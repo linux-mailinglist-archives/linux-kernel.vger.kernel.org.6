@@ -1,147 +1,276 @@
-Return-Path: <linux-kernel+bounces-298540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DAC95C88F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:57:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A38195C8AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1577B284E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0C11F24E43
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18C114A4C9;
-	Fri, 23 Aug 2024 08:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1FD14EC7E;
+	Fri, 23 Aug 2024 08:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBlF2LIF"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VhVBZE5L"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7165714B97B;
-	Fri, 23 Aug 2024 08:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B8D187345
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724403420; cv=none; b=KakJ60gGn0HNM1iuxZZcsVuPl8ajZ8fuA4ylTxubBgh1So0SFp0eKZdAwaDj0PR7CFXI+71qsKDJrqi5+OMiftUdRsJLD9ZBikYv6O4zpW9/0IWE5TeGDONqo3NlnnKHPv1i/d0NM8kqrJ/x4PCaQrlTqXA7bwNjw3SpPxwrXmU=
+	t=1724403457; cv=none; b=cEUoHTvdfKzFxn+07iPmSLBZQVyq+knaVz5HtPbF/uSxDKHtKzqXNtoYwXAEL1vNrXxPrJvy8CylKsKHEWj8eFrZZ6NX7NljKl48F6UMOhHg+Fv+5k4V8mv1swKejV3vVRPhKwsZk+udDVo66umYMjZj+q0gAaJ46TpWBOG0EfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724403420; c=relaxed/simple;
-	bh=FPA2LbjmMda9Z3hqjlA4MPD3nfJDM3A9haziHutdelY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2pPOOMnesuPSMfiqzUmQc6fvsl3jbnUKEiyJ7YOVDdGiGD7jzIR6X00kfa15JwjOnHocHij/I13NAYF2irB+h/Kn4WgBZmK+4x3TeVw4rT3skggFziKK0Gpxkjjs2YY5/TrXncVf2fsLotiznnmdRXMA+u6k+vkX+pt53GRV3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBlF2LIF; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f3f163e379so28506101fa.3;
-        Fri, 23 Aug 2024 01:56:58 -0700 (PDT)
+	s=arc-20240116; t=1724403457; c=relaxed/simple;
+	bh=8lnr6Y8CYYR/tsZAaXobHIHOJeKtPwwM0WSm4dTdVDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+5WrDsaznAqjtdAzwytjj1bvz/iTdSTuIPJShDSXowJvNd0ER0PfWX7dz0Vxvc1UZX2HrcqHpNjZ+JvvwfITEwqElHj/AGMr2n4KOhZN2rU2dD8CgqstBv89U93FdcoDs7NcidheGUcg+wR4/w3OHxqyJ17VhtE8fvyHQuyIms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VhVBZE5L; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so4929188a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:57:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724403416; x=1725008216; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=idAJLD2w37nSdicsVCk5zam2KjZOsmHcn1q6N2TszYk=;
-        b=mBlF2LIFaisoGGdUyzrxxqH5XL39zUBw5VouqKxFRhhTeD458IZ+a3ZBMXYhlPY3EJ
-         RkPajeC6VL4CSPUjVCbAibVZOYY92WdagLxsDAstG0eFjgftAZ/y+81YmQm3jM6c6/A6
-         hvjblTz2nQvi1MVVLBv+f1o4Tfrzm2fyLmMwbZ6SbF3/DVOPrOHMyT4XMa/jOEiBVtC+
-         jcegqWy6I+F48nBzWad4/cpZmjGqYKt8usV102UnLJIu+SN+9d5BDD2s0hNEuyJlyZo/
-         KCb0fLb2wM5iXSJd8R472ZluBAv+M3m6pkUsolIZ8R0ghW+RLnOzDMQdBxHzzNJv2VR0
-         CL3w==
+        d=tuxon.dev; s=google; t=1724403454; x=1725008254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
+        b=VhVBZE5L/aEEE2/7LjYy06WdCtsSgxaG+d6aA7NeA94fGwTS5kX1ydoD8o2qTuYP/B
+         IvT5TJ87fAAQybiZKAeGQvZpM/3q4Ca9eXDLUzzDxqxp0M/IKV0POPl4ZTyhVNjyNLxp
+         tu7hN056Gk/pr+OwRiZrugubbh89cjJ5rf5U7+c3MjsJRP+pS5VRHhQIb+XizvykEjHo
+         LlL+H2lI+kd3hE1Izzz/M7ju5MpUbKzvGK6Yoq1p0q9qs0faP6t3zmyqjCIZTrzs8FdF
+         XCin7p/7dHOa0BH9cTIrsjetG1CKTvEg19UyWqtp+wW4hu8G+FdwMkYBn9LH6N+AvelU
+         4IOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724403416; x=1725008216;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=idAJLD2w37nSdicsVCk5zam2KjZOsmHcn1q6N2TszYk=;
-        b=oJMTW8Jj19BXTLo1MhVgqYV6KSGi73QEoJvwZ5xql25G6sDrLgdBcwdalMOH5GWbwG
-         nVdWu6o3uA7r/YIYVHrlOwHcVOfyrSzlS6PdvDVMCOjEGs9IxqpAzet9ANUXq3J9GWTy
-         YzBWXKnKNz8jESZvgfjPqmDU21uLSd2jmWno4NfbOj1qSm+bAg/538KlA5fUYYh97FHK
-         ipUw3sQuf+CevAoTgHwXuKdn4vdYCuMyNfnMq03ppVvpRq3Vb8ODUjs1zME34/OV3iv3
-         wnNJJFoGTRopinCRiiIDgffCcKPy4hckJdUPuqpfSi02Pgo7rdgb+JAAXrzobMNORn8b
-         R5vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2gRG959yimw09vrHSXTK/NbFAhC0PAC2OqqEGVleZL6+FMG3N8ViRCpW0BScF9IMdAURx5lw+fhmL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9cqIooU63ose3RK9OfGN96Ld8TBK5fxePNaKAXoee4WbiYOGy
-	il9D63XpjiDNmT0CAESYCdRXXsoNo8GOffEcDwmJRV+wygdEyR8b7iwPrw==
-X-Google-Smtp-Source: AGHT+IGaWz24Aozq4D7VOTOmYTh/Fv8EN/2E+HgmUJu5BKO6ATGu/LKxCVfl8yD6ZVqN95lELSS6Ow==
-X-Received: by 2002:ac2:4e06:0:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-53438846debmr1157338e87.16.1724403415659;
-        Fri, 23 Aug 2024 01:56:55 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea29626sm504746e87.17.2024.08.23.01.56.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 01:56:55 -0700 (PDT)
-Date: Fri, 23 Aug 2024 11:56:52 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Wu Bo <bo.wu@vivo.com>
-Cc: linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	Wu Bo <wubo.oduw@gmail.com>
-Subject: Re: [PATCH] bus: bt1-axi: change to use devm_clk_get_enabled()
- helpers
-Message-ID: <jwspy5qbmtkl32wngiv7cgypy7sox3zeqks3wkqsuqra6vx7p2@3xg2rbc3lxp5>
-References: <20240823023103.1984437-1-bo.wu@vivo.com>
+        d=1e100.net; s=20230601; t=1724403454; x=1725008254;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
+        b=PBNyS9d9tHP/8e0Zz0VM3zIF+I8zblFV/B9Tob4YGYNd8P/rHFeyC5Qhm2fcxfQE1s
+         ofDb2F95kv4oA15lIfMZ9lw5g2l6Vttza1IuhetgpJ4PBcjkIqtroQRBy8fWBzoB/jsR
+         f5rl7hquTLgSrNzpuJrzepqeLRpnNCrwSkJYt8LummeEfxzHq1YWkImZoh6NcX7xyLki
+         Hc+M9cd8DUwoR6nvlgeXZceTGBb9TPL1DutEAQ8yrIj6o+W6M74As1LF+FLUuVPr35/n
+         FyaLVr+iBfgYg1o9EQEkCQ8drcKZvTsdYpfALtsNl/JTFLFQ4yyfNSZtW+03rXgj4dO6
+         uqrg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+RSZzXYnobbEtEXzOD1MRzUfQSF9evbi1iM6L3eE3LDdwonTq7VSeUxI7FwVqgvyp3eG/H+gVzLzs56Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7VOSkmL/FaVcuS7TK0jFLWTcn1uQwVUzUpg+MSmie16Q+H4Za
+	MAIEqPYVyvdvv7Ur5R0/jWMe5AsnmSJrop2l+ST+0PcwCR77sIpS8ups0vjz68Q=
+X-Google-Smtp-Source: AGHT+IEuOD6mMoOYP1+ZXn8J654fsnrlqdSXKZuQL602YsnGpaYCCO0kwwL9QjY/ps2l0W7ExxRiUw==
+X-Received: by 2002:a17:906:c144:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a86a309ae59mr140738466b.26.1724403454000;
+        Fri, 23 Aug 2024 01:57:34 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f299e28sm230756866b.56.2024.08.23.01.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 01:57:33 -0700 (PDT)
+Message-ID: <8faa6b6d-a013-4a71-a8b7-af02ac92d94b@tuxon.dev>
+Date: Fri, 23 Aug 2024 11:57:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823023103.1984437-1-bo.wu@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to
+ initialize the bus
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>, "vkoul@kernel.org"
+ <vkoul@kernel.org>, "kishon@kernel.org" <kishon@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-11-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wu
+Hi, Biju,
 
-On Thu, Aug 22, 2024 at 08:31:03PM -0600, Wu Bo wrote:
-> Make the code cleaner and avoid call clk_disable_unprepare()
+On 23.08.2024 10:35, Biju Das wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
-
-Awesome! Thanks.
-
-Acked-by: Serge Semin <fancer.lancer@gmail.com>
-
-Could you also apply the same change to drivers/bus/bt1-apb.c ?
-
--Serge(y)
-
-> ---
->  drivers/bus/bt1-axi.c | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Thursday, August 22, 2024 4:28 PM
+>> Subject: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The Renesas RZ/G3S need to initialize the USB BUS before transferring data due to hardware limitation.
+>> As the register that need to be touched for this is in the address space of the USB PHY, and the UBS
+>> PHY need to be initialized before any other USB drivers handling data transfer, add support to
+>> initialize the USB BUS.
+>>
+>> As the USB PHY is probed before any other USB drivers that enables clocks and de-assert the reset
+>> signals and the BUS initialization is done in the probe phase, we need to add code to de-assert reset
+>> signal and runtime resume the device (which enables its clocks) before accessing the registers.
+>>
+>> As the reset signals are not required by the USB PHY driver for the other USB PHY hardware variants,
+>> the reset signals and runtime PM was handled only in the function that initialize the USB BUS.
+>>
+>> The PHY initialization was done right after runtime PM enable to have all in place when the PHYs are
+>> registered.
 > 
-> diff --git a/drivers/bus/bt1-axi.c b/drivers/bus/bt1-axi.c
-> index 4007e7322cf2..b0baae49aca6 100644
-> --- a/drivers/bus/bt1-axi.c
-> +++ b/drivers/bus/bt1-axi.c
-> @@ -146,32 +146,15 @@ static int bt1_axi_request_rst(struct bt1_axi *axi)
->  	return ret;
->  }
->  
-> -static void bt1_axi_disable_clk(void *data)
-> -{
-> -	struct bt1_axi *axi = data;
-> -
-> -	clk_disable_unprepare(axi->aclk);
-> -}
-> -
->  static int bt1_axi_request_clk(struct bt1_axi *axi)
->  {
->  	int ret;
->  
-> -	axi->aclk = devm_clk_get(axi->dev, "aclk");
-> +	axi->aclk = devm_clk_get_enabled(axi->dev, "aclk");
->  	if (IS_ERR(axi->aclk))
->  		return dev_err_probe(axi->dev, PTR_ERR(axi->aclk),
->  				     "Couldn't get AXI Interconnect clock\n");
->  
-> -	ret = clk_prepare_enable(axi->aclk);
-> -	if (ret) {
-> -		dev_err(axi->dev, "Couldn't enable the AXI clock\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(axi->dev, bt1_axi_disable_clk, axi);
-> -	if (ret)
-> -		dev_err(axi->dev, "Can't add AXI clock disable action\n");
-> -
->  	return ret;
->  }
->  
-> -- 
-> 2.25.1
+> There is no user for this patch. The first user is RZ/G3S and you should merge this patch with
+> next one.
+
+I think this is a matter of taste... This is how I usually format the
+patches (for scenarios like this) and got no request for squashing.
+
+Anyway, I can do it your way, too.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 50 ++++++++++++++++++++++--
+>>  1 file changed, 47 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> index 7594f64eb737..cf4299cea579 100644
+>> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> @@ -19,12 +19,14 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/regulator/consumer.h>
+>> +#include <linux/reset.h>
+>>  #include <linux/string.h>
+>>  #include <linux/usb/of.h>
+>>  #include <linux/workqueue.h>
+>>
+>>  /******* USB2.0 Host registers (original offset is +0x200) *******/
+>>  #define USB2_INT_ENABLE		0x000
+>> +#define USB2_AHB_BUS_CTR	0x008
+>>  #define USB2_USBCTR		0x00c
+>>  #define USB2_SPD_RSM_TIMSET	0x10c
+>>  #define USB2_OC_TIMSET		0x110
+>> @@ -40,6 +42,10 @@
+>>  #define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)	/* For EHCI */
+>>  #define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)	/* For OHCI */
+>>
+>> +/* AHB_BUS_CTR */
+>> +#define USB2_AHB_BUS_CTR_MBL_MASK	GENMASK(1, 0)
+>> +#define USB2_AHB_BUS_CTR_MBL_INCR4	2
+>> +
+>>  /* USBCTR */
+>>  #define USB2_USBCTR_DIRPD	BIT(2)
+>>  #define USB2_USBCTR_PLL_RST	BIT(1)
+>> @@ -111,6 +117,7 @@ struct rcar_gen3_chan {
+>>  	struct extcon_dev *extcon;
+>>  	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
+>>  	struct regulator *vbus;
+>> +	struct reset_control *rstc;
+>>  	struct work_struct work;
+>>  	struct mutex lock;	/* protects rphys[...].powered */
+>>  	enum usb_dr_mode dr_mode;
+>> @@ -125,6 +132,7 @@ struct rcar_gen3_chan {  struct rcar_gen3_phy_drv_data {
+>>  	const struct phy_ops *phy_usb2_ops;
+>>  	bool no_adp_ctrl;
+>> +	bool init_bus;
+>>  };
+>>
+>>  /*
+>> @@ -650,6 +658,35 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
+>>  	return candidate;
+>>  }
+>>
+>> +static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+>> +{
+>> +	struct device *dev = channel->dev;
+>> +	int ret;
+>> +	u32 val;
+>> +
+>> +	channel->rstc = devm_reset_control_array_get_shared(dev);
+>> +	if (IS_ERR(channel->rstc))
+>> +		return PTR_ERR(channel->rstc);
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = reset_control_deassert(channel->rstc);
+>> +	if (ret)
+>> +		goto rpm_put;
+>> +
+>> +	val = readl(channel->base + USB2_AHB_BUS_CTR);
+>> +	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+>> +	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+>> +	writel(val, channel->base + USB2_AHB_BUS_CTR);
+>> +
+>> +rpm_put:
+>> +	pm_runtime_put(dev);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)  {
+>>  	const struct rcar_gen3_phy_drv_data *phy_data; @@ -703,6 +740,15 @@ static int
+>> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>  		goto error;
+>>  	}
+>>
+>> +	platform_set_drvdata(pdev, channel);
+>> +	channel->dev = dev;
+>> +
+>> +	if (phy_data->init_bus) {
+>> +		ret = rcar_gen3_phy_usb2_init_bus(channel);
+>> +		if (ret)
+>> +			goto error;
+>> +	}
+>> +
+>>  	channel->soc_no_adp_ctrl = phy_data->no_adp_ctrl;
+>>  	if (phy_data->no_adp_ctrl)
+>>  		channel->obint_enable_bits = USB2_OBINT_IDCHG_EN; @@ -733,9 +779,6 @@ static int
+>> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>  		channel->vbus = NULL;
+>>  	}
+>>
+>> -	platform_set_drvdata(pdev, channel);
+>> -	channel->dev = dev;
+>> -
+>>  	provider = devm_of_phy_provider_register(dev, rcar_gen3_phy_usb2_xlate);
+>>  	if (IS_ERR(provider)) {
+>>  		dev_err(dev, "Failed to register PHY provider\n"); @@ -762,6 +805,7 @@ static void
+>> rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+>>  	if (channel->is_otg_channel)
+>>  		device_remove_file(&pdev->dev, &dev_attr_role);
+>>
+>> +	reset_control_assert(channel->rstc);
+>>  	pm_runtime_disable(&pdev->dev);
+>>  };
+>>
+>> --
+>> 2.39.2
 > 
 
