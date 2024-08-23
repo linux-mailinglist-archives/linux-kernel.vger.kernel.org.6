@@ -1,125 +1,169 @@
-Return-Path: <linux-kernel+bounces-299269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF3195D22E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E569B95D22D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BAAB26429
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A102B27709
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4264318BBB4;
-	Fri, 23 Aug 2024 15:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF5D18BC10;
+	Fri, 23 Aug 2024 15:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="COLWxKwq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L++hseRD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AB21898E6;
-	Fri, 23 Aug 2024 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAA71885BE;
+	Fri, 23 Aug 2024 15:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428559; cv=none; b=EfvHtDSlIWYZmT3s2kKcRGCVrZWSGv/5fH7/EQNDeaxrwrETCeIDbrI6w8ZVwnYiF2i3xVN/5YLO9i7AbJMKJpJM7a+tRlddL58+xdvJ2ur4RZVKpOglPskbSr9UoZ1hX9Ljc4N25Or3ZkFaaAv4F21QJlhXX/VHcB+xyMpH9CY=
+	t=1724428578; cv=none; b=BP6wWuc2lbkyV3mt2OTDL5V/N8FwSvgw4S7gzxmQ3Q+iOPAjyswTizHt0GO0UEwMjFagPR+I03PL3d3+BcBaxUF1Bo9DrVrdgGr8Wrcyh3elutQNzYA2nbxvRbgmzxq/Ts5/063Y2lWBtfPY+XRmAknZwuJH63lM+zeUf2rltsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428559; c=relaxed/simple;
-	bh=j8rRZh/7vK2gSDNSUcMwzZv/glSVV+Vcun13cvEoLrA=;
+	s=arc-20240116; t=1724428578; c=relaxed/simple;
+	bh=1DkFpRNUuvVbzXLS5nkNQsNUzpujVqKCccs30oDKFrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nzrpf4YPpYqPbeyQmXTtcS5mnpNpYh1pXAXNG6qyLq42tyB9bS3lWMNuKPSC6LDGUZU6q58//YK7XWvI1sa6OE7QvAPXNxqva6L/nUf+gIU5AGzJ77T3vWYCFfi6rs5Z2sXAGL8vFm/7RVLSQp0PgBACpjhUy/KCTGLPoB8Zfzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=COLWxKwq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B11A22D5;
-	Fri, 23 Aug 2024 17:54:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724428492;
-	bh=j8rRZh/7vK2gSDNSUcMwzZv/glSVV+Vcun13cvEoLrA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uc44QoY7+kP9R5FSJ3oGTVieT2c84voqPbHvaSkVPQJaivl6wGuCaMQilwNxi0QSFL6fcmHwocTjA/PXePEUaDZH2K4ewJ44bZUFCdabtAoYncypeNI3q4byKWQluDrUlLouuK1viUXQoKWjxAUVEhkVlFuqZm475+Wt+4DeUWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L++hseRD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE18C32786;
+	Fri, 23 Aug 2024 15:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724428578;
+	bh=1DkFpRNUuvVbzXLS5nkNQsNUzpujVqKCccs30oDKFrc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=COLWxKwqd8JpQbWo4Dl5eAB+s5k5CHV690jRFmECZqGgnikI6bOc1754VPxuFRF+/
-	 1yPVhDkF5EmvOsJ4nAxGk1AllV2YAVx7+vFNjYqxOQ+zKdAOAg5W6HVgoCHFWTQT6F
-	 79wC6SRas8VSLdCbt7a4tnuBaavTDka/3piduHUk=
-Date: Fri, 23 Aug 2024 18:55:54 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 2/2] media: mt9p031: Drop CONFIG_OF ifdeffery
-Message-ID: <20240823155554.GS26098@pendragon.ideasonboard.com>
-References: <20230910160126.70122-1-biju.das.jz@bp.renesas.com>
- <20230910160126.70122-3-biju.das.jz@bp.renesas.com>
+	b=L++hseRDfFgMHYM7kN/OSwY2n/VFOY9WAkhxVgygTfLGjpOn3h9ikwZWu6iOkZQGU
+	 paEtjPZC8USZsoLM8HldgNs1hFg4l3bsZR842s9jveupLAvAf0AbWHmUrXLMwUzYTj
+	 s+gf4fWCYhMtQBxyJE7LR69snXLXQ7N7OXKlncHaE2BtDP4yo/YnhH+fy2vH6zkex6
+	 Eg0jcSlFsu3gBH/qd5Qj6B9mCrsJY67di2SC5NtR9RtbWId9Ab8iRS7JsDOYEUoHVt
+	 8DwZ4/5XnW+W2mRIP8DIEulSgH4I5lWQMI0H7VaJbljNG3zNmjy5j5McPTN+GMpQ4V
+	 kG8XvsO7wvizA==
+Date: Fri, 23 Aug 2024 16:56:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@lunn.ch" <andrew@lunn.ch>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"Andrei Botila (OSS)" <andrei.botila@oss.nxp.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next 2/3] net: phy: tja11xx: replace
+ "nxp,rmii-refclk-in" with "nxp,phy-output-refclk"
+Message-ID: <20240823-jersey-conducive-70863dd6fd27@spud>
+References: <20240822013721.203161-1-wei.fang@nxp.com>
+ <20240822013721.203161-3-wei.fang@nxp.com>
+ <20240822-headed-sworn-877211c3931f@spud>
+ <PAXPR04MB85107F19C846ABDB74849086888F2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20240822-passerby-cupcake-a8d43f391820@spud>
+ <PAXPR04MB85109CB5538707701F52246E88882@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ANYxDycCsQyo/fXE"
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB85109CB5538707701F52246E88882@PAXPR04MB8510.eurprd04.prod.outlook.com>
+
+
+--ANYxDycCsQyo/fXE
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230910160126.70122-3-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Biju,
+On Fri, Aug 23, 2024 at 01:31:02AM +0000, Wei Fang wrote:
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: 2024=E5=B9=B48=E6=9C=8823=E6=97=A5 0:14
+> > To: Wei Fang <wei.fang@nxp.com>
+> > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; andrew@lunn.ch; f.fainelli@gmail.com;
+> > hkallweit1@gmail.com; linux@armlinux.org.uk; Andrei Botila (OSS)
+> > <andrei.botila@oss.nxp.com>; netdev@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v2 net-next 2/3] net: phy: tja11xx: replace
+> > "nxp,rmii-refclk-in" with "nxp,phy-output-refclk"
+> >=20
+> > On Thu, Aug 22, 2024 at 09:37:11AM +0000, Wei Fang wrote:
+> > > > -----Original Message-----
+> > > > From: Conor Dooley <conor@kernel.org>
+> > > > Sent: 2024=E5=B9=B48=E6=9C=8822=E6=97=A5 16:47
+> > > > To: Wei Fang <wei.fang@nxp.com>
+> > > > Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+> > > > pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+> > > > conor+dt@kernel.org; andrew@lunn.ch; f.fainelli@gmail.com;
+> > > > hkallweit1@gmail.com; linux@armlinux.org.uk; Andrei Botila (OSS)
+> > > > <andrei.botila@oss.nxp.com>; netdev@vger.kernel.org;
+> > > > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH v2 net-next 2/3] net: phy: tja11xx: replace
+> > > > "nxp,rmii-refclk-in" with "nxp,phy-output-refclk"
+> > > >
+> > > > On Thu, Aug 22, 2024 at 09:37:20AM +0800, Wei Fang wrote:
+> > > > > As the new property "nxp,phy-output-refclk" is added to instead of
+> > > > > the "nxp,rmii-refclk-in" property, so replace the "nxp,rmii-refcl=
+k-in"
+> > > > > property used in the driver with the "nxp,reverse-mode" property
+> > > > > and make slight modifications.
+> > > >
+> > > > Can you explain what makes this backwards compatible please?
+> > > >
+> > > It does not backward compatible, the related PHY nodes in DTS also
+> > > need to be updated. I have not seen "nxp,rmii-refclk-in" used in the
+> > > upstream.
+> >=20
+> > Since you have switched the polarity, devicestrees that contain
+> > "nxp,rmii-refclk-in" would actually not need an update to preserve
+> > functionality. However...
+> >=20
+> > > For nodes that do not use " nxp,rmii-refclk-in", they need to be
+> > > updated, but unfortunately I cannot confirm which DTS use TJA11XX PHY,
+> > > and there may be no relevant nodes in upstream DTS.
+> >=20
+> > ...as you say here, all tja11xx phy nodes that do not have the property=
+ would
+> > need to be updated to retain functionality. Given you can't even determ=
+ine
+> > which devicetrees would need to be updated, I'm going to have to NAK th=
+is
+> > change as an unnecessary ABI break.
+> >=20
+>=20
+> Okay, that make sense, "nxp,rmii-refclk-in" was added only for TJA1100 and
+> TJA1101, although it does not seem to be a suitable property now, it cann=
+ot
+> be changed at present. :(
+> Since TJA1103/TJA1104/TJA1120/TJA1121 use different driver than TJA1100
+> and TJA1101, which is nxp-c4-tja11xx. I think it's fine to add " nxp,phy-=
+output-refclk "
+> for these PHYs, so I will remove this patch from the patch set.
 
-Thank you for the patch.
+If they use a different binding, then yeah, you can add use the new
+name/polarity for those devices.
 
-On Sun, Sep 10, 2023 at 05:01:26PM +0100, Biju Das wrote:
-> Drop of_match_ptr() from mt9p031_i2c_driver and get rid of ugly CONFIG_OF
-> if check. This slightly increases the size of mt9p031_i2c_driver on non-OF
-> system and shouldn't be an issue.
-> 
-> Add mod_devicetable.h include.
-> 
-> It also allows, in case if needed, to enumerate this device via ACPI with
-> PRP0001 magic.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+--ANYxDycCsQyo/fXE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+-----BEGIN PGP SIGNATURE-----
 
-> ---
->  drivers/media/i2c/mt9p031.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index 540cb519915c..91d5de5b95f0 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -15,6 +15,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
->  #include <linux/log2.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_graph.h>
-> @@ -1222,7 +1223,6 @@ static const struct i2c_device_id mt9p031_id[] = {
->  };
->  MODULE_DEVICE_TABLE(i2c, mt9p031_id);
->  
-> -#if IS_ENABLED(CONFIG_OF)
->  static const struct of_device_id mt9p031_of_match[] = {
->  	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
->  	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> @@ -1230,11 +1230,10 @@ static const struct of_device_id mt9p031_of_match[] = {
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
-> -#endif
->  
->  static struct i2c_driver mt9p031_i2c_driver = {
->  	.driver = {
-> -		.of_match_table = of_match_ptr(mt9p031_of_match),
-> +		.of_match_table = mt9p031_of_match,
->  		.name = "mt9p031",
->  	},
->  	.probe          = mt9p031_probe,
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsixHAAKCRB4tDGHoIJi
+0nW9AP4vV2xl618F6KsrE008fW2eV6kz0eQzNzhu8RDFinWI3AD/ZypQb+ffi0tz
+aNX9IUGBoNG3hT1ntEDsKLnvSfZIKgw=
+=iFaS
+-----END PGP SIGNATURE-----
 
--- 
-Regards,
-
-Laurent Pinchart
+--ANYxDycCsQyo/fXE--
 
