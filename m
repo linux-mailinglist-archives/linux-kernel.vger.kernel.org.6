@@ -1,205 +1,76 @@
-Return-Path: <linux-kernel+bounces-299757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BB295D9B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683A495D9B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7F1C23BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3EF1F24937
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978A1C8FDB;
-	Fri, 23 Aug 2024 23:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vORTuiKb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628081C8FD8;
+	Fri, 23 Aug 2024 23:28:13 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FAD61FFC
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622C61FFC
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724455702; cv=none; b=JsvmkBajAsys3m6urZRoYsAkY0rSYrZ0ZOfcFSuCwYDKn7CxRRh9hTn38u62Ko0NI097OUlxj1ojl4tcy8OXMHEj4gM3Qezim0gsBLuYTIdDoBq4UE93iRfvJrENxdGcidM2Jt2jDIik4P9KEAprcm2+uWK/2y01ylvVYPuUtJg=
+	t=1724455693; cv=none; b=iUDtWx8rjBrVZeU13dw4+MSCdliE4wX4z+cjQCWLV5L7v6IV6dW/3Ovhy+KVwkGcDfL9guBodB7P5FIyWiE6Nwx2A+v67dxY9PwdyTBok5nlFmmYtDhGLeoGieFyeMC8sL6MVRRlKF8GEW7ExqnJ4dyYhVy/Gwp0hGvAeshFFdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724455702; c=relaxed/simple;
-	bh=qUWlsVBaCvs/ScOoZEuc4eDAUzoBoNdCnkHyMXoBP0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dZDDj4JhiyzoSP7qkJwZ2fidj50TLwZy0E5cC5VtATTsiBAu8cVCMR3ErGI25boNKp+5S/OxJ/0wAX6zRbd3xuW0ybY7VLWrfYF7VC54IzWRlzyIcCnp40sDrLHztBC1YQXP0R0J7TubIH1ncHNZEUlUoIGV531DFpDu06YBDy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vORTuiKb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57787C32786;
-	Fri, 23 Aug 2024 23:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724455701;
-	bh=qUWlsVBaCvs/ScOoZEuc4eDAUzoBoNdCnkHyMXoBP0Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vORTuiKbLxZNPOEQ0PzthnF0YH6X3D3t02uOkqzxXEq3ydhuflVlK3Waov1PUgvD3
-	 7cF8XEuVzOfd9feh4tnCeA5ZFXAep0b31PKMPFr1s0danzrge9wOW0+haFLp1CCj/S
-	 lQOizMv3uah49tKyOFUH8fpRFmgXA9loFR6Pa+w8xkdzzHG6hqcj9josDJwMI6JLjy
-	 JZk0F/3AUmy4xUbjEERKYoPRKj8ckzWxQfe1WsNR+bzzR9u3BObxclWpPquTBY5tns
-	 MNvjEK8mV5/IxshEJXM62Wjf9e9cUjTXPuZtMJkwbgdpizZSn0w1f6hMAPFWAv6x0R
-	 IOMmxMh68Yg1g==
-Date: Sat, 24 Aug 2024 01:28:06 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v8 03/13] acpi/ghes: Add support for GED error device
-Message-ID: <20240824012806.6189d0a4@sal.lan>
-In-Reply-To: <20240819134304.68c54eae@imammedo.users.ipa.redhat.com>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<ba1864f1aa7073abe090eec0c31915f187967140.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819134304.68c54eae@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724455693; c=relaxed/simple;
+	bh=Rr1yHC4GkVt44KsDGAllWQXvdIIBCeFGse21PqnOdqc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EC3TL9wTBGjkHPgEA1Tn01S5t2fN015zHFQ2gOMtMLBllXc1FKH4tlT0NOErgUD1xwPXIduEkDtCqi8IgWQR52Xkm+VVmClKUH2CfSTkWOWWAlZ0Vqww/vrzj/xitfnELnYQB7dFibmVVqvJqB82BJOjKHrZ54ao8N0nbKgLiDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso22513055ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:28:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724455690; x=1725060490;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rr1yHC4GkVt44KsDGAllWQXvdIIBCeFGse21PqnOdqc=;
+        b=MYxPLiPym+Uar6g0clqGASCD+OeIhE514PbTXhkr7YnRCrOX84bM7WHWzzw8bvaLES
+         2NxMmOlfBYAhGWrDcBHrNpswWFzeLgnYb2l5y6rdm9W47zEZr7OT0WCuPJFmUzvIXtkw
+         LbFVS1K41v497ORpVXfa064jPNLFzmWooQ5lkw5AVOpuGRpeW0tZNBr2bzc24En2xkXJ
+         vSe9QsrCyyKKAFean4GENkWAVaH0WZvE1/1jwrWahIqeKBfoTUttRmQMS/CZJbkubW/i
+         yyTVEnOduhVWi47iivKSH3eyhhBiodboI6Nj0Ska8Xz0LBjbeT6M7hONkPGIx8h9t/YF
+         oGUA==
+X-Gm-Message-State: AOJu0Ywn/37Gnqj7dXq4S6Bpb9H0NepqnM7JPnVf4T4Az0MjPg8fewl9
+	GlbJ2JiD6zfQFKjgxRmWU9wO+Gu4wPw6ZfKc4lKVKsn/82/1Vx57P3nrgv/g5KgLqijSiNOxKzp
+	nUxlJ/SO7bFroQ7qEJ6O5jgCRQuIBj7+2Zy4+hT1rAWmzSO3hcQdOkzI=
+X-Google-Smtp-Source: AGHT+IG1H9yIHFIyE9R9r4d3pfM03uTn2uA8Z55xpM1gHPco3mZwX11eLC4qdpNDgvkmJEUzYJpLcuZiL7afWaDK3xKPjetmcfe1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d85:b0:383:4db4:cbe0 with SMTP id
+ e9e14a558f8ab-39e3ca065e0mr2600955ab.5.1724455690645; Fri, 23 Aug 2024
+ 16:28:10 -0700 (PDT)
+Date: Fri, 23 Aug 2024 16:28:10 -0700
+In-Reply-To: <0000000000004492c2061b8b3796@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df429d06206220b6@google.com>
+Subject: Re: [syzbot] kernel BUG in bch2_bucket_alloc_freelist
+From: syzbot <syzbot+3d2944b5612507034fc4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Em Mon, 19 Aug 2024 13:43:04 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> On Fri, 16 Aug 2024 09:37:35 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > 
-> > As a GED error device is now defined, add another type
-> > of notification.
-> > 
-> > Add error notification to GHES v2 using
-> >a GED error device GED triggered via interrupt.  
->  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> This is hard to parse, perhaps update so it would be
-> more clear what does what
-> 
-> > 
-> > [mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks and
-> >  rename HEST event to better identify GED interrupt OSPM]
-> > 
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > ---  
-> 
-> in addition to change log in cover letter,
-> I'd suggest to keep per patch change log as well (after ---),
-> it helps reviewer to notice intended changes.
-> 
-> 
-> [...]
-> > +    case ACPI_HEST_SRC_ID_GED:
-> > +        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);  
-> While GPIO works for arm, it's not the case for other machines.
-> I recall a suggestion to use ACPI_GHES_NOTIFY_EXTERNAL instead of GPIO one,
-> but that got lost somewhere...
+***
 
-True, but the same also applies to SEA, which is ARMv8+. After having
-everything in place, I confined the source ID into this code inside
-ghes.c:
+Subject: kernel BUG in bch2_bucket_alloc_freelist
+Author: kent.overstreet@linux.dev
 
-	enum AcpiHestSourceId {
-	    ACPI_HEST_SRC_ID_SEA,
-	    ACPI_HEST_SRC_ID_GED,
-
-	    /* Shall be the last one */
-	    ACPI_HEST_SRC_ID_COUNT
-	} AcpiHestSourceId;
-
-	static bool ghes_notify_to_source_id(enum AcpiGhesNotifyType notify,
-	                                     enum AcpiHestSourceId *source_id)
-	{
-	    switch (notify) {
-	    case ACPI_GHES_NOTIFY_SEA:             /* ARMv8 */
-	        *source_id = ACPI_HEST_SRC_ID_SEA;
-	        return false;
-	    case ACPI_GHES_NOTIFY_GPIO:
-	        *source_id = ACPI_HEST_SRC_ID_GED;
-	        return false;
-	    default:
-	        /* Unsupported notification types */
-	        return true;
-	    }
-	}
-
-The only place where the source ID number is used is at
-ghes_notify_to_source_id() - still we use ACPI_HEST_SRC_ID_COUNT on other
-places to initialize and fill in the HEST table and its error source 
-structures.
-
-On other words, the source ID field is filled from the notification types as
-defined at include/hw/acpi/ghes.h:
-
-    ACPI_GHES_NOTIFY_POLLED = 0,
-    ACPI_GHES_NOTIFY_EXTERNAL = 1,
-    ACPI_GHES_NOTIFY_LOCAL = 2,
-    ACPI_GHES_NOTIFY_SCI = 3,
-    ACPI_GHES_NOTIFY_NMI = 4,
-    ACPI_GHES_NOTIFY_CMCI = 5,
-    ACPI_GHES_NOTIFY_MCE = 6,
-    ACPI_GHES_NOTIFY_GPIO = 7,
-    ACPI_GHES_NOTIFY_SEA = 8,
-    ACPI_GHES_NOTIFY_SEI = 9,
-    ACPI_GHES_NOTIFY_GSIV = 10,
-    ACPI_GHES_NOTIFY_SDEI = 11,
-
-(please notice that ACPI already defines "EXTERNAL" as being something 
-else)
-
-Now, if we want to add support for x86, we could either add some ifdefs
-inside ghes.c, e. g. something like:
-
-	enum AcpiHestSourceId {
-	#ifdef TARGET_ARM
-	    ACPI_HEST_SRC_ID_SEA,
-	    ACPI_HEST_SRC_ID_GED,
-	#endif
-	#ifdef TARGET_I386
-	   ACPI_HEST_SRC_ID_MCE,
-        #endif
-
-	    /* Shall be the last one */
-	    ACPI_HEST_SRC_ID_COUNT
-	} AcpiHestSourceId;
-
-and something similar at ghes_notify_to_source_id():
-	static bool ghes_notify_to_source_id(enum AcpiGhesNotifyType notify,
-	                                     enum AcpiHestSourceId *source_id)
-	{
-	    switch (notify) {
-	#ifdef TARGET_ARM
-	    case ACPI_GHES_NOTIFY_SEA:             /* ARMv8 */
-	        *source_id = ACPI_HEST_SRC_ID_SEA;
-	        return false;
-	    case ACPI_GHES_NOTIFY_GPIO:
-	        *source_id = ACPI_HEST_SRC_ID_GED;
-	        return false;
-	#endif
-	#ifdef TARGET_I386
-	    case ACPI_GHES_NOTIFY_MCE:
-	        *source_id = ACPI_HEST_SRC_ID_MCE;
-	        return false;
-	#endif
-	    default:
-	        /* Unsupported notification types */
-	        return true;
-	    }
-	}
-
-An alternative would be to move source id/notification code out, placing
-them at hw/arm, hw/i386, but a more complex binding logic will be needed.
-
-If we're willing to do something like that, I would prefer to not do such
-redesign now. Better to do such change when we'll be ready to add some 
-notification support that works on x86 (MCE? SCI? NMI?).
-
-Regards,
-Mauro
+#syz fix: bcachefs: Don't use the new_fs() bucket alloc path on an initialized fs
 
