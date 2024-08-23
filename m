@@ -1,270 +1,176 @@
-Return-Path: <linux-kernel+bounces-298708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7E395CA81
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C6395CA82
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38EBBB238AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FD41C21417
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FAB185E7B;
-	Fri, 23 Aug 2024 10:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEED0184521;
+	Fri, 23 Aug 2024 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="apKd8pYw"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WjqS93v3"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8CB183CA5
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C213AD33
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724409151; cv=none; b=pG9kyV7fJ3yGiZqNwUGVH0PL8+dSJOfnCpaqEjf21w1pHeLhsj3KLCLkW11/+DG4ZUy/5LIHhlRscK0Al1+abEAEafHSvUgF2ehqYk/s7tIpqdEbrMhWfXHlftALhDR3YZ9wGGl5t715M9ySAs/KKWW+f7zRDr0QdODVkU8hQl8=
+	t=1724409220; cv=none; b=BqZ4KOGl7V+RbnKBEiE1QyxPSLosjn8Zr1gGi5+Qw1qjDemV75QZuDfSszXdh0qFEAVz8kpQzoVSVWWsibPAsZxNa62fjsTOtTddCI/3h3NcLDoexgxdhNL4tHvrKdzz3tsv0PNSTpEsydvNg/e41UdymGZENo1nMW9rL2WrbBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724409151; c=relaxed/simple;
-	bh=IIacz7qfDLLOfGIR7Qsfd8HV7WiOO9Y8+iUqvYoBVfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlHwWRTxoDtTNnQOJny0sM/c34zHRjdMQXu3wPerhIC/L90F5oZ/+GFALEpWzMDkzvUNKesY7L4/Zx8yxiZxWpVrPE9GWsrg2M+nmTYPdJfozBbkQBkS8wnzHkld9HA+usZWN3t9lj4AEX1x+PPar4B5yzdYOlm2WC2rKtsvnog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=apKd8pYw; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efdf02d13so2590915e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724409148; x=1725013948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=msee6vptApu2Z/Zxm5KrwvjqOV+8m1GWJRTDYPaGTQ0=;
-        b=apKd8pYwWmqlUAKBQXt1eoO3jMqCV8VA5HqpRLyFVEjKgMUj+mQiG8dQHZDcd+RihB
-         1YGJkY5E626TJV7+WbBXHY84iBH/osN7GyKtG8TJsdIOPMy+zeszeyqfjsrtyaxFG9Dt
-         P/crhCUsH7/rYaqLJaoNry51EW65kVrUpZAZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724409148; x=1725013948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=msee6vptApu2Z/Zxm5KrwvjqOV+8m1GWJRTDYPaGTQ0=;
-        b=j49dbAV+njFg3GihVzoZ/NuNDwIxycdvUAnklGPH8xl9ysUXAETNg7k+eelFm9rGLa
-         N7eCLFngRbOaPLvxSHcHVhQ6ET2YzW/1qfzsu9P7jfMTBI24ivb0OyQragCkEN5xrPMe
-         P2FbUiGYQTWwXwUi+YrmKFK51JugyJKq/q72cPxiktEYgGgne27Ewulawm7EWhwOPhGQ
-         bQBaxW9pPNloIF4ZgPcmSydMr8MOFN8EToUWGXLkjwXrvClNk80JztQw1L5DwTQXs7bZ
-         SkV12ZaXESaiTJjYUC75sWW/3OpLVCYKpsLtUBghQROemAelsCZPhjJd+ICCbLA7upON
-         yTUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXR5C2W9ohgBza55zNbyJPGjNIgOiQrdsriXOP7OX4lY8U4+E1uOfrJyqx8l+U1XcrALczPwiRI9NeFcPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxneXLCIy1I6BbHnT8PVRDW5HuCvKP+zCxv/OzXHzkbdLKklP+g
-	ZN+erzn+R+s2m9vvQj6ydL47KkWFOfprVXKENBJjp7IutMqBO19bJrFEFKRNvy7WhbSkhzglgkS
-	GS7kpPCY5Ol4OgKdyUwC9zKd6eOEqWKLOWH+l
-X-Google-Smtp-Source: AGHT+IHeN+Mw9mA2FjlysvQEEAUELAjuWivKbkYmYOUv0QR8Nac49Wn18na13i/jZffEieHV1XNO2MlM81/zZrEAaDU=
-X-Received: by 2002:a05:6512:1111:b0:530:e0fd:4a97 with SMTP id
- 2adb3069b0e04-534387e89d7mr1529511e87.0.1724409147414; Fri, 23 Aug 2024
- 03:32:27 -0700 (PDT)
+	s=arc-20240116; t=1724409220; c=relaxed/simple;
+	bh=5tzmMqE4uw8YNLH37w3JdkTPy1lBds4uLS8HcjKaLqE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ms0VL38nCpk4ny4Q8RtVPHflLkBVqH5wxcunx3nkEtcnp61Am4Hc+gD3vwjDHdACdnGWStCKklMP+Ti/cJqGFhtRr7cKmwDcZSwxPkZI8l6r4ZFZZAopzlRNPMIbc8igNB85k16D/t+6ZOEbIovVmifDcdbYQl08Mparaaeki2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WjqS93v3; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724409215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=23y0Dpx06rVTsxajJlUy4GfX8Ye+RAWg4FefK6RDN4E=;
+	b=WjqS93v31AaeOz0pzVGR2Z4adLcbTjz0oM06c1Y7ujqJmomR35nb+1tG6FieL7NBvE0Pq8
+	0f0kkVVWnWCxswKVxuCNXUdIVH3Bn89p4oyenW2GqSWQSsw0egg66HhkgnuQ/U9NYZeAif
+	QrecW6NMUJE5EYhBPdgQA8MNPmoL+p0=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a
+ file read
+In-Reply-To: <0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com> (Xiubo Li's
+	message of "Fri, 23 Aug 2024 09:48:16 +0800")
+References: <20240822150113.14274-1-luis.henriques@linux.dev>
+	<0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com>
+Date: Fri, 23 Aug 2024 11:33:27 +0100
+Message-ID: <87msl3lea0.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822092006.3134096-1-wenst@chromium.org> <20240822092006.3134096-9-wenst@chromium.org>
- <ZsdJOUe44hiGur-s@smile.fi.intel.com>
-In-Reply-To: <ZsdJOUe44hiGur-s@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 23 Aug 2024 18:32:16 +0800
-Message-ID: <CAGXv+5G7h08Pvd24_6LoUB_8w_Cd0RntRSjNdn_FjrRH1ZF5oQ@mail.gmail.com>
-Subject: Re: [PATCH v5 08/10] i2c: of-prober: Add GPIO support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 22, 2024 at 10:20=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 22, 2024 at 05:20:01PM +0800, Chen-Yu Tsai wrote:
-> > This adds GPIO management to the I2C OF component prober.
-> > Components that the prober intends to probe likely require their
-> > regulator supplies be enabled, and GPIOs be toggled to enable them or
-> > bring them out of reset before they will respond to probe attempts.
-> > regulator support was added in the previous patch.
-> >
-> > Without specific knowledge of each component's resource names or
-> > power sequencing requirements, the prober can only enable the
-> > regulator supplies all at once, and toggle the GPIOs all at once.
-> > Luckily, reset pins tend to be active low, while enable pins tend to
-> > be active high, so setting the raw status of all GPIO pins to high
-> > should work. The wait time before and after resources are enabled
-> > are collected from existing drivers and device trees.
-> >
-> > The prober collects resources from all possible components and enables
-> > them together, instead of enabling resources and probing each component
-> > one by one. The latter approach does not provide any boot time benefits
-> > over simply enabling each component and letting each driver probe
-> > sequentially.
-> >
-> > The prober will also deduplicate the resources, since on a component
-> > swap out or co-layout design, the resources are always the same.
-> > While duplicate regulator supplies won't cause much issue, shared
-> > GPIOs don't work reliably, especially with other drivers. For the
-> > same reason, the prober will release the GPIOs before the successfully
-> > probed component is actually enabled.
->
-> ...
->
-> > +     struct fwnode_handle *fwnode =3D of_fwnode_handle(node);
-> > +     struct gpio_descs *gpiods;
-> > +     struct gpio_desc *gpiod;
-> > +     char con[32]; /* 32 is max size of property name */
->
-> Use 'propname' to be aligned with GPIO library usages.
+On Fri, Aug 23 2024, Xiubo Li wrote:
 
-Ack.
+> On 8/22/24 23:01, Luis Henriques (SUSE) wrote:
+>> If, while doing a read, the inode is updated and the size is set to zero,
+>> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit=
+ a
+>> NULL pointer dereferrence by continuously reading a file while, on anoth=
+er
+>> client, we keep truncating and writing new data into it.
+>>
+>> This patch fixes the issue by adding extra checks to avoid integer overf=
+lows
+>> for the case of a zero size inode.  This will prevent the loop doing page
+>> copies from running and thus accessing the pages[] array beyond num_page=
+s.
+>>
+>> Link: https://tracker.ceph.com/issues/67524
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>> Hi!
+>>
+>> Please note that this patch is only lightly tested and, to be honest, I'm
+>> not sure if this is the correct way to fix this bug.  For example, if the
+>> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+>> 0 and the problem would be solved.  However, it seems to be returning the
+>> size of the reply message and that's not something easy to change.  Or m=
+aybe
+>> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+>> other ideas.
+>>
+>> Also, the tracker contains a simple testcase for crashing the client.
+>>
+>>   fs/ceph/file.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index 4b8d59ebda00..dc23d5e5b11e 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   		}
+>>     		idx =3D 0;
+>> -		if (ret <=3D 0)
+>> +		if ((ret <=3D 0) || (i_size =3D=3D 0))
+>
+> Hi Luis,
+>
+> This change looks incorrect to me.
+>
+> As I mentioned before when the 'IFILE' lock is in MIX state the 'Frw' cap=
+s could
+> be issued to multiple clients at the same time. Which means the file coul=
+d be
+> updated by another client and the local 'i_size' may haven't been changed=
+ in
+> time. So in this case the 'ret' will be larger than '0' and the 'i_size' =
+could
+> be '0'.
+>
+>
+>>   			left =3D 0;
+>> -		else if (off + ret > i_size)
+>> +		else if ((i_size >=3D off) && (off + ret > i_size))
+>
+> And the 'off' also could equal to little than the 'i_size'.
 
-> > +     char *con_id =3D NULL;
-> > +     size_t new_size;
-> > +     int len;
->
-> ...
->
-> > +     if (len >=3D sizeof(con) - 1) {
->
-> This can be transformed to check the returned value from strscpy().
+(I forgot to comment here.)
 
-Ack.
+This change is _exactly_ what will prevent the NULL pointer from
+occurring, because if 'i_size' is 0, then:
 
-> > +             pr_err("%pOF: length of GPIO name \"%s\" exceeds current =
-limit\n",
-> > +                    node, prop->name);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     if (len > 0) {
-> > +             strscpy(con, prop->name, len + 1);
->
-> The correct (robust) call is with destination size. Which means here that=
- you
-> may use 2-argument strscpy().
+		left =3D i_size - off;
 
-Ack.
+will leave 'left' with a huge value.  And the loop 'while (left > 0) {}'
+will execute until the access to 'pages[idx]' crashes.
 
-> > +             con_id =3D con;
-> > +     }
->
-> ...
->
-> > +     if (!data->gpiods)
-> > +             return 0;
->
-> If it comes a new code (something else besides GPIOs and regulators) this=
- will be a (small) impediment. Better to have a helper for each case and do
->
->         ret =3D ..._gpiods();
->         if (ret)
->                 ...
->
-> Same for regulators and anything else in the future, if any.
+Cheers,
+--=20
+Lu=C3=ADs
 
-I'm not sure I follow. Do you mean wrap each individual type in a wrapper
-and call those here, like the following?
-
-    i2c_of_probe_enable_res(...)
-    {
-        ret =3D i2c_of_probe_enable_regulators(...)
-        if (ret)
-              return ret;
-
-        ret =3D i2c_of_probe_enable_gpios(...)
-        if (ret)
-              goto error_disable_regulators;
-
-        ...
-    }
-
-> > +             /*
-> > +              * reset GPIOs normally have opposite polarity compared t=
-o
+> BTW, could you reproduce the crash issue ?
 >
-> "reset"
+> Thanks
 >
-> > +              * enable GPIOs. Instead of parsing the flags again, simp=
-ly
+> - Xiubo
 >
-> "enable"
+>>   			left =3D i_size - off;
+>>   		else
+>>   			left =3D ret;
+>> @@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   			size_t plen, copied;
+>>     			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
+>> +			WARN_ON_ONCE(idx >=3D num_pages);
+>>   			SetPageUptodate(pages[idx]);
+>>   			copied =3D copy_page_to_iter(pages[idx++],
+>>   						   page_off, plen, to);
+>> @@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   	}
+>>     	if (ret > 0) {
+>> -		if (off >=3D i_size) {
+>> +		if ((i_size >=3D *ki_pos) && (off >=3D i_size)) {
+>>   			*retry_op =3D CHECK_EOF;
+>>   			ret =3D i_size - *ki_pos;
+>>   			*ki_pos =3D i_size;
+>>
 >
-> > +              * set the raw value to high.
->
-> This is quite a fragile assumption. Yes, it would work in 98% cases, but =
-will
-> break if it's not true somewhere else.
 
-Well, this seems to be the de facto standard. Or it would have to remember
-what each GPIO descriptor's name is, and try to classify those into either
-"enable" or "reset", and set their respective logical values to 1 or 0.
-And then you run into a peripheral with a broken binding that has its
-"reset" GPIO inverted, i.e. it's driver behavior needs to follow the
-"enable" GPIO style. The class of devices this prober targets are
-consumer electronics (laptops, tablets, phones) that at least have gone
-through some component selection where the options won't have conflicting
-requirements.
-
-And if the polarities of the possible components don't line up, then this
-probe structure can't really do anything. One would need something that
-power sequences each component separately and probes it. I would really
-like to avoid that if possible, as it makes the boot time (to peripheral
-available) dependent on which component you have and how far down the
-list it is. We have Chromebooks that have 4 touchscreen components
-introduced over the years. In that case something more like Doug's
-original proposal would work better: something that forces mutual
-exclusivity among a class of devices.
-
-> > +              */
->
-> ...
->
-> > +     /* largest post-reset-deassert delay seen in tree for Elan I2C HI=
-D */
-> > +     msleep(300);
->
-> Same Q, how do you monitor _all_ the drivers?
-
-Discussion in the previous patch.
-
-> ...
->
-> > +disable_gpios:
-> > +     for (gpio_i--; gpio_i >=3D 0; gpio_i--)
-> > +             gpiod_set_raw_value_cansleep(data->gpiods->desc[gpio_i], =
-0);
->
-> Can't you call the _array() variant here?
-
-I thought that without |struct gpio_array| the _array() variant wouldn't
-help, i.e. it would still be a loop internally. Looks like I was wrong.
-
-> ...
->
-> > -     dev_dbg(dev, "Resources: # of regulator supplies =3D %d\n", probe=
-_data.regulators_num);
-> > +     dev_dbg(dev, "Resources: # of GPIOs =3D %d, # of regulator suppli=
-es =3D %d\n",
-> > +             probe_data.gpiods ? probe_data.gpiods->ndescs : 0,
-> > +             probe_data.regulators_num);
->
-> I would issue one message per class of the devices (GPIOs, regulators, ..=
-.)
-
-Ack.
-
-
-Thank you for the review.
-ChenYu
 
