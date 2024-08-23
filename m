@@ -1,105 +1,154 @@
-Return-Path: <linux-kernel+bounces-299463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0910C95D51D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:17:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DCF95D520
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48271F238A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:17:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3202B1F23489
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C314B190662;
-	Fri, 23 Aug 2024 18:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68126191F62;
+	Fri, 23 Aug 2024 18:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="oj6QZ9QE"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJrGf8If"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7E18BC05;
-	Fri, 23 Aug 2024 18:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0807918E02E;
+	Fri, 23 Aug 2024 18:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724437012; cv=none; b=er0OmhroGbeTsrg11X+LTI7x8wSMM4lRvdbMxlquT0im2Olz5EtwBFJGEys0wIFE+WN68KuWmBMiu5p3V/NwOt2m4ZUwy1bKHVHRrJIuSSbhTJmuZI1uKZNrUL2zjecB8AHHcXAbzAklmZLEmWnq+b437AZ3deGYPM0mOw3zBs0=
+	t=1724437042; cv=none; b=XbHw/X0qo0c0i3Nenjf9XizjCFiCxDpzcWobvNPTHpppKp+VffeIB8TFxbJavi0BUaIttIUDG4sSKrA3a/V2NIf/PnVtxXy/itdgmJv+udApulR19FRPykaPeUXCQcqjca7TkGlIR8QEIBkJKtbynvKoTFInfPnt6Z4fiZpA5XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724437012; c=relaxed/simple;
-	bh=Z+KpfCDbK4dGleB/fKN+SD8SYDcZR6qlO1ZLgGdwWks=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A3EV+eUE6a6MXYvt+xFQ/YlpwvUdqTxmAzIFyqUKPThQvKAMtP5Qyr48ORq6YO8uigqPP2BU6CVXUzG5deHe2bHt9DrlgIVGW7HXE4W4R/MeWQ/0K150PzWKg/pifOnS2vskfqXL+Lr/JWT8bnsie98NqnnR3f2S/ABfCcosXl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=oj6QZ9QE; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lF3IGhVEk01uLE12Kfo9B/+81jxDEguey7tV3Pj8R54=; t=1724437008; x=1725041808; 
-	b=oj6QZ9QE0pI4rsrP76Xc/gbOn3hd3JAL/e38J8YWktrd8xsThYn0awEMwITbjjnqwHJgCoN7zwn
-	P7vubLn+tNj7UyQqhN35uvrqS2ABzYcENEVIqVm2JATdZ+iCZNmMSTA9LVXgB0r6lgKVUcSMWekVI
-	seVN0btNP6aV5FcXlitv92sKykOA+jtDGNcXU4RPXabltMCnSP6zSHfZVOSbz21dZ0+ohGm/o8q3Y
-	XWLAfslrxR2TG2w/yYRVqRQWxr8jG8+jsWX3NM9rYItjMZwoRTHqhtC/BT48poqdkfnrlDNcQ45o/
-	8r4cANdCde4a+dGiXT0tYvW6HbQGjJ2iIImg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1shYpw-00000002CKl-2SPB; Fri, 23 Aug 2024 20:16:36 +0200
-Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1shYpw-00000003fE3-1W3A; Fri, 23 Aug 2024 20:16:36 +0200
-Message-ID: <09c29a3c4879d4ce5d8b97fd60d8ba5e38bed979.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
- unlikely
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Dave Vasilevsky
-	 <dave@vasilevsky.ca>
-Cc: bhe@redhat.com, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-  mpe@ellerman.id.au, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org,  Reimar =?ISO-8859-1?Q?D=F6ffinger?=
- <Reimar.Doeffinger@gmx.de>
-Date: Fri, 23 Aug 2024 20:16:35 +0200
-In-Reply-To: <CAMuHMdVYNhFJ+qBDP3_fi9oeHsgOL0vqPe1YqE18+M8n1onssw@mail.gmail.com>
-References: <20240823125156.104775-1-dave@vasilevsky.ca>
-	 <CAMuHMdVYNhFJ+qBDP3_fi9oeHsgOL0vqPe1YqE18+M8n1onssw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1724437042; c=relaxed/simple;
+	bh=s9+PU91HOsnvN69dHOcgiVrBMPVH6NbyLtFUFs+4qos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EvLThNLJispsbKiyPTNEyQoesekyqyBWbt1OFxwcDLIDx47+vXjCOi1So/ARQek6oD5PZD07V0mATlvVBks1+IUZ/N9FzNHIJ8/c2l4cEsiMrtrzWQPyU881lVM3W1WIh0t7WPVgBmQ+PDT7tLMLqdK5TLZ0pRQrVDzTkfLKBPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJrGf8If; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428178fc07eso17219095e9.3;
+        Fri, 23 Aug 2024 11:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724437039; x=1725041839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YbHgXuYc8WVmqRaVNRxIWkQql4xPfWAG9gyqOHYiFQU=;
+        b=RJrGf8IfGX7R+v5+rTy5LGd4sH7/CI36CNMp0C9wFWXuXsWRk5Fmc3GoiNJCpZvLaW
+         kst04QetQBJisVqWXDNgS9F71wC4MLuQBxpQjqGSo2hssSFLLjfKvLwD0UtnoJosc/qw
+         33j+92tujYGjFMYgVpxJYjH+cbPwH4FUCRbwPy8Be8YiKSgsXV4yoG0NzVZ+o4wrFwWH
+         h23rqrbJtm3Ywp3FivG7GgNhFupd1x5y+UyX8hnJjAsLI664e/IULM0cdkj4dPMKFZPC
+         5BMivli61xpH0nH3eB2Pk+2rY9o3RdNyTSrAwB87QLh34hJqi0AVPTbvsfwrBUw+MuAQ
+         b8fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724437039; x=1725041839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YbHgXuYc8WVmqRaVNRxIWkQql4xPfWAG9gyqOHYiFQU=;
+        b=A48nxtNfIg9tH4EIeQf7dL/xc3iPNUOTvOixpQ0hCqCxYgwcjVV0PPaM5h/Xbm8Gi2
+         uk/wCcFtnyjoSxoCdrL2M2wUyFJRiIPNbbmZlLgUAXwPBoTYCezyCogbhd91x6IIsQ+g
+         apzWCOgsr3d6kecBq0R2YvMqA3lhNBXq+4C+n/ao3AWs4PAH8zXsDQWRsCwHZjqYgfeQ
+         b86x78ovYrI8cJsBtr/RwicP9379rPRcUBl9w65KzH6vANiNe4Xynbmx6sTLXTNrIDpc
+         pBuFiPe8gw36j7oO4JqnTswtK15Du+0N8zsFVrHkYG780Au99Cdj2wBKZBSbi9QyTVdd
+         Q0wA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOpxNw+bzwzIigOKKSPx2MZHPIo+NIlEG+i6hPZyF4QQxVzbPc4y6aCKN65C5XevfVw3n+9WLY4ZGUYdjt@vger.kernel.org, AJvYcCUf+QzAenml3K0oFbfVohJ7HgeYLubTlmHFVHAqvxv7VvkakyRmmIN+6agTYU7h6sD6XfRJy//oS65j@vger.kernel.org, AJvYcCWwvukGRj9T3wCVJaD4XMrrq8wCzbZQxqeNh4wzOtX09v4N9n/Pvt3rDW/hz1mPkxpggMhi9CF8TqwG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9pnAidR9KTSQbH/JF3XypsB6lHzAjQtb1Qm/Jy3sTgNJqHYSt
+	Vcgo0XzgJePsVAsnXIA2K2Ynai1m36x5u7SEZT9p6v4hyYlyQi4p
+X-Google-Smtp-Source: AGHT+IHUpne5bcgyg59dEnxMMu8YpwxY1O31b9h55pFrr4+/0pywbv0ZolURjU5JE5mUCPXcT2hKmQ==
+X-Received: by 2002:adf:a11e:0:b0:367:99fd:d7bb with SMTP id ffacd0b85a97d-373118fde37mr1702754f8f.63.1724437038584;
+        Fri, 23 Aug 2024 11:17:18 -0700 (PDT)
+Received: from localhost.localdomain ([2a04:ee41:82:7577:f90d:5a72:8d56:a041])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730814602asm4677939f8f.44.2024.08.23.11.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 11:17:18 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: vassilisamir@gmail.com,
+	ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org,
+	579lpy@gmail.com,
+	ak@it-klinger.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] pressure: bmp280: Minor cleanup and interrupt support
+Date: Fri, 23 Aug 2024 20:17:07 +0200
+Message-Id: <20240823181714.64545-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
 
-On Fri, 2024-08-23 at 15:13 +0200, Geert Uytterhoeven wrote:
-> IMHO CRASH_DUMP should just default to n, like most kernel options, as
-> it enables non-trivial extra functionality: the kernel source tree has
-> more than 100 locations that check if CONFIG_CRASH_DUMP is enabled.
+Changes in v3:
 
-I guess we should then revert that part of Baoquan's original patch.
+[PATCH v3 1/7]:
+	- Moved the indexing enum on top of the calibration buffer and added a
+	  comment that the reason for the complex accesses can be found in the
+	  datasheet.
 
-> What is so special about CRASH_DUMP, that it should be enabled by
-> default?
+[PATCH v3 2/7]:
+	- Use dev_err_probe() instead of dev_err() since the .preinit function
+	  is called only from the probe.
 
-Let's ask Baoquan who made the original change to enable CRASH_DUMP by defa=
-ult.
+[PATCH v3 4/7]:
+	- Made static the const int arrays.
+	- Changed the comment from "future" versions to "newer" versions.
+	- The current state of the board is saved into a variable in order to be
+	  able to be recovered after a suspend/resume operation.
 
-Adrian
+[PATCH v3 5/7]:
+	- Corrected syntax error.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+[PATCH v3 6/7]:
+	- Merged the bmp{3,5}80_trigger_probe() functions to one by using a
+	  general __bmp280_trigger_probe() which takes the sensor specific
+	  functions as interrupts.
+
+[PATCH v3 7/7]:
+	- Fixed the bmp085_chip_info array by duplicating the bmp180_chip_info
+	  and just adding the extra variable for the bmp085 interrupt.
+
+v2: https://lore.kernel.org/linux-iio/20240725231039.614536-1-vassilisamir@gmail.com
+
+Vasileios Amoiridis (7):
+  iio: pressure: bmp280: Use bulk read for humidity calibration data
+  iio: pressure: bmp280: Add support for bmp280 soft reset
+  iio: pressure: bmp280: Remove config error check for IIR filter
+    updates
+  iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+  dt-bindings: iio: pressure: bmp085: Add interrupts for BMP3xx and
+    BMP5xx devices
+  iio: pressure: bmp280: Add data ready trigger support
+  iio: pressure: bmp280: Move bmp085 interrupt to new configuration
+
+ .../bindings/iio/pressure/bmp085.yaml         |   7 +-
+ drivers/iio/pressure/bmp280-core.c            | 691 +++++++++++++++---
+ drivers/iio/pressure/bmp280-i2c.c             |   4 +-
+ drivers/iio/pressure/bmp280-spi.c             |   4 +-
+ drivers/iio/pressure/bmp280.h                 |  52 ++
+ 5 files changed, 667 insertions(+), 91 deletions(-)
+
+
+base-commit: 0f718e10da81446df0909c9939dff2b77e3b4e95
+prerequisite-patch-id: e4f81f31f4fbb2aa872c0c74ed4511893eee0c9a
+-- 
+2.25.1
+
 
