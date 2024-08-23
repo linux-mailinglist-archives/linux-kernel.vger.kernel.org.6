@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-299664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061D595D859
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:13:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D1695D85A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E0DB21F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC451C23032
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5287A1C8251;
-	Fri, 23 Aug 2024 21:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADA91C8234;
+	Fri, 23 Aug 2024 21:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gQD+gpTF"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rF/sSfTC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3641C6F7D;
-	Fri, 23 Aug 2024 21:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC631C822B;
+	Fri, 23 Aug 2024 21:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724447598; cv=none; b=ge8mzIfIf+ALNQprDZzJKwTJzU94/BjajVXjscVbmnG3KWcBkRUSb6+TE3sQGg3T5XdB9e2lrcSkPxELTuuAWreeNhc2ndARlO6mOMb45d1QKDCzz1VqH197i+2+FQlXgbh6Fb2qIpQs6M1CFs94rlRwYZ306FZnqFkQOcQVjus=
+	t=1724447705; cv=none; b=h/2NADEa6MSxcEEa+KoRN1MVT8l/QQhYUFmFsmTgapfsVl4hY+7BqnPsbTSwx+cRkZbUzVVPV6S1kk8wd2jMLTDEwGhP3R4YJh83A7TFh2N3IjUPvG1IOkwpvL5okTy5o9zs/tv67kpMMYS943Pqq7hrYZaADTyLeqfS73FwBrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724447598; c=relaxed/simple;
-	bh=1nEJx3outJ+wke5kcoDryNAAJEh2QSIqPPR40g836og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEInMvZ/qZXMKXLQqPqj4RmRoR9YtVsAZ0b+ioNqtd3vvlkg6qVABL5MJzK+2ariR3jO/6qMtzliBZabrAWZQqPFC4mm++dtlkTaxuXTTFKMpaW8wLT5zwpn2AGjy/xeCwJXoqVD4tNYHLKLMTxZqA88ga6qCbOy9vC5AyXl7zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gQD+gpTF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rNQiKOG3WfAl8BLbmtekSaNfRZH3KyMD9Ikmqm2WXo8=; b=gQD+gpTFpwSYyZUQXcUv+bXDyh
-	MmogKs3tLKfm7VUWrREvEvooEn24CJ1uamzcUqlRbT0hpzVjKa+YjY2Re9bNmJoQAHWXxd5fhm1g2
-	Jri5dxBL2LMGrK0vTMvHa5Ov6Z587Pi/lP3Qmp1UD6/YfpUcKRDjZaN9rjzEw42mH63jGpCb/vo1L
-	x3GrSfAJ6UWeOLBPbTZIJL5ihJElAjZ5+SeasjdNZ/RcQ+RM+tPZkFYTqbLoiOWaYigQIw00wjh+d
-	t6mNV2ntun8Q37VGxzHnL1fTevN8iF5iGTMEAcYVkiad6m68wEEw1CeXEf3kd7JotZw7ENwuyv/VT
-	3WlHGXWg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1shbar-00000000gZm-3kwC;
-	Fri, 23 Aug 2024 21:13:13 +0000
-Date: Fri, 23 Aug 2024 14:13:13 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-Message-ID: <Zsj7afivXqOL1FXG@bombadil.infradead.org>
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+	s=arc-20240116; t=1724447705; c=relaxed/simple;
+	bh=mUH0IziPWhJ5X3zmaIyZcbFDpVMgw6WO0zCuL9ImWBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JScFMaTpnk9cZZKac4Bncn5NfsTq+rF0aeDoAG9UyclOiGFBFBLHL30m7lqZSlkasAASnaMJ0qi+puyZLDslCpYjR5oKyUN0axzk2QWtpQ1l8MhucvKDOsaEN++BepsmT3t5z5hRLIBxj0k9ptPRUv/qam2ebEOn8Ltysl1fDJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rF/sSfTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806CFC32786;
+	Fri, 23 Aug 2024 21:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724447704;
+	bh=mUH0IziPWhJ5X3zmaIyZcbFDpVMgw6WO0zCuL9ImWBw=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=rF/sSfTCuqogAs3V5A7Baraq2/IELGzXzJaMqXi58FB6xZpuRS/Qdz/Ek7Ybow+/g
+	 79f/OxNIAoAL9etrf5jhmNghhNfd0GMp0KHDsY8homuFt04xThlbt/FuREyGmbBuPx
+	 y0XrK31i8/HRjIx+N1SlYFh2Wh69aRCDDDM2rf2HTvGYVQKx+bOMHjWRBcbU1KKGTN
+	 6qa8z4+0GaU+TPdLa11BMqMt0mfofAPh3HR8270ZJQkBlYJXYiJBSgSSSQPpP/4xcA
+	 qBP1s3kyAVZSRZ7qITpiF4TZ2Nf77HsuD6/q1POrjWDcDd9ocNO7vUCAbCmjFoiI7y
+	 /sV8xf18GJIog==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2C629CE0D9B; Fri, 23 Aug 2024 14:14:59 -0700 (PDT)
+Date: Fri, 23 Aug 2024 14:14:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	riel@surriel.com
+Subject: [PATCH rcu 0/4] Reduce lock contention during RCU CPU stall warnings
+Message-ID: <415b108b-1046-4027-aa2a-c829b77f39f6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,56 +58,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823-firmware-traversal-v2-1-880082882709@google.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
-> Most firmware names are hardcoded strings, or are constructed from fairly
-> constrained format strings where the dynamic parts are just some hex
-> numbers or such.
-> 
-> However, there are a couple codepaths in the kernel where firmware file
-> names contain string components that are passed through from a device or
-> semi-privileged userspace; the ones I could find (not counting interfaces
-> that require root privileges) are:
-> 
->  - lpfc_sli4_request_firmware_update() seems to construct the firmware
->    filename from "ModelName", a string that was previously parsed out of
->    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
->  - nfp_net_fw_find() seems to construct a firmware filename from a model
->    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
->    think parses some descriptor that was read from the device.
->    (But this case likely isn't exploitable because the format string looks
->    like "netronome/nic_%s", and there shouldn't be any *folders* starting
->    with "netronome/nic_". The previous case was different because there,
->    the "%s" is *at the start* of the format string.)
->  - module_flash_fw_schedule() is reachable from the
->    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
->    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
->    enough to pass the privilege check), and takes a userspace-provided
->    firmware name.
->    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
->    network namespace that a special kind of ethernet device is mapped into,
->    so I think this is not a viable attack path in practice.)
-> 
-> Fix it by rejecting any firmware names containing ".." path components.
-> 
-> For what it's worth, I went looking and haven't found any USB device
-> drivers that use the firmware loader dangerously.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-> Signed-off-by: Jann Horn <jannh@google.com>
+Hello!
 
-I'm all for this, however a strong rejection outright for the first
-kernel release is bound to end up with some angry user with some oddball
-driver that had this for whatever stupid reason. Without a semantic
-patch assessment to do this (I think its possible with coccinelle) I'd
-suggest for now we leave the warning in place for one kernel release,
-and for the one after we enforce this.
+This patch series reduces lock contention during RCU CPU stall warnings,
+especially on systems having slow consoles.  It does this first by
+deferring printk() output, second by refraining from emitting stack
+backtraces if the grace period should end partway through, and third
+by using a lockless check in order to avoid ever acquiring the lock for
+leaf rcu_node structures not associated with a stalled CPU.  In the case
+where a given rcu_node structure is associated with multiple stalled CPUs,
+the lock is also dropped and reacquired for each stalled CPU.
 
-Linus might feel differently over it, and may want it right away. I'll
-let him chime in.
+While in the area, get rid of a function that is no longer used.
 
-  Luis
+1.	Defer printing stall-warning backtrace when holding rcu_node lock.
+
+2.	Delete unused rcu_gp_might_be_stalled() function.
+
+3.	Stop stall warning from dumping stacks if grace period ends.
+
+4.	Finer-grained grace-period-end checks in rcu_dump_cpu_stacks().
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/include/linux/rcutiny.h |    1 
+ b/include/linux/rcutree.h |    1 
+ b/kernel/rcu/tree_stall.h |    2 +
+ kernel/rcu/tree_stall.h   |   65 +++++++++++++++-------------------------------
+ 4 files changed, 24 insertions(+), 45 deletions(-)
 
