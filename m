@@ -1,220 +1,116 @@
-Return-Path: <linux-kernel+bounces-298295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBFA95C55D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E534095C560
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7455E1F23D79
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1FBA284D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BCE74BF8;
-	Fri, 23 Aug 2024 06:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7110580C02;
+	Fri, 23 Aug 2024 06:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYVf2b5H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eagAVZar"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0762241746;
-	Fri, 23 Aug 2024 06:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B108768EC;
+	Fri, 23 Aug 2024 06:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724394207; cv=none; b=YaZrvxxjJCur6CorxY0bHa5FVWEy4xlhgg6UxAt2sAlkcm1c3zHpGhZgDwhiu8wfPAzmTbQ+3oyZ288d4VlA423VW0Ci6iZn9okrrsJ6Far5Z/2ga3bgVTmHlkpUYeYgN/0zcQl1ZEqxYPhPoNjZvEZguhpYftiwEL3jd+IN6/s=
+	t=1724394224; cv=none; b=QJSoFZMFqrsQIoV3nyc1TbmEl02Cr5U+fojReRTG6SvK509cSQ/ArlpqrTpOqM7N35KPjHvzR9qVBziKJ0lmhgj9bH8ASOkhXUqhCjbLA5WjVwgnGi/lOAJQEDfDIhbySQYGyMg2+cdw0g3B8ZJsWphwO9eP1FKoiK8hV1m3PCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724394207; c=relaxed/simple;
-	bh=F9j6/99Wp8zwbHk0+R/u1d0bSQKJJlhKEVeaCimqaFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQ41NO2DEgawlNLQL2a28DuDp1q6xmUNcYWONan2PPNmLJaW98heatHr+yFzR2+Ux2B4TcZn9rzp3dt+vWBqcsFi3q7PkX2t3hjTaLg6UNKSk/C4X6NBoNrt+6+SGFqpPbHKR1bvCKMMWprwn3sxiJtERT1Ym+JE0sk/Mi6MXEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYVf2b5H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F9EC32786;
-	Fri, 23 Aug 2024 06:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724394206;
-	bh=F9j6/99Wp8zwbHk0+R/u1d0bSQKJJlhKEVeaCimqaFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YYVf2b5HSPWz4aJRASqJsNkzn7bFqCTToBYapTv9Rw983fP0EESsFc3CMELlAvGei
-	 KqyMcYpRV5bfk8w3sNY5GP70N7D9r1K4Hy9hynA8Q2ihlaX2KvcrVyyjkjCqKORtvr
-	 tt1KH6YzJA1/WhtW65unj6oLbCJcmNUKa1gf3wsu9/tYnTMASiPoaHYmEk9g7xF91x
-	 zURpEvUENgS8Nt6x49YagRKhTOA4rnMt/DofUL1OMSEpyahDCE9Gk6F1r0x9Mt6zxN
-	 eWmqouvDKD2KE65hM2vVSGYG2CTDANgw6nm3kwMg2PjHuqLjaFOG3g/k12+EOhyMc7
-	 8X7rb5EFcgX5A==
-Date: Fri, 23 Aug 2024 08:23:17 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com, 
-	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com, 
-	robin.murphy@arm.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-Message-ID: <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+	s=arc-20240116; t=1724394224; c=relaxed/simple;
+	bh=z3mK0pnB6r8H+ole1+hP6AUNfokWAte8IJOO0j2aM/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VLy/vu6p9zxiZnNPqJp+MpYeXlQ7Fz2Uuvehl07PLsobeZmq0mFSODoQAV1vTPQiKr16Tx2F4nEcl4q15/m7bX8QOiebGsrgWKfw0ilKmzckMb55Iw0atjlOAwqOCQSXwl5mUX/Lbmjbd5lCojDfQmZqa9Y4YZ6TzAtghNLiZHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eagAVZar; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id hNhusyVj8iKc3hNhvseTYx; Fri, 23 Aug 2024 08:23:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724394219;
+	bh=iQq19mCMzjHlVz5sYuACQpPZfj10+p6o5t4TzgNeqWU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=eagAVZar1w5/qoToACyJVPmFsMnkpiUJ3nMxa0YORqPpAOGiN3NhNERMirSyTDhlu
+	 8zfDkP22Jkw61BF2iHWJFIHxg3a1K/yRZoXilQeP6RHzMQ0mG5W00qdJ8hOPBSxgyt
+	 mYaykRy4ZeLLrr1HOW7F+PkyNBdA3SOJLTm4qqBzRPFV1ZrHq4DR3aak+u0ZE7kKwY
+	 kyzlaHJtrmk8oRjx/5e3vrEVT0fLCFUa04ik8QQrN4L67cDTqHjJMC/Ibgib5Dhm2V
+	 6cp9CCa/wYtZBxEcSf9wJ+5ZT3l77r4B7ppVGNTL5di2GhmJ79acVwqy6HaIYA1gQe
+	 TcKlp8TmIyoGw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 23 Aug 2024 08:23:39 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next] idpf: Slightly simplify memory management in idpf_add_del_mac_filters()
+Date: Fri, 23 Aug 2024 08:23:29 +0200
+Message-ID: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 06:09:47PM +0100, Abdellatif El Khlifi wrote:
-> Add devicetree binding schema for the External Systems remote processors
-> 
-> The External Systems remote processors are provided on the Corstone-1000
-> IoT Reference Design Platform via the SSE-710 subsystem.
-> 
-> For more details about the External Systems, please see Corstone SSE-710
-> subsystem features [1].
-> 
+In idpf_add_del_mac_filters(), filters are chunked up into multiple
+messages to avoid sending a control queue message buffer that is too large.
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets.
+Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
+last iteration which can be smaller, space for exactly
+IDPF_NUM_FILTERS_PER_MSG entries is allocated.
 
-> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
-> 
-> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> ---
->  .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> new file mode 100644
-> index 000000000000..827ba8d962f1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SSE-710 External System Remote Processor
-> +
-> +maintainers:
-> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
-> +
-> +description: |
+There is no need to free and reallocate a smaller array just for the last
+iteration.
 
-dt-preserve-formatting
+This slightly simplifies the code and avoid an (unlikely) memory allocation
+failure.
 
-> +  SSE-710 is an heterogeneous subsystem supporting up to two remote
-> +  processors aka the External Systems.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - arm,sse710-extsys
-> +
-> +  firmware-name:
-> +    description:
-> +      The default name of the firmware to load to the remote processor.
-> +
-> +  '#extsys-id':
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-'#' is not correct for sure, that's not a cell specifier.
-
-But anyway, we do not accept in general instance IDs.
-
-> +    description:
-> +      The External System ID.
-
-This tells me nothing. You basically copied property name.
-
-> +    enum: [0, 1]
-> +
-> +  mbox-names:
-> +    items:
-> +      - const: txes0
-> +      - const: rxes0
-> +
-> +  mboxes:
-> +    description:
-> +      The list of Message Handling Unit (MHU) channels used for bidirectional
-> +      communication. This property is only required if the virtio-based Rpmsg
-> +      messaging bus is used. For more details see the Arm MHUv2 Mailbox
-> +      Controller at devicetree/bindings/mailbox/arm,mhuv2.yaml
-> +
-
-Drop blank line
-
-> +    minItems: 2
-
-This is redundant if equals to maxItemns, drop.
-
-> +    maxItems: 2
-> +
-> +  memory-region:
-> +    description:
-> +      If present, a phandle for a reserved memory area that used for vdev
-> +      buffer, resource table, vring region and others used by the remote
-> +      processor.
-> +    minItems: 2
-> +    maxItems: 32
-> +
-> +required:
-> +  - compatible
-> +  - firmware-name
-> +  - '#extsys-id'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    reserved-memory {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        extsys0_vring0: vdev0vring0@82001000 {
-> +            reg = <0 0x82001000 0 0x8000>;
-> +            no-map;
-> +        };
-> +
-> +        extsys0_vring1: vdev0vring1@82009000 {
-> +            reg = <0 0x82009000 0 0x8000>;
-> +            no-map;
-> +        };
-> +    };
-
-Drop, it is fairly common.
-
-> +
-> +    syscon@1a010000 {
-> +        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
-> +        reg = <0x1a010000 0x1000>;
-
-So this is a part of other block? Then make one complete example in the
-parent device bindings.
-
-> +
-> +        extsys0 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-e.g. remoteproc
-
-
-> +            compatible = "arm,sse710-extsys";
-> +            #extsys-id = <0>;
-> +            firmware-name = "es_flashfw.elf";
-> +            mbox-names = "txes0", "rxes0";
-> +            mboxes = <&mhu0_hes0 0 1>, <&mhu0_es0h 0 1>;
-
-First go mboxes, then mbox-names. The same in the binding, BTW.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+index 70986e12da28..b6f4b58e1094 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+@@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct idpf_vport *vport,
+ 		entries_size = sizeof(struct virtchnl2_mac_addr) * num_entries;
+ 		buf_size = struct_size(ma_list, mac_addr_list, num_entries);
+ 
+-		if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
+-			kfree(ma_list);
++		if (!ma_list) {
+ 			ma_list = kzalloc(buf_size, GFP_ATOMIC);
+ 			if (!ma_list)
+ 				return -ENOMEM;
+ 		} else {
++			/* ma_list was allocated in the first iteration
++			 * so IDPF_NUM_FILTERS_PER_MSG entries are
++			 * available
++			 */
+ 			memset(ma_list, 0, buf_size);
+ 		}
+ 
+-- 
+2.46.0
 
 
