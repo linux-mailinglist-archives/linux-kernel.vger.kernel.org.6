@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-299025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A1E95CF2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4661395CF38
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D98DBB2A511
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F781C20AE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CB719ADB9;
-	Fri, 23 Aug 2024 14:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0919318BC29;
+	Fri, 23 Aug 2024 14:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMAB5GdB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FEImtkXY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910C18BBA8;
-	Fri, 23 Aug 2024 14:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA3118BBBA;
+	Fri, 23 Aug 2024 14:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421842; cv=none; b=mBtJ73DO3pjEtbEYIcnQS0esjy2QtBKpfxoMt0lKtJ76sJijF9dnkFD86L+Xnz0q97lEbOhItitKvk5nux47FhYeczuXzMhADbDMsSf+TIw2+90AAt4XDLbkt9uXFF4mQLWMc4WzuNNSD3b5PmhwukHk/fTF7z/yptnWIIHS7RI=
+	t=1724421870; cv=none; b=dOC7ZCLOTfQrO3dQuLC1kn5XhKU6ZYUCgFaA/8zIeWCG7qMQJy4hnLQunEWSc9IbWRaCM7/Ueya8+Ra8V/7hvIKDCUVjf1iJdgi9wWS8zkipM1NiKiB17LOTTZ4pN1t8nTW7/7dey5iKllkB252SsW8kv11/i7uZ0G6IWMk0/B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421842; c=relaxed/simple;
-	bh=YDVSGA/jFK4M17MfyjQFVNfdTrCHk87aLypRffFNPO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NPH6tAatabGqj4vmFIe/DfyaBloxZjaGJokagylZGvhau9yPsFRDHF5K0TSoP4ixeby4M8Titbgv81enwnIMndhFZLe6SZ7FtoCnxi3v+oPVJwiyZ2RQ0APeGCkIbp4fEsZDXbL30X0IMUQD8aMKl+mHATvpbbvTUlsKjYfZHsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMAB5GdB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE50CC4AF09;
-	Fri, 23 Aug 2024 14:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724421841;
-	bh=YDVSGA/jFK4M17MfyjQFVNfdTrCHk87aLypRffFNPO8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pMAB5GdBLsVixSM3TCk5bc8v5YZw0DyGkfi1NZntCvH8XwOzyyWufT2+exMfuYYsw
-	 RdvLf+t59ALHRLi/paiGxdBwOdkJExGXtXfOyVmLlXl66gs1fAv5D4FO24nw6kIvcT
-	 tS9oBzJdCRjQ/298BfKd1LcK4leQIyWSU423XlUdQn9RShtHZGHyn24dgt8oJVTRu3
-	 8QdRNHEEnDO0EoQce6rxI0AmVM/hysX/haWViHQf4sgUyvoxovBbbfdsgxA+NRtHTH
-	 JYoRxkMgZNox0czA4pZl+GhMoIigh1n8OMjVKUiMkVlzv+Z1uAFGeIuUAqN69o2tY1
-	 W0D2hCqduTa/Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>,
-	David Sterba <dsterba@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 20/20] btrfs: update target inode's ctime on unlink
-Date: Fri, 23 Aug 2024 10:02:34 -0400
-Message-ID: <20240823140309.1974696-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823140309.1974696-1-sashal@kernel.org>
-References: <20240823140309.1974696-1-sashal@kernel.org>
+	s=arc-20240116; t=1724421870; c=relaxed/simple;
+	bh=RarjRljA012H8GjcXE0795+YxS0vJ/uKSKtUTKIt+3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOMSKq4LD0R6aCYRSQFbln/u5mJRa4jwE8hOUaCHIyIJBXdc+lCkyhosg8fjOlHqCzFc6K92ynhE+zJ/xp2n1j6ZPtXJOTKOoQO8WHToVJhBGl8yaJmQIKhX5sYCvnkFD6cmhikFVj1ybF6vZpnlL4KPKsQhRSACsGsYX/XJnQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FEImtkXY; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724421870; x=1755957870;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RarjRljA012H8GjcXE0795+YxS0vJ/uKSKtUTKIt+3k=;
+  b=FEImtkXYtBgaB7Rgy0+5vIGvWwWDe2GkC9acX/H88KrLIrKLipQGOQyO
+   7P2PIRjSBJKgVp/acltwcVtVB3bFE4V9clTSOqP14C1Ysm+kvxmqbFhra
+   ryzVTZmFB3w3SmkPr8Mf72H8GoPnbdf7gmgUOmq9YhLD5imYcau86fgkV
+   3UlaXvnQDJ1hN4VHPFDPyKWgeIUDS4efwIJbmi77G6PJGykl8bu3YE11h
+   Wl8Zle+3cu63lT2ljhvfu04mEOgMfL82GTx0rDT50phXv9CEQRwkQEsFX
+   lhPL/8EGddbqLPMl7vF79C8gvRXhSg1UEV3b6XNjNMGR4Db6J/84UelMY
+   Q==;
+X-CSE-ConnectionGUID: KVLbtHE7QqeAnr+SJJ0f8w==
+X-CSE-MsgGUID: OJwEWCdnR0qKkas4b06jFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23016209"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23016209"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:03:59 -0700
+X-CSE-ConnectionGUID: 5SVtqCkpR1OhiuzSknEhTQ==
+X-CSE-MsgGUID: o2GSPqwpSdKx8bDzLi+utw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="66126708"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:03:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shUsq-00000000oWR-0s0k;
+	Fri, 23 Aug 2024 17:03:20 +0300
+Date: Fri, 23 Aug 2024 17:03:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <ZsiWp5ENQ0BeBjMn@smile.fi.intel.com>
+References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
+ <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
+ <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
+ <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <ZsXVU2qy0GIANFrc@smile.fi.intel.com>
+ <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <Zsc9_UddBybdnM1Z@smile.fi.intel.com>
+ <OS8PR06MB75419F3E3A222AE941DE3007F2882@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.47
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS8PR06MB75419F3E3A222AE941DE3007F2882@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Jeff Layton <jlayton@kernel.org>
+On Fri, Aug 23, 2024 at 06:23:54AM +0000, Ryan Chen wrote:
+> > On Thu, Aug 22, 2024 at 02:24:26AM +0000, Ryan Chen wrote:
+> > > > On Wed, Aug 21, 2024 at 06:43:01AM +0000, Ryan Chen wrote:
+> > > > > > On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
 
-[ Upstream commit 3bc2ac2f8f0b78a13140fc72022771efe0c9b778 ]
+...
 
-Unlink changes the link count on the target inode. POSIX mandates that
-the ctime must also change when this occurs.
+> > > > > > > +	if (i2c_bus->mode == BUFF_MODE) {
+> > > > > > > +		i2c_bus->buf_base =
+> > > > > > devm_platform_get_and_ioremap_resource(pdev, 1, &res);
+> > > > > > > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
+> > > > > > > +			i2c_bus->buf_size = resource_size(res) / 2;
+> > > > > > > +		else
+> > > > > > > +			i2c_bus->mode = BYTE_MODE;
+> > > > > >
+> > > > > > What's wrong with positive conditional? And is it even possible
+> > > > > > to have NULL here?
+> > > > > >
+> > > > > Yes, if dtsi fill not following yaml example have reg 1, that will
+> > > > > failure at buffer
+> > > > mode.
+> > > > > And I can swith to byte mode.
+> > > > >
+> > > > > reg = <0x80 0x80>, <0xc00 0x20>;
+> > > >
+> > > > I was asking about if (!IS_ERR_OR_NULL(...)) line:
+> > > > 1) Why 'if (!foo) {} else {}' instead of 'if (foo) {} else {}'?
+> > > I will update to following.
+> > > 		if (IS_ERR(i2c_bus->buf_base))
+> > > 			i2c_bus->mode = BYTE_MODE;
+> > > 		else
+> > > 			i2c_bus->buf_size = resource_size(res) / 2;
+> > >
+> > > > 2) Why _NULL?
+> > > 	If dtsi file is claim only 1 reg offset. reg = <0x80 0x80>; that will goto byte
+> > mode.
+> > > 	reg = <0x80 0x80>, <0xc00 0x20>; can support buffer mode.
+> > > 	due to 2nd is buffer register offset.
+> > 
+> > I have asked why IS_ERR_OR_NULL() and not IS_ERR().
+> > 
+> OH, I will doing by this.
+> 		if (IS_ERR_OR_NULL(i2c_bus->buf_base))
 
-According to https://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html:
+The question about _NULL remains unanswered...
 
-"Upon successful completion, unlink() shall mark for update the last data
- modification and last file status change timestamps of the parent
- directory. Also, if the file's link count is not 0, the last file status
- change timestamp of the file shall be marked for update."
+> 			i2c_bus->mode = BYTE_MODE;
+> 		else
+> 			i2c_bus->buf_size = resource_size(res) / 2;
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add link to the opengroup docs ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 5ddee801a8303..173b16ae510b0 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4145,6 +4145,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
- 
- 	btrfs_i_size_write(dir, dir->vfs_inode.i_size - name->len * 2);
- 	inode_inc_iversion(&inode->vfs_inode);
-+	inode_set_ctime_current(&inode->vfs_inode);
- 	inode_inc_iversion(&dir->vfs_inode);
- 	inode_set_ctime_current(&inode->vfs_inode);
- 	dir->vfs_inode.i_mtime = inode_set_ctime_current(&dir->vfs_inode);
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
