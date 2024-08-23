@@ -1,108 +1,176 @@
-Return-Path: <linux-kernel+bounces-298426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD18495C72A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E318F95C72E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B87283C48
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AAA52827F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A497313DDB9;
-	Fri, 23 Aug 2024 08:01:09 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA313D601;
+	Fri, 23 Aug 2024 08:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="EfWSmyBV"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ED62AE95;
-	Fri, 23 Aug 2024 08:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C8D5FEE4
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400069; cv=none; b=R8Vg2//V2/Nju6TvW/yexNz9kZ9aQj9kQCJ1KYU9X4qr0LH+LIC1P+ojAFc4cM3QL6v3mpky6mTp5900GhB7t/vfmcHdYZzMKrJpSM8oVTZvRxrDnR/24LafeR2p+ArRvtvC6DPNbGPw++iGIJa1LN8nsDooULrN0fhURzxZTAw=
+	t=1724400115; cv=none; b=jx8B2UtJ5sXpXYfx0DeWdkxWWlBzL33/bSq47yaBncskLKB3+IxsUKas0T2fAhA48kr8pP0+42nSH98UQlhaYNfDLn7amgW119DxopSCJX7CTPzJakL2o+elwAG+52Oj5zB6mprzwy8oT5eanB/Uk3sI4QRFsHmxT1Uv6U3dKgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724400069; c=relaxed/simple;
-	bh=YMpa+SbGxYf/sCPtp1m1woweja7XMPGkDHxyAg7Gs4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OSZwrHBj/LXArpKT4UKQzFVAB6Qas1XObfCr1RzxTxkmvHElnMB0HQiJCpuIn3kKu9TRAs7TU/PFdMSLMWcMucDv8WOqZcLkZCsnmc4todzGlPIbKVtw3iUBEkwlXAe4O5k4tQPOesIM5EyHeZHkAbo6zq6Y4ETBoLHe39z11AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-690b6cbce11so15296067b3.2;
-        Fri, 23 Aug 2024 01:01:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724400065; x=1725004865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JZg3JV/QRh+aqgg5QhTZTb5xVGV10gy/aoyguwvI1Eo=;
-        b=qJcT0l2beFc+5Zp6gUMejX7rE8N0+ZaC5SEa6NFQTWGTq7fUm0kN58V4316GCvLcuU
-         qQzfltAzNdmwAm7QCPFaeqU7Z5m+DcSV3XpVjXXWftBrKrLLV8QaPAdVjY5IzQgQQXoW
-         R93wxFmD6u6tYUL6bxAVUAFyFq17hyozxjPHiInOH/DCYmXKaPW30qwekIBgDYwBPSSy
-         s8ojLX+g7gMJb2Oo3jgim8mWsl8+JHboxmSVJPsgbBASl4FJlnsSeun5fPHmt7wk5V/F
-         7S0Ase60piU6+GCr6UaUtCyekvUxgZ4bWs5rGubRRM0vgtNey5TYe7AtBLo4GHkoPGLs
-         6ZFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4TM7tzs4YRi5tWDlJvaIY7d+mSuKG29XZImwpRzy4EG7nyq/48y2W5VUHCFEzZQHuE/iJR0q+f9MEGg5Z8k8=@vger.kernel.org, AJvYcCW5Tq5IU4q6LFnnfqI6iTL6rZ8/t2IZsd3UdRzbQZ4P4ytRNw7+TWiJhhJZr8bOdWdsp0Fa4XFBC8TSHoO0Gz/7bbg=@vger.kernel.org, AJvYcCWs6F/KTRJ1aYeGP8fm7GP8We1DwntfeeyeofMJML3UB7XTz6+NGqqXWlAc5/OA8xBdymIl0poZxYj+@vger.kernel.org, AJvYcCXbAcDbywNzDby7h7iUFksv4ZVF8Norj6ZoBdefG1zCKD6Zgko0xGS5n6K5vgedrEIYzt6QytwrJEggH/dA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEEokyuWltXUG21H90JkdLQQXkuV60VtU8KZyYta7rZoy4PTB
-	vuMAcWWB2aZExII4yG2c++LVOB7ceHtw/Gy1VY/Vn7vLXkfQLRtdkfTQvsVo
-X-Google-Smtp-Source: AGHT+IGJ4d8LqWEPIzXo1JDyFyHjCpoOWdQ2RqQ5pwygv7/wMcLCSyfukFbaoCKPCZBaA77Clbygaw==
-X-Received: by 2002:a05:690c:d83:b0:64b:2f31:296b with SMTP id 00721157ae682-6c624228d38mr16324077b3.4.1724400065501;
-        Fri, 23 Aug 2024 01:01:05 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39a753aa0sm4764547b3.47.2024.08.23.01.01.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 01:01:05 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-690b6cbce11so15295877b3.2;
-        Fri, 23 Aug 2024 01:01:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUols/Tth85O6RG/C3TPDvLlgfsuxD0hhZLUbey33FU0zbYqYCnad5PY31piKWwbVN3INmdvCazZqlx@vger.kernel.org, AJvYcCVgC/gG3lVLg1K9IzqUohhZ9hvImMxyaT7nYFkVfm2coXdxcermBAtmX7HdIBtEFZhOaDVrJbfKcJtgoIi22CY=@vger.kernel.org, AJvYcCWaSMVj1k/CMGrQo8OGdh0M6Emd0CUIIwq6ffP/BaMAipCdi+UgACd/bvD+uNx/fUhUZVR/Fre7I0fcOEJTT26jmqA=@vger.kernel.org, AJvYcCWxrr65JVPjpufkvd460cBnP8nVXik7CyHHjj2ZNaQ/1JFERPTzI7ipg9S8LnXDocMbBqEe0r5hv1fcyggu@vger.kernel.org
-X-Received: by 2002:a05:690c:10c:b0:64b:4a9f:540d with SMTP id
- 00721157ae682-6c6286b8ad2mr15067107b3.31.1724400065138; Fri, 23 Aug 2024
- 01:01:05 -0700 (PDT)
+	s=arc-20240116; t=1724400115; c=relaxed/simple;
+	bh=4hDm5FWWVa0YyBbMM+VE/PXVEM468xqIq17Z0T8yXgk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Sf8BLs4wt/V+VhiGI4MYhxhbnOwxuQdqDnAv2qBrk31/zVtEMi1NnEYzBj/wQhsVD32Ey6SucfdxuNsrVX+7lzsLQlyK3tSTwGb26KVApOz78Q7em9EGgcjyTuHPWONBuOLE86guEpgx26Vx/hC9TOPmha00avvSFdCL0uI4zKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=EfWSmyBV; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1724400103; x=1726992103;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4hDm5FWWVa0YyBbMM+VE/PXVEM468xqIq17Z0T8yXgk=;
+	b=EfWSmyBV22bnWbP49p53nZN0ezft4g5KiEthlkGX66guM92ygIUqTPIqpIQPO2a0
+	mXv0dQ87sxSnBW17bVFb5V0W6xOlrqdVROokQiDjCaYfDmlJIx9RlmTcAYeV23pY
+	urc0MOtMcH0QYgkcmJwgO80d0sVYv4XK/4QubHbDcTg=;
+X-AuditID: ac14000a-03251700000021bc-fc-66c841e605bc
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 5C.20.08636.6E148C66; Fri, 23 Aug 2024 10:01:42 +0200 (CEST)
+Received: from llp-hahn.hahn.test (172.25.0.11) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 23 Aug
+ 2024 10:01:42 +0200
+From: Benjamin Hahn <B.Hahn@phytec.de>
+Date: Fri, 23 Aug 2024 10:01:32 +0200
+Subject: [PATCH v3] arm64: dts: imx8mp-phyboard-pollux-rdk: Add support for
+ PCIe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822205941.643187-1-colin.i.king@gmail.com>
-In-Reply-To: <20240822205941.643187-1-colin.i.king@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 10:00:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUrN6wcCzXfHaB=9sGUr2Mq49oBriu6mC1NotVoZjy0rA@mail.gmail.com>
-Message-ID: <CAMuHMdUrN6wcCzXfHaB=9sGUr2Mq49oBriu6mC1NotVoZjy0rA@mail.gmail.com>
-Subject: Re: [PATCH][next] PCI: rcar-gen4: make read-only const array
- check_addr static
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240823-wip-bhahn-add_pcie_support-v3-1-8b86af45e73f@phytec.de>
+X-B4-Tracking: v=1; b=H4sIANtByGYC/43NvQ6CMBiF4Vshna2hpWrr5H0YQ/rzYb8Fmharh
+ HDvFiYm4/ie4TkzSRARErlWM4mQMeHQl2gOFbFe90+g6EoTXnNRS9bQNwZqvPY91c61wSK06RX
+ CEEdqlHGXU2eFU5IUIETo8LPh90dpj2kc4rR9Zbauf7GZUUYtM6Y+cyOAdbfgpxHs0QFZ2cx3F
+ Gc/KV4oZRV3UkipDd9Ty7J8AcnSatUPAQAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Teresa Remmet
+	<t.remmet@phytec.de>
+CC: <upstream@lists.phytec.de>, <devicetree@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Benjamin Hahn <B.Hahn@phytec.de>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724400102; l=2246;
+ i=B.Hahn@phytec.de; s=20240126; h=from:subject:message-id;
+ bh=4hDm5FWWVa0YyBbMM+VE/PXVEM468xqIq17Z0T8yXgk=;
+ b=/b8AKjwwccuG7USDnR92yOsjjCXaVrVrQ9F4gv/kcw1lUb+8tF+6Z2V+DWQ5y3Mxc6lL0K/8n
+ yh+O0Qb9zykBpamy3wSJEkvJv2wyeOiTZ4KQLzCaSYedLeL60bgSWD9
+X-Developer-Key: i=B.Hahn@phytec.de; a=ed25519;
+ pk=r04clMulHz6S6js6elPBA+U+zVdDAqJyEyoNd8I3pSw=
+X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
+ (172.25.0.12)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42JZI8nAo/vM8USawd4LxhZr9p5jsph/5Byr
+	xcOr/hYz77WyWayaupPF4uWse2wWmx5fY7W4vGsOm8X/PTvYLf5u38Ri8WKLuEX3O3UHHo+d
+	s+6ye2xa1cnmsXlJvceLzTMZPfq7W1g9+v8aeHzeJBfAHsVlk5Kak1mWWqRvl8CVsbPpN3PB
+	CcGKKb9uszUw3uPrYuTkkBAwkXi7q5Wxi5GLQ0hgCZNEw5lLzBDOQ0aJZ683sYNUsQmoSex6
+	85oVxGYRUJVoX3KTGcQWFgiSaP31lwXE5hUQlDg58wmQzcHBLKApsX6XPkiYWUBeYvvbOcwQ
+	Jb4Sx/+dY4ZY3M0kcbWBC8QWEdjBJPG43xBkL7PAQUaJP+sfsEMUCUt83r2GDSQhIbCbSWLf
+	yxZmkAUSAokSO1/LgdQICchK3Dy/hQ2iXl5i2rnXUAtCJY5sWs00gVF4FpLzZiGcNwvJeQsY
+	mVcxCuVmJmenFmVm6xVkVJakJuulpG5iBMWYCAPXDsa+OR6HGJk4GA8xSnAwK4nwJt07mibE
+	m5JYWZValB9fVJqTWnyIUZqDRUmcd3VHcKqQQHpiSWp2ampBahFMlomDU6qBcbWK1q8KrobI
+	XV/fqS9nlX66bX/y6jRR3W61Q+aPb54/x2G/1mha+RqD7BM3/5yP6jRj+jIx+EOJkzWjr2rQ
+	xp4t66dqiK0+lFDFlSTMX/GxjX9x3+wS1kW8L98ourKFMOwT7bvacklqZo6jDWN5smmYWuLH
+	sHWT5v87/yZTcMu6CZ7iDQ1hSizFGYmGWsxFxYkAL+taIp8CAAA=
 
-On Thu, Aug 22, 2024 at 10:59=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
-.com> wrote:
-> Don't populate the const read-only array check_addr on the stack at
-> run time, instead make it static.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Add support for the Mini PCIe slot.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
+---
+Changes in v3:
+- change order of properties for pcie phy node
+- Link to v2: https://lore.kernel.org/r/20240821-wip-bhahn-add_pcie_support-v2-1-9c92d8488ab2@phytec.de
 
-Gr{oetje,eeting}s,
+Changes in v2:
+- change pcie regulator to reg_vcc_3v3_sw
+- add wake gpio to pcie pinctrl and order the gpios
+- Link to v1: https://lore.kernel.org/r/20240813-wip-bhahn-add_pcie_support-v1-1-c1bb062b4e1f@phytec.de
+---
+ .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+index 00a240484c25..bea479b5203a 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
+@@ -6,6 +6,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/phy/phy-imx8-pcie.h>
+ #include <dt-bindings/leds/leds-pca9532.h>
+ #include <dt-bindings/pwm/pwm.h>
+ #include "imx8mp-phycore-som.dtsi"
+@@ -195,6 +196,23 @@ &snvs_pwrkey {
+ 	status = "okay";
+ };
+ 
++&pcie_phy {
++	clocks = <&hsio_blk_ctrl>;
++	clock-names = "ref";
++	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
++	fsl,clkreq-unsupported;
++	status = "okay";
++};
++
++/* Mini PCIe */
++&pcie {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pcie0>;
++	reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
++	vpcie-supply = <&reg_vcc_3v3_sw>;
++	status = "okay";
++};
++
+ &pwm3 {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -366,6 +384,15 @@ MX8MP_IOMUXC_SD2_WP__GPIO2_IO20		0x12
+ 		>;
+ 	};
+ 
++	pinctrl_pcie0: pcie0grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_GPIO1_IO08__GPIO1_IO08     0x40
++			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10     0x60
++			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11	0x60 /* open drain, pull up */
++			MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14     0x40
++		>;
++	};
++
+ 	pinctrl_pwm3: pwm3grp {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_SPDIF_TX__PWM3_OUT		0x12
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240813-wip-bhahn-add_pcie_support-b9bd75fc4d98
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Benjamin Hahn <B.Hahn@phytec.de>
+
 
