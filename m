@@ -1,491 +1,169 @@
-Return-Path: <linux-kernel+bounces-298616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498A395C978
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:44:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614B295C97D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE90E1F24E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19B49285FF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77634156C6A;
-	Fri, 23 Aug 2024 09:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70FC14E2D6;
+	Fri, 23 Aug 2024 09:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L+SW52Ca"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x9QtM2Fs"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D8414C599
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ACE14D431
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406250; cv=none; b=K/fO+CpqG2hKAm/QWYhZlwRJ6HhAEqs9swZ6vKfo2HFJo9pq1KO3GT6CHwj67T41U77mM0ey/JIF2zUP2B5Rg1O+ktlkrdqFdi9l8gV9sEDuv9wlX3Yh2z32JvQdIsAqQHpn5zsuH6Oizirk39ado1r/VDk1fXtLXZBRqB/lejI=
+	t=1724406271; cv=none; b=bQ1wGstmE6OwKoS578zIibNLyxVBVpIy0nsdjrR12cpQAJ65NXWrxKO6XxA7Ioyb78GnxyKnjoi0fPCPICUk7Bbf6DsGaq4XIpdrZ3cAU12n2Od/JIoE9Or0DXKEMTlw67Psns3iUAIICJN2HHrxsoMTeL2gOSkUPAJAtyqqAvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406250; c=relaxed/simple;
-	bh=4c3KzHN6LLXdrATpuUYPGih+JOiJGyl2SN7wEWhJAek=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Agj+6MuZhS15PXR4E4xAcZsw+faMWfYjKScifmEqSIvXv1idLffV5Upm+tAFoZyKi+nVUBlXn4OFd7phZa5etaOOLGAZBNHtmA4Kvm1gtkFouseJTe7jnNgk/mSxwjfWcstAJvLVo0XxV1S9QgOOzLm/Qd3tpH+8FPQxgu4dVqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L+SW52Ca; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a86a0b5513aso91160366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:44:06 -0700 (PDT)
+	s=arc-20240116; t=1724406271; c=relaxed/simple;
+	bh=3PvN3jtOvPAZoaO89i8WxnDTkvSqatK/JcoT3DeVYSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoAoih0uJBrcTYJjKrjbMNHlm8w/nuG/4z13ohA3MQRdPyIZL+kwt8cqHo7T3WR9/Mvg9vR1FPNO25eWLzG1iYUlyLQ+rEs+iP0zIuiZzeelWxcP+50Y6WTbU4GGeBMGNw5OUDHEbmOa9JRAqOPgAXeCxi8FYBBV3CtkVOVPamM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x9QtM2Fs; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-201fbd0d7c2so16437685ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:44:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724406245; x=1725011045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVcGuVd4AVvQ2weJkkLnD/mq26okah869g1A0uYNj+w=;
-        b=L+SW52Caw8jsFw/mYuYuCXVuq5J7DyvOJin0UsXCie3SX3jc0p0tY15+u7VXnZ00Uk
-         5gmy8iMFkxwInOTy8TLOe8xvuNSfo8pWW2x/w1lyGv5hqesjh+2iG44RJynWidVRQdRS
-         4itBRlyzUnn5xXpZts8byX1HAu5/ilXD7UU0gA9mzMPiGPX7qRbMt5I48CDpiU3LnUvI
-         agH50Oy0Tt5HkEoV2+TIuDDK0lTDCzapbhuG5vhB0My2l2U6/yy/WlBK2e2AwxvSSOBH
-         ISpQceRKdkKFhPLkovVZHEUa8qHsZ8r9LWyajZVljStgRyitubOQn1rSqR+z376WiT1e
-         Btuw==
+        d=linaro.org; s=google; t=1724406269; x=1725011069; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/UI0fMy+8miLNDvNonKP4baMvE/ykNIwcSEuW14yBSE=;
+        b=x9QtM2FsPT5fFX3UAyTAHgi1rBVOEak5I7f8eWDjuaq7QS3czsZi5NsgVSntW5PFTg
+         M2miXuBWC+2vZ6z1u8siuiSTMCXrlYXWvRnJTXf0LvJf6d8qc8kd/2WtmZv/Z++fIfQg
+         XIeGHp6cSZc8WLWcpseQps+q+QMFxBgOU6jqLde+0uyD8SWSCn9VdQC+8UCxQuLW5I6r
+         vY0AXbYaT4VoTrOIz33XdZCDuNVTiFXz4CHJI2Qn50QE+BRAigohIIXwvEeyHPsnB8Hf
+         RGnyPaOew2SxFLVWzhpIBi9JmfdYi66uc4qqrhmneNPBFQRntSdV+nhEdVLsgJHJs7SR
+         Ekow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724406245; x=1725011045;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1724406269; x=1725011069;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVcGuVd4AVvQ2weJkkLnD/mq26okah869g1A0uYNj+w=;
-        b=Fw6wJpeVdsDd6THi8P5Lbs34UcZsMud9owjQ9zx3CspBHgzdzsVhdWg7jtxXtjNLjB
-         OY4KqTG+iLIfUx8gmNEjveThWRgVeQP7Acip59+jfkm2vQePA7swOfAFTP/6OoyfJ8TC
-         TpB+6/YYrD6e1GqN38zerxhFUvQXuv4ZHzuQ9RCyU+vwBBzpmWgw91Oq/+3fHN+JCFRG
-         6Zd2XxfunB1y1ACRSVG9uXgRzMQ6fdk4agm15BiG5gVz4GST+/6MDWVbD8pFZEn/2WZN
-         l4rL5fQvaXQ5oIHXPu4H3XDft+mbETpgkCpxuh9kK9H5bcxOtMih3b7UCRxQT5IYissN
-         7SFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUEpxASnvsB2OQocMjCJcWH+CjY0YVBXHmj1TO5zNQvAvzG3vzpD1YMjD+8NgRqnG6Mw9OALgsamtePKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Q/3qyHX50SmA3HlDi7xourCey9P2pAcW6gM0lAa1gI4qco1K
-	LpjrS1eXQEfW3fr5SRlG98hVIko/QedfvRbRKM2+R/Kw/MLgaYfNOu2UN/6yE1c=
-X-Google-Smtp-Source: AGHT+IERZNLBRRQ1MUmcPAQSt7FJvwF5+ZuhPpD8J9OYue8gs+58cviAxhD1hN2NixzJ8eJtBxyDpw==
-X-Received: by 2002:a17:907:d2c9:b0:a86:7a59:55e9 with SMTP id a640c23a62f3a-a86a54a8e7emr117724766b.55.1724406244825;
-        Fri, 23 Aug 2024 02:44:04 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f220561sm234654266b.37.2024.08.23.02.44.04
+        bh=/UI0fMy+8miLNDvNonKP4baMvE/ykNIwcSEuW14yBSE=;
+        b=haSBlkvBbQA8MxNNKYST4z01vhJUxTkAmKJfl2I16XnrrQ7liyXoR+cDCUNNczQ8/3
+         KhZ/Exst80LdYhoD4DlmmjMv8GbD11HYCkX95fMQQeGs6KUoTlYsjTIF0Q38EkJqYVA7
+         YvFDtxPgP49a1+HA4Y8AAzLz2R1jDk2d2kzMB8I9gWT4RhSjPYaU5Y+fQyG72+JCQEzC
+         AdAefY8V+WsKlZXWM1rIWRYn9L+bwY5SIKHC9AwFIPGtCLs5B9JWMnmzAQl1JnyImHWa
+         dCwnMIJEJaMI/WHC3DVKuVlRvd+fB3X365ByZjZpP23ccMPTfHElVofvTxUlPbAHuEpH
+         FmZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLCK/GS2hKWKf+BdrvevOcbxH5MFoO0qN7Rvl1XnjsnvccDp1ChcCkz66grSzHXOdYk6LPUP2/sFkgqMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMdRCim9mVXck+niK6ubFS5P7z0wPfdJKPPS2mAQdBwaq3OLnm
+	NrrzZO2JYfNB9sv88OrrBiBi4JWKPBtOJbtoYEytYxPpsMkzdyngDO7XA8YXOw/OtMUZ7PckptA
+	=
+X-Google-Smtp-Source: AGHT+IGbFyjY9zU3XHhTX7eBPKnZgYQO/jUribauXzoWCAqaf7GVCGFIFJsv+qddX9jb1Lk+ZzvFtw==
+X-Received: by 2002:a17:902:f544:b0:202:5af:47fc with SMTP id d9443c01a7336-2039e4bd43bmr18884285ad.13.1724406268772;
+        Fri, 23 Aug 2024 02:44:28 -0700 (PDT)
+Received: from thinkpad ([120.60.60.148])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385be08f5sm24910975ad.275.2024.08.23.02.44.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 02:44:04 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 23 Aug 2024 11:44:11 +0200
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Fri, 23 Aug 2024 02:44:28 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:14:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZshZ6yAmyFoiF5qu@apocalypse>
-Mail-Followup-To: Stefan Wahren <wahrenst@gmx.net>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <98c570cb-c2ca-4816-9ca4-94033f7fb3fb@gmx.net>
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
+	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+Message-ID: <20240823094419.7l2kvly4mnajrm4z@thinkpad>
+References: <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+ <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
+ <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
+ <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
+ <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
+ <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
+ <7f48f71c-7f57-492c-47df-6aac1d3b794b@quicinc.com>
+ <aa311052-deba-4d13-9ede-1d863a4f362e@kernel.org>
+ <20240822141622.tw7vcoc4ciwbydsw@thinkpad>
+ <9cff09b0-d039-4e65-b6dc-57adaf94c12e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <98c570cb-c2ca-4816-9ca4-94033f7fb3fb@gmx.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9cff09b0-d039-4e65-b6dc-57adaf94c12e@kernel.org>
 
-Hi Stefan,
-
-On 18:20 Wed 21 Aug     , Stefan Wahren wrote:
-> Hi Andrea,
+On Fri, Aug 23, 2024 at 11:01:37AM +0200, Krzysztof Kozlowski wrote:
+> On 22/08/2024 16:16, Manivannan Sadhasivam wrote:
+> > On Mon, Aug 05, 2024 at 04:43:47PM +0200, Krzysztof Kozlowski wrote:
+> >> On 05/08/2024 07:57, Krishna Chaitanya Chundru wrote:
+> >>>>
+> >>> Hi Krzysztof,
+> >>>
+> >>> QPS615 has a 3 downstream ports and 1 upstream port as described below
+> >>> diagram.
+> >>> For this entire switch there are some supplies which we described in the
+> >>> dt-binding (vdd18-supply, vdd09-supply etc) and one GPIO which controls
+> >>> reset of the switch (reset-gpio). The switch hardware can configure the
+> >>> individual ports DSP0, DSP1, DSP2, upstream port and also one integrated
+> >>> ethernet endpoint which is connected to DSP2(I didn't mentioned in the
+> >>> diagram) through I2C.
+> >>>
+> >>> The properties other than supplies,i2c client, reset gpio which
+> >>> are added will be applicable for all the ports.
+> >>> _______________________________________________________________
+> >>> |   |i2c|                   QPS615       |Supplies||Resx gpio |
+> >>> |   |___|              _________________ |________||__________|
+> >>> |      ________________| Upstream port |_____________         |
+> >>> |      |               |_______________|            |         |
+> >>> |      |                       |                    |         |
+> >>> |      |                       |                    |         |
+> >>> |  ____|_____              ____|_____            ___|____     |
+> >>> |  |DSP 0   |              | DSP 1  |            | DSP 2|     |
+> >>> |  |________|              |________|            |______|     |
+> >>> |_____________________________________________________________|
+> >>>
+> >>
+> >> I don't get why then properties should apply to main device node.
+> >>
+> > 
+> > The problem here is, we cannot differentiate between main device node and the
+> > upstream node. Typically the differentiation is not needed because no one cared
+> > about configuring the upstream port. But this PCIe switch is special (as like
+> > most of the Qcom peripherals).
+> > 
+> > I agree that if we don't differentiate then it also implies that all main node
+> > properties are applicable to upstream port and vice versa. But AFAIK, upstream
+> > port is often considered as the _device_ itself as it shares the same bus
+> > number.
 > 
-> Am 20.08.24 um 16:36 schrieb Andrea della Porta:
-> > The RaspberryPi RP1 is ia PCI multi function device containing
-> > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > and others.
-> sorry, i cannot provide you a code review, but just some comments. multi
-> function device suggests "mfd" subsystem or at least "soc" . I won't
-> recommend misc driver here.
+> Well, above diagram shows supplies being part of the entire device, not
+> each port. That's confusing. Based on diagram, downstream ports do not
+> have any supplies... and what exactly do they supply? Let's look at
+> vdd18 and vdd09 which sound main supplies of the entire device. In
+> context of port: what exactly do they power? Which part of the port?
+> 
 
-It's true that RP1 can be called an MFD but the reason for not placing
-it in mfd subsystem are twofold:
+The supplies for the downstream ports are derived from the switch power supply
+only. There is no way we can describe them as the port suppliers are internal to
+the device.
 
-- these discussions are quite clear about this matter: please see [1]
-  and [2]
-- the current driver use no mfd API at all
+- Mani
 
-This RP1 driver is not currently addressing any aspect of ARM core in the
-SoC so I would say it should not stay in drivers/soc / either, as also
-condifirmed by [2] again and [3] (note that Microchip LAN966x is a very
-close fit to what we have here on RP1).
-
-> > Implement a bare minimum driver to operate the RP1, leveraging
-> > actual OF based driver implementations for the on-borad peripherals
-> > by loading a devicetree overlay during driver probe.
-> Can you please explain why this should be a DT overlay? The RP1 is
-> assembled on the Raspberry Pi 5 PCB. DT overlays are typically for loose
-> connections like displays or HATs. I think a DTSI just for the RP1 would
-> fit better and is easier to read.
-
-The dtsi solution you proposed is the one adopted downstream. It has its
-benefits of course, but there's more.
-With the overlay approach we can achieve more generic and agnostic approach
-to managing this chipset, being that it is a PCI endpoint and could be
-possibly be reused in other hw implementations. I believe a similar
-reasoning could be applied to Bootlin's Microchip LAN966x patchset as
-well, and they also choose to approach the dtb overlay.
-Plus, a solution that can (althoguh proabbly in teh long run) cope
-with both DT or ACPI based system has been kindly requested, plase see [4]
-for details.
-IMHO the approach proposed from RH et al. of using dtbo for this 'special'
-kind of drivers makes a lot of sense (see [5]).
-
-> > The peripherals are accessed by mapping MMIO registers starting
-> > from PCI BAR1 region.
-> > As a minimum driver, the peripherals will not be added to the
-> > dtbo here, but in following patches.
-> > 
-> > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >   MAINTAINERS                           |   2 +
-> >   arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
-> >   drivers/misc/Kconfig                  |   1 +
-> >   drivers/misc/Makefile                 |   1 +
-> >   drivers/misc/rp1/Kconfig              |  20 ++
-> >   drivers/misc/rp1/Makefile             |   3 +
-> >   drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
-> >   drivers/misc/rp1/rp1-pci.dtso         |   8 +
-> >   drivers/pci/quirks.c                  |   1 +
-> >   include/linux/pci_ids.h               |   3 +
-> >   10 files changed, 524 insertions(+)
-> >   create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
-> >   create mode 100644 drivers/misc/rp1/Kconfig
-> >   create mode 100644 drivers/misc/rp1/Makefile
-> >   create mode 100644 drivers/misc/rp1/rp1-pci.c
-> >   create mode 100644 drivers/misc/rp1/rp1-pci.dtso
-> > 
-> ...
-> > +
-> > +				rp1_clocks: clocks@c040018000 {
-> > +					compatible = "raspberrypi,rp1-clocks";
-> > +					#clock-cells = <1>;
-> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
-> > +					clocks = <&clk_xosc>;
-> > +					clock-names = "xosc";
-> > +
-> > +					assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
-> > +							  <&rp1_clocks RP1_PLL_AUDIO_CORE>,
-> > +							  // RP1_PLL_VIDEO_CORE and dividers are now managed by VEC,DPI drivers
-> > +							  <&rp1_clocks RP1_PLL_SYS>,
-> > +							  <&rp1_clocks RP1_PLL_SYS_SEC>,
-> > +							  <&rp1_clocks RP1_PLL_SYS_PRI_PH>,
-> > +							  <&rp1_clocks RP1_CLK_ETH_TSU>;
-> > +
-> > +					assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
-> > +							       <1536000000>, // RP1_PLL_AUDIO_CORE
-> > +							       <200000000>,  // RP1_PLL_SYS
-> > +							       <125000000>,  // RP1_PLL_SYS_SEC
-> > +							       <100000000>,  // RP1_PLL_SYS_PRI_PH
-> > +							       <50000000>;   // RP1_CLK_ETH_TSU
-> > +				};
-> > +
-> > +				rp1_gpio: pinctrl@c0400d0000 {
-> > +					reg = <0xc0 0x400d0000  0x0 0xc000>,
-> > +					      <0xc0 0x400e0000  0x0 0xc000>,
-> > +					      <0xc0 0x400f0000  0x0 0xc000>;
-> > +					compatible = "raspberrypi,rp1-gpio";
-> > +					gpio-controller;
-> > +					#gpio-cells = <2>;
-> > +					interrupt-controller;
-> > +					#interrupt-cells = <2>;
-> > +					interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
-> > +						     <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
-> > +						     <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
-> > +					gpio-line-names =
-> > +						"ID_SDA", // GPIO0
-> > +						"ID_SCL", // GPIO1
-> > +						"GPIO2", // GPIO2
-> > +						"GPIO3", // GPIO3
-> > +						"GPIO4", // GPIO4
-> > +						"GPIO5", // GPIO5
-> > +						"GPIO6", // GPIO6
-> > +						"GPIO7", // GPIO7
-> > +						"GPIO8", // GPIO8
-> > +						"GPIO9", // GPIO9
-> > +						"GPIO10", // GPIO10
-> > +						"GPIO11", // GPIO11
-> > +						"GPIO12", // GPIO12
-> > +						"GPIO13", // GPIO13
-> > +						"GPIO14", // GPIO14
-> > +						"GPIO15", // GPIO15
-> > +						"GPIO16", // GPIO16
-> > +						"GPIO17", // GPIO17
-> > +						"GPIO18", // GPIO18
-> > +						"GPIO19", // GPIO19
-> > +						"GPIO20", // GPIO20
-> > +						"GPIO21", // GPIO21
-> > +						"GPIO22", // GPIO22
-> > +						"GPIO23", // GPIO23
-> > +						"GPIO24", // GPIO24
-> > +						"GPIO25", // GPIO25
-> > +						"GPIO26", // GPIO26
-> > +						"GPIO27", // GPIO27
-> > +						"PCIE_RP1_WAKE", // GPIO28
-> > +						"FAN_TACH", // GPIO29
-> > +						"HOST_SDA", // GPIO30
-> > +						"HOST_SCL", // GPIO31
-> > +						"ETH_RST_N", // GPIO32
-> > +						"", // GPIO33
-> > +						"CD0_IO0_MICCLK", // GPIO34
-> > +						"CD0_IO0_MICDAT0", // GPIO35
-> > +						"RP1_PCIE_CLKREQ_N", // GPIO36
-> > +						"", // GPIO37
-> > +						"CD0_SDA", // GPIO38
-> > +						"CD0_SCL", // GPIO39
-> > +						"CD1_SDA", // GPIO40
-> > +						"CD1_SCL", // GPIO41
-> > +						"USB_VBUS_EN", // GPIO42
-> > +						"USB_OC_N", // GPIO43
-> > +						"RP1_STAT_LED", // GPIO44
-> > +						"FAN_PWM", // GPIO45
-> > +						"CD1_IO0_MICCLK", // GPIO46
-> > +						"2712_WAKE", // GPIO47
-> > +						"CD1_IO1_MICDAT1", // GPIO48
-> > +						"EN_MAX_USB_CUR", // GPIO49
-> > +						"", // GPIO50
-> > +						"", // GPIO51
-> > +						"", // GPIO52
-> > +						""; // GPIO53
-> GPIO line names are board specific, so this should go to the Raspberry
-> Pi 5 file.
-
-Could we instead just name them with generic GPIO'N' where N is the number
-of the gpio? Much like many of that pins already are... in this way we
-don't add a dependency in the board dts to the rp1_gpio node, which is not
-even there when the main dts is parsed at boot, since the dtbo will be
-added only on PCI enumeration of the RP1 device.
-Or even better: since we don't explicitly use the gpio names to address
-them (e.g. phy-reset-gpios in rp1_eth node is addressing the ETH_RST_N
-gpio by number), can we just get rid of the gpio-line-names property?
-Also Bootlin's Microchip gpio node seems to avoid naming them...
-
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > +};
-> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> > index 41c3d2821a78..02405209e6c4 100644
-> > --- a/drivers/misc/Kconfig
-> > +++ b/drivers/misc/Kconfig
-> > @@ -618,4 +618,5 @@ source "drivers/misc/uacce/Kconfig"
-> >   source "drivers/misc/pvpanic/Kconfig"
-> >   source "drivers/misc/mchp_pci1xxxx/Kconfig"
-> >   source "drivers/misc/keba/Kconfig"
-> > +source "drivers/misc/rp1/Kconfig"
-> >   endmenu
-> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > index c2f990862d2b..84bfa866fbee 100644
-> > --- a/drivers/misc/Makefile
-> > +++ b/drivers/misc/Makefile
-> > @@ -71,3 +71,4 @@ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
-> >   obj-$(CONFIG_NSM)		+= nsm.o
-> >   obj-$(CONFIG_MARVELL_CN10K_DPI)	+= mrvl_cn10k_dpi.o
-> >   obj-y				+= keba/
-> > +obj-$(CONFIG_MISC_RP1)		+= rp1/
-> > diff --git a/drivers/misc/rp1/Kconfig b/drivers/misc/rp1/Kconfig
-> > new file mode 100644
-> > index 000000000000..050417ee09ae
-> > --- /dev/null
-> > +++ b/drivers/misc/rp1/Kconfig
-> > @@ -0,0 +1,20 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +#
-> > +# RaspberryPi RP1 misc device
-> > +#
-> > +
-> > +config MISC_RP1
-> > +        tristate "RaspberryPi RP1 PCIe support"
-> > +        depends on PCI && PCI_QUIRKS
-> > +        select OF
-> > +        select OF_OVERLAY
-> > +        select IRQ_DOMAIN
-> > +        select PCI_DYNAMIC_OF_NODES
-> > +        help
-> > +          Support for the RP1 peripheral chip found on Raspberry Pi 5 board.
-> > +          This device supports several sub-devices including e.g. Ethernet controller,
-> > +          USB controller, I2C, SPI and UART.
-> > +          The driver is responsible for enabling the DT node once the PCIe endpoint
-> > +          has been configured, and handling interrupts.
-> > +          This driver uses an overlay to load other drivers to support for RP1
-> > +          internal sub-devices.
-> > diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
-> > new file mode 100644
-> > index 000000000000..e83854b4ed2c
-> > --- /dev/null
-> > +++ b/drivers/misc/rp1/Makefile
-> > @@ -0,0 +1,3 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +rp1-pci-objs			:= rp1-pci.o rp1-pci.dtbo.o
-> > +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
-> > diff --git a/drivers/misc/rp1/rp1-pci.c b/drivers/misc/rp1/rp1-pci.c
-> > new file mode 100644
-> > index 000000000000..a6093ba7e19a
-> > --- /dev/null
-> > +++ b/drivers/misc/rp1/rp1-pci.c
-> > @@ -0,0 +1,333 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018-22 Raspberry Pi Ltd.
-> > + * All rights reserved.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/err.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/irq.h>
-> > +#include <linux/irqchip/chained_irq.h>
-> > +#include <linux/irqdomain.h>
-> > +#include <linux/module.h>
-> > +#include <linux/msi.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/pci.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +
-> > +#include <dt-bindings/misc/rp1.h>
-> > +
-> > +#define RP1_B0_CHIP_ID		0x10001927
-> > +#define RP1_C0_CHIP_ID		0x20001927
-> > +
-> > +#define RP1_PLATFORM_ASIC	BIT(1)
-> > +#define RP1_PLATFORM_FPGA	BIT(0)
-> > +
-> > +#define RP1_DRIVER_NAME		"rp1"
-> > +
-> > +#define RP1_ACTUAL_IRQS		RP1_INT_END
-> > +#define RP1_IRQS		RP1_ACTUAL_IRQS
-> > +#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
-> > +
-> > +#define RP1_SYSCLK_RATE		200000000
-> > +#define RP1_SYSCLK_FPGA_RATE	60000000
-> > +
-> > +enum {
-> > +	SYSINFO_CHIP_ID_OFFSET	= 0,
-> > +	SYSINFO_PLATFORM_OFFSET	= 4,
-> > +};
-> > +
-> > +#define REG_SET			0x800
-> > +#define REG_CLR			0xc00
-> > +
-> > +/* MSIX CFG registers start at 0x8 */
-> > +#define MSIX_CFG(x) (0x8 + (4 * (x)))
-> > +
-> > +#define MSIX_CFG_IACK_EN        BIT(3)
-> > +#define MSIX_CFG_IACK           BIT(2)
-> > +#define MSIX_CFG_TEST           BIT(1)
-> > +#define MSIX_CFG_ENABLE         BIT(0)
-> > +
-> > +#define INTSTATL		0x108
-> > +#define INTSTATH		0x10c
-> > +
-> > +extern char __dtbo_rp1_pci_begin[];
-> > +extern char __dtbo_rp1_pci_end[];
-> > +
-> > +struct rp1_dev {
-> > +	struct pci_dev *pdev;
-> > +	struct device *dev;
-> > +	struct clk *sys_clk;
-> > +	struct irq_domain *domain;
-> > +	struct irq_data *pcie_irqds[64];
-> > +	void __iomem *bar1;
-> > +	int ovcs_id;
-> > +	bool level_triggered_irq[RP1_ACTUAL_IRQS];
-> > +};
-> > +
-> > +
-> ...
-> > +
-> > +static const struct pci_device_id dev_id_table[] = {
-> > +	{ PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RP1_C0), },
-> > +	{ 0, }
-> > +};
-> > +
-> > +static struct pci_driver rp1_driver = {
-> > +	.name		= RP1_DRIVER_NAME,
-> > +	.id_table	= dev_id_table,
-> > +	.probe		= rp1_probe,
-> > +	.remove		= rp1_remove,
-> > +};
-> > +
-> > +module_pci_driver(rp1_driver);
-> > +
-> > +MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
-> Module author & Copyright doesn't seem to match with this patch author.
-> Please clarify/fix
-
-My intention here is that, even if the code has been heavily modified by me,
-the core original code is still there so I just wanted to tribute it to the
-original author. 
-I'll synchronize this with RaspberryPi guys and coem up with a unified solution.
-Just in case: would multiple MODULE_AUTHOR entries (one with my name and one
-with original authors name) be accepetd?
-
-Many thanks,
-Andrea
-
-References:
-
-- [1]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
-- [2]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
-- [3]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
-- [4]: https://lore.kernel.org/all/ba8cdf39-3ba3-4abc-98f5-d394d6867f95@gmx.net/
-- [5]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+-- 
+மணிவண்ணன் சதாசிவம்
 
