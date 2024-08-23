@@ -1,288 +1,215 @@
-Return-Path: <linux-kernel+bounces-298131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A98695C2D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4C595C2E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFDB283142
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:34:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FEB285495
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE4A1E4A4;
-	Fri, 23 Aug 2024 01:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnIgDhby"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33124B29;
+	Fri, 23 Aug 2024 01:39:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAB720314;
-	Fri, 23 Aug 2024 01:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D142F1755C;
+	Fri, 23 Aug 2024 01:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724376847; cv=none; b=JdjYmxjBJBsjslK5fqvOJQ3Zxkp4DnH8oQWuyE/hkgJ5b5+uGzRxAynhaHWsOzAuP/JZP3bis2SKuHgq9t/LGc3591ijkRKGpkroT9jWuiD6vQJvHcpX84RwsPLIVIuAA7QooXwVR2L6gct6/L8vQDLXHEw50qptPt5ldjHiNl8=
+	t=1724377186; cv=none; b=E/tIEKWRobg1MW7j/Umis5O2Ia7BOW/is3U6DVC83iMyb/zbJfPHbaO/OZF2j9kfpnUMMSdlnQmZyOSET25P65wVQG+qLylspusVnZS0l9QBb67T6a3fPqRoVfYBZNftANJDoubbekVzeoPmIJmmLLTpL/8amhMBU47Cg6yPl9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724376847; c=relaxed/simple;
-	bh=RkuvIMkclvFPD0SfbQ0lukE1nGNH6KOgpTMJO2EH9vE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Tv5MRQvVdH4mR83M4/+aG3BDwacDWhtg/DTALXTxg/CzdcEtOLthvRUDX3c2ValR2LeF09b4BKOPr08/sajx+RsRyOO9g86YZeAfIqz6WkMqNwhL5NVVva7Wo/OxxOtW6vmXO2xfK9QloVKE0Vgxy1DOD8OPmEBX/ei8b7zOBUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnIgDhby; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5dcad9845b4so1089858eaf.2;
-        Thu, 22 Aug 2024 18:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724376844; x=1724981644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1fH1Ho4GcX3EGjEBqcsALQduBlTVXsfPzay7ElzmRk=;
-        b=EnIgDhbycdT4gl+M+Xak78AzvDOiZ6cuele4jXfR+aluAIcFwxcWtNdkAHLbaPA9wL
-         bqx8w2tgajChhduUPfsgBZ7CN9KlkG4H1CJC7HR6xiGMdMoFLhSSuYO21RXT6cskUPKh
-         U8mr7PSGUewVbo2yEvlb7GynON00JTqKoXGuUJd8W/K1sFyrRxz24Iaxfg67cFSG/I5R
-         yQKC1uagtVkJ2gV9J2Vwsdqnw19rgMkIPxefGyU1bn5UcdCFwz+Ha5zx42pQt6+TURnO
-         Pfcn2iA/nRteqIEdTZNZlfglN04tro4W+UoxHT1JPRQcSwngWjp1BUMl/P2shJ47rFby
-         ag+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724376844; x=1724981644;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1fH1Ho4GcX3EGjEBqcsALQduBlTVXsfPzay7ElzmRk=;
-        b=gHPTUSxe++AN0FTZyUDFvnz5O/P8WbqwXuEsE0NXhv3sgLKAARQblP/vKWio8KuV1s
-         hA3IYX2am9W3ZFghmwgOIAGvO4vlSZUavVDcUYmZLWbhI6f8/G2UH/C8nyMgPz50ZL5o
-         9PZJqi6I0UucYhC+2nmayZnsnXNt/lE7VYUqnRoY97YHyNfKW4vMJu9gvUbxVZxsBVeK
-         BidCZYGxsxZdpjPV2aCZMh5tL8Q3InqjsUikxFsn3b1pPxfFJ42PUUrEgkT7SSy/p5wn
-         Nd/txo1xEf0cZ3s9zyBitDZgwUlQT/GCltFVD9mhWY4YCfKMo6pIn9955N36JHMWNqY0
-         vrtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH/Q26qsb9hM+99NUnvMvsQe9s+KtjMYKA70RHq2NDOC85H2yBfWv9xUIQuq8ugFy8gEI9ipVfVc6+P/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywtRF+HROfFqNeEI6cL2b3tekjSDxhYFe9F6hKwsP0rk1yVou2
-	xjdjfJPsgCHwTZSZ5iGq8tgJstkMCn2WPFoCZleBeqgF6Db1AnX/
-X-Google-Smtp-Source: AGHT+IEJUd/FoXCyRCHI7KTlM3uspFbNook0Fyprx5/XcBi2eKFkl+xtVR4pOYOY5o+3pBQ6IR9NXQ==
-X-Received: by 2002:a05:6358:7e53:b0:1a6:7e01:e4f4 with SMTP id e5c5f4694b2df-1b5c22e99e2mr110823955d.28.1724376844083;
-        Thu, 22 Aug 2024 18:34:04 -0700 (PDT)
-Received: from localhost.localdomain ([163.53.18.10])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad6e334sm1735781a12.84.2024.08.22.18.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 18:34:03 -0700 (PDT)
-From: zhangshida <starzhangzsd@gmail.com>
-X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn,
-	starzhangzsd@gmail.com,
-	Baolin Liu <liubaolin@kylinos.cn>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/2] ext4: fix a potential assertion failure due to improperly dirtied buffer
-Date: Fri, 23 Aug 2024 09:33:29 +0800
-Message-Id: <20240823013329.1996741-3-zhangshida@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240823013329.1996741-1-zhangshida@kylinos.cn>
-References: <20240823013329.1996741-1-zhangshida@kylinos.cn>
+	s=arc-20240116; t=1724377186; c=relaxed/simple;
+	bh=v/HA6AqybZOCybS77U+9o6ictMaHC1hErdyv37BrgTs=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=E6DGfzZ57qCR8/CqmS0JDIG+WieTeEzbbUPSyJMsCq+GJ/TXAWQFlEzMMymTL5hC7YZNynAplzcf8Ve4Ptg9WELq5ahUZxC7epRaukat3gUYXlBJ8GLs9eW9WR/Ave67XAY/6Hp1xmqBTCs6/w/u4Lm6sxEtYGmkJhDGQkj5BwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B4FC32782;
+	Fri, 23 Aug 2024 01:39:46 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1shJHn-00000003Zgb-06Bz;
+	Thu, 22 Aug 2024 21:40:19 -0400
+Message-ID: <20240823013902.135036960@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 22 Aug 2024 21:39:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ suleiman@google.com,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ David Howells <dhowells@redhat.com>,
+ Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Tony Luck <tony.luck@intel.com>,
+ Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>,
+ Kees Cook <keescook@chromium.org>,
+ Alexander Aring <aahringo@redhat.com>,
+ "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>,
+ Clark Williams <williams@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Jonathan Corbet" <corbet@lwn.net>
+Subject: [PATCH 0/5] tracing: Allow trace_printk() to use the persistent ring buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Shida Zhang <zhangshida@kylinos.cn>
+[ Take-two because I had an extra comma at the end of my Cc list
+  for sending via quilt ]
 
-On an old kernel version(4.19, ext3, data=journal, pagesize=64k),
-an assertion failure will occasionally be triggered by the line below:
------------
-jbd2_journal_commit_transaction
-{
-...
-J_ASSERT_BH(bh, !buffer_dirty(bh));
-/*
-* The buffer on BJ_Forget list and not jbddirty means
-...
-}
------------
+While debugging the rtla and timerlat issue[1], I started using
+trace_printk() to see what was happening as the task_struct was randomly
+being corrupted. But the reproducer to this bug would cause a kernel crash.
+I wanted to try the new persistent ring buffer (which has not been merged
+yet), to debug this. As I was using trace_printk(), I needed the
+trace_printk() to write into this buffer.
 
-The same condition may also be applied to the lattest kernel version.
+trace_printk() currently only writes into the top trace buffer, and I didn't
+want to use the trace_array_printk() for this, as it seemed too clunky.
+Instead, I wrote up this patch series that allows an instance created on the
+kernel command line to be used as the trace_printk destination buffer.
 
-When blocksize < pagesize and we truncate a file, there can be buffers in
-the mapping tail page beyond i_size. These buffers will be filed to
-transaction's BJ_Forget list by ext4_journalled_invalidatepage() during
-truncation. When the transaction doing truncate starts committing, we can
-grow the file again. This calls __block_write_begin() which allocates new
-blocks under these buffers in the tail page we go through the branch:
+To accomplish this, I needed a way to add an option to the trace_instance
+command line. I created "flags" to modify the trace instance after it is
+created. If the trace_instance has a "^<flag>" in its name, it is parsed as
+a flag.
 
-                        if (buffer_new(bh)) {
-                                clean_bdev_bh_alias(bh);
-                                if (folio_test_uptodate(folio)) {
-                                        clear_buffer_new(bh);
-                                        set_buffer_uptodate(bh);
-                                        mark_buffer_dirty(bh);
-                                        continue;
-                                }
-                                ...
-                        }
+  reserve_mem=12M:4096:trace  trace_instance=boot_map^traceprintk@trace
 
-Hence buffers on BJ_Forget list of the committing transaction get marked
-dirty and this triggers the jbd2 assertion.
+The "^traceprintk" would tell the kernel to use the boot_map instance as the
+location of the trace_printk(). Now when the kernel crashed, the boot
+instance would have the trace_printk() output.
 
-Teach ext4_block_write_begin() to properly handle files with data
-journalling by avoiding dirtying them directly. Instead of
-folio_zero_new_buffers() we use ext4_journalled_zero_new_buffers() which
-takes care of handling journalling. We also don't need to mark new uptodate
-buffers as dirty in ext4_block_write_begin(). That will be either done
-either by block_commit_write() in case of success or by
-folio_zero_new_buffers() in case of failure.
+Note, when I first did this, the kernel crashed when reading the boot
+buffer, as the trace_printk() would default into using the trace_bprintk()
+which saves the pointer to the format string and the raw arguments in the
+buffer. On reading it, it would try to read the pointer where the format
+string was located at in the previous kernel and crashed. To solve this, I
+added a flag to the trace_array to denote that it is a boot trace buffer,
+and if it is set, then the binary trace_printks will call the version that
+does the formatting before adding it to the buffer. This may be slightly
+slower, but it's safer.
 
-Reported-by: Baolin Liu <liubaolin@kylinos.cn>
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
----
- fs/ext4/ext4.h   |  3 ++-
- fs/ext4/inline.c |  7 ++++---
- fs/ext4/inode.c  | 30 ++++++++++++++++++++++--------
- 3 files changed, 28 insertions(+), 12 deletions(-)
+I also noticed that using trace_printk() in the boot buffer, it would write
+to the buffer on the boot after the crash. This caused events to be listed
+in the buffer to be mixed between two kernels, and it was really confusing
+to read. I added another boot time flag to have the tracing instance boot
+with tracing disabled.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 5f8257b68190..b653bd423b11 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3851,7 +3851,8 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
- 	return buffer_uptodate(bh);
- }
- 
--extern int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
-+extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
-+				  loff_t pos, unsigned len,
- 				  get_block_t *get_block);
- #endif	/* __KERNEL__ */
- 
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 0a1a8431e281..8d5599d5af27 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -601,10 +601,11 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
- 		goto out;
- 
- 	if (ext4_should_dioread_nolock(inode)) {
--		ret = ext4_block_write_begin(folio, from, to,
-+		ret = ext4_block_write_begin(handle, folio, from, to,
- 					     ext4_get_block_unwritten);
- 	} else
--		ret = ext4_block_write_begin(folio, from, to, ext4_get_block);
-+		ret = ext4_block_write_begin(handle, folio, from, to,
-+					     ext4_get_block);
- 
- 	if (!ret && ext4_should_journal_data(inode)) {
- 		ret = ext4_walk_page_buffers(handle, inode,
-@@ -856,7 +857,7 @@ static int ext4_da_convert_inline_data_to_extent(struct address_space *mapping,
- 			goto out;
- 	}
- 
--	ret = ext4_block_write_begin(folio, 0, inline_size,
-+	ret = ext4_block_write_begin(NULL, folio, 0, inline_size,
- 				     ext4_da_get_block_prep);
- 	if (ret) {
- 		up_read(&EXT4_I(inode)->xattr_sem);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 6b15805ca88b..4c34827da56e 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -49,6 +49,11 @@
- 
- #include <trace/events/ext4.h>
- 
-+static void ext4_journalled_zero_new_buffers(handle_t *handle,
-+					    struct inode *inode,
-+					    struct folio *folio,
-+					    unsigned from, unsigned to);
-+
- static __u32 ext4_inode_csum(struct inode *inode, struct ext4_inode *raw,
- 			      struct ext4_inode_info *ei)
- {
-@@ -1041,7 +1046,8 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
- 	return ret;
- }
- 
--int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
-+int ext4_block_write_begin(handle_t *handle, struct folio *folio,
-+			   loff_t pos, unsigned len,
- 			   get_block_t *get_block)
- {
- 	unsigned from = pos & (PAGE_SIZE - 1);
-@@ -1055,6 +1061,7 @@ int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
- 	struct buffer_head *bh, *head, *wait[2];
- 	int nr_wait = 0;
- 	int i;
-+	bool should_journal_data = ext4_should_journal_data(inode);
- 
- 	BUG_ON(!folio_test_locked(folio));
- 	BUG_ON(from > PAGE_SIZE);
-@@ -1083,11 +1090,11 @@ int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
- 			err = get_block(inode, block, bh, 1);
- 			if (err)
- 				break;
-+			if (should_journal_data)
-+				do_journal_get_write_access(handle, inode, bh);
- 			if (buffer_new(bh)) {
- 				if (folio_test_uptodate(folio)) {
--					clear_buffer_new(bh);
- 					set_buffer_uptodate(bh);
--					mark_buffer_dirty(bh);
- 					continue;
- 				}
- 				if (block_end > to || block_start < from)
-@@ -1117,7 +1124,11 @@ int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
- 			err = -EIO;
- 	}
- 	if (unlikely(err)) {
--		folio_zero_new_buffers(folio, from, to);
-+		if (should_journal_data)
-+			ext4_journalled_zero_new_buffers(handle, inode, folio,
-+							 from, to);
-+		else
-+			folio_zero_new_buffers(folio, from, to);
- 	}
- #ifdef CONFIG_FS_ENCRYPTION
- 	else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-@@ -1218,10 +1229,11 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
- 	folio_wait_stable(folio);
- 
- 	if (ext4_should_dioread_nolock(inode))
--		ret = ext4_block_write_begin(folio, pos, len,
-+		ret = ext4_block_write_begin(handle, folio, pos, len,
- 					     ext4_get_block_unwritten);
- 	else
--		ret = ext4_block_write_begin(folio, pos, len, ext4_get_block);
-+		ret = ext4_block_write_begin(handle, folio, pos, len,
-+					     ext4_get_block);
- 	if (!ret && ext4_should_journal_data(inode)) {
- 		ret = ext4_walk_page_buffers(handle, inode,
- 					     folio_buffers(folio), from, to,
-@@ -2954,7 +2966,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
- 	if (IS_ERR(folio))
- 		return PTR_ERR(folio);
- 
--	ret = ext4_block_write_begin(folio, pos, len, ext4_da_get_block_prep);
-+	ret = ext4_block_write_begin(NULL, folio, pos, len,
-+				     ext4_da_get_block_prep);
- 	if (ret < 0) {
- 		folio_unlock(folio);
- 		folio_put(folio);
-@@ -6208,7 +6221,8 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 		if (folio_pos(folio) + len > size)
- 			len = size - folio_pos(folio);
- 
--		err = __block_write_begin(&folio->page, 0, len, ext4_get_block);
-+		err = ext4_block_write_begin(handle, folio, 0, len,
-+					     ext4_get_block);
- 		if (!err) {
- 			ret = VM_FAULT_SIGBUS;
- 			if (ext4_journal_folio_buffers(handle, folio, len))
--- 
-2.33.0
+  trace_instance=boot_map^traceoff^traceprintk@trace
 
+With this, and enabling the printk console trace event in the boot buffer, I
+got nice traces like this:
+
+ # trace-cmd start -B boot_map -e printk
+ # <run test to crash kernel>
+[CRASH / REBOOT ]
+ # trace-cmd show -B boot_map
+[..]
+          <idle>-0       [004] dNh1.    45.277163: timerlat_irq: exit timer no restart
+           <...>-910     [007] ....1    45.277201: wait_next_period.isra.0: hrtimer start ffff88823c7b5b28
+           <...>-907     [004] ....1    45.277206: wait_next_period.isra.0: hrtimer start ffff88823c635b28
+           <...>-905     [003] ....1    45.277240: timerlat_fd_release: OSN_VAR KTHREAD [3] timerlatu/3:905 ffff88810d5f4500
+           <...>-920     [003] .....    45.277316: stop_kthread: kill timerlatu/3:905 ffff88810d5f4500
+           <...>-920     [003] .....    45.277348: stop_kthread: OSN_VAR KTHREAD [4] timerlatu/4:907 ffff8881104ae780
+           <...>-920     [003] .....    45.277357: stop_kthread: kill timerlatu/4:907 ffff8881104ae780
+           <...>-920     [003] .....    45.277358: stop_kthread: OSN_VAR KTHREAD [5] timerlatu/5:908 ffff8881104aa280
+           <...>-920     [003] .....    45.277365: stop_kthread: kill timerlatu/5:908 ffff8881104aa280
+           <...>-920     [003] .....    45.277367: stop_kthread: OSN_VAR KTHREAD [6] timerlatu/6:909 ffff8881104ab3c0
+           <...>-920     [003] .....    45.277375: stop_kthread: kill timerlatu/6:909 ffff8881104ab3c0
+           <...>-920     [003] .....    45.277377: stop_kthread: OSN_VAR KTHREAD [7] timerlatu/7:910 ffff8881104a9140
+           <...>-920     [003] .....    45.277386: stop_kthread: kill timerlatu/7:910 ffff8881104a9140
+           <...>-909     [006] d.h1.    45.277556: timerlat_irq: enter timer
+           <...>-909     [006] d.h1.    45.277561: timerlat_irq: exit timer no restart
+           <...>-908     [005] d.h1.    45.277919: timerlat_irq: enter timer
+           <...>-908     [005] d.h1.    45.277923: timerlat_irq: exit timer no restart
+           <...>-907     [004] d.h1.    45.278080: timerlat_irq: enter timer
+           <...>-910     [007] d.h1.    45.278081: timerlat_irq: enter timer
+           <...>-907     [004] d.h1.    45.278083: timerlat_irq: exit timer no restart
+           <...>-910     [007] d.h1.    45.278084: timerlat_irq: exit timer no restart
+           <...>-1       [002] d..1.    45.278665: console: ==================================================================
+           <...>-1       [002] d..1.    45.280870: console: BUG: KASAN: slab-use-after-free in proc_pid_lookup+0xbf/0x210
+           <...>-1       [002] d..1.    45.282876: console: Write of size 4 at addr ffff88810d5f4528 by task systemd/1
+           <...>-1       [002] d..1.    45.284781: console: 
+           <...>-1       [002] d..1.    45.285295: console: CPU: 2 UID: 0 PID: 1 Comm: systemd Not tainted 6.11.0-rc3-test-00027-g014f473a3416-dirty #124 e44bf2780799707baf299f82ac321c3be7495d33
+           <...>-1       [002] d..1.    45.289265: console: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+           <...>-1       [002] d..1.    45.292001: console: Call Trace:
+           <...>-1       [002] d..1.    45.292764: console:  <TASK>
+           <...>-1       [002] d..1.    45.293441: console:  dump_stack_lvl+0x53/0x70
+           <...>-1       [002] d..1.    45.294575: console:  print_report+0xc6/0x640
+           <...>-1       [002] d..1.    45.295672: console:  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+           <...>-1       [002] d..1.    45.297182: console:  ? proc_pid_lookup+0xbf/0x210
+           <...>-1       [002] d..1.    45.298407: console:  kasan_report+0xc6/0x100
+           <...>-1       [002] d..1.    45.299496: console:  ? proc_pid_lookup+0xbf/0x210
+           <...>-1       [002] d..1.    45.300707: console:  kasan_check_range+0xf4/0x1a0
+           <...>-1       [002] d..1.    45.301931: console:  proc_pid_lookup+0xbf/0x210
+[..]
+
+And I was able to easily debug the situation.
+
+Now that I have an easy way to make the trace_printk() write to any
+instance, I decided to add a run time option to the instances to tell them
+to be the destination to the trace_printk(). That is, you don't need to add
+a kernel command line to make the trace_printk() write to an instance. All
+you need to do is set the trace_printk_dest option in the instance (note,
+the trace_printk option was already taken at the top level that can be used
+to disable trace_printk). Only one instance is allowed to be the
+trace_printk destination, so setting this flag in one instance will clear it
+in another. Also, an instance must always be the destination of the
+trace_printk() function, so clearing the flag in any instance will
+automatically cause the top level instance to be set. Trying to clear the
+flag of the top level instance will return -EINVAL.
+
+  echo 1 > /sys/kernel/tracing/instances/boot_map/options/trace_printk_dest
+
+With all these fun new ways to debug the kernel, I figured it's about time
+to start adding it to the Documentation directory. I created a debugging.rst
+file in Documentation/trace, that is the start of adding techniques in using
+tracing to debug your kernel.
+
+[1] https://lore.kernel.org/all/20240821160316.02c03c44@gandalf.local.home/
+
+These patches are based on top of:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+     for-next
+
+
+Steven Rostedt (5):
+      tracing: Add "traceoff" flag to boot time tracing instances
+      tracing: Allow trace_printk() to go to other instance buffers
+      tracing: Have trace_printk not use binary prints if boot buffer
+      tracing: Add option to set an instance to be the trace_printk destination
+      tracing/Documentation: Start a document on how to debug with tracing
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |  23 ++++
+ Documentation/trace/debugging.rst               | 159 ++++++++++++++++++++++++
+ Documentation/trace/ftrace.rst                  |  12 ++
+ kernel/trace/trace.c                            | 127 ++++++++++++++++---
+ kernel/trace/trace.h                            |   4 +-
+ kernel/trace/trace_output.c                     |   5 +-
+ 6 files changed, 313 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/trace/debugging.rst
 
