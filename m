@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-299148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBC295D0F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D18E95D12B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE758283FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:06:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78285B2CB66
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8581E188A32;
-	Fri, 23 Aug 2024 15:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599AA192598;
+	Fri, 23 Aug 2024 15:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K0mgXezE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfF8QuhD"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040CA188931;
-	Fri, 23 Aug 2024 15:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120B2192588
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425518; cv=none; b=E+qhcFFAOhn0sCuDHANuUxgG6TIQ4FZwVf/ESL/m+C2IKfY2W72Nf8o8eeF+gaNrvjWF+wQJ/h/d5woK2N8IxxOjeO2MUr7xrzBYE1YQCQMoWOdNFt93UQRg5Vfdbdk7wh7kyB/ykExAnH4qOkJE9UxFWd0RGmjmQExrbO6dAYE=
+	t=1724425634; cv=none; b=ppAx1t6f/6nI7NovRAqElW6g7KXk1EM4hPlP4hmS8bwcppFNJvxtFXmh/bbdqkIXNYENKH7rhuDkV/qfzHvRj/vEJ9UmGhSCNPlor6bgUjsNA9OnX4/Pgz6eYqg1fwXYQ/uCwKRcVfgmL2tUCxAjbopN5SPe5W0D6+DofpquuGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425518; c=relaxed/simple;
-	bh=8HxekA/tIQ3ueiwSzfQMxkCxyPVBq2maRhM23NvBn9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcR+WF8BLqfOzD2SVF2yOWSQFQOodlVfGv5ej682hDGBcrMFfI+kLguxi/J73C4aC9Ix7Sl7SvZKsmErBtMNzfo8gaXAr69BPVYesczkNv0EEH+7w9WGdUYcL7y+3vH0Yh1HAUKXmcPc7VJTf3Bn858faMsnAd556v27S+7+ohg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K0mgXezE; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724425517; x=1755961517;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8HxekA/tIQ3ueiwSzfQMxkCxyPVBq2maRhM23NvBn9I=;
-  b=K0mgXezEBQnzxtNPb5slg090amI60pk6bDPLAE1gBckYo788997qHZH5
-   qE22nJ6YilsMxc5Uk8pgKftt7xzJ20aGnUVgCqeBRajBoQm6ey83AStzc
-   cgOReiZEfh4bu9nt4XofD/hanf2k8Vc3SCwzB2iusIhFHBPONtYjEg97w
-   Y7v0iUKQvxbWNvKd1Ls9b8ZuvgR/9+b8KNAdPNRrX8wsSA0/fCpIA9qdQ
-   i3xe0BN8XDoh6VQQdfLX0qzXeBt8BqTU8Gk4C2RBilH3NX+Bb7Ackca0/
-   3TQCDX3vymuWNaZAbwrrg9dagLn5mHZRNAcIcf2dRB1RztogjC268Hdhb
-   g==;
-X-CSE-ConnectionGUID: BMLkCfH+RT6CrkSSxK21Mg==
-X-CSE-MsgGUID: NNqfmn2BTuG+/dpULtN6rg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26767125"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="26767125"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 08:05:15 -0700
-X-CSE-ConnectionGUID: Pdy/4ySgRDmc8rGncZm8qA==
-X-CSE-MsgGUID: HeWWgZQGTlGdVZ7/pKQpqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="66141593"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 08:05:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shVqf-00000000pUQ-3d9q;
-	Fri, 23 Aug 2024 18:05:09 +0300
-Date: Fri, 23 Aug 2024 18:05:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v2] gpio: rockchip: support new version gpio
-Message-ID: <ZsilJZS2_Kvyhs1S@smile.fi.intel.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-9-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724425634; c=relaxed/simple;
+	bh=Trk7kRqz9cwbWgyymtr7L+zIg0BtyDTU0ddlg39/M8Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LmtYWNjzuRbI3dxpgI+0h5QgC2bg8NDLgv0CamVOl/NIh1DOhIzKXTSUjwo7FTNIqDlHw5dYEaHjWkDYktqMRnbLZUkHXepi1TuOPGmZhY0CjxaZ5eeTyJqvq+QAbvqMiocnXrH81eOuZfbn+Fb0QZ9KuEip38lmcfbjokOkXsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfF8QuhD; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so5503037a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724425631; x=1725030431; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hN/u/MQcY1xAjLL8Hjod4ME8opqYEyKjoXDkSbZQ89U=;
+        b=OfF8QuhDYZaK3jb7P2cy+ds3AvlyoKwcRPCJZBT0L9Lb3ebLnk6Xe7WpUdG8X0/bD/
+         9hvBAwyjEEGXCujhoutTwHcJ5/GD0KKq40K/I2Hc5iphFVauH40Ly+hN4pOXU9To89ia
+         OGMDqthDiVYsAj4DIzQ3DiPD3wsr2op4Sfk7Tf89RQhYD6iHwfGkiGfLo5mtZBis1QQf
+         qpn1fpBHCu5n32K/g/JZZ0jNW+wIq2Y7ksbgkCSnV2TmO0+rrtdHGvi3fET9IhHBClux
+         g6/VcBtDWYnZoGPxObaBwt1xikDya21bfrBr6s2PUMcFcSgIJvrjy/htOmBnLaVWoYFk
+         LCNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724425631; x=1725030431;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hN/u/MQcY1xAjLL8Hjod4ME8opqYEyKjoXDkSbZQ89U=;
+        b=AgoIcV6cb6rV9zSKgelklkhEt6VbzeDJPFXCltrucOPcyItrHUUberTQn0u8j19Mdl
+         bqcnSf5f6SPC0ivssYbDmDMxQjKxBG+4Qth8PCQX04J11TKqVSlUnqVRYLt0B7y50qaz
+         zN9nbvl5RextCrMzJJBlXuWCZC6ONIgeFmVapa6Yvcn63U8+Yp77ZAo1rJ7hh+J4ljLQ
+         +VvnmSC1cv/LNtyvE0i+Sf4AK/lbRlWm8elRV0HOJFvB6K51r+RZLmDtd18PAUuVzG7i
+         +Sye0aodkLQLTfQvuFVczJY9LqBTw62tMltByxnEJ7Si98Ui30QvgkZ9maf+JQcuJcNT
+         VX4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZlTjH933EwpoBuh0UyrrU8qXGDRzVtQCsiaSGIrs2/qNbUm2hPkPTuIiSc6GV1k9Cb6YX+8wq+EfCcE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUv0fNDMK9eG9oRq1NB96BDhqyLCEV7vFI1JSIH2RM+kC+2vM4
+	1embDHsZZHOxs6thCUTGIj3P9IpBSlPrgBbRFjYRogaG3VEDd89P
+X-Google-Smtp-Source: AGHT+IFyl+aF9R5RuSf+qHazg+rk9eimRMeCf57k838qIezH0l6uUevQOGnLjaOijBOPiJBcMEhZXQ==
+X-Received: by 2002:a17:907:724a:b0:a86:94cd:97f0 with SMTP id a640c23a62f3a-a86a2fae4f0mr277662266b.19.1724425631009;
+        Fri, 23 Aug 2024 08:07:11 -0700 (PDT)
+Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2e48e2sm269559166b.89.2024.08.23.08.07.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Aug 2024 08:07:10 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823034314.62305-9-ye.zhang@rock-chips.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <ZsiLElTykamcYZ6J@casper.infradead.org>
+Date: Fri, 23 Aug 2024 17:06:58 +0200
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Yosry Ahmed <yosryahmed@google.com>,
+ Nhat Pham <nphamcs@gmail.com>,
+ Linux-MM <linux-mm@kvack.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Fri, Aug 23, 2024 at 11:43:11AM +0800, Ye Zhang wrote:
-> The next version gpio controller on SoCs like rk3576 which support four
-> OS operation and four interrupts
 
-...
 
->  #define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
->  #define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
-> +#define GPIO_TYPE_V2_2		(0x010219C8)  /* GPIO Version ID 0x010219C8 */
+> Wiadomo=C5=9B=C4=87 napisana przez Matthew Wilcox =
+<willy@infradead.org> w dniu 23.08.2024, o godz. 15:13:
+>=20
+> I wouldn't be surprised if this were dodgy ram.
 
-These needs a bit of decoding. As far as I can decipher these it's something like
 
-0x01 00 00 00 ???
+Well - that was my initial hypothesis.
 
-0x00 xx 00 00 // seems like a subversion, 2.xx
+in fact i had few of them. Ranked (and ordered) like this:
+1. downstream kernel patches
+2. hw (ram) issue
+3. kernel bug
 
-0x00 00 xx xx // seems like a release which is
+So full history was:
+-build myself archlinux 6.10.2 kernel; upgrade builder OS (only kernel; =
+nothing else)
+-run normal devel process and (to my surprise) discover interrupted =
+CI/CD builds by kernel oops
+-downgrade to 6.8.2 and done 4 full builds (full takes 8..9h of constant =
+12c/24/t compile). all good. =20
+-prepare vanilla 6.10.6 (to exclude potential downstream (ArchLinux) =
+root causes)
+-run normal devel process and still discover oops
+-make sure hw is ok by week of test with 6.8.2 (recompiling for 3 =
+architectures on 4 OS (3 in kvm). This was almost 5 full days of 12c/24 =
+compiling. All good
+-because last steep was all good - decide to go to you :-)
 
-3115
-5500
-6600
+sure - this is possible that 6.8.2 had luck with my ram and 6.10.6 had =
+no luck=E2=80=A6.but i personally don=E2=80=99t believe this is a =
+case=E2=80=A6.    =20
 
-in decimal representation.
-
-But again, can you make the comments better explaining these cryptic 4-byte
-values?
-
-With that done it might be better approach to check the version of the IP.
-
-...
-
-> +	switch (id) {
-> +	case GPIO_TYPE_V2:
-> +	case GPIO_TYPE_V2_1:
->  		bank->gpio_regs = &gpio_regs_v2;
->  		bank->gpio_type = GPIO_TYPE_V2;
-> -	} else {
-> +		break;
-> +	case GPIO_TYPE_V2_2:
-> +		bank->gpio_regs = &gpio_regs_v2;
-> +		bank->gpio_type = GPIO_TYPE_V2_2;
-> +		break;
-> +	default:
->  		bank->gpio_regs = &gpio_regs_v1;
->  		bank->gpio_type = GPIO_TYPE_V1;
-> +		pr_info("Note: Use default GPIO_TYPE_V1!\n");
-
-Missed break;
-
->  	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+btw: we can go with elimination strategy.
+So what i need to change/disable to be closer to finding root cause?
+swap?
+now it is swapfile on system nvme
 
 
