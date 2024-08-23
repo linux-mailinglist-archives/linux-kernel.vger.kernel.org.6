@@ -1,312 +1,192 @@
-Return-Path: <linux-kernel+bounces-298931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0E95CD9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2553695CDA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB2E1F23A42
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580E21C228A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7768F1E4B2;
-	Fri, 23 Aug 2024 13:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC54186616;
+	Fri, 23 Aug 2024 13:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggaQ1qHV"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="g0HtSX6i"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5FF186611
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419089; cv=none; b=EAx/mOfpt1Ks4LNDxpZLOU5FsNNfkpf1fzxCnu93+M0twaaID1847JcqDJ2leefOwRaIYYPornPnUtBGsPO+BUttYkIUqZAEtbba30v8NHKAVsZuVJOaOarasRobakKeaFMmbHM7jDyiNP/+2wZ4yE0xlfyvj7L4iXJqDIRF22Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419089; c=relaxed/simple;
-	bh=ptNVNaTrQaw1PgLfgnyMXqlQlcvpy/Dg2kkBK8KHcKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jGmAbXS1YRkUk9z9/0dc2XPsNHktv6dZyt7k7TvLdtyTUarBxhIg9/muyz0kzwa57fKiIDorzBO0cNmDpxgHEHfggluNVSVIsW2KDU6m17DhNIVi4rIk0psuEtaQQMwuJoNmhlFrALWONQ/o9ZUVa1/Js3Sgoya5OKRD3SCpXo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggaQ1qHV; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so196135a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:18:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724419087; x=1725023887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4FM9Xtx1WVTxxu5XGhVbKBrKZgXpEQzHjuRapKL7d44=;
-        b=ggaQ1qHVJAMZOBqj7fX3uGBtkoridDZp5EkoEEjUENeIxD/rXpNafV9AoARYt84iD+
-         wN10T1wLY7sPZJKF82Gsvwnfc3IMf9eWoAu6ilWYzxdYFifAbxJVvt/OddufN2JSZGnt
-         i6qb+xCKgbsekxrdMglFki5aizJeUUv024V7+u0lbF5URTxkzLXxboMRzviRH//ykWN4
-         /SIPT28qp/xTcbHxESH3zgplwCb5ghnfbDrXbP2b080hO1Y/ZpHMcDna2TkrXNwQHdBZ
-         OznN0yXTsQ2SBrik027IqbtNMy12agGloFIeOalr9Ho0RD1R58gNdfbqZi01eoFvzIl7
-         C6CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724419087; x=1725023887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4FM9Xtx1WVTxxu5XGhVbKBrKZgXpEQzHjuRapKL7d44=;
-        b=mIMV7r+MUwP9DxKeZKmWydlYQlt0vmsvsKR4TnWUJxBZVHYkM/oMStPGhU78tQJH9q
-         c9DMoKbWgY/+uMUSAMCLaJBUflU8/A+FrdLCbOLLb24QgwPYQCnH2PLGKC5WZ1XRyyNa
-         M2cIfU+jsrR+K/mu6jVqPMMK6l8Kw68RILrDIH18aHModVtqOUTZhortAngEq4O1CBLb
-         oZwO//LbBFysfnUNkaYfzPwnAUcFkIiczjzZ2IbYAx+Lgpo7wbL+H2b29ftxYbHNnEBW
-         P94QMHznSttKPj0CmcbrDemDRw6mL3iMty8WEww775PKxld3ii3iwv+5hC8IuM1XtLvD
-         rewQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyYp9BFHB/rVx+ZjAMN36i2xP4S9uyctxpznB6/CXH0QtQ7DZHFxV3KaYVhsZq6cpYRQL8Am3KdhKx1Nk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPa/Jynl1MgmrQIkaAE0RsxS5BI3h7sloAuSi0iT5GTdOl9W9J
-	YhEm7ETQxB6I50gvRQ3St/CUVe6uQtrOi1lqaHzSLrDYOgxZEJ8xpGoJ0nEc30rxhUgA0VnnDKs
-	eNjJF0GDTsJVGYRheBCSmirJxVSg=
-X-Google-Smtp-Source: AGHT+IGGPjPiBjhx/igIgyFZnU5cMDgr5uKwT3YNr6Sp+5Qeksl9DoGAOkexFul1FA5+sXrmVo5msKSxq7/5owzoMFw=
-X-Received: by 2002:a17:902:f68d:b0:202:401f:ec8d with SMTP id
- d9443c01a7336-2039e6e6159mr12905495ad.11.1724419086888; Fri, 23 Aug 2024
- 06:18:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3076F18562A;
+	Fri, 23 Aug 2024 13:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724419183; cv=pass; b=ciD03yCrPDZXJ2867FuT6VA4fSlSpB6U+8b9rPc+M9hHbhEo8Xgn2DQ86rjD364wiNqj6lQqR5lcnu/qzlfxMSf+TCteIBFjbQ6LI63o27fKniHjfnHnzZc6vNSDffeefBTWo+upLoDe4p38da+vT6VbLiYptuhF4A/q9q8E62Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724419183; c=relaxed/simple;
+	bh=Vy6+x51p1S7kTEcTlXe6/7SsOO5i45PUg87sjGHGunE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SxzXw8BETrX4dzg40BhgaYc86XusL3oH56fFviw3q70n8nv3rr7LY+EuHsu1vnT82N0jwGbsiqvptzM2foKqgy9FfgyRWF5VONbr9Phsf6ERmxP1pQUcJYmg1q86fixvaNuZFXZGrBKh+gKk5bK1cnKdkMmE8aBqFvMVl9IYraU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=g0HtSX6i; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724419152; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CP6mR9nhLYaIveKpyLaeZ46q9sUT63lbSfiMIuaWfs7yx9M+FNNim+JoIotArBcgoed75YdHxptkraEtr19QO/CcqQArxJfW93c3amEoan5N/e/2pu1AsDKlPd6KKbMPLyvqkRzPPQPHjj5LMHrCtzV0dWyrkprbdJF5aUalctw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724419152; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hZhy927uMS7MJX4gbRwhbG85sBlv12sTezrKNZF+Sjo=; 
+	b=a6JpAMOErhsOFMfZlM+H4x08BtZKGRkFsCGjhOiu3744h0qPwB4XIgU7hEEFkPdWm20KoJwNqK5sS4/v6xrzvuwa5weoFH5ICsohdVfuQvdoqMzod0YuzHhfSfEvHUXxnkI8mr/63f6w8AS2WL8TRBdTU5IWrf9EKSHXKkzLAIw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724419152;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=hZhy927uMS7MJX4gbRwhbG85sBlv12sTezrKNZF+Sjo=;
+	b=g0HtSX6iROSiuef6fVy/H2/AVyaw27pgU7AiuzuYnBVDsvfDHPdrlums9H7gC0tQ
+	PjS2YqPH00fG1/6Dha5knVdpJy9nUnISGH3CSCb3gE1LioE1z+x0hzBizXynA7a2Nwm
+	SnjueHAAxM5G9HSRGeXZj03yVaWJKXNV4GFcKe8M=
+Received: by mx.zohomail.com with SMTPS id 1724419149648671.8521035840524;
+	Fri, 23 Aug 2024 06:19:09 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
+Date: Fri, 23 Aug 2024 09:20:50 -0400
+Message-ID: <5808226.DvuYhMxLoT@trenzalore>
+In-Reply-To: <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
+References:
+ <20240822212418.982927-1-detlev.casanova@collabora.com>
+ <20240822212418.982927-5-detlev.casanova@collabora.com>
+ <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823091803.3452513-1-11162571@vivo.com>
-In-Reply-To: <20240823091803.3452513-1-11162571@vivo.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 23 Aug 2024 09:17:55 -0400
-Message-ID: <CADnq5_PhMMT1-Xex5eW2unNkhU1gjuEvd9V7PRYfOb+dKJOwNg@mail.gmail.com>
-Subject: Re: [PATCH v2] drivers:smumgr:fix up the misspellings
-To: Yang Ruibin <11162571@vivo.com>
-Cc: Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Fri, Aug 23, 2024 at 5:30=E2=80=AFAM Yang Ruibin <11162571@vivo.com> wro=
-te:
->
-> Hightest is a typo.  It should be highest.Please ensure
-> the consistency of variable naming.
->
-> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> ---
-> Changes V2:
-> - Replaced the word "hightest_pcie_level_enabled" with "hightest_pcie_lev=
-el_enabled".
-> ---
->  .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c    | 16 ++++++++--------
->  .../amd/pm/powerplay/smumgr/polaris10_smumgr.c   | 16 ++++++++--------
->  .../drm/amd/pm/powerplay/smumgr/vegam_smumgr.c   | 16 ++++++++--------
->  3 files changed, 24 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/driv=
-ers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> index 5e43ad2b2..e16efc44d 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> @@ -1014,7 +1014,7 @@ static int fiji_populate_all_graphic_levels(struct =
-pp_hwmgr *hwmgr)
->         struct SMU73_Discrete_GraphicsLevel *levels =3D
->                         smu_data->smc_state_table.GraphicsLevel;
->         uint32_t i, max_entry;
-> -       uint8_t hightest_pcie_level_enabled =3D 0,
-> +       uint8_t hightest_pcie_level_enabled =3D 0,
+Hi Dragan,
 
-This looks like this one didn't get updated properly.
+On Friday, 23 August 2024 03:00:57 EDT Dragan Simic wrote:
+> Hello Detlev,
+> 
+> Please see a comment below.
+> 
+> On 2024-08-22 23:15, Detlev Casanova wrote:
+> > On rk3576 the tunable clocks are inside the controller itself, removing
+> > the need for the "ciu-drive" and "ciu-sample" clocks.
+> > 
+> > That makes it a new type of controller that has its own dt_parse
+> > function.
+> > 
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
+> >  1 file changed, 43 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
+> > b/drivers/mmc/host/dw_mmc-rockchip.c
+> > index 1458cb5fd5c7..7c8ccf5e71bc 100644
+> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+[...]
+> > @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci
+> > *host)
+> > 
+> >  	if (IS_ERR(priv->sample_clk))
+> >  	
+> >  		dev_dbg(host->dev, "ciu-sample not available\n");
+> > 
+> > -	host->priv = priv;
+> > -
+> > 
+> >  	priv->internal_phase = false;
+> >  	
+> >  	return 0;
+> >  
+> >  }
+> > 
+> > +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
+> > +{
+> > +	struct dw_mci_rockchip_priv_data *priv;
+> > +	int err = dw_mci_common_parse_dt(host);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	priv = host->priv;
+> > +
+> > +	priv->internal_phase = true;
+> 
+> Defining priv, assigning it and using it seems rather redundant,
+> when all that's needed is simple "host->priv->internal_phase = true"
+> assignment instead.
 
-Alex
+Yes, that's what I did at first, but host->priv is declared as void*, which 
+means it needs to be cast to struct dw_mci_rockchip_priv_data * and I felt 
+that 
 
->                         lowest_pcie_level_enabled =3D 0,
->                         mid_pcie_level_enabled =3D 0,
->                         count =3D 0;
-> @@ -1054,27 +1054,27 @@ static int fiji_populate_all_graphic_levels(struc=
-t pp_hwmgr *hwmgr)
->         } else {
->                 while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &=
-&
->                                 ((data->dpm_level_enable_mask.pcie_dpm_en=
-able_mask &
-> -                                               (1 << (hightest_pcie_leve=
-l_enabled + 1))) !=3D 0))
-> -                       hightest_pcie_level_enabled++;
-> +                                               (1 << (highest_pcie_level=
-_enabled + 1))) !=3D 0))
-> +                       highest_pcie_level_enabled++;
->
->                 while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &=
-&
->                                 ((data->dpm_level_enable_mask.pcie_dpm_en=
-able_mask &
->                                                 (1 << lowest_pcie_level_e=
-nabled)) =3D=3D 0))
->                         lowest_pcie_level_enabled++;
->
-> -               while ((count < hightest_pcie_level_enabled) &&
-> +               while ((count < highest_pcie_level_enabled) &&
->                                 ((data->dpm_level_enable_mask.pcie_dpm_en=
-able_mask &
->                                                 (1 << (lowest_pcie_level_=
-enabled + 1 + count))) =3D=3D 0))
->                         count++;
->
->                 mid_pcie_level_enabled =3D (lowest_pcie_level_enabled + 1=
- + count) <
-> -                               hightest_pcie_level_enabled ?
-> +                               highest_pcie_level_enabled ?
->                                                 (lowest_pcie_level_enable=
-d + 1 + count) :
-> -                                               hightest_pcie_level_enabl=
-ed;
-> +                                               highest_pcie_level_enable=
-d;
->
-> -               /* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +               /* set pcieDpmLevel to highest_pcie_level_enabled */
->                 for (i =3D 2; i < dpm_table->sclk_table.count; i++)
-> -                       levels[i].pcieDpmLevel =3D hightest_pcie_level_en=
-abled;
-> +                       levels[i].pcieDpmLevel =3D highest_pcie_level_ena=
-bled;
->
->                 /* set pcieDpmLevel to lowest_pcie_level_enabled */
->                 levels[0].pcieDpmLevel =3D lowest_pcie_level_enabled;
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b=
-/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> index ff6b563ec..d785cc646 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> @@ -1050,7 +1050,7 @@ static int polaris10_populate_all_graphic_levels(st=
-ruct pp_hwmgr *hwmgr)
->         struct SMU74_Discrete_GraphicsLevel *levels =3D
->                         smu_data->smc_state_table.GraphicsLevel;
->         uint32_t i, max_entry;
-> -       uint8_t hightest_pcie_level_enabled =3D 0,
-> +       uint8_t highest_pcie_level_enabled =3D 0,
->                 lowest_pcie_level_enabled =3D 0,
->                 mid_pcie_level_enabled =3D 0,
->                 count =3D 0;
-> @@ -1114,27 +1114,27 @@ static int polaris10_populate_all_graphic_levels(=
-struct pp_hwmgr *hwmgr)
->         } else {
->                 while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mas=
-k &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
-> -                                               (1 << (hightest_pcie_leve=
-l_enabled + 1))) !=3D 0))
-> -                       hightest_pcie_level_enabled++;
-> +                                               (1 << (highest_pcie_level=
-_enabled + 1))) !=3D 0))
-> +                       highest_pcie_level_enabled++;
->
->                 while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mas=
-k &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
->                                                 (1 << lowest_pcie_level_e=
-nabled)) =3D=3D 0))
->                         lowest_pcie_level_enabled++;
->
-> -               while ((count < hightest_pcie_level_enabled) &&
-> +               while ((count < highest_pcie_level_enabled) &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
->                                                 (1 << (lowest_pcie_level_=
-enabled + 1 + count))) =3D=3D 0))
->                         count++;
->
->                 mid_pcie_level_enabled =3D (lowest_pcie_level_enabled + 1=
- + count) <
-> -                               hightest_pcie_level_enabled ?
-> +                               highest_pcie_level_enabled ?
->                                                 (lowest_pcie_level_enable=
-d + 1 + count) :
-> -                                               hightest_pcie_level_enabl=
-ed;
-> +                                               highest_pcie_level_enable=
-d;
->
-> -               /* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +               /* set pcieDpmLevel to highest_pcie_level_enabled */
->                 for (i =3D 2; i < dpm_table->sclk_table.count; i++)
-> -                       levels[i].pcieDpmLevel =3D hightest_pcie_level_en=
-abled;
-> +                       levels[i].pcieDpmLevel =3D highest_pcie_level_ena=
-bled;
->
->                 /* set pcieDpmLevel to lowest_pcie_level_enabled */
->                 levels[0].pcieDpmLevel =3D lowest_pcie_level_enabled;
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c b/dri=
-vers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> index 34c9f59b8..3e73f380a 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> @@ -878,7 +878,7 @@ static int vegam_populate_all_graphic_levels(struct p=
-p_hwmgr *hwmgr)
->         struct SMU75_Discrete_GraphicsLevel *levels =3D
->                         smu_data->smc_state_table.GraphicsLevel;
->         uint32_t i, max_entry;
-> -       uint8_t hightest_pcie_level_enabled =3D 0,
-> +       uint8_t highest_pcie_level_enabled =3D 0,
->                 lowest_pcie_level_enabled =3D 0,
->                 mid_pcie_level_enabled =3D 0,
->                 count =3D 0;
-> @@ -925,27 +925,27 @@ static int vegam_populate_all_graphic_levels(struct=
- pp_hwmgr *hwmgr)
->         } else {
->                 while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mas=
-k &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
-> -                                               (1 << (hightest_pcie_leve=
-l_enabled + 1))) !=3D 0))
-> -                       hightest_pcie_level_enabled++;
-> +                                               (1 << (highest_pcie_level=
-_enabled + 1))) !=3D 0))
-> +                       highest_pcie_level_enabled++;
->
->                 while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mas=
-k &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
->                                                 (1 << lowest_pcie_level_e=
-nabled)) =3D=3D 0))
->                         lowest_pcie_level_enabled++;
->
-> -               while ((count < hightest_pcie_level_enabled) &&
-> +               while ((count < highest_pcie_level_enabled) &&
->                                 ((hw_data->dpm_level_enable_mask.pcie_dpm=
-_enable_mask &
->                                                 (1 << (lowest_pcie_level_=
-enabled + 1 + count))) =3D=3D 0))
->                         count++;
->
->                 mid_pcie_level_enabled =3D (lowest_pcie_level_enabled + 1=
- + count) <
-> -                               hightest_pcie_level_enabled ?
-> +                               highest_pcie_level_enabled ?
->                                                 (lowest_pcie_level_enable=
-d + 1 + count) :
-> -                                               hightest_pcie_level_enabl=
-ed;
-> +                                               highest_pcie_level_enable=
-d;
->
-> -               /* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +               /* set pcieDpmLevel to highest_pcie_level_enabled */
->                 for (i =3D 2; i < dpm_table->sclk_table.count; i++)
-> -                       levels[i].pcieDpmLevel =3D hightest_pcie_level_en=
-abled;
-> +                       levels[i].pcieDpmLevel =3D highest_pcie_level_ena=
-bled;
->
->                 /* set pcieDpmLevel to lowest_pcie_level_enabled */
->                 levels[0].pcieDpmLevel =3D lowest_pcie_level_enabled;
-> --
-> 2.34.1
->
+((struct dw_mci_rockchip_priv_data *)host->priv)->internal_phase = true;
+
+is not very pretty and harder to read.
+
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > 
+> >  static int dw_mci_rockchip_init(struct dw_mci *host)
+> >  {
+> >  
+> >  	int ret, i;
+> > 
+> > @@ -483,11 +511,21 @@ static const struct dw_mci_drv_data
+> > rk3288_drv_data = {
+> > 
+> >  	.init			= dw_mci_rockchip_init,
+> >  
+> >  };
+> > 
+> > +static const struct dw_mci_drv_data rk3576_drv_data = {
+> > +	.common_caps		= MMC_CAP_CMD23,
+> > +	.set_ios		= dw_mci_rk3288_set_ios,
+> > +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
+> > +	.parse_dt		= dw_mci_rk3576_parse_dt,
+> > +	.init			= dw_mci_rockchip_init,
+> > +};
+> > +
+> > 
+> >  static const struct of_device_id dw_mci_rockchip_match[] = {
+> >  
+> >  	{ .compatible = "rockchip,rk2928-dw-mshc",
+> >  	
+> >  		.data = &rk2928_drv_data },
+> >  	
+> >  	{ .compatible = "rockchip,rk3288-dw-mshc",
+> >  	
+> >  		.data = &rk3288_drv_data },
+> > 
+> > +	{ .compatible = "rockchip,rk3576-dw-mshc",
+> > +		.data = &rk3576_drv_data },
+> > 
+> >  	{},
+> >  
+> >  };
+> >  MODULE_DEVICE_TABLE(of, dw_mci_rockchip_match);
+
+
+
+
 
