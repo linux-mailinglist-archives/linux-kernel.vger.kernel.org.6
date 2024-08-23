@@ -1,255 +1,166 @@
-Return-Path: <linux-kernel+bounces-298619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DC295C983
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:45:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBFC95C9CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5974728600E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1561C248FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B617E00B;
-	Fri, 23 Aug 2024 09:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D092E1862B2;
+	Fri, 23 Aug 2024 09:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="S2jrY8wf"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013046.outbound.protection.outlook.com [52.101.67.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4+iLpm8"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4850E14F9D4;
-	Fri, 23 Aug 2024 09:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406281; cv=fail; b=JimWG0yKh3dBXjICzekVFmimHTWtuGf4Cl6iE2A2RKZFJbAXfrD1Qx4ZZU+iAHbg3iG3sHlCTzEirgre94eYnrB7Qv6xK6BESxxpzxa2myFrJiJg233uIEEPkvqlwolyxcgSC4vrs9wF1U3E5Bjv+GMjUbGr3zBvFHzRXBYf8X4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406281; c=relaxed/simple;
-	bh=kZUj6aN9KcQYSiNDizf4idUZbYz6TWD2wnpy1nsvetI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=UJKlifXtk8KzVxfLuj1xqiqLLqsxE+t3CirhGmsai0DFuEi1bbd3J80Ax8+FFKLQUEhLbKMUgtathxPQ6z2EvvgsOpIuis5vVzMGLVYBgip2JgarpVsGwZjc8psSErBlpW8FpvIQJkFIMZu4s0ptWkhnh/x3t6j2HsioU82YK5M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=S2jrY8wf; arc=fail smtp.client-ip=52.101.67.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xH6/AtfKh1yJqIHInmfR+I10nexpVc3DCDL28wPZkRLvG01zGthq1k0TieeeVP9RFxs0vA9isJ1dW6MnuUnP3hThguEs9UK5mQvg6Gfv0EE8MNOcwgsOelM20oZSapa6FcnsyhxeL0JaA/H8kr5VZF4BA82hkosZR0e9vyzoRD6fO1gHxvfUG73acBhR6TPDoKbGjFqFEVM6xIjlYvpWLAXEVcVHVWHXA75O1/NkEUe79fnAhHj5yEhMVLjtaVkBq6xvf1JQiR/rElgFRBB21nh8ED18oY7DlY1G6yrblm1h0aIoVfMLEM+RdbU02NOaivUGV9rVsLVpYc3low1yrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z6BTvz66Q9bjs88/uwi2TQVU6CESaYwylM1S6sMG4AU=;
- b=kcNIfUy9UwFd+mpJcFyU8CAMoRSXpqMS3dJaj6FMzwy2mi6xCy9iNIqMS0I10X8AeZkdmGMLlmcHI7D6XGE85qViRzBh1d9yy4hGQw5MXXHvYmSqx/pnz9lf59H676/v/lbNq52ZHmcffZ5nv7sG5YMwOZwUNeFuzrhv66fxevpaWQc1Bjv8yMpFPXY+ZscZlELWsaYwGzi/IAOuF4VNmA2CAuJVg+qM5aTSAbNSK+1xnpdAXAloutYICR10JcfMAkbCnNWrMKE28kOFKahHomMMuhfk8cDm4qo7Le+7nJc8mXjGL+jJ29EtwoUURcO9t19V0AaSI6FyY58Gxn5AMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z6BTvz66Q9bjs88/uwi2TQVU6CESaYwylM1S6sMG4AU=;
- b=S2jrY8wf/uMsKk0hDzKrpkNXNZzCsDu5XGoy6GRI9pQtBfif7OrMurv+M/4mh+H8jHRVk8pdBPhoIqQwXUUUvFoHrmNS3yVH10y/68o5moZIpuCA+X3nMAwfAhctCuYJmiIp+aoyC7EbyMXpqXCICja/14/xzzMh/lzAwZKsDBeNCtw5pxNpgtKIY91DbQM3rW/pBxdkOu7vqhm9uLhkc1LB2qduEvh1OOzul5yH5gbJ8N3jf9bz+ZRvDACCspn5Kbv+rdJjnlqfJcEl7aTvcD01RqQtojWi7uZJsOiMkGGAADL1C4JNE18WhM89joIQguRdwl+sh2Ks385I/AlpPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GV1PR04MB9087.eurprd04.prod.outlook.com (2603:10a6:150:22::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Fri, 23 Aug
- 2024 09:44:33 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 09:44:33 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: ulf.hansson@linaro.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de
-Cc: kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	victor.liu@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] pmdomain: imx: imx93-blk-ctrl: fix power up domain fail during early noriq resume
-Date: Fri, 23 Aug 2024 17:53:19 +0800
-Message-Id: <20240823095319.3917639-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0076.apcprd02.prod.outlook.com
- (2603:1096:4:90::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA67917DFFC;
+	Fri, 23 Aug 2024 09:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724406889; cv=none; b=JeTDKf/dKQyaWXeC3kJ4Wvp7wP2rEYX9JWBV4ZTVSGyYpBeAuMcnwpAaGn25cZlvcXn9FaSpaUka2NJq2lRmR52owgBZ5YgyCv089MV2zFD14JgU4+ffMvQ7O2J1jt33u/aFPjpF3f6v2B6plWDsmIWfP9IkFCiYNAal0XgVEJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724406889; c=relaxed/simple;
+	bh=mNpqaZEJj0E/otrpKHpE9Qh6U2sfPn/VXuSZ63+Hlbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZiVal+sgzCrN4QsnfrpyjWo7sFuWNzhg8RgYm+dGvs6ZehwM/+vdtO4Guuf2ARgHO9O4MEcRf8NcIbzRhhzijiYtc7DQ27FcnZ2Xn2IdvTQsSppnjCC1WY02XRg7E8r0kC+ZdXrhOyKkzhSOhyWjP7QV09y6TqcBGnIF59QpuZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4+iLpm8; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d3badec49eso258252a91.1;
+        Fri, 23 Aug 2024 02:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724406887; x=1725011687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n4bN9IfcVP0Js1Ho+sT05Ee5/YCq3s77Z8TA53IzYiQ=;
+        b=V4+iLpm8873FzVEklHvFL4t39/0ay0w0cEg46RNh3KqzcNSfp4hrnF159W3VJFkrF5
+         1Ib5MUs6wT9C1sJI7e7MHvL9hsznA/i4qqvpUnJQdO+TzPKibHAtsdwl2NsPbFCvFoZs
+         /X9dTYKRBtZ4zWnk3bzA61IhllrnamWnp4uVH+35tm2dDtvSpup4nCXnBWYj0w1qZARH
+         StsRA12Pj7sK7dThBlg4OOMhnz4omhtQT7LkdrvAjG077ldcKz0XRQpvM4fKyZ2n67uq
+         g4/yUAXRww8iMTry+v12mCf+c9QB722Y7ychup4Fpo6t5tUAIklqFf8aWmowroZDF2gR
+         VOwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724406887; x=1725011687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n4bN9IfcVP0Js1Ho+sT05Ee5/YCq3s77Z8TA53IzYiQ=;
+        b=Q1BWiRvBBKVwkeTNW8/l9Y0eIp7ZcKLSz+nmTg2TW+0iogFjIdKeAS+UY3jhTXl/ux
+         lIKoIqsaYPdcVqT0DIR5FrDN9ONOvYyGhQKzaX/VTwS4QNfaZtng7Zcl+4DnF1t7eYEJ
+         3uO0wWBNH7Nuqc1BOEbpn/07bVU0JCIrM36XhT+OFVOiUEwllC7HdzEffSrrcuysZZE0
+         aSmJ8ySEEl8JQFgxCpjmB8sXDxszQeC1kbH+XFR0cnxsYpNHRWIfJ9Y10AsNQfd5JByY
+         C+bYvFz1AuEPSdVVzFVuJCwYVFI8R05Pc2OC0AVZvG/bJTnupUUCSor6ZUQodACSo9fK
+         djiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg64MCJNmJcvpOE236i/e8ld+aTa6ucnpQMsRzGrMNpDQ6u82pVmFubuccXx1LiXxNjdOSD57VwPwp0LjK@vger.kernel.org, AJvYcCWE6bDQtwQ01YyjEfgarMtCVO60eglTfzD6HEQE5d/rV7EpR4/MMN6e8krr8+yfo3z8+r7ncomsJ3hnoIG0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBM0cKKjA/7SIJs9J/B5n2qcrl3Q7dkNMmILHKwNiVvxk/B8Jd
+	52MpsRsr6b5Gsn3+Ju0lxt7MwoaQZbIsHLYuBem+cAgdLe2FpFMye0dlRIQf2rsrjUrMNTev1Tx
+	q2BPFlVjPgMbO63maCed2uCgqNAQ=
+X-Google-Smtp-Source: AGHT+IHkKd6W3yLC8UO7e6tYlcg+yxaTXlITfiFbSzWQxEydP7NfUV7YDnPSBqBENI+EV62HFZxca1DdRI9a5B+97vI=
+X-Received: by 2002:a17:90a:1f07:b0:2c9:6920:d2b2 with SMTP id
+ 98e67ed59e1d1-2d646b9d9bfmr949904a91.1.1724406886880; Fri, 23 Aug 2024
+ 02:54:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB9087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b9d9d41-ac14-465d-3d89-08dcc35830aa
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?otV//TdjLkYvYXanm1IEpk4qKbEx4AEPVOAwZ82hofWmXoB170xrk/AGLYvc?=
- =?us-ascii?Q?lkI0BTMy1vC6YjdmTHXYb1KqERS7Lv3EQew2gx5WElSEbK57JQG2aqAWayq0?=
- =?us-ascii?Q?IrLj5PhPrTSFkxLuI7HFyJcB0aBDfah4Uxgx2Rat02XKvqYci5JayTm/3ahF?=
- =?us-ascii?Q?d2pu5ILDgUNP37SVcTfoit9nzPI+808aJ4icyFydRbzAT1RnKCpDvqHh18In?=
- =?us-ascii?Q?dqm5W6EsXtxBdmZvxJB71sr1CTAvxFwM9z8OQrP35sbpX704XLYH/j/iHO0c?=
- =?us-ascii?Q?dfAjmDzx15g/xTd0L0MqN9/TwsLt991UqTGaPifjCznSQZUrLi4HKlzzcO0R?=
- =?us-ascii?Q?ALd2U5YCiDKRriTccRiD6mLiHqp9H5FYtp7uW7iv6+MxWv0XemSVNUtjwtMo?=
- =?us-ascii?Q?28uEa13D0PD69wCCJ5orCJD+dgOMX+T/WzAuX2Hx4gD/1j8xh+hpEBx0RBT5?=
- =?us-ascii?Q?CnMtagw5WAa+D42DasD8BvrMyXbNvKwVEE6lFKpEi2zgDWPqElW16PhGvrLh?=
- =?us-ascii?Q?+PcRqDid84dZS5S2NzCdAQwO5DjKo8K/4hUXfH1Rtz1PkA6k6YB9U0gjQIoi?=
- =?us-ascii?Q?76NyaOgmhSlre7PS8n9vk+L5Fgfaya0HKWDB0kAM35cM0MZqkF9ZxDPxOdyp?=
- =?us-ascii?Q?yn/kyB5WDWLl4hLs/ZeQNhzInIm8miPKhzy5/1b1Y4C9dvyGD4fVgyWUxjZX?=
- =?us-ascii?Q?CGhwUgxb/NllVg41nOpETf5uAb90PIHcNoA2WQMsbWiH9p3Wm1qhUQcPkV2x?=
- =?us-ascii?Q?1TvOmEjDC3VtEcfouAyIN+2Ry47t/uWxSQZWvkfxijwR7UMEK+jPxmb+ZkC8?=
- =?us-ascii?Q?/cUlF384OpRjVyq4GwKFsIOt+s32nn8Cav0NSmfBRY5gBrOlxs03T/O72vgq?=
- =?us-ascii?Q?jqaTFSAhBaR3rHiCEkKUEyOl0I6NfD+j6NpYcYcYes/DNLj0dUELkyzyXT+N?=
- =?us-ascii?Q?dxNVK7Nshgs2fucNXEaVn/R40EJlmxQHojFRYlBRCPFf9D4/3odE7M5qneXS?=
- =?us-ascii?Q?YssEaNOhc6WC2ui5IRdDTv2KSURuV6QT8ARDqXL33zh1z+QrHCAZxlU2C8VQ?=
- =?us-ascii?Q?uwDlF8aY5zJCReXufD/ud+T3fiGajO/15LxOmce/h0blpFPd69gvCnNoP0ny?=
- =?us-ascii?Q?9ZZ3QPAPS4k6Q6BHEw0Qh6ktwLvREvfm14TgfVFwQ7N7eUW5JXpHnDiG7K7L?=
- =?us-ascii?Q?HlQKaJyXNnbRjSNywR72B1Am0l0SwICyAfvqBEqT6EqwulylB5aa2ah6YD0e?=
- =?us-ascii?Q?idcfBRwHzldTWISMbQ+p8IrnTm16O/WNfaJYcAyGcvvq2d4hCzy255gT8fU0?=
- =?us-ascii?Q?kTEMJJ8UisQKANFaUTlbi9/w9zQ2rWSXMmPNgCEPVFUvtQ/u6lC5qYsX6Ehn?=
- =?us-ascii?Q?QHzDl4M3bg8A7BTdWE7E/znC+x96yjjyxMY7x/bpFKql0dE9aw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?e4D7IWfvSV3SoIf/okzGckmllZce2NxRYZ6nL5NhHCtEObApmd/0euvdrjiA?=
- =?us-ascii?Q?aNrwVJkAzxW/QrbMqbKs5mZ5kzOiIq45FS9G/G6LNegbF8f0q2zRh5kjqPVj?=
- =?us-ascii?Q?MjsmTgbooInY/zCR4zvuiW301t4M1gCw5Dsl0E7S78/FZcGb1MD9dmbW4Sov?=
- =?us-ascii?Q?nFbWJcTY3ytyzYRXKul1/q5gZAHUY2KI5BpYfXwlGRVfbfDwIH+8KtaAsMlu?=
- =?us-ascii?Q?ctiRYs9HyO/uog8ZRUa0Qj/1Df8RIl/oXcS7DigcEzmikzGhq/t+03FXUC4F?=
- =?us-ascii?Q?2sdACOGCDDN1aIGYIeM9ltf+sozx+EXX25W77+MJcqDcxcNJL5Xe03E9Xx4H?=
- =?us-ascii?Q?+LKe3jJmIXTQkHizM7lADXIlNJ17D9OUJMQJl5K+IHN2r2xo8eMg7QpBexqn?=
- =?us-ascii?Q?+Ik5U8GYjCwg8h7NjxsU1gQ65KbqyCbzZJdWHxdib/YgYvy7EMYC3JcEwSSF?=
- =?us-ascii?Q?WnlT+CgKoLWUoKunVC9EUKNsX3FI9Fx4dLfyO5PW1QBj0u2JmZs2hmpLSOAX?=
- =?us-ascii?Q?zdFaeIzQMcgOJMLzwb1kvI3UG2BwlrohSwg4KE4sn71qBqFgYAUKugRq4rm4?=
- =?us-ascii?Q?tbRynZ8DWVJt58Ruyb8fDEpBnSr/Z6EUMiU0rorEjuGj4ISA8jnbdEpk/ZFK?=
- =?us-ascii?Q?2egib5WFpIfGq+mfkQ7ATsLrbOocs5FBmJEMyMCGXgzoS2TgeTm3V78Wo0CG?=
- =?us-ascii?Q?F0+/lhxTGVS7A7vvxG4C9HHmHasFCiC6+FeFHR34xaNoYiHMnogsnWJXpbxX?=
- =?us-ascii?Q?rj9fjvJgGwWdho6okC1wqDpBsst4vLj2di5JyYhpH+pTMs2Z8JXRUkSO983w?=
- =?us-ascii?Q?zoq3kse50CVcFJ6D/s+9Kb2AgnhWNim1YzegbYMJfRV6aZNOltYnf/Q6kptK?=
- =?us-ascii?Q?IfwaacWe94cpd0QYDcqw1YgRKN3+LmwPb55kk/0CL+0HpSTwNbE8EWe2eWHI?=
- =?us-ascii?Q?GZq6eMuT5PJIrUYkSqODQyR0FoprITlg3DAo4wdQdQjkQ9KX2x0itZoCVjhM?=
- =?us-ascii?Q?YZ117PriD58tYJo92c2cOpQlMLitf+ndq3kaI+CVO+cTiN5Fk9XDFkjyFR/I?=
- =?us-ascii?Q?YgMngBvv9WIvrCFeUYKfHm9PsacS7zz7KyNUaLJMckrkISF8zVld5t8rHXlA?=
- =?us-ascii?Q?jGlsWhdr6PO+w98rOamXK/7XVoMXHuZPuR5foYkg9mEJtse22lRqRlsVXtlB?=
- =?us-ascii?Q?7CZXWfYWyB6fzdiyPeFcz19lu+omziAgwTbv/1bSNphFzcJJ5UsmvQZgAVJA?=
- =?us-ascii?Q?70zC6qnWhIO1wuxFbhKsWsbI5Lo6QI7LDsfUk9faDzyiMO+9zhIvstcEBmZF?=
- =?us-ascii?Q?bTFXUMZ7IxJbiJaQn4IAI05zMmqbuI6TmvgAL6d1NSsxYBf5bJbHCiQxkduo?=
- =?us-ascii?Q?UCIXMEJJSr+XPPzyh6DzF+/74fORdkbhKr0fQuBpqtKkP3EP6A8yDkS4z3D9?=
- =?us-ascii?Q?wgQEQLt8PxAv8Cd0+Ew/hqC5utp+555oFwavL6y9g5JZTBdvyfWghxqRqV+P?=
- =?us-ascii?Q?JLWrseQ8D3qgP7mcpMuFQBZj67IaH5uokZcFv8cix8ZJcUehjA89L/Yye1/F?=
- =?us-ascii?Q?T/luRFxPxkWXbwXY5h1mYylHPbWxx6cTXwQJCwPB?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9d9d41-ac14-465d-3d89-08dcc35830aa
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 09:44:33.6921
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: czRBtE2M7QN8jKBbfcZLtTo5meg6PICm/VH4Bzwdd27z78JpaQHGzG0zB9SsGGU/+qgjil1K75Y+HTu6IHcL8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9087
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com> <95f0517a-ed86-4905-85e5-a123880c6fa8@linaro.org>
+In-Reply-To: <95f0517a-ed86-4905-85e5-a123880c6fa8@linaro.org>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Fri, 23 Aug 2024 10:54:34 +0100
+Message-ID: <CACu1E7FxE3rLN8SV1-5Zg7=+LqCAwHuiCcXroikS4=yRPsdnMQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Preemption support for A7XX
+To: neil.armstrong@linaro.org
+Cc: Antonino Maniscalco <antomani103@gmail.com>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dong Aisheng <aisheng.dong@nxp.com>
+On Fri, Aug 23, 2024 at 9:30=E2=80=AFAM <neil.armstrong@linaro.org> wrote:
+>
+> On 15/08/2024 20:26, Antonino Maniscalco wrote:
+> > This series implements preemption for A7XX targets, which allows the GP=
+U to
+> > switch to an higher priority ring when work is pushed to it, reducing l=
+atency
+> > for high priority submissions.
+> >
+> > This series enables L1 preemption with skip_save_restore which requires
+> > the following userspace patches to function:
+> >
+> > https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
+> >
+> > A flag is added to `msm_gem_submit` to only allow submissions from comp=
+atible
+> > userspace to be preempted, therefore maintaining compatibility.
+> >
+> > Some commits from this series are based on a previous series to enable
+> > preemption on A6XX targets:
+> >
+> > https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@code=
+aurora.org
+> >
+> > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> > ---
+> > Antonino Maniscalco (7):
+> >        drm/msm: Fix bv_fence being used as bv_rptr
+> >        drm/msm: Add submitqueue setup and close
+> >        drm/msm: Add a `preempt_record_size` field
+> >        drm/msm/A6xx: Implement preemption for A7XX targets
+> >        drm/msm/A6xx: Add traces for preemption
+> >        drm/msm/A6XX: Add a flag to allow preemption to submitqueue_crea=
+te
+> >        drm/msm/A6xx: Enable preemption for A7xx targets
+> >
+> >   drivers/gpu/drm/msm/Makefile              |   1 +
+> >   drivers/gpu/drm/msm/adreno/a6xx_catalog.c |   3 +
+> >   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 339 +++++++++++++++++++++=
++-
+> >   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
+> >   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 441 +++++++++++++++++++++=
++++++++++
+> >   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
+> >   drivers/gpu/drm/msm/msm_gpu.h             |   7 +
+> >   drivers/gpu/drm/msm/msm_gpu_trace.h       |  28 ++
+> >   drivers/gpu/drm/msm/msm_ringbuffer.h      |   8 +
+> >   drivers/gpu/drm/msm/msm_submitqueue.c     |  10 +
+> >   include/uapi/drm/msm_drm.h                |   5 +-
+> >   11 files changed, 995 insertions(+), 16 deletions(-)
+> > ---
+> > base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> > change-id: 20240815-preemption-a750-t-fcee9a844b39
+> >
+> > Best regards,
+>
+> For what is worth, I've tested it on the SM8650 QRD with the Mesa 30544 M=
+R & vkcube
+>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+>
+> If you think of more tests to run, please tell me.
+>
+> Neil
 
-After disabling PXP and having no displays connected, we met the following
-suspend/resume hang issue on MX93 EVK board.
+Hi Neil,
 
- Enabling non-boot CPUs ...
- Detected VIPT I-cache on CPU1
- GICv3: CPU1: found redistributor 100 region 0:0x0000000048060000
- CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
- CPU1 is up
- imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
- imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
- imx93-blk-ctrl 4ac10000.system-controller: failed to power up domain: -13
-...
+I think it would help to test this on SM8550 and SM8450 too. I don't
+have SM8450 to test with. Maybe also worth mentioning that there are
+now vulkan CTS tests that try to test L1 preemption:
+https://github.com/KhronosGroup/VK-GL-CTS/commit/7e0e4a000f34e748bb527b39f7=
+30f78b595140b9
+although it's not in a released version yet.
 
-The issue was introduced since the commit c24efa673278
-("PM: runtime: Capture device status before disabling runtime PM")
-which will also check the power.last_status must be RPM_ACTIVE before
-pm_runtime_get_sync() can return 1 (means already active) even pm_runtime
-is disabled during no_irq resume stage.
-
-However, the pm_runtime_set_active() we called ahead of
-pm_runtime_get_sync() will not update power.last_status which probably like
-a upstream kernel issue. But that's another issue which may worth an
-extra fix.
-
-This patch refers to the solution in the exist similar imx8m blkctrl
-driver[1] that it will power up upstream domains during blkctl suspend
-first in order to make sure the power.last_status to be RPM_ACTIVE. Then we
-can support calling pm_runtime_get_sync in noirq resume stage.
-
-After fixing, no need extra calling of pm_runtime_set_active() ahead.
-
-1. drivers/pmdomain/imx/imx8m-blk-ctrl.c
-
-Fixes: e9aa77d413c9 ("soc: imx: add i.MX93 media blk ctrl driver")
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/pmdomain/imx/imx93-blk-ctrl.c | 29 +++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-index 904ffa55b8f4..34ac7b722b90 100644
---- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
-+++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-@@ -424,6 +424,34 @@ static const struct imx93_blk_ctrl_data imx93_media_blk_ctl_dev_data = {
- 	.reg_access_table = &imx93_media_blk_ctl_access_table,
- };
- 
-+static int imx93_blk_ctrl_suspend(struct device *dev)
-+{
-+	struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
-+
-+	/*
-+	 * This may look strange, but is done so the generic PM_SLEEP code
-+	 * can power down our domains and more importantly power them up again
-+	 * after resume, without tripping over our usage of runtime PM to
-+	 * control the upstream GPC domains. Things happen in the right order
-+	 * in the system suspend/resume paths due to the device parent/child
-+	 * hierarchy.
-+	 */
-+	return pm_runtime_resume_and_get(bc->dev);
-+}
-+
-+static int imx93_blk_ctrl_resume(struct device *dev)
-+{
-+	struct imx93_blk_ctrl *bc = dev_get_drvdata(dev);
-+
-+	pm_runtime_put(bc->dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops imx93_blk_ctrl_pm_ops = {
-+	SYSTEM_SLEEP_PM_OPS(imx93_blk_ctrl_suspend, imx93_blk_ctrl_resume)
-+};
-+
- static const struct of_device_id imx93_blk_ctrl_of_match[] = {
- 	{
- 		.compatible = "fsl,imx93-media-blk-ctrl",
-@@ -439,6 +467,7 @@ static struct platform_driver imx93_blk_ctrl_driver = {
- 	.remove_new = imx93_blk_ctrl_remove,
- 	.driver = {
- 		.name = "imx93-blk-ctrl",
-+		.pm = pm_sleep_ptr(&imx93_blk_ctrl_pm_ops),
- 		.of_match_table = imx93_blk_ctrl_of_match,
- 	},
- };
--- 
-2.37.1
-
+Connor
 
