@@ -1,193 +1,201 @@
-Return-Path: <linux-kernel+bounces-299424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F130795D463
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FA295D46D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C3FBB21CF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6056B1F214B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A683192B79;
-	Fri, 23 Aug 2024 17:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9221946A2;
+	Fri, 23 Aug 2024 17:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcciBic4"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ahX/SCZP"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E14192597
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE82193414;
+	Fri, 23 Aug 2024 17:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434424; cv=none; b=CbFbFBWO/3lExNcNWMN9jReQyfOJsLnowQxFnAwQ27Fq1l3UTDidu/tPvFU2Q/eI6O1DwMy5RiWHSly2J0aiP+o0U0rO1RdOpKRgNhBiO8UTzsA6AFkevIVBLfgT+arPPBf8yto56C+aS+4lNUpyESmogPTT20YNJ4D99hJkreA=
+	t=1724434439; cv=none; b=IGKexgUAZmpGCLaEheHwYi3cGETXwd2HSiYTOtAjscjjaxmljrlc/86vwUvwbdsoEuoMZr4OSQpjBXg8YqDPODDI+CZPrHlrGWeDv407iWsl/KW/OtgbTOlklwenBRNPuC6iJDI7oWmLP3QH7Bzbv851cgI2HJi/fF2qU3dc/J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434424; c=relaxed/simple;
-	bh=qcQ+kss4ewa/66kGgpNaE9eqqDVNwNbhn7AywTnrHtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFAhWfOe5rIaYk8o840pm1YsNUjLOL/WWq/4kplcfTUOKIsQ0WmNa2VVO/uGw4MqQGXKqkt5wYDKyZGHgkx4X6beuCxjDQGBZuiQ7UQJBdDyj7LJylJW+Ooqob640Fl0XQQT0Myk85n2RceFuwa2iUa9i7pLmN14rM2MINIyLNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CcciBic4; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fee2bfd28so15801cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724434421; x=1725039221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yrDhJJ/5EwfF2mTCDXTG+gotDkVPsxK/KucvLDLQTiE=;
-        b=CcciBic4zvRVLh33+8o2yMSFUGLiiTUr58ji+H5HnsPcZ20CHgx7ZKpT+e7Gq84xEv
-         NjLNGEyTwUG883V/NOlqxEaekGDKwfvMLMODCTLx6adZxtnFX68sqM31CyTPmAaUAM9o
-         2nZf+uzfEASqWzP6lhUEXaUM6l2ZzvCFVaX/ONJ0UCYEv7790WvKaC5d2lxCab0tGt0h
-         Y5Ecy8CsaBpSLYbaZlsMDovlN7aucp5SLMP9t1Rjy+RuCUnn9oeTDOvuqHNJkKVcpk8Y
-         5MHOV0Y56xHJsW3ZKD0Nyj3HaBq74I7XVWPLvBYG2kyxdyBmPrru+q158ovpfcibHogx
-         5Zjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724434421; x=1725039221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yrDhJJ/5EwfF2mTCDXTG+gotDkVPsxK/KucvLDLQTiE=;
-        b=pGD7pncIRC6q0Hukjz+wp+LP6cmMkM+M3dheOmu9D8V3yLnshnRHAHdikGV/O5E3IB
-         YN4Nx0k39tRkhkU5t8W0x9jzWGMkUQIZDmcr1d0UIJVUec4rcwrPTi9Qlpm1ExGdmjVQ
-         PSbL4nHA91T7fnOGXhsH26A7WyyyeGoJD0bSX+Ahoqd2wu65Kqdu/ZHFc4xxbQqMmqs7
-         XKF4WLs3T0uBQJLhL+r4zNh9O5ylIp2O3IDGsvWVWUZHAqCft+eWtblee9VqYfYurR2e
-         D0sfIJFcHBS9wCYs75FYhUSqT+Fx85WNVYWtX6mTRKRWJeC4Y0wBq5EVVUkZNIpk0tZl
-         X1qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrGjxpy5UaU4ViDMPCCDfslw/ag4TSIaCCLUHraUnTyT2mo4CwGIOkLixLwMGhp7xEaYSrExasYeXktXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlv/+l2xxA9bgCt6WUx0csapibrkkdhtgPCBQgSeFdbP0DFquT
-	fsvX4wuxS9Q9/Gf4THz8c+bVspkiRVXQHl7Ds7S7NTKyMuVWvBqW/RtzxORBTP5xNrSZBxfifMa
-	TwVIHd+2oHxszmw//VhA394N89YdVcg6p1tFS
-X-Google-Smtp-Source: AGHT+IGvAzMr5/ZaOUktkFhC0qDUCbo7Vm+q/xR1nu+IqMWWE+GBkW4jlqZo/fn8sWKxDdXpRsMmFHVkI6I4KCCgk7I=
-X-Received: by 2002:a05:622a:1443:b0:447:d7ff:961d with SMTP id
- d75a77b69052e-45509e77b0emr3262991cf.9.1724434420482; Fri, 23 Aug 2024
- 10:33:40 -0700 (PDT)
+	s=arc-20240116; t=1724434439; c=relaxed/simple;
+	bh=oAkC2gyEvYqie2BMaBkOi+Q3ObXHcVC5/ivUbijOClQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qZRuncdbpYe55kaCks6pH3qOGG76erjM+eteQAMe/E7nuf4CEv46XIu24K8xTpnV04+yuc7IpOQqZ/N4NKPgHMExlrNLxwjjGWBNipyo/d7ZSC7m0x3Qr5O+qjrzk7QpaWLfpy4SYowfS6ke7eERN+BFjsoL1eUAPd1cOLHEmMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ahX/SCZP; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=8fGDhDblxpiWpLMEgOVUHiirq5YHZlp3LvTsoH5n4cY=; b=ahX/SCZPOOraUkYBrU/yJolT6B
+	Kaff1CccaDHutwJ9fMceTjyx8yuoufIaCaSXL4xLmYLVu4Ez7dQW4SgRl1UX9kBjwJDz/csOehy2U
+	2PLh06v/HDwbslSyxxYPnjW9iFO/fRPxH+3yRnP9tzLA97V7wyfigHZCPaLAOYmap67CMl+cAf/Hr
+	k0mPm5XcFUDm4G95UQzuKEKhDVaDMKnqS+ZZEPQuaSb0073EAbelrlCU5MXEQkXoBOtRuL5jj6PgG
+	Xx0bNvwyYLrQ1BkNMqP/KAVd/YO9auXgQEg00LEbCQKYOPATfIhN5QBeZBa6ymMaIfap3YL9tbNqU
+	yROXwNDw==;
+Received: from [179.118.186.198] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1shYAX-0048Ww-3i; Fri, 23 Aug 2024 19:33:49 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	krisman@kernel.org,
+	Daniel Rosenberg <drosen@google.com>,
+	smcv@collabora.com,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH 3/5] tmpfs: Create casefold mount options
+Date: Fri, 23 Aug 2024 14:33:30 -0300
+Message-ID: <20240823173332.281211-4-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240823173332.281211-1-andrealmeid@igalia.com>
+References: <20240823173332.281211-1-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816182533.2478415-1-jmattson@google.com> <20240816182533.2478415-2-jmattson@google.com>
- <93effd6c-124e-07fd-57ca-ed271fb50665@amd.com>
-In-Reply-To: <93effd6c-124e-07fd-57ca-ed271fb50665@amd.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 23 Aug 2024 10:33:29 -0700
-Message-ID: <CALMp9eSn_u8add6pT5L8LT1vVqj=2y1zcHvgqxiiW+x-aCjNCA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Venkatesh Srinivas <venkateshs@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 9:06=E2=80=AFAM Tom Lendacky <thomas.lendacky@amd.c=
-om> wrote:
->
-> On 8/16/24 13:25, Jim Mattson wrote:
-> > From Intel's documention [1], "CPUID.(EAX=3D07H,ECX=3D0):EDX[26]
-> > enumerates support for indirect branch restricted speculation (IBRS)
-> > and the indirect branch predictor barrier (IBPB)." Further, from [2],
-> > "Software that executed before the IBPB command cannot control the
-> > predicted targets of indirect branches (4) executed after the command
-> > on the same logical processor," where footnote 4 reads, "Note that
-> > indirect branches include near call indirect, near jump indirect and
-> > near return instructions. Because it includes near returns, it follows
-> > that **RSB entries created before an IBPB command cannot control the
-> > predicted targets of returns executed after the command on the same
-> > logical processor.**" [emphasis mine]
-> >
-> > On the other hand, AMD's IBPB "may not prevent return branch
-> > predictions from being specified by pre-IBPB branch targets" [3].
-> >
-> > However, some AMD processors have an "enhanced IBPB" [terminology
-> > mine] which does clear the return address predictor. This feature is
-> > enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
-> >
-> > Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
-> > accordingly.
-> >
-> > [1] https://www.intel.com/content/www/us/en/developer/articles/technica=
-l/software-security-guidance/technical-documentation/cpuid-enumeration-and-=
-architectural-msrs.html
-> > [2] https://www.intel.com/content/www/us/en/developer/articles/technica=
-l/software-security-guidance/technical-documentation/speculative-execution-=
-side-channel-mitigations.html#Footnotes
-> > [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1=
-040.html
-> > [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-doc=
-s/programmer-references/24594.pdf
-> >
-> > Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features=
- as derived in generic x86 code")
-> > Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
-> > Signed-off-by: Jim Mattson <jmattson@google.com>
-> > ---
-> >  v2: Use IBPB_RET to identify semantic equality (Venkatesh)
-> >
-> >  arch/x86/kvm/cpuid.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > index 2617be544480..044bdc9e938b 100644
-> > --- a/arch/x86/kvm/cpuid.c
-> > +++ b/arch/x86/kvm/cpuid.c
-> > @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
-> >       kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
-> >       kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
-> >
-> > -     if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IB=
-RS))
-> > +     if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
-> > +         boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
-> > +         boot_cpu_has(X86_FEATURE_AMD_IBRS))
-> >               kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
-> >       if (boot_cpu_has(X86_FEATURE_STIBP))
-> >               kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
-> > @@ -759,8 +761,10 @@ void kvm_set_cpu_caps(void)
-> >        * arch/x86/kernel/cpu/bugs.c is kind enough to
-> >        * record that in cpufeatures so use them.
-> >        */
-> > -     if (boot_cpu_has(X86_FEATURE_IBPB))
-> > +     if (boot_cpu_has(X86_FEATURE_IBPB)) {
-> >               kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
-> > +             kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
->
-> Should IBPB_RET be conditionally set? I would think that you would only
-> want to set IBPB_RET if either IBPB_RET or SPEC_CTRL is set on the hyperv=
-isor.
->
->                 if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) ||
->                     boot_cpu_has(X86_FEATURE_SPEC_CTRL)
->                         kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
->
-> Right?
+Most filesystems have their data stored in disk, so casefold option need
+to be enabled when building a filesystem on a device (via mkfs).
+However, as tmpfs is a RAM backed filesystem, there's no disk
+information and thus no mkfs to store information about casefold.
 
-Right. This clause is intended to set cross-vendor capabilities, so it
-should be:
+For tmpfs, create casefold options for mounting. Userspace can then
+enable casefold support for a mount point using:
 
-    if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-        kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+$ mount -t tmpfs -o casefold=utf8-12.1.0 fs_name mount_dir/
 
-Passing through AMD_IBPB_RET from the hardware should be done by
-adding the bit to the mask for CPUID_8000_0008_EBX.
+Userspace must set what Unicode standard is aiming to. The available
+options depends on what the kernel Unicode subsystem supports.
 
-I'll send out a v3.
+And for strict encoding:
 
-Thanks!
+$ mount -t tmpfs -o casefold=utf8-12.1.0,strict_encoding fs_name mount_dir/
 
-> Thanks,
-> Tom
->
-> > +     }
-> >       if (boot_cpu_has(X86_FEATURE_IBRS))
-> >               kvm_cpu_cap_set(X86_FEATURE_AMD_IBRS);
-> >       if (boot_cpu_has(X86_FEATURE_STIBP))
+Strict encoding means that tmpfs will refuse to create invalid UTF-8
+sequences. When this option is not enabled, any invalid sequence will be
+treated as an opaque byte sequence, ignoring the encoding thus not being
+able to be looked up in a case-insensitive way.
+
+Signed-off-by: André Almeida <andrealmeid@igalia.com>
+---
+ mm/shmem.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 67b6ab580ca2..5c77b4e73204 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4102,6 +4102,8 @@ enum shmem_param {
+ 	Opt_usrquota_inode_hardlimit,
+ 	Opt_grpquota_block_hardlimit,
+ 	Opt_grpquota_inode_hardlimit,
++	Opt_casefold,
++	Opt_strict_encoding,
+ };
+ 
+ static const struct constant_table shmem_param_enums_huge[] = {
+@@ -4133,9 +4135,67 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
+ 	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit),
+ #endif
++	fsparam_string("casefold",	Opt_casefold),
++	fsparam_flag  ("strict_encoding", Opt_strict_encoding),
+ 	{}
+ };
+ 
++#if IS_ENABLED(CONFIG_UNICODE)
++static int utf8_parse_version(const char *version, unsigned int *maj,
++			      unsigned int *min, unsigned int *rev)
++{
++	substring_t args[3];
++	char version_string[12];
++	static const struct match_token token[] = {
++		{1, "%d.%d.%d"},
++		{0, NULL}
++	};
++
++	strscpy(version_string, version, sizeof(version_string));
++
++	if (match_token(version_string, token, args) != 1)
++		return -EINVAL;
++
++	if (match_int(&args[0], maj) || match_int(&args[1], min) ||
++	    match_int(&args[2], rev))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct shmem_options *ctx = fc->fs_private;
++	unsigned int maj, min, rev, version_number;
++	char version[10];
++	int ret;
++	struct unicode_map *encoding;
++
++	if (strncmp(param->string, "utf8-", 5))
++		return invalfc(fc, "Only utf8 encondings are supported");
++	ret = strscpy(version, param->string + 5, sizeof(version));
++	if (ret < 0)
++		return invalfc(fc, "Invalid enconding argument: %s",
++			       param->string);
++
++	utf8_parse_version(version, &maj, &min, &rev);
++	version_number = UNICODE_AGE(maj, min, rev);
++	encoding = utf8_load(version_number);
++	if (IS_ERR(encoding))
++		return invalfc(fc, "Invalid utf8 version: %s", version);
++	pr_info("tmpfs: Using encoding provided by mount options: %s\n",
++		param->string);
++	ctx->encoding = encoding;
++
++	return 0;
++}
++#else
++static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *param)
++{
++	return invalfc(fc, "tmpfs: No kernel support for casefold filesystems\n");
++}
++#endif
++
+ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct shmem_options *ctx = fc->fs_private;
+@@ -4294,6 +4354,11 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 				       "Group quota inode hardlimit too large.");
+ 		ctx->qlimits.grpquota_ihardlimit = size;
+ 		break;
++	case Opt_casefold:
++		return shmem_parse_opt_casefold(fc, param);
++	case Opt_strict_encoding:
++		ctx->strict_encoding = true;
++		break;
+ 	}
+ 	return 0;
+ 
+-- 
+2.46.0
+
 
