@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-298361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F9295C643
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6217695C645
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99EB1F263C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFB3DB23951
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB89813C810;
-	Fri, 23 Aug 2024 07:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B626313D601;
+	Fri, 23 Aug 2024 07:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DoPNZBIg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G7TjziTy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="x61nUTQ9"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929E2139D15;
-	Fri, 23 Aug 2024 07:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9348E13A86C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724396953; cv=none; b=gt24BJfH7Sm5i7UDEN7qxmGHp5MlvlUzXhXYT82rPqUIghrYj0xZBHs5je8Ovgi2GTQ8zldamHfV1HPOciU3uZCF3AIsMqg1++oXtbotThRAb7A46VkARhHajp/RmvSyat9usHjQ7khZouUya9UrMP81ENJpoxDOK5eJx9LoOwE=
+	t=1724396966; cv=none; b=pNH6meY0M20T61Rb0itEl2pjI9iH3JZRo7gw7F8dy+0EDG+0aP4enCMz4jbPEON2GDGtcxuCDPnVZCz+EN7maqJRzId/WbEzxfWTwagz9/BfpDPdP9Uz3fjGZLu43T4AQJCdsGHoQC86S79MEqSsJus7Hu3Q4tr5sVdHwoFuq4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724396953; c=relaxed/simple;
-	bh=9UhV2IODQREqR4uQoLzNBv5rfKibOFEm+2yCwhoz6q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOikVjpPlJ3D1qXGuTeqnbHoG/PfGjwvV9zRJHQimArEAnswfcSs4OgvgRIHlf8kipIwDVS7y/PBk8jWO+fzSRXoelQLGofA0/lKHkZBNtZJ0hwzHOydyBbu4vS7YF13dGcop4FASfhkU35WMeZoG+HX0G96Jhoe7dggXbEoR+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DoPNZBIg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G7TjziTy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 23 Aug 2024 09:09:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724396949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixFolHKRyKqlh9t34LBP2UUWQ9fpJZXPE9R/jHylteM=;
-	b=DoPNZBIgbwmZv3qRIw/8RUXm2LGnz6tVdKIAr2IfkFvodUKDBIUPiaVXDBIkCPks9t4Imq
-	1r37HjbPAodMKg/gtW7sov0jgVpmTl6zOyXPdqVh18zfAmjazib+niZvsuaQ+2vX6Ts/9R
-	/WzTZZ/hTOPo+WLrz9CYqxJaL5n7x9j4Oich7Br1F3JOy0/4E4Hbzgqe5lK6owJXv1hVpl
-	95QU4K8X9RHRiqpFOkz9DHrWb4IPs3Ut1io1AFW/XMBy0nNTAGgvz6xCPdvFl+My1KnTlT
-	xhx5C4TZt4HjhhNH9359RmZ5EN0qvA8ZvChP2+Zsukp+JQr6n1vREiq6PgHzCQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724396949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixFolHKRyKqlh9t34LBP2UUWQ9fpJZXPE9R/jHylteM=;
-	b=G7TjziTyjPITIfW/+YKjUEpim01KIJ0hqqFNlAhY9vTeQ3nhcFR0p8nGWcb1E8tv52lBFU
-	n1FY2JY/T18lF0DA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Derek Barbosa <debarbos@redhat.com>
-Cc: pmaldek@suse.com, williams@redhat.com, john.ogness@linutronix.de,
-	tglx@linutronix.de, linux-rt-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: A Comparison of printk between upstream and linux-rt-devel
-Message-ID: <20240823070908.D0GYffCS@linutronix.de>
-References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1724396966; c=relaxed/simple;
+	bh=rOmiKvE4YC4gVq+QxHki/4pKEr+Sh15p2TsZEHY54yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iguKZ7J3+WQDfFQlgl/myyHNmDQLOL6B8wEnSmNFCthDGgmt0zsupL4lQL3v9uLK0lOSubSbZYND+onri1eGyhnAjsM3XG723RFXSFNwrfbVLCgk1CMiL3I/De4oJqRc6gMw1uuP+G7mYlaaoJlkKDV6CAr9N0tS7eJYCw+dqgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=x61nUTQ9; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-81fd925287eso55644839f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:09:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724396963; x=1725001763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U+xtomViJRKkecljBjWQnaYi+v9/a71K9NKTwuwwlJ0=;
+        b=x61nUTQ9t2G6SLs5FdOTAMwW4sozEBE5E9xrdWz3S00pU9JnCBAvGqu+1PN11bE1WB
+         rONlIPRALP1zbLho7NMUB1IXbm5Amtv2+6HnGkJGbjpGYIardHkXqE0zvLitLJs5thpa
+         NJLug5epVx8F4nL+paVnuwdhKkJMFGYHRPVVfqcuhtMosMhc33MphuqslAkd7VBdVlKO
+         di2x71160plpopC2u/JgDIHXTJZYZAWaB6EDsaYwbrqiyeyRQNuos8vYID4Z93u6UGYm
+         cz7lNReQfS/XJJUDeQ/BEO8/Y/oTdMDF6+Eb369kr4j9pmGpJNAfp8ogvQpbvj0UzC3v
+         0N6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724396963; x=1725001763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U+xtomViJRKkecljBjWQnaYi+v9/a71K9NKTwuwwlJ0=;
+        b=CqE17H3tQ9WzE9s8FCIjsl0D3GwPUcFp7kcRgb768gTGM72S4DM+VQQQq/Ip8XN5RY
+         2yRxHwL0vN81yQhg3MCf6b9xXR9ypbsv4WbWrZPY5Bb28FGCHK81ovxPxt2dqCxNbNEa
+         pdnepcAl2U58K2BHCKG4xccew1ERcvJk7dBzzUYM2KWjhDSxl5DDan5n0xiWCi/eXkSk
+         9HEi9IAQ/iZ7haAelZdjN2ix1ResA41A4lbYu81uZcwYbsR3olPp0FlNwNBsRlGlIi/5
+         6FL6DkU285mTFfqsOdUlRyeEnqbvKAbeE6r+FPijnLz1VTFOwR2jh2+zt+G358hPZPd/
+         oSlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVC6p+lVq0HdVLRTlqXsUF8cIqYJlAft6xjz7fWKVkyu2CK7Lkn8lt6Zz2vpkpNA9ws9ZXepgGg8cLHCUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq7LX413i0HqZLTJGNbdnGJVHU3IQPQ8dTlVMLOg68TXQU5CSV
+	5kHf/orYQEh5aB2ZfWNC1CL0yHWiVKL64xrXNNfotXWrV5TH+t9nsr+aj4eUkudVRVeE7ne4czy
+	unonBbmqCCeJW+JBzJW7nVTJgRIzqaQRNOZeWnA==
+X-Google-Smtp-Source: AGHT+IFvCf4E3AaZh8GOYF6qDZtM9rSpNnAk22CeUU8eVSdJtW5sQOCjzvPdcdppk0FFBC/EkZxVm+WiWqVpIISR9II=
+X-Received: by 2002:a05:6602:14cd:b0:7fa:56f0:ad87 with SMTP id
+ ca18e2360f4ac-8278732f754mr186317239f.10.1724396963618; Fri, 23 Aug 2024
+ 00:09:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+References: <20240814054434.3563453-1-nick.hu@sifive.com> <20240814054434.3563453-2-nick.hu@sifive.com>
+In-Reply-To: <20240814054434.3563453-2-nick.hu@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 23 Aug 2024 12:39:12 +0530
+Message-ID: <CAAhSdy2HkZrd6VmZ=L84soCJ0gcix2J+6MOMZ15OT8ri0=m1xQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] cpuidle: riscv-sbi: Move sbi_cpuidle_init to arch_initcall
+To: Nick Hu <nick.hu@sifive.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	greentime.hu@sifive.com, zong.li@sifive.com, 
+	Anup Patel <apatel@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-22 12:32:15 [-0400], Derek Barbosa wrote:
-> Hi,
-Hi,
+On Wed, Aug 14, 2024 at 11:14=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote=
+:
+>
+> Move the sbi_cpuidle_init to the arch_initcall to prevent the consumer
+> devices from being deferred.
+>
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> Link: https://lore.kernel.org/lkml/CAKddAkAOUJSnM=3DPx-YO=3DU6pis_7mODHZb=
+mYqcgEzXikriqYvXQ@mail.gmail.com/
+> Suggested-by: Anup Patel <apatel@ventanamicro.com>
 
-> TLDR: plain, vanilla 6.11.0-0.rc3 is slower on flush and 
-> does not print traces in panic/crash context consistently.
+LGTM.
 
-Thank you for testing.
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-> For the stock kernel, we observed an average of about 14,263 messages printed
-> within 30 seconds. The standard deviation here hovers at around 1.52 messages,
-> with a variance of 2.3 messages.
-> 
-> For the "new printk" kernel, we observed an average of about 12,693 messages
-> printed within 30 seconds. The standard devation here hovers at about 131.2  
-> messages, with a variance of 17211 messages. 
-> 
-> We observe a rough 12-13 percent overall delta between new printk and the
-> stock kernel in this test case, with a larger disparity in standard
-> deviation/variance.
+Regards,
+Anup
 
-I am a bit confused. You write here ~14k messages within 30secs for
-"stock" aka 6.11.0-0.rc3 and then ~12k messages for "new printk" aka
-from the latest RT tree. At the top you write "6.11.0-0.rc3 is slower on
-flush". This means something else I guess.
-
-Regarding your RCU stall: You stuff a _lot_ into the printk buffer. And
-then printk is forced print everything out in a single sitting. The
-whole printing job is done within a preempt_disable region so RCU has to
-wait until it is done. If printing of the whole buffer takes >60sec then
-you see your RCU stall.
-The current RT tree will do the printing from a kthread which remains
-preemptible because your printing threads don't print any errors/ panics
-for 30seconds. So RCU gets its turn.
-
-Sebastian
+> ---
+>  drivers/cpuidle/cpuidle-riscv-sbi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
+e-riscv-sbi.c
+> index a6e123dfe394..98e7751dbfe8 100644
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -592,4 +592,4 @@ static int __init sbi_cpuidle_init(void)
+>
+>         return 0;
+>  }
+> -device_initcall(sbi_cpuidle_init);
+> +arch_initcall(sbi_cpuidle_init);
+> --
+> 2.34.1
+>
 
