@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-298515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB6595C84C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D0895C84E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB41B283D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:41:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A8B1C2165C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF70149009;
-	Fri, 23 Aug 2024 08:41:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4455E1487CD;
+	Fri, 23 Aug 2024 08:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lYVqsKUO"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D534F88C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C52232C85
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402466; cv=none; b=X+pVmG3fHkdfDeww/E194kJWOc/c4ErsEJtivb/Li9YgbclyCRTMsDfHbTf5KcORPBOYZiOHA6haRFyLAXuLVBfSv+mmUpMBH4E/bXn5GJsUUz1yzHLedfoSl3Y1UZX+CGghQIQtKadfQNvgOG3H1Ecpx8gx0/qSEc0kQOvAwTM=
+	t=1724402538; cv=none; b=Q8GD0POfBDC14nXBaeyYfdAtlQOvtAB0qnjsD797WygZClrTM3ywQA2p0sO94BFksoTQzpr5UpvwW0eA9iqEMHm688LlOxr2X5yuPWllDFzSU6YCNy+pawFMn/xZ8olPKoHPzyZ5mzHho+wfR95Jofr2Gr0LgwGzdkbvz4ZOAfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402466; c=relaxed/simple;
-	bh=4LihlNSfrZ8x3ExCWI7DRClqzqwfzElxZ2l30IYcd34=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AVs2G6GNu9mEDdODfuKcDM3Eq3//PPDLL1s/WO5Pmh/RgPGgw6DExA9B1Iv6+wGrCKZxiF2yVTzEVkZimIu48ZcPskjqoWLGmyfpqJ+EOCCQk87JhODIesHLWDI42Ny6Yv8SzUvmpdejH6j5eYPaTCc9QqWZf1UMfLq0l3Fyhnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqtk64Hq3z6K8y1;
-	Fri, 23 Aug 2024 16:37:50 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 292A8140B63;
-	Fri, 23 Aug 2024 16:40:59 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 09:40:58 +0100
-Date: Fri, 23 Aug 2024 09:40:58 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Huisong Li <lihuisong@huawei.com>
-CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
-	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
-Subject: Re: [PATCH v2 4/6] soc: hisilicon: kunpeng_hccs: Fix the
- 'lane_mode' field name in port info structure to 'max_lane_num'
-Message-ID: <20240823094058.00002b9f@Huawei.com>
-In-Reply-To: <20240823031059.32579-5-lihuisong@huawei.com>
-References: <20240718071134.31155-1-lihuisong@huawei.com>
-	<20240823031059.32579-1-lihuisong@huawei.com>
-	<20240823031059.32579-5-lihuisong@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724402538; c=relaxed/simple;
+	bh=er3ldAacAISiKuIrc+S0Cy7dUbUKLUyxcWVpv8fktw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=skfeVo56TtbDGEu3mZci8+g+EivNXpaWF96QmHwc1rD9QOAlV1xMWlEzhobXYnS0pjyA0XA7hiTkYrccl428kotNtuOA4cJ+JABjTbdoYToYHk44MJy/RfBuMkq4AekXy6On3El/4KGl91nax+bQiCl47jVEVAMt6wnOAnDSRMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lYVqsKUO; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d5f5d8cc01so1214572a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724402536; x=1725007336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0VYKazBHx5RAkPfvbSrtx9Aay+RtLgwI3e64WjTUdE=;
+        b=lYVqsKUOErvoOXMMyaS0kKfN6aHjhkksDJKXFVbEopASRAj+ng6szgH3UszVmkXzJB
+         Ua0fRqPdtG8OcM77QWNA+EgR0h0w5YU0dke2+7fEjdbDvKtTZg/XKiqH75c5HzNUTGNU
+         XYr9gUEp1rnla2LR9HhMygDrO4uNdGZlOBa/v7CClnIqpyQ906AtV0x82MB+R2NHNfWD
+         1tUtZ0J0hh8dZMJl8LG1vWWmnRZHJMHGr+wCaIrBfg0sRZ7pcVDZtOKZkYu9N12dbR7O
+         atgg/Q0Un0FS6bwdE22PvMCIfFAinBjgARUxHvmYROnLc0J85gR/ar1Pl4nuZdUPZ7/R
+         QmDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724402536; x=1725007336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D0VYKazBHx5RAkPfvbSrtx9Aay+RtLgwI3e64WjTUdE=;
+        b=fCObtIaML/BkzJ95icq4K1ctRXQ1NrMRtnnxBjRSt8yXPRxL4xAiUb1eZawYAUFcX7
+         FJ12XSnvQnKZj1A87UDTcz0f/yTTwxGgzxbqsvxIJzxmnIPSkJy2jc2l9C+PXebyfdpN
+         GlddEQTapsx4MI7CdRvJDmPmve28mT5vT305lB0LuOI7FacXN/bdS3+Flj/C/iW9cuHV
+         Nuzm2+XSzTPR8OlNOQltpa2LIpLS7aadO4mdjKv4qgCMenRXQPfElswp5b6W2F0RzB0N
+         8qlL5wm0ooh4ZLH73F36LD1rQ2WdnAHsAW6BHFhhLzjjcna9WxLBEYl0mz47fGYb4Hvf
+         1zqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ59L8TQeC5nPXbp6LZ51Hfk6OF5X+geimUiuuKYLm4+Ztf7dui/Wv/2tbuNZJMdUzdOHrYbF5beO9rzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT4MfxH162vSHntZ/y8xOgL+6UIYjXMHG2WZQuDJY4jd9vQmpN
+	mzogk5t9iwqp7kFxy0B9QzKfO5tHDDb6ymqImvI6wbVzG3z8eze5O1NLlDBrvbM=
+X-Google-Smtp-Source: AGHT+IGshkNTIduaJa/lscFaNRfIY72EQHcQ9Wkq3p+g4GdDaJIuRfyI0KI0dQp5V5Up4zxguq22aw==
+X-Received: by 2002:a17:90a:ff17:b0:2c8:2cd1:881b with SMTP id 98e67ed59e1d1-2d60aa0f083mr8560055a91.20.1724402536237;
+        Fri, 23 Aug 2024 01:42:16 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d61391a783sm3457332a91.14.2024.08.23.01.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 01:42:15 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	jiri@resnulli.us,
+	bigeasy@linutronix.de,
+	lorenzo@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Subject: [PATCH bpf-next v2] net: Don't allow to attach xdp if bond slave device's upper already has a program
+Date: Fri, 23 Aug 2024 16:42:04 +0800
+Message-Id: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 11:10:57 +0800
-Huisong Li <lihuisong@huawei.com> wrote:
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-> The lane mode of HCCS port is an information to user, and actually comes
-> from the maximum lane number. But it is good and easy for driver to use
-> the maximum lane number. So fix the 'lane_mode' field name in port info
-> structure to 'max_lane_num'.
-> 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+Cannot attach when an upper device already has a program, This
+restriction is only for bond's slave devices or team port, and
+should not be accidentally injured for devices like eth0 and vxlan0.
 
-It's unfortunate we missed the ABI in the first place
-as that's still confusingly names, but at least this improves things
-in the driver.
+Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+---
+Changelog:
+v1->v2: Addressed comments from Paolo Abeni, Jiri Pirko
+- Use "netif_is_lag_port" relace of "netif_is_bond_slave"
+Details in here:
+https://lore.kernel.org/netdev/3bf84d23-a561-47ae-84a4-e99488fc762b@bytedance.com/T/
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+ net/core/dev.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/soc/hisilicon/kunpeng_hccs.c | 4 ++--
->  drivers/soc/hisilicon/kunpeng_hccs.h | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-> index 6055e5091cbd..418e4ee5d9e5 100644
-> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
-> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-> @@ -594,7 +594,7 @@ static int hccs_get_all_port_info_on_die(struct hccs_dev *hdev,
->  		port = &die->ports[i];
->  		port->port_id = attrs[i].port_id;
->  		port->port_type = attrs[i].port_type;
-> -		port->lane_mode = attrs[i].lane_mode;
-> +		port->max_lane_num = attrs[i].max_lane_num;
->  		port->enable = attrs[i].enable;
->  		port->die = die;
->  	}
-> @@ -839,7 +839,7 @@ static ssize_t lane_mode_show(struct kobject *kobj, struct kobj_attribute *attr,
->  {
->  	const struct hccs_port_info *port = kobj_to_port_info(kobj);
->  
-> -	return sysfs_emit(buf, "x%u\n", port->lane_mode);
-> +	return sysfs_emit(buf, "x%u\n", port->max_lane_num);
->  }
->  static struct kobj_attribute lane_mode_attr = __ATTR_RO(lane_mode);
->  
-> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.h b/drivers/soc/hisilicon/kunpeng_hccs.h
-> index c3adbc01b471..5e12a1e1474e 100644
-> --- a/drivers/soc/hisilicon/kunpeng_hccs.h
-> +++ b/drivers/soc/hisilicon/kunpeng_hccs.h
-> @@ -19,7 +19,7 @@
->  struct hccs_port_info {
->  	u8 port_id;
->  	u8 port_type;
-> -	u8 lane_mode;
-> +	u8 max_lane_num;
->  	bool enable; /* if the port is enabled */
->  	struct kobject kobj;
->  	bool dir_created;
-> @@ -113,7 +113,7 @@ struct hccs_die_info_rsp_data {
->  struct hccs_port_attr {
->  	u8 port_id;
->  	u8 port_type;
-> -	u8 lane_mode;
-> +	u8 max_lane_num;
->  	u8 enable : 1; /* if the port is enabled */
->  	u16 rsv[2];
->  };
+diff --git a/net/core/dev.c b/net/core/dev.c
+index f66e61407883..49144e62172e 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -9502,10 +9502,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+ 	}
+ 
+ 	/* don't allow if an upper device already has a program */
+-	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
+-		if (dev_xdp_prog_count(upper) > 0) {
+-			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
+-			return -EEXIST;
++	if (netif_is_lag_port(dev)) {
++		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
++			if (dev_xdp_prog_count(upper) > 0) {
++				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
++				return -EEXIST;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.30.2
 
 
