@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-298827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2ECA95CBF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:03:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A63795CBF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948DF2851C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE49286266
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B854184558;
-	Fri, 23 Aug 2024 12:03:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C58E184527;
-	Fri, 23 Aug 2024 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F631184547;
+	Fri, 23 Aug 2024 12:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yOiA9sxw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/yj9NlR7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D06E184520;
+	Fri, 23 Aug 2024 12:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414589; cv=none; b=LvPucH1SpGvWi3zs0+HbYsCiSLQssjQT7w4dAVcQtWHoK+zbLnnUUJsYG6ZKyx3fmiSGsfPYGfbGEC5DVLYl0Kk2nD3FB94iIxlzXmAPzYk81l+hAy9pzwVgraCWTSkEvFfDzHNC+PcjhX5qrp2Ue/SJGnPh9TDaWInweosZF0U=
+	t=1724414599; cv=none; b=IKUKE3gDeYX397zyTt2irIqqk7BtHwJ62BaaUp+KOtvDlajyYl5i+9+Mk6555nZRf1WPu0EqJc3gTERGyjk/uqxaXLpY9GXKVoGFIKukfFmjmQIrfK/YgE9ka/w5FM8/53x9A6MoNSk5RifjUb89ceeIwJWm1kv1Yj5DwkApfkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414589; c=relaxed/simple;
-	bh=hdHVAvPt7f0rZ3mUsNU7oNL1zeQ26mFD/AaIfLTMBu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ebHyaDhv4luvSZQF56+gcq8paVQhEwYewv8QK35PgcFxTvnCtA12b3ZvFmu04DfXvDyG3yCIdqnej56u0bUtUbA5TLF/CnxxKNY8KdJ76nRiOmdQZxs1CpikBBJR+T7a7nVHnkRk0ttXrorYllnSN96Lbiiqv5iWFDfDrTM44e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9ABEDA7;
-	Fri, 23 Aug 2024 05:03:32 -0700 (PDT)
-Received: from [10.57.47.154] (unknown [10.57.47.154])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9042A3F66E;
-	Fri, 23 Aug 2024 05:03:02 -0700 (PDT)
-Message-ID: <3d37e8ba-25a8-45c2-93a3-02888dad2c9e@arm.com>
-Date: Fri, 23 Aug 2024 13:03:00 +0100
+	s=arc-20240116; t=1724414599; c=relaxed/simple;
+	bh=CchEQikIIATe2qrbjuWnN9ool6Os4tthXIyHcZnPHqM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=cLiCgMhgBX4Le6h4IpwB650pJ///R80zNRmPYB/3P83xIJfdhSQmOaMNNBM19ktHKKCYZMIqWJMybbZwsJI+dKBbcVPlDNPIfwZUVK5pm+2CHABP8W2PidUrSs4/7h6Aw+WmBpmsyjSRvjhInSUiyD5AmZ1StE5auqIowu8JwWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yOiA9sxw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/yj9NlR7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 23 Aug 2024 12:03:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724414596;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FeJgxEa4J3Lj5ofbuAI15yOW9ACHFinKlPh/oANJ76Y=;
+	b=yOiA9sxwWGkqsbLNVwEHQ+pZWtUupTao3/tF8wSjWUckBrk77oPGUHcZ6HPifVDw/ml0G4
+	ooycSgOFY3/0Ea291BJPnK/hFBIaz88gHTkgVcm7dRe2VcJbnZziBUWCsHk09ESYK0/oF2
+	2Kt1qnviG0fo5bfNuHy66xwzA/5pNsGgP31sLnZGwflzSrFlO4NvA8g9p1A9gs6aWcG6Jw
+	AHWOJZUy/Hh5kBoiDQfjGI9nhQe9lrsvB5AsapHLVIMGEcBWoQynzL9gPpriryT355pkM+
+	4RLjPO4GvH1G3yKjGYR4S3xWtedyF5gZBgk1/eW6YgEi4QQ6sNF3Yd2QexUQ/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724414596;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FeJgxEa4J3Lj5ofbuAI15yOW9ACHFinKlPh/oANJ76Y=;
+	b=/yj9NlR7iSfl5yFuxmRcXUOL2NZHZN/uhTGpyzwYhpsgto0D92dyjblB2v9EN8Y15bxrzO
+	07UvzKlLnLe2rzCA==
+From: "tip-bot2 for Maxime Chevallier" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/irq-msi-lib: Check for NULL ops in
+ msi_lib_irq_domain_select()
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240823100733.1900666-1-maxime.chevallier@bootlin.com>
+References: <20240823100733.1900666-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-To: MANISH PANDEY <quic_mapa@quicinc.com>,
- Bart Van Assche <bvanassche@acm.org>, Sandeep Dhavale <dhavale@google.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Qais Yousef <qyousef@layalina.io>, axboe@kernel.dk, mingo@kernel.org,
- peterz@infradead.org, vincent.guittot@linaro.org,
- linux-block@vger.kernel.org, sudeep.holla@arm.com,
- Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>,
- kailash@google.com, tkjos@google.com, bvanassche@google.com,
- quic_nitirawa@quicinc.com, quic_cang@quicinc.com, quic_rampraka@quicinc.com,
- quic_narepall@quicinc.com,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <3feb5226-7872-432b-9781-29903979d34a@arm.com>
- <20240805020748.d2tvt7c757hi24na@airbuntu>
- <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
- <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
- <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
- <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
- <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
- <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
- <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
- <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
- <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
- <1a95a60c-730a-4bb7-80c9-98b8a70f6521@acm.org>
- <66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <172441459534.2215.17071496172496357174.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 8/23/24 08:57, MANISH PANDEY wrote:
-> 
-> 
-> On 8/22/2024 7:54 PM, Bart Van Assche wrote:
->> On 8/22/24 3:46 AM, MANISH PANDEY wrote:
->>> On 8/21/2024 10:52 PM, Bart Van Assche wrote:
->>> > What is the performance impact of the above change?
->>  >
->>> No impact at all
->> Is this a good summary of this email thread?
->> * The first email in this thread reports an important performance
->>    regression.
->> * In your previous email there is a candidate fix for the performance
->>    regression.
->> * Above I read that the proposed fix has no performance impact at all
->>    on any setup.
->>
->> Is this a good summary of this email thread? If so, do you agree that
->> this must be confusing everyone who is following this email thread?
->>
->> Thanks,
->>
->> Bart.
-> 
-> Hi Bart,
-> 
-> Performance impact due to addition of cpu capacity check (https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io/) ...[1]
-> is already mentioned in the first email.
-> 
-> But let me summarize it again:
-> 
-> We are not able to get advantage of affining the IRQ in different capacity CPU(s)/clusters and complete the request in higher cluster cpu(s), even though the LLC is shared between these clusters as it is causing the block completion to happen on SOFTIRQ context, if requester and completion clusters are different.
-> 
-> Below is the performance impact with the current patch [1]
-> 
-> 1. For MCQ capable UFS host (paired with UFS 4.x), we are observing ~20% random R/W performance drop.
-> 
-> 2. For single doorbell ufs hosts (paired with UFS 2.x/ UFS 3.x), we are observing ~7-10% random R/W performance drop.
-> 
+The following commit has been merged into the irq/urgent branch of tip:
 
-If you do decide to write your proposal up as a patch, a description of the
-topology would be helpful as well.
+Commit-ID:     880799fc7a3a127c43143935c1a8767d77c19cae
+Gitweb:        https://git.kernel.org/tip/880799fc7a3a127c43143935c1a8767d77c19cae
+Author:        Maxime Chevallier <maxime.chevallier@bootlin.com>
+AuthorDate:    Fri, 23 Aug 2024 12:07:12 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 23 Aug 2024 13:55:15 +02:00
 
-> 
-> Also in previous emails on this thread, below were few suggestions to add check for equal or greater capacity cpus by @Christian Loehle
-> https://lore.kernel.org/all/3feb5226-7872-432b-9781-29903979d34a@arm.com/
-> 
->> From: Christian Loehle @ 2024-08-02  9:03 UTC (permalink / raw)
->> [......]
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index e3c3c0c21b55..a4a2500c4ef6 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -1164,7 +1164,7 @@ static inline bool
->> blk_mq_complete_need_ipi(struct request *rq)
->>        if (cpu == rq->mq_ctx->cpu ||
->>            (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
->>             cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
->> -            cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
->> +            arch_scale_cpu_capacity(cpu) >=
->>              arch_scale_cpu_capacity(rq->mq_ctx->cpu)))
->>                return false;
->>
->>       /* don't try to IPI to an offline CPU */
-> 
-> 
-> There can be SoCs with different CPU cluster configurations and to have optimal IO load balancing or to avoid contention b/w submission path and completion path, we may need to complete IO request of large capacity CPU(s) on small cluster cpus. So the above propose solution may not be suffice to all the use cases.
-> 
-> Hence with below proposed solution, we are trying to propose a new rq flag QUEUE_FLAG_CPU_CAPACITY. The proposed solution will provide us a way such that users who are benefited with CPU capacity check [1] would be able to use the fix as it is, and if a user (including us) want to bypass cpu capacity fix [1], they can set rq_affinity to 3 and would be able to retain performance drop as mentioned in first email. This would give flexibility to user to choose what's the best for their system.
->
+irqchip/irq-msi-lib: Check for NULL ops in msi_lib_irq_domain_select()
 
-FWIW I'd agree with introducing a new queue_flag that behaves like
-QUEUE_FLAG_SAME_COMP before commit af550e4c9682 ("block/blk-mq: Don't complete locally if capacities are different").
-Equal capacity makes sense as the default behavior for
-QUEUE_FLAG_SAME_COMP, but is limiting, there might be just one
-CPU of that capacity and that might be fully utilized by submission
-(and related work), so completing locally makes sense.
+The irq_domain passed to msi_lib_irq_domain_select() may not have
+msi_parent_ops set. There is a NULL pointer check for it, but unfortunately
+there is a dereference of the parent ops pointer before that.
 
-So QUEUE_FLAG_SAME_COMP I'd leave as-is and introduce
-QUEUE_FLAG_SAME_LLC that actually just checks LLC.
+Move the NULL pointer test before the first use of that pointer.
 
-Regards,
-Christian
+This was found on a MacchiatoBin (Marvell Armada 8K SoC), which uses the
+irq-mvebu-sei driver.
 
+Fixes: 72e257c6f058 ("irqchip: Provide irq-msi-lib")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240823100733.1900666-1-maxime.chevallier@bootlin.com
+Closes: https://lore.kernel.org/all/20240821165034.1af97bad@fedora-3.home/
+---
+ drivers/irqchip/irq-msi-lib.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
+index b5b9000..d8e29fc 100644
+--- a/drivers/irqchip/irq-msi-lib.c
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -128,6 +128,9 @@ int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 	const struct msi_parent_ops *ops = d->msi_parent_ops;
+ 	u32 busmask = BIT(bus_token);
+ 
++	if (!ops)
++		return 0;
++
+ 	if (fwspec->fwnode != d->fwnode || fwspec->param_count != 0)
+ 		return 0;
+ 
+@@ -135,6 +138,6 @@ int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 	if (bus_token == ops->bus_select_token)
+ 		return 1;
+ 
+-	return ops && !!(ops->bus_select_mask & busmask);
++	return !!(ops->bus_select_mask & busmask);
+ }
+ EXPORT_SYMBOL_GPL(msi_lib_irq_domain_select);
 
