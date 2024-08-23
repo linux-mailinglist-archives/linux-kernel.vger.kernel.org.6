@@ -1,227 +1,113 @@
-Return-Path: <linux-kernel+bounces-299202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD97D95D178
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C25895D17A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74218B23E46
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7C9280FE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA5A188A26;
-	Fri, 23 Aug 2024 15:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB40188A1A;
+	Fri, 23 Aug 2024 15:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NXNGSSz7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVoYCTqx"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E8918800E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B280D189501;
+	Fri, 23 Aug 2024 15:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427202; cv=none; b=qGVU7LJ0NrkqXn+IK2n/6ZY3AX7pnDsbdAi/lp44+tmuI4OyKMFiOXjFSq4biy7ZNbKIXsZsPoMePr8Z0lsEY0ckcPwOkY3rEqPI2hecqQuZTCEbs4dFXKHcdc9LG9hfdpQCXxM6bSgbNqgXeiFXeicCit4EvvWt+hKhxSOjj5o=
+	t=1724427246; cv=none; b=RT+6AvLHbWM2/JwNlnFgFd2p4eQ+chNuO82w/PC7I9xDU/ErvI9fnSittzcIA8tN81NBCudQJG8scqjiHSmnbQaNihHY9sgVMkczpGYFFlf09S7ljqmG4+AwecVW6sToXJeMiLxE4STr/TOWsqalFiPYJgRAghI5CPIgSKhEj+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427202; c=relaxed/simple;
-	bh=AS2NxEZemsTzIzZeciU6KQmngp5HFihrC+Vbn+2p35A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XoO60z4BhwabjWvtpBmEohRA7hdgPJq8MxnQ6/WrJedBhnqttY8+OV+N3UtZVWu5vVNI3JyeTcFQwq4bO9h0MdM8pLWKALb21Ut4fZVKmF9lxXQCdnrZEpMNf14yATfWNgmFRkIQgx9QYsBXLxb8Je03NRroFN5XGAuBn3RyyaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NXNGSSz7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 07F8F2D5;
-	Fri, 23 Aug 2024 17:32:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724427134;
-	bh=AS2NxEZemsTzIzZeciU6KQmngp5HFihrC+Vbn+2p35A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NXNGSSz7xR1mL1/ZM5QCcqH07zUfhllx4BUtqENbfDxVkIqhVw6ASOw1SBdO9VqsF
-	 YDxiQGjT+CvOiGOshVP53uzcE9Gy//2G5e+Ezx5QQTpBBZfX3NO4HMcspu9QI/rt/X
-	 S0HfLn7aBVWQCfxox7QD/RDcwnllqdHVJ2DrBtNs=
-Date: Fri, 23 Aug 2024 18:33:15 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Phil Elwell <phil@raspberrypi.com>
-Subject: Re: [PATCH 4/7] staging: vchiq_core: Factor out bulk transfer for
- (no/)callback mode
-Message-ID: <20240823153315.GA28317@pendragon.ideasonboard.com>
-References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
- <20240823-to_sent2-v1-4-8bc182a0adaf@ideasonboard.com>
+	s=arc-20240116; t=1724427246; c=relaxed/simple;
+	bh=4Ef2CyBtX8os7pcd6r06D78uQ8gDmdfCBjZSLKkrypo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YEHuhOWax+BjpNP2z/DwoUpO2VicfCcNcA1QzloLeAIOb/buCbqH5md0Ie6CZTC31fAi3HfQfBv6CAZxT0K3JIRKZVsqW3V1XtOTkr0mhrqo8FE5G69k0WiipT6+ABcYhVqfBUxS1cIYMMavucb7nZ8WwtTadyjAyy9tX2jz5i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVoYCTqx; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6bf705959f1so17515106d6.1;
+        Fri, 23 Aug 2024 08:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724427243; x=1725032043; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9etiYnnRxwRg/QPMQ3FRSnJ0KuDh4l5wr2lhwy9ymKs=;
+        b=KVoYCTqxkjm4jRQkyvwmeHhpok7ZnLm6pPZt7vSU2GO9WQjO1YgeJ//Fcu5F9yb4wR
+         NL0V6Qm7J4Kbw8YG2w7Fcox8QNWJ7oeVADJUt/Ngc6JszB0KKLA/roKQiNaGRtPA5m6L
+         irJ+0pqjX8rYyve3RoFm8djoWHwHhUANhRLt98JghOu8UvJUxv5ox4NLiRY1L4k6D/1O
+         Je6E08S5AhiCQK/O42EM8W3bdHaSwtIWeapZeZiR+CilJT1RsTOqf56uQsZjME8QsOpl
+         LHf+L+50CuEZ8xwmWCpxSaPxoyVRofENJo92iX/SmS8weQs36tFrwq/o9yKO2L8kmFql
+         zJcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724427243; x=1725032043;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9etiYnnRxwRg/QPMQ3FRSnJ0KuDh4l5wr2lhwy9ymKs=;
+        b=TFhMLcMvpn+6UZVD9OOSKrJ9pRwWCMk2wEOq79ZzT2e+f/asYnTTDHRJJtBnHQhqAu
+         m6FvJVkH41w/AzvXVGdYyoTOC7z9YwfHof4510YKAiDNyZS3Aef0qBcYpGfucTmBGlKn
+         kwZNqXsCQEZlurT+WzjwIpLZm5XmH/8/cFat4QdykIqfylHwr/Fi3NF+VEx9KroNG6Jf
+         LRQXmOmAYhpV7x24W3Aq6XZR7ZXWAi8DYmCRKGGNr4P+hflznyXfXNvPoo8lhMA5EDxw
+         Ifdsw/T8Vnuc2GoIkWpAJpzBbMRZISs8L23I2WoYrdsn+KBZCcAIPFz0Nwt53lp2s10T
+         /drA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9+Z5GlyuBIaZ3PzX5UsCIBWS9Fw1Yj5/7o/rVZwC8HImBkKaxMTKGo05sGNBeVH7FfIt9P4vixgzG@vger.kernel.org, AJvYcCX/cLBVX747M7MAQFJldykVKXYM7EY9BgHYylEnua530xWj7Lo6MegFuW4lMHR36dpL6NBVZN4ZJNQ8aUtF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlh8VFyYWG66NuW1V+i2R6W1q9KMjD+cKVMfK3yFgUiDta0zGO
+	fZNkYKfY3zKWy3cgtJIZZPioSYdLddhQvTeg23/XEhhyOplFgtgk88TgX3MaW5niQmlNy8c8pC+
+	y0byGGQ5YTn/BwL5teineMHV39Ew=
+X-Google-Smtp-Source: AGHT+IGmPoJR9aOXkv5AveTf99brHiAcZWHZzVAF/gpt3nMAbhQG0K50J7cjARmS1sgy7EUnsEkjnlECrKcssQQQ7qI=
+X-Received: by 2002:a05:6214:4904:b0:6bf:6b6e:95b3 with SMTP id
+ 6a1803df08f44-6c16d4449aamr49758376d6.1.1724427243349; Fri, 23 Aug 2024
+ 08:34:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240823-to_sent2-v1-4-8bc182a0adaf@ideasonboard.com>
+References: <20240822170440.265055-1-robertcnelson@gmail.com>
+ <20240822170440.265055-2-robertcnelson@gmail.com> <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
+In-Reply-To: <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Fri, 23 Aug 2024 10:33:37 -0500
+Message-ID: <CAOCHtYhK36QyKOmQhY+Q31rB23ASoxUXTX+0R1tzK-ZhvvWSLA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
+To: Roger Quadros <rogerq@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>, Jai Luthra <j-luthra@ti.com>, 
+	Siddharth Vadapalli <s-vadapalli@ti.com>, Jared McArthur <j-mcarthur@ti.com>, 
+	Jason Kridner <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>, 
+	Drew Fustini <drew@beagleboard.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Umang,
+> > +
+> > +&cpsw3g {
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&rgmii1_pins_default>, <&gbe_pmx_obsclk>;
+>
+> Why do you need OBSCLK for Ethernet MAC?
+> The OBSCLK is connected to the Ethernet PHY via C406 which is not even populated.
+> It seems that the PHY is clocked by a crystal oscillator X5 so doesn't really
+> need OBSCLK in the stock configuration?
 
-Thank you for the patch.
+Ah crap, I'll take a look at this... I bet it's left over from the
+first pcb, (all my first rev pcb's are now locked up so i don't use
+them anymore)..  Seeed/BeagleBoard was playing it safe and designing
+in both options.. Once the internal clocks were verified newer
+revisions removed the external clock.
 
-On Fri, Aug 23, 2024 at 08:44:24PM +0530, Umang Jain wrote:
-> Factor out bulk transfer for VCHIQ_BULK_MODE_NOCALLBACK and
-> VCHIQ_BULK_MODE_CALLBACK mode into a separate dedicated function
-> bulk_xfer_callback_interruptible(). It is suffixed by "_interruptible"
-> to denote that it can be interrupted and -EAGAIN can be returned. It
-> would be up to the users of the function to retry the call in those cases.
-> 
-> bulk_xfer_callback_interruptible() also takes in 'mode' parameter to
-> differentiate between VCHIQ_BULK_MODE_NOCALLBACK and
-> VCHIQ_BULK_MODE_CALLBACK, which then is directly passed to
-> vchiq_bulk_xfer_queue_msg_interruptible() inside the function.
-> 
-> Adjust the calls to vchiq-dev.c ioctl interface and vchiq_arm.c
-> for the respective bulk transfers.
-> 
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->  .../vc04_services/interface/vchiq_arm/vchiq_arm.c  | 15 ++++----
->  .../vc04_services/interface/vchiq_arm/vchiq_core.c | 40 ++++++++++++++++++++++
->  .../vc04_services/interface/vchiq_arm/vchiq_core.h |  6 ++++
->  .../vc04_services/interface/vchiq_arm/vchiq_dev.c  |  6 ++++
->  4 files changed, 60 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> index e9b9c76381dc..5210ce8d269e 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> @@ -857,10 +857,10 @@ vchiq_bulk_transmit(struct vchiq_instance *instance, unsigned int handle, const
->  		switch (mode) {
->  		case VCHIQ_BULK_MODE_NOCALLBACK:
->  		case VCHIQ_BULK_MODE_CALLBACK:
-> -			ret = vchiq_bulk_transfer(instance, handle,
-> -						  (void *)data, NULL,
-> -						  size, userdata, mode,
-> -						  VCHIQ_BULK_TRANSMIT);
-> +			ret = bulk_xfer_callback_interruptible(instance, handle,
-> +							       (void *)data, NULL,
-> +							       size, mode, userdata,
-> +							       VCHIQ_BULK_TRANSMIT);
->  			break;
->  		case VCHIQ_BULK_MODE_BLOCKING:
->  			ret = vchiq_blocking_bulk_transfer(instance, handle, (void *)data, size,
-> @@ -895,9 +895,10 @@ int vchiq_bulk_receive(struct vchiq_instance *instance, unsigned int handle,
->  		switch (mode) {
->  		case VCHIQ_BULK_MODE_NOCALLBACK:
->  		case VCHIQ_BULK_MODE_CALLBACK:
-> -			ret = vchiq_bulk_transfer(instance, handle, data, NULL,
-> -						  size, userdata,
-> -						  mode, VCHIQ_BULK_RECEIVE);
-> +			ret = bulk_xfer_callback_interruptible(instance, handle,
-> +							       (void *)data, NULL,
-> +							       size, mode, userdata,
-> +							       VCHIQ_BULK_RECEIVE);
->  			break;
->  		case VCHIQ_BULK_MODE_BLOCKING:
->  			ret = vchiq_blocking_bulk_transfer(instance, handle, (void *)data, size,
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index 341a06997848..0606561fd3d0 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -3027,6 +3027,46 @@ bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int h
->  	return status;
->  }
->  
-> +int
-> +bulk_xfer_callback_interruptible(struct vchiq_instance *instance, unsigned int handle,
+Yeah, I'm pretty sure final production boards removed every external
+clock option.
 
-Please prefix the name of all functions with an appropriate driver
-prefix, especially for functions that are not static.
-
-> +				 void *offset, void __user *uoffset, int size,
-> +				 enum vchiq_bulk_mode mode, void *userdata,
-> +				 enum vchiq_bulk_dir dir)
-> +{
-> +	struct vchiq_service *service = find_service_by_handle(instance, handle);
-> +	int status = -EINVAL;
-> +
-> +	if (!service)
-> +		goto error_exit;
-> +
-> +	if (mode != VCHIQ_BULK_MODE_CALLBACK &&
-> +	    mode != VCHIQ_BULK_MODE_NOCALLBACK)
-> +		goto error_exit;
-> +
-> +	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
-> +		goto error_exit;
-> +
-> +	if (!offset && !uoffset)
-> +		goto error_exit;
-> +
-> +	if (vchiq_check_service(service))
-> +		goto error_exit;
-> +
-> +	status = vchiq_bulk_xfer_queue_msg_interruptible(service, offset, uoffset,
-> +							 size, userdata, mode, dir);
-> +	if (status)
-> +		goto error_exit;
-> +
-> +	vchiq_service_put(service);
-> +
-> +	return 0;
-> +
-> +error_exit:
-> +	if (service)
-> +		vchiq_service_put(service);
-> +	return status;
-> +}
-> +
->  /*
->   * This function may be called by kernel threads or user threads.
->   * User threads may receive -EAGAIN to indicate that a signal has been
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> index ff3559c3d1ba..8aaf3c9d3dbe 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> @@ -479,6 +479,12 @@ bulk_xfer_blocking_interruptible(struct vchiq_instance *instance, unsigned int h
->  				 void *offset, void __user *uoffset, int size,
->  				 void __user *userdata, enum vchiq_bulk_dir dir);
->  
-> +extern int
-> +bulk_xfer_callback_interruptible(struct vchiq_instance *instance, unsigned int handle,
-> +				 void *offset, void __user *uoffset, int size,
-> +				 enum vchiq_bulk_mode mode, void *userdata,
-> +				 enum vchiq_bulk_dir dir);
-> +
->  extern int
->  vchiq_bulk_transfer(struct vchiq_instance *instance, unsigned int handle, void *offset,
->  		    void __user *uoffset, int size, void *userdata, enum vchiq_bulk_mode mode,
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> index 1bff97ad28fa..7ecfcaa85569 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> @@ -336,6 +336,12 @@ static int vchiq_irq_queue_bulk_tx_rx(struct vchiq_instance *instance,
->  		goto bulk_transfer_handled;
->  	} else {
->  		userdata = args->userdata;
-> +
-> +		status = bulk_xfer_callback_interruptible(instance, args->handle,
-> +							  NULL, args->data, args->size,
-> +							  args->mode, userdata, dir);
-> +
-> +		goto bulk_transfer_handled;
->  	}
->  
->  	status = vchiq_bulk_transfer(instance, args->handle, NULL, args->data, args->size,
-> 
+Thanks!
 
 -- 
-Regards,
-
-Laurent Pinchart
+Robert Nelson
+https://rcn-ee.com/
 
