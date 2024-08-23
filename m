@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-298182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7469A95C38D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411E495C397
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECDDCB24472
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F290A2836C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC8C376E0;
-	Fri, 23 Aug 2024 03:04:45 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EFE2E3EB;
+	Fri, 23 Aug 2024 03:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6YeG7pK"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A88C29CEA;
-	Fri, 23 Aug 2024 03:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AB29406
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724382285; cv=none; b=Cqm1R7Hod7pcfzf60t569tJ7XV0HNICdogAB1d5hkHwKXFxoq7J2UJmgPTg5aYcEGmJbUyPi09eT4Te2IVEUWkyXemHgt7TqOGDETxpw8paGab0iat7M9xLRxAigl1YXW7cy0gS1O201haiUVLlBCntsnNCywVcAYfEM8BOMr2s=
+	t=1724382346; cv=none; b=sH1UgO38Zd0vUY9EKmz3Zw2l/Z+q20qfgmGTq7rgwDPwLBv5Z9MYsp1Q76R+hW5WTjHZOJNj+6i2/ZdS2MGTkRPBy0NDigzvx91+Yys0tm01U1iSwsPF+Nely00ByNE2IiuxuJljihSaXG3yMqYIb7Cf4DMZtjStcH4vfaKU6eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724382285; c=relaxed/simple;
-	bh=f4e1VhDyQTp/RzUqC79vd3LL+HdDwEnfeblf6og8ELw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IT3Fc5CvwxCxumY+TbeURryj/rGoUVMgQzi9krC2bPYn9SxZJ675JjF2BXinBqh2Jlrq//CiHNunJocMpi6LoSrJD4UHBzYeesjy0+fOQKC0romkJZEaQ1ur0lTeCAER4jPdn6i+ZPvzuzP+NvacBq0s6kV8C1clVKQXxces2Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowADn0ME3_Mdm8RV8CQ--.11516S2;
-	Fri, 23 Aug 2024 11:04:36 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: dan.carpenter@linaro.org
-Cc: benjamin.berg@intel.com,
-	daniel.gabay@intel.com,
-	gregory.greenman@intel.com,
-	johannes.berg@intel.com,
-	kvalo@kernel.org,
+	s=arc-20240116; t=1724382346; c=relaxed/simple;
+	bh=PDBb6gF2R+iMrzKWkesA5uHNXQG2EqCGOeZvygJGW+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EkDY8uCUHVabUaNB+DZADccoP0mMu9B6ZsxoBYbsHRtlAnAUw3bZVFRz/pfqDXJpsNU94QSaGExX+nAF+AjR9aMl9CpjLZAS8KCcbQWVWSWfKS+75Ht+Il3PEa6bQzCUFHX++BlqDHdJuTi9TIBICYyAAZWLmeWN8bt/SC9usvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6YeG7pK; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7cd830e0711so1442613a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 20:05:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724382344; x=1724987144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pq0C1aRzAHoVhXyS4kaMh7Wg4xyGpeAa9UnKZXVrjAA=;
+        b=Y6YeG7pKMmexLRN2Z9e4vkNzxHqCkKW+SfqfaJ5F0I5CSMES2fmIs/vjH0Hv7udmbv
+         Fqj6qiN98u7kApnqAenAG5jbBW5GmeircZZQVQ+jbHUgUDv6pmRFT+PYjV99gXWxbvBa
+         QZHba3jZfIudUeawmsyfCX5Y85nraOS6kkaauzmPxGoQRLPqpgFMbUiZqvEH61uzA846
+         7A7LApxh+uHviG+qlBnGHM+VTQb7Pa85lHMxIS5UtD2rYlr7IOJST/imq1FBC9McQVem
+         BMt00aIM6XkxJwiXK0vdvcP6U57W8Kc8A9Mt8fXwnVo7/MfJ++c5c9Mu/6PU6PtcPHFu
+         xFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724382344; x=1724987144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pq0C1aRzAHoVhXyS4kaMh7Wg4xyGpeAa9UnKZXVrjAA=;
+        b=urcsgsSze6AZgTYNdeBzojjPAhTs60ur0IaBN/gX7+cAI5hY0DP/dZZotHVzBVZWEs
+         krzzOcCDQJrZ7U6TjMXzKS37NYDkTYUkmItq8/n4qIDazLlN1Qs2/EWxANv5vSChCMbl
+         3Glx7tZERPNmH3oyJbXlfGzqGdH3DSlT8Rq6n/ztPlQFsqtOhPIPGu8j8qVXSSaOotPM
+         BLA++9gG4yd02iFZfzScFA+gdLDZpnuju20B2Cig9VK9h9sPbm0hCiYka9UuY4M9gkeZ
+         lVC/QzU/Gj1xRHja7362+h7B5srIU6hV3EWa/BGvdMWjB+Q2Pk57z0TQwDdye7ePZYa2
+         l0NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuPt4zgtESf2Mf5CrJtCiNo3x2o9QGCHmZko2v0wiBzlazJr92MZXYm6AzCNEU61mIhxvXWgp3HUdGvZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNSI5xuQj0aCQ+FVtTEJFgROghSehqAsqkGuXqP46ZU/Izu9t5
+	U7yKevOlColGqLMpBGi9cMZKUdaWoJSSxQvWg2Icc1qS93MFmiuR
+X-Google-Smtp-Source: AGHT+IHRxxjWzMo/gQ86LcVvFpreUA+pLbsL7cJKw/E5UqRrCouKYM+QHAsdGLolQuq5mhtnBzgT6w==
+X-Received: by 2002:a17:90b:188a:b0:2cf:dd3c:9b0d with SMTP id 98e67ed59e1d1-2d60a8cb8afmr7527855a91.2.1724382343787;
+        Thu, 22 Aug 2024 20:05:43 -0700 (PDT)
+Received: from mi.mioffice.cn ([2408:8607:1b00:8:8eec:4bff:fe94:a95d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d61391fe09sm2756114a91.19.2024.08.22.20.05.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 20:05:43 -0700 (PDT)
+From: liujinbao1 <jinbaoliu365@gmail.com>
+To: xiang@kernel.org
+Cc: chao@kernel.org,
+	linux-erofs@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	make24@iscas.ac.cn,
-	miriam.rachel.korenblit@intel.com
-Subject: Re: [PATCH RESEND] wifi: iwlwifi: mvm: fix an error code in iwl_mvm_alloc_sta_after_restart()
-Date: Fri, 23 Aug 2024 11:04:23 +0800
-Message-Id: <20240823030423.1781977-1-make24@iscas.ac.cn>
+	mazhenhua@xiaomi.com,
+	liujinbao1 <liujinbao1@xiaomi.com>
+Subject: [PATCH] erofs: [PATCH v2] Prevent entering an infinite loop when i is 0
+Date: Fri, 23 Aug 2024 11:05:25 +0800
+Message-Id: <20240823030525.4081970-1-jinbaoliu365@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <575625da-60bc-4444-a5f3-a7acf925f1e5@suswa.mountain>
-References: <575625da-60bc-4444-a5f3-a7acf925f1e5@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:qwCowADn0ME3_Mdm8RV8CQ--.11516S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1xKr1UJw17Ary7ZF1xGrg_yoW8WFWDpF
-	Wakr1YyrWqqF1xJrn2kw4jva4Fkrs5J3W5WFn5Gr9xJr4agFW7XrW3KrWq9Fy7uryxCaya
-	yrWftF9Yka4DZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
-	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
-	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
-	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
-	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF
-	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
-	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-Dan Carpenter<dan.carpenter@linaro.org> wrote:=0D
-> The Subject says RESEND but doesn't explain why you are resending.=0D
-> You probably meant v2, but again it needs an explanation.=0D
-> =0D
-> On Fri, Aug 02, 2024 at 12:27:40PM +0800, Ma Ke wrote:=0D
-> > This error path should return -EINVAL instead of success.=0D
-> =0D
-> Why do you feel that way?  Have you tested it?  What is the user visible=
-=0D
-> effect of this bug?=0D
-> =0D
-> I slightly feel hypocritical because I have send lots of commit messages=
-=0D
-> with exactly this commit message.  The difference is that I only send=0D
-> really easy patches where it's obvious what the intent was.  A normal=0D
-> kernel developer wouldn't need to leave their email client or view any=0D
-> outside information to see that my patch is correct.  If a patch is not=0D
-> dead easy, I normally just report it.  (Sometimes I report dead easy=0D
-> bugs as well because I am lazy and maybe it's the end of my work day=0D
-> or whatever).=0D
-> =0D
-> This patch on the other hand is more subtle and it's not clear why the=0D
-> continue statements changed into returns.=0D
-> =0D
-> regards,=0D
-> dan carpenter=0D
-Thank you for your response to the vulnerability I submitted. Yes, we =0D
-believe there is a similar issue. As described in [1], it gets pointers =0D
-which are handled under the protection mechanism. If the path is error, it =
-=0D
-should return -EINVAL directly instead of success. The discovery of this =0D
-problem was confirmed through manual review of the code and compilation =0D
-testing. And by the way, I resent the patch because I hadn=E2=80=99t receiv=
-ed a =0D
-reply for a long time, so I resent it.=0D
-=0D
-[1] https://lore.kernel.org/all/MW5PR11MB58102E1897D7437CD8E1DF27A3DDA@MW5P=
-R11MB5810.namprd11.prod.outlook.com/=0D
-=0D
---=0D
-Regards,=0D
-=0D
-Ma Ke=
+From: liujinbao1 <liujinbao1@xiaomi.com>
+
+When i=0 and err is not equal to 0,
+the while(-1) loop will enter into an
+infinite loop. This patch avoids this issue.
+
+Signed-off-by: liujinbao1 <liujinbao1@xiaomi.com>
+---
+ fs/erofs/decompressor.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+>Hi,
+> 
+>On 2024/8/22 14:27, liujinbao1 wrote:
+>> From: liujinbao1 <liujinbao1@xiaomi.com>
+>> 
+>> When i=0 and err is not equal to 0,
+>> the while(-1) loop will enter into an
+>> infinite loop. This patch avoids this issue.
+> 
+>Missing your Signed-off-by here.
+> 
+>> ---
+>>  fs/erofs/decompressor.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>> 
+>> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c index 
+>> c2253b6a5416..1b2b8cc7911c 100644
+>> --- a/fs/erofs/decompressor.c
+>> +++ b/fs/erofs/decompressor.c
+>> @@ -539,6 +539,8 @@ int __init z_erofs_init_decompressor(void)
+>>      for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
+>>              err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
+>>              if (err) {
+>> +                    if (!i)
+>> +                            return err;
+>>                      while (--i)
+>>                              if (z_erofs_decomp[i])
+>>                                      z_erofs_decomp[i]->exit();
+> 
+> 
+>Thanks for catching this, how about the following diff (space-demaged).
+> 
+>If it looks good to you, could you please send another version?
+
+>diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c index c2253b6a5416..c9b2bc1309d2 100644
+>--- a/fs/erofs/decompressor.c
+>+++ b/fs/erofs/decompressor.c
+>@@ -534,18 +534,16 @@ int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb)
+> 
+> int __init z_erofs_init_decompressor(void)
+> {
+>-      int i, err;
+>+      int i, err = 0;
+> 
+>        for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
+>                err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
+>-              if (err) {
+>+              if (err && i)
+>                        while (--i)
+>                                if (z_erofs_decomp[i])
+>                                        z_erofs_decomp[i]->exit();
+>-                      return err;
++						break;
+>-              }
+>        }
+>-      return 0;
+>+      return err;
+> }
+>
+missing break?
+-- 
+2.25.1
 
 
