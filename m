@@ -1,140 +1,176 @@
-Return-Path: <linux-kernel+bounces-299454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033EA95D4D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E25195D4DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3253A1C21934
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B85B1C2269F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36894191F6B;
-	Fri, 23 Aug 2024 18:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1F4746E;
+	Fri, 23 Aug 2024 18:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="l27QRTqJ"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DkgLm68Q"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E4F190482
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0118FDD6
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724436134; cv=none; b=d+f/vNq26UmhNwtXTDxtogSXisgjdROhAmGs4zyyVPdYTl5HqLOuTvB+eG9MF7cLypBpPp74c16n5Bl4zZRAuesbr5NBjnnljH6TZm7LoePNgBf6swvXLt1uNJ4vNb7UmEpbE+2nLFmNEg8tJK6/9MwJlCVijXrPUIBLLuK3Gjo=
+	t=1724436244; cv=none; b=PFCSrB9iSi6rM4lNK35j36xsrbebuRPwYvwVkUIuscve5z+rqUQeRj90AluRvuhZakBS/CHNfwsTTjXYRFJTX/6A/i++RhzUDgdh3Qah0EBIl7q8Ple6aHoRAseejip0ctaAYUunvM1uROkg8riYDGPnXoEmrS2QyGRHwlOyEmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724436134; c=relaxed/simple;
-	bh=KFzisPDMHJo7Ln/wIh4AWQVO8V7I807m5GrKhyN8ij8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlFci61ScO0DR2TlRZFUsqTtmaIMtVmHektrBZIrZNhNq1lgMh8HKjVWi4QoG6N6F6ojOm0wDcCxKVbQzv4v2ZaRkI5iYW79Q9LqyrWc6HYDbUijszuwZoI0ry9cip1pGuYgCOeyfOK0fuRmc6IHd842g5/ffXaxus4fQ3MqVIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=l27QRTqJ; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3174626a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:02:12 -0700 (PDT)
+	s=arc-20240116; t=1724436244; c=relaxed/simple;
+	bh=WUyzJ9RLzKLS23Zwiy2U3eJ/4NjpZ8Dgh8hCXrMko0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=irXjm//6BlJt0aB1g64xkAuqOhSdVDSdwCO5AdR9ym6sv3SU0kbDgzBf+b6iZ4lUtV30NGKDt/8h26VMh9PfnI8/6R3X2bTlIZB1ihHucc/sn7yMhzBE28ti26/fONxQ6hCodSB8rtLWfQsPx4s2qIuVXw223eOtzD2Mryms3xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DkgLm68Q; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-70941cb73e9so1583110a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724436131; x=1725040931; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=chz6WNcKqUHubBnvxXzbFav7NB3CIhhztw7hfQz7I5k=;
-        b=l27QRTqJRTTUaiTKpACtd8J3FUkDUDPzEGPK4pPrp44NcNINlNuoSBJoVWAcjg1cDM
-         SM7DaqTr3jnKTQKM1PhtrnTcJ4eeqEC15ltlplRiHgPlS5bgd2zr3VWkLeGanWDVJxK0
-         tSc/kuFODF7dlcZr67az1SAlHNOklIMOlgfoI=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724436242; x=1725041042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jCQS3DXdl0f8z4sgR9LVNvCbxixtPmDAEn66rBmMtuc=;
+        b=DkgLm68QegSPnmk5f3rFoUZZd4Eiqb+s4BBqHW+7927ZKb+6RlfWUZff6oaXh1YvqA
+         Gy3duJrSIana67r7k0kI0F1Wf0GEqEc5e8dANth+kP8g9je/UP7VZ6AfFeHuQk7WoVPr
+         6yh8GvzFwFOJj9DfbDX0/9OPC4Zrrlg/ft+yThE3bsmAPLFwUO1Mg30PAPvufDr6VVw8
+         VtM5QJiAVsd1wheVgpXtlqUgotAGUsT54VAmQHZMraMuEbdTOAgaqXoZXwAU97D+ZYwl
+         HtdlfmrfAk7PIXgR0WGB9Ylz9OkQ4Y91xuvYiVsF5wo3kZ7Bz/jBbgl98iu3CBu5Ri7i
+         47rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724436131; x=1725040931;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=chz6WNcKqUHubBnvxXzbFav7NB3CIhhztw7hfQz7I5k=;
-        b=HfhIz3Rh6XByiWlDPLZO6cjsTaNw7ccuPnZigMDs/xL1mpnvQG8iJvWU4zNuCSfF53
-         oBz2K8ZDcNucW3gElfK8Pc0sAClpOfbEFyua9nA7ZfxeCOoFlIXlIiBBsC3chdDMP3fT
-         UdRqZ0aYzr5GRiGFZFd/Nw7iksqT4jpMBdALcYBtVE66UOQa4s2Meul00LzZDSfgt5Br
-         47Vls4NP/ne8kdS5gEdju0VnGA9Oqpjx64ILcj1yr31wKKDftw6GjxlI3qwGNimna/Sx
-         Kyy7gWvAWBN68FlgBA0l8OUQj/3F0krRNi8/UTPW4Gl3gebxb3/7I0/SuzKOIRU3Fegw
-         2tvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAml1hskR3v3GijRtjMj9mSZU8gDk8YAgulct7IB6drW8vVUiZSZMyo9FYW33pqL0Hz96XY4YNMW/wFf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9iwUqwutIuxsN+jOl9bSoMljC75Y695D3jAhESypMZmrJW3xf
-	PJXH8z7cxYm6CQs1neyzBhhNZzl/08gpiWASSWqUhrs5mj2o4zHifLLOQYN335U=
-X-Google-Smtp-Source: AGHT+IHLmogsSLL4RG6OHQXTCvoGTD7y9oeQstqmNv9alfhru+JJ/kqYHZ2RPkrU6o+dIL+xFV2BAw==
-X-Received: by 2002:a05:6402:2743:b0:5c0:88fe:261b with SMTP id 4fb4d7f45d1cf-5c0891637dbmr1859486a12.11.1724436130569;
-        Fri, 23 Aug 2024 11:02:10 -0700 (PDT)
-Received: from LQ3V64L9R2 ([185.226.39.209])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c43e7sm2387276a12.70.2024.08.23.11.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 11:02:10 -0700 (PDT)
-Date: Fri, 23 Aug 2024 19:02:08 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/6] net: Add control functions for irq
- suspension
-Message-ID: <ZsjOoJBQBls7dl8o@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
-	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240823173103.94978-1-jdamato@fastly.com>
- <20240823173103.94978-4-jdamato@fastly.com>
- <CANn89iJmp2yviC=Z-n7-=suw8N=SJ7uoy0xy5LMQRKDhubNBZg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1724436242; x=1725041042;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jCQS3DXdl0f8z4sgR9LVNvCbxixtPmDAEn66rBmMtuc=;
+        b=KKLXKMFmmzmneojy0dmxgZry94c4mAbVjd/ssdfUy9UGgEG3CLFXuQRNcuI/0j8vwr
+         7thLbdHkn//5X2AQRQjM3nZs3zDIPGc0tofkw83gMxk0dD1dgsPzs4cu4VTCcLZAvEOh
+         QCWyW8FpdZtdyW7Q4boqr3CC/aXKl2OnAHp/6tHd5k1XkskKyxZIwHKh3sdBOA8hbFCJ
+         xE9Ab7TFf2NVnufqm39kAbmeZ2WMHQMe0YPcFUo5S2n1d5Ddq94ij6f6/VOuLpc+lo7h
+         19gbFrDoigBcFgrn57TzIqihaYuoc/M3zxnJsMP6Sojr4CsMzGcnX0t5RmO4uHdp04iJ
+         bwbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWL3Q8A2nVR/2pHWi8DUdbjE9s/SLOcpcscUkEC+rG0UYQJsRhKXdwucAdEQ03RxJ6y90pERnvFdsNJE/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRPmz69Xwx7zCWkTvs09+e4DDcbMAfCMedeuRs/xbKW9RIhCIh
+	kTTqz9wOWmyYGrpaGWz6YaBXUeWgT7PX2gyr3pVNiC/UX7AIClIsL5M0wlf/wU8=
+X-Google-Smtp-Source: AGHT+IG+4VjesQO0U4bzGJWWiKqATbDZrExKqcLFpjCOsTYwHuqBc2PbTksTfSPvFt0Q7bEW/1nT2w==
+X-Received: by 2002:a05:6808:1914:b0:3dc:14dd:c455 with SMTP id 5614622812f47-3de2a88f420mr3074421b6e.19.1724436241784;
+        Fri, 23 Aug 2024 11:04:01 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3de22555608sm802967b6e.20.2024.08.23.11.04.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 11:04:01 -0700 (PDT)
+Message-ID: <bf12e626-d052-421f-a7e7-ec52577d3297@baylibre.com>
+Date: Fri, 23 Aug 2024 13:04:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
+ parts
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org,
+ robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com,
+ gstols@baylibre.com, Mark Brown <broonie@kernel.org>
+References: <20240819064721.91494-1-aardelean@baylibre.com>
+ <20240819064721.91494-8-aardelean@baylibre.com>
+ <3c4edf41-fd3b-4258-9b9e-a81b25568403@baylibre.com>
+ <CA+GgBR9H66u0mB-cQt_6tT2kh9TCW0Bm_BiHEUyVGvmGHBGEJg@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CA+GgBR9H66u0mB-cQt_6tT2kh9TCW0Bm_BiHEUyVGvmGHBGEJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iJmp2yviC=Z-n7-=suw8N=SJ7uoy0xy5LMQRKDhubNBZg@mail.gmail.com>
 
-On Fri, Aug 23, 2024 at 07:56:32PM +0200, Eric Dumazet wrote:
-> On Fri, Aug 23, 2024 at 7:31 PM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > From: Martin Karsten <mkarsten@uwaterloo.ca>
-> >
-> > The napi_suspend_irqs routine bootstraps irq suspension by elongating
-> > the defer timeout to irq_suspend_timeout.
-> >
-> > The napi_resume_irqs routine effectly cancels irq suspension by forcing
-> > the napi to be scheduled immediately.
-> >
-> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Co-developed-by: Joe Damato <jdamato@fastly.com>
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > Tested-by: Joe Damato <jdamato@fastly.com>
-> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > ---
+On 8/23/24 10:54 AM, Alexandru Ardelean wrote:
+> On Mon, Aug 19, 2024 at 6:33 PM David Lechner <dlechner@baylibre.com> wrote:
+>>
+>> On 8/19/24 1:47 AM, Alexandru Ardelean wrote:
+>>> The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
+>>> The main difference between AD7606C-16 & AD7606C-18 is the precision in
+>>> bits (16 vs 18).
+>>> Because of that, some scales need to be defined for the 18-bit variants, as
+>>> they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
+>>>
+>>> Because the AD7606C-16,18 also supports bipolar & differential channels,
+>>> for SW-mode, the default range of 10 V or ±10V should be set at probe.
+>>> On reset, the default range (in the registers) is set to value 0x3 which
+>>> corresponds to '±10 V single-ended range', regardless of bipolar or
+>>> differential configuration.
+>>>
+>>> Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
+>>>
+>>> And the AD7606C-18 variant offers 18-bit precision. The unfortunate effect
+>>> of this 18-bit sample size, is that there is no simple/neat way to get the
+>>> samples into a 32-bit array without having to do a home-brewed bit-buffer.
+>>> The ADC must read all samples (from all 8 channels) in order to get the
+>>> N-th sample (this could be reworked to do up-to-N-th sample for scan-direct).
+>>> There doesn't seem to be any quick-trick to be usable to pad the samples
+>>> up to at least 24 bits.
+>>> Even the optional status-header is 8-bits, which would mean 26-bits of data
+>>> per sample.
+>>> That means that when using a simple SPI controller (which can usually read
+>>> 8 bit multiples) a simple bit-buffer trick is required.
+>>>
+>> Maybe it would be better to just use .bits_per_word = 18 for the 18-bit
+>> ADC and not worry about "simple" SPI controller support for that one?
+>>
 > 
-> You have not CC me on all the patches in the series, making the review
-> harder then necessary.
+> +cc Mark Brown for some input on the SPI stuff
+> 
+> I'm generally fine with choosing to not support SPI controllers that
+> can't do padding to 16/32 bit arrays
+> 
+> But, at the same time: would it be an interesting topic to implement
+> (in the SPI framework) some SW implementation for padding a series of
+> 18-bit samples to 32-bit arrays?
+> (Similarly, this could work for 10-15 bit samples into 16 bit arrays).
+> 
+> Apologies if this is already implemented and I missed it.
+> 
+> But if there isn't such a functionality (padding done in SW inside the
+> SPI framework), then I could probably spin-up a proposal.
+> I think that the functionality could be spun-up in a separate
+> patch-set/discussion; and this patchset would just go with
+> "bits_per_word = 18".
+> 
+> It could be done as a new field in the "struct spi_transfer", or
+> something else like "spi_pad_rx_to_nbits(struct spi_device *)"
+> Or other suggestions welcome
+> 
+> Thanks
+> Alex
 
-My sincere apologies, Eric, and thank you for your time reviewing
-this.
+Seems like it would be tricky to do something in the core code to
+emulate "odd" sized words in general since what is permissible
+likely depends on how the individual peripheral works. For example,
 
-I used a script I'd been using for a while to generate the CC list,
-but it clearly has a bug.
+total_bits = xfer->bits_per_word * (xfer->len  /
+	roundup_pow_of_two(BITS_TO_BYTES(xfer->bits_per_word)))
 
-For any future revisions I will be sure to explicitly include you.
+If total_bits % 8 != 0, then there will be extra trailing
+clock cycles that could be problematic on some peripherals
+but not others.
+
+And there are other incompatibilities to consider, like this
+could not be used with a peripheral that have the CS_WORD flag
+set (highly unlikely, but still something to consider if we
+are integrating this into the core).
+
+But if you want to look into it more, another use case for this
+could be SPI TFT displays. There are a number of these that use
+9-bit data words. Right now emulation is handled in the peripheral
+driver code. For example, see mipi_dbi_spi1e_transfer() and
+fbtft_write_reg8_bus9().
+
 
