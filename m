@@ -1,217 +1,168 @@
-Return-Path: <linux-kernel+bounces-299481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D300795D55C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:39:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB4295D55E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E58AB21B73
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1DF1F2290C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753961917F2;
-	Fri, 23 Aug 2024 18:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37067191F62;
+	Fri, 23 Aug 2024 18:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UFDcULMB"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzyRdbRz"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92E8190482
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E1190482;
+	Fri, 23 Aug 2024 18:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724438350; cv=none; b=d/9eKmoG9WH2yDifllWKXPl0lexLxAAgSEt+rUf4A+huhTF1CodbHpPTHiGoNJzkDK/ZaIDZN7MSsSuz9Nd+5Z2SRbmOTXxCz9oce18p+kJJZbH+UIwE6/8eK17HtNpqm7lfu01gKYHWpXIR2hJvM0SMwKu5koq9cIj12pVn6yE=
+	t=1724438365; cv=none; b=XjslTvwvzUUuBCWs52EcGWmjF/z8H84Z9fKy0ZajbV/N+Tr9tGgvxz0hKoqBG5OlFI+dHfdsxO9OeIkQkC8tiVfT4aPttgS9JDcoVze6KtGtxYnnAWpcHI4qw4PoE1mOZFKjkI/Ag2RFBaCuR9/ps3i9g9M3HedYeCwTVmjrHS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724438350; c=relaxed/simple;
-	bh=sVzJV9USq9eKNEzwIFZInybbtCZlW+uBUC8SgalnmSM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PTByrzcClKoFOlolqJ8aiyQUznSvNSgVnrtfZ6zDenxKU7bxfJVpLotCpfgANW5ZeNGxDLLXZ32qClNYk/fJew5Lgkv9vkMTQeAeuuL/m6kJR5zNqu+5xvgNS9+EmXLCrFGr890oBwvO1yCtfrUutW2s1aEqTJY6VrqUSOIwznY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UFDcULMB; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e12f6e56so7205e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:39:08 -0700 (PDT)
+	s=arc-20240116; t=1724438365; c=relaxed/simple;
+	bh=vS0rVEDSQYULdN8EnBPSspx7F1bgHxO4L9Yx3ey7uyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oulPGcfw3cMoyn4EdhSMBXl0RJGZLtDKrtKvXFwlS/CfuUCPab1zHRSV2RjtB+zMzi/ZvdNYTQ99s0xZSFmqXLcEFdTj+9ZJO8ZSo9zICCLkcfLRJk3iq7lI1HdUr6j8BDWHpU2zSRKMP6uCvmb4qPtBNt77OH3jfAVOTJqC+WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzyRdbRz; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-270298a3b6eso1605026fac.3;
+        Fri, 23 Aug 2024 11:39:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724438347; x=1725043147; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yeAj6QQyTkhL3Etqku7A99WvtAjPRPUGrAhllHSbre4=;
-        b=UFDcULMBdWmkgpzIaWUX9oHCgArlxy+Ie2rOcYlRglyAFIYVTY8FlFF2MMaobcynh7
-         /WQzzkeWH740Bq8KPQwI49JAoLUmmhPllqpRj/DKD6x/MQX5fjbokreA4KbaablTcyfy
-         TYfUnmyzWYNTbeg2vAIqRKFAXrvuu733+HrYoEO4ImOG8BJ0pHxnTL1WqdNcZpS7cSiU
-         DviD5ffohfW1vuRde2N+CT0+5vB+GvP6p8/iHPgnCpnot1sjolredFBcjgD2yYcFOykw
-         hOj96VxEqzPh/3DT7lglfHxG4xEYjMPbVBt6sBx/fmJUtqZwBqMcVvRkaKaePbSBJbR9
-         ornA==
+        d=gmail.com; s=20230601; t=1724438363; x=1725043163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XNYyXTiUUKGs1jDISX3liwadU3ssMVGkOQ//kMNiZNE=;
+        b=RzyRdbRzasM+UDOFIj9+b1enP4/6vz4bgueFj8imNdpNHiV8rKQqysYDLBkb8Nzoai
+         QSwVa+dai3cuAmSa89tIHjD+pNw+xxo7Sr3/jc6vQZcmimZ+p2ZlhZJikH1UHWl4wZBh
+         VOC0TXxOgyL2H5C8ICai7hQ5E27hWijaZj5nXNwBvHjIEIWN1Zw2uCaPVo4IqNQt2yY8
+         F17aG+1OHKVByHCB9JK9fK5G1sd/TTwVRGAtC45OdetwLSmep1735wVjVeq9BGOX1Tr9
+         h8MJCeFFa0euFbwWSyB0V1E5Car47IwmYsGuEzOy8WQhf4GGULztQ69xyv6WLiwkadAo
+         cXrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724438347; x=1725043147;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724438363; x=1725043163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yeAj6QQyTkhL3Etqku7A99WvtAjPRPUGrAhllHSbre4=;
-        b=Xflzg+f16olG3j3tqevcM4N+3DPQLs8/HEHFYFLVVc+Ni1p67qlxKUoBiAnXZ2ZR1C
-         F3/b3Ni9y6mIwTBFo91pakjUvY+vLep61Sac+vVApiT3qX7UafyA0tOwVBPzksC+y8bl
-         X/57En8CRU46YuMTbDlasoafwGJZ7BTutFcA4u/wczytFsXB3qHjw1jTNOR6slcaTbNC
-         7/tOkYASptPBSxFBYfY6eorIxLQkGyGpRwBoVyq88Zf0Q9h8DCdnaXyyKGsP7/sfTZvY
-         7ZwriZ93/FjZac3AhtvnxgEDunCe+cSOArNlFnIk2TDQcHSEdZ9xD680pN90tCzExb6I
-         pRYg==
-X-Gm-Message-State: AOJu0YyB2gj5WFM37t3d/dAGHdrsIhQ08i6yFcL071JbVSbwpXICeVmH
-	n7wtoUh+X2/QqbZtGTFlrH5AlHPlQFz7EcMkUnT7xutT+5ebdl9vyl0C8nT2fw==
-X-Google-Smtp-Source: AGHT+IFZ722Lx1blVGG2/ICsCK8F+H69EIM8QFz+t/DEVAFFrk0vyOqtGOJZELjrZhSmw8atbdME0Q==
-X-Received: by 2002:a05:600c:4e41:b0:424:898b:522b with SMTP id 5b1f17b1804b1-42b8bcbadb1mr89345e9.1.1724438346614;
-        Fri, 23 Aug 2024 11:39:06 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:eabf:157d:f06b:d918])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c459sm4707083f8f.27.2024.08.23.11.39.04
+        bh=XNYyXTiUUKGs1jDISX3liwadU3ssMVGkOQ//kMNiZNE=;
+        b=bb/4LJ/MxcVcNnyzKxMSiZvHU8x2SybskksdFTnHlxcFG5Mp3hcU32cDUd6G7sFNKd
+         4GBifxzCH7kwVQ8MFR+c4/08u9rJfDW16O5bBQRD8kcpZA4iSAi6U3yhplxnZQO73zfb
+         HSmOUNkyBumnwAAdIJ/a7xyMT9yzY+vmTamsR/qW2tgcsPuSarwGZ3eFxNOvhrxaONBP
+         hNLbSdcqPdGyZFMSlb1mjfCKRjqfeV8b6pJAZO0cn149kIr5x0qKSrUKuD1lLbRsQhBa
+         ljtOP8irkrQpZtx2zbhnGUcJ8fE42nYmGzid6iYrtRzkgOE1k3AAivoRuH3TPj3Ly1+T
+         hg3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHwyh7ROjzPkpJxE65bzkeYzT+zvLCt0Fzwesib6DtYMpOol7HlqHJeIOBztMmUWdN67azTx2qGHmqTr6T@vger.kernel.org, AJvYcCVWE6PuLj0gZ+yUTtea2vmzTsQpRhT8wGxJokLD/zT1RYXchdxFL7/zRQNOTNgvbsHdX4y9iZgv5DknaD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt2i0rs6n1lhC5m1swEgE3Ey0Qj7EYXP9shNGJBTKOhUS+H6tp
+	fMAZj+jSYIT2CTnAgZ8t/xrRBKhKWTmNG1C6lqDsunxRPQg/Z+WQ
+X-Google-Smtp-Source: AGHT+IHbkE3ZdZNEe89UyGALRUQdE2iHgZVFlqykGhqfkjXdOnaI2N/Cf8M87lZEgKanxYVaiw3f+w==
+X-Received: by 2002:a05:6870:d113:b0:260:f50e:923c with SMTP id 586e51a60fabf-273e63e6ca2mr3485136fac.10.1724438363009;
+        Fri, 23 Aug 2024 11:39:23 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143425201csm3352157b3a.73.2024.08.23.11.39.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 11:39:04 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Fri, 23 Aug 2024 20:38:55 +0200
-Subject: [PATCH v2] firmware_loader: Block path traversal
+        Fri, 23 Aug 2024 11:39:22 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: shenyang39@huawei.com,
+	wangzhou1@hisilicon.com
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	jserv@ccns.ncku.edu.tw,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] crypto: hisilicon/zip - Optimize performance by replacing rw_lock with spinlock
+Date: Sat, 24 Aug 2024 02:38:56 +0800
+Message-Id: <20240823183856.561166-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-firmware-traversal-v2-1-880082882709@google.com>
-X-B4-Tracking: v=1; b=H4sIAD7XyGYC/32NQQ6CMBBFr0JmbU3bYAVX3sOwqDAtkwAlU1I1p
- He3cgCX7yX//R0iMmGEW7UDY6JIYSmgTxX0o108ChoKg5a6lo2WwhHPL8soNrYJOdpJmME1F6m
- e0mENZbgyOnof0UdXeKS4Bf4cH0n97N9cUkKJxrStc9a2+mruPgQ/4bkPM3Q55y+CNAaFtQAAA
- A==
-To: Luis Chamberlain <mcgrof@kernel.org>, 
- Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724438340; l=4972;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=sVzJV9USq9eKNEzwIFZInybbtCZlW+uBUC8SgalnmSM=;
- b=w+PQC/YhGSbyDuQGT2kE+BkkIJLnPf7kD9AeBeE6Xxke8ibFZiogpmGPhEoE4cP0lg9tWwuMw
- e4HXbY+zATIAiw+TTOoVuDLHbSVbRxZvxNl3X0b/9e2bZSkwyaTJlJF
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Transfer-Encoding: 8bit
 
-Most firmware names are hardcoded strings, or are constructed from fairly
-constrained format strings where the dynamic parts are just some hex
-numbers or such.
+The req_lock is currently implemented as a rw_lock, but there are no
+instances where read_lock() is called. This means that the lock is
+effectively only used by writers, making it functionally equivalent to
+a simple spinlock.
 
-However, there are a couple codepaths in the kernel where firmware file
-names contain string components that are passed through from a device or
-semi-privileged userspace; the ones I could find (not counting interfaces
-that require root privileges) are:
+As stated in Documentation/locking/spinlocks.rst:
+"Reader-writer locks require more atomic memory operations than simple
+spinlocks. Unless the reader critical section is long, you are better
+off just using spinlocks."
 
- - lpfc_sli4_request_firmware_update() seems to construct the firmware
-   filename from "ModelName", a string that was previously parsed out of
-   some descriptor ("Vital Product Data") in lpfc_fill_vpd()
- - nfp_net_fw_find() seems to construct a firmware filename from a model
-   name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
-   think parses some descriptor that was read from the device.
-   (But this case likely isn't exploitable because the format string looks
-   like "netronome/nic_%s", and there shouldn't be any *folders* starting
-   with "netronome/nic_". The previous case was different because there,
-   the "%s" is *at the start* of the format string.)
- - module_flash_fw_schedule() is reachable from the
-   ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
-   GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
-   enough to pass the privilege check), and takes a userspace-provided
-   firmware name.
-   (But I think to reach this case, you need to have CAP_NET_ADMIN over a
-   network namespace that a special kind of ethernet device is mapped into,
-   so I think this is not a viable attack path in practice.)
+Since the rw_lock in this case incurs additional atomic memory
+operations without any benefit from reader-writer locking, it is more
+efficient to replace it with a spinlock. This patch implements that
+replacement to optimize the driver's performance.
 
-Fix it by rejecting any firmware names containing ".." path components.
-
-For what it's worth, I went looking and haven't found any USB device
-drivers that use the firmware loader dangerously.
-
-Cc: stable@vger.kernel.org
-Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 ---
-Changes in v2:
-- describe fix in commit message (dakr)
-- write check more clearly and with comment in separate helper (dakr)
-- document new restriction in comment above request_firmware() (dakr)
-- warn when new restriction is triggered
-- Link to v1: https://lore.kernel.org/r/20240820-firmware-traversal-v1-1-8699ffaa9276@google.com
----
- drivers/base/firmware_loader/main.c | 41 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Note: Build test only.
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index a03ee4b11134..dd47ce9a761f 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -849,6 +849,37 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name,
- {}
- #endif
+ drivers/crypto/hisilicon/zip/zip_crypto.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
+index 94e2d66b04b6..92d3bd0dfe1b 100644
+--- a/drivers/crypto/hisilicon/zip/zip_crypto.c
++++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
+@@ -54,7 +54,7 @@ struct hisi_zip_req {
+ struct hisi_zip_req_q {
+ 	struct hisi_zip_req *q;
+ 	unsigned long *req_bitmap;
+-	rwlock_t req_lock;
++	spinlock_t req_lock;
+ 	u16 size;
+ };
  
-+/*
-+ * Reject firmware file names with ".." path components.
-+ * There are drivers that construct firmware file names from device-supplied
-+ * strings, and we don't want some device to be able to tell us "I would like to
-+ * be sent my firmware from ../../../etc/shadow, please".
-+ *
-+ * Search for ".." surrounded by either '/' or start/end of string.
-+ *
-+ * This intentionally only looks at the firmware name, not at the firmware base
-+ * directory or at symlink contents.
-+ */
-+static bool name_contains_dotdot(const char *name)
-+{
-+	size_t name_len = strlen(name);
-+	size_t i;
-+
-+	if (name_len < 2)
-+		return false;
-+	for (i = 0; i < name_len - 1; i++) {
-+		/* do we see a ".." sequence? */
-+		if (name[i] != '.' || name[i+1] != '.')
-+			continue;
-+
-+		/* is it a path component? */
-+		if ((i == 0 || name[i-1] == '/') &&
-+		    (i == name_len - 2 || name[i+2] == '/'))
-+			return true;
-+	}
-+	return false;
-+}
-+
- /* called from request_firmware() and request_firmware_work_func() */
- static int
- _request_firmware(const struct firmware **firmware_p, const char *name,
-@@ -869,6 +900,14 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 		goto out;
+@@ -116,17 +116,17 @@ static struct hisi_zip_req *hisi_zip_create_req(struct hisi_zip_qp_ctx *qp_ctx,
+ 	struct hisi_zip_req *req_cache;
+ 	int req_id;
+ 
+-	write_lock(&req_q->req_lock);
++	spin_lock(&req_q->req_lock);
+ 
+ 	req_id = find_first_zero_bit(req_q->req_bitmap, req_q->size);
+ 	if (req_id >= req_q->size) {
+-		write_unlock(&req_q->req_lock);
++		spin_unlock(&req_q->req_lock);
+ 		dev_dbg(&qp_ctx->qp->qm->pdev->dev, "req cache is full!\n");
+ 		return ERR_PTR(-EAGAIN);
  	}
+ 	set_bit(req_id, req_q->req_bitmap);
  
-+	if (name_contains_dotdot(name)) {
-+		dev_warn(device,
-+			 "Firmware load for '%s' refused, path contains '..' component",
-+			 name);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	ret = _request_firmware_prepare(&fw, name, device, buf, size,
- 					offset, opt_flags);
- 	if (ret <= 0) /* error or already assigned */
-@@ -946,6 +985,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
-  *      @name will be used as $FIRMWARE in the uevent environment and
-  *      should be distinctive enough not to be confused with any other
-  *      firmware image for this or any other device.
-+ *	It must not contain any ".." path components - "foo/bar..bin" is
-+ *	allowed, but "foo/../bar.bin" is not.
-  *
-  *	Caller must hold the reference count of @device.
-  *
-
----
-base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-change-id: 20240820-firmware-traversal-6df8501b0fe4
+-	write_unlock(&req_q->req_lock);
++	spin_unlock(&req_q->req_lock);
+ 
+ 	req_cache = q + req_id;
+ 	req_cache->req_id = req_id;
+@@ -140,9 +140,9 @@ static void hisi_zip_remove_req(struct hisi_zip_qp_ctx *qp_ctx,
+ {
+ 	struct hisi_zip_req_q *req_q = &qp_ctx->req_q;
+ 
+-	write_lock(&req_q->req_lock);
++	spin_lock(&req_q->req_lock);
+ 	clear_bit(req->req_id, req_q->req_bitmap);
+-	write_unlock(&req_q->req_lock);
++	spin_unlock(&req_q->req_lock);
+ }
+ 
+ static void hisi_zip_fill_addr(struct hisi_zip_sqe *sqe, struct hisi_zip_req *req)
+@@ -456,7 +456,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
+ 
+ 			goto err_free_comp_q;
+ 		}
+-		rwlock_init(&req_q->req_lock);
++		spin_lock_init(&req_q->req_lock);
+ 
+ 		req_q->q = kcalloc(req_q->size, sizeof(struct hisi_zip_req),
+ 				   GFP_KERNEL);
 -- 
-Jann Horn <jannh@google.com>
+2.34.1
 
 
