@@ -1,76 +1,98 @@
-Return-Path: <linux-kernel+bounces-298494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A75C95C810
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F9895C819
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9FA61C22155
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293A71C2257D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C31448D2;
-	Fri, 23 Aug 2024 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaAxMLKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2600D566A;
+	Fri, 23 Aug 2024 08:30:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41B2140397;
-	Fri, 23 Aug 2024 08:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464237144;
+	Fri, 23 Aug 2024 08:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401712; cv=none; b=RtOM7esUesVjzbQ8u+WbKRZfexFGNhO2L4lWjpdNOf9B5YLSHirlvfuVLULVTUxm/p7KZH/Y1C1G5T+3zuxO1clE57QnvmCmTLlCshIRqp892ebHQO7TCVNzSo5+duYeZB9zqOGxBaIvMDQtfdFPFbkL+dorO1GM521yEJOx7eU=
+	t=1724401823; cv=none; b=Qrv2oegv2yboEAgzH7LMe7Gfp6ETtKja/fLKckvflLnWx0NMI+8nsXufN0ER6t3W7twuO80jqy0haNdohQaecKNdiwaFNURSZg80AIdwsNYdrzV9BEds76seNf3jAgr8S2HRzeW/U9Wx/yFpGOkeqRiZa+rZlQSvQ6hElQi7rUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401712; c=relaxed/simple;
-	bh=Th32cuB5eevmkr9+C33ucO995EYDQ3oqEYQBH3SolPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOaonvZ9+8i48CmKbDqpQXqylrdCK+mcGJiGM+Xb9SJGkh3ravA9/UZXP5c054X0aNg1dd/dPPphxGj8v7kYPAP3huuR9iUfNimUpWSBabto3tNKFroEEqg/WDOJboC7QBJlfs5G1pNHzatzRkn3E/VQxBHLnRAtNvAG++ns8ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaAxMLKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBF5C4AF0B;
-	Fri, 23 Aug 2024 08:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724401711;
-	bh=Th32cuB5eevmkr9+C33ucO995EYDQ3oqEYQBH3SolPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MaAxMLKJaf4pgvpGwesErDEI79kqgS6eoYBUb4Ne20q9KGJw7h2MVCSVkeI6eZmcC
-	 qU/oR2ySfQEzkkd6ecEaGWfM067aEEa3HfFuNpO1Jrn2c8vkshe+fdS673DZJBcSvS
-	 yR25anXp5oGlcG0rxtJhimxmRdYoS4N1B+b5b4wiEX8f3Oia8hc47hJodAdRB2xYLg
-	 6eCxdEBUGkX/lvtIYcQ9pJp9JqJvnC+LKBE7h9G52wupYvLrg1IGPfmrO3raXowAPX
-	 jkiR/ZHyNdL0S3NZGuLMnR7QD5sNzsFSWQhRvPHGQKUSDNgoWsZdbG95AbXEqtl12N
-	 1FSxcfNQ9GKVA==
-Date: Fri, 23 Aug 2024 09:28:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yuesong Li <liyuesong@vivo.com>
-Cc: mark.einon@gmail.com, davem@davemloft.net, dumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH net-next v2] et131x: Remove NULL check of list_entry()
-Message-ID: <20240823082827.GT2164@kernel.org>
-References: <20240823012737.2995688-1-liyuesong@vivo.com>
+	s=arc-20240116; t=1724401823; c=relaxed/simple;
+	bh=SqHvwbAraygEAg356Y++FZVnXAHwaUKpCxpJXbMD2Ww=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uecBFQrSLIMjUG6Q3ItGlFkGUdzguoOiecT0tD2Acw0gWtV+RiePktaTCzO/PXACRY6LGBK/G5SMAzKh6WRzGebG1UW6wsfGL+RJdrZflcvUoYsI6gBRcTEV5glyaZbnOuheu1qLROC0RmEiKt3IqAM4GZ+LGm8h/V+sLPV8N1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqtTg6Jzjz6K8wt;
+	Fri, 23 Aug 2024 16:27:03 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7DC6F140B63;
+	Fri, 23 Aug 2024 16:30:12 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 09:30:00 +0100
+Date: Fri, 23 Aug 2024 09:29:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Yang Ruibin <11162571@vivo.com>
+CC: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, "Andy
+ Whitcroft" <apw@canonical.com>, Joe Perches <joe@perches.com>, "Dwaipayan
+ Ray" <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, Ingo
+ Molnar <mingo@kernel.org>, <linux-edac@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
+Subject: Re: [PATCH v2] drivers:block:Use IS_ERR() to check
+ debugfs_create_dir() return value
+Message-ID: <20240823092959.00000c90@Huawei.com>
+In-Reply-To: <20240822132358.2416027-1-11162571@vivo.com>
+References: <20240822132358.2416027-1-11162571@vivo.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823012737.2995688-1-liyuesong@vivo.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Aug 23, 2024 at 09:27:37AM +0800, Yuesong Li wrote:
-> list_entry() will never return a NULL pointer, thus remove the
-> check.
+On Thu, 22 Aug 2024 21:23:58 +0800
+Yang Ruibin <11162571@vivo.com> wrote:
+
+Patch title needs an update as this isn't in block and that's not the
+style used for this subsystem.
+
+Otherwise fine.
+
+> The debugfs_create_dir() function returns error pointers.It
+> never returns NULL. So use IS_ERR() to check its return value.
 > 
-> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
-> Reviewed-by: Mark Einon <mark.einon@gmail.com>
+> Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
 > ---
-> changes v2:
-> - update the short log and patch name
-
-Thanks for the update.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+>  drivers/ras/cec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+> index e440b15fbabc..ebd4631b685b 100644
+> --- a/drivers/ras/cec.c
+> +++ b/drivers/ras/cec.c
+> @@ -489,7 +489,7 @@ static int __init create_debugfs_nodes(void)
+>  	}
+>  
+>  	d = debugfs_create_dir("cec", dfs);
+> -	if (!d) {
+> +	if (IS_ERR(d)) {
+>  		pr_warn("Error creating cec debugfs node!\n");
+>  		return -1;
+>  	}
 
 
