@@ -1,85 +1,80 @@
-Return-Path: <linux-kernel+bounces-298511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CF295C83F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8956695C840
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85B7283166
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27ADBB24C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF6149C7C;
-	Fri, 23 Aug 2024 08:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C58149007;
+	Fri, 23 Aug 2024 08:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="pgQv9t36"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9+gWLXg"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868E67346D
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A96147C7D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402418; cv=none; b=XLQrFaP+mkjmuvq8bL2cBFnfwUApp1fLtmB6XXs/rNtoiXH1JDUE5exs+dqeyBef0OD3p9jC/zvRybih2ByiPuxqxhRWjW86v/OG1nGwL44qjjTFb/9Sw+KQFbDOYoXgGl//pWcOGaDVl7bHfvB0eM5QTZILgWr6CS7LG3fSREM=
+	t=1724402431; cv=none; b=V2cWNZuQ/jhi1pXzV+zYicHu6DQU9JBy84nMS0gj6UxVaIh3rAgJ/EKaRUAYisd0OLgR5V6cTW0sMQUK+STAo0UI+6y0cHIQlo0Qk+gQy2a0WYHpt0zq/qokY3hNabaRGAjaAabm7MWTEg7pLTz2J+1RunqnqsDBO+OB4jf9ICw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402418; c=relaxed/simple;
-	bh=/gkKdkn1kch9YHgvbfB4pJh7hu8uTpCucVk4jPgCW2M=;
+	s=arc-20240116; t=1724402431; c=relaxed/simple;
+	bh=4MFsLweXpcj4nF6A04h1Qu5QFvXdA/Hqoh0p9msZQiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5XG3fsEJ7b1C+fyWQqWZlFuOYAJBX5SkBhpzhYKVJQjxgxd+xA3Qm162ntqRtPHIhPVjkJatIElp5GfQhBErTJe17YRd1X1Lk8Nm3IFidHN7ZN1od3rZ6lVU/nr/ah2ycaZbxQGTabSaRXrudltEmpOzMXxoTtTz/Dhl+uNo64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=pgQv9t36; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8696e9bd24so161166866b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:40:16 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7lF5yr2EX8aXqrpfT3HOx2pv8TZzTZgn4QVygo6lmYqGmy8bmjY3YH7lfXaFJSSyWzPUH3sEeDLWx/0z+QNevilPr7GPkyr3r8ZHW7DRMZjP4mUB+jOv4uatabgSPuAfrzhf42pEBzJPBvuLkb+IzDf59DIwwAjyVo6G4eo1+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J9+gWLXg; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aa086b077so199841066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:40:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724402415; x=1725007215; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724402428; x=1725007228; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/gkKdkn1kch9YHgvbfB4pJh7hu8uTpCucVk4jPgCW2M=;
-        b=pgQv9t36FhrDOoXSd3BMXJ756sNDTzu3RHAkuG+hrV4EQCc9z5mglilHHvBzDHRvf1
-         Q3oiN8RIWYuSmS6w+Ji/ntWe6AYVlWHU+oM5z2rOWixjV/1PhylKbD7eSwU1acbfxtuJ
-         SHLsaNYUqe46Id/A4TLcKp8gpL9ET6Kg08NzFs0o8jDQzTd4zU/fIjdiOWG0G2Fapi+b
-         q59NnLQEYbKCLCjoHmN8HU/lLRXUg9ckjdqW5Gx0ZPhJkYAQXcRwJfQyh0C136TyLu70
-         6XbsA21pe5aLWcrOdm+C74skr9bu1gz61ro1ypkYhqyiBvlJq8+lxOXv+GktIMOwExDd
-         6b9Q==
+        bh=U1pa7E49sl/YII5qs1pBYw/u3WGyDMldXse0AluXJUc=;
+        b=J9+gWLXgMnzYAz5ymBGI+Kqc0eLViHoVWfpxHohvUkW3MYFzxOQUwSKkNA6uc6KFbG
+         MNYAUXMbdJMCHt5/a56vazlJCK86dTMbSzJwS+CWCd1dHTXgp/Ba+WJBaU4Fur3y6A1F
+         EpiJY821E49fP+UOast8WLX6tPaaMySwTtqfpqRah3G0fuhtRmK2z+X19MQfrpEcZeh3
+         VTtOEbpp2hwzyyKqvwOLWx1C1g3CN7V/6DYTYiiATnoFlCrRbQc/+qEUENC63WTlBFcX
+         37QmgY+WFeoqelctqCknl8MdAVJx78CkOXqvIk7GnKROEzRDjEK0934Z8i4++t8dAEw5
+         XkPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724402415; x=1725007215;
+        d=1e100.net; s=20230601; t=1724402428; x=1725007228;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/gkKdkn1kch9YHgvbfB4pJh7hu8uTpCucVk4jPgCW2M=;
-        b=MjHh+8WW8C1Jwul/jBmIbJtb85hUGFmvW2C7GSCQ0Wj0r8BOn5E8g2/cZXKyO/sTFx
-         joIm20Yt84oBM64FQw0VISplZZb4LI+jM4XPfsck79zXACv71vi6LFSai6anUVekBuyH
-         KHcJSDE9hAHLIecmC47rboEUXScjA2hIRlOilg7U/GSs5iBFUD5aXDolAApehcGrBt1Z
-         ooniOMQYFK/hliaU9Oi4upIB2xT35emebtD0/AyFEKb+5CYrPpOLgdGdWFXM65NIvHXJ
-         PStcofvnLkJkmWThtxDE6N6+6zUxv7C4cbQIyF0giWCB75w2WsoOt6ukwtbSwG6lLtER
-         GD3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6bQH/cbvn+j7YBH/2WvEyxYAXNxYYGYv1dBTVZ1OQCKl7jf5HjF513japbtjaNL+zwZdXoqoQs4doXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwitQNkpU+5KAWMq1J3t0KCTYYX5XTeFar4HoMVFrd5mH3WNilV
-	LRN5uv0pNWjyzmfwWk9wTBJj8DqnLmt9pUdBNU2TWl79RAc+/Q6Un9Sy158mehM=
-X-Google-Smtp-Source: AGHT+IGaPZGfsEcdpD0z2HooWb5CW/e+RVLq6gXdB73IpyHPSTkCKbWsNG2C5VF/YTe9NZwWRUVqtg==
-X-Received: by 2002:a17:907:7e95:b0:a86:668d:c0b2 with SMTP id a640c23a62f3a-a86a5189298mr133154366b.7.1724402414734;
-        Fri, 23 Aug 2024 01:40:14 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f220324sm229420666b.44.2024.08.23.01.40.13
+        bh=U1pa7E49sl/YII5qs1pBYw/u3WGyDMldXse0AluXJUc=;
+        b=ncyYCzTiSsEwjGXulr6PzaLyIzaArDI0ifARJiKTjntSgODsZ/7b0+3CDtdN6/StrU
+         GaKQaTrVFavJwvSCxOAKiVwDVy9Bv0MTi16LrEoFTPkxRLfayYfPNsXQBnpz6D0HT02s
+         RPd3pIL2dz5bWUH5TZC8OE8TEAp7SMBv3ADdCqMeQ2lHCAAgwV2iELtxKheKQuXWmLSh
+         aHCZqJAfUYcXxlCdNBQ02/S3sjHUvweko0EI0atQj330ZCgytC8WYdZ8f0cqx/khszf+
+         xAOBZUHWiPL+C2Jf2PLBQHLI+cJ1VNukkGchBiFV1SjIv1VTUlVG+OXJ0aCH6/NbdlEI
+         45xw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/y352bKh/MgLWPujGFsWSiV2h734sB64DNSlxy6uJSS8emcv4IXBPPQdNo7H5wchxW/U7XcmycXeYJ24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCpwQEcMofmlnmoQINoJyvHzwWKLyEQEd5Tf9wgKz0mTeVWJ0/
+	sWxTNhblJAWtEqnTLA/hZ6m5L2BYjb9CxkzUNU3l1rkIknRdAIlQ9TUuzkEXz4I=
+X-Google-Smtp-Source: AGHT+IEU3rH8SLxwgdg/b9g1i8nA4dWuV71n2Fukh8RIHu5yiqMPwi1HVt1y+bWUu3W19Xi8e5L9SA==
+X-Received: by 2002:a17:907:c7c3:b0:a86:843e:b3e3 with SMTP id a640c23a62f3a-a86a52eb624mr104449866b.33.1724402427990;
+        Fri, 23 Aug 2024 01:40:27 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f507facsm228074366b.225.2024.08.23.01.40.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 01:40:14 -0700 (PDT)
-Date: Fri, 23 Aug 2024 10:40:13 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc: netdev@vger.kernel.org, vadim.fedorenko@linux.dev, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, donald.hunter@gmail.com,
-	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	intel-wired-lan@lists.osuosl.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: Re: [PATCH net-next v3 2/2] ice: add callbacks for Embedded SYNC
- enablement on dpll pins
-Message-ID: <ZshK7RwzHO_vZtdN@nanopsycho.orion>
-References: <20240822222513.255179-1-arkadiusz.kubalewski@intel.com>
- <20240822222513.255179-3-arkadiusz.kubalewski@intel.com>
+        Fri, 23 Aug 2024 01:40:27 -0700 (PDT)
+Date: Fri, 23 Aug 2024 11:40:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Gabriel Maciel Raad <ffunctor@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH v2 1/2] Staging: rtl8192e: Fix parenthesis alignment
+Message-ID: <5b063faf-f882-4f3c-bd11-9695d1ba9917@stanley.mountain>
+References: <20240823000838.8207-1-ffunctor@gmail.com>
+ <20240823000838.8207-2-ffunctor@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,14 +83,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822222513.255179-3-arkadiusz.kubalewski@intel.com>
+In-Reply-To: <20240823000838.8207-2-ffunctor@gmail.com>
 
-Fri, Aug 23, 2024 at 12:25:13AM CEST, arkadiusz.kubalewski@intel.com wrote:
->Allow the user to get and set configuration of Embedded SYNC feature
->on the ice driver dpll pins.
->
->Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
->Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+On Thu, Aug 22, 2024 at 09:08:37PM -0300, Gabriel Maciel Raad wrote:
+> Fix parenthesis alingment in rtl92e_leisure_ps_enter to silence the
+> following checkpatch.pl warning:
+> 
+> CHECK: Alignment should match open parenthesis
+> 
+> Signed-off-by: Gabriel Maciel Raad <ffunctor@gmail.com>
+> ---
+> Changes in v2:
+> - Split the changes in two patches
+> ---
+>  drivers/staging/rtl8192e/rtl8192e/rtl_ps.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c b/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
+> index 5aac9110bff6..1f881c27d4b4 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
+> @@ -204,7 +204,7 @@ void rtl92e_leisure_ps_enter(struct net_device *dev)
+>  					&priv->rtllib->pwr_save_ctrl;
+>  
+>  	if (!((priv->rtllib->iw_mode == IW_MODE_INFRA) &&
+> -	    (priv->rtllib->link_state == MAC80211_LINKED)))
+> +	      (priv->rtllib->link_state == MAC80211_LINKED)))
+>  		return;
 
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
+It would be nicer to write this as:
+
+        if (priv->rtllib->iw_mode != IW_MODE_INFRA ||
+            priv->rtllib->link_state != MAC80211_LINKED)
+                return;
+regards,
+dan carpenter
+
 
