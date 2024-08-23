@@ -1,195 +1,175 @@
-Return-Path: <linux-kernel+bounces-299005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CD395CEE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:08:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B0B95CEBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A20286724
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:08:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 619E8B26BA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EED11891A9;
-	Fri, 23 Aug 2024 14:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D933018BC34;
+	Fri, 23 Aug 2024 14:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="jlaDrOju"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lflddiE+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3FA194125;
-	Fri, 23 Aug 2024 14:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF618BBB4;
+	Fri, 23 Aug 2024 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421766; cv=none; b=oZwlgX/hUL86LTfG+ihJ5+h2toyurHJA4Bw25Cu1cwWkamrAPXDDUf76CC3stE1KqJF8B7k0BTogJc99AmRt0EjR1+nrRZNP2fGlbKftmatg9Y4L+qEOVJ4jfQ5VWRMZE4FqOL5qhYBmNhqub8Wq2/mNf777wTQ2jv93aMgikXE=
+	t=1724421716; cv=none; b=VlWLp9+YDcl753UmlPkWCtaJHFlMf0b3UjcKzeyem7dn7DeH4S5nCjP35oyKkTdDOPXQZSkiV1VHhFbFxi4bmr/YVE+uzbj1ktugFY3Ofr0mrMjZn6cboqlUGXyR7jp1U9fBg52yImlk5LoBgH3QtQK24HhoteiGnaOWgC6RxKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421766; c=relaxed/simple;
-	bh=M/+JW3B4fr1FmeAODEX3e/e8p10B2hMp1V9Fr4Rz+m8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEkKThaWTeQXAxKhrEkn97f3g+gOlXTHUSHQ6ILz9FaFqVqFQvBhZgtqL4wYgNCHEgONhpj1gk6mVhSIumt/xeHx9M/Fo6Cqfp6tjGbfRxqGBgv3gB3Z7A+jbahve2vIu2atD45UJH1OWgTCy8tAy7OHFFVAEOKNySPs1I5SzPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=jlaDrOju; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GxF+gOMi88g9BBo9JOx0m3wME02pBHhU7ugsa7eOpAg=; b=jlaDrOjuTijwmuVnD8iWgRrncU
-	6yxUlbz5CLacwjZ/oDiZadhRopTWse3LShl6LJNsxsgLSFr0zGrM3Hkq5Zk0hjA4XzEqXkWjWGBHU
-	StiWyIjZnctjVoag7pCR5VuNRVG6gN7Z1nLNe1lakLkpkNfawtrRzvOvFJW6EOJBhzCQDoqM+T6jn
-	DDRX/xlE56lRGtQrcKP/M23Ce9q1hLSNiCoAU8GMrtSw3AQ5pVgNSH//3CrYKjfQqRviXTr972oQA
-	qtclx9AEU/BInPyQEzE88xiZ3RMPMpD2mGWgavURamvAV9llfwL87qE4uXgFx1QlPs79MMA2AsAtY
-	feutIWwQ==;
-Received: from [2001:9e8:9f5:ff01:6f0:21ff:fe91:394] (port=45454 helo=bergen)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1shUpT-000BrH-4G;
-	Fri, 23 Aug 2024 15:59:51 +0200
-Date: Fri, 23 Aug 2024 15:59:46 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fails
-Message-ID: <ZsiV0V5-UYFGkxPE@bergen>
-References: <20240728125527.690726-1-ojeda@kernel.org>
- <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
+	s=arc-20240116; t=1724421716; c=relaxed/simple;
+	bh=15l+qDzCLdF1gpvhcpikzw6gieOH+CMMdtspTwbv/8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mX4koKQchFYWElg5+WVG3EsMjLGBmT5dDOh+AciA+vqobrvZpgONUWvtUyOtE2MbwOfK9LbibfSozW11GlSPzOQq6wmXW0eyjUFViBq6pP4RNJjWXF738qFBO9vbtvFAB53U6DfURbgkqUrreSP6OxU6KMi3eQ3yRepnFGXrGDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lflddiE+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434E0C32786;
+	Fri, 23 Aug 2024 14:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724421715;
+	bh=15l+qDzCLdF1gpvhcpikzw6gieOH+CMMdtspTwbv/8Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lflddiE+iJ64OWZQNWYAtWOjE1oONrdYZAJlmlaPosdYUqOUKQ3wbaD9L8jdbg4jF
+	 VULZWo09h7aJ6f0lwKucpq5dXEtLk2qe+DzdQZ1ut8yexpuT+5alwQmLWi7sOGxEHL
+	 9KgFyny/B7E9AzpueHp4JZM5br4HWqIe94DxU/KkzuBtaHPLsWBZiD9W9iAqioNCmW
+	 bxQrZRIv+g6tj4oQ9rQ0fBAr//ObtMV8AWcEw3gt8ZluB/X5rs/qB2Hyv/iuKLeu6b
+	 +/VE5Ixx4ZwRr89Lt5goSi84HK0RzpFkMfrwNDxDa30sj6L49AzbYYyNB8AIEeAeRK
+	 lcNu4oAi/sy9A==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	nathan@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.10 10/24] rust: add intrinsics to fix `-Os` builds
+Date: Fri, 23 Aug 2024 10:00:32 -0400
+Message-ID: <20240823140121.1974012-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240823140121.1974012-1-sashal@kernel.org>
+References: <20240823140121.1974012-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yO3YVrUfbWxrxaQH"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
-X-Operating-System: Debian GNU/Linux 12.6
-Jabber-ID: nicolas@jabber.no
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.6
+Content-Transfer-Encoding: 8bit
 
+From: Miguel Ojeda <ojeda@kernel.org>
 
---yO3YVrUfbWxrxaQH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 02dfd63afe65f7bacad543ba2b10f77083ae7929 ]
 
-On Fri 23 Aug 2024 02:28:28 GMT, Masahiro Yamada wrote:
-> Date: Fri, 23 Aug 2024 02:28:28 +0900
-> From: Masahiro Yamada <masahiroy@kernel.org>
-> To: Miguel Ojeda <ojeda@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
->  <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
->  Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song L=
-iu
->  <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabe=
-nd
->  <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
->  Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
->  <jolsa@kernel.org>, bpf@vger.kernel.org, Nathan Chancellor
->  <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
->  linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
->  patches@lists.linux.dev
-> Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fa=
-ils
-> X-Mailing-List: linux-kbuild@vger.kernel.org
-> Message-ID: <CAK7LNARhR=3DGGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.g=
-mail.com>
->=20
-> On Sun, Jul 28, 2024 at 9:55=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> w=
-rote:
-> >
-> > Like patch "rust: suppress error messages from
-> > CONFIG_{RUSTC,BINDGEN}_VERSION_TEXT" [1], do not assume the file existi=
-ng
-> > and being executable implies executing it will succeed. Instead, bail
-> > out if executing it fails for any reason.
-> >
-> > For instance, `pahole` may be built for another architecture, may be a
-> > program we do not expect or may be completely broken:
-> >
-> >     $ echo 'bad' > bad-pahole
-> >     $ chmod u+x bad-pahole
-> >     $ make PAHOLE=3D./bad-pahole defconfig
-> >     ...
-> >     ./bad-pahole: 1: bad: not found
-> >     init/Kconfig:112: syntax error
-> >     init/Kconfig:112: invalid statement
->=20
->=20
->=20
-> Even with this patch applied, a syntax error can happen.
->=20
-> $ git log --oneline -1
-> dd1c54d77f11 kbuild: pahole-version: avoid errors if executing fails
-> $ echo 'echo' > bad-pahole
-> $ chmod u+x bad-pahole
-> $ make PAHOLE=3D./bad-pahole defconfig
-> *** Default configuration is based on 'x86_64_defconfig'
-> init/Kconfig:114: syntax error
-> init/Kconfig:114: invalid statement
-> make[2]: *** [scripts/kconfig/Makefile:95: defconfig] Error 1
-> make[1]: *** [/home/masahiro/workspace/linux-kbuild/Makefile:680:
-> defconfig] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
->=20
+Alice reported [1] that an arm64 build failed with:
 
-Do we have to catch all possibilities?  Then, what about this:
+    ld.lld: error: undefined symbol: __extendsfdf2
+    >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+    >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+    >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+    >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
 
+    ld.lld: error: undefined symbol: __truncdfsf2
+    >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
+    >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
 
-#!/bin/sh
-trap "echo 0; exit 1" EXIT
-set -e
+Rust 1.80.0 or later together with `CONFIG_CC_OPTIMIZE_FOR_SIZE=y`
+is what triggers it.
 
-output=3D$("$@" --version 2>/dev/null)
+In addition, x86_64 builds also fail the same way.
 
-output=3D$(echo "${output}" |  sed -nE 's/^v([0-9]+)\.([0-9][0-9])$/\1\2/p')
-if [ -z "${output}" ]; then
-	echo "warning: pahole binary '$1' outputs incompatible version number, pah=
-ole will not be used." >&2
-	exit 1
-fi
+Similarly, compiling with Rust 1.82.0 (currently in nightly) makes
+another one appear, possibly due to the LLVM 19 upgrade there:
 
-echo "${output}"
-trap EXIT
+    ld.lld: error: undefined symbol: __eqdf2
+    >>> referenced by core.20495ea57a9f069d-cgu.0
+    >>>               rust/core.o:(<f64>::next_up) in archive vmlinux.a
+    >>> referenced by core.20495ea57a9f069d-cgu.0
+    >>>               rust/core.o:(<f64>::next_down) in archive vmlinux.a
 
+Gary adds [1]:
 
+> Usually the fix on rustc side is to mark those functions as `#[inline]`
+>
+> All of {midpoint,next_up,next_down} are indeed unstable functions not
+> marked as inline...
 
-Kind regards,
-Nicolas
+Fix all those by adding those intrinsics to our usual workaround.
 
---yO3YVrUfbWxrxaQH
-Content-Type: application/pgp-signature; name="signature.asc"
+[ Trevor quickly submitted a fix to upstream Rust [2] that has already
+  been merged, to be released in Rust 1.82.0 (2024-10-17). - Miguel ]
 
------BEGIN PGP SIGNATURE-----
+Cc: Gary Guo <gary@garyguo.net>
+Reported-by: Alice Ryhl <aliceryhl@google.com>
+Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/x/topic/x/near/455637364 [1]
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
+Tested-by: Alice Ryhl <aliceryhl@google.com>
+Tested-by: Boqun Feng <boqun.feng@gmail.com>
+Reviewed-by: Gary Guo <gary@garyguo.net>
+Link: https://github.com/rust-lang/rust/pull/128749 [2]
+Link: https://lore.kernel.org/r/20240806150619.192882-1-ojeda@kernel.org
+[ Shortened Zulip link. - Miguel ]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ rust/Makefile             | 4 ++--
+ rust/compiler_builtins.rs | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmbIlcYACgkQB1IKcBYm
-EmlIXhAAw5al6h44X2UnA31bKgo8H+OA3wzHIF1UTZOMe02NkAtVFidcpkKqxLih
-n5bOp6VjVr5KRcp7O45TAIWJ4Bm3G4PHX52MrohtW5GXABeoVRQTsCTdS1BB1PTh
-9nZZIvKF3ONqHGDSfYXHP72bfW1bVn1pzgMj/FA6GhRkv1n4AQVfO1Ohyacrn4go
-AT+6hu3gWwtj0CqeYJVBJ66GNDBCC9eoc++79WB0BQipZRNr3sHHznb7pOA+3M57
-iRhDdiVDIwmUcQTfj7oS/H/hlTLW5BeYhmXUyLDQaq3yAgcnKyQPCfdftVNmlmyN
-hI+jPJKnhYLGvB8UPj63GJudRqW/RNqE7ewZF2aOvC7+IaZwdRhaduOrCkBU+pNY
-/YYDOkEElGNRKHW9J5zFDuPQwlFDaLfCZ4hezgXYpiZTN7NggYKHa/ba32BgGPjr
-DR7OPk+lR2FArLTbzJa9I0KYmPdrKi6KNE0loghDcnLXySLHCStwahKwg7BZ+/US
-o5hgWMaeeNw9NuuscNYmHryKzKMAhGjtEE5wWJfdpyyOsqyiohCI/Mx0jKSOysGW
-mhgOynT2Tnq8sOPYg3vbIjYECabONecL1Q79TeJGVV5e879B3nTkZVAgV6cX5xP5
-6rZK7XWdqSaR/RxNulPl3wy+eJIEWI1D4j4ogbGfm0xWNmqr1TI=
-=aokD
------END PGP SIGNATURE-----
+diff --git a/rust/Makefile b/rust/Makefile
+index 5a41ace9fea10..de223d74d683d 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -408,8 +408,8 @@ rust-analyzer:
+ 		$(if $(KBUILD_EXTMOD),$(extmod_prefix),$(objtree))/rust-project.json
+ 
+ redirect-intrinsics = \
+-	__addsf3 __eqsf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __unordsf2 \
+-	__adddf3 __ledf2 __ltdf2 __muldf3 __unorddf2 \
++	__addsf3 __eqsf2 __extendsfdf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __truncdfsf2 __unordsf2 \
++	__adddf3 __eqdf2 __ledf2 __ltdf2 __muldf3 __unorddf2 \
+ 	__muloti4 __multi3 \
+ 	__udivmodti4 __udivti3 __umodti3
+ 
+diff --git a/rust/compiler_builtins.rs b/rust/compiler_builtins.rs
+index bba2922c6ef77..f14b8d7caf899 100644
+--- a/rust/compiler_builtins.rs
++++ b/rust/compiler_builtins.rs
+@@ -40,16 +40,19 @@ pub extern "C" fn $ident() {
+ define_panicking_intrinsics!("`f32` should not be used", {
+     __addsf3,
+     __eqsf2,
++    __extendsfdf2,
+     __gesf2,
+     __lesf2,
+     __ltsf2,
+     __mulsf3,
+     __nesf2,
++    __truncdfsf2,
+     __unordsf2,
+ });
+ 
+ define_panicking_intrinsics!("`f64` should not be used", {
+     __adddf3,
++    __eqdf2,
+     __ledf2,
+     __ltdf2,
+     __muldf3,
+-- 
+2.43.0
 
---yO3YVrUfbWxrxaQH--
 
