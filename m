@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-299541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C3495D60A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:25:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C46D95D60D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E44B284BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496EC1C21A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA4192595;
-	Fri, 23 Aug 2024 19:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123591925A1;
+	Fri, 23 Aug 2024 19:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QwVj9nkw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sn3Q9POA"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774D8F6B;
-	Fri, 23 Aug 2024 19:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF38B558BB
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724441117; cv=none; b=Xjd5uVljwrR7hMV2yGA7llSfMxtEfZAN1coOlZwcvxU+iP2o+sYHNnxNzU8xM5yaP83qsG8tHn8gf2T6ZiuyItp+NpEx3VwvTd4jdpO4k/HmjTUmqDlnVcj94g50vcytWFFJAnkfte0qAjAaB07Os8AKzFVzB4VMnCZcOEeiXDQ=
+	t=1724441264; cv=none; b=F8proFowEkvAT50T6pOR3UNQRdhemK+a63dc4myUhurnL0TLIA1pNOH2zlHYn6cMoOABKGN34fgmPOiK5b0yB1NUaDMftm0YXV8EYeBCNv+FaDBLE1C6/DfVa3saTvN5uuJWO692G/0iwdXrTDrungBmbMwOnGSkJKvcTLDqjcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724441117; c=relaxed/simple;
-	bh=DFlFWR7lXMyjsZyyLCuvccHNpt67WGrdixy/Ulp6tTA=;
+	s=arc-20240116; t=1724441264; c=relaxed/simple;
+	bh=IxXH4yqEjBZYuKr0LQyjuOrlrGfwNdQCl7HuhZAk8I4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3yPFzRI5aStpTZulRVIo3EVaGl5uDAHLq9K3yWBbMvmFvsRAzD4B047mpWT5MCMIxGvDV9JjwB+vDUt3gf7206sUyw+AdI/Ehw+23R3bzGPGtU+vbumXUL+0HmqtuANKI4XNVyP7mtLF0IlPfIZ1K7aO5LkQ4oQYOVsHxLpaGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QwVj9nkw; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724441116; x=1755977116;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DFlFWR7lXMyjsZyyLCuvccHNpt67WGrdixy/Ulp6tTA=;
-  b=QwVj9nkwzvTCPI0pj6fbnAstJAobG740cmkAtXTNnp1rvJwPoxFa0ZhH
-   gTsB1byGtuuiKU9rN9u9igSDCfYqd03WqQaz8kQDjP1gvSbOuAZiuQYEF
-   wtjzRhQgf2jak5+98cVupwfW2Kv/3Jh1WSUq04BSHyhwrllRi1ZAGBzSR
-   UNjpNSnT3qBI7Ja+i8QEuYO30tY2xwv3/B963BMP9irpxHw6/ZqkjwnT5
-   fCTYI81F0Ddab/E3bBV33tTSUDHSGNDLMeWsa96QVeIKJxXlv6IiwJwYu
-   8oYpxVyyO7o5jWIao3BYpsnqGwUHS4y8nDIg/mv/s4ozC/Q/ak5SsxtVE
-   w==;
-X-CSE-ConnectionGUID: MtKvJTP0RjCBNl1DVvulfQ==
-X-CSE-MsgGUID: nroJss6hSPO5glxeYYU1vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="25821208"
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="25821208"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:25:10 -0700
-X-CSE-ConnectionGUID: uPUZA1ArRSi0UnqKNpqUJA==
-X-CSE-MsgGUID: sX/8HsmNTFq89skPVLyMbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="66699466"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:25:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shZu9-000000010IY-2PdN;
-	Fri, 23 Aug 2024 22:25:01 +0300
-Date: Fri, 23 Aug 2024 22:25:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] iio: pressure: bmp280: Use sleep and forced mode
- for oneshot captures
-Message-ID: <ZsjiDaZjcA-oopWB@smile.fi.intel.com>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-5-vassilisamir@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNW8f5yxq/vAVEOUktLHi4wK1kfipnKELIb/EyEUpGR2EVExIxbnBzgVAZfijJ51srtuke3Ftu4TI6uNiqFgK2djoDYKFjJzpoTBgrjiWoSBwZ9zNaqYDo6NR+QhYJJa/OZ5oXQxehgnB0u/o7bLumiAt+xly5LbDEpkaAvwjEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sn3Q9POA; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-202018541afso1355ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724441262; x=1725046062; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7sW/KIdWg4GMnaTZlrBgO/OACPZTU5MORyHXW0t4xnM=;
+        b=Sn3Q9POATvJhNwGCtjnZBlidT6sN/gsnvDPhUvQEcPWt1F8WJzRtArmpsjg7Wm+GmU
+         b9waVWo9alYbkk1Wma9Fr2d4iiylsMohINBAkrN20DTVV4UJ/05JI+t/+AxPd/5qrwoI
+         ZL1UAVqkIqTbHg+qzhCfYenZgYATdb6YpF7PcRqS6L9JBV2VXrjOZqri1bF/WTteI94x
+         Bfxgo+U/28BHZFQafJEM0Lad8eXq3fjmyUeVuVL2LPeF39JJrov1gV18sylu3i7HBAQt
+         EJ3BMW7jLv8Ks6afbJMdWL0ZhNNqX6a92IJc+GzJsIBeZgXYOW0nMpXhhUOftuXRwa9L
+         FL7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724441262; x=1725046062;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7sW/KIdWg4GMnaTZlrBgO/OACPZTU5MORyHXW0t4xnM=;
+        b=iMv3GghX0J0f5f7yw9eXOz5emWjYqmOyusIlqwSy5+EezTnPPfnf8vy/2Sg2ggoPln
+         BxBc1q5b/Cy8M4BwyxzSRGsvwwLx3UqDwZe/QbWXIwkYrE2klGwYYHY9RYcqrRLDmVzO
+         bV0YMYabadXitwzKswCQoHiECfg55LXZ5kKU61t9ONDZdsyDGg8Z9WSbA61RJDhw3atM
+         8GiW+FUWzLxPnN2ppBclXm1CnPsmXYnANO+/xyv/ShUMs5pybcdzWQxojkP6RE7Oqgrp
+         He4qjWU5npcb4JYJCmaE+dim91HlMwKdje2WPN7ln6oSA4ov1F0huvcF8pa1u8Dtyv9O
+         FS9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWwKs/IOCg3j4AQv+3cVFH5Tyt5UB15HncpCnLDMdbpqQuF4zLJNXKLeHhz7xBLPI2l7MTCgLOhwllHyNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAsYCxFrLJADL4XhIyqC/EFyMdTIhOwAYyxOrt27CTtsV+GFAS
+	Jc6rF5m+K2VrAcDofae+wy0SW6u6j2cKxkDkeuxsnmwarkkRAPxxdW3OPGD47w==
+X-Google-Smtp-Source: AGHT+IH8Yu9URYCV6GYm8RY+OUmJzjfJGuB6x/nQyDb2ooK2vE1LzL3Z3soPgmQw8zCzlltDiQ8Tzg==
+X-Received: by 2002:a17:902:ec92:b0:1fb:2924:5c7e with SMTP id d9443c01a7336-203b2f3678amr333135ad.11.1724441261846;
+        Fri, 23 Aug 2024 12:27:41 -0700 (PDT)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad6e563sm3569519a12.81.2024.08.23.12.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 12:27:41 -0700 (PDT)
+Date: Fri, 23 Aug 2024 12:27:36 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
+ MMU under MMU read lock
+Message-ID: <20240823192736.GA678289.vipinsh@google.com>
+References: <20240812171341.1763297-1-vipinsh@google.com>
+ <20240812171341.1763297-3-vipinsh@google.com>
+ <ZsPE56MnelsV490m@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,206 +84,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823181714.64545-5-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ZsPE56MnelsV490m@google.com>
 
-On Fri, Aug 23, 2024 at 08:17:11PM +0200, Vasileios Amoiridis wrote:
-> This commit adds forced mode support in sensors BMP28x, BME28x, BMP3xx
-> and BMP58x. Sensors BMP18x and BMP085 are old and do not support this
-> feature so their operation is not affected at all.
+On 2024-08-19 15:19:19, Sean Christopherson wrote:
+> On Mon, Aug 12, 2024, Vipin Sharma wrote:
+> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> > @@ -817,9 +817,11 @@ static void tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
+> >  	rcu_read_unlock();
+> >  }
+> >  
+> > -bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
+> > +static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
 > 
-> Essentially, up to now, the rest of the sensors were used in normal mode
-> all the time. This means that they are continuously doing measurements
-> even though these measurements are not used. Even though the sensor does
-> provide PM support, to cover all the possible use cases, the sensor needs
-> to go into sleep mode and wake up whenever necessary.
+> At this point, I think we should rename this to tdp_mmu_zap_possible_nx_huge_page(),
+> as I can't imagine there's another use case where we'll zap a SP starting from the
+> SP itself, i.e. without first walking from the root.
 > 
-> This commit, adds sleep and forced mode support. Essentially, the sensor
-> sleeps all the time except for when a measurement is requested. When there
-> is a request for a measurement, the sensor is put into forced mode, starts
-> the measurement and after it is done we read the output and we put it again
-> in sleep mode.
+
+Okay.
+
+> >  {
+> > -	u64 old_spte;
+> > +	struct tdp_iter iter = {};
 > 
-> For really fast and more deterministic measurements, the triggered buffer
-> interface can be used, since the sensor is still used in normal mode for
-> that use case.
+> Rather than initializes the on-stack structure, I think it makes sense to directly
+> initialize the whole thing and then WARN after, e.g. so that its easier to see
+> that "iter" is simply being filled from @sp.
 > 
-> This commit does not add though support for DEEP STANDBY, Low Power NORMAL
-> and CONTINUOUS modes, supported only by the BMP58x version.
+> 	struct tdp_iter iter = {
+> 		.old_spte = sp->ptep ? kvm_tdp_mmu_read_spte(sp->ptep) : 0,
+> 		.sptep = sp->ptep,
+> 		.level = sp->role.level + 1,
+> 		.gfn = sp->gfn,
+> 		.as_id = kvm_mmu_page_as_id(sp),
+> 	};
 
-...
+Okay.
 
-> +static const u8 bmp280_operation_mode[] = { BMP280_MODE_SLEEP,
-> +					    BMP280_MODE_FORCED,
-> +					    BMP280_MODE_NORMAL };
+> > +retry:
+> > +	/*
+> > +	 * Since mmu_lock is held in read mode, it's possible to race with
+> > +	 * another CPU which can remove sp from the page table hierarchy.
+> > +	 *
+> > +	 * No need to re-read iter.old_spte as tdp_mmu_set_spte_atomic() will
+> > +	 * update it in the case of failure.
+> > +	 */
+> > +	if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
+> >  		return false;
+> >  
+> > -	tdp_mmu_set_spte(kvm, kvm_mmu_page_as_id(sp), sp->ptep, old_spte,
+> > -			 SHADOW_NONPRESENT_VALUE, sp->gfn, sp->role.level + 1);
+> > +	if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE))
+> > +		goto retry;
+> 
+> I'm pretty sure there's no need to retry.  Non-leaf SPTEs don't have Dirty bits,
+> and KVM always sets the Accessed bit (and never clears it) for non-leaf SPTEs.
+> Ditty for the Writable bit.
+> 
+> So unless I'm missing something, the only way for the CMPXCHG to fail is if the
+> SPTE was zapped or replaced with something else, in which case the sp->spt will
+> fail.  I would much prefer to WARN on that logic failing than have what appears
+> to be a potential infinite loop.
 
-Better style is
+I don't think we should WARN() in that scenario. Because there is
+nothing wrong with someone racing with NX huge page recovery for zapping
+or replacing the SPTE. This function should be just trying to zap a page
+and if that didn't suceed then return the error and let caller handle
+however they want to.
 
-static const u8 bmp280_operation_mode[] = {
-	BMP280_MODE_SLEEP, BMP280_MODE_FORCED, BMP280_MODE_NORMAL,
-};
-
-Also note comma at the end.
-
-...
-
-> +static int bmp280_wait_conv(struct bmp280_data *data)
-> +{
-> +	unsigned int reg;
-> +	int ret, meas_time;
-> +
-> +	meas_time = BMP280_MEAS_OFFSET;
-> +
-> +	/* Check if we are using a BME280 device */
-> +	if (data->oversampling_humid)
-> +		meas_time += (1 << data->oversampling_humid) * BMP280_MEAS_DUR +
-
-		BIT(data->oversampling_humid)
-
-> +			       BMP280_PRESS_HUMID_MEAS_OFFSET;
-
-> +	/* Pressure measurement time */
-> +	meas_time += (1 << data->oversampling_press) * BMP280_MEAS_DUR +
-
-Ditto.
-
-> +		      BMP280_PRESS_HUMID_MEAS_OFFSET;
-
-> +	/* Temperature measurement time */
-> +	meas_time += (1 << data->oversampling_temp) * BMP280_MEAS_DUR;
-
-Ditto.
-
-> +	usleep_range(meas_time, meas_time * 12 / 10);
-
-fsleep() ?
-
-> +	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to read status register\n");
-> +		return ret;
-> +	}
-> +	if (reg & BMP280_REG_STATUS_MEAS_BIT) {
-> +		dev_err(data->dev, "Measurement cycle didn't complete\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static const u8 bmp380_operation_mode[] = { BMP380_MODE_SLEEP,
-> +					    BMP380_MODE_FORCED,
-> +					    BMP380_MODE_NORMAL };
-
-As per above.
-
-...
-
-> +static int bmp380_wait_conv(struct bmp280_data *data)
-> +{
-
-As per above comments against bmp280_wait_conv().
-
-> +	ret = regmap_read(data->regmap, BMP380_REG_STATUS, &reg);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to read status register\n");
-> +		return ret;
-> +	}
-
-> +
-
-Choose one style (with or without blank line), as in the above you have no
-blank line in the similar situation.
-
-> +	if (!(reg & BMP380_STATUS_DRDY_PRESS_MASK) ||
-> +	    !(reg & BMP380_STATUS_DRDY_TEMP_MASK)) {
-> +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
-
-> +		usleep_range(data->start_up_time, data->start_up_time + 500);
-
-fsleep() ? Comment?
-
-...
-
-> +static const u8 bmp580_operation_mode[] = { BMP580_MODE_SLEEP,
-> +					    BMP580_MODE_FORCED,
-> +					    BMP580_MODE_NORMAL };
-
-As per above.
-
-...
-
-> +	switch (mode) {
-> +	case BMP280_SLEEP:
-> +		break;
-> +	case BMP280_FORCED:
-> +		ret = regmap_set_bits(data->regmap, BMP580_REG_DSP_CONFIG,
-> +				      BMP580_DSP_IIR_FORCED_FLUSH);
-> +		if (ret) {
-> +			dev_err(data->dev,
-> +				"Could not flush IIR filter constants.\n");
-> +			return ret;
-> +		}
-> +		break;
-> +	case BMP280_NORMAL:
-> +		break;
-
-Can be unified with _SLEEP case.
-
-> +	default:
-> +		return -EINVAL;
-> +	}
-
-...
-
-> +static int bmp580_wait_conv(struct bmp280_data *data)
-> +{
-> +	/*
-> +	 * Taken from datasheet, Section 2 "Specification, Table 3 "Electrical
-> +	 * characteristics
-
-Missing period.
-
-> +	 */
-> +	static const int time_conv_press[] = { 0, 1050, 1785, 3045, 5670, 10920, 21420,
-> +					42420, 84420};
-> +	static const int time_conv_temp[] = { 0, 1050, 1105, 1575, 2205, 3465, 6090,
-> +				       11340, 21840};
-
-Please, start values on the next line after {. Also make }; to be on a separate line.
-
-> +	int meas_time;
-> +
-> +	meas_time = 4000 + time_conv_temp[data->oversampling_temp] +
-> +			   time_conv_press[data->oversampling_press];
-
-4 * USEC_PER_MSEC ?
-
-> +	usleep_range(meas_time, meas_time * 12 / 10);
-
-Comment? fsleep() ?
-
-> +	return 0;
-> +}
-
-...
-
-> +	usleep_range(2500, 3000);
-
-fsleep() ?
-
--- 
-With Best Regards,
-Andy Shevchenko
+NX huge page recovery should be tolerant of this zapping failure and
+move on to the next shadow page. May be we can put WARN if NX huge page
+recovery couldn't zap any pages during its run time. For example, if it
+was supposed to zap 10 pages and it couldn't zap any of them then print
+using WARN_ON_ONCE. This is with the assumption that if more than 1
+pages are there to be zapped then at least some of them will get zapped
+whenever recovery worker kicks in.
 
 
 
