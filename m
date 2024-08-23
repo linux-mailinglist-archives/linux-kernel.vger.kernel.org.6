@@ -1,77 +1,131 @@
-Return-Path: <linux-kernel+bounces-299291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6231295D25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3512A95D266
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0CC1F215DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681A11C23774
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9923F18951B;
-	Fri, 23 Aug 2024 16:05:00 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2082618A6DA;
+	Fri, 23 Aug 2024 16:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="V4MIS8yS"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D964C18BB82
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15B8185E7B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429100; cv=none; b=izQYNKwtHT1OM4X++40IhN0+SHzVAzCTIwSHnj64q5TLdNbd0mNTqvMe7+UAz6YZuAmZryGRXyNc2oCVYwVqVYj59mdJMCgeSoTumFOxBXmc+q+ENr8fmoCBJPZtu21zF/Ab32F0Lbm30Gm/2oHjrBnPcoHU+BAVR0GPy26h+9U=
+	t=1724429154; cv=none; b=cojqu3EOYl5otWnSzp6OiyOukWqlwM86OyxH22qLq3Hw1FL6lUgO2LE3WzLDToJcBsXRWxYu/oZjt0QJloONzqsbBxuXeCofj8ZEco3aCkJX1Z+vrHKX2/9bSb1YIi9M/ZxJgrJG4DJ23FReOJextGwWceQ+3uZ6JPaGuoKTaIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429100; c=relaxed/simple;
-	bh=Cp2pgca+yiV7OzD1NdSZQbL+bCUa+O+yEXL91qOfnzI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n68WmKGISxY8gH7JDZUSXOeDrO/RQ3aAWS7gknMiqdSJoXi44T+gbbNQ9aGjn+s2TFxHKg9QvmMCct0T5iIPpBVFzLx9iV1qtUzSyaIQoczGzohwF5GRdrvUHKONge/RuQKZN9Zo8s2M6Z3I55VLJwogv3u37tv8hAi1qkVzdlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso19267415ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:04:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724429098; x=1725033898;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cp2pgca+yiV7OzD1NdSZQbL+bCUa+O+yEXL91qOfnzI=;
-        b=bRYLlDD0jXYjpN1DAoTvHkPZ2TjxIL+x5vItlfn3Ep2uxQGWFaZ1KNomXENQZDL5cA
-         BUF7kly2q+5JUdOOyesex6Cb6zEVnvpOEVBNibr3pgd/wvCRAwGpgYWbGZkXq9Emn8xA
-         KxNcZTxklc9qz3i85PqrOr9mmzx6ghtt1JIfdkTpiGgr50KSMBKBgcunApF0XQ1lrr/q
-         YTR9K6v7kv82pynqXp7QPBtDnSv67AtgC2EDmKxOuQeQ9ggEQvhaodjX1GTGJ/qVJ/VN
-         2oAEIpmF3T+74H/tEZqjWypH6rYlmdfoEnn8Sgr+rD6eRPiJWcAZLRGg+hHbVqM6jzI+
-         YObQ==
-X-Gm-Message-State: AOJu0YysKo5RDrNwZHECXjm+PHNiHIYGXLZnpO7Cn8jPezW7Iz0wIEhw
-	GQ969S6GoDX5rlCs5hft/aycxOJPqHKLXLWj3C+FzjeAqZT3P3/HcesJ/GVA2NgQHilRN2eAF80
-	MLbtMugpPf5vZj3iqdtOezLpBy9QtkjpJUduDNloEedG5TtIdmPmbz7E=
-X-Google-Smtp-Source: AGHT+IFF4UizVlYxyNwHcxGvW4sXWmWUvmeyqFGeywvSsdP6PKJUKaXv7ZZSWIfvRYMF0IlkENQ6tp1dD9KdJpNMKGnHE3wUTDiC
+	s=arc-20240116; t=1724429154; c=relaxed/simple;
+	bh=FstkNDRNbaK14vWvEY1SladmWDSjQ+KqFzh47ygUass=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGu/Et8ZgyZ7l6IEOhuTagM8FbQTq1pzQa/zcSPeiZIlOEDBLIuUaw97ZdbV4ixkXmP5bjuNoKtSeSJtNleik1wQ0cyAjh0UMOGK5nH7Qr+uQHzIRd24F8tu1pPt9Liqr1+fQJUZsyX8MWqGGqA/MfWD745RY0Ev+FGQqWOxcq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=V4MIS8yS; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-112-67.bstnma.fios.verizon.net [173.48.112.67])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47NG5J1Z018050
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 12:05:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1724429122; bh=AMQjT8wPGTwlJZgBL47TXzuwBFUu6cj117cSla0JD24=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=V4MIS8yS7VBx21EO1dW6OBzSh/Gk5WJ6nGL6NKYpXDo/2DmorgnScyrMNpmHepeSs
+	 vBjJpDddWIZ4/lgPgzwn6bnoXE/6Uk14KeZWTPHYSZyeVe4XEIK154nuijWDLNasyV
+	 Zkq7beWCqA5Lj5s6ebiyNth4U9E3/ulYGRGPa5wRfrdkaarDbpKmx1m+Wol7IlPM/B
+	 b49lSIUT9rgfhc/NfRA3RRWWpJbINwkYdmflJSX5Mjzlzv7dUS2hPZYS2EL28e7Oko
+	 tlcbaAdLz8E4cafZVYpaJvHECc4zvFxOZVN4ksuaOgNjuavFwGBSn/V21VamqjuqPF
+	 WYc3bA64cdjuQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id DCD6B15C02C0; Fri, 23 Aug 2024 12:05:18 -0400 (EDT)
+Date: Fri, 23 Aug 2024 12:05:18 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Edward Adam Davis <eadavis@qq.com>,
+        syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] ext4: No need to continue when the number of entries is 1
+Message-ID: <20240823160518.GA424729@mit.edu>
+References: <00000000000075a135061c0480d0@google.com>
+ <tencent_BE7AEE6C7C2D216CB8949CE8E6EE7ECC2C0A@qq.com>
+ <172433877725.370733.2330809797744892142.b4-ty@mit.edu>
+ <6ba9afc8-fa95-478c-8ed2-a4ad10b3c520@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc6:b0:39d:1144:e784 with SMTP id
- e9e14a558f8ab-39e3c9fa817mr2143465ab.4.1724429098001; Fri, 23 Aug 2024
- 09:04:58 -0700 (PDT)
-Date: Fri, 23 Aug 2024 09:04:57 -0700
-In-Reply-To: <000000000000be9914061763f17a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3b8a106205beff2@google.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in attr_make_nonresident
-From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ba9afc8-fa95-478c-8ed2-a4ad10b3c520@huawei.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Aug 23, 2024 at 10:22:19AM +0800, Baokun Li wrote:
+> 
+> I think this patch is wrong and it will hide the real problem.
+> 
+> The maximum length of a filename is 255 and the minimum block size is 1024,
+> so it is always guaranteed that the number of entries is greater than or
+> equal to 2 when do_split() is called.
+> 
+> The problem reported by syzbot was actually caused by a missing check in
+> make_indexed_dir(). The issue has been fixed:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=50ea741def58
+> 
+> So unless ext4_dx_add_entry() and make_indexed_dir(), or some other function
+> has a bug, 'split == 0' will not occur.
+> 
+> If we want to defend against future changes that introduce bugs, I think
+> it's better to add a WARN_ON_ONCE to make sure that the problem isn't hidden
+> and that it doesn't trigger serious bugs like out-of-bounds access.
 
-***
+I agree that given your patch (50ea741def58: "ext4: check dot and
+dotdot of dx_root before making dir indexed") split should never be
+zero.  (Although there are two ways this could happen --- either count
+could be 0, or count == max).  But this patch isn't wrong per se
+because in the case where split == 0, we do want to prevent the
+out-of-bounds memory access bug.
 
-Subject: BUG: unable to handle kernel NULL pointer dereference in attr_make_nonresident
-Author: almaz.alexandrovich@paragon-software.com
+That being said; adding a WARN_ON_ONCE(split == 0) might be a good
+idea, although I'd probably also print more debugging information so
+we can take a look at the file system and understand what might have
+happened.  Maybe something like this?
 
-#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+	if (WARN_ON_ONCE(split == 0)) {
+	   	/* should never happen, but... */
+		ext4_error_inode_block(dir, (*bh)->b_blocknr, 0,
+				"bad indexed directory? hash=%08x:%08x "
+				"count=%d move=%u", hinfo->hash, hinfo->minor_hash,
+				count, move);
+		brelse(*bh);
+		brelse(bh2);
+		*bh = 0;
+		return ERR_PTR(-EFSCORRUPTED);
+	}
 
+I haven't checked to make sure all of the error code paths / error
+handling right, but something like this might be useful for debugging
+purposes --- if the file system developer could get access to the file
+system moment the error is logged.  If the data center automation
+causes the file system to get fsck'ed or reformatted right away (which
+is the only scalable thing to do if there are millions of file systems
+in production :-), something like this is probably not going to help
+all that much.  Still, it certainly wouldn't hurt.
+
+If someone does think this would be helpful for them, I wouldn't
+object to adding a patch something like this.
+
+Cheers,
+
+						- Ted
 
