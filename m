@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-298747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2352495CB0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CE395CB09
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B441C20AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C669D1C21735
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15B9187342;
-	Fri, 23 Aug 2024 10:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3319917C211;
+	Fri, 23 Aug 2024 10:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="EZnjN9AA"
-Received: from pv50p00im-ztdg10012001.me.com (pv50p00im-ztdg10012001.me.com [17.58.6.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kmts5GRU"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C388118732C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D125A37144
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724410394; cv=none; b=cs5vp7xVCGfK/MtDtXpfhr3c8tjoyuQu41ibOAKFvS0G4C0cj+mmNVAZy/DAFQcHfPVHL5K+i/Y0I18UgojwOHV4W3UI6u9vKE5WiKzIOCDu3s8n4P2ibk7VF96yjEt1fx39vwlnYfbw4DVUK1h/mezJlAtdY+KNqHelmakCZQc=
+	t=1724410386; cv=none; b=Wz523sW9HoHbTVsomJ+g41O36Zq2HW9lO3+N3XxvIEEIwB0tED+pZK0yb98rEfaPesqI3oNhNgaY5wZlDu20jxSEmReDhVR2UIT8kNLsaTZRfq2SZe76KTw4Um4Ji76kxYefWNfF5dFigQeeU2dpiBrzVphKRlDQ4Vdec03XWqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724410394; c=relaxed/simple;
-	bh=LzNZP8D/JikrZqvd3KnfrjtecLMd+GXgTwvXKvkPa5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eipzeyD3ZDfXrOWG0zvz83JrTz2dQ8OGcG1btfTKF3zJSyeg81AuWN5ExOmDg6MNlrNAyHJhE99CwmThuPQcRFsFRY9G+K0Eh6/Jt6CmhMK5vor9LGHMl9zJGMHyRBMvIG06Jd/s1c7Ee+Nyj0/JGctbBX1AMr7bNW4ZgNPJ0Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=EZnjN9AA; arc=none smtp.client-ip=17.58.6.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724410392;
-	bh=4oEYTSnYB8gV+hdO+WbLXv/ub86nSIX37ilAYztk8Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=EZnjN9AAb9IIw8+PCrsypiwtDsEhiTGFZUnY585Dvp2490gM/WuvDylKcbOuzy7Mp
-	 DFUKRGLe4n8jWae2QQM5QE8qoQt6zywEuGbXYGKYaJx5Ivj3g4kyB4yEXfAvEqvqwK
-	 0StaEd1Hl5/nckW31JIU1+kfd93QlcMc9Q1681LMRuhfxjajkFYWjM572bh4hrGIsP
-	 qoe3PT/Ls0MbWdtHTHi4rsFTy5y8wMl7xTOmP6ffgL64NlmxUryVsUSPKK/TikKScp
-	 V/JKdwpT0zXjdJDzmDsWZFEgPf56wmmIgTpxIPK2W3OzCeMe/TKoTcCEFwNw3uoxJE
-	 fWOHQz/B9RL1g==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012001.me.com (Postfix) with ESMTPSA id E5BB7A0210;
-	Fri, 23 Aug 2024 10:53:06 +0000 (UTC)
-Message-ID: <48b997b0-a27a-43ca-a7cc-abbab9bb9eb5@icloud.com>
-Date: Fri, 23 Aug 2024 18:52:47 +0800
+	s=arc-20240116; t=1724410386; c=relaxed/simple;
+	bh=biQL3DxblkB3rCUDzcXxatNSH4ag1B0YP2dqEt64H1g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PJQbicqyYrftyu7xb0b2HsPnTNK6xcG1810pIK5C0E8ixeCl5EfpUuDIVEobdmaZo3RQ1T5YVWH3Cv4E5Yh+AuBtA0J+vE4U8GY9L4oXeRpuGaxZ9MylKFG/7p3PmYnFv/dtubDu9/OmPab+Jz3287nqLCEgA4Zp2jxDc9u20bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kmts5GRU; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f406034874so17866741fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724410383; x=1725015183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJwKU3pM+fSGw8xlV5Hp191/V1knUQHDFEo0lS32CeM=;
+        b=kmts5GRUXdgIQ8+hRh6T6Ljv1bNM3QtUThYYmBauctI6FA67Vp73SXPj5hmETdsMcY
+         9o0SDQcHmIyc15kF2GlcSxf4zTbSYfHF0fmk6XVJ25UoFxiqWp6/S0Uwv7wK3m3tAveg
+         Vp4hOGHhy3rEwcqZONJcPz69dANhURlv5eApS6m8j1Iq9fdSOHAVqZAh9Z1ujyHtgILk
+         5wk/dzXCH6jV51uU+Bu9tckkjTA0Iph6w4/t54fO1uRX74HXtSqSCYaFTZJs9hLUU8QA
+         jsoV8Jp53rqQXjrSpgYedfIy1P5Mj7lUQm74k1tvTPLEym3IlThaHnN6OcXoMWG2xWZT
+         86uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724410383; x=1725015183;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mJwKU3pM+fSGw8xlV5Hp191/V1knUQHDFEo0lS32CeM=;
+        b=NOt7YzdHwb7ufKQCPdran4t8zt4xbuV36aJMVnjzELiLc4SZxAU+Lx23GSX6HJeiGK
+         49pkCOqc1NpAOl7NUswhOLQ9gcFGab6/YO70qUSlt/FenKYfmCZf6oe0JNmGi8rlfnSo
+         bJV3h/tsr5sDxXnvNd6NSpOVMgdJ/A0utyV2ELF/FJRn4WHSyz1GHENlz2idBqh6i046
+         AEcxhPDAuRBocOHaiWTsOlYqLM0sQKuJHDq1MvjN9Z26Icx3V25uAuZ9yPP/HOntzBOp
+         Wp9mPS2PradEao3Rlvqx+ra8TzLmQbODgIXeBE9BLTuTEUksaqXG2cp8eIXvKGEgZctQ
+         jHGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgyyi5SrWCnnfpxZFfaHqv3zLM59Zt7EwsMx0ZGkFo0raFlaHBNwjKNX63fzgKhAoInC0KwkD+7w9bzlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybzLDoFWvRJQ0aWuOEILgsQa1BVtmNQB636HvyrouXEOUap+Je
+	2gUjB4oM7MwzpT9IJXhNE5EgPT6ENP43xnpYipOrJgMkNQsdVOg7/+5PcDOcVLyl5JrFdiE+pr9
+	5
+X-Google-Smtp-Source: AGHT+IEan/GnR/OKjKnkJkJvShhmZs9A9iwIWvtwinNMbLwzGGPZOx7tGcSf6waNVy1TKMCbtcWO7w==
+X-Received: by 2002:a2e:4e12:0:b0:2ee:4dc6:fe28 with SMTP id 38308e7fff4ca-2f4f49423e9mr12196731fa.40.1724410382750;
+        Fri, 23 Aug 2024 03:53:02 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4048acb0bsm4623061fa.125.2024.08.23.03.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 03:53:02 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v6.11-rc5
+Date: Fri, 23 Aug 2024 12:53:01 +0200
+Message-Id: <20240823105301.397397-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
- __device_attach()
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
- <ZsfRqT9d6Qp_Pva5@google.com>
- <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
- <2024082318-labored-blunderer-a897@gregkh> <Zsfk-9lf1sRMgBqE@google.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <Zsfk-9lf1sRMgBqE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: Q-d1PEaJGgMqV9MRR2s56GRT5lx-xMXC
-X-Proofpoint-GUID: Q-d1PEaJGgMqV9MRR2s56GRT5lx-xMXC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_08,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=565
- adultscore=0 clxscore=1015 spamscore=0 mlxscore=0 phishscore=0
- malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2408230080
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/23 09:25, Dmitry Torokhov wrote:
-> On Fri, Aug 23, 2024 at 09:14:12AM +0800, Greg Kroah-Hartman wrote:
->> On Fri, Aug 23, 2024 at 08:46:12AM +0800, Zijun Hu wrote:
->>> On 2024/8/23 08:02, Dmitry Torokhov wrote:
->>>> Hi,
->>>>
->>>> On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
->>>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>>
->>>>> An uninitialized variable @data.have_async may be used as analyzed
->>>>> by the following inline comments:
->>>>>
->>>>> static int __device_attach(struct device *dev, bool allow_async)
->>>>> {
->>>>> 	// if @allow_async is true.
->>>>>
->>>>> 	...
->>>>> 	struct device_attach_data data = {
->>>>> 		.dev = dev,
->>>>> 		.check_async = allow_async,
->>>>> 		.want_async = false,
->>>>> 	};
->>>>> 	// @data.have_async is not initialized.
->>>>
->>>> No, in the presence of a structure initializer fields not explicitly
->>>> initialized will be set to 0 by the compiler.
->>>>
->>> really?
->>> do all C compilers have such behavior ?
->>
->> Oh wait, if this were static, then yes, it would all be set to 0, sorry,
->> I misread this.
->>
->> This is on the stack so it needs to be zeroed out explicitly.  We should
->> set the whole thing to 0 and then set only the fields we want to
->> override to ensure it's all correct.
-> 
-> No we do not. ISO/IEC 9899:201x 6.7.9 Initialization:
-> 
-> "21 If there are fewer initializers in a brace-enclosed list than there
-> are elements or members of an aggregate, or fewer characters in a string
-> literal used to initialize an array of known size than there are
-> elements in the array, the remainder of the aggregate shall be
-> initialized implicitly the same as objects that have static storage
-> duration."
-> 
-> That is why you can 0-initialize a structure by doing:
-> 
-> 	struct s s1 = { 0 };
-> 
-> or even
-> 
-> 	struct s s1 = { };
-> 
-For above both initialization: it appears to initialize the whole struct.
-but For the initialization approach we discuss, it appears to
-initialize partial struct, it is easy to mislead developers.
+Hi Linus,
 
-> Thanks.
-> 
+Here's a PR with a couple of MMC fixes intended for v6.11-rc5. Details about the
+highlights are as usual found in the signed tag.
 
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.11-rc1
+
+for you to fetch changes up to a1e627af32ed60713941cbfc8075d44cad07f6dd:
+
+  mmc: mmc_test: Fix NULL dereference on allocation failure (2024-08-20 13:47:36 +0200)
+
+----------------------------------------------------------------
+MMC core:
+ - Fix NULL dereference for mmc_test on allocation failure
+
+MMC host:
+ - dw_mmc: Fix support for deferred probe for biu/ciu clocks
+ - mtk-sd: Fix CMD8 support when fragile tuning settings
+
+----------------------------------------------------------------
+Ben Whitten (1):
+      mmc: dw_mmc: allow biu and ciu clocks to defer
+
+Dan Carpenter (1):
+      mmc: mmc_test: Fix NULL dereference on allocation failure
+
+Mengqi Zhang (1):
+      mmc: mtk-sd: receive cmd8 data when hs400 tuning fail
+
+ drivers/mmc/core/mmc_test.c | 9 +++++----
+ drivers/mmc/host/dw_mmc.c   | 8 ++++++++
+ drivers/mmc/host/mtk-sd.c   | 8 ++++----
+ 3 files changed, 17 insertions(+), 8 deletions(-)
 
