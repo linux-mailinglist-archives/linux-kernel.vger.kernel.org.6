@@ -1,101 +1,108 @@
-Return-Path: <linux-kernel+bounces-298354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEA595C630
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F9295C643
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F271C2202B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99EB1F263C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB8313DDA7;
-	Fri, 23 Aug 2024 07:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB89813C810;
+	Fri, 23 Aug 2024 07:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="JjtwRubo"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DoPNZBIg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G7TjziTy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81894140E5F;
-	Fri, 23 Aug 2024 07:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929E2139D15;
+	Fri, 23 Aug 2024 07:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724396815; cv=none; b=QeaPXFlc0Jr2btB0E89D72nsP/wrDeggBgvL/P/mMCrwSX05JM56STEiVwUmm/RevqmgK+vTrYCyU2UK4OoMJUmS2+VqfRYvBoO0PczmFPFAOuDpSTnsgMqKAFi9IqqkAGTcx7cMaNFPPfkaK57XEpv7vvNEQoLWS90p3ahD4ek=
+	t=1724396953; cv=none; b=gt24BJfH7Sm5i7UDEN7qxmGHp5MlvlUzXhXYT82rPqUIghrYj0xZBHs5je8Ovgi2GTQ8zldamHfV1HPOciU3uZCF3AIsMqg1++oXtbotThRAb7A46VkARhHajp/RmvSyat9usHjQ7khZouUya9UrMP81ENJpoxDOK5eJx9LoOwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724396815; c=relaxed/simple;
-	bh=l+jNErGC1Zn9eyfvrAu5rxOhbUYE9BBxG5YNVVs40zY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=BqpIJTZHuVGjKsSf8V+KIxG2C5cv0mzqSBgUkbscy2m5/uaBjazcxtpJsmuAxLAaVnSet5yH8JpJ7Cfa+hxLhzPMzfPHyv1Jt7AX2r0U/Gt2F+8vLMoOHNQZnQEQj7jvdBp4v4+ly0TX3XbrtelymDikR5Ognq4PDX9ac42BCxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=JjtwRubo; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1724396953; c=relaxed/simple;
+	bh=9UhV2IODQREqR4uQoLzNBv5rfKibOFEm+2yCwhoz6q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOikVjpPlJ3D1qXGuTeqnbHoG/PfGjwvV9zRJHQimArEAnswfcSs4OgvgRIHlf8kipIwDVS7y/PBk8jWO+fzSRXoelQLGofA0/lKHkZBNtZJ0hwzHOydyBbu4vS7YF13dGcop4FASfhkU35WMeZoG+HX0G96Jhoe7dggXbEoR+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DoPNZBIg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G7TjziTy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 23 Aug 2024 09:09:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724396949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixFolHKRyKqlh9t34LBP2UUWQ9fpJZXPE9R/jHylteM=;
+	b=DoPNZBIgbwmZv3qRIw/8RUXm2LGnz6tVdKIAr2IfkFvodUKDBIUPiaVXDBIkCPks9t4Imq
+	1r37HjbPAodMKg/gtW7sov0jgVpmTl6zOyXPdqVh18zfAmjazib+niZvsuaQ+2vX6Ts/9R
+	/WzTZZ/hTOPo+WLrz9CYqxJaL5n7x9j4Oich7Br1F3JOy0/4E4Hbzgqe5lK6owJXv1hVpl
+	95QU4K8X9RHRiqpFOkz9DHrWb4IPs3Ut1io1AFW/XMBy0nNTAGgvz6xCPdvFl+My1KnTlT
+	xhx5C4TZt4HjhhNH9359RmZ5EN0qvA8ZvChP2+Zsukp+JQr6n1vREiq6PgHzCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724396949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ixFolHKRyKqlh9t34LBP2UUWQ9fpJZXPE9R/jHylteM=;
+	b=G7TjziTyjPITIfW/+YKjUEpim01KIJ0hqqFNlAhY9vTeQ3nhcFR0p8nGWcb1E8tv52lBFU
+	n1FY2JY/T18lF0DA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Derek Barbosa <debarbos@redhat.com>
+Cc: pmaldek@suse.com, williams@redhat.com, john.ogness@linutronix.de,
+	tglx@linutronix.de, linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: A Comparison of printk between upstream and linux-rt-devel
+Message-ID: <20240823070908.D0GYffCS@linutronix.de>
+References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724396811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uk+gkYUflODc+eRWSAS3LGZzaVkq5JJYSdzC+cnX4hA=;
-	b=JjtwRubot6tDXBlSTMcSA13Yb3AlCfGTaiJIQDtXbM13oYuSsgz4vOBehFmnDTZIeFethJ
-	RAYwq/JszXK2zQG9HJ6/fq489F/8zs0roc+QaSz/8RwaNZktCD8GkggXXgRgp1Rg4SIPLY
-	hRgaTCCCVsMhl/WFG90DvmRk7/HvD7MtBT0iz68CJtIGQPSN/7ncPTOQQqigTgD6fldjht
-	e2E66iISKo+yblcr7qXSQLhLe4CGUhxyPasF+Wnn1OuOTaET6M0CMp1gBqTNI+nHvtr/E1
-	TLyFlnZucALGjkba5p2opkT9mhWXI3lWTTZs3fF8V8wibVjWL863H9lCA3AOng==
-Date: Fri, 23 Aug 2024 09:06:50 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
- tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
- tim.chen@rock-chips.com, elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v2] gpio: rockchip: Update the GPIO driver
-In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
-Message-ID: <1195a341c0206b08318ca90af0b9cb00@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
 
-Hello Ye,
+On 2024-08-22 12:32:15 [-0400], Derek Barbosa wrote:
+> Hi,
+Hi,
 
-On 2024-08-23 05:43, Ye Zhang wrote:
-> GPIO driver support acpi and new version, set input direction in
-> irq_request_resources, fix division error and debounce config error.
+> TLDR: plain, vanilla 6.11.0-0.rc3 is slower on flush and 
+> does not print traces in panic/crash context consistently.
+
+Thank you for testing.
+
+> For the stock kernel, we observed an average of about 14,263 messages printed
+> within 30 seconds. The standard deviation here hovers at around 1.52 messages,
+> with a variance of 2.3 messages.
 > 
-> Changes since v1:
-> - Split commits with multiple changes into separate commits.
-> - Adjust backportable fix to the forefront.
-> - Modify messages of some commits.
-
-It seems that you sent a bunch of separate patches, instead of sending
-a patch series.  I believe that wasn't intended or requested, so could
-you, please, resend the v2 patches as a series?
-
-> Ye Zhang (11):
->   gpio: rockchip: avoid division by zero
->   gpio: rockchip: release reference to device node
->   gpio: rockchip: resolve overflow issues
->   gpio: rockchip: resolve underflow issue
->   gpio: rockchip: fix debounce calculate
->   gpio: rockchip: Update debounce config function
->   gpio: rockchip: support 'clock-names' from dt nodes
->   gpio: rockchip: support new version gpio
->   gpio: rockchip: Set input direction when request irq
->   gpio: rockchip: support ACPI
->   gpio: rockchip: driver works without pinctrl device
+> For the "new printk" kernel, we observed an average of about 12,693 messages
+> printed within 30 seconds. The standard devation here hovers at about 131.2  
+> messages, with a variance of 17211 messages. 
 > 
->  drivers/gpio/gpio-rockchip.c | 297 +++++++++++++++++++++--------------
->  1 file changed, 181 insertions(+), 116 deletions(-)
+> We observe a rough 12-13 percent overall delta between new printk and the
+> stock kernel in this test case, with a larger disparity in standard
+> deviation/variance.
+
+I am a bit confused. You write here ~14k messages within 30secs for
+"stock" aka 6.11.0-0.rc3 and then ~12k messages for "new printk" aka
+from the latest RT tree. At the top you write "6.11.0-0.rc3 is slower on
+flush". This means something else I guess.
+
+Regarding your RCU stall: You stuff a _lot_ into the printk buffer. And
+then printk is forced print everything out in a single sitting. The
+whole printing job is done within a preempt_disable region so RCU has to
+wait until it is done. If printing of the whole buffer takes >60sec then
+you see your RCU stall.
+The current RT tree will do the printing from a kthread which remains
+preemptible because your printing threads don't print any errors/ panics
+for 30seconds. So RCU gets its turn.
+
+Sebastian
 
