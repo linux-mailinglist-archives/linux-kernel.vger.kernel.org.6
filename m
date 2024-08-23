@@ -1,218 +1,186 @@
-Return-Path: <linux-kernel+bounces-298226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2F395C417
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3434E95C419
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1421C23314
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D503C2857AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B55040BE3;
-	Fri, 23 Aug 2024 04:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701DA41C73;
+	Fri, 23 Aug 2024 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p/Yuhp1u"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q/51xwf8"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD30620DF4;
-	Fri, 23 Aug 2024 04:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724386413; cv=fail; b=EF+j/EkPqk0rwmf5pawrXlYTrZTR1kxq8TezOO4HHyZXx6C4x9h/72hIb5RC5J8z3lSRPKsDW7q0FcTH9azDsaPCGipg4HxXBmgF8sqNUIrCUM90ULt6GJzBnvTUPKqetnLDekmtAjXA1GucOM0FkFo1QNCJ4YErty2ZMkiRwng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724386413; c=relaxed/simple;
-	bh=yHeFpLKV6avdr4WDXqCTRop0xGcTBHLbxOKzKe7PxCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=i396EDtjXZZUKuXWKIM+FsmxGWMLWRTPQ0JY+eM1IH8zwiSO4EV/na+4dS6yxYB55qjfIu5PPNcgwwWJZVd/o6Jh0pJKyXUoOg88Qx0RfDlD8d+XJYnM9s0iRckpF18HsgXzaj7K8XRDogBuHIkIt1dCzbemAtNmkUTU7PB2V3U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p/Yuhp1u; arc=fail smtp.client-ip=40.107.223.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZbWqQT4530dOytpfJGamF+d9uhhfVA0sSSQXZmg5roGzqO/U6XWHBkoiaalFEeYLPAQFoC+V0RHwQ9kNHPgvW05YFz8WN6cw9emADdQ4qOT7LjHNBFB45oW0BfBiCzD91ZfTfizcXPCea8ag2G1EMCbXMqCMSfnY6mUUQyABKvdF8uE0Wme7UoQ19LDexkJpdTv5Acs5dcyNnU6x0JNbLsBxqrTShn/FBMd+VfqQ20u+X+vi1PnxLjLqoHJBOkOwUgMfrjxU7pGFy6Hy3hAVt4WGDGxBE/FXl+dFMtE6x2K3nJXu8SzhKzSO6UPTMGC26glx07u0MwhrYd/A3xpEMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C1X2XcVGbxFepsm2bqWOcBqhdYjZPb2r/ShjTJaqWvI=;
- b=L7Oc+Hp9cJwL669TdzovLJzI0NNZo/A+oCHXYhnfxxO8T35IpWOhW2nMAf4fE/5ctgf20KWiKEtQNdBadYP24PzuRQQQ/vJu8zf9WZrIQPgdeC2fulmaoYqh+qUB4vJAYcWf33OntWewrUkVcSqgmc7ZTMyQt0R10GBRgEGomJfYdhMJCzUHMK9Gpfp8v76kSVBAlfwusGubpnMMA7TPQIG5E/8hFbXsi9nERemOwzLPEGNSr7HqWtntoydHrHAr7iFA92hui3c/lozJGx9KCmdxwRnHtjvtsAV0g9veNFCJ3nXU60U1EYA1rPKIGHlqLE5egJWKzkXzPc/wBJDnQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C1X2XcVGbxFepsm2bqWOcBqhdYjZPb2r/ShjTJaqWvI=;
- b=p/Yuhp1uDaiyKoqPfjYvra7b1Lj19YbVnty3WeX06K5q9pG4Y6+0aRADfOa/O3ivu3CmZ8c2oGq92rgAlibN8GT2GVqiLk48g8eNsFzuIlhngctIysqz7rFrzFdQMrs1NwGCv4CNdWnrrBU1B/1bz8p1HVYI0qS4ib4sNKg2gxQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- DS0PR12MB6560.namprd12.prod.outlook.com (2603:10b6:8:d0::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.19; Fri, 23 Aug 2024 04:13:29 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%4]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 04:13:29 +0000
-Date: Fri, 23 Aug 2024 09:43:18 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Huang Rui <ray.huang@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
-	David Wang <00107082@163.com>
-Subject: Re: [PATCH 0/3] cpufreq/amd-pstate: A set of fixes
-Message-ID: <ZsgMXv3sQgcw3aNl@BLRRASHENOY1.amd.com>
-References: <20240813095115.2078-1-gautham.shenoy@amd.com>
- <e53159a9-3451-4255-8fa0-bb9aeee09fce@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e53159a9-3451-4255-8fa0-bb9aeee09fce@amd.com>
-X-ClientProxiedBy: PN2PR01CA0210.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e9::19) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DEB2D030
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724386665; cv=none; b=TVz0F5zdPt9w9ndurkcpCfJQv6cdd3vQwTAg/a+3sJkDdznF2j0DrQbLitU2bpJb4NYbsdSgK9DARD/wv3Y8Q4qFbb/m4kVNTfN36e+UZG+tG7O1ub0fniK7G/2L5fiVYAzdXhfugDBgiUQ0WIjy7FqApdzxJ8NzWnHnwOYResQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724386665; c=relaxed/simple;
+	bh=zFZdx23HnzLYC+NY4UvZuHsDGkKcK3j50SHMCYMhn8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UVwo9cztNnO8S2TITZIQg26Shs7IbliGL+LEalbsaum5eTaMQcRmqvKXqgwU7FFSwOzZsG72NMcjRf0cXWulLFHnnfQReKiK3VcoKIUJfCvlrdjVeCLno+ykTI++X4piFw7ouNtaUByy0hN8dceo+ikkRxGKYAnX2fQtxulpmok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q/51xwf8; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4fc92316e1bso434608e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724386663; x=1724991463; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mSZlGnS8Yi3PbWaYIYLB38Taazl30a+zo2QRNYAbZFM=;
+        b=q/51xwf82lQPr1lkYUVbLgEUngxXlP0A3oQwTQ7GaXO1OfVh+zGnp3QsbgIc9eP5yv
+         fmBxlvtwuzVqOZ4g/DgKZNis/QuhcoKLsjdNhg0vboi9u7y1G3g27EF7+ND0DNcqk7Hu
+         yqjduAeWa4GfSmEThAUe24K7lS69KOKCUue3IC13JUKq1ptcDmO3zGAGbFjR74QAJ5OZ
+         GG0bZLlfgrwuD0ni02Qwg5//7Lax/eU6qhFsUYE03E9Bz7HC9+CNioDObseUeQBMCqXI
+         Mn6JdWDdKyg8EkrVqaGQNFjnB1maMJYwGrPCM0VK6FAyw/nvu6kP4OlCKjircLG2TLzf
+         GAnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724386663; x=1724991463;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mSZlGnS8Yi3PbWaYIYLB38Taazl30a+zo2QRNYAbZFM=;
+        b=ns9GXx8/TsR+4eGe9qUAAimPDDa91qRJTGmWgkIyN//tV6r0qoOe4F7jeNjhyOuyWd
+         lWdBYSLfHWK7pgkTnFTS0UxpZD8oeRCxf3rJS8tjNU/TgzeBYAIngkkOMKcwb3fltw7I
+         HEGpluRt7p9SR/lqtps+3HyC9TLsLNydySSLx+IZAQJ8IairEHQQy5DKQNYAvhDCxhuV
+         yXVrYrlTqyiK/hkSChEglzLfpPdi6FTOqLoofmQJotv99T8GlL8magMcwJ7Bxi/hCAjT
+         wu0hpnysak0RVJst3W/6FJlG5f3uVHpJcTiSM1+ceXLRjIK+onxiTAVWnlF9xBAvjDR4
+         VzAA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2OIZnnHOuzSYirjG6MR/Dlv1QJPS5LJ13hB9Nex5c7bN9pdBydCv76mbyAdpkFz3Sfutr7venAnGqnFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ44CsoXvJjd21jN+6+McbxSoagBpwkLbxp/FCon58+fepuW06
+	wilHGgYn1+G5YlyJhov5URWhhihMKqR8Uqlr/wq6K28DWrcHQ9Z7HmKvFhGIhsmzphA31Yj1Gnh
+	vG+GfbgbjnBSk95/iouduikVv8whYxd5nsNy6
+X-Google-Smtp-Source: AGHT+IGTRkdxlYLCBHLBkK8lFNaUjUTKqaXwIu200VLpRBRtKJFoYnuJVYx/nbFGmpdRfWc9b1eiNg4P6qxnoqjwhRQ=
+X-Received: by 2002:a05:6122:1e0f:b0:4f6:ad39:dab1 with SMTP id
+ 71dfb90a1353d-4fd1a53145fmr1162809e0c.5.1724386662652; Thu, 22 Aug 2024
+ 21:17:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|DS0PR12MB6560:EE_
-X-MS-Office365-Filtering-Correlation-Id: df1dcd93-802d-4023-ac7b-08dcc329f15f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0ByaaeKMQ9LLt1Wn80XG6TiOSDC4Xm2eQ000O21nLRhphzY6Lw3SqRARDLJV?=
- =?us-ascii?Q?09ZWlFyCWQxN26Cc5xeYZVKNXaGTj/emIX4bczX/4du+4C/RhYCBF11Qxbat?=
- =?us-ascii?Q?oZ2x5ZcJ33DRtbE5DZ41+6FujyzrKMeAbjWP8kg+WxEaqpjIZMXvnpXZnY4+?=
- =?us-ascii?Q?zFsy3D5ujKxLQn7ifTcUuCzFPW0BFCOgPhRGXC+FhRFaGZpMXpxOaFIVZ4Al?=
- =?us-ascii?Q?/tDjNUHRq93wZCYiO63rOQpTp4KesKJ12v0J+tiDvG89U/Xf5Siw8gYnriap?=
- =?us-ascii?Q?QezeJGVAFGE/Z5E2knIGXzapM/qlTNGzt4dlxBAVpqzgV1mt5vwDz+s34Nuz?=
- =?us-ascii?Q?Aat0KN8+ceyNWQ/mH6AAnjYkRHGdNFu0TD5ALgp3kEGnzxNFKjIlBEl8wnRJ?=
- =?us-ascii?Q?eQzET3jl/4O4/BNnZZImaSBu/q88vuR+wCjdV3d/oNlceaJyEjkvfAKUYMnl?=
- =?us-ascii?Q?foVLjLU8AsFJTqCmv8haS7SW0+yQoO60nGPgtGTYsF/6BW6GK3Pwy8o2L9vB?=
- =?us-ascii?Q?tk8N3y2Ux3dMkIssXafSGHgAUMA/xiny6cqABsgMEH4nXR45LzLndP8qmVo4?=
- =?us-ascii?Q?iY6agxDtrgQXAusQVqwb+WwsAwJcIm9kzm85ZK2p02pukEhpvaq1VziHmbG/?=
- =?us-ascii?Q?M4rg4yOjc2c0RsbTncDSiowKnTWi6LjKHDtfWAajvlCU3d/bGI9/mcnuzhda?=
- =?us-ascii?Q?1rt3P6Sti7rKjdkobQIlmLGStRarQfHKCoSEsG+ZosrRr99Iwy8n6+xAs3QT?=
- =?us-ascii?Q?oiKK517QzIX4V5BOyVCmp0+PkckWejiOpNDsaWuQ58VzB5EvtWlxYc3oxNLl?=
- =?us-ascii?Q?O2kFH7z56gC3fNV941Own8YLo5KjpiULwgdXnpmF51Idj692gmpCtpFF885O?=
- =?us-ascii?Q?DKNElQk1ztN3v037wdf1rJheb6EpHMehgC/wXw4eXyJJ6Wvrwz/csd6laNHC?=
- =?us-ascii?Q?s+EClIZiJlG16Fh8oRpzdGlcDY3YNGvM4vZmMk/np5UprIPpxCRK43TSkotB?=
- =?us-ascii?Q?QiVmpxt9nZfw4kBlh6L6Tce4TuGeuS+jDyvtezCj8vXU/YbriFp6OCoF7vZC?=
- =?us-ascii?Q?CudqQHTAVqpcTPob+TnfbvhVDnV+8rb5MhDE94hyAiHZgXJ7yjeQHsm1IS9a?=
- =?us-ascii?Q?o0QqjfjSnkfZMsPeaq3QfxWZxTa59wnHrmKezZaV1/lrsgBU3GzGu9pwkbjT?=
- =?us-ascii?Q?JL8SDT8zd1S9hU7fCWRtwIEYeEQgvwJEwLB2oWjEu7nIpINx8+P+AwuHj5z+?=
- =?us-ascii?Q?+UQDHkWY3EoAN1VUu1MawajjyhYvSTGdLnsVvpwUpW85eNutoySTqDNOcHm4?=
- =?us-ascii?Q?2XyIjRlMxNYnwETHDqeXlvEy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aUfb1vFZaKIH3PWLptwaVntGn6Di0MlEzTaYj6uJcmyf2psaCLe6YfUueMZm?=
- =?us-ascii?Q?RZXtRx764dH86q3a+wB236jaCiP/k3XzVlEj3xixIixhpuv3qqGiArXVRfbX?=
- =?us-ascii?Q?j+ksGliDWTByuTHtRXG0RpKi0hxfvlsYh51SjuFzW+ArTcNAXLRh1xGBWC7W?=
- =?us-ascii?Q?vanomrpONHdY+pvSAYHLu06WhjxmqQSZxMdij47GUY3RWSGpdTlzCex6wdsM?=
- =?us-ascii?Q?OSUUfWxU2zo+akhv17XAwzIbMfA6oh7B6mDsPoOVJLzkGEMDEGON51NMLSOf?=
- =?us-ascii?Q?Ta4bMWbyz1I5TJl4frQYpWly78GTpyM++cMZRFCMhw2LmGMNclybFb4IbWH/?=
- =?us-ascii?Q?KEa1eaSFi5/1pCRlYJfUAUrBLCrtc5pedsr2ZMz8SIkNCwv8GNAN5//N+U8o?=
- =?us-ascii?Q?bsIL6OhB//XHpxX/frGvKQw157URAOeRi04wup5ym+cBITk7G7DVZZdHWW+v?=
- =?us-ascii?Q?rQZJf8aclIId11qv0ik8NTrUY68R57/RLozJ5dKAHJSChfNj2au9c2QwQM8g?=
- =?us-ascii?Q?SX3Pipsx8MZ2mqRZfeDChFqKEHZmXDq5XHh8YCO61JdJ7p7o9lUCwxy1Zlaf?=
- =?us-ascii?Q?wTRJBrJIHqNecXteR+W1UvYE/Y0J1DTVf/t52OgpUcCtH0jw/oGNI5aYkjuH?=
- =?us-ascii?Q?ESo1LkPGA0DLtuNCbyZOtUZaXw+e6qeiDdUUcXLQ4KnR9xTsoSHnUMaWj6Wn?=
- =?us-ascii?Q?Lru9Jhz/KDYtZou+Gd5vLapi2N0AeheIqFYGwjDdKjCLuizGvCEViQqr/jWY?=
- =?us-ascii?Q?wwMeTKP/fpdN9Mrz+SXKWR9jhldDJH3p4wMKAPDmF3/flfH+m8v5SWcPxfJy?=
- =?us-ascii?Q?aJ/tzGLKqu05Dbz9/lF0CVro6ZD+En0fU0hKTIQ0z7AnSkZqBigUYUHY8uCD?=
- =?us-ascii?Q?ZOsuUhLU7FWuADTMNd2pcuGGrfaZnAUe8gKMloqaYnFx/SEnFc7niD6oh5G6?=
- =?us-ascii?Q?XlkPRfDkDU/CB9S35xSh7TlObdTAGmZanRsVT27mUdCTGPnhTCONMdGOKsPQ?=
- =?us-ascii?Q?eVnPo4aoQ4RPOUQqURNFFjxVJAR4BaJipRf/sblnpOZ0o0g2XIr6dl6Wg85H?=
- =?us-ascii?Q?f5LpFKypZQofxL6YTYCnet/luIBsLWdgGHf2szULjdA4PSqNlCwJG7Fo7MpD?=
- =?us-ascii?Q?lySK3gu0A1i78v2ieZv5+LYvqLoukl2rFHuifa3fTaImnzN88z1+SdYMz/j7?=
- =?us-ascii?Q?g6SqFLmbtgr0NV+SK+okzpqlpec5n7zU2aMDh63eSohBz66SVCbmEGdyof93?=
- =?us-ascii?Q?/D3sZYEzppvleqJHKX+P11DCCbnp13tuwA1pGq3KcOZnLSGc1B8F9Xl1awUP?=
- =?us-ascii?Q?kus6oybBmKAd8WUygFbpFr+BOS4GxQsQNH5GE3F+7artx4/zwyHGpoY2S93O?=
- =?us-ascii?Q?HnNBNbMIAHyuLtxYAApew5m/y/XUI8T16OYV6qWJQUYD/d2yBcgV1FjKwBZy?=
- =?us-ascii?Q?KBoWxUpfEj8YQPcQBvJp4wjcZVOBp7z+pdnpqqkomcvaojuNVRQt/6PudFT/?=
- =?us-ascii?Q?an+WzkLhV6AHRLNj6R9tMf70auAHmnbHEYvcTqscOIJY/XWTqyoNj5Z61NNa?=
- =?us-ascii?Q?X2+q3VAPR8sxTWi5E5nTJFf8nULJGyuMze/0D6iy?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df1dcd93-802d-4023-ac7b-08dcc329f15f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 04:13:29.3980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8dilSrcUB++oUrfMogzqDDY8zyGwComNN0Tbslj88sb6EJq/SkgrQvJZh6y0ZlI+wL6fQuZnC2fvJJCxyeSAuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6560
+References: <20240820043543.837914-1-suleiman@google.com> <20240820043543.837914-3-suleiman@google.com>
+ <ZsWJsPkrhDReU4ez@intel.com>
+In-Reply-To: <ZsWJsPkrhDReU4ez@intel.com>
+From: Suleiman Souhlal <suleiman@google.com>
+Date: Fri, 23 Aug 2024 13:17:31 +0900
+Message-ID: <CABCjUKCBQq9AMCVd0BqOSViPn=Q3wiVByOvJNhNpHvqx=Ef-4g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] KVM: x86: Include host suspended time in steal time.
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ssouhlal@freebsd.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mario,
+On Wed, Aug 21, 2024 at 3:31=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
+:
+>
+> On Tue, Aug 20, 2024 at 01:35:42PM +0900, Suleiman Souhlal wrote:
+> >When the host resumes from a suspend, the guest thinks any task
+> >that was running during the suspend ran for a long time, even though
+> >the effective run time was much shorter, which can end up having
+> >negative effects with scheduling. This can be particularly noticeable
+> >if the guest task was RT, as it can end up getting throttled for a
+> >long time.
+> >
+> >To mitigate this issue, we include the time that the host was
+> >suspended in steal time, which lets the guest subtract the duration from
+> >the tasks' runtime.
+> >
+> >Note that the case of a suspend happening during a VM migration
+> >might not be accounted.
+> >
+> >Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> >---
+> > arch/x86/include/asm/kvm_host.h |  1 +
+> > arch/x86/kvm/x86.c              | 11 ++++++++++-
+> > 2 files changed, 11 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_=
+host.h
+> >index 4a68cb3eba78f8..728798decb6d12 100644
+> >--- a/arch/x86/include/asm/kvm_host.h
+> >+++ b/arch/x86/include/asm/kvm_host.h
+> >@@ -898,6 +898,7 @@ struct kvm_vcpu_arch {
+> >               u8 preempted;
+> >               u64 msr_val;
+> >               u64 last_steal;
+> >+              u64 last_suspend_ns;
+> >               struct gfn_to_hva_cache cache;
+> >       } st;
+> >
+> >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> >index 70219e4069874a..104f3d318026fa 100644
+> >--- a/arch/x86/kvm/x86.c
+> >+++ b/arch/x86/kvm/x86.c
+> >@@ -3654,7 +3654,7 @@ static void record_steal_time(struct kvm_vcpu *vcp=
+u)
+> >       struct kvm_steal_time __user *st;
+> >       struct kvm_memslots *slots;
+> >       gpa_t gpa =3D vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS;
+> >-      u64 steal;
+> >+      u64 steal, suspend_ns;
+> >       u32 version;
+> >
+> >       if (kvm_xen_msr_enabled(vcpu->kvm)) {
+> >@@ -3735,6 +3735,14 @@ static void record_steal_time(struct kvm_vcpu *vc=
+pu)
+> >       steal +=3D current->sched_info.run_delay -
+> >               vcpu->arch.st.last_steal;
+> >       vcpu->arch.st.last_steal =3D current->sched_info.run_delay;
+> >+      /*
+> >+       * Include the time that the host was suspended in steal time.
+> >+       * Note that the case of a suspend happening during a VM migratio=
+n
+> >+       * might not be accounted.
+> >+       */
+> >+      suspend_ns =3D kvm_total_suspend_ns();
+> >+      steal +=3D suspend_ns - vcpu->arch.st.last_suspend_ns;
+> >+      vcpu->arch.st.last_suspend_ns =3D suspend_ns;
+>
+> The document in patch 3 states:
+>
+>   Time during which the vcpu is idle, will not be reported as steal time
+>
+> I'm wondering if all host suspend time should be reported as steal time,
+> or if the suspend time during a vCPU halt should be excluded.
 
+I think the statement about idle time not being reported as steal isn't
+completely accurate, so I'm not sure if it's worth the extra complexity.
 
-On Thu, Aug 22, 2024 at 03:41:30PM -0500, Mario Limonciello wrote:
-> On 8/13/2024 04:51, Gautham R. Shenoy wrote:
-> > Hello Rafael, Viresh,
-> > 
-> > This series contains three fixes for the amd-pstate driver for 6.11.
-> > Could you please include it in your tree?
-> > 
-> > These patches are based on linux-pm/master with the top commit
-> > 7c626ce4bae1 ("Linux 6.11-rc3").
-> > 
-> > There are three patches,
-> > 
-> > 1. To fix an uninitialized variable in amd_pstate_cpu_boost_update()
-> >     from Dan Carpenter:
-> >     https://lore.kernel.org/lkml/7ff53543-6c04-48a0-8d99-7dc010b93b3a@stanley.mountain/
-> > 
-> > 2. Use topology_logical_package_id() instead of
-> >     topology_logical_die_id() definition of the later function has
-> >     changed on some AMD processors since the inclusion of the CPUID
-> >     0x80000026 parser:
-> >     https://lore.kernel.org/lkml/20240801124509.3650-1-Dhananjay.Ugwekar@amd.com/
-> > 
-> > 3. Remove a warning for the absence fo X86_FEATURE_CPPC on Zen1 and
-> >     Zen2 since they don't have the feature defined. This fixes the
-> >     regression reported by David Wang:
-> >     https://lore.kernel.org/lkml/20240730140111.4491-1-00107082@163.com/
+>
+> >       unsafe_put_user(steal, &st->steal, out);
+> >
+> >       version +=3D 1;
+> >@@ -12280,6 +12288,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+> >
+> >       vcpu->arch.arch_capabilities =3D kvm_get_arch_capabilities();
+> >       vcpu->arch.msr_platform_info =3D MSR_PLATFORM_INFO_CPUID_FAULT;
+> >+      vcpu->arch.st.last_suspend_ns =3D kvm_total_suspend_ns();
+>
+> is this necessary? I doubt this because KVM doesn't capture
+> current->sched_info.run_delay here.
 
-> > 
-> > Thanks and Regards
-> > gautham.
-> > 
-> > Dan Carpenter (1):
-> >    cpufreq: amd-pstate: Fix uninitialized variable in
-> >      amd_pstate_cpu_boost_update()
-> > 
-> > Gautham R. Shenoy (2):
-> >    cpufreq/amd-pstate: Use topology_logical_package_id() instead of
-> >      logical_die_id()
-> >    cpufreq/amd-pstate: Remove warning for X86_FEATURE_CPPC on Zen1 and
-> >      Zen2
-> > 
-> >   drivers/cpufreq/amd-pstate.c | 10 ++++------
-> >   1 file changed, 4 insertions(+), 6 deletions(-)
-> > 
-> 
-> Thanks for handling these.  I'm back now, I'm digging through my inbox.
-> Assuming Rafael didn't already pull these I'll batch these into my
-> amd-pstate branch for the robots to bang on and then send a PR after I go
-> through everything else that happened.
+Isn't run_delay being captured by the scheduler at all time?
 
-Thank you Mario. I will be sending an updated version to Patch 3
-"Remove warning for X86_FEATURE_CPPC on Zen1 and Zen2" to incorporate
-feedback from Xiaojian.
+We need to initialize last_suspend_ns otherwise the first call to
+record_steal_time() for a VCPU would report a wrong value if
+the VCPU is started after the host has already had a suspend.
 
-Please merge the Patches 1 and 2 from this series.
-
---
-Thanks and Regards
-gautham.
+Thanks,
+-- Suleiman
 
