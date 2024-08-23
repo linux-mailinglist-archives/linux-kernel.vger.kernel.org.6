@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-298457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEEC95C791
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:10:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7CE95C793
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F5801C24D69
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:10:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE324B267E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB791487CD;
-	Fri, 23 Aug 2024 08:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="awlyk1I3"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09BC143C50;
+	Fri, 23 Aug 2024 08:10:31 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429F13E8A5
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C646213FD99;
+	Fri, 23 Aug 2024 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400614; cv=none; b=mCVrFoh3eYlbti093+VYcqsq+LmygezJHV8pyvVeWdBn/cxSD6WhjW39Tb/b+0+tJvFbX06CfaOSnfn5yxz4kdTnys2wPCLr4T2TMXwEwU+F8+W7PGzih0n0xALuOm6PeuZLnR9vuXo5+4N4x/QpoONHC46oTIkOvfcDpwpxNF0=
+	t=1724400631; cv=none; b=uZyzjkSaES1XMMtQkQyA5/JkiiCIAAG855xKJ2lua7AlT2bfjsQ1F+U5lGEGyLitwOEc0FchQax2KSsJmPOjsbZV2ydEk/KVt85MRWzGj+ij4/8iF0zGdvajtlsJ5beGabIra0uEZv2+R6KIBckT0O5/2YErs83DnJqeVdI6ZPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724400614; c=relaxed/simple;
-	bh=64IRvIy8S2kxDWhv9Zwr7Mk1kOegeXmyr3QHRXMD8Q8=;
+	s=arc-20240116; t=1724400631; c=relaxed/simple;
+	bh=4qRV8LjaXlxs8iK8DO4QVzv6Tqvxltp922psqJqgA6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D34v7tBnamiy+jdzqVEnobxEflkS2LXeuz7BY5v5E+9fuqM4mjn3IINC9GMLBeokqT1FYJhKW66gXsviSHBomtAQtGw2RL2SwAL87+7HuMuV089+qvo7ZkguYziR3AflZhxpUxPB65bqbr0CFDZendQinzrGYXTeTRWAUuF90f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=awlyk1I3; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <50e74f28-5165-a45b-c152-1b18f32e61aa@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724400610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bn5wnRQMXm7eArEe25VtPGx5Zc8qNdSU3gOpFjda3wg=;
-	b=awlyk1I3N6cP7oTTHLeOQOg2RO5uKBvPfy/elRoHHXEXrJ3oQMVRYY7xC2hj7/c0N8diPE
-	xNVhPx3SgwH0ypvV7gGO8id0bj0C/CoYV9qC3f/EFxbKHqz4w+FnQBNMYOzy8SGavcDh+Q
-	YLkUwOhbdr4BpR5GUspF5V5P77H/kAo=
-Date: Fri, 23 Aug 2024 16:10:05 +0800
+	 In-Reply-To:Content-Type; b=I3tEBhZkjodTiksoS+hnWKENzf0MJztHx7OYI0Wj5eIayuAU7mfRq8ZBVxdyFd83aKaDNN3FGMNgA8pOfGlhzYtzaN0oei5F2fnvw+tbhAcPDCh9aoFjvoVp7Bho5JcurEdamV0gAnutsFQe7kmuNTPjcFHIdJbWIgWrcZbwX4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Wqt6X0kbKz9sRr;
+	Fri, 23 Aug 2024 10:10:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 6fEcinwE3CeY; Fri, 23 Aug 2024 10:10:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wqt6W73mYz9rvV;
+	Fri, 23 Aug 2024 10:10:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E0BCE8B77D;
+	Fri, 23 Aug 2024 10:10:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id aOnz-ziVcxln; Fri, 23 Aug 2024 10:10:27 +0200 (CEST)
+Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 611238B763;
+	Fri, 23 Aug 2024 10:10:27 +0200 (CEST)
+Message-ID: <5721db08-5139-49a3-8614-0fcd674a762c@csgroup.eu>
+Date: Fri, 23 Aug 2024 10:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
- transitioned from being poison to unpoison as empty
-To: Miaohe Lin <linmiaohe@huawei.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>,
- stable@vger.kernel.org, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
- pasha.tatashin@soleen.com, david@redhat.com
-References: <20240822025800.13380-1-hao.ge@linux.dev>
- <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
- <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
- <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
- <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev>
- <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
- <292d1141-4edf-ee60-a145-4ca06600076a@huawei.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <292d1141-4edf-ee60-a145-4ca06600076a@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 21/36] soc: fsl: cpm1: qmc: Fix 'transmiter' typo
+To: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240808071132.149251-1-herve.codina@bootlin.com>
+ <20240808071132.149251-22-herve.codina@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240808071132.149251-22-herve.codina@bootlin.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-
-Hi Miaohe
 
 
-On 8/23/24 15:40, Miaohe Lin wrote:
-> On 2024/8/23 11:37, Hao Ge wrote:
->> Hi Suren and Miaohe
->>
->>
->> On 8/23/24 09:47, Hao Ge wrote:
->>> Hi Suren and Miaohe
->>>
->>>
->>> Thank you all for taking the time to discuss this issue.
->>>
->>>
->>> On 8/23/24 06:50, Suren Baghdasaryan wrote:
->>>> On Thu, Aug 22, 2024 at 2:46 AM Hao Ge <hao.ge@linux.dev> wrote:
->>>>> Hi Miaohe
->>>>>
->>>>>
->>>>> Thank you for taking the time to review this patch.
->>>>>
->>>>>
->>>>> On 8/22/24 16:04, Miaohe Lin wrote:
->>>>>> On 2024/8/22 10:58, Hao Ge wrote:
->>>>>>> From: Hao Ge <gehao@kylinos.cn>
->>>>>>>
->>>>>> Thanks for your patch.
->>>>>>
->>>>>>> The PG_hwpoison page will be caught and isolated on the entrance to
->>>>>>> the free buddy page pool. so,when we clear this flag and return it
->>>>>>> to the buddy system,mark codetags for pages as empty.
->>>>>>>
->>>>>> Is below scene cause the problem?
->>>>>>
->>>>>> 1. Pages are allocated. pgalloc_tag_add() will be called when prep_new_page().
->>>>>>
->>>>>> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag and pgalloc_tag_sub()
->>>>>> will be called when pages are caught and isolated on the entrance to buddy.
->>>> Hi Folks,
->>>> Thanks for reporting this! Could you please describe in more details
->>>> how memory_failure() ends up calling pgalloc_tag_sub()? It's not
->>>> obvious to me which path leads to pgalloc_tag_sub(), so I must be
->>>> missing something.
->>>
->>> OK,Let me describe the scenario I encountered.
->>>
->>> In the Link [1] I mentioned,here is the logic behind it:
->>>
->>> It performed the following operations:
->>>
->>> madvise(ptrs[num_alloc], pagesize, MADV_SOFT_OFFLINE)
->>>
->>> and then the kernel's call stack looks like this:
->>>
->>> do_madvise
->>>
->>> soft_offline_page
->>>
->>> page_handle_poison
->>>
->>> __folio_put
->>>
->>> free_unref_page
->>>
->> I just reviewed it and I think I missed a stack.
->>
->> Actually, it's like this
->>
->> do_madvise
->>
->> soft_offline_page
->>
->> soft_offline_in_use_page
->>
->> page_handle_poison
->>
->> __folio_put
->>
->> free_unref_page
->>
->>
->> And I've come up with a minimal solution. If everyone agrees, I'll send the patch.look this
->>
->> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L1056
->>
->> Let's directly call clear_page_tag_ref after pgalloc_tag_sub.
-> I tend to agree with you. It should be a good practice to call clear_page_tag_ref()
-> whenever page_tag finished its work. Do you think below code is also needed?
 
-Actually, this is not necessary,It follows the normal logic of 
-allocation and release.
+Le 08/08/2024 à 09:11, Herve Codina a écrit :
+> checkpatch.pl raises the following issue
+>    CHECK: 'transmiter' may be misspelled - perhaps 'transmitter'?
+> 
+> Indeed, fix it.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-The actual intention of the clear_page_tag_reffunction is to indicate to 
-thealloc_tag  that the page is not being returned to the
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-buddy system through normal allocation.
-
-Just like when the page first enters the buddy system,
-
-https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/mm_init.c#L2464
-
-So, can you help review this patch?
-
-https://lore.kernel.org/all/20240823062002.21165-1-hao.ge@linux.dev/
-
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index de54c3567539..707710f03cf5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1104,6 +1104,7 @@ __always_inline bool free_pages_prepare(struct page *page,
->          reset_page_owner(page, order);
->          page_table_check_free(page, order);
->          pgalloc_tag_sub(page, 1 << order);
-> +       clear_page_tag_ref(page);
->
->          if (!PageHighMem(page)) {
->                  debug_check_no_locks_freed(page_address(page),
->
-> Thanks.
-> .
+> ---
+>   drivers/soc/fsl/qe/qmc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+> index 04466e735302..2d54d7400d2d 100644
+> --- a/drivers/soc/fsl/qe/qmc.c
+> +++ b/drivers/soc/fsl/qe/qmc.c
+> @@ -1715,7 +1715,7 @@ static int qmc_probe(struct platform_device *pdev)
+>   	if (ret < 0)
+>   		goto err_disable_intr;
+>   
+> -	/* Enable transmiter and receiver */
+> +	/* Enable transmitter and receiver */
+>   	qmc_setbits32(qmc->scc_regs + SCC_GSMRL, SCC_GSMRL_ENR | SCC_GSMRL_ENT);
+>   
+>   	platform_set_drvdata(pdev, qmc);
+> @@ -1742,7 +1742,7 @@ static void qmc_remove(struct platform_device *pdev)
+>   {
+>   	struct qmc *qmc = platform_get_drvdata(pdev);
+>   
+> -	/* Disable transmiter and receiver */
+> +	/* Disable transmitter and receiver */
+>   	qmc_setbits32(qmc->scc_regs + SCC_GSMRL, 0);
+>   
+>   	/* Disable interrupts */
 
