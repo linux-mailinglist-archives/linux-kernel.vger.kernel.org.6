@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-299773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D85895D9E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:54:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF00C95D9EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538991F22FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF021C224CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B531C93AE;
-	Fri, 23 Aug 2024 23:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19141C945D;
+	Fri, 23 Aug 2024 23:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PIebXDOw"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTcSSNh5"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE5119342B
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9238119342B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724457248; cv=none; b=LikxO0/WLMrNPGUGYfXcTNSF8lZMDEYAG1VtIDpWQaCkAshTHXeBA9OTWMQifOEnLXGtZ1adLcO4nkbdqsM1qYGzKDbnG70M3Q5ZXADZ7H9xgdAlf76WEyp6nQWNnhwDdzGFpUQT7/1S5E1CPaLWVgR1dNxDkuHuqsG9bc8Cp6M=
+	t=1724457269; cv=none; b=Ybb31N7sBPcJHyCQvULkyczaBpOyEhzfBmTnweHqH8OdjTHbLAiqTYmy+Zp4jXL9uEgZs3wbmMy2VbP8M4rEvoVwl5nzRr3dR7f2Z/mNpvD84WIqBe01wj8OLTYvwQ6fmV2O1rTx8DqsQr8qShEZMJwV/E6A0JQhwMWZ+wn6law=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724457248; c=relaxed/simple;
-	bh=syaC91o95OEEW2s70JvlpUn03eys1tP3gYIKE9pNcmg=;
+	s=arc-20240116; t=1724457269; c=relaxed/simple;
+	bh=NFrH6QKQdAm7hqhMi1X6Y/Mb5BH/zBlLUwLwoHG2TGw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ceDpDXxULoLEX2deDOu1K201jsbR3xf5OcI2h+BfoHIqtrp+HZC8yZ9JOO30ajX5Lqx49Bj8oJylXnH/dWNLe8p/P346UWT39O5UuzUe3u82dWB2ekoRx2zTQOwXQoYMxoUM7MD55o54B9wLQzSYv0x08RiW4nhuic7S/2S/Ijg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PIebXDOw; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=O1D/YRxx3gfSOfBPCoC3R3JHjKtKTyNIg0rf7PcpkgZdbUILVqJdL1SFjM3pX++Z9YVP5r5xgPu4f6mzSQ1qr7XWgeFfDUboGXX/bhaggOuA/G9/frkmJmUYvO655YafwWdfUf2zLPBJUYTjprSG9B2HY/0PVS7Ul3S+//emxpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTcSSNh5; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7143d76d29fso2160838b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:54:06 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6adcb88da08so51157697b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724457246; x=1725062046; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724457266; x=1725062066; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wjeQ4sUJxepKMd1YuoYTecnAndxcQA2Py/BA+Uc+sjo=;
-        b=PIebXDOwaWVr245X0FWO/V2qscbX/0dVO9w5BUs/HrDmFczAPodEA3h+EluVfPzCwt
-         4MjSBV6ihFHjmrO4ltTMLUIbGVFa1613vsPegSY8Vlp3RJuF0PDoK5sqHhSNolNDoq2n
-         2omtH1y4rI5sXsOlWONev4dpJ8igotUcJIq+lQvxfmiHmra9Tky4mX/Gowc8DnbCV8GD
-         6qh6VhD5Ef7AYBXpKtkoeyvOEUVkjALzme96kqwfU1z4H9SrccKFPMNQY+VaXUZZUF4h
-         6tTz5qTFrd6pJOp/EZxJYi0KnBVTRlkMWWDeOWIZRqw9JdfegNtnYvHE8JgTAf1EfeSu
-         MbbQ==
+        bh=XUG/VbNxzCYgL5k/uczQ4c0VmpcWo0PYIg3efsPlOFk=;
+        b=oTcSSNh5yhhsq1DFNTCP0RbI+QyhH1VTTM3cPwjPc1qrLTpocMyjEX/zeixBjvZv8d
+         e0MC3+1USoJ6u7AUOKqUBhVMu1cuznuu3cDhJmxcVKs/8hqyBBHzxDa1zt7SzoKjkD/h
+         sqd53D1ImYxS87xRMSW+7ZxQ+pql49nro4iZSU45vRBgzxHDHgeA35vNXLihs1fgGrsg
+         J29S3FKQbLrwjxUBCvc5DlKpZLNvKgN51WCPsRm3GgDpCw3dvi60vedXCbSUkHSYk5z+
+         m6f2VrSE2ueeF3qL4kg/3WIoUq4SDPTtNyDZXOqxaOekMbtfNJ1LFUaBy69mqpyyJH8p
+         FKDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724457246; x=1725062046;
+        d=1e100.net; s=20230601; t=1724457266; x=1725062066;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wjeQ4sUJxepKMd1YuoYTecnAndxcQA2Py/BA+Uc+sjo=;
-        b=dXqPDLsjoncGEFAQ+7UKx/bTHYZh41opUmYHJJJB8MmAjMNKVzUbQmIjTyWvXPamPk
-         a2UFnNnFGnVgh+gC2VqPc8FIV+vy0Qg7g1R6wpMEr4+Qhs1SPq9QzXpb1lq/k/WYjYTm
-         XaojQP4+fslK2Ls8CAhCzdr7jH0wVYt/A3Cbh2psyt6FCO8/BNYtOlAaXyC4SZnYEfM1
-         xS2b4JygFqIcvetkF910Fi6mV6SyV+K795/r75jyS7Prblit7vAzxpBmDaZjVeQkPBzr
-         0SM+AKYey57iUbWe6UT58GBXfAZ9rVxFwJmulmzVbCBX0vY3GFE6JCWMXyJK4YgxeEsR
-         7KOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0SxMbPnqnap04SuTF4zV5Z+974TYcZFqPe9hOfANtiFFD1sRf4HrmI3shZvb8NfFqklRLiX4CPI3K/18=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+BiOAxObSVurX4dkhd1hjBilNHvEwc+ymXfAVoVjaOzoK57NW
-	spDrbZ3bJC45L3eHsm12RcLd/8zX+CmhLzQCUDyWk6aMgK4ivDRqRcS6obGY5Zi6Ma2Aiw801tR
-	vTA==
-X-Google-Smtp-Source: AGHT+IGkirtwyUTKyL39wix+m1OnVtTNEg7AM+vXXhVJfwyHpsD/kM8ZEV5NLVaNIrH2ZTAFsjxvpNTM4u0=
+        bh=XUG/VbNxzCYgL5k/uczQ4c0VmpcWo0PYIg3efsPlOFk=;
+        b=tdoLX5dqE+zTVnJbGADKyKV8RYzCCqFB8IgRXKJKZxCQ9hst9N04VnYjNmy8NR5miI
+         FuNcQ4/gSrB/iiomLWhBthRXUcNXXgsCrWH7r1UIEPmSoNYEvshOWTbzvI3SqAQ6hEBk
+         i1ooUFL8ucRsjEiqJ7cblGG1uDVyJqpniko2kbIQqddfakoNBueyL7+tAeIIkWE0oH/d
+         jQp6I9eNYnaTqm8+FuzMY2Y9bsQmGxjdzKGhHicSw39ZdVdehKFSoJg75Bh1fK5vKEV7
+         FSgMPhS8E/i8PnwTzXZ5rsnrmICAX16kiGPztpyCskObB60Y+V1plrrFzLba4mOou5gm
+         pyeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWehvridRMa9BWc9mQ2Re7hOHj95IoOqcfD3g37l4jLJkle5v66Afu+OYRHwik+v1qvfUpD99zkvdI8lEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo6muc/OwVLW6hn5qT5EmxnZeqEuT3Xj4ukVCaxC1IeKN/FaOj
+	w4vZasPWttow2j3+/+G9R7DGAZopZhzW374EAK++pfNTA2TmW7WbRGG35qMMoCzZP70EP4u3zlp
+	Ekw==
+X-Google-Smtp-Source: AGHT+IGS7BvoZUmzKrI7jiLE5DmLS4L7wkzo8CGb427MM110ZTx0sqvu9MQ9sxKwDppX+ynGW5ty+xXVnxA=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:9181:b0:70d:30a8:abaa with SMTP id
- d2e1a72fcca58-71445aa7003mr10252b3a.5.1724457245889; Fri, 23 Aug 2024
- 16:54:05 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:47:47 -0700
-In-Reply-To: <20240802181935.292540-1-seanjc@google.com>
+ (user=seanjc job=sendgmr) by 2002:a81:ff08:0:b0:64a:8aec:617c with SMTP id
+ 00721157ae682-6c61e8fcf4dmr1253387b3.0.1724457266663; Fri, 23 Aug 2024
+ 16:54:26 -0700 (PDT)
+Date: Fri, 23 Aug 2024 16:47:51 -0700
+In-Reply-To: <20240814203345.2234-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240802181935.292540-1-seanjc@google.com>
+References: <20240814203345.2234-2-thorsten.blum@toblux.com>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <172443897959.4130036.5832329559174205887.b4-ty@google.com>
-Subject: Re: [PATCH v2 00/10] KVM: x86: Clean up MSR access/failure handling
+Message-ID: <172443883227.4128803.4411198613341670589.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86: Optimize local variable in start_sw_tscdeadline()
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Weijiang Yang <weijiang.yang@intel.com>
+To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 02 Aug 2024 11:19:25 -0700, Sean Christopherson wrote:
-> Rework KVM's MSR access handling, and more specific the handling of failures,
-> to begin the march towards removing host_initiated exemptions for CPUID
-> checks, e.g. to eventually turn code like this:
+On Wed, 14 Aug 2024 22:33:46 +0200, Thorsten Blum wrote:
+> Change the data type of the local variable this_tsc_khz to u32 because
+> virtual_tsc_khz is also declared as u32.
 > 
-> 		if (!msr_info->host_initiated &&
-> 		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-> 			return 1;
+> Since do_div() casts the divisor to u32 anyway, changing the data type
+> of this_tsc_khz to u32 also removes the following Coccinelle/coccicheck
+> warning reported by do_div.cocci:
 > 
 > [...]
 
 Applied to kvm-x86 misc, thanks!
 
-[01/10] KVM: SVM: Disallow guest from changing userspace's MSR_AMD64_DE_CFG value
-        https://github.com/kvm-x86/linux/commit/74a0e79df68a
-[02/10] KVM: x86: Move MSR_TYPE_{R,W,RW} values from VMX to x86, as enums
-        https://github.com/kvm-x86/linux/commit/b58b808cbe93
-[03/10] KVM: x86: Rename KVM_MSR_RET_INVALID to KVM_MSR_RET_UNSUPPORTED
-        https://github.com/kvm-x86/linux/commit/aaecae7b6a2b
-[04/10] KVM: x86: Refactor kvm_x86_ops.get_msr_feature() to avoid kvm_msr_entry
-        https://github.com/kvm-x86/linux/commit/74c6c98a598a
-[05/10] KVM: x86: Rename get_msr_feature() APIs to get_feature_msr()
-        https://github.com/kvm-x86/linux/commit/b848f24bd74a
-[06/10] KVM: x86: Refactor kvm_get_feature_msr() to avoid struct kvm_msr_entry
-        https://github.com/kvm-x86/linux/commit/7075f1636150
-[07/10] KVM: x86: Funnel all fancy MSR return value handling into a common helper
-        https://github.com/kvm-x86/linux/commit/1cec2034980a
-[08/10] KVM: x86: Hoist x86.c's global msr_* variables up above kvm_do_msr_access()
-        https://github.com/kvm-x86/linux/commit/3adef9034596
-[09/10] KVM: x86: Suppress failures on userspace access to advertised, unsupported MSRs
-        https://github.com/kvm-x86/linux/commit/64a5d7a1091f
-[10/10] KVM: x86: Suppress userspace access failures on unsupported, "emulated" MSRs
-        https://github.com/kvm-x86/linux/commit/44dd0f5732b4
+[1/1] KVM: x86: Optimize local variable in start_sw_tscdeadline()
+      https://github.com/kvm-x86/linux/commit/1448d4a935ab
 
 --
 https://github.com/kvm-x86/linux/tree/next
