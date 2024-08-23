@@ -1,182 +1,168 @@
-Return-Path: <linux-kernel+bounces-298813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB7995CBC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:56:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBC595CBD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9B1C23B4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD17A284D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B9618786E;
-	Fri, 23 Aug 2024 11:56:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86893187847;
+	Fri, 23 Aug 2024 11:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b="eX6b/epw"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343ED143C5F;
-	Fri, 23 Aug 2024 11:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC0D181B88
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414204; cv=none; b=o43RRT5Vxdljc7LREcr/Y/z1ZqDpZmuWfORSpeg03rDdP5sUl7B2mTka/3cp5Ds7lNc9L8gCQxZ1Gr3noQZJnPs9CVnnwX5RN70QDThvLRjYF/pNDSJm1EzBL0NxoJhL1Quz7dIFjonhePa3ZJjKNQJIx/tOTHgYp4HzbisGkQw=
+	t=1724414317; cv=none; b=m7nWLLxJlTUYpN4/gbiiJE6CQ7BGu/TMPigMklMjrWNEX7x3+gG3uCy5LREyWkML7LKYQaCVQbj4xOb3QIB5ujeiy+A29NIgdm7vPuHZY+ddP0UqskR5oBfR16mxQRAqHfS9zbT+FjMbVZ9ozhsPJBle8u8AdYFWjpoys1tsSt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414204; c=relaxed/simple;
-	bh=MBf7otlcpTgpp7tPlJUEgl08qH3djO0uuaYTsvCnv/I=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hGCbJErM8Ky1gzGD2AGpJoAs6sZSSWe+gsfi2q0UxqMgF0d573cdF+MjrnDEyMerGN+zlWb+MjBgCl660s2qutbSGtYSTiR/PymfF1ASp25aA8pRmq1uYVZLaLa0L+z4Ph/eubHorLmXIDZAq6QwOioY+ASdKFv8E+AoHt1l6DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqz3y4sQ8z6K9Pw;
-	Fri, 23 Aug 2024 19:53:34 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1F602140B18;
-	Fri, 23 Aug 2024 19:56:39 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 12:56:38 +0100
-Date: Fri, 23 Aug 2024 12:56:37 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Santosh Shilimkar <ssantosh@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
-	<tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Michal Simek <michal.simek@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 7/7] memory: pl353-smc: simplify with
- devm_clk_get_enabled()
-Message-ID: <20240823125637.00007fe4@Huawei.com>
-In-Reply-To: <20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
-References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
-	<20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724414317; c=relaxed/simple;
+	bh=M0X62fZgR660OqYh/QaAI/DnGfsKl4Acfw7CnaUDR3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lmLt3xRHpxV/H8zTV23cUUT3riSqObsfZIoN/xpo9NQIjHlzsa9k3zNJWoRBWGuEe1eMzGU0oQ6seYnBk1GZlv1D4nGrj9XdvbnvgnwWeoj5OHenMKKLR7Coq95RpWlfF1rjVKpC17pf7SVg008IAc46Ei0M/ASLRLLFzoWOMx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net; spf=pass smtp.mailfrom=fenniak.net; dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b=eX6b/epw; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fenniak.net
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201f2b7fe0dso17603635ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fenniak.net; s=google; t=1724414315; x=1725019115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQ753okLVrPQcSQx8laXwTZrkgm8wYxxXnj3EKQwJYg=;
+        b=eX6b/epwR/s7UsviFrOxHPM0HkZe1CkmrBGdBZdOHxIaTh/uwCvBX2gQQ6tgU0rqee
+         TL+eX7xqMYM5Dg9kKleYmDFyLfWcYMZg7lFQpsX/3sA1/1l/V2AusJwuKGdPNhzhIwxr
+         Iy0jo/Umsnqnmydnwx6yh2qVCm+8aaESPO4jjKwYfn+ZN6xPKCmHmN1In5zuar5KV0ls
+         uTSyBqPz8XlDaKhl2wF+S/OpPG3o4B0Ybov+RogvUgd10wMGwLCC09J7aaJbHPZ+cVX6
+         +hN/vpKnRrrS1yG8/4l1o9B5Afr3vum++DTEu/oJHthprkY/mO4zmtBvd1vt88gmVezJ
+         BkFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724414315; x=1725019115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qQ753okLVrPQcSQx8laXwTZrkgm8wYxxXnj3EKQwJYg=;
+        b=HXtaPMY2q6YgiVLvEdP1900xaqujgZgJqeDTZcI5JjIpw2x8avQ7cv9RXW3Uh64Yuf
+         ONMjkMzeqTF20GH1C3svKAtz6Qa+H0lK+Mn4zvAjzQFpiByaLv4mO4OAlPoA9xk3YAA5
+         OGa1z26TZQDWjKnG4ZwI6ZbDalDJgCIFZRCvqmxZ5I6M3ksDvag9UEwGkiMb68tfTVRJ
+         vubHuqfT6Bv6SmdYg4PtrJpRwlhJKKn1pqBJzGjuiPEZ7rYpnS/BeHpIiUTpAC9YoXtR
+         B8Fca/sPVGvConDL9NUqYIO5c21lhMpYTuRDck+rWScuOqK+O0cEwxXujLvkoq+W8kEI
+         0JTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLALFG4fUQAUhE4FdLG1jdApB6Z4dcAX7vxt7EcUlLWDf2OQOo7nSbkr0Tb4FqD3+VqxbGwn8QIA8Qy0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1nrD5Mf6HlzVbbdHf/abTcUmRwJJ5Ywr6CWG6c3QQ+fjnyZ9J
+	ouiYslFawGufEufxbgUObPwdvCWxkkuW55mQYLzT7LutKq7qibvGmqsFPzwtcpI=
+X-Google-Smtp-Source: AGHT+IGcagSKVRrqeqKYGELWF9o3/fwwXcnyAKNgYw86VSVELRo7EyAacgDpv5h9FUqtl5EZyJE24g==
+X-Received: by 2002:a17:902:eccb:b0:1fb:93d6:9fef with SMTP id d9443c01a7336-2039e4cd9c9mr22997035ad.38.1724414315445;
+        Fri, 23 Aug 2024 04:58:35 -0700 (PDT)
+Received: from zenbook-nixos.tail73afb.ts.net (d104-205-214-17.abhsia.telus.net. [104.205.214.17])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20385581393sm27056685ad.102.2024.08.23.04.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 04:58:35 -0700 (PDT)
+From: Mathieu Fenniak <mathieu@fenniak.net>
+To: 
+Cc: Mathieu Fenniak <mathieu@fenniak.net>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D. Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA
+Date: Fri, 23 Aug 2024 13:56:45 +0200
+Message-ID: <20240823115657.69053-1-mathieu@fenniak.net>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 12:16:02 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+The Asus Zenbook Duo (UX8406MA) has a keyboard which can be
+placed on the laptop to connect it via USB, or can be removed from the
+laptop to reveal a hidden secondary display in which case the keyboard
+operates via Bluetooth.
 
-> Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
-> make code simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-LGTM.
-Follow up suggestion inline.
+When it is placed on the secondary display to connect via USB, it emits
+a keypress for a wireless disable.  This causes the rfkill system to be
+activated disconnecting the current wifi connection, which doesn't
+reflect the user's true intention.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Detect this hardware and suppress any wireless switches from the
+keyboard; this keyboard does not have a wireless toggle capability so
+these presses are always suprious.
 
-> ---
->  drivers/memory/pl353-smc.c | 36 +++---------------------------------
->  1 file changed, 3 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/memory/pl353-smc.c b/drivers/memory/pl353-smc.c
-> index c75b99e49970..994c7a792e34 100644
-> --- a/drivers/memory/pl353-smc.c
-> +++ b/drivers/memory/pl353-smc.c
-> @@ -75,34 +75,21 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
->  	const struct of_device_id *match = NULL;
->  	struct pl353_smc_data *pl353_smc;
->  	struct device_node *child;
-> -	int err;
->  
->  	pl353_smc = devm_kzalloc(&adev->dev, sizeof(*pl353_smc), GFP_KERNEL);
->  	if (!pl353_smc)
->  		return -ENOMEM;
->  
-> -	pl353_smc->aclk = devm_clk_get(&adev->dev, "apb_pclk");
-> +	pl353_smc->aclk = devm_clk_get_enabled(&adev->dev, "apb_pclk");
->  	if (IS_ERR(pl353_smc->aclk))
->  		return dev_err_probe(&adev->dev, PTR_ERR(pl353_smc->aclk),
->  				     "aclk clock not found.\n");
->  
-> -	pl353_smc->memclk = devm_clk_get(&adev->dev, "memclk");
-> +	pl353_smc->memclk = devm_clk_get_enabled(&adev->dev, "memclk");
->  	if (IS_ERR(pl353_smc->memclk))
->  		return dev_err_probe(&adev->dev, PTR_ERR(pl353_smc->memclk),
->  				     "memclk clock not found.\n");
->  
-> -	err = clk_prepare_enable(pl353_smc->aclk);
-> -	if (err) {
-> -		dev_err(&adev->dev, "Unable to enable AXI clock.\n");
-> -		return err;
-> -	}
-> -
-> -	err = clk_prepare_enable(pl353_smc->memclk);
-> -	if (err) {
-> -		dev_err(&adev->dev, "Unable to enable memory clock.\n");
-> -		goto disable_axi_clk;
-> -	}
-> -
->  	amba_set_drvdata(adev, pl353_smc);
->  
->  	/* Find compatible children. Only a single child is supported */
-> @@ -115,30 +102,14 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
->  		break;
->  	}
->  	if (!match) {
-With change below this becomes unconditional as we'll have already
-returned in the loop for the good path.
+Signed-off-by: Mathieu Fenniak <mathieu@fenniak.net>
+---
+ drivers/platform/x86/asus-nb-wmi.c | 20 +++++++++++++++++++-
+ drivers/platform/x86/asus-wmi.h    |  1 +
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-Might as well use dev_err_probe() here as well to save a few lines.
-
-> -		err = -ENODEV;
->  		dev_err(&adev->dev, "no matching children\n");
-> -		goto disable_mem_clk;
-> +		return -ENODEV;
->  	}
->  
->  	of_platform_device_create(child, NULL, &adev->dev);
->  	of_node_put(child);
-
-An additional cleanup looks sensible here.
-
-Push this last bit into the loop and use 
-
-for_each_available_child_of_node_scoped()
-
-Assuming you don't already have a patch doing that :)
-
->  
->  	return 0;
-> -
-> -disable_mem_clk:
-> -	clk_disable_unprepare(pl353_smc->memclk);
-> -disable_axi_clk:
-> -	clk_disable_unprepare(pl353_smc->aclk);
-> -
-> -	return err;
-> -}
-> -
-> -static void pl353_smc_remove(struct amba_device *adev)
-> -{
-> -	struct pl353_smc_data *pl353_smc = amba_get_drvdata(adev);
-> -
-> -	clk_disable_unprepare(pl353_smc->memclk);
-> -	clk_disable_unprepare(pl353_smc->aclk);
->  }
->  
->  static const struct amba_id pl353_ids[] = {
-> @@ -157,7 +128,6 @@ static struct amba_driver pl353_smc_driver = {
->  	},
->  	.id_table = pl353_ids,
->  	.probe = pl353_smc_probe,
-> -	.remove = pl353_smc_remove,
->  };
->  
->  module_amba_driver(pl353_smc_driver);
-> 
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index fceffe2082ec..ed3633c5955d 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -145,6 +145,10 @@ static struct quirk_entry quirk_asus_ignore_fan = {
+ 	.wmi_ignore_fan = true,
+ };
+ 
++static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
++	.ignore_key_wlan = true,
++};
++
+ static int dmi_matched(const struct dmi_system_id *dmi)
+ {
+ 	pr_info("Identified laptop model '%s'\n", dmi->ident);
+@@ -516,6 +520,15 @@ static const struct dmi_system_id asus_quirks[] = {
+ 		},
+ 		.driver_data = &quirk_asus_ignore_fan,
+ 	},
++	{
++		.callback = dmi_matched,
++		.ident = "ASUS Zenbook Duo UX8406MA",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "UX8406MA"),
++		},
++		.driver_data = &quirk_asus_zenbook_duo_kbd,
++	},
+ 	{},
+ };
+ 
+@@ -630,7 +643,12 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
+ 	case 0x32: /* Volume Mute */
+ 		if (atkbd_reports_vol_keys)
+ 			*code = ASUS_WMI_KEY_IGNORE;
+-
++		break;
++	case 0x5D: /* Wireless console Toggle */
++	case 0x5E: /* Wireless console Enable */
++	case 0x5F: /* Wireless console Disable */
++		if (quirks->ignore_key_wlan)
++			*code = ASUS_WMI_KEY_IGNORE;
+ 		break;
+ 	}
+ }
+diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
+index cc30f1853847..a6ee9440d932 100644
+--- a/drivers/platform/x86/asus-wmi.h
++++ b/drivers/platform/x86/asus-wmi.h
+@@ -50,6 +50,7 @@ struct quirk_entry {
+ 	 */
+ 	int no_display_toggle;
+ 	u32 xusb2pr;
++	bool ignore_key_wlan;
+ };
+ 
+ struct asus_wmi_driver {
+-- 
+2.44.1
 
 
