@@ -1,130 +1,150 @@
-Return-Path: <linux-kernel+bounces-298558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEFB95C8CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 978F995C8D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A141F22BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F3D81F2264D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B88149DF8;
-	Fri, 23 Aug 2024 09:06:44 +0000 (UTC)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CDA149E01;
+	Fri, 23 Aug 2024 09:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WP1oNPIH"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E4B1442F4;
-	Fri, 23 Aug 2024 09:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587091442F4
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724404004; cv=none; b=Sn7sIpNQlGexyv1OGEAa8tYtDnhWoe/eo7uOSW9tNLOfE4Ueiv3BKYkj5fBUijVgNJoTRpQGRmhOwsgPb7eX4sl1xZ3To3QRjos+WgxmlTYRh4Ge3CU4o0JUcgdbDWGTt5+iJCzusfQVxobFIuQk+9GD5MWG2rVKL/eQCvvdxRk=
+	t=1724404058; cv=none; b=HmUGFe7OzuUcjtPqlpYXKA5iXIdtQNE2R3rSvMKOsVEnieEtZ+0TfXe4iLMNfDYGqSxXGxtcB7N/KfhV++H8lZSSAbpFDrfRhXQl7bWgvgEm7XfHwO5jwqWEIu15P+yX3nei/lnjaMSLq6kCdkDZLs14kcvDTkdmYnlX2bT0ZDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724404004; c=relaxed/simple;
-	bh=+9IpXVuegpDInQgrAgek/vlLq/KRAbJFH1JPQwJ4gwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPBrKqblWMW3wGTMD2O/bAQqdx4Hz3WlHwRQ+KA0aG67uQD3gcYLVszF1OEKAUzKXqBVEC76HIXEvyuFGrFj7d54uOSdFQhIbIwX6MdMKLNJjnZ4/T3iXcKZidyYyiUU1dZbe9Qt1lM0h+ujohMAi9A6E5fN7wAzMwHQ+AXSTYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e13c23dbabdso1688806276.3;
-        Fri, 23 Aug 2024 02:06:42 -0700 (PDT)
+	s=arc-20240116; t=1724404058; c=relaxed/simple;
+	bh=6TDhbMBxh8ER8c2wAp9Bn7Pr5nLB0LrrZiZoMLgAwM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UI9r+m9CxCB8PrJ9g/iSeXMkgkB14Xz/6Phusilv1iDJ+TRAXais3FQ6oTy4/8d3Z2WwBs8++dqVJa4lVhTo0dulnyRYlX/iccNQdYUs8hN2lZMMoBjQ/zPeZ3p6zeJdJFU0GFa9K73NFW3KOlBXrD2OifPkRgbv3QteSLCCOwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WP1oNPIH; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20203988f37so16865955ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724404055; x=1725008855; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BujlrYm35vFB+ocFShx+NdrnZX8baVGGGUnFlESMDdw=;
+        b=WP1oNPIH2sifqh4G3R7D5p4UMENK/6+6BhFwVNRPrdQkohgYpZWPigrWgmw2ORTIFc
+         QRk9OBPf2+E5gyAkTGSw+AC1uDM7z4TxPZKVHWRoyoD3bcVF0tq1r+iYw3l5hOkpbBru
+         j3Ao1VTf87ajPMbKjckZIHuqcHfwjIyQmmU4EjhCepeTqcrIcrf0cDvPPSm/fo4dlwL8
+         HwwAoaxa9yAry9nR9SeaA38pdrvM1O+uawci1RyXX+rrTecPU1jvq+CocFDJPSLBWJxC
+         l+fgEke7vcA9+jyXE1y4QSURrNwHdIoli1QChU6BTm9AeGfp2t/i7lEfPf2X0OEfP2gB
+         KrWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724404001; x=1725008801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gb/YSqzf9fDLhLWRgXRW/noXuJgu/x7bBZHSqFpFD0Q=;
-        b=dC3wbDve5glLecLo5GyHlCjh68RSkaLfFTJan6nNQfwXtznSDo7Bx3ITaiMrrkAwgG
-         9JU9wdsaeJyo/p3hU+ZGlvJ9aDJq9EnBsdcUlba4plP/BVu+Y3vEa6/+ivF35zgCQ8YH
-         JI9M9DBE441fX5OqNo377SwuFibwYBhnMX4AxFt6woaBDibxLpQKt7XzUk/BiVPHKZoQ
-         G7FB0XxZSLKn6vbAMYI0o1DgF12z6lOTC91sT2RWkb7todI26Mh6m3bsAY/sYmZRZ7Ac
-         X1ROEcFWR77tG0S7NGFVxNYoeSD85H7jFurz6Cd8DzAL5bAggU3SJCXhpiHhTzkO3o3C
-         Y2nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU27ucjkhRJRFFOF6KwPMZenNzq4t/PmQkzdvn5QLo5GyLDJrIBr8iCKZMKL2bFkOu0n48cbTDNJwK0XVPAYu3pKPc=@vger.kernel.org, AJvYcCVTslZ6SIoMhgW3fy7441BfdQDVjJ6lv0e0DBseyEcb09QN+0kmI7w1Tunhv2Ed80ovYd21U8NBmtuS@vger.kernel.org, AJvYcCWRKxQ3ZJQO2PivK55Bk45anzw2NNQf0c+W7LSgIo0w8fGCdxdKBdg5ocRwDTAQk2+hwZ/ecQkNPldzBJfu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxggrYde+OfE+z6jK6WnuqdGTTfEyKujcQfXvST8aqIOFt33WZ7
-	JDjOgkuNBAQEqUCGytz2roW8fQ5HIU+4tfgr8mkL82tV/Zvc7gGhbiV/JLtA
-X-Google-Smtp-Source: AGHT+IE8XA4iQjNq3Lh9k9fFy7um3yyoxoDo9pZFNJSUCVZHXMnmwe8pQ+IMDMVEvmTWskrlawXs3w==
-X-Received: by 2002:a05:6902:218b:b0:e05:e103:1ccb with SMTP id 3f1490d57ef6-e17a8e66d33mr1524066276.55.1724404001088;
-        Fri, 23 Aug 2024 02:06:41 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4638c5sm585147276.18.2024.08.23.02.06.40
+        d=1e100.net; s=20230601; t=1724404055; x=1725008855;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BujlrYm35vFB+ocFShx+NdrnZX8baVGGGUnFlESMDdw=;
+        b=pjwRMNtLzoZ0Z9TAZMS4JSYk2x7/BGjUIRIzz/Pkla9UOMGpVjU8zH8mXxKnP9qgeL
+         bDJ2ubsIPpCzK/kSakEWBQu89GpZJGNS8te4iHhARpxi7lb7jYw7J7aYZ/y6p9Mhb1Ha
+         /+Vq5YfZ6+9v1RcvEjiKtNbxaTMhU8DNqV7ESlHkM67v8op9+2fR3xZHazoqv3pmSm2l
+         N5WxEiNZTGaxwJvKTNaw2oR7sAceCPZhu9jH9uVoittsP8cJnFKRFrAZCmM2MQqGAeRC
+         GWtLuGfwxDke0mrDBacStZHyjP83sj8j4MBPby/ZKRjXCEJu3nIBGbLdZvvCbH9kTpSE
+         /SjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG0838b0Q01yAarq8lVYr0mWf+ZYeuM1SUIHlR9+1EfJOrbPMDDnffX/75UJYaCOtaAd2CrPuirfw+xEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxBocl6kfq4ms3FyrK2IyxhVeynnoPtPSGsfyNoLg/dcPU4Qat
+	3w0Zg822XnVVyVLDRYP1vBoConr5ZhjVyv/jFj0CMKo3Nc4swHV9pn63mdPzk5Y=
+X-Google-Smtp-Source: AGHT+IF+yjppQ8Rvs4xK22oJaNMlOg2f+WI0R0G4POwuHjBEUSD01luW4nbMfGr/qWeNmYF+2b5B1A==
+X-Received: by 2002:a17:903:244e:b0:203:a046:c665 with SMTP id d9443c01a7336-203a046c8e1mr14609965ad.15.1724404055508;
+        Fri, 23 Aug 2024 02:07:35 -0700 (PDT)
+Received: from [10.84.154.91] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203859ef177sm24452195ad.243.2024.08.23.02.07.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 02:06:40 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b0c5b1adfaso16800047b3.0;
-        Fri, 23 Aug 2024 02:06:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTyUTgt5EL524lsBr2FUTz/mz79BcbWW7L4AN7qAqzLSaH0YB7QRCfuvOKvHkfWS/wj3Eed/+pbJT1DsXr1MskJc8=@vger.kernel.org, AJvYcCVX0yjyEh3rg/RS1/faStGKvoyZNOkj9Zgwigzk/HgPo491EBScXx3HPMeUOlTRmXhN2fGfDTuxaWMQbpRE@vger.kernel.org, AJvYcCWeehA8lHwyzeaG6m/90y4TfY7A9UtbFpf8TLROvuHhWXC+O9aainZ7omilJ5cMmeVHPVo9KM1YTEMw@vger.kernel.org
-X-Received: by 2002:a05:690c:340b:b0:664:7b3d:a53f with SMTP id
- 00721157ae682-6c629befdc3mr12100907b3.45.1724404000684; Fri, 23 Aug 2024
- 02:06:40 -0700 (PDT)
+        Fri, 23 Aug 2024 02:07:35 -0700 (PDT)
+Message-ID: <8f98e3e8-b6c4-4888-bfc7-204bea32004b@bytedance.com>
+Date: Fri, 23 Aug 2024 17:07:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 11:06:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUdTZMHOn9qK=mZi7PR=fdwzXOdYnhFwB-2ikEGiLQfmw@mail.gmail.com>
-Message-ID: <CAMuHMdUdTZMHOn9qK=mZi7PR=fdwzXOdYnhFwB-2ikEGiLQfmw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: renesas: Document RZ/V2H GP-EVK board
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] maple_tree: simplify mas_wr_node_walk for improved
+ readability
+To: Hao Li <haoli.tcs@gmail.com>
+Cc: akpm@linux-foundation.org, maple-tree@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Liam.Howlett@oracle.com
+References: <20240823081729.GA23434@systemsresearch.io>
+From: Peng Zhang <zhangpeng.00@bytedance.com>
+In-Reply-To: <20240823081729.GA23434@systemsresearch.io>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
 
-On Wed, Jul 24, 2024 at 11:48=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add "renesas,gp-evk" which targets the Renesas RZ/V2H ("R9A09G057")
-> GP-EVK board.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> @@ -515,6 +515,8 @@ properties:
->
->        - description: RZ/V2H(P) (R9A09G057)
->          items:
-> +          - enum:
-> +              - renesas,gp-evk # GP-EVK
->            - enum:
->                - renesas,r9a09g057h41 # RZ/V2H
->                - renesas,r9a09g057h42 # RZ/V2H with Mali-G31 support
-
-Is this the same board as on[1], which is called "V2HEVK" in the board
-documentation? According to the (vague) picture, it has an "RTKxxx"
-part number, which you may want to add to the comment, too.
-
-[1] https://www.renesas.com/us/en/products/microcontrollers-microprocessors=
-/rz-mpus/rzv2h-evk-rzv2h-quad-core-vision-ai-mpu-evaluation-kit
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+在 2024/8/23 16:17, Hao Li 写道:
+> Refactor mas_wr_node_walk to make the code more clear and easier to
+> understand. The main changes are:
+> 
+> 1. Replace the forward-iterating loop with a backward-iterating loop.
+>   This simplifies the logic for determining the correct range
+>   containing mas->index.
+I don't think iterating in reverse is a good idea, it makes the code
+different from everywhere else.
+> 
+> 2. Eliminate the ternary operator.
+> 
+> The new implementation maintains the same functionality as before, but
+> with improved readability. The performance characteristics remain
+> essentially the same, as we cannot predict which interval mas->index
+> will fall into.
+> 
+> Signed-off-by: Hao Li <haoli.tcs@gmail.com>
+> ---
+>   lib/maple_tree.c | 18 ++++++++----------
+>   1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index fe1b01b29..0b3eb55d8 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -2203,7 +2203,7 @@ static inline void mas_node_or_none(struct ma_state *mas,
+>   static inline void mas_wr_node_walk(struct ma_wr_state *wr_mas)
+>   {
+>   	struct ma_state *mas = wr_mas->mas;
+> -	unsigned char count, offset;
+> +	int idx;
+>   
+>   	if (unlikely(ma_is_dense(wr_mas->type))) {
+>   		wr_mas->r_max = wr_mas->r_min = mas->index;
+> @@ -2213,16 +2213,14 @@ static inline void mas_wr_node_walk(struct ma_wr_state *wr_mas)
+>   
+>   	wr_mas->node = mas_mn(wr_mas->mas);
+>   	wr_mas->pivots = ma_pivots(wr_mas->node, wr_mas->type);
+> -	count = mas->end = ma_data_end(wr_mas->node, wr_mas->type,
+> +	mas->end = ma_data_end(wr_mas->node, wr_mas->type,
+>   				       wr_mas->pivots, mas->max);
+> -	offset = mas->offset;
+> -
+> -	while (offset < count && mas->index > wr_mas->pivots[offset])
+> -		offset++;
+> -
+> -	wr_mas->r_max = offset < count ? wr_mas->pivots[offset] : mas->max;
+> -	wr_mas->r_min = mas_safe_min(mas, wr_mas->pivots, offset);
+> -	wr_mas->offset_end = mas->offset = offset;
+> +	wr_mas->r_max = mas->max;
+> +	idx = mas->end - 1;
+> +	while (idx >= mas->offset && wr_mas->pivots[idx] >= mas->index)
+> +		wr_mas->r_max = wr_mas->pivots[idx--];
+> +	wr_mas->offset_end = mas->offset = idx + 1;
+> +	wr_mas->r_min = mas_safe_min(mas, wr_mas->pivots, mas->offset);
+>   }
+>   
+>   /*
 
