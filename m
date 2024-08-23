@@ -1,109 +1,146 @@
-Return-Path: <linux-kernel+bounces-298939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC81A95CDC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:28:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F7C95CDCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677B41F244EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:28:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095002812BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DD5186E3C;
-	Fri, 23 Aug 2024 13:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DCF186E4F;
+	Fri, 23 Aug 2024 13:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS32JMbN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kA2hmdVM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BB5186601;
-	Fri, 23 Aug 2024 13:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6A41865EE;
+	Fri, 23 Aug 2024 13:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419685; cv=none; b=lK8va/fZ+QUWn/k7VssDoDXUefV28XRdFDxmGPzRh+GHt+u1+nhTrcRU0ZRpGz5EcsL4TvxY6WsgxV838bK63UsGcY4d1eIuZvrQqyymXqTwmgg51xC+OAYgnou5xfegak6mtq3WhshFMooGESI/D8BesX0OeMirD9DiL9DisS4=
+	t=1724419767; cv=none; b=iutWbxEwRbtVpIzUq0n0itIvO7hOUd79UI+XtcA36ozmxrS23iOWgwfN7IA+lZTaIF3PEY7cA+3d3AaHIts0yuqmdjDEUor7J9D8Ky1BL7ieavdkXdcaj/B+EqIfowDAK3xnHnn2V8WBynBT/aXoUy7OgEQUTwA/ow50uNBb4sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419685; c=relaxed/simple;
-	bh=DNlR9IfmHdpksq7A8/Fhgkr8Dh+iHoATiUQp29Ay9Ao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjvpXR5CohxAbJeaMaeVWNgpvEF+tHeK44KbjYUufLAJovm3M5arvHQmy/e5j8oQLUDwLLH8uJo3Rd+UxmrxJNqpNS5isnDsgA5cTOhloyzkCVtyBtrjpfaIJjflqgEW7GHZXz0RqNAibTWviRlGsBheBqQuEIYVl4LhiREJndM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS32JMbN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAE5C4AF09;
-	Fri, 23 Aug 2024 13:28:05 +0000 (UTC)
+	s=arc-20240116; t=1724419767; c=relaxed/simple;
+	bh=+svFskNShy8sFNlgF5SEtQoxYaXCquZxrHdULTV+fok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4SWHdD2HTzrkZAvOmFoP7I/kiFWST4SsH+buWxtLQ7XOWyCh1poQUdr9aWnCjW6rzurnXJhYjwSOZ6yTEGKF9W9KDVJgjmFFYWkNivkaymah+ROeBdRCV3gEhv5VYoNn7eOiKiKQNRZaprI58OpLHX39P5i1kYgBapCARMMgvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kA2hmdVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61F5C32786;
+	Fri, 23 Aug 2024 13:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724419685;
-	bh=DNlR9IfmHdpksq7A8/Fhgkr8Dh+iHoATiUQp29Ay9Ao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JS32JMbNlVZdL2ke6W76ZOFYihkqV44p3oAPSqGoFyyIOdnkTYwZd3XX3nIDVZJU4
-	 izBMZzsJsN7QXWKE3QbmadQb4hmJMU4ffLZ/4Ta3f5QVEERL0Zo84/4RwBgACFrNLr
-	 Sr5B2EK86gTYU74lsaQiZ3gzZJFvfRCZErWI/+/RqyjARw5n4cYVm2WuhcpOJ53Y+4
-	 57DCdEYa+Aa8iwnO7TDACxlvsiV8abxfT+0at/8wXBresMsgo++9GO6jR/EgGzlW+s
-	 suHedI6VI57dOfsX7k9HmO8wJ1i61SeUKq5IdvDLfHI9hG7DL9VZyTeajv6LnnpfPw
-	 3CgDjJoGeDTRQ==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-268eec6c7c1so1360896fac.3;
-        Fri, 23 Aug 2024 06:28:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVU8JGkmkSs4XBoQiBbHZikveSEu6svurTMu5nJWrcs2DZirSoL04qFU/m9HFLqXa2KOx9H1H2cutI=@vger.kernel.org, AJvYcCXKjDp498tn/5tXLRy5cBqTBSg0xxQhbQ06Ky8JDgrqqvz+EQ/ArejysncRBuBXDt4eZmIoHxMylqRMjMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNgy1KkvjcO1soPcx7QbW1hH3+LcKiVDunGv2gBFFT2SYrVh+J
-	AL14AlMgFM+j4ZXFCXHvuBg8guad+NggyeTxCNHFSK2S0B/J9wiF3d8TLmbISpZ8uFDnbbjfxDE
-	PRZ2A2F8c2ZSk/wqe+wfZECQp9ag=
-X-Google-Smtp-Source: AGHT+IGIRNoKP4JL5Gq1gJYcxZT+ZARdtAf+zcnKNPiWj9LhaEWGtYnyVS2U+bMY5dmYBScdsFE5Nd2NRT+TSQCUNFA=
-X-Received: by 2002:a05:6871:706:b0:268:a074:39cf with SMTP id
- 586e51a60fabf-273e641fa92mr2404461fac.8.1724419684502; Fri, 23 Aug 2024
- 06:28:04 -0700 (PDT)
+	s=k20201202; t=1724419766;
+	bh=+svFskNShy8sFNlgF5SEtQoxYaXCquZxrHdULTV+fok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kA2hmdVMxSzV++kcXzN5YAi4vhW52MP9h1Irc+MVotOBEDpZnz6kAn04R8y+fa2EF
+	 R48RlaAC5cpGoHQt/DoFm5WqecBHpzWt/HbecCgUTteh4E59IRzzoKAPo6pR9A9XtP
+	 qYpnuYXYh17u7bcp2kfKxRRPavwiaGOYBc2bROrAvckD5Kos+nD8aUX0cTn89sasI3
+	 ELnJRe8S52ONTGIovzE5KISphun/cFd4oPdgKqgu/hnFIXm23Yr2Z0o6a7STGjVFNQ
+	 y7wx5hOeJB1Jl2hW6eze3Qky+3x4Y0IoCnQtLeqzoKmY7yQqd2cAaFHNWq5wk2RVTI
+	 4noYVh1UmE6Og==
+Date: Fri, 23 Aug 2024 14:29:19 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>
+Subject: Re: [PATCH v5 04/19] firmware/psci: Add psci_early_test_conduit()
+Message-ID: <20240823132918.GD32156@willie-the-truck>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-5-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823071555.3331632-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240823071555.3331632-1-ruanjinjie@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Aug 2024 15:27:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iw7uXE_cfU5VXOjFDg9GM8Hu0+hKxqfzU3v0OM5KK9oQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iw7uXE_cfU5VXOjFDg9GM8Hu0+hKxqfzU3v0OM5KK9oQ@mail.gmail.com>
-Subject: Re: [PATCH -next] thermal/of: Fix duplicate of_node_put()
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819131924.372366-5-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, Aug 23, 2024 at 9:08=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
->
-> In for_each_child_of_node(), if continue, of_node_put(prev) will be
-> called by __of_get_next_child(), so remove the duplicate
-> of_node_put(child).
->
-> Fixes: 0f0a1b4ba3e4 ("thermal/of: Use the .should_bind() thermal zone cal=
-lback")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On Mon, Aug 19, 2024 at 02:19:09PM +0100, Steven Price wrote:
+> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> 
+> Add a function to test early if PSCI is present and what conduit it
+> uses. Because the PSCI conduit corresponds to the SMCCC one, this will
+> let the kernel know whether it can use SMC instructions to discuss with
+> the Realm Management Monitor (RMM), early enough to enable RAM and
+> serial access when running in a Realm.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  drivers/thermal/thermal_of.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index dc43f50db890..85e7e3c43c7e 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -319,10 +319,8 @@ static bool thermal_of_should_bind(struct thermal_zo=
-ne_device *tz,
->                 int count, i;
->
->                 tr_np =3D of_parse_phandle(child, "trip", 0);
-> -               if (tr_np !=3D trip->priv) {
-> -                       of_node_put(child);
-> +               if (tr_np !=3D trip->priv)
->                         continue;
-> -               }
->
->                 /* The trip has been found, look up the cdev. */
->                 count =3D of_count_phandle_with_args(child, "cooling-devi=
-ce", "#cooling-cells");
-> --
+> v4: New patch
+> ---
+>  drivers/firmware/psci/psci.c | 25 +++++++++++++++++++++++++
+>  include/linux/psci.h         |  5 +++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 2328ca58bba6..2b308f97ef2c 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/linkage.h>
+>  #include <linux/of.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/pm.h>
+>  #include <linux/printk.h>
+>  #include <linux/psci.h>
+> @@ -769,6 +770,30 @@ int __init psci_dt_init(void)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * Test early if PSCI is supported, and if its conduit matches @conduit
+> + */
+> +bool __init psci_early_test_conduit(enum arm_smccc_conduit conduit)
+> +{
+> +	int len;
+> +	int psci_node;
+> +	const char *method;
+> +	unsigned long dt_root;
+> +
+> +	/* DT hasn't been unflattened yet, we have to work with the flat blob */
+> +	dt_root = of_get_flat_dt_root();
+> +	psci_node = of_get_flat_dt_subnode_by_name(dt_root, "psci");
+> +	if (psci_node <= 0)
+> +		return false;
+> +
+> +	method = of_get_flat_dt_prop(psci_node, "method", &len);
+> +	if (!method)
+> +		return false;
+> +
+> +	return  (conduit == SMCCC_CONDUIT_SMC && strncmp(method, "smc", len) == 0) ||
+> +		(conduit == SMCCC_CONDUIT_HVC && strncmp(method, "hvc", len) == 0);
+> +}
 
-Good catch, thank you!
+This still looks incomplete to me as per my earlier comments:
 
-I'll fix the original patch and reapply it.
+https://lore.kernel.org/all/20240709104851.GE12978@willie-the-truck/
+
+For the first implementation, can we punt the RIPAS_RAM to the bootloader
+and drop support for earlycon? Even if we manage to shoe-horn enough code
+into the early boot path, I think we'll regret it later on because there's
+always something that wants to be first and it inevitably ends up being
+a nightmare to maintain.
+
+Will
 
