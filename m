@@ -1,554 +1,261 @@
-Return-Path: <linux-kernel+bounces-298719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E94395CA9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:39:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC15D95CA9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07DC1F23495
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DDB9B22C7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216B0185B6C;
-	Fri, 23 Aug 2024 10:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WNqQqhP9"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FBB637144;
-	Fri, 23 Aug 2024 10:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BF128EA;
+	Fri, 23 Aug 2024 10:39:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E2418308E;
+	Fri, 23 Aug 2024 10:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724409559; cv=none; b=M9qPgXbVnETEbuj1hqMhNjQKbtpfICVtUbOZ73bKom5mbm7szjFyTRvQp8U5Oc9P0I1NnyoYKQlXS5ByWySK+uCkjszBTb/x+iVQzKRi3yCaAr/2YnPRdbtYHh7T6+TIyjwvLUHFBDdEXWb3NBF9k3CGP2p6mdv2f6Mst7vaZ/c=
+	t=1724409585; cv=none; b=gtZoo1hu0bhPkjdC49HJdLJgOz1rgEjsV36B6Dlo9wi0ZBgbB9nLUIkgaLApBueuZlqU6aaLjrQy74qxtjDQJwdKTEAiKXrbR7JnZx7Bhk1kQ4JQn4ia+Unx3qLR2TuXFjQVhcOAs+tDcX7NnNrUAqBY42RC85nN1EORKNuXq0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724409559; c=relaxed/simple;
-	bh=e75YuNHuF3uRa93LuBPJ0CtMCzV8nRbZ60P2pLqv+8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M8VYWm2hqS9SJ0o+b2nYfrg62S13qGT13b1J2+ZFWBquAlE4AXx7TuvPHBD1DWxFv7sSjDDsULRVhV94MWFD67uH29/8vWc242mKu6ZB4uEavugy9f+nJrg5EBg4Az4Cphoe6RdXRk5JbqkhPD8BkeSjGNOchysZZZL+RptE17Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WNqQqhP9; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9912A6000B;
-	Fri, 23 Aug 2024 10:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724409548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VazZZaoOaU+AweRpjTZvFFv0SAXdmFXV2i/Srq/ko4=;
-	b=WNqQqhP9R6GC7QMf/xMCHvkVDDAzxfAmlAkanALg5uuiGBEl0wTLQTQ0yhaDkHkiSDCGQK
-	Ra8oSY9KVi6US/bEWNwCjp6lErVIrQSZf0hZd/VAUTJ5gblDBo1Cqkw1kK5kss16LTCIvJ
-	xoNEcoTOwh7YfCgnYU2s7Zc+MOdNaILlw4okStplqOA8pf+OSe9sIILnz3LkQAP1gMCdVa
-	4al+TPpMzXtsFBhRT+62rJQ/6HqXEBG4+Sxk3/lulho5LriMdzdublkbZfJGVTKg+BxznP
-	jZg3morJ+vmqmEUVotq07Ud+gVWyU3kSpTd6dz9AayTDmbSD9b6+hlNqYQcfEg==
-Date: Fri, 23 Aug 2024 12:39:03 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, Paul
- Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Paul
- Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v2 0/5] Add support for GE SUNH hot-pluggable connector
- (was: "drm: add support for hot-pluggable bridges")
-Message-ID: <20240823123903.1c793c4b@booty>
-In-Reply-To: <ZkyND17TGj6y0Wjq@phenom.ffwll.local>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
-	<ZkYIeWzYyxkURS79@phenom.ffwll.local>
-	<20240520140148.26b91240@booty>
-	<ZkyND17TGj6y0Wjq@phenom.ffwll.local>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724409585; c=relaxed/simple;
+	bh=N9KQYoHIt8wWtFmEO28dJFEBDCKvzUkXQxi3GVbTIyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jHkwnuL5LQDuexc8VOGh9BS2GbFFi3IKhUYmD5D6fIspWfAsvtgwBBctxwEksMGJUy98Y94STz3m1dQJDsTA8yGQlnkCjlL80IQUqknr9kFFjOyfi8cU+dysqNi6xudQVt9mqxQXehlnA6zAn9Kst5nKyVwtIp+DK9hlUXY4HkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8AxmOnrZshmh1UdAA--.60573S3;
+	Fri, 23 Aug 2024 18:39:39 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMAxYeHqZshm6jcfAA--.4588S2;
+	Fri, 23 Aug 2024 18:39:38 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: corbet@lwn.net,
+	alexs@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tglx@linutronix.de,
+	jiaxun.yang@flygoat.com,
+	gaoliang@loongson.cn,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	zhangtianyang@loongson.cn,
+	yijun@loongson.cn,
+	mhocko@suse.com,
+	akpm@linux-foundation.org,
+	dianders@chromium.org,
+	maobibo@loongson.cn,
+	xry111@xry111.site,
+	zhaotianrui@loongson.cn,
+	nathan@kernel.org,
+	yangtiezhu@loongson.cn,
+	zhoubinbin@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH v11 3/7] LoongArch: Move irqchip function prototypes to irq-loongson.h
+Date: Fri, 23 Aug 2024 18:39:32 +0800
+Message-Id: <20240823103936.25092-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxYeHqZshm6jcfAA--.4588S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKrykGw1rWryxWryfCw18Xrc_yoWxGFy8pF
+	W5Aa92vr43GayUWr15GFW5Ary3A3WfKrZrtayxXa43ZrZ8Cw1DCF1UAFn8urn7ArsrWa42
+	9r1FqF4UuFn8AwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBmb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	ZF0_GryDMcIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
+	kI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
+	c4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
+	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUx2Q6DUUUU
 
-Hello Sima,
+From: Huacai Chen <chenhuacai@loongson.cn>
 
-these days I started looking in more detail into some of the topics you
-had mentioned in your v2 review. I have questions about those I have
-investigated, see below.
+Some irqchip functions are only for internal use by irqchip drivers, so
+move their prototypes from asm/irq.h to drivers/irqchip/irq-loongson.h.
 
-On Tue, 21 May 2024 14:01:19 +0200
-Daniel Vetter <daniel@ffwll.ch> wrote:
+All related driver files include the new irq-loongson.h.
 
-> On Mon, May 20, 2024 at 02:01:48PM +0200, Luca Ceresoli wrote:
-> > Hello Daniel,
-> >=20
-> > On Thu, 16 May 2024 15:22:01 +0200
-> > Daniel Vetter <daniel@ffwll.ch> wrote:
-> >  =20
-> > > Apologies for missing v1 ...
-> > >=20
-> > > On Fri, May 10, 2024 at 09:10:36AM +0200, Luca Ceresoli wrote: =20
-> > > > DRM hotplug bridge driver
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> > > >=20
-> > > > DRM natively supports pipelines whose display can be removed, but a=
-ll the
-> > > > components preceding it (all the display controller and any bridges=
-) are
-> > > > assumed to be fixed and cannot be plugged, removed or modified at r=
-untime.
-> > > >=20
-> > > > This series adds support for DRM pipelines having a removable part =
-after
-> > > > the encoder, thus also allowing bridges to be removed and reconnect=
-ed at
-> > > > runtime, possibly with different components.
-> > > >=20
-> > > > This picture summarizes the  DRM structure implemented by this seri=
-es:
-> > > >=20
-> > > >  .------------------------.
-> > > >  |   DISPLAY CONTROLLER   |
-> > > >  | .---------.   .------. |
-> > > >  | | ENCODER |<--| CRTC | |
-> > > >  | '---------'   '------' |
-> > > >  '------|-----------------'
-> > > >         |
-> > > >         |DSI            HOTPLUG
-> > > >         V              CONNECTOR
-> > > >    .---------.        .--.    .-.        .---------.         .-----=
---.
-> > > >    | 0 to N  |        | _|   _| |        | 1 to N  |         |     =
-  |
-> > > >    | BRIDGES |--DSI-->||_   |_  |--DSI-->| BRIDGES |--LVDS-->| PANE=
-L |
-> > > >    |         |        |  |    | |        |         |         |     =
-  |
-> > > >    '---------'        '--'    '-'        '---------'         '-----=
---'
-> > > >=20
-> > > >  [--- fixed components --]  [----------- removable add-on ---------=
---]
-> > > >=20
-> > > > Fixed components include:
-> > > >=20
-> > > >  * all components up to the DRM encoder, usually part of the SoC
-> > > >  * optionally some bridges, in the SoC and/or as external chips
-> > > >=20
-> > > > Components on the removable add-on include:
-> > > >=20
-> > > >  * one or more bridges
-> > > >  * a fixed connector (not one natively supporting hotplug such as H=
-DMI)
-> > > >  * the panel   =20
-> > >=20
-> > > So I think at a high level this design approach makes sense, =20
-> >=20
-> > Good starting point :)
-> >  =20
-> > > but the
-> > > implementation needs some serious thought. One big thing upfront thou=
-gh,
-> > > we need to have a clear plan for the overlay hotunload issues, otherw=
-ise
-> > > trying to make drm bridges hotpluggable makes no sense to me. Hotunlo=
-ad is
-> > > very, very tricky, full of lifetime issues, and those need to be sort=
-ed
-> > > out first or we're just trying to build a castle on quicksand.
-> > >=20
-> > > For bridges itself I don't think the current locking works. You're tr=
-ying
-> > > to really cleverly hide it all behind a normal-looking bridge driver,=
- but
-> > > there's many things beyond that which will blow up if bridges just
-> > > disappear. Most importantly the bridge states part of an atomic updat=
-e. =20
-> >=20
-> > Surely possible as atomic updates are definitely not stimulated in my
-> > use case. Can you recommend any testing tools to be able to trigger any
-> > issues? =20
->=20
-> Uh really hard ... You'd need to create an atomic commit that's blocked on
-> a sync_file in-fence (so that you can extend the race window). And then
-> hotunplug the bridge chain _before_ you signal that fence.
->=20
-> That's not going to cover all possible races, but at least a large chunk
-> of the really big ones.
->=20
-> > The main setups I used for my testing so far are 'modetest -s' for my
-> > daily work and a simple weston setup to periodically test a complete
-> > user space stack.
-> >  =20
-> > > Now in drm we have drm_connector as the only hotunpluggable thing, an=
-d it
-> > > took years to sort out all the issues. I think we should either model=
- the
-> > > bridge hotunplug locking after that, or just outright reuse the conne=
-ctor
-> > > locking and lifetime rules. I much prefer the latter personally.
-> > >=20
-> > > Anyway the big issues:
-> > >=20
-> > > - We need to refcount the hotpluggable bridges, because software (like
-> > >   atomic state updates) might hang onto pointers for longer than the
-> > >   bridge physically exists. Assuming that you can all tear it down
-> > >   synchronously will not work.
-> > >=20
-> > >   If we reuse connector locking/lifetime then we could put the
-> > >   hotpluggable part of the bridge chain into the drm_connector, since=
- that
-> > >   already has refcounting as needed. It would mean that finding the n=
-ext
-> > >   bridge in the chain becomes a lot more tricky though. With that mod=
-el
-> > >   we'd create a new connector every time the bridge is hotplugged, wh=
-ich I
-> > >   think is also the cleaner model (because you might plug in a hdmi
-> > >   connector after a panel, so things like the connector type change).
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+---
+ arch/loongarch/include/asm/irq.h       | 14 --------------
+ drivers/irqchip/irq-loongarch-cpu.c    |  2 ++
+ drivers/irqchip/irq-loongson-eiointc.c |  2 ++
+ drivers/irqchip/irq-loongson-htvec.c   |  2 ++
+ drivers/irqchip/irq-loongson-liointc.c |  2 ++
+ drivers/irqchip/irq-loongson-pch-lpc.c |  2 ++
+ drivers/irqchip/irq-loongson-pch-msi.c |  1 +
+ drivers/irqchip/irq-loongson-pch-pic.c |  2 ++
+ drivers/irqchip/irq-loongson.h         | 25 +++++++++++++++++++++++++
+ 9 files changed, 38 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/irqchip/irq-loongson.h
 
-So, based on your dp__mst hint I added connector creation/removal in the
-v3 I sent a few days ago. All other aspects in your list are unchanged
-from the v2 you have reviewed.
+diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
+index 480418bc5071..65503c9eb529 100644
+--- a/arch/loongarch/include/asm/irq.h
++++ b/arch/loongarch/include/asm/irq.h
+@@ -88,20 +88,6 @@ struct acpi_madt_bio_pic;
+ struct acpi_madt_msi_pic;
+ struct acpi_madt_lpc_pic;
+ 
+-int liointc_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_lio_pic *acpi_liointc);
+-int eiointc_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_eio_pic *acpi_eiointc);
+-
+-int htvec_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_ht_pic *acpi_htvec);
+-int pch_lpc_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_lpc_pic *acpi_pchlpc);
+-int pch_msi_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_msi_pic *acpi_pchmsi);
+-int pch_pic_acpi_init(struct irq_domain *parent,
+-					struct acpi_madt_bio_pic *acpi_pchpic);
+-int find_pch_pic(u32 gsi);
+ struct fwnode_handle *get_pch_msi_handle(int pci_segment);
+ 
+ extern struct acpi_madt_lio_pic *acpi_liointc;
+diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loongarch-cpu.c
+index 9d8f2c406043..83f7492290a8 100644
+--- a/drivers/irqchip/irq-loongarch-cpu.c
++++ b/drivers/irqchip/irq-loongarch-cpu.c
+@@ -13,6 +13,8 @@
+ #include <asm/loongarch.h>
+ #include <asm/setup.h>
+ 
++#include "irq-loongson.h"
++
+ static struct irq_domain *irq_domain;
+ struct fwnode_handle *cpuintc_handle;
+ 
+diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
+index b1f2080be2be..34b5ca2f5e62 100644
+--- a/drivers/irqchip/irq-loongson-eiointc.c
++++ b/drivers/irqchip/irq-loongson-eiointc.c
+@@ -17,6 +17,8 @@
+ #include <linux/syscore_ops.h>
+ #include <asm/numa.h>
+ 
++#include "irq-loongson.h"
++
+ #define EIOINTC_REG_NODEMAP	0x14a0
+ #define EIOINTC_REG_IPMAP	0x14c0
+ #define EIOINTC_REG_ENABLE	0x1600
+diff --git a/drivers/irqchip/irq-loongson-htvec.c b/drivers/irqchip/irq-loongson-htvec.c
+index 0bff728b25e3..5da02c7ad0b3 100644
+--- a/drivers/irqchip/irq-loongson-htvec.c
++++ b/drivers/irqchip/irq-loongson-htvec.c
+@@ -17,6 +17,8 @@
+ #include <linux/of_irq.h>
+ #include <linux/syscore_ops.h>
+ 
++#include "irq-loongson.h"
++
+ /* Registers */
+ #define HTVEC_EN_OFF		0x20
+ #define HTVEC_MAX_PARENT_IRQ	8
+diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
+index 7c4fe7ab4b83..2b1bd4a96665 100644
+--- a/drivers/irqchip/irq-loongson-liointc.c
++++ b/drivers/irqchip/irq-loongson-liointc.c
+@@ -22,6 +22,8 @@
+ #include <asm/loongson.h>
+ #endif
+ 
++#include "irq-loongson.h"
++
+ #define LIOINTC_CHIP_IRQ	32
+ #define LIOINTC_NUM_PARENT	4
+ #define LIOINTC_NUM_CORES	4
+diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq-loongson-pch-lpc.c
+index 9b35492fb6be..2d4c3ec128b8 100644
+--- a/drivers/irqchip/irq-loongson-pch-lpc.c
++++ b/drivers/irqchip/irq-loongson-pch-lpc.c
+@@ -15,6 +15,8 @@
+ #include <linux/kernel.h>
+ #include <linux/syscore_ops.h>
+ 
++#include "irq-loongson.h"
++
+ /* Registers */
+ #define LPC_INT_CTL		0x00
+ #define LPC_INT_ENA		0x04
+diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
+index 2242f63c66fc..d43731878800 100644
+--- a/drivers/irqchip/irq-loongson-pch-msi.c
++++ b/drivers/irqchip/irq-loongson-pch-msi.c
+@@ -16,6 +16,7 @@
+ #include <linux/slab.h>
+ 
+ #include "irq-msi-lib.h"
++#include "irq-loongson.h"
+ 
+ static int nr_pics;
+ 
+diff --git a/drivers/irqchip/irq-loongson-pch-pic.c b/drivers/irqchip/irq-loongson-pch-pic.c
+index cbaef65e804c..69efda35a8e7 100644
+--- a/drivers/irqchip/irq-loongson-pch-pic.c
++++ b/drivers/irqchip/irq-loongson-pch-pic.c
+@@ -17,6 +17,8 @@
+ #include <linux/of_irq.h>
+ #include <linux/syscore_ops.h>
+ 
++#include "irq-loongson.h"
++
+ /* Registers */
+ #define PCH_PIC_MASK		0x20
+ #define PCH_PIC_HTMSI_EN	0x40
+diff --git a/drivers/irqchip/irq-loongson.h b/drivers/irqchip/irq-loongson.h
+new file mode 100644
+index 000000000000..b155f1258ed5
+--- /dev/null
++++ b/drivers/irqchip/irq-loongson.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2024 Loongson Technology Corporation Limited
++ */
++
++#ifndef _DRIVERS_IRQCHIP_IRQ_LOONGSON_H
++#define _DRIVERS_IRQCHIP_IRQ_LOONGSON_H
++
++int find_pch_pic(u32 gsi);
++
++int liointc_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_lio_pic *acpi_liointc);
++int eiointc_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_eio_pic *acpi_eiointc);
++
++int htvec_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_ht_pic *acpi_htvec);
++int pch_lpc_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_lpc_pic *acpi_pchlpc);
++int pch_pic_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_bio_pic *acpi_pchpic);
++int pch_msi_acpi_init(struct irq_domain *parent,
++					struct acpi_madt_msi_pic *acpi_pchmsi);
++
++#endif /* _DRIVERS_IRQCHIP_IRQ_LOONGSON_H */
+-- 
+2.20.1
 
-Now I'm trying to tackle some other of the items you mentioned here,
-and locking/lifetime is the hardest one for me to understand at the
-moment.
-
-If I get you right, you suggest making all the removable bridges
-"owned" by the connector that gets hotplugged, the reason being that
-locking and lifetime issues for the hotplug connectors have already
-been sorted out, while that has not been done for bridges.
-
-Correct?
-
-Assuming the above is correct, I'm wondering whether this would be a
-correct design or rather a shortcut to leverage the connector locking
-instead of implementing bridge locking/lifetime. Note I'm not
-criticizing, I'm really asking myself this question and I'd like to
-know your position about that.
-
-Again about putting the removable bridges inside the hotplug connector,
-I'm trying to understand how that may happen in the device tree case.
-The hot-pluggable bridge is populated starting from the DT code
-(through i2c-core-of in my case being an I2C chip), and that code is
-not aware that it is being instantiating a DRM device. So there is
-nothing we can do before the bridge probe is called. The bridge probe
-then does know much about any connectors. It also does not know about
-hotplug: this is a design decision I made to make the regular bridge
-drivers reusable without edits for the hotplug case, but it can be
-waived if needed.
-
-So the only way I currently to move the bridge inside the connector is
-to catch it in the hotplug-bridge driver, when it gets notified about
-the new bridge having appeared (was a notifier, I'm changing that, see
-below). So the hotplug-bridge would need a function line
-drm_connector_add_bridge(conn, br) to make the association.
-
-Is this the direction of development you had in mind?
-
-> > I have been investigating the option of adding/removing a connector
-> > based on hot-plug/unplug events initially, see my reply to Maxime after
-> > v1 [0]:
-> >  =20
-> > > The first approach is based on removing the drm_connector. My laptop
-> > > uses the i915 driver, and I have observed that attaching/removing a
-> > > USB-C dock with an HDMI connector connected to a monitor, a new
-> > > drm_connector appears/disappears for the card. User space gets notifi=
-ed
-> > > and the external monitor is enabled/disabled, just the way a desktop
-> > > user would expect, so this is possible. I had a look at the driver but
-> > > how this magic happens was not clear to me honestly. =20
-> >=20
-> > So if you could point to where/how this is done, I would certainly
-> > reconsider that. =20
->=20
-> Right now only the dp mst code uses hotplug/unplug (like you've observed
-> in your testing with i915, usb-c docks are generally all dp mst). For code
-> reading it might be best to start with the i915 dp mst code and then go
-> through the helpers.
->=20
-> > > - No notifiers please. The create a locking mess with inversions, and
-> > >   especially for hotunplug they create the illusion that you can
-> > >   synchronously keep up to date with hardware state. That's not possi=
-ble.
-> > >   Fundamentally all bridge drivers which might be hotunplugged need t=
-o be
-> > >   able to cope with the hardware disappearing any momemnt. =20
-> >=20
-> > Can you clarify this point? I'm sorry I fail to understand the
-> > relationship between the use of notifiers and the ability of bridge
-> > drivers to cope with hardware disappearing.
-> >=20
-> > In this patch, the hotplug-bridge uses notifiers to be informed when
-> > the following bridge is disappearing: which other way would you suggest
-> > to make the hotplug-bridge aware of that? OTOH the hotplug-bridge is
-> > not meant to disappear, and it has no actual hardware that can go away,
-> > being just a mechanical connector. =20
->=20
-> Yeah you need code to handle that. My point is that using a notifier is
-> the wrong design, because the notifier has it's own locking. Which tends
-> to get in the way.
-
-I went into this subject to see how drm_bridge_add() could inform the
-interested bridges using a DRM-specific mechanism instead of standard
-notifiers.
-
-However I think to inform *the interested* bridges, at least in the
-device tree case, there is a fundamental issue: DRM core has no idea
-about the topology. Definitely not at drm_bridge_add() time, way before
-drm_bridge_attach() where the 'previous' pointer introduces a minimum
-of topology awareness in the DRM core.
-
-Option 1 is to iterate over all the ports and endpoints and for every
-remote-endpoint pointing to a bridge, inform the remote bridge about
-that via a new optional callback in drm_bridge_funcs. That means likely
-informing more bridges than needed, so when they get informed the
-bridges will still have to check whether they are interested or not.
-
-Pseudocode:
-
-  void drm_bridge_add(struct drm_bridge *new_bridge)
-  {
-     // existing code unchanged
-
-+    if (bridge->of_node) {
-+       for_each_remote_endpoint(bridge->of_node) {
-+          br =3D of_drm_find_bridge(remote_endpoint);
-+          if (br && br->funcs.bridge_event_notify)
-+              br->funcs->bridge_event_notify(br, DRM_EVENT_BRIDGE_ADD,
-+                                             new_bridge);
-+       }
-+    }
-  }
-
-That means informing both upstream and downstream bridges, which could
-even be useful, but anyway there is no reliable way to pick only the
-sink or source ports. It also implies having lots of of_*() calls which
-iterate over the tree, which is not optimal, but it happens only at
-add/removal so it's fine I guess.
-
-Option 2 is be to just inform all the bridges (using the global
-bridge_list). Pros and cons:
-
- * less of_*() calls to crawl around the remote-endpoints
- * simpler code
- * more bridges than needed would be informed, could be be an issue
-   if many implement the .bridge_event_notify()
- * notifies even in the non-OF case too, not sure it's useful
-
-What are your thoughts about these two options?
-
-> Instead I think that code should be directly in core bridge code (I don't
-> see the benefit of having this entirely in a separate driver), using drm
-> locking to make sure there's no races.
-
-Not sure I got what you mean here. Which one of the following?
-
- 1. The entire hotplug-bridge driver should not exist, and the DRM
-    core should handle it all (seems not doable, this driver has lots of
-    device-specific details)
- 2. The hotplug-driver should exist, but the code to attach/detach the
-    pipeline on hotplug/unplug should be moved to the core, with the
-    hotplug-driver providing callbacks for the device-specific aspects
- 3. Same as 2, but additionally the hotplug-bridge should become a
-    connector driver (hotplug-connector.c?) -- not sure it can decouple
-    the two sides without a bridge however
- 4. None of the above
-
-> > On the opposite side, the following bridges are physically removable
-> > and so their drivers will have to be fixed (if needed) to work when
-> > removal happens, but I don't see how that relates to the DRM core
-> > emitting a notification of such bridges being removed. =20
->=20
-> Yeah it's not directly related, just my experience that people assume
-> notifiers provide you more synchronization and race-preventation than they
-> really do. So it's better to hand-roll to make it all really explicit.
->=20
-> > > - Related to this: You're not allowed to shut down hardware behind the
-> > >   user's back with drm_atomic_helper_shutdown. We've tried that appro=
-ach
-> > >   with dp mst, it really pisses off userspace when a page_flip that it
-> > >   expected to work doesn't work.
-> > >=20
-> > > - There's also the design aspect that in atomic, only atomic_check is
-> > >   allowed to fail, atomic_commit must succeed, even when the hardware=
- is
-> > >   gone. Using connectors and their refcounting should help with that.=
- =20
-> >=20
-> > IIUC here you are suggesting again to remove the connector instead of
-> > marking it "disconnected". So, as above, pointers on how that is
-> > achieved would be helpful. =20
->=20
-> See dp mst code. It's complex unfortunately, so there's some reading
-> involved :-/
-> > =20
-> > > - Somewhat aside, but I noticed that the bridge->atomic_reset is in
-> > >   drm_bridge_attach, and that's kinda the wrong place. It should be in
-> > >   drm_mode_config_reset, like all the other ->atomic_reset hooks. That
-> > >   would make it a lot clearer that we need to figure out who/when =20
-> > >   ->atomic_reset should be called for hotplugged bridges, maybe as pa=
-rt of   =20
-> > >   connector registration when the entire bridge and it's new connecto=
-r is
-> > >   assembled?
-> > >=20
-> > > - Finally this very much means we need to rethink who/how the connect=
-or
-> > >   for a bridge is created. The new design is that the main driver cre=
-ates
-> > >   this connector, once the entire bridge exists. But with hotplugging=
- this
-> > >   gets a lot more complicated, so we might want to extract a pile of =
-that
-> > >   encoder related code from drivers (same way dp mst helpers take car=
-e of
-> > >   connector creation too, it's just too much of a mess otherwise).
-> > >=20
-> > >   The current bridge chaining infrastructure requires a lot of hand-r=
-olled
-> > >   code in each bridge driver and the encoder, so that might be a good
-> > >   thing anyway.
-> > >=20
-> > > - Finally I think the entire bridge hotplug infrastructure should be
-> > >   irrespective of the underlying bus. Which means for the mipi dsi ca=
-se we
-> > >   might also want to look into what's missing to make mipi dsi
-> > >   hotunpluggable, at least for the case where it's a proper driver. I
-> > >   think we should ignore the old bridge model where driver's stitched=
- it
-> > >   all toghether using the component framework, in my opinion that app=
-roach
-> > >   should be deprecated. =20
-> >=20
-> > The DSI side was one of my headaches on writing this driver, and I
-> > must say I dislike the code in hotplug_bridge_dsi_attach(), with the
-> > need for an initial "dummy" attach and detach the first time. At first
-> > sight I think we need a .update_format callback in struct
-> > mipi_dsi_host_ops so the DSI host is aware of a format change.
-> >=20
-> > Right now there are DSI host drivers which keep a copy of the struct
-> > mipi_dsi_device pointer and read the format from there when starting a
-> > stream (e.g. the tc358768.c driver [1]). That somewhat provides a way
-> > to react to format changes, but keeping a pointer is bad when the DSI
-> > device hot-unplugs, and the new format won't be seen until a
-> > disable/enable cycle. So a new callback looks more robust overall.
-> >=20
-> > Any opinion about this? =20
->=20
-> Yeah I don't like the code either.
->=20
-> What might help for prototyping is if you start with a hotpluggeable
-> bridge where the bridge is a i2c device. That way I think we should be
-> able to benefit from the driver bind/unbind code that exists already.
-> Although there's going to be issues with i2c hotunplug too in i2c core
-> code.
->=20
-> Then lift whatever we learn there to our dsi code. But essentially I think
-> we should model the driver core model a lot more, so I guess you could use
-> any hotunplug capable bus as a template. Usb might be closest, since
-> that's also a packet/message based interface, mostly at least?
->=20
-> > > - Finally I think we should have a lot of safety checks, like only br=
-idges
-> > >   which declare themselve to be hotunplug safe should be allowed as a=
- part
-> > >   of the hotpluggable bridge chain part. All others must still be att=
-ached
-> > >   before the entire driver is registered with drm_dev_register. =20
-> >=20
-> > I'm fine with the principle of a "HOTPLUG" flag.
-> >=20
-> > I wonder how that should be implemented, though. Based on my (surely
-> > simplistic) understanding, right now bridges can be both added and
-> > removed, but only in a specific sequence:
-> >=20
-> >  1. add all bridges
-> >  2. use the card
-> >  3. remove all bridges
-> >  4. EOF
-> >=20
-> > We'd need to change to allow:
-> >=20
-> >  1. add fixed bridges (including hotplug-bridge)
-> >  2. add bridges on removable add-on
-> >  3. use card
-> >  4. remove bridges on removable add-on
-> >  5. optionally goto 2
-> >  6. remove fixed bridges (including hotplug-bridge)
-> >  7. EOF
-> >=20
-> > One na=C3=AFve idea is that the DRM core keeps a flag whenever any fixed
-> > bridge (no HOTLPUG flag) is removed and when that happens forbid adding
-> > bridges as we are now at line 5. =20
->=20
-> If a fixed bridge is removed while the driver is still in use (i.e. before
-> drm_dev_unregister is called), that's a driver bug. Would be good to catch
-> that, which is why I think a lot of all the bridge hotplug handling should
-> be in core bridge code and not the separate hotplug driver, so that we can
-> enforce all these constraints.
->=20
-> Also conceptually 3 can happen before 2 (but also before), and that's how
-> dp mst works too. It does add all kinds of complications though ...
->=20
-> > Aside for tons of subtleties I'm surely missing, does this look a
-> > proper approach? I'd not be surprised if there is something better and
-> > more solid. =20
->=20
-> Yeah roughly. If you look through dp mst code then that also adds all
-> kinds of structures (since dp mst is a routed network really), not just
-> the connectors. They also all come with refcounts (because the network is
-> a tree), but like I said I think for your case we can avoid the per-bridge
-> refcounts by relying on the connector refcount we have already.
->=20
-> But I might be overlooking something, and we need refcounting for each
-> bridge like dp mst also needs refcounting for all its internal structures
-> that map the entire hotpluggable display chain. If you want to read some
-> dp mst code, these internal structures are ports/branches with struct
-> drm_dp_mst_branch/port.
->=20
-> > >   Or that we only allow bridges with the NO_CONNECTOR flag for
-> > >   drm_bridge_attach.
-> > >=20
-> > > There's probably a pile more fundamental issues I've missed, but this
-> > > should get a good discussion started. =20
-> >=20
-> > Sure, I think it has.
-> >=20
-> > Bottom line, I'm clearly not seeing some issues that need to be
-> > considered, and that do not show up for my use case. Based on my
-> > limited DRM knowledge, this was expected, and I'm glad to work on those
-> > issues with some practical indications about the path forward. =20
->=20
-> Yeah for learning I think dp mst is best. It's a bit complex, but since
-> you have a dock you should be able to play around and experiment with the
-> code with some real hardware.
->=20
-> That should help to get a bit a feel for the complexity, since lots of
-> opportunities for you to ask why/how locking/refcounting is used and
-> against which potential issue they protect.
->=20
-> Cheers, Sima
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
