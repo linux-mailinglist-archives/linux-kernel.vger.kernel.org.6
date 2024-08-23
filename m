@@ -1,274 +1,152 @@
-Return-Path: <linux-kernel+bounces-298806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B8795CBB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:53:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A7C95CBBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4218F1F24A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6591F20595
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F16185E7B;
-	Fri, 23 Aug 2024 11:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563AB187FEA;
+	Fri, 23 Aug 2024 11:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gDQSys6n"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xj8a4QtO"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD10357CBE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043F415382E;
+	Fri, 23 Aug 2024 11:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724413975; cv=none; b=JCGd//4s4725T0ubqhmw1xDDRiXMsf+4W43Cgumeria5z1uWJgOQwUQPNu/GcP11KCxGWOtJqd8ZIZ7WxT0bknj6WHqzv6M1Rx2XBUK5+ZnlxnCqTHLDz8WOFxYvus+mf9DoaZbZiS5ynAH+LTXuheIfNVty1/q+z+HwKFKY48A=
+	t=1724414014; cv=none; b=U/9+LwOvop6GYFh/IKyFWlUSS/kzd4f9XMI26VHQ2Y90M6DkJaWE7y1IZUIkAJAHaeW9iBeogZffNvgim1XHbEQ4yLZA5KRHV+6rTa25/AtfIsyGlubmrJBS6YnFWXQnPuN+9tytMAfzbvmwKhoiLgYNL5yRn+HGopSiKGA9jcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724413975; c=relaxed/simple;
-	bh=h/o1nIjYOjbfHt5iKy+Xhy3gLOPLIs905K5hTrMw5KY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k1G0H0LJmve22BgXM4e/iL0uEDbWxY4BZsdLs5jsMlxYztERKgT6JxQK6HcUiSaQvAo7N/A5DByNHjNlY86fkmQmjEt8MqHZwzkayk+0vUXpYSmvqnxlW7qmUr11WttIPdM2vInjxfjR3NYyhTjgJGN5iWLh/yG2qW7Io7OcrGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gDQSys6n; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N6SW2w011158;
-	Fri, 23 Aug 2024 11:52:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=vTkBDv5ceaxAf2c7bC/ZTr2ksX
-	6JSrRgLGjmVWqKHZ0=; b=gDQSys6nsZiJjfDrxlUc4XaM3oMoLb3yRZ2oO5hxDM
-	cp86L7E0SxOjdzSWyT8hAoT4wKVlq4dscgTWVWGuTPbzccTAk0Vjo+elPDxJ1iDy
-	YZdzUDt34LokwtbggVUiqEmPdIhsHnyOr5stTsLmi+LWFbFv5kQRA9PmawKmarIY
-	56t6MTBULYYv8r7iiOK9JbaoaplzTtFrgP8+9CnDweEZafNlqm11TJ7CucBKRw8Q
-	Ah9tb8k1pMh2ls1rVgQ/oiW5kyn/xe2UMz66MND+7z7vUpyFYS3p/nRdZFVa+tLU
-	VPuaYJZ0S8U/P1qbeP17mAghbHmVyFcmJvUqK1TbKA7Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc53tqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 11:52:38 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NBqbp3020368;
-	Fri, 23 Aug 2024 11:52:37 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc53tqp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 11:52:37 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47N7nT0x029443;
-	Fri, 23 Aug 2024 11:52:36 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138dmsf3d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 11:52:36 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NBqVwL55509296
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 11:52:33 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 082B82004B;
-	Fri, 23 Aug 2024 11:52:31 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 73B6A20040;
-	Fri, 23 Aug 2024 11:52:28 +0000 (GMT)
-Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.43.120.212])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Aug 2024 11:52:28 +0000 (GMT)
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: bhe@redhat.com
-Cc: Hari Bathini <hbathini@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.ibm.com>, kexec@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Subject: [PATCH] [RFC] crash: Lock-free crash hotplug support reporting
-Date: Fri, 23 Aug 2024 17:22:26 +0530
-Message-ID: <20240823115226.835865-1-sourabhjain@linux.ibm.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724414014; c=relaxed/simple;
+	bh=bkd8aOXZmdZzWEyDAhR8G5uVU8gVqqo3IxhELzNqYD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gie24x/HonEhz8MfAi//gXruIj2B3RVRiMnMjku0nN7ooenlPZUYCohGJhrp3lu/m7lyKFxS3WFOhxjNWT9H5ghSy5j9eerDQ7a+/9bZ+2QX6ZYomJzMMzVScZ969lIv/D5Gsq/Dk79fOGr40M/LUrCeYh1HW6kWVsewFtwlHUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xj8a4QtO; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso14879095e9.1;
+        Fri, 23 Aug 2024 04:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724414011; x=1725018811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4Qa+EV6v8ZB2IRZYzD1waaDvUl0h5wTKdlKd2XzMYI=;
+        b=Xj8a4QtOJtaqvv44lBb5NKMZnVoC97+07tAVxyMsdAfhLrsMZqk2goGPDTnjY3+K6N
+         iKnw3H8KiO2sOeaIT05cJ7VhF7V1sao1exYQ/Q+KErJpm/2m4b9pgT+FHBo5+iHh7YaK
+         JZl3YqCBsxEqHzWHrM632NVddqeSTYBDa90EnYGQ/m+VoB7dCrtLJdW/tylpL0xy/LUc
+         rOeLedDAUSnfQ/sfWz7sSiWQwL+yrm0+ByT0BgZrD1/iMauOZXbEHAMeIiSlGk7/oAfN
+         +hL+tug594T717as3+mfHLosfxudMJOul0f1aiyzH4tk/mjm/izDEzTp2QhIbWDiJamc
+         YpYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724414011; x=1725018811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y4Qa+EV6v8ZB2IRZYzD1waaDvUl0h5wTKdlKd2XzMYI=;
+        b=DL7nRgqqpK6dq4jVg3EmwaBUIcX1ZgKX3ZYH9YQg2aMQHCDPKyl+3lbjtDVM7/DXPE
+         fvLQtJekaWsS1T1Shn7OE7rSQ4kScSLCmECg+wu9p45cY/8Z5WpAS54ytO2d4F7wooxp
+         FdaCmu2oVGzqYOZ8vg4c5O2bb4UG8OU2pxjGYY0KJlb74wM1FQdjHZ15K7n5ihuM8zLQ
+         iW7O2Z9rQ8qI7/sufIzCigOKfSfv4gwo3FLk7Tz9RfvcRnVjqEF9Ee4szcV2dkBycqKO
+         +YXGuMkGqc+q8jG9kcFg0R6rnKd9o2EkZOvy8D8+Ed4FtLk/RZLUAaYwuXio63cpVvpy
+         BV3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/c5S8gVfIqS3U/rQouHM80QaifSxsbUaGG9A/EwGPbG5augZze46e9JkhxP3LXJPwsFnsNwUilhVZnU=@vger.kernel.org, AJvYcCX9C+2QgEkMlu9m6unc9xff4RxnR3VYEJdc9xI0DsoaRDqTChay9Cq7cB281IXxoF67zEg9R4AZXkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylgdTsmzUTz6YzpRR4+xImkXo2ivbA5vdKA3RVINipEKH8RMMk
+	B7O8PRv7XxV/dr3sphcLsM+IUq2gVucUm1VJiyaSQwKlNNBVYCeS
+X-Google-Smtp-Source: AGHT+IEOdga9aCjrjCpoQ31PaOCn35Tdda7+8wpViWtKG/KjqE3Q9icx1tmerrSqFubfounMdNwCNQ==
+X-Received: by 2002:a05:600c:4f47:b0:426:61e8:fb35 with SMTP id 5b1f17b1804b1-42acc8d5137mr16033265e9.4.1724414010676;
+        Fri, 23 Aug 2024 04:53:30 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff5b8sm3962533f8f.85.2024.08.23.04.53.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 04:53:30 -0700 (PDT)
+Date: Fri, 23 Aug 2024 13:53:28 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Stephan Gerhold <stephan@gerhold.net>, 
+	Ilia Lin <ilia.lin@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/10] drm/tegra: gr3d: Convert into
+ devm_pm_domain_attach_list()
+Message-ID: <kg3gfmh4vd5lgnglk7wzzullu7s3b7lpnh3czinmvpds2it7cm@bowytsfbzzvi>
+References: <20240822224547.385095-1-ulf.hansson@linaro.org>
+ <20240822224547.385095-8-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 8hfry96WB_4XfsoQF-PgNWc7OgRd_3At
-X-Proofpoint-GUID: _QnM_hpx8XMPIJVMiYp6BS7xmF0q5KAm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_08,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 adultscore=0 phishscore=0
- impostorscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230085
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dsasrgumy5bfzyrj"
+Content-Disposition: inline
+In-Reply-To: <20240822224547.385095-8-ulf.hansson@linaro.org>
 
-On a CPU/Memory hotplug event, the kexec lock is taken to update the
-kdump image. At the same time, this lock is also required to report
-the support for crash hotplug to user-space via the
-/sys/devices/system/[cpu|memory]/crash_hotplug sysfs interface, to
-avoid kdump reload.
 
-The kexec lock is needed to report crash hotplug support because the
-crash_hotplug variable, which tracks crash hotplug support, is part of
-the kdump image, and the kdump image needs to be updated during a
-hotplug event.
+--dsasrgumy5bfzyrj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Given that only one kdump image can be loaded at any given time, the
-crash_hotplug variable can be placed outside the kdump image and set or
-reset during kdump image load and unload. This allows crash hotplug
-support to be reported without taking the kexec lock.
+On Fri, Aug 23, 2024 at 12:45:44AM GMT, Ulf Hansson wrote:
+> Rather than hooking up the PM domains through devm_pm_opp_attach_genpd()
+> and manage the device-link, let's avoid the boilerplate-code by converting
+> into devm_pm_domain_attach_list().
+>=20
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>=20
+> Changes in v3:
+> 	- Updated commitmsg.
+> 	- Converted to devm mangaged version of dev_pm_domain_attach_list()
+>=20
+> ---
+>  drivers/gpu/drm/tegra/gr3d.c | 38 +++++++-----------------------------
+>  1 file changed, 7 insertions(+), 31 deletions(-)
 
-This would help in situation where CPU/Memory resource are hotplug from
-system in bulk.
+I'm not very familiar with most of the OPP bits in this driver, but it
+looks like the corresponding code is now in the core, so this seems
+fine:
 
-Commit e2a8f20dd8e9 ("Crash: add lock to serialize crash hotplug
-handling") introduced to serialize the kexec lock during bulk CPU/Memory
-hotplug events. However, with these changes, the kexec lock for crash
-hotplug support reporting can be avoided altogether.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Cc: Hari Bathini <hbathini@linux.ibm.com>
-Cc: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-Cc: kexec@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org
-Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
----
- include/linux/kexec.h | 11 ++++-------
- kernel/crash_core.c   | 27 +++++++++------------------
- kernel/kexec.c        |  5 ++++-
- kernel/kexec_file.c   |  7 ++++++-
- 4 files changed, 23 insertions(+), 27 deletions(-)
+On a related note: we have two other case on Tegra where we attach to
+multiple PM domains (drivers/usb/host/xhci-tegra.c and
+drivers/usb/gadget/udc/tegra-xudc.c). Both of those don't use OPP, but
+I wonder if they could also be simplified using the new
+devm_pm_domain_attach_list() function?
 
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index f0e9f8eda7a3..bd755ba6bac4 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -318,13 +318,6 @@ struct kimage {
- 	unsigned int preserve_context : 1;
- 	/* If set, we are using file mode kexec syscall */
- 	unsigned int file_mode:1;
--#ifdef CONFIG_CRASH_HOTPLUG
--	/* If set, it is safe to update kexec segments that are
--	 * excluded from SHA calculation.
--	 */
--	unsigned int hotplug_support:1;
--#endif
--
- #ifdef ARCH_HAS_KIMAGE_ARCH
- 	struct kimage_arch arch;
- #endif
-@@ -370,6 +363,10 @@ struct kimage {
- 	unsigned long elf_load_addr;
- };
- 
-+#ifdef CONFIG_CRASH_HOTPLUG
-+extern unsigned int crash_hotplug_support;
-+#endif
-+
- /* kexec interface functions */
- extern void machine_kexec(struct kimage *image);
- extern int machine_kexec_prepare(struct kimage *image);
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 63cf89393c6e..3428deba0070 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -30,6 +30,13 @@
- #include "kallsyms_internal.h"
- #include "kexec_internal.h"
- 
-+#ifdef CONFIG_CRASH_HOTPLUG
-+/* if set, it is safe to update kexec segments that are
-+ * excluded from sha calculation.
-+ */
-+unsigned int crash_hotplug_support;
-+#endif
-+
- /* Per cpu memory for storing cpu states in case of system crash. */
- note_buf_t __percpu *crash_notes;
- 
-@@ -500,23 +507,7 @@ static DEFINE_MUTEX(__crash_hotplug_lock);
-  */
- int crash_check_hotplug_support(void)
- {
--	int rc = 0;
--
--	crash_hotplug_lock();
--	/* Obtain lock while reading crash information */
--	if (!kexec_trylock()) {
--		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
--		crash_hotplug_unlock();
--		return 0;
--	}
--	if (kexec_crash_image) {
--		rc = kexec_crash_image->hotplug_support;
--	}
--	/* Release lock now that update complete */
--	kexec_unlock();
--	crash_hotplug_unlock();
--
--	return rc;
-+	return crash_hotplug_support;
- }
- 
- /*
-@@ -552,7 +543,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
- 	image = kexec_crash_image;
- 
- 	/* Check that kexec segments update is permitted */
--	if (!image->hotplug_support)
-+	if (!crash_hotplug_support)
- 		goto out;
- 
- 	if (hp_action == KEXEC_CRASH_HP_ADD_CPU ||
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index a6b3f96bb50c..d5c6b51eaa8b 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -116,6 +116,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- 		/* Uninstall image */
- 		kimage_free(xchg(dest_image, NULL));
- 		ret = 0;
-+#ifdef CONFIG_CRASH_HOTPLUG
-+		crash_hotplug_support = 0;
-+#endif
- 		goto out_unlock;
- 	}
- 	if (flags & KEXEC_ON_CRASH) {
-@@ -136,7 +139,7 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- 
- #ifdef CONFIG_CRASH_HOTPLUG
- 	if ((flags & KEXEC_ON_CRASH) && arch_crash_hotplug_support(image, flags))
--		image->hotplug_support = 1;
-+		crash_hotplug_support = 1;
- #endif
- 
- 	ret = machine_kexec_prepare(image);
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 3d64290d24c9..b326edb90fd7 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -378,7 +378,7 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 
- #ifdef CONFIG_CRASH_HOTPLUG
- 	if ((flags & KEXEC_FILE_ON_CRASH) && arch_crash_hotplug_support(image, flags))
--		image->hotplug_support = 1;
-+		crash_hotplug_support = 1;
- #endif
- 
- 	ret = machine_kexec_prepare(image);
-@@ -432,6 +432,11 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 		arch_kexec_protect_crashkres();
- #endif
- 
-+#ifdef CONFIG_CRASH_HOTPLUG
-+	if (flags & KEXEC_FILE_UNLOAD)
-+		crash_hotplug_support = 0;
-+#endif
-+
- 	kexec_unlock();
- 	kimage_free(image);
- 	return ret;
--- 
-2.46.0
+Thierry
 
+--dsasrgumy5bfzyrj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbIeDQACgkQ3SOs138+
+s6GH5hAAj0NN7iL0JJc60EmmVh+H2EQPjTib+taoAWQEwsmELcslXLSc4FI+ejKy
+Wrr7KfyFIAyvn0aMfpN2BmO33LnQLlLGsrF4N5nnpu/Xs3T+zk7YSdXnVWb4iJGY
+CLuzCCrwn+3zo6vXoLUOUfVjD31u1dow5T/0IXFfHJ8xLmhADMydsJuzCgkfLlY+
+Ty56qPYurcouiUcDFTw3IBFpuRfwYxrbxvUaRINzCjgW+JQAGZJUQQiraOUJPe43
+oV+O+oSUvYYl/XSkvjOfiny4f44DnA9Peude0UljUQ2jIBZJqeLPu019+lfovUqm
+h3BxoypJmk1wU0z1qrSxEa3O1G62SlXCc/XqsPXYDaHRJrB9XXL+zjY4CsjhHNBC
+iVGK4AEaOA6NhSKKpqUBnkNQARd57qBm6i0iGIZrPcoKmxoxNth4K0rsfaxXwgW3
+mssfTiu4e1JB5BfIKY1tFdvNOiY9XEjw/+mMAWGHTQTOEUYJQz8CwnPVoulSRIs2
+WEmweMuovxjEVODl7XfCtXTJoMdOBkYZT5aenofxSwggl8MaqgJQdNVsIIfof9Qy
+PWWOJ5bOTMipJE9hY7AxHpIa2z89KK+ohIf89OvvZUH1W9v0iuIwtuNUveljHym0
+9XEVHLsIcYaBD7iG7q5vHqEDB7RotZycfCKgZg073yNlQQGVzAw=
+=AFIi
+-----END PGP SIGNATURE-----
+
+--dsasrgumy5bfzyrj--
 
