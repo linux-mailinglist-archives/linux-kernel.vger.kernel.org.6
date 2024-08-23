@@ -1,69 +1,73 @@
-Return-Path: <linux-kernel+bounces-299183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD07F95D141
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58D895D145
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624681F23443
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:22:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C4F1C2257E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B9188A1E;
-	Fri, 23 Aug 2024 15:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34063188A22;
+	Fri, 23 Aug 2024 15:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z028GTwJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwiuuZ2t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A96188903;
-	Fri, 23 Aug 2024 15:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15651433BD;
+	Fri, 23 Aug 2024 15:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724426514; cv=none; b=p3tBFtDULLIMju9zukVgm/FBxiVhYB4QvXAp+QnvTzaCuhIgx8GlT7dhEhQ6T1rN+iGznvZvcCOi8fGYN/rgwQbSWUHaZqCziZw6h7+TLpyTkJiyJHqv0mSYtrFaAFv3XhkCtVnywOcUdQm4zuYkaEdYY+Wq71LPZIP4r1c+Fio=
+	t=1724426562; cv=none; b=EzHs5B1znvpVZzPE+Gjl7BiUTPYViOLtcdVdaxeOlBn6HcGZVI66k4B/xpkj4QJhjmWhxM97pEqNc6SGhZYNKV2Sv+046Fj0BPBzwj97WQR85OE6rnd75PCPPr+r7mc02ZJTHR9x1yhPLe/jh848sYA0k/GIVhxrejjwqWrFq/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724426514; c=relaxed/simple;
-	bh=z/xlA997HrrjimGdMRbL+kogTgPfZTfDFAxkUoJUHPQ=;
+	s=arc-20240116; t=1724426562; c=relaxed/simple;
+	bh=3qK4L+r7VH5lFspwqEdMrN+QdtLEFgzsJe1FRuCWHys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgvnfCDK3IdrHkU3F4Tzq7hexTcM7dLvHNjHr+CdaYQtjl2MTRbYMLXOkT+Hnm5qIwm2tgAH6G3HhTyyM9ftVG/pRl24uq0nXpbBJtUnNPu9CUS38gVYUopBW1bCGaVHMyamhtwhxyzq/YM+ztBJ7CshapwMHaLtuyhUJwfiwYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z028GTwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30861C32786;
-	Fri, 23 Aug 2024 15:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724426513;
-	bh=z/xlA997HrrjimGdMRbL+kogTgPfZTfDFAxkUoJUHPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z028GTwJDVdrD1dy3EjvhFp7/d7QDBryXCZodsxMo5qKnH3PWsQ/4+Wm6eTEOplEp
-	 kyBxZ8jGqrPeG1Xt8UjF3BY6dJ8CDvKsug5GIhKRmTuCV4NrVNBw8ZaqqiDNn028+N
-	 NVE4bPZFx8i7vIG9zzXW4Gy2cPxD11soRQ0JnmfdL+f5+tDk7wneORN70sI2Sa0XGl
-	 z207z0JmHzApJt8hYOYpgbu5My/ukNBLeso2W2h8bw5s2cXb4TcR+6oAOuUZgzBM13
-	 VU1auf4S0UCnI1WUEFGc62AHSLTSq7/h8ij4AjUY+ZmCIeixPeD8mntVJWiTS4ZRVS
-	 Ksi6NBAv4Cdhg==
-Date: Fri, 23 Aug 2024 16:21:48 +0100
-From: Will Deacon <will@kernel.org>
-To: Trilok Soni <quic_tsoni@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/
- 16K pages
-Message-ID: <20240823152147.GA396@willie-the-truck>
-References: <20240729-topic-845_gpu_smmu-v1-1-8e372abbde41@kernel.org>
- <osxynb352ubxgcb5tv3u7mskkon23nmm3gxkfiiiqss5zp67jf@fv5d6bob2rgp>
- <CAF6AEGuWULwrJDWW37nQhByTpc-2bBYVv3b_Ac6OCwaJ83Ed9w@mail.gmail.com>
- <CAA8EJpp9zaQSKbis7J9kYTudTt=RFhfbzeayz3b-VbGQENtqeA@mail.gmail.com>
- <3332c732-4555-46bf-af75-aa36ce2d58df@gmail.com>
- <CAA8EJppZsNTqh_KxD=BWXjmedA1ogeMa74cA=vVbCWAU7A-qgQ@mail.gmail.com>
- <d766e2e8-9f3f-af3a-bb5e-633b11bce941@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=in/b7haGpYBsVI5VtftjPVN+dQnIP3sgaqXXC9E+7Qs7XWTEbZk8+ade5Zw68EMD0z0JZz6cUNOJRCUshV3W2l+GhUDOfvAZRGzfOjqVgIom4Fme8+LFVCVvlj+tdu2NKtxoN59b1GdXExzYUcJiSQhygTcqn0tq/XScF4k16S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwiuuZ2t; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724426561; x=1755962561;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3qK4L+r7VH5lFspwqEdMrN+QdtLEFgzsJe1FRuCWHys=;
+  b=RwiuuZ2tbYxr4Niq1Sq3QjDs1MDdG9DZ9tVmgojjXlLbORDGUGDX793f
+   ARjjz57lB2Y+Ck4qT5CeyntB3eGUeyUrqr39XHMmIf5+sr+uXHhYcoAJO
+   Gk4owdYLhXWPFsT7TSj1sp2HLe2QfdSa/DY48vsvxjbYvq7Ub1TjPJu61
+   LCMh7f5+a0q9iDuIbF1u9eX6PJtvJFKNQCSf7EThdY0nnuj/XHlg7+LtD
+   jt63BbKPrVBmxq+pYW5zKHjXz4Cbo6cwFEdhA2H8+aaEcaA/hBm8UM9gX
+   6+Do6OJCOC1LyiuOkVAkFdnQgZng8ss+3v/ZWnN1/CsMIMLJ8IR+mhPOT
+   A==;
+X-CSE-ConnectionGUID: Sa0hCwHXQge6pkdgkOVChw==
+X-CSE-MsgGUID: ++OI4opRQTyK2f8e3kBDeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23069531"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23069531"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 08:22:40 -0700
+X-CSE-ConnectionGUID: S7lhRkrzTvuFsWFiwB9K5A==
+X-CSE-MsgGUID: bRpJZFmSTcCz1uRxOvrExg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61678428"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 23 Aug 2024 08:22:38 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id AFA42209; Fri, 23 Aug 2024 18:22:37 +0300 (EEST)
+Date: Fri, 23 Aug 2024 18:22:37 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: geert+renesas@glider.be, linus.walleij@linaro.org,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] drivers/pinctrl/renesas: Switch to use kmemdup_array()
+Message-ID: <ZsipPZz7O0yrOHE9@black.fi.intel.com>
+References: <20240822061438.14617-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,31 +76,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d766e2e8-9f3f-af3a-bb5e-633b11bce941@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240822061438.14617-1-shenlichuan@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Jul 30, 2024 at 10:16:00AM -0700, Trilok Soni wrote:
-> On 7/30/2024 1:50 AM, Dmitry Baryshkov wrote:
-> >>>>>> SDM845's Adreno SMMU is unique in that it actually advertizes support
-> >>>>>> for 16K (and 32M) pages, which doesn't hold for newer SoCs.
-> > My question is about forbidding 16k pages for sdm845 only or for other
-> > chips too. I'd assume that it shouldn't also work for other smmu-v2
-> > platforms.
-> 
-> Yes, my understanding was that SMMUv2 based IPs doesn't have 16k support
-> and it is only starting from SMMUv3. 
+On Thu, Aug 22, 2024 at 02:14:38PM +0800, Shen Lichuan wrote:
+> Let the kememdup_array() take care about
+> multiplication and possible overflows.
 
-I'm not sure about that. The architecture doc for SMMUv2 talks about the
-AArch64 translation regime in section 1.5 and bit 13 of SMMU_IDR2 says:
+> +	cfgs = kmemdup_array(configs, num_configs,
+> +				sizeof(*cfgs), GFP_KERNEL);
 
-  | PTFSv8_16kB, bit[13]
-  | Support for 16KB translation granule size. The possible values of this bit are:
-  | 0	The 16KB translation granule is not supported.
-  | 1	The 16KB translation granule is supported.
-  | In SMMUv1, this bit is reserved.
+Geert, don't you want to fix the indentation issues?
+Perhaps even combining these to a single line?
 
-so I think Konrad's patch is about right, but if you want to extend it
-to cover other implementations then that's fine too.
+...
 
-Will
+> +	cfgs = kmemdup_array(configs, num_configs,
+> +				sizeof(*cfgs), GFP_KERNEL);
+>  	if (!cfgs)
+>  		return -ENOMEM;
+
+Ditto.
+
+...
+
+> +	cfgs = kmemdup_array(configs, num_configs,
+> +				sizeof(*cfgs), GFP_KERNEL);
+
+Ditto.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
