@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-298930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4043095CD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:18:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B9295CD96
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE95B283BA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:18:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A620CB21783
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC7318661D;
-	Fri, 23 Aug 2024 13:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DFF186616;
+	Fri, 23 Aug 2024 13:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcJjW2kQ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WM349I3h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497CC18660D;
-	Fri, 23 Aug 2024 13:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015A91E4B2;
+	Fri, 23 Aug 2024 13:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419080; cv=none; b=XWVOqWY9cjLGMHkQo4U/QZxtwglapmIZfJWk9IH/MFXNzebatyDqYpjh4IkCYUfXKv1Yp0ZmlWiGnD0oV333SHSdl+sUSt6xd1E8f4dtv7JcrFmQNKLtV98Pm7brNikG3eArQHJqoIdIdh7rHjgj1frid9o5NaCViuDPvxEyDe0=
+	t=1724419053; cv=none; b=rxHpvAIL7d9QsnRs3OArk7ONfLmGK02SkO3c7OycMQCq5m+o+zTswc3IM9siQfQ+tMpsfyOeCWkfEFhSxIprqXhH2fILSGDcQwk/Etbad6dcs2MWsC1x56lriNhEHLuuUljU0ZTAM8xBpUEUaw35FmBAQUPh7U7QuiojWWqfsQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419080; c=relaxed/simple;
-	bh=pfyQOkmQAU8XkzyXRFVQA9QDvSE5Ui00cEDJmg8NJ6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEVgYLThgexDl9Damh9XFEcEi4tJ3K69c9wQA3MDU+Fjd7FAxg2WjpjPWk7EmxbW0DatyN/HdGjlYP9D7ABeIIFJrIrLfTpR9F4A4K8lmSu38YMrb18jodGQ0VfCwePdDHpo8MQV+glG0HRr8b51qmkMjedWAwKn+5n409Wm4hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcJjW2kQ; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8679f534c3so239090766b.0;
-        Fri, 23 Aug 2024 06:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724419076; x=1725023876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GYZqtNKbUf46Y9j/NKPxky9EWjGfSIe8fIFl5OJVMWI=;
-        b=mcJjW2kQ8KXfNQQeYsqUczsn082zwZRaNkrq1r9EyThz8fVghZ2McJrmfbdQjzcG13
-         OPOa0yyIN1uHKYmqaoPg2l8KBkZhBSgw0R3xpBxEy3JyD1yDZTIS+oMAJ0fozXcFvBbS
-         61xbQEjpjXrE+Gl7Eb6FlSu1KmLsuooIAgvefU1Ff8ZYNeV++mK0sD3ufObwCxJOX+ZB
-         4OW6P+3knxgq/5YkfxJ2DleioRnIoGRrF0pto0BDRoWk9MyLZo/7fShOQB6AwOrHB9K0
-         maF3JNMXTxOfL202Gh0v2sJgSqiRJOm39m/30Nk9LHcjP4CvmV0ykFlSgKaZxJuztPb9
-         /Scg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724419076; x=1725023876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GYZqtNKbUf46Y9j/NKPxky9EWjGfSIe8fIFl5OJVMWI=;
-        b=tBf4W3gGicQf9f4i0OZD9E8ibcDtxTYuf9WfoVw6H1J9Q14LDVoj2F7mhQja8ymmDv
-         Txlf71Nu2MS03Y6UBHHzSM6CoNGmy0MnWDnVTt3VAwpyLR+vPWMyc+j647xTiy1FxiGg
-         yW4MoTWg/c531nrgw6/hNRl19VINWXcSoUv0PDTNgw/6KjNn12tqMBU8TnfUlbyhvTiP
-         MIBgval8D/fABGK/pMRfgQbId6eNnfpYRVAgESTZ02QU3dvLqSe/k011m/vTw5MyajWd
-         Jt9vmsx1NCI6LELloUgVvu9EZyry8orhty6eE/dl0jUHMiiZ6n+UgtrPg281TEduIYuR
-         4+9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAtFbbUW9aGj3igokC1fvqwkFWFvezufiIuOnzByQ1k+DEcfrQfHetXyf2EdTPFG16OTTw9NJiyW2p@vger.kernel.org, AJvYcCXSr1Tx3bHFe3/SN3BIS5tql5pbNRyx11HESafMHL+LeiDBX0tz9VuwbxaMau3VvsUr3Su97vbHCBA01KrO@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJpxR4C1y2gGQ/mQ3v2ijoPWSs6JAPFovRnV2bDczcjBBeDGu
-	kBwZnep3SPXfQHO1lTTrNqjCW/Z9x11icVOJVnmXdBbnoAmGoGwGEQ3Ax7dmhveSKsm8EMeoKSk
-	vJsmpg48rTZtuwoKaZueukH5WFaY=
-X-Google-Smtp-Source: AGHT+IFb9dM2hTGAgF+mE+zRRyN4RLOmdCTv+xltJOXiNxFfV14R5W5jlIb2uXglMgqXP+bnxHgjptGQ9l74MQxF7/Y=
-X-Received: by 2002:a17:907:6088:b0:a86:7a84:abb7 with SMTP id
- a640c23a62f3a-a86a51b4cc7mr182232366b.20.1724419076196; Fri, 23 Aug 2024
- 06:17:56 -0700 (PDT)
+	s=arc-20240116; t=1724419053; c=relaxed/simple;
+	bh=vNOPFnUUgqIZCsZ9G+sLenBXNsMnJqk5VHIKseweeyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCzPpAB5FoJjR249kUHeZWIQ2tEk96tBTUmSWby0pmtFTkkZzHUDahM7VYLRSZPypt8a8ZSg5jEhXR1ZUkhcnpVlLNc83WHRUJSFm9vq/j4w1hWOJyuAhmdoOSStXdxK8DD3sMzlGZi8KETvaTcq2n8sSu4a5nAr0BepXxFCyIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WM349I3h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145B7C32786;
+	Fri, 23 Aug 2024 13:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724419052;
+	bh=vNOPFnUUgqIZCsZ9G+sLenBXNsMnJqk5VHIKseweeyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WM349I3hxOfHBiRXpCUUWQs0smPVDvjs3QcgUdyRvavfsFIwCSRiWFynWbqtOhV/t
+	 pwgbuz8Mog9kzW5hB9dfRMCO776P/ildh/8V6JcGq4tmkW9mSdfrTplmtbwXClJbxC
+	 tThc7RotB4KDJ5Tk9Sx9QAGQw0E6C/kyUJEJq6C8V/biNp7wF/QP+YfvEl/iR4txmT
+	 oFlLtSjr6HiK6SYAd8TmQESMKYhVAa4qbhC4E/hfZnQjZzEfytcf/TD0oTxynJioaq
+	 VPHwrUcmu5al4Ujo872jvwfcRBGOPfAdp/NRRlt+zohzOtlfJs8NVA5QSugBdabKmW
+	 PMIZk0LQbvNcg==
+Date: Fri, 23 Aug 2024 10:17:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] perf trace: Add some string arguments' name in
+ syscall_arg_fmt__init_array()
+Message-ID: <ZsiL6aW-nSxCvYBP@x1>
+References: <20240815013626.935097-1-howardchu95@gmail.com>
+ <20240815013626.935097-5-howardchu95@gmail.com>
+ <Zse4LR6gtIO8-Fch@x1>
+ <CAH0uvohkLdA5OHWTWqit-6ttd254Sg1vJQBejK+1yzxO7=miJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822230104.707812-1-andy.shevchenko@gmail.com> <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
-In-Reply-To: <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Aug 2024 16:17:19 +0300
-Message-ID: <CAHp75VfyPQGXT9ypp+SducvHwOgMpCm-rCXSrQ=9-MCH8b+ZLw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: renesas: rzg2l: Replace
- of_node_to_fwnode() with more suitable API
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
-	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvohkLdA5OHWTWqit-6ttd254Sg1vJQBejK+1yzxO7=miJQ@mail.gmail.com>
 
-On Fri, Aug 23, 2024 at 10:23=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Aug 23, 2024 at 1:01=E2=80=AFAM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > of_node_to_fwnode() is a IRQ domain specific implementation of
-> > of_fwnode_handle(). Replace the former with more suitable API.
+On Fri, Aug 23, 2024 at 12:37:01PM +0800, Howard Chu wrote:
+> On Fri, Aug 23, 2024 at 6:14 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 09:36:20AM +0800, Howard Chu wrote:
+> > > Add them so that we can augment more strings (which is a file path)
+> > >
+> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > > ---
+> > >  tools/perf/builtin-trace.c | 8 +++++++-
+> > >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > > index e7e8c89d9538..84c7398312d8 100644
+> > > --- a/tools/perf/builtin-trace.c
+> > > +++ b/tools/perf/builtin-trace.c
+> > > @@ -1918,7 +1918,13 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+> > >
+> > >               if (strcmp(field->type, "const char *") == 0 &&
+> > >                   ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+> > > -                  strstr(field->name, "path") != NULL))
+> > > +                  strstr(field->name, "path") ||
+> > > +                  strstr(field->name, "file") ||
+> > > +                  strstr(field->name, "root") ||
+> > > +                  strstr(field->name, "key") ||
+> > > +                  strstr(field->name, "special") ||
+> > > +                  strstr(field->name, "type") ||
+> > > +                  strstr(field->name, "description")))
+> > >                       arg->scnprintf = SCA_FILENAME;
+> > >               else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
+> > >                       arg->scnprintf = SCA_PTR;
+> >
+> > Humm?
+> >
+> > root@number:~# for field_name in file root key special type description ; do grep "field:.* $field_name\>" /sys/kernel/tracing/events/syscalls/sys_enter_*/format ; done
+> >
+> > /sys/kernel/tracing/events/syscalls/sys_enter_msgget/format:    field:key_t key;        offset:16;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_semget/format:    field:key_t key;        offset:16;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_shmget/format:    field:key_t key;        offset:16;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_quotactl/format:  field:const char * special;     offset:24;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_kcmp/format:      field:int type; offset:32;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_mount/format:     field:char * type;      offset:32;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_socket/format:    field:int type; offset:24;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_socketpair/format:        field:int type; offset:24;      size:8; signed:0;
+> > /sys/kernel/tracing/events/syscalls/sys_enter_syslog/format:    field:int type; offset:16;      size:8; signed:0;
+> > root@number:~#
+> >
+> > Skipping this one. Please ellaborate, what am I missing?
+> 
+> Hello, just some minor changes on your command, if I do:
+> ```
+> perf $ for field_name in file root key special type description ; do
+> grep "field:.*char \* .*$field_name\>"
+> /sys/kernel/tracing/events/syscalls/sys_enter_*/format ; done
+> /sys/kernel/tracing/events/syscalls/sys_enter_swapoff/format:
+> field:const char * specialfile;   offset:16;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_swapon/format:
+> field:const char * specialfile;   offset:16;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_pivot_root/format:
+> field:const char * new_root;     offset:16;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_fsconfig/format:
+> field:const char * _key;  offset:32;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_quotactl/format:
+> field:const char * special;       offset:24;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_add_key/format:
+> field:const char * _type; offset:16;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_mount/format:
+> field:char * type;        offset:32;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_request_key/format:field:const
+> char * _type;        offset:16;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_add_key/format:
+> field:const char * _description;  offset:24;      size:8; signed:0;
+> /sys/kernel/tracing/events/syscalls/sys_enter_request_key/format:field:const
+> char * _description; offset:24;      size:8; signed:0;
+> ```
+> 
+> They pop up.
+> 
+> Because it's strstr(), not strcmp(). Do you think we should use
 
-...
+Sure, that was my mistake, I was looking for those exact words, and its
+being used as substrings.
 
-> > -       girq->fwnode =3D of_node_to_fwnode(np);
-> > +       girq->fwnode =3D dev_fwnode(pctrl->dev);
->
-> While this looks correct, the new call goes through many more hoops, and
-> is not a simple inline function.
+> "strstr(field->name, "description") ||" or "strstr(field->name,
+> "_description") ||"? Please let me know.
 
-Maybe, but it's not a hot path anyway.
+But I think using "key" as a a substring is way too generic to think
+that a syscall arg with that in its name is necessarily a string.
 
-> Perhaps just &np->fwnode? ;-)
+We better look at the tracepoint _type_ instead since we have it in the
+first place :-)
 
-Definitely not for a couple of reasons:
-- the explicit dereferencing may prevent from easier cleaning up and
-moving the fwnode members around in the driver core
-- the GPIO library internally doesn't use OF node directly, so the
-code that call GPIO library would be better to follow that
-
-Additionally one can call of_fwnode_handle(), but going here and there
-with it makes no sense as it much cleaner to see that this fwnode
-comes directly from the device. This is not obvious from the original
-or any code that uses np.
-
-After all the idea at minimum to isolate of_node_to_fwnode() from all,
-but native IRQ chips (basically there are two big users: native IRQ
-chips and PCI MSI).
-
-P.S. Also note, it's _the only_ pin control driver that uses that API.
-
---=20
-With Best Regards,
-Andy Shevchenko
+- Arnaldo
 
