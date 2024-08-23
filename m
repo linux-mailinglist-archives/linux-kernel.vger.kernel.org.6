@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-299629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2A895D7D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353D895D7DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76B891F2490D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA2C1F24A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F251B9B21;
-	Fri, 23 Aug 2024 20:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BA01C7B8C;
+	Fri, 23 Aug 2024 20:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPS7g6RW"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cFTZss0A"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A571B8E87;
-	Fri, 23 Aug 2024 20:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485231C6F7D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724445090; cv=none; b=CtXo7VE2El08GO8Jf8YdGdqkmFmtz++Lcpqr5hkyPSK2hOrZxCfmptuFOmv9M9ZnR15vlBIKL6FqACj5xdy/9/6DEPaLhoXtfYmqFtgLT+lbi1aEX5SvlcGKn6qKmQ3Vww1QRsh6w612KZSCcOgKLJkjWj46JHaReGXlaN7t14Q=
+	t=1724445208; cv=none; b=C6eHCCHaHXqPYRt+f+8G+L5zBybaFoj9df4q9xlx9y5Giwc8MWAB6IZqIxm510qhb58n5TZAuwiWfFm4wPEEZMWwR5qh6X4htABIvuDe+/0Itq29gMT5r1aTWoM/mD3yJrlkb5dQ22Rib7cCI14wUUepGKm1ybFyHuqZHIhSZ1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724445090; c=relaxed/simple;
-	bh=B21LZxV1wIqjOVmBZtDJRBNPAcgVHbIIFnF8egE8p4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jU1rWm5QbF6rIFb5CVDs/W+c761wa+QvmOxQJcRMJzWOlLVnnE4T4Dt2ckoqPTJsVfZWU3GTu2go4d6Z/KkShA2q4u+9kIgrxu2E6VFsD4lqlek8btw3bEsqfHgvoQ9b/+ts2bNiCVNunfeWh32jHzE3xQ0Kd6DYeLHy5dB10Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPS7g6RW; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-714262f1bb4so1972864b3a.3;
-        Fri, 23 Aug 2024 13:31:28 -0700 (PDT)
+	s=arc-20240116; t=1724445208; c=relaxed/simple;
+	bh=MsOMxkYeIW9qydJzRqD0Ihv3BRacgITErjIgiRvw2KI=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b8Ir4JQdQD3Eo/1lFWbZzYfaAh92gZyXRqiJeKw+ul/zvMqZd28XcdBqcBgpGIHQFh5SgsOWPNyzuJp5bIdnimuChJbzN2ra89h3whvigkFxtcxCgxxgNXlImG4u77VH1z64n2XylsUEF7DIDtluRTWgQiHxUpXxRXFo3jhhvkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cFTZss0A; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a1d42da3e9so152922185a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724445088; x=1725049888; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oVkYgAd9pwJ37tjg8sGU6xd6OORsj2mGna/zcnNQyOI=;
-        b=kPS7g6RWVe9EesFhWdYGZGk517mCpEkAXqhAI0uw2DrIdHyY6kjdPkajiMFLBEaBbm
-         4v7/j19u46bXh8SYFCJUhV0avZ6Y71SwnuB51MX2z2wcWCZ4Uf7KiiwftZfYvEEL4VRw
-         lBXFO8uHVLsDKjekn1hNwfiS+nKCFThvr3aoJBCIyokER/CZZRXS7mKK1n8+2w4v42Jb
-         rFj8O6uZinfieTrjJCZjXlh5iSg7mJryEq+hmuxxWJ+vVat84DPp9joFzdy6EcUYA/2u
-         UR22M/gk6eTgSxBSTCX5NkNeaTlJt4jtWISh0C2D6ltbs2936P+QGxswL1EBWPK6Z0E4
-         QmcQ==
+        d=chromium.org; s=google; t=1724445205; x=1725050005; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/0Yyeee2Vf8r1D/wovFCOKuxZaGFv9fKeG3mfjxEVas=;
+        b=cFTZss0AaAWpfKQeI8Idfc6fqkRGpIPKMJXs8fvEZraYzcmoJoA6hTJ0ThLIGiwNNr
+         F30K72MKPjoT2g6KfmMBkTAFWbtAzmEoZbdYzgxKpYK5iHCSrUZOQDov+oWhG3O3YklN
+         kVVUqJCL/yQJCif6Bv1AdisX4MGrx90wQGICg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724445088; x=1725049888;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVkYgAd9pwJ37tjg8sGU6xd6OORsj2mGna/zcnNQyOI=;
-        b=PiXylIfSnynKttuSgMlam/sBTUvc7oeHYARe/x1cRRfI+4E5NKxCFLb2qrThjBIDpP
-         0aXABIMtsbI32R90A7xfuYpnd8DCY0HdD1GiZCe9KfQUNYEy3zEmu8hMVeHJUmGQIOob
-         2J8zXY8NsBIG7WHnhMoQcm7+77Q7C1xVLyEkD77SitSUik2RPRXi+IexUEQ3rjyjGByo
-         5EYxsfG2S54rvfDHiPLGTUSdlTbmZTTXH0cCVuLhJZSpGrY2/W54n4U20woh1M62wWT5
-         CkD1h0cXdCRVnIRN8Pgm2M06g+TXaEoXfst1VfbgZeyZhTKg1oiNIf0LF6IWMOVhergO
-         eZkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnPCpv2qMupfEdMDzseW5ohmFWFlGgpxJlBurSMpOrVIfUwj1vUiNbkXOytoC1ZP29k6QC1TPqRBqmOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztiHEEYvHcCpwTTuMiXtK7dmW+uSnTvsR3j3uOKmDkvsLG3WmG
-	p7bviy4c1IbreUXeCYPWiPlvXa3Y1fZEldyZ6bxrEv5cYO9eUVwIQXHT5A==
-X-Google-Smtp-Source: AGHT+IHwdfIvDGy3aVDUvOAQjl2U2G14TEsqZIEYJa1LTtRaT4M+o3I8NnK3DS4H/TTbXe74O+Yfiw==
-X-Received: by 2002:a05:6a00:188c:b0:714:34c1:166a with SMTP id d2e1a72fcca58-71445e7783dmr4526213b3a.21.1724445088139;
-        Fri, 23 Aug 2024 13:31:28 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:75c:5a5a:d7dc:18f6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e0d2esm3538305b3a.99.2024.08.23.13.31.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 13:31:27 -0700 (PDT)
-Date: Fri, 23 Aug 2024 13:31:25 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.11-rc4
-Message-ID: <ZsjxnTwQWOaTnPpY@google.com>
+        d=1e100.net; s=20230601; t=1724445205; x=1725050005;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/0Yyeee2Vf8r1D/wovFCOKuxZaGFv9fKeG3mfjxEVas=;
+        b=qe8oQYN0MfT+v5KJcy3H43bnyfLrzEe06baypESobYl/JL6YeeRO5SfqRNg0k0DiHF
+         P4raEWfhClGpZ5hjQeDN68XYjkI0tEvyjYmvn68XMKX6wdtAAeh9YMKe1VKNpGplE/rP
+         PihiJD5RUdaHNJVXOhVHNv7t8ElvNc/Y+4zeFhigDYI0z6rFVR6XtOKC2Tu2k/DZzuGu
+         dtv+F5kPosOztSRGyO2gBX9hTe7phmGKdCvz81SGyfLN8DCZdsmOc0ZeTTN7pnpV3Kcr
+         ZRRDuktt4jwvARRIDVBzkO3kLlgAc405rizwSms2Xn/DEXiE0SnduVp+6LWu70Rk4bca
+         W41Q==
+X-Gm-Message-State: AOJu0YyKEh0DwnLC/awSneqbJsPRRLkHw8Pjv9SKrXW6wvlylrGLHR5w
+	PiXYTcXVgWf/kZWtR094DTc1pECztnxbLp5pfYOK7OrEDUC4Qno6Hfpz2gfcRBJ1iz2YTphWd4Q
+	iEXgQ1+yjdIql0MTVDhSo6oLo+9LHH/Qzz1ND
+X-Google-Smtp-Source: AGHT+IGW/VO5LDbH2qUnWbdRuqhhtG11KOFQeC4peX75Dv4BIQ4AXaDFfDgoU0VrJw72vzH9xwkXBWdGeZo2zOTAGgE=
+X-Received: by 2002:a05:620a:461e:b0:79f:dce:76c7 with SMTP id
+ af79cd13be357-7a6897c444dmr460409785a.68.1724445205109; Fri, 23 Aug 2024
+ 13:33:25 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 23 Aug 2024 13:33:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <d03d5425-bd7c-4c20-a54e-5708ffd059e0@linaro.org>
+References: <20240819233628.2074654-1-swboyd@chromium.org> <d03d5425-bd7c-4c20-a54e-5708ffd059e0@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Fri, 23 Aug 2024 13:33:24 -0700
+Message-ID: <CAE-0n52=kQzEx76D5AmZfui_X0jqejQ+ENz+VQunY_ovph65Hw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking breakage
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	neil.armstrong@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
+	Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Quoting neil.armstrong@linaro.org (2024-08-21 08:44:00)
+> Hi,
+>
+> On 20/08/2024 01:36, Stephen Boyd wrote:
+> > Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
+> > Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
+> > These two patches fix the issue by skipping the parking bit of the
+> > shared RCGs for devices that can't run so slow.
+> >
+> > [1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
+> >
+> > Stephen Boyd (2):
+> >    clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
+> >    clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
+> >
+> >   drivers/clk/qcom/clk-rcg.h    |  1 +
+> >   drivers/clk/qcom/clk-rcg2.c   | 30 +++++++++++++++++++
+> >   drivers/clk/qcom/gcc-sm8550.c | 54 +++++++++++++++++------------------
+> >   3 files changed, 58 insertions(+), 27 deletions(-)
+> >
+> >
+> > base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+>
+> I'm pretty sure sm8450 & sm8650 (and probably other SoCs) could be also affected, could you check ?
 
-Please pull from:
-
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.11-rc4
-
-to receive updates for the input subsystem. You will get:
-
-- a tweak to uinput interface to reject requests with abnormally large
-  number of slots. 100 slots/contacts should be enough for real devices
-
-- support for FocalTech FT8201 added to the edt-ft5x06 driver
-
-- tweaks to i8042 to handle more devices that have issue with its
-  emulation
-
-- Synaptics touchpad switched to native SMbus/RMI mode on HP Elitebook
-  840 G2
-
-- other minor fixes.
-
-Changelog:
----------
-
-Dmitry Torokhov (2):
-      Input: uinput - reject requests with unreasonable number of slots
-      Input: himax_hx83112b - fix incorrect size when reading product ID
-
-Felix Kaechele (2):
-      dt-bindings: input: touchscreen: edt-ft5x06: Document FT8201 support
-      Input: edt-ft5x06 - add support for FocalTech FT8201
-
-John Keeping (1):
-      Input: adc-joystick - fix optional value handling
-
-Jonathan Denose (1):
-      Input: synaptics - enable SMBus for HP Elitebook 840 G2
-
-Marek Vasut (1):
-      Input: ads7846 - ratelimit the spi_sync error message
-
-Takashi Iwai (1):
-      Input: i8042 - add Fujitsu Lifebook E756 to i8042 quirk table
-
-Werner Sembach (2):
-      Input: i8042 - add forcenorestore quirk to leave controller untouched even on s3
-      Input: i8042 - use new forcenorestore quirk to replace old buggy quirk combination
-
-Diffstat:
---------
-
- .../bindings/input/touchscreen/edt-ft5x06.yaml     |  1 +
- drivers/input/joystick/adc-joystick.c              |  7 ++++--
- drivers/input/misc/uinput.c                        | 14 +++++++++++
- drivers/input/mouse/synaptics.c                    |  1 +
- drivers/input/serio/i8042-acpipnpio.h              | 29 +++++++++++++---------
- drivers/input/serio/i8042.c                        | 10 +++++---
- drivers/input/touchscreen/ads7846.c                |  2 +-
- drivers/input/touchscreen/edt-ft5x06.c             |  6 +++++
- drivers/input/touchscreen/himax_hx83112b.c         | 14 ++---------
- 9 files changed, 54 insertions(+), 30 deletions(-)
-
-Thanks.
-
--- 
-Dmitry
+Does someone have the hardware to test? It looks like sm8450 isn't using
+the shared ops, but sm8650 is, likely incorrectly.
 
