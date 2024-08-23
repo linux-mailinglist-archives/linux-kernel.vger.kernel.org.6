@@ -1,175 +1,163 @@
-Return-Path: <linux-kernel+bounces-299402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3310E95D41E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B255995D424
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA901F22FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E7F22844C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E6118F2FB;
-	Fri, 23 Aug 2024 17:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fXIE0q43"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EA918E764;
+	Fri, 23 Aug 2024 17:17:41 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F9018C921
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F89C188A1A;
+	Fri, 23 Aug 2024 17:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724433358; cv=none; b=FPgwQYolKaht+RXH5BrRsLM/GKbfu+lNACsNuTuRYtJJuzgoAswDZvUoXjdKytKl9tDuVvilhO/tqiyq5duUld5ztnZPMXn6a15Eu+BYGf4f4oks3sLU2lPifCQwWv5fpygsiMOuKbA8XuJMnttQqFuQfKIGM19hdqJfoQlWd7s=
+	t=1724433461; cv=none; b=n/qHjznY8dsKA3bSMwMJ/BsgBblO2X7+e0Lf5KK8VruqfQrHfFTCkFGsVTpcLERK2Y335/cAs0RfnKpRnVQtFc27G9oS0wlweSMKtE3jlCSSE3rlS5h0nMaPlwe2Auj1HsRnZPPnZqSC4ttmkNiXZ4xW5qdFqcztllZTb9ZDco0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724433358; c=relaxed/simple;
-	bh=VPZAtg08Wy5/FG+Kj/wTZuQQZpFnItvR2PIwTa5Vc/I=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxdDQO4RTVBBVxwNodgUXlQSKJcaRtWtdtzN8Vq3OEaboI6hlE6/CsUIhu4o40CraSSmFmMnCxGGGy+VjOyECcVFy0CFfVHY51ReOyPk1r1aGAytvBau8KB+5ObCY5e7gGxSTn2FsH6V50TnPBkPOIaLN2kOTEeN/mktBmlZycs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fXIE0q43; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so2156666a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724433355; x=1725038155; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5kboO0j45Is859BAgD4iFoFAta2hgxS6Xgur8E+680=;
-        b=fXIE0q43JG/afuGoJEo+1ZFmAZyWLPTmqGuQgqMJ/4lFrRm0qZuHBzQqU5pb+FghpW
-         h9I+J8sE1cbOerZ1XocD/Dsjwv0sbkDb32VVtnF1twJKGQ21qxpF9uoorvT2sCcHwf+f
-         E68DXoobn8xvzK4zt9C+WC6FwLmWrhsoMdKaO9jWeCLyYa4VSPEBQifovEROjvrizcCJ
-         zdYaEmq2IsAmQ6sS1DHygrF7Deu/CD1RCjMmo5B0fHQbG3J5ndKE/SQDnbvlvUfpdMbU
-         1mEq6JtTvaicqO++blC68QVaO4O2PyziwJPlE3P24TJ8Dfy6CkEplcuE68KAAQANAHAi
-         nrMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724433355; x=1725038155;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5kboO0j45Is859BAgD4iFoFAta2hgxS6Xgur8E+680=;
-        b=tMsJUQjv9/SWyzD2EigNcoXEz2SSgLovGRptF+Cc6cnuQfElpPhLFf0IsZfzL2YWcZ
-         Tuhj0AMURXJQgBWYGKQv/x+V+NMaZm/y2D10HF4D58zpmniSQT/RjJXjU2+FAKR78IEQ
-         jkjeFxAbKyTYVmB4//fHEqAxpYJgZaAo+CoMdaNQ6SUepbhH/RUIDA+wg3mLGYj3oJzT
-         iUVY0y7udnEag7SBDkjxl89c6eD3uNOkBfPSuA4Y23+1OGhenFDS9EMvSIb21yIAmlxz
-         CVxMddDnhUkgQB9yfD7yeEwhFTWZaYn0PMDwJQnu/hW0HoigqkUaDOcP/Fj6KCB/8IdK
-         zAmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPRCQ+jCgCQu6sGy/fzTMJsiQCovs25NuDb8/i4xVQ8cTcXNAtft526gFcMp/lF6tKyBR5OKJfwlqtt7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEGwtZZt4Aej/Ys02Xf2MrbyIs3QLlwlYEOCO40+fJamDh4XJ6
-	s+LaWUdvetjX1sFZpBJlQRX2kaIV3ci/NpqVilvwC8eIOgyyIwH+IXvSAXO/780=
-X-Google-Smtp-Source: AGHT+IGi+ju94qIZV+5dh+FC4edd1LJS/Rb5jnDSsIsgwxHk/+itiIP1aidxM/8be626D3wcbLPt/A==
-X-Received: by 2002:a17:907:2d0a:b0:a86:7199:af37 with SMTP id a640c23a62f3a-a86a54f142dmr198119466b.58.1724433354052;
-        Fri, 23 Aug 2024 10:15:54 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862e8sm287339466b.173.2024.08.23.10.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 10:15:53 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 23 Aug 2024 19:16:00 +0200
-To: Simon Horman <horms@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <ZsjD0C8oYmUi5I7n@apocalypse>
-Mail-Followup-To: Simon Horman <horms@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
- <20240821132754.GC6387@kernel.org>
+	s=arc-20240116; t=1724433461; c=relaxed/simple;
+	bh=lCxMlrFWlPzZle8jCcnfTAfxOAP60K7Pgbx49ro+y4A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=st2Uk/c9zj+ryOAfspz9JFIIisjQuZzbsGJgpkxLOqt56UgAiSvEnOTS/uAsUHmFx7CTqqGP+CN4fXe/VYFUO0+PfPVJU+AJNQSDislFJdQrH1oPsYpWiEDGy86iVx4i1kATbcLqnN2LK0XCm3h7M3na2hLF+3W/1gIOQbJCTP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wr6BH29yqz6K5cY;
+	Sat, 24 Aug 2024 01:14:31 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5CE3A140B33;
+	Sat, 24 Aug 2024 01:17:36 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 18:17:35 +0100
+Date: Fri, 23 Aug 2024 18:17:34 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 19/25] cxl/region/extent: Expose region extent
+ information in sysfs
+Message-ID: <20240823181734.000022bb@Huawei.com>
+In-Reply-To: <66c7faba90d0a_1719d294b@iweiny-mobl.notmuch>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+	<20240816-dcd-type2-upstream-v3-19-7c9b96cba6d7@intel.com>
+	<63cfd343-763e-4f7a-a1cc-857927a7282c@intel.com>
+	<66c7faba90d0a_1719d294b@iweiny-mobl.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821132754.GC6387@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 14:27 Wed 21 Aug     , Simon Horman wrote:
-> On Tue, Aug 20, 2024 at 04:36:09PM +0200, Andrea della Porta wrote:
-> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
-> > Add minimum support for the gpio only portion. The driver is in
-> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
-> > support where the gpio part can be seen as an addition.
+On Thu, 22 Aug 2024 21:58:02 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
+
+> Dave Jiang wrote:
 > > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > 
+> > On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:  
+> > > From: Navneet Singh <navneet.singh@intel.com>
+> > > 
+> > > Extent information can be helpful to the user to coordinate memory usage
+> > > with the external orchestrator and FM.
+> > > 
+> > > Expose the details of region extents by creating the following
+> > > sysfs entries.
+> > > 
+> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y
+> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
+> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/length
+> > >         /sys/bus/cxl/devices/dax_regionX/extentX.Y/tag
+> > > 
+> > > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> > > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > ---
+> > > Changes:
+> > > [iweiny: split this out]
+> > > [Jonathan: add documentation for extent sysfs]
+> > > [Jonathan/djbw: s/label/tag]
+> > > [Jonathan/djbw: treat tag as uuid]
+> > > [djbw: use __ATTRIBUTE_GROUPS]
+> > > [djbw: make tag invisible if it is empty]
+> > > [djbw/iweiny: use conventional id names for extents; extentX.Y]
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-bus-cxl | 13 ++++++++
+> > >  drivers/cxl/core/extent.c               | 58 +++++++++++++++++++++++++++++++++
+> > >  2 files changed, 71 insertions(+)
+> > > 
+> > > diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> > > index 3a5ee88e551b..e97e6a73c960 100644
+> > > --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> > > +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> > > @@ -599,3 +599,16 @@ Description:
+> > >  		See Documentation/ABI/stable/sysfs-devices-node. access0 provides
+> > >  		the number to the closest initiator and access1 provides the
+> > >  		number to the closest CPU.
+> > > +
+> > > +What:		/sys/bus/cxl/devices/dax_regionX/extentX.Y/offset
+> > > +		/sys/bus/cxl/devices/dax_regionX/extentX.Y/length
+> > > +		/sys/bus/cxl/devices/dax_regionX/extentX.Y/tag  
+> > 
+> > I wonder consider an entry for each with their own descriptions, which seems to be the standard practice.  
 > 
-> ...
+> :-/  Except kind of for the access'.
 > 
-> > diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+> What:           /sys/bus/cxl/devices/regionZ/accessY/read_bandwidth
+>                 /sys/bus/cxl/devices/regionZ/accessY/write_banwidth
 > 
-> ...
+> What:           /sys/bus/cxl/devices/regionZ/accessY/read_latency
+>                 /sys/bus/cxl/devices/regionZ/accessY/write_latency
 > 
-> > +const struct rp1_iobank_desc rp1_iobanks[RP1_NUM_BANKS] = {
-> > +	/*         gpio   inte    ints     rio    pads */
-> > +	{  0, 28, 0x0000, 0x011c, 0x0124, 0x0000, 0x0004 },
-> > +	{ 28,  6, 0x4000, 0x411c, 0x4124, 0x4000, 0x4004 },
-> > +	{ 34, 20, 0x8000, 0x811c, 0x8124, 0x8000, 0x8004 },
-> > +};
-> 
-> rp1_iobanks seems to only be used in this file.
-> If so, it should be static.
+> But I think you have a point.
 
-Fixed, thanks.
+It's a balance between complexity and repetition.
+
+E.g. https://elixir.bootlin.com/linux/v6.11-rc4/source/Documentation/ABI/testing/sysfs-bus-iio#L427
+is one of these files I know far too well. That would be a lot
+of very boring repetition and that doc is long enough without breaking them up.
+
+Here there are only 3 and a good bit of description differs so
+probably good to split up.
+
+Less so for bandwidth and latency cases.
+
+Jonathan
 
 > 
-> Flagged by Sparse.
+> Ira
 > 
-> ...
+> > 
+> > DJ
+> >   
+> 
+> [snip]
+> 
+
 
