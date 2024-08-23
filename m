@@ -1,158 +1,245 @@
-Return-Path: <linux-kernel+bounces-299684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0D595D89F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:42:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C5C95D8A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EF01C2190F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5D9B2202F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADF71C8225;
-	Fri, 23 Aug 2024 21:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D1E1C825E;
+	Fri, 23 Aug 2024 21:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KJQmm6eV"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="hAq6NSUF"
+Received: from pv50p00im-ztdg10012101.me.com (pv50p00im-ztdg10012101.me.com [17.58.6.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4D1953BA
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 21:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1932F139D00
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 21:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724449365; cv=none; b=azjSgwEl71poo3LKvgmp3ylrWa6Sh9aiCEle10GXUiThYkW8R92ZLmVJADWZhFxRcgsB7LFhHV55k3jNEaUeo+z54MwIgDgoeIMH6igEKHucD88da+YfubEk65dvdlPh7dKKJwzm9oSqaGpDxYU1EVYtHzo+6egEFt/LueT3/qA=
+	t=1724449552; cv=none; b=cxyWr3dfPWEZqSteAW8IW75T0Q+C13qx0VYPwXbXUOcLpsOzs2IbCKSOVT08rObk/IUo8Zp0ugw6InwdtZ1M6e8pNiEA47Yhv1kgPd0FH2TjU8Gxx7YPEbdIixM0KgmuICCzNmz5vXqSdzRVqLUvVF8wrcZYn1h4/kdsbD6rCdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724449365; c=relaxed/simple;
-	bh=XSXJzOwEhN3LBd9q7srfwXbleUbDiNHKgOWgEYrFn0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WTYSL0K6WIEKplUatF4DTzyg9dz+mUrIIGRe001K0+8nEb+cAidnttqdLH5IEwfYrESAI9ic/zPpx+UE0iZawVURaLMyftSV1aJ0AnN3vOQp0hpI3Pv/vutFqpNXPlJtzZtVQNUb/QRPtPx8dgdSq/dQdwryM4iMqFa0daRTFBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KJQmm6eV; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201f2b7fe0dso23966145ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:42:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724449363; x=1725054163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AjvArJdA06PbNXPgnOry3Qq7eKu1y9KpKSsxjlMv9Wc=;
-        b=KJQmm6eVhwVEQZ8DNVvsahDCtoCCXSaAKsahqI3S/FiBwuDAEMF/4x7Q5ACmNUF4g/
-         gCbNNyEB6VS9ixV6LMexTg7UtYDX5YWpdTfBXIccYPUs8uqPB9Jse1BUQ0bLRdRGZfNQ
-         rdJRE/bxShPiJHia4hsDRkd1ZP80pJ3oTdOuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724449363; x=1725054163;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AjvArJdA06PbNXPgnOry3Qq7eKu1y9KpKSsxjlMv9Wc=;
-        b=vitYKa2oy2wXGOpaIPzJM8cJMZsH1Y82uCHKOJeD2FZO/n3CVmMfaGL1ogCPbvZNKT
-         tsMtyoP9jXkdMbECfoS7/ncbbXEYrMzgJFLNplvJ2z4i2teUoYPGkuhUVZoRET3yFCL6
-         RCYZKmxDYCrXRbkVJ/2CMFWttoKaTprlqqdXqrkn3xG43SHXxUtMdil/PdLovXVmkkFd
-         1PRdmYK/LIYXlIyURq2Bt2KeznesRH58bmuQrFhJeiefyyPRt24TxxQvvukzTWC9qlKp
-         tN+CiHBXqb25pkkdRJeG1J770zJSq/qTJjFtNGIWHOl51ZWJKgiTtWcD/QtHQi974nAr
-         aeVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9IipWuEUOy/sUl21e86c59+LeqzK33V961l0dreHbeKgpl3fM+4rdcr3mHd/UTZVdZd72Qz+i4Zo9hec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWB7sAFCFzcktth4RTfktlh58lZNm2c+rLLBaxFdT2M4lGs/eo
-	SIBkj2WQRuJO0kwHGm1LuXwKinSqvwqCBZa5MmZperf7drvj2BuQC4jAuuiqQA==
-X-Google-Smtp-Source: AGHT+IGx6tc8HURRUBmfNKOOVhPbKyAJLPo58Lxm+iRK79rRI6Fo2cVzD+Gs5a92IWu63jXL+kWA/Q==
-X-Received: by 2002:a17:903:22c1:b0:1fb:7c7f:6458 with SMTP id d9443c01a7336-2039e4b4bcemr38350745ad.32.1724449363238;
-        Fri, 23 Aug 2024 14:42:43 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:9d43:7af7:9970:8219])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2038560975csm32500335ad.194.2024.08.23.14.42.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 14:42:42 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>,
-	Brian Norris <briannorris@chromium.org>,
-	stable@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jon Lin <jon.lin@rock-chips.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	shengfei Xu <xsf@rock-chips.com>
-Subject: [PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM handling
-Date: Fri, 23 Aug 2024 14:41:56 -0700
-Message-ID: <20240823214235.1718769-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+	s=arc-20240116; t=1724449552; c=relaxed/simple;
+	bh=E2PfdCUWQrf2uDP/LGPSZ+Tax04937a7xG2LwQ2/Qt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaaE1wzOi8eQPW0djumdLTGWXU6MgPa6Qp5kVYMmciHkM5JjaiIIg+QCs3hcdXNGpIoXWUUDm0RWgnHZ/2mQhw0qGoGSfEKU9j0pyFq2hWyH21v99lHGztizWIWtq05RiigJVTW4QSJT2vtbkxr8WhDeLlFXnDGYT9u+xQJ7K/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=hAq6NSUF; arc=none smtp.client-ip=17.58.6.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724449549;
+	bh=DZT9D0YL+MfAjwfIKWBNhTFYdAQCL09UUBbtbCTuoh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=hAq6NSUF5jOF4WXIIC1s1EIKI8wgKLkEYvh7umYCdZ/XRzo2b93E8q86oKqzvF5sd
+	 DQTNxPNHnAbmLfzk33IzhGgrapIqe/fZjn0fh/LRiD2Vg/Ff5v5VzRQdGy4hI59INn
+	 MP3iXSL56f+96Bv48hP+RoLtHyAnJH2r/7ELdZZnXBTbsE/nmq+Rqo2+nbxLD8+Uxt
+	 gJru1GCaaJMa5gyvk7XU7whC58FvNzd0muIIvzLWgQ+XQnMAyY7SbEINgtlus22GVa
+	 MtD4sCegmgH8Tp1bdEcOVo/onBiL8mCt79modaONriIr9mslBbj2EQ/X2jhci5mY8d
+	 UnB5qkME5FEhQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10012101.me.com (Postfix) with ESMTPSA id CE61B740123;
+	Fri, 23 Aug 2024 21:45:42 +0000 (UTC)
+Message-ID: <dcddaabd-8a8a-4ccc-ba38-02088a4134a4@icloud.com>
+Date: Sat, 24 Aug 2024 05:45:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] driver core: Make parameter check consistent for
+ API cluster device_(for_each|find)_child()
+To: Ira Weiny <ira.weiny@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Davidlohr Bueso
+ <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
+ <20240815-const_dfc_prepare-v2-1-8316b87b8ff9@quicinc.com>
+ <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
+ <2b9fc661-e061-4699-861b-39af8bf84359@icloud.com>
+ <66c4a4e15302b_2f02452943@iweiny-mobl.notmuch>
+ <e30eac3b-4244-460d-ab0b-baaa659999fe@icloud.com>
+ <66c8c4a0633e9_a87cd294f6@iweiny-mobl.notmuch>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <66c8c4a0633e9_a87cd294f6@iweiny-mobl.notmuch>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: f32q2jKvmmVMqFEqfpaAeRCwDZQtvNnD
+X-Proofpoint-GUID: f32q2jKvmmVMqFEqfpaAeRCwDZQtvNnD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 malwarescore=0
+ adultscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408230162
 
-Commit e882575efc77 ("spi: rockchip: Suspend and resume the bus during
-NOIRQ_SYSTEM_SLEEP_PM ops") stopped respecting runtime PM status and
-simply disabled clocks unconditionally when suspending the system. This
-causes problems when the device is already runtime suspended when we go
-to sleep -- in which case we double-disable clocks and produce a
-WARNing.
+On 2024/8/24 01:19, Ira Weiny wrote:
+> Zijun Hu wrote:
+>> On 2024/8/20 22:14, Ira Weiny wrote:
+>>> Zijun Hu wrote:
+>>>> On 2024/8/20 20:53, Ira Weiny wrote:
+>>>>> Zijun Hu wrote:
+>>>>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>>>>
+>>>>>> The following API cluster takes the same type parameter list, but do not
+>>>>>> have consistent parameter check as shown below.
+>>>>>>
+>>>>>> device_for_each_child(struct device *parent, ...)  // check (!parent->p)
+>>>>>> device_for_each_child_reverse(struct device *parent, ...) // same as above
+>>>>>> device_find_child(struct device *parent, ...)      // check (!parent)
+>>>>>>
+>>>>>
+>>>>> Seems reasonable.
+>>>>>
+>>>>> What about device_find_child_by_name()?
+>>>>>
+>>>>
+>>>> Plan to simplify this API implementation by * atomic * API
+>>>> device_find_child() as following:
+>>>>
+>>>> https://lore.kernel.org/all/20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com
+>>>> struct device *device_find_child_by_name(struct device *parent,
+>>>>  					 const char *name)
+>>>> {
+>>>> 	return device_find_child(parent, name, device_match_name);
+>>>> }
+>>>
+>>> Ok.  Thanks.
+>>>
+>>>>
+>>>>>> Fixed by using consistent check (!parent || !parent->p) for the cluster.
+>>>>>>
+>>>>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>>>> ---
+>>>>>>  drivers/base/core.c | 6 +++---
+>>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>>>>>> index 1688e76cb64b..b1dd8c5590dc 100644
+>>>>>> --- a/drivers/base/core.c
+>>>>>> +++ b/drivers/base/core.c
+>>>>>> @@ -4004,7 +4004,7 @@ int device_for_each_child(struct device *parent, void *data,
+>>>>>>  	struct device *child;
+>>>>>>  	int error = 0;
+>>>>>>  
+>>>>>> -	if (!parent->p)
+>>>>>> +	if (!parent || !parent->p)
+>>>>>>  		return 0;
+>>>>>>  
+>>>>>>  	klist_iter_init(&parent->p->klist_children, &i);
+>>>>>> @@ -4034,7 +4034,7 @@ int device_for_each_child_reverse(struct device *parent, void *data,
+>>>>>>  	struct device *child;
+>>>>>>  	int error = 0;
+>>>>>>  
+>>>>>> -	if (!parent->p)
+>>>>>> +	if (!parent || !parent->p)
+>>>>>>  		return 0;
+>>>>>>  
+>>>>>>  	klist_iter_init(&parent->p->klist_children, &i);
+>>>>>> @@ -4068,7 +4068,7 @@ struct device *device_find_child(struct device *parent, void *data,
+>>>>>>  	struct klist_iter i;
+>>>>>>  	struct device *child;
+>>>>>>  
+>>>>>> -	if (!parent)
+>>>>>> +	if (!parent || !parent->p)
+>>>>>
+>>>>> Perhaps this was just a typo which should have been.
+>>>>>
+>>>>> 	if (!parent->p)
+>>>>> ?
+>>>>>
+>>>> maybe, but the following device_find_child_by_name() also use (!parent).
+>>>>
+>>>>> I think there is an expectation that none of these are called with a NULL
+>>>>> parent.
+>>>>>
+>>>>
+>>>> this patch aim is to make these atomic APIs have consistent checks as
+>>>> far as possible, that will make other patches within this series more
+>>>> acceptable.
+>>>>
+>>>> i combine two checks to (!parent || !parent->p) since i did not know
+>>>> which is better.
+>>>
+>>> I'm not entirely clear either.  But checking the member p makes more sense
+>>> to me than the parent parameter.  I would expect that iterating the
+>>> children of a device must be done only when the parent device is not NULL.
+>>>
+>>> parent->p is more subtle.  I'm unclear why the API would need to allow
+>>> that to run without error.
+>>>
+>> i prefer (!parent || !parent->p) with below reasons:
+>>
+>> 1)
+>> original API authors have such concern that either (!parent) or
+>> (!parent->p) maybe happen since they are checked, all their concerns
+>> can be covered by (!parent || !parent->p).
+>>
+>> 2)
+>> It is the more robust than either (!parent) or (!parent->p)
+>>
+>> 3)
+>> it also does not have any negative effect.
+> 
+> It adds code and instructions to all paths calling these functions.
+> 
+such slight impacts can be ignored if a machine run linux OS.
 
-Switch back to pm_runtime_force_{suspend,resume}(), because that still
-seems like the right thing to do, and the aforementioned commit makes no
-explanation why it stopped using it.
+right?
 
-Also, refactor some of the resume() error handling, because it's not
-actually a good idea to re-disable clocks on failure.
+> What is the reason to allow?
+> 
+1)
+it allow to use device_for_each_child() without misgiving.
 
-Fixes: e882575efc77 ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
-Cc: <stable@vger.kernel.org>
-Reported-by: "Ondřej Jirman" <megi@xff.cz>
-Closes: https://lore.kernel.org/lkml/20220621154218.sau54jeij4bunf56@core/
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
+2)
+there are many many existing APIs which have similar checks such as
+get_device(), kfree()...
 
- drivers/spi/spi-rockchip.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+> void foo() {
+> ...
+> 	device_for_each_child(NULL, ...);
+> ...
+> }
+> 
+> What are we finding the child of in that case?
+>
+similar usage as device_find_child(NULL, ...) which have check (!parent).
 
-diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index e1ecd96c7858..f30af4316b8b 100644
---- a/drivers/spi/spi-rockchip.c
-+++ b/drivers/spi/spi-rockchip.c
-@@ -951,8 +951,11 @@ static int rockchip_spi_suspend(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- 
--	clk_disable_unprepare(rs->spiclk);
--	clk_disable_unprepare(rs->apb_pclk);
-+	ret = pm_runtime_force_suspend(dev);
-+	if (ret < 0) {
-+		spi_controller_resume(ctlr);
-+		return ret;
-+	}
- 
- 	pinctrl_pm_select_sleep_state(dev);
- 
-@@ -967,21 +970,11 @@ static int rockchip_spi_resume(struct device *dev)
- 
- 	pinctrl_pm_select_default_state(dev);
- 
--	ret = clk_prepare_enable(rs->apb_pclk);
-+	ret = pm_runtime_force_resume(dev);
- 	if (ret < 0)
- 		return ret;
- 
--	ret = clk_prepare_enable(rs->spiclk);
--	if (ret < 0)
--		clk_disable_unprepare(rs->apb_pclk);
--
--	ret = spi_controller_resume(ctlr);
--	if (ret < 0) {
--		clk_disable_unprepare(rs->spiclk);
--		clk_disable_unprepare(rs->apb_pclk);
--	}
--
--	return 0;
-+	return spi_controller_resume(ctlr);
- }
- #endif /* CONFIG_PM_SLEEP */
- 
--- 
-2.46.0.295.g3b9ea8a38a-goog
+both device_for_each_child() and device_find_child() iterates over its
+child.
+
+original author's concern (!parent->p) for device_for_each_child() is
+applicable for the other.
+
+original author's concern (!parent) for device_find_child() is
+applicable for the other as well.
+
+so i use (!parent || !parent->p).
+
+> Ira
+> 
+>>
+>>> Ira
+>>
+> 
+> 
 
 
