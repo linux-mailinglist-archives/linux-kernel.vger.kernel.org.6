@@ -1,267 +1,115 @@
-Return-Path: <linux-kernel+bounces-299497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A4D95D58F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0165295D591
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434331F23AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3439F1C224CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60551922E0;
-	Fri, 23 Aug 2024 18:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142E61922F0;
+	Fri, 23 Aug 2024 18:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jV7IOqWU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TG2CnnXP"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C492D7B8;
-	Fri, 23 Aug 2024 18:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA22718BC30
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724439180; cv=none; b=XuJAuiMP55PR7eA70TrNiqtOKGZ4mp6mFIOe0yTAoPFkMU8R6YGuRBOjQoMKwTJH8mWG1tINKh0yquT2sxA1wnrlTGk6PX9kC6+4Z/WV2Fgvfqs2NdpnnJrfudJHZVWAFVdh7EZuMwuxzMMlg+o5/iempGk/MQLXrWiG2JHnWEg=
+	t=1724439231; cv=none; b=E/81A/zLQC1kuL0xTW9cVQoobp87geL5bjzFDmgxUZTmNnxMsmXF8u9QU77irsfr2/Oacbv+ASQr9hckDmVspGB2NBEMKQe4EXVYDCpZa+VlIY6Faffeqd3JMeFzIl8EJmw3UdFmuAjkO/3K6BkGShcTdS6+TGCQaBT6qWd3ALg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724439180; c=relaxed/simple;
-	bh=a5OnLJfANYSC5UrYhkqe36Xaupf77ZFrSR4vNWZCGsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JHrLaRaOctOwbVAWgN6T1plSqcrhfavY1rREr+FL2sWnPYHvxrqWsGvb320FH5Ukb7FxO3Teb5jZLt6KiYy223PLmsrsdeQ8xbzNl9iGApP3leZJZTOwepuPZ2z8STisFfyIsAAV1e+55u5wnZPhQqPO721+eWqgP9nXpZGrKjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jV7IOqWU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DBCC32786;
-	Fri, 23 Aug 2024 18:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724439179;
-	bh=a5OnLJfANYSC5UrYhkqe36Xaupf77ZFrSR4vNWZCGsk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jV7IOqWUhN3S57Hw2VodnlilfntQODqmLNXT2F6vAfpxhqc/OKBjyuS+MUtg07PWw
-	 wCrfTEm069K9fbyvC8GU7IV0tv267kxCPYuWAnv9DbtYiNxG4905N3Qm42AH49se27
-	 N6gr4VJnrwNmsFUcMQ+5hikSjiC9Ul1uDrW4FfD4ioa8TN2lvefMwPg31TUQtvwzIG
-	 vXUzCe1VQ6YIMwZEASGpcWRFLMDtCR1QEYxg0UZULSBMkLfOkDn3rWnNpVHh3fxr5K
-	 +wvKHrBJR2GT7SFrf2kT+BFyas0ke+MXBYRWrAT4ZguVCHNRsuj2em9RhzMJp9Xe+C
-	 xI2yxfovXv8kA==
-Date: Fri, 23 Aug 2024 19:52:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH 1/7] iio: adc: ad7606: add 'bits' parameter to channels
- macros
-Message-ID: <20240823195251.032c0c22@jic23-huawei>
-In-Reply-To: <20240819064721.91494-2-aardelean@baylibre.com>
-References: <20240819064721.91494-1-aardelean@baylibre.com>
-	<20240819064721.91494-2-aardelean@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724439231; c=relaxed/simple;
+	bh=I0qyn/icG9D6L2FLHgV3ipU2mv5QmM8/4/jsHKYN5sU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=G4X31at3id1eg2Ha8OGf4m3o1G5sA0kTAkOe23BEKrIsKkgpgddBuJ3Nat5nbzizYLc4OgvnSl/ke8k69bbgPZCSbjl5/NPVtSJHvuOlQZUQVTKb3hcD4Ce4905JA21AAvkDNkN50jBIaaPVl35EYTqkZ1En+9c5oPUWZW+ZcwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TG2CnnXP; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e165fc5d94fso3783655276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724439229; x=1725044029; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Z5atdIZMHIshod5y/lRNkXHga0YOPYF7YnbQxHMFSWU=;
+        b=TG2CnnXPHVBqWB8VVPsq3OUA9V30YNKqlBk5P9E71YH7uOgltyI4iArJ9/T+jU5EGY
+         Xpk+qwqvahVb7MYJ1/2uL2BTby5tAi4CN4uI2o+RI1UZ2/lNueKVFjWPhODHJD6WoMJr
+         L/9XFDJEOdCzuC4VC8vv0zxDJ9UREFU0fbPeHxwqnFCUOY4p+U7gvZEHD2H2XCnTfAxT
+         DyUZCq77CaeFDqm+AgYhUG1qmPOdf0FlUsO+wTOjhr2iH437bBfAwbOaYGR4FDXhi6Ii
+         Ljdmxo1CMqGiZCiZgQSQrEwAZsgU5AytMzKLjg7U6u9aeHgzefaGT/+1Uf1VqOBSHEHs
+         L41A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724439229; x=1725044029;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5atdIZMHIshod5y/lRNkXHga0YOPYF7YnbQxHMFSWU=;
+        b=PjSAU55sitDTCD+4Zodrxm0sgHO9xf9zfQ3yBVhauWeasEcp+QkClRhqmEU67ph33w
+         Pmj1OffiVe1po2+U0uDQwMkbU+hOj1T36IIW3ZoFbCV0K9XGQZfEDgEhT3dRasgwKzlu
+         yAu9xTrn4sQSS3wP4gwUGoov9SfMB54ZOo4lM8BZRBB/CWxYGWyqK792RSG9EwxwExm7
+         61nYWnQFRjxmSa8RiVrRR2ZBBl1Wh+8sIbH6Xf9mnfEpNI0EPHH6wlg+Ktc0Hcf8eyvn
+         jpJJ5cqKIQVWpYGJPCPMN1eMnm4WwmvLTUiZ7rHPd5RhabLD3V/5nvlf/bs1TXjky8u+
+         LDFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmO+s0V7HecXzEoNxDgUsDJ81bjBXYllXqV4goXdy8Gk4DL96IG0A0OO/iYS3zaZN4dDyrXSLBlry5C8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA0fBOcW4H5GJ4MmA1wP+Q+FyeIMAeCb/+yDvdZkZJMtIHNHEV
+	a9iOm6mof4RvUEecvKrN5mNIBGE3tDCH2tTm8qI8dHPhSbrcSEsPJzjk9TRubHi0S2xmCXC6v1G
+	3+EwwjuMRbw==
+X-Google-Smtp-Source: AGHT+IHI3MGKzFkEWdRAldfnlQ7Tp3k1gDJgOQ3i3BZpeAA1GjGuMOyrHUJ90/DFmqXbTOCcSgmh3QpVVuZgAw==
+X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:f3:525d:ac13:60e1])
+ (user=jmattson job=sendgmr) by 2002:a25:8450:0:b0:e0e:a784:2957 with SMTP id
+ 3f1490d57ef6-e17a83a77a2mr47383276.1.1724439228784; Fri, 23 Aug 2024 11:53:48
+ -0700 (PDT)
+Date: Fri, 23 Aug 2024 11:53:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+Message-ID: <20240823185323.2563194-1-jmattson@google.com>
+Subject: [PATCH v3 0/4] Distinguish between variants of IBPB
+From: Jim Mattson <jmattson@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 19 Aug 2024 09:47:11 +0300
-Alexandru Ardelean <aardelean@baylibre.com> wrote:
+Prior to Zen4, AMD's IBPB did not flush the RAS (or, in Intel
+terminology, the RSB). Hence, the older version of AMD's IBPB was not
+equivalent to Intel's IBPB. However, KVM has been treating them as
+equivalent, synthesizing Intel's CPUID.(EAX=7,ECX=0):EDX[bit 26] on any
+platform that supports the synthetic features X86_FEATURE_IBPB and
+X86_FEATURE_IBRS.
 
-> There are some newer additions to the AD7606 family, which support 18 bit
-> precision.
+Equivalence also requires a previously ignored feature on the AMD side,
+CPUID Fn8000_0008_EBX[IBPB_RET], which is enumerated on Zen4.
 
-Hi Alexandru,
+v3: Pass through IBPB_RET from hardware to userspace. [Tom]
+    Derive AMD_IBPB from X86_FEATURE_SPEC_CTRL rather than
+    X86_FEATURE_IBPB. [Tom]
+    Clarify semantics of X86_FEATURE_IBPB.
 
-> Up until now, all chips were 16 bit.
-> 
-> This change adds a 'bits' parameter to the AD760X_CHANNEL macro and renames
-> 'ad7606_channels' -> 'ad7606_channels_16bit' for the current devices.
-> 
-> The AD7606_CHANNEL_PER_CHAN_SCALE() macro is also introduced, as it will
-> also require that the number of bits be correctly adjusted (for 18 bit
-> parts).
-Where is that introduced?  There is a _SW_ variant of one macro that isn't
-mentioned...
+v2: Use IBPB_RET to identify semantic equality. [Venkatesh]
 
-J
-> 
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> ---
->  drivers/iio/adc/ad7606.c     | 58 ++++++++++++++++++------------------
->  drivers/iio/adc/ad7606.h     | 18 ++++++-----
->  drivers/iio/adc/ad7606_spi.c | 16 +++++-----
->  3 files changed, 47 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index 539e4a8621fe..dba1f28782e4 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -333,16 +333,16 @@ static const struct iio_chan_spec ad7605_channels[] = {
->  	AD7605_CHANNEL(3),
->  };
->  
-> -static const struct iio_chan_spec ad7606_channels[] = {
-> +static const struct iio_chan_spec ad7606_channels_16bit[] = {
->  	IIO_CHAN_SOFT_TIMESTAMP(8),
-> -	AD7606_CHANNEL(0),
-> -	AD7606_CHANNEL(1),
-> -	AD7606_CHANNEL(2),
-> -	AD7606_CHANNEL(3),
-> -	AD7606_CHANNEL(4),
-> -	AD7606_CHANNEL(5),
-> -	AD7606_CHANNEL(6),
-> -	AD7606_CHANNEL(7),
-> +	AD7606_CHANNEL(0, 16),
-> +	AD7606_CHANNEL(1, 16),
-> +	AD7606_CHANNEL(2, 16),
-> +	AD7606_CHANNEL(3, 16),
-> +	AD7606_CHANNEL(4, 16),
-> +	AD7606_CHANNEL(5, 16),
-> +	AD7606_CHANNEL(6, 16),
-> +	AD7606_CHANNEL(7, 16),
->  };
->  
->  /*
-> @@ -357,22 +357,22 @@ static const struct iio_chan_spec ad7606_channels[] = {
->   */
->  static const struct iio_chan_spec ad7616_channels[] = {
->  	IIO_CHAN_SOFT_TIMESTAMP(16),
-> -	AD7606_CHANNEL(0),
-> -	AD7606_CHANNEL(1),
-> -	AD7606_CHANNEL(2),
-> -	AD7606_CHANNEL(3),
-> -	AD7606_CHANNEL(4),
-> -	AD7606_CHANNEL(5),
-> -	AD7606_CHANNEL(6),
-> -	AD7606_CHANNEL(7),
-> -	AD7606_CHANNEL(8),
-> -	AD7606_CHANNEL(9),
-> -	AD7606_CHANNEL(10),
-> -	AD7606_CHANNEL(11),
-> -	AD7606_CHANNEL(12),
-> -	AD7606_CHANNEL(13),
-> -	AD7606_CHANNEL(14),
-> -	AD7606_CHANNEL(15),
-> +	AD7606_CHANNEL(0, 16),
-> +	AD7606_CHANNEL(1, 16),
-> +	AD7606_CHANNEL(2, 16),
-> +	AD7606_CHANNEL(3, 16),
-> +	AD7606_CHANNEL(4, 16),
-> +	AD7606_CHANNEL(5, 16),
-> +	AD7606_CHANNEL(6, 16),
-> +	AD7606_CHANNEL(7, 16),
-> +	AD7606_CHANNEL(8, 16),
-> +	AD7606_CHANNEL(9, 16),
-> +	AD7606_CHANNEL(10, 16),
-> +	AD7606_CHANNEL(11, 16),
-> +	AD7606_CHANNEL(12, 16),
-> +	AD7606_CHANNEL(13, 16),
-> +	AD7606_CHANNEL(14, 16),
-> +	AD7606_CHANNEL(15, 16),
->  };
->  
->  static const struct ad7606_chip_info ad7606_chip_info_tbl[] = {
-> @@ -382,25 +382,25 @@ static const struct ad7606_chip_info ad7606_chip_info_tbl[] = {
->  		.num_channels = 5,
->  	},
->  	[ID_AD7606_8] = {
-> -		.channels = ad7606_channels,
-> +		.channels = ad7606_channels_16bit,
->  		.num_channels = 9,
->  		.oversampling_avail = ad7606_oversampling_avail,
->  		.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
->  	},
->  	[ID_AD7606_6] = {
-> -		.channels = ad7606_channels,
-> +		.channels = ad7606_channels_16bit,
->  		.num_channels = 7,
->  		.oversampling_avail = ad7606_oversampling_avail,
->  		.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
->  	},
->  	[ID_AD7606_4] = {
-> -		.channels = ad7606_channels,
-> +		.channels = ad7606_channels_16bit,
->  		.num_channels = 5,
->  		.oversampling_avail = ad7606_oversampling_avail,
->  		.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
->  	},
->  	[ID_AD7606B] = {
-> -		.channels = ad7606_channels,
-> +		.channels = ad7606_channels_16bit,
->  		.num_channels = 9,
->  		.oversampling_avail = ad7606_oversampling_avail,
->  		.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
-> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> index 0c6a88cc4695..771121350f98 100644
-> --- a/drivers/iio/adc/ad7606.h
-> +++ b/drivers/iio/adc/ad7606.h
-> @@ -8,7 +8,7 @@
->  #ifndef IIO_ADC_AD7606_H_
->  #define IIO_ADC_AD7606_H_
->  
-> -#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all) {	\
-> +#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {	\
->  		.type = IIO_VOLTAGE,				\
->  		.indexed = 1,					\
->  		.channel = num,					\
-> @@ -19,24 +19,26 @@
->  		.scan_index = num,				\
->  		.scan_type = {					\
->  			.sign = 's',				\
-> -			.realbits = 16,				\
-> -			.storagebits = 16,			\
-> +			.realbits = (bits),			\
-> +			.storagebits = (bits),			\
->  			.endianness = IIO_CPU,			\
->  		},						\
->  }
->  
->  #define AD7605_CHANNEL(num)				\
->  	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
-> -		BIT(IIO_CHAN_INFO_SCALE), 0)
-> +		BIT(IIO_CHAN_INFO_SCALE), 0, 16)
->  
-> -#define AD7606_CHANNEL(num)				\
-> +#define AD7606_CHANNEL(num, bits)			\
->  	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
->  		BIT(IIO_CHAN_INFO_SCALE),		\
-> -		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
-> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
->  
-> -#define AD7616_CHANNEL(num)	\
-> +#define AD7606_SW_CHANNEL(num, bits)	\
->  	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),\
-> -		0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
-> +		0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
-> +
-> +#define AD7616_CHANNEL(num)	AD7606_SW_CHANNEL(num, 16)
->  
->  /**
->   * struct ad7606_chip_info - chip specific information
-> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-> index 287a0591533b..dd0075c97c24 100644
-> --- a/drivers/iio/adc/ad7606_spi.c
-> +++ b/drivers/iio/adc/ad7606_spi.c
-> @@ -67,14 +67,14 @@ static const struct iio_chan_spec ad7616_sw_channels[] = {
->  
->  static const struct iio_chan_spec ad7606b_sw_channels[] = {
->  	IIO_CHAN_SOFT_TIMESTAMP(8),
-> -	AD7616_CHANNEL(0),
-> -	AD7616_CHANNEL(1),
-> -	AD7616_CHANNEL(2),
-> -	AD7616_CHANNEL(3),
-> -	AD7616_CHANNEL(4),
-> -	AD7616_CHANNEL(5),
-> -	AD7616_CHANNEL(6),
-> -	AD7616_CHANNEL(7),
-> +	AD7606_SW_CHANNEL(0, 16),
-> +	AD7606_SW_CHANNEL(1, 16),
-> +	AD7606_SW_CHANNEL(2, 16),
-> +	AD7606_SW_CHANNEL(3, 16),
-> +	AD7606_SW_CHANNEL(4, 16),
-> +	AD7606_SW_CHANNEL(5, 16),
-> +	AD7606_SW_CHANNEL(6, 16),
-> +	AD7606_SW_CHANNEL(7, 16),
->  };
->  
->  static const unsigned int ad7606B_oversampling_avail[9] = {
+Jim Mattson (4):
+  x86/cpufeatures: Clarify semantics of X86_FEATURE_IBPB
+  x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+  KVM: x86: Advertise AMD_IBPB_RET to userspace
+  KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+
+ arch/x86/include/asm/cpufeatures.h | 3 ++-
+ arch/x86/kvm/cpuid.c               | 8 ++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+-- 
+2.46.0.295.g3b9ea8a38a-goog
 
 
