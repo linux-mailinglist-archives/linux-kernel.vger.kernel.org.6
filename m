@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-298795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED9E95CB91
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:40:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E0E95CB93
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3B71C20CFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:40:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECF33B2573D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B37F16B391;
-	Fri, 23 Aug 2024 11:40:40 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88021D52D;
-	Fri, 23 Aug 2024 11:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1756018757C;
+	Fri, 23 Aug 2024 11:41:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA17153800;
+	Fri, 23 Aug 2024 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724413239; cv=none; b=CTDcNxqfcW2ksGobjVcUr0Hxo/LUFEbaJRYsnTbPvZ9T5IwJl61kjDFRrl4cwXyhuL9uS621ki6kZM/mhprUpYNQwxkLxSgX75qqLiWQv3Tw6Z2ZIEEx5jXCBnZtLeXNqRcYEm8DoXbn4EtgVa8HP2CE2+DF9hjAzTUNj7+tfs8=
+	t=1724413264; cv=none; b=Ju94DcU7FK3HIUMwbhHrg9nSxaXI5y6Lz/2CcWo9XLBb0WIUmD6WTKHZGs4lMd5njmgCaJWvOVIA1C8Zvk9aHAZnVqG5gwInzgwPuha3zLaWj6LRl3QfCj3Au7TJKXLYuKdYcB+E3tTn5ixnqmWLxYnPN1Nj4QlIIlc/6enCMuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724413239; c=relaxed/simple;
-	bh=kao6Pa3wdh+gbXPN3x0fWVZ9uW3JLbRwfjk1XlTuA00=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=spO3kkRMgOEruV+jzTNKPFVPceEZg0wpNb04AhtU0qfguElIFdWsLzFuOw6j4gOJFPow/q5qCpxgUFRU4xemLLpggS6TXocISdq1gaDFEiIh4HbNOv8/GoDRj1wA3EQHQG5I1XHV5q9rYgg/w6Nz1fcDQT0IFCOPpD77cmXKb7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqyhd71Sxz6K6j6;
-	Fri, 23 Aug 2024 19:36:49 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E4E661400DB;
-	Fri, 23 Aug 2024 19:40:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 12:40:34 +0100
-Date: Fri, 23 Aug 2024 12:40:33 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Santosh Shilimkar <ssantosh@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
-	<tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Michal Simek <michal.simek@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] memory: emif: simplify locking with guard()
-Message-ID: <20240823124033.00007f76@Huawei.com>
-In-Reply-To: <20240823-b4-cleanup-h-guard-v1-2-01668915bd55@linaro.org>
-References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
-	<20240823-b4-cleanup-h-guard-v1-2-01668915bd55@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724413264; c=relaxed/simple;
+	bh=LUhOrVYfKT0isygGSeX4L4NapNsHu0dSaJKHucmj5cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ek4lCnWplCCDltvON4LUGdR8KFfyabMG7SyXccrZCIUlujYe8J1/687bTgHv4E6s5xTYSdDMvZjPuDT1GtCVHqGlGUBOPXdrrR7mGg/zUUGshI34GnHvOztpB6CYBrd+9w7UG/j1DYtxfS86USKvQZ1g13WzvrZgPVbEj6IYbm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65F1BDA7;
+	Fri, 23 Aug 2024 04:41:28 -0700 (PDT)
+Received: from [10.57.80.121] (unknown [10.57.80.121])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6C323F58B;
+	Fri, 23 Aug 2024 04:40:59 -0700 (PDT)
+Message-ID: <c2804576-6a79-46ba-b3d6-1c5879ad36b4@arm.com>
+Date: Fri, 23 Aug 2024 12:40:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/8] perf/core: Allow multiple AUX PMU events with the
+ same module
+To: Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org
+References: <20240823113306.2310957-1-leo.yan@arm.com>
+ <20240823113306.2310957-2-leo.yan@arm.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240823113306.2310957-2-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, 23 Aug 2024 12:15:57 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hi Peter, Adrian,
 
-> Simplify error handling (less gotos) over locks with guard().
+On 8/23/2024 12:32 PM, Leo Yan wrote:
 > 
-> The driver used file-scope variable 'irq_state' for storing IRQ state
-> with spin_lock_irqsave, so move it into respective local scopes.  This
-> should be equivalent, but more readable (less global variables).
+> This commit changes the condition from checking the same PMU instance to
+> checking the same .setup_aux() callback pointer. If PMU events have the
+> same callback pointer, it means they share the same PMU driver module.
+> This allows support for multiple PMU events with the same driver module.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-LGTM. File scoped irq_state is certainly unusual...
+> As a result, more than one AUX event (e.g. arm_spe_0 and arm_spe_1)
+> can record trace into the AUX ring buffer.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
+This patch is the only change in the kernel, so it is crucial for this
+series. Can I get your opinion? Thanks a lot!
+
+Leo 
+ 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  kernel/events/core.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c973e3c11e03..883c457911a3 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12345,9 +12345,16 @@ perf_event_set_output(struct perf_event *event, struct perf_event *output_event)
+> 
+>         /*
+>          * If both events generate aux data, they must be on the same PMU
+> +        * module but can be with different PMU instances.
+> +        *
+> +        * For a built-in PMU module, the 'pmu->module' pointer is NULL,
+> +        * thus it is not feasible to compare the module pointers when
+> +        * AUX PMU drivers are built into the kernel image. Instead,
+> +        * comparing the .setup_aux() callback pointer can determine if
+> +        * the two PMU events come from the same PMU driver.
+>          */
+>         if (has_aux(event) && has_aux(output_event) &&
+> -           event->pmu != output_event->pmu)
+> +           event->pmu->setup_aux != output_event->pmu->setup_aux)
+>                 goto out;
+> 
+>         /*
+> --
+> 2.34.1
+> 
 
