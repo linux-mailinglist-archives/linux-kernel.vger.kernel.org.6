@@ -1,86 +1,118 @@
-Return-Path: <linux-kernel+bounces-298767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C3995CB51
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C7095CB54
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C4D284B0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45552283055
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0405B18755F;
-	Fri, 23 Aug 2024 11:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LBspOPxv"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816618755F;
+	Fri, 23 Aug 2024 11:24:16 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC2716EB79;
-	Fri, 23 Aug 2024 11:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C661E89C;
+	Fri, 23 Aug 2024 11:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724412208; cv=none; b=XMaGDcyM2yAICyiOudbQUS1q9K+cdfZLjfFT/oePvkkkkok9TnDA2u0HFyJR8sHINbfDM3b6GhM7kfNwymMytyWq2v0LVrLL+A7B6JjvzJmVmX8eDRory7ow8tQGtMrq8atBiBMqRKKMwa9xiCiFeaXhQK4jISxtqmSNx8fFOdw=
+	t=1724412256; cv=none; b=mzctsttSlxS0d88V85CYGOooln/b/HYhb8l5uuWG2Fjk6nWzkw7mDVNhXSe2Ey3E4XzkTgv7AYMvgobs5eK3k3KjprDc9U5GwfWGm7AuH2vcRp1bNjdb7Hy0sHvc6qM7ASR2dsAVfmR6Tlnoza78/yUOvL93xEXvJ46SY+/mOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724412208; c=relaxed/simple;
-	bh=SaTuvw0MJunv7dLNBgF0IjP/Pg/Ms2j6iJq6un2x1UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmKvbjpFQWvW00JRKnTYg35Uu/46ITdsjBzstZ9uKOF18SSGDEst8ps60KG6ZuO9LQzJOVQhwdBsr2PN2YQkAQCybVqe/IKVqAswGAAEJakb5CMhpd6N7UlaMciq/9+1TSCvlxGoYKQsXqILvwkbAOO+Ho4pn4W6R5K/3UewBx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LBspOPxv; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 492A9E0003;
-	Fri, 23 Aug 2024 11:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724412203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SaTuvw0MJunv7dLNBgF0IjP/Pg/Ms2j6iJq6un2x1UI=;
-	b=LBspOPxvAHp9tbAR2zobwwZpo8tI/F50Z8KlGOxR2la0IMGaiqdlmHH2uZoPUnqRaGosW1
-	e9nl/vR6Z/F411fLtagQ8ZhJwO3G8Kosr2n8WYUPY4z8dW4HCqisAWYod6BDEL80UytDkI
-	rFAzz5GI9qI0VmHGCogeVLOgxTazofo0vUf7CMlPW8KhKJ+QUKDV1eZqJckKu9cwjBfHes
-	wPvbaAtT7ZWdSZidWyGlfTCnKwZ28fko+QCG6MOU+ExiWb3XVVkmw25cvdxMt7xP0tdT09
-	OAt0YIf6m9iQri5C9QbLJbUUxRGqUNm3uVvSA5iNVvxtSC3+aeNYaWOrQqWgKQ==
-Date: Fri, 23 Aug 2024 13:23:21 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
- <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, Michal Simek
- <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 7/7] memory: pl353-smc: simplify with
- devm_clk_get_enabled()
-Message-ID: <20240823132321.08f7f9e3@xps-13>
-In-Reply-To: <20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
-References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
-	<20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724412256; c=relaxed/simple;
+	bh=Vyx/TlcmDNCHy0FXHrijGVUjSihnYDxjMgJaB2QEmhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iOezKp6MLAP0J9gTOD1IeRlYS1VfrjzPjwsFri5i4t7OcUdz6gFNIRjxbUGOE6D2UfOL5xqnTNBB1h9OQjqCU3r30GMTqxoq7PhMC89f2dH271lKuL+25bsNeHxLLVVEA/9kuMsTgTvmGBmsPtrVtIVKAAybPr8eCXN1mMrCLGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-691bb56eb65so16923317b3.0;
+        Fri, 23 Aug 2024 04:24:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724412253; x=1725017053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dj5VovZ20bk+QpLNOLkrMw84voMi0CVYaIroeUtSYtE=;
+        b=EWz2V1lUxfp//+jJ6s9CfhOt3EvHbG3aqGUlelvY4DP7qmbI0VBfRrxhzBo6iARGkp
+         KPGu/lbaOQAiPD853WE1+ecaYQiqMCvM6Fh7+flT8StDu48EqfPTA8omrY/wVEViYjP3
+         eLEpQF8C+q5L/OdRSAhTRhcUshVIobbesZp/8w27waVDxcO6cY8BaCzO/RoAurgngTPS
+         4kKp3vmJ4ON0WC71fbfwXPYyIDRHEbsBVKVqkjACduWNCwY039IyQ3dMRMs7VREFnBfV
+         jRuDfq/gdWZy2o4IV/2Kc6tH34eyTKopH9mDGu5nVepMuGGUyNXG6ZQgAvRFaPJ0Iq9y
+         r9Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV/bm3f3N7g7KL6qY4hGJeh8g+rAs0uyeNLEHDppdq8rB52zLgLXs/kJRA4TippAGmkL2XHc360eyqWVJjUhtQSZ00=@vger.kernel.org, AJvYcCXJETkj6xJm2wt7VRFk6PyMiX5at65ZREJF5pbRwF66re1ligDQ+TVQqNPaWVJn5o5eIT2x8lxz37Ii@vger.kernel.org, AJvYcCXsLNCpnBEH5MAnID9Krtc0o9HyNEavl43WV5Fa7f4pAp1A3OM4ORiM3sUhiTOJfaOikFYGahIxlV0nbLMQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpm49/ahTQZLuxJYZCoMqP4P+C1jXb8k48/Foaa0gCQhMOUXQq
+	KmFqtyFvYbgxjCIWmapx2vPoFAfrgRVP5mq4YLxykXAJr65cxTFygZKmjV+G
+X-Google-Smtp-Source: AGHT+IGahmQMjaCOt34Do1O0gLmbCxGtXuqdtk1WktGE6WVeKMVzc7OdF94n4MLQ8x10lQiTlW2LzQ==
+X-Received: by 2002:a05:690c:f94:b0:6ae:1e27:c993 with SMTP id 00721157ae682-6c625390575mr22003937b3.7.1724412252865;
+        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9a93sm5142737b3.89.2024.08.23.04.24.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6b59a67ba12so18175217b3.1;
+        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVN+NxRpppJsVKSUJn3GIw3ykYs++xHfQaKnxQSeqsbWesF7Vr4/9pn4gy5BokFxjQxeXntRm2o7WNRy+it3RCn9Ds=@vger.kernel.org, AJvYcCVWovh2PF5kD3AXeXlJMAoejdHz3AHamsHBmR2CH8RPbCqjm/OSoOnoc26XqM6oNVprmFG8TMzwLUsiMyo3@vger.kernel.org, AJvYcCVcL+1BZve9EREOI1GZiXiBeU6S3llN5jRo2QyobzBKYKTwPUbu83pzsmFfZHnvYst7ZmrHyZdO/f+2@vger.kernel.org
+X-Received: by 2002:a05:690c:6611:b0:64b:7500:2e9 with SMTP id
+ 00721157ae682-6c6253900fdmr21154827b3.9.1724412252461; Fri, 23 Aug 2024
+ 04:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240730122436.350013-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240730122436.350013-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Aug 2024 13:24:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWB+v7WCn3YqfPaShCHvPEcwu9vrXVugFpyc9vyMJZApg@mail.gmail.com>
+Message-ID: <CAMuHMdWB+v7WCn3YqfPaShCHvPEcwu9vrXVugFpyc9vyMJZApg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] arm64: dts: renesas: Correct GICD and GICR sizes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Marc Zyngier <maz@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Krzysztof,
+Hi Prabhakar,
 
-krzysztof.kozlowski@linaro.org wrote on Fri, 23 Aug 2024 12:16:02 +0200:
+On Tue, Jul 30, 2024 at 2:26=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> This patch series aims to correct GICD and GICR sizes on RZ/G2L(LC),
+> RZ/G2UL, RZ/V2L and RZ/G3S SoCs. These SoCs are equipped with GIC-600.
+>
+> GIC-600 supports MBI by default, so GICD size is set to 128kB.
+> On RZ/G2UL and RZ/G3S SoC despite being single core the GICR size is set
+> to 256kB as dumping the GICR_IIDR register shows it has two instances of
+> GICR.
+>
+> v1->v2
+> - Dropped changes for single core
+> - Updated commit message
 
-> Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
-> make code simpler.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks for your series!
+I have to trust you on this, and will queue this series in
+renesas-devel for v6.12, with s/kB/KiB/g.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Gr{oetje,eeting}s,
 
-Thanks,
-Miqu=C3=A8l
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
