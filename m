@@ -1,186 +1,408 @@
-Return-Path: <linux-kernel+bounces-299458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3703F95D4E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECDE95D4EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69DE1F23220
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2C01F2349C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210C9191F8D;
-	Fri, 23 Aug 2024 18:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848AC1922CB;
+	Fri, 23 Aug 2024 18:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iuNFuf5v"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="novWmeTl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3441918BBB9;
-	Fri, 23 Aug 2024 18:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724436610; cv=none; b=bUSpdEiBup1wa361MPmARQmIRAOG0fyYROAo3w22p2ZMc3qrKtXQ1hElccWOHWgU38l0X34xNJSGiCGRvea/a13LGrk/Gnu7wLaiX2tgXC7qAl80Sex2keEAulr6um+s4BXRqwIK4enDdS/NZ6Yi/qN+XKdlEzws0/DuBMSPyQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724436610; c=relaxed/simple;
-	bh=gD1pEko5Dng4/515untwuajMYraF0bj5us9lTSecl3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nV13VyE2eIgMBzlJYYdPEWiFprnlkTct15dpg0Jn/OBixXE5CvuZr2NJZq7oD5A2QN8qdgS1A/chy1K61iERWOzqCj+4RDRoK5omvRRgTIyEp8bKhE0vt/NiTUQGe0DuyVH2I+n44Xw1RhfeSrhXEd61FtOdvs+Se0GvtZ7h2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iuNFuf5v; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NAbhNr006699;
-	Fri, 23 Aug 2024 18:09:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ULYQELyVUyWgHfDeuJJCwuYVuaLB/jXSe8cof8/NKCg=; b=iuNFuf5vKc+4W+UH
-	yl7J1ef4WDEF4ofV7+IrdeV4dfsZk8KhoDl+rMTtusynM2jnn9xol0cQG62CTWyy
-	VPlbiY+34koZXmkDyjwuIoJrwT4n4izcPgQFaDmtSlWpu/dgLRHkb04NvHtfXPkT
-	73ssfNwdepgkFFupA4gnGRLCL3mJNJncS3Ry8QwoDdRVbV0AU51LJB0cOXp1mZgf
-	5aP4pkfX3vuCPAoJAfAjU3SJhvvQ4anlSQHDYJeKc54EFAYMa71FI8rBKgFIWom1
-	71cdiRrgfJa2g21YHJW2RDtT1ktIzaew6FAWgg9rI0Swg+Zj5jY02YRriJVgAlwa
-	9mt7FA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkwgsbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 18:09:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47NI9wSF029057
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 18:09:58 GMT
-Received: from [10.111.180.26] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
- 2024 11:09:58 -0700
-Message-ID: <2890dfef-bd0a-41df-b269-72bccead2046@quicinc.com>
-Date: Fri, 23 Aug 2024 11:09:57 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F233186E3B;
+	Fri, 23 Aug 2024 18:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724436661; cv=fail; b=UJJCqWYtvadTXfMRIwQ9qSaAHawPk5B4qqnQ8+zq/42VNW7rS59f6PCMqVvPInTSYZFGpjsCwoQ0BxNkShnqUlXYlwZFP1hMysTG/62wMLOTsLnMwArSBZKt2+b3eybLXn8vpvDhZeJEcQVY5Xb2L/zMV+77yWHkuzwZ8N0d7c4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724436661; c=relaxed/simple;
+	bh=Cd5N39PiHx4hiXPTR6BjODHHkNIQaZ7y79h+rO6qUMU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=djynlF6HXlAKOoAKzrltdchRJuW+wWWTaleXZ6dY1Jz4nB5o7vem/5caVqdqqeh83S7xPDszNq3oZPDF8BI2MhiRzAUd56eVH+xZbbNSZUSLLzzwX53xFHSiZc6EDB08AmC2CfPENe/AYo5nJFNTr8Z3TdA5mzlOd0ijmZC2nac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=novWmeTl; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724436659; x=1755972659;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=Cd5N39PiHx4hiXPTR6BjODHHkNIQaZ7y79h+rO6qUMU=;
+  b=novWmeTlRyd3RA8NOUJ+gHMTMz6AmM6fZq68z6tTExY1n6kGsKBNSUbB
+   r+6ZYeavhjDuHiDBBv01bGQE7b7V/JZtNv1YjPgslKQqZ4xOKzvSzRenK
+   p1FNJNcSEAzLNuaAk5a0NKNxbVCtL4W1ud7soh0Jp5JZEF5nvFfEAaAY4
+   4MmQyrSiTQAt5Z7IbUu0Fd7aCBZmhb9DZA1hPK/l98nXXKf1SgbsB4ZYq
+   zHd6fG7pcimU5r9FkJdgyHXK2edWd7sAWZPZrNKyKv6RKQFrxWBEASF4k
+   5CLV61kQe0ZVpZJCn4a7fQ7uzfS/dy6hbf26R6CrJIBumYKu5K7vps+8d
+   Q==;
+X-CSE-ConnectionGUID: 1gKOkT0USpSFNNIQryRhRA==
+X-CSE-MsgGUID: U7I9OJ/USIGkFe3LjMyHYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="48313707"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="48313707"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 11:10:57 -0700
+X-CSE-ConnectionGUID: bkNP4eNtTJKQLPKPqvcWAw==
+X-CSE-MsgGUID: ufRY3yJ0TPGbJA1beEIO3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="62589116"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Aug 2024 11:10:58 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 23 Aug 2024 11:10:56 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 23 Aug 2024 11:10:56 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.177)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 23 Aug 2024 11:10:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tnMF7UsFzxyzHf9bNvRJZGT7F0HqULOYlFGzsow3ZZKgOrgaL0QxfcJ1hTieZ7ynsz4CMb+ZlsVYfzXUcOSY7Vf0j51yb+9x4goz/7IkgD9k8h8Tqe5DUAHvbLFeYIlkPIYA58V5J7escL9AZ8XOT0sGFiCcOyPlgxV9YMoxE5r2CYJRp2OOd6L3N17MS4yZl5AakZ95E/YF1zFhl0P/Fp30FvTuwI0xp4A9raLdceGLXfEyTKrNr3qgOMZ0SJf04270eGt2auwGKrsRQgKwY4+hzq6vd/zEqgrKR8FnewNynDNKw/npJ407BQnrMsmmqaZBFyAWEnybvcpMED4n1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=if8kYcZhhWF+r5D1H47rSjf+xBgBSoZn8a8OTy0m+2g=;
+ b=lWcxWBXSyrkZrgl87OIiMSXT4V4JE+SA/vPZf87FvFOYFWQyjBRMbGP8A350KIs6GQ1Mak7iqwQBn3KmwzIoQ6SmXjY8C+yr/0YOeeO/ewSncJOX8MMLG4uDuDZQ9pkKbZpRFEK84YbnaaUrclo4TBSxoNLrY3yIHCxhXEi2/Llq4TLtdQL805qkyzKAZzoeP8nau4OjvJ97cJHyD1+mDuzw7tGK8OzhyZhr8voCR57uEQdL2wc3FWuA/q7xpaVUJq+sHcSG+Yg6OdfEdduvS7/IrbGDBPbVtA/F+2r/zwGdSfSr6GZmuKEdXFjR8q7642Vi6qAXHTC8nNdbXV69yA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SJ2PR11MB8345.namprd11.prod.outlook.com (2603:10b6:a03:53c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
+ 2024 18:10:54 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 18:10:53 +0000
+Date: Fri, 23 Aug 2024 13:10:47 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Zijun Hu <zijun_hu@icloud.com>, Ira Weiny <ira.weiny@intel.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>, "Takashi
+ Sakamoto" <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux1394-devel@lists.sourceforge.net>, <netdev@vger.kernel.org>, Zijun Hu
+	<quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2 2/4] cxl/region: Prevent device_find_child() from
+ modifying caller's match data
+Message-ID: <66c8d0a7eddc5_a87cd294e1@iweiny-mobl.notmuch>
+References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
+ <20240815-const_dfc_prepare-v2-2-8316b87b8ff9@quicinc.com>
+ <66c4a136d9764_2ddc2429435@iweiny-mobl.notmuch>
+ <dec374a6-073d-4b7f-9e83-adcfcf672852@icloud.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <dec374a6-073d-4b7f-9e83-adcfcf672852@icloud.com>
+X-ClientProxiedBy: MW4PR04CA0360.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::35) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] wifi: ath11k: Set IRQ affinity hint after requesting
- all shared IRQs
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <kvalo@kernel.org>, <jjohnson@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>
-References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
- <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ROxrMKPjdxDr5nLfShA7QOMwArct1_Bv
-X-Proofpoint-GUID: ROxrMKPjdxDr5nLfShA7QOMwArct1_Bv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_14,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408230134
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SJ2PR11MB8345:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef23a2d1-e3f2-42b5-2768-08dcc39eed85
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gZy0LQHquOFLaTxX3MkI+hqQ8gNzu1Zn7jYiE5EfHkc7SP/4KAbr+IUJ5ICO?=
+ =?us-ascii?Q?9xNvsoc4mdtH7ZtgMN3SJP8wl+g+cUoo5z8HbImWchJ/lvx14GdKNkhViV1g?=
+ =?us-ascii?Q?VNYW8vH7Jqxg66zUe/9l8f/SdA9YVPKRJLNfQpF98rcw85b1OubzP0+I2jru?=
+ =?us-ascii?Q?Lhk6J8u+F9n0e7WkVMi3OsBapa56Doczhku7mq24aFHJtuPSYUqrImVBLQvR?=
+ =?us-ascii?Q?fwAUPhSQc5nbVvBkkZSyJnS/BbFGqmoIRtaUffnNbjB734Rd29zhJu1Mw+j3?=
+ =?us-ascii?Q?uGURDstmct+2kmH4xucy4fO9wY+kaC+EaxNJh+Sn9arA+zZKlxKlMiBOyb72?=
+ =?us-ascii?Q?bjXe0U+oz261Xk5c74S+6wha46sRCU6rkR7mygMBi3FsdpRwLBNeQnTqqQZz?=
+ =?us-ascii?Q?um6h33CxsTaZvaAnijaZ62loHnw/uHXa4eqlQ4YeDURitNM3IR+ALKQQzF79?=
+ =?us-ascii?Q?+FYx/j0H9NxKxHud8XgaWrve6t1GoRpNSaSxiQOANr2pLYXqwgCnbYWXAK0m?=
+ =?us-ascii?Q?SdMbwweWXMbejdb2ZY4ZR1KX5Ukcs+1mvROX5r2OP6rlHeU4CmYUVGISTeYd?=
+ =?us-ascii?Q?2F3NO0Az9OivwVrnIZQS3HpsoD1/JNf9oB9EdmNuUycSnsvQdjxkJOWeykNR?=
+ =?us-ascii?Q?5goprMqniCzhSGUeo4z5AoRibWkzGJxTEkTKHawqoUDXdWdu/q469DIPbxka?=
+ =?us-ascii?Q?kL2Q2gmAUjCoUC6j0kkQDZ87uXMbhTQoImY3soaJt3lxMGu9Xk8gFq41anoL?=
+ =?us-ascii?Q?kqbUMbeNmf9ZXTIDBZBEAJQecb7tyRFFlm4JO5KBMCKz4tu/JuYxj52vVy8j?=
+ =?us-ascii?Q?HSEMl9ecr5zBGMkjJxd+9/+f9iSCb0vKG91VqrVXVutSiTgFdqnxqsgtVQWl?=
+ =?us-ascii?Q?7gaRqxL4GkRmWMzGr3h9rVzURZ0rqnVSPOPi8uXZwHyU41B6P0BAOrjEl/Eu?=
+ =?us-ascii?Q?JU6Hq4eqSbD3zxZaNCymDM9yWVZhgqp7uIY9sKBzhXhwZ5kH9GeVQOO5XxHf?=
+ =?us-ascii?Q?zYL8JcbOEC7EGA5EjhZWyhgtzG1Lr19nBBKoU0tDdxHQwBOp+pMtpk8Cqmsn?=
+ =?us-ascii?Q?UjiM33NEZwVPpXCP3ZI7lMCIc8DT3Fbe2oen9BE3fzDaWzxxgXy5vDl8g2jz?=
+ =?us-ascii?Q?UchdTvlLPcHOxCVQ/hvuyuZByFL12qRDP2l6ng6Njlp6sJvyt+yFAwO2HV2L?=
+ =?us-ascii?Q?LHDmVRUyBqUveLBfZxFUsnutqvsH6Gbv2YGfyoB2nL0TQWJ5k3+8wepEda4o?=
+ =?us-ascii?Q?MOvwKfQL9Y2zDNs+gCGo2P06bDUIESTofUZsmLErC3GGEaWNr1i9mkwPcz81?=
+ =?us-ascii?Q?V9w6j3pFBAOMpQ5vz2j8b0N+nQN/Scg4iDVlDzNuhwaiEFJBdxOc7xGXLFoh?=
+ =?us-ascii?Q?hST5NwUEd4O31ErfyA5dvdIH+v87?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PTrSlOXl+tLs37AvmxSB7idOnDLXB4DfsFM+jbW55azu/WbW6FFJCWrbkKrv?=
+ =?us-ascii?Q?uLJWo2+fsMt49sU/UmHztS2Af4BhumfeNe6sPwWN+3WlOZXl8MXHNiEbmA4X?=
+ =?us-ascii?Q?wjgJNaGFhzMXcMe/iZIxj+VAuWHCLwtRwuVD0xfxZPB3WHc5vNrabzdzevs7?=
+ =?us-ascii?Q?r/o++l4Ig13KmUxOvr3lCHzgT6C9Afns+HRMqn3u4rBKtQgLYJceJgsUQ/Tu?=
+ =?us-ascii?Q?OaDZp98VfRBnC9CHiNudIvb8xtXojqGqxNw+6nUNmXpWmZ1RtSJqJu65SqAz?=
+ =?us-ascii?Q?9Ksvpx0f2tIdIojZxkOs2xWNLiV038HFm5umei7SqtAnmseTrla8M9xMXUyY?=
+ =?us-ascii?Q?hZj8MV6dkWY6jOwzaEB6OeKip2J9cWIsWR0Pkh0XgjwNjbyS6rkwf3gkOGIE?=
+ =?us-ascii?Q?6nKdjUBkG6b94nzMv6AxoRVaFEpj7peUQdXSZXVv4aSnDsgSX6Emly1DDi6O?=
+ =?us-ascii?Q?GCOEcGfJFFuMB4Nc09RJvfucyReQMFWmvftN+E+CKrdIChAd/IV90VDQ+1Nq?=
+ =?us-ascii?Q?1SyPSKIKD/UbTp6pxyT7jpsRrjzl23CzORjGzbdcOioq7sd8f+06JCXmUg9E?=
+ =?us-ascii?Q?/EF5OTq9OtEAE7fxfoXyKXUC3WK2agm5JDGgjKpN/7pHdveqBSIR84Gf7nlL?=
+ =?us-ascii?Q?N9A+2XeZfOSeiFx5GFv5/DpJPz3nV7jPvW7dZxBfLhuJfv40HpbFtVD044tv?=
+ =?us-ascii?Q?IvBINobnyV22dS39aYdTZTgghJrAYg1UPUrGsYqCba7EFs2hcJtB2A7cZKPB?=
+ =?us-ascii?Q?5PTocMREM33i58c6RdUdL5PJjCJgqt2Kq2WNEzbbMoqxUHxoM2DSlx1L4e9q?=
+ =?us-ascii?Q?rm5pJQ8EDbWU0QzaMeT6M5DjKvynVnEjdwFaB38c9x8aLNq2a9y0K3NbmEwM?=
+ =?us-ascii?Q?L2czmtsaGiCXUzGwxLJkFqDg/nrn/GVKfjnC9FtvR8pHmhMFbt0kNwRk25NW?=
+ =?us-ascii?Q?8Lk2cSUL4GZh1gcUKLQfIXRXD7+DjwluG3BiyO6nNq+TWsa+8qjxa1reH5G7?=
+ =?us-ascii?Q?dWXKSxakVF0+N6GQ/eda7phYYiTdT5z50DYq0du1Se9oJVRC4Y/HBJhzjMeQ?=
+ =?us-ascii?Q?Za3WoXP4D05l8w6/vKkgV+BGpo0YVH8yr9qNlwQHyPvc0wmotKGOqTc1s2X4?=
+ =?us-ascii?Q?+VeiN0z06Zhk4YOU3rkY0ReMf/FYqR6y5J/QZ2fKJxsipcs7OXcCusO3fjy+?=
+ =?us-ascii?Q?vuWVX9G3hGGUgvu2DSNgE3OnXxie4yklK4UWFAjL+sQwxgeIxN5h9jay8qvk?=
+ =?us-ascii?Q?Q9RkxrFvPJOgqgj+yVlCu6enRNJq+IyX00h6u6XMgnZsyJ0ACLIFfPhFrzNH?=
+ =?us-ascii?Q?zHkbwjy3AeSzl/W+yWhYUx811YO+gh08j4FEFwb1RhCcap6REdgidzjMnB1R?=
+ =?us-ascii?Q?i4ZJyBcw7K/OTrKUMKwj5eGjKDSj/2sRHtarvHyJOn2ty/N3PPvXTbg5JNCJ?=
+ =?us-ascii?Q?U15WOOhusZDl5H2/2P7z5LAfe60131rqGJ5Sf79JZgu1sx0j1VpIyPuShVl+?=
+ =?us-ascii?Q?O/pev1JgLKKW+jtqSvXFM5ko79lIOl9uWztnGmMc6D/RxswlIgLJuLaKypCY?=
+ =?us-ascii?Q?Tw8hGIfr2+/zAW7i91D9Q7jUO0PwJwrHWiPQP5j7?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef23a2d1-e3f2-42b5-2768-08dcc39eed85
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 18:10:53.8897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UbBGEQfBPiutDYKbPqUT6CCtCDJj5L24NmsRx0zJimdg9Le1iZCayi+D2Pk6Mzo5y+f8QkdhioFJmyh3uoK+8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8345
+X-OriginatorOrg: intel.com
 
-On 8/23/2024 8:55 AM, Manivannan Sadhasivam wrote:
-> If a shared IRQ is used by the driver due to platform limitation, then the
-> IRQ affinity hint is set right after the allocation of IRQ vectors in
-> ath11k_pci_alloc_msi(). This does no harm unless one of the functions
-> requesting the IRQ fails and attempt to free the IRQ. This results in the
-> below warning:
+Zijun Hu wrote:
+> On 2024/8/20 21:59, Ira Weiny wrote:
+> > Zijun Hu wrote:
+> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>
+> >> To prepare for constifying the following old driver core API:
+> >>
+> >> struct device *device_find_child(struct device *dev, void *data,
+> >> 		int (*match)(struct device *dev, void *data));
+> >> to new:
+> >> struct device *device_find_child(struct device *dev, const void *data,
+> >> 		int (*match)(struct device *dev, const void *data));
+> >>
+> >> The new API does not allow its match function (*match)() to modify
+> >> caller's match data @*data, but match_free_decoder() as the old API's
+> >> match function indeed modifies relevant match data, so it is not
+> >> suitable for the new API any more, fixed by implementing a equivalent
+> >> cxl_device_find_child() instead of the old API usage.
+> > 
+> > Generally it seems ok but I think some name changes will make this more
+> > clear.  See below.
+> > 
 > 
-> [   29.804276] ath11k_pci 0000:01:00.0: failed to power up mhi: -110
-> [   29.810564] ath11k_pci 0000:01:00.0: failed to start mhi: -110
-> [   29.816566] ath11k_pci 0000:01:00.0: failed to power up :-110
-> [   29.847202] ath11k_pci 0000:01:00.0: failed to create soc core: -110
-> [   29.853735] ath11k_pci 0000:01:00.0: failed to init core: -110
-> [   29.859745] ------------[ cut here ]------------
-> [   29.864486] WARNING: CPU: 7 PID: 349 at kernel/irq/manage.c:1929 free_irq+0x278/0x29c
-> [   29.872529] Modules linked in: snd_soc_hdmi_codec ath11k_pci(+) venus_dec venus_enc ath11k videobuf2_dma_contig videobuf2_memops nb7vpq904m lontium_lt9611uxc mcp251xfd mac80211 can_dev libarc4 hci_uart
->  btqca btbcm ax88179_178a usbnet option leds_qcom_lpg usb_wwan led_class_multicolor usbserial crct10dif_ce qcom_pmic_tcpm tcpm venus_core aux_hpd_bridge qcom_spmi_adc_tm5 v4l2_mem2mem qcom_pon qcom_spmi_a
-> dc5 videobuf2_v4l2 bluetooth videobuf2_common msm qcom_spmi_temp_alarm rtc_pm8xxx qcom_vadc_common ocmem snd_soc_sm8250 gpu_sched snd_soc_qcom_sdw videodev drm_exec phy_qcom_qmp_combo drm_display_helper s
-> nd_soc_qcom_common qcom_stats mc i2c_qcom_geni llcc_qcom spi_geni_qcom drm_dp_aux_bus aux_bridge icc_bwmon typec qcom_rng coresight_stm coresight_tmc coresight_replicator stm_core coresight_funnel soundwi
-> re_qcom qrtr pci_pwrctl_pwrseq qcrypto pci_pwrctl_core soundwire_bus snd_soc_lpass_va_macro pinctrl_sm8250_lpass_lpi snd_soc_lpass_wsa_macro authenc lpass_gfm_sm8250 coresight slimbus pinctrl_lpass_lpi
-> [   29.872610]  snd_soc_lpass_macro_common qcom_q6v5_pas libdes qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common pwrseq_qcom_wcn qcom_glink_smem mdt_loader pwrseq_core icc_osm_l3 qmi_helpers qcom_wdt socin
-> fo display_connector drm_kms_helper cfg80211 rfkill fuse drm backlight ip_tables x_tables ipv6
-> [   29.990067] CPU: 7 UID: 0 PID: 349 Comm: (udev-worker) Not tainted 6.11-rc4 #50
-> [   29.997564] Hardware name: Qualcomm Technologies, Inc. Robotics RB5 (DT)
-> [   30.004446] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   30.011591] pc : free_irq+0x278/0x29c
-> [   30.015355] lr : free_irq+0xb4/0x29c
-> [   30.019030] sp : ffff800081f236e0
-> [   30.022441] x29: ffff800081f236e0 x28: ffff64630d260000 x27: ffffd8d89a8c3458
-> [   30.029764] x26: ffff64630d26ac00 x25: 00000000000000d6 x24: ffff6463029c58dc
-> [   30.037086] x23: ffff6463029c5990 x22: ffff64630d261c58 x21: 0000000000000000
-> [   30.044408] x20: ffff646301431c00 x19: ffff6463029c5800 x18: 0000000000000010
-> [   30.051730] x17: 0000000000010108 x16: ffffd8d8f1d8b840 x15: 0763072007740769
-> [   30.059051] x14: 000000000000030d x13: ffff646306b35ae8 x12: ffffd8d8f3852b80
-> [   30.066374] x11: ffff646306b356c0 x10: 0000000000000000 x9 : 00000000000000d6
-> [   30.073696] x8 : 000000000000000f x7 : 1fffec8c605626a1 x6 : ffffd8d8f2e602b8
-> [   30.081017] x5 : 0000000000000030 x4 : ffff646302b13580 x3 : ffff646301431c98
-> [   30.088339] x2 : 0000000000200880 x1 : ffff646301431c00 x0 : ffffd8d8f2b2c1b8
-> [   30.095662] Call trace:
-
-refer to:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages
-
-per that guidance can we remove the "distracting information like timestamps, module lists, register and stack dumps"
-
-removing the module list will fix the checkpatch issue:
-WARNING:TYPO_SPELLING: 'fo' may be misspelled - perhaps 'of'?
-
-> [   30.098183]  free_irq+0x278/0x29c
-> [   30.101595]  ath11k_pcic_free_irq+0x70/0x10c [ath11k]
-> [   30.106800]  ath11k_pci_probe+0x800/0x820 [ath11k_pci]
-> [   30.112081]  local_pci_probe+0x40/0xbc
-> [   30.115934]  pci_device_probe+0x1d4/0x1e8
-> [   30.120049]  really_probe+0xbc/0x268
-> [   30.123727]  __driver_probe_device+0x78/0x12c
-> [   30.128204]  driver_probe_device+0x40/0x11c
-> [   30.132505]  __driver_attach+0x74/0x124
-> [   30.136445]  bus_for_each_dev+0x78/0xe0
-> [   30.140383]  driver_attach+0x24/0x30
-> [   30.144059]  bus_add_driver+0xe4/0x208
-> [   30.147910]  driver_register+0x60/0x128
-> [   30.151849]  __pci_register_driver+0x44/0x50
-> [   30.156238]  ath11k_pci_init+0x2c/0x6c [ath11k_pci]
-> [   30.161242]  do_one_initcall+0x70/0x1b8
-> [   30.165182]  do_init_module+0x5c/0x1f0
-> [   30.169034]  load_module+0x19f0/0x1abc
-> [   30.172884]  init_module_from_file+0x88/0xc8
-> [   30.177273]  __arm64_sys_finit_module+0x1c4/0x2b0
-> [   30.182102]  invoke_syscall+0x44/0x100
-> [   30.185953]  el0_svc_common.constprop.0+0xc0/0xe0
-> [   30.190783]  do_el0_svc+0x1c/0x28
-> [   30.194196]  el0_svc+0x34/0xdc
-> [   30.197335]  el0t_64_sync_handler+0xc0/0xc4
-> [   30.201635]  el0t_64_sync+0x190/0x194
-> [   30.205399] ---[ end trace 0000000000000000 ]---
-> [   30.432731] ath11k_pci 0000:01:00.0: probe with driver ath11k_pci failed with error -110
+> okay.
 > 
-> The warning is due to not clearing the affinity hint before freeing the
-> IRQ.
+> > Also for those working on CXL I'm questioning the use of ID here and the
+> > dependence on the id's being added to the parent in order.  Is that a
+> > guarantee?
+> > 
+> >>
+> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> >> ---
+> >>  drivers/cxl/core/region.c | 36 +++++++++++++++++++++++++++++++++++-
+> >>  1 file changed, 35 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> >> index 21ad5f242875..8d8f0637f7ac 100644
+> >> --- a/drivers/cxl/core/region.c
+> >> +++ b/drivers/cxl/core/region.c
+> >> @@ -134,6 +134,39 @@ static const struct attribute_group *get_cxl_region_access1_group(void)
+> >>  	return &cxl_region_access1_coordinate_group;
+> >>  }
+> >>  
+> >> +struct cxl_dfc_data {
+> > 
+> > struct cxld_match_data
+> > 
+> > 'cxld' == cxl decoder in our world.
+> > 
 > 
-> So to fix this, let's set the IRQ affinity hint after requesting all the
-> shared IRQ. This will make sure that the affinity hint gets cleared in the
-> error path before freeing the IRQ.
+> make sense.
 > 
-> Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
+> >> +	int (*match)(struct device *dev, void *data);
+> >> +	void *data;
+> >> +	struct device *target_device;
+> >> +};
+> >> +
+> >> +static int cxl_dfc_match_modify(struct device *dev, void *data)
+> > 
+> > Why not just put this logic into match_free_decoder?
+> > 
 > 
-> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
-> Fixes: e94b07493da3 ("ath11k: Set IRQ affinity to CPU0 in case of one MSI vector")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Actually, i ever considered solution B as you suggested in the end.
+> 
+> For this change, namely, solution A:
+> 1) this change is clearer and easier to understand.
+> 2) this change does not touch any existing cxld logic
+> 
+> For solution B:
+> it is more reasonable
+> 
+> i finally select A since it can express my concern and relevant solution
+> clearly.
 
-Actual patch LGTM but I want Baochen to give a Reviewed-by before I ack
+Understood.
+
+> 
+> >> +{
+> >> +	struct cxl_dfc_data *dfc_data = data;
+> >> +	int res;
+> >> +
+> >> +	res = dfc_data->match(dev, dfc_data->data);
+> >> +	if (res && get_device(dev)) {
+> >> +		dfc_data->target_device = dev;
+> >> +		return res;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +/*
+> >> + * I have the same function as device_find_child() but allow to modify
+> >> + * caller's match data @*data.
+> >> + */
+> > 
+> > No need for this comment after the new API is established.
+> > 
+> 
+> i have given up the idea within v1 to introduce a new API which *should
+> ONLY* be used by this patch series, so it is not worthy of a new API
+> even if it can bring convenient for this patch series.
+
+I'm not clear on this.  Are you still proposing to change the parameter to
+const?
+
+> 
+> >> +static struct device *cxl_device_find_child(struct device *parent, void *data,
+> >> +					    int (*match)(struct device *dev, void *data))
+> >> +{
+> >> +	struct cxl_dfc_data dfc_data = {match, data, NULL};
+> >> +
+> >> +	device_for_each_child(parent, &dfc_data, cxl_dfc_match_modify);
+> >> +	return dfc_data.target_device;
+> >> +}
+> >> +
+> >>  static ssize_t uuid_show(struct device *dev, struct device_attribute *attr,
+> >>  			 char *buf)
+> >>  {
+> >> @@ -849,7 +882,8 @@ cxl_region_find_decoder(struct cxl_port *port,
+> >>  		dev = device_find_child(&port->dev, &cxlr->params,
+> >>  					match_auto_decoder);
+> >>  	else
+> >> -		dev = device_find_child(&port->dev, &id, match_free_decoder);
+> >> +		dev = cxl_device_find_child(&port->dev, &id,
+> >> +					    match_free_decoder);
+> > 
+> > This is too literal.  How about the following (passes basic cxl-tests).
+> > 
+> 
+> it is reasonable.
+> 
+> do you need me to submit that you suggest in the end and add you as
+> co-developer ?
+
+You can submit it with Suggested-by:
+
+> 
+> OR
+> 
+> you submit it by yourself ?
+> 
+> either is okay for me.
+> 
+> > Ira
+> > 
+> > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c              
+> > index 21ad5f242875..c1e46254efb8 100644                                         
+> > --- a/drivers/cxl/core/region.c                                                 
+> > +++ b/drivers/cxl/core/region.c                                                 
+> > @@ -794,10 +794,15 @@ static size_t show_targetN(struct cxl_region *cxlr, char *buf, int pos)
+> >         return rc;                                                              
+> >  }                                                                              
+> >                                                                                 
+> > +struct cxld_match_data {                                                       
+> > +       int id;                                                                 
+> > +       struct device *target_device;                                           
+> > +};                                                                             
+> > +                                                                               
+> >  static int match_free_decoder(struct device *dev, void *data)                  
+> >  {                                                                              
+> > +       struct cxld_match_data *match_data = data;                              
+> >         struct cxl_decoder *cxld;                                               
+> > -       int *id = data;                                                         
+> >                                                                                 
+> >         if (!is_switch_decoder(dev))                                            
+> >                 return 0;                                                       
+> > @@ -805,17 +810,30 @@ static int match_free_decoder(struct device *dev, void *data)
+> >         cxld = to_cxl_decoder(dev);                                             
+> >                                                                                 
+> >         /* enforce ordered allocation */                                        
+> > -       if (cxld->id != *id)                                                    
+> > +       if (cxld->id != match_data->id)                                         
+> >                 return 0;                                                       
+> >                                                                                 
+> > -       if (!cxld->region)                                                      
+> > +       if (!cxld->region && get_device(dev)) {                                 
+> 
+> get_device(dev) failure may cause different logic against existing
+> but i think it should be impossible to happen normally.
+
+Indeed this is slightly different.  :-/
+
+Move the get_device() to find_free_decoder()?
+
+Ira
+
+> 
+> > +               match_data->target_device = dev;                                
+> >                 return 1;                                                       
+> > +       }                                                                       
+> >                                                                                 
+> > -       (*id)++;                                                                
+> > +       match_data->id++;                                                       
+> >                                                                                 
+> >         return 0;                                                               
+> >  }                                                                              
+> >                                                                                 
+> > +static struct device *find_free_decoder(struct device *parent)                 
+> > +{                                                                              
+> > +       struct cxld_match_data match_data = {                                   
+> > +               .id = 0,                                                        
+> > +               .target_device = NULL,                                          
+> > +       };                                                                      
+> > +                                                                               
+> > +       device_for_each_child(parent, &match_data, match_free_decoder);         
+> > +       return match_data.target_device;                                        
+> > +}                                                                              
+> > +                                                                               
+
+[snip]
 
