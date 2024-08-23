@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-298952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BFC95CE16
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF02695CE23
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F297A282862
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F211A1C21588
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FE118755C;
-	Fri, 23 Aug 2024 13:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706A9187875;
+	Fri, 23 Aug 2024 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc22AyWH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g+PP1qel"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E0A186E51;
-	Fri, 23 Aug 2024 13:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B2817F4F2;
+	Fri, 23 Aug 2024 13:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420301; cv=none; b=GgowFfdr0WT7frHgERDzO1N9lzKAULC4nEU2t+tzMiAOdRA7r4ZAUXUQwjMrchaOmhJQFK+pxZGzYzh2YYqsGk0lxL8HD+x3UDagmUFfKVfFHqs+ZLExSeVRaKf5o0TP03s+cqTVPFxTMXdoMIfp7UVyCYez5l91SnNthMLuwZI=
+	t=1724420433; cv=none; b=b1dDkhkd78dc5W7dmUw98x9uyg6YmVnldVHVe8EqzZlEG8BS8mAgadeFoETWarXsnCf+sBNc69K1KfBCdf1rJtvEaPVACmWfZWcfpjap8jVxrtChqeO0jlfRN6sQuHQx5IE55aoa7MorX7flfxoHDECooimN6LpzQrcFMv05Qq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420301; c=relaxed/simple;
-	bh=a/OiFD247/+nojA5CTQ430KoiqEMvylvNIFkd9r7htM=;
+	s=arc-20240116; t=1724420433; c=relaxed/simple;
+	bh=+szYI74W4Zki1Y29MlUjRsf+VYwWjiDCC0d45P7PO6E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b/f1/VpItfXUbqdr57hsr38GkuyfTeKY7aW9GsGn2ErayskAb1vpbJ8elidc6JUxgfI6AvLPSyHtcscijUgxx8vcIofe9/9nldcee3MejqjLu2i5Kq9i3M1VmrsD2wTRpbB3F2TuigbK0evm4CnXbdDUuqcunRCZRpOB00y43mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dc22AyWH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF03C32786;
-	Fri, 23 Aug 2024 13:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724420301;
-	bh=a/OiFD247/+nojA5CTQ430KoiqEMvylvNIFkd9r7htM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dc22AyWHhhGJJJmflDhshA+3lNWhEzG8e1A4eR41o/6top4axGWMel9pL8id9qQI/
-	 g+dtQAH1In2B6liZiflFOAG3xykpRcxoyxL+2IQ3sZKXOTERAalk/Vy9RVr1A4HMXn
-	 t8pxOC/5a77goMIZ5wVJweCatRFdu0PUY2ryXY/s07k/puB4Rf1xHFTfOi6UnGBXEx
-	 KdcM5q+sgQxWN9y0E2J+s0QdLY9jfwPyJtpKcjZQEEwCqzbwk9Niyvj2jl8irX/RNe
-	 5exvWIms9TCFfKcTV+5NeydiFEvURuFBpcEIoWBPtR/zeHeRmc01T5BoseyBaIgLdU
-	 FQ6YnRSTcMXnA==
-Date: Fri, 23 Aug 2024 10:38:17 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] perf trace: Collect augmented data using BPF
-Message-ID: <ZsiQyahfNYCAmbZq@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-10-howardchu95@gmail.com>
- <ZsiNef72pSLnQO_c@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+O8eEBvfrSfo1rgNhFA0DN1rgxogmMaIEhlqo9jXLUS+sVRddQInRtcfe4CuDd2UySNS6lEiaqXqnWNatEnofWWnmbVHW50xPkZBVi3+SbM8AvoZJQhmCDwfYqNfs1PwPBRzcsGpef7sKtKY1JowO2tPRj7m5e5CAioAwPFMnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g+PP1qel; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724420432; x=1755956432;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+szYI74W4Zki1Y29MlUjRsf+VYwWjiDCC0d45P7PO6E=;
+  b=g+PP1qelloPomPomEn/WfU5A7I93lj1ZlDWnxoYchszH6hYFs/vovsQz
+   C+iK6P9wi94Z3h6QNyDa8jtcnPtebGhIIGtSv3TOLlOctAeXGuMx3lYI0
+   RLv4fMTHfhD1fGEkHuN1cqZ0m8gLHxYClhvvlphZPMnKs3dwkFrevNipN
+   IIqB4lNX0th2kBlHpl8Ah41KQAztxi6KsA2ul6Sn0XUQ/IGgItq/oe1AS
+   +HfmqSWWZOb4TuTN7VBcCIrTAutv0JYHPjUF3Aj39jjtO/QL5YKZssUj/
+   qrxNFZT23vxGPL///vu8PO9P8VIr9czMftTs4pbQr3fghunaU79pqVncw
+   Q==;
+X-CSE-ConnectionGUID: yZVe0La6T1eQMVb0pRl1Yg==
+X-CSE-MsgGUID: L/9qA+jCRrCudl1YN1370Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33455732"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="33455732"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:40:31 -0700
+X-CSE-ConnectionGUID: en08L4UhRsmKTTVSlY4xtg==
+X-CSE-MsgGUID: GQq0JHIwTu2c3ysst6bTLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61774254"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:40:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shUWg-00000000o7p-3l9m;
+	Fri, 23 Aug 2024 16:40:26 +0300
+Date: Fri, 23 Aug 2024 16:40:26 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kees@kernel.org, gustavoars@kernel.org, mcgrof@kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] params: Annotate struct module_param_attrs with
+ __counted_by()
+Message-ID: <ZsiRSq_fgrnKcQPi@smile.fi.intel.com>
+References: <20240823123300.37574-1-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,79 +78,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsiNef72pSLnQO_c@x1>
+In-Reply-To: <20240823123300.37574-1-thorsten.blum@toblux.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 23, 2024 at 10:24:09AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Aug 15, 2024 at 09:36:25AM +0800, Howard Chu wrote:
-> > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > @@ -427,7 +538,8 @@ int sys_enter(struct syscall_enter_args *args)
-> >  	 * "!raw_syscalls:unaugmented" that will just return 1 to return the
-> >  	 * unaugmented tracepoint payload.
-> >  	 */
-> > -	bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-> > +	if (augment_sys_enter(args, &augmented_args->args))
-> > +		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
+On Fri, Aug 23, 2024 at 02:33:00PM +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
-> We shouldn't do that, instead we keep doing
+> Increment num before adding a new param_attribute to the attrs array and
+> adjust the array index accordingly. Increment num immediately after the
+> first reallocation such that krealloc() for the NULL terminator only
+> needs to add 1 (instead of 2) to mk->mp->num.
 > 
-> 	bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-> 
-> And userspace will setup the syscalls_sys_enter map adding the generic
-> pointer collector (augment_sys_enter) for syscalls that have pointers
-> _and_ are not serviced by a pre-existing, specialized handler, this way
-> we keep the ones we have already and that already take into account
-> pretty printing network addresses based on the network family, knows how
-> to pretty print flags (the perf_event_open, etc).
-> 
-> I'll try to do this now.
+> Use struct_size() instead of manually calculating the size for the
+> reallocation.
 
-So, step by step, first this, and then hook it to the syscalls that:
+...
 
-1) have a pointer to collect and no handler, i.e. as a last step in
-assigning the functions to be tail called from the syscalls BPF map.
+>  	/* Extra pointer for NULL terminator */
+>  	new_attrs = krealloc(mk->mp->grp.attrs,
+> -			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 2),
+> +			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 1),
+>  			     GFP_KERNEL);
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 37ca96e130a5862d..a909880bd25e51d1 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1007,9 +1007,11 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
- 	return 0;
- }
- 
--static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
-+static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg *arg, char *bf,
- 				   size_t size, int val, char *type)
- {
-+	struct syscall_arg_fmt *arg_fmt = arg->fmt;
-+
- 	if (trace->btf == NULL)
- 		return 0;
- 
-@@ -1029,7 +1031,7 @@ static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg_fmt *
- }
- 
- #else // HAVE_LIBBPF_SUPPORT
--static size_t trace__btf_scnprintf(struct trace *trace __maybe_unused, struct syscall_arg_fmt *arg_fmt __maybe_unused,
-+static size_t trace__btf_scnprintf(struct trace *trace __maybe_unused, struct syscall_arg *arg __maybe_unused,
- 				   char *bf __maybe_unused, size_t size __maybe_unused, int val __maybe_unused,
- 				   char *type __maybe_unused)
- {
-@@ -2284,7 +2286,7 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			if (trace->show_arg_names)
- 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
- 
--			btf_printed = trace__btf_scnprintf(trace, &sc->arg_fmt[arg.idx], bf + printed,
-+			btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
- 							   size - printed, val, field->type);
- 			if (btf_printed) {
- 				printed += btf_printed;
-@@ -2987,7 +2989,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		if (trace->show_arg_names)
- 			printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
- 
--		btf_printed = trace__btf_scnprintf(trace, arg, bf + printed, size - printed, val, field->type);
-+		btf_printed = trace__btf_scnprintf(trace, &syscall_arg, bf + printed, size - printed, val, field->type);
- 		if (btf_printed) {
- 			printed += btf_printed;
- 			continue;
+Convert this to use krealloc_array().
+
+>  	if (!new_attrs)
+>  		return -ENOMEM;
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
