@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-299161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D18E95D12B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:15:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B1095D113
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78285B2CB66
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273731C23AD9
 	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599AA192598;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997B192599;
 	Fri, 23 Aug 2024 15:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfF8QuhD"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120B2192588
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C94192589
 	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425634; cv=none; b=ppAx1t6f/6nI7NovRAqElW6g7KXk1EM4hPlP4hmS8bwcppFNJvxtFXmh/bbdqkIXNYENKH7rhuDkV/qfzHvRj/vEJ9UmGhSCNPlor6bgUjsNA9OnX4/Pgz6eYqg1fwXYQ/uCwKRcVfgmL2tUCxAjbopN5SPe5W0D6+DofpquuGU=
+	t=1724425634; cv=none; b=LfOQDrhm9+clD215qycGT2WNGdxJUt2fni2gawUWqZBvabw/2/CkwIRAaQhxpRhRng2cKo4c+4dXbzfoG/hxi4hDdF3q7wz4cdGrxEt6vikuPxjgPx0h5XR25+TgdWbi3HIGskpMDvDG/171SCyCgMTz9fw/ym8t1cThDz1/c8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724425634; c=relaxed/simple;
 	bh=Trk7kRqz9cwbWgyymtr7L+zIg0BtyDTU0ddlg39/M8Q=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
 	 Message-Id:References:To; b=LmtYWNjzuRbI3dxpgI+0h5QgC2bg8NDLgv0CamVOl/NIh1DOhIzKXTSUjwo7FTNIqDlHw5dYEaHjWkDYktqMRnbLZUkHXepi1TuOPGmZhY0CjxaZ5eeTyJqvq+QAbvqMiocnXrH81eOuZfbn+Fb0QZ9KuEip38lmcfbjokOkXsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfF8QuhD; arc=none smtp.client-ip=209.85.208.52
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfF8QuhD; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so5503037a12.1
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a86910caf9cso333537166b.1
         for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:07:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1724425631; x=1725030431; darn=vger.kernel.org;
@@ -50,22 +50,22 @@ X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
          :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
         bh=hN/u/MQcY1xAjLL8Hjod4ME8opqYEyKjoXDkSbZQ89U=;
-        b=AgoIcV6cb6rV9zSKgelklkhEt6VbzeDJPFXCltrucOPcyItrHUUberTQn0u8j19Mdl
-         bqcnSf5f6SPC0ivssYbDmDMxQjKxBG+4Qth8PCQX04J11TKqVSlUnqVRYLt0B7y50qaz
-         zN9nbvl5RextCrMzJJBlXuWCZC6ONIgeFmVapa6Yvcn63U8+Yp77ZAo1rJ7hh+J4ljLQ
-         +VvnmSC1cv/LNtyvE0i+Sf4AK/lbRlWm8elRV0HOJFvB6K51r+RZLmDtd18PAUuVzG7i
-         +Sye0aodkLQLTfQvuFVczJY9LqBTw62tMltByxnEJ7Si98Ui30QvgkZ9maf+JQcuJcNT
-         VX4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZlTjH933EwpoBuh0UyrrU8qXGDRzVtQCsiaSGIrs2/qNbUm2hPkPTuIiSc6GV1k9Cb6YX+8wq+EfCcE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUv0fNDMK9eG9oRq1NB96BDhqyLCEV7vFI1JSIH2RM+kC+2vM4
-	1embDHsZZHOxs6thCUTGIj3P9IpBSlPrgBbRFjYRogaG3VEDd89P
-X-Google-Smtp-Source: AGHT+IFyl+aF9R5RuSf+qHazg+rk9eimRMeCf57k838qIezH0l6uUevQOGnLjaOijBOPiJBcMEhZXQ==
-X-Received: by 2002:a17:907:724a:b0:a86:94cd:97f0 with SMTP id a640c23a62f3a-a86a2fae4f0mr277662266b.19.1724425631009;
+        b=N+YfGkJDfwe8OgpwifoQBOejlWDPPtLfMkFsa2qADL3ebCMsgt/baDsTJaKwdzh4dd
+         QFTOgkOY+xWpYLCVUMnE8Ruq+9VPDAXV/1DdI+HCySqCZ0MqjmYzgZTE7n0Ekkd9VxPx
+         e9Z3uHbzleCwX8BWUQFXSqHjtGgdYxUaaN7T87MBdmGU8ERjbIIVXMsfokOVUqo7mW0n
+         2mtm576UtUblISeoXcr5cT5go6I0GhtwxfGtItYJX5b0aI06q0lExM9fOclgwlGX15Hm
+         Tzotw6bqG7LhMkRN0J6ETGM1Pp8WTKuEnAAiWUA8VVzp0k3K7UykoDwW3rR3z30Xdeqe
+         7pbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxNvPw9T4NBCUfKenXSziwOyYMN+T46OmTWfm57Pg3X+wdr5fWF12k9KwkLroLJz9/aQQLS6to3My7BZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4JWpVi01UkiKoAr+19iW38F9RVnMJ6q++NV7l9wIs6aG+SHQw
+	x2OPAe7OaWhtmGn6oGigmwBMo1trwo/TTsP0wx/my6rI/XU5zDmy
+X-Google-Smtp-Source: AGHT+IG5tAtRJxhV8UgS3aL4a+RPXNeZQ71j1OSkrJuVSejXjR1anmR0EuaxDPjcIBy/x4piGenuQg==
+X-Received: by 2002:a17:907:86aa:b0:a72:66d5:892c with SMTP id a640c23a62f3a-a86a2fa7ed2mr249230866b.18.1724425631323;
         Fri, 23 Aug 2024 08:07:11 -0700 (PDT)
 Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2e48e2sm269559166b.89.2024.08.23.08.07.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f21fe18sm269127766b.29.2024.08.23.08.07.10
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Aug 2024 08:07:10 -0700 (PDT)
+        Fri, 23 Aug 2024 08:07:11 -0700 (PDT)
 Content-Type: text/plain;
 	charset=utf-8
 Precedence: bulk
