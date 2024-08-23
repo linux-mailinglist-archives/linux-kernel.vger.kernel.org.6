@@ -1,356 +1,169 @@
-Return-Path: <linux-kernel+bounces-299108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5135195D036
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309D295D043
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 772921C2203A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:43:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D8B24A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126D8188590;
-	Fri, 23 Aug 2024 14:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852DF1885A2;
+	Fri, 23 Aug 2024 14:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a0v0Mdl9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r9jzCJ6r"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2069.outbound.protection.outlook.com [40.107.212.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BED1E4B2;
-	Fri, 23 Aug 2024 14:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424186; cv=none; b=oQZQ7ROn4xqNiKnw70xLFJogTxnCr+ZiCHvERaKL4/iq/+4G/28dyZ/sgttuSe5hJMH3W1DmfOV3WQYq9hvvsvyzmyTzAYj49iOIBjY4YFpvZekVfsJpDlhdRmCY1qB+5aCkzVZj4DNF6ySKkZN1rMjYvMGNroVQGrMGdgyVnCI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424186; c=relaxed/simple;
-	bh=qZ56w3M6m3+Ib8naPKDYErrKF3TaH8hFo9WLkYydJzM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C/BXYutimvzm1OlnxuctS7z+hOEHzhyoOByAeGgff7ivsSM5ZMGzwZeq9Fu5d/s0eSnfxCBjSh4FLXziIeXg75FuJxLZWok61f0Rm7uoGsD342UsBnpEB91C92eIEgHNFS/DWUIQqbwM6wBv796chjAmPOOV41c3YjXZxmWRyd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a0v0Mdl9; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724424184; x=1755960184;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=qZ56w3M6m3+Ib8naPKDYErrKF3TaH8hFo9WLkYydJzM=;
-  b=a0v0Mdl9lDZQkvZidrgErS1QbPdA+9dH4rpIqfbB5FjTTGkVx/BZ+8xr
-   hh03Lu0EZr6VwDrOMbo0/nx+WwiTdhNK1MakKkChwQ6Ot6vOT5CipNdfW
-   zA9Ooy9fWeVRwpKGDkt5W7/x8J1i5/Cv5g5SPhBYwwwdHwGGdYv1i9IB6
-   kVw6J16A/nVRyCvButqboZKG4bt/T8Z6ZLx136qYmni1diT93E7fpRgEC
-   y/3i+zxtdqrjwx7xP7w4hSz7J0Sck0hia83ZJSoCeBBmWiest/vFKsKcP
-   jmfD/7qfdTOCa5E97nmMEaLjCFeQJsPRov6symNYbMIIEt6MAA7Qc06Hz
-   g==;
-X-CSE-ConnectionGUID: IEG7RJbuSwaEiMcG3SmBqg==
-X-CSE-MsgGUID: 418bNt1CSjavI9YjlA28HA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23065402"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23065402"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:43:03 -0700
-X-CSE-ConnectionGUID: a5eHacTfTqqnx1IZrmwa/g==
-X-CSE-MsgGUID: 1Ya/CHx2RSmABdRzQJWmDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="92542015"
-Received: from kkkuntal-desk3 (HELO [10.124.222.88]) ([10.124.222.88])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:43:03 -0700
-Message-ID: <5ea774f522a365ef42c9e3729d123f9be4b04726.camel@linux.intel.com>
-Subject: Re: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency
- latency control to sysfs interface
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Tero Kristo <tero.kristo@linux.intel.com>, Hans de Goede
-	 <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, LKML
-	 <linux-kernel@vger.kernel.org>
-Date: Fri, 23 Aug 2024 10:43:01 -0400
-In-Reply-To: <6adc07a2-14bc-6910-5d51-a0f68fc8ef46@linux.intel.com>
-References: <20240821131321.824326-1-tero.kristo@linux.intel.com>
-	 <20240821131321.824326-4-tero.kristo@linux.intel.com>
-	 <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com>
-	 <863beeab7f6ecf36796394c75e95fc7a0396a862.camel@linux.intel.com>
-	 <6adc07a2-14bc-6910-5d51-a0f68fc8ef46@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EF417E01F;
+	Fri, 23 Aug 2024 14:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724424261; cv=fail; b=JzQBs5P9qxvRranc243dODwzRsOVeOBTvAZwdr2pSF7eIAZ+Lru2fwTuAeTEEeJuATSJxbZepmwiC+x5Du/Zi7GTgzFwuxPEuV6ULDE5uarPxJLg1kzyKeYzPkn6ZDZomid+VgFsEFgF20bgro+R/JGPKpvnA/JAsQcoxAEhIpM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724424261; c=relaxed/simple;
+	bh=0Rqpk8p/+u18lmHFpunJO7aB88tOIfBZZ0PFVng6C84=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dRp7r0UGjyMu7tBOqC1gvoRNuOphJQyZZvzjYQFuyUaB4Ah/25yPXGVu7vjnP6kzZHXYCzDF+MUGhsoPxiN17hp9I9Ln343Tu+p0Kj2x5ocF+jGKPkL1wpKqBFg63pMcZgCd8W/dnSPkjI4q15fN88G9JZivShJnHe5Cn8HJnKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r9jzCJ6r; arc=fail smtp.client-ip=40.107.212.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CnGocMpRZK6D3Fwcwmrff2iG3FUb959KqnkjhPNw45SWY5XWrAi/AY7GGK3MpJ8r3LsYllaaq9XuRihiM72flezBiGesfoPTuWCXrGy79uQBacWnC2mGyrLbgxysrxnmxaC5zNKiMbwwQs6g2TKTH5OAHrSreg5hViSsL4x72jadGa7mTHBxnCddashazvYCzVx+zQoUjx8FvIqXcoBsbOPp/rLqEGQM+ulKLbnaiyHiJZyo+uQHdax8QpFvfnDrrqycWj4OEF5yiHRcnAl68pB8+RZaW46J5LsYkxJf1v7j6MVJwQGP8hrNPXGNN//4vdeOvuOaAEcpSa8BSQixFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/KoK5Z9UNiTAoP/dpzY0KRcgZtFePZz/S3uBwThHQpA=;
+ b=uCsXjBC0lyO1I5K7otndNhZEqH8Z8xVdBvRY1ht+UqRICFgEQHe6SaThapYqwssvhJdWxkV1BFbuDOmIeowluEMXjia+oxaduwIOy+daSaY0DgqVB8EMRKaraDKiHMpWlPo5B5eOwpH+qXsQd446Z7SxomV6mx58gR/jyay8Qq+l50qWbm4Tr1F2Fwgg08ds3N+BMIo4Vs8FfEpqCI1scXaHOKYM8k4A682EZPwgYyUfvm18SHstMJzXftDYk1sdw1tru0ZTpLBQy6F7Srt4lWP7AyPYqEXrGCF5Ez5TMywFe25bFtP0ejljeZyWKh59Hz3Y3OEpQnZZyldKOlFGTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/KoK5Z9UNiTAoP/dpzY0KRcgZtFePZz/S3uBwThHQpA=;
+ b=r9jzCJ6r2qfUsa23r/xiP8e8mwKpXkpP9FHeLeR6vQFaVJGcML0qu/L3YQltctR4rXDUYGY7HZy2D+7BFew4brYJP6at453yZRmgS7z9G4Ec8xLekuIscbIxQfbU2DnrMDRiBmYAE3uLp9J1T2riilsNNhfq1kiRW9krLdPjSsckMfvdeyW+LchxQRT0q7l6JSQSSNxT1l45c+rFMEWD76jVCs+P36yEh+wfemmXYC50rZWZjDt9ifoOWrMVUpMp2fejLurm+TDTuftStPjbxAgU9TjjJ3x3dVuHBCwJ8j81XkABNoU8WsBZPlr0x5WD1MCemX8AXjtBlgQHj72fSA==
+Received: from PH8PR07CA0014.namprd07.prod.outlook.com (2603:10b6:510:2cd::25)
+ by SJ2PR12MB8691.namprd12.prod.outlook.com (2603:10b6:a03:541::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 14:44:14 +0000
+Received: from CY4PEPF0000EE3D.namprd03.prod.outlook.com
+ (2603:10b6:510:2cd:cafe::f2) by PH8PR07CA0014.outlook.office365.com
+ (2603:10b6:510:2cd::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29 via Frontend
+ Transport; Fri, 23 Aug 2024 14:44:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EE3D.mail.protection.outlook.com (10.167.242.15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.11 via Frontend Transport; Fri, 23 Aug 2024 14:44:14 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 23 Aug
+ 2024 07:44:04 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 23 Aug
+ 2024 07:44:03 -0700
+Received: from build-spujar-20240626T115404323.nvidia.com (10.127.8.9) by
+ mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Fri, 23 Aug 2024 07:44:03 -0700
+From: Sameer Pujar <spujar@nvidia.com>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
+CC: <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <mkumard@nvidia.com>,
+	<spujar@nvidia.com>, <rituc@nvidia.com>, <jbrunet@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<robelin@nvidia.com>
+Subject: [PATCH 0/2] Fixes for Tegra audio
+Date: Fri, 23 Aug 2024 14:43:40 +0000
+Message-ID: <20240823144342.4123814-1-spujar@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3D:EE_|SJ2PR12MB8691:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e85fa5b-5d52-4556-057c-08dcc3820ed7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dWfu55Fq2DrixIfJ2Aidr23z6GXuEvX0SMZqHQsuT4fio3UJxy+8jsGdTKxA?=
+ =?us-ascii?Q?9y0rJgSsxwigkmMATSwc6KFOXMaw21KK2ahEiDwmVZcWpN6+MB0Xn4m36WOk?=
+ =?us-ascii?Q?v/iIs2aU/396qa+/sosy3nqRwumRcgyMCWHv7dT+sguxfwX0n8YpzTY3l0mX?=
+ =?us-ascii?Q?OIjOfOG1N9EqaH9VICWEYa7luHNDHOM+2i/mTjTbiV9ojXIS+Li0DFLU1wbG?=
+ =?us-ascii?Q?avaD1got15A+A9dF9u+5cseWBqPFJDrIrclqi9aZ+kqORJIpT8M1xxTL7hnn?=
+ =?us-ascii?Q?KU8HRqY7uQXLd2TE5ld1UbJzYMrOi0I4DAFv5d8O78pQT7XDmP1VaU2bfZ5E?=
+ =?us-ascii?Q?hdsWN+DSEI1xwQ4JRqO4VI8Rh+GtpC5h52Z/Bgrw+rdLZa4eMeAQehaZ8xxk?=
+ =?us-ascii?Q?UGRUkoo8SNHMMNyiJKLlf8ZwdF4GAr/B4eV/8lwxAMlJIkVtlxAM/x76DQ6P?=
+ =?us-ascii?Q?pTlZjeglz717OqJS/fBquIP05i4uY6FtN6phhRm01Z35ha14fbOTibofgQjw?=
+ =?us-ascii?Q?BPeDqizXXUUplvOsJZTWYR0/6iX9bE1C0uy2nEDiA/xRzzGubnOgIoIJlhNc?=
+ =?us-ascii?Q?YhGedqkYysSXFR3TKIR3w0vjC3DkYwpZP1HPtd5A3cPH9rqvw9ArtFgK5Sp/?=
+ =?us-ascii?Q?vXpSD/HwgXvp9WDV8gFiPmcRS5Xwm6zzAckZyV315aiAYoj4dAWJUQrW1Ejo?=
+ =?us-ascii?Q?C07vWbiRkkecGCRSYH+cjOiPq4Md6PZQnDTyATap+LEG6+pMH8xKVb7MoIaV?=
+ =?us-ascii?Q?W+j42VN2ihDKzrXfcw+vVne7luMtibL39+R0cOmNwu6gkoSXCF78pCNBKgji?=
+ =?us-ascii?Q?82jluJ4ndGSsJiN0MvZsNIvLiH3tsI91eftJBTbicQCmCY9jqPsqKDEljajS?=
+ =?us-ascii?Q?OH9p314RygBL7OZLouv+6Vx+EB7LbXSRQXFik6lXUkzBPBc1xlb5pe7UC0aj?=
+ =?us-ascii?Q?xvpgilN5QX8o9qoev56eJI4Gmj/rWq1VkucELBoFzDqDo4RDGsuSDRj8o3f7?=
+ =?us-ascii?Q?WQiCw3lh4TrxNSDHKr01RLv9taHEyegpEn4Nu0rkBBlB/cVD6k6sAdlxox/6?=
+ =?us-ascii?Q?PMb54HKG/Ywm3rrT1O/MRFiRYQNRZi5c6aiUFLnYtD6y26PIZxz+ymYLBVQE?=
+ =?us-ascii?Q?wM/YN93B5YjwbFmyNszTkPUe/1KMox3qJlWvLhnj92/jbvOLSUjOc4BAKI4C?=
+ =?us-ascii?Q?yTwfPajcLwYwzUtBSCAaBoVsOc9vcWtENpsDo5e6+lRLsAp/tta6cvzm8GLS?=
+ =?us-ascii?Q?lH8Qkv5yZPDHUw2QGEtRsZ74xCuZtC2RVv7fwRJll7Yvhqh4BFzwB+FCWoUa?=
+ =?us-ascii?Q?Obzb0EkZ3Te7bvEWIBNtq65Hps4zNUW8TZGsTyfA2zjM7hl6QUHSpcfoyzl9?=
+ =?us-ascii?Q?mLpIwvFVKTQByhATqv6Viz+pm4M0+QKdW7OYHaOjAB8V/cyirkDzWg4xC/Rt?=
+ =?us-ascii?Q?uJFaub1XLhy6F/7yX6/9F1Y+fWwzIRu2?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 14:44:14.0186
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e85fa5b-5d52-4556-057c-08dcc3820ed7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE3D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8691
 
-On Fri, 2024-08-23 at 16:29 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Fri, 23 Aug 2024, srinivas pandruvada wrote:
-> > On Fri, 2024-08-23 at 16:03 +0300, Ilpo J=C3=A4rvinen wrote:
-> > > On Wed, 21 Aug 2024, Tero Kristo wrote:
-> > >=20
-> > > > Add the TPMI efficiency latency control fields to the sysfs
-> > > > interface.
-> > > > The sysfs files are mapped to the TPMI uncore driver via the
-> > > > registered
-> > > > uncore_read and uncore_write driver callbacks. These fields are
-> > > > not
-> > > > populated on older non TPMI hardware.
-> > > >=20
-> > > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> > > > ---
-> > > > =C2=A0.../uncore-frequency-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 42
-> > > > ++++++++++++++++---
-> > > > =C2=A0.../uncore-frequency-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 +++=
-++-
-> > > > =C2=A02 files changed, 49 insertions(+), 6 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/platform/x86/intel/uncore-
-> > > > frequency/uncore-
-> > > > frequency-common.c b/drivers/platform/x86/intel/uncore-
-> > > > frequency/uncore-frequency-common.c
-> > > > index 4e880585cbe4..e22b683a7a43 100644
-> > > > --- a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > > frequency-
-> > > > common.c
-> > > > +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > > > frequency-
-> > > > common.c
-> > > > @@ -60,11 +60,16 @@ static ssize_t show_attr(struct uncore_data
-> > > > *data, char *buf, enum uncore_index
-> > > > =C2=A0static ssize_t store_attr(struct uncore_data *data, const cha=
-r
-> > > > *buf, ssize_t count,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 enum uncore_index index)
-> > > > =C2=A0{
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input =3D 0=
-;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> > > > =C2=A0
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, =
-&input))
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index =3D=3D
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtobool(buf, (bool *)&input))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
-urn -EINVAL;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, &input))
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
-urn -EINVAL;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&uncore_=
-lock);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_writ=
-e(data, input, index);
-> > > > @@ -103,6 +108,18 @@ show_uncore_attr(max_freq_khz,
-> > > > UNCORE_INDEX_MAX_FREQ);
-> > > > =C2=A0
-> > > > =C2=A0show_uncore_attr(current_freq_khz, UNCORE_INDEX_CURRENT_FREQ)=
-;
-> > > > =C2=A0
-> > > > +store_uncore_attr(elc_low_threshold_percent,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-> > > > +store_uncore_attr(elc_high_threshold_percent,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
-> > > > +store_uncore_attr(elc_high_threshold_enable,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-> > > > +store_uncore_attr(elc_floor_freq_khz,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-> > > > +
-> > > > +show_uncore_attr(elc_low_threshold_percent,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-> > > > +show_uncore_attr(elc_high_threshold_percent,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
-> > > > +show_uncore_attr(elc_high_threshold_enable,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
-> > > > +show_uncore_attr(elc_floor_freq_khz,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
-> > > > +
-> > > > =C2=A0#define
-> > > > show_uncore_data(member_name)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0
-> > > > \
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static ssize_t show=
-_##member_name(struct kobject
-> > > > *kobj,=C2=A0\
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct
-> > > > kobj_attribute
-> > > > *attr, char *buf)\
-> > > > @@ -146,7 +163,8 @@ show_uncore_data(initial_max_freq_khz);
-> > > > =C2=A0
-> > > > =C2=A0static int create_attr_group(struct uncore_data *data, char
-> > > > *name)
-> > > > =C2=A0{
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, freq, index =3D=
- 0;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, index =3D 0;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int val;
-> > > > =C2=A0
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(m=
-ax_freq_khz);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(m=
-in_freq_khz);
-> > > > @@ -168,10 +186,24 @@ static int create_attr_group(struct
-> > > > uncore_data *data, char *name)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[=
-index++] =3D &data-
-> > > > > initial_min_freq_khz_kobj_attr.attr;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[=
-index++] =3D &data-
-> > > > > initial_max_freq_khz_kobj_attr.attr;
-> > > > =C2=A0
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
-, &freq,
-> > > > UNCORE_INDEX_CURRENT_FREQ);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
-, &val,
-> > > > UNCORE_INDEX_CURRENT_FREQ);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
-> > > > > current_freq_khz_kobj_attr.attr;
-> > > > =C2=A0
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
-, &val,
-> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret) {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_low_threshold_percent);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_percent);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_enable);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_floor_freq_khz);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
-> > > > > elc_low_threshold_percent_kobj_attr.attr;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
-> > > > > elc_high_threshold_percent_kobj_attr.attr;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0&da=
-ta-
-> > > > > elc_high_threshold_enable_kobj_attr.attr;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
-> > > > > elc_floor_freq_khz_kobj_attr.attr;
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > >=20
-> > > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > >=20
-> > > But I have to say I'm not big fan of this function treating any
-> > > error
-> > > as=20
-> > > an implicit indication of ELC not supported.
-> >=20
-> > Also there is a check for version number, which supports ELC.
->=20
-> AFAICT, the version number check is not on the path that is called
-> from=20
-> create_attr_group().
->=20
-> The version number check is in uncore_probe() which then propagates
-> this=20
-> knowledge into read/write_eff_lat_ctrl() using ->elc_supported.
+This is a small series which fixes two bugs which were discovered
+on NVIDIA Jetson AGX Orin platform.
 
-I mean uncore_read() should fail if the current platform doesn't
-support ELC.
-Here that check is via a flag cluster_info->elc_supported.
+The first patch in the series fixes a KASAN UAF bug discovered
+during suspend/resume testing. This is a core DAPM fix.
 
->=20
-> > So this
-> > condition will never be true unless some IO read failure.
->=20
-> So are you saying ->elc_supported check is not required (added by
-> patch=20
-> 2)? It return -EOPNOTSUPP not because of an "IO read failure"??
->=20
-I take back IO read fail. readq() will never fail here. uncore_read()
-can only fail on non TPMI platforms only for IO issues.
+The second patch fixes CBB error and this is Tegra in AHUB driver.
+This error happens when Tegra audio drivers were built as part of
+kernel image.
 
- We should check elc_supported.
+Mohan Kumar (1):
+  ASoC: tegra: Fix CBB error during probe()
 
+robelin (1):
+  ASoC: dapm: Fix UAF for snd_soc_pcm_runtime object
 
-> > > Is that even going to be true after this:
-> > >=20
-> > > =C2=A0
-> > > https://patchwork.kernel.org/project/platform-driver-x86/patch/202408=
-20204558.1296319-1-srinivas.pandruvada@linux.intel.com/
-> > >=20
-> > > ...as root_domain is eliminated for other reasons than ELC=20
-> > > supported/not-supported (-ENODATA return path)?
-> >=20
-> > Even if ELC is not supported, but all others fields will always be
-> > supported from base version. The above change doesn't do anything
-> > with
-> > root domain.
->=20
-> ??
->=20
-> read/write_eff_lat_ctrl() check for ->root_domain and return -ENODATA
-> if it is true. If that patch from you I linked above is applied, this
-> line=20
-> won't execute on some systems:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpmi_uncore->root_cluster=
-.root_domain =3D true;
->=20
-Yes and will return without calling any callbacks for any attribute for
-root domain only on these systems. So read/write_eff_lat_ctrl() will
-not be called for root domain. For other domains the callbacks are
-called before this check.=20
+ sound/soc/soc-dapm.c            |  1 +
+ sound/soc/tegra/tegra210_ahub.c | 10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-> Will that cause an issue (for read/write_eff_lat_ctrl())?
-We don't present ELC fields on root_domain on any system.
-
-Can you tell what kind of issues you are worried about, may be I am not
-getting?
-
->=20
-> My concern here is that misusing error values like this to do=20
-> supported/not-supported check leads to fragility that would not occur
-> if errors would be treated as hard errors and supported is checked by
-> other means (which would be easy here using ->elc_supported, AFAICT).
->=20
-
-Attribute creation is in common part which includes non TPMI systems,
-which we still support for all clients for several gens.
-
-We can add a feature mask as part of struct uncore_data and avoid
-calling uncore_read() and treat uncore_read() error as hard errors as a
-separate change. elc_supported can be moved to this structure, but I
-want to avoid as we will be adding some more features, which are again
-TPMI specific, so more flags will be needed.
-
-Thanks,
-Srinivas
-
-
-
-
+-- 
+2.17.1
 
 
