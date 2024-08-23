@@ -1,156 +1,185 @@
-Return-Path: <linux-kernel+bounces-298957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CAD95CE40
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8208795CE42
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1464BB253E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B63C1F22645
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F98A188017;
-	Fri, 23 Aug 2024 13:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CC61586D3;
+	Fri, 23 Aug 2024 13:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvKoed14"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPcOiE1w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04049186E55;
-	Fri, 23 Aug 2024 13:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4032B4430;
+	Fri, 23 Aug 2024 13:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420611; cv=none; b=EHq9k2aOUfJiN7wUa7gP6G58+kU0Fg0yWimbMThrrantpkSlUeh5egBYAnahIr27Xaz/Jiyzdn7Wydo7d+Mw1sJvOh8XEslRs53ospnvj+ZvMpDR3zR9Gkyn2x8qc1zu3aFSvE5sNc1KGC/xmgDE4Xta3Q6FFJGXliRElkg/nMQ=
+	t=1724420623; cv=none; b=aJr1+ozGh39CPG7qIrMk8TbZUulhNwRHgtMgeOEr4+zL3Wsy0dp26oxFIZyh2CrEyh58Jlynh1Rwl1wDfMl/bl7lhpFUpcu7U+8yKgpnhKS5yjx2JOruVtA7ARHwzaZuciYhriN4AD+OiTjPQebozJykpB0AhfBpGvW/McAfkN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420611; c=relaxed/simple;
-	bh=ib4sJFch59+GHVbbNODHxykPpCp6swAnQhqC1AHvoNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1+wSPbP5aMX5YgZLh3hNkT2ayhivwKi7zH3WEjXRhB8qjsWCyC5NprWuHHmnA6deJy4He8tB4e0xIYSV1jd4MjUNgpFEOtTx4WXFNhEB3zgzYc9gZCtXZlccpfuYLgi5z8inwB7meTkmCeBNclwHLDvYh0MKJ2X9xLfHRTXkjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvKoed14; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1724420623; c=relaxed/simple;
+	bh=1KLzU72H9HpFzFTrNnIbhXToQZtbWCT9AM/EaZEMT9g=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qGq5sfX/0o3N4BgxcPT4uBC/9LW90f18YqTzCfCTmSdGS5Y37miw2bL4dILC18I086yGOnOELfUkpFok9NW0UN8wD8RzBfa4l9pg0LNLUNra+qykA/DAmhTLV+nwFIGb9C+klQ9YGLM6LNUFskIb/sU1VKH+gMXMV5+w4MVLnlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPcOiE1w; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724420610; x=1755956610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ib4sJFch59+GHVbbNODHxykPpCp6swAnQhqC1AHvoNM=;
-  b=RvKoed14wIVS7WWbe2RILh/yRicWZ0WL0A0AW+JtRxsAgrgaGMyF9dl4
-   vzwOcfjh1GHgL65wPAffcZDDaZpeUCNol5EOiq0FVE9ISLml8wEtaTrBR
-   CcriEG7eMwWEiI7WR8QIUeYmN0XY4PMFMQMLj+HPvFZYn3QcH9mhRtnvz
-   aKdtqZ1A5Q7I8OmwUaz25InCGlCDFTtmUbxRhdLSSseujcf6yNlOF5U32
-   h2AHepGNGEj5ze+lj/WtaaxyhOGlAymFzbm3FzH2F05QozLXGSoNCraMZ
-   Z3dS9f3AveHvYs6Xx/nUadlBZKP+V/Y7o/eFNUmMblU3VfkGXBzMoAGlw
-   A==;
-X-CSE-ConnectionGUID: BoaZ8bdPTb+OjzvpNWABUw==
-X-CSE-MsgGUID: ZSNoBZc3T76LAXnOXVDy2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40352809"
+  t=1724420622; x=1755956622;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=1KLzU72H9HpFzFTrNnIbhXToQZtbWCT9AM/EaZEMT9g=;
+  b=BPcOiE1whdjn12Sn+iB+iW8f7kn11dT+rsXUZeGY+edIV576x0jT+K1W
+   4DdwNAN2oCiBIVyNb8GGGkEtdxIcIh2T1hEl6OTyOw3r7vZBF7Mzu//Aq
+   Rz9spFAtncBkLMdW2zzQwyIZBKxjeCFaM2ftvI5OsSyCoXjUxm/tNcaDw
+   itwsWQ+PIPWUN6hE6vk6vmMXwhV2o2TlT4ockgN0BBQ+s59gBIajcTa+D
+   6fQO2ZXkhrtyu9kPdqEoecdPYB/OsI6fh2Zud7phrJeQGLHYRnfpZ7CH8
+   JTxsrbw9XfPcJeLZpwRabVOG4xcbtEezIWkj75UhakgfFkaVr+8NPYOqz
+   Q==;
+X-CSE-ConnectionGUID: W/o6jgNrTx+4ODpZNPhBBQ==
+X-CSE-MsgGUID: t7l8K+pZRpCjHK9kCqdvSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22752332"
 X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="40352809"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:29 -0700
-X-CSE-ConnectionGUID: S+vBFfveTkGCT/5A9bwGUw==
-X-CSE-MsgGUID: IoLQjP50Q9K73aFOWBIlnw==
+   d="scan'208";a="22752332"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:41 -0700
+X-CSE-ConnectionGUID: yCwH8bAnSGuAvleyt6vArw==
+X-CSE-MsgGUID: BgUdmcg3QiScT9xpGAhu5w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="84980367"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shUZW-00000000oAz-2JFe;
-	Fri, 23 Aug 2024 16:43:22 +0300
-Date: Fri, 23 Aug 2024 16:43:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v5 02/10] regulator: Move OF-specific regulator lookup
- code to of_regulator.c
-Message-ID: <ZsiR-kizxnvZufgR@smile.fi.intel.com>
-References: <20240822092006.3134096-1-wenst@chromium.org>
- <20240822092006.3134096-3-wenst@chromium.org>
- <ZsdBddTDuvNasHNq@smile.fi.intel.com>
- <CAGXv+5FjwxGQgV6SdLfTeNRYbpcgwkEnCWvaZiWh4rs3bhs-2A@mail.gmail.com>
+   d="scan'208";a="61803516"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 16:43:32 +0300 (EEST)
+To: Mathieu Fenniak <mathieu@fenniak.net>
+cc: Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Fix spurious rfkill on
+ UX8406MA
+In-Reply-To: <20240823115657.69053-1-mathieu@fenniak.net>
+Message-ID: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
+References: <20240823115657.69053-1-mathieu@fenniak.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5FjwxGQgV6SdLfTeNRYbpcgwkEnCWvaZiWh4rs3bhs-2A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: multipart/mixed; boundary="8323328-2062772605-1724420612=:2230"
 
-On Fri, Aug 23, 2024 at 02:49:59PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Aug 22, 2024 at 9:47 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 22, 2024 at 05:19:55PM +0800, Chen-Yu Tsai wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-...
+--8323328-2062772605-1724420612=:2230
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> > > +/**
-> > > + * of_get_child_regulator - get a child regulator device node
-> > > + * based on supply name
-> > > + * @parent: Parent device node
-> > > + * @prop_name: Combination regulator supply name and "-supply"
-> > > + *
-> > > + * Traverse all child nodes.
-> > > + * Extract the child regulator device node corresponding to the supply name.
-> > > + * returns the device node corresponding to the regulator if found, else
-> > > + * returns NULL.
-> >
-> > At the same time you may fix kernel-doc warnings (no "Return" section) in these
-> > three (on your wish you may fix others in a separate change, but it's not
-> > related to this series).
-> 
-> As you said some other functions are missing it as well, so I'll do a
-> patch separate from this series to fix them all.
+On Fri, 23 Aug 2024, Mathieu Fenniak wrote:
 
-But you need to fix them in this patch series. We do not add patches with known
-issues, which are really easy to fix beforehand.
+> The Asus Zenbook Duo (UX8406MA) has a keyboard which can be
+> placed on the laptop to connect it via USB, or can be removed from the
+> laptop to reveal a hidden secondary display in which case the keyboard
+> operates via Bluetooth.
+>=20
+> When it is placed on the secondary display to connect via USB, it emits
+> a keypress for a wireless disable.  This causes the rfkill system to be
 
-(And below seems you indirectly agrees on that)
+One space is enough (the second one might have been auto-added by your=20
+editor).
 
-> > > + */
+> activated disconnecting the current wifi connection, which doesn't
+> reflect the user's true intention.
+>=20
+> Detect this hardware and suppress any wireless switches from the
+> keyboard; this keyboard does not have a wireless toggle capability so
+> these presses are always suprious.
 
-...
+spurious
 
-> > > +/** of_regulator_dev_lookup - lookup a regulator device with device tree only
-> >
-> > Something went wrong with the indentation.
-> 
-> Will fix, and also add a "Return" section.
+>=20
+> Signed-off-by: Mathieu Fenniak <mathieu@fenniak.net>
+> ---
+>  drivers/platform/x86/asus-nb-wmi.c | 20 +++++++++++++++++++-
+>  drivers/platform/x86/asus-wmi.h    |  1 +
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/as=
+us-nb-wmi.c
+> index fceffe2082ec..ed3633c5955d 100644
+> --- a/drivers/platform/x86/asus-nb-wmi.c
+> +++ b/drivers/platform/x86/asus-nb-wmi.c
+> @@ -145,6 +145,10 @@ static struct quirk_entry quirk_asus_ignore_fan =3D =
+{
+>  =09.wmi_ignore_fan =3D true,
+>  };
+> =20
+> +static struct quirk_entry quirk_asus_zenbook_duo_kbd =3D {
+> +=09.ignore_key_wlan =3D true,
+> +};
+> +
+>  static int dmi_matched(const struct dmi_system_id *dmi)
+>  {
+>  =09pr_info("Identified laptop model '%s'\n", dmi->ident);
+> @@ -516,6 +520,15 @@ static const struct dmi_system_id asus_quirks[] =3D =
+{
+>  =09=09},
+>  =09=09.driver_data =3D &quirk_asus_ignore_fan,
+>  =09},
+> +=09{
+> +=09=09.callback =3D dmi_matched,
+> +=09=09.ident =3D "ASUS Zenbook Duo UX8406MA",
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +=09=09=09DMI_MATCH(DMI_PRODUCT_NAME, "UX8406MA"),
+> +=09=09},
+> +=09=09.driver_data =3D &quirk_asus_zenbook_duo_kbd,
+> +=09},
+>  =09{},
+>  };
+> =20
+> @@ -630,7 +643,12 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_d=
+river *asus_wmi, int *code,
+>  =09case 0x32: /* Volume Mute */
+>  =09=09if (atkbd_reports_vol_keys)
+>  =09=09=09*code =3D ASUS_WMI_KEY_IGNORE;
+> -
+> +=09=09break;
+> +=09case 0x5D: /* Wireless console Toggle */
+> +=09case 0x5E: /* Wireless console Enable */
+> +=09case 0x5F: /* Wireless console Disable */
+> +=09=09if (quirks->ignore_key_wlan)
+> +=09=09=09*code =3D ASUS_WMI_KEY_IGNORE;
+>  =09=09break;
+>  =09}
+>  }
+> diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-=
+wmi.h
+> index cc30f1853847..a6ee9440d932 100644
+> --- a/drivers/platform/x86/asus-wmi.h
+> +++ b/drivers/platform/x86/asus-wmi.h
+> @@ -50,6 +50,7 @@ struct quirk_entry {
+>  =09 */
+>  =09int no_display_toggle;
+>  =09u32 xusb2pr;
+> +=09bool ignore_key_wlan;
 
-Thank you!
+Please put this next to the other bool values.
 
-> > > + * @dev: Device pointer for regulator supply lookup.
-> > > + * @supply: Supply name or regulator ID.
-> > > + *
-> > > + * If successful, returns a struct regulator_dev that corresponds to the name
-> > > + * @supply and with the embedded struct device refcount incremented by one.
-> > > + * The refcount must be dropped by calling put_device().
-> > > + * On failure one of the following ERR-PTR-encoded values is returned:
-> > > + * -ENODEV if lookup fails permanently, -EPROBE_DEFER if lookup could succeed
-> > > + * in the future.
-> > > + */
+Seems fine otherwise so after correcting these small things, you can add:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
+--=20
+ i.
 
+--8323328-2062772605-1724420612=:2230--
 
