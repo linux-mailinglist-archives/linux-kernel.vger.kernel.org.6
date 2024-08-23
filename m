@@ -1,103 +1,152 @@
-Return-Path: <linux-kernel+bounces-299658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2CC395D847
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:03:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB85F95D84C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F4F1F219BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 166FFB21153
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BE91C7B91;
-	Fri, 23 Aug 2024 21:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F91B8EBE;
+	Fri, 23 Aug 2024 21:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C6iwZbgi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5947D401;
-	Fri, 23 Aug 2024 21:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c2LbS+Lj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fXPZVRcS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83477189B89;
+	Fri, 23 Aug 2024 21:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724446971; cv=none; b=HnMNWkp7wgY9JNVKD6hBue5Ermg2u2wbu3EPdxLty6O3XKIq8Nkw89ZKO/5QPrDkoVAF9vJGFHPbhVcnkfGOBG50/4YZdlCXe64xtndCa88gmpqwKwd0SWJ4eKwHLhVfdgQisGRXwyLGqtQGplC9rVn2F7EJQP6SM8y4aLsqcwA=
+	t=1724447106; cv=none; b=u0XemVV/nI/0mP+lSFFNyM9x5jK698maZKJRNAn/9aPi1H0sBY1sj+6vcGah2eqrfksgfnT5PNRDAi4lvyCinJF+rJ9XD9DRMgjucsB8XsAsyWkyoM7ItuYr4F1kkx6U3Gnuxb2Ba6gvpfvD58QpH/vOu++cvIIJa3Efhpv2oMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724446971; c=relaxed/simple;
-	bh=nH8oqdDj52PUh7dzoLgyetldfSEB/0EcGoulJoFRuGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ot1L7cycu/iqeZM614tB4ASJniKeLMoyWN3c9xjAZnYmTy/YkNS210OnHYEaYCZ7xfXi0Dpm5Apib0ijoLKEM1K4eg71PyHW/xWT6sLP5Ma+GDko/kTl/O3w+Qxuqy0f6DkB0PM3d86bLJWy8q0Ree+sUGqxb826CwzKUj4J2Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C6iwZbgi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.106.151] (unknown [131.107.174.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A297220B7165;
-	Fri, 23 Aug 2024 14:02:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A297220B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724446969;
-	bh=94ktIl6VDdIJQkXpB2W9oUFrU1hm0z82X3RGB8CaEsU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C6iwZbgi0mE2l4o05Ijn6mRc3v74OYS+oeKC4BL6cj/bLnm7gkyyLX2GjsN9AjyVV
-	 Y0Ir9mghq8dR0IZtLlph/l2paSPKpFUn912xITmk99DcEJeffoGomADxzJ+fggBpM7
-	 4PsiLVhcWHw5vozyhmmIG2lk36G8hlS/wAbMhO6A=
-Message-ID: <727eebc5-e01e-4737-88b8-9890d90abc39@linux.microsoft.com>
-Date: Fri, 23 Aug 2024 14:02:49 -0700
+	s=arc-20240116; t=1724447106; c=relaxed/simple;
+	bh=ox2jYiZ8U+EpeLKvUKiCr26WsEt1LgMU0TnExRBDCls=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ZL12lZ52krUa9FdT9M0Qs2vy+PUb4ovtyfDcs9Q3zrzuPUkxGrzZDGdRzcvAZWX+rwfRz+GZeF8wAekFwMVVDaFiD90zAc1J1fmIcutNrgcB8csrYef/MqwBkivCVWNJ3Lsi4RkVGq+7qWH+ZTkNTwPjPxNPP/l0uOSxORSZINo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c2LbS+Lj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fXPZVRcS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 23 Aug 2024 21:05:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724447102;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=IgoJXlScJJIs5QPuokDwh1R5rfSuaSkbFTLkMOO2tC4=;
+	b=c2LbS+LjITwPNBkU3wBoPXTvLje8E8dUP2tzMwsi+XISFju/t/heS2UNfmqdQgTiQgPuES
+	xsxcuq1Ymc8z91w2l7bnJdhKWblZPGVDSnnFyMO6jp0kax9yDngPrn3U8uZsaxVm7eqJDV
+	fOmrpWiq4+FKb0nZhSGGQrs2hsoSR2UkG+T3JxbPB+Kj0yn1vS6HlRDskuRL4uQzmrDFor
+	T913pVj6rEJlBBA7KZqvTyHBTlgRuP2juDkyh78N7JbmtqG+YFDUc1DYuVrLoP0HnNfrvC
+	PxzstnNdEWyOUISSciN4TRbmgz9H353d5KLMSGKAyTUQ684c9nGs/+QFkR5mqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724447102;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=IgoJXlScJJIs5QPuokDwh1R5rfSuaSkbFTLkMOO2tC4=;
+	b=fXPZVRcSBpjYXq1PkZ30VNYU+Vg3OoULOGWCruBuQB31LRCmN7e9clIXvEXIarih0oFfAl
+	iWlsqrj/SqU9VPDA==
+From: "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/misc] x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Kees Cook <kees@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/4] Squashfs: Ensure all readahead pages have been used
-To: Christian Brauner <brauner@kernel.org>,
- Phillip Lougher <phillip@squashfs.org.uk>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20240820232622.19271-1-phillip@squashfs.org.uk>
- <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
-Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <172444710177.2215.15316264335505039763.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+The following commit has been merged into the x86/misc branch of tip:
 
+Commit-ID:     d19d638b1e6cf746263ef60b7d0dee0204d8216a
+Gitweb:        https://git.kernel.org/tip/d19d638b1e6cf746263ef60b7d0dee0204d=
+8216a
+Author:        Kees Cook <kees@kernel.org>
+AuthorDate:    Mon, 08 Jul 2024 13:22:06 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 23 Aug 2024 11:46:51 -07:00
 
-On 8/21/2024 1:12 AM, Christian Brauner wrote:
-> On Wed, 21 Aug 2024 00:26:22 +0100, Phillip Lougher wrote:
->> In the recent work to remove page->index, a sanity check
->> that ensured all the readhead pages were covered by the
->> Squashfs data block was removed [1].
->>
->> To avoid any regression, this commit adds the sanity check
->> back in an equivalent way.  Namely the page actor will now
->> return error if any pages are unused after completion.
->>
->> [...]
-> 
-> Applied to the vfs.folio branch of the vfs/vfs.git tree.
-> Patches in the vfs.folio branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.folio
-> 
-> [5/5] Squashfs: Ensure all readahead pages have been used
->        https://git.kernel.org/vfs/vfs/c/5d85f9c952d8
-> 
+x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
 
-When I was testing the linux-next branch I got
-"BUG: KASAN: slab-use-after-free in squashfs_readahead+0x19f1/0x1e50"
-It seems this is due to the access of `actor` just after freeing it.
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/squashfs/page_actor.h#n41
+Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
+the end of the addressed destination (or source) struct member:
 
--Fan
+In function =E2=80=98fortify_memcpy_chk=E2=80=99,
+    inlined from =E2=80=98syscall_get_arguments=E2=80=99 at ./arch/x86/includ=
+e/asm/syscall.h:85:2,
+    inlined from =E2=80=98populate_seccomp_data=E2=80=99 at kernel/seccomp.c:=
+258:2,
+    inlined from =E2=80=98__seccomp_filter=E2=80=99 at kernel/seccomp.c:1231:=
+3:
+./include/linux/fortify-string.h:580:25: error: call to =E2=80=98__read_overf=
+low2_field=E2=80=99 declared with attribute warning: detected read beyond siz=
+e of field (2nd parameter); maybe use struct_group()? [-Werror=3Dattribute-wa=
+rning]
+  580 |                         __read_overflow2_field(q_size_field, size);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As already done for x86_64 and compat mode, do not use memcpy() to
+extract syscall arguments from struct pt_regs but rather just perform
+direct assignments. Binary output differences are negligible, and actually
+ends up using less stack space:
+
+-       sub    $0x84,%esp
++       sub    $0x6c,%esp
+
+and less text size:
+
+   text    data     bss     dec     hex filename
+  10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
+  10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
+
+Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gma=
+il.com/
+Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Link: https://lore.kernel.org/all/20240708202202.work.477-kees%40kernel.org
+---
+ arch/x86/include/asm/syscall.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+index 2fc7bc3..7c488ff 100644
+--- a/arch/x86/include/asm/syscall.h
++++ b/arch/x86/include/asm/syscall.h
+@@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struc=
+t *task,
+ 					 struct pt_regs *regs,
+ 					 unsigned long *args)
+ {
+-	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
++	args[0] =3D regs->bx;
++	args[1] =3D regs->cx;
++	args[2] =3D regs->dx;
++	args[3] =3D regs->si;
++	args[4] =3D regs->di;
++	args[5] =3D regs->bp;
+ }
+=20
+ static inline int syscall_get_arch(struct task_struct *task)
 
