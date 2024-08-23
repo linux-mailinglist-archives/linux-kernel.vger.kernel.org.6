@@ -1,140 +1,178 @@
-Return-Path: <linux-kernel+bounces-299557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB41095D630
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42F595D644
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A502B22961
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF40284567
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02491925B8;
-	Fri, 23 Aug 2024 19:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E811192B8D;
+	Fri, 23 Aug 2024 19:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="KJ4JKBJF"
-Received: from mx0b-00190b01.pphosted.com (mx0b-00190b01.pphosted.com [67.231.157.127])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6TuGExr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4A5374F6;
-	Fri, 23 Aug 2024 19:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.157.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9206F1885B9;
+	Fri, 23 Aug 2024 19:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724442233; cv=none; b=DOvXdVLv+uaKpu4LqNLCWpACyS9mLAsOC+Kyjb+KkUK9HenmlCG9qiK1LfW4Fl8VNrr05asZQAICx8RcRSSFBdvU6MYFhCgnv+jXmIgXVl0vy39PhbXVRskm8ZkVFCw/Xn/sbXNGpWnL2Xr1t9Aw+00KS3uaWwdUz+vlzeUDo3I=
+	t=1724442843; cv=none; b=IxyAY23JHjkxBTAEOKR9ZCTf50C8PNQuyyTV1u1YwPiWO7w0xJxmishOPeU59KbcRzQcEJh8Re25HUreVlj15gNk4Yte3rbSx6KolbsQQPwonI2unFZfHH/uhqc9wFID/bsSZH5YPGLS1A5MAIE30BVcKEddFlaiyheKVm15BaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724442233; c=relaxed/simple;
-	bh=Btaro2Qiai6A7CzeUMkggAooimXU1sAVfClzJf4PG5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aA7k4bGDesv45dMuq7TEGghLvlRP7OCJqwacIYmQ0pBKE+bvFV65WkdGPS36rt2kFJZo41dvwfBV289c1IATHTfSMaKeqci7J9F9CC4KPOKXXXr+FifuLJooLxUuxttWvUskEUgWxkFCX9BSSbgKZr87Cd3t0lgx3ONfgnktJAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=KJ4JKBJF; arc=none smtp.client-ip=67.231.157.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0050096.ppops.net [127.0.0.1])
-	by m0050096.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 47NIJIZM004354;
-	Fri, 23 Aug 2024 20:43:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=XzG6HZ73bnZdBGfIo2FN4SLx9LhGptyboPpkY4yLGy0=; b=KJ4JKBJFdwJ2
-	mlA3PrUGnn1vbj8nuMVX+9kf/rS//trVXZiJPTo4Igyl/pEd6XcWEmmRibhfz320
-	3iGE9pho+z3kAWMXYT92FBeSbyW5rpsgtb8/7OJgcQvdyTi1nLzU9VidxlmxJ5oK
-	lTy2QzB4c4lYhAf6ZSTEC0U/gGSnyJgpjEru0Ic2JgwUtZzJvAMlfFY9Dlv94g6f
-	YEj1UViJzCUlOg8oQ/JLvTAVxDMtwECMaG8rkc1Qr1IXCY6kJrN2eyr9MViPtts6
-	EMynbVpv8vJg9yixgKMLsSt2a6xQEFCATKREH8GO5Yj8ftSUZ4tFIE002liOFN1h
-	XRxR8Dt9jA==
-Received: from prod-mail-ppoint3 (a72-247-45-31.deploy.static.akamaitechnologies.com [72.247.45.31] (may be forged))
-	by m0050096.ppops.net-00190b01. (PPS) with ESMTPS id 4149pgkpw2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 20:43:41 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint3.akamai.com [127.0.0.1])
-	by prod-mail-ppoint3.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 47NJcsLA014518;
-	Fri, 23 Aug 2024 15:43:40 -0400
-Received: from prod-mail-relay18.dfw02.corp.akamai.com ([172.27.165.172])
-	by prod-mail-ppoint3.akamai.com (PPS) with ESMTP id 4138s0j8m5-1;
-	Fri, 23 Aug 2024 15:43:40 -0400
-Received: from [100.64.0.1] (unknown [172.27.166.123])
-	by prod-mail-relay18.dfw02.corp.akamai.com (Postfix) with ESMTP id 21329389;
-	Fri, 23 Aug 2024 19:43:37 +0000 (GMT)
-Message-ID: <a76ac35a-9be2-4849-985c-2f3b2a922fa5@akamai.com>
-Date: Fri, 23 Aug 2024 12:43:36 -0700
+	s=arc-20240116; t=1724442843; c=relaxed/simple;
+	bh=FbLzJM1sevygIw62wwjrGDZMa5dNQfyCcprINFgo/Dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EqDrdxDL54QSVFJ01AdLthlw5h8RlufiPcqTc9MvGVtjbVp+wVUaVgEwJNUOBcZpGe6ofNWe5orflfske0QgyJ/XcSCm7SPuh7S13UYzK0WynS7ejSfRfPuJx7HGs1LCi3dvsoi2rqEjUNOVGrjCEkb6W8zaVnIKAizosFp4HRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6TuGExr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC22C32786;
+	Fri, 23 Aug 2024 19:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724442843;
+	bh=FbLzJM1sevygIw62wwjrGDZMa5dNQfyCcprINFgo/Dc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=U6TuGExrg/rj/EK/jeeQeNKcTWby1eVjRt66rDgTcfJ36+bWzhpyFozet0x4dfXOc
+	 5ic8+xJMH/nNfm0ScBx3wJJOWGOcvIE6LB30/pMsYuagsqGfEfWCC3ZkbRpCAxAhGJ
+	 0nlNozgSgDoeAFE8ij0ibdbhEItHq81aYAj1Cnxwp3XxIbb+/KEAwLdDU6TVC1hmhe
+	 sznAVkC8x4yCyVyXJ0BZDOohq/xNB6BSrREDFuVbmfa6Sdy+SOTGxJzPXSkj466GQR
+	 LFGqm3dW5Y4L0LMaKkUaGVXDcspi3WGBWEfLwuYzLdaqJgs9i6v66fEQIPDymx4Iae
+	 IEyPUTS10tB3g==
+Date: Fri, 23 Aug 2024 14:54:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Duc Dang <ducdang@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240823195400.GA377553@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/1] tcp: check skb is non-NULL in tcp_rto_delta_us()
-To: Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240823033444.1257321-1-johunt@akamai.com>
- <20240823033444.1257321-2-johunt@akamai.com>
- <CANn89iJ7uOFshDP_VE=OSKqkw_2=9iuRpHNUV_kzHhP-Xh2icg@mail.gmail.com>
-Content-Language: en-US
-From: Josh Hunt <johunt@akamai.com>
-In-Reply-To: <CANn89iJ7uOFshDP_VE=OSKqkw_2=9iuRpHNUV_kzHhP-Xh2icg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408230144
-X-Proofpoint-ORIG-GUID: PdfIPermMux2ctHnFxdM7MvTKlUUrNhv
-X-Proofpoint-GUID: PdfIPermMux2ctHnFxdM7MvTKlUUrNhv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 mlxscore=0
- spamscore=0 clxscore=1011 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 mlxlogscore=964 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408230145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823154023.360234-3-superm1@kernel.org>
 
+[+cc Duc, Alex]
 
+On Fri, Aug 23, 2024 at 10:40:20AM -0500, Mario Limonciello wrote:
+> If a dock is plugged in at the same time as autosuspend delay then this
+> can cause malfunctions in the USB4 stack. This happens because the
+> device is still in D3cold at the time that the PCI core handed
+> control back to the USB4 stack.
 
-On 8/22/24 11:55 PM, Eric Dumazet wrote:
-> !-------------------------------------------------------------------|
->    This Message Is From an External Sender
->    This message came from outside your organization.
-> |-------------------------------------------------------------------!
-> 
-> On Fri, Aug 23, 2024 at 5:34 AM Josh Hunt <johunt@akamai.com> wrote:
->>
->> There have been multiple occassions where we have crashed in this path
->> because packets_out suggested there were packets on the write or retransmit
->> queues, but in fact there weren't leading to a NULL skb being dereferenced.
->> While we should fix that root cause we should also just make sure the skb
->> is not NULL before dereferencing it. Also add a warn once here to capture
->> some information if/when the problem case is hit again.
->>
->> Signed-off-by: Josh Hunt <johunt@akamai.com>
-> 
-> Hi Josh
-> 
-> We do not want a patch series of one patch, with the stack trace in
-> the cover letter.
-> Please send a standalone patch, with all the information in its changelog.
-> 
-> 1) Add Neal Cardwell in the CC list.
-> 
-> 2) Are you using TCP_REPAIR by any chance ?
-> 
-> 3) Please double check your kernel has these fixes.
-> 
-> commit 1f85e6267caca44b30c54711652b0726fadbb131    tcp: do not send
-> empty skb from tcp_write_xmit()
-> commit 0c175da7b0378445f5ef53904247cfbfb87e0b78     tcp: prohibit
-> TCP_REPAIR_OPTIONS if data was already sent
-> 
+I assume the USB device in question is in the dock that was hot-added?
+This patch suggests that pci_dev_wait() has waited for a read of
+PCI_COMMAND to respond with something other than ~0, but the device is
+still in D3cold.  I suppose we got to pci_dev_wait() via
+pci_pm_bridge_power_up_actions() calling
+pci_bridge_wait_for_secondary_bus(), since I wouldn't expect a reset
+in the hot-add case.
 
-Thanks Eric. I will resend and also check the commits you mentioned. I 
-didn't include the writeup in the patch submission b/c it was rather 
-long and detailed, but will include it in a v2.
+> A device that has gone through a reset may return a value in PCI_COMMAND
+> but that doesn't mean it's finished transitioning to D0.  For evices that
+> support power management explicitly check PCI_PM_CTRL on everything but
+> system resume to ensure the transition happened.
 
-Josh
+s/evices/devices/
+
+> Devices that don't support power management and system resume will
+> continue to use PCI_COMMAND.
+
+Is there a bugzilla or other report with more details that we can
+include here?
+
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v4->v5:
+>  * Fix misleading indentation
+>  * Amend commit message
+> ---
+>  drivers/pci/pci.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 1e219057a5069..f032a4aaec268 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1309,21 +1309,33 @@ static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_type, int
+>  	 * the read (except when CRS SV is enabled and the read was for the
+>  	 * Vendor ID; in that case it synthesizes 0x0001 data).
+>  	 *
+> -	 * Wait for the device to return a non-CRS completion.  Read the
+> -	 * Command register instead of Vendor ID so we don't have to
+> -	 * contend with the CRS SV value.
+> +	 * Wait for the device to return a non-CRS completion.  On devices
+> +	 * that support PM control and on waits that aren't part of system
+> +	 * resume read the PM control register to ensure the device has
+> +	 * transitioned to D0.  On devices that don't support PM control,
+> +	 * or during system resume read the command register to instead of
+> +	 * Vendor ID so we don't have to contend with the CRS SV value.
+>  	 */
+>  	for (;;) {
+> -		u32 id;
+> -
+>  		if (pci_dev_is_disconnected(dev)) {
+>  			pci_dbg(dev, "disconnected; not waiting\n");
+>  			return -ENOTTY;
+>  		}
+>  
+> -		pci_read_config_dword(dev, PCI_COMMAND, &id);
+> -		if (!PCI_POSSIBLE_ERROR(id))
+> -			break;
+> +		if (dev->pm_cap && reset_type != PCI_DEV_WAIT_RESUME) {
+> +			u16 pmcsr;
+> +
+> +			pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+> +			if (!PCI_POSSIBLE_ERROR(pmcsr) &&
+> +			    (pmcsr & PCI_PM_CTRL_STATE_MASK) == PCI_D0)
+> +				break;
+> +		} else {
+> +			u32 id;
+> +
+> +			pci_read_config_dword(dev, PCI_COMMAND, &id);
+> +			if (!PCI_POSSIBLE_ERROR(id))
+> +				break;
+> +		}
+
+What is the rationale behind using PCI_PM_CTRL in some cases and
+PCI_COMMAND in others?  Is there some spec language we can cite for
+this?
+
+IIUC, pci_dev_wait() waits for a device to be ready after a reset
+(FLR, D3hot->D0 transition for devices where No_Soft_Reset is clear,
+DPC) and after power-up from D3cold (pci_pm_bridge_power_up_actions()).
+I think device readiness in all of these cases is covered by PCIe
+r6.0, sec 6.6.1.
+
+If the Root Port above the device supports Configuration RRS Software
+Visibility, I think we probably should use that here instead of either
+PCI_COMMAND or PCI_PM_CTRL.  SR-IOV VFs don't implement Vendor ID,
+which might complicate this a little.  But it niggles in my mind that
+there may be some other problem beyond that.  Maybe Alex remembers.
+
+Anyway, if we meet the requirements of sec 6.6.1, the device should be
+ready to respond to config requests, and I assume that also means
+the device is in D0.
+
+>  		if (delay > timeout) {
+>  			pci_warn(dev, "not ready %dms after %s; giving up\n",
+> -- 
+> 2.43.0
+> 
 
