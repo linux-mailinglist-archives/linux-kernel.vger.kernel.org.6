@@ -1,80 +1,193 @@
-Return-Path: <linux-kernel+bounces-299253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822CD95D205
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9C995D209
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A781F24949
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF3E2822E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33B188CDA;
-	Fri, 23 Aug 2024 15:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BA1891A3;
+	Fri, 23 Aug 2024 15:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJwENFa/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bP/gAoXf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F73D14AD30;
-	Fri, 23 Aug 2024 15:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A091586D3;
+	Fri, 23 Aug 2024 15:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428182; cv=none; b=kD66BdaDviLZpQWA1tqG1j7oiedZq8q78iu9efazIcU7f9gq9Oa67QfCPdaE8qYCPSbV4sNGQEKlMw/aEXDZHanQydv6K6wXxtd9gLJoHYaYyLyna0zdp7f2fNFe/2aX8gF1LkDaqyQqhZRgB8qeY4R2VNMTawAa3tATa8V6Lkk=
+	t=1724428273; cv=none; b=ElbqH8xHV5WheODkgss1P3cflYlyP5Mx33vbRcoJwR0MvVg77+0k62U5ojg260LTc/IvJBiR+Ml0t3h8FZ0bFIUa86WUazIcL0FOEWgf3E8mP/9JZ4o3cEEwfSrvw7n9ZC0WjXAARhhF9gXOfTixVoRW6UkSFFxIGWleBBx/fL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428182; c=relaxed/simple;
-	bh=I9gc2djIDzPGy0ixSrbc+n8oHPkFzl7mDiSiq44+R/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fybm/ueAJmqdGqca/aNLnL6Rd9/yr/gMoPY3NxanGwgY/pthZ1jiJFPVmQ7S68vW1jkd7NNMut20zG0UYYfpO95q2h40QAieNl6DGQ+TQr9R1RqmCOH1dasa7seZYHgYYUU0bSAIchlqaqNSniqa3XTSxuHu3f4Kwrpz9qjVZPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJwENFa/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B60CC32786;
-	Fri, 23 Aug 2024 15:49:38 +0000 (UTC)
+	s=arc-20240116; t=1724428273; c=relaxed/simple;
+	bh=UJ8y9SbdyQJ2cpOyfwD7iZtYNXEMcqBlR4gxzqHEGxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZX+spkZFgsptPC28GbdMW+/yCURsdcYcC94l6Y1NC+v7jrubNAAHKSZ4a1jKFi0oL1RnE7wcaMCrKaFV+ZEb+5/ToEDRiUxDGBL+15VUtqm/tmIkQ+fWdUYDq0h6OOsR2vh/nXLeGfMDrxy2lIgkX+nLwK4SQCOquqQNoi5j6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bP/gAoXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04A3C32786;
+	Fri, 23 Aug 2024 15:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724428182;
-	bh=I9gc2djIDzPGy0ixSrbc+n8oHPkFzl7mDiSiq44+R/4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aJwENFa/u8ls8c2y1XXiDsilkGYNAeK+s7/WMmfnudXCyvu895QJUOGNcowJj4Bv6
-	 4L9/Srr4zOQ/ydhJ0dTAVg8a3nPGBAXTkWh1XIHzgmHK4FZp1EKyf8pkZflIRH9CHk
-	 BvorQuIkQZXSdWQDvziuDlWRHzElzCZSw4NmKMXMQuaCC67+CVwyBlNEnD8207DjpD
-	 Rfo5DD19UJKWvRJnhBEfQPRktXwsXd++EVgwYPFZrzyWrgRmmgtVLKb70nsGKPSCTI
-	 qXUe1TEe/fL0r22F+xrLc97LdIUSOmvtGfX0zSN2nY0Zse3dj8uPpzV++h293tjNIt
-	 A71QXt6DOLhCA==
-Message-ID: <fa0a7bb3-4030-42cc-a437-716d645e30b9@kernel.org>
-Date: Fri, 23 Aug 2024 18:49:36 +0300
+	s=k20201202; t=1724428272;
+	bh=UJ8y9SbdyQJ2cpOyfwD7iZtYNXEMcqBlR4gxzqHEGxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bP/gAoXfI7Pog1TUdgOKN8s4SexOQTEN3/DKLmgzdIN7SXK+xlz+Cthyv9su1mGGk
+	 fMvwB1aVkboO3i9jKv4q2NL7YTh5eK+mlVgbJgFfmKJAJFkXMoR36JaAJ7kbwe6H/C
+	 ovTT++QqSEY9UCr8rwN/AIWGL0X4uiWDGyQir2eqwnWUY2voEpnJ5tADF8YPdq+lWC
+	 +W2ehjaR780BCokbQUzzqXlyMBjCY9EdItqnv6IdArAecyDWh+Y2D58x5m/94jPH8Q
+	 U8jjy+ZeqMBnk/nvj2fLQyAx7wS3yUpvjez5KbQYigJ9n+Y6MlMvfUxBhyOqvrvx/7
+	 pB6uqMUfCqB/w==
+Date: Fri, 23 Aug 2024 16:51:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: xianwei.zhao@amlogic.com
+Cc: Yiting Deng <yiting.deng@amlogic.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: rtc: Add Amlogic A311L2 and A113X2 rtc
+Message-ID: <20240823-rotunda-machinist-4f8dabbff479@spud>
+References: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
+ <20240823-rtc-v1-1-6f70381da283@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix 10M Link issue on AM64x
-To: MD Danish Anwar <danishanwar@ti.com>, Andrew Lunn <andrew@lunn.ch>,
- Dan Carpenter <dan.carpenter@linaro.org>, Diogo Ivo <diogo.ivo@siemens.com>,
- Jan Kiszka <jan.kiszka@siemens.com>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240823120412.1262536-1-danishanwar@ti.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240823120412.1262536-1-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pFpN10RskjPDX7Mw"
+Content-Disposition: inline
+In-Reply-To: <20240823-rtc-v1-1-6f70381da283@amlogic.com>
 
 
+--pFpN10RskjPDX7Mw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23/08/2024 15:04, MD Danish Anwar wrote:
-> Crash is seen on AM64x 10M link when connecting / disconnecting multiple
-> times.
-> 
-> The fix for this is to enable quirk_10m_link_issue for AM64x.
-> 
-> Fixes: b256e13378a9 ("net: ti: icssg-prueth: Add AM64x icssg support")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+On Fri, Aug 23, 2024 at 05:19:44PM +0800, Xianwei Zhao via B4 Relay wrote:
+> From: Yiting Deng <yiting.deng@amlogic.com>
+>=20
+> Add documentation describing the Amlogic A113L2 and A113X2 rtc controller.
+>=20
+> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../bindings/rtc/amlogic,amlogic-rtc.yaml          | 66 ++++++++++++++++=
+++++++
+>  1 file changed, 66 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.ya=
+ml b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
+> new file mode 100644
+> index 000000000000..fa3d7838022e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Filename matching a compatible please.
+
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/rtc/amlogic,amlogic-rtc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic Real Time Clock controller include a4, a5
+> +
+> +maintainers:
+> +  - Yiting Deng <yiting.deng@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +description:
+> +  The Amlogic new chips used RTC module.
+> +
+> +allOf:
+> +  - $ref: rtc.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,a4-rtc
+> +      - amlogic,a5-rtc
+
+The names you have chosen here do not match the patch description. What
+is going on there?
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: RTC clock source, available 24M or 32K crystal
+> +          oscillator source. when using 24M, need to divide 24M into 32K.
+> +      - description: RTC module accesses the clock of the apb bus.
+> +
+> +  clock-names:
+> +    items:
+> +      - const: rtc_osc
+> +      - const: rtc_sys_clk
+
+s/_clk//, they're all clocks.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    apb {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        rtc: rtc@8e600 {
+
+And the label here can go, you've got no references to it :)
+
+Thanks,
+Conor.
+
+> +            compatible =3D "amlogic,a4-rtc";
+> +            interrupts =3D <GIC_SPI 131 IRQ_TYPE_EDGE_RISING>;
+> +            reg =3D <0x0 0x8e600 0x0 0x38>;
+> +            clocks =3D <&xtal_32k>, <&clkc_periphs 1>;
+> +            clock-names =3D "rtc_osc", "rtc_sys_clk";
+> +        };
+> +    };
+>=20
+> --=20
+> 2.37.1
+>=20
+>=20
+
+--pFpN10RskjPDX7Mw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsiv7AAKCRB4tDGHoIJi
+0pRTAQCos2kfCyu1HmMLs3vUDMHuAt4FObAjJDqXmI50lj4prAEAoCkTanOgaIFf
+mgPp56m+d+FLEo2EuVyr4VMVi4sgkAo=
+=N36O
+-----END PGP SIGNATURE-----
+
+--pFpN10RskjPDX7Mw--
 
