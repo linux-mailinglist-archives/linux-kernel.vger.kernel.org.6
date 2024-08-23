@@ -1,136 +1,152 @@
-Return-Path: <linux-kernel+bounces-299297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8968695D273
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0423495D276
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F99D1F22F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:08:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3752E1C23511
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E94189905;
-	Fri, 23 Aug 2024 16:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68A189B8F;
+	Fri, 23 Aug 2024 16:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aN/8Iiao"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="flsasWVd"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8657A188001
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89E218593A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429274; cv=none; b=ID2E1MlvRcI6xsK1i8pWsT4Fx4Q7gFJXOuR1XQ4MjcL0Rxk3A7xC34D4CyXbd8VjB+H/Agoln0PBXKL+MSM42xEOzcp8DMu2XyfYp4ou/EmhbEC3GQmK6bIGjmLWC1dWO7ImiFIync5Llf0ZzDPRtj9FHxmjWGvQpShg1e7qbFI=
+	t=1724429306; cv=none; b=OugfMGG4SdhHDqPRZ9RKG+B8ph+aW1As8lpy/Y2ooKtUDbxj6orALpwSgzel79tPnlZOALrGvbLg4WQ+Z3M/x3wQ5xMeRD2N8IZz/k2WNsE61Wao+AKhdk5AZ0azOVyPE+V552slvQC/FXJlpSt18J6YFsYAwTU63dsNdM869I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429274; c=relaxed/simple;
-	bh=TeVMpeQdg2wG0XosoMdsTgxo9Xce9on002pqxPK6pjw=;
+	s=arc-20240116; t=1724429306; c=relaxed/simple;
+	bh=+ZasLi+hclkNjCek93y8gPQorkAqqJ6TQAwzl8Op0MY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B9LX8c/2Owrxg8gl6eokwvNYDFVYHmHvtGxqmng+HQed0LEGWyEtDq9PcF2J7eVD2phz4+4a6EFQAhg2dR1YaBdp6Eti+6akKh4iBjhaHg62v/mWWOaQGsUj+qWN49LcngF7DO3KzkM/fXzu2Mgthmck5IDE8iC8joABKdFKT9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aN/8Iiao; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53349d3071eso2666644e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:07:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=mUlaI2VvbnS3qJPE0eI4EQ+/jpwll82YBvE+LJMxfH8bRRV4n8aRikyaA1Nd4MVqw1Y5Xd1qcTHFO7H1c5u3bEYdxD2V3VbiSPkyo4GQEJp4VuQbWGPdyk3+zVu/7RhI4vlPJF+UCuIk3OzUZeVgr1j/03sOAwpCKJUflSwu5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=flsasWVd; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533521cd1c3so2555914e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724429271; x=1725034071; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724429303; x=1725034103; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9OCNvj/wx5yxOsb2/+mcktbpA3DNvcmR3VULCO7umQ0=;
-        b=aN/8IiaoxsYMBfIxY5DMV9NyoGdUpCAeWs8GA0TvLvmbp8qV5CjYTQpR0HPS1mgxh/
-         oYZzfiWFjbgt9T/DWGgp2iZ1HFj+qTS3UUVSZOcSbaOq7Ar39UtvGdzrnLf/3J37iP7z
-         8BVawduf1kac336bq7ntSt56Gt3EILfWxygocK+7ZDzyRcFM7WDnyPnGwjEDzQ2i3/p+
-         0jyAFvpEX/wdL+YUR7QsmoRWqbFgGOo64av2YGdQTNOSx/m3VZgS5F0KpnO+bXv6Rtmc
-         MRRNouHh6/NKaseRECZSL9oEYT6tXw5cn/MsQDIN+9EYgx/NR/r3EjvyWSeJwZpzzwqh
-         lWVw==
+        bh=60mDZjLohoH/Srn+FzsRdN5LB7GzcubV5MgxDtoHqBs=;
+        b=flsasWVdJf8RXK13cmJ4paEj2JezKBnQg+JB3YTIwPwslJRtq5ntgk8IN/tpFY79nQ
+         fi+ZcWy2CXkeGxYSej/+XLQy6UtRoj7Ep2IX9qAT+6DMFzFlw5OxQCrw6mx2uc+nTTYD
+         n+sexqZDnyGRsy+OiXXocyofevXcBmu23HLJrl4LASXgY0zw/EeDPPUhCN32UgzySVx5
+         ZFph8oqts6n3NLlBkTxIrE/ju+x5u/peXeRjA9hQRk4idO/3KaHxYZCdYrMM4SEzX/QT
+         sJPH1aFZefs8AmO8XYHKHkdMWtY+NrvZ+BgSmy8mn2rDBmAoIaS5SwRBPcbJLv26wocp
+         NcBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724429271; x=1725034071;
+        d=1e100.net; s=20230601; t=1724429303; x=1725034103;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9OCNvj/wx5yxOsb2/+mcktbpA3DNvcmR3VULCO7umQ0=;
-        b=JA6IVBeeD8MrY6weeApmJ7cUqWwU8Y08nBIxpYqaZk1WQATHr6HOa2IN1fN81d8Kta
-         I3IJ9PMRL4Hc5qc00P4c3PhuMY40eiS3bO62YjHYZ2yKm4ACJV0uOkDa1OqaSkSKlizi
-         FbqgGUr3j2G3bN4HC6D9i9udSHTA14Me8sgBVl+LUZj4f3ChBNiSZux1pnR8IK6n0zIH
-         vA1AL/piG9syfhymd3kIWsnGxWintneXCxCiSktVutLxrFRMjdIQe/E8jph8ZBrPn2za
-         yWVRofsoxZke/ZSZbeYidexlkOwJLVupCa5Lh1QZg3mBhDakI3KhhmYfyt9Sn5UanBX6
-         HA+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGMFT2qruEizm2lGzxvAPoSRwzA8QAP0oHezvXuAHxRE/E8L/h1wY7d3Ln+V5YaBq24nF4rZtCF15kHes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF6oQi8bxlrHVjYzyDRMdZSL2jnMcGvnYbAVYYY5GPHf6JE5CS
-	6v1q68JTrFV7U1iAce/y/hJzLzaJtc3L6VnJK4cV1e0sTU3TV3oefR3RNIenN3cUmtXIvXrUCn4
-	UnbXuC+mVzfJL8lphdFQk7lydT6YX3OuWZzpiEQ==
-X-Google-Smtp-Source: AGHT+IGUI0PY8Ux0OZKUd+jbtCpSnv5I/wL6SIyMbObq48C6tOrwmIkWL6by381sXMMlDTaIRU35sAsSSqAQhXmpqJI=
-X-Received: by 2002:a05:6512:3c9a:b0:52e:999b:7c01 with SMTP id
- 2adb3069b0e04-534387bbf66mr2088604e87.48.1724429270252; Fri, 23 Aug 2024
- 09:07:50 -0700 (PDT)
+        bh=60mDZjLohoH/Srn+FzsRdN5LB7GzcubV5MgxDtoHqBs=;
+        b=uxFW5ekWO1BEpPsAaDLikSsRhgsVMmxpixuLkGfH2gvETIaMkiK7yJA416SyPLGi8M
+         tFM7UsRXe/zOMlEBFQCoEnT0hz+Kf2it2ucoRsknjCsGdU+GKoMY2IPJdfFOKAfUoSPr
+         6PH1jEQoOoeEvfK5r82acWkD6MuDMCz3V8nNN+QJCuLIVjIL5Xim4FeNnv66wBi9m+Ux
+         X9acOHfFDgdvzC6mvbJBMutoW7XvPcRuABVGpRLKjFII3YuJBi7wY5hOILUCfdiiaCPS
+         l3bsEctMHxC1uGbbC4+2dB08saeYxRpokrUDeh5pFZKydHL+q8zYOlNi8LIIo5XOLUYo
+         r47A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwejiX5YTCxD3mQGZfBP0PV+bbZK1cbfmVExDwUif+Yen+CLFRfUWuAxNmUhkk32TDahkOjJNJl5pbUEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEDomQxIbXClyYOe2glwDF+OVQDCXvw0Is/vpo99y4A0xrcLi4
+	eFiCP6wp1OqaC4qgTb7pMGHLCGVMDB6C2v8VnkyNiyleKTib9wLw3NJGu7zFr4bqNfWKv+p3IpO
+	pbWYfkUzvoRAcL1Q4E8osoLUohzK9/bHD4eAd
+X-Google-Smtp-Source: AGHT+IFzWoZ4n+2CZWNfhdJAMZParmTzQohv9bRH0x15mgayHZBeNg5k4entByf4z9D7oSlR7pVx0fhye36Aap4RFO0=
+X-Received: by 2002:a05:6512:234b:b0:533:4505:5b2a with SMTP id
+ 2adb3069b0e04-534388510cdmr2797061e87.28.1724429302210; Fri, 23 Aug 2024
+ 09:08:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-mtk-rsel-bias-disable-fix-v1-1-1b4e85bf596c@collabora.com>
-In-Reply-To: <20240808-mtk-rsel-bias-disable-fix-v1-1-1b4e85bf596c@collabora.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 23 Aug 2024 18:07:39 +0200
-Message-ID: <CACRpkdZy9F-oh0sT+YhvgzoSrKQL78gK46wRbQ6d6jHYS5nzfA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: common-v2: Fix broken bias-disable for PULL_PU_PD_RSEL_TYPE
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <CAKEwX=PEye=VcXF=r-A9B47VsNtpLLxz5cJiswzuQXBio8rizA@mail.gmail.com> <Zsig_AZDT5zOO1Wg@casper.infradead.org>
+In-Reply-To: <Zsig_AZDT5zOO1Wg@casper.infradead.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 23 Aug 2024 09:07:44 -0700
+Message-ID: <CAJD7tkbO938ETJn0FOG_vVU4V2_dBanio1QG56cp6ctFHpSeNw@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 1:27=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
+On Fri, Aug 23, 2024 at 7:47=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Aug 23, 2024 at 10:35:19AM -0400, Nhat Pham wrote:
+> > On Fri, Aug 23, 2024 at 9:13=E2=80=AFAM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > >
+> > > That said, zswap could handle this better.  There's no need to panic =
+the
+> > > entire machine over being unable to read a page from swap.  Killing j=
+ust
+> > > the process that needed this page is sufficient.
+> >
+> > Agree 100%. It is silly to kill the entire host for a swap read error,
+> > and extra silly to kill the process because we fail to writeback - for
+> > all we know that page might never be needed by the process again!!!
+> >
+> > >
+> > > Suggested patch at end after the oops.
+> > >
+> > > @@ -1601,6 +1613,7 @@ bool zswap_load(struct folio *folio)
+> > >         bool swapcache =3D folio_test_swapcache(folio);
+> > >         struct xarray *tree =3D swap_zswap_tree(swp);
+> > >         struct zswap_entry *entry;
+> > > +       int err;
+> > >
+> > >         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > >
+> > > @@ -1638,10 +1651,13 @@ bool zswap_load(struct folio *folio)
+> > >         if (!entry)
+> > >                 return false;
+> > >
+> > > -       if (entry->length)
+> > > -               zswap_decompress(entry, folio);
+> > > -       else
+> > > +       if (entry->length) {
+> > > +               err =3D zswap_decompress(entry, folio);
+> > > +               if (err)
+> > > +                       return false;
+> >
+> > Here, if zswap decompression fails and zswap load returns false, the
+> > page_io logic will proceed as if zswap does not have the page and
+> > reads garbage from the backing device instead. This could potentially
+> > lead to silent data/memory corruption right? Or am I missing something
+> > :) Maybe we could be extra careful here and treat it as if there is a
+> > bio read error in the case zswap owns the page, but cannot decompress
+> > it?
+>
+> Ah; you know more about how zswap works than I do.  So it's not a
+> write-through cache?  I guess we need to go a bit further then and
+> return an errno from zswap_load -- EIO/ENOENT/0 and handle that
+> appropriately.
 
-> Despite its name, commit fed74d75277d ("pinctrl: mediatek: common-v2:
-> Fix bias-disable for PULL_PU_PD_RSEL_TYPE") actually broke bias-disable
-> for PULL_PU_PD_RSEL_TYPE.
->
-> mtk_pinconf_bias_set_combo() tries every bias method supported by the
-> pin until one succeeds. For PULL_PU_PD_RSEL_TYPE pins, before the
-> breaking commit, mtk_pinconf_bias_set_rsel() would be called first to
-> try and set the RSEL value (as well as PU and PD), and if that failed,
-> the only other valid option was that bias-disable was specified, which
-> would then be handled by calling mtk_pinconf_bias_set_pu_pd() and
-> disabling both PU and PD.
->
-> The breaking commit misunderstood this logic and added an early "return
-> 0" in mtk_pinconf_bias_set_rsel(). The result was that in the
-> bias-disable case, the bias was left unchanged, since by returning
-> success, mtk_pinconf_bias_set_combo() no longer tried calling
-> mtk_pinconf_bias_set_pu_pd() to disable the bias.
->
-> Since the logic for configuring bias-disable on PULL_PU_PD_RSEL_TYPE
-> pins required mtk_pinconf_bias_set_rsel() to fail first, in that case,
-> an error was printed to the log, eg:
->
->   mt8195-pinctrl 10005000.pinctrl: Not support rsel value 0 Ohm for pin =
-=3D 29 (GPIO29)
->
-> This is what the breaking commit actually got rid of, and likely part of
-> the reason why that commit was thought to be fixing functionality, while
-> in reality it was breaking it.
->
-> Instead of simply reverting that commit, restore the functionality but
-> in a way that avoids the error from being printed and makes the code
-> less confusing:
-> * Return 0 explicitly if a bias method was successful
-> * Introduce an extra function mtk_pinconf_bias_set_pu_pd_rsel() that
->   calls both mtk_pinconf_bias_set_rsel() (only if needed) and
->   mtk_pinconf_bias_set_pu_pd()
->   * And analogously for the corresponding getters
->
-> Fixes: fed74d75277d ("pinctrl: mediatek: common-v2: Fix bias-disable for =
-PULL_PU_PD_RSEL_TYPE")
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+It should work if we just return true without calling
+folio_mark_uptodate(), this is what we do if we get a large folio in
+zswap_load(). Returning true means that the page was found in zswap,
+so we won't fallback to reading from the backing device. Not marking
+the folio uptodate will cause an IO error IIUC.
 
-Patch applied for fixes.
-
-Thanks!
-Linus Walleij
+>
+> > The rest seems solid to me :)
 
