@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-299686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C098A95D8A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD3795D8AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11381C21890
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A614628482D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C251C8232;
-	Fri, 23 Aug 2024 21:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826C11C825B;
+	Fri, 23 Aug 2024 21:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="JPzu+vVM"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="WUeLhkAr"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925691922E0;
-	Fri, 23 Aug 2024 21:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AC01922E0;
+	Fri, 23 Aug 2024 21:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724449651; cv=none; b=f81QLwsZYQ7bimswBKvjx1DhqN9E9b3KLXSju5xTqp+WvGVW3TRNUDYNSmKhOdD4W4w0j3qVks043Q/SEHERxfm+zZ3DYdjjKx0sXUGTmr2Vwag8C5dVJlS8Mg++nVsUVvDYFaJDktNbIIx1lg1tbporur94N2GS+aW5jI7JSJ0=
+	t=1724449855; cv=none; b=UgOzfNt+Q8QI4vYuw8+FoXRX+nb3k6+hsddGqkfufD/+z6oDUbMnaeJ8Ir9mYp5DUFRfnwt69jUM0Rd8lkyt3mnadgzkbA7wPW38ckwW4/r5Zjlp82MJvzxwVOblRfiCyWOPfS+6gH0oKU1zB2kJ1INeFuDqTP7buzly+LSibq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724449651; c=relaxed/simple;
-	bh=PCDnMC8slProdj/MUscZCihbWNlAfgo5Fz3MCr1lm84=;
+	s=arc-20240116; t=1724449855; c=relaxed/simple;
+	bh=Duob4DARHudu9UffvC2e4VH9jt+adZqFzJCl+uR0RHs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TRt2mWJ8wMOB1uYos5qQLihY7xr343sd0guKPVEPUGrP2+/0fWD004XCcnfsS7RJIanm/3ies5B3DrokHxZ0RdyC9JqERegC1lBj9D5IyJ6HdL7tNkhho6Uom9FZ+iathcSYcM9ZE8kLsgjGxayHNjmE0LIMH0tGxpJPwOWqCJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=JPzu+vVM; arc=none smtp.client-ip=212.227.17.21
+	 In-Reply-To:Content-Type; b=fy8U6MuKKPXA6mkja2In/Tf5gI8xbkdD4JnGqmYLUoTtchW9yvjQytF0LynD7ojfzwBZb+XfaQ5lJbpncpChnh+EZL43Vt4E7g7KTn6Z5VqHrF98poi63MtBDqKrX7MryFwVinRKmYDBeBmEDipyIbHCvmFm2LMovRYpQjaPrb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=WUeLhkAr; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1724449636; x=1725054436; i=wahrenst@gmx.net;
-	bh=xYO6QiXJmcSTMu9xVAlZbnC04DXri0/+K49HCyQdjZE=;
+	s=s31663417; t=1724449842; x=1725054642; i=wahrenst@gmx.net;
+	bh=Duob4DARHudu9UffvC2e4VH9jt+adZqFzJCl+uR0RHs=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=JPzu+vVMQAeqxu8rEyBzOi08mbdwkPbweGG0CvC0aFXonuSZgx41P98OM61moe3T
-	 4jdEC59QvlNFDSOvxnfUXgnDX0gjgHYagY+Bh1gGTdt6hMBd2hbgsje6LA87oSstY
-	 rlsQS8YRFetksoyBi7FSvkjuHHeeFidI6raf5Dmk8FEulyP/61agF5t1A3yKQMc5t
-	 +08bEkiIKPc7ikPXthiSl0LR8UZSqqtNDqnJPFxYZH35i3aPeINMhacw5PRCG2219
-	 vs704ebLrOgF1obqedlAXWv+Rbwfbpek7Q9JuPQY9iGfD3FBdVjGMopIpaQn4POiO
-	 HXYgRGuQ9w6aT9jGww==
+	b=WUeLhkAr/oB5PKZm94D9JGfGKRykPg9DZX0EhMwHFzcakrbKKjB73QI6c5EeWQtZ
+	 rIztmMaKyIeA2MnvcMCIdzeJfqX9TwKbLwPpedPS2ed0+JNXkFhnkTq/eRm8GZUaf
+	 T47kSJ6tB6BjAeW6D9wofNus/FoMtx1QHmH6Yj8Hn/k1KRuhB44xn3jxuPQ2nuzQC
+	 L3h5gYpB4kuAhfplmQNi5LaV/m/milU9aKjZvffTHKJnKc3UfqQyV1IYwn/HAY0mH
+	 Ajo4iGYj/y3knppTAR8+vrurACpiRS2c0e8umASmy0sNygqHjwRhQKIycRnuS6T0N
+	 M47V6aj+A3xoeiCYcw==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1McH9Y-1s7T1k1SXc-00e0mN; Fri, 23
- Aug 2024 23:47:16 +0200
-Message-ID: <437e7171-097d-43b0-876e-c6343518197d@gmx.net>
-Date: Fri, 23 Aug 2024 23:47:15 +0200
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N2mBQ-1rylO225rI-011DOI; Fri, 23
+ Aug 2024 23:50:42 +0200
+Message-ID: <0a32d686-80e3-4c59-b0d9-3bfd15964ecc@gmx.net>
+Date: Fri, 23 Aug 2024 23:50:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,7 +57,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] staging: vchiq_core: Remove unused function argument
+Subject: Re: [PATCH 7/7] staging: vchiq_core: Pass enumerated flag instead of
+ int
 To: Umang Jain <umang.jain@ideasonboard.com>,
  Florian Fainelli <florian.fainelli@broadcom.com>,
  Broadcom internal kernel review list
@@ -72,80 +73,35 @@ Cc: linux-rpi-kernel@lists.infradead.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Phil Elwell <phil@raspberrypi.com>
 References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
- <20240823-to_sent2-v1-6-8bc182a0adaf@ideasonboard.com>
+ <20240823-to_sent2-v1-7-8bc182a0adaf@ideasonboard.com>
 Content-Language: en-US
 From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240823-to_sent2-v1-6-8bc182a0adaf@ideasonboard.com>
+In-Reply-To: <20240823-to_sent2-v1-7-8bc182a0adaf@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kxKESK5O9T5ZHHdcIqK0azc3AdJmyxeIVDCOHvftSDizZljLdyZ
- +4J0SOSCWT8pt1ra27t/T0zs1gFnA6phyMUf+TcXWQYhM9mbIDeQOmJxj96qZW2ZV6L2JDN
- igvGr5R6NTEmkDBMDDftCE3YwUh6O7hYHQIG8bQt+ivs2ZvjoPZedR2c0HuFlvC4Xjx/HNn
- 3t1a0Ly01cH/nFtQ6MSQA==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:uO6QyX2U4G+XdUvjQKDHLWdCtBQkwcLYOZEDGUP2vi4QPbmRgJx
+ euP9vtDduE88bIRv9tWS13ptUS/yi2OOrt4SNINYPNLtDXpzs/VNy+0ksBqZiDC9/f7Ep36
+ lYq97B/l4hXKgcFZh2yeYNdQsrVY2fMNvUvLUQ9QK2SZjlMytlLPa+Yzr6CuHgvvqChPiTu
+ 5Ztdgzd6ZQWlfMWQ3zbuQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FtAPsWoh1Vs=;jV+TrRVLOBHjH0hXXVTUp1iswk0
- hQBFSpO7pERdwLKcu4M+i10aXLSNCcU9euWruAzlXZroaheHaUrRMBPpmrYaeYsJnOxmdtld2
- ypk3YUWk+Hyo09QMd0DYJc+3PMZijy7Ci3oAPRHfg6S9JDGf3pOsVn4jvkinM3FEW3HauG6zs
- 7y3GbzJiG6tkZHBbBZd1FqbnfKe9m4LTs5142vyCXbrKuw4p0UI9w3QJQiA6EtHXU3aydCvEt
- SGDSQJJD05KhxUlBxEBhA64bzy5ROZ1j1/rbbdYk2ETOQQLBN1OMNMCMRErn5+GYJ/Jk12LVD
- JvW1YIR+O451A9iVMpSubeCSmXVEDLIbE+Al0aTREvUzEUUpyLsDDkJfAIZH3DAIdhISkLv/k
- Goq2X1vi/0Q/7ZGHs/VH80bnt1UlMIBZ+pxUPDX6lyeW36mRs0pZ2gBl+fj42/IFhlsmOcihZ
- C4fEOU67LP1ayUpskrSOc+yV3o2/IgzD8rScVMFczzcuSAP5McB4UdELRiaet7AQRIZxRCPCT
- fkqEq6jD4Egp5JMmiYOagUTl4EEboxuH1vPiIHMpqmiGnAUgv5wG+hQDDfbEG7IWEjZITrJ1p
- CIwlGJ8YNd+cPprDvf1cUgtjSuK3XitxZ6ygVyN35K+ZQbzfCgJl9GAOZ3Hh2+IHq0L2vQ3wj
- mFx0gNiAua85fP8fmPYx/MMvrAjVHjWwhDY8N9IlszMgQ5Vn+V2VbLQOoopYYOT14iBL9ZIQ1
- HQL6I0SNausN4hCVMzws00ROd7amaoYCteIp/QvGnw/0cPUjMlbxpHRvduwdGwBb22r0wDc+v
- q28GIXviJmEsRxik4Cgp2R9Q==
+UI-OutboundReport: notjunk:1;M01:P0:hkQxNndVZYE=;4t5D+eqxrDN0nBpGbiQyYnVb7ne
+ Xic4vGq7g2kSzt6syVkIMjw61DyC6Eqoiz4e0bbEx39rZc3P/+BOkIrqPb0dJJLPuz/IWoPjZ
+ vPkEadh7433KdRQUYC7XH5bcgMNKAKSR2vc+iBFV46EWQQknKf/XVQK96lNKVdoO79cvBqDNJ
+ ZucW/mdZOehazrjeX+SFB90H/CZnyxZWPLYxbKHIJ4P4v8uUUWTzqI11LhULM1/IV6FaR0Fye
+ mj/pbhCz45oriMF7CwAMXW3eLetCzxEPmZHaYr5aUqZ8AQCWY9XcHR9gN0Nzg6A5rZpi4GLSO
+ pJVbZPqP66PIgwP52CKvBlV/HxRNperIXGxJFQzBjVjQwm6fxkXOCrLzKTKIK7GykaFsLnpkd
+ wAGmffXXjU2dXCSOcDWvSI2uSAGBdv6DgiZpJS8Ja/yUMSGHiBPnNhoG8ynse/YUW6s4MWzZB
+ CalJHXRBkNXk4TMSnJZDQt0VLv0Bt6MXifgrZuBoy/cPmMDEbZtbfcwkD4pGlCKU/FRMSJhIs
+ 5Qj8sYsgYGUC7ZCPaX/rkRsWMPYgIvR8d5mvFeFZ6DcLOD9v6NW7sYV/GTvz3s6/XvgTc7JtR
+ 8fbhqFVSLHQbiimkDWVr5yxws2p/kO1OarMGSyU8mfiixCxbydlNzu9v+FgykCNk7aF4EhmN7
+ LWyTAxLz5PPXYh4mTcxiPdH2cozbUhZlwTzlZk1ws/LBDzIKgbjYO2gB5AsipUuHU9fkZ3Q0z
+ BNR0y1ziCDgOK+M36+EzsZDPuei+bLx4jbKTLNwlnMR4Pp2udWg1M3R1pebpiaLUQRuHcShog
+ cMplX+M/onLr8JwMGvofXKyQ==
 
 Am 23.08.24 um 17:14 schrieb Umang Jain:
-> The argument 'is_blocking' in queue_message_sync() is not
-> used in the function. Drop it.
+> Pass proper enumerated flag which exists, instead of an integer while
+> calling queue_message(). It helps with readability of the code.
 >
 > Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-Good catch!
-
 Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
-> ---
->   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 6 +++=
-=2D--
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index 43c6a214be86..84631878f77d 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -1146,7 +1146,7 @@ queue_message_sync(struct vchiq_state *state, stru=
-ct vchiq_service *service,
->   		   int msgid,
->   		   ssize_t (*copy_callback)(void *context, void *dest,
->   					    size_t offset, size_t maxsize),
-> -		   void *context, int size, int is_blocking)
-> +		   void *context, int size)
->   {
->   	struct vchiq_shared_state *local;
->   	struct vchiq_header *header;
-> @@ -1524,7 +1524,7 @@ parse_open(struct vchiq_state *state, struct vchiq=
-_header *header)
->   		/* Acknowledge the OPEN */
->   		if (service->sync) {
->   			if (queue_message_sync(state, NULL, openack_id, memcpy_copy_callbac=
-k,
-> -					       &ack_payload, sizeof(ack_payload), 0) =3D=3D -EAGAIN)
-> +					       &ack_payload, sizeof(ack_payload)) =3D=3D -EAGAIN)
->   				goto bail_not_ready;
->
->   			/* The service is now open */
-> @@ -3150,7 +3150,7 @@ vchiq_queue_message(struct vchiq_instance *instanc=
-e, unsigned int handle,
->   		break;
->   	case VCHIQ_SRVSTATE_OPENSYNC:
->   		status =3D queue_message_sync(service->state, service, data_id,
-> -					    copy_callback, context, size, 1);
-> +					    copy_callback, context, size);
->   		break;
->   	default:
->   		status =3D -EINVAL;
->
-
 
