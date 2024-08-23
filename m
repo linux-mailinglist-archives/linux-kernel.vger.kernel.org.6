@@ -1,128 +1,100 @@
-Return-Path: <linux-kernel+bounces-299722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8296595D93C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:26:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9158895D93F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7871C22288
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE371B219C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56051C8FB6;
-	Fri, 23 Aug 2024 22:26:13 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEBE1C8FBC;
+	Fri, 23 Aug 2024 22:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fk26q8Md"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19786191F6B;
-	Fri, 23 Aug 2024 22:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D7D189B89;
+	Fri, 23 Aug 2024 22:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724451973; cv=none; b=c/43JJ0/dT1cHLr1r1wlooE/OZOo2WqJQyyOI80MJzjO3hqfBQ1ruBu2zylpVUxWcRRlxcW256JKoPMU/OC/gIGwrNHb1tUeDAixGGsinSSsnuu2xlq69tp2zE/Pe5CXOSxPdM5PfN4HfmRjfB1J9qGZeAdo14GGC1hiDWyvRBQ=
+	t=1724452069; cv=none; b=YjgbRIQcClxkZSoXhQafo2K8xruCl3fQwu1bCt1k5lYR1wrUMjm61AtdfX02WUOZQ2F5BJz5L7It9ln4Rnbmuo3edKEFU0C6KQjwhnRP/RG52tx+WsmzVl3Ka0RpTD1JQW1az+C00toOghL9tysGdJP5jxop2yLTx/9SbQ5EyGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724451973; c=relaxed/simple;
-	bh=eLCmEV3ljwLRxFocwTohCv1knJB6UKK5vBItWzRmJxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZrR0u6+5ltt1SCN67tBfkf1xRRkyRiyuwKIASOGlPflkaX+84CK7YS8WvT9EzKIonjzBy588gpjG19s95UyYLubnAwO1xWAHBAJPZJWN/by/zsxyruz+/rEHlrWYN/bQzC5JiTI8j6HbFRMu+I46dm81zCPULhQNG+kXrnYah80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so2044856b3a.3;
-        Fri, 23 Aug 2024 15:26:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724451971; x=1725056771;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FdNQRWy4m/f1LqMofqJHKv4N0JPmy7Ex46RigXKn8ow=;
-        b=sXPHWUJ4/iBLIQ85zWjRcS8i8TG4unMBOfXLUqzVxXAm7Wgs0hxkLiztweOy1w3VVw
-         bZr9nelOHzGNQleBi807wOGGyslIAcbY94atvqAyJrFz7SmmZ+v+iGqxQ2sBdPHutf88
-         AdUrJddM18tptOrQuI11qc3e+8DPyaWjPQDLZbJEAlIfJmv7Yt1AUkkrW1a/iY4wbZg7
-         Y7qXzNVvZA9jTlr2wLVjDNhj/buBDlWXIxg4zHcNYKybpy3Ah4t66jbKy37dd1ozL99C
-         PDXG9pagM2gNTkmBxmupo9P7cYTleH5xX+PlvZBzFIfeAFdIHcxJVRZuciplDwJqhZWh
-         94Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGqhB6hN5eI5qLjMyA7MGI3ARgYITGTEs64n+tTIayKSYoIfzaom6CW+/QDehm3FGZoj5ROlluGpPqAn4@vger.kernel.org, AJvYcCWP3opiNunMo1UwdxCTW8rgPAXzDB1JAKNpOvpZaXSjO9EYKLxehKVDeOPJX700yP96LWmWZJ6tP+mYhmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb0kUoXRH1euaytZyOxbEVANJXfRhasK3RZNdvdNnZO1gNGpC0
-	hcRhvKoqBmJmQVr2VdtKG3TG5RqjktiACGmwV4rIDzIgBR5C8mEo
-X-Google-Smtp-Source: AGHT+IHTY/45MOums/RrhmNxfIyjTZwPcT5SCZcRi5tBmMVFKliYHXyvHq9qcDI0G+8KI7zWdBwFTg==
-X-Received: by 2002:a05:6a21:1191:b0:1c0:f5fa:cbe6 with SMTP id adf61e73a8af0-1cc89d7dca6mr3857291637.22.1724451971112;
-        Fri, 23 Aug 2024 15:26:11 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9aca1193sm3222434a12.6.2024.08.23.15.26.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 15:26:10 -0700 (PDT)
-Date: Fri, 23 Aug 2024 22:26:01 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/hyperv: use helpers to read control registers in
- hv_snp_boot_ap()
-Message-ID: <ZskMeWQfjQ00BTVm@liuwe-devbox-debian-v2>
-References: <20240805201247.427982-1-yosryahmed@google.com>
- <CAJD7tkZTFNm3k3OM9G1qtd8-FyjKDvj5C-CPKvuS3AipKb7x8Q@mail.gmail.com>
+	s=arc-20240116; t=1724452069; c=relaxed/simple;
+	bh=yCaQkLSd54Cn3tWTs40GhBWcbEurvIrKIHGs6WCnZXE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D1LlBPLl2WT6NuF06Wtt+RWY6xy47Lhwjak8UlSwxom6wAoLbdwrUuFfaAVduYEQM0IHejZALc1uniIxuqhONPoUOEiAAauS3GOEhimIe4eJ6IjIBmNWTDxpX8nEiX2noiI3iToUafTg2dG/9bZYtfCWJIo+kqpMabLLUKG1whI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fk26q8Md; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C3ACC32786;
+	Fri, 23 Aug 2024 22:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724452068;
+	bh=yCaQkLSd54Cn3tWTs40GhBWcbEurvIrKIHGs6WCnZXE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Fk26q8MdOVY1S0z9Bs+7J+1qiYWKooT7uUJJ3YxMEmnx/FWV+CMJrbW+oCakQdKOr
+	 avEGQnYvyEmPqG1O8Ve4+mwJPL2XUOmia4uZ7noROEh+Vr1IasulFbgNdg8OyDDQ4G
+	 tbw+Udqx/3zrcZE4zYMzNoY0WIjqrl0fpmMk7+K7bxsoZQSXAceW9RMsR3OQs+13s9
+	 m+cnc95Q+mAkTZJuIL+jcbAK2snK0vePze18PjYhmeesgZAnLAw08GfZ9r/AHXDLJj
+	 9Lf6zUdffb3cBlZc7Yo+NXJ7+OyGeXURSVNMjr6qBjZvD62x9P87YZCmUUWi1xhNcM
+	 9SuBKUNn3E4hg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/2] nfsd: CB_GETATTR fixes
+Date: Fri, 23 Aug 2024 18:27:37 -0400
+Message-Id: <20240823-nfsd-fixes-v1-0-fc99aa16f6a0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkZTFNm3k3OM9G1qtd8-FyjKDvj5C-CPKvuS3AipKb7x8Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANkMyWYC/x2LQQqAIBAAvxJ7bkEtS/pKdAhday8WLkQg/j3pO
+ MxMAaHMJLB0BTI9LHylBrrvwJ97Ogg5NAajzKicGTBFCRj5JcFJR+VnZ4M2FtpwZ/pF69et1g+
+ hUpS2XAAAAA==
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=633; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=yCaQkLSd54Cn3tWTs40GhBWcbEurvIrKIHGs6WCnZXE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmyQzdrrYKGSAN0SDxNqBzk8NSTUzh1VnLLu+3/
+ RGg9AQaNSuJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZskM3QAKCRAADmhBGVaC
+ FcYOD/4lsP1bnNfeJqTC8oi4RkwTqJYimd9JVdaBoh9sCRcFRrv73zfSm5ot5DOA5tpCv0FO7QF
+ xGMSrJVf4JaOPsecZ3QSNTE6XRZG7SZL8urMRRf9HnpgHo25SNCY1cZwI0c94sIiXEuYugKwiH/
+ LyVAqpcR4Rq32Ok/hGKJ+DJWGBkTjK2Vy2r4tDNxzBwIQBbOl1bPThheD4JNc45gNDmDiSRhPOz
+ AFxQ1KQFpmbPu8FZJ4OZTzpKDWu4ov+n4xA5CDcv8dRNZALmNw+VCCOjRzG+Dm/kdaNhbLgxDoy
+ fpvnmc8XPPTH9aV8rf1jyGag5byswNdiWPxheyYfSngOzVJnEzyCd1IOmWLcD2kX5vjGmuiLDRV
+ taRaUJztO/w8v4IYtzQd6yc2l/MFJMMKXaLInlBiyN/K/NRfwuV02CCHCwNNWT1RJlEUElJuMPn
+ j3xTpttREPD7wWV8D7/7+XVh+xCLlmMAcE9OM9oywvdfOcz5ymZDkrYsA91qbAd8q6khYAmbwF7
+ Neqc0MMeE3GIjXx7QxOATZ/hec/qd0aBXtdWIPWPialBILa4hIJxC53/yixRAGNwQPXcfMZOzz7
+ Dz0RQBqwviJfs3txdiBnok3DUuNGikm3oTSZAmaf6MlZUMM9uEXpnUNKxU3BSugZPt3qlFDmFaC
+ 5v+HeqfoWRsZ6Ow==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Aug 14, 2024 at 04:54:32PM -0700, Yosry Ahmed wrote:
-> On Mon, Aug 5, 2024 at 1:12 PM Yosry Ahmed <yosryahmed@google.com> wrote:
-> >
-> > Use native_read_cr*() helpers to read control registers into vmsa->cr*
-> > instead of open-coded assembly.
-> >
-> > No functional change intended, unless there was a purpose to specifying
-> > rax.
-> >
-> > Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-> > ---
-> >
-> > v1 -> v2:
-> > - Fixed a silly bug that overwrote vmsa->cr3 instead of reading
-> >   vmsa->cr0.
-> >
-> > ---
-> 
-> Friendly ping on this, any thoughts?
+Fixes for a couple of CB_GETATTR bugs I found while working on the
+delstid set. Mostly this just ensures that we hold references to the
+delegation while working with it.
 
-Applied to hyperv-next. Thanks.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (2):
+      nfsd: hold reference to delegation when updating it for cb_getattr
+      nfsd: fix potential UAF in nfsd4_cb_getattr_release
 
-> 
-> >  arch/x86/hyperv/ivm.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-> > index b4a851d27c7cb..60fc3ed728304 100644
-> > --- a/arch/x86/hyperv/ivm.c
-> > +++ b/arch/x86/hyperv/ivm.c
-> > @@ -321,9 +321,9 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
-> >
-> >         vmsa->efer = native_read_msr(MSR_EFER);
-> >
-> > -       asm volatile("movq %%cr4, %%rax;" : "=a" (vmsa->cr4));
-> > -       asm volatile("movq %%cr3, %%rax;" : "=a" (vmsa->cr3));
-> > -       asm volatile("movq %%cr0, %%rax;" : "=a" (vmsa->cr0));
-> > +       vmsa->cr4 = native_read_cr4();
-> > +       vmsa->cr3 = __native_read_cr3();
-> > +       vmsa->cr0 = native_read_cr0();
-> >
-> >         vmsa->xcr0 = 1;
-> >         vmsa->g_pat = HV_AP_INIT_GPAT_DEFAULT;
-> > --
-> > 2.46.0.rc2.264.g509ed76dc8-goog
-> >
+ fs/nfsd/nfs4state.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+---
+base-commit: a204501e1743d695ca2930ed25a2be9f8ced96d3
+change-id: 20240823-nfsd-fixes-61f0c785d125
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
