@@ -1,149 +1,109 @@
-Return-Path: <linux-kernel+bounces-298938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF1195CDBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC81A95CDC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F701F243D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677B41F244EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0916F186E39;
-	Fri, 23 Aug 2024 13:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DD5186E3C;
+	Fri, 23 Aug 2024 13:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2rcjfzw5"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS32JMbN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3949186601
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BB5186601;
+	Fri, 23 Aug 2024 13:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419647; cv=none; b=USrlDeFgTNShtC81GU7ujLWa+nPx7nGpiyt4PtWUWR63MSR1nwe/thl9pBz42p7LNfsjrDD5iZXZBgS9FFS4hJEFfFmsi1t5zOkSj3cv0N4/pQv//mhmhluaoV3zePrLAy6x5LqQAFsAe3vVhAe1atBu/HEM4hEtfPjTRA9T74Y=
+	t=1724419685; cv=none; b=lK8va/fZ+QUWn/k7VssDoDXUefV28XRdFDxmGPzRh+GHt+u1+nhTrcRU0ZRpGz5EcsL4TvxY6WsgxV838bK63UsGcY4d1eIuZvrQqyymXqTwmgg51xC+OAYgnou5xfegak6mtq3WhshFMooGESI/D8BesX0OeMirD9DiL9DisS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419647; c=relaxed/simple;
-	bh=gkV7L0xgIqdS75BR6FVfM70ki27PozW4gYl9NIpEHV8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sI6bblptIuzRP56SMZV8QXcFrD/Ho49n3zNElfka1u2XoURJjKbUsmZcJpFOwMgZ49sD8FwbqBTFmDzUgS9vhIZ7XW1ooxNw3O5EMZtDuhpsZYl2XpG1+eAF7Owh8hYjwolZXEmNCV/10Q7y6YFluNO2vQJ9kPtNFc/IePQ/ZUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2rcjfzw5; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2d3c008e146so2257595a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724419645; x=1725024445; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8Ef0ixVq1Ssftzpz2CrTSL5ehMj86hkYQziGH0NMvY=;
-        b=2rcjfzw54+/6U9eIBShqmiNCsswdc1w+bhHQNRivjaIiuURprDUGrUMuoTV7vEuWHc
-         fOGnbJ/pioTBa7e+a4Q3TYc5LK2OmOUaMG0f84U0B42nmkUZfOXBx+1LTiIdwCC1aZg1
-         PsT06QuDVrNnX63p2dkG6A/4p7zKEAxolE6l0sb/hYZmGZriHYmTEhEGHk9Ke1ubum+f
-         XGSxG+Cg7aZDRkmRfD1idPE/Ff9KElELSsOy0ULwfvvlS7ZQpX7ggoGDDzhPSDVNihpx
-         HVZDWkGlk1P19/TgaUs0RseQklFM3B/iTzTHvvBbSNQpYB+y7HH5YISlmerOFE/cWzhV
-         wIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724419645; x=1725024445;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8Ef0ixVq1Ssftzpz2CrTSL5ehMj86hkYQziGH0NMvY=;
-        b=LSp8wqzwQHqcHprjRYRLDrfrVUJSm+wMKwdECA2aDdCs5wn3WO6iDWRV7xcNicFQEF
-         jtSYkbq6isx4dEbl9yuo2hOOWMOh+TwHgyKcnUyAkkTS1bH4SQpKPsCms+vWqXEftSCH
-         mUEhmjOV3hc/WTlkSkJvQqS1aD9Y9/4olA3nEf9h4BX28OIVOEruQK6BXToJhAs2w7Zj
-         7Mr6ysS3H1EyHRvNBcqXUFjnKVpqw0c6Ene0Cr1Xj69tm6hBC9rQYIm2XYynWP9Qw/l/
-         1UrFf1VBhstH29YxEN0fOWAM71JQhzFzLKIb4BFKY6c+DRHYm5Nqv6bLSKHwulMBZnfa
-         uqSw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Q4S7/OQm4H/PLCDtmcHji0K/wUJRDk3ohzKdrZXG+41demd8w87Zkz5P8xiC9FExJFnCcib1bTuED54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCglAbyz/+N63bIsJNeLv+cuFeANhwebcj88h5HFA3aDrLsjTf
-	Vh/wYwrpHqdGMia0ZOJO6VYmMVHctzvMDE1qYxciKoYtg91Ehj/lEzrVjo8i5DUuK+/SlspbYdt
-	40w==
-X-Google-Smtp-Source: AGHT+IEzZfO+fuHrj0fYDVlO89QIfXwRZDOmuttI6MD7uqhT8MwWlZma1Qq3IQN8e5TlXvR8nSwA5lT5Hf0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:1b51:b0:2cd:1e0d:a4c7 with SMTP id
- 98e67ed59e1d1-2d646b8fa5dmr36595a91.1.1724419644812; Fri, 23 Aug 2024
- 06:27:24 -0700 (PDT)
-Date: Fri, 23 Aug 2024 06:27:23 -0700
-In-Reply-To: <20240823121538.GA32110@willie-the-truck>
+	s=arc-20240116; t=1724419685; c=relaxed/simple;
+	bh=DNlR9IfmHdpksq7A8/Fhgkr8Dh+iHoATiUQp29Ay9Ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tjvpXR5CohxAbJeaMaeVWNgpvEF+tHeK44KbjYUufLAJovm3M5arvHQmy/e5j8oQLUDwLLH8uJo3Rd+UxmrxJNqpNS5isnDsgA5cTOhloyzkCVtyBtrjpfaIJjflqgEW7GHZXz0RqNAibTWviRlGsBheBqQuEIYVl4LhiREJndM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS32JMbN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAE5C4AF09;
+	Fri, 23 Aug 2024 13:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724419685;
+	bh=DNlR9IfmHdpksq7A8/Fhgkr8Dh+iHoATiUQp29Ay9Ao=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JS32JMbNlVZdL2ke6W76ZOFYihkqV44p3oAPSqGoFyyIOdnkTYwZd3XX3nIDVZJU4
+	 izBMZzsJsN7QXWKE3QbmadQb4hmJMU4ffLZ/4Ta3f5QVEERL0Zo84/4RwBgACFrNLr
+	 Sr5B2EK86gTYU74lsaQiZ3gzZJFvfRCZErWI/+/RqyjARw5n4cYVm2WuhcpOJ53Y+4
+	 57DCdEYa+Aa8iwnO7TDACxlvsiV8abxfT+0at/8wXBresMsgo++9GO6jR/EgGzlW+s
+	 suHedI6VI57dOfsX7k9HmO8wJ1i61SeUKq5IdvDLfHI9hG7DL9VZyTeajv6LnnpfPw
+	 3CgDjJoGeDTRQ==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-268eec6c7c1so1360896fac.3;
+        Fri, 23 Aug 2024 06:28:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVU8JGkmkSs4XBoQiBbHZikveSEu6svurTMu5nJWrcs2DZirSoL04qFU/m9HFLqXa2KOx9H1H2cutI=@vger.kernel.org, AJvYcCXKjDp498tn/5tXLRy5cBqTBSg0xxQhbQ06Ky8JDgrqqvz+EQ/ArejysncRBuBXDt4eZmIoHxMylqRMjMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNgy1KkvjcO1soPcx7QbW1hH3+LcKiVDunGv2gBFFT2SYrVh+J
+	AL14AlMgFM+j4ZXFCXHvuBg8guad+NggyeTxCNHFSK2S0B/J9wiF3d8TLmbISpZ8uFDnbbjfxDE
+	PRZ2A2F8c2ZSk/wqe+wfZECQp9ag=
+X-Google-Smtp-Source: AGHT+IGIRNoKP4JL5Gq1gJYcxZT+ZARdtAf+zcnKNPiWj9LhaEWGtYnyVS2U+bMY5dmYBScdsFE5Nd2NRT+TSQCUNFA=
+X-Received: by 2002:a05:6871:706:b0:268:a074:39cf with SMTP id
+ 586e51a60fabf-273e641fa92mr2404461fac.8.1724419684502; Fri, 23 Aug 2024
+ 06:28:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802191617.312752-1-seanjc@google.com> <20240820154150.GA28750@willie-the-truck>
- <ZsS_OmxwFzrqDcfY@google.com> <20240820163213.GD28750@willie-the-truck>
- <ZsTM-Olv8aT2rql6@google.com> <20240823121538.GA32110@willie-the-truck>
-Message-ID: <ZsiOO88d7O8lpQoV@google.com>
-Subject: Re: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks
- when possible
-From: Sean Christopherson <seanjc@google.com>
-To: Will Deacon <will@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240823071555.3331632-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240823071555.3331632-1-ruanjinjie@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 Aug 2024 15:27:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iw7uXE_cfU5VXOjFDg9GM8Hu0+hKxqfzU3v0OM5KK9oQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iw7uXE_cfU5VXOjFDg9GM8Hu0+hKxqfzU3v0OM5KK9oQ@mail.gmail.com>
+Subject: Re: [PATCH -next] thermal/of: Fix duplicate of_node_put()
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024, Will Deacon wrote:
-> On Tue, Aug 20, 2024 at 10:06:00AM -0700, Sean Christopherson wrote:
-> > On Tue, Aug 20, 2024, Will Deacon wrote:
-> > > On Tue, Aug 20, 2024 at 09:07:22AM -0700, Sean Christopherson wrote:
-> > > > On Tue, Aug 20, 2024, Will Deacon wrote:
-> > > > > handler could do the invalidation as part of its page-table walk (for
-> > > > > example, it could use information about the page-table structure such
-> > > > > as the level of the leaves to optimise the invalidation further), but
-> > > > > this does at least avoid zapping the whole VMID on CPUs with range
-> > > > > support.
-> > > > > 
-> > > > > My only slight concern is that, should clear_flush_young() be extended
-> > > > > to operate on more than a single page-at-a-time in future, this will
-> > > > > silently end up invalidating the entire VMID for each memslot unless we
-> > > > > teach kvm_arch_flush_remote_tlbs_range() to return !0 in that case.
-> > > > 
-> > > > I'm not sure I follow the "entire VMID for each memslot" concern.  Are you
-> > > > worried about kvm_arch_flush_remote_tlbs_range() failing and triggering a VM-wide
-> > > > flush?
-> > > 
-> > > The arm64 implementation of kvm_arch_flush_remote_tlbs_range()
-> > > unconditionally returns 0, so we could end up over-invalidating pretty
-> > > badly if that doesn't change. It should be straightforward to fix, but
-> > > I just wanted to point it out because it would be easy to miss too!
-> > 
-> > Sorry, I'm still not following.  0==success, and gfn_range.{start,end} is scoped
-> > precisely to the overlap between the memslot and hva range.  Regardless of the
-> > number of pages that are passed into clear_flush_young(), KVM should naturally
-> > flush only the exact range being aged.  The only hiccup would be if the hva range
-> > straddles multiple memslots, but if userspace creates multiple memslots for a
-> > single vma, then that's a userspace problem.
-> 
-> Fair enough, but it's not a lot of effort to fix this (untested diff
-> below) and if the code were to change in future so that
-> __kvm_handle_hva_range() was more commonly used to span multiple
-> memslots we probably wouldn't otherwise notice the silent
-> over-invalidation for a while.
-> 
-> Will
-> 
-> --->8
-> 
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 6981b1bc0946..1e34127f79b0 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -175,6 +175,9 @@ int kvm_arch_flush_remote_tlbs(struct kvm *kvm)
->  int kvm_arch_flush_remote_tlbs_range(struct kvm *kvm,
->                                       gfn_t gfn, u64 nr_pages)
->  {
-> +       if (!system_supports_tlb_range())
-> +               return -EOPNOTSUPP;
+On Fri, Aug 23, 2024 at 9:08=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
+>
+> In for_each_child_of_node(), if continue, of_node_put(prev) will be
+> called by __of_get_next_child(), so remove the duplicate
+> of_node_put(child).
+>
+> Fixes: 0f0a1b4ba3e4 ("thermal/of: Use the .should_bind() thermal zone cal=
+lback")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  drivers/thermal/thermal_of.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> index dc43f50db890..85e7e3c43c7e 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -319,10 +319,8 @@ static bool thermal_of_should_bind(struct thermal_zo=
+ne_device *tz,
+>                 int count, i;
+>
+>                 tr_np =3D of_parse_phandle(child, "trip", 0);
+> -               if (tr_np !=3D trip->priv) {
+> -                       of_node_put(child);
+> +               if (tr_np !=3D trip->priv)
+>                         continue;
+> -               }
+>
+>                 /* The trip has been found, look up the cdev. */
+>                 count =3D of_count_phandle_with_args(child, "cooling-devi=
+ce", "#cooling-cells");
+> --
 
-Oooh, now your comments make a lot more sense.  I didn't catch on that range-based
-flushing wasn't universally supported.
+Good catch, thank you!
 
-Agreed, not doing the above would be asinine.
-
-> +
->         kvm_tlb_flush_vmid_range(&kvm->arch.mmu,
->                                 gfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
->         return 0;
-> 
+I'll fix the original patch and reapply it.
 
