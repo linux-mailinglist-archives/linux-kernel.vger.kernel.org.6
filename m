@@ -1,157 +1,302 @@
-Return-Path: <linux-kernel+bounces-298941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA88D95CDD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:30:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688AB95CDD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7041F244D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F588282E9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846CB187342;
-	Fri, 23 Aug 2024 13:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C19A186E5E;
+	Fri, 23 Aug 2024 13:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="eOEteFvJ"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbEgJISV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D01D186E51
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA4618661A;
+	Fri, 23 Aug 2024 13:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419788; cv=none; b=sUQ1E5ZvoCnn69fDUumKS4cx0ISnXbiidt7GQB7oSD66jXc/e642hB8Jop5ulSR/esAId/w++Rof6DMJsd58KXh/FoBwaN/M/cndL6pF9HJpLPSvKEil+3FoPKPTQOL55JamXXtVV3YExD3/0YucnE+zVr9EKTy0aigEzVosX7s=
+	t=1724419801; cv=none; b=NfWttZQQsfIENQmFXu5lslDJHV1KhNcyVv889t1ZJQ5z/g+UONOOSSuMs7wehasbfo0btbo6ddxf6WazYLmgTTuISSSpFTSGnQc+7Ma3429CCjrRIFA5o1R+I/jWRcOne0N8D4DaNiqJEmvbwa7ATt8fCYXoGLoCqwbw07CKU6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419788; c=relaxed/simple;
-	bh=X9LwjPzhN+uJQCh4XWk9pbDdfJ5T1eZa5ETA6hy46Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PM0A/xKNGmjFku3CtTTiggb2qut5zIqjWxBYEniznNATQ20aBQDayELI0Wxnlxp0nK9qJN53+rQNFd7MV8xnX03MmTOsdLYrSa2fkDmAK8t9lV5QFgtVzbRrHvLHPLOGF9oAFY2QjTZIjV58qmtTGlJoh51e6sHXly3emXRVmfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=eOEteFvJ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so2832596a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724419785; x=1725024585; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=34ePrmT6ThCSMAVDOF/08UJdMTT0ZiO9ZyonmTHuBOo=;
-        b=eOEteFvJIXchlLLKTVCuVUD8iR+ApTn2Qkg7MOqd3UwTgFRQ0YMaV6yAql6HdCvn2m
-         +Gfeu2eYYOa5VxOuPCuv1Jp2v2j8bMq2QbHKIHR2X8Cufg/iDVsbaGaF7tl7Am2O/fOX
-         RviJ2kfq8dL75PWmpdXQTxl9u3XBWzrww1nNZj8+eDMVV/Bb8LZUDkWborE8xXwyINNA
-         FBlRoWri4HdpCsnRkWQx6sMlEF43xxGK23fZ8Cu3iOas6F+6SVvsPYe+T0yZ4Go8UqcI
-         FMAi0c8pjUTWeMHKtbYwqi3fjCVwx5fbG0vsdkQX/yXMhyaouBG2KHq7LvZFcKqxHTWv
-         Bqtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724419785; x=1725024585;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=34ePrmT6ThCSMAVDOF/08UJdMTT0ZiO9ZyonmTHuBOo=;
-        b=s7AC27LMgroG94wUKawqKbiGYmnGds4Wq2HoLPTDmFm/4EEwrE++QytKXGvHPmRPIc
-         jpFi2ZMTrDVmKX2Ft15cTbeOYiZlGl2XWqSwSdu0ykNTEOMAODHCLp8xGYH182x0jK0X
-         janxlt1xg9wixvuPg0J6dU4H9l69WdVnjFhEQbM6oiFSJUUWF1o3Dp+OtdSqHyk1HRQm
-         dQjoFzXiKE1cnss1IsTGszqtgRjvCovSRyMZSJyqL+0KJhRxCTkJb/3xHZDllV57240D
-         etH+DPIguWEECn4oVDwIZMJZHRIRfKjFYi0hxgQqJWETp46TLqHGwgmwZEx2zvb2wL5t
-         +QTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbJPAFj3s23VetoHfe40vBYP+509sDO8y/7QDrdS9z5UGTqOH5g8dnfUgDD8bFqJJAYC5T3dVYnivsM7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvdlYbLPzavG+2MM4oc0bZwjcJbmj3WCMhgeNRjPZRA++/t4Uh
-	fFcPzKslB2Ad+htqnXIGz2ffog+EFdxXWeU35ML6NRjJ+zQdex4A19n6COb1GrA=
-X-Google-Smtp-Source: AGHT+IEYo5sFGQI+9l4/IiJwriviRXNovEkCQk0pf3xWtH80ArYe1Esf/M6ITiX8QAhka73M1v+RLg==
-X-Received: by 2002:a05:6402:3549:b0:5c0:8d62:bc9c with SMTP id 4fb4d7f45d1cf-5c08d62bea7mr1232778a12.6.1724419784285;
-        Fri, 23 Aug 2024 06:29:44 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a6342sm2110246a12.79.2024.08.23.06.29.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 06:29:43 -0700 (PDT)
-Date: Fri, 23 Aug 2024 15:29:42 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Feng zhou <zhoufeng.zf@bytedance.com>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	ast@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
-	bigeasy@linutronix.de, lorenzo@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Subject: Re: [PATCH bpf-next v2] net: Don't allow to attach xdp if bond slave
- device's upper already has a program
-Message-ID: <ZsiOxkd5KbbIIB6k@nanopsycho.orion>
-References: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
- <Zsh4vPAPBKdRUq8H@nanopsycho.orion>
- <6d38eaf5-0a13-9f85-3a5d-0ca354bc45d5@iogearbox.net>
+	s=arc-20240116; t=1724419801; c=relaxed/simple;
+	bh=lxPnCqRE2SMW9DTd0bsncIN/4sowD1QrLleoMKQGYJc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=F4RaDDFp9nLzQMPNqq/aEG9FvAy0rGVa9plMbxbwqDCJvNJKRkMBXklXmcDakW2CJGjhDWl8GjTDU+z6/IiIZOabGmMsJ8R1pRYnP2oQYze77IZhzk/jaL+PgGhZU0JHfvst3x1WDVVZkLPARF/v473EjATcNZUfLJHgMrsK8mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbEgJISV; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724419799; x=1755955799;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=lxPnCqRE2SMW9DTd0bsncIN/4sowD1QrLleoMKQGYJc=;
+  b=UbEgJISVH3hjkYNFFVpmBTeWjYTE0x+4I/We6AJ9Rx21DdIirLwvYCou
+   GJJVssLoh04KWpoykM2v6N0ZGHE5WMxvr1SV5hncYJiUK/QJ7vocNCLmf
+   N7mNi4SiZhA4w2WXbdeW8FRWzohvSm5nm2lskW5Kkdiq7rSyARoGz5aEJ
+   9SXxrp0N9RjZnqDzFBoXcyeH1xZe/TTcoGdvh3LgI4f+RICtGozwbKxOt
+   /paMFnNDvYg4zzxEaNGUePZAuZvdqbYVe7LkIhf2rGJEvOAvl6uy0ZM4U
+   dorApyA0zKRakca9EPPx4swUoOOdjoEIiYXC+vlgKjbVGppRde6sgkuV7
+   g==;
+X-CSE-ConnectionGUID: L6YL9xvuTHGtONELHZe8lQ==
+X-CSE-MsgGUID: ke7BsIi1Q3S9fP6ZMAg3pA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="13170253"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="13170253"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:29:59 -0700
+X-CSE-ConnectionGUID: eEfZ/s4YTjKDZt67vv+SUQ==
+X-CSE-MsgGUID: zrWoLhGvReOkMmtvp2WPcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="99317550"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:29:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 16:29:52 +0300 (EEST)
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+cc: Tero Kristo <tero.kristo@linux.intel.com>, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency
+ latency control to sysfs interface
+In-Reply-To: <863beeab7f6ecf36796394c75e95fc7a0396a862.camel@linux.intel.com>
+Message-ID: <6adc07a2-14bc-6910-5d51-a0f68fc8ef46@linux.intel.com>
+References: <20240821131321.824326-1-tero.kristo@linux.intel.com>  <20240821131321.824326-4-tero.kristo@linux.intel.com>  <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com> <863beeab7f6ecf36796394c75e95fc7a0396a862.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6d38eaf5-0a13-9f85-3a5d-0ca354bc45d5@iogearbox.net>
+Content-Type: multipart/mixed; boundary="8323328-2110916037-1724419792=:2230"
 
-Fri, Aug 23, 2024 at 02:07:45PM CEST, daniel@iogearbox.net wrote:
->On 8/23/24 1:55 PM, Jiri Pirko wrote:
->> Fri, Aug 23, 2024 at 10:42:04AM CEST, zhoufeng.zf@bytedance.com wrote:
->> > From: Feng Zhou <zhoufeng.zf@bytedance.com>
->> > 
->> > Cannot attach when an upper device already has a program, This
->> > restriction is only for bond's slave devices or team port, and
->> > should not be accidentally injured for devices like eth0 and vxlan0.
->> 
->> What if I attach xdp program to solo netdev and then I enslave it
->> to bond/team netdev that already has xdp program attached?
->> What prevents me from doing that?
->
->In that case the enslaving of the device to bond(/team) must fail as
->otherwise the latter won't be able to propagate the XDP prog downwards.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yep, I don't see that in the code though.
+--8323328-2110916037-1724419792=:2230
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
+On Fri, 23 Aug 2024, srinivas pandruvada wrote:
+> On Fri, 2024-08-23 at 16:03 +0300, Ilpo J=C3=A4rvinen wrote:
+> > On Wed, 21 Aug 2024, Tero Kristo wrote:
+> >=20
+> > > Add the TPMI efficiency latency control fields to the sysfs
+> > > interface.
+> > > The sysfs files are mapped to the TPMI uncore driver via the
+> > > registered
+> > > uncore_read and uncore_write driver callbacks. These fields are not
+> > > populated on older non TPMI hardware.
+> > >=20
+> > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+> > > ---
+> > > =C2=A0.../uncore-frequency-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 42
+> > > ++++++++++++++++---
+> > > =C2=A0.../uncore-frequency-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 +++++-
+> > > =C2=A02 files changed, 49 insertions(+), 6 deletions(-)
+> > >=20
+> > > diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-
+> > > frequency-common.c b/drivers/platform/x86/intel/uncore-
+> > > frequency/uncore-frequency-common.c
+> > > index 4e880585cbe4..e22b683a7a43 100644
+> > > --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
+> > > common.c
+> > > +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
+> > > common.c
+> > > @@ -60,11 +60,16 @@ static ssize_t show_attr(struct uncore_data
+> > > *data, char *buf, enum uncore_index
+> > > =C2=A0static ssize_t store_attr(struct uncore_data *data, const char
+> > > *buf, ssize_t count,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 enum uncore_index index)
+> > > =C2=A0{
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input =3D 0;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
+> > > =C2=A0
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, &i=
+nput))
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index =3D=3D
+> > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtobool(buf, (bool *)&input))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn -EINVAL;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, &input))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn -EINVAL;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&uncore_lo=
+ck);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_write(=
+data, input, index);
+> > > @@ -103,6 +108,18 @@ show_uncore_attr(max_freq_khz,
+> > > UNCORE_INDEX_MAX_FREQ);
+> > > =C2=A0
+> > > =C2=A0show_uncore_attr(current_freq_khz, UNCORE_INDEX_CURRENT_FREQ);
+> > > =C2=A0
+> > > +store_uncore_attr(elc_low_threshold_percent,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > +store_uncore_attr(elc_high_threshold_percent,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
+> > > +store_uncore_attr(elc_high_threshold_enable,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENA=
+BLE);
+> > > +store_uncore_attr(elc_floor_freq_khz,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
+> > > +
+> > > +show_uncore_attr(elc_low_threshold_percent,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > +show_uncore_attr(elc_high_threshold_percent,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
+> > > +show_uncore_attr(elc_high_threshold_enable,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
+> > > +show_uncore_attr(elc_floor_freq_khz,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
+> > > +
+> > > =C2=A0#define
+> > > show_uncore_data(member_name)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0\
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static ssize_t show_#=
+#member_name(struct kobject *kobj,=C2=A0\
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct kobj_attribute
+> > > *attr, char *buf)\
+> > > @@ -146,7 +163,8 @@ show_uncore_data(initial_max_freq_khz);
+> > > =C2=A0
+> > > =C2=A0static int create_attr_group(struct uncore_data *data, char *na=
+me)
+> > > =C2=A0{
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, freq, index =3D 0=
+;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, index =3D 0;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int val;
+> > > =C2=A0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(max=
+_freq_khz);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(min=
+_freq_khz);
+> > > @@ -168,10 +186,24 @@ static int create_attr_group(struct
+> > > uncore_data *data, char *name)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[in=
+dex++] =3D &data-
+> > > >initial_min_freq_khz_kobj_attr.attr;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[in=
+dex++] =3D &data-
+> > > >initial_max_freq_khz_kobj_attr.attr;
+> > > =C2=A0
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data, =
+&freq, UNCORE_INDEX_CURRENT_FREQ);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data, =
+&val, UNCORE_INDEX_CURRENT_FREQ);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > >current_freq_khz_kobj_attr.attr;
+> > > =C2=A0
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data, =
+&val,
+> > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_low_threshold_percent);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_percent);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_enable);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_floor_freq_khz);
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > >elc_low_threshold_percent_kobj_attr.attr;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > >elc_high_threshold_percent_kobj_attr.attr;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0&da=
+ta-
+> > > >elc_high_threshold_enable_kobj_attr.attr;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > >elc_floor_freq_khz_kobj_attr.attr;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> >=20
+> > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> >=20
+> > But I have to say I'm not big fan of this function treating any error
+> > as=20
+> > an implicit indication of ELC not supported.
+>
+> Also there is a check for version number, which supports ELC.
 
+AFAICT, the version number check is not on the path that is called from=20
+create_attr_group().
+
+The version number check is in uncore_probe() which then propagates this=20
+knowledge into read/write_eff_lat_ctrl() using ->elc_supported.
+
+> So this
+> condition will never be true unless some IO read failure.
+
+So are you saying ->elc_supported check is not required (added by patch=20
+2)? It return -EOPNOTSUPP not because of an "IO read failure"??
+
+> > Is that even going to be true after this:
+> >=20
+> > =C2=A0
+> > https://patchwork.kernel.org/project/platform-driver-x86/patch/20240820=
+204558.1296319-1-srinivas.pandruvada@linux.intel.com/
+> >=20
+> > ...as root_domain is eliminated for other reasons than ELC=20
+> > supported/not-supported (-ENODATA return path)?
 >
->Feng, did you double check if we have net or BPF selftest coverage for
->that? If not might be good to add.
->
->> > Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
->> > Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
->> > ---
->> > Changelog:
->> > v1->v2: Addressed comments from Paolo Abeni, Jiri Pirko
->> > - Use "netif_is_lag_port" relace of "netif_is_bond_slave"
->> > Details in here:
->> > https://lore.kernel.org/netdev/3bf84d23-a561-47ae-84a4-e99488fc762b@bytedance.com/T/
->> > 
->> > net/core/dev.c | 10 ++++++----
->> > 1 file changed, 6 insertions(+), 4 deletions(-)
->> > 
->> > diff --git a/net/core/dev.c b/net/core/dev.c
->> > index f66e61407883..49144e62172e 100644
->> > --- a/net/core/dev.c
->> > +++ b/net/core/dev.c
->> > @@ -9502,10 +9502,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
->> > 	}
->> > 
->> > 	/* don't allow if an upper device already has a program */
->> > -	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
->> > -		if (dev_xdp_prog_count(upper) > 0) {
->> > -			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
->> > -			return -EEXIST;
->> > +	if (netif_is_lag_port(dev)) {
->> > +		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
->> > +			if (dev_xdp_prog_count(upper) > 0) {
->> > +				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
->> > +				return -EEXIST;
->> > +			}
->> > 		}
->> > 	}
->> > 
->> > -- 
->> > 2.30.2
->> > 
->> 
->
+> Even if ELC is not supported, but all others fields will always be
+> supported from base version. The above change doesn't do anything with
+> root domain.
+
+??
+
+read/write_eff_lat_ctrl() check for ->root_domain and return -ENODATA
+if it is true. If that patch from you I linked above is applied, this line=
+=20
+won't execute on some systems:
+
+=09tpmi_uncore->root_cluster.root_domain =3D true;
+
+Will that cause an issue (for read/write_eff_lat_ctrl())?
+
+My concern here is that misusing error values like this to do=20
+supported/not-supported check leads to fragility that would not occur
+if errors would be treated as hard errors and supported is checked by=20
+other means (which would be easy here using ->elc_supported, AFAICT).
+
+--=20
+ i.
+
+--8323328-2110916037-1724419792=:2230--
 
