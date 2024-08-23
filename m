@@ -1,117 +1,213 @@
-Return-Path: <linux-kernel+bounces-299407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650B495D431
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:20:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A5A95D436
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D245284AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A7C1C21B88
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1F218E346;
-	Fri, 23 Aug 2024 17:20:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B948A18E022;
+	Fri, 23 Aug 2024 17:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9RZM6vE"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55AA18E03F
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471E341C69;
+	Fri, 23 Aug 2024 17:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724433643; cv=none; b=s56QhnXxxT5vvCdZGD9W6dcfyYYAJj5K/eSR4Jx/Vg993kosjBmYygf0bZyzQE6Ci/xGpv1gh1vZygtDJhoHbojst18peDBIGaqd/BwflJfl79KTMP6V+b9nz4YjLdaswGczXBKCBi6JuasHGO6+6KStYckx0MqcA+eQHWTkKJA=
+	t=1724433747; cv=none; b=O8+//rd9wynrfINu7bcPEFGkFFLtwKsfY5Kcv0Cg3E6yidqgwG1HXmy/EX4nywwCWOXZzQGT5J+peylqTciRoK/x4Uqnxjn7onMChcj/ClV5wllOyKICD36jW0sYArUkHxRzDWtkOf2IlSS8fbl3mibavhStVkJiMyww1T+GacM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724433643; c=relaxed/simple;
-	bh=2s0HmHC5BxdKSohQRReHQscLN8+om9ADhIV836AtpsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EU/zzfZIbD/vlOKZawdNCQByan2QWF5jAZjLwkIdWP6dJrLxU4Dq9IDDS9yeDf7swOhTZZwsz6EOMe6hKZVfIMqeK8oaaT1SuMiozXG7D/VGoBFzBFP4RJqxcfRZxgFLLfXyKqly6+YjLhbYa44/xXC21ImSC8AbvQ0cf92eUb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C2ECC32786;
-	Fri, 23 Aug 2024 17:20:42 +0000 (UTC)
-Date: Fri, 23 Aug 2024 18:20:40 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64/KVM fixes for 6.11-rc5
-Message-ID: <ZsjE6BXzDznbg6R-@arm.com>
+	s=arc-20240116; t=1724433747; c=relaxed/simple;
+	bh=G0lER78D+2SETUz/ApeRDt+Z853WduaDAX8/ePTaJyg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N39lynHZgvT71RZMdmiIUCR2sPLsAu4L5v98Ue0BQU+1mFtN+7t2hYams9QVMzrg2vI2w1KfYjEAj920K0z4IP0b3TZG1kSA3+AhNGHGy2zZjKR4TvTYjOkoU6qAMRLc9ppZ/e9DZGrVGbJp2mTnPW4qu4P9La57ci7dHuy6MYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9RZM6vE; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bec87ececeso2744081a12.0;
+        Fri, 23 Aug 2024 10:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724433743; x=1725038543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=to9+ooQ8roiiPWwijQQKyxvjukW+kYNzLti9AMo/t7c=;
+        b=j9RZM6vEpgBcKCFuy3AvdbakDChgoB9E1qSZL1xlL3eS0du9+Ycel7IgrfR/ewuMuR
+         rCp2Y6w+qRj67jtGPGJCVbn4kgeq16lNKrOk9exyW6lp4RIEzMV0FXIHoQZggfWi1mqg
+         OW0s2vidiLTTBGAvgYCuoitZitECDr49OU1yfvgY64wZkPGBfjB9ppWl62LjrNdmkad5
+         EliwDUyhjIgq8GG4xihl9I2e1MOLwEfh6Vdd7udUuEB0vTJfsnX9RfItrJOEThB+OKtH
+         FUp5sdZ/3uaTvq3fp4+p52OuU/BxXNiUCSMY+enaLIG011hBiyy71wSt00jyz/cxgiIU
+         eUbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724433743; x=1725038543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=to9+ooQ8roiiPWwijQQKyxvjukW+kYNzLti9AMo/t7c=;
+        b=ojOu7WfqSszE20Qz1hB2wlfBNpego+trfcl5ymePLO5COIbJsYBPCLji1kJCMkQjw2
+         xXKrh5CIl9RMmfUaf7tWzRy7lndO5c11uV0zOoNhSFfppVio8h2opGNWra7JeGxE0o/2
+         k2jqYs04TrW9ObqtOcJDG91QKkaFfvhxAk9+5s+htQWn9e2AwkcavzsOVj6KTAxtgSyg
+         iXScyn9NQUGjw3OfMy/lgEJr43rfuVftA8VyTW9TieTzLojVNbq4Mvy7kGneUr/dW+dx
+         GBpkxbkC0C8jCpcQNwa70FbH+LYz7sAh4TlLo9pzQaUcEhw79TUNS99GwkIG3/UGvnVg
+         XN8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/lAJsQ7T1EYUQ4eZqSuyFbZIpyM0DVAaz1928GfggJ4YCjVzK9kQgwWAnzg3s62U9x8+/KNiARTViI1vJ@vger.kernel.org, AJvYcCXPn5lzJqEuEtwcDtAGVhIoP3O4Z8gKJEXHL0PNTkZG8YmM3HzguvJ3bhvNaaX6zZg2f4RXNKVYHEZ3P3vq@vger.kernel.org
+X-Gm-Message-State: AOJu0YztqWtMg5Ht25mreQYxSJTr9oeZqgHY2hM2QGfFVILtEMBzGT5T
+	lByM6G0rgcEduBJHu7Ph6e5i4zX9ZkAKrMh7oHG+fWNijVhjKp/ZxlKLxsAHqRltlvFXV0UELp5
+	bHBg0Y4HeJnapSrv+RXN3A7DSkcs=
+X-Google-Smtp-Source: AGHT+IFuXT0FKUkEk5+963PnUNJ3N6G9Q52jPVUXuTKK5Gcc+EuJjboxEWGL4C/ondtpTBM89q0Dd2Hl/8/TbjklQKc=
+X-Received: by 2002:a05:6402:5109:b0:57c:a422:677b with SMTP id
+ 4fb4d7f45d1cf-5c08915f498mr2302771a12.8.1724433742982; Fri, 23 Aug 2024
+ 10:22:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240820171652.145673-1-robdclark@gmail.com> <20240820171652.145673-3-robdclark@gmail.com>
+ <20240823161148.GB851@willie-the-truck>
+In-Reply-To: <20240823161148.GB851@willie-the-truck>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 23 Aug 2024 10:22:10 -0700
+Message-ID: <CAF6AEGvdKc3APaYVZ1G9iQfw22yb2MGssADhXU50MhZqp8tcrA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] iommu/io-pgtable-arm: Re-use the pgtable walk for iova_to_phys
+To: Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Mostafa Saleh <smostafa@google.com>, 
+	Rob Clark <robdclark@chromium.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, Aug 23, 2024 at 9:11=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Tue, Aug 20, 2024 at 10:16:45AM -0700, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Re-use the generic pgtable walk path.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  drivers/iommu/io-pgtable-arm.c | 73 +++++++++++++++++-----------------
+> >  1 file changed, 36 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-=
+arm.c
+> > index b4bc358740e0..5fa1274a665a 100644
+> > --- a/drivers/iommu/io-pgtable-arm.c
+> > +++ b/drivers/iommu/io-pgtable-arm.c
+> > @@ -710,42 +710,6 @@ static size_t arm_lpae_unmap_pages(struct io_pgtab=
+le_ops *ops, unsigned long iov
+> >                               data->start_level, ptep);
+> >  }
+> >
+> > -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+> > -                                      unsigned long iova)
+> > -{
+> > -     struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(ops);
+> > -     arm_lpae_iopte pte, *ptep =3D data->pgd;
+> > -     int lvl =3D data->start_level;
+> > -
+> > -     do {
+> > -             /* Valid IOPTE pointer? */
+> > -             if (!ptep)
+> > -                     return 0;
+> > -
+> > -             /* Grab the IOPTE we're interested in */
+> > -             ptep +=3D ARM_LPAE_LVL_IDX(iova, lvl, data);
+> > -             pte =3D READ_ONCE(*ptep);
+> > -
+> > -             /* Valid entry? */
+> > -             if (!pte)
+> > -                     return 0;
+> > -
+> > -             /* Leaf entry? */
+> > -             if (iopte_leaf(pte, lvl, data->iop.fmt))
+> > -                     goto found_translation;
+> > -
+> > -             /* Take it to the next level */
+> > -             ptep =3D iopte_deref(pte, data);
+> > -     } while (++lvl < ARM_LPAE_MAX_LEVELS);
+> > -
+> > -     /* Ran out of page tables to walk */
+> > -     return 0;
+> > -
+> > -found_translation:
+> > -     iova &=3D (ARM_LPAE_BLOCK_SIZE(lvl, data) - 1);
+> > -     return iopte_to_paddr(pte, data) | iova;
+> > -}
+> > -
+> >  struct io_pgtable_walk_data {
+> >       void                            *data;
+> >       int (*visit)(struct io_pgtable_walk_data *walk_data, int lvl,
+> > @@ -760,6 +724,41 @@ static int __arm_lpae_iopte_walk(struct arm_lpae_i=
+o_pgtable *data,
+> >                                arm_lpae_iopte *ptep,
+> >                                int lvl);
+> >
+> > +struct iova_to_phys_data {
+> > +     arm_lpae_iopte pte;
+> > +     int lvl;
+> > +};
+> > +
+> > +static int visit_iova_to_phys(struct io_pgtable_walk_data *walk_data, =
+int lvl,
+> > +                           arm_lpae_iopte pte, size_t size)
+> > +{
+> > +     struct iova_to_phys_data *data =3D walk_data->data;
+> > +     data->pte =3D pte;
+> > +     data->lvl =3D lvl;
+> > +     return 0;
+> > +}
+> > +
+> > +static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
+> > +                                      unsigned long iova)
+> > +{
+> > +     struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(ops);
+> > +     struct iova_to_phys_data d;
+> > +     struct io_pgtable_walk_data walk_data =3D {
+> > +             .data =3D &d,
+> > +             .visit =3D visit_iova_to_phys,
+> > +             .addr =3D iova,
+> > +             .end =3D iova + 1,
+> > +     };
+> > +     int ret;
+> > +
+> > +     ret =3D __arm_lpae_iopte_walk(data, &walk_data, data->pgd, data->=
+start_level);
+> > +     if (ret)
+> > +             return 0;
+> > +
+> > +     iova &=3D (ARM_LPAE_BLOCK_SIZE(d.lvl, data) - 1);
+> > +     return iopte_to_paddr(d.pte, data) | iova;
+> > +}
+> > +
+> >  static int io_pgtable_visit(struct arm_lpae_io_pgtable *data,
+> >                           struct io_pgtable_walk_data *walk_data,
+> >                           arm_lpae_iopte *ptep, int lvl)
+> > @@ -776,7 +775,7 @@ static int io_pgtable_visit(struct arm_lpae_io_pgta=
+ble *data,
+> >               return 0;
+> >       }
+> >
+> > -     if (WARN_ON(!iopte_table(pte, lvl)))
+> > +     if (WARN_ON(!iopte_table(pte, lvl) && !selftest_running))
+>
+> Why do you care about the selftest here?
 
-As Paolo is away, I'm taking the arm64/KVM fixes through the arm64 tree.
-Apart from KVM, there are no other fixes. Thanks.
+Otherwise we see a flood of WARN_ON from negative tests in the selftests
 
-The following changes since commit f75c235565f90c4a17b125e47f1c68ef6b8c2bce:
+BR,
+-R
 
-  arm64: Fix KASAN random tag seed initialization (2024-08-15 11:04:56 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-
-for you to fetch changes up to 75c8f387dd16066a90c0928d00851edad0c8c519:
-
-  Merge tag 'kvmarm-fixes-6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into for-next/fixes (2024-08-23 09:47:39 +0100)
-
-----------------------------------------------------------------
-arm64/KVM fixes:
-
-- Don't drop references on LPIs that weren't visited by the vgic-debug
-  iterator
-
-- Cure lock ordering issue when unregistering vgic redistributors
-
-- Fix for misaligned stage-2 mappings when VMs are backed by hugetlb
-  pages
-
-- Treat SGI registers as UNDEFINED if a VM hasn't been configured for
-  GICv3
-
-----------------------------------------------------------------
-Catalin Marinas (1):
-      Merge tag 'kvmarm-fixes-6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into for-next/fixes
-
-Marc Zyngier (2):
-      KVM: arm64: vgic: Don't hold config_lock while unregistering redistributors
-      KVM: arm64: Make ICC_*SGI*_EL1 undef in the absence of a vGICv3
-
-Oliver Upton (1):
-      KVM: arm64: Ensure canonical IPA is hugepage-aligned when handling fault
-
-Zenghui Yu (1):
-      KVM: arm64: vgic-debug: Don't put unmarked LPIs
-
- Documentation/virt/kvm/api.rst                     |  2 +-
- arch/arm64/include/asm/kvm_ptrauth.h               |  2 +-
- arch/arm64/kvm/Kconfig                             |  1 +
- arch/arm64/kvm/Makefile                            |  3 +++
- arch/arm64/kvm/arm.c                               | 15 +++++----------
- arch/arm64/kvm/hyp/include/hyp/switch.h            |  1 -
- arch/arm64/kvm/hyp/nvhe/Makefile                   |  2 ++
- arch/arm64/kvm/hyp/nvhe/switch.c                   |  5 ++---
- arch/arm64/kvm/hyp/vhe/Makefile                    |  2 ++
- arch/arm64/kvm/mmu.c                               |  9 ++++++++-
- arch/arm64/kvm/nested.c                            |  2 +-
- arch/arm64/kvm/sys_regs.c                          |  6 ++++++
- arch/arm64/kvm/vgic/vgic-debug.c                   |  7 ++++---
- arch/arm64/kvm/vgic/vgic-init.c                    | 12 +++++++-----
- arch/arm64/kvm/vgic/vgic-irqfd.c                   |  7 ++++---
- arch/arm64/kvm/vgic/vgic-its.c                     | 18 +++++++++++-------
- arch/arm64/kvm/vgic/vgic-v3.c                      |  2 +-
- arch/arm64/kvm/vgic/vgic.c                         |  7 ++++++-
- arch/arm64/kvm/vgic/vgic.h                         |  9 ++++++++-
- tools/testing/selftests/kvm/aarch64/get-reg-list.c |  4 ++--
- 20 files changed, 75 insertions(+), 41 deletions(-)
-
--- 
-Catalin
+> Will
 
