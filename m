@@ -1,179 +1,196 @@
-Return-Path: <linux-kernel+bounces-299357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D442495D395
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:33:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF5295D398
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137441C23353
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99382283D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E927A18BC2F;
-	Fri, 23 Aug 2024 16:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE09818BC20;
+	Fri, 23 Aug 2024 16:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYTG5Reg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EseA2AGf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE618858B;
-	Fri, 23 Aug 2024 16:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FF2188A1A;
+	Fri, 23 Aug 2024 16:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430820; cv=none; b=YIgrauT1TOHY7O7+k2xamUzKHI+Hftx6rdjHa1tmPa/CItppWkEq9dPVX33v2jmSMoFdKv28jQgsE5ayesTta7eWi/Ec4Cv2QLlVV5BnRur7NZ7/olcPMwRaM05ztSddSjozl10BrdfcrFqzqD8JxnkHOn7SCUwX180+y93y048=
+	t=1724430902; cv=none; b=CG8TBWTKjxZSfuZBYT6h2Wa/v1lsQ3SolaHtPcJQUUl7vih8dNFvbri1Voh2wKsnYaT/ywsuhG4wn+oVa1Wu0/cknehOZgAn92wP9UzAhgBnG42IFxibsZMiJXWttaT2JhoaZG2+Q8YYK/zne6k/AGYKW7OiqXMFFG+H7zf4H6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430820; c=relaxed/simple;
-	bh=WSH4rUm+bcwJjBbvm5rtjbFA5J4F0JTq05nNX35iUV0=;
+	s=arc-20240116; t=1724430902; c=relaxed/simple;
+	bh=U9X5a5rGX2lKZTnV7WShDNM8IpNHEe/HA7qYkCTylAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpWpqLQvARg+JRRWo+sKBPKLvKW+tV8YI4aqputQVfD7PZA08x7dVxMPiqUQYAX+ijxzRTPppuxHPkrNREp4WyDU9tSlYWKWzTfiZQNtQizM+Pk2He7/GooGcnDVaunON9MOzPiSLWmDzcRF7r32W2YzlUNv3YxIbVabgSsIOQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYTG5Reg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 277BAC32786;
-	Fri, 23 Aug 2024 16:33:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CttFw9CawZjnDHWN6aR0iQUFCJl41hRlh9W35MIgtuRvGbgDVDjfXPBlmTxoqeEwRk2OTDcR6yYp+9nGVvZbLbza+SUzChnCLYaIwDaFXf7zAhueKWqlaUmtdHpwgdWXcsJRmh6VozvGPin5ofvZNnF6EBT810g0+AnO6/KxK0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EseA2AGf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93501C32786;
+	Fri, 23 Aug 2024 16:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724430819;
-	bh=WSH4rUm+bcwJjBbvm5rtjbFA5J4F0JTq05nNX35iUV0=;
+	s=k20201202; t=1724430901;
+	bh=U9X5a5rGX2lKZTnV7WShDNM8IpNHEe/HA7qYkCTylAI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYTG5RegZzLko0cKmECk+1jIcHjw7gFO2WvdCtHif+pORMKYzT8tC9WzFlKs1FlaN
-	 UwhG0vqVsJm7sGX8DKRpyucDaJxJibDXg55bauuigXDLMK3ML6xMWKgZRjbhXttZcv
-	 xmUQ4ebQSXFJsM1QD/dhLALw0CQY+sSFNE+0KCNN/za2Zpr3+KK4gZ9sD6jbeIWrj5
-	 TmWJRNi6/SofZ76q6Scy3B1nI9WQFhAIgw07UM6eYQNuHu4I+IdeRL56g3D7IAEnmD
-	 kytHd15OE9JXfOsZhgrjEfbHAL5rngqSfm9p10rLt6lvyybNcC2EF4gC4XlwGh2X3o
-	 ZMGkHbIvJXo+A==
-Date: Fri, 23 Aug 2024 17:33:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	gregkh@linuxfoundation.org, mturquette@baylibre.com,
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
- #reset-cells for RZ/G3S
-Message-ID: <20240823-dilute-juggle-7e2d43b8b630@spud>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
- <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
- <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
- <20240823-plywood-unfixed-d8d8a2d93f14@spud>
- <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
+	b=EseA2AGfjjhJCvVsPP2TaDLSNTRN52Ja0Eg5yyOzpmqC44PvXrcLDGC6ZADiD2KM1
+	 zc/78A5uO1/wiiCoL8XM8VmsYd8hkxJJjIwAkZtAZXVjgRICpbPrL5TPBhv+tSrTzH
+	 BzQq9/1x0zs27HyaMAbZStngmb/G2HrnjlQOiml6hwCqs95a1Nk+KpPbggzmndEplw
+	 rX32e5fBHBO8q75J6B4Mcdg+x4otGNFxWTqwaiqXrC3UzR7zosqPG3FJMxs+/KCHyA
+	 zXimFetcel9AmdOquC4HP3+heKUyL6aBLu2tvb83tc4ClsNr9L+LN0pdrfQR/FVEnP
+	 gAeeHL3RMnl6Q==
+Date: Fri, 23 Aug 2024 09:35:01 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 12/14] xfs: Unmap blocks according to forcealign
+Message-ID: <20240823163501.GD865349@frogsfrogsfrogs>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <20240813163638.3751939-13-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n5mdGyWbSuHiQTuz"
-Content-Disposition: inline
-In-Reply-To: <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
-
-
---n5mdGyWbSuHiQTuz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240813163638.3751939-13-john.g.garry@oracle.com>
 
-On Fri, Aug 23, 2024 at 07:26:42PM +0300, claudiu beznea wrote:
-> On 23.08.2024 19:18, Conor Dooley wrote:
-> > On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
-> >> Hi, Conor,
-> >>
-> >> On 22.08.2024 19:42, Conor Dooley wrote:
-> >>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> The RZ/G3S System controller has registers to control signals that n=
-eed
-> >>>> to be de-asserted/asserted before/after different SoC areas are power
-> >>>> on/off. This signals are implemented as reset signals. For this docu=
-ment
-> >>>> the #reset-cells property.
-> >>>>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>> ---
-> >>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 +++++++++++++=
-+++
-> >>>>  1 file changed, 16 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,r=
-zg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2=
-l-sysc.yaml
-> >>>> index 4386b2c3fa4d..6b0bb34485d9 100644
-> >>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sy=
-sc.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sy=
-sc.yaml
-> >>>> @@ -42,12 +42,28 @@ properties:
-> >>>>        - const: cm33stbyr_int
-> >>>>        - const: ca55_deny
-> >>>> =20
-> >>>> +  "#reset-cells":
-> >>>> +    const: 1
-> >>>> +
-> >>>>  required:
-> >>>>    - compatible
-> >>>>    - reg
-> >>>> =20
-> >>>>  additionalProperties: false
-> >>>> =20
-> >>>> +allOf:
-> >>>> +  - if:
-> >>>> +      properties:
-> >>>> +        compatible:
-> >>>> +          contains:
-> >>>> +            const: renesas,r9a08g045-sysc
-> >>>> +    then:
-> >>>> +      required:
-> >>>> +        - "#reset-cells"
-> >>>
-> >>> Given this is new required property on an existing platform, I'd expe=
-ct
-> >>> some mention of why it used to be okay to not have this but is now
-> >>> required. Did firmware or a bootloader stage take things out of reset?
-> >>
-> >> On previous SoCs the SYS controller has no support for controlling the
-> >> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
-> >> I'll add a note about this on next version.
-> >=20
-> > My initial thought here wasn't about previous SoCs though, it was
-> > because you didn't add the compatible in this series for /this/ SoC.
->=20
-> RZ/G3S compatible is already present in this file:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
+On Tue, Aug 13, 2024 at 04:36:36PM +0000, John Garry wrote:
+> For when forcealign is enabled, blocks in an inode need to be unmapped
+> according to extent alignment, like what is already done for rtvol.
+> 
+> Generalize the code by replacing variable isrt with a value to hold the
+> FSB alloc size for the inode, which works for forcealign.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-I know, first thing I did when I read the original patch was open the
-file ;)
-I don't care about the old SoCs, cos you're not applying the property to
-them, so what's changed between SoCs isn't really relevant. It's a mention
-of why, on this SoC, it is safe to add new required properties that I want.
+Looks good to me now,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-AFAIU the answer is that no consumer of the resets existed before, so
-there's not some special state there, and I am guessing that the new
-sysc driver you're adding isn't going to fail to probe if there are no
-resets, it just won't register a reset controller? Which is fine, cos all
-devicetrees that have the new peripherals will have #reset-cells etc.
+--D
 
-> > What's worth noting isn't about the prior SoCs, it is about what makes
-> > it okay for this one.
-
---n5mdGyWbSuHiQTuz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsi53AAKCRB4tDGHoIJi
-0oJNAP92c9ehJZq5fmnv1qleJEN3MobM8LhjI5S5pogRzACmrgD8C8AbjitXRcYG
-U53c5w0n+oi1+4Eu53GCqNNU/LSCmgc=
-=GFYM
------END PGP SIGNATURE-----
-
---n5mdGyWbSuHiQTuz--
+> ---
+>  fs/xfs/libxfs/xfs_bmap.c | 46 ++++++++++++++++++++++++++++------------
+>  1 file changed, 32 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index 0c3df8c71c6d..3ab2cecf09d2 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -5409,6 +5409,25 @@ xfs_bmap_del_extent_real(
+>  	return 0;
+>  }
+>  
+> +static xfs_extlen_t
+> +xfs_bmap_alloc_unit_offset(
+> +	struct xfs_inode	*ip,
+> +	unsigned int		alloc_fsb,
+> +	xfs_fsblock_t		fsbno)
+> +{
+> +	xfs_agblock_t		agbno;
+> +
+> +	if (XFS_IS_REALTIME_INODE(ip))
+> +		return do_div(fsbno, alloc_fsb);
+> +	/*
+> +	 * The agbno for the fsbno is aligned to extsize, but the fsbno itself
+> +	 * is not necessarily aligned (to extsize), so use agbno to determine
+> +	 * mod to the alloc unit boundary.
+> +	 */
+> +	agbno = XFS_FSB_TO_AGBNO(ip->i_mount, fsbno);
+> +	return agbno % alloc_fsb;
+> +}
+> +
+>  /*
+>   * Unmap (remove) blocks from a file.
+>   * If nexts is nonzero then the number of extents to remove is limited to
+> @@ -5430,7 +5449,6 @@ __xfs_bunmapi(
+>  	xfs_extnum_t		extno;		/* extent number in list */
+>  	struct xfs_bmbt_irec	got;		/* current extent record */
+>  	struct xfs_ifork	*ifp;		/* inode fork pointer */
+> -	int			isrt;		/* freeing in rt area */
+>  	int			logflags;	/* transaction logging flags */
+>  	xfs_extlen_t		mod;		/* rt extent offset */
+>  	struct xfs_mount	*mp = ip->i_mount;
+> @@ -5441,6 +5459,7 @@ __xfs_bunmapi(
+>  	xfs_fileoff_t		end;
+>  	struct xfs_iext_cursor	icur;
+>  	bool			done = false;
+> +	unsigned int		alloc_fsb = xfs_inode_alloc_fsbsize(ip);
+>  
+>  	trace_xfs_bunmap(ip, start, len, flags, _RET_IP_);
+>  
+> @@ -5467,7 +5486,6 @@ __xfs_bunmapi(
+>  		return 0;
+>  	}
+>  	XFS_STATS_INC(mp, xs_blk_unmap);
+> -	isrt = xfs_ifork_is_realtime(ip, whichfork);
+>  	end = start + len;
+>  
+>  	if (!xfs_iext_lookup_extent_before(ip, ifp, &end, &icur, &got)) {
+> @@ -5519,18 +5537,18 @@ __xfs_bunmapi(
+>  		if (del.br_startoff + del.br_blockcount > end + 1)
+>  			del.br_blockcount = end + 1 - del.br_startoff;
+>  
+> -		if (!isrt || (flags & XFS_BMAPI_REMAP))
+> +		if (alloc_fsb == 1 || (flags & XFS_BMAPI_REMAP))
+>  			goto delete;
+>  
+> -		mod = xfs_rtb_to_rtxoff(mp,
+> +		mod = xfs_bmap_alloc_unit_offset(ip, alloc_fsb,
+>  				del.br_startblock + del.br_blockcount);
+>  		if (mod) {
+>  			/*
+> -			 * Realtime extent not lined up at the end.
+> +			 * Not aligned to allocation unit on the end.
+>  			 * The extent could have been split into written
+>  			 * and unwritten pieces, or we could just be
+>  			 * unmapping part of it.  But we can't really
+> -			 * get rid of part of a realtime extent.
+> +			 * get rid of part of an extent.
+>  			 */
+>  			if (del.br_state == XFS_EXT_UNWRITTEN) {
+>  				/*
+> @@ -5554,8 +5572,8 @@ __xfs_bunmapi(
+>  			ASSERT(del.br_state == XFS_EXT_NORM);
+>  			ASSERT(tp->t_blk_res > 0);
+>  			/*
+> -			 * If this spans a realtime extent boundary,
+> -			 * chop it back to the start of the one we end at.
+> +			 * If this spans an extent boundary, chop it back to
+> +			 * the start of the one we end at.
+>  			 */
+>  			if (del.br_blockcount > mod) {
+>  				del.br_startoff += del.br_blockcount - mod;
+> @@ -5571,14 +5589,14 @@ __xfs_bunmapi(
+>  			goto nodelete;
+>  		}
+>  
+> -		mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
+> +		mod = xfs_bmap_alloc_unit_offset(ip, alloc_fsb,
+> +					del.br_startblock);
+>  		if (mod) {
+> -			xfs_extlen_t off = mp->m_sb.sb_rextsize - mod;
+> -
+> +			xfs_extlen_t off = alloc_fsb - mod;
+>  			/*
+> -			 * Realtime extent is lined up at the end but not
+> -			 * at the front.  We'll get rid of full extents if
+> -			 * we can.
+> +			 * Extent is lined up to the allocation unit at the
+> +			 * end but not at the front.  We'll get rid of full
+> +			 * extents if we can.
+>  			 */
+>  			if (del.br_blockcount > off) {
+>  				del.br_blockcount -= off;
+> -- 
+> 2.31.1
+> 
+> 
 
