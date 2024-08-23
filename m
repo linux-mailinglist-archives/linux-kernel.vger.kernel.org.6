@@ -1,229 +1,157 @@
-Return-Path: <linux-kernel+bounces-298950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45FD95CE0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:35:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A8E95CE0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B814282217
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50684281AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E48186E5F;
-	Fri, 23 Aug 2024 13:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504A918755C;
+	Fri, 23 Aug 2024 13:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bmnVSmdM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iacUFqMS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BCeVgrhE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uKk/w5XP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MICsk+Pj"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF8814387B;
-	Fri, 23 Aug 2024 13:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B253B29D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420100; cv=none; b=llMGcBX8PCHcrRLLd/FsGzrHgRfJ3uetETUX/hlEkVnHNYFO5f8GPrJXabaoyzG036RUqG4ezCh8DukZMBrhEx+1Bo5c1i3B01CwkDqd7ZBsoW2vlNLOZumQIwheGApNXPU1zpgnQmyJ+gsuhU7i12iT/1dMg+hDJkNpvjRozKk=
+	t=1724420158; cv=none; b=mIV3yUULlhNur1Pr/jXxa4r9NSDlRv9zzPN5N63RIAnHEGiokM2tsIFaCBdE1HZOKCiGw6Ge7jNsS+DgV+/TWcfRIkNBao3Ij+Rtxu2FJmeVbSBbMrXy21Xyf+tWxaxW0oyJsWJ5hoEC/dpHBot1tifYS0qRpb+Q7B1NzZnY5m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420100; c=relaxed/simple;
-	bh=O5TwfSRy4VQ5HYkyQCKD0vtCMrL6lFiVndCJVERj1u8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jJbOnnv3ht5ZQkB7X7ztlj5GzwMrWiYVFPfRyZ0co8tixjacpPud42cbEhjOsXRyaTkKaCJrJxqCoeZkX7JYI7kFJj7Ume4dKbHzXc0WIq0KXjK780gmx3kV+0yQ+tt58kNT5IMD0L0NCbrxtPL+GKzCeXFvrX+UViadn+4iz+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bmnVSmdM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iacUFqMS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BCeVgrhE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uKk/w5XP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9299622618;
-	Fri, 23 Aug 2024 13:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724420096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hLGieBf5ePsScx99YX+rTJKyxnZ84uHErS3dY1fv5l4=;
-	b=bmnVSmdMCNRcNiGP66ijcGsD03n7wOuMk8Mhls7DFJgA/jxAxY1LlXV3ubAozl0fAfU7V4
-	KCRDwUs7AQ3YyD5O7qe0DzhXW/p/8SgbmW2D/Qf+Nia4IU6ktOHMNf2AcLySZDEeRj8Zpb
-	XX+PYYctnSAsoVfXHiixfSEtjoKBfOA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724420096;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hLGieBf5ePsScx99YX+rTJKyxnZ84uHErS3dY1fv5l4=;
-	b=iacUFqMSI2mMYBuhqhv66GXSUNSoYjnJT7cwFZhsqrwRFzcg6GCuk1KzEskuR3NPPziMNO
-	+DAnyMKbFvBVdtAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BCeVgrhE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="uKk/w5XP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724420095; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hLGieBf5ePsScx99YX+rTJKyxnZ84uHErS3dY1fv5l4=;
-	b=BCeVgrhEy+apVN95ZhQBITMsreo2/pM2ubttvVDuy1iZzuP4qY5CX3ZwVhyV9UMrUO0p3E
-	8nW6AUBKRi0RoIHePpunHG0Xq3iJcMIfZwHZcZ/AEQAk6G5MhuMuVN1KasEONTyS6LrGDz
-	odRNcQ9ArRG8MKxO9+jICy8OzPU7yMQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724420095;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hLGieBf5ePsScx99YX+rTJKyxnZ84uHErS3dY1fv5l4=;
-	b=uKk/w5XPo//9lLQ/ouaZCftf+mhD8tIcUI3AauCKaoS4fz6qCg8UDs4QUt1xd+TrHEOCSc
-	Za9Y7xOAjctr6RCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 143C61398B;
-	Fri, 23 Aug 2024 13:34:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0OvEA/+PyGZWZwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 23 Aug 2024 13:34:55 +0000
-Date: Fri, 23 Aug 2024 15:35:38 +0200
-Message-ID: <874j7bl5ud.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: bhelgaas@google.com,
-	siyuli@glenfly.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pierre-louis.bossart@linux.intel.com,
-	maarten.lankhorst@linux.intel.com,
-	peter.ujfalusi@linux.intel.com,
-	kai.vehmanen@linux.intel.com,
-	rsalvaterra@gmail.com,
-	suijingfeng@loongson.cn,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	jasontao@glenfly.com,
-	reaperlioc@glenfly.com,
-	guanwentao@uniontech.com,
-	linux@horizon.com,
-	pat-lkml@erley.org,
-	alex.williamson@redhat.com
-Subject: Re: [PATCH v2] PCI: Add function 0 DMA alias quirk for Glenfly arise chip
-In-Reply-To: <CA2BBD087345B6D1+20240823095708.3237375-1-wangyuli@uniontech.com>
-References: <CA2BBD087345B6D1+20240823095708.3237375-1-wangyuli@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1724420158; c=relaxed/simple;
+	bh=ujM6O5ZK/EqpLhk4Q4uv5TbD+rpWyu4euAlplf7EsFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hu7Eg/g5XJ3OHg2FA1ZKip3na/o98Da45JpTx0DWi5GG7MXU39hCfl3YAiFMiMLhT6lEZ1MQ++KY76zisMFaXZmRzWMg11SJlg6YAR1SuqjREiMvAiqG8BM54lXi5ehBe757meJ/BWnSeREMqmpaIDXeaRngV5QIQQ9TAV5mHOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MICsk+Pj; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-824ee14f7bfso74339639f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724420156; x=1725024956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gEKb45Lg8MPDi362O0d6ofXFvSIdqIRy115kUuxhPZk=;
+        b=MICsk+PjgLz2jig6HfpG8NjNKTWbVEWXAz9xczcIUN/9/ypUJt8qn5RmryX5k5OsWg
+         KHxRFXwWfnf8VUvJrSwTg/Si/Oo3jmdqgXX/OjTYWk9U27gh8YJ4y8oIcUJDvLtO1OJ1
+         YLXEEeVTxb/y+FE/mZQO9/cPlXr9R7RJQjrKsnDQlS++UZcmCn98xZdBb1s4bFO4g3T7
+         ffnTV0FkwBmag9zQBHzvRM8pu3Lr76TjC04vs9I1mYvdS++HvTorXunM8BYTeaeRvwoR
+         6CroNyTZCJV3NE4NB1jK9GeNdoWeWsl/f/WzzVdOaMj/3YJIp8beI2ocOYTGOeEyIncG
+         aNNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724420156; x=1725024956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gEKb45Lg8MPDi362O0d6ofXFvSIdqIRy115kUuxhPZk=;
+        b=IRui0TZiNV5c2nHjMWdLso+QS6vbzw3Dq0M2O5iFyQ4wznak9/aWek1OQCitUQSnO/
+         tmMNNB9nIm+xl8uegiWRyNtKtINdle/JE21RJ6mHBWZ50wfzzHdH9W/6+U3zQeTUjFNu
+         jF1sOxbsl/3UuelII8fnM7hGA3TUMFD/X4r7tdCDPbtRf+Z5q6zxORs1fDLy9rhoiWWY
+         7o3rEGDEJFl9OjcA2++geyaTd9TfkQvLiNWpdcYWczMV3tYzVqCQjeeJvvJnoxjqHQX0
+         eKMMrIJ3xAzZ3L5wS2+Ko7n0rfHbkSlkAiIKtD/JUKQrXKJNL9kvbvYY95D6pBLU8NqO
+         ve0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCvkZk6e2INcDR121Gvm88l5QAeSm38DO6OeKZCzz95xNtbrbR1mecBKirAlj8MP8nAFwhrUp7mI7Ghgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPAgQN4BeaPMHIHGpDKiOmCIUCOnw4m2np0XDFd6gCICWPLNF9
+	PQw6NCKUc4+EwGxnXhm8hRXwg7QVw2FvkK77Agcz8TisSsVEEFEueuRaarg8Pir0KG1O3LZBVXt
+	UCgYSkJ6bdFcQQhTHywTVNsFMKyTybqS/hfQC
+X-Google-Smtp-Source: AGHT+IF1feSpu1MHABPyVtTarNKgPPjFSAfT+Lum6ZjhP2a6e49DYc4QMytXHG34dALxUk29vig8528QbbKgOzAX8xE=
+X-Received: by 2002:a05:6602:3996:b0:81f:9468:7c3c with SMTP id
+ ca18e2360f4ac-8278735fc68mr349134739f.12.1724420156033; Fri, 23 Aug 2024
+ 06:35:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 9299622618
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,glenfly.com,perex.cz,suse.com,linux.intel.com,gmail.com,loongson.cn,vger.kernel.org,uniontech.com,horizon.com,erley.org,redhat.com];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid,glenfly.com:email,uniontech.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20240823085313.75419-1-zhoufeng.zf@bytedance.com>
+In-Reply-To: <20240823085313.75419-1-zhoufeng.zf@bytedance.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 23 Aug 2024 15:35:43 +0200
+Message-ID: <CANn89i+ZsktuirATK0nhUmJu+TiqB9Kbozh+HhmCiP3qdnW3Ew@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2] bpf: Fix bpf_get/setsockopt to tos not take
+ effect when TCP over IPv4 via INET6 API
+To: Feng zhou <zhoufeng.zf@bytedance.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, dsahern@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 23 Aug 2024 11:57:08 +0200,
-WangYuli wrote:
-> 
-> Add DMA support for audio function of Glenfly arise chip,
-> which uses request id of function 0.
-> 
-> Link: https://lore.kernel.org/all/20240822185617.GA344785@bhelgaas/
-> Signed-off-by: SiyuLi <siyuli@glenfly.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-
-For the sound part:
-
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-
-
-thanks,
-
-Takashi
-
+On Fri, Aug 23, 2024 at 10:53=E2=80=AFAM Feng zhou <zhoufeng.zf@bytedance.c=
+om> wrote:
+>
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>
+> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
+> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+> use ip_queue_xmit, inet_sk(sk)->tos.
+>
+> So bpf_get/setsockopt needs add the judgment of this case. Just check
+> "inet_csk(sk)->icsk_af_ops =3D=3D &ipv6_mapped".
+>
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408152034.lw9Ilsj6-lkp=
+@intel.com/
+> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
 > ---
->  drivers/pci/quirks.c      | 6 ++++++
->  include/linux/pci_ids.h   | 4 ++++
->  sound/pci/hda/hda_intel.c | 2 +-
->  3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index dd75c7646bb7..7aad5311326d 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4259,6 +4259,12 @@ static void quirk_dma_func0_alias(struct pci_dev *dev)
->  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_RICOH, 0xe832, quirk_dma_func0_alias);
->  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_RICOH, 0xe476, quirk_dma_func0_alias);
->  
-> +/*
-> + * Some Glenfly chips use function 0 as the PCIe requester ID for DMA too.
-> + */
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_GLENFLY, 0x3D40, quirk_dma_func0_alias);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_GLENFLY, 0x3D41, quirk_dma_func0_alias);
+> Changelog:
+> v1->v2: Addressed comments from kernel test robot
+> - Fix compilation error
+> Details in here:
+> https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
+>
+>  include/net/tcp.h   | 2 ++
+>  net/core/filter.c   | 6 +++++-
+>  net/ipv6/tcp_ipv6.c | 6 ++++++
+>  3 files changed, 13 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index 2aac11e7e1cc..ea673f88c900 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(const str=
+uct request_sock_ops *ops,
+>                                             struct tcp_options_received *=
+tcp_opt,
+>                                             int mss, u32 tsoff);
+>
+> +bool is_tcp_sock_ipv6_mapped(struct sock *sk);
 > +
->  static void quirk_dma_func1_alias(struct pci_dev *dev)
+>  #if IS_ENABLED(CONFIG_BPF)
+>  struct bpf_tcp_req_attrs {
+>         u32 rcv_tsval;
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index ecf2ddf633bf..02a825e35c4d 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -5399,7 +5399,11 @@ static int sol_ip_sockopt(struct sock *sk, int opt=
+name,
+>                           char *optval, int *optlen,
+>                           bool getopt)
 >  {
->  	if (PCI_FUNC(dev->devfn) != 1)
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index e388c8b1cbc2..536465196d09 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2661,6 +2661,10 @@
->  #define PCI_DEVICE_ID_DCI_PCCOM8	0x0002
->  #define PCI_DEVICE_ID_DCI_PCCOM2	0x0004
->  
-> +#define PCI_VENDOR_ID_GLENFLY	    0x6766
-> +#define PCI_DEVICE_ID_GLENFLY_ARISE10C0_AUDIO	 0x3D40
-> +#define PCI_DEVICE_ID_GLENFLY_ARISE1020_AUDIO	 0x3D41
-> +
->  #define PCI_VENDOR_ID_INTEL		0x8086
->  #define PCI_DEVICE_ID_INTEL_EESSC	0x0008
->  #define PCI_DEVICE_ID_INTEL_HDA_CML_LP	0x02c8
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index b33602e64d17..e8958a464647 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -2671,7 +2671,7 @@ static const struct pci_device_id azx_ids[] = {
->  	  .driver_data = AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS |
->  	  AZX_DCAPS_PM_RUNTIME },
->  	/* GLENFLY */
-> -	{ PCI_DEVICE(0x6766, PCI_ANY_ID),
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_GLENFLY, PCI_ANY_ID),
->  	  .class = PCI_CLASS_MULTIMEDIA_HD_AUDIO << 8,
->  	  .class_mask = 0xffffff,
->  	  .driver_data = AZX_DRIVER_GFHDMI | AZX_DCAPS_POSFIX_LPIB |
-> -- 
-> 2.43.4
-> 
+> -       if (sk->sk_family !=3D AF_INET)
+> +       if (sk->sk_family !=3D AF_INET
+> +#if IS_BUILTIN(CONFIG_IPV6)
+> +           && !is_tcp_sock_ipv6_mapped(sk)
+> +#endif
+> +           )
+>                 return -EINVAL;
+
+This does not look right to me.
+
+I would remove the test completely.
+
+SOL_IP socket options are available on AF_INET6 sockets just fine.
 
