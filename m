@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-299120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD81E95D05A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:48:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FF295D05C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1DB283D89
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6910D1F234AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA63188939;
-	Fri, 23 Aug 2024 14:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7D718891C;
+	Fri, 23 Aug 2024 14:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sZJKQ6WI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FnEb8l61"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D31865ED;
-	Fri, 23 Aug 2024 14:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287A0187FFC;
+	Fri, 23 Aug 2024 14:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424473; cv=none; b=BcnidWX9s1TlHdprXNFZJ4O8FYR3LxeNuEuImOERjl5/lBowzriPOQ4HJKQPMDQqob7J8VQE5LukieEzMs7PN5u7lUhShihe0VjxzaeJvT3Q/68F1ZZDeOye0kCea0NaqdWPbpvwkfPUu+v3d4rRUAwOK22rObx1WuF8zouStv8=
+	t=1724424492; cv=none; b=YPjPOigx16UyHx2zSGUaDubSE4YCMVZFjyiYihgXdDQAFCjvf2oBzq2e5zf/kJKk8a1oPWTx9lT9KQDngLuGbVrxEA68eyFBH2djY2/63Kyt2IG5WfoZIVw64ulWCWcv1HsSfe1F1OKf8/BDmGDZ/xMZZ2/WvPbz08zqJcv90KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424473; c=relaxed/simple;
-	bh=X+g0Y1DQzxqNTmTHo5vJQtnuEG3RxlxEPJhyxBhn7KY=;
+	s=arc-20240116; t=1724424492; c=relaxed/simple;
+	bh=oRK6C/+tY1XXLhNr5QfIgOfUkuRNl5VuJiB4P1b7u8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WB58/2cQlon1qmJCcXEMVxQ6zdRYgeyhsTm447xRb1aCmanwD6E4EJsFZJppJLYUfQaK392fXtOvj3Ery2bUrHpdHQeWuL1k/mjCvxBhdxaEP7fPUFWfl4BA5A+3eiz/0FMb9ecoUDQmtmRG+hIRVfK1FxIWAYQoHQupsSqglpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sZJKQ6WI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65559497;
-	Fri, 23 Aug 2024 16:46:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724424406;
-	bh=X+g0Y1DQzxqNTmTHo5vJQtnuEG3RxlxEPJhyxBhn7KY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZJKQ6WIViutqJKHj+OQ6Kq6QrFmrA6xbh1cFMwPqcpXuF+9XPJDBStNoLJ4xuBax
-	 tJA6JMOw94qAAKjWYvFxrSD3OCgbTCbG9m6Lfg3Sg7wgZKjHKMHQqU1Gd7CpCkNoAn
-	 FJ4Br3O3T0E6OcbkwZz/HwpxtrKywG28yGF3my0c=
-Date: Fri, 23 Aug 2024 17:47:47 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [v3] staging: media: starfive: Add the dynamic resolution support
-Message-ID: <20240823144747.GN26098@pendragon.ideasonboard.com>
-References: <20240820112002.560432-1-changhuang.liang@starfivetech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4n4il/NMf/4u5YJJ5d5QadPWFx2NnUeJ2DCT+kcI//FVIjqR26EtaT7oAdANhp6GmUmLKhhPWQPI7zE7bRCN98osNYD5heWQtKGxkvQqJ8fCV3nnAhPvwOdjYddNmoGNgYZThLEM9j/yXxL10iweLH7ZUi9wpGY/j+dC9kRvKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FnEb8l61; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724424491; x=1755960491;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oRK6C/+tY1XXLhNr5QfIgOfUkuRNl5VuJiB4P1b7u8E=;
+  b=FnEb8l61/vCnJIb9FRcudbziax1602kub0yAzg29Gk1RpBXkZ5fi7Esp
+   2DCboiRsqLZFe40W2kmOXSPWS+MsnViIIV7dQFLb1rTqNbgbl5ULTHp5n
+   jqrPPLN/6hkFD1WUT0Y/XSk9Ihs8VuaxWpu/LQd/TLXt5lkq/zSiSOjnw
+   loC0cA7w+xLg2e1bq0Cq4BlEgsqo7M+fpu7aUSzrdYGaeU+cddNEyY47o
+   104TXx8eBKnzclyPSCYVQMVMvrC54PErQYwYACZF5AeFVeGQlBEgOFeIT
+   ydowAVTSegJqelT4FL/SWsghs7hEws2abW1qBmJMfD+9a3vy0WiiNi+JR
+   Q==;
+X-CSE-ConnectionGUID: K1w6F9/rT46r8EBFdeNUVg==
+X-CSE-MsgGUID: h+m4/Vi2TzOKf+ZtAdMUQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23065988"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23065988"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:48:10 -0700
+X-CSE-ConnectionGUID: d/4Oulh+QpmEw0y6SEvIpg==
+X-CSE-MsgGUID: o5xH+gyqTVm500thYnpgAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="92542653"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:48:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shVa7-00000000pED-1VXN;
+	Fri, 23 Aug 2024 17:48:03 +0300
+Date: Fri, 23 Aug 2024 17:48:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: Re: [PATCH v2] gpio: rockchip: resolve overflow issues
+Message-ID: <ZsihI71S8ep7j_Ke@smile.fi.intel.com>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+ <20240823034314.62305-4-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820112002.560432-1-changhuang.liang@starfivetech.com>
+In-Reply-To: <20240823034314.62305-4-ye.zhang@rock-chips.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Changhuang,
+On Fri, Aug 23, 2024 at 11:43:06AM +0800, Ye Zhang wrote:
+> Prevent overflow issues when performing debounce-related calculations.
 
-Thank you for the patch.
+...
 
-On Tue, Aug 20, 2024 at 04:20:02AM -0700, Changhuang Liang wrote:
-> Add the dynamic resolution support for video "capture_raw" device.
-> Otherwise it will capture the wrong image data if the width is
-> not 1920.
-> 
-> Fixes: e080f339c80a ("media: staging: media: starfive: camss: Add capture driver")
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> +		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> Hi
-> 
-> v2 forgot to synchronous description with v1. Now send a new version 3.
-> 
-> Best Regards
-> Changhuang
-> ---
->  drivers/staging/media/starfive/camss/stf-capture.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/starfive/camss/stf-capture.c b/drivers/staging/media/starfive/camss/stf-capture.c
-> index ec5169e7b391..e15d2e97eb0b 100644
-> --- a/drivers/staging/media/starfive/camss/stf-capture.c
-> +++ b/drivers/staging/media/starfive/camss/stf-capture.c
-> @@ -180,6 +180,8 @@ static void stf_channel_set(struct stfcamss_video *video)
->  	u32 val;
->  
->  	if (cap->type == STF_CAPTURE_RAW) {
-> +		const struct v4l2_pix_format *pix = &video->active_fmt.fmt.pix;
-> +
->  		val = stf_syscon_reg_read(stfcamss, VIN_CHANNEL_SEL_EN);
->  		val &= ~U0_VIN_CHANNEL_SEL_MASK;
->  		val |= CHANNEL(0);
-> @@ -193,7 +195,7 @@ static void stf_channel_set(struct stfcamss_video *video)
->  		val |= PIXEL_HEIGH_BIT_SEL(0);
->  
->  		val &= ~U0_VIN_PIX_CNT_END_MASK;
-> -		val |= PIX_CNT_END(IMAGE_MAX_WIDTH / 4 - 1);
-> +		val |= PIX_CNT_END(pix->width / 4 - 1);
->  
->  		stf_syscon_reg_write(stfcamss, VIN_INRT_PIX_CFG, val);
->  	} else if (cap->type == STF_CAPTURE_YUV) {
+You probably want to use HZ_PER_MHZ from units.h or so?
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Laurent Pinchart
+
 
