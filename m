@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-298377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A13995C670
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:23:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0B495C679
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC91A2848F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:23:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9F9B2289D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378E13AD39;
-	Fri, 23 Aug 2024 07:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MLmIoJxn"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2727113C9D4;
+	Fri, 23 Aug 2024 07:23:51 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2523213B7BC;
-	Fri, 23 Aug 2024 07:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7810613A88A;
+	Fri, 23 Aug 2024 07:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397787; cv=none; b=bkbGYQGrZXEuAN5e/7cLKbF9ykbTvd+BqNSZUP89f627DeZDNShs/8uYm5t44is/GCVBv3au01L2ERsxupBErYI9rg7U15xg538riaLnkBmk/88kNsuSuXkngxtA2/g45ECPaFRCQ8KxxxMqhKCgNLT4/JbKZgFaSA/s1x0v9K4=
+	t=1724397830; cv=none; b=GgI0JROYev7oAyvSm7yfKR1OJqP7iiNSjYlKnMPTgC4FGw0TX7P5TL2DU0scSraChxGlpuSN9lLuZpr2zppDv9+hEKkATNAqpH378TouBKWcFqsu2juvFbDvHDAu1g6fgI2058dxLid+3FcfhwpHzD4HHz3b2S4YK/pqAGVYQ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397787; c=relaxed/simple;
-	bh=pkwZjd7axreB1196Pr5R2CaAwu0JxHMSBUSEgf+Tynk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=VWZaNUpaBjv+9IV/IFBAd2metWSDG+l3fPZvmwMN1IpZLBzfTEswZLrK9FT1kP8RTwFyRgg95se+p/ObAnHfZ4zyMs1mMIlxO71aRWztNGvHr0kUwx/3XoSbBR34X6PIQkuiTynMGsEM0k288zrdkS9bHIKoNq0j0Z5HgoDtqgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MLmIoJxn; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1724397830; c=relaxed/simple;
+	bh=TZ8pa3FlE5L+xPFRN/W9Z5wq6Lhu8mNg1Qmwnmdbf90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zh+gPIsA0hbyoJl+2Di84njE8fsX43eTwPuADRm3WOvbaUECNMCsk/ZoeRhz9gWQYbyl75p0J4cb8A7nPM4MBQ2xhxW+zcRFGElvzLtYhPFhpZdLvNptZ74RH2HM8YyiCXBZBjzvyssmH2YiIV14xuUCq/xWHR/kZYxJpnMW+RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e16582cb9f9so1297809276.0;
+        Fri, 23 Aug 2024 00:23:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724397826; x=1725002626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b6LuKNaeSfLw79fqt8g2TueEBKyy/sG3LeW1oOKYYb8=;
+        b=AGDVp6VbJHwOtbq7VqJM5OM8jQP3Iq2TxF+mV1jvFMGPOrX53c4DFGhLyOQAjq5QpN
+         WxZ8zNka+fTd7tfiFJlgoI9Rs6Z8Da0R0yQm5YdAVyTt5bd/HWNeAUVI1GZj1fNsWpNX
+         2Gp5HWEh4YR8EtKJ/qRJ2+1o0EWxS+Aw/y8yRyRGQhjnzOcXRcat2iV75FtIMMEJkp9V
+         2gkSd7jt8k2EtgpngqiTsdTdo0EgcCgXpWXcBVXyzzLKOSdP5AnJceOGlUAiYa8eL1oh
+         Ow8mEUQwAL/KpFlT1fNLqjZbM+TJ3da6EwtyXrfg4Gb3kfeOXs3tmYrGA7BflvOzEVta
+         a7yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQoJ2U9udYqDwm6hkFk8nDIv7cMfJjEGm6LbV8PokuDSQnLZAZBsSQQhTuJ7MK2/EfrEhIpS37XJhx@vger.kernel.org, AJvYcCXhcYkZicYElfi8fX60LqGBfJsdUEAcOIsVikPvQbonkMARPcyiMsdo0AqNj2lavbkOsaO7BZJ1tPAJCNW6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxXgQZfxND/Av2aWVtKJb4HFIYtxKlKd3allAxmFdMoV/QM1F1
+	7lkTDkwIR1C6IUqWkcHW6Y6EVZYFprbq2+Vqni2CrqPtyZZO3DoCDaAg5nUz
+X-Google-Smtp-Source: AGHT+IEncNMW/TzrY3HsDtbqA5DUzfV4XJ8JIUDKhai+60RIveGzUxW7t+FNQf6TdlAL3y49C+yEXg==
+X-Received: by 2002:a05:6902:2013:b0:e17:5746:15d with SMTP id 3f1490d57ef6-e17a7a708f2mr1163678276.25.1724397826196;
+        Fri, 23 Aug 2024 00:23:46 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4b3972sm583188276.30.2024.08.23.00.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 00:23:45 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6aab656687cso13698917b3.1;
+        Fri, 23 Aug 2024 00:23:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+vNihjb+Nm1EX5YjAdnCG77vZvZSmxVuTuHoFWOLQ9aQiNxSyZ0cNvSIyKlv/mu4D9HCLGczx4vvF@vger.kernel.org, AJvYcCX6hOdpSfS4Z7N//shfQFeBLasAoXuGvDuQ1qw3rHDXL3qeLI5gpp1N4m9DWZvb8V48egw+Xi+LnuqReIuS@vger.kernel.org
+X-Received: by 2002:a05:690c:6f10:b0:651:4b29:403c with SMTP id
+ 00721157ae682-6c30317233dmr52554827b3.2.1724397825549; Fri, 23 Aug 2024
+ 00:23:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724397784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0zbIKrcGYGStpZ6ut/qfVF6ZFmX3hFK6vNTCYPxcvsI=;
-	b=MLmIoJxnTpJCob5x8ecf4IBHK7aK1cZ2kR1lTQIzQPw5ww4A4ebaq4rdbpJhEErVCgcOaE
-	UXam0SfkxT20JwFifr3E8zGvhAQng910WkmIuz3+z/ekGHAmgBtV+QYrItMR5mHd7a93uZ
-	k6zpiYR0zwjgEKQYPf2ABgJNr6HudzvdAFgGz7slD8eNlq1Zy9dlPfLfsBWVSeX4MDO30V
-	k5l3DPfJE2i11UVpxCqEN5OApFmcsqj5Nmbh6M2b3JPtZGIJ4vzbg4V3rtf4YJ65La5VXw
-	aC1AZnp8Q/Vg7+LZsFf9WsjY2MyLAT7S1VCRtW7KwsbdUzczrkoGtv7Bqn5zKQ==
-Date: Fri, 23 Aug 2024 09:23:04 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Seunghwan Baek <sh8267.baek@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- ulf.hansson@linaro.org, ritesh.list@gmail.com, grant.jung@samsung.com,
- jt77.jang@samsung.com, junwoo80.lee@samsung.com, dh0421.hwang@samsung.com,
- jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com,
- wkon.kim@samsung.com
-Subject: Re: [PATCH] mmc : fix for check cqe halt.
-In-Reply-To: <7f81eb0943674983f771bbb292e0566f@manjaro.org>
-References: <CGME20240823071040epcas1p1309967537fb6286a9e67a38e598ce104@epcas1p1.samsung.com>
- <20240823071025.15410-1-sh8267.baek@samsung.com>
- <7f81eb0943674983f771bbb292e0566f@manjaro.org>
-Message-ID: <6bf83bab55ee44394e69696b5ac6be6e@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240822230104.707812-1-andy.shevchenko@gmail.com>
+In-Reply-To: <20240822230104.707812-1-andy.shevchenko@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Aug 2024 09:23:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
+Message-ID: <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: renesas: rzg2l: Replace
+ of_node_to_fwnode() with more suitable API
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-23 09:22, Dragan Simic wrote:
-> Hello Seunghwan,
-> 
-> On 2024-08-23 09:10, Seunghwan Baek wrote:
->> To check if mmc cqe is in halt state, need to check
->> set/clear of CQHCI_HALT bit. At this time, we need to
->> check with &, not &&. Therefore, code to check whether
->> cqe is in halt state is modified to cqhci_halted,
->> which has already been implemented.
->> 
->> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
-> 
-> Looking good to me, thanks for the patch.  I'd suggest that you
-> resend the patch with a proper "Fixes" tag, together with the
-> "Cc: stable@vger.kernel.org" tag.
-> 
-> Maybe also reflow the patch description a bit, to use the 78-column
-> width or so fully.
+Hi Andy,
 
-Oh, and please feel free to include:
+On Fri, Aug 23, 2024 at 1:01=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> of_node_to_fwnode() is a IRQ domain specific implementation of
+> of_fwnode_handle(). Replace the former with more suitable API.
+>
+> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+Thanks for your patch!
 
->> ---
->>  drivers/mmc/host/cqhci-core.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/mmc/host/cqhci-core.c 
->> b/drivers/mmc/host/cqhci-core.c
->> index c14d7251d0bb..3d5bcb92c78e 100644
->> --- a/drivers/mmc/host/cqhci-core.c
->> +++ b/drivers/mmc/host/cqhci-core.c
->> @@ -282,7 +282,7 @@ static void __cqhci_enable(struct cqhci_host 
->> *cq_host)
->> 
->>  	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
->> 
->> -	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
->> +	if (cqhci_halted(cq_host))
->>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
->> 
->>  	mmc->cqe_on = true;
->> @@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc,
->> struct mmc_request *mrq)
->>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
->>  		mmc->cqe_on = true;
->>  		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
->> -		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
->> +		if (cqhci_halted(cq_host)) {
->>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
->>  			       mmc_hostname(mmc));
->>  		}
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/spinlock.h>
+>
+> @@ -2624,7 +2625,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl=
+ *pctrl)
+>
+>         girq =3D &chip->irq;
+>         gpio_irq_chip_set_chip(girq, &rzg2l_gpio_irqchip);
+> -       girq->fwnode =3D of_node_to_fwnode(np);
+> +       girq->fwnode =3D dev_fwnode(pctrl->dev);
+
+While this looks correct, the new call goes through many more hoops, and
+is not a simple inline function.
+
+Perhaps just &np->fwnode? ;-)
+
+>         girq->parent_domain =3D parent_domain;
+>         girq->child_to_parent_hwirq =3D rzg2l_gpio_child_to_parent_hwirq;
+>         girq->populate_parent_alloc_arg =3D rzg2l_gpio_populate_parent_fw=
+spec;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
