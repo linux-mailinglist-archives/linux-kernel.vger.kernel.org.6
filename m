@@ -1,102 +1,130 @@
-Return-Path: <linux-kernel+bounces-298684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE1195CA33
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C82C695CA35
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03EB2873C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8502A287429
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9718B18BC1C;
-	Fri, 23 Aug 2024 10:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AA0188932;
+	Fri, 23 Aug 2024 10:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fU2Txd61"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WohhG2N6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41626187335
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B20D16BE2A;
+	Fri, 23 Aug 2024 10:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724407871; cv=none; b=sfPvUoxDJ6c/2PH1rjqsANthnD+hmjVUxtozA0Ca7zseMUaESX+MQGUwQ7U0965NeL1/JmGFPv1uEc7wfFklIpsIHpyOcHNNPuc5Tla3/FD+bcQJ62b/HUU+4RuXUlnXz4OKSRycbCJeE2UqyW1vl4FCTBJMNZoTm56wCu2rE7k=
+	t=1724407951; cv=none; b=fGqOsTkxW9uYM70pHujrvEyPCkh3hFAanFTRdqTXZQH6KO1cvsi/wYU52j4BRoOPCR22/pz4yI1KT609YQ8gVTQYpGdyhbZw9h52uFF2HekNozgK9QxUGA9zkgH6ZIZGh+ZJD5ifQ+tclogLn8FZlRihd99UaKBoAlYiSJ190wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724407871; c=relaxed/simple;
-	bh=QpcuazOnyseJ5P/75JZGJzYJIZkjK3slrOjOLNMHRNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKKTsPGGMHEUWScwOlN4SISabzRaKLbV/L1aLW7AoyiJPl9C9/huPifa15f0I+5z+1rWsUQI+16ubb4RvgNJSaEW8s8y2jACsCRIx3refj65YMD/32I+xb36wK4dHLZxbgUruL2GUVBOYXRFYSeQ0XEQV68PgmWOxADMxj0r3HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fU2Txd61; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724407870; x=1755943870;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QpcuazOnyseJ5P/75JZGJzYJIZkjK3slrOjOLNMHRNs=;
-  b=fU2Txd61y2RhKnc8QSx8lchPU09zN0AHw268Aue97/znEo4xa4gLoTgf
-   RkKucMSzALgWg9dJJjJxxTrNdN1Q0+JdbbauCX8C7LQtiuVqTUpOkp1va
-   IKEfiY6oF4qolLIyAgiLEhDNDrsU3rv5GsFY+ukiMdT9e88kKiRnl2AU0
-   SnouodEZdy1ZxbW+tT6TV9z99jKhmjbCwaGFJz72zirpgTi3QNbEssC7Q
-   9aISNdpaPWZRinRrhoPrEGcX5wZSIISbhyH45Ij9CM8XkAKiEV6uT708k
-   H6uz9pRr/hpelWQ3eupAlz//5WnfPa8HykjX6iRqmnhvRt7nI+U81EOj5
-   g==;
-X-CSE-ConnectionGUID: GlA6MJ98Sf6FyzdIhXPJ5w==
-X-CSE-MsgGUID: BJkH3eaARxeFxgHfcVYJVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40383827"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="40383827"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:11:10 -0700
-X-CSE-ConnectionGUID: zUmtfBfnSdKz9AUiOW87fQ==
-X-CSE-MsgGUID: Aux2LsAWTdiaA7cLk17DHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61758366"
-Received: from mylly.fi.intel.com (HELO [10.237.72.154]) ([10.237.72.154])
-  by fmviesa008.fm.intel.com with ESMTP; 23 Aug 2024 03:11:08 -0700
-Message-ID: <9cc7f7a1-72b5-42fd-b5eb-6cd1cf59f3e7@linux.intel.com>
-Date: Fri, 23 Aug 2024 13:11:05 +0300
+	s=arc-20240116; t=1724407951; c=relaxed/simple;
+	bh=ziCiAI0IhosMoGUeluz0BvN2Y4wzxViOLL3PfeejSfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2CSo5WSvPuT3zn9IWE919V0XGBJUg1jSFUuU6DZH1smT/0wTRHvopYtC43JRHD3V3oy36KcPt3O6ZhpnlB91KbwrC/lX7eYUPBEHRwQDeUy6HwHzYkAxGlhDsmrkNfYR62leZsBvPGji/i9n441WCG47R4jhtiodBxDPV6zqGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WohhG2N6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E81C32786;
+	Fri, 23 Aug 2024 10:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724407950;
+	bh=ziCiAI0IhosMoGUeluz0BvN2Y4wzxViOLL3PfeejSfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WohhG2N6xWFt5kCS/+xWf5opyr7Dum1KsuUUxPQvWMJmNqgwmQ+E+vEZUStoU63aD
+	 up9jm4+D1bLB9UcaYUbrA5CdSZKFZAZFvDYyQQhaUb4oMdl9Fomnv1j8cWUa4wXL7Y
+	 fjSrs86MR64h7DhxaFA0XvFku3hXropRd2AX4h3hmpwr4jDDJqjFM8JJnOt/9oEmaI
+	 ht5nV6B4HBKtyOW4d8tfT5Y9Eo5zsPwcwAgRJsa8IDNn/gCO42bBJSjk6EUyn2cOnp
+	 skDgd1PvYUXXqbff3JVT1X0MBMzC/qyCoHxZuCrbwo0GqJdCeHyGYXLriGrLYh2rEW
+	 PV/ZdHo8ZQRcg==
+Date: Fri, 23 Aug 2024 12:12:25 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Zheng Qixing <zhengqixing@huaweicloud.com>
+Cc: dlemoal@kernel.org, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, zhengqixing@huawei.com
+Subject: Re: [PATCH v2] ata: libata: Fix memory leak for error path in
+ ata_host_alloc()
+Message-ID: <ZshgieaM0VaMkjBj@ryzen.lan>
+References: <20240822033050.2909195-1-zhengqixing@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] i3c: mipi-i3c-hci: Add a quirk to set timing
- parameters
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
- <20240821133554.391937-6-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240821133554.391937-6-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822033050.2909195-1-zhengqixing@huaweicloud.com>
 
-On 8/21/24 4:35 PM, Shyam Sundar S K wrote:
-> The AMD HCI controller is currently unstable at 12.5 MHz. To address this,
-> a quirk is added to configure the clock rate to 9 MHz as a workaround,
-> with proportional adjustments to the Open-Drain (OD) and Push-Pull (PP)
-> values.
+On Thu, Aug 22, 2024 at 11:30:50AM +0800, Zheng Qixing wrote:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
+> for a port, the allocated 'host' structure is not freed before returning
+> from the function. This results in a potential memory leak.
+
+This sentence is wrong.
+
+If ata_port_alloc() fails, we must have already called
+devres_alloc(ata_devres_release, ...);
+which means that when:
+
+	ap = ata_port_alloc(host);
+	if (!ap)
+		goto err_out;
+
+
+...
+
+err_out:
+	devres_release_group(dev, NULL);
+	return NULL;
+
+
+devres_release_group() will trigger a call to ata_host_release().
+ata_host_release() calls kfree(host).
+
+So we will not leak "host" if ata_port_alloc() fails.
+
+
+> 
+> This patch adds a kfree(host) before the error handling code is executed
+> to ensure that the 'host' structure is properly freed in case of an
+> allocation failure.
+> 
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
 > ---
->   drivers/i3c/master/mipi-i3c-hci/Makefile     |  3 +-
->   drivers/i3c/master/mipi-i3c-hci/core.c       |  6 +++-
->   drivers/i3c/master/mipi-i3c-hci/hci.h        |  2 ++
->   drivers/i3c/master/mipi-i3c-hci/hci_quirks.c | 33 ++++++++++++++++++++
->   4 files changed, 42 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
+> Changes in v2:
+>  - error path is wrong in v1
 > 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+>  drivers/ata/libata-core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index e4023fc288ac..f27a18990c38 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev, int n_ports)
+>  	}
+>  
+>  	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
+> -	if (!dr)
+> +	if (!dr) {
+> +		kfree(host);
+>  		goto err_out;
+
+This code does free "host" if devres_alloc() fails, which looks correct,
+as "host" will currently be leaked if devres_alloc() fails.
+
+However, that is not what the commit log above claims :P
+
+Please update the commit message to reflect reality.
+
+
+Kind regards,
+Niklas
 
