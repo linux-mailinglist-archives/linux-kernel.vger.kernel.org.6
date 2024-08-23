@@ -1,145 +1,78 @@
-Return-Path: <linux-kernel+bounces-298970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3A795CE73
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:53:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3F995CE77
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D992282B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6177D1F232CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC5918859A;
-	Fri, 23 Aug 2024 13:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XF1PnJHs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA39188593;
+	Fri, 23 Aug 2024 13:55:08 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F3546556;
-	Fri, 23 Aug 2024 13:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E50046556
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421184; cv=none; b=q51wO8z8NoODSx8wJWWZ5DoJtJK5xxLtgeOriL2sOKCDYK0fCe684qfT2/roPJCRiBLwqX7Gf5Tq4EmqE+n0U+3VfjaI6NzSzFUuqgK1QKfqAn84OVHN5ju8B9O4jEfjrK6KU55wfk+0jtNujV41C3o6Hh8IYQ9Yc3/31Zn+Tjs=
+	t=1724421308; cv=none; b=PKDdC6sgXM4P2Xb2ZeCq8k8y9ykr9Hp+RJkeUZPvfGOWmJ+FUvSfvSn+az5SllJIkvkXikfiXIIgTQoW5o14ycyzN9wWW6UJardahHnUXwaPhLqMpoqLTUkkCF0byykB34nWHWtBBxqRjvkdldxrqqOENWRuLMpRpcZ5fvr7YQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421184; c=relaxed/simple;
-	bh=NMdfI/OWHRYSTSw6L7RpviVNsUSKd3nDock7vtJ+5b8=;
+	s=arc-20240116; t=1724421308; c=relaxed/simple;
+	bh=qSqQ9GnhWGmTSapojg84oU2lB3a269KGY/hYPDUonjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1V3guSCFG+9QRpxij2UI/bPcO2iTOEBQWaDpiLcS+70v1dooTPyqV3YQHw+t/tKMx6ob5luLw3+n87HjkjVoPTzVICtwTsswM9nIm7gwRH5Iy872nuYpEjoYmbK1rEvcxgYcpskTOUqhO8n40RTNmpDVc3dRJzyzIsqKWqOsDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XF1PnJHs; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724421183; x=1755957183;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=NMdfI/OWHRYSTSw6L7RpviVNsUSKd3nDock7vtJ+5b8=;
-  b=XF1PnJHsFxGUuBJjN0G0hH5u4rhtk4KdiiFjaJXzKXHERrWDrWptwvUQ
-   IlalE7/RatkE6ecl+MTePh2NI+PwTmHMukf69icfAgwASCO9TKyVDAh1A
-   UROClwBCJwnEs/9AvGvgvSZHdhqePwsOOoGdJotEh06cHeT7yAzRuINZQ
-   102+H+aOWzSHFhNwGsu02PguZn4tUH9bRCwfQVqyn2/HMuaUZfTxAvamY
-   TkCFfTr1c+mVzjWxcbINxFvM72m2YVC+3Ed63AFRDAiI1w6mLu0pCmNgM
-   i3FIO3fXS5Nr7v400gWPzGTQN5DIrVGk2BKdSPcsEVGRj3vZdRYnFQ3GW
-   A==;
-X-CSE-ConnectionGUID: uz7VckucQNqV3DuuptbIsw==
-X-CSE-MsgGUID: cWkr+6UCSIOgz700x+ydog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22770928"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="22770928"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:53:02 -0700
-X-CSE-ConnectionGUID: 3J6bHqD+RnmlS77hRXo7Tw==
-X-CSE-MsgGUID: KG6Te0ezSfyzu69uRTTi9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="92527922"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:52:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shUik-00000000oKZ-1854;
-	Fri, 23 Aug 2024 16:52:54 +0300
-Date: Fri, 23 Aug 2024 16:52:54 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v5 06/10] i2c: Introduce OF component probe function
-Message-ID: <ZsiUNodqp9PgzbP-@smile.fi.intel.com>
-References: <20240822092006.3134096-1-wenst@chromium.org>
- <20240822092006.3134096-7-wenst@chromium.org>
- <ZsdE0PxKnGRjzChl@smile.fi.intel.com>
- <CAGXv+5HtjWi60OnMrjR3fnO3T=7uyMazr1aKBFjuPmWuE9NK6g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZx0GbOoVkPFJL8PaTfnSGx4/Q7vR4HRA6DnzFNRs3z4g5RXJPYYzsHQnXWovP1jez9lS/KmrZPLyeFbZJGf5Fs0lvRKS9hkyDfYW8mCGqT0oWc6S4gydMDTm1sZCHE87aoF4VOx7O81NFI+RbePbMjZTBJw0G7tZuPfSLS9/DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 75626227A87; Fri, 23 Aug 2024 15:54:59 +0200 (CEST)
+Date: Fri, 23 Aug 2024 15:54:59 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	Stan Johnson <userm57@yahoo.com>,
+	Finn Thain <fthain@linux-m68k.org>
+Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in
+ kernel mode
+Message-ID: <20240823135459.GA28487@lst.de>
+References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu> <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de> <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com> <20240822053238.GA2028@lst.de> <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com> <20240823130600.GI28254@gate.crashing.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5HtjWi60OnMrjR3fnO3T=7uyMazr1aKBFjuPmWuE9NK6g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240823130600.GI28254@gate.crashing.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Aug 23, 2024 at 04:40:36PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Aug 22, 2024 at 10:02 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 22, 2024 at 05:19:59PM +0800, Chen-Yu Tsai wrote:
+On Fri, Aug 23, 2024 at 08:06:00AM -0500, Segher Boessenkool wrote:
+> What does "uncached memory" even mean here?  Literally it would be
+> I=1 memory (uncachEABLE memory), but more likely you want M=0 memory
+> here ("non-memory memory", "not well-behaved memory", MMIO often).
 
-...
+Regular kernel memory vmapped with pgprot_noncached().
 
-> > > +     ret = of_changeset_apply(ocs);
-> > > +     if (!ret) {
-> >
-> > Why not positive conditional?
-> 
-> No real reason. I suppose having the error condition come first is more
-> common.
+> If memset() is expected to be used with M=0, you cannot do any serious
+> optimisations to it at all.  If memset() is expected to be used with I=1
+> it should use a separate code path for it, probably the caller should
+> make the distinction.
 
-Yes, when you have something like
-
-	if (err) {
-		...
-		return err;
-	} else {
-		...
-	}
-
-
-But you don't. That's why I commented on this.
-
-> Not sure if it makes any difference in this case though?
-
-! is hard to read by a human being, easy to make a mistake in the brain of
-reader and with inverted logic the code reading becomes harder. So, it's pure
-about cognitive function.
-
-> > > +             /*
-> > > +              * ocs is intentionally kept around as it needs to
-> > > +              * exist as long as the change is applied.
-> > > +              */
-> > > +             void *ptr __always_unused = no_free_ptr(ocs);
-> > > +     } else {
-> > > +             /* ocs needs to be explicitly cleaned up before being freed. */
-> > > +             of_changeset_destroy(ocs);
-> > > +     }
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+DMA coherent memory which uses uncached memory for platforms that
+do not provide hardware dma coherence can end up just about anywhere
+in the kernel.  We could use special routines for a few places in
+the DMA subsystem, but there might be plenty of others.
 
 
