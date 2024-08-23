@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-298940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F7C95CDCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:29:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA88D95CDD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095002812BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7041F244D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DCF186E4F;
-	Fri, 23 Aug 2024 13:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846CB187342;
+	Fri, 23 Aug 2024 13:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kA2hmdVM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="eOEteFvJ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6A41865EE;
-	Fri, 23 Aug 2024 13:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D01D186E51
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419767; cv=none; b=iutWbxEwRbtVpIzUq0n0itIvO7hOUd79UI+XtcA36ozmxrS23iOWgwfN7IA+lZTaIF3PEY7cA+3d3AaHIts0yuqmdjDEUor7J9D8Ky1BL7ieavdkXdcaj/B+EqIfowDAK3xnHnn2V8WBynBT/aXoUy7OgEQUTwA/ow50uNBb4sM=
+	t=1724419788; cv=none; b=sUQ1E5ZvoCnn69fDUumKS4cx0ISnXbiidt7GQB7oSD66jXc/e642hB8Jop5ulSR/esAId/w++Rof6DMJsd58KXh/FoBwaN/M/cndL6pF9HJpLPSvKEil+3FoPKPTQOL55JamXXtVV3YExD3/0YucnE+zVr9EKTy0aigEzVosX7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419767; c=relaxed/simple;
-	bh=+svFskNShy8sFNlgF5SEtQoxYaXCquZxrHdULTV+fok=;
+	s=arc-20240116; t=1724419788; c=relaxed/simple;
+	bh=X9LwjPzhN+uJQCh4XWk9pbDdfJ5T1eZa5ETA6hy46Nc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4SWHdD2HTzrkZAvOmFoP7I/kiFWST4SsH+buWxtLQ7XOWyCh1poQUdr9aWnCjW6rzurnXJhYjwSOZ6yTEGKF9W9KDVJgjmFFYWkNivkaymah+ROeBdRCV3gEhv5VYoNn7eOiKiKQNRZaprI58OpLHX39P5i1kYgBapCARMMgvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kA2hmdVM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61F5C32786;
-	Fri, 23 Aug 2024 13:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724419766;
-	bh=+svFskNShy8sFNlgF5SEtQoxYaXCquZxrHdULTV+fok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kA2hmdVMxSzV++kcXzN5YAi4vhW52MP9h1Irc+MVotOBEDpZnz6kAn04R8y+fa2EF
-	 R48RlaAC5cpGoHQt/DoFm5WqecBHpzWt/HbecCgUTteh4E59IRzzoKAPo6pR9A9XtP
-	 qYpnuYXYh17u7bcp2kfKxRRPavwiaGOYBc2bROrAvckD5Kos+nD8aUX0cTn89sasI3
-	 ELnJRe8S52ONTGIovzE5KISphun/cFd4oPdgKqgu/hnFIXm23Yr2Z0o6a7STGjVFNQ
-	 y7wx5hOeJB1Jl2hW6eze3Qky+3x4Y0IoCnQtLeqzoKmY7yQqd2cAaFHNWq5wk2RVTI
-	 4noYVh1UmE6Og==
-Date: Fri, 23 Aug 2024 14:29:19 +0100
-From: Will Deacon <will@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>
-Subject: Re: [PATCH v5 04/19] firmware/psci: Add psci_early_test_conduit()
-Message-ID: <20240823132918.GD32156@willie-the-truck>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-5-steven.price@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PM0A/xKNGmjFku3CtTTiggb2qut5zIqjWxBYEniznNATQ20aBQDayELI0Wxnlxp0nK9qJN53+rQNFd7MV8xnX03MmTOsdLYrSa2fkDmAK8t9lV5QFgtVzbRrHvLHPLOGF9oAFY2QjTZIjV58qmtTGlJoh51e6sHXly3emXRVmfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=eOEteFvJ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so2832596a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724419785; x=1725024585; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=34ePrmT6ThCSMAVDOF/08UJdMTT0ZiO9ZyonmTHuBOo=;
+        b=eOEteFvJIXchlLLKTVCuVUD8iR+ApTn2Qkg7MOqd3UwTgFRQ0YMaV6yAql6HdCvn2m
+         +Gfeu2eYYOa5VxOuPCuv1Jp2v2j8bMq2QbHKIHR2X8Cufg/iDVsbaGaF7tl7Am2O/fOX
+         RviJ2kfq8dL75PWmpdXQTxl9u3XBWzrww1nNZj8+eDMVV/Bb8LZUDkWborE8xXwyINNA
+         FBlRoWri4HdpCsnRkWQx6sMlEF43xxGK23fZ8Cu3iOas6F+6SVvsPYe+T0yZ4Go8UqcI
+         FMAi0c8pjUTWeMHKtbYwqi3fjCVwx5fbG0vsdkQX/yXMhyaouBG2KHq7LvZFcKqxHTWv
+         Bqtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724419785; x=1725024585;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=34ePrmT6ThCSMAVDOF/08UJdMTT0ZiO9ZyonmTHuBOo=;
+        b=s7AC27LMgroG94wUKawqKbiGYmnGds4Wq2HoLPTDmFm/4EEwrE++QytKXGvHPmRPIc
+         jpFi2ZMTrDVmKX2Ft15cTbeOYiZlGl2XWqSwSdu0ykNTEOMAODHCLp8xGYH182x0jK0X
+         janxlt1xg9wixvuPg0J6dU4H9l69WdVnjFhEQbM6oiFSJUUWF1o3Dp+OtdSqHyk1HRQm
+         dQjoFzXiKE1cnss1IsTGszqtgRjvCovSRyMZSJyqL+0KJhRxCTkJb/3xHZDllV57240D
+         etH+DPIguWEECn4oVDwIZMJZHRIRfKjFYi0hxgQqJWETp46TLqHGwgmwZEx2zvb2wL5t
+         +QTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbJPAFj3s23VetoHfe40vBYP+509sDO8y/7QDrdS9z5UGTqOH5g8dnfUgDD8bFqJJAYC5T3dVYnivsM7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvdlYbLPzavG+2MM4oc0bZwjcJbmj3WCMhgeNRjPZRA++/t4Uh
+	fFcPzKslB2Ad+htqnXIGz2ffog+EFdxXWeU35ML6NRjJ+zQdex4A19n6COb1GrA=
+X-Google-Smtp-Source: AGHT+IEYo5sFGQI+9l4/IiJwriviRXNovEkCQk0pf3xWtH80ArYe1Esf/M6ITiX8QAhka73M1v+RLg==
+X-Received: by 2002:a05:6402:3549:b0:5c0:8d62:bc9c with SMTP id 4fb4d7f45d1cf-5c08d62bea7mr1232778a12.6.1724419784285;
+        Fri, 23 Aug 2024 06:29:44 -0700 (PDT)
+Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a6342sm2110246a12.79.2024.08.23.06.29.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 06:29:43 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:29:42 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Feng zhou <zhoufeng.zf@bytedance.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	ast@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
+	bigeasy@linutronix.de, lorenzo@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com,
+	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
+Subject: Re: [PATCH bpf-next v2] net: Don't allow to attach xdp if bond slave
+ device's upper already has a program
+Message-ID: <ZsiOxkd5KbbIIB6k@nanopsycho.orion>
+References: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
+ <Zsh4vPAPBKdRUq8H@nanopsycho.orion>
+ <6d38eaf5-0a13-9f85-3a5d-0ca354bc45d5@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240819131924.372366-5-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6d38eaf5-0a13-9f85-3a5d-0ca354bc45d5@iogearbox.net>
 
-On Mon, Aug 19, 2024 at 02:19:09PM +0100, Steven Price wrote:
-> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> 
-> Add a function to test early if PSCI is present and what conduit it
-> uses. Because the PSCI conduit corresponds to the SMCCC one, this will
-> let the kernel know whether it can use SMC instructions to discuss with
-> the Realm Management Monitor (RMM), early enough to enable RAM and
-> serial access when running in a Realm.
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> v4: New patch
-> ---
->  drivers/firmware/psci/psci.c | 25 +++++++++++++++++++++++++
->  include/linux/psci.h         |  5 +++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index 2328ca58bba6..2b308f97ef2c 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -13,6 +13,7 @@
->  #include <linux/errno.h>
->  #include <linux/linkage.h>
->  #include <linux/of.h>
-> +#include <linux/of_fdt.h>
->  #include <linux/pm.h>
->  #include <linux/printk.h>
->  #include <linux/psci.h>
-> @@ -769,6 +770,30 @@ int __init psci_dt_init(void)
->  	return ret;
->  }
->  
-> +/*
-> + * Test early if PSCI is supported, and if its conduit matches @conduit
-> + */
-> +bool __init psci_early_test_conduit(enum arm_smccc_conduit conduit)
-> +{
-> +	int len;
-> +	int psci_node;
-> +	const char *method;
-> +	unsigned long dt_root;
-> +
-> +	/* DT hasn't been unflattened yet, we have to work with the flat blob */
-> +	dt_root = of_get_flat_dt_root();
-> +	psci_node = of_get_flat_dt_subnode_by_name(dt_root, "psci");
-> +	if (psci_node <= 0)
-> +		return false;
-> +
-> +	method = of_get_flat_dt_prop(psci_node, "method", &len);
-> +	if (!method)
-> +		return false;
-> +
-> +	return  (conduit == SMCCC_CONDUIT_SMC && strncmp(method, "smc", len) == 0) ||
-> +		(conduit == SMCCC_CONDUIT_HVC && strncmp(method, "hvc", len) == 0);
-> +}
+Fri, Aug 23, 2024 at 02:07:45PM CEST, daniel@iogearbox.net wrote:
+>On 8/23/24 1:55 PM, Jiri Pirko wrote:
+>> Fri, Aug 23, 2024 at 10:42:04AM CEST, zhoufeng.zf@bytedance.com wrote:
+>> > From: Feng Zhou <zhoufeng.zf@bytedance.com>
+>> > 
+>> > Cannot attach when an upper device already has a program, This
+>> > restriction is only for bond's slave devices or team port, and
+>> > should not be accidentally injured for devices like eth0 and vxlan0.
+>> 
+>> What if I attach xdp program to solo netdev and then I enslave it
+>> to bond/team netdev that already has xdp program attached?
+>> What prevents me from doing that?
+>
+>In that case the enslaving of the device to bond(/team) must fail as
+>otherwise the latter won't be able to propagate the XDP prog downwards.
 
-This still looks incomplete to me as per my earlier comments:
+Yep, I don't see that in the code though.
 
-https://lore.kernel.org/all/20240709104851.GE12978@willie-the-truck/
 
-For the first implementation, can we punt the RIPAS_RAM to the bootloader
-and drop support for earlycon? Even if we manage to shoe-horn enough code
-into the early boot path, I think we'll regret it later on because there's
-always something that wants to be first and it inevitably ends up being
-a nightmare to maintain.
-
-Will
+>
+>Feng, did you double check if we have net or BPF selftest coverage for
+>that? If not might be good to add.
+>
+>> > Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+>> > Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+>> > ---
+>> > Changelog:
+>> > v1->v2: Addressed comments from Paolo Abeni, Jiri Pirko
+>> > - Use "netif_is_lag_port" relace of "netif_is_bond_slave"
+>> > Details in here:
+>> > https://lore.kernel.org/netdev/3bf84d23-a561-47ae-84a4-e99488fc762b@bytedance.com/T/
+>> > 
+>> > net/core/dev.c | 10 ++++++----
+>> > 1 file changed, 6 insertions(+), 4 deletions(-)
+>> > 
+>> > diff --git a/net/core/dev.c b/net/core/dev.c
+>> > index f66e61407883..49144e62172e 100644
+>> > --- a/net/core/dev.c
+>> > +++ b/net/core/dev.c
+>> > @@ -9502,10 +9502,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
+>> > 	}
+>> > 
+>> > 	/* don't allow if an upper device already has a program */
+>> > -	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
+>> > -		if (dev_xdp_prog_count(upper) > 0) {
+>> > -			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
+>> > -			return -EEXIST;
+>> > +	if (netif_is_lag_port(dev)) {
+>> > +		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
+>> > +			if (dev_xdp_prog_count(upper) > 0) {
+>> > +				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
+>> > +				return -EEXIST;
+>> > +			}
+>> > 		}
+>> > 	}
+>> > 
+>> > -- 
+>> > 2.30.2
+>> > 
+>> 
+>
 
