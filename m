@@ -1,144 +1,363 @@
-Return-Path: <linux-kernel+bounces-298202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF9995C3C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:35:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D3B95C3C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBB2B22CBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6162849B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657693987B;
-	Fri, 23 Aug 2024 03:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5B383BF;
+	Fri, 23 Aug 2024 03:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="lIzNGEWp"
-Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NZoC87Hz"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F97D4D8B7;
-	Fri, 23 Aug 2024 03:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1507526AF6
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724384103; cv=none; b=KM39N5Xz7Zc0vV9h9ENiKHhj8zKBNIGLBY9gXyDXJPeSi1NW51jKWMZH2toX9Lieh/h7iDib/32s4Ynl8utqcUPSDtrKC5Xc8wP1ZlfFR02+5v+PEOeZJTH7FM1txXp9HNLzlzxeSeQEq5DBYHpy7ndAfoMGIInLtfw1T0GmGgU=
+	t=1724384236; cv=none; b=sKc9QvdEPUFvGIJDpG09ePs9EH9/kTZ0OFG7RpDDQYM9ull0sL7vF+MGQpK54kZ5dwEF373zaxrGQ03szFYyV5ExXiGXLC1AjODl76kWsHj70xP9uXgHfR3q2QEJrjTulSdWuhC9RHFT+uqejISK3w52219vXtc1icrEasnig4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724384103; c=relaxed/simple;
-	bh=WPCHBig5DRinRvTaXXZ9Vpk5zJV2wFCTWtXfZMM8JNw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GWnnYwkp1+/P0K6Q61Y6rLyH+7sgvIQEgXa2wnEQiQfeM78tZE/B7y0wbn0o6ZDkH/pwr5L0aHPnEP7ekPtOdKw6Lb+Ch2rev+HhYcEwZEleZwPDKykxLKoU6wmwpCTAdOyCkSdC955PZwHYBFOS0moXlNBoCuXmWEfndkYsWBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=lIzNGEWp; arc=none smtp.client-ip=67.231.149.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
-	by mx0a-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N36FTL026515;
-	Fri, 23 Aug 2024 04:34:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=7WWIS+/Dp506iu4vAOaQV51OIFRNeLyO4MDm/OaBe1E=; b=lIzNGEWpGCs3
-	QrRjP6fC7um6su4LROvGdHuINB2ORl9b0aum9izbPBpivdcqda/7+3RifyFMkBpp
-	HC5wUFQIWWoGLXPW5oU1iYxnXFWmOCSPf0h7br/MNpJ+ERM9A5cAEZn62r9Enkg1
-	c+B7YHyViQtUtSdDydxk1OoyBMv9i0A4SStlaUpbwL/q2aNNlhKlgUKo99r4Bp+m
-	tuVLFIBibXYiEf/hnD6Xa9pkCY0yUYINIMGJcIAC4WuRxu7qfjK3IqL+qSI5J4fn
-	dc/omzOTkWR5VNMR5qLsLVqdyUycJwGJHpYZQrCYedUoE/tyxjhjaT3xHMJoLvEu
-	itGrV2ShZA==
-Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
-	by mx0a-00190b01.pphosted.com (PPS) with ESMTPS id 4149phx7ks-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 04:34:55 +0100 (BST)
-Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
-	by prod-mail-ppoint5.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 47MKkKYA003754;
-	Thu, 22 Aug 2024 20:34:54 -0700
-Received: from email.msg.corp.akamai.com ([172.27.91.26])
-	by prod-mail-ppoint5.akamai.com (PPS) with ESMTPS id 412sub4gxw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 20:34:54 -0700
-Received: from usma1ex-dag4mb2.msg.corp.akamai.com (172.27.91.21) by
- usma1ex-dag4mb7.msg.corp.akamai.com (172.27.91.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 22 Aug 2024 23:34:54 -0400
-Received: from bos-lhvx56.bos01.corp.akamai.com (172.28.41.223) by
- usma1ex-dag4mb2.msg.corp.akamai.com (172.27.91.21) with Microsoft SMTP Server
- id 15.2.1544.11 via Frontend Transport; Thu, 22 Aug 2024 23:34:54 -0400
-Received: by bos-lhvx56.bos01.corp.akamai.com (Postfix, from userid 30754)
-	id 194B415F534; Thu, 22 Aug 2024 23:34:54 -0400 (EDT)
-From: Josh Hunt <johunt@akamai.com>
-To: <edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <johunt@akamai.com>
-Subject: [PATCH net 1/1] tcp: check skb is non-NULL in tcp_rto_delta_us()
-Date: Thu, 22 Aug 2024 23:34:44 -0400
-Message-ID: <20240823033444.1257321-2-johunt@akamai.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823033444.1257321-1-johunt@akamai.com>
-References: <20240823033444.1257321-1-johunt@akamai.com>
+	s=arc-20240116; t=1724384236; c=relaxed/simple;
+	bh=Z8QEmwIvhhBAtgzzjvQ1Vyn70bF/wzXSmXShbJdc3JE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eAiPa/KcuYxs2kC8TCUSSI4HefE6iEKIPtrG/8FTYioWKtfgQJgDNL9Fiqyvj2QMBDp3cV/oQ/RJ3R7j8V0GOmB2N5tsagfgI+Mi97Lv3l6fwAnSPaQUvBkkeEvISbMY9JgkmzKxuYUno52jvI54KEvW/EFkA1YTUB2zCI6MQtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NZoC87Hz; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724384230;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cY24nOUEo2m206GlJwgB19ZAs8hLikNfAgK8dR8ZU44=;
+	b=NZoC87Hz1pLFaHnHL4SbGQcF+e9d+YA3JSgICauOGv4UM+ANdhV6hrDti2FSSQWlFQHHI6
+	c5oYcYwk8maD7LYJA5HR5HIDwJvhINjWA+Jd6WOSKCK5UYkz1po8/AKORUJOl7mKDDurI0
+	ypYUPtj+ZIRRLA9eRWb5JTkvEgBI0MA=
+Date: Fri, 23 Aug 2024 11:37:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
+ transitioned from being poison to unpoison as empty
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>, Miaohe Lin <linmiaohe@huawei.com>
+Cc: kent.overstreet@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>,
+ stable@vger.kernel.org, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
+ pasha.tatashin@soleen.com, david@redhat.com
+References: <20240822025800.13380-1-hao.ge@linux.dev>
+ <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
+ <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
+ <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
+ <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev>
+In-Reply-To: <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- mlxlogscore=995 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408230022
-X-Proofpoint-ORIG-GUID: -f4XgW0w18busVvZHZpTSC20c5DmyMm7
-X-Proofpoint-GUID: -f4XgW0w18busVvZHZpTSC20c5DmyMm7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 clxscore=1015
- priorityscore=1501 spamscore=0 malwarescore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 mlxlogscore=826 mlxscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230022
+X-Migadu-Flow: FLOW_OUT
 
-There have been multiple occassions where we have crashed in this path
-because packets_out suggested there were packets on the write or retransmit
-queues, but in fact there weren't leading to a NULL skb being dereferenced.
-While we should fix that root cause we should also just make sure the skb
-is not NULL before dereferencing it. Also add a warn once here to capture
-some information if/when the problem case is hit again.
+Hi Suren and Miaohe
 
-Signed-off-by: Josh Hunt <johunt@akamai.com>
----
- include/net/tcp.h | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 2aac11e7e1cc..19ea6ed87880 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2433,10 +2433,19 @@ void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
- static inline s64 tcp_rto_delta_us(const struct sock *sk)
- {
- 	const struct sk_buff *skb = tcp_rtx_queue_head(sk);
--	u32 rto = inet_csk(sk)->icsk_rto;
--	u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
-+	u32 rto = jiffies_to_usecs(inet_csk(sk)->icsk_rto);
-+
-+	if (likely(skb)) {
-+		u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + rto;
-+
-+		return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
-+	} else {
-+		WARN_ONCE(1,
-+			"rtx queue emtpy: inflight %u tlp_high_seq %u state %u\n",
-+			tcp_sk(sk)->packets_out, tcp_sk(sk)->tlp_high_seq, sk->sk_state);
-+		return rto;
-+	}
- 
--	return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
- }
- 
- /*
--- 
-2.34.1
+On 8/23/24 09:47, Hao Ge wrote:
+> Hi Suren and Miaohe
+>
+>
+> Thank you all for taking the time to discuss this issue.
+>
+>
+> On 8/23/24 06:50, Suren Baghdasaryan wrote:
+>> On Thu, Aug 22, 2024 at 2:46 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>> Hi Miaohe
+>>>
+>>>
+>>> Thank you for taking the time to review this patch.
+>>>
+>>>
+>>> On 8/22/24 16:04, Miaohe Lin wrote:
+>>>> On 2024/8/22 10:58, Hao Ge wrote:
+>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>
+>>>> Thanks for your patch.
+>>>>
+>>>>> The PG_hwpoison page will be caught and isolated on the entrance to
+>>>>> the free buddy page pool. so,when we clear this flag and return it
+>>>>> to the buddy system,mark codetags for pages as empty.
+>>>>>
+>>>> Is below scene cause the problem?
+>>>>
+>>>> 1. Pages are allocated. pgalloc_tag_add() will be called when 
+>>>> prep_new_page().
+>>>>
+>>>> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag 
+>>>> and pgalloc_tag_sub()
+>>>> will be called when pages are caught and isolated on the entrance 
+>>>> to buddy.
+>> Hi Folks,
+>> Thanks for reporting this! Could you please describe in more details
+>> how memory_failure() ends up calling pgalloc_tag_sub()? It's not
+>> obvious to me which path leads to pgalloc_tag_sub(), so I must be
+>> missing something.
+>
+>
+> OK,Let me describe the scenario I encountered.
+>
+> In the Link [1] I mentioned,here is the logic behind it:
+>
+> It performed the following operations:
+>
+> madvise(ptrs[num_alloc], pagesize, MADV_SOFT_OFFLINE)
+>
+> and then the kernel's call stack looks like this:
+>
+> do_madvise
+>
+> soft_offline_page
+>
+> page_handle_poison
+>
+> __folio_put
+>
+> free_unref_page
+>
 
+I just reviewed it and I think I missed a stack.
+
+Actually, it's like this
+
+do_madvise
+
+soft_offline_page
+
+soft_offline_in_use_page
+
+page_handle_poison
+
+__folio_put
+
+free_unref_page
+
+
+And I've come up with a minimal solution. If everyone agrees, I'll send 
+the patch.look this
+
+https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L1056
+
+Let's directly call clear_page_tag_ref after pgalloc_tag_sub.
+
+Thanks
+
+BR
+
+Hao
+
+
+> It will set a flag within the following function and then release the 
+> page.
+>
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/memory-failure.c#L206 
+>
+>
+> and and then,because you set the PG_hwpoison flag, so the page will be 
+> caught and isolated on the
+>
+> entrance to the free buddy page pool. look here:
+>
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L1052
+>
+> At this very moment, we call pgalloc_tag_sub.
+>
+> So,when we callunpoison_memoryclear this flag and return the page to 
+> the buddy system, the problem arises.
+>
+>
+>> On a conceptual level I want to understand if the page isolated in
+>> this manner should be considered freed or not. If it shouldn't be
+>> considered free then I think the right fix would be to avoid
+>> pgalloc_tag_sub() when this isolation happens.
+>> Thanks,
+>> Suren.
+>
+> In my understanding, the purpose of unpoison_memory is to reclaim 
+> poisoned pages.
+>
+> I dug up the patch that introduced this function back then
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/mm/memory-failure.c?id=847ce401df392b0704369fd3f75df614ac1414b4 
+>
+>
+> Therefore, this is reasonable.
+>
+> Thanks
+>
+> Best regards
+>
+> Hao
+>
+>>
+>>>> 3. unpoison_memory cleared flags and sent the pages to buddy. 
+>>>> pgalloc_tag_sub() will be
+>>>> called again in free_pages_prepare().
+>>>>
+>>>> So there is a imbalance that pgalloc_tag_add() is called once and 
+>>>> pgalloc_tag_sub() is called twice?
+>>> As you said, that's exactly the case.
+>>>> If so, let's think about more complicated scene:
+>>>>
+>>>> 1. Same as above.
+>>>>
+>>>> 2. Pages are hwpoisoned. But memory_failure() fails to handle it. 
+>>>> So PG_hwpoison flag is set
+>>>> but pgalloc_tag_sub() is not called (pages are not sent to buddy).
+>>>>
+>>>> 3. unpoison_memory cleared flags and calls clear_page_tag_ref() 
+>>>> without calling pgalloc_tag_sub()
+>>>> first. Will this cause problem?
+>>>>
+>>>> Though this should be really rare...
+>>>>
+>>>> Thanks.
+>>>> .
+>>> Great, I didn't anticipate this scenario.
+>>>
+>>> When we call clear_page_tag_ref() without calling pgalloc_tag_sub(),
+>>>
+>>> It will cause exceptions 
+>>> in|tag->counters->bytes|and|tag->counters->calls|.
+>>>
+>>> We can add a layer of protection to handle it
+>>>
+>>> The pseudocode is as follows:
+>>>
+>>> if (mem_alloc_profiling_enabled()) {
+>>>           union codetag_ref *ref = get_page_tag_ref(page);
+>>>
+>>>           if (ref) {
+>>>               if( ref->ct != NULL && !is_codetag_empty(ref))
+>>>               {
+>>>                   tag = ct_to_alloc_tag(ref->ct);
+>>>                   this_cpu_sub(tag->counters->bytes, bytes);
+>>>                   this_cpu_dec(tag->counters->calls);
+>>>               }
+>>>               set_codetag_empty(ref);
+>>>               put_page_tag_ref(ref);
+>>>           }
+>>> }
+>>>
+>>> Hi Suren and Kent
+>>>
+>>> Do you have any suggestions for this? If it's okay, I'll add comments
+>>> and include this pseudocode in|clear_page_tag_ref|.
+>>>
+>>>>> It was detected by [1] and the following WARN occurred:
+>>>>>
+>>>>> [  113.930443][ T3282] ------------[ cut here ]------------
+>>>>> [  113.931105][ T3282] alloc_tag was not set
+>>>>> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at 
+>>>>> ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
+>>>>> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse 
+>>>>> ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 
+>>>>> xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
+>>>>> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 
+>>>>> Kdump: loaded Tainted: G        W 6.11.0-rc4-dirty #18
+>>>>> [  113.943003][ T3282] Tainted: [W]=WARN
+>>>>> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, 
+>>>>> BIOS unknown 2/2/2022
+>>>>> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO 
+>>>>> -DIT -SSBS BTYPE=--)
+>>>>> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
+>>>>> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
+>>>>> [  113.946706][ T3282] sp : ffff800087093a10
+>>>>> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 
+>>>>> x27: ffff80008249f0a0
+>>>>> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 
+>>>>> x24: 0000000000000000
+>>>>> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 
+>>>>> x21: 0000000000000000
+>>>>> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 
+>>>>> x18: ffffffffffffffff
+>>>>> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 
+>>>>> x15: ffff800081746210
+>>>>> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 
+>>>>> x12: 5b5d353031313339
+>>>>> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d 
+>>>>> x9 : 00000000ffffffd0
+>>>>> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 
+>>>>> x6 : c0000000ffff7fff
+>>>>> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 
+>>>>> x3 : 0000000000000001
+>>>>> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 
+>>>>> x0 : 0000000000000000
+>>>>> [  113.957962][ T3282] Call trace:
+>>>>> [  113.958350][ T3282] pgalloc_tag_sub.part.66+0x154/0x164
+>>>>> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
+>>>>> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
+>>>>> [  113.960096][ T3282]  __folio_put+0xd4/0x120
+>>>>> [  113.960614][ T3282]  folio_put+0x24/0x50
+>>>>> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
+>>>>> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
+>>>>> [  113.962436][ T3282] simple_attr_write_xsigned.isra.34+0xec/0x1cc
+>>>>> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
+>>>>> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
+>>>>> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
+>>>>> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
+>>>>> [  113.965372][ T3282]  ksys_write+0x78/0x100
+>>>>> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
+>>>>> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
+>>>>> [  113.966984][ T3282] el0_svc_common.constprop.1+0x88/0x104
+>>>>> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
+>>>>> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
+>>>>> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
+>>>>> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
+>>>>> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
+>>>>>
+>>>>> Link [1]: 
+>>>>> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise11.c
+>>>>>
+>>>>> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() 
+>>>>> helper function")
+>>>>> Cc: stable@vger.kernel.org # v6.10
+>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>>> ---
+>>>>>    mm/memory-failure.c | 6 ++++++
+>>>>>    1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>>> index 7066fc84f351..570388c41532 100644
+>>>>> --- a/mm/memory-failure.c
+>>>>> +++ b/mm/memory-failure.c
+>>>>> @@ -2623,6 +2623,12 @@ int unpoison_memory(unsigned long pfn)
+>>>>>
+>>>>>               folio_put(folio);
+>>>>>               if (TestClearPageHWPoison(p)) {
+>>>>> +                    /* the PG_hwpoison page will be caught and 
+>>>>> isolated
+>>>>> +                     * on the entrance to the free buddy page pool.
+>>>>> +                     * so,when we clear this flag and return it 
+>>>>> to the buddy system,
+>>>>> +                     * clear it's codetag
+>>>>> +                     */
+>>>>> +                    clear_page_tag_ref(p);
+>>>>>                       folio_put(folio);
+>>>>>                       ret = 0;
+>>>>>               }
+>>>>>
+>>>>>
+>>> Thanks
+>>>
+>>> BR
+>>>
+>>> Hao
+>>>
 
