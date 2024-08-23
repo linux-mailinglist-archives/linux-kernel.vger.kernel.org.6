@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-298363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A339495C647
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6BC95C648
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61541C22E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF226282012
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE4513AA2A;
-	Fri, 23 Aug 2024 07:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E13B13A409;
+	Fri, 23 Aug 2024 07:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="XslyPLyx"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZcX+COnS"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2126113D244
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AAF4F88C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724396990; cv=none; b=gT3mgobArnsE0tGJ4QIfiYeXKE9FZKE9IBT5HrsgWuGAZhyD15SV5xOI+WsS8eHMqt9wVuvCzByJ1nT7/9KwjYfYgTgTQobo8Qn9NKIuamriEH64jT0syyIfhzS305dhhSRaTazo/ARklgkjW+w5rrGuOTWq/Gur6kFsg2LBzlY=
+	t=1724397048; cv=none; b=sUYiASYL95J4fycc2kd4BDCRE8Q7qWincCiCMnnVs21aukKzbugzotG/1zL67dUMkl2onquF/KZlwXXZFnQWBC6hTnqouRDjsbfcVx73vklKhQRzqrUg7N2mEWCcXPYLzV6YCwTlNCgbDyKi3h66WaqYBSq9wXEjzBU3NKEjet8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724396990; c=relaxed/simple;
-	bh=6/Y+PAcwqnv9X4Hn2IGNsHNmrjRh+Nqm3Kd7gOnya3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xw2rVy/oyetFdqUcztuMygSGmRNveAcbf7WJpnnMDsy4dX4PoNTrrEsJWKfh1xBTXYQkeWq+cP9ktwNHNZ0ygCWXdcMqcz4uDIEdgsveaSWq26Trwovou1W5wS8yvlWiBrELo+WWhH1mJL1QvxNDvvNvqy7SZF3T3Ymol2uovHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=XslyPLyx; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-39d4a4e4931so5137815ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1724396988; x=1725001788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tYiyuSQAwfiQQ39+HAQvaBlmRARXpxRgdyCqu4zVO9c=;
-        b=XslyPLyx14NG0ioOukxMW9PD6r+BTCl8L4jjyQvyfb1PZj0zsPV9VLHBaFF55N4fd3
-         vjnqU2Nl6GyE//j2sC4cKvBTBztaOctjsK+SBe9YyXUq+TQolsfDvbislIcXZhhVf47q
-         nznOuXhuImmIQbN4ifHJOe25OCSOPul5AVQ1XHTQN2XHv6DujJPUOhL+t26ARZqn7Zpw
-         zm8FEd7TUt2rK4kiwIrIuK6suUVWPriIw/lTV3xj5RmXDlSH6OWtu8hb36aMKnWXFldH
-         anGNVLt2KiRYeZXJYm+fUH/bD0PZCJKtSYDB8ak01VMWDNed1uG7/ijlRKUqst4XE7eO
-         CzrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724396988; x=1725001788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tYiyuSQAwfiQQ39+HAQvaBlmRARXpxRgdyCqu4zVO9c=;
-        b=fQ4UVpGSzjtwHMZvzxlLYe5F3ys8T0kxspPiW61PuOzPeWK1JoKSEm8JOl7sgVL4Zm
-         GcZawdKr7GRAIPxy1ElmgRGO8GT2b5KSM4NcD/jzGDFl4tkQbAKU0xgy8WiKU5SsliiK
-         lVUBhlg8phfNb/6irn8HEX9d+/TP7joPrYLXkbYIpFsNbCC0ivgWZPYKotxRe93JIGua
-         fR+KsIRhZ87iBYVJGlFE4/5Uua8nhhLibxXcJD4ItLv9KXO5BMh+Zc0RNpp02Uc6BKYr
-         JDbfbzgt+dIVgpwvB1IKXAcYX/leT9pS9KBQuV3Lq58VqlvqfZ+bOdn+lfn5gF5ofL38
-         4d9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXml2wxij9y0+Uq0sxpU5Ac0ji4C07Mliw6jIBat5miEfmYypL9dWj90P2yaxIcLCp3UzSNBg9ADGqS5II=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRPtvWezVpcgULRXGbhk4Ae7cEWqOV0N7TSII5FjLSToE/HSSf
-	JJFL8NkPoYJtZa/dPvSXYsl6CsLAbdIwdU6ZeRv83fvs/1XBltHyB0ly3EcNO0b4ZZ6XSS8oJ14
-	zf0rF80UZoz0aQ0m40g7sbuwn8I+25eDcUjeecBYVl+qLpyCjYWM=
-X-Google-Smtp-Source: AGHT+IFheFAcpjMzzb2iqY4HfoVxZvmcsr/sK9zcF/qfuUz+TYRMD4/KAnFW1EAGR+jGgOYeNhlDxxZStd4REvhqF1Y=
-X-Received: by 2002:a05:6e02:1a65:b0:39b:3e01:cbd4 with SMTP id
- e9e14a558f8ab-39e3c98c3ecmr14412585ab.14.1724396988109; Fri, 23 Aug 2024
- 00:09:48 -0700 (PDT)
+	s=arc-20240116; t=1724397048; c=relaxed/simple;
+	bh=7bEY5BHshEOBuA2Gob1wOrXnh6efFOAaLeaZpC3zE84=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=styd4DgdrWl36c+Kc4aK0J7V7ZsjknF8X+n3E3m2JneqqIub4kGkT/VOzn17DtkpoBhtdnEzbp85A7F2L0FhJw846KbaaGZsQqw4ju2ZXM6fSfcQaicFjvU3eIYWF6ib+JVbNr7SCHD4hR6O1r1oyQLhJy9RWVPgtqQZx3kgNwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZcX+COnS; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240823071042epoutp03e88788caca8f29e8d0ed700d42491638~uSfltW-By0525705257epoutp03G
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:10:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240823071042epoutp03e88788caca8f29e8d0ed700d42491638~uSfltW-By0525705257epoutp03G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724397043;
+	bh=9VWmLuxYaD6xmjyel1Q0vd8KxN5Mn29C49srXZRZDK8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZcX+COnSd4BZ6SNBTKCsYJXayIMmYnwUKqUUQlRUHlklHbf+kJQBsF+BNAbaQKllN
+	 eDcwAFbOUN6IuysFJnFRkFPFtgGkiBeoI4zOm1QIWsNWgqBOTZG8t1kZ8JVQkJymwE
+	 CqpRnjTw6wz8kqb+lkL6bknvaTdcbauPX+FulwJw=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240823071042epcas1p3a19abd3cf5b65a7e5518c12c797f5640~uSflC20pt0151101511epcas1p3p;
+	Fri, 23 Aug 2024 07:10:42 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.36.224]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WqrnY5ddVz4x9Q1; Fri, 23 Aug
+	2024 07:10:41 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8D.02.10258.1F538C66; Fri, 23 Aug 2024 16:10:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240823071040epcas1p1309967537fb6286a9e67a38e598ce104~uSfjo3zRe1889818898epcas1p1M;
+	Fri, 23 Aug 2024 07:10:40 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240823071040epsmtrp1f6c4e28d32a9482c80b32b73e6b8bb6e~uSfjn5UAL0940909409epsmtrp1r;
+	Fri, 23 Aug 2024 07:10:40 +0000 (GMT)
+X-AuditID: b6c32a38-9ebb870000002812-0a-66c835f1d65f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5C.C9.19367.0F538C66; Fri, 23 Aug 2024 16:10:40 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.98.171]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240823071040epsmtip10cb7c3d17ec093d493801decbc092dee~uSfja-A3X3177631776epsmtip1c;
+	Fri, 23 Aug 2024 07:10:40 +0000 (GMT)
+From: Seunghwan Baek <sh8267.baek@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org, ritesh.list@gmail.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+	cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: [PATCH] mmc : fix for check cqe halt.
+Date: Fri, 23 Aug 2024 16:10:25 +0900
+Message-Id: <20240823071025.15410-1-sh8267.baek@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7bCmvu5H0xNpBr8fqFvMONXGarHv2kl2
+	i19/17NbdGydzGSx4/kZdotdf5uZLC7vmsNmceR/P6PFwVMd7BZNf/axWFw7c4LV4vjacIvN
+	l76xOPB67Jx1l93jzrU9bB59W1YxenzeJBfAEpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9q
+	ZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0npJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1
+	ICWnwKxArzgxt7g0L10vL7XEytDAwMgUqDAhO2PZ0v1sBd1cFTPn/GdtYFzK0cXIySEhYCKx
+	Y9V7li5GLg4hgR2MEpuO72KFcD4xSpxrP8AG58z+t40VpmXp+RYmiMRORoljL+9DVX1mlDj1
+	+SU7SBWbgJ7Eq/bDbCC2iECOxI6njYwgRcwC9xkl9h/8wwiSEAYq2neggQXEZhFQldj4fgpY
+	M6+AjUTfzPlsEOvkJVZvOMAMYZ9jl3i/Kg/CdpHYeqwZKi4s8er4FnYIW0riZX8blF0ssXDj
+	JLDvJARaGCWuL4dYLCFgL9Hc2gy0gAPoIk2J9bv0QcLMAnwS7772sIKEJQR4JTrahCCqVSVO
+	bdgK1Sktcb25ARoSHhIzLh0HO1NIIFZiReNMlgmMMrMQhi5gZFzFKJZaUJybnlpsWGACj5rk
+	/NxNjOB0pmWxg3Hu2w96hxiZOBgPMUpwMCuJ8CbdO5omxJuSWFmVWpQfX1Sak1p8iNEUGEYT
+	maVEk/OBCTWvJN7QxNLAxMzIxMLY0thMSZz3zJWyVCGB9MSS1OzU1ILUIpg+Jg5OqQYma4Gi
+	YyE7ir6mxvz9s7z4/8U1rvF/U8+KBS14phj2amnhnjjhbs0rLkqGsbKnO48tkPDSvCmg8yFm
+	ofTLU6pCnfvZt7Us82h3ZI44FvvmM/fFb1qBYRMn7+FekB8Y9aB+9YblPzauslU02Vqhpsj7
+	8vUJ60P71rxl+32IZ//bE//XZi3NOztNemNft4HTJNUPztz8T5boLpIWYd75TTdrwr6dhZ1v
+	vvw+LDtTcoXIxT/ygdc/P/Wbo1taJqCvbhzzdN3cZS8z7eVPJrO/3sH2JnvLuaC7b1OjTbdP
+	37lUwqJpY1Lwmy5m7qv2kV6dZ+Lnlv3a97Ol9pTXmjOv9S5V3lvCv4NJzGrVbfP7osfkeZVY
+	ijMSDbWYi4oTAbjU8yHwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprELMWRmVeSWpSXmKPExsWy7bCSnO4H0xNpBhs3aVjMONXGarHv2kl2
+	i19/17NbdGydzGSx4/kZdotdf5uZLC7vmsNmceR/P6PFwVMd7BZNf/axWFw7c4LV4vjacIvN
+	l76xOPB67Jx1l93jzrU9bB59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CVsWzpfraCbq6KmXP+
+	szYwLuXoYuTkkBAwkVh6voWpi5GLQ0hgO6PEvT07WSAS0hKPD7xk7GLkALKFJQ4fLoao+cgo
+	8fDhTmaQGjYBPYlX7YfZQGwRgQKJk3/msoLYzAKvGSW6LkSA2MJANfsONIDNZBFQldj4fgo7
+	iM0rYCPRN3M+G8QueYnVGw4wT2DkWcDIsIpRNLWgODc9N7nAUK84Mbe4NC9dLzk/dxMjONi0
+	gnYwLlv/V+8QIxMH4yFGCQ5mJRHepHtH04R4UxIrq1KL8uOLSnNSiw8xSnOwKInzKud0pggJ
+	pCeWpGanphakFsFkmTg4pRqYMtYzeHbe7GLfUX76+aygu+bO+R58S6NMtndvF/+hFmNlscB6
+	Sr/3xW1vHxskfwjvFLp85vb6tOtTQ83Xz258UhB754nChBKXWy4SJs3t07+U5m7krPre6NAf
+	GftF5IIc4/HpQZpOrxXZe718/L/fZ9m7d0Wt9bQKK+2Tct++yAtlPLlzLlsus+aZ3LHM8Ia/
+	lXyTetd9Nz+4rfzlrlkR9vltTzoZZgd+U+LYlTyl0FJkbXdadNcGCX5HyxPLtv3zS5zZV1tS
+	sLDeR+CxevfCW0er6iN9D2/Q5Z7nkjjd5WT86xw1nqQzNyzLk84p2PzTFv7QeeUjr9E2lc1K
+	XgF/p35nvXn3u9yCj7tmKaYosRRnJBpqMRcVJwIAuqcoVqUCAAA=
+X-CMS-MailID: 20240823071040epcas1p1309967537fb6286a9e67a38e598ce104
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240823071040epcas1p1309967537fb6286a9e67a38e598ce104
+References: <CGME20240823071040epcas1p1309967537fb6286a9e67a38e598ce104@epcas1p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240814054434.3563453-1-nick.hu@sifive.com> <20240814054434.3563453-3-nick.hu@sifive.com>
-In-Reply-To: <20240814054434.3563453-3-nick.hu@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 23 Aug 2024 12:39:37 +0530
-Message-ID: <CAAhSdy0aPwod6_5xf6rw++jFFZNnOSSWJzQ9CJM0g55483rVSA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpuidle: riscv-sbi: Add cpuidle_disabled() check
-To: Nick Hu <nick.hu@sifive.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	greentime.hu@sifive.com, zong.li@sifive.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 11:14=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote=
-:
->
-> The consumer devices that inside the cpu/cluster power domain may registe=
-r
-> the genpd notifier where their power domains point to the pd nodes under
-> '/cpus/power-domains'. If the cpuidle.off=3D=3D1, the genpd notifier will=
- fail
-> due to sbi_cpuidle_pd_allow_domain_state is not set. We also need the
-> sbi_cpuidle_cpuhp_up/down to invoke the callbacks. Therefore adding a
-> cpuidle_disabled() check before cpuidle_register() to address the issue.
->
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+To check if mmc cqe is in halt state, need to check
+set/clear of CQHCI_HALT bit. At this time, we need to
+check with &, not &&. Therefore, code to check whether
+cqe is in halt state is modified to cqhci_halted,
+which has already been implemented.
 
-LGTM.
+Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+---
+ drivers/mmc/host/cqhci-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+index c14d7251d0bb..3d5bcb92c78e 100644
+--- a/drivers/mmc/host/cqhci-core.c
++++ b/drivers/mmc/host/cqhci-core.c
+@@ -282,7 +282,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+ 
+ 	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+ 
+-	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
++	if (cqhci_halted(cq_host))
+ 		cqhci_writel(cq_host, 0, CQHCI_CTL);
+ 
+ 	mmc->cqe_on = true;
+@@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		cqhci_writel(cq_host, 0, CQHCI_CTL);
+ 		mmc->cqe_on = true;
+ 		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+-		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
++		if (cqhci_halted(cq_host)) {
+ 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+ 			       mmc_hostname(mmc));
+ 		}
+-- 
+2.17.1
 
-Regards,
-Anup
-
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
-e-riscv-sbi.c
-> index 98e7751dbfe8..3c8a509288f3 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -25,6 +25,7 @@
->  #include <asm/smp.h>
->  #include <asm/suspend.h>
->
-> +#include "cpuidle.h"
->  #include "dt_idle_states.h"
->  #include "dt_idle_genpd.h"
->
-> @@ -336,6 +337,9 @@ static int sbi_cpuidle_init_cpu(struct device *dev, i=
-nt cpu)
->                 return ret;
->         }
->
-> +       if (cpuidle_disabled())
-> +               return 0;
-> +
->         ret =3D cpuidle_register(drv, NULL);
->         if (ret)
->                 goto deinit;
-> @@ -548,7 +552,10 @@ static int sbi_cpuidle_probe(struct platform_device =
-*pdev)
->         /* Setup CPU hotplut notifiers */
->         sbi_idle_init_cpuhp();
->
-> -       pr_info("idle driver registered for all CPUs\n");
-> +       if (cpuidle_disabled())
-> +               pr_info("cpuidle is disabled\n");
-> +       else
-> +               pr_info("idle driver registered for all CPUs\n");
->
->         return 0;
->
-> --
-> 2.34.1
->
 
