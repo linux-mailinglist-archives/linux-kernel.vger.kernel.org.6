@@ -1,114 +1,76 @@
-Return-Path: <linux-kernel+bounces-298493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7907695C80E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:28:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A75C95C810
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039E8B25A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9FA61C22155
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895CF149C50;
-	Fri, 23 Aug 2024 08:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12C31448D2;
+	Fri, 23 Aug 2024 08:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nkM8VrHE"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaAxMLKJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B301428E8
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41B2140397;
+	Fri, 23 Aug 2024 08:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401683; cv=none; b=AKNzXH0wk0f9mlyOPgQDrPE6Yke2nhi6LydyQ7cd9JFoxYOAF5rRU0xKbIJNmkP77Jp5EJv9polQHBlWuUT4xGg9QJN8nmeLy1Rjoyj2JU0h0/n4cXl5syvETDiv5h4fp3ruLo4Mf+m6ndBAmgwotFhP+XozUUHliBLqjrGWpiI=
+	t=1724401712; cv=none; b=RtOM7esUesVjzbQ8u+WbKRZfexFGNhO2L4lWjpdNOf9B5YLSHirlvfuVLULVTUxm/p7KZH/Y1C1G5T+3zuxO1clE57QnvmCmTLlCshIRqp892ebHQO7TCVNzSo5+duYeZB9zqOGxBaIvMDQtfdFPFbkL+dorO1GM521yEJOx7eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401683; c=relaxed/simple;
-	bh=yrptH+DQbXiAHa8Z83G/22BB8xjASWlh1dPOd3PH4Dw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=VdYjYE2K83LWIAVsnCSCkztahwruoel4hhOzuTGiQCUFnekI/QKXrRwr4Eypn2lqsGczqMRF+coDPEOqsCOBZvs+Cg7zBZDAd9xuMMndv7ht2aNqJl2CUBJ2r/Ud5UxKNGAh76imLo6XoU8z2ehN2bMSqxbu/Tegv5+/HMKJG2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nkM8VrHE; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 66B296000B;
-	Fri, 23 Aug 2024 08:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724401680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HckJMNZywGJU3Fu+i/HC7yiULXqjL8S2dKNsB+4J6zU=;
-	b=nkM8VrHEq2VoPSgWrJ5aB8Jv7XcDHl4CD48svLlqUI+Yb1fSXgDGatGOIGEFOaZQG6JBsk
-	GZFXIiREd+Tov6Fgdmwc3ToK8FRppG6Czu1ZZeibR5Ttwh7p0dY3gCUNUcrdbnVjlWlZdI
-	5xZa9VNxfPtUD5up4/6EVrofb9wAmRb6OWTGne/si1MANRZdoyxlPwyvw0lyVixt1X7MYQ
-	+hNIodKAusYKd4a70T+wk4Q/NpzIeNNPAtbyj5ZdN7ZejfblNTwU4IpTVG+iBXlLzKybbZ
-	bUBhQM+YordWM1Tx1UZUG80JT52FnGOuIQLtVlxWAS24xI0/z3hi+lqhGpYryQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 23 Aug 2024 10:27:44 +0200
-Subject: [PATCH RESEND v2 3/3] scripts/decode_stacktrace.sh: add '-h' flag
+	s=arc-20240116; t=1724401712; c=relaxed/simple;
+	bh=Th32cuB5eevmkr9+C33ucO995EYDQ3oqEYQBH3SolPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DOaonvZ9+8i48CmKbDqpQXqylrdCK+mcGJiGM+Xb9SJGkh3ravA9/UZXP5c054X0aNg1dd/dPPphxGj8v7kYPAP3huuR9iUfNimUpWSBabto3tNKFroEEqg/WDOJboC7QBJlfs5G1pNHzatzRkn3E/VQxBHLnRAtNvAG++ns8ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaAxMLKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBF5C4AF0B;
+	Fri, 23 Aug 2024 08:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724401711;
+	bh=Th32cuB5eevmkr9+C33ucO995EYDQ3oqEYQBH3SolPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MaAxMLKJaf4pgvpGwesErDEI79kqgS6eoYBUb4Ne20q9KGJw7h2MVCSVkeI6eZmcC
+	 qU/oR2ySfQEzkkd6ecEaGWfM067aEEa3HfFuNpO1Jrn2c8vkshe+fdS673DZJBcSvS
+	 yR25anXp5oGlcG0rxtJhimxmRdYoS4N1B+b5b4wiEX8f3Oia8hc47hJodAdRB2xYLg
+	 6eCxdEBUGkX/lvtIYcQ9pJp9JqJvnC+LKBE7h9G52wupYvLrg1IGPfmrO3raXowAPX
+	 jkiR/ZHyNdL0S3NZGuLMnR7QD5sNzsFSWQhRvPHGQKUSDNgoWsZdbG95AbXEqtl12N
+	 1FSxcfNQ9GKVA==
+Date: Fri, 23 Aug 2024 09:28:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yuesong Li <liyuesong@vivo.com>
+Cc: mark.einon@gmail.com, davem@davemloft.net, dumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH net-next v2] et131x: Remove NULL check of list_entry()
+Message-ID: <20240823082827.GT2164@kernel.org>
+References: <20240823012737.2995688-1-liyuesong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-decode_stacktrace-find_module-improvements-v2-3-d7a57d35558b@bootlin.com>
-References: <20240823-decode_stacktrace-find_module-improvements-v2-0-d7a57d35558b@bootlin.com>
-In-Reply-To: <20240823-decode_stacktrace-find_module-improvements-v2-0-d7a57d35558b@bootlin.com>
-To: Konstantin Khlebnikov <koct9i@gmail.com>, 
- Stephen Boyd <swboyd@chromium.org>, Sasha Levin <sashal@kernel.org>, 
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823012737.2995688-1-liyuesong@vivo.com>
 
-When no parameters are passed, the usage instructions are presented only
-when debuginfod-find is not found. This makes sense because with debuginfod
-none of the positional parameters are needed. However it means that users
-having debuginfod-find installed will have no chance of reading the usage
-text without opening the file.
+On Fri, Aug 23, 2024 at 09:27:37AM +0800, Yuesong Li wrote:
+> list_entry() will never return a NULL pointer, thus remove the
+> check.
+> 
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+> Reviewed-by: Mark Einon <mark.einon@gmail.com>
+> ---
+> changes v2:
+> - update the short log and patch name
 
-Many programs have a '-h' flag to get the usage, so add such a flag.
-Invoking 'scripts/decode_stacktrace.sh -h' will now show the usage text and
-exit.
+Thanks for the update.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- scripts/decode_stacktrace.sh | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index b56e79060e9f..e8c9976062d0 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -7,6 +7,7 @@ usage() {
- 	echo "Usage:"
- 	echo "	$0 -r <release>"
- 	echo "	$0 [<vmlinux> [<base_path>|auto [<modules_path>]]]"
-+	echo "	$0 -h"
- }
- 
- # Try to find a Rust demangler
-@@ -32,7 +33,10 @@ fi
- READELF=${UTIL_PREFIX}readelf${UTIL_SUFFIX}
- ADDR2LINE=${UTIL_PREFIX}addr2line${UTIL_SUFFIX}
- 
--if [[ $1 == "-r" ]] ; then
-+if [[ $1 == "-h" ]] ; then
-+	usage
-+	exit 0
-+elif [[ $1 == "-r" ]] ; then
- 	vmlinux=""
- 	basepath="auto"
- 	modpath=""
-
--- 
-2.34.1
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
