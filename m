@@ -1,104 +1,87 @@
-Return-Path: <linux-kernel+bounces-298594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C4995C932
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:27:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F85195C933
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 591E8B2151D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C1D21C2235F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1236314B963;
-	Fri, 23 Aug 2024 09:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="I9KihzUv"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700E14B095;
+	Fri, 23 Aug 2024 09:28:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108E139D00;
-	Fri, 23 Aug 2024 09:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6FC14B09C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405230; cv=none; b=Lb+4VRVOQMDOD8kh4cwnJHZfPETIeFlzKmaXmtAHsLDFu86MicrqiQlfe4FQOf5tJ7E6V3WO6DIw58XfVV+khtznfjU01V0xd8by3ToH5owbRhLBM1TgVWAhKGocGu1ULsEgzfLevo0if84W+GDcc8nvTnSs/9ooDZm+XuKYei0=
+	t=1724405284; cv=none; b=QLw52q8XgUxWNP5Hd9626A5TTqOGKCuL0+4DdmJHnO/QcSeJCLTYlOrP8d02/+VapHzxQGuz32H/8W5DVysjjroo1re8dfiC1S9jSnbwWon73kIlXoF4xSqfQ6AId/ihtWp0Jdp90+dsEAOwhbkcmSW1DFDz5DN4ffF0XBcFBtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405230; c=relaxed/simple;
-	bh=LjzOa5VYF5uE48fuF+oizFl+TE1qvTWS/NM0ytVg2+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZAwIxNCT9GdoKa0BmUV1OmEuLGIJtdmpMRR1EumeMPp04UZ9ZCd6ee0eVqYkQ85RzFx9p32sYUGeDA+9giMC+X0lzw0NK50KZeWD34RKcezEcjgfNLAehteNJKfOLeIsOVr2nc+xgrnN4PWGpOB8DUDZyhaXsIrBRlXD8MTUn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=I9KihzUv; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=61W4JP5s8vUt9uD7fkH3yJkHJ3h3zSgOoudSNB9+DCA=; b=I9KihzUvS9amZ6JG12fLnBmKOM
-	lF26nIdAMu1Q8D+Gl9Igb3TD3gGII3hFL9Ofj7fA18GPywbsAxh4ONokft8g6YX1qUHlzRLS5Xyk6
-	xGDA5io3HKnw8C+2XMAOMpWrkW9Lqgc0qAuGNB1z5zPpIk9A7oA2PKeiaIZpGdYXS2hjiavrEr/Fz
-	JMvuIg6fPC/bpxW+/ATFBBBiuGITbmuGWDcYdgV15ju7gcwJpqHo0zEEL5U5dqyGKHyDqEZMmRo2w
-	k3H3pzJweSL5R3WcKcaOXZnCtE2Eaq8nC1MRtQBlfxAfRqJ29lt4YFiJx0uvh64olgXLZQpo99gB0
-	ZW8Pj2yQ==;
-Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shQZN-0003nE-Os; Fri, 23 Aug 2024 11:26:57 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
- tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
- tim.chen@rock-chips.com, elaine.zhang@rock-chips.com,
- Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v2] gpio: rockchip: avoid division by zero
-Date: Fri, 23 Aug 2024 11:27:38 +0200
-Message-ID: <3370558.KgjxqYA5nG@diego>
-In-Reply-To: <20240823034314.62305-2-ye.zhang@rock-chips.com>
-References:
- <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-2-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724405284; c=relaxed/simple;
+	bh=iynXqP56ixtaP4nXJKR31NascYrrHan5Cn00P05H8CY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DUazGFNi4LlHNiLL57IzmZKPehIh0t0mMXVooSLereHh/zCOEOubS8zmjqvTuHaVpf3zT6yLx1ozbzVeYjYT8FwGbKxeRwF1FGYINLnQFzgds91AHHmDbMXpaLO3t2uY9wy1q23QO04nP3ali6+6wK9y7yPV32Z18jZtVjUz+EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso185133039f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:28:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724405282; x=1725010082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KttlhmlTALgfg5PUGPLqtRN0LNsASsNIispna5Tm+vE=;
+        b=p+O6tQBom+PgBWDlLjmlXm7/QS4KVWR1swOUGXLeorpHzcgd+f2Wv1yvUb/9cJlXQT
+         kZdWHiYnHcpeCt1H8MGUcYlUmPrr/NeWw/T5YBSWTTIiuW1DkZFmTZatlNRiPogjkPpU
+         trup2abaOpElhuqBiMBRoxFrnDW75O8QIqZMs1Lmt4C+5HJ3OpjoSkcY+kIiH7Wnr1w5
+         tEieGqQ7KUm4qGvDHyzqVBZEI1I7UqNmGQ/Hjv+5JutDqZpc/K1znKdrHnvDPS2K0iDT
+         mVOHye7EIADmME3ER0TUjdKt1paYVf4WKeV+wnYHSaJkbAu3T3wenjCG4ZkUdNOjz4O/
+         GVyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmO+euQ7IT6uPokHt6T6LiXP6j1VtS19lfkuBvm4HCa/WnoDIIrctaHq/mtamwF3kO/WSUBc5p7+BPSUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKcz+LYJfQtjk3YCAUty5XKqSxVzQV2Oq+pyXJXXaAv5l/XBkQ
+	8bXUNza8+YzXCCn5Jw0dm2F1dlHJbvB5mvHi0O1Nj/X+KKvz6Q1DAnr92sb4y6iIMaQf4cjcw0s
+	2uyKaXLLBXpIyx64dm75cdqzSQm2HthlMZstPaZLd1vVHtEszR8VeiMg=
+X-Google-Smtp-Source: AGHT+IGCLJEvGQ1/lj0IWgTn8+cOmkzRFeXpzvYJW36WjkLV2evLDQkx2eQ6rcO5qHF5wRW6NFcSobol36qqwhPnfKzwOFslEWez
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6602:3404:b0:81f:7e75:4040 with SMTP id
+ ca18e2360f4ac-827873744a5mr1994739f.3.1724405282584; Fri, 23 Aug 2024
+ 02:28:02 -0700 (PDT)
+Date: Fri, 23 Aug 2024 02:28:02 -0700
+In-Reply-To: <1fa0a253-d36f-49ce-bd6f-d712fb1ca0df@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000514e4306205664cb@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING: kmalloc bug in wnd_init
+From: syzbot <syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Freitag, 23. August 2024, 05:43:04 CEST schrieb Ye Zhang:
-> If the clk_get_rate return '0', it will happen division by zero.
-> 
-> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+Hello,
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> ---
->  drivers/gpio/gpio-rockchip.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 0bd339813110..712258224eb3 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -207,6 +207,8 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
->  	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
->  		div_debounce_support = true;
->  		freq = clk_get_rate(bank->db_clk);
-> +		if (!freq)
-> +			return -EINVAL;
->  		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
->  		if (debounce > max_debounce)
->  			return -EINVAL;
-> 
+Reported-by: syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com
+Tested-by: syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=164bcd8d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9cfedede3362b1e2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6d94bedd910a8216d25
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
