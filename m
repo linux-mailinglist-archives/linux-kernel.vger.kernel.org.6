@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-298829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC9D95CBFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516B195CD74
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74DE51F24BE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D591F23109
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7BF184547;
-	Fri, 23 Aug 2024 12:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325E51865E1;
+	Fri, 23 Aug 2024 13:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="suiDXK2G"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jiTn11vt"
+Received: from mail-m3288.qiye.163.com (mail-m3288.qiye.163.com [220.197.32.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A6184527
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6816BE14;
+	Fri, 23 Aug 2024 13:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414647; cv=none; b=XzBRji0KwMRAK2nLcJOlzYX8QIDIyPH/oGw0yxwAPleShOUFw9mFoxtECJpdYs6/ZPC9WmVSyz7RNZDOoY4NcNz8GKb0eKjGGI+2JVwJ93ioVC3e5bD8kRnlRomvxI1l2BYulSijpl1hIf1QKtEYx8EX0xtxD2+I1RV0dbtDBMo=
+	t=1724418748; cv=none; b=qOAHWIijxVwYptq6T70za4rN+TK6EyhnpgOny/HWwcM9slxCgBXdcrCbukd/z/uxLHJPolsQDf+WYyf3hEM8Eqm4TvMLmdZEBK50gVLOAuyrByc5ZdVSC2vllMKWYNtEY8pie+lOQfa9le79o1tfCVlVhN57yytH/WG/cdRuxvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414647; c=relaxed/simple;
-	bh=fyzr7fb2kWsyVTwK9PR+UAPo68zR5RMmPdLXxwui6mM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QY98bTv2z25sRCyrDy8nI3I+pjihf7Ocw8dLYb7VCas/nwgdHRMr+3gwmkNtTYeqOXV9JoO+yE2ACs1qy/0nxhfE97J3hdb9WIOMGtGvfkVeJRlmOKHLCs2MX9TtGCKv+1lM7W9SHL+Vdx3x8Kc2nwiW8NfpwlUOjbwXhwL8V8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=suiDXK2G; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724414636; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AQqCQwb+Jccrz3xk4NCyo0ZnAcB4vP2QRPGZr5pucPg=;
-	b=suiDXK2GekRFOkVwbw4KPEPCk9nPNiDTwWFA/GLop22m3KHKJcD7/46ref2Ggp5kFL3vIba1Sff/PNYFj1qmiFANuhuV5D20OfzwIGCLplgz41weN6LsdMDt9AhKcvA5iZP+VLiYzmzqpij0gUawFqVHjgUTMdFrWCmes6Fd3g8=
-Received: from 172.20.10.3(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WDTYZkX_1724414634)
-          by smtp.aliyun-inc.com;
-          Fri, 23 Aug 2024 20:03:55 +0800
-Message-ID: <b399e356-6e95-489a-a844-3545a6f22e12@linux.alibaba.com>
-Date: Fri, 23 Aug 2024 20:03:53 +0800
+	s=arc-20240116; t=1724418748; c=relaxed/simple;
+	bh=1VfQbjWS+6z2mD0CQrtZvs5NWWR86HhjlnQAFqhZ9Tw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Vv2plvnQyuKJYzD59TM4Cg+r4wsWcqNftkLqJ/ROyZBnX+DyCkXN+DtcvIJPpp7iEQH9ORnPpSmmvyuFUaBnCDZplTT8OkM/cFVKfZzUZh/u3i1hNCP80zffbKVz8B6unVZ9TDy7VJD0laLfG+YywsP+QQ6AGtlgm8N/fbCbXZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jiTn11vt; arc=none smtp.client-ip=220.197.32.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=jiTn11vtYuDeWdB68667tgi9pyyqszmnApIkCNbVnsqAk4SxE9WfnEP9itMvgfhuO4lxjpYN86CzGINoICX16MLvxRY1OPz6NOtY10C6HmKPngLd+rp5Q5SNrwCcM8tcZu6CbyTLV7vCnhUeRI+BTjWLEFzupkmMl7d/1XVbHU8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=AludWvTyCsSnun1czF/Np2s2IMxYrPapHyVaGwssSEk=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 7A1507E03D5;
+	Fri, 23 Aug 2024 11:45:02 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: [PATCH v2] gpio: rockchip: resolve underflow issue
+Date: Fri, 23 Aug 2024 11:43:07 +0800
+Message-Id: <20240823034314.62305-5-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: [PATCH v2] Prevent entering an infinite loop when
- i is 0
-To: liujinbao1 <jinbaoliu365@gmail.com>, xiang@kernel.org
-Cc: chao@kernel.org, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, mazhenhua@xiaomi.com,
- liujinbao1 <liujinbao1@xiaomi.com>
-References: <20240823030525.4081970-1-jinbaoliu365@gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240823030525.4081970-1-jinbaoliu365@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkJMTVZJTk4YTE1KQ0lPT0NWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a917d5672e609cfkunm7a1507e03d5
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MSo6HTo5FjI4KCxRCTYIThAO
+	LhIKCzlVSlVKTElPSENPTEtITElNVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSUxOTTcG
 
+div_reg may be < 0 if debounce is zero, causing the unsigned int to
+overflow.
 
+Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 2024/8/23 11:05, liujinbao1 wrote:
-> From: liujinbao1 <liujinbao1@xiaomi.com>
-> 
-> When i=0 and err is not equal to 0,
-> the while(-1) loop will enter into an
-> infinite loop. This patch avoids this issue.
-> 
-> Signed-off-by: liujinbao1 <liujinbao1@xiaomi.com>
-> ---
->   fs/erofs/decompressor.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
-> 
->> Hi,
-
-The patch is corrupted and the patch subject
-line is also broken.
-
-I think it should be:
-[PATCH v2] erofs: prevent entering an infinite loop when i is 0
-
->>
->> On 2024/8/22 14:27, liujinbao1 wrote:
->>> From: liujinbao1 <liujinbao1@xiaomi.com>
->>>
->>> When i=0 and err is not equal to 0,
->>> the while(-1) loop will enter into an
->>> infinite loop. This patch avoids this issue.
->>
->> Missing your Signed-off-by here.
->>
->>> ---
->>>   fs/erofs/decompressor.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c index
->>> c2253b6a5416..1b2b8cc7911c 100644
->>> --- a/fs/erofs/decompressor.c
->>> +++ b/fs/erofs/decompressor.c
->>> @@ -539,6 +539,8 @@ int __init z_erofs_init_decompressor(void)
->>>       for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
->>>               err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
->>>               if (err) {
->>> +                    if (!i)
->>> +                            return err;
->>>                       while (--i)
->>>                               if (z_erofs_decomp[i])
->>>                                       z_erofs_decomp[i]->exit();
->>
->>
->> Thanks for catching this, how about the following diff (space-demaged).
->>
->> If it looks good to you, could you please send another version?
-> 
->> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c index c2253b6a5416..c9b2bc1309d2 100644
->> --- a/fs/erofs/decompressor.c
->> +++ b/fs/erofs/decompressor.c
->> @@ -534,18 +534,16 @@ int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb)
->>
->> int __init z_erofs_init_decompressor(void)
->> {
->> -      int i, err;
->> +      int i, err = 0;
->>
->>         for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
->>                 err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
->> -              if (err) {
->> +              if (err && i)
->>                         while (--i)
->>                                 if (z_erofs_decomp[i])
->>                                         z_erofs_decomp[i]->exit();
->> -                      return err;
-> +						break;
->> -              }
->>         }
->> -      return 0;
->> +      return err;
->> }
->>
-> missing break?
-
-Why needing a break?
-
-Thanks,
-Gao Xiang
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index bf22b103b6a2..c3a87d075908 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -204,8 +204,8 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 	unsigned int cur_div_reg;
+ 	u64 div;
+ 
+-	if (bank->gpio_type == GPIO_TYPE_V2 && !IS_ERR(bank->db_clk)) {
+-		div_debounce_support = true;
++	div_debounce_support = (bank->gpio_type == GPIO_TYPE_V2) && !IS_ERR(bank->db_clk);
++	if (debounce && div_debounce_support) {
+ 		freq = clk_get_rate(bank->db_clk);
+ 		if (!freq)
+ 			return -EINVAL;
+@@ -216,8 +216,6 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+ 
+ 		div = (u64)debounce * freq;
+ 		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+-	} else {
+-		div_debounce_support = false;
+ 	}
+ 
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
+-- 
+2.34.1
 
 
