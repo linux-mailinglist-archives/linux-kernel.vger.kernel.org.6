@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-299656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBF795D844
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:58:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CC395D847
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC806282C71
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F4F1F219BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7221CFEBA;
-	Fri, 23 Aug 2024 20:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BE91C7B91;
+	Fri, 23 Aug 2024 21:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvBQSMqU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114A61C8255;
-	Fri, 23 Aug 2024 20:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C6iwZbgi"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5947D401;
+	Fri, 23 Aug 2024 21:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724446540; cv=none; b=f7v3U+RgozUIKiSJvbkAB5Wo8ZVyJCS5wk6FL8LMHFQnrNO1eHY8q8DyZjDNHI61Oz9dI0bcz0vEqfOUCiX8Q0UpanyZlje0WyxpnO3e2qVL5/PRllRLgvOnWObpyeJ9b0OHotvaSMV22IiwbP6U28S+N1LrNB3fiAEo1/6Bv/w=
+	t=1724446971; cv=none; b=HnMNWkp7wgY9JNVKD6hBue5Ermg2u2wbu3EPdxLty6O3XKIq8Nkw89ZKO/5QPrDkoVAF9vJGFHPbhVcnkfGOBG50/4YZdlCXe64xtndCa88gmpqwKwd0SWJ4eKwHLhVfdgQisGRXwyLGqtQGplC9rVn2F7EJQP6SM8y4aLsqcwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724446540; c=relaxed/simple;
-	bh=Q3+HmYt/G3Au0niSNa/DgxrSc5e1rXQMjT5sZsxkC6k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qi72sruBA1ryWecxbaRyRiqXHar54Vah0OJIomGCFGh7N+SQ6WKRQ5SP3Rj1vg/R5V0ME5OCivOnEpExzeN1o49WTAgMgIPTuZJuXt0K9a+NRXAkew7IzOogaS3KSj3vV+kz1uMYxK6nzytLjeo4zltPuO+N+xFYFemxuxTb+NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvBQSMqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DC580C4DE06;
-	Fri, 23 Aug 2024 20:55:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724446539;
-	bh=Q3+HmYt/G3Au0niSNa/DgxrSc5e1rXQMjT5sZsxkC6k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=XvBQSMqU1e7ef3C8uU+tS2nJk/ECWMx5tGp040hyDzvCwQBoLunK+w9N39JZNswI8
-	 SSdDf0595/SF0it02f1TuVrXivw9KePWXfpt0WQjJugHLCIz2tf2ccKwLULN3soyMA
-	 IonTfGVxUSvmqr1bEwnxC2k9gYYeUJHJsVbOeVXw8S+u0MfZcW/axJa9MRi2YfWc4Q
-	 gGjZGB+y2/FhD9kkFSUpCl3AHEMTkCuCvaDsemjKLuSN2Yvn4YiWqFoJiRTSOoNSAf
-	 KpwH7WuMA5g43VfJTyz1S637B6iQEE7WacemNb6MbtmS4ZQlwP+XwkYoP+cCUOSd6v
-	 p6P4pS5bkLi7g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4818C5472F;
-	Fri, 23 Aug 2024 20:55:39 +0000 (UTC)
-From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Fri, 23 Aug 2024 22:54:47 +0200
-Subject: [PATCH v12 12/12] MAINTAINERS: add myself as Marvell PXA1908
- maintainer
+	s=arc-20240116; t=1724446971; c=relaxed/simple;
+	bh=nH8oqdDj52PUh7dzoLgyetldfSEB/0EcGoulJoFRuGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ot1L7cycu/iqeZM614tB4ASJniKeLMoyWN3c9xjAZnYmTy/YkNS210OnHYEaYCZ7xfXi0Dpm5Apib0ijoLKEM1K4eg71PyHW/xWT6sLP5Ma+GDko/kTl/O3w+Qxuqy0f6DkB0PM3d86bLJWy8q0Ree+sUGqxb826CwzKUj4J2Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C6iwZbgi; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A297220B7165;
+	Fri, 23 Aug 2024 14:02:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A297220B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724446969;
+	bh=94ktIl6VDdIJQkXpB2W9oUFrU1hm0z82X3RGB8CaEsU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C6iwZbgi0mE2l4o05Ijn6mRc3v74OYS+oeKC4BL6cj/bLnm7gkyyLX2GjsN9AjyVV
+	 Y0Ir9mghq8dR0IZtLlph/l2paSPKpFUn912xITmk99DcEJeffoGomADxzJ+fggBpM7
+	 4PsiLVhcWHw5vozyhmmIG2lk36G8hlS/wAbMhO6A=
+Message-ID: <727eebc5-e01e-4737-88b8-9890d90abc39@linux.microsoft.com>
+Date: Fri, 23 Aug 2024 14:02:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240823-pxa1908-lkml-v12-12-cc3ada51beb0@skole.hr>
-References: <20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr>
-In-Reply-To: <20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, 
- Haojian Zhuang <haojian.zhuang@linaro.org>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
- Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=906;
- i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=GovpMCIQGsNWiqbFciJR2Sc0Ur3raxOrVfpbnASZsI0=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDGknvmtOrQsqVdn/eNOL6UtM38WnnF06LSylxs74TY+Zk
- /MLo0UVHaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjAR5VWMDF+Fr/W0cn4+lPPI
- Uab+fHTsIt2zZgz9t86z6nFxOK0uusvwizlo+fYjB/3Zpdj5D8SaqDX/blqV+7tOwe4d256288v
- OswIA
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
-X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
- auth_id=191
-X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Reply-To: duje.mihanovic@skole.hr
-
-From: Duje Mihanović <duje.mihanovic@skole.hr>
-
-Add myself as the maintainer for Marvell PXA1908 SoC support.
-
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f328373463b0..33752c63bd5a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2481,6 +2481,15 @@ F:	drivers/irqchip/irq-mvebu-*
- F:	drivers/pinctrl/mvebu/
- F:	drivers/rtc/rtc-armada38x.c
- 
-+ARM/Marvell PXA1908 SOC support
-+M:	Duje Mihanović <duje.mihanovic@skole.hr>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+T:	git https://gitlab.com/LegoLivesMatter/linux
-+F:	arch/arm64/boot/dts/marvell/pxa1908*
-+F:	drivers/clk/mmp/clk-pxa1908*.c
-+F:	include/dt-bindings/clock/marvell,pxa1908.h
-+
- ARM/Mediatek RTC DRIVER
- M:	Eddie Huang <eddie.huang@mediatek.com>
- M:	Sean Wang <sean.wang@mediatek.com>
-
--- 
-2.46.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/4] Squashfs: Ensure all readahead pages have been used
+To: Christian Brauner <brauner@kernel.org>,
+ Phillip Lougher <phillip@squashfs.org.uk>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240820232622.19271-1-phillip@squashfs.org.uk>
+ <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+
+On 8/21/2024 1:12 AM, Christian Brauner wrote:
+> On Wed, 21 Aug 2024 00:26:22 +0100, Phillip Lougher wrote:
+>> In the recent work to remove page->index, a sanity check
+>> that ensured all the readhead pages were covered by the
+>> Squashfs data block was removed [1].
+>>
+>> To avoid any regression, this commit adds the sanity check
+>> back in an equivalent way.  Namely the page actor will now
+>> return error if any pages are unused after completion.
+>>
+>> [...]
+> 
+> Applied to the vfs.folio branch of the vfs/vfs.git tree.
+> Patches in the vfs.folio branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+> 
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.folio
+> 
+> [5/5] Squashfs: Ensure all readahead pages have been used
+>        https://git.kernel.org/vfs/vfs/c/5d85f9c952d8
+> 
+
+When I was testing the linux-next branch I got
+"BUG: KASAN: slab-use-after-free in squashfs_readahead+0x19f1/0x1e50"
+It seems this is due to the access of `actor` just after freeing it.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/squashfs/page_actor.h#n41
+
+-Fan
 
