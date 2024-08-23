@@ -1,83 +1,148 @@
-Return-Path: <linux-kernel+bounces-299422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586E495D460
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7785C95D466
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDEC1B21340
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE6C1C226B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A570A1922E4;
-	Fri, 23 Aug 2024 17:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C18193082;
+	Fri, 23 Aug 2024 17:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WP5kf9sb"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Xrty0Hnc"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA2018FDCE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8DB1925BD;
+	Fri, 23 Aug 2024 17:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434418; cv=none; b=JS7Q90M8Rips5gcRC8GpLcymrcr1BsTqPcLNOa6vm4NniuIrJ9UUwKW/t8ksksbnBJvfEGnwK5ssavILGpoMZywHftBaFA52O4L587fVqtWEC9n1c5QfnuVjACSfI+OjpM0gKc8e4amn1q6T9iKjW1bUtt2+g4AMyKMGg9q1Spk=
+	t=1724434434; cv=none; b=HHhQiGaS+WmcSEJIbB6O83735JE3w3ewNodPPe1BHa734eVvdD0MaaZZSIrDJZSowzbWd+smCBO4LOUo1UtySnqLo+1BUlPY9KU216iTzIJFcZzDPm0qBgInfMc3mWCNSK0P5RSbqEiMuL+S1tSPeR3gXqGzVXtbbHLdIc0B470=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434418; c=relaxed/simple;
-	bh=N089ifLbeTW8qCCACTyokSGPtgYUtwc9Ea3m9PRxESg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=udFucOJ22wnAoKsxX62HNSTOAfX0nVhkH4Tt2UpD/g2HE+u1uafxh4+GYHTlg08cT0udqUnObu1Dr3r/DWrHL4cAN+V4fy3IGPLKguMYEpqBgf5xJYw0tRl/whYpFlnGXQXkPXhm8bzYJjwghBDPWdhEgrGqp+Wt7buVr405rJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WP5kf9sb; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CDF86C0003;
-	Fri, 23 Aug 2024 17:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724434407;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y5mTqTOdc9pSBs6vZN4P0DsIlQ2ECczt0doqqJU0yUE=;
-	b=WP5kf9sbcqcUiCOpn11scWXFR7bj845YG4FJTG5BzAX1T5+IyPix/seAo8lLqtEc4W0Rdx
-	zwOwGoacHnzqGa9wjdePOy6wN9ugpA7/TerjhXkp1tf4o4Oc/tuVIUR0HG71hdvi8hnmfw
-	S5LJCyijwqkLhmld95Havvml8cqH/J+jQoG96yNAnauMibgog88LwpMlX3HBBGR+mlMMez
-	zpoBch/GMkZFQJkpt/hsy5mXeXxWVZCxNLFtzTBfgFlZ8txAvPfq0hWW1ydSKpWPasPew2
-	JfBXz4G9+Dehz8U1Pq435vYT6T5i0Do0IpHWz9UcTPl2zwbu3zvCEP5gGd4RJA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: Use of_property_read_bool()
-Date: Fri, 23 Aug 2024 19:33:26 +0200
-Message-ID: <20240823173326.441823-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240731191312.1710417-22-robh@kernel.org>
-References: 
+	s=arc-20240116; t=1724434434; c=relaxed/simple;
+	bh=SOVQqgNqJtR/+1Gf55+3TQb+lOiY3C7sFKejcvIlGt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O8FPPT2Obb/D268xqufXaBvfoFgYstFFQsRLRvZ3VAzn3WqE7yofXbtSGCYZQv3o4xqJlIC5GEpvV1d47/IH/hALtPEb5U8H8CR9ZHXD1+VzpOoTzwyN16I/qlJypkrR27cSguXjJ88sNJO8k7Mna9mwCHq9SScZGZQKFiR7/BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Xrty0Hnc; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=SxyIC5tFq6AtUq6R3df3UAsAHokn3gBbCFeE0EbVRo8=; b=Xrty0Hnc0QheTY7+MW9JDReDc1
+	lgyN0AvuKVbjlkbjEtNp0FHvW4At/7wR2mkF/aShDa0OJpQjpAqK7xv4cTtSb1qtoOHGrov2C1vmg
+	NNbLrVQtqHzd2CCGTtmzNInAOiTDeHuPWcNteHD96t83+XbRdQ9R1NNtm6LWBjCrKVyNJq4FIHtjb
+	GSjk/uE7JMGiCbsGbDIqu+wvDSn4AeC5/IYp2tvuYYnsOyZg0dj7UES9hYOW9wWna5FnbTXHswPab
+	g65joXcwN4RvGEPse9A7GGv6FMU2ZucgMVt/f9m7ejBAMTj0yQcQ8Hk1n9dSQfPjsmxjsq2BPn7wW
+	5LnIAJXQ==;
+Received: from [179.118.186.198] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1shYAM-0048Ww-1V; Fri, 23 Aug 2024 19:33:37 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	krisman@kernel.org,
+	Daniel Rosenberg <drosen@google.com>,
+	smcv@collabora.com,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH 0/5] tmpfs: Add case-insesitive support for tmpfs
+Date: Fri, 23 Aug 2024 14:33:27 -0300
+Message-ID: <20240823173332.281211-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'ea265e483eb3d9750c7cfc642dedd5be31dc22c2'
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, 2024-07-31 at 19:13:00 UTC, "Rob Herring (Arm)" wrote:
-> Use of_property_read_bool() to read boolean properties rather than
-> of_get_property(). This is part of a larger effort to remove callers
-> of of_get_property() and similar functions. of_get_property() leaks
-> the DT property data pointer which is a problem for dynamically
-> allocated nodes which may be freed.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hi,
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+This series is based on [0].
 
-Miquel
+This patchset adds support for case-insesitive file names lookups in tmpfs. The
+main difference from other casefold filesystems is that tmpfs has no information
+on disk, just on RAM, so we can't use mkfs to create a case-insensitive tmpfs.
+For this implementation, I opted to have a mount option for casefolding. The
+rest of the patchset follows a similar approach as ext4 and f2fs.
+
+* Use case (from the original cover letter)
+
+The use case for this feature is similar to the use case for ext4, to
+better support compatibility layers (like Wine), particularly in
+combination with sandboxing/container tools (like Flatpak). Those
+containerization tools can share a subset of the host filesystem with an
+application. In the container, the root directory and any parent
+directories required for a shared directory are on tmpfs, with the
+shared directories bind-mounted into the container's view of the
+filesystem.
+
+If the host filesystem is using case-insensitive directories, then the
+application can do lookups inside those directories in a
+case-insensitive way, without this needing to be implemented in
+user-space. However, if the host is only sharing a subset of a
+case-insensitive directory with the application, then the parent
+directories of the mount point will be part of the container's root
+tmpfs. When the application tries to do case-insensitive lookups of
+those parent directories on a case-sensitive tmpfs, the lookup will
+fail.
+
+For example, if /srv/games is a case-insensitive directory on the host,
+then applications will expect /srv/games/Steam/Half-Life and
+/srv/games/steam/half-life to be interchangeable; but if the
+container framework is only sharing /srv/games/Steam/Half-Life and
+/srv/games/Steam/Portal (and not the rest of /srv/games) with the
+container, with /srv, /srv/games and /srv/games/Steam as part of the
+container's tmpfs root, then making /srv/games a case-insensitive
+directory inside the container would be necessary to meet that
+expectation.
+
+* Testing
+
+I send a patch for xfstests to enable the casefold test (generic/556) for tmpfs.[1]
+The test succeed.
+
+You can test this patchset using:
+
+  sudo mount -t tmpfs -o casefold=utf8-12.1.0 tmpfs mnt/
+
+And making a dir case-insesitive:
+
+  mkdir mnt/dir
+  chattr +F mnt/dir
+
+[0] https://lore.kernel.org/linux-fsdevel/20210323195941.69720-1-andrealmeid@collabora.com/
+[1] https://lore.kernel.org/fstests/20240823173008.280917-1-andrealmeid@igalia.com/
+
+André Almeida (5):
+  tmpfs: Add casefold lookup support
+  tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
+  tmpfs: Create casefold mount options
+  tmpfs: Expose filesystem features via sysfs
+  docs: tmpfs: Add casefold options
+
+ Documentation/filesystems/tmpfs.rst |  37 +++++
+ include/linux/shmem_fs.h            |   7 +-
+ mm/shmem.c                          | 205 ++++++++++++++++++++++++++--
+ 3 files changed, 238 insertions(+), 11 deletions(-)
+
+-- 
+2.46.0
+
 
