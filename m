@@ -1,176 +1,107 @@
-Return-Path: <linux-kernel+bounces-298889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B244895CCC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB72A95CCCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701F0285F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69E5287EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7E4185B45;
-	Fri, 23 Aug 2024 12:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56359185B55;
+	Fri, 23 Aug 2024 12:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDDgAMNa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J6njZBo9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D85136E2E;
-	Fri, 23 Aug 2024 12:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D644186287
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417220; cv=none; b=tHvQ8OyWUH4dB8wtDgpkgOr+4BSb4TbTXXr25FEvuCFMJFUKnDmjpN6pq70CW6h2yMLmGCRkpm4bC5ATuzX6D2KmBQBhBKVJT4ItBUO2fKjKJipCDW6poWlPJOqqJvkA8FZlOH5o2M7ISYoLju1lYWv/bXSkvJyAc6IhzMWNeec=
+	t=1724417295; cv=none; b=g/0Vw2j5b54+oIbslWOJY5B6p9Imkrg/il+PEVgwnpLJvirLevCuS+rUtSAjS3jXmBioM4EElUEhDMqP8yWPtl7UcZXtk7VmE1ySEqlnpYueqGIh76kFnRaJAw5INHrPVGhBQD5Q1LC/19NT89HJ5mlN40qRzMMxmP8ND6GbGZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417220; c=relaxed/simple;
-	bh=OM8PaXHNjwZ20oARdQYqWPXPxhV8XwwRpOxFxrnByjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftZbrVqskWTXvxw+l4e9XGAEfZzaCWQVudoFiJ3PN159FLZh4ALa/pkltSD3zSKXKIK/Nt7lF1Kj2aiUGhbfCQl03fDHL8hB4wmLQTCV/xiMjb6We91akuL3Uq5OyIb5SmFHjOLnp+OlEkYVPvOs2ZH1NWwJh4tP9bHuFQ79f60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDDgAMNa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA98C32786;
-	Fri, 23 Aug 2024 12:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724417220;
-	bh=OM8PaXHNjwZ20oARdQYqWPXPxhV8XwwRpOxFxrnByjs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=dDDgAMNajyn+5gV1/T1NXQY9X/7GCK8fYmdt2040YYgQ80tMjjPkwxNAYISpJa2PH
-	 JBQLsWb1sSAYAp+sselkjS9lYKlrJArK7wu3/tbv3yUbnt72I6+NE/8DnvFIq+w+29
-	 +Kf6enLpqeJu16/HsMPB3v7vgSDylnpdyBgNSlgAJFTB01KbzNU1uTnpbAVMABxPDV
-	 xkrwcfUwWr+0mzTDdxW++xkyJj2YNIF95NWumS4Ao9q3atzS/+fS2p0oLCXM088PMT
-	 CrEUDhbsoxffkDQjbbvNWh1rfURZFiDi1Tx5ptlQKPr90oRYrcHiTCqf6Z/06zlG13
-	 kkSvPbZ5SUo+A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id AAE73CE0469; Fri, 23 Aug 2024 05:46:59 -0700 (PDT)
-Date: Fri, 23 Aug 2024 05:46:59 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1724417295; c=relaxed/simple;
+	bh=IAqcMqU8mCp77ZE2JJJNSsjrrmdmH41CGEMxBizPaSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tPoaP62i78C/qf/oMUsUx7UYP6kp/Gbs/sYBMnwQbPd67jOSTpCawZQtWe/tnMoHn23kVD1AuFVEhzvOGbGzICA3IdK3aSHNw+iuaPWDbZrD1WynVHAdM19oS9CM84kmgwH+TNAlnyCtxnrfUYeGUgzc+kxDyHptDF+onLRAaRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J6njZBo9; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724417292; x=1755953292;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=IAqcMqU8mCp77ZE2JJJNSsjrrmdmH41CGEMxBizPaSQ=;
+  b=J6njZBo97yt2fBincVo/FhBs93/7vJX7TBR2fINjMWU1WVWeXmh6yMUp
+   8Wke1+0SOmO3QqQ+J3poVYw1Qgh+CiUHIpIOulACP1wGCbU0bVKrVhFYn
+   2gTsN57m3suzG+8HeLYJJQiWvEgr1v6HNF0aRKRHLHZ6epSkm2VRdbeil
+   OfD22tUyX6jf4UxVIbslQnWYFYLPX76ZXFKaMrVtbWnL8EnaGorFjTf+q
+   JHL3XW+gGUZG+GYzOnn4/lLgk7cWr4O4Zb0nLzJK6/P8may5WjQ/Y/rw6
+   PAIfO/4BA7Npoz8oH3SnuWfeNTfuZYbWqwkUUJzZXxkWUutyBXoqF5PdA
+   g==;
+X-CSE-ConnectionGUID: 7jbBWW6sTOq6jXbCucCagw==
+X-CSE-MsgGUID: 8VkFjDvbQQaCd/9a8CZFEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="25777033"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="25777033"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 05:48:12 -0700
+X-CSE-ConnectionGUID: 7VIo5akBRryUwe8G7Xjlig==
+X-CSE-MsgGUID: YIMoobw5Se6RXftgBh8F1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="62507011"
+Received: from mylly.fi.intel.com (HELO [10.237.72.154]) ([10.237.72.154])
+  by orviesa008.jf.intel.com with ESMTP; 23 Aug 2024 05:48:10 -0700
+Message-ID: <473d838e-7b19-46b7-99a1-73fb8037188b@linux.intel.com>
+Date: Fri, 23 Aug 2024 15:48:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i3c/master: cmd_v1: Fix the exit criteria for the daa
+ procedure
+To: Billy Tsai <billy_tsai@aspeedtech.com>, alexandre.belloni@bootlin.com,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240823062535.3073706-1-billy_tsai@aspeedtech.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240823062535.3073706-1-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 09:47:05AM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 21, 2024 at 02:57:16PM -0700, Paul E. McKenney wrote:
+Hi
+
+On 8/23/24 9:25 AM, Billy Tsai wrote:
+> The exit criteria for the DAA should check if the data length is equal to
+> 1, instead of checking if the response status is equal to 1.
 > 
-> > 2e0199df252a ("sched/fair: Prepare exit/cleanup paths for delayed_dequeue")
-> > 
-> > The preceding commit is very reliable.
-> > 
-> > Only instead of (or maybe as well as?) introducing the dequeue_rt_stack()
-> > bug, the 2e0199df252a commit introduced a build bug:
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > In file included from kernel/sched/fair.c:54:
-> > kernel/sched/fair.c: In function ‘switched_from_fair’:
-> > kernel/sched/sched.h:2154:58: error: ‘__SCHED_FEAT_DELAY_ZERO’ undeclared (first use in this function); did you mean ‘__SCHED_FEAT_LATENCY_WARN’?
-> >  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
-> >       |                                                          ^~~~~~~~~~~~~
-> > kernel/sched/fair.c:12878:21: note: in expansion of macro ‘sched_feat’
-> > 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> >       |                     ^~~~~~~~~~
-> > kernel/sched/sched.h:2154:58: note: each undeclared identifier is reported only once for each function it appears in
-> >  2154 | #define sched_feat(x) !!(sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
-> >       |                                                          ^~~~~~~~~~~~~
-> > kernel/sched/fair.c:12878:21: note: in expansion of macro ‘sched_feat’
-> > 12878 |                 if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> >       |                     ^~~~~~~~~~
-> > 
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+>   drivers/i3c/master/mipi-i3c-hci/cmd_v1.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Oh gawd, last minute back-merges :/
-
-I know that feeling!  ;-)
-
-> Does the below help any? That's more or less what it was before Valentin
-> asked me why it was weird like that :-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 6be618110885..5757dd50b02f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
->  	 * and we cannot use DEQUEUE_DELAYED.
->  	 */
->  	if (p->se.sched_delayed) {
-> -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
->  		p->se.sched_delayed = 0;
->  		p->se.rel_deadline = 0;
->  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-
-Removing that line from 2e0199df252a still gets me the complaint about
-__SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
-that this commit:
-
-54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-
-Need to be placed before 2e0199df252a.  Of course, when I try it, I
-get conflicts.  So I took just this hunk:
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 97fb2d4920898..6c5f5424614d4 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
-  */
- SCHED_FEAT(CACHE_HOT_BUDDY, true)
- 
-+/*
-+ * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
-+ */
-+SCHED_FEAT(DELAY_ZERO, true)
-+
- /*
-  * Allow wakeup-time preemption of the current task:
-  */
-
-------------------------------------------------------------------------
-
-That makes the build error go away.  Maybe even legitimately?
-
-Just to pick on the easy one, I took a look at the complaint about
-cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
-being undefined.  This variable was added here:
-
-781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
-
-And its first use was added here:
-
-54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-
-Which matches my experience.
-
-So left to myself, I would run on these commits with the above hunk:
-
-54a58a7877916 sched/fair: Implement DELAY_ZERO
-152e11f6df293 sched/fair: Implement delayed dequeue
-e1459a50ba318 sched: Teach dequeue_task() about special task states
-a1c446611e31c sched,freezer: Mark TASK_FROZEN special
-781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
-f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
-2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-
-And where needed, remove the unused cfs_rq local variable.
-
-Would that likely work?
-
-In the meantime, SIGFOOD!
-
-							Thanx, Paul
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
+> index d97c3175e0e2..6a781f89b0e4 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/cmd_v1.c
+> @@ -339,7 +339,7 @@ static int hci_cmd_v1_daa(struct i3c_hci *hci)
+>   			break;
+>   		}
+>   		if (RESP_STATUS(xfer[0].response) == RESP_ERR_NACK &&
+> -		    RESP_STATUS(xfer[0].response) == 1) {
+> +		    RESP_DATA_LENGTH(xfer->response) == 1) {
+>   			ret = 0;  /* no more devices to be assigned */
+>   			break;
+>   		}
+Did you accidentally resend this from a local tree? Is this the same 
+than your commit cbf871e6d8ce ("i3c/master: cmd_v1: Fix the exit 
+criteria for the daa procedure")?
 
