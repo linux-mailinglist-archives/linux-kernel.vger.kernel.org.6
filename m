@@ -1,595 +1,287 @@
-Return-Path: <linux-kernel+bounces-298760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E67595CB38
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:14:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC99E95CB3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35531285589
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:14:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D06F1C21458
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FC818755F;
-	Fri, 23 Aug 2024 11:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193B018757C;
+	Fri, 23 Aug 2024 11:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RfkmrzKy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RCAhN47p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68851514CE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724411672; cv=none; b=GmqJDB0sr8oEif0Upc92sTDdZ1ToLlbLmDQvftP5ZNQpE7z/0xkprBKjO7CsBGsigf3NJFY12m6gUFyai3I0bM5t3MsI4uUl8KSWfwzN9tk/MYEbBCdLOJaU4VUA1e/BRNtbrn98Z6dBMovMM1PD0DjHtJL1MYtsUXvKOZVG4QE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724411672; c=relaxed/simple;
-	bh=vsMS/ZnAQ0CskAhs0EmegJwNPYR6rNO72dSYOc8fu8M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Lez1l7cCWVrffp26NLG9RLz+w2Bn35YuQBeolXfQTL9h02s9H5VLVIzRGrawFUQKrg8qzUWBJ99XlgJJ0xXGFHzrMaYkDdR9RmaeLaKVU1zYVrccGJa7yRw1ZV7sFyGNbnjxppnHW7xpfpGEMBcT67KzPZdKlxXJRepVnGijlCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RfkmrzKy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724411667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AvgRNgUeNF/NQOhQ8w2WHxRiSwRZ5hZk/1rYUYrRUhM=;
-	b=RfkmrzKyc+qW0+aiB8ifHWoQF4pCMx0cl2aR/oUCj7TWLaT4n2RqN/NxkdaSG+gAJ0xDbB
-	DMxIAvEEnnlt/CoxfTq0TI/TGwiKs2HnAnAPAmsDUTp2t/mgUgaUsAkqkc1dpFFwOXF87H
-	SVEy3UX5BEzrTJdMMy2mZl1tsJyVI/w=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-422-_utpHUzaNFuDNepK2jDotg-1; Fri, 23 Aug 2024 07:14:25 -0400
-X-MC-Unique: _utpHUzaNFuDNepK2jDotg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4280a39ecebso14983865e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:14:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724411664; x=1725016464;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AvgRNgUeNF/NQOhQ8w2WHxRiSwRZ5hZk/1rYUYrRUhM=;
-        b=CbQ6T5Y2IBb6RMz+siO6Kj7GVfo+tsWhJSXNFIW6OK01SSoDoUZJt58A9y1r1eJTFL
-         Eg8aBp9LV/j6QmmF6BHWaWLwc+Faxf9S+0QIV0bL1nxYrgFbS9EohcV1LG/blhZH3/wd
-         83mte8hky2KvrSLCiXWTaVXyq8MnUoIUD/YakluZiqqbxumUXz/p03oqj/zRb2kafkCV
-         hqThmwwPxEtYyz1+a62cyFkd4t3D2LsJpN3Zl2TqLKNqtA0lrfvAs4GklLC4WDQDa+NO
-         lxHbx3659L+DztoYO5lF2zxdeyDNd0jVbtiP0ddOGsx2mR+nPcpb0zX6KSh2YQt5AiKD
-         /rQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdg/MMNwASf9BxrYZk9rWrTSiw1yB5T3gGJ0LsI7hQ6Z2NxRHCi8/QSjDpMMwKAXzL8y1qFWrZ6kJlxcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9/ovztXX3fO8lk4AA01yJN/syP16vAMhI4mCtp41z+rEgXd9f
-	vUMi8Bs+/GEndPmkF5vlHjXVoUdeUQL8f9rg6uFJyRSfVr2t0r32Sf5uJe4uukUWFVNxivbzpvj
-	bsbzzlXGJ37AintYGTmlsCj4wlZIm6PTUc5d028piJ8Lu9mh5SgLPN874AOE9EA==
-X-Received: by 2002:a05:600c:1d16:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-42ac38dfc60mr34868605e9.15.1724411664039;
-        Fri, 23 Aug 2024 04:14:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEKT1mg0ON9En57It764EyPFtnZKbhE1cyli+Fq7zjkAvDncnj3/kYXksD+WtitiWXj7RNjjQ==
-X-Received: by 2002:a05:600c:1d16:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-42ac38dfc60mr34868325e9.15.1724411663414;
-        Fri, 23 Aug 2024 04:14:23 -0700 (PDT)
-Received: from intellaptop.lan ([2a06:c701:7783:7201:2e6e:4397:f7d8:1e47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac515a2a5sm56821365e9.20.2024.08.23.04.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 04:14:23 -0700 (PDT)
-Message-ID: <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
-Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
- architectural msrs
-From: mlevitsk@redhat.com
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
- linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Chao Gao
- <chao.gao@intel.com>
-Date: Fri, 23 Aug 2024 14:14:21 +0300
-In-Reply-To: <ZsYQE3GsvcvoeJ0B@google.com>
-References: <20240815123349.729017-1-mlevitsk@redhat.com>
-	 <20240815123349.729017-2-mlevitsk@redhat.com> <Zr_JX1z8xWNAxHmz@google.com>
-	 <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
-	 <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
-	 <ZsYQE3GsvcvoeJ0B@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B014F4F88C;
+	Fri, 23 Aug 2024 11:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724412038; cv=fail; b=bvGUVOFjRp3RmK2f2wrY5usRWeC9jsbR32OJrQUalFywizgSlM+8lgWGABH8UIT5crNiNqL48VAoOokIxXaFK7/kADSkrKN0nUmLjYIq1oEzzkD5z6lXAujRuQzjLRti/ZiALjR7fJQjA/zuRVWoLM4SBduZi9lA7FdSSvFyNsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724412038; c=relaxed/simple;
+	bh=wB+1kPwWyS0Jo1voK/0Jlf2ZdUznBDb6ISHP/wuoM9E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b+7+HO2P+w2qDpJnlcdhp/xGbtzU4tk38EMBJKwZNSsM9a6ro/p3ARx6vUeSRP9ELFhJd/224cYtqd48PvHmP3ZkXfOq4gRoLqJNC+nA0yAJvq2XnbYUHnptrxmNAYB492s7f6kH114pUsJImL7HZyPxjXgMt/Ip35xxOMkd8d8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RCAhN47p; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724412037; x=1755948037;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=wB+1kPwWyS0Jo1voK/0Jlf2ZdUznBDb6ISHP/wuoM9E=;
+  b=RCAhN47pf4BXkUHkAAnA+6hAPfSLtZzLME3Zyv/nPIvkQuqbQc0v1nz8
+   CoP1GcEL7gAOiVd7ZbVFM0o4pRc4y5ZS1Qc5LtFNhk3Rfdua26C3BOoZa
+   MikTxEXCQbpFR9v/VnktgTOTRkhBY5ZzSPaflwcbhX+TrXKy7G+dYiOs8
+   3xNcMFQYsAE49DpYNZ9UfCOCpM8+oJsxv/x/YQFHjOQAZjU191cgimy/H
+   OPtFdMdzzmlWrGw233bgtxbBOOpD+J2NVPMtEplybQJQgOoKJ8ShUFk+J
+   OanRNswhMPdCQx3OhELr/1Mr3oDiFc6M8PGqy5BK847hHwv5ViZ77dGug
+   g==;
+X-CSE-ConnectionGUID: VeYW6CLFST6MefSGJCtJQg==
+X-CSE-MsgGUID: P2d3674xSiusgmmE9Rn6jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33441437"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="33441437"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 04:20:36 -0700
+X-CSE-ConnectionGUID: IwbE52FsQNmi9g9REs/row==
+X-CSE-MsgGUID: sEPoMaXkSRmfANw0ZGSyEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61917894"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Aug 2024 04:20:35 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 23 Aug 2024 04:20:35 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 23 Aug 2024 04:20:34 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 23 Aug 2024 04:20:34 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.42) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 23 Aug 2024 04:20:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wa98Zl2I70BZ5sZ8CJR9wVHPfQPp83X8paoIAg2tHNtLNm4NMAi5YQQbcXyfLNQM75ZLPHWZPgWsl9laDOp1gGg7jBjPCiro3PGYZAzhF9cN68br6XAwCgpGVOLa9XdqB6sk+QtRkPOv54vMfNZ5MbZooH7wuS5U0e5wm3x1LO3dGuEl+GcTJovXJ2GEQ4/yHzjX/w2IcafNkj9XAQIerYY8kefgITVGpcUyh07b5CuNhop/1WArAALeAjXE3vBEaIA5mKA+7uRv4MEuz+0TL12AbsoxSZ6OjZnR2Z7hl1/w4EAH3Tp4hwAKyELbEXBEaVzOrbgvU2NnsczPcJSPFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3FOKuEFOYRIpccfxG8w8QOqDUqDv76LVSxdB8ETRXpg=;
+ b=vjXz0tEjT5Vpe+ercNW3WIh6BaKxSBgUiUHP2btwDMUy4YSrXwlpl4NImT6+E7ULvRKJ61eyoTl2PuVO2DwmSey2NqLLMVeqcPBHfh3Zdf8rCc9Ba9AzGV/vt6xDl1poYIMD7Kz6YDrDM53lk32cwaDgTlS5Thq+AH15YPtN4oM8yIBA/cBIzP91witI1Ye9765B+xZ6zEkM2qq4xkMzluL192+B0rzz4TNe+gmL/DRZpKZofFpVkOGTPxR+QoxO0apubzfc1wXozFZXyGYs7vb+ej4H98YatRwywquTzP1GTWiopAYGTgT3MCqxmXZuDW2JHyZFCyUPSIuku0zYVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
+ SA2PR11MB5033.namprd11.prod.outlook.com (2603:10b6:806:115::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 11:20:31 +0000
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca%4]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 11:20:31 +0000
+Date: Fri, 23 Aug 2024 13:20:22 +0200
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Jacob
+ Keller" <jacob.e.keller@intel.com>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <magnus.karlsson@intel.com>, Michal Kubiak
+	<michal.kubiak@intel.com>, Wojciech Drewek <wojciech.drewek@intel.com>,
+	Amritha Nambiar <amritha.nambiar@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<anirudh.venkataramanan@intel.com>, <sridhar.samudrala@intel.com>
+Subject: Re: [PATCH iwl-net v4 1/6] ice: move netif_queue_set_napi to
+ rtnl-protected sections
+Message-ID: <ZshwdidOXJGojVaa@boxer>
+References: <20240823095933.17922-1-larysa.zaremba@intel.com>
+ <20240823095933.17922-2-larysa.zaremba@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240823095933.17922-2-larysa.zaremba@intel.com>
+X-ClientProxiedBy: ZR2P278CA0061.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:52::19) To DM4PR11MB6117.namprd11.prod.outlook.com
+ (2603:10b6:8:b3::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|SA2PR11MB5033:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72880fa7-61d6-4c70-514e-08dcc3659926
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3MBFGWREq9NLFx9v0HhyiWFfUski0FF8qPNu39WFbil+8Luv50qq6PwvC5Sf?=
+ =?us-ascii?Q?WA3Qz7tbpc+yIwPKsEq/vBTA3nfx0OXvj33CXw2dDk5uW43osjtsD/BkiMmy?=
+ =?us-ascii?Q?qXlJSC1Q2beuPxJqJe3G7GqEeGPkxZ6lYxIWYidBrlAgDyCh1BaHW+kDMMGg?=
+ =?us-ascii?Q?foVXrs2Pev9/OlMGs0qYjoxUsckGzyJj8JHDDvymXEKDoYgmkeTRdz15eaBZ?=
+ =?us-ascii?Q?b1psFcpWrWpEjOO1/25erurx+pNY375TwECWbQfZ5LfHXepYHJTbHwYU+T1A?=
+ =?us-ascii?Q?tYwZtS4v37eBryzXxypF7pYU24tK5FBWb9vNFHf/FkR6Jn4GWv+81RePz7Bx?=
+ =?us-ascii?Q?fYFqpF4RfeZ5/1UaXURHB2jgTk6oUv57EiNA9878sds/Yc5rCmzGW2Yrgt5P?=
+ =?us-ascii?Q?RbdQEglh3gkZWZCL9S9sVvYvCn+FRzhMKpMSsLo+Tq8EjAYaK8PRSZAqkFUT?=
+ =?us-ascii?Q?TQeRAPhR0q3bX0sViySNBT0D9HZAQ0s7U3oZQW3sgyliYc7HbNeANoBgzKgI?=
+ =?us-ascii?Q?DO1g2M5v2+kJF5bZRtvZNUjzDrDKB6hmxSg8n185+Ko8/2SjYAZosBd9QzPw?=
+ =?us-ascii?Q?INZRkZH9S1lnfvqLrBW65s7u+nmYIm8wqUi3bo+uao14NIhQL9BqIF+iHEQi?=
+ =?us-ascii?Q?VcmR2HgXBBw7/vjSEiX3KRq84DUvBw91NswxaMZHXLbKniSqjJmSmQvOqf5P?=
+ =?us-ascii?Q?hcdb0nmrC3B10C0tW9Kvs3vnMZDdGSHnbi7jcNKi9cA5wmWQt6fU6L4gYrUi?=
+ =?us-ascii?Q?y37z1bYAm++Z4CM+UrCxZYmELszMC766gw1Xw4DO9tn/PZ38r2SIbiFQeF/m?=
+ =?us-ascii?Q?Uwwx4rIkIfvwDpt6wpEnCW31fusEkGGX9CReHzMIMxqO2s9Hg2ez5cR4Dczo?=
+ =?us-ascii?Q?2Lzyz0bvkxzQ5iNdg7e4lDMtDQDF3MDSi2eeSohsof+a9Kv29lwcQX2mVCPA?=
+ =?us-ascii?Q?FAjTINfkSQIax9cVCJAqYPN4sAfXKE3Cdy5wBXwEhrlI2ZVo75SnHp4WQ3LB?=
+ =?us-ascii?Q?oH+fM2S/hI4GHn3pIVAS5oHBIV98R2CnuMlbPqgQjlRuJEu8ETzw6GcKVOxY?=
+ =?us-ascii?Q?8TlRQmGjiihUKOOwSklS8sqvwr+kCjQP+gZi7nMMxxCmqJEeDCNysIuNNAkU?=
+ =?us-ascii?Q?k2V6HbUYjs+prvqdyENbD7I/rPPWIplvWo4RpoaptcwzFTtFzIxPrjT/1eLA?=
+ =?us-ascii?Q?rfQgvt6vQ0wsgldIXv0pTs+rxEnO1GylCnN3P2LFpO22QmSd23aMejoaZ5p7?=
+ =?us-ascii?Q?cNAVsRG/SL6vwtXG7/+U+vL935BqXI8lqODKUZhCaTLT+RAh4xX+wHWxeJCk?=
+ =?us-ascii?Q?XEeEmhKpGrg7csd10wQxQJWxLxMtDEad7MWuKoUXxSnnJQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XTZDuZDJvLI/qlRBVt33PijW/1F/LBKE6o79UDoBsYhUQBNgPmFOmgqMOZe3?=
+ =?us-ascii?Q?msBCIKXEJv0PPUOkzZrEvwr1NWxCVmMjnkUftHi82gU+EbllPTmE91jZEee8?=
+ =?us-ascii?Q?BOS5JV8hL1ti10l2ndAzYRJNOQ62m9+pK6B5Lye+xz5RJn2i3DeViPqwhFqg?=
+ =?us-ascii?Q?RxZIlM2udmoGWmyEqRLVoUjKZTu2q1ddqgoSPN7gzs6GR367GtFIsyElHYPA?=
+ =?us-ascii?Q?Bivkc//c5CWIAYhZfzQDsPBqk/ShnRQ1V/EzfKW5cdsu5kivX9lZIJP73SpD?=
+ =?us-ascii?Q?SaaVcuC5e1hlOEasMy01+CEBxEUX3wraV5hZNdpwIjfVg4QaCYjw2zsHfGVH?=
+ =?us-ascii?Q?7KNwq2NpRXF5B870qMuhZBBXfwYKI/mfb9yzTwNUwEr7qa03hKw+xn5wiLsZ?=
+ =?us-ascii?Q?XLK9nVrYtDeiYvxnsQoomRdDkpLN1kAL6D7jXXwkfymFDH2Qp5gIOEFqbbHQ?=
+ =?us-ascii?Q?9nB82KHadj48Wo+D/7I2u5EVQ5yyLjn8CwM+DkoF2gtVdVnx+K2NG+ydjzm4?=
+ =?us-ascii?Q?0qndqVx14N4kgvPDMybK5hYVeDzS2k5mGv0flIxaucol5eNVWwmbBHVrCbyh?=
+ =?us-ascii?Q?LRRJq0iwaFuwlycz+AIpR4KkWYI7SbkbKw1dOiV4fvjP1qEgpBhECZfILDHN?=
+ =?us-ascii?Q?MyMJ18mywQM1SXY98n+l4v40ROIALvZgVrwA4VA2HTqVwqAhSHDy0ps9BDSV?=
+ =?us-ascii?Q?cNf2sPiYNYiVbjCc1RCw+oBAjslekIdivAMkLfLKzuC1ruXy1QD1wscLvEng?=
+ =?us-ascii?Q?/VNzVrMiktcIHculnu8757Uedy6akGd5AkyQoSD4+BtPqna2TexxYHoikd5B?=
+ =?us-ascii?Q?FB4UBLEuscb++nvNmvtycmHGleRkYJSxQVpJKUnlUlWy/nkMyxA8kyfv3QsZ?=
+ =?us-ascii?Q?6OIRSahDF9UD9ePk52FE4ycqWLS7htEoftRfuUb2Qj9vIkL8kcfJCtNGU1QE?=
+ =?us-ascii?Q?RQma+phv1XaPQmBG3Pg0gbdv/pk8rGfYCCe8ghM7R/K5Ji4A6QpaPNbqoU5n?=
+ =?us-ascii?Q?EfF7emt4ZAiwbmKjkx/bor8PbfobYC6bXTougxdLw4EGLGz0XNSlRw+aFyFy?=
+ =?us-ascii?Q?l3OWRGHrsJRGhhHRIqvUuJ8uB0ZkM/pAsmMjFz27LhAc3nevT6m7OMBEHPYI?=
+ =?us-ascii?Q?FVIv3zY0BQBhA7IsBE1jN8sxu3hVALH6/u8CixaqwVY+410yioGCDdj8w/Hc?=
+ =?us-ascii?Q?l45eggbn6MuTwhMKKkm+aOa2779Ph+nIWeWLhGVumLWEgG7RUyvu1YjJVCsC?=
+ =?us-ascii?Q?2Iq/HJ2sXb2qYqPGVonmwsWYCibuYY3oCxp//xsM2DrV846KbBCWhzhV+HM6?=
+ =?us-ascii?Q?/r/6u0WvEko/3IDsM1cLiMLO8R11t6RuuCxnGIxXuWtSje+mDER/Nn1AZky/?=
+ =?us-ascii?Q?01xII2+gdwksW2M4893sldEnPUPfcL96xRd28oCPDEIR8/j4EoIvbjvhWxaf?=
+ =?us-ascii?Q?SItXxCh7UG8TxSYAufG0O4F7JqqCVs5TxBb+JNH3xUsnmAtH1CNApDGrXwKS?=
+ =?us-ascii?Q?/G+w/2Xich7ItBn56/XgrVQDznu5j1sL7cnfX1MhjcVYzX23gDWWMdkH2S7m?=
+ =?us-ascii?Q?YQkzXZYnwg3g4yb1wcdZiVADJFU9JQt0UCMkr3qMEtdfsTDL9lXV4g5547V5?=
+ =?us-ascii?Q?Yg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72880fa7-61d6-4c70-514e-08dcc3659926
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 11:20:30.9961
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pzbUXztrR2se+IbrKadRueEnpW6Yz01rgn9ptxybBCo3ipXcYzctU3633fInvnEB6pK4yOLaBtBDFwaPgJAxw9uHxeL03N90tubY+OXr/vY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5033
+X-OriginatorOrg: intel.com
 
-=D0=A3 =D1=81=D1=80, 2024-08-21 =D1=83 09:04 -0700, Sean Christopherson =D0=
-=BF=D0=B8=D1=88=D0=B5:
-> > On Wed, Aug 21, 2024, mlevitsk@redhat.com=C2=A0wrote:
-> > > > =D0=A3 =D0=B2=D1=82, 2024-08-20 =D1=83 15:13 +0300, mlevitsk@redhat=
-.com=C2=A0=D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > =D0=A3 =D0=BF=D1=82, 2024-08-16 =D1=83 14:49 -0700, Sean Christ=
-opherson =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > > > > > > > > > On Thu, Aug 15, 2024, Maxim Levitsky wrote:
-> > > > > > > > > > > > > > > > > > > > > > diff --git a/arch/x86/kvm/x86.c=
- b/arch/x86/kvm/x86.c
-> > > > > > > > > > > > > > > > > > > > > > index ce7c00894f32..2e83f7d7459=
-1 100644
-> > > > > > > > > > > > > > > > > > > > > > --- a/arch/x86/kvm/x86.c
-> > > > > > > > > > > > > > > > > > > > > > +++ b/arch/x86/kvm/x86.c
-> > > > > > > > > > > > > > > > > > > > > > @@ -302,6 +302,31 @@ const stru=
-ct kvm_stats_header kvm_vcpu_stats_header =3D {
-> > > > > > > > > > > > > > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 sizeof(kvm_vcpu_stats_desc),
-> > > > > > > > > > > > > > > > > > > > > > =C2=A0};
-> > > > > > > > > > > > > > > > > > > > > > =C2=A0
-> > > > > > > > > > > > > > > > > > > > > > +
-> > > > > > > > > > > > > > > > > > > > > > +/*
-> > > > > > > > > > > > > > > > > > > > > > + * Most x86 arch MSR values wh=
-ich contain linear addresses like
-> > > > > > > > > > > > > >=20
-> > > > > > > > > > > > > > Is it most, or all?=C2=A0 I'm guessing all?
-> > > > > >=20
-> > > > > > I can't be sure that all of them are like that - there could be=
- some
-> > > > > > outliers that behave differently.
-> > > > > >=20
-> > > > > > One of the things my work at Intel taught me is that there is n=
-othing
-> > > > > > consistent in x86 spec, anything is possible and nothing can be=
- assumed.
-> > > > > >=20
-> > > > > > I dealt only with those msrs, that KVM checks for canonicality,=
- therefore I
-> > > > > > use the word=C2=A0 'most'. There could be other msrs that are n=
-ot known to me
-> > > > > > and/or to KVM.
-> > > > > >=20
-> > > > > > I can write 'some' if you prefer.
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > >=20
-> > > > So I did some more reverse engineering and indeed, 'some' is the ri=
-ght word:
-> >=20
-> > Is it?=C2=A0 IIUC, we have yet to find an MSR that honors, CR4.LA57, i.=
-e. it really
-> > is "all", so far as we know.
+On Fri, Aug 23, 2024 at 11:59:26AM +0200, Larysa Zaremba wrote:
+> Currently, netif_queue_set_napi() is called from ice_vsi_rebuild() that is
+> not rtnl-locked when called from the reset. This creates the need to take
+> the rtnl_lock just for a single function and complicates the
+> synchronization with .ndo_bpf. At the same time, there no actual need to
+> fill napi-to-queue information at this exact point.
+> 
+> Fill napi-to-queue information when opening the VSI and clear it when the
+> VSI is being closed. Those routines are already rtnl-locked.
+> 
+> Also, rewrite napi-to-queue assignment in a way that prevents inclusion of
+> XDP queues, as this leads to out-of-bounds writes, such as one below.
+> 
+> [  +0.000004] BUG: KASAN: slab-out-of-bounds in netif_queue_set_napi+0x1c2/0x1e0
+> [  +0.000012] Write of size 8 at addr ffff889881727c80 by task bash/7047
+> [  +0.000006] CPU: 24 PID: 7047 Comm: bash Not tainted 6.10.0-rc2+ #2
+> [  +0.000004] Hardware name: Intel Corporation S2600WFT/S2600WFT, BIOS SE5C620.86B.02.01.0014.082620210524 08/26/2021
+> [  +0.000003] Call Trace:
+> [  +0.000003]  <TASK>
+> [  +0.000002]  dump_stack_lvl+0x60/0x80
+> [  +0.000007]  print_report+0xce/0x630
+> [  +0.000007]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+> [  +0.000007]  ? __virt_addr_valid+0x1c9/0x2c0
+> [  +0.000005]  ? netif_queue_set_napi+0x1c2/0x1e0
+> [  +0.000003]  kasan_report+0xe9/0x120
+> [  +0.000004]  ? netif_queue_set_napi+0x1c2/0x1e0
+> [  +0.000004]  netif_queue_set_napi+0x1c2/0x1e0
+> [  +0.000005]  ice_vsi_close+0x161/0x670 [ice]
+> [  +0.000114]  ice_dis_vsi+0x22f/0x270 [ice]
+> [  +0.000095]  ice_pf_dis_all_vsi.constprop.0+0xae/0x1c0 [ice]
+> [  +0.000086]  ice_prepare_for_reset+0x299/0x750 [ice]
+> [  +0.000087]  pci_dev_save_and_disable+0x82/0xd0
+> [  +0.000006]  pci_reset_function+0x12d/0x230
+> [  +0.000004]  reset_store+0xa0/0x100
+> [  +0.000006]  ? __pfx_reset_store+0x10/0x10
+> [  +0.000002]  ? __pfx_mutex_lock+0x10/0x10
+> [  +0.000004]  ? __check_object_size+0x4c1/0x640
+> [  +0.000007]  kernfs_fop_write_iter+0x30b/0x4a0
+> [  +0.000006]  vfs_write+0x5d6/0xdf0
+> [  +0.000005]  ? fd_install+0x180/0x350
+> [  +0.000005]  ? __pfx_vfs_write+0x10/0xA10
+> [  +0.000004]  ? do_fcntl+0x52c/0xcd0
+> [  +0.000004]  ? kasan_save_track+0x13/0x60
+> [  +0.000003]  ? kasan_save_free_info+0x37/0x60
+> [  +0.000006]  ksys_write+0xfa/0x1d0
+> [  +0.000003]  ? __pfx_ksys_write+0x10/0x10
+> [  +0.000002]  ? __x64_sys_fcntl+0x121/0x180
+> [  +0.000004]  ? _raw_spin_lock+0x87/0xe0
+> [  +0.000005]  do_syscall_64+0x80/0x170
+> [  +0.000007]  ? _raw_spin_lock+0x87/0xe0
+> [  +0.000004]  ? __pfx__raw_spin_lock+0x10/0x10
+> [  +0.000003]  ? file_close_fd_locked+0x167/0x230
+> [  +0.000005]  ? syscall_exit_to_user_mode+0x7d/0x220
+> [  +0.000005]  ? do_syscall_64+0x8c/0x170
+> [  +0.000004]  ? do_syscall_64+0x8c/0x170
+> [  +0.000003]  ? do_syscall_64+0x8c/0x170
+> [  +0.000003]  ? fput+0x1a/0x2c0
+> [  +0.000004]  ? filp_close+0x19/0x30
+> [  +0.000004]  ? do_dup2+0x25a/0x4c0
+> [  +0.000004]  ? __x64_sys_dup2+0x6e/0x2e0
+> [  +0.000002]  ? syscall_exit_to_user_mode+0x7d/0x220
+> [  +0.000004]  ? do_syscall_64+0x8c/0x170
+> [  +0.000003]  ? __count_memcg_events+0x113/0x380
+> [  +0.000005]  ? handle_mm_fault+0x136/0x820
+> [  +0.000005]  ? do_user_addr_fault+0x444/0xa80
+> [  +0.000004]  ? clear_bhb_loop+0x25/0x80
+> [  +0.000004]  ? clear_bhb_loop+0x25/0x80
+> [  +0.000002]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  +0.000005] RIP: 0033:0x7f2033593154
+> 
+> Fixes: 080b0c8d6d26 ("ice: Fix ASSERT_RTNL() warning during certain scenarios")
+> Fixes: 91fdbce7e8d6 ("ice: Add support in the driver for associating queue with napi")
+> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> Reviewed-by: Amritha Nambiar <amritha.nambiar@intel.com>
 
-This is more or less what I meant to say: I meant to say that I verified on=
-ly 'some'
-of the msrs/instructions, and for others I can't know,=C2=A0although it's l=
-ikely that
-indeed our theory is correct.
+Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
 
-> >=20
-> > > > I audited all places in KVM which check an linear address for being=
- canonical
-> > > > and this is what I found:
-> > > >=20
-> > > > - MSR_IA32_BNDCFGS - since it is not supported on CPUs with 5 level=
- paging,
-> > > > =C2=A0 its not possible to know what the hardware does.
-> >=20
-> > Heh, yeah, but I would be very surprised if MSR_IA32_BNDCFGS didn't fol=
-low all
-> > other system-ish MSRs.
-> >=20
-> > > > - MSR_IA32_DS_AREA: - Ignores CR4.LA57 as expected. Tested by booti=
-ng into kernel
-> > > > =C2=A0 with 5 level paging disabled and then using userspace 'wrmsr=
-' program to
-> > > > =C2=A0 set this msr.=C2=A0 I attached the bash script that I used
-> > > >=20
-> > > > - MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: - Exactly the sa=
-me story,
-> > > > =C2=A0 but for some reason the host doesn't suport (not even read) =
-from
-> > > > =C2=A0 MSR_IA32_RTIT_ADDR2_*, MSR_IA32_RTIT_ADDR3_*.=C2=A0 Probably=
- the system is not new
-> > > > =C2=A0 enough for these.
-> > > >=20
-> > > > - invpcid instruction. It is exposed to the guest without intercept=
-ion
-> > > > =C2=A0 (unless !npt or !ept), and yes, it works just fine on 57-can=
-onical address
-> > > > =C2=A0 without CR4.LA57 set....
-> >=20
-> > Did you verify the behavior for the desciptor, the target, or both?=C2=
-=A0 I assume
-> > the memory operand, i.e. the address of the _descriptor_, honors CR4.LA=
-57, but
-> > the target within the descriptor does not.
+We're going for a record of rev-by tags:)
 
-I verified only the target address. I assume that memory fetches do have to=
- honor the CR.LA57.
-
-> >=20
-> > If that assumption is correct, then this code in vm_mmu_invalidate_addr=
-() is broken,
-> > as KVM actually needs to do a TLB flush if the address is canonical for=
- the vCPU
-> > model, even if it's non-canonical for the current vCPU state.
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* It's actually a GPA =
-for vcpu->arch.guest_mmu.=C2=A0 */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (mmu !=3D &vcpu->arc=
-h.guest_mmu) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0/* INVLPG on a non-canonical address is a NOP ac=
-cording to the SDM.=C2=A0 */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (is_noncanonical_address(addr, vcpu))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-return;
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0kvm_x86_call(flush_tlb_gva)(vcpu, addr);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> >=20
-> > Assuming INVPCID is indicative of how INVLPG and INVVPID behave (they a=
-re nops if
-> > the _target_ is non-canonical), then the code is broken for INVLPG and =
-INVVPID.
-> >=20
-> > And I think it's probably a safe assumption that a TLB flush is needed.=
-=C2=A0 E.g. the
-> > primary (possible only?) use case for INVVPID with a linear address is =
-to flush
-> > TLB entries for a specific GVA=3D>HPA mapping, and honoring CR4.LA57 wo=
-uld prevent
-> > shadowing 5-level paging with a hypervisor that is using 4-level paging=
- for itself.
-
-I also think so.
-
-> >=20
-> > > > - invvpid - this one belongs to VMX set, so technically its for nes=
-ting
-> > > > =C2=A0 although it is run by L1, it is always emulated by KVM, but =
-still executed on
-> > > > =C2=A0 the host just with different vpid, so I booted the host with=
-out 5 level
-> > > > =C2=A0 paging, and patched KVM to avoid canonical check.
-> > > >=20
-> > > > =C2=A0 Also 57-canonical adddress worked just fine, and fully non c=
-anonical
-> > > > =C2=A0 address failed.=C2=A0 and gave a warning in 'invvpid_error'
-> > > >=20
-> > > > Should I fix all of these too?
-> >=20
-> > Yeah, though I believe we're at the point where we need to figure out a=
- better
-> > naming scheme, because usage of what is currently is_noncanonical_addre=
-ss() will
-> > be, by far, in the minority.
-
-Yes, I will take this into account.
-
-> >=20
-> > Hmm, actually, what if we extend the X86EMUL_F_* flags that were added =
-for LAM
-> > (and eventually for LASS) to handle the non-canonical checks?=C2=A0 Tha=
-t's essentially
-> > what LAM does already, there are just a few more flavors we now need to=
- handle.
-> >=20
-> > E.g. I think we just need flags for MSRs and segment/DT bases.=C2=A0 Th=
-e only (or at
-> > least, most) confusing thing is that LAM/LASS do NOT apply to INVPLG ac=
-cesses,
-> > but are exempt from LA57.=C2=A0 But that's an arch oddity, not a proble=
-m KVM can solve.
-> >=20
-> > diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
-> > index 55a18e2f2dcd..6da03a37bdd5 100644
-> > --- a/arch/x86/kvm/kvm_emulate.h
-> > +++ b/arch/x86/kvm/kvm_emulate.h
-> > @@ -94,6 +94,8 @@ struct x86_instruction_info {
-> > =C2=A0#define X86EMUL_F_FETCH=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(1)
-> > =C2=A0#define X86EMUL_F_IMPLICIT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(2)
-> > =C2=A0#define X86EMUL_F_INVLPG=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(3)
-> > +#define X86EMUL_F_MSR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(4)
-> > +#define X86EMUL_F_BASE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(5)
-> > =C2=A0
-> > =C2=A0struct x86_emulate_ops {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*vm_bugged)(struct x86=
-_emulate_ctxt *ctxt);
-> > ---
-> >=20
-> > And then with that, we can do the below, and have emul_is_noncanonical_=
-address()
-> > redirect to is_noncanonical_address() instead of being an open coded eq=
-uivalent.
-> >=20
-> > ---
-> > static inline u8 vcpu_virt_addr_bits(struct kvm_vcpu *vcpu)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return kvm_is_cr4_bit_s=
-et(vcpu, X86_CR4_LA57) ? 57 : 48;
-> > }
-> >=20
-> > static inline u8 max_host_virt_addr_bits(void)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return kvm_cpu_cap_has(=
-X86_FEATURE_LA57) ? 57 : 48;
-> > }
-
-This is a good name for this function, thanks.
-
-> >=20
-> > static inline bool is_noncanonical_address(u64 la, struct kvm_vcpu *vcp=
-u,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int flags)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (flags & (X86EMUL_F_=
-INVLPG | X86EMUL_F_MSR | X86EMUL_F_DT_LOAD))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return !__is_canonical_address(la, max_host_virt=
-_addr_bits());
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0return !__is_canonical_address(la, vcpu_virt_add=
-r_bits(vcpu));
-> > }
-
-This can work in principle, although are you OK with using these emulator f=
-lags
-outside of the emulator code?
-
-I am asking because the is_noncanonical_address is used in various places a=
-cross KVM.
-
-> > ---
-> >=20
-> > That will make it _much_ harder to incorrectly use is_noncanonical_addr=
-ess(),
-> > as all callers will be forced to specify the emulation type, i.e. there=
- is no
-> > automatic, implied default type.
-> >=20
-> > Line lengths could get annoying, but with per-type flags, we could do s=
-electively
-> > add a few wrappers, e.g.
-> >=20
-> > ---
-> > static inline bool is_noncanonical_msr_address(u64 la, struct kvm_vcpu =
-*vcpu)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return is_noncanonical_=
-address(la, vcpu, X86EMUL_F_MSR);
-> > }
-> >=20
-> > static inline bool is_noncanonical_base_address(u64 la, struct kvm_vcpu=
- *vcpu)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return is_noncanonical_=
-address(la, vcpu, X86EMUL_F_BASE);
-> > }
-> >=20
-> > static inline bool is_noncanonical_invlpg_address(u64 la, struct kvm_vc=
-pu *vcpu)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return is_noncanonical_=
-address(la, vcpu, X86EMUL_F_INVLPG);
-> > }
-> > ---
-> >=20
-> > We wouldn't want wrapper for everything, e.g. to minimize the risk of c=
-reating a
-> > de factor implicit default, but I think those three, and maybe a code/f=
-etch
-> > variant, will cover all but a few users.
-> >=20
-> > > > About fixing the emulator this is what see:
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0emul_is_noncanonica=
-l_address
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0__load_segment_descriptor
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0load_segment_descriptor
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_lldt
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_ltr
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_lgdt_lidt
-> > > >=20
-> > > >=20
-> > > >=20
-> > > > While em_lgdt_lidt should be easy to fix because it calls
-> > > > emul_is_noncanonical_address directly,
-> >=20
-> > Those don't need to be fixed, they are validating the memory operand, n=
-ot the
-> > base of the descriptor, i.e. aren't exempt from CR4.LA57.
-
-Are you sure?
-
-em_lgdt_lidt reads its memory operands (and checks that it is canonical thr=
-ough
-linearize) with read_descriptor and that is fine because this is memory fet=
-ch,=C2=A0
-and then it checks that the base address within the operand is canonical.
-
-This check needs to be updated, as it is possible to load non canonical GDT=
- and IDT
-base via lgdt/lidt (I tested this).
-
-For em_lldt, em_ltr, the check on the system segment descriptor base is
-in __load_segment_descriptor:
-
-...
- ret =3D linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
- if (ret !=3D X86EMUL_CONTINUE)
- return ret;
- if (emul_is_noncanonical_address(get_desc_base(&seg_desc) |
- ((u64)base3 << 32), ctxt))
- return emulate_gp(ctxt, err_code);
-
-...
-
-
-64 bases are possible only for system segments, which are
-TSS, LDT, and call gates/IDT descriptors.
-
-
-We don't emulate IDT fetches in protected mode, and as I found out the hard=
- way after
-I wrote a unit test to do a call through a call gate, the emulator doesn't
-support call gates either)
-
-Thus I can safely patch __load_segment_descriptor.
-
-
-> >=20
-> > > > the em_lldt, em_ltr will be harder
-> > > > because these use load_segment_descriptor which calls
-> > > > __load_segment_descriptor which in turn is also used for emulating =
-of far
-> > > > jumps/calls/rets, for which I do believe that canonical check does =
-respect
-> > > > CR4.LA57, but can't be sure either.
-> >=20
-> > I'm fairly certain this is a non-issue.=C2=A0 CS, DS, ES, and SS have a=
- fixed base of
-> > '0' in 64-bit mode, i.e. are completely exempt from canonical checks be=
-cause the
-> > base address is always ignored.=C2=A0 And while FS and GS do have base =
-addresses, the
-> > segment descriptors themselves can only load 32-bit bases, i.e. _can't_=
- generate
-> > non-canonical addresses.
-
-Yes - all data segments in 64 bit mode, still have 32 bit base in the GDT/L=
-DT,
-so this is indeed not an issue.
-
-> >=20
-
-> > There _is_ an indirect canonical check on the _descriptor_ (the actual =
-descriptor
-> > pointed at by the selector, not the memory operand).=C2=A0 The SDM is c=
-alls this case
-> > out in the LFS/LDS docs:
-> >=20
-> > =C2=A0 If the FS, or GS register is being loaded with a non-NULL segmen=
-t selector and
-> > =C2=A0 any of the following is true: the segment selector index is not =
-within descriptor
-> > =C2=A0 table limits, the memory address of the descriptor is non-canoni=
-cal
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-I tested that both ltr and lldt do ignore CR4.LA57 by loading from a descri=
-ptor
-which had a non canonical value and CR4.LA57 clear.
-
-> > and similarly, when using a CALL GATE, the far transfer docs say:
-> >=20
-> > =C2=A0 If the segment descriptor from a 64-bit call gate is in non-cano=
-nical space.
-
-For the academic reference, when loading offset from a call gate descriptor=
-,
-the CPU does the canonical check, and it does honour the CR4.LA57.
-
-
-A variation of the below test can prove it:
-
-void set_callgate_entry(u16 sel, void *offset, int dpl)
-{
-	idt_entry_t *e =3D (idt_entry_t *)&gdt[sel >> 3];
-	set_desc_entry(e, sizeof *e, offset, read_cs(), 12, dpl);
-}
-
-int main(int argc, char **argv)
-{
-	u64 gate_offset =3D (u64)&&gate_entry_point;
-
-	// toggle below to check various cases:
-	//setup_5level_page_table();
-	//gate_offset =3D 0xff4547ceb1600000;
-
-	set_callgate_entry(FIRST_SPARE_SEL, (void *)gate_offset, 0);
-
-	struct { u64 offset; u16 sel; } call_target =3D
-		{ 0 /* ignored */,
-		  FIRST_SPARE_SEL};
-
-	// Perform the far call
-	asm volatile goto (
-//	    KVM_FEP
-	    ".byte 0x48; rex.w\n" // optional, just for fun
-	    "lcall *%0\n"
-	    "jmp %l1\n"
-	:
-	: "m" (call_target)
-	:
-	: return_address
-	);
-
-	gate_entry_point:
-	printf("Call gate worked\n");
-
-	asm volatile (
-	     "retfq\n"
-	);
-
-	return_address:
-
-	printf("Exit from call gate worked\n");
-	return 0;
-}
-
-
-
-> >=20
-> > And given that those implicit accesses are not subjected to LAM/LASS, I=
- strongly
-> > suspect they honor CR4.LA57.=C2=A0 So the explicit emul_is_noncanonical=
-_address()
-> > check in __load_segment_descriptor() needs to be tagged X86EMUL_F_BASE,=
- but
-> > otherwise it all should Just Work (knock wood).
-> >=20
-> > > > It is possible that far jumps/calls/rets also ignore CR4.LA57, and =
-instead
-> > > > set RIP to non canonical instruction, and then on first fetch, #GP =
-happens.
-> >=20
-> > I doubt this is the case for the final RIP check, especially since ucod=
-e does
-> > check vmcs.HOST_RIP against vmcs.HOST_CR4.LA57, but it's worth testing =
-to confirm.
-
-See above.
-
-So now I'll try to do a v4 of the patches with all of the feedback included=
-.
-Thanks!
-
-> >=20
-> > > > I'll setup another unit test for this. RIP of the #GP will determin=
-e if the
-> > > > instruction failed or the next fetch.
-> >=20
-
-Best regards,
-	Maxim Levitsky
-
-
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_base.c |  11 +-
+>  drivers/net/ethernet/intel/ice/ice_lib.c  | 129 ++++++----------------
+>  drivers/net/ethernet/intel/ice/ice_lib.h  |  10 +-
+>  drivers/net/ethernet/intel/ice/ice_main.c |  17 ++-
+>  4 files changed, 49 insertions(+), 118 deletions(-)
+> 
 
