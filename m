@@ -1,200 +1,143 @@
-Return-Path: <linux-kernel+bounces-298429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECDB95C735
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:03:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BB195C738
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE33DB20E0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D746B280D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E15D13F42A;
-	Fri, 23 Aug 2024 08:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="UaMjInLF"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DE713D8A8;
+	Fri, 23 Aug 2024 08:03:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE7B13B2A9;
-	Fri, 23 Aug 2024 08:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD9E2AE95;
+	Fri, 23 Aug 2024 08:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400183; cv=none; b=qJZ9SvSVq/qUs01pk3GHPY0JHyNjSHsgMcR/t0nAuG4whzV5AvM9uaM3AYmebb5ZY1Yh82Y37+pyL6MOFNg0WBFMfyttjO4OpWVvJXeXfoaS/6gBrhTpKwv9QGdbGjutQ0csb+3OYImRZuGa7AyQF5cBXTmJm63utpT5Nkc4Rmw=
+	t=1724400220; cv=none; b=D1lNVG+p9pTK8l+RfaBbJ6UzvCr3e5JzdNZiC/K9o1imHZbCcb+9n3S/B0PAs/UMkTjZ6OPnBtDIObJTrsinelPWcIRnGjJ6oqKrtLnE7G/iOsp4mQ8kCPTGAjqWQoxvhTmGlFGn1k8b8QWJTk2aOhGuFn/RVlVysBxGpo/jW34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724400183; c=relaxed/simple;
-	bh=RCzLBGrSgxEPifownce8btohGXHc/a+7byMcwyzI2TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WbPauv37uMH/XGSWPXmdWYIP1ErIPxXt2AxASQxXDWEe5Yqhjk851TzD8IZcm5U2vilqMHt++xQryzDmBYD1xmOnvzl8ll2v1PIaxqGz4FAjovadFL0cL6ucqvHd9J7eD1TH0+69oFInxiGadyMIdipN4ruvSrbD4Mnwya94G3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=UaMjInLF; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 2D8C21EFF40;
-	Fri, 23 Aug 2024 10:02:53 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1724400173; bh=tvmG/sMa+Qp7dOabskQKJ8ju2mqFsxT02CkXxGsxk9Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UaMjInLFyWQnfqYiMg3/uumOWVIHR/EHNkJUKfBAIdDHxgnmlxI+sc6jnZlt/X6Ju
-	 l8iMbK4HnW6Hm/ExWi2g9Y8cxxiqWWaiohigWu7F06tI1dgJxfXd7f//zLpK+8gMCV
-	 zCT0ZTMLplxAAcrWEf1jXuVJ7XNi2qysiG3K3On89gV6KULIvForp9VJj6BFRMQszA
-	 7oxN+Xg0KRllxwas/A+U0YTwAcuSXq6WCsU/C9HNpENoXaZLQE+flZg5s7hk591Qd3
-	 ml602dwx6ghnW4W8TFbkF/0L+DAYhcOB5lEtVKEQVKqsTdynwT5IE4zJrJ6ZvKFTL/
-	 dNY5cWtoRrD2Q==
-Date: Fri, 23 Aug 2024 10:02:52 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: mhkelley58@gmail.com
-Cc: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
- sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, robin.murphy@arm.com, hch@lst.de,
- m.szyprowski@samsung.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-coco@lists.linux.dev
-Subject: Re: [RFC 2/7] dma: Handle swiotlb throttling for SGLs
-Message-ID: <20240823100252.4f2a1a43@meshulam.tesarici.cz>
-In-Reply-To: <20240822183718.1234-3-mhklinux@outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-	<20240822183718.1234-3-mhklinux@outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1724400220; c=relaxed/simple;
+	bh=iF8iUihmF2dJh3FkshOnChMP04Ma/3/oZnTUDTsXBCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jSgWeP2DkTobLFts4RKOht04ve2lYTk/ygyJihsZkcwz/SQtss5eScO2bHY/8c6CuMoewJdzqw+0XqCNAwipZguwdRBIAHZoWrRuk25CBoYQXcYOBe3jvHgTzUH7ztXix8hhew9w423BHsltpxSrJKVt/I//pPHIRh1U5oHOJWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WqsyV5TkTz9sRr;
+	Fri, 23 Aug 2024 10:03:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id s4XLifoY12ly; Fri, 23 Aug 2024 10:03:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqsyV4NkMz9rvV;
+	Fri, 23 Aug 2024 10:03:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8447F8B77D;
+	Fri, 23 Aug 2024 10:03:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Ca1iEuO7cMiA; Fri, 23 Aug 2024 10:03:30 +0200 (CEST)
+Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E4AE58B763;
+	Fri, 23 Aug 2024 10:03:29 +0200 (CEST)
+Message-ID: <834e0fdd-bc87-481d-bed1-1c8295d5a2be@csgroup.eu>
+Date: Fri, 23 Aug 2024 10:03:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/36] soc: fsl: cpm1: qmc: Update TRNSYNC only in
+ transparent mode
+To: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org
+References: <20240808071132.149251-1-herve.codina@bootlin.com>
+ <20240808071132.149251-2-herve.codina@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240808071132.149251-2-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 11:37:13 -0700
-mhkelley58@gmail.com wrote:
 
-> From: Michael Kelley <mhklinux@outlook.com>
+
+Le 08/08/2024 à 09:10, Herve Codina a écrit :
+> The TRNSYNC feature is available (and enabled) only in transparent mode.
 > 
-> When a DMA map request is for a SGL, each SGL entry results in an
-> independent mapping operation. If the mapping requires a bounce buffer
-> due to running in a CoCo VM or due to swiotlb=force on the boot line,
-> swiotlb is invoked. If swiotlb throttling is enabled for the request,
-> each SGL entry results in a separate throttling operation. This is
-> problematic because a thread may be holding swiotlb memory while waiting
-> for memory to become free.
+> Since commit 7cc9bda9c163 ("soc: fsl: cpm1: qmc: Handle timeslot entries
+> at channel start() and stop()") TRNSYNC register is updated in
+> transparent and hdlc mode. In hdlc mode, the address of the TRNSYNC
+> register is used by the QMC for other internal purpose. Even if no weird
+> results were observed in hdlc mode, touching this register in this mode
+> is wrong.
 > 
-> Resolve this problem by only allowing throttling on the 0th SGL
-> entry. When unmapping the SGL, unmap entries 1 thru N-1 first, then
-> unmap entry 0 so that the throttle isn't released until all swiotlb
-> memory has been freed.
+> Update TRNSYNC only in transparent mode.
 > 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Fixes: 7cc9bda9c163 ("soc: fsl: cpm1: qmc: Handle timeslot entries at channel start() and stop()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
 > ---
-> This approach to SGLs muddies the line between DMA direct and swiotlb
-> throttling functionality. To keep the MAY_BLOCK attr fully generic, it
-> should propagate to the mapping of all SGL entries.
+>   drivers/soc/fsl/qe/qmc.c | 24 ++++++++++++++----------
+>   1 file changed, 14 insertions(+), 10 deletions(-)
 > 
-> An alternate approach is to define an additional DMA attribute that
-> is internal to the DMA layer. Instead of clearing MAX_BLOCK, this
-> attr is added by dma_direct_map_sg() when mapping SGL entries other
-> than the 0th entry. swiotlb would do throttling only when MAY_BLOCK
-> is set and this new attr is not set.
-> 
-> This approach has a modest amount of additional complexity. Given
-> that we currently have no other users of the MAY_BLOCK attr, the
-> conceptual cleanliness may not be warranted until we do.
-> 
-> Thoughts?
-
-If we agree to change the unthrottling logic (see my comment to your
-RFC 1/7), we'll need an additional attribute to delay unthrottling when
-unmapping sg list entries 1 to N-1. This attribute could convey that
-the mapping is the non-initial segment of an sg list and it could then
-be also used to disable blocking in swiotlb_tbl_map_single().
-
-> 
->  kernel/dma/direct.c | 35 ++++++++++++++++++++++++++++++-----
->  1 file changed, 30 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 4480a3cd92e0..80e03c0838d4 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -438,6 +438,18 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
->  		arch_sync_dma_for_cpu_all();
->  }
->  
-> +static void dma_direct_unmap_sgl_entry(struct device *dev,
-> +		struct scatterlist *sgl, enum dma_data_direction dir,
-
-Nitpick: This parameter should probably be called "sg", because it is
-never used to do any operation on the whole list. Similarly, the
-function could be called dma_direct_unmap_sg_entry(), because there is
-no dma_direct_unmap_sgl() either...
-
-> +		unsigned long attrs)
-> +
-> +{
-> +	if (sg_dma_is_bus_address(sgl))
-> +		sg_dma_unmark_bus_address(sgl);
-> +	else
-> +		dma_direct_unmap_page(dev, sgl->dma_address,
-> +				      sg_dma_len(sgl), dir, attrs);
-> +}
-> +
->  /*
->   * Unmaps segments, except for ones marked as pci_p2pdma which do not
->   * require any further action as they contain a bus address.
-> @@ -449,12 +461,20 @@ void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
->  	int i;
->  
->  	for_each_sg(sgl,  sg, nents, i) {
-> -		if (sg_dma_is_bus_address(sg))
-> -			sg_dma_unmark_bus_address(sg);
-> -		else
-> -			dma_direct_unmap_page(dev, sg->dma_address,
-> -					      sg_dma_len(sg), dir, attrs);
-> +		/*
-> +		 * Skip the 0th SGL entry in case this SGL consists of
-> +		 * throttled swiotlb mappings. In such a case, any other
-> +		 * entries should be unmapped first since unmapping the
-> +		 * 0th entry will release the throttle semaphore.
-> +		 */
-> +		if (!i)
-> +			continue;
-> +		dma_direct_unmap_sgl_entry(dev, sg, dir, attrs);
->  	}
-> +
-> +	/* Now do the 0th SGL entry */
-> +	if (nents)
-
-I wonder if nents can ever be zero here, but it's nowhere enforced and
-dma_map_sg_attrs() is exported, so I agree, let's play it safe.
-
-> +		dma_direct_unmap_sgl_entry(dev, sgl, dir, attrs);
->  }
->  #endif
->  
-> @@ -492,6 +512,11 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
->  			ret = -EIO;
->  			goto out_unmap;
->  		}
-> +
-> +		/* Allow only the 0th SGL entry to block */
-> +		if (!i)
-
-Are you sure? I think the modified value of attrs is first used in the
-next loop iteration, so the conditional should be removed, or else both
-segment index 0 and 1 will keep the flag.
-
-Petr T
-
-> +			attrs &= ~DMA_ATTR_MAY_BLOCK;
-> +
->  		sg_dma_len(sg) = sg->length;
->  	}
->  
-
+> diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+> index 76bb496305a0..bacabf731dcb 100644
+> --- a/drivers/soc/fsl/qe/qmc.c
+> +++ b/drivers/soc/fsl/qe/qmc.c
+> @@ -940,11 +940,13 @@ static int qmc_chan_start_rx(struct qmc_chan *chan)
+>   		goto end;
+>   	}
+>   
+> -	ret = qmc_setup_chan_trnsync(chan->qmc, chan);
+> -	if (ret) {
+> -		dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
+> -			chan->id, ret);
+> -		goto end;
+> +	if (chan->mode == QMC_TRANSPARENT) {
+> +		ret = qmc_setup_chan_trnsync(chan->qmc, chan);
+> +		if (ret) {
+> +			dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
+> +				chan->id, ret);
+> +			goto end;
+> +		}
+>   	}
+>   
+>   	/* Restart the receiver */
+> @@ -982,11 +984,13 @@ static int qmc_chan_start_tx(struct qmc_chan *chan)
+>   		goto end;
+>   	}
+>   
+> -	ret = qmc_setup_chan_trnsync(chan->qmc, chan);
+> -	if (ret) {
+> -		dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
+> -			chan->id, ret);
+> -		goto end;
+> +	if (chan->mode == QMC_TRANSPARENT) {
+> +		ret = qmc_setup_chan_trnsync(chan->qmc, chan);
+> +		if (ret) {
+> +			dev_err(chan->qmc->dev, "chan %u: setup TRNSYNC failed (%d)\n",
+> +				chan->id, ret);
+> +			goto end;
+> +		}
+>   	}
+>   
+>   	/*
 
