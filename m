@@ -1,75 +1,128 @@
-Return-Path: <linux-kernel+bounces-299274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2452795D237
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542CD95D241
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F691C22759
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA461F258FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E3F18A94F;
-	Fri, 23 Aug 2024 15:59:15 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F018BC00;
+	Fri, 23 Aug 2024 15:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riwlz6LI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFED91885BE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8C1188903;
+	Fri, 23 Aug 2024 15:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428755; cv=none; b=Ws1WCV5RE0X3fDCP5zhbtQ3/a3MUr6TJjAYSDzI6Is31pu1M6oLnBDWro82yL0kTdqcQIaiRO7hHbZQfm8bEngx4IywpgeQTnmz35UvOAG81zKl+X7ZBDB8tZ0TsRFow+OgPDXemZBGuAEivAiUtDiuY+ZBSKFc7JqUK8MV+KZY=
+	t=1724428765; cv=none; b=d7TMzzAFUcYYjnyYlfVyP3YyCGjXiEbM+6nPEIvnqoEG1IkMLhncYBLne5z4Isr41EcpSFSaOgbjEj9OeDNP0r7fL2kkIRq6WqWDiqsqORv93DpBvEGBSbVdBh1YKMxwa9WzmZe3YjdWIM4b15ixFVR07vDycl18PLsJHXKwtc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428755; c=relaxed/simple;
-	bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=EK0FcH1PEFVVSQDn1Yg2iXaooCZY2ZeOvkpaBrP14ra1bff3mbcloCKWODnuQdGtEsF2MD66709IojK6/pRXKYzibMhXQqTzQWTG+00ncRnugmXNy290jEURgN6X5tvllnu7Uajt0KS4Rqhy11Q9YaN/41RFnvMD65TzUc7qyyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d415635e6so23477405ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:59:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724428753; x=1725033553;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-        b=QBjYKwd5Me0RUmpk1K8KtK0zqKtTPQ17N22CKQOUJi5G3tygATFFfSW3bCBEHEPhMP
-         3ngZhY1tAkooHRgxGEDxkV01jJYFfvO2GiHjzkPKvlAoin86ZlqGqO2kUVYsuq626Z8o
-         nl8H1dzU2yugtscUaATwmYq65W0uzlduGIcqFczghf5cr3MDzY3Xq4HngkwUpb3JTd3L
-         h+RL4Kfx/FQOihVPpgobO+e1VVA8buXjOHbT2Yumb+hAEWBQzo/kXvZn0UM9nvfI5GpA
-         ieCYY0SqjtJQkpSLsheIuxW18HOVTMIFFbF5HJBOW80jrbsRO7ym2dEfLvHc+pG7twqa
-         dMmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxcO4CNGqz9nLEv8djeYjVTJdXSZE0NdX1OKmHEa+ACCPk38UM8ZCv/sLETDr/woXZuTCyTCd4i1PxOP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG2OmbJnqJ8C3SCrmU2FADPGt2I6Gug5M4S6uyF4rjp9ShkCQC
-	iUR8qq6+mrCy6n4oOw1tRyW37nGmnRRRwTYzl1aUkaJJskCQ0w13nzn5IsmyNjX7srZTBPkIEPq
-	v4MjLjtxqOFfXjwkqvQ+n/avaD6lH3Le/lHC5PHdBCkz2eUgNUPT3XME=
-X-Google-Smtp-Source: AGHT+IHf6pLPbG+UJxqOzrGHUueGILZCUQ1RXkjwiYYOmolk+fgA8xW2Af8zJSuV0X2cHYypY44euO82mlmydc7HHapOw6hGuFfb
+	s=arc-20240116; t=1724428765; c=relaxed/simple;
+	bh=0HRvVg+YyEHc+kywsKJk0vWlQ3aA90NvCzXe/aKIlyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f29WEHxw2tggVDJ0Vp7tP5FYG1gI/6NjmmpOC1HJRPWXDpQKVqgV1yZyK6rA22CmZYlEgQ0z4qHMSqz7kwurfcamWPB44QHPY4TS7TP6nQWDvDxarhIiSc31Ot4d4vxVRcPl98T/LS10LHB2SbOjLnPWSw24YCSRjEL+4wEzp4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riwlz6LI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B394C32786;
+	Fri, 23 Aug 2024 15:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724428764;
+	bh=0HRvVg+YyEHc+kywsKJk0vWlQ3aA90NvCzXe/aKIlyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=riwlz6LIf2Pymnypnc/MJDlMct1gq2mDyLkLXe7rb56gRpjjhC3FzxSLYDLbdI7V8
+	 0btplPPz2BUPNPlHALtJQMwSy7kN+xixkekp5zOHusd5kcsMECSDsYqhJvFT5o36pX
+	 KHb1resMxE5ApDWpoO/oB9gIWOVh5HKblq7JrpphHaztzH58KqGqVSIV3EztswH6tr
+	 MiP15E4rKZlcFwVq8cYwH5oKBXApwsauSkidFQ/ENPO0+a8jDA6Dq8Q/lOX9gk6ihD
+	 7gVCNVrirWS7QttwJl9Qrm9tA9hW10GXYK+e/ok8hiRFjVnz0+RAjgb6nNvYaP7xQO
+	 D/oH6+gzIdSZA==
+Date: Fri, 23 Aug 2024 16:59:18 +0100
+From: Will Deacon <will@kernel.org>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+	dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 5/6] iommu/arm-smmu: add ACTLR data and support for
+ SC7280
+Message-ID: <20240823155918.GD525@willie-the-truck>
+References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
+ <20240816174259.2056829-6-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d85:b0:383:4db4:cbe0 with SMTP id
- e9e14a558f8ab-39e3ca065e0mr1676055ab.5.1724428752902; Fri, 23 Aug 2024
- 08:59:12 -0700 (PDT)
-Date: Fri, 23 Aug 2024 08:59:12 -0700
-In-Reply-To: <0a06b525402f43298cb3a1c4305cba14@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000041ecee06205bdbad@google.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in attr_make_nonresident
-From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816174259.2056829-6-quic_bibekkum@quicinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-> #syz test:https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+On Fri, Aug 16, 2024 at 11:12:58PM +0530, Bibek Kumar Patro wrote:
+> Add ACTLR data table for SC7280 along with support for
+> same including SC7280 specific implementation operations.
+> 
+> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 58 +++++++++++++++++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index dc143b250704..a776c7906c76 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -31,6 +31,55 @@
+>  #define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
+>  #define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
+> 
+> +static const struct actlr_config sc7280_apps_actlr_cfg[] = {
+> +	{ 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x0900, 0x0402, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x0901, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x0d01, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1181, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1182, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1183, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1184, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1185, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1186, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1187, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1188, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1189, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x118b, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x118c, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x118d, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x118e, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x118f, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x2000, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2040, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2062, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2080, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x20c0, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2100, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2140, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x2180, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x2181, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x2183, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x2184, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x2187, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +};
+> +
+> +static const struct actlr_config sc7280_gfx_actlr_cfg[] = {
+> +	{ 0x0000, 0x07ff, PREFETCH_DEEP | CPRE | CMTLB },
+> +};
 
-unknown command "test:https://github.com/Paragon-Software-Group/linux-ntfs3.git"
+It's Will "stuck record" Deacon here again to say that I don't think
+this data belongs in the driver.
 
->
+Have a great weekend!
+
+Will
 
