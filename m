@@ -1,266 +1,311 @@
-Return-Path: <linux-kernel+bounces-299373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46ECF95D3BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:50:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C528995D3BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEBC8B238F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:50:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5F60B24079
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C36718BC31;
-	Fri, 23 Aug 2024 16:50:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBC718BC2D;
+	Fri, 23 Aug 2024 16:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cShglcHW"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDA741C69
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24312B6C;
+	Fri, 23 Aug 2024 16:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431804; cv=none; b=R+a6YACkjWcQvXMhMOnDcBoQGR8/DCMd2jb+rR2uTq1crYRmTi/k/9bbHEYceQXKKd6Iv0UUp8svNlGpxZqe8xr84cgs6sgbAvzjkrlvFWg1elCJikGIYaVJevdZDCY5AM9HeF1nn4Ye7whkpMzUt2vC55iWApToabYA/HbO/38=
+	t=1724431995; cv=none; b=jvsTRqxcDNl4Yr35ncNEsHXMbe1mOsSBiWIyh2jNIzmum/nSVsijBZBlffA8QHSy/UW1d1i6oLmY2lJo31sSdBWUfjRJQN5JVDUY6QbiH2QGi2pFcY19ueKcCJT3ucpHIUDwN46alGpRb4XBaQnvadxxw/zIXsKtx2TSJDKbbqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431804; c=relaxed/simple;
-	bh=nCKuc8qN9eiHWhtxpoN1DAEmT7wyiwWWNue884G33AI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SMNtadEAWZLeW6F0V+hFh72CyDaV26abb3to9zKsYvE/LC9ndYDbTzBynnFkoWwJ+01J7/FDVjJr9CJF2YQ1olN1QZr/AX9k/1nMUvhoFCK0L35cqQzgXoyqFdaIQZlB1dYnakiTHX+J/dZDBDfXqT8PTRCvo9LJJnL6rNxKeC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d306a36daso22076395ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:50:02 -0700 (PDT)
+	s=arc-20240116; t=1724431995; c=relaxed/simple;
+	bh=1bgw/Kad0mno9yvnmFSAkkRdRvDChUoKawQTuAds79I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GMQYfCRVHhQUMNjMTBp6Y5QLqudP0345OYKTeYpqwrAJytfMV5uTBW/cpjleX2ahNCbYinWU4Xk52TVVJRfG6ni3RxtDjQsoJvrT4yAKqGmbx2pVnxZiS4K19ysep8HjAqZNnJY5gUiR0aiD+rrcyjUiCpsadqlPZkjn5Eeuy5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cShglcHW; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f409c87b07so21632291fa.0;
+        Fri, 23 Aug 2024 09:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724431991; x=1725036791; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3dNTaiY5IwxKdtWPFyIFrXrhNmpKz5xY0XspkPMjuU=;
+        b=cShglcHW9C6qEzTnMX1cuubGoDK9aeUufDyjeUPdDZCJ7ijR86TzgFaMqgpgzqGs48
+         gDnbTEl9xAEm5/+kmag+tRs4ai739NMIqzYjTgsF/EZxKzcETyg7EFNg6w3hI6fKuG5o
+         bXe2+g82NV3UJUQ135blj5XJy6T1UWP49f/GDega8Faj9n0xTBiMC3kURkA6agfLx9F4
+         E4HCAOhcMvGRTGqgXMTNU2FUJH06aruPRoFitX6RZqfp1RllFJB1tL47mTEI7y+UEQzi
+         Pl2c4kMu2FLbvd5Hdc05ZPC+g/IpuyObRR14ycp/Y08zrwda7dvb2jJcN7Jdf76oT5LO
+         9WFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724431802; x=1725036602;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNEWvbKYxjyr/E9rIQJDzRY1RafKKmvKLn967I4Wihc=;
-        b=OHhYNFm62N6sGzyZ107/XIM7sp3PKOjQzqlWbLbBuYJDLIMOh+j+WqKmaJKM8MtwDQ
-         i9etlmZCFQ9cS5jyYnuBuH2XGIYVBTAmOuNlCPtTsZlBbsaskeRiGcRbWj8E37BTzsMg
-         o2lzEH1YuCVY7KT/5f3z2MPApfj0Lq4xaGqdmS5iBkE4vgRuiQQW5LVNhgTVzsCoxzia
-         iuG9sDyGTwMa+B3Jm8aE5HJjCne9cgEEo+IDcPNgxBanPgtYUuRNz1S185+W0ORvg2Da
-         c2+BMrIpkMxMrFRqVutzhOQt9PgqfGxe8VfQ11pnOArWsEnnvLgtQV6LoqsI6nHH/WoO
-         ni0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpGmH95vggQIO+3fZLNKcFI9E15IT0z/aPD5dngr8RM4uPl5Mjnn9JBLS2Y8Q6fMtBaRNit7cBaxVvJUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB9QxA2dzePSi3U+u3qNe7okZNZnDAr1NYF+d84IhJsOopZjog
-	aNLFudwuk3/LDQ//HuyVB9KycoIe38T6TOWQ9NHlnZphOQzH+0shDv2rHt1EHAt3gFAi6gnyL+B
-	RFytnXJrT9JhPxGG5r/gTwzpadX3M3oqiCsUOyzY4eCH7awPH2HCsMAk=
-X-Google-Smtp-Source: AGHT+IGZW4gYaa7ABNqcj9bzH5kpTD7UZM7XZtVtJM8tyBUIFSIz65qiQxXioGRGkbxB8iwEMjTd30cQcIoxaBQPX27jnTTHT0WN
+        d=1e100.net; s=20230601; t=1724431991; x=1725036791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v3dNTaiY5IwxKdtWPFyIFrXrhNmpKz5xY0XspkPMjuU=;
+        b=JFoXKBOtyWhVoMdqQ3FyT7OdAepD0Pekt5MGIfAifhtLBdFyilZMpHYkM4pnwdrwu8
+         MUS0HqzIZI/E9glcHxFNwmzg13JhioFZnvgAd0ySzJmEShofuvDbHNvbpdn8pYYEPH3v
+         GBdmSiMVTAKGZR/FY5WT02FCqNmnRyBPd34Xvj7cfAVwy4vv/mwduD5jRc1Vs6IMyPEc
+         7uOJGY6wStXcINCro8G98tS7UT+jEq+V9gSb06YVjUadV1X6Qn2Cp+54riT+yP8vvEvX
+         +kfQ+owa+JyyqfnSTzUXYCIjmxA7tviINogLVessta/FEfTBFgBChMDjGIRbGLaXDUZA
+         3vPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPxDcAdFqF6DDsd1aC8Gjl5OM5fb/aU7UeRNXF6gy/XqNKz4c5AhGtFYJvn/n2kNyT/RqSxqyMHQei3vQG4WJlcj0=@vger.kernel.org, AJvYcCUvxEtkkp/porK3tQOHicUiWVt4kDG7/lX4S3Qkmgc88fTUzEBFAsgyMNqqqrMSz65vnellw0DDkw17UX8=@vger.kernel.org, AJvYcCXPzmaxSD7iJBPl9wzvF/Q52F74xcx0WaGXlRrbRyS5P8Zdg0/gppFtAY0rmZpzJmH/oEEL7I5p@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHVRYcyrIgiM16GS8Dc717Q8m9xbJXEPFV3vwN5xp5fYHVrTPv
+	+oB2oA8RNAMx3jB+4/xzlMISzQR0yFBuz/eQGY7RGZtAlaqkqAn/EggiaCvVXGO1H5GwI0/F3Rc
+	52oXRgvOX7XuUoYFjuFBd2gro6hs=
+X-Google-Smtp-Source: AGHT+IHFX3VQxQPo7oldwhzia1sNHKwPxoeEI8OI4ihkGQJzz3Kefmx2UFC0C3joDhGlSP0z6cPQURvCDKileTV5k2w=
+X-Received: by 2002:a05:651c:1505:b0:2ef:2d3d:3cc3 with SMTP id
+ 38308e7fff4ca-2f4f48d5a82mr20452211fa.4.1724431990868; Fri, 23 Aug 2024
+ 09:53:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc6:b0:380:f12f:30de with SMTP id
- e9e14a558f8ab-39e3c97fee7mr1117145ab.2.1724431801802; Fri, 23 Aug 2024
- 09:50:01 -0700 (PDT)
-Date: Fri, 23 Aug 2024 09:50:01 -0700
-In-Reply-To: <333f17b4357947228d61557068440e1f@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fc736a06205c90e3@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240823072122.2053401-1-frank.li@vivo.com> <20240823072122.2053401-9-frank.li@vivo.com>
+In-Reply-To: <20240823072122.2053401-9-frank.li@vivo.com>
+From: Marcin Wojtas <marcin.s.wojtas@gmail.com>
+Date: Fri, 23 Aug 2024 18:52:58 +0200
+Message-ID: <CAHzn2R2eEWeSJOVQWbhG6FbCZv-o2PqL4tdU0E0XWSHM_EOjjw@mail.gmail.com>
+Subject: Re: [net-next v2 8/9] net: mvpp2: Convert to devm_clk_get_enabled()
+ and devm_clk_get_optional_enabled()
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com, 
+	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, ulli.kroll@googlemail.com, linus.walleij@linaro.org, 
+	linux@armlinux.org.uk, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
+	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, kees@kernel.org, 
+	justinstitt@google.com, u.kleine-koenig@pengutronix.de, horms@kernel.org, 
+	sd@queasysnail.net, linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in chrdev_open
-
-loop0: detected capacity change from 0 to 4096
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
-Read of size 8 at addr ffff88807f384160 by task syz-executor.0/5480
-
-CPU: 1 UID: 0 PID: 5480 Comm: syz-executor.0 Not tainted 6.11.0-rc1-syzkaller-00016-g7529036a025a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- chrdev_open+0x2a9/0x630 fs/char_dev.c:396
- do_dentry_open+0x970/0x1440 fs/open.c:959
- vfs_open+0x3e/0x330 fs/open.c:1089
- do_open fs/namei.c:3727 [inline]
- path_openat+0x2b3e/0x3470 fs/namei.c:3886
- do_filp_open+0x235/0x490 fs/namei.c:3913
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f676cc7dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f676da810c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f676cdabf80 RCX: 00007f676cc7dea9
-RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
-RBP: 00007f676ccca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f676cdabf80 R15: 00007ffc7b6a07b8
- </TASK>
-
-Allocated by task 5469:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4056
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:559
- alloc_inode fs/inode.c:263 [inline]
- new_inode_pseudo fs/inode.c:1038 [inline]
- new_inode+0x6e/0x310 fs/inode.c:1057
- ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
- ntfs_create_inode+0x681/0x3880 fs/ntfs3/inode.c:1311
- ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:120
- vfs_mknod+0x36d/0x3b0 fs/namei.c:4088
- do_mknodat+0x3ec/0x5b0
- __do_sys_mknodat fs/namei.c:4166 [inline]
- __se_sys_mknodat fs/namei.c:4163 [inline]
- __x64_sys_mknodat+0xa7/0xc0 fs/namei.c:4163
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 16:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4548
- rcu_do_batch kernel/rcu/tree.c:2569 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- __call_rcu_common kernel/rcu/tree.c:3106 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3210
- __dentry_kill+0x20d/0x630 fs/dcache.c:610
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1055
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1082
- shrink_dcache_parent+0xcb/0x3b0
- do_one_tree+0x23/0xe0 fs/dcache.c:1545
- shrink_dcache_for_umount+0xb4/0x180 fs/dcache.c:1562
- generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
- kill_block_super+0x44/0x90 fs/super.c:1696
- ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1779
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:222
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88807f383ac0
- which belongs to the cache ntfs_inode_cache of size 1752
-The buggy address is located 1696 bytes inside of
- freed 1752-byte region [ffff88807f383ac0, ffff88807f384198)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7f380
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff88802c965601
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff88801a72eb40 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000110011 00000001fdffffff ffff88802c965601
-head: 00fff00000000040 ffff88801a72eb40 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000110011 00000001fdffffff ffff88802c965601
-head: 00fff00000000003 ffffea0001fce001 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5469, tgid 5467 (syz-executor.0), ts 86108799803, free_ts 17237297825
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3442
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4700
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4056
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:559
- alloc_inode fs/inode.c:263 [inline]
- iget5_locked+0xa3/0x250 fs/inode.c:1259
- ntfs_iget5+0xcc/0x3970 fs/ntfs3/inode.c:530
- ntfs_fill_super+0x2569/0x4730 fs/ntfs3/super.c:1208
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2612
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6673
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
- do_one_initcall+0x248/0x880 init/main.c:1267
- do_initcall_level+0x157/0x210 init/main.c:1329
- do_initcalls+0x3f/0x80 init/main.c:1345
- kernel_init_freeable+0x435/0x5d0 init/main.c:1578
- kernel_init+0x1d/0x2b0 init/main.c:1467
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff88807f384000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88807f384080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88807f384100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                       ^
- ffff88807f384180: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807f384200: fc fc fc fa fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+pt., 23 sie 2024 o 09:07 Yangtao Li <frank.li@vivo.com> napisa=C5=82(a):
+>
+> Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
+> to simplify code.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
 
-Tested on:
+Reviewed-by: Marcin Wojtas <marcin.s.wojtas@gmail.com>
 
-commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=10830233980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=500271480f7d801c
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Thanks!
+Marcin
 
-Note: no patches were applied.
+> v2:
+> -get rid of amount of variables used
+>
+>  drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  7 --
+>  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 89 +++++--------------
+>  2 files changed, 24 insertions(+), 72 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/eth=
+ernet/marvell/mvpp2/mvpp2.h
+> index 9e02e4367bec..643a645e8097 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+> @@ -1044,13 +1044,6 @@ struct mvpp2 {
+>          */
+>         struct regmap *sysctrl_base;
+>
+> -       /* Common clocks */
+> -       struct clk *pp_clk;
+> -       struct clk *gop_clk;
+> -       struct clk *mg_clk;
+> -       struct clk *mg_core_clk;
+> -       struct clk *axi_clk;
+> -
+>         /* List of pointers to port structures */
+>         int port_count;
+>         struct mvpp2_port *port_list[MVPP2_MAX_PORTS];
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
+t/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 2fe8bae4eb3c..0ca2daeb0f90 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -7561,56 +7561,32 @@ static int mvpp2_probe(struct platform_device *pd=
+ev)
+>                 priv->max_port_rxqs =3D 32;
+>
+>         if (dev_of_node(&pdev->dev)) {
+> -               priv->pp_clk =3D devm_clk_get(&pdev->dev, "pp_clk");
+> -               if (IS_ERR(priv->pp_clk))
+> -                       return PTR_ERR(priv->pp_clk);
+> -               err =3D clk_prepare_enable(priv->pp_clk);
+> -               if (err < 0)
+> -                       return err;
+> -
+> -               priv->gop_clk =3D devm_clk_get(&pdev->dev, "gop_clk");
+> -               if (IS_ERR(priv->gop_clk)) {
+> -                       err =3D PTR_ERR(priv->gop_clk);
+> -                       goto err_pp_clk;
+> -               }
+> -               err =3D clk_prepare_enable(priv->gop_clk);
+> -               if (err < 0)
+> -                       goto err_pp_clk;
+> +               struct clk *clk;
+>
+> -               if (priv->hw_version >=3D MVPP22) {
+> -                       priv->mg_clk =3D devm_clk_get(&pdev->dev, "mg_clk=
+");
+> -                       if (IS_ERR(priv->mg_clk)) {
+> -                               err =3D PTR_ERR(priv->mg_clk);
+> -                               goto err_gop_clk;
+> -                       }
+> +               clk =3D devm_clk_get_enabled(&pdev->dev, "pp_clk");
+> +               if (IS_ERR(clk))
+> +                       return PTR_ERR(clk);
+>
+> -                       err =3D clk_prepare_enable(priv->mg_clk);
+> -                       if (err < 0)
+> -                               goto err_gop_clk;
+> +               /* Get system's tclk rate */
+> +               priv->tclk =3D clk_get_rate(clk);
+>
+> -                       priv->mg_core_clk =3D devm_clk_get_optional(&pdev=
+->dev, "mg_core_clk");
+> -                       if (IS_ERR(priv->mg_core_clk)) {
+> -                               err =3D PTR_ERR(priv->mg_core_clk);
+> -                               goto err_mg_clk;
+> -                       }
+> +               clk =3D devm_clk_get_enabled(&pdev->dev, "gop_clk");
+> +               if (IS_ERR(clk))
+> +                       return PTR_ERR(clk);
+>
+> -                       err =3D clk_prepare_enable(priv->mg_core_clk);
+> -                       if (err < 0)
+> -                               goto err_mg_clk;
+> -               }
+> +               if (priv->hw_version >=3D MVPP22) {
+> +                       clk =3D devm_clk_get_enabled(&pdev->dev, "mg_clk"=
+);
+> +                       if (IS_ERR(clk))
+> +                               return PTR_ERR(clk);
+>
+> -               priv->axi_clk =3D devm_clk_get_optional(&pdev->dev, "axi_=
+clk");
+> -               if (IS_ERR(priv->axi_clk)) {
+> -                       err =3D PTR_ERR(priv->axi_clk);
+> -                       goto err_mg_core_clk;
+> +                       clk =3D devm_clk_get_optional_enabled(&pdev->dev,=
+ "mg_core_clk");
+> +                       if (IS_ERR(clk))
+> +                               return PTR_ERR(clk);
+>                 }
+>
+> -               err =3D clk_prepare_enable(priv->axi_clk);
+> -               if (err < 0)
+> -                       goto err_mg_core_clk;
+> -
+> -               /* Get system's tclk rate */
+> -               priv->tclk =3D clk_get_rate(priv->pp_clk);
+> +               clk =3D devm_clk_get_optional_enabled(&pdev->dev, "axi_cl=
+k");
+> +               if (IS_ERR(clk))
+> +                       return PTR_ERR(clk);
+>         } else {
+>                 err =3D device_property_read_u32(&pdev->dev, "clock-frequ=
+ency", &priv->tclk);
+>                 if (err) {
+> @@ -7622,7 +7598,7 @@ static int mvpp2_probe(struct platform_device *pdev=
+)
+>         if (priv->hw_version >=3D MVPP22) {
+>                 err =3D dma_set_mask(&pdev->dev, MVPP2_DESC_DMA_MASK);
+>                 if (err)
+> -                       goto err_axi_clk;
+> +                       return err;
+>                 /* Sadly, the BM pools all share the same register to
+>                  * store the high 32 bits of their address. So they
+>                  * must all have the same high 32 bits, which forces
+> @@ -7630,7 +7606,7 @@ static int mvpp2_probe(struct platform_device *pdev=
+)
+>                  */
+>                 err =3D dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32=
+));
+>                 if (err)
+> -                       goto err_axi_clk;
+> +                       return err;
+>         }
+>
+>         /* Map DTS-active ports. Should be done before FIFO mvpp2_init */
+> @@ -7649,12 +7625,12 @@ static int mvpp2_probe(struct platform_device *pd=
+ev)
+>         err =3D mvpp2_init(pdev, priv);
+>         if (err < 0) {
+>                 dev_err(&pdev->dev, "failed to initialize controller\n");
+> -               goto err_axi_clk;
+> +               return err;
+>         }
+>
+>         err =3D mvpp22_tai_probe(&pdev->dev, priv);
+>         if (err < 0)
+> -               goto err_axi_clk;
+> +               return err;
+>
+>         /* Initialize ports */
+>         device_for_each_child_node_scoped(&pdev->dev, port_fwnode) {
+> @@ -7665,8 +7641,7 @@ static int mvpp2_probe(struct platform_device *pdev=
+)
+>
+>         if (priv->port_count =3D=3D 0) {
+>                 dev_err(&pdev->dev, "no ports enabled\n");
+> -               err =3D -ENODEV;
+> -               goto err_axi_clk;
+> +               return -ENODEV;
+>         }
+>
+>         /* Statistics must be gathered regularly because some of them (li=
+ke
+> @@ -7698,16 +7673,6 @@ static int mvpp2_probe(struct platform_device *pde=
+v)
+>  err_port_probe:
+>         for (i =3D 0; i < priv->port_count; i++)
+>                 mvpp2_port_remove(priv->port_list[i]);
+> -err_axi_clk:
+> -       clk_disable_unprepare(priv->axi_clk);
+> -err_mg_core_clk:
+> -       clk_disable_unprepare(priv->mg_core_clk);
+> -err_mg_clk:
+> -       clk_disable_unprepare(priv->mg_clk);
+> -err_gop_clk:
+> -       clk_disable_unprepare(priv->gop_clk);
+> -err_pp_clk:
+> -       clk_disable_unprepare(priv->pp_clk);
+>         return err;
+>  }
+>
+> @@ -7745,12 +7710,6 @@ static void mvpp2_remove(struct platform_device *p=
+dev)
+>
+>         if (!dev_of_node(&pdev->dev))
+>                 return;
+> -
+> -       clk_disable_unprepare(priv->axi_clk);
+> -       clk_disable_unprepare(priv->mg_core_clk);
+> -       clk_disable_unprepare(priv->mg_clk);
+> -       clk_disable_unprepare(priv->pp_clk);
+> -       clk_disable_unprepare(priv->gop_clk);
+>  }
+>
+>  static const struct of_device_id mvpp2_match[] =3D {
+> --
+> 2.39.0
+>
 
