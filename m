@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-298856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977E795CC40
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9AF95CC44
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDEC28355E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:20:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3F91C21108
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8EC185950;
-	Fri, 23 Aug 2024 12:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F43185923;
+	Fri, 23 Aug 2024 12:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xa6v6zEA"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIAfTeYq"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BEE9457;
-	Fri, 23 Aug 2024 12:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628CF9457;
+	Fri, 23 Aug 2024 12:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415598; cv=none; b=AXf/6i9y690jAndxsSn/pyOZ8lHa+3ASqCrtHlg8VWmcvRD9ktyeEiQi8wQA1eT62sMEko58s7Wo66wZ5fvDleXFE5vCF1Z7wxxjqhWj592hmP1SLqpOQdLIwayc9hujAZfyH2eAgFJnigiDi/SlrZY8OB2qEqMgUEqB5gTi99M=
+	t=1724415726; cv=none; b=Jl/lK+jwr+sUqmFkye+AH/qHT2+4yDJrqsYzZf0betC8VuaroDCh5uaynFn7lzwFfMl4jiBocZUCg3LZpizyz2Fs7wnMCXiK90DUDavFXczOSYv/3afSMzmBZrW70dThntJF2YC3SBdtXbU/KaBIYM/hapE7xisFTZu5j/daAww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415598; c=relaxed/simple;
-	bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DEQKhnPrBB9/1iaUqhwp94lUU/9oVPS9As8CP948Oe/ZaTAfSa2jCmqfLngdLZ1Uq5zeWc5CQll8HSKKLQBcqBjQP4xxMPu0decOBOgI3tpxL/iZWQJxGcy4QJaHxRHaWx37nz79GAKqDQDosUoxcTtPHNDex2XfXbdcAm4HRmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xa6v6zEA; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1724415726; c=relaxed/simple;
+	bh=Lc8l5JND44/zG76jTdnfFqKHRz/NrHFNKpUikJFT+4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IMy8cXRXIBzLLOOn+Vf/WTarwxb0JNc5FIFiKfRK79APrpkQwlhj07V2HbX4+AQNJ1o7WIdFr57JtK2hrcTJakvhMlGR68ZA2lp944Q3c2MBun/Eb9CLTck6HuKgKeXk4ePlnYHYdBQN9uBl0ASbAWnavwbJ/oE2dRpKTD5LxGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIAfTeYq; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so1564857b3a.3;
-        Fri, 23 Aug 2024 05:19:56 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a83597ce5beso294358166b.1;
+        Fri, 23 Aug 2024 05:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724415596; x=1725020396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
-        b=Xa6v6zEA7tUCKrIb6hfZzLzdaLXhpfT2d2451CCsYTs4yXdJX4Kz4r7iLdu4VE2Blj
-         2Lf8rVGpxBdHDIuYerhg3qfo9+TRgmlRMsK3N9NYQl37FHC9fEnG7PzqUr6ludPTb3do
-         9+G0/OOE6QiUmVPVOVzdEPvssmdYdCtGlDmH/fkE7UoFxulZBvucPnuRtf90lZszHlH6
-         lYQNkmZwMv/1ua27NiRDVurAeMC4avrRL5/OSoG9NK+lWn2RHkmz4DtapRGltGI5231D
-         NaUE+M5fRqXPmQUgYLuUwMa/6Ub/iaA3Afm4g6MoccobCzRxrynXRif0Apg7UoIPR1Da
-         9CBQ==
+        d=gmail.com; s=20230601; t=1724415723; x=1725020523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5eEdCgC0SPKqs3u0LuaMWosRv+buqe75w5wcTyW8ZQo=;
+        b=BIAfTeYqwXbOv/b8WJzzZ7HLF0OwE2dNjUznKOm8DaQJFppJ5bWH/jKRLTSi1jEcfo
+         AvpWMWa7XbVUXd0jYM4HJLEfpG8nr5bnKzVYO0yuGDnrfktnWqVCMBe7USb0ERq+4ac5
+         d12gx7+I25LwiSaNOxAN6sEP0ZbU2f/rky3xNZAgqIQ4+ywhGRHoK1IGFbu2QislTJV8
+         xwzu5As3E0kPYnSrDWsIwRnq9XBF7bW3DH/sXQMxz5ImS1Gm2SFNxTn0z2NyzoFDbQ5Y
+         11Pm2ZE/jbBPc4BNMCJoBKEnn6BrCNL57rPbXn+wsCxAXIfsphr3kK2enPUAph7r4tvr
+         x71A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724415596; x=1725020396;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
-        b=kq/jVRHk7tJZgDjImDSRD7lft69ECCOxnygvZ2zX9UWBpW5qljDLXyJ/tbtoZRGt1S
-         Ft65jKSe2L4m6QeSZwLMJPnks8flOYyltoWQ+c2SuPQTfEyYOwlYVGO43N3r5pWsCT5X
-         ti2hHestAcBCNscn1FDGHp7HaEDF4jccWOFjOhvtpgFfQupLcGPVz6dr919kNvbyKzsa
-         Zbno8aRxoB2jBPzY65t8LCVsD4kwME4Nuq9UU3QDT43qS/eFzgIP943ljZiz/y/rINkg
-         0SEm5e5aeC6LWBZuweTTdxPvZbhn0Fb+3eE0w8H355w6jLQaY/PPEKugDaBrGnRODLb+
-         Pl0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVK1XWCsQ3DNBxNzMrf7ZCh09js8gagqBHBpFGOG6Z247diqJvZ38+v91NfolAS6o0lUpdGi1/sahfjWYwm@vger.kernel.org, AJvYcCWvgtBX8whVrmU74OeKF0PzBBDL1SKIRErg0tcjCXgknszoWpMvuYrowNxsAsIz6yNcPPgHah7L@vger.kernel.org, AJvYcCXCKfaHkFI5dmLEb/b/hmKholwPHhghpBZK6NQi5NJXZaLMMBEGUArqVIN+w+K0BlAgEynYodElts8QYMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY8J8ym/cyqBUUCBGmW3hLzxTV6s80VyiW7S+YtAQk4/IoQzaX
-	WV8spB+fWgdF1kGxxvvXyvLbmN1do+liqHfgfIAdykDyiLy6xneA
-X-Google-Smtp-Source: AGHT+IGzc7ioPCbQCUlxcip72zBvSMtYRgGsnomQD6AMKfga1Ybtd8vRCH2kemIvGrXuqleOIpl3tQ==
-X-Received: by 2002:a05:6a20:e18a:b0:1c3:ff33:246b with SMTP id adf61e73a8af0-1cc89ed999cmr2643659637.40.1724415595687;
-        Fri, 23 Aug 2024 05:19:55 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad5529csm2955543a12.68.2024.08.23.05.19.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 23 Aug 2024 05:19:55 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: yukuai1@huaweicloud.com
-Cc: 21cnbao@gmail.com,
-	a.hindborg@samsung.com,
-	axboe@kernel.dk,
-	baolin.wang@linux.alibaba.com,
-	boqun.feng@gmail.com,
-	cgroups@vger.kernel.org,
-	david@redhat.com,
-	fujita.tomonori@lab.ntt.co.jp,
-	ioworker0@gmail.com,
-	josef@toxicpanda.com,
-	libang.li@antgroup.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mkoutny@suse.com,
-	paolo.valente@unimore.it,
-	tj@kernel.org,
-	vbabka@kernel.org,
-	yukuai3@huawei.com
-Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with set device wbps and wiops
-Date: Fri, 23 Aug 2024 20:19:39 +0800
-Message-ID: <20240823121939.65934-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <7c3499ac-faa7-cc0c-2d90-b8291fce5492@huaweicloud.com>
-References: <7c3499ac-faa7-cc0c-2d90-b8291fce5492@huaweicloud.com>
+        d=1e100.net; s=20230601; t=1724415723; x=1725020523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5eEdCgC0SPKqs3u0LuaMWosRv+buqe75w5wcTyW8ZQo=;
+        b=ZIb2gn2wnvglNGpnTypKrmz9uDUuskjE8WARZ3NK7apoe/j31TCckSu73Nr+pEOAIy
+         +ida5XXKO1JLieHLn4f3iTJDUMOCKeSgt3Ik23PmhcN6fyNR1s7exfbA8tZf1TZhHbWQ
+         uGEYtYEC6gEPGiOg7RGIVuqJF2RW6WKcq2RsKgHZcKR4RodaM8FNOyb8LOct1F67XVUT
+         WpOuO1O/7GwlnjOYoq9rIZRIPKHiGPL4LhWqezjfzwxeG2nm9bCmrKSmeJba6EjSxvQ2
+         n6F7F+LYCJ/EBE5JtyOVEvndy4MzbZRTx6fmu2Yy5tcv/36QpWv+iuzxgcBH8WDgTM2i
+         5yqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcaptx+q9fqzbfxmt6R4qVK3g1LGdJzzk6UbKyAU/EYubIpLWHDdf7Cn8w9ITL3GS3hnbszWbUGDTwNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHbEnLvelVWcs+TNvcIknzGs6gz86F+tYbFJDDjVot+XZlvNwV
+	YFdvgMp5uC9eOkE+DEDzlj15LYt6Sjo2M8a/lMIf9L9NupLjkZhp
+X-Google-Smtp-Source: AGHT+IEtzhFNF1/qaDPbXhNNEEMpqA9Zaf6XEK3JQKxLluenNtG8sXlgTDCejcz+iDBXAzJC7A8yLw==
+X-Received: by 2002:a17:907:9811:b0:a86:84c3:a87 with SMTP id a640c23a62f3a-a868a84e735mr570613466b.24.1724415722116;
+        Fri, 23 Aug 2024 05:22:02 -0700 (PDT)
+Received: from localhost.localdomain ([78.210.47.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2206a1sm253317166b.6.2024.08.23.05.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 05:22:01 -0700 (PDT)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: linux@roeck-us.net,
+	jdelvare@suse.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Antoni Pokusinski <apokusinski01@gmail.com>
+Subject: [PATCH] hwmon: (sht4x): add heater support
+Date: Fri, 23 Aug 2024 14:21:39 +0200
+Message-Id: <20240823122139.12698-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,136 +82,226 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Forget to add the test result of buffered IO:
+Add support for manipulating the internal heater of sht4x devices.
 
-With wiops, the result is as follows:
+The heater can operate at three heating levels (20, 110 or 200
+milliwatts). Also, two heating durations may be selected (0.1 or 1s).
+Once the heating time elapses the heater is automatically switched off.
+---
+ Documentation/hwmon/sht4x.rst |  10 +++
+ drivers/hwmon/sht4x.c         | 137 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 146 insertions(+), 1 deletion(-)
 
-```
-$ echo "8:0 wbps=10485760 wiops=100000" > io.max
+diff --git a/Documentation/hwmon/sht4x.rst b/Documentation/hwmon/sht4x.rst
+index daf21e763425..e7414a623a52 100644
+--- a/Documentation/hwmon/sht4x.rst
++++ b/Documentation/hwmon/sht4x.rst
+@@ -42,4 +42,14 @@ humidity1_input Measured humidity in %H
+ update_interval The minimum interval for polling the sensor,
+                 in milliseconds. Writable. Must be at least
+                 2000.
++heater_power	The requested heater power, in milliwatts.
++		Available values: 20, 110, 200 (default: 200).
++heater_time	The requested operating time of the heater,
++		in milliseconds.
++		Available values: 100, 1000 (default 1000).
++heater_enable	Enable the heater with the selected power
++		and for the selected time. Write-only.
++
++			- 0: turn off
++			- 1: turn on
+ =============== ============================================
+diff --git a/drivers/hwmon/sht4x.c b/drivers/hwmon/sht4x.c
+index b8916d2735b5..34214fe08a9e 100644
+--- a/drivers/hwmon/sht4x.c
++++ b/drivers/hwmon/sht4x.c
+@@ -11,6 +11,7 @@
+ #include <linux/crc8.h>
+ #include <linux/delay.h>
+ #include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
+ #include <linux/i2c.h>
+ #include <linux/jiffies.h>
+ #include <linux/module.h>
+@@ -31,6 +32,12 @@
+  */
+ #define SHT4X_CMD_MEASURE_HPM	0b11111101
+ #define SHT4X_CMD_RESET		0b10010100
++#define SHT4X_CMD_HEATER_20_1	0b00011110
++#define SHT4X_CMD_HEATER_20_01	0b00010101
++#define SHT4X_CMD_HEATER_110_1	0b00101111
++#define SHT4X_CMD_HEATER_110_01	0b00100100
++#define SHT4X_CMD_HEATER_200_1	0b00111001
++#define SHT4X_CMD_HEATER_200_01 0b00110010
+ 
+ #define SHT4X_CMD_LEN		1
+ #define SHT4X_CRC8_LEN		1
+@@ -54,6 +61,8 @@ DECLARE_CRC8_TABLE(sht4x_crc8_table);
+  * @last_updated: the previous time that the SHT4X was polled
+  * @temperature: the latest temperature value received from the SHT4X
+  * @humidity: the latest humidity value received from the SHT4X
++ * @heater_power: the power at which the heater will be started
++ * @heater_time: the time for which the heater will remain turned on
+  */
+ struct sht4x_data {
+ 	struct i2c_client	*client;
+@@ -63,6 +72,8 @@ struct sht4x_data {
+ 	long			last_updated;	/* in jiffies */
+ 	s32			temperature;
+ 	s32			humidity;
++	u32			heater_power;	/* in milli-watts */
++	u32			heater_time;	/* in milli-seconds */
+ };
+ 
+ /**
+@@ -215,6 +226,128 @@ static int sht4x_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
+ 	}
+ }
+ 
++static ssize_t heater_enable_show(struct device *dev,
++				  struct device_attribute *attr,
++				  char *buf)
++{
++	return -EOPNOTSUPP;
++}
++
++static ssize_t heater_enable_store(struct device *dev,
++				   struct device_attribute *attr,
++				   const char *buf,
++				   size_t count)
++{
++	struct sht4x_data *data = dev_get_drvdata(dev);
++	bool status;
++	ssize_t ret;
++	u8 cmd[SHT4X_CMD_LEN];
++
++	ret = kstrtobool(buf, &status);
++	if (ret)
++		return ret;
++
++	if (status) {
++		if (data->heater_power == 20) {
++			if (data->heater_time == 100)
++				*cmd = SHT4X_CMD_HEATER_20_01;
++			else /* data->heater_time == 1000 */
++				*cmd = SHT4X_CMD_HEATER_20_1;
++		} else if (data->heater_power == 110) {
++			if (data->heater_time == 100)
++				*cmd = SHT4X_CMD_HEATER_110_01;
++			else /* data->heater_time == 1000 */
++				*cmd = SHT4X_CMD_HEATER_110_1;
++		} else if (data->heater_power == 200) {
++			if (data->heater_time == 100)
++				*cmd = SHT4X_CMD_HEATER_200_01;
++			else /* data->heater_time == 1000 */
++				*cmd = SHT4X_CMD_HEATER_200_1;
++		} else {
++			return -EINVAL;
++		}
++	}
++
++	mutex_lock(&data->lock);
++	ret = i2c_master_send(data->client, cmd, SHT4X_CMD_LEN);
++	mutex_unlock(&data->lock);
++
++	return ret;
++}
++
++static ssize_t heater_power_show(struct device *dev,
++				 struct device_attribute *attr,
++				 char *buf)
++{
++	struct sht4x_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%u\n", data->heater_power);
++}
++
++static ssize_t heater_power_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf,
++				  size_t count)
++{
++	struct sht4x_data *data = dev_get_drvdata(dev);
++	u32 power;
++	ssize_t ret;
++
++	ret = kstrtou32(buf, 10, &power);
++	if (ret)
++		return ret;
++
++	if (power != 20 && power != 110 && power != 200)
++		return -EINVAL;
++
++	data->heater_power = power;
++
++	return count;
++}
++
++static ssize_t heater_time_show(struct device *dev,
++				struct device_attribute *attr,
++				char *buf)
++{
++	struct sht4x_data *data = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%u\n", data->heater_time);
++}
++
++static ssize_t heater_time_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf,
++				 size_t count)
++{
++	struct sht4x_data *data = dev_get_drvdata(dev);
++	u32 time;
++	ssize_t ret;
++
++	ret = kstrtou32(buf, 10, &time);
++	if (ret)
++		return ret;
++
++	if (time != 100 && time != 1000)
++		return -EINVAL;
++
++	data->heater_time = time;
++
++	return count;
++}
++
++static SENSOR_DEVICE_ATTR_RW(heater_enable, heater_enable, 0);
++static SENSOR_DEVICE_ATTR_RW(heater_power, heater_power, 0);
++static SENSOR_DEVICE_ATTR_RW(heater_time, heater_time, 0);
++
++static struct attribute *sht4x_attrs[] = {
++	&sensor_dev_attr_heater_enable.dev_attr.attr,
++	&sensor_dev_attr_heater_power.dev_attr.attr,
++	&sensor_dev_attr_heater_time.dev_attr.attr,
++	NULL
++};
++
++ATTRIBUTE_GROUPS(sht4x);
++
+ static const struct hwmon_channel_info * const sht4x_info[] = {
+ 	HWMON_CHANNEL_INFO(chip, HWMON_C_UPDATE_INTERVAL),
+ 	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT),
+@@ -255,6 +388,8 @@ static int sht4x_probe(struct i2c_client *client)
+ 
+ 	data->update_interval = SHT4X_MIN_POLL_INTERVAL;
+ 	data->client = client;
++	data->heater_power = 200;
++	data->heater_time = 1000;
+ 
+ 	mutex_init(&data->lock);
+ 
+@@ -270,7 +405,7 @@ static int sht4x_probe(struct i2c_client *client)
+ 							 client->name,
+ 							 data,
+ 							 &sht4x_chip_info,
+-							 NULL);
++							 sht4x_groups);
+ 
+ 	return PTR_ERR_OR_ZERO(hwmon_dev);
+ }
+-- 
+2.25.1
 
-$ rm -rf /data/file1 && dd if=/dev/zero of=/data/file1 bs=50M count=1
-1+0 records in
-1+0 records out
-52428800 bytes (52 MB, 50 MiB) copied, 0.062217 s, 843 MB/s
-
-$ dmesg -T
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac500
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5adb80
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac140
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5acdc0
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac280
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ada40
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 4096 ffff0000ce5adcc0
-[Fri Aug 23 12:09:10 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac500
-[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac500
-[Fri Aug 23 12:09:11 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5adb80
-[Fri Aug 23 12:09:11 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5adb80
-[Fri Aug 23 12:09:12 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac140
-[Fri Aug 23 12:09:12 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac140
-[Fri Aug 23 12:09:13 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5acdc0
-[Fri Aug 23 12:09:13 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5acdc0
-[Fri Aug 23 12:09:14 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac280
-[Fri Aug 23 12:09:14 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac280
-[Fri Aug 23 12:09:14 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ada40
-[Fri Aug 23 12:09:14 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 4096 ffff0000ce5adcc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1536 ffff0000ce5adcc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1536 ffff0000ce5adcc0
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac500
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5adb80
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac140
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5acdc0
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac280
-[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ada40
-[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ada40
-```
-
-And without wiops, the result is quite different as well:
-
-```
-$ echo "8:0 wbps=10485760 wiops=max" > io.max
-
-$ rm -rf /data/file1 && dd if=/dev/zero of=/data/file1 bs=50M count=1
-1+0 records in
-1+0 records out
-52428800 bytes (52 MB, 50 MiB) copied, 0.0791369 s, 663 MB/s
-
-$ dmesg -T
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87ca3c0
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87ca000
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb2c0
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb040
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cac80
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb400
-[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 4096 ffff0000f87ca640
-[Fri Aug 23 12:16:51 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87ca3c0
-[Fri Aug 23 12:16:52 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87ca000
-[Fri Aug 23 12:16:53 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb2c0
-[Fri Aug 23 12:16:54 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb040
-[Fri Aug 23 12:16:54 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cac80
-[Fri Aug 23 12:16:55 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb400
-[Fri Aug 23 12:16:55 2024] blk_throtl_dispatch_work_fn: bio done 4096 ffff0000f87ca640
-```
-
-Thanks,
-Lance
 
