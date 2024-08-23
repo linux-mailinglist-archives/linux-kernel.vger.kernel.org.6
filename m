@@ -1,209 +1,639 @@
-Return-Path: <linux-kernel+bounces-298255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0166595C4D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9160395C4D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239CE1C21B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:22:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FFBB24001
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E5853E15;
-	Fri, 23 Aug 2024 05:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A906553E22;
+	Fri, 23 Aug 2024 05:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kQWIwuba"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="bNwSI4M8"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898352F71
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15A52D030;
+	Fri, 23 Aug 2024 05:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724390525; cv=none; b=geNX2FyQ8AIFqv/YR5aFQpwaVobgxOXjmouH7XGoQmmUDXOmBljnP/qz+czhkPiUoUqIiC9zA7Y4MOF6CP/2WAuZCkqUP/R0KKvaLzSWyndM0kiPUXjXPzlgVcaeBhyQBKTWOBf3DIRxEN1N8JT0r3fdEMzxpKannRxwQ5EDH3A=
+	t=1724390598; cv=none; b=LNsKgJ7pM80KMlyCOdFBTGW+UYr4dhQxjCE7YROSb+KzT6NzIwGxM593oeKSsHzbGVK3mQFoPO+Ope+tjUI4T+4Y34ZDh5yE/ei1enceBhzBKOHQcw4URu/GOWyISuNZ5h0ESdM6MxwV9HzLNmJFyycXcP0XLVhkEHv7ROh/cu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724390525; c=relaxed/simple;
-	bh=02oePitC1YRTMIq8qs60oNRbz/9WvpkZje6s3ZT0Kw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dtzPVu8Ywqx0l+XwnyY4Zn7bvzYrEBSxtmRBgFHYdcCPognMqxlM9orcSEOM8LrVDh6HbL2fFL8E9iqGtRGPN7CqruzkznFYNGGvFnKvKLZjlF1Oh1hEnWe2RB6+y2bK0gTFOe9u6IcIWUNQRKOlHeyvOssbUmHAT42X34EGT/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kQWIwuba; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bebb241fddso5149a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724390520; x=1724995320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uet9U2HrK3DDTVPxLWw7T/TPH3t4QYpkiQ6FRu69I08=;
-        b=kQWIwubaBJhbHpQtlonn5vyKtxBmV3tBW9l7Qajn3ZW+kSsK4QKlpHuhpOGv+kPsIi
-         ZyiryTyIeCQMPMW1R6M8oUCvCUuuhoO06tp0f7wtlW/3XFPD3cuYwSJMElwsyJHsl0Fx
-         T2tgLPf0YwMGlA36nvS+Fjod+q6CNcncSONc3SV3C5kf0Kl3zr0Pm16R2fsDVRT6Po2j
-         WHRYx0dQO0puvjTzosxFwDnTJAh0b3uNYvYipTIWvXjNYLWk4e8H6TKWN5TuLsbjPn4T
-         RuKpeuqvTfHkubHYNFEispo6cukfwYCAcL0phK2u5glc3i4yzxYN2buiDukfbxUxIp+j
-         45vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724390520; x=1724995320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uet9U2HrK3DDTVPxLWw7T/TPH3t4QYpkiQ6FRu69I08=;
-        b=uZZWDbO1X65FXi0abR3vc19jw7QWu8UQUQCtFpKr1ACIKTi4RdotHuo6fT4MsdQ0I0
-         eqqX1kQGa3qq/t5ya1efgZ0H4desPza4L9fykJbfHxEIKMuGC7eKsEco5rcZFHcMuJBc
-         TqmJILWR+ZSMWdeoB4f/fj0mi+c4sDvhMOP35TLwsp3sVWkHXK3a5LIgG+ysmHHLtRcj
-         nWWqmfLuoTSOlnhQ1Gz+zckggnj6smvDq8e/scnNnj5Z2sKbM6EpzE/h9rmcRpD0iaKZ
-         na5Ak7A51RepUkUEgL37BEpofRyKYA374irV0DvqRbJxtYXBIBPWYn+YK1Avp/bz+Gwh
-         9KGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Pd3UZiZKTtbtlwMt5HNVPoWl36jkZRnph9YS4QaRf0vqMsNbYwKn7eXdcnVT8JsVNCfUzaHGNe5Z9RE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeiTvTtq1zLA5y4o8TUTBcp5kWwNblHCDYopKJ+1vDuJz7cA8/
-	UGf/smMx/zyWoE3D+78ICEZGXRplfyM2VeNuJvaQGvmauP4sB5fhO8eTe5wPZQ==
-X-Google-Smtp-Source: AGHT+IHX7tl5DbRivNHSGrXaXjN7w0N7ivyfde8OdjfcE2wwK+UU5/Q3ZPbA/FFuKu71Tegra0xcDA==
-X-Received: by 2002:a05:6402:51d1:b0:59f:9f59:9b07 with SMTP id 4fb4d7f45d1cf-5c0870abd46mr92310a12.4.1724390520099;
-        Thu, 22 Aug 2024 22:22:00 -0700 (PDT)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110436sm3247482f8f.11.2024.08.22.22.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 22:21:59 -0700 (PDT)
-Date: Fri, 23 Aug 2024 05:21:58 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev,
-	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
-	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v8 5/6] KVM: arm64: Initialize the ptdump parser with
- stage-2 attributes
-Message-ID: <Zsgcdjh4EvqFWMlA@google.com>
-References: <20240816123906.3683425-1-sebastianene@google.com>
- <20240816123906.3683425-6-sebastianene@google.com>
- <86plq3xoly.wl-maz@kernel.org>
- <8634mwy1mt.wl-maz@kernel.org>
+	s=arc-20240116; t=1724390598; c=relaxed/simple;
+	bh=+BHWP6cJ0n2Mlqh15oqgvPuXNEm2En7fluhLy9ALQnQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ALCtjbO+nCasK/riULfvNvCC5FCBOORe9wEf+5CGCaQ546mF+7UiMQuKk67sUS87U3fm6Q9ORt3qch39De+3eJsenJfaFZ9lVoickpER6JADvcT708yaThKj+qM33IOftt9XK2mZBkhCA+5JpJsnP69DdocSKmBiUOiVfqvR8CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=bNwSI4M8; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N1nwEC018836;
+	Thu, 22 Aug 2024 22:22:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=c
+	ghSDEDWE5Jw5vwxMjrLExwQyMfLD4fw48+eElkPyuQ=; b=bNwSI4M8x70h06lhK
+	VroyufrjhD8SUqcXWGgSt05KhXlwcIZUE3hVFTTKwiuHZxRVh/ypaKgMFC/BaJzx
+	AwxYDDT5EojUmcavrCDXG6RNr2TmQ8BCU2O34Zn0NclQsmuUCUwqKisJsMwojdbc
+	eD7MuD/8wXsQeDWu10OqmCdhBYkAZYz2B11UMuUgVuwHpUeULxkbJqL5Mt0kAyPO
+	Ytf24ThvF8GTkE2I3r5QTkT4fLZIC/l+L22yK0RWqbyKkeWWO3XFYUiiuhdN7+g7
+	isp7Mt1pFQUoM/iK1ylJWtB8m6xSOk7KRraWr5E2ppgOedfBmJ4OJmIYkem2XRk4
+	ugW7Q==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 416gyhrh7u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 22 Aug 2024 22:22:58 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 22 Aug 2024 22:22:56 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 22 Aug 2024 22:22:56 -0700
+Received: from localhost.localdomain (unknown [10.28.34.29])
+	by maili.marvell.com (Postfix) with ESMTP id 091D93F7069;
+	Thu, 22 Aug 2024 22:22:52 -0700 (PDT)
+From: Shijith Thotton <sthotton@marvell.com>
+To: <bhelgaas@google.com>
+CC: Shijith Thotton <sthotton@marvell.com>, <ilpo.jarvinen@linux.intel.com>,
+        <Jonathan.Cameron@Huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <rafael@kernel.org>,
+        <scott@os.amperecomputing.com>, <jerinj@marvell.com>,
+        <schalla@marvell.com>, <vattunuru@marvell.com>
+Subject: [PATCH v2] PCI: hotplug: Add OCTEON PCI hotplug controller driver
+Date: Fri, 23 Aug 2024 10:52:19 +0530
+Message-ID: <20240823052251.1087505-1-sthotton@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <PH0PR18MB442535D2828B701CD84A3994D98E2@PH0PR18MB4425.namprd18.prod.outlook.com>
+References: <PH0PR18MB442535D2828B701CD84A3994D98E2@PH0PR18MB4425.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8634mwy1mt.wl-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: lbpicGsdVb3U3fl1_4Ghmixiro_YukDW
+X-Proofpoint-ORIG-GUID: lbpicGsdVb3U3fl1_4Ghmixiro_YukDW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
 
-On Thu, Aug 22, 2024 at 05:15:54PM +0100, 'Marc Zyngier' via kernel-team wrote:
-> On Tue, 20 Aug 2024 15:20:25 +0100,
-> Marc Zyngier <maz@kernel.org> wrote:
-> > 
-> > On Fri, 16 Aug 2024 13:39:05 +0100,
-> > Sebastian Ene <sebastianene@google.com> wrote:
-> > > 
-> > > Define a set of attributes used by the ptdump parser to display the
-> > > properties of a guest memory region covered by a pagetable descriptor.
-> > > Build a description of the pagetable levels and initialize the parser
-> > > with this configuration.
-> > > 
-> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > > ---
-> > >  arch/arm64/kvm/ptdump.c | 135 ++++++++++++++++++++++++++++++++++++++--
-> > >  1 file changed, 129 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-> > > index 52483d56be2e..79be07ec3c3c 100644
-> > > --- a/arch/arm64/kvm/ptdump.c
-> > > +++ b/arch/arm64/kvm/ptdump.c
-> > > @@ -14,6 +14,51 @@
-> > >  #include <kvm_ptdump.h>
-> > >  
-> > >  
-> > > +#define MARKERS_LEN		(2)
-> > > +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
-> > > +
-> > > +struct kvm_ptdump_guest_state {
-> > > +	struct kvm		*kvm;
-> > > +	struct ptdump_pg_state	parser_state;
-> > > +	struct addr_marker	ipa_marker[MARKERS_LEN];
-> > > +	struct ptdump_pg_level	level[KVM_PGTABLE_MAX_LEVELS];
-> > > +	struct ptdump_range	range[MARKERS_LEN];
-> > > +};
-> > > +
-> > > +static const struct ptdump_prot_bits stage2_pte_bits[] = {
-> > > +	{
-> > > +		.mask	= PTE_VALID,
-> > > +		.val	= PTE_VALID,
-> > > +		.set	= " ",
-> > > +		.clear	= "F",
-> > > +	}, {
-> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> > > +		.set	= "R",
-> > > +		.clear	= " ",
-> > > +	}, {
-> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
-> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
-> > > +		.set	= "W",
-> > > +		.clear	= " ",
-> > > +	}, {
-> > > +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
-> > > +		.val	= PTE_VALID,
-> > > +		.set	= " ",
-> > > +		.clear	= "X",
-> > > +	}, {
-> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> > > +		.set	= "AF",
-> > > +		.clear	= "  ",
-> > > +	}, {
-> > > +		.mask	= PTE_TABLE_BIT | PTE_VALID,
-> > > +		.val	= PTE_VALID,
-> > > +		.set	= "BLK",
-> > > +		.clear	= "   ",
-> > > +	},
-> > > +};
-> > > +
-> > >  static int kvm_ptdump_visitor(const struct kvm_pgtable_visit_ctx *ctx,
-> > >  			      enum kvm_pgtable_walk_flags visit)
-> > >  {
-> > > @@ -40,15 +85,81 @@ static int kvm_ptdump_show_common(struct seq_file *m,
-> > >  	return kvm_pgtable_walk(pgtable, 0, BIT(pgtable->ia_bits), &walker);
-> > >  }
-> > >  
-> > > +static int kvm_ptdump_build_levels(struct ptdump_pg_level *level, u32 start_lvl)
-> > > +{
-> > > +	static const char * const level_names[] = {"PGD", "PUD", "PMD", "PTE"};
-> > 
-> > How about 5 level page tables, which we support since v6.8? The
-> > architecture uses a SL=-1 in this case, and I have the feeling this is
-> > going to expose in a lovely way, given that you use a u32 for
-> > start_level... :-/
-> 
+This patch introduces a PCI hotplug controller driver for the OCTEON
+PCIe device, a multi-function PCIe device where the first function acts
+as a hotplug controller. It is equipped with MSI-x interrupts to notify
+the host of hotplug events from the OCTEON firmware.
 
-Hello Marc,
+The driver facilitates the hotplugging of non-controller functions
+within the same device. During probe, non-controller functions are
+removed and registered as PCI hotplug slots. The slots are added back
+only upon request from the device firmware. The driver also allows the
+enabling and disabling of the slots via sysfs slot entries, provided by
+the PCI hotplug framework.
 
-> Talking to Oliver, I just had an epiphany: we never have a 5th level
-> with KVM, because we always use concatenated page tables at the start
-> level. So the depth is still 4 levels, but we get up to 16 pages at
-> level 0, and that's how we expand the IPA space from 48 to 52 bits.
-> 
+Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+Co-developed-by: Vamsi Attunuru <vattunuru@marvell.com>
+Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+---
 
-Thanks for letting me know. Then it should be fine keeping that as an
-unisgned integer.
+This patch introduces a PCI hotplug controller driver for OCTEON PCIe hotplug
+controller. The OCTEON PCIe device is a multi-function device where the first
+function acts as a PCI hotplug controller.
 
-> So by the look of it, your code should still be OK with only 4 levels.
-> 
+              +--------------------------------+
+              |           Root Port            |
+              +--------------------------------+
+                              |
+                             PCIe
+                              |
++---------------------------------------------------------------+
+|              OCTEON PCIe Multifunction Device                 |
++---------------------------------------------------------------+
+            |                    |              |            |
+            |                    |              |            |
++---------------------+  +----------------+  +-----+  +----------------+
+|      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
+| (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
++---------------------+  +----------------+  +-----+  +----------------+
+            |
+            |
++-------------------------+
+|   Controller Firmware   |
++-------------------------+
 
-Thanks,
-Seb
+The hotplug controller driver facilitates the hotplugging of non-controller
+functions in the same device. During the probe of the driver, the non-controller
+function are removed and registered as PCI hotplug slots. They are added back
+only upon request from the device firmware. The driver also allows the user to
+enable/disable the functions using sysfs slot entries provided by PCI hotplug
+framework.
 
-> Apologies for leading you in the wrong direction.
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
-> 
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
-> 
+This solution adopts a hardware + software approach for several reasons:
+
+1. To reduce hardware implementation cost. Supporting complete hotplug
+   capability within the card would require a PCI switch implemented within.
+
+2. In the multi-function device, non-controller functions can act as emulated
+   devices. The firmware can dynamically enable or disable them at runtime.
+
+3. Not all root ports support PCI hotplug. This approach provides greater
+   flexibility and compatibility across different hardware configurations.
+
+The hotplug controller function is lightweight and is equipped with MSI-x
+interrupts to notify the host about hotplug events. Upon receiving an
+interrupt, the hotplug register is read, and the required function is enabled
+or disabled.
+
+This driver will be beneficial for managing PCI hotplug events on the OCTEON
+PCIe device without requiring complex hardware solutions.
+
+Changes in v2:
+- Added missing include files.
+- Used dev_err_probe() for error handling.
+- Used guard() for mutex locking.
+- Splited cleanup actions and added per-slot cleanup action.
+- Fixed coding style issues.
+- Added co-developed-by tag.
+
+ MAINTAINERS                    |   6 +
+ drivers/pci/hotplug/Kconfig    |  10 +
+ drivers/pci/hotplug/Makefile   |   1 +
+ drivers/pci/hotplug/octep_hp.c | 412 +++++++++++++++++++++++++++++++++
+ 4 files changed, 429 insertions(+)
+ create mode 100644 drivers/pci/hotplug/octep_hp.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42decde38320..7b5a618eed1c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13677,6 +13677,12 @@ R:	schalla@marvell.com
+ R:	vattunuru@marvell.com
+ F:	drivers/vdpa/octeon_ep/
+ 
++MARVELL OCTEON HOTPLUG CONTROLLER DRIVER
++R:	Shijith Thotton <sthotton@marvell.com>
++R:	Vamsi Attunuru <vattunuru@marvell.com>
++S:	Supported
++F:	drivers/pci/hotplug/octep_hp.c
++
+ MATROX FRAMEBUFFER DRIVER
+ L:	linux-fbdev@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+index 1472aef0fb81..2e38fd25f7ef 100644
+--- a/drivers/pci/hotplug/Kconfig
++++ b/drivers/pci/hotplug/Kconfig
+@@ -173,4 +173,14 @@ config HOTPLUG_PCI_S390
+ 
+ 	  When in doubt, say Y.
+ 
++config HOTPLUG_PCI_OCTEONEP
++	bool "OCTEON PCI device Hotplug controller driver"
++	depends on HOTPLUG_PCI
++	help
++	  Say Y here if you have an OCTEON PCIe device with a hotplug
++	  controller. This driver enables the non-controller functions of the
++	  device to be registered as hotplug slots.
++
++	  When in doubt, say N.
++
+ endif # HOTPLUG_PCI
+diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
+index 240c99517d5e..40aaf31fe338 100644
+--- a/drivers/pci/hotplug/Makefile
++++ b/drivers/pci/hotplug/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_HOTPLUG_PCI_RPA)		+= rpaphp.o
+ obj-$(CONFIG_HOTPLUG_PCI_RPA_DLPAR)	+= rpadlpar_io.o
+ obj-$(CONFIG_HOTPLUG_PCI_ACPI)		+= acpiphp.o
+ obj-$(CONFIG_HOTPLUG_PCI_S390)		+= s390_pci_hpc.o
++obj-$(CONFIG_HOTPLUG_PCI_OCTEONEP)	+= octep_hp.o
+ 
+ # acpiphp_ibm extends acpiphp, so should be linked afterwards.
+ 
+diff --git a/drivers/pci/hotplug/octep_hp.c b/drivers/pci/hotplug/octep_hp.c
+new file mode 100644
+index 000000000000..3ac90ffff564
+--- /dev/null
++++ b/drivers/pci/hotplug/octep_hp.c
+@@ -0,0 +1,412 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Copyright (C) 2024 Marvell. */
++
++#include <linux/cleanup.h>
++#include <linux/container_of.h>
++#include <linux/delay.h>
++#include <linux/dev_printk.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/pci.h>
++#include <linux/pci_hotplug.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/workqueue.h>
++
++#define OCTEP_HP_INTR_OFFSET(x) (0x20400 + ((x) << 4))
++#define OCTEP_HP_INTR_VECTOR(x) (16 + (x))
++#define OCTEP_HP_DRV_NAME "octep_hp"
++
++/*
++ * Type of MSI-X interrupts.
++ * The macros OCTEP_HP_INTR_VECTOR and OCTEP_HP_INTR_OFFSET are used to
++ * generate the vector and offset for an interrupt type.
++ */
++enum octep_hp_intr_type {
++	OCTEP_HP_INTR_INVALID = -1,
++	OCTEP_HP_INTR_ENA,
++	OCTEP_HP_INTR_DIS,
++	OCTEP_HP_INTR_MAX,
++};
++
++struct octep_hp_cmd {
++	struct list_head list;
++	enum octep_hp_intr_type intr_type;
++	u64 intr_val;
++};
++
++struct octep_hp_slot {
++	struct list_head list;
++	struct hotplug_slot slot;
++	u16 slot_number;
++	struct pci_dev *hp_pdev;
++	unsigned int hp_devfn;
++	struct octep_hp_controller *ctrl;
++};
++
++struct octep_hp_intr_info {
++	enum octep_hp_intr_type type;
++	int number;
++	char name[16];
++};
++
++struct octep_hp_controller {
++	void __iomem *base;
++	struct pci_dev *pdev;
++	struct octep_hp_intr_info intr[OCTEP_HP_INTR_MAX];
++	struct work_struct work;
++	struct list_head slot_list;
++	struct mutex slot_lock; /* Protects slot_list */
++	struct list_head hp_cmd_list;
++	spinlock_t hp_cmd_lock; /* Protects hp_cmd_list */
++};
++
++static void octep_hp_enable_pdev(struct octep_hp_controller *hp_ctrl,
++				 struct octep_hp_slot *hp_slot)
++{
++	guard(mutex)(&hp_ctrl->slot_lock);
++	if (hp_slot->hp_pdev) {
++		dev_dbg(&hp_slot->hp_pdev->dev, "Slot %u already enabled\n",
++			hp_slot->slot_number);
++		return;
++	}
++
++	/* Scan the device and add it to the bus */
++	hp_slot->hp_pdev = pci_scan_single_device(hp_ctrl->pdev->bus,
++						  hp_slot->hp_devfn);
++	pci_bus_assign_resources(hp_ctrl->pdev->bus);
++	pci_bus_add_device(hp_slot->hp_pdev);
++
++	dev_dbg(&hp_slot->hp_pdev->dev, "Enabled slot %u\n",
++		hp_slot->slot_number);
++}
++
++static void octep_hp_disable_pdev(struct octep_hp_controller *hp_ctrl,
++				  struct octep_hp_slot *hp_slot)
++{
++	guard(mutex)(&hp_ctrl->slot_lock);
++	if (!hp_slot->hp_pdev) {
++		dev_dbg(&hp_ctrl->pdev->dev, "Slot %u already disabled\n",
++			hp_slot->slot_number);
++		return;
++	}
++
++	dev_dbg(&hp_slot->hp_pdev->dev, "Disabling slot %u\n",
++		hp_slot->slot_number);
++
++	/* Remove the device from the bus */
++	pci_stop_and_remove_bus_device_locked(hp_slot->hp_pdev);
++	hp_slot->hp_pdev = NULL;
++}
++
++static int octep_hp_enable_slot(struct hotplug_slot *slot)
++{
++	struct octep_hp_slot *hp_slot =
++		container_of(slot, struct octep_hp_slot, slot);
++
++	octep_hp_enable_pdev(hp_slot->ctrl, hp_slot);
++	return 0;
++}
++
++static int octep_hp_disable_slot(struct hotplug_slot *slot)
++{
++	struct octep_hp_slot *hp_slot =
++		container_of(slot, struct octep_hp_slot, slot);
++
++	octep_hp_disable_pdev(hp_slot->ctrl, hp_slot);
++	return 0;
++}
++
++static struct hotplug_slot_ops octep_hp_slot_ops = {
++	.enable_slot = octep_hp_enable_slot,
++	.disable_slot = octep_hp_disable_slot,
++};
++
++#define SLOT_NAME_SIZE 16
++static struct octep_hp_slot *
++octep_hp_register_slot(struct octep_hp_controller *hp_ctrl,
++		       struct pci_dev *pdev, u16 slot_number)
++{
++	char slot_name[SLOT_NAME_SIZE];
++	struct octep_hp_slot *hp_slot;
++	int ret;
++
++	hp_slot = kzalloc(sizeof(*hp_slot), GFP_KERNEL);
++	if (!hp_slot)
++		return ERR_PTR(-ENOMEM);
++
++	hp_slot->ctrl = hp_ctrl;
++	hp_slot->hp_pdev = pdev;
++	hp_slot->hp_devfn = pdev->devfn;
++	hp_slot->slot_number = slot_number;
++	hp_slot->slot.ops = &octep_hp_slot_ops;
++
++	snprintf(slot_name, sizeof(slot_name), "octep_hp_%u", slot_number);
++	ret = pci_hp_register(&hp_slot->slot, hp_ctrl->pdev->bus,
++			      PCI_SLOT(pdev->devfn), slot_name);
++	if (ret) {
++		kfree(hp_slot);
++		return ERR_PTR(ret);
++	}
++
++	list_add_tail(&hp_slot->list, &hp_ctrl->slot_list);
++	octep_hp_disable_pdev(hp_ctrl, hp_slot);
++
++	return hp_slot;
++}
++
++static void octep_hp_deregister_slot(void *data)
++{
++	struct octep_hp_slot *hp_slot = data;
++	struct octep_hp_controller *hp_ctrl = hp_slot->ctrl;
++
++	pci_hp_deregister(&hp_slot->slot);
++	octep_hp_enable_pdev(hp_ctrl, hp_slot);
++	list_del(&hp_slot->list);
++	kfree(hp_slot);
++}
++
++static bool octep_hp_is_slot(struct octep_hp_controller *hp_ctrl,
++			     struct pci_dev *pdev)
++{
++	/* Check if the PCI device can be hotplugged */
++	return pdev != hp_ctrl->pdev && pdev->bus == hp_ctrl->pdev->bus &&
++	       PCI_SLOT(pdev->devfn) == PCI_SLOT(hp_ctrl->pdev->devfn);
++}
++
++static void octep_hp_cmd_handler(struct octep_hp_controller *hp_ctrl,
++				 struct octep_hp_cmd *hp_cmd)
++{
++	struct octep_hp_slot *hp_slot;
++
++	/*
++	 * Enable or disable the slots based on the slot mask.
++	 * intr_val is a bit mask where each bit represents a slot.
++	 */
++	list_for_each_entry(hp_slot, &hp_ctrl->slot_list, list) {
++		if (!(hp_cmd->intr_val & BIT(hp_slot->slot_number)))
++			continue;
++
++		if (hp_cmd->intr_type == OCTEP_HP_INTR_ENA)
++			octep_hp_enable_pdev(hp_ctrl, hp_slot);
++		else
++			octep_hp_disable_pdev(hp_ctrl, hp_slot);
++	}
++}
++
++static void octep_hp_work_handler(struct work_struct *work)
++{
++	struct octep_hp_controller *hp_ctrl;
++	struct octep_hp_cmd *hp_cmd;
++	unsigned long flags;
++
++	hp_ctrl = container_of(work, struct octep_hp_controller, work);
++
++	/* Process all the hotplug commands */
++	spin_lock_irqsave(&hp_ctrl->hp_cmd_lock, flags);
++	while (!list_empty(&hp_ctrl->hp_cmd_list)) {
++		hp_cmd = list_first_entry(&hp_ctrl->hp_cmd_list,
++					  struct octep_hp_cmd, list);
++		list_del(&hp_cmd->list);
++		spin_unlock_irqrestore(&hp_ctrl->hp_cmd_lock, flags);
++
++		octep_hp_cmd_handler(hp_ctrl, hp_cmd);
++		kfree(hp_cmd);
++
++		spin_lock_irqsave(&hp_ctrl->hp_cmd_lock, flags);
++	}
++	spin_unlock_irqrestore(&hp_ctrl->hp_cmd_lock, flags);
++}
++
++static enum octep_hp_intr_type octep_hp_intr_type(struct octep_hp_intr_info *intr,
++						  int irq)
++{
++	enum octep_hp_intr_type type;
++
++	for (type = OCTEP_HP_INTR_ENA; type < OCTEP_HP_INTR_MAX; type++) {
++		if (intr[type].number == irq)
++			return type;
++	}
++
++	return OCTEP_HP_INTR_INVALID;
++}
++
++static irqreturn_t octep_hp_intr_handler(int irq, void *data)
++{
++	struct octep_hp_controller *hp_ctrl = data;
++	struct pci_dev *pdev = hp_ctrl->pdev;
++	enum octep_hp_intr_type type;
++	struct octep_hp_cmd *hp_cmd;
++	u64 intr_val;
++
++	type = octep_hp_intr_type(hp_ctrl->intr, irq);
++	if (type == OCTEP_HP_INTR_INVALID) {
++		dev_err(&pdev->dev, "Invalid interrupt %d\n", irq);
++		return IRQ_HANDLED;
++	}
++
++	/* Read and clear the interrupt */
++	intr_val = readq(hp_ctrl->base + OCTEP_HP_INTR_OFFSET(type));
++	writeq(intr_val, hp_ctrl->base + OCTEP_HP_INTR_OFFSET(type));
++
++	hp_cmd = kzalloc(sizeof(*hp_cmd), GFP_ATOMIC);
++	if (!hp_cmd)
++		return IRQ_HANDLED;
++
++	hp_cmd->intr_val = intr_val;
++	hp_cmd->intr_type = type;
++
++	/* Add the command to the list and schedule the work */
++	spin_lock(&hp_ctrl->hp_cmd_lock);
++	list_add_tail(&hp_cmd->list, &hp_ctrl->hp_cmd_list);
++	spin_unlock(&hp_ctrl->hp_cmd_lock);
++	schedule_work(&hp_ctrl->work);
++
++	return IRQ_HANDLED;
++}
++
++static void octep_hp_irq_cleanup(void *data)
++{
++	struct octep_hp_controller *hp_ctrl = data;
++
++	pci_free_irq_vectors(hp_ctrl->pdev);
++	flush_work(&hp_ctrl->work);
++}
++
++static int octep_hp_request_irq(struct octep_hp_controller *hp_ctrl,
++				enum octep_hp_intr_type type)
++{
++	struct pci_dev *pdev = hp_ctrl->pdev;
++	struct octep_hp_intr_info *intr;
++	int irq;
++
++	irq = pci_irq_vector(pdev, OCTEP_HP_INTR_VECTOR(type));
++	if (irq < 0)
++		return irq;
++
++	intr = &hp_ctrl->intr[type];
++	intr->number = irq;
++	intr->type = type;
++	snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
++
++	return devm_request_irq(&pdev->dev, irq, octep_hp_intr_handler,
++				IRQF_SHARED, intr->name, hp_ctrl);
++}
++
++static int octep_hp_controller_setup(struct pci_dev *pdev,
++				     struct octep_hp_controller *hp_ctrl)
++{
++	struct device *dev = &pdev->dev;
++	enum octep_hp_intr_type type;
++	int ret;
++
++	ret = pcim_enable_device(pdev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to enable PCI device\n");
++
++	ret = pcim_iomap_regions(pdev, BIT(0), OCTEP_HP_DRV_NAME);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to map PCI device region\n");
++
++	pci_set_master(pdev);
++	pci_set_drvdata(pdev, hp_ctrl);
++
++	INIT_LIST_HEAD(&hp_ctrl->slot_list);
++	INIT_LIST_HEAD(&hp_ctrl->hp_cmd_list);
++	mutex_init(&hp_ctrl->slot_lock);
++	spin_lock_init(&hp_ctrl->hp_cmd_lock);
++	INIT_WORK(&hp_ctrl->work, octep_hp_work_handler);
++
++	hp_ctrl->pdev = pdev;
++	hp_ctrl->base = pcim_iomap_table(pdev)[0];
++	if (!hp_ctrl->base)
++		return dev_err_probe(dev, -ENODEV, "Failed to get device resource map\n");
++
++	ret = pci_alloc_irq_vectors(pdev, 1,
++				    OCTEP_HP_INTR_VECTOR(OCTEP_HP_INTR_MAX),
++				    PCI_IRQ_MSIX);
++	if (ret < 0)
++		return dev_err_probe(dev, ret, "Failed to alloc MSI-X vectors\n");
++
++	ret = devm_add_action(&pdev->dev, octep_hp_irq_cleanup, hp_ctrl);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Failed to add IRQ cleanup action\n");
++
++	for (type = OCTEP_HP_INTR_ENA; type < OCTEP_HP_INTR_MAX; type++) {
++		ret = octep_hp_request_irq(hp_ctrl, type);
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "Failed to request IRQ for vector %d\n",
++					     OCTEP_HP_INTR_VECTOR(type));
++	}
++
++	return 0;
++}
++
++static int octep_hp_pci_probe(struct pci_dev *pdev,
++			      const struct pci_device_id *id)
++{
++	struct octep_hp_controller *hp_ctrl;
++	struct pci_dev *tmp_pdev = NULL;
++	struct octep_hp_slot *hp_slot;
++	u16 slot_number = 0;
++	int ret;
++
++	hp_ctrl = devm_kzalloc(&pdev->dev, sizeof(*hp_ctrl), GFP_KERNEL);
++	if (!hp_ctrl)
++		return -ENOMEM;
++
++	ret = octep_hp_controller_setup(pdev, hp_ctrl);
++	if (ret)
++		return ret;
++
++	/*
++	 * Register all hotplug slots. Hotplug controller is the first function
++	 * of the PCI device. The hotplug slots are the remaining functions of
++	 * the PCI device. They are removed from the bus and are added back when
++	 * the hotplug event is triggered.
++	 */
++	for_each_pci_dev(tmp_pdev) {
++		if (!octep_hp_is_slot(hp_ctrl, tmp_pdev))
++			continue;
++
++		hp_slot = octep_hp_register_slot(hp_ctrl, tmp_pdev, slot_number);
++		if (IS_ERR(hp_slot))
++			return dev_err_probe(&pdev->dev, PTR_ERR(hp_slot),
++					     "Failed to register hotplug slot %u\n",
++					     slot_number);
++
++		ret = devm_add_action(&pdev->dev, octep_hp_deregister_slot,
++				      hp_slot);
++		if (ret)
++			return dev_err_probe(&pdev->dev, ret,
++					     "Failed to add action for deregistering slot %u\n",
++					     slot_number);
++		slot_number++;
++	}
++
++	return 0;
++}
++
++#define OCTEP_DEVID_HP_CONTROLLER 0xa0e3
++static struct pci_device_id octep_hp_pci_map[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, OCTEP_DEVID_HP_CONTROLLER) },
++	{ },
++};
++
++static struct pci_driver octep_hp = {
++	.name = OCTEP_HP_DRV_NAME,
++	.id_table = octep_hp_pci_map,
++	.probe = octep_hp_pci_probe,
++};
++
++module_pci_driver(octep_hp);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Marvell");
++MODULE_DESCRIPTION("OCTEON PCIe device hotplug controller driver");
+-- 
+2.25.1
+
 
