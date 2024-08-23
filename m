@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-299296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1524095D270
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8968695D273
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72A628532D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F99D1F22F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB99818A6C7;
-	Fri, 23 Aug 2024 16:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E94189905;
+	Fri, 23 Aug 2024 16:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Qj8k0qIq"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aN/8Iiao"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D5818593A;
-	Fri, 23 Aug 2024 16:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429217; cv=pass; b=b/1aLozzKfzaoF/j/7pKTfxFQJ+HIZX4HABPN/U8CcNuzuWY0Dx4Y2Mi/QtdbHXg+SFjfLpci5bBUnqjzTtKvC11fm2fECQXpMUpUDFJxPzSG9tChyOwRdvo7xMRIjJbkOmX1/uUlk5EL1SMk0x29Ax95TtjVkehMQ/O+ktAa7k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429217; c=relaxed/simple;
-	bh=tBB3izCPMfNbf0TqYcL+j5sUi5mpYAci9rH5LDp8q24=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iBKeDnfL0aeb23kZQj19opSgUoTtJm17yz3BrMn5EQG5wkSbBjEmgwFxU6jgdnUkQcWS9hZJy5sldKeyg4kcF2Fl17+YJLWXuyGdXNsE7pBN0YPZWU2+gwUMlnMgNFK4/MaWIaPD9xzlOFgmN5tWoV4qI+SikLzD7huIWQvtz+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Qj8k0qIq; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724429133; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MjRK1FoJsuHsyIVh4RKCCc54M6gWCjzayDtGsNTo97lxPTlzEHOzuPiovQrrjUJmaJ5s90+XuamKSaXVKuWxZOVAH3Bh2dfB0YO4s8YRjLu8ROWo/SjA7TonfQN/Nxp1DL+/sOlJlYLuPLtZN6+b0yztkrjX95/53JgMg+gFheM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724429133; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wDoypvfwN342dAKyLY44n6dnwxz7IYCMVu0LjSVZLls=; 
-	b=OkalxmebjQXK/KNBLiMUpyfDZY3yUF9lxpQHzS6JQq9nyIuQYPz4dFPFV1Mzz0HywvcQffmaRmLuZrYdktRgoBTNbajEvjSvM3UrBAkfFiCvscC+NH6RBWSuvHd1pTFv5OkD9rV2dyTAk2JQGc/KjmvS9E//46qYImoKkcQKgcY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724429133;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=wDoypvfwN342dAKyLY44n6dnwxz7IYCMVu0LjSVZLls=;
-	b=Qj8k0qIq4exUkeUJptd26SKuPlitb5ZgBqC7E3rk4WordXlOwH+24duUcyGUL9O2
-	hLBr5QB77BbIfluvvtyxmmART4/PB3WKPu7qNXu6jHnrxIWlG1XOTc9OHwqoWm7H8JP
-	Z+4ldmd5ncaGMTv2H6RjCcptwCTfFGlpoRk6G05s=
-Received: by mx.zohomail.com with SMTPS id 1724429132247991.7209561127088;
-	Fri, 23 Aug 2024 09:05:32 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Chukun Pan <amadeus@jmu.edu.cn>, Andy Yan <andyshrk@163.com>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Jagan Teki <jagan@edgeble.ai>,
- Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>,
- Michael Riesch <michael.riesch@wolfvision.net>,
- Jimmy Hon <honyuenkwun@gmail.com>, Alexey Charkov <alchark@gmail.com>,
- Elon Zhang <zhangzj@rock-chips.com>, Elaine Zhang <zhangqing@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
- kernel@collabora.com
-Subject: [PATCH v2 10/12] dt-bindings: spi: Add rockchip,rk3576-spi compatible
-Date: Fri, 23 Aug 2024 12:07:10 -0400
-Message-ID: <1995660.usQuhbGJ8B@trenzalore>
-In-Reply-To: <20240823150057.56141-1-detlev.casanova@collabora.com>
-References: <20240823150057.56141-1-detlev.casanova@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8657A188001
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724429274; cv=none; b=ID2E1MlvRcI6xsK1i8pWsT4Fx4Q7gFJXOuR1XQ4MjcL0Rxk3A7xC34D4CyXbd8VjB+H/Agoln0PBXKL+MSM42xEOzcp8DMu2XyfYp4ou/EmhbEC3GQmK6bIGjmLWC1dWO7ImiFIync5Llf0ZzDPRtj9FHxmjWGvQpShg1e7qbFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724429274; c=relaxed/simple;
+	bh=TeVMpeQdg2wG0XosoMdsTgxo9Xce9on002pqxPK6pjw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B9LX8c/2Owrxg8gl6eokwvNYDFVYHmHvtGxqmng+HQed0LEGWyEtDq9PcF2J7eVD2phz4+4a6EFQAhg2dR1YaBdp6Eti+6akKh4iBjhaHg62v/mWWOaQGsUj+qWN49LcngF7DO3KzkM/fXzu2Mgthmck5IDE8iC8joABKdFKT9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aN/8Iiao; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53349d3071eso2666644e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724429271; x=1725034071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9OCNvj/wx5yxOsb2/+mcktbpA3DNvcmR3VULCO7umQ0=;
+        b=aN/8IiaoxsYMBfIxY5DMV9NyoGdUpCAeWs8GA0TvLvmbp8qV5CjYTQpR0HPS1mgxh/
+         oYZzfiWFjbgt9T/DWGgp2iZ1HFj+qTS3UUVSZOcSbaOq7Ar39UtvGdzrnLf/3J37iP7z
+         8BVawduf1kac336bq7ntSt56Gt3EILfWxygocK+7ZDzyRcFM7WDnyPnGwjEDzQ2i3/p+
+         0jyAFvpEX/wdL+YUR7QsmoRWqbFgGOo64av2YGdQTNOSx/m3VZgS5F0KpnO+bXv6Rtmc
+         MRRNouHh6/NKaseRECZSL9oEYT6tXw5cn/MsQDIN+9EYgx/NR/r3EjvyWSeJwZpzzwqh
+         lWVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724429271; x=1725034071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9OCNvj/wx5yxOsb2/+mcktbpA3DNvcmR3VULCO7umQ0=;
+        b=JA6IVBeeD8MrY6weeApmJ7cUqWwU8Y08nBIxpYqaZk1WQATHr6HOa2IN1fN81d8Kta
+         I3IJ9PMRL4Hc5qc00P4c3PhuMY40eiS3bO62YjHYZ2yKm4ACJV0uOkDa1OqaSkSKlizi
+         FbqgGUr3j2G3bN4HC6D9i9udSHTA14Me8sgBVl+LUZj4f3ChBNiSZux1pnR8IK6n0zIH
+         vA1AL/piG9syfhymd3kIWsnGxWintneXCxCiSktVutLxrFRMjdIQe/E8jph8ZBrPn2za
+         yWVRofsoxZke/ZSZbeYidexlkOwJLVupCa5Lh1QZg3mBhDakI3KhhmYfyt9Sn5UanBX6
+         HA+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXGMFT2qruEizm2lGzxvAPoSRwzA8QAP0oHezvXuAHxRE/E8L/h1wY7d3Ln+V5YaBq24nF4rZtCF15kHes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF6oQi8bxlrHVjYzyDRMdZSL2jnMcGvnYbAVYYY5GPHf6JE5CS
+	6v1q68JTrFV7U1iAce/y/hJzLzaJtc3L6VnJK4cV1e0sTU3TV3oefR3RNIenN3cUmtXIvXrUCn4
+	UnbXuC+mVzfJL8lphdFQk7lydT6YX3OuWZzpiEQ==
+X-Google-Smtp-Source: AGHT+IGUI0PY8Ux0OZKUd+jbtCpSnv5I/wL6SIyMbObq48C6tOrwmIkWL6by381sXMMlDTaIRU35sAsSSqAQhXmpqJI=
+X-Received: by 2002:a05:6512:3c9a:b0:52e:999b:7c01 with SMTP id
+ 2adb3069b0e04-534387bbf66mr2088604e87.48.1724429270252; Fri, 23 Aug 2024
+ 09:07:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+References: <20240808-mtk-rsel-bias-disable-fix-v1-1-1b4e85bf596c@collabora.com>
+In-Reply-To: <20240808-mtk-rsel-bias-disable-fix-v1-1-1b4e85bf596c@collabora.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 18:07:39 +0200
+Message-ID: <CACRpkdZy9F-oh0sT+YhvgzoSrKQL78gK46wRbQ6d6jHYS5nzfA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: common-v2: Fix broken bias-disable for PULL_PU_PD_RSEL_TYPE
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It is compatible with the rockchip,rk3066-spi SPI core.
+On Fri, Aug 9, 2024 at 1:27=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- Documentation/devicetree/bindings/spi/spi-rockchip.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> Despite its name, commit fed74d75277d ("pinctrl: mediatek: common-v2:
+> Fix bias-disable for PULL_PU_PD_RSEL_TYPE") actually broke bias-disable
+> for PULL_PU_PD_RSEL_TYPE.
+>
+> mtk_pinconf_bias_set_combo() tries every bias method supported by the
+> pin until one succeeds. For PULL_PU_PD_RSEL_TYPE pins, before the
+> breaking commit, mtk_pinconf_bias_set_rsel() would be called first to
+> try and set the RSEL value (as well as PU and PD), and if that failed,
+> the only other valid option was that bias-disable was specified, which
+> would then be handled by calling mtk_pinconf_bias_set_pu_pd() and
+> disabling both PU and PD.
+>
+> The breaking commit misunderstood this logic and added an early "return
+> 0" in mtk_pinconf_bias_set_rsel(). The result was that in the
+> bias-disable case, the bias was left unchanged, since by returning
+> success, mtk_pinconf_bias_set_combo() no longer tried calling
+> mtk_pinconf_bias_set_pu_pd() to disable the bias.
+>
+> Since the logic for configuring bias-disable on PULL_PU_PD_RSEL_TYPE
+> pins required mtk_pinconf_bias_set_rsel() to fail first, in that case,
+> an error was printed to the log, eg:
+>
+>   mt8195-pinctrl 10005000.pinctrl: Not support rsel value 0 Ohm for pin =
+=3D 29 (GPIO29)
+>
+> This is what the breaking commit actually got rid of, and likely part of
+> the reason why that commit was thought to be fixing functionality, while
+> in reality it was breaking it.
+>
+> Instead of simply reverting that commit, restore the functionality but
+> in a way that avoids the error from being printed and makes the code
+> less confusing:
+> * Return 0 explicitly if a bias method was successful
+> * Introduce an extra function mtk_pinconf_bias_set_pu_pd_rsel() that
+>   calls both mtk_pinconf_bias_set_rsel() (only if needed) and
+>   mtk_pinconf_bias_set_pu_pd()
+>   * And analogously for the corresponding getters
+>
+> Fixes: fed74d75277d ("pinctrl: mediatek: common-v2: Fix bias-disable for =
+PULL_PU_PD_RSEL_TYPE")
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml b/
-Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-index e4941e9212d13..46d9d6ee09234 100644
---- a/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-rockchip.yaml
-@@ -35,6 +35,7 @@ properties:
-               - rockchip,rk3368-spi
-               - rockchip,rk3399-spi
-               - rockchip,rk3568-spi
-+              - rockchip,rk3576-spi
-               - rockchip,rk3588-spi
-               - rockchip,rv1126-spi
-           - const: rockchip,rk3066-spi
--- 
-2.46.0
+Patch applied for fixes.
 
-
-
+Thanks!
+Linus Walleij
 
