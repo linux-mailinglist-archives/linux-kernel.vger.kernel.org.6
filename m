@@ -1,157 +1,349 @@
-Return-Path: <linux-kernel+bounces-299131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A937195D085
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:59:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F1595D0FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEB131C218B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:59:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC7DB2B19A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41A9188934;
-	Fri, 23 Aug 2024 14:59:24 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB5918951B;
+	Fri, 23 Aug 2024 15:06:31 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2CE18859A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99B1188A03;
+	Fri, 23 Aug 2024 15:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425164; cv=none; b=ULUtreUFzRS4hXBH7vVKAMmES3FRX4eyvxE5ov1LW4kCwRQhzAB18TlSBu1Z93Z3HAQl4zAGba8ANqEUPvu1nKywv9U63VQ2+kCwTkPXo1xH+Ek6DWH75oiJWne5gau23V9pOgzJUlabC4NfMrGmAA/GybmFWsnpVl9oXUl7PFw=
+	t=1724425590; cv=none; b=oUqgtflm6FDHADJAmSbZM2ZINMn3VpEl/huMClatsu2aJGcd2MHsCiOCxpLJpleTgGoKUMeCn2yUVSW85lc4Bmc9DH0xX8zYTLkBGlV63IN8WekRVR6OpPs2M1Vp4HSqBqVVXQ1IZ3GYXFyQ6Xn9lDE8063/Ns/3Rp1qBm4UkqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425164; c=relaxed/simple;
-	bh=+cO5iDtiVefaLy9OqDQvfdGVMsajBS0aKXFTf1N1mxs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DMyLii6faPCr8TK/XvwiUuuqygOxKTK3N/w9LwnyaPl+qq6WC7lvP6ZvPwrt73bxB8XKV470RkN98ay7Ez58FYkl2qv6B3C7vChevYsASyQcfJARqWW6zS3DEQcTE+TnUAGUVAsWEjCclSNNbpIqMRTZGBSrrRTaIZIrXWzsMJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa44764bbso219596639f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:59:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724425162; x=1725029962;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wTIFi9L9UeHyNSaav76xv9rofn+a9DeiubQ8FGO7z3g=;
-        b=nLdVCEhW/Mrf/a6lbbk7LpHFoUe7o//obF8Obi7+hcpjm6LxsDnr8T+XBBx/ARVsJ4
-         vLGNeC09YowGyWa6KKNEMrgOJqCDgsociYVY3zWXZisRAWj/PX4kusuUr01nFSXZ4g4W
-         eD0UyxYOSRlCUqkjTUqdtXUrNBfclATxFyl07z+u3ZEFFQFWsc4xDQcTw7lwyxi0dQzu
-         N+upgzB47jGGQ02DFWFDOi4YSeId9W6RE1606SPRCRwm3nGVAa+rQHUK8aQBZWlUZVVA
-         nF/owevfLgTRgOHGj6YHw4NnvTQCS5VNUf+i+WdQHq2n/p5aHhAh8CylNC/SNJhCERrB
-         5mYw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9/LpDO/rUbmK5MTHOhaTRtR2Ynbeb78Gok8A3/9M08iPN9HYsFuwd3UyD0CizKkZCYm4vbb6CtjmmlaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp/i6RlqmGMOfmh/Tdxou6iIZ6FKMBvPO0omjnPDutTR1MzNsH
-	b3+MoLiPS6eb8KCr4hR/zd3VL9KmJ1KfXRtEn9IEw3Y58xs6BR//3XEuTsr/lLSWMLJLlAkg7Zh
-	fnq/tBSkZ6EpSOuoPCQFKfxwXOoiN0hMDflEj7zuXOQTjpUwhxgxmhwg=
-X-Google-Smtp-Source: AGHT+IEdhSqKPJiuaiV0LCtePBM5lotT/gx4Ia9RBngJx//c1xiJrf1p2mSOBcG6lU0dPAai+QX7PFstzkkXH2VQotoL6coWuOHj
+	s=arc-20240116; t=1724425590; c=relaxed/simple;
+	bh=sjLBEZJXMHfrWzunUy6hND8Kd20CL1FdXFEPcbibCkQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RWvi5K9temVpbMMDcGwvyp0BgG6rJt972powH3xjmk0X6s5YGRMkxGQwm88VYbEyZJrnpt6yZ4knbbQqv3/yXv44PIl4JsN+BSC5ySqzE7MasWPJmp7p1iuhDGAcQY+Pc2mFrwjWM0tWi+KwgI5BGiGJge1zumy7dYv53JeIgwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wr3Jc4jKwzpTNf;
+	Fri, 23 Aug 2024 23:04:48 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 579BE1800A4;
+	Fri, 23 Aug 2024 23:06:23 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 Aug 2024 23:06:23 +0800
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
+	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
+Subject: [PATCH net-next v14 00/11] Replace page_frag with page_frag_cache for sk_page_frag()
+Date: Fri, 23 Aug 2024 23:00:28 +0800
+Message-ID: <20240823150040.1567062-1-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c08:b0:81f:927e:d900 with SMTP id
- ca18e2360f4ac-827873128ecmr13987739f.1.1724425162032; Fri, 23 Aug 2024
- 07:59:22 -0700 (PDT)
-Date: Fri, 23 Aug 2024 07:59:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000399d6e06205b056e@google.com>
-Subject: [syzbot] [usb?] WARNING: refcount bug in usb_get_dev
-From: syzbot <syzbot+e8c4df4ec92aa7f4e3a2@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hello,
+After [1], there are still two implementations for page frag:
 
-syzbot found the following issue on:
+1. mm/page_alloc.c: net stack seems to be using it in the
+   rx part with 'struct page_frag_cache' and the main API
+   being page_frag_alloc_align().
+2. net/core/sock.c: net stack seems to be using it in the
+   tx part with 'struct page_frag' and the main API being
+   skb_page_frag_refill().
 
-HEAD commit:    528dd46d0fc3 Merge tag 'net-6.10-rc8-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=108f8c0d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b63b35269462a0e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e8c4df4ec92aa7f4e3a2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+This patchset tries to unfiy the page frag implementation
+by replacing page_frag with page_frag_cache for sk_page_frag()
+first. net_high_order_alloc_disable_key for the implementation
+in net/core/sock.c doesn't seems matter that much now as pcp
+is also supported for high-order pages:
+commit 44042b449872 ("mm/page_alloc: allow high-order pages to
+be stored on the per-cpu lists")
 
-Unfortunately, I don't have any reproducer for this issue yet.
+As the related change is mostly related to networking, so
+targeting the net-next. And will try to replace the rest
+of page_frag in the follow patchset.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e86e44bbf25e/disk-528dd46d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/601010d0e1b0/vmlinux-528dd46d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c98ac3165731/bzImage-528dd46d.xz
+After this patchset:
+1. Unify the page frag implementation by taking the best out of
+   two the existing implementations: we are able to save some space
+   for the 'page_frag_cache' API user, and avoid 'get_page()' for
+   the old 'page_frag' API user.
+2. Future bugfix and performance can be done in one place, hence
+   improving maintainability of page_frag's implementation.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e8c4df4ec92aa7f4e3a2@syzkaller.appspotmail.com
+Kernel Image changing:
+    Linux Kernel   total |      text      data        bss
+    ------------------------------------------------------
+    after     45250307 |   27274279   17209996     766032
+    before    45254134 |   27278118   17209984     766032
+    delta        -3827 |      -3839        +12         +0
 
-usb 18-1: new SuperSpeed USB device number 27 using vhci_hcd
-------------[ cut here ]------------
-refcount_t: addition on 0; use-after-free.
-WARNING: CPU: 1 PID: 784 at lib/refcount.c:25 refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Modules linked in:
-CPU: 1 PID: 784 Comm: kworker/1:2 Not tainted 6.10.0-rc7-syzkaller-00254-g528dd46d0fc3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
-Code: 80 d6 1f 8c e8 37 16 a9 fc 90 0f 0b 90 90 eb b9 e8 5b e8 e6 fc c6 05 64 bf e8 0a 01 90 48 c7 c7 e0 d6 1f 8c e8 17 16 a9 fc 90 <0f> 0b 90 90 eb 99 e8 3b e8 e6 fc c6 05 45 bf e8 0a 01 90 48 c7 c7
-RSP: 0018:ffffc9000384f270 EFLAGS: 00010046
-RAX: 984309741ee81900 RBX: ffff8880257470e0 RCX: ffff88801fb85a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff81585882 R09: fffffbfff1c39994
-R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff8880242d8408
-R13: ffff8880242d8448 R14: ffff8880257470e0 R15: ffff8880257470a8
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000005845d99c CR3: 0000000062b7a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000400
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_inc include/linux/refcount.h:241 [inline]
- refcount_inc include/linux/refcount.h:258 [inline]
- kref_get include/linux/kref.h:45 [inline]
- kobject_get+0xfd/0x120 lib/kobject.c:643
- usb_get_dev+0x23/0x40 drivers/usb/core/usb.c:765
- vhci_urb_enqueue+0x5bf/0xef0 drivers/usb/usbip/vhci_hcd.c:785
- usb_hcd_submit_urb+0x36c/0x1e80 drivers/usb/core/hcd.c:1533
- usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
- get_bMaxPacketSize0 drivers/usb/core/hub.c:4805 [inline]
- hub_port_init+0x1156/0x2670 drivers/usb/core/hub.c:5066
- hub_port_connect drivers/usb/core/hub.c:5450 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x295f/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Performance validation:
+1. Using micro-benchmark ko added in patch 1 to test aligned and
+   non-aligned API performance impact for the existing users, there
+   is no notiable performance degradation. Instead we seems to have
+   some major performance boot for both aligned and non-aligned API
+   after switching to ptr_ring for testing, respectively about 200%
+   and 10% improvement in arm64 server as below.
+
+2. Use the below netcat test case, we also have some minor
+   performance boot for replacing 'page_frag' with 'page_frag_cache'
+   after this patchset.
+   server: taskset -c 32 nc -l -k 1234 > /dev/null
+   client: perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc 127.0.0.1 1234
+
+In order to avoid performance noise as much as possible, the testing
+is done in system without any other load and have enough iterations to
+prove the data is stable enough, complete log for testing is below:
+
+perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000
+perf stat -r 200 -- insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1
+taskset -c 32 nc -l -k 1234 > /dev/null
+perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc 127.0.0.1 1234
+
+*After* this patchset:
+
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000' (200 runs):
+
+         17.758393      task-clock (msec)         #    0.004 CPUs utilized            ( +-  0.51% )
+                 5      context-switches          #    0.293 K/sec                    ( +-  0.65% )
+                 0      cpu-migrations            #    0.008 K/sec                    ( +- 17.21% )
+                74      page-faults               #    0.004 M/sec                    ( +-  0.12% )
+          46128650      cycles                    #    2.598 GHz                      ( +-  0.51% )
+          60810511      instructions              #    1.32  insn per cycle           ( +-  0.04% )
+          14764914      branches                  #  831.433 M/sec                    ( +-  0.04% )
+             19281      branch-misses             #    0.13% of all branches          ( +-  0.13% )
+
+       4.240273854 seconds time elapsed                                          ( +-  0.13% )
+
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1' (200 runs):
+
+         17.348690      task-clock (msec)         #    0.019 CPUs utilized            ( +-  0.66% )
+                 5      context-switches          #    0.310 K/sec                    ( +-  0.84% )
+                 0      cpu-migrations            #    0.009 K/sec                    ( +- 16.55% )
+                74      page-faults               #    0.004 M/sec                    ( +-  0.11% )
+          45065287      cycles                    #    2.598 GHz                      ( +-  0.66% )
+          60755389      instructions              #    1.35  insn per cycle           ( +-  0.05% )
+          14747865      branches                  #  850.085 M/sec                    ( +-  0.05% )
+             19272      branch-misses             #    0.13% of all branches          ( +-  0.13% )
+
+       0.935251375 seconds time elapsed                                          ( +-  0.07% )
+
+ Performance counter stats for 'taskset -c 0 head -c 20G /dev/zero' (200 runs):
+
+      16626.042731      task-clock (msec)         #    0.607 CPUs utilized            ( +-  0.03% )
+           3291020      context-switches          #    0.198 M/sec                    ( +-  0.05% )
+                 1      cpu-migrations            #    0.000 K/sec                    ( +-  0.50% )
+                85      page-faults               #    0.005 K/sec                    ( +-  0.16% )
+       30581044838      cycles                    #    1.839 GHz                      ( +-  0.05% )
+       34962744631      instructions              #    1.14  insn per cycle           ( +-  0.01% )
+        6483883671      branches                  #  389.984 M/sec                    ( +-  0.02% )
+          99624551      branch-misses             #    1.54% of all branches          ( +-  0.17% )
+
+      27.370305077 seconds time elapsed                                          ( +-  0.01% )
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+*Before* this patchset:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000' (200 runs):
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+         21.587934      task-clock (msec)         #    0.005 CPUs utilized            ( +-  0.72% )
+                 6      context-switches          #    0.281 K/sec                    ( +-  0.28% )
+                 1      cpu-migrations            #    0.047 K/sec                    ( +-  0.50% )
+                73      page-faults               #    0.003 M/sec                    ( +-  0.12% )
+          56080697      cycles                    #    2.598 GHz                      ( +-  0.72% )
+          61605150      instructions              #    1.10  insn per cycle           ( +-  0.05% )
+          14950196      branches                  #  692.526 M/sec                    ( +-  0.05% )
+             19410      branch-misses             #    0.13% of all branches          ( +-  0.18% )
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+       4.603530546 seconds time elapsed                                          ( +-  0.11% )
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+ Performance counter stats for 'insmod ./page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=12 nr_test=51200000 test_align=1' (200 runs):
 
-If you want to undo deduplication, reply with:
-#syz undup
+         20.988297      task-clock (msec)         #    0.006 CPUs utilized            ( +-  0.81% )
+                 7      context-switches          #    0.316 K/sec                    ( +-  0.54% )
+                 1      cpu-migrations            #    0.048 K/sec                    ( +-  0.70% )
+                73      page-faults               #    0.003 M/sec                    ( +-  0.11% )
+          54512166      cycles                    #    2.597 GHz                      ( +-  0.81% )
+          61440941      instructions              #    1.13  insn per cycle           ( +-  0.08% )
+          14906043      branches                  #  710.207 M/sec                    ( +-  0.08% )
+             19927      branch-misses             #    0.13% of all branches          ( +-  0.17% )
+
+       3.438041238 seconds time elapsed                                          ( +-  1.11% )
+
+ Performance counter stats for 'taskset -c 0 head -c 20G /dev/zero' (200 runs):
+
+      17364.040855      task-clock (msec)         #    0.624 CPUs utilized            ( +-  0.02% )
+           3340375      context-switches          #    0.192 M/sec                    ( +-  0.06% )
+                 1      cpu-migrations            #    0.000 K/sec
+                85      page-faults               #    0.005 K/sec                    ( +-  0.15% )
+       32077623335      cycles                    #    1.847 GHz                      ( +-  0.03% )
+       35121047596      instructions              #    1.09  insn per cycle           ( +-  0.01% )
+        6519872824      branches                  #  375.481 M/sec                    ( +-  0.02% )
+         101877022      branch-misses             #    1.56% of all branches          ( +-  0.14% )
+
+      27.842745343 seconds time elapsed                                          ( +-  0.02% )
+
+
+Note, ipv4-udp, ipv6-tcp and ipv6-udp is also tested with the below script:
+nc -u -l -k 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -N -u 127.0.0.1 1234
+
+nc -l6 -k 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -N ::1 1234
+
+nc -l6 -k -u 1234 > /dev/null
+perf stat -r 4 -- head -c 51200000000 /dev/zero | nc -u -N ::1 1234
+
+CC: Alexander Duyck <alexander.duyck@gmail.com>
+
+1. https://lore.kernel.org/all/20240228093013.8263-1-linyunsheng@huawei.com/
+
+Change log:
+V14:
+   1. Drop '_va' Renaming patch and use new API naming.
+   2. Use new refactoring to enable more codes to be reusable.
+   3. And other minor suggestions from Alexander.
+
+V13:
+   1. Move page_frag_test from mm/ to tools/testing/selftest/mm
+   2. Use ptr_ring to replace ptr_pool for page_frag_test.c
+   3. Retest based on the new testing ko, which shows a big different
+      result than using ptr_pool.
+
+V12:
+   1. Do not treat page_frag_test ko as DEBUG feature.
+   2. Make some improvement for the refactoring in patch 8.
+   3. Some other minor improvement as Alexander's comment.
+
+RFC v11:
+   1. Fold 'page_frag_cache' moving change into patch 2.
+   2. Optimizate patch 3 according to discussion in v9.
+
+V10:
+   1. Change Subject to "Replace page_frag with page_frag_cache for sk_page_frag()".
+   2. Move 'struct page_frag_cache' to sched.h as suggested by Alexander.
+   3. Rename skb_copy_to_page_nocache().
+   4. Adjust change between patches to make it more reviewable as Alexander's comment.
+   5. Use 'aligned_remaining' variable to generate virtual address as Alexander's
+      comment.
+   6. Some included header and typo fix as Alexander's comment.
+   7. Add back the get_order() opt patch for xtensa arch
+
+V9:
+   1. Add check for test_alloc_len and change perm of module_param()
+      to 0 as Wang Wei' comment.
+   2. Rebased on latest net-next.
+
+V8: Remove patch 2 & 3 in V7, as free_unref_page() is changed to call
+    pcp_allowed_order() and used in page_frag API recently in:
+    commit 5b8d75913a0e ("mm: combine free_the_page() and free_unref_page()")
+
+V7: Fix doc build warning and error.
+
+V6:
+   1. Fix some typo and compiler error for x86 pointed out by Jakub and
+      Simon.
+   2. Add two refactoring and optimization patches.
+
+V5:
+   1. Add page_frag_alloc_pg() API for tls_device.c case and refactor
+      some implementation, update kernel bin size changing as bin size
+      is increased after that.
+   2. Add ack from Mat.
+
+RFC v4:
+   1. Update doc according to Randy and Mat's suggestion.
+   2. Change probe API to "probe" for a specific amount of available space,
+      rather than "nonzero" space according to Mat's suggestion.
+   3. Retest and update the test result.
+
+v3:
+   1. Use new layout for 'struct page_frag_cache' as the discussion
+      with Alexander and other sugeestions from Alexander.
+   2. Add probe API to address Mat' comment about mptcp use case.
+   3. Some doc updating according to Bagas' suggestion.
+
+v2:
+   1. reorder test module to patch 1.
+   2. split doc and maintainer updating to two patches.
+   3. refactor the page_frag before moving.
+   4. fix a type and 'static' warning in test module.
+   5. add a patch for xtensa arch to enable using get_order() in
+      BUILD_BUG_ON().
+   6. Add test case and performance data for the socket code.
+
+Yunsheng Lin (11):
+  mm: page_frag: add a test module for page_frag
+  mm: move the page fragment allocator from page_alloc into its own file
+  mm: page_frag: use initial zero offset for page_frag_alloc_align()
+  mm: page_frag: avoid caller accessing 'page_frag_cache' directly
+  mm: page_frag: reuse existing space for 'size' and 'pfmemalloc'
+  mm: page_frag: use __alloc_pages() to replace alloc_pages_node()
+  net: rename skb_copy_to_page_nocache() helper
+  mm: page_frag: introduce prepare/probe/commit API
+  net: replace page_frag with page_frag_cache
+  mm: page_frag: update documentation for page_frag
+  mm: page_frag: add an entry in MAINTAINERS for page_frag
+
+ Documentation/mm/page_frags.rst               | 173 +++++-
+ MAINTAINERS                                   |  11 +
+ .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
+ .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 +---
+ .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
+ drivers/net/tun.c                             |  47 +-
+ drivers/vhost/net.c                           |   2 +-
+ include/linux/gfp.h                           |  22 -
+ include/linux/mm_types.h                      |  18 -
+ include/linux/mm_types_task.h                 |  21 +
+ include/linux/page_frag_cache.h               | 519 ++++++++++++++++++
+ include/linux/sched.h                         |   2 +-
+ include/linux/skbuff.h                        |   1 +
+ include/net/sock.h                            |  30 +-
+ kernel/exit.c                                 |   3 +-
+ kernel/fork.c                                 |   3 +-
+ mm/Makefile                                   |   1 +
+ mm/page_alloc.c                               | 136 -----
+ mm/page_frag_cache.c                          | 159 ++++++
+ net/core/skbuff.c                             |  64 ++-
+ net/core/skmsg.c                              |  12 +-
+ net/core/sock.c                               |  31 +-
+ net/ipv4/ip_output.c                          |  28 +-
+ net/ipv4/tcp.c                                |  26 +-
+ net/ipv4/tcp_output.c                         |  25 +-
+ net/ipv6/ip6_output.c                         |  28 +-
+ net/kcm/kcmsock.c                             |  21 +-
+ net/mptcp/protocol.c                          |  44 +-
+ net/rxrpc/conn_object.c                       |   4 +-
+ net/rxrpc/local_object.c                      |   4 +-
+ net/sched/em_meta.c                           |   2 +-
+ net/sunrpc/svcsock.c                          |   6 +-
+ net/tls/tls_device.c                          |  99 ++--
+ tools/testing/selftests/mm/Makefile           |   2 +
+ tools/testing/selftests/mm/page_frag/Makefile |  18 +
+ .../selftests/mm/page_frag/page_frag_test.c   | 170 ++++++
+ tools/testing/selftests/mm/run_vmtests.sh     |   9 +-
+ 37 files changed, 1384 insertions(+), 463 deletions(-)
+ create mode 100644 include/linux/page_frag_cache.h
+ create mode 100644 mm/page_frag_cache.c
+ create mode 100644 tools/testing/selftests/mm/page_frag/Makefile
+ create mode 100644 tools/testing/selftests/mm/page_frag/page_frag_test.c
+
+-- 
+2.33.0
+
 
