@@ -1,92 +1,58 @@
-Return-Path: <linux-kernel+bounces-298378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EBC95C675
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAE795C67B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B1F1F23555
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:23:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A481F23FF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DFD13BC2F;
-	Fri, 23 Aug 2024 07:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4200913B5B6;
+	Fri, 23 Aug 2024 07:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ImVFoA92"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X0vCAbUe"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F7913AA2A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6390C12C484;
+	Fri, 23 Aug 2024 07:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397829; cv=none; b=k5RA9H3hdMSdyMs9FRdIfA1Q+DbI+u4ir1KmjfiyaRsaauhxwTzkx0rjd+bo+nYLlP1o52BvDHzo2cvpQnGQFp4UDZR6HGeLRY95NuedDciPM5t+0zTOZJKT9bM8eqDEU580glLscKGQCkJ3QRyxh7wNgiAgtFJR3qiw+EQlb8o=
+	t=1724397928; cv=none; b=XPi2XmpZe7OGW1zRB/Mlao9kVX7AmWH/SEebR2GZRKN4FEyJHcj8oSYSxCUxeNG24K/trkJIRHXVA3rxdKSZC7vxOkUL2pR4W86/NeCPDQiB+4GQpzWs1QCnTERkidBHlcnPgrw6ZQdz07SVcHfxo1waoZ9RS1EzrR/TZmBexac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397829; c=relaxed/simple;
-	bh=iHS7rbkShMfUPZAmnOlThc8ibOAJHNhxRONLIiuqN58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kar9T+qgf/b8FpEyiekprvCzCwmzo8Sn0jodrzrkOtjsmF8uduhc6OKEPxhe6cW2DOcyp+FAk3ex1rUpjVAHFOm1QwldceWCNP8E9yQdTiyHsxFn7hRVwaeZ302K/7jtHo8Uz2FgsrNSAz2wK/Jg9cgeTZpJ/8XFNCu58S6eA6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ImVFoA92; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7142448aaf9so1195150b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724397827; x=1725002627; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=v5ElHlHRIu5slLIV+mCF9JmI6Y4XWgj6Cd25Jej8q74=;
-        b=ImVFoA92UV7EnvWgPwjqfgKN4wepkAlm5LIwHeugg4xcYzebSHenKmF8kVC6LyVqOZ
-         DQN3iIi+Vw1KdBNszlAUeP4jDCqXEZn9ndyFHyPJeygxKJmzWqeZTgYa25hPODsdP8AG
-         jzR5exz0hBUE/YRWzKONVSWRj3Mo2REiQ3Witi5mZ5fNqkse24FDLLrgLk4z9Bqqbzku
-         sJHvK2SQGdCwxOoZuSzgIPjGVcZ6QNQKqHwYSPM6srEqxDhG7pCdKOdLHiG7V7DG8IHG
-         sPGDZHi0jECaXZBlL70hgXJZEZiAOy4ON66JNBdGQUftzMdxx5JBNER3MWyiQuu4oPX2
-         8Gag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724397827; x=1725002627;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5ElHlHRIu5slLIV+mCF9JmI6Y4XWgj6Cd25Jej8q74=;
-        b=owim91CXXm3lTwfYZcKBxze78d8uq/+ArhCQ1/lwvfiV+iRsVOj31rwoBNqW67WD9u
-         K00brC3cpjdDk6o9qgtIyIj8V5FfOBHT3z5sY7GGeWqmkYRmeMKNj5sFixrHR/OJqey0
-         Yni2ZnBhtr2I6FHISNhyhNah74pRIkd52sgc0kmuTGHftpf2MGPhEuefEd9ZACmyb/ji
-         ftYq5BNuxiCF9kOKMCtjJAiUofpg6bT3tlgUZbKZKg9Z4QvgYEoKlrMVSfhp9KsqDRnp
-         dJ4eoaqKd6e4VHtI4NdEWPEH199yCNGkausUaSWb540nrLgobEACNHdseKw68Xuj3wSS
-         dEag==
-X-Forwarded-Encrypted: i=1; AJvYcCX8tS1+nvUhNRRCAUm9wMIHxK08hVjKe7refYEWZ2lbxO26SvNj07CeCoUHWkJRt2iXQG/7275kK8IOVc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUXTdhoTUZDeUYq8DCmHgmu4Ptk08QsC+vboM9ecmPtb7bUeoJ
-	ygGiERVmOdHYPJhRWcDMdBgjAUwtGFujHwEZeC4FujfVrDD+w+ZwsjV03NqYkw==
-X-Google-Smtp-Source: AGHT+IFci5MVjwKGKSuKLPiYMi40vitXCDqOaX7wyqWrXkZSVfN3mDYsFqyHTQR/+iLqpPsiZXbVXg==
-X-Received: by 2002:a05:6a00:2fce:b0:70e:ce95:b87 with SMTP id d2e1a72fcca58-7143162f704mr9396156b3a.0.1724397826876;
-        Fri, 23 Aug 2024 00:23:46 -0700 (PDT)
-Received: from thinkpad ([120.60.60.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e03a3sm2510295b3a.140.2024.08.23.00.23.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 00:23:46 -0700 (PDT)
-Date: Fri, 23 Aug 2024 12:53:40 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 4/8] PCI: Change the parent to correctly represent
- pcie hierarchy
-Message-ID: <20240823072340.qcd6afkgwssr4muw@thinkpad>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
+	s=arc-20240116; t=1724397928; c=relaxed/simple;
+	bh=l2borQ6BL7UJAeCJ8fjSxCZVWGtcnM5bweA18vjtZOw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NHQTP/ZCM5VJancj9g7Lz02Zn1YjC5Tb8QxJkzgrIvwULqJJA/iY/qjkcTCjE6DlTq/ppd+6oZX1/jVxqsLKWDNE9q6G2iBmpmcTqCSnSccf/mjFKQ9SafTYG1a1HWcizZBCQ/tWF2dfMwF3GLQv5Yq+5PxgMT3xKiiTi1Qk9B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X0vCAbUe; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724397923;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6nm/KD+x6LmewnNHCRvgZAlRU/7D6SolWNRFixGP90=;
+	b=X0vCAbUe7cjqzn/KTpFLWQ/IA8WPDIZ1X3i7ZEd3K3LTEUBbB0ls4Ct+/5PoFDX9JtWfRJ
+	RIXM7CfDJX2jfsTHW9UhderGbVrJ0xtfHRX96C/QENigg3AKyJ0joQ+ggTxKJFtfmZj3Yo
+	qqKdluJtJhwBG3SSDD47hDiUxALM+Gw=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a
+ file read
+In-Reply-To: <0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com> (Xiubo Li's
+	message of "Fri, 23 Aug 2024 09:48:16 +0800")
+References: <20240822150113.14274-1-luis.henriques@linux.dev>
+	<0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com>
+Date: Fri, 23 Aug 2024 08:25:20 +0100
+Message-ID: <87ikvrhfa7.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,101 +60,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Aug 03, 2024 at 08:52:50AM +0530, Krishna chaitanya chundru wrote:
-> Currently the pwrctl driver is child of pci-pci bridge driver,
-> this will cause issue when suspend resume is introduced in the pwr
-> control driver. If the supply is removed to the endpoint in the
-> power control driver then the config space access by the
-> pci-pci bridge driver can cause issues like Timeouts.
-> 
-> For this reason change the parent to controller from pci-pci bridge.
-> 
+On Fri, Aug 23 2024, Xiubo Li wrote:
 
-Also, what if the PCIe controller driver tries to access the device? Like for
-sending PME_Turn_Off etc... during suspend? I think you should also make sure
-that the suspend callback of the pwrctl driver has to happen _after_ the
-controller driver.
+> On 8/22/24 23:01, Luis Henriques (SUSE) wrote:
+>> If, while doing a read, the inode is updated and the size is set to zero,
+>> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit=
+ a
+>> NULL pointer dereferrence by continuously reading a file while, on anoth=
+er
+>> client, we keep truncating and writing new data into it.
+>>
+>> This patch fixes the issue by adding extra checks to avoid integer overf=
+lows
+>> for the case of a zero size inode.  This will prevent the loop doing page
+>> copies from running and thus accessing the pages[] array beyond num_page=
+s.
+>>
+>> Link: https://tracker.ceph.com/issues/67524
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>> Hi!
+>>
+>> Please note that this patch is only lightly tested and, to be honest, I'm
+>> not sure if this is the correct way to fix this bug.  For example, if the
+>> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+>> 0 and the problem would be solved.  However, it seems to be returning the
+>> size of the reply message and that's not something easy to change.  Or m=
+aybe
+>> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+>> other ideas.
+>>
+>> Also, the tracker contains a simple testcase for crashing the client.
+>>
+>>   fs/ceph/file.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index 4b8d59ebda00..dc23d5e5b11e 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   		}
+>>     		idx =3D 0;
+>> -		if (ret <=3D 0)
+>> +		if ((ret <=3D 0) || (i_size =3D=3D 0))
+>
+> Hi Luis,
+>
+> This change looks incorrect to me.
+>
+> As I mentioned before when the 'IFILE' lock is in MIX state the 'Frw' cap=
+s could
+> be issued to multiple clients at the same time. Which means the file coul=
+d be
+> updated by another client and the local 'i_size' may haven't been changed=
+ in
+> time. So in this case the 'ret' will be larger than '0' and the 'i_size' =
+could
+> be '0'.
+>
+>
+>>   			left =3D 0;
+>> -		else if (off + ret > i_size)
+>> +		else if ((i_size >=3D off) && (off + ret > i_size))
+>
+> And the 'off' also could equal to little than the 'i_size'.
+>
+> BTW, could you reproduce the crash issue ?
 
-Still the parent-child hierarchy is not going to change, but only the devlink
-part.
+Yes, 100% reproducible :-)
 
-- Mani
+See https://tracker.ceph.com/issues/67524
 
-> Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/bus.c         | 3 ++-
->  drivers/pci/pwrctl/core.c | 9 ++++++++-
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 55c853686051..15b42f0f588f 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -328,6 +328,7 @@ void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
->   */
->  void pci_bus_add_device(struct pci_dev *dev)
->  {
-> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
->  	struct device_node *dn = dev->dev.of_node;
->  	int retval;
->  
-> @@ -352,7 +353,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->  
->  	if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
->  		retval = of_platform_populate(dev_of_node(&dev->dev), NULL, NULL,
-> -					      &dev->dev);
-> +					      host->dev.parent);
->  		if (retval)
->  			pci_err(dev, "failed to populate child OF nodes (%d)\n",
->  				retval);
-> diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
-> index feca26ad2f6a..4f2ffa0b0a5f 100644
-> --- a/drivers/pci/pwrctl/core.c
-> +++ b/drivers/pci/pwrctl/core.c
-> @@ -11,6 +11,8 @@
->  #include <linux/property.h>
->  #include <linux/slab.h>
->  
-> +#include "../pci.h"
-> +
->  static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
->  			     void *data)
->  {
-> @@ -64,18 +66,23 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
->   */
->  int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
->  {
-> +	struct pci_bus *bus;
->  	int ret;
->  
->  	if (!pwrctl->dev)
->  		return -ENODEV;
->  
-> +	bus = pci_find_bus(of_get_pci_domain_nr(pwrctl->dev->parent->of_node), 0);
-> +	if (!bus)
-> +		return -ENODEV;
-> +
->  	pwrctl->nb.notifier_call = pci_pwrctl_notify;
->  	ret = bus_register_notifier(&pci_bus_type, &pwrctl->nb);
->  	if (ret)
->  		return ret;
->  
->  	pci_lock_rescan_remove();
-> -	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-> +	pci_rescan_bus(bus);
->  	pci_unlock_rescan_remove();
->  
->  	return 0;
-> 
-> -- 
-> 2.34.1
-> 
+Cheers,
+--=20
+Lu=C3=ADs
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+>
+> Thanks
+>
+> - Xiubo
+>
+>>   			left =3D i_size - off;
+>>   		else
+>>   			left =3D ret;
+>> @@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   			size_t plen, copied;
+>>     			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
+>> +			WARN_ON_ONCE(idx >=3D num_pages);
+>>   			SetPageUptodate(pages[idx]);
+>>   			copied =3D copy_page_to_iter(pages[idx++],
+>>   						   page_off, plen, to);
+>> @@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>>   	}
+>>     	if (ret > 0) {
+>> -		if (off >=3D i_size) {
+>> +		if ((i_size >=3D *ki_pos) && (off >=3D i_size)) {
+>>   			*retry_op =3D CHECK_EOF;
+>>   			ret =3D i_size - *ki_pos;
+>>   			*ki_pos =3D i_size;
+>>
+>
 
