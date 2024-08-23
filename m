@@ -1,167 +1,76 @@
-Return-Path: <linux-kernel+bounces-299289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3B895D25B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5764495D25C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0621D2819E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DA02822C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2330418953F;
-	Fri, 23 Aug 2024 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aoEsic4m"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F818BBA3;
+	Fri, 23 Aug 2024 16:04:43 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14CE1C680
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AEB18B466
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429079; cv=none; b=EC8tnxCjlwqgTTEJVLieDtFv9BjJwaqQne/fY6j4mGi0GJl6vdPDQtn3p0keHSMpgVu9jFR5DZdzdV8zTpsyjpFCFHLeKlpT0Nmv735r2X94WN5empRhAcZvXuq4K7R1mNxxr7KBBCxoSICPeaemAcJxzvbxxc6WMdiFojuGww4=
+	t=1724429083; cv=none; b=gUxKuxz8eWBFuuzQOskhhPiOexjXjEjU56N+vgPNBUlZoVK7tXeNwJRIha1dJrcCHQ1nIN40qxRthAHJRuO225F43oP924pN7BQYJk1KaLo9/jO8SS+FsZa+aQws37+FtXVfjHvq4waLxrDFjoxFPXdFA5ISkLwWesMm/9hU82g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429079; c=relaxed/simple;
-	bh=177xgDYdFO5QHTNUZBJcTtp1IMBMsPqEb0gndm8UzoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ch1TncvtqgNZhTppBl5dLO0005xFPND+afA/m117xHR4/WlyZme8l9evTgSh3BuyfVnVDZuUDPWEbdGyW6yiCYWZw7te4CIuEMGQEO6V0Cqu+Yq1o8npmiJU+LIix4lWB5UfdS5vLhtPqAme6zm/j+d4X+xZazF5IlLtRnckWG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aoEsic4m; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A7F221C0007;
-	Fri, 23 Aug 2024 16:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724429068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mF0jJ+XEsMsD5uzCbms/Umdhg76zuMSa2D9a98I2W8I=;
-	b=aoEsic4mvBwrZmCLdfeoItEW+UzVqev1VH0kORDjuuE7d2xIYkApkVl+hKqE/GTz6WZ7an
-	LEjcRon50pIKvTdEchNepMY5SWGZANXT9Fj/NJWIkvzc34TrmCNF4nVzCjySYovpgHaYbw
-	kLWg5pzHSkQV7egl3zX7VSzhr375K3FCM03Vn50AMgOrNmi1h6fi6fDvOBaU4DgbAwTm7q
-	P7Bkse6b3/gQ53y66UGiZDZrpRZPC262rsN8Vh4oiUslPXNPRY7IX+4+RVansh4rBNC3t5
-	D7FH9CPEfS5uyTh5nAZQL276rNEEVxZxZb6F0VPGw1gfgfWMCDkOHfofsQPVGQ==
-Date: Fri, 23 Aug 2024 18:04:26 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
- <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
- <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
- <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 03/11] i3c: master: Extend address status bit to 4
- and add I3C_ADDR_SLOT_EXT_INIT
-Message-ID: <20240823180426.056ac093@xps-13>
-In-Reply-To: <20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
-	<20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724429083; c=relaxed/simple;
+	bh=myxzuBIwG2Mo0coTeeYdtFic57FitjVELZpP0iplrHU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Sn7Dn8/SIj3yMGpDwkYraRbYx6dvIJDf9aPoMwWUOUUbmOIO8eOOL0JNpwGRwTn0NOdcWxOxdjaWs1sflKOl7q/j4UuY5tsP1V+wq5SeEt+UHOUJXZoSZP2wQCsDnZhqdTbK7its5vpj4bv1m7GrKUsu7tAcpL5ENEMYjvnq/ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9504974dso192936239f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:04:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724429081; x=1725033881;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=myxzuBIwG2Mo0coTeeYdtFic57FitjVELZpP0iplrHU=;
+        b=XYe1Te7PCCp7GYzgPX+82jfiWX44INaUtUxXIw5v6btw2PYqMlNi0YkoIBXy6ZNqDr
+         y5RWSpk9R+ap1j6Cxp58lr5lKDcZg0k/xKHuMZ6fG2P6gVuulcza0gq/KXlfhwrmdMH9
+         NtvTgijXKJ5hYN7lZpXb359noMWajgCs49BKknCL8MDMa0G8Ii5Hno1IhJs1yP3BVayk
+         iXSUKhDGRi/riMNgng2dhvyIRYIHO9dLGP9U38BJb+3FzkFFZmauajc4K9S8Ns2lLzcW
+         sKa1jdfxb7/BASIA8LcbW5c4nuzZ1KAtCuAOhkvRNk3tBZuA5/hI/T7qAv3Kk/tEWjHw
+         euAw==
+X-Gm-Message-State: AOJu0YzpZbBB8VBOPCckJXyvnGWkceU0kIrKf9I/sVvsidjqjHWvJcIt
+	vUiwNuZyWsbOIByi1vkJ76Z4YOZMYNwZ+N24U0Qia7bqDdEK33r20SJuBACZCV1n/mF8FXiQ/dD
+	1GlVVPh0gKPlACrRU+hercbpwXcCp9VGRzQvaf1/Dd3OoB5vV0oKet1g=
+X-Google-Smtp-Source: AGHT+IEcqRoC3Lsbae2YHIsUknX1YlJc7v17l4QTKwe/l+virBh6Tuz8g/OL6X5/FzHVP8HeTS9K4OGskHFsqSzXYBEd5sTRGHML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-Received: by 2002:a05:6638:8904:b0:4ca:7128:6c70 with SMTP id
+ 8926c6da1cb9f-4ce82b6c530mr86089173.6.1724429080855; Fri, 23 Aug 2024
+ 09:04:40 -0700 (PDT)
+Date: Fri, 23 Aug 2024 09:04:40 -0700
+In-Reply-To: <00000000000077d29606186c5e99@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ce165c06205bee98@google.com>
+Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in decompress_lznt
+From: syzbot <syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Frank,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
->  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 addr)
->  {
->  	enum i3c_addr_slot_status status;
-> @@ -388,6 +405,14 @@ static int i3c_bus_get_free_addr(struct i3c_bus *bus=
-, u8 start_addr)
->  	enum i3c_addr_slot_status status;
->  	u8 addr;
-> =20
-> +	/* try find an address, which have not pre-allocated by assigned-addres=
-s */
+Subject: UBSAN: array-index-out-of-bounds in decompress_lznt
+Author: almaz.alexandrovich@paragon-software.com
 
-	Try	to find			has   been
-
-pre-allocated?
-
-> +	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
-> +		status =3D i3c_bus_get_addr_slot_status_ext(bus, addr);
-> +		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> +			return addr;
-> +	}
-> +
-> +	/* use pre-allocoated by assigned-address because such device was remov=
-ed at bus*/
-
-	  Use      allocated=20
-
-pre-allocated or assigned?
-
-I guess the logic should be:
-- try the assigned-address
-- look for a free slot
-- look for an already in use slot that must concern a disconnected
-  device
-
-But the comments are not precise enough IMHO. Can you rephrase them?
-
->  	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
->  		status =3D i3c_bus_get_addr_slot_status(bus, addr);
->  		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> @@ -1906,9 +1931,9 @@ static int i3c_master_bus_init(struct i3c_master_co=
-ntroller *master)
->  			goto err_rstdaa;
->  		}
-> =20
-> -		i3c_bus_set_addr_slot_status(&master->bus,
-> -					     i3cboardinfo->init_dyn_addr,
-> -					     I3C_ADDR_SLOT_I3C_DEV);
-> +		i3c_bus_set_addr_slot_status_ext(&master->bus,
-> +						 i3cboardinfo->init_dyn_addr,
-> +						 I3C_ADDR_SLOT_I3C_DEV | I3C_ADDR_SLOT_EXT_INIT);
-> =20
->  		/*
->  		 * Only try to create/attach devices that have a static
-> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-> index 4601b6957f799..c923b76bbc321 100644
-> --- a/include/linux/i3c/master.h
-> +++ b/include/linux/i3c/master.h
-> @@ -284,6 +284,8 @@ enum i3c_bus_mode {
->   * @I3C_ADDR_SLOT_I2C_DEV: address is assigned to an I2C device
->   * @I3C_ADDR_SLOT_I3C_DEV: address is assigned to an I3C device
->   * @I3C_ADDR_SLOT_STATUS_MASK: address slot mask
-> + * @I3C_ADDR_SLOT_EXT_INIT: the bit mask display of addresses is preferr=
-ed by some devices,
-
-I'm sorry, but I don't understand what "bit mask display of addresses"
-means.
-
-> + *			    such as the "assigned-address" in device tree source (dts).
->   *
->   * On an I3C bus, addresses are assigned dynamically, and we need to kno=
-w which
->   * addresses are free to use and which ones are already assigned.
-> @@ -297,9 +299,11 @@ enum i3c_addr_slot_status {
->  	I3C_ADDR_SLOT_I2C_DEV,
->  	I3C_ADDR_SLOT_I3C_DEV,
->  	I3C_ADDR_SLOT_STATUS_MASK =3D 3,
-> +	I3C_ADDR_SLOT_EXT_STATUS_MASK =3D 7,
-> +	I3C_ADDR_SLOT_EXT_INIT =3D BIT(2),
->  };
-> =20
-> -#define I3C_ADDR_SLOT_BITS 2
-> +#define I3C_ADDR_SLOT_BITS 4
-> =20
->  /**
->   * struct i3c_bus - I3C bus object
->=20
-
-
-Thanks,
-Miqu=C3=A8l
+#syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
