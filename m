@@ -1,87 +1,146 @@
-Return-Path: <linux-kernel+bounces-299340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D458B95D32B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:24:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7BD95D32C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C40C1C237E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE651F22F69
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69168189BAE;
-	Fri, 23 Aug 2024 16:24:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CA9189B93;
+	Fri, 23 Aug 2024 16:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jdyx02Pv"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A172F134A0
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E6C18893B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430244; cv=none; b=qjE1VXvZ4kYaD8WqjC2O8zWGY5v3OWlg5M6LCoTaqzQzu5NS9g5ZzZsWeOGU5oxXsoaUmQL5elQ/Jfx14brv22MweFziknkH8Vvq0jMv4y/ZVWk1VqxNDrgBz8nWgf2HhhAo+uV8Mivaq24xheRqokGCSDSv808E+PI9BYX8ss8=
+	t=1724430261; cv=none; b=RCoRJGHbRT+GqI9dVFkMFqneqNVtBRyUeh8c6yN4EKf+mRGOusCEfC5bp+Va5y2J9qZCfitCC6kODYoZ4vxrPRCl2fYugLQy/jxosP5RtRG+aPVGlgTaHH7IPuksOue9klIXuj6XytujM0ZYBIE0BQA7/qQDw/waU19d5OhsnI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430244; c=relaxed/simple;
-	bh=+dUcxZCRPp9sDzc9kWJVrJIUXSx9K+C1tMGdjM0XZJQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DIqxhGK2YrU0Sq4RnBw/TUABTYc+msB/nfiCDH8r+L6ejKiOi2fceAusZu7rQ+n8rTkTywUfzTIdXbGHk/67vEuljN/Vx+5NuRSLxKU/wTcOLTj86mOJgzpli0w47xyaBrF12Cm7XRS8rwlBLP1n43X3Gmyq0fsIbhotqmKdbe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81fc0896188so220166639f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:24:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724430242; x=1725035042;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R49eMCdc1EeKu5shIzC0L4dTA6JLOlR+2/tzRUfA6dg=;
-        b=rPPNx54sERXBUwgVOCulheNkffU2BOuGtrtvr12mloNkkqR6PKa/d0XES33ulPEOOo
-         Ik7gmhQC06efERDa9/rmXtXnTktl12HbBsRnZsl/tnCJ6hB5ikkusUxq4JyaZTN4I1Jz
-         dvggq3SYBHBBqQv0YH8A65ieAUCuNcZzbP2uYG/Cwojj4JBY/DBQwhrahs17uESV4dCq
-         i3KU/OtuupDJhe5lnrtPJtF43GWhHwKP5CCt5cW+whqEqfKWdKGSJfB5wgAN6GM+HCcK
-         1m77kG2WrvMn2LF3kJgfb7K98Vv+ygqnr6ETMl+qFY7YanQDuARPIBSp0oj40rMgadM9
-         5E+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSbNM3GIRfV8dynbRVSQRTUvsdhOj4f4faiMFnfb9nk//vewNmybOTy3rrseOWU+AV+YsJn+uxhFhaxVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO+EkAdN0YL66igI+LbxZ3gN0ylY4ziSkiK9KGeUbIv04HF1fG
-	FQlACtLPm7UeeCEaNfX75TSF88VTrKymmNvbr2wSOsj4Rr2dNIm9zHceobxptnX26Ul172FYpp2
-	h+UhDvVR4fDZ4zFlWtjRK2qqEiShyR5knR45av5KPKVMK5LOFs2/diMs=
-X-Google-Smtp-Source: AGHT+IFShC+bD+4HNPXEYRtxC4W1Me34JrhJ6DCmFIbfS1kNV0N6Z6tK5ZtH4uXNIUjF6soLfuyDC1UljN6tRtulKznzWCsxGAD6
+	s=arc-20240116; t=1724430261; c=relaxed/simple;
+	bh=2AZcW0AMjruhAKqn0fjALEg1RIVZrHtZALPiKh483iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gmeV7nNYZe6OMDc8wvP2bQ7HqCGDoUa3Z4sNG1RUFY6J7AHVmFt8fq6tXypSgQ+OjbpXXWMU7bYsundHu/GT/sedHMLU+FxwkuMwTVdu4gBV7PYL8NoqKDj97KB6UN8CvFEuWvHa+Yotn5cdUFkEXKrXl0z6zaWb1PV5c63LyvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jdyx02Pv; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 677DB1BF209;
+	Fri, 23 Aug 2024 16:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724430258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h1vZPt/dBcDYDQ0mp2GaU66eD+tAIsEG5O9GhWlpdXI=;
+	b=jdyx02Pv1cUl9X6jJRVEPrHP+O4CHcA+e2qnqfSUDKpTiM1pcOtu+gRdMjDT7Lc5KeNTy5
+	QdJckxIcKreRCrjJ5uWLDyqD1iPWX6fvCUNcxiJkRRDPmxnQRdlrPmL8pkK1FnVabNmYWb
+	K2mg3j2Cc+1S7jebKgxgnCY+ddyDW5ymhEr8YnOcGsbEwDNNBpDqzuAbLnHs3P28qh/8fh
+	O4ovRNC1Z7Whx2saeY2D1/l+VCzMHswrKRcnMFQ1NBX3TiKs5hZAGBQPSkNM6o71Di5h0A
+	30cydmV27n76AYxneoVqS9yPWyS5NQQeJdb6SRSOTTdHrqxyeCOJPTCXOSvkeg==
+Date: Fri, 23 Aug 2024 18:24:16 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
+ <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
+ <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, stable@kernel.org
+Subject: Re: [PATCH v3 11/11] i3c: master: svc: fix possible assignment of
+ the same address to two devices
+Message-ID: <20240823182416.33744666@xps-13>
+In-Reply-To: <20240819-i3c_fix-v3-11-7d69f7b0a05e@nxp.com>
+References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
+	<20240819-i3c_fix-v3-11-7d69f7b0a05e@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1485:b0:4c2:90d0:b311 with SMTP id
- 8926c6da1cb9f-4ce8293ddabmr142387173.3.1724430241758; Fri, 23 Aug 2024
- 09:24:01 -0700 (PDT)
-Date: Fri, 23 Aug 2024 09:24:01 -0700
-In-Reply-To: <5ff534147df14a938c79911a34fd52bf@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000000252406205c3432@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_mark_rec_free (2)
-From: syzbot <syzbot+016b09736213e65d106e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+Hi Frank,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Frank.Li@nxp.com wrote on Mon, 19 Aug 2024 12:02:05 -0400:
 
-Reported-by: syzbot+016b09736213e65d106e@syzkaller.appspotmail.com
-Tested-by: syzbot+016b09736213e65d106e@syzkaller.appspotmail.com
+> svc_i3c_master_do_daa() {
+>     ...
+>     for (i =3D 0; i < dev_nb; i++) {
+>         ret =3D i3c_master_add_i3c_dev_locked(m, addrs[i]);
+>         if (ret)
+>             goto rpm_out;
+>     }
+> }
+>=20
+> If two devices (A and B) are detected in DAA and address 0xa is assigned =
+to
+> device A and 0xb to device B, a failure in i3c_master_add_i3c_dev_locked()
+> for device A (addr: 0xa) could prevent device B (addr: 0xb) from being
+> registered on the bus. The I3C stack might still consider 0xb a free
+> address. If a subsequent Hotjoin occurs, 0xb might be assigned to Device =
+A,
+> causing both devices A and B to use the same address 0xb, violating the I=
+3C
+> specification.
+>=20
+> The return value for i3c_master_add_i3c_dev_locked() should not be checked
+> because subsequent steps will scan the entire I3C bus, independent of
+> whether i3c_master_add_i3c_dev_locked() returns success.
+>=20
+> If device A registration fails, there is still a chance to register device
+> B. i3c_master_add_i3c_dev_locked() can reset DAA if a failure occurs while
+> retrieving device information.
+>=20
+> Cc: stable@kernel.org
+> Fixes: 317bacf960a4 ("i3c: master: add enable(disable) hot join in sys en=
+try")
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/i3c/master/svc-i3c-master.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc=
+-i3c-master.c
+> index 2010495906eb3..003565fddc261 100644
+> --- a/drivers/i3c/master/svc-i3c-master.c
+> +++ b/drivers/i3c/master/svc-i3c-master.c
+> @@ -1042,11 +1042,8 @@ static int svc_i3c_master_do_daa(struct i3c_master=
+_controller *m)
+>  		goto rpm_out;
+> =20
+>  	/* Register all devices who participated to the core */
+> -	for (i =3D 0; i < dev_nb; i++) {
+> -		ret =3D i3c_master_add_i3c_dev_locked(m, addrs[i]);
+> -		if (ret)
+> -			goto rpm_out;
+> -	}
+> +	for (i =3D 0; i < dev_nb; i++)
+> +		i3c_master_add_i3c_dev_locked(m, addrs[i]);
 
-Tested on:
+Makes sense, but please explain why don't check the return value in a
+comment (your commit log is good).
 
-commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fd6dd5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=af26d0d182db8829
-dashboard link: https://syzkaller.appspot.com/bug?extid=016b09736213e65d106e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> =20
+>  	/* Configure IBI auto-rules */
+>  	ret =3D svc_i3c_update_ibirules(master);
+>=20
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+With the comment added,
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Thanks,
+Miqu=C3=A8l
 
