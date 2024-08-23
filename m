@@ -1,197 +1,164 @@
-Return-Path: <linux-kernel+bounces-299185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD1995D14B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8025E95D14C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890C31F231DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:24:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E491C219ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84DB188A35;
-	Fri, 23 Aug 2024 15:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844BF188A1E;
+	Fri, 23 Aug 2024 15:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="fbJDTmRz"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jRE1v6Zq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sKSG43sb"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D61185E65;
-	Fri, 23 Aug 2024 15:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724426639; cv=pass; b=UG0MBXxsooePLB9iylK6qNwWp/Pnbb8PeEaglpcujr3AUtQu8AoUNIhUy1RNaW9Evidgsjp4ddoW/lrC7yguyeDRXY9gXUNLDPGDZywHpkgdJiw+RWSvH6weOHiTXX18/0f2YDeYPKk/PhhIZEGWSKuBFraxq+uHGCAzYMZb+QQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724426639; c=relaxed/simple;
-	bh=nRsHpWGYPED5YcKFeo82Ne3STmSb5PjaPNJUfEHd5t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFN01l4nmfojyyv4IG7PxeXVumdot8CZx05Om3VF1NUfjbcUxZNL6g94LLCRMvv5C/bTg6AWpvGYOsJ9A7YaD7DR/POv6mh+UJWU+zmWM9V1+1f8JRJV6tUfT8qk2holz3wuOwcjllbn8sq/MtjSRu5+1O716SGjjRboieyxO8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=fbJDTmRz; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: nfraprado@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724426625; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YY61u2QHEh3TyX+mPY4Akk3f68nTPIaSz9fOYvcxGEVOzn271buw29BZN8C1ra8zE7cxbwxLLNIkkNDMXFwO2PrcDSkzuro3fYYE2nCI8WTN24ciXYP81+1nadfQ0Ux0JV0hh3cSaShyOJX1vYnnQhrrNbeMQU3q7JHCaijDS+U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724426625; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=P1cL9EeZ4+4EpZOIxL5FlEKqQ7oajrUqL8HBJ40Wupw=; 
-	b=cHQ9lr75NVT2jt7GsCDKXQADoqxVgqLn3HR8I2VhWxm9AbCiKn+Y/Hc+Jtz9bIKZe8DXP5jlOobNMQNksLfqK9S6qlxwT8rqxHXPmvkctm1Yr7s6bsongP7CTYPQOK6cyX2UWfvh/Kid+wJYep9C3iDNXapxiEV9VyeTdbLJ3nk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724426625;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=P1cL9EeZ4+4EpZOIxL5FlEKqQ7oajrUqL8HBJ40Wupw=;
-	b=fbJDTmRzLXEIIPjhgcxLVu290CQcBX/tPN52Nbrx3/q27PyRC9zkhPSbQTVzIP1I
-	bqfYAkhqxf6NUiiESl/HaqgkRjcM/mt4PrTXJfQAOayPmXpN9FIIYf2wu0ENwQ4wl/Y
-	mBIj+Xy1u0RmuEWkpoQVg3nfrZvFif1NjDQBlYdc=
-Received: by mx.zohomail.com with SMTPS id 1724426623925742.9251945533158;
-	Fri, 23 Aug 2024 08:23:43 -0700 (PDT)
-Date: Fri, 23 Aug 2024 17:23:38 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Nathan Hebert <nhebert@chromium.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v4 6/7] media: mediatek: vcodec: replace
- v4l2_m2m_next_src_buf with v4l2_m2m_src_buf_remove
-Message-ID: <20240823152338.n7i7cnvolvke2hqp@basti-XPS-13-9310>
-References: <20240807082444.21280-1-yunfei.dong@mediatek.com>
- <20240807082444.21280-7-yunfei.dong@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7CC18891D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724426646; cv=none; b=GweC7HdNUnZawtwy7+DQMwih0Yr42HXO2ZiDDKGES1yxvgQ3lMdBRSxJNOPbFU5XZ+TBl0hOz/6wCGCp1SEH1A3TYDXcBUoaKYXJarYLHY7f/1C4lUYW8nEWZGFDBq9b2BfrMXLGVY5SsB1tyBGQwVXD/R6zUB0DvsBv7Eh/dTs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724426646; c=relaxed/simple;
+	bh=dXXaT+XrLzWzSMAiHu2CPA6F0g3w3AL16WhsN2tFcTU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gjgGAkoaiQ3q/OuielGczgfw4GqMU/NXIMSAryEH7jFRxkcQImVP6Uxy6poiWOwPNMC8n0TSaI0CFEY0VT75jlAYsIdPnqBdNyo0nrvYC3chFWRXtHC/8eRS8GPWJ2u/WyNyCD7ABuDY9prxelz5GNTQ04MiDIR9rOZR5h8fCE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jRE1v6Zq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sKSG43sb; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6D000138FF2B;
+	Fri, 23 Aug 2024 11:24:03 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Fri, 23 Aug 2024 11:24:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724426643;
+	 x=1724513043; bh=7DkSDfC4nKtBQlrSWTZo8b6YkpGWZDzUq9d5F4Eo5Y8=; b=
+	jRE1v6Zq2US909ELF6jnrMrnVJK+p31B/UAlLV6BIpSV6yftsbt69khFVTsq5/8q
+	7qP4DRE1Fx1t3LYbfKZwcRfCKdoFRnZUKZdZ3GrrCFteQqAfPS+108gU8KQSiq/f
+	gHpBavBmeCy1sP/WbWZyPBMFFWB57rY8YpAy+P81zGgWAFTaC+w70PvCJleRFEYM
+	j+8t1j9Ux2QT98urcjHaWB3qTwVL27mCxgCknTGf6mCX1QC8EExpOFOXPkhJfiTQ
+	MWMRH3rWFj6KJS3XENDed8aylC2sfx3iRR9Z1naBWdu3lX/+qWrNZctjpbyfydtT
+	/b/BIf5BQofNbhXFc4CrlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724426643; x=
+	1724513043; bh=7DkSDfC4nKtBQlrSWTZo8b6YkpGWZDzUq9d5F4Eo5Y8=; b=s
+	KSG43sb/qodEuIQIrOrxZ49SD6glxxnMaoyFWj80aebXIAkpgORyfnLLHzYZ0Uwv
+	3QySglveaR14U3HvwyEo7DvA4+jO5NGYss/Z+vHMAJsi0CTYIE9H5UkSWvJn6ost
+	tkS7v+m+s7IMd4UmO93X7yNapHdG9VQMEQb8+w3GIJ03Uey/NViyD06m5ad1lIo+
+	dcXOUZ5n87baHL7UaDgiOYuP9DK/huQ/xGleCNvfvLXkEVh694JSIUlWx8bIrXfx
+	P6Fo7tLhNYEVoCsiIu1QoxJiUW4WEw0XkzfLmQO8BjBSq2pxlfPBOGLb1jtBBz5a
+	O4FIkqWwcIKODXtsfuXqw==
+X-ME-Sender: <xms:k6nIZsNJhIHB-yDrgQbAYFxN0j47iv8-CX490YfySnB9YUOZfM7qhw>
+    <xme:k6nIZi-2UmFjG7XOh0MkvFSyNM0J72rYK8AFO1NpZjlU5GW_mIBWYpZ1DbE3Rss-a
+    UKkIkrSH9Vk9IpcOgU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvvddgkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvg
+    gusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepfhhlohhr
+    ihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopeifrg
+    hhrhgvnhhsthesghhmgidrnhgvthdprhgtphhtthhopehkihgvrhgrnhdrsghinhhghhgr
+    mhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrph
+    hinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehumhgr
+    nhhgrdhjrghinhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepuggrnh
+    drtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepghhrvghgkhhh
+    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrg
+    hrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:k6nIZjQkmmwA7bufIwMsCGGsoo_ehDcfeV8DxvFYdHHOdsPuvlkEzA>
+    <xmx:k6nIZkuO-3aoPWDIZLr8M5hnlZoYVSoU6dQPMDz2QHRBEtP-cwE2Kg>
+    <xmx:k6nIZke8Wh6IRPmejjYMXOzCV61tkuzbApf4tB77UfU_oOOwBwBOmA>
+    <xmx:k6nIZo2QJBZcg0vLoYk4_D1cpTcMcbyDdEXhoagBwkvLNOZvDsUi5A>
+    <xmx:k6nIZj98LaEDW8uSrVNVkh6vqb_lGoehWitlyQjRsl22bFtOxLWviYYl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 2A16E2220071; Fri, 23 Aug 2024 11:24:03 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240807082444.21280-7-yunfei.dong@mediatek.com>
-X-ZohoMailClient: External
+Date: Fri, 23 Aug 2024 15:23:42 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Umang Jain" <umang.jain@ideasonboard.com>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
+ "Stefan Wahren" <wahrenst@gmx.net>,
+ "Dave Stevenson" <dave.stevenson@raspberrypi.com>,
+ "Phil Elwell" <phil@raspberrypi.com>
+Message-Id: <8174beea-9260-4248-abb5-4104a886b905@app.fastmail.com>
+In-Reply-To: <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
+References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
+ <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
+Subject: Re: [PATCH 1/7] staging: vchiq: Factor out bulk transfer for
+ VCHIQ_BULK_MODE_WAITING
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hey Yunfei,
-
-On 07.08.2024 16:24, Yunfei Dong wrote:
->There isn't lock to protect source buffer when get next src buffer,
->if the source buffer is removed for some unknown reason before lat
->work queue execute done, will lead to remove source buffer or buffer
->done error.
-
-This is really hard to understand, can try wording this a bit clearer?
-Stuff like: if the source buffer is removed ... will lead to remove
-source buffer, just leaves me scratching my head.
-And there is a spinlock in the m2m framework in `v4l2_m2m_next_buf` so I
-suppose you mean something else when you say that there is no lock to
-protect the source buffer?
-
-You might not know all reasons but for this commit description you
-should at least know one reason. Please highlight a case how this can
-happen, so that you can justify the change.
-
+On Fri, Aug 23, 2024, at 15:14, Umang Jain wrote:
+> The bulk transfer is VCHIQ_BULK_MODE_WAITING is used by VCHIQ ioctl
+> interface. It is factored out to a separate function from
+> vchiq_bulk_transfer() to bulk_xfer_waiting_interruptible().
 >
->Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
->---
-> .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 30 +++++++++++++------
-> 1 file changed, 21 insertions(+), 9 deletions(-)
+> This is a part of vchiq_bulk_transfer refactoring. Each bulk mode
+> will have their dedicated functions to execute bulk transfers.
+> Each mode will be handled separately in subsequent patches.
 >
->diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
->index 8aa379872ddc..3dba3549000a 100644
->--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
->+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
->@@ -321,6 +321,7 @@ static void mtk_vdec_worker(struct work_struct *work)
-> 		container_of(work, struct mtk_vcodec_dec_ctx, decode_work);
-> 	struct mtk_vcodec_dec_dev *dev = ctx->dev;
-> 	struct vb2_v4l2_buffer *vb2_v4l2_src = ctx->last_vb2_v4l2_src;
->+	struct vb2_v4l2_buffer *vb2_v4l2_dst;
-> 	struct vb2_buffer *vb2_src;
-> 	struct mtk_vcodec_mem *bs_src;
-> 	struct mtk_video_dec_buf *dec_buf_src;
->@@ -329,7 +330,7 @@ static void mtk_vdec_worker(struct work_struct *work)
-> 	bool res_chg = false;
-> 	int ret;
+> bulk_xfer_waiting_interruptible() is suffixed with "_interruptible"
+> to denote that it can be interrupted when a signal is received.
+> -EAGAIN maybe returned in those cases, similar to what
+> vchiq_bulk_transfer() does.
 >
->-	vb2_v4l2_src = vb2_v4l2_src ? vb2_v4l2_src : v4l2_m2m_next_src_buf(ctx->m2m_ctx);
->+	vb2_v4l2_src = vb2_v4l2_src ? vb2_v4l2_src : v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-> 	if (!vb2_v4l2_src) {
-> 		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> 		mtk_v4l2_vdec_dbg(1, ctx, "[%d] no available source buffer", ctx->id);
->@@ -381,17 +382,28 @@ static void mtk_vdec_worker(struct work_struct *work)
-> 	    ctx->current_codec == V4L2_PIX_FMT_VP8_FRAME) {
-> 		if (src_buf_req)
-> 			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
->-		v4l2_m2m_buf_done_and_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx, state);
->-	} else {
->-		if (ret != -EAGAIN) {
->-			v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
->-			ctx->last_vb2_v4l2_src = NULL;
->-		} else {
->-			ctx->last_vb2_v4l2_src = vb2_v4l2_src;
->-		}
->+		vb2_v4l2_dst = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
->+		v4l2_m2m_buf_done(vb2_v4l2_dst, state);
->+		v4l2_m2m_buf_done(vb2_v4l2_src, state);
-
-This is another case where you just remove again completely what you
-have added in the previous patch.
-
+> Adjust the vchiq_irq_queue_bulk_tx_rx() in the vchiq-dev.c to call
+> bulk_xfer_waiting_interruptible() for waiting mode. A temporary
+> goto label has been introduced to jump the call execution over
+> vchiq_bulk_transfer() for waiting mode only. When all dedicated bulk
+> transfer calls are introduced, this label shall be dropped.
 >
-> 		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
->+		return;
-> 	}
->+
->+	/* If each codec return -EAGAIN to decode again, need to backup current source
->+	 * buffer, then the driver will get this buffer next time.
-
-I would reword this like:
-
-	/* Store the current source buffer for the next attempt to decode,
-    * if this decode returned -EAGAIN */
-
->+	 *
->+	 * If each codec decode error, must to set buffer done with error status for
->+	 * this buffer have been removed from ready list.
->+	 */
->+	ctx->last_vb2_v4l2_src = (ret != -EAGAIN) ? NULL : vb2_v4l2_src;
-
-Okay and here you add the same thing again as in the previous patch but
-differently, this collection of commits feels more and more to me like a
-work in progress. Please make sure in the future that each commit does
-one job and does it completely.
-It is not only confussing but also makes it hard to read the changes as
-the bigger picture is missing in these tiny commits.
-
-Please try to combine the patches where possible.
-
-Regards,
-Sebastian Fricke
-
->+	if (ret && ret != -EAGAIN) {
->+		if (src_buf_req)
->+			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
->+		v4l2_m2m_buf_done(vb2_v4l2_src, state);
->+	}
->+
->+	v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> }
+> No function changes intended in this patch.
 >
-> static void vb2ops_vdec_stateless_buf_queue(struct vb2_buffer *vb)
->-- 
->2.46.0
->
->
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+
+This looks reasonable, just one think I would change:
+
+> +int
+> +bulk_xfer_waiting_interruptible(struct vchiq_instance *instance, 
+> unsigned int handle,
+> +				void *userdata)
+> +{
+> +	struct vchiq_service *service = find_service_by_handle(instance, 
+> handle);
+> +	struct bulk_waiter *bulk_waiter = NULL;
+
+> +
+> +	bulk_waiter = userdata;
+
+Since you always pass a 'struct bulk_waiter' here, please
+replace the 'void *userdata' with the typed argument directly.
+
+       Arnd
 
