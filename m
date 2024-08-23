@@ -1,155 +1,238 @@
-Return-Path: <linux-kernel+bounces-299324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD42E95D2FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFF295D301
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F227A1C23807
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2D41F21E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E2318BC2D;
-	Fri, 23 Aug 2024 16:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B59518BC2A;
+	Fri, 23 Aug 2024 16:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8bKoUfM"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1Txo4lY"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB0618BC2A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2401191477
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429827; cv=none; b=CYz3mhhfYyl1eULD85KG52kYMfMCAjABphLlV9nigHrHbqewLfKQeyLGO2AKipG1RGopL26UQTMY41UxOH+gBVnYUL4oOH0EHv5qysnYPRRz4SJpUJYvpYJ70IaWfk8lSVuLPtX8kj5s2u8Ys8pua+VtLM44dR3NLaJoQ1WaaSo=
+	t=1724429832; cv=none; b=lt9nF0c2PLbRAYZfl6ebEgD6hqD2Vh7UsgSkTyeQwi77GV8E3reSo/7tX5f7vqt/2pNrOaI3kC0cZtxJfi+QwuvTXNcSuXQn1Ez9zXwdBMXEo69qDj4F0CZ84tha8p2QlkM977pt3FvYfucUI0NeGsMmxueLBnULYws0rTKDy0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429827; c=relaxed/simple;
-	bh=flB7OHR5QrKHPhbrF3On1DA0RFx/CeDMftCyKCVbPiY=;
+	s=arc-20240116; t=1724429832; c=relaxed/simple;
+	bh=KnP2R2SOHCKuyyL1619jImwOBRmEyKY28WF2znWJgGg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+kou5Z0Zc0tJW/rrWL3toiObj2oGCsxVv/8ocKj5S2vu29+/Y4QZA+AhECPDZNoM0GIn8uoRoHG231VeI5A2XhBuds0qZZJDgAFYWhwcdX/OHZtI8RQflaurxjkcGyvmmN+fvM+79vaTvhyMYIZ0RUskLRIwFMw32M0XY2+PpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8bKoUfM; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6bf999ac52bso10036646d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:17:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=arACSti+dASZvUc2iEWnjcpAISEgVWpVTXmg1fIMOVfU6dzdk3BiKmRnvMf2N9RosAJ3JZstlCOwbWYtnvH2MTif5SRzEyRLsVIkFfuT0Hof04DpGQmiY9TO4CPwZnIqSU6RO9PFRvVg2iBVs3RGxiMRPlnRmMxO+dfB8iB9/xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S1Txo4lY; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39d2a107aebso199695ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724429825; x=1725034625; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724429830; x=1725034630; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=flB7OHR5QrKHPhbrF3On1DA0RFx/CeDMftCyKCVbPiY=;
-        b=Z8bKoUfMG3AXU/rU5Cu7/9NBPY/nAkoJsvO3WnEF7++Pp+MZS81wMm+/9DIZP91axp
-         owS2VYu+8xCdWhZoPEmhiyVcplRTPegfpaBRXpLGM2/FU+o0UtuzGB1ayyvZW1Ex8k72
-         AlKZ+idasbrGo455Qi/TM79Hw7y243joLx0auYp/RPsXN4Rcno86CKOqhmEJnap6SM16
-         /H/qaUJqJQRzCAE3Iv16RSU6uALyd+Mrz2elbk0NT7SJ9xxHXxGVvH1AvRoWZrUd0vbZ
-         P4oUbhMAUq4F59leqabD9vmgYFUFqiwGVzOZbihH6fI18pCTo2cvgulQ2RUZf6naHsuw
-         vUYA==
+        bh=JRyBChkzDJ6EdBnp4HpZAO2Elm1XGepN3U0opL5ubIU=;
+        b=S1Txo4lYImKk5GLbxp3ch8S78c5yAh58zT6ppnVoFrn0a6+SF/YzEfWsP57QY3Gk1x
+         39cwH8DEj1upYNwX088gQCTy6M4iu425STd57LayjFuLeiqzSaiGWHZkxCc1hlWgSSkh
+         QcXtjVJtYVQqBxlhu3jyTc2EkhtOYSQhMiEwctENO9Hzw8Zpd7rhMUiQK2xpmxQYEmMM
+         TnIh7P6GAzzekhm6gk9oqJhL/aYvaqzUjUv7UBKItHZIlhaO0/UNppfaCIXbwSfje4p/
+         GSYuqLcRrWTUMK67oYwYHa3x2kIlY8SIBQamCp2PPN55stFdA8Q5VKQhXiQuNhJMtvSj
+         LF5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724429825; x=1725034625;
+        d=1e100.net; s=20230601; t=1724429830; x=1725034630;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=flB7OHR5QrKHPhbrF3On1DA0RFx/CeDMftCyKCVbPiY=;
-        b=WocrwBVzCPSOmnAUUYh1SxEyXec6F7lVWHLWYTpJeavpPfp88xIIMbabprSP67g6iT
-         4dG6wMSleu0SIY5OcQDiEqbDOSsHxIjKxREm6tsfVRN0+5zJfYYV0gqzZYo+qKCxtz6t
-         zrOgwAARgRUQ29sqHeCC6xNUOadCtjq5/zc5TW3hzP7u9WBPdGiMB0J5ER1uP1jstYb5
-         Vk2vDqyM3lcnM1HiPjb1EI4kxrOGvwQ4N0XIC0iL6suL8E4WyFc4rlSn1u+6Irqn32HU
-         Y+d5i4HUt4yQVS8//CdotPeiSS+00ABOCXxRNZzLtc4rCN/zOjLT8oDzgMG7N5DlmpnO
-         oafw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcR6oj3ssj8ZMezafbtuWJ2P8/p6tv64pP1w+/v/7aRvUPYSNu38n9Nv/WDmkUHY+3EnuoMHT/x1fCrUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXJ7uPzcPxFyaFCc7IvapwHh+zspDL4O1TPIEEuVVLcu9fiIJP
-	ZW7cffQQuTe0j8Vi4qL51ZO9AzKp9BWeUkp+sDIuYoPUpC53RBDQ5mGQvZu2IUv7kVEk9kANGOs
-	ia273NDWYuIxeHsu/G842twaOBEg=
-X-Google-Smtp-Source: AGHT+IFL358z/bGmiPDknmSO46yYht9Fbjiric2FHtiPjzBP0j8i9TbAuhNt5ETwz3uYpEPLaVomzadAPZWLpJ7izO0=
-X-Received: by 2002:a05:6214:3a87:b0:6b5:e1fb:68ee with SMTP id
- 6a1803df08f44-6c16dc7ca9dmr33223576d6.25.1724429824918; Fri, 23 Aug 2024
- 09:17:04 -0700 (PDT)
+        bh=JRyBChkzDJ6EdBnp4HpZAO2Elm1XGepN3U0opL5ubIU=;
+        b=SiIru1PD6+WK7hO3vPdTps+v2ZUAjBuFxlyvKHfpAVxCkfTfTav+uQWoF7GzcixESP
+         4l+B+XHdH1ubWzp3UJCJnOEM7ykYfCl7nERNCe9gLG654Vw5Ei3BKjuNI2ISAIIv1l0q
+         zyNiYD3Pu/hX3g9b7euWitDjBqOSjQZiRwMw9hK4KZJ4DLU9cmSC+8ybQ09hC9casgxY
+         1xR4jthBf0syGeO3R5RrahRnrPEzki5mS7AbnGVT+X3pFOWVEBbscbpKJKOCxS5Qzg7C
+         ZTXdVmvLiJxtrcGqj/SRSPDZgHFIN33FW+ECf0Wbz7YhSGlcU4Ih5p0szKZp4GNR3jJK
+         1fVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGRg9KZckq7DGtpsPJn3ONLrHAqnN42LJxEh1XuwPhDQIf4FB5bVrutbAxnm7SqNr6Z4KsYmtv5SrAabU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHZg7G2qH/RAlRHMJS2CLC6hRT3pYnM50dTxB077hZPgXa7qON
+	Wb3TlTzEXa6MvYHZPxrCrXZGblGbSXjphYnFC0Dht+n1JW9kHKLhIb1m1675rFM5dD0G8allkUr
+	BjpYBX6qiJ/4Yg4jUXBZ8Klopnxenbcmi29sn
+X-Google-Smtp-Source: AGHT+IH8wuwWOfarZTVY3YLjuN0ypve1B5twUBatzYsj4K93vqQwsdzwVWr8fUx2i+lMfTFoiVulVkZnnkD3rHMAzTc=
+X-Received: by 2002:a05:6e02:1649:b0:395:e031:6c1f with SMTP id
+ e9e14a558f8ab-39e3c5250b6mr2841165ab.27.1724429829298; Fri, 23 Aug 2024
+ 09:17:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
- <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
- <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
-In-Reply-To: <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 23 Aug 2024 12:16:53 -0400
-Message-ID: <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
-Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
- mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
-To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Linux-MM <linux-mm@kvack.org>
+References: <20240822025800.13380-1-hao.ge@linux.dev> <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
+ <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev> <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
+ <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev> <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
+ <292d1141-4edf-ee60-a145-4ca06600076a@huawei.com> <50e74f28-5165-a45b-c152-1b18f32e61aa@linux.dev>
+In-Reply-To: <50e74f28-5165-a45b-c152-1b18f32e61aa@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 23 Aug 2024 09:16:56 -0700
+Message-ID: <CAJuCfpFfw04uv4Euw_C7Kqdo59DJ-zaGJ-TPhjE3uOwxo=WTyw@mail.gmail.com>
+Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
+ transitioned from being poison to unpoison as empty
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Miaohe Lin <linmiaohe@huawei.com>, kent.overstreet@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>, stable@vger.kernel.org, 
+	nao.horiguchi@gmail.com, akpm@linux-foundation.org, pasha.tatashin@soleen.com, 
+	david@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 11:07=E2=80=AFAM Piotr Oniszczuk
-<piotr.oniszczuk@gmail.com> wrote:
+On Fri, Aug 23, 2024 at 1:10=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wrote:
+>
+> Hi Miaohe
 >
 >
+> On 8/23/24 15:40, Miaohe Lin wrote:
+> > On 2024/8/23 11:37, Hao Ge wrote:
+> >> Hi Suren and Miaohe
+> >>
+> >>
+> >> On 8/23/24 09:47, Hao Ge wrote:
+> >>> Hi Suren and Miaohe
+> >>>
+> >>>
+> >>> Thank you all for taking the time to discuss this issue.
+> >>>
+> >>>
+> >>> On 8/23/24 06:50, Suren Baghdasaryan wrote:
+> >>>> On Thu, Aug 22, 2024 at 2:46=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wr=
+ote:
+> >>>>> Hi Miaohe
+> >>>>>
+> >>>>>
+> >>>>> Thank you for taking the time to review this patch.
+> >>>>>
+> >>>>>
+> >>>>> On 8/22/24 16:04, Miaohe Lin wrote:
+> >>>>>> On 2024/8/22 10:58, Hao Ge wrote:
+> >>>>>>> From: Hao Ge <gehao@kylinos.cn>
+> >>>>>>>
+> >>>>>> Thanks for your patch.
+> >>>>>>
+> >>>>>>> The PG_hwpoison page will be caught and isolated on the entrance =
+to
+> >>>>>>> the free buddy page pool. so,when we clear this flag and return i=
+t
+> >>>>>>> to the buddy system,mark codetags for pages as empty.
+> >>>>>>>
+> >>>>>> Is below scene cause the problem?
+> >>>>>>
+> >>>>>> 1. Pages are allocated. pgalloc_tag_add() will be called when prep=
+_new_page().
+> >>>>>>
+> >>>>>> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison fla=
+g and pgalloc_tag_sub()
+> >>>>>> will be called when pages are caught and isolated on the entrance =
+to buddy.
+> >>>> Hi Folks,
+> >>>> Thanks for reporting this! Could you please describe in more details
+> >>>> how memory_failure() ends up calling pgalloc_tag_sub()? It's not
+> >>>> obvious to me which path leads to pgalloc_tag_sub(), so I must be
+> >>>> missing something.
+> >>>
+> >>> OK,Let me describe the scenario I encountered.
+> >>>
+> >>> In the Link [1] I mentioned,here is the logic behind it:
+> >>>
+> >>> It performed the following operations:
+> >>>
+> >>> madvise(ptrs[num_alloc], pagesize, MADV_SOFT_OFFLINE)
+> >>>
+> >>> and then the kernel's call stack looks like this:
+> >>>
+> >>> do_madvise
+> >>>
+> >>> soft_offline_page
+> >>>
+> >>> page_handle_poison
+> >>>
+> >>> __folio_put
+> >>>
+> >>> free_unref_page
+> >>>
+> >> I just reviewed it and I think I missed a stack.
+> >>
+> >> Actually, it's like this
+> >>
+> >> do_madvise
+> >>
+> >> soft_offline_page
+> >>
+> >> soft_offline_in_use_page
+> >>
+> >> page_handle_poison
+> >>
+> >> __folio_put
+> >>
+> >> free_unref_page
+> >>
+> >>
+> >> And I've come up with a minimal solution. If everyone agrees, I'll sen=
+d the patch.look this
+> >>
+> >> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L105=
+6
+> >>
+> >> Let's directly call clear_page_tag_ref after pgalloc_tag_sub.
+> > I tend to agree with you. It should be a good practice to call clear_pa=
+ge_tag_ref()
+> > whenever page_tag finished its work. Do you think below code is also ne=
+eded?
 >
-> > Wiadomo=C5=9B=C4=87 napisana przez Matthew Wilcox <willy@infradead.org>=
- w dniu 23.08.2024, o godz. 15:13:
+> Actually, this is not necessary,It follows the normal logic of
+> allocation and release.
+
+Yes, we don't need to clear_page_tag_ref() after every
+pgalloc_tag_sub(), only in this special situation. alloc_tag_sub()
+resets ref->ct to NULL at the end, so not clearing the tag allows us
+to catch if an extra alloc_tag_sub() is called on this page later.
+
+>
+> The actual intention of the clear_page_tag_reffunction is to indicate to
+> thealloc_tag  that the page is not being returned to the
+>
+> buddy system through normal allocation.
+>
+> Just like when the page first enters the buddy system,
+>
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/mm_init.c#L2464
+>
+> So, can you help review this patch?
+
+Yeah, that looks good, just spelling in the comment needs fixing. I'll
+comment on that patch.
+Thanks,
+Suren.
+
+>
+> https://lore.kernel.org/all/20240823062002.21165-1-hao.ge@linux.dev/
+>
 > >
-> > I wouldn't be surprised if this were dodgy ram.
->
->
-> Well - that was my initial hypothesis.
->
-> in fact i had few of them. Ranked (and ordered) like this:
-> 1. downstream kernel patches
-> 2. hw (ram) issue
-> 3. kernel bug
->
-> So full history was:
-> -build myself archlinux 6.10.2 kernel; upgrade builder OS (only kernel; n=
-othing else)
-> -run normal devel process and (to my surprise) discover interrupted CI/CD=
- builds by kernel oops
-> -downgrade to 6.8.2 and done 4 full builds (full takes 8..9h of constant =
-12c/24/t compile). all good.
-> -prepare vanilla 6.10.6 (to exclude potential downstream (ArchLinux) root=
- causes)
-> -run normal devel process and still discover oops
-> -make sure hw is ok by week of test with 6.8.2 (recompiling for 3 archite=
-ctures on 4 OS (3 in kvm). This was almost 5 full days of 12c/24 compiling.=
- All good
-> -because last steep was all good - decide to go to you :-)
->
-> sure - this is possible that 6.8.2 had luck with my ram and 6.10.6 had no=
- luck=E2=80=A6.but i personally don=E2=80=99t believe this is a case=E2=80=
-=A6.
-
-Have you tried with 6.9 yet? IIRC, there are two major changes to
-zswap architecture in recent versions.
-
-1. In 6.9, we range-partition zswap's rbtrees to reduce lock contention.
-
-2. In 6.10, we replace zswap's rbtrees with xarrays.
-
-If 6.9 is fine, then the latter is the suspect, and vice versa. Of
-course, the minor changes are still suspect - but you get the idea :)
-
->
-> btw: we can go with elimination strategy.
-> So what i need to change/disable to be closer to finding root cause?
-
-Could you let me know more about the setup? A couple things come to my mind=
-:
-
-1. zswap configs (allocator - is it zsmalloc? compressor?)
-
-2. Is mTHP enabled? mTHP swapout was merged in 6.10, and there seems
-to be some conflicts with zswap, but Yosry will know more about this
-than me...
-
-3. Is there any proprietary driver etc.?
-
-> swap?
-> now it is swapfile on system nvme
->
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index de54c3567539..707710f03cf5 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1104,6 +1104,7 @@ __always_inline bool free_pages_prepare(struct pa=
+ge *page,
+> >          reset_page_owner(page, order);
+> >          page_table_check_free(page, order);
+> >          pgalloc_tag_sub(page, 1 << order);
+> > +       clear_page_tag_ref(page);
+> >
+> >          if (!PageHighMem(page)) {
+> >                  debug_check_no_locks_freed(page_address(page),
+> >
+> > Thanks.
+> > .
 
