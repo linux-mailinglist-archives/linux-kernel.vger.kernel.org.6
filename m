@@ -1,167 +1,221 @@
-Return-Path: <linux-kernel+bounces-299435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA0C95D47C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:38:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4956095D484
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15EF01F24311
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6770A1C23293
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8FB190665;
-	Fri, 23 Aug 2024 17:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC418660B;
+	Fri, 23 Aug 2024 17:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbMA0N5D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GR2s24/j"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C15818CBE4;
-	Fri, 23 Aug 2024 17:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2CB18BBB9
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434677; cv=none; b=kr20gwt3ZtXLe/lqObq1BGb6Xalq2/DSC7jrySk8ZM5CZ6Sk7duB2QXlwRadzrftVdZRCobfQNv9qHqRqPxBY15ghIcb3CvarCbMkh+wsr5pVnl5Zd7puqll5ouadh2E9dE3RkA6S4Xa0euoZbC11jVtjK9JwBY/f9FooR92j+E=
+	t=1724434813; cv=none; b=JWsu9+6DnWOUBSeYIxVerT3HgTdj1EJFE4Iy6yEkxeMhNSAifykgBu9hCodC1FiYDQDY11Alu/B4GALkWKB8zM/F1yGwBDGso756FszaG4vT8lW/KSLpiCF08C9dHGVPDJ0tqk3jf0OuKIqyIOBgqRdmOxdHVFy2Xxlzr2qQR+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434677; c=relaxed/simple;
-	bh=6oD8VPCVcONbDxn5sPhpPyTmY2Raf9rNjY/H3VQKCvM=;
+	s=arc-20240116; t=1724434813; c=relaxed/simple;
+	bh=TXfNChzrZarBmVT6IrFhYmqesKQ5ZLs7w+O0BxvrYPU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RzPWD+Qvake3FGYrnhvnvMQQO04Z2s5CINxclsGYsMogNmnjNQy9IrRfQ2gQVpBdh6hlhawrlwY03XeFKcWqMo1zCFONApAkeZA6ranHzfwGPaamEOejQudnzHkJrA4e61HLqqWo2yfJ04u4beUAHOqB35prbgv8xRhO3Y2HOj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbMA0N5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC79DC4AF09;
-	Fri, 23 Aug 2024 17:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724434676;
-	bh=6oD8VPCVcONbDxn5sPhpPyTmY2Raf9rNjY/H3VQKCvM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rbMA0N5DDdRy8IWLKihqCDCfE/c5AHPR513kcdUeFehwew+f18vxWNjqg9lC7qiR4
-	 Et8OEJbtShNyODYVxvYWS7Zuq1w19hb/ajRaxFiZuUKbtTLrNCDtul5oWQdIE3xQ8e
-	 c7smzdB0GGh8ewaCeTAp0ya/6ztd/v6ScKg0jyl1+Jl6A7NTII7UrgqR4oNd78gnac
-	 x53ee/sL1l0B3TdlX8FzvJRIPBMGmzFCH/DbuLvya2aC+8hLI6bpko6i5OyB9BoqXQ
-	 tcp1AA0/oKS4iSUYjGmp2j3d1xSCWQqtj5u9yRnDGLvanp6T3LK3NMVROH+oTdU8A6
-	 Hl9UiewGo1qcA==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so2947761e87.1;
-        Fri, 23 Aug 2024 10:37:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMVnpiFydRVyPlZ56HDJ4rgO4VVCQ4ygpC7tAvdwAYUhHs7004ohf28gRzJKe4284FWTP3qf/l9Yjs2bjmYnsX7+KD@vger.kernel.org, AJvYcCVe4CmcX9TnheZmypV0Lv9arL9xwqQY+iI1CNDAvuoYUHKFA6YPVgbykI3AYYF6IrKfkOfhNmCQ/bWWxn5dJw==@vger.kernel.org, AJvYcCVrKac8n92jFkhV+s+a9h2HGxJz7PRZJZa3621L3hxSIP39eabYC/1ghLcG2rQ5eFKF6KFIb612cAHP2tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfzZlowyQIRev2YUjdzCRV6y5qzjFC7I7vX6m/dgLO6FannaE4
-	cK6FyI9h4Xn80UW2aWI+q8Q6xCdEd8SVNorsFEh1kK7A8603xZFGLYk5kxNyqEljdZiivPT0wVz
-	hYDiXTIhDB0LumFJCsSqgzZJdl4Y=
-X-Google-Smtp-Source: AGHT+IHb678oo4FzQStwGuSq6xYtd7MNQHGi4fBI7dSe3/2MAw1YrY8lt09yV3eo9YZfJfTYS4wQcIAfnNCz/iqJ7EU=
-X-Received: by 2002:a05:6512:ad2:b0:52c:e3bd:c70b with SMTP id
- 2adb3069b0e04-5343882e2ecmr1569179e87.1.1724434675552; Fri, 23 Aug 2024
- 10:37:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=nnDQSRSMUNvBX5sNJXvioPXagREyDTb6Wj20UwdjCRJU5qaz7BHk7RHKPw+GtIy0sXSUtvnCBtxAuOlMPm/um5ACoJA5k1OoHjH0RZs7aFa98Y7oYBmcpmerL4qwd3LUVfQMDvcA2I5Zjlg1mOkYXX2h0GYBYdDztLjE8bAUDLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GR2s24/j; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8682bb5e79so315940866b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724434809; x=1725039609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OH1qxLnA+Zvrf4Sge9MNfEyRKt/TljXbeyPaYEb99N4=;
+        b=GR2s24/jdHvEuzW7FPkpGr9WgObDzH9zQXuDm3zqc7QxfYIUbmn6LNI8RtODCf3uEQ
+         uJEinpRvz0aasJrxAuadBDCXQO5W2aXeHJ6qhlymhYrdlqoOllFxOYxQ2PQm5aihF/TT
+         XSsfhgOJe0KcFbGp9NF1dCJAGdtTy8mtHzIrQEJr3GoKXGSX2/oi5bfCQLl/j5ln0m8D
+         r2Asdl7aI7EA8fEgZorIIJmlr5ac6ITIaomywTG9XA/9fnlhBelSl0m86BVnzMhhOhah
+         WpXV9qcgSXy/MQ7oGiRSpVCG1FQtMbDYOqtnADNOtMVz3yfmIVzhJ61f2LJDO8IvDcMp
+         xx1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724434809; x=1725039609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OH1qxLnA+Zvrf4Sge9MNfEyRKt/TljXbeyPaYEb99N4=;
+        b=Ilv1GQS7WXq0vUVUVbdTaafsluhol8PcxqjBJrt0Jy8h+6StV+ol0L8YhMcaIydb5A
+         UYqR7WS744BgmlvX82QcAdxxuZbcvdn5YxZotErNfE54kexT/sXQI/CwLNht4oqTxadX
+         pts/uOvhjaWQ4+3ohmmm3kDBFPoSAQda5uNl19yGvDSOmUOYbn10FogUvyn5HH2/Y1y0
+         5ZMpoD53EWD9v8ONj97EnOZ3ghOdVxkI4LamiZQl3CDIJYatzs8vUtXc0xMOeVKXMtR7
+         LanJfy8v5yPMVT6kVllppcSGBr9Opog0szEop1rgJpWIh+WWlSQ5CLkdArzqU9o00tFI
+         oJlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMtRKKh1mSPS3hibjgfzDoUvB/beEEAPy/dJ2QwETBgMW/bsatZONkpccf3/4vL7Kk4NGU319RhvG9/gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD1pFVmr/3rpxXV8NDjWoTCl2+iF7C321GIx2HBXmJcjM1aTcW
+	3fdYSignejlHbk4nPDhen0pve8MrUj9J+aNE/KMZ1HQ1T5e+NpwnoX8r+tjbG0/XmoAEyLDc7c0
+	wZwUoXk8TQ9p0ISZLeOK/u51frdwlZ4VOLJBl
+X-Google-Smtp-Source: AGHT+IEZXgTuCQle3Qpj7pdoBe4KBDDR6xavAWwaoebPKgC9Cg72qfd1jKAOJU/eu4TnICfm5Wzzvw5N7Ktr3y4lfAU=
+X-Received: by 2002:a17:907:3fa9:b0:a86:a178:42de with SMTP id
+ a640c23a62f3a-a86a54b8d19mr207320166b.54.1724434808769; Fri, 23 Aug 2024
+ 10:40:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821040700.1919317-1-kris.van.hees@oracle.com>
- <20240822181942.2626536-1-kris.van.hees@oracle.com> <20240822181942.2626536-2-kris.van.hees@oracle.com>
-In-Reply-To: <20240822181942.2626536-2-kris.van.hees@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 24 Aug 2024 02:37:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATrCQb23mnc4nHQ3OEWRf+6gB_32+3x84BtYmV6xTRHyQ@mail.gmail.com>
-Message-ID: <CAK7LNATrCQb23mnc4nHQ3OEWRf+6gB_32+3x84BtYmV6xTRHyQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] kbuild: add mod(name,file)_flags to assembler
- flags for module objects
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+References: <20240823173103.94978-1-jdamato@fastly.com> <20240823173103.94978-2-jdamato@fastly.com>
+In-Reply-To: <20240823173103.94978-2-jdamato@fastly.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 23 Aug 2024 19:39:56 +0200
+Message-ID: <CANn89iJE01V4TBCXg=w=M8=75TXypuYMJ_pXBUrN9NdRRAtAZg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/6] net: Add sysfs parameter irq_suspend_timeout
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com, 
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net, 
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org, 
+	willy@infradead.org, willemdebruijn.kernel@gmail.com, skhawaja@google.com, 
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Breno Leitao <leitao@debian.org>, 
+	Johannes Berg <johannes.berg@intel.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 3:21=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle=
-.com> wrote:
+On Fri, Aug 23, 2024 at 7:31=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
+te:
 >
-> In order to create the file at build time, modules.builtin.ranges, that
-> contains the range of addresses for all built-in modules, there needs to
-> be a way to identify what code is compiled into modules.
+> From: Martin Karsten <mkarsten@uwaterloo.ca>
 >
-> To identify what code is compiled into modules during a kernel build,
-> one can look for the presence of the -DKBUILD_MODFILE and -DKBUILD_MODNAM=
-E
-> options in the compile command lines.  A simple grep in .*.cmd files for
-> those options is sufficient for this.
+> This patch doesn't change any behavior but prepares the code for other
+> changes in the following commits which use irq_suspend_timeout as a
+> timeout for IRQ suspension.
 >
-> Unfortunately, these options are only passed when compiling C source file=
-s.
-> Various modules also include objects built from assembler source, and the=
-se
-> options are not passed in that case.
->
-> Adding $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), an=
-d
-
-
-modkern_cflahs  ->  modkern_cflags
-
-
-> adding $(modname_flags) to a_flags (similar to c_flags) makes it possible
-> to identify which objects are compiled into modules for both C and
-> assembler soure files.
-
-soure  -> source
-
-
-
-Strictly speaking, only KBUILD_MODFILE was used in 2/4 or 3/4.
-
-KBUILD_MODNAME was unneeded, but If you want to add KBUILD_MODNAME
-for consistency, it is fine too.
-
-
-RUST_MODFILE exists, but RUST_MODNAME does not.
-
-
-
->
-> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Co-developed-by: Joe Damato <jdamato@fastly.com>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
 > ---
->  scripts/Makefile.lib | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  rfc -> v1:
+>    - Removed napi.rst documentation from this patch; added to patch 6.
 >
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index fe3668dc4954..170f462537a8 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -238,7 +238,7 @@ modkern_rustflags =3D                                =
-              \
+>  include/linux/netdevice.h |  2 ++
+>  net/core/dev.c            |  3 ++-
+>  net/core/net-sysfs.c      | 18 ++++++++++++++++++
+>  3 files changed, 22 insertions(+), 1 deletion(-)
 >
->  modkern_aflags =3D $(if $(part-of-module),                              =
- \
->                         $(KBUILD_AFLAGS_MODULE) $(AFLAGS_MODULE),       \
-> -                       $(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL))
-> +                       $(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL) $(modfil=
-e_flags))
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 0ef3eaa23f4b..31867bb2ff65 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -1857,6 +1857,7 @@ enum netdev_reg_state {
+>   *     @gro_flush_timeout:     timeout for GRO layer in NAPI
+>   *     @napi_defer_hard_irqs:  If not zero, provides a counter that woul=
+d
+>   *                             allow to avoid NIC hard IRQ, on busy queu=
+es.
+> + *     @irq_suspend_timeout:   IRQ suspension timeout
+>   *
+>   *     @rx_handler:            handler for received packets
+>   *     @rx_handler_data:       XXX: need comments on this one
+> @@ -2060,6 +2061,7 @@ struct net_device {
+>         struct netdev_rx_queue  *_rx;
+>         unsigned long           gro_flush_timeout;
+>         int                     napi_defer_hard_irqs;
+> +       unsigned long           irq_suspend_timeout;
+>         unsigned int            gro_max_size;
+>         unsigned int            gro_ipv4_max_size;
+>         rx_handler_func_t __rcu *rx_handler;
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index e7260889d4cb..3bf325ec25a3 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -11945,6 +11945,7 @@ static void __init net_dev_struct_check(void)
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, _rx);
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, gro_flush_timeout);
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, napi_defer_hard_irqs);
+> +       CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, irq_suspend_timeout);
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, gro_max_size);
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, gro_ipv4_max_size);
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, rx_handler);
+> @@ -11956,7 +11957,7 @@ static void __init net_dev_struct_check(void)
+>  #ifdef CONFIG_NET_XGRESS
+>         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_=
+rx, tcx_ingress);
+>  #endif
+> -       CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx=
+, 104);
+> +       CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx=
+, 112);
+>  }
 >
->  c_flags        =3D -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)=
-     \
->                  -include $(srctree)/include/linux/compiler_types.h      =
- \
-> @@ -248,7 +248,7 @@ c_flags        =3D -Wp,-MMD,$(depfile) $(NOSTDINC_FLA=
-GS) $(LINUXINCLUDE)     \
->  rust_flags     =3D $(_rust_flags) $(modkern_rustflags) @$(objtree)/inclu=
-de/generated/rustc_cfg
+>  /*
+> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+> index 0e2084ce7b75..fb6f3327310f 100644
+> --- a/net/core/net-sysfs.c
+> +++ b/net/core/net-sysfs.c
+> @@ -440,6 +440,23 @@ static ssize_t napi_defer_hard_irqs_store(struct dev=
+ice *dev,
+>  }
+>  NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
 >
->  a_flags        =3D -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)=
-     \
-> -                $(_a_flags) $(modkern_aflags)
-> +                $(_a_flags) $(modkern_aflags) $(modname_flags)
->
->  cpp_flags      =3D -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)=
-     \
->                  $(_cpp_flags)
+> +static int change_irq_suspend_timeout(struct net_device *dev, unsigned l=
+ong val)
+> +{
+> +       WRITE_ONCE(dev->irq_suspend_timeout, val);
+> +       return 0;
+> +}
+> +
+> +static ssize_t irq_suspend_timeout_store(struct device *dev,
+> +                                        struct device_attribute *attr,
+> +                                        const char *buf, size_t len)
+> +{
+> +       if (!capable(CAP_NET_ADMIN))
+> +               return -EPERM;
+> +
+> +       return netdev_store(dev, attr, buf, len, change_irq_suspend_timeo=
+ut);
+> +}
+> +NETDEVICE_SHOW_RW(irq_suspend_timeout, fmt_ulong);
+> +
+>  static ssize_t ifalias_store(struct device *dev, struct device_attribute=
+ *attr,
+>                              const char *buf, size_t len)
+>  {
+> @@ -664,6 +681,7 @@ static struct attribute *net_class_attrs[] __ro_after=
+_init =3D {
+>         &dev_attr_tx_queue_len.attr,
+>         &dev_attr_gro_flush_timeout.attr,
+>         &dev_attr_napi_defer_hard_irqs.attr,
+> +       &dev_attr_irq_suspend_timeout.attr,
+>         &dev_attr_phys_port_id.attr,
+>         &dev_attr_phys_port_name.attr,
+>         &dev_attr_phys_switch_id.attr,
 > --
-> 2.45.2
->
+> 2.25.1
 
 
---=20
-Best Regards
-Masahiro Yamada
+Please no more per-device sysfs entry, shared by all the users of the devic=
+e.
+
+Let's not repeat past mistakes.
+
+Nowadays, we need/want per receive-queue tuning, preferably set with netlin=
+k.
 
