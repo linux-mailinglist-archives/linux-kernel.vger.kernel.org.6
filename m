@@ -1,55 +1,35 @@
-Return-Path: <linux-kernel+bounces-298448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D615E95C778
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8076495C77B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313B51F216DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9161C24740
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B58143C6E;
-	Fri, 23 Aug 2024 08:07:53 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79580143C5D;
+	Fri, 23 Aug 2024 08:08:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4733213D881;
-	Fri, 23 Aug 2024 08:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5513D881;
+	Fri, 23 Aug 2024 08:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724400472; cv=none; b=Invs4z4xQgZcWB6V+lOWytwndtnHzInE60JqxN6a6WSFDFqN5uUS926MyP1k4wEWaA1XMW9BClKZ1vdREchMVGp6MUI+Cds9SGBloB2sSU/peTcIWSjIwL9gd/CkM6y3b4PRd5x5jvJbT+XQgI4Ax6WGhSbZUhPBLarSzwsduEU=
+	t=1724400484; cv=none; b=uSb5PB9mtVP7fmnJKOkbyRLUMgZvoteCy4gfdrxx9YW4Q9EByBiVRObg7fs7hoMD/TUeF03FZTHlgEZ82jJ7dZFvlv5eRzPPVw5ODzf22Yrgu9LmCJHzmyuHksplSTpvd5Csc21zv11940M3HDoS4h7sFkkHTWV3xy8poDwmgUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724400472; c=relaxed/simple;
-	bh=7v630FLWOvJkUlj0sL8Sy6/IV7vpuARLbhzW7wqdTbA=;
+	s=arc-20240116; t=1724400484; c=relaxed/simple;
+	bh=3zMP5S1k6sYRn4ns9Y0FYSgU61KWYAHwqHMqDqCzSAg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JvbjWGZYmzyghurmIAxqZ7hBQLJ7cNsYBtBa1H98Y/rab/JbVCGMBd4xAPi3ZSpJ5Q+EwayKZ+uDZQScrwvVlNiRctdZ+50tz4sh3x8fk9SIva27/S+iATH5DZrJRnCFTtUYV6zoRmjZavjV4stvRaQQTPWQtQRt2W+kcJDh92c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wqt3T4gTgz9sRr;
-	Fri, 23 Aug 2024 10:07:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id oTUxj4K4c8gV; Fri, 23 Aug 2024 10:07:49 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wqt3T3cSYz9rvV;
-	Fri, 23 Aug 2024 10:07:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 690958B77D;
-	Fri, 23 Aug 2024 10:07:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id j6s4fVaZomEL; Fri, 23 Aug 2024 10:07:49 +0200 (CEST)
-Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C0FD48B763;
-	Fri, 23 Aug 2024 10:07:48 +0200 (CEST)
-Message-ID: <551f4c3d-a57f-47ea-a477-c502fbd61251@csgroup.eu>
-Date: Fri, 23 Aug 2024 10:07:47 +0200
+	 In-Reply-To:Content-Type; b=hL3hyxX94AHZOAyNW0Z5js2zc2kAPCN+WW5N8wHdnU83yzQ1tZllclFth8fYmwgORwGxUA1ITzO4dXRcIZHM0Mj3/mtJ5ZZLzvgjy+5T1V092OlUd7SujbOeY/QWjbBBxmgcTXRrUdXVgMhvyYU/7nb5tHbKYHDHHC/qLmeWDTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA0ADC32786;
+	Fri, 23 Aug 2024 08:08:01 +0000 (UTC)
+Message-ID: <8476356b-9452-40d6-8eba-a2155135cd7c@xs4all.nl>
+Date: Fri, 23 Aug 2024 10:08:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,189 +37,256 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/36] soc: fsl: cpm1: tsa: Isolate specific CPM1 part
- from tsa_serial_{dis}connect()
-To: Herve Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
- Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20240808071132.149251-1-herve.codina@bootlin.com>
- <20240808071132.149251-13-herve.codina@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240808071132.149251-13-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v21 2/9] videobuf2: Add min_reqbufs_allocation field to
+ vb2_queue structure
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tomasz Figa <tfiga@chromium.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
+ m.szyprowski@samsung.com, ezequiel@vanguardiasur.com.ar,
+ p.zabel@pengutronix.de, nicolas@ndufresne.ca, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com
+References: <20240314153226.197445-1-benjamin.gaignard@collabora.com>
+ <20240314153226.197445-3-benjamin.gaignard@collabora.com>
+ <20240821232819.GA18600@pendragon.ideasonboard.com>
+ <CAAFQd5AQTZa2epfkJnfn_6kpnaNRMzjZ=FjYjf1DM+ZxE0YkZQ@mail.gmail.com>
+ <7bbb62e8-8df8-4167-bb00-a0deedf3eedd@xs4all.nl>
+ <20240822122033.GA11152@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240822122033.GA11152@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-Le 08/08/2024 à 09:11, Herve Codina a écrit :
-> Current code handles the CPM1 version of TSA. Connecting and
-> disconnecting the SCC to/from the TSA consists in handling SICR register
-> which is CPM1 specific. The connection and disconnection operation in
-> the QUICC Engine (QE) version are slightly different.
+On 22/08/2024 14:20, Laurent Pinchart wrote:
+> Hello,
 > 
-> In order to prepare the support for the QE version, clearly identify
-> SICR register as specific to CPM1 and isolate its handling done in
-> connect and disconnect functions.
+> On Thu, Aug 22, 2024 at 08:11:17AM +0200, Hans Verkuil wrote:
+>> On 22/08/2024 03:29, Tomasz Figa wrote:
+>>> On Thu, Aug 22, 2024 at 8:28 AM Laurent Pinchart wrote:
+>>>> On Thu, Mar 14, 2024 at 04:32:19PM +0100, Benjamin Gaignard wrote:
+>>>>> Add 'min_reqbufs_allocation' field in the vb2_queue structure so drivers
+>>>>> can specify the minimum number of buffers to allocate when calling
+>>>>> VIDIOC_REQBUFS.
+>>>>> When initializing the queue, v4l2 core makes sure that the following
+>>>>> constraints are respected:
+>>>>> - the minimum number of buffers to allocate must be at least 2 because
+>>>>> one buffer is used by the hardware while the other is being processed
+>>>>> by userspace.
+>>>>
+>>>> This breaks userspace for the Renesas vsp1 driver :-( Unit tests fail,
+>>>> as some of them rely on operation with a single buffer.
+>>>>
+>>>> The vsp1 is a memory-to-memory processing engine, so operating with a
+>>>> single buffer is fine in some use cases. I would argue that for live
+>>>> capture devices there are valid use cases to operate with a single
+>>>> buffer too. Changing this by default will break use cases.
+>>>>
+>>>> How can we relax this check ? Should I simply submit a patch that lowers
+>>>> the minimum to one buffer ?
+>>>>
+>>>
+>>> Uhm, I didn't notice this when reading this series. (Actually if I
+>>> recall correctly, originally it didn't have this restriction.)
+>>>
+>>> Indeed, I don't see what's wrong with just having 1 buffer. If
+>>> performance is not a concern, it's okay to just serialize the
+>>> operation on 1 buffer.
+>>>
+>>> If you would be so nice to send it, I think a patch that changes
+>>> min_reqbufs_allocation to max(max(1, min_reqbufs_allocation),
+>>> min_queued_buffers)) would be good.
+>>>
+>>> That said, Benjamin, Hans, are we missing something by any chance? :)
+>>
+>> See my proposal below:
+>>
+>>>>> -if the driver needs 'min_queued_buffers' in the queue before calling
+>>>>> start_streaming(), then the minimum requirement is 'min_queued_buffers + 1'
+>>>>> to keep at least one buffer available for userspace.
+>>>>>
+>>>>> Simplify __vb2_init_fileio() by using 'min_reqbufs_allocation' directly
+>>>>> to avoid duplicating the minimum number of buffers to allocate computation.
+>>>>>
+>>>>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>>>>> ---
+>>>>>  .../media/common/videobuf2/videobuf2-core.c   | 38 +++++++++++--------
+>>>>>  include/media/videobuf2-core.h                | 15 +++++++-
+>>>>>  2 files changed, 37 insertions(+), 16 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+>>>>> index d8b3c04cb3b5..58c495b253ce 100644
+>>>>> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+>>>>> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+>>>>> @@ -866,7 +866,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>>>>>       /*
+>>>>>        * Make sure the requested values and current defaults are sane.
+>>>>>        */
+>>>>> -     num_buffers = max_t(unsigned int, *count, q->min_queued_buffers);
+>>>>> +     num_buffers = max_t(unsigned int, *count, q->min_reqbufs_allocation);
+>>>>>       num_buffers = min_t(unsigned int, num_buffers, q->max_num_buffers);
+>>>>>       memset(q->alloc_devs, 0, sizeof(q->alloc_devs));
+>>>>>       /*
+>>>>> @@ -918,7 +918,7 @@ int vb2_core_reqbufs(struct vb2_queue *q, enum vb2_memory memory,
+>>>>>        * There is no point in continuing if we can't allocate the minimum
+>>>>>        * number of buffers needed by this vb2_queue.
+>>>>>        */
+>>>>> -     if (allocated_buffers < q->min_queued_buffers)
+>>>>> +     if (allocated_buffers < q->min_reqbufs_allocation)
+>>>>>               ret = -ENOMEM;
+>>>>>
+>>>>>       /*
+>>>>> @@ -2524,6 +2524,25 @@ int vb2_core_queue_init(struct vb2_queue *q)
+>>>>>       if (WARN_ON(q->supports_requests && q->min_queued_buffers))
+>>>>>               return -EINVAL;
+>>>>>
+>>>>> +     /*
+>>>>> +      * The minimum requirement is 2: one buffer is used
+>>>>> +      * by the hardware while the other is being processed by userspace.
+>>>>> +      */
+>>>>> +     if (q->min_reqbufs_allocation < 2)
+>>
+>> This should be:
+>>
+>> 	if (!q->min_reqbufs_allocation)
+>>
+>>>>> +             q->min_reqbufs_allocation = 2;
+>>
+>> and vsp1 should set q->min_reqbufs_allocation to 1.
 > 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-
-> ---
->   drivers/soc/fsl/qe/tsa.c | 103 ++++++++++++++++-----------------------
->   1 file changed, 43 insertions(+), 60 deletions(-)
+> That would work to fix the issue with vsp1, but I don't think it's
+> enough. See below.
 > 
-> diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
-> index 239b71187e07..48a176cece86 100644
-> --- a/drivers/soc/fsl/qe/tsa.c
-> +++ b/drivers/soc/fsl/qe/tsa.c
-> @@ -67,34 +67,34 @@
->   #define   TSA_CPM1_SIGMR_RDM_DYN_TDMAB		FIELD_PREP_CONST(TSA_CPM1_SIGMR_RDM_MASK, 0x3)
->   
->   /* SI clock route register (32 bits) */
-> -#define TSA_SICR	0x0C
-> -#define   TSA_SICR_SCC2_MASK		GENMASK(15, 8)
-> -#define   TSA_SICR_SCC2(x)		FIELD_PREP(TSA_SICR_SCC2_MASK, x)
-> -#define   TSA_SICR_SCC3_MASK		GENMASK(23, 16)
-> -#define   TSA_SICR_SCC3(x)		FIELD_PREP(TSA_SICR_SCC3_MASK, x)
-> -#define   TSA_SICR_SCC4_MASK		GENMASK(31, 24)
-> -#define   TSA_SICR_SCC4(x)		FIELD_PREP(TSA_SICR_SCC4_MASK, x)
-> -#define     TSA_SICR_SCC_MASK		GENMASK(7, 0)
-> -#define     TSA_SICR_SCC_GRX		BIT(7)
-> -#define     TSA_SICR_SCC_SCX_TSA	BIT(6)
-> -#define     TSA_SICR_SCC_RXCS_MASK	GENMASK(5, 3)
-> -#define       TSA_SICR_SCC_RXCS_BRG1	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x0)
-> -#define       TSA_SICR_SCC_RXCS_BRG2	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x1)
-> -#define       TSA_SICR_SCC_RXCS_BRG3	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x2)
-> -#define       TSA_SICR_SCC_RXCS_BRG4	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x3)
-> -#define       TSA_SICR_SCC_RXCS_CLK15	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x4)
-> -#define       TSA_SICR_SCC_RXCS_CLK26	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x5)
-> -#define       TSA_SICR_SCC_RXCS_CLK37	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x6)
-> -#define       TSA_SICR_SCC_RXCS_CLK48	FIELD_PREP_CONST(TSA_SICR_SCC_RXCS_MASK, 0x7)
-> -#define     TSA_SICR_SCC_TXCS_MASK	GENMASK(2, 0)
-> -#define       TSA_SICR_SCC_TXCS_BRG1	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x0)
-> -#define       TSA_SICR_SCC_TXCS_BRG2	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x1)
-> -#define       TSA_SICR_SCC_TXCS_BRG3	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x2)
-> -#define       TSA_SICR_SCC_TXCS_BRG4	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x3)
-> -#define       TSA_SICR_SCC_TXCS_CLK15	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x4)
-> -#define       TSA_SICR_SCC_TXCS_CLK26	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x5)
-> -#define       TSA_SICR_SCC_TXCS_CLK37	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x6)
-> -#define       TSA_SICR_SCC_TXCS_CLK48	FIELD_PREP_CONST(TSA_SICR_SCC_TXCS_MASK, 0x7)
-> +#define TSA_CPM1_SICR	0x0C
-> +#define   TSA_CPM1_SICR_SCC2_MASK		GENMASK(15, 8)
-> +#define   TSA_CPM1_SICR_SCC2(x)			FIELD_PREP(TSA_CPM1_SICR_SCC2_MASK, x)
-> +#define   TSA_CPM1_SICR_SCC3_MASK		GENMASK(23, 16)
-> +#define   TSA_CPM1_SICR_SCC3(x)			FIELD_PREP(TSA_CPM1_SICR_SCC3_MASK, x)
-> +#define   TSA_CPM1_SICR_SCC4_MASK		GENMASK(31, 24)
-> +#define   TSA_CPM1_SICR_SCC4(x)			FIELD_PREP(TSA_CPM1_SICR_SCC4_MASK, x)
-> +#define     TSA_CPM1_SICR_SCC_MASK		GENMASK(7, 0)
-> +#define     TSA_CPM1_SICR_SCC_GRX		BIT(7)
-> +#define     TSA_CPM1_SICR_SCC_SCX_TSA		BIT(6)
-> +#define     TSA_CPM1_SICR_SCC_RXCS_MASK		GENMASK(5, 3)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_BRG1	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x0)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_BRG2	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x1)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_BRG3	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x2)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_BRG4	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x3)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_CLK15	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x4)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_CLK26	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x5)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_CLK37	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x6)
-> +#define       TSA_CPM1_SICR_SCC_RXCS_CLK48	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_RXCS_MASK, 0x7)
-> +#define     TSA_CPM1_SICR_SCC_TXCS_MASK		GENMASK(2, 0)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_BRG1	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x0)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_BRG2	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x1)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_BRG3	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x2)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_BRG4	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x3)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_CLK15	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x4)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_CLK26	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x5)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_CLK37	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x6)
-> +#define       TSA_CPM1_SICR_SCC_TXCS_CLK48	FIELD_PREP_CONST(TSA_CPM1_SICR_SCC_TXCS_MASK, 0x7)
->   
->   struct tsa_entries_area {
->   	void __iomem *entries_start;
-> @@ -159,7 +159,7 @@ static inline void tsa_clrsetbits32(void __iomem *addr, u32 clr, u32 set)
->   	tsa_write32(addr, (tsa_read32(addr) & ~clr) | set);
->   }
->   
-> -int tsa_serial_connect(struct tsa_serial *tsa_serial)
-> +static int tsa_cpm1_serial_connect(struct tsa_serial *tsa_serial, bool connect)
->   {
->   	struct tsa *tsa = tsa_serial_get_tsa(tsa_serial);
->   	unsigned long flags;
-> @@ -168,16 +168,16 @@ int tsa_serial_connect(struct tsa_serial *tsa_serial)
->   
->   	switch (tsa_serial->id) {
->   	case FSL_CPM_TSA_SCC2:
-> -		clear = TSA_SICR_SCC2(TSA_SICR_SCC_MASK);
-> -		set = TSA_SICR_SCC2(TSA_SICR_SCC_SCX_TSA);
-> +		clear = TSA_CPM1_SICR_SCC2(TSA_CPM1_SICR_SCC_MASK);
-> +		set = TSA_CPM1_SICR_SCC2(TSA_CPM1_SICR_SCC_SCX_TSA);
->   		break;
->   	case FSL_CPM_TSA_SCC3:
-> -		clear = TSA_SICR_SCC3(TSA_SICR_SCC_MASK);
-> -		set = TSA_SICR_SCC3(TSA_SICR_SCC_SCX_TSA);
-> +		clear = TSA_CPM1_SICR_SCC3(TSA_CPM1_SICR_SCC_MASK);
-> +		set = TSA_CPM1_SICR_SCC3(TSA_CPM1_SICR_SCC_SCX_TSA);
->   		break;
->   	case FSL_CPM_TSA_SCC4:
-> -		clear = TSA_SICR_SCC4(TSA_SICR_SCC_MASK);
-> -		set = TSA_SICR_SCC4(TSA_SICR_SCC_SCX_TSA);
-> +		clear = TSA_CPM1_SICR_SCC4(TSA_CPM1_SICR_SCC_MASK);
-> +		set = TSA_CPM1_SICR_SCC4(TSA_CPM1_SICR_SCC_SCX_TSA);
->   		break;
->   	default:
->   		dev_err(tsa->dev, "Unsupported serial id %u\n", tsa_serial->id);
-> @@ -185,39 +185,22 @@ int tsa_serial_connect(struct tsa_serial *tsa_serial)
->   	}
->   
->   	spin_lock_irqsave(&tsa->lock, flags);
-> -	tsa_clrsetbits32(tsa->si_regs + TSA_SICR, clear, set);
-> +	tsa_clrsetbits32(tsa->si_regs + TSA_CPM1_SICR, clear,
-> +			 connect ? set : 0);
->   	spin_unlock_irqrestore(&tsa->lock, flags);
->   
->   	return 0;
->   }
-> +
-> +int tsa_serial_connect(struct tsa_serial *tsa_serial)
-> +{
-> +	return tsa_cpm1_serial_connect(tsa_serial, true);
-> +}
->   EXPORT_SYMBOL(tsa_serial_connect);
->   
->   int tsa_serial_disconnect(struct tsa_serial *tsa_serial)
->   {
-> -	struct tsa *tsa = tsa_serial_get_tsa(tsa_serial);
-> -	unsigned long flags;
-> -	u32 clear;
-> -
-> -	switch (tsa_serial->id) {
-> -	case FSL_CPM_TSA_SCC2:
-> -		clear = TSA_SICR_SCC2(TSA_SICR_SCC_MASK);
-> -		break;
-> -	case FSL_CPM_TSA_SCC3:
-> -		clear = TSA_SICR_SCC3(TSA_SICR_SCC_MASK);
-> -		break;
-> -	case FSL_CPM_TSA_SCC4:
-> -		clear = TSA_SICR_SCC4(TSA_SICR_SCC_MASK);
-> -		break;
-> -	default:
-> -		dev_err(tsa->dev, "Unsupported serial id %u\n", tsa_serial->id);
-> -		return -EINVAL;
-> -	}
-> -
-> -	spin_lock_irqsave(&tsa->lock, flags);
-> -	tsa_clrsetbits32(tsa->si_regs + TSA_SICR, clear, 0);
-> -	spin_unlock_irqrestore(&tsa->lock, flags);
-> -
-> -	return 0;
-> +	return tsa_cpm1_serial_connect(tsa_serial, false);
->   }
->   EXPORT_SYMBOL(tsa_serial_disconnect);
->   
+>>>>> +
+>>>>> +     /*
+>>>>> +      * If the driver needs 'min_queued_buffers' in the queue before
+>>>>> +      * calling start_streaming() then the minimum requirement is
+>>>>> +      * 'min_queued_buffers + 1' to keep at least one buffer available
+>>>>> +      * for userspace.
+>>>>> +      */
+>>>>> +     if (q->min_reqbufs_allocation < q->min_queued_buffers + 1)
+>>>>> +             q->min_reqbufs_allocation = q->min_queued_buffers + 1;
+>>
+>> The reasoning behind all this is that VIDIOC_REBUFS is expected to allocate
+>> a sane (i.e. workable and efficient) number of buffers.
+>>
+>> So if the DMA engine requires at least X buffers queued, then the minimum
+>> reqbufs allocation is at least q->min_queued_buffers + 1, otherwise you
+>> would never be able to get a buffer back.
+>>
+>> That's also why q->min_reqbufs_allocation was set to a minimum of 2: one
+>> buffer in flight, one buffer processed by userspace. That made the queue_setup
+>> call simpler for quite a few drivers that manually set the buffer count to 2.
+>> For most drivers, allocating 2 buffers makes perfect sense.
+> 
+> For devices that can absolutely not work with less than two buffers,
+> setting the minimum to 2 is fine. That is however not the majority use
+> case, and that's why setting the default in the vb2 core, overriding all
+> the drivers that haven't been patched, doesn't sound like a good idea to
+> me.
+> 
+> Generally speaking, 2 is in many cases too low. In the common use case
+> of capture and display, you will need a minimum of 3 buffers. Use cases
+> are the responsibility of userspace, we shouldn't try to be too smart
+> here.
+> 
+> I actually want to lower the number of buffers and require camera
+> drivers to support operating with a single buffer as a general rule.
+> Drivers that hold on the last buffer until a new one is provided are
+> very painful to use, they're causing issues with libcamera.
+
+I thought about it some more, and I agree with you. So just post a patch
+to drop that 'if (q->min_reqbufs_allocation < 2)' bit.
+
+Regards,
+
+	Hans
+
+> 
+>> But if a driver sets q->min_reqbufs_allocation explicitly to 1, then that
+>> should be honored, and my proposed change above will do that.
+>>
+>> Laurent, if you agree with this, just post patches for this.
+>>
+>>>>> +
+>>>>> +     if (WARN_ON(q->min_reqbufs_allocation > q->max_num_buffers))
+>>>>> +             return -EINVAL;
+>>>>> +
+>>>>>       INIT_LIST_HEAD(&q->queued_list);
+>>>>>       INIT_LIST_HEAD(&q->done_list);
+>>>>>       spin_lock_init(&q->done_lock);
+>>>>> @@ -2717,7 +2736,6 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>>>>>       struct vb2_fileio_data *fileio;
+>>>>>       struct vb2_buffer *vb;
+>>>>>       int i, ret;
+>>>>> -     unsigned int count = 0;
+>>>>>
+>>>>>       /*
+>>>>>        * Sanity check
+>>>>> @@ -2738,18 +2756,8 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>>>>>       if (q->streaming || vb2_get_num_buffers(q) > 0)
+>>>>>               return -EBUSY;
+>>>>>
+>>>>> -     /*
+>>>>> -      * Start with q->min_queued_buffers + 1, driver can increase it in
+>>>>> -      * queue_setup()
+>>>>> -      *
+>>>>> -      * 'min_queued_buffers' buffers need to be queued up before you
+>>>>> -      * can start streaming, plus 1 for userspace (or in this case,
+>>>>> -      * kernelspace) processing.
+>>>>> -      */
+>>>>> -     count = max(2, q->min_queued_buffers + 1);
+>>>>> -
+>>>>>       dprintk(q, 3, "setting up file io: mode %s, count %d, read_once %d, write_immediately %d\n",
+>>>>> -             (read) ? "read" : "write", count, q->fileio_read_once,
+>>>>> +             (read) ? "read" : "write", q->min_reqbufs_allocation, q->fileio_read_once,
+>>>>>               q->fileio_write_immediately);
+>>>>>
+>>>>>       fileio = kzalloc(sizeof(*fileio), GFP_KERNEL);
+>>>>> @@ -2763,7 +2771,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>>>>>        * Request buffers and use MMAP type to force driver
+>>>>>        * to allocate buffers by itself.
+>>>>>        */
+>>>>> -     fileio->count = count;
+>>>>> +     fileio->count = q->min_reqbufs_allocation;
+>>>>>       fileio->memory = VB2_MEMORY_MMAP;
+>>>>>       fileio->type = q->type;
+>>>>>       q->fileio = fileio;
+>>>>> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+>>>>> index 667bf9ee1101..4a8b9135cec8 100644
+>>>>> --- a/include/media/videobuf2-core.h
+>>>>> +++ b/include/media/videobuf2-core.h
+>>>>> @@ -549,9 +549,21 @@ struct vb2_buf_ops {
+>>>>>   *           @start_streaming can be called. Used when a DMA engine
+>>>>>   *           cannot be started unless at least this number of buffers
+>>>>>   *           have been queued into the driver.
+>>>>> - *           VIDIOC_REQBUFS will ensure at least @min_queued_buffers
+>>>>> + *           VIDIOC_REQBUFS will ensure at least @min_queued_buffers + 1
+>>>>>   *           buffers will be allocated. Note that VIDIOC_CREATE_BUFS will not
+>>>>>   *           modify the requested buffer count.
+>>>>> + * @min_reqbufs_allocation: the minimum number of buffers to be allocated when
+>>>>> + *           calling VIDIOC_REQBUFS. Note that VIDIOC_CREATE_BUFS will *not*
+>>>>> + *           modify the requested buffer count and does not use this field.
+>>>>> + *           Drivers can set this if there has to be a certain number of
+>>>>> + *           buffers available for the hardware to work effectively.
+>>>>> + *           This allows calling VIDIOC_REQBUFS with a buffer count of 1 and
+>>>>> + *           it will be automatically adjusted to a workable buffer count.
+>>>>> + *           If set, then @min_reqbufs_allocation must be larger than
+>>>>> + *           @min_queued_buffers + 1.
+>>>>> + *           If this field is > 3, then it is highly recommended that the
+>>>>> + *           driver implements the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE/OUTPUT
+>>>>> + *           control.
+>>>>>   * @alloc_devs:      &struct device memory type/allocator-specific per-plane device
+>>>>>   */
+>>>>>  /*
+>>>>> @@ -622,6 +634,7 @@ struct vb2_queue {
+>>>>>       u32                             timestamp_flags;
+>>>>>       gfp_t                           gfp_flags;
+>>>>>       u32                             min_queued_buffers;
+>>>>> +     u32                             min_reqbufs_allocation;
+>>>>>
+>>>>>       struct device                   *alloc_devs[VB2_MAX_PLANES];
+>>>>>
+> 
+
 
