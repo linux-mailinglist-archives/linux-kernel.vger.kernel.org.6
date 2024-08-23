@@ -1,71 +1,237 @@
-Return-Path: <linux-kernel+bounces-298909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB6795CD18
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC6495CD21
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13AD28A752
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B17282B8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B369A1865E1;
-	Fri, 23 Aug 2024 13:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0C1865E6;
+	Fri, 23 Aug 2024 13:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0bBRbPSj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5Yf7Ekh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FF429CEB;
-	Fri, 23 Aug 2024 13:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65EB1448E3;
+	Fri, 23 Aug 2024 13:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418147; cv=none; b=QH6s3dMgI8YmX5yqZLQIlqezvrY8MwyaH+GmgzhShCFSQ1gcZIRG9YVa113h4AVkKhIbsuMSrNDUlf/WZTFtibDjMwLwvR93/FJQMoz0v9s/U3i2jEnV44AMhql1JwVCdeIq1y5i99IMET/dEyHFR84REW3iKjA7In6smzgYEwU=
+	t=1724418223; cv=none; b=GhakYWEZL/qIrtfFGf/u0LBk/4ygffjSs+xrbauhXNyujJ9cOZyObGCk27V5NbAfJuvXaGP0z8fkwKJQ06oMwu1iabFscYCtvw7jcVVP+8PCMC/XV16cw+Cn0ICQGOmveH3ab19Jk2QgsCcTaKup5kTy3gdfnIR4kUfmDLpPew4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418147; c=relaxed/simple;
-	bh=QIyJgxkRV2MDD4htjgdRDrYdt5c+wGSIiqCsbfy9egk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NgzjHxKwfPHAvY3h5DrTUHBIExwQG157gmTXXEXJpMQ3LbxbFiM0zzlqEd/AZIpH9hmERrDP9ym9C3UL34yCcQqjMm58WJ9+sKY/j8zvNMxs4bXYvVqMhofYq/4usif1ceazkSzyXtv98s6dfo+zwKfQk/moPNIbYxCFoHCOoWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0bBRbPSj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E50BC32786;
-	Fri, 23 Aug 2024 13:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724418146;
-	bh=QIyJgxkRV2MDD4htjgdRDrYdt5c+wGSIiqCsbfy9egk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0bBRbPSjLZD6Q0SYKzQImqhJlgyfSMnNk/QcNJS57jpn5si284p0f4ug8Xr8J9nyP
-	 3QLYcVxUpCu8KvsTiHDt+vGh6/5EISqCQAx6zolorHsvT32yx+LAqPhIRXUxe7aci9
-	 NcTPum3yOf5k/cE9DVjoZAkxUQ3giBGi89Yzzpj4=
-Date: Fri, 23 Aug 2024 21:02:23 +0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Yang Ruibin <11162571@vivo.com>
-Cc: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v4] drivers:block:Cancel debugfs_create_dir() check
-Message-ID: <2024082346-delivery-oblong-cd4c@gregkh>
-References: <20240823112246.3905118-1-11162571@vivo.com>
+	s=arc-20240116; t=1724418223; c=relaxed/simple;
+	bh=p2xLj28GHKMKhvQhgLBI9NF7kK+N1OH33hLkP6mFMDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V9u/WoF9/pvfokyFdoWVDHkGyTLMIz+x+9ThcuPciLQE04sLSyad0ZflzOVPbjTj7SdX0uZEZn5NkXV0k+jXAVcgLM64uawQrp6u1OptRV0+cYVRUzUMfIfiebo37uL1Th8JK9UhHedyNLHrfy9Nz/47plbYBjTcPu7Xy356R/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5Yf7Ekh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637A1C4AF0F;
+	Fri, 23 Aug 2024 13:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724418223;
+	bh=p2xLj28GHKMKhvQhgLBI9NF7kK+N1OH33hLkP6mFMDQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H5Yf7Ekh6zGk0IrzfsKAPMrENQES9oFFnIF7cGjPT8EJAK4iof69D/15RH7+8BSWr
+	 4A4DNt1OPs5VaTcAaF/84Aqv1BBRDILPw8lmp6qvnP0STpBtnYBKK2LxwvaYlsFjFQ
+	 +p1YoQ32UzXjokNyDuayv1qOYLa98uQzUkaJiUL7K0tg+2GOajIOOMHHG8ycFPAPOm
+	 V19zo5hkQu75Zmvpg5Vj+yuFDd+I3MlSLk5Bbsv8pVEDMf1J8SIWuin74L3+j29UNW
+	 MPG1teQRFFdPZsrZquZ6M4fiGe5Tf/dOKnIs2u3Ci1Du6Cgpa5T53dfR7mM5rFDJRx
+	 H5F7k4uIs0Prw==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so19222411fa.1;
+        Fri, 23 Aug 2024 06:03:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULVQTgjwuEuLQOpzbnuGArCMzT1InY40hh2LDr2rZI4eTd779WqD1H1+VB93Kc/+rRKA2bCkUmEvf5CCJb@vger.kernel.org, AJvYcCWnepowlcu1Ujp4QvONuB+vPdppDDNxm+8z08c4lt898swdd6QIVBAkIKH1tHd41BpL+fwR0ZTtze1yrEhzrw==@vger.kernel.org, AJvYcCXhknBV2QlJXRJMK+s5BDsVcShTfDsPweuTOJlVuTrMjQfI2ThsqVldIgI+98a47Isowfi6bB8i9sJ76Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRq62+8sDyFmMXNUkdSMAMEm1Cv7/QSe4HcwuQQcnlYJZyyT6+
+	gSzpI3mROTcjZahOILD8chSyjrbA6Vd46SuUnY2xaBjkmTWGCrE1pE1qJRaeiLh8e+cAwdn91+t
+	fXCbbv6ioTNVb35kxe718nGaYDdY=
+X-Google-Smtp-Source: AGHT+IGmCxpPlHHAMaDBV/FLeAgm08sZpEZkejfjDPLomNWsnGnuzWdCXEQMqVRspnbDaJgrkvwBr1RsluIaJoc3Cwc=
+X-Received: by 2002:a2e:b90c:0:b0:2ef:2b45:b71d with SMTP id
+ 38308e7fff4ca-2f4f576b3aamr11269451fa.24.1724418221846; Fri, 23 Aug 2024
+ 06:03:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823112246.3905118-1-11162571@vivo.com>
+References: <e3yow7ih6af2hxzkmjay2oan3jypmo4hda64vxvpfco66ajcew@i3zewn4nbklf>
+ <cover.1699618135.git.msuchanek@suse.de> <xbgto5tttcah4mrtyjih72ubod3qb375ww6e2fd4pi342rg4eg@wipwd57q43cc>
+ <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
+ <5gx6vt4tzgk4zvboxrrahexr4ja6zm6fisjshdvnlfihsysqzb@quhp42ydtvh2> <20240822083600.GF26466@kitsune.suse.cz>
+In-Reply-To: <20240822083600.GF26466@kitsune.suse.cz>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 23 Aug 2024 22:03:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
+Message-ID: <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] kmod /usr support
+To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, linux-modules@vger.kernel.org, 
+	Takashi Iwai <tiwai@suse.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jiri Slaby <jslaby@suse.com>, Jan Engelhardt <jengelh@inai.de>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 07:22:45PM +0800, Yang Ruibin wrote:
-> No need to check debugfs_create_dir() return value.
-> It's safe to pass in errors that debugfs_create_dir() gives you.
-> 
-> Fixes: f40eb99897af ("pktcdvd: remove driver.")
+On Thu, Aug 22, 2024 at 5:36=E2=80=AFPM Michal Such=C3=A1nek <msuchanek@sus=
+e.de> wrote:
+>
+> Hello,
+>
+> On Thu, Aug 22, 2024 at 01:05:11AM -0500, Lucas De Marchi wrote:
+> > On Tue, Dec 19, 2023 at 05:37:31PM GMT, Masahiro Yamada wrote:
+> > > On Thu, Dec 7, 2023 at 3:37=E2=80=AFAM Lucas De Marchi <lucas.demarch=
+i@intel.com> wrote:
+> > > >
+> > > > On Fri, Nov 10, 2023 at 01:13:53PM +0100, Michal Suchanek wrote:
+> > > > >Hello,
+> > > > >
+> > > > >This is resend of the last patch in the series that adds prefix su=
+pport
+> > > > >to kernel module location together with additional patch for valid=
+ating
+> > > > >the user supplied input to options that are interpreted as directo=
+ries.
+> > > > >
+> > > > >Thanks
+> > > >
+> > > > applied, thanks
+> > > >
+> > > > Lucas De Marchi
+> > >
+> > >
+> > >
+> > > If I understood this correctly, MODULE_DIRECTORY is determined
+> > > by "configure --with-module-directory=3D...", and there is no
+> > > way to change it after that.
+> > >
+> > >
+> > > If so, how to work with cross-building?
+> > >
+> > > Cross-building is typical when building embedded Linux systems.
+> >
+> > I was thinking the `pkg-config --variable=3Dmodule_directory`
+> > from the target would be sufficient, but...
+> >
+> > >
+> > >
+> > > Consider this scenario:
+> > >
+> > > - Your build machine adopts
+> > >    MODULE_DIRECTORY=3D/usr/lib/modules
+> > > - The target embedded system adopts
+> > >    MODULE_DIRECTORY=3D/lib/modules
+> > >
+> > > (or vice a versa)
+> > > depmod is used also for cross-building because
+> > > it is executed as a part of "make module_install".
+> > >
+> > >
+> > > The counterpart patch set for Kbuild provides
+> > > KERNEL_MODULE_DIRECTORY, which only changes
+> > > the destination directory to which *.ko are copied.
+> > >
+> > > You cannot change the directory where the
+> > > depmod searches for modules, as it is fixed
+> > > at the compile-time of kmod.
+> > >
+> > >
+> > >
+> > >
+> > > In this case, what we can do is to build another
+> > > instance of kmod configured for the target system,
+> >
+> > the target system may not even have depmod actually, so using just the
+> > host one seems more appropriate. But target should have the kmod.pc for
+> > the pkg-config call to work.
+> >
+> > > and use it for modules_install:
+> > >
+> > > 1. In the kmod source directory
+> > >    ./configure --with=3Dmodule-directory=3D/lib/modules
+> > >    make
+> > >
+> > > 2. make modules_install INSTALL_MOD_PATH=3D<staging-dir>
+> > >     KERNEL_MODULE_DIRECTORY=3D/lib/modules
+> > >     DEPMOD=3D<new-depmod-you-has-just-built>
+> > >
+> > >
+> > >
+> > > If you use OpenEmbedded etc., this is what you do
+> > > because host tools are built from sources.
+> > >
+> > > But, should it be required all the time?
+> > > Even when the target embedded system uses
+> > > busybox-based modprobe instead of kmod?
+> >
+> > no, I don't think we can rely on depmod from the target.
+> >
+> > >
+> > >
+> > >
+> > > depmod provides --basedir option, which changes
+> > > the prefix part, but there is no way to override
+> > > the stem part, MODULE_DIRECTRY.
+> > >
+> > > In the review of the counter patch set,
+> > > I am suggesting an option to override MODULE_DIRECTRY
+> > > (let's say --moduledir) at least for depmod.
+> >
+> > ok
+> >
+> > >
+> > > (Perhaps modinfo too, as it also supports --basedir)
+> > >
+> > >
+> > >
+> > > Then, we can change scripts/depmod.sh so that
+> > > Kbuild can propagate KERNEL_MODULE_DIRECTORY
+> > > to depmod.
+> > >
+> > >
+> > > if  <depmod supports --moduledir>; then
+> > >    set -- "$@"  --moduledir "${KERNEL_MODULE_DIRECTORY}"
+> > > fi
+> > >
+> > >
+> > >
+> > > Does it make sense?
+>
+> It does not make sense for the common case: building kernel for the host
+> system.
+>
+> Then overriding the directory is wrong, and using what kmod was compiled
+> with is needed to get correct module directory layout.
 
-It's not a "fix", it's just a cleanup.  The current code just never
-actually triggers so it's not like there is any functional change here
-at all.
 
-thanks,
+NACK.
 
-greg k-h
+scripts/Makefile.modinst and depmod must agree about
+the install destination.
+
+Both must refer to the same ${KERNEL_MODULE_DIRECTORY}.
+
+
+
+
+>
+> Or it would make sense if both was done:
+>
+> Default KERNEL_MODULE_DIRECTORY to what kmod was compiled with, and
+> then pass the actual value to depmod so that depmod uses the compiled-in
+> value by default, and the user-provided value when
+> KERNEL_MODULE_DIRECTORY was overridden by the user.
+>
+> Thanks
+>
+> Michal
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
