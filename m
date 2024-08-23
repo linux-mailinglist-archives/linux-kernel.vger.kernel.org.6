@@ -1,140 +1,236 @@
-Return-Path: <linux-kernel+bounces-298855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187CB95CC3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:17:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977E795CC40
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C458B1F25CD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDEC28355E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CC18455D;
-	Fri, 23 Aug 2024 12:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8EC185950;
+	Fri, 23 Aug 2024 12:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SQ4BQYna"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xa6v6zEA"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8276358A7
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BEE9457;
+	Fri, 23 Aug 2024 12:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415416; cv=none; b=VUME9xKhNROc0DMfqfqGbzYp28YQlAljOofVDk0lmsz3S+dvdC3OxAG1vAgIYsEP8FxdZ9yuDOHvyQ7XlD7KjfnAbc0ntsr8lhr7quPTPC9WG4sYffh82K97N52STMX2SaU2rSil1wHpOVKF5D0n09q7w/2nte4v1RXnstjLFnI=
+	t=1724415598; cv=none; b=AXf/6i9y690jAndxsSn/pyOZ8lHa+3ASqCrtHlg8VWmcvRD9ktyeEiQi8wQA1eT62sMEko58s7Wo66wZ5fvDleXFE5vCF1Z7wxxjqhWj592hmP1SLqpOQdLIwayc9hujAZfyH2eAgFJnigiDi/SlrZY8OB2qEqMgUEqB5gTi99M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415416; c=relaxed/simple;
-	bh=4DC97yxJeXEdzHMLZMXkYAU0ZNbEVEeDGKGhuV0RtgM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a++KTM4V6JfJLZvMt8+2xgb2fCjk4JaiTyvgL9cZOfh/TZ72rhLM/OtD9Cgysp7EXk17jqGkx2AwQW7Rl1/dPMWQNrJqoQOR6Fzr2bTAvWAg/mlxSo20kvrZbALS1geCE1jUEo4bGmk/pEO0pknLa5eZQkiSVg0B7bvDVSqQuHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SQ4BQYna; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so3131674a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:16:54 -0700 (PDT)
+	s=arc-20240116; t=1724415598; c=relaxed/simple;
+	bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DEQKhnPrBB9/1iaUqhwp94lUU/9oVPS9As8CP948Oe/ZaTAfSa2jCmqfLngdLZ1Uq5zeWc5CQll8HSKKLQBcqBjQP4xxMPu0decOBOgI3tpxL/iZWQJxGcy4QJaHxRHaWx37nz79GAKqDQDosUoxcTtPHNDex2XfXbdcAm4HRmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xa6v6zEA; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so1564857b3a.3;
+        Fri, 23 Aug 2024 05:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724415413; x=1725020213; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k4jqcyPYPviNvzc22wHcy+G7CO3Izw5qaIhoXnNG/Do=;
-        b=SQ4BQYna+VjIFEjOz1SuG7klXn+9Sbz5SnE0c2CXEdFAY4Q1ILUuhnebhlMsCHE1O1
-         5gdEDbk1Ove0w0thPLYQ1JWcqE1jNekRmsVGxUK5RuKBzOb3P670JVT9jDJYbartUfUr
-         tUSD3z0cjt267X8eM34ZgkYf/IsKe47DtxGWo2QnZz0pR6HweDV/nHSLiZS6kcEQPZtd
-         h6vOJb4COkbSya/cHWnGThVohY/robkJmijhiomc+tVtR2exQNsp5HUpU+tDVMZv5wdF
-         5Mfr7nKD2iN2PfEGowFVBuffOrn03Dh8ftSt7oveGU4qi1KlRmX/2M/Y15iEvYRiqQFx
-         uHFw==
+        d=gmail.com; s=20230601; t=1724415596; x=1725020396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
+        b=Xa6v6zEA7tUCKrIb6hfZzLzdaLXhpfT2d2451CCsYTs4yXdJX4Kz4r7iLdu4VE2Blj
+         2Lf8rVGpxBdHDIuYerhg3qfo9+TRgmlRMsK3N9NYQl37FHC9fEnG7PzqUr6ludPTb3do
+         9+G0/OOE6QiUmVPVOVzdEPvssmdYdCtGlDmH/fkE7UoFxulZBvucPnuRtf90lZszHlH6
+         lYQNkmZwMv/1ua27NiRDVurAeMC4avrRL5/OSoG9NK+lWn2RHkmz4DtapRGltGI5231D
+         NaUE+M5fRqXPmQUgYLuUwMa/6Ub/iaA3Afm4g6MoccobCzRxrynXRif0Apg7UoIPR1Da
+         9CBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724415413; x=1725020213;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k4jqcyPYPviNvzc22wHcy+G7CO3Izw5qaIhoXnNG/Do=;
-        b=sh5pHWMCcr1fta90gN8zT6dw3toNPY3jwBrCDxLd3OFm/y5fUV8nLMjOKKW3htIt1W
-         iV/EFu/jT9KefzChE91XRkLe8RMybT+DdPbRIlUzxneIwNZEnxG3w9dq9vdZzxTQ5hIR
-         gUtDk7jr9vu1f1JQImSvYEoqh3up7i4WVAZZI5lpNIYO2KUA4QIYYjgnaxcxSfRH2BhI
-         1g3FBgkCj2JCAXwdRlTf6fkZ/BF4f9VG8rDCu806Zr3kCFTKyipYnSu7RhOtmJhiC2aI
-         tuVtbi8N5pDTAh4UFWPIpvm+ksL9vwP8B8LViPpyBLG+pLYu92rH96L/YxjAnf9S4HTD
-         bv6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVknMhw5DQWNDwl4sIvqZIEQcP8LEK7iR9jZ61VliT/YQSk13WOb213Di4iZMIo6h8dqzTZcZ8YEOhWoxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIMd1g4O6OU30Vx7fiouq1ajV1L/owt5tIwj0A2/r+UDRq/rxV
-	G/MMyoYJHBr9U8oY82ZSruNY74L5j+njvs2GI6yADOfQgkyU/Qw2GY0ceO4IjKY6J130cv3y2eu
-	F
-X-Google-Smtp-Source: AGHT+IG92QLTsCPe+kjIiyPB4rgSuURcZx+5MoV2DAob+IU0NbCTX+8Mz4OYOAHiDABjZnejlhmBTQ==
-X-Received: by 2002:a05:6402:4022:b0:5c0:8ea7:3971 with SMTP id 4fb4d7f45d1cf-5c08ea73a22mr986178a12.18.1724415412747;
-        Fri, 23 Aug 2024 05:16:52 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddc6afsm1993346a12.14.2024.08.23.05.16.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:16:52 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 23 Aug 2024 15:16:46 +0300
-Subject: [PATCH] drm/panel-edp: add BOE NE140WUM-N6G panel entry
+        d=1e100.net; s=20230601; t=1724415596; x=1725020396;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UNUCMHj/hyaQMFc8KHdZF7HyFyUqAA9VUiUHkYXLnpM=;
+        b=kq/jVRHk7tJZgDjImDSRD7lft69ECCOxnygvZ2zX9UWBpW5qljDLXyJ/tbtoZRGt1S
+         Ft65jKSe2L4m6QeSZwLMJPnks8flOYyltoWQ+c2SuPQTfEyYOwlYVGO43N3r5pWsCT5X
+         ti2hHestAcBCNscn1FDGHp7HaEDF4jccWOFjOhvtpgFfQupLcGPVz6dr919kNvbyKzsa
+         Zbno8aRxoB2jBPzY65t8LCVsD4kwME4Nuq9UU3QDT43qS/eFzgIP943ljZiz/y/rINkg
+         0SEm5e5aeC6LWBZuweTTdxPvZbhn0Fb+3eE0w8H355w6jLQaY/PPEKugDaBrGnRODLb+
+         Pl0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVK1XWCsQ3DNBxNzMrf7ZCh09js8gagqBHBpFGOG6Z247diqJvZ38+v91NfolAS6o0lUpdGi1/sahfjWYwm@vger.kernel.org, AJvYcCWvgtBX8whVrmU74OeKF0PzBBDL1SKIRErg0tcjCXgknszoWpMvuYrowNxsAsIz6yNcPPgHah7L@vger.kernel.org, AJvYcCXCKfaHkFI5dmLEb/b/hmKholwPHhghpBZK6NQi5NJXZaLMMBEGUArqVIN+w+K0BlAgEynYodElts8QYMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY8J8ym/cyqBUUCBGmW3hLzxTV6s80VyiW7S+YtAQk4/IoQzaX
+	WV8spB+fWgdF1kGxxvvXyvLbmN1do+liqHfgfIAdykDyiLy6xneA
+X-Google-Smtp-Source: AGHT+IGzc7ioPCbQCUlxcip72zBvSMtYRgGsnomQD6AMKfga1Ybtd8vRCH2kemIvGrXuqleOIpl3tQ==
+X-Received: by 2002:a05:6a20:e18a:b0:1c3:ff33:246b with SMTP id adf61e73a8af0-1cc89ed999cmr2643659637.40.1724415595687;
+        Fri, 23 Aug 2024 05:19:55 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([124.156.216.125])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad5529csm2955543a12.68.2024.08.23.05.19.48
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 23 Aug 2024 05:19:55 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: yukuai1@huaweicloud.com
+Cc: 21cnbao@gmail.com,
+	a.hindborg@samsung.com,
+	axboe@kernel.dk,
+	baolin.wang@linux.alibaba.com,
+	boqun.feng@gmail.com,
+	cgroups@vger.kernel.org,
+	david@redhat.com,
+	fujita.tomonori@lab.ntt.co.jp,
+	ioworker0@gmail.com,
+	josef@toxicpanda.com,
+	libang.li@antgroup.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mkoutny@suse.com,
+	paolo.valente@unimore.it,
+	tj@kernel.org,
+	vbabka@kernel.org,
+	yukuai3@huawei.com
+Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with set device wbps and wiops
+Date: Fri, 23 Aug 2024 20:19:39 +0800
+Message-ID: <20240823121939.65934-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <7c3499ac-faa7-cc0c-2d90-b8291fce5492@huaweicloud.com>
+References: <7c3499ac-faa7-cc0c-2d90-b8291fce5492@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-drm-panel-edp-add-boe-ne140wum-n6g-v1-1-7bdd3c003514@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAK19yGYC/x3NywrCMBBG4Vcps3YgjWmpvoq4GJ0/dcCmIcELl
- L67weW3OWejimKodO42KnhbtTU19IeO7g9JM9i0mbzzwU3+yFoWzpLwZGhmUeXbCk7og/u8Fk7
- jzBhiHMMwyUmFWigXRPv+J5frvv8A5pjWkHQAAAA=
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1309; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=4DC97yxJeXEdzHMLZMXkYAU0ZNbEVEeDGKGhuV0RtgM=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmyH2vnRgfiMfes4bKqmJ6e6TiZhJL98fXzERjX
- CZ/gJuW0dWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZsh9rwAKCRAbX0TJAJUV
- Vun7EACiWpqGOOnI1lmm2WvxDcohOKf67CM5K6lRzUpHawdGBVSaQV/QOgFO05xyoEBsBbWenE4
- Co1OCcUflDJ14EzhqRG0pnkmVnRUfCr4skiGbtSVXsag5AluGkER+TpZpWNlBFkTH5K+n8Cpves
- vPzGfEjZGfX/QZbo3NsSBq1NBsAWpG2BZJIfJVDDw+gIPVW2FMtyl1mKr/ysyDBAKjVkipFxLy6
- JpwsgiyA3TK9Pqpk9z1mzqtCidpEHx5lDFZERUBOMc1twUrgPsO1zGhywBSp72nBbvdkb6nv3bt
- XLCF+jawU/3n6oHaJWocc1Rq6sRQTsE1GdYeOXymvtQKO0ZlvKMb8KxRAu3Imo2730/oK1fIdqi
- 9MI31AzDNZ58OWQgoHLpQp6HYqRWxlhP2xhv54I2G1Z7wVlxuawebo5tuqQnlW5dzuQ2o5RYyV0
- FdoKPoldPIrDOcU5KsxWYgFjxdyZ1oIb10jpFwoslUX6La0E2IRmdrb43lRL86W4W4iK8ZiCfh2
- eT0jUgrUuwgcPd4YWj1jlGNTQ1grQMQ+qx89Mp5FjA7wnPvV+NTdzlHgKAU5RohIl4bvnbfxtME
- IiLqyxoscRcJNhVa/syUuuQYwkNr0I1KwzdSn1kn9TOaRfNlZ/Q9b2DkzePF6bHknj1kO788lqb
- gxrlNYNN4YwrLDA==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Transfer-Encoding: 8bit
 
-Add an eDP panel entry for BOE NE140WUM-N6G.
+Forget to add the test result of buffered IO:
 
-Due to lack of documentation, use the delay_200_500_e80 timings like
-some other BOE entries for now.
+With wiops, the result is as follows:
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/gpu/drm/panel/panel-edp.c | 1 +
- 1 file changed, 1 insertion(+)
+```
+$ echo "8:0 wbps=10485760 wiops=100000" > io.max
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 7183df267777..f6102ceaf0a7 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1911,6 +1911,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b34, &delay_200_500_e80, "NV122WUM-N41"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b43, &delay_200_500_e200, "NV140FHM-T09"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b56, &delay_200_500_e80, "NT140FHM-N47"),
-+	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b66, &delay_200_500_e80, "NE140WUM-N6G"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT140FHM-N47"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
+$ rm -rf /data/file1 && dd if=/dev/zero of=/data/file1 bs=50M count=1
+1+0 records in
+1+0 records out
+52428800 bytes (52 MB, 50 MiB) copied, 0.062217 s, 843 MB/s
 
----
-base-commit: 6a7917c89f219f09b1d88d09f376000914a52763
-change-id: 20240823-drm-panel-edp-add-boe-ne140wum-n6g-e5ff6458a9da
+$ dmesg -T
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac500
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5adb80
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac140
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5acdc0
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ac280
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 16384 ffff0000ce5ada40
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 4096 ffff0000ce5adcc0
+[Fri Aug 23 12:09:10 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac500
+[Fri Aug 23 12:09:10 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac500
+[Fri Aug 23 12:09:11 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5adb80
+[Fri Aug 23 12:09:11 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5adb80
+[Fri Aug 23 12:09:12 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac140
+[Fri Aug 23 12:09:12 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac140
+[Fri Aug 23 12:09:13 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5acdc0
+[Fri Aug 23 12:09:13 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5acdc0
+[Fri Aug 23 12:09:14 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ac280
+[Fri Aug 23 12:09:14 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ac280
+[Fri Aug 23 12:09:14 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000ce5ada40
+[Fri Aug 23 12:09:14 2024] __blk_throtl_bio: bio start 13824 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 4096 ffff0000ce5adcc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1536 ffff0000ce5adcc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1536 ffff0000ce5adcc0
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac500
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5adb80
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac140
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5acdc0
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ac280
+[Fri Aug 23 12:09:15 2024] blk_throtl_dispatch_work_fn: bio done 13824 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 11264 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 11264 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 8704 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 8704 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 6144 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 6144 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 3584 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 3584 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio start 1024 ffff0000ce5ada40
+[Fri Aug 23 12:09:15 2024] __blk_throtl_bio: bio done 1024 ffff0000ce5ada40
+```
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+And without wiops, the result is quite different as well:
 
+```
+$ echo "8:0 wbps=10485760 wiops=max" > io.max
+
+$ rm -rf /data/file1 && dd if=/dev/zero of=/data/file1 bs=50M count=1
+1+0 records in
+1+0 records out
+52428800 bytes (52 MB, 50 MiB) copied, 0.0791369 s, 663 MB/s
+
+$ dmesg -T
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87ca3c0
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87ca000
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb2c0
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb040
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cac80
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 16384 ffff0000f87cb400
+[Fri Aug 23 12:16:50 2024] __blk_throtl_bio: bio start 4096 ffff0000f87ca640
+[Fri Aug 23 12:16:51 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87ca3c0
+[Fri Aug 23 12:16:52 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87ca000
+[Fri Aug 23 12:16:53 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb2c0
+[Fri Aug 23 12:16:54 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb040
+[Fri Aug 23 12:16:54 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cac80
+[Fri Aug 23 12:16:55 2024] blk_throtl_dispatch_work_fn: bio done 16384 ffff0000f87cb400
+[Fri Aug 23 12:16:55 2024] blk_throtl_dispatch_work_fn: bio done 4096 ffff0000f87ca640
+```
+
+Thanks,
+Lance
 
