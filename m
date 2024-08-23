@@ -1,237 +1,293 @@
-Return-Path: <linux-kernel+bounces-299635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2EF795D7EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:42:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B65895D7F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7081B2188E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DB0284488
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B341C7B87;
-	Fri, 23 Aug 2024 20:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16DD1C6F7D;
+	Fri, 23 Aug 2024 20:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="lXsGzNMi"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazolkn19011037.outbound.protection.outlook.com [52.103.13.37])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IZCX53sM"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D99A1957E4;
-	Fri, 23 Aug 2024 20:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724445747; cv=fail; b=sE6DdC5gFQUUL2qB/GLkA1/C+WUmBflowPBMv4Qnqn7TfyWzGvqn3t+vxN2m5+8tWXsbFHFlpcZZu9zvmMm9VeBVQuGor4HE6nRG9aw271w5+t/GW71Ly6T7GDO0eGSL/sFFhRWCKYWhf4Z+ZuasMOm7UErDwWX00dwYM125jc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724445747; c=relaxed/simple;
-	bh=NRWP+t9ThFWW/HJSLEc9xMiNTytDWdQnalcUM6z/Hes=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kyhioT8O0FD3rMUhsWlhRCs+4En4tfUV/6Q0p1luuMI63LAP4SIG/w0kYIxgpU30D3GCNeNld7/KZKzRKiltY8oM8GPi4XxdmLlRPR3VBu9zr06wEymKgfXSdG2nWH0wknUk5c7YR+mmoS2JRwMfodQSOG8X+1rZ95Pq/tsbhu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=lXsGzNMi; arc=fail smtp.client-ip=52.103.13.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urbIaEoPCihOwYFEcMqzSfEynmml3WvVyFnf+pqGAC5SRn7tlutAZcBOInj1eE/k6YHFkO3d6Ujog/i0jMgz7K1HSzb1iQ0DHH5JjvLLvnGee6M8Imp/2bZuNHEpnt+RfWKCwfXB/fkxzvWDq3OYxIQk5oCK6RK5MD9r5WNwTgfw59YpWlX3XvM2UdzFWJk9jjKF26QqNaHqaLQcYw1MlIqNm8D+14JTamGqdybzrOUvhkEfdXBYpuUa0NJAbJIQ4ZRD3PEhK95Bu2wyyKBeEY7btZq5DiruCdvvP0eJqdFeQBbokzFrzstQynzv1uqiEnv9xwlZfVFjU6pCkhVtbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fFIX6pB3w/4OGDJNh/1Z6sD/CVs4htzkBA0YRKpRTZE=;
- b=dfx1CBTRIKsH4oFyJsNzCItZW8yBE+/TjwQw46Kp4wp4FsauddBHnyV4NdGlutx536BRPyGlL9uAChcnYA8QRUzuBkLzoisoDNWEgrPE5IUsVEZYt+QfxYTQyg0NyI341WrzeaS2DYe64NP5K7YteIUyWU6oeu7F85XSLQGIbLJt7v7+a32ewCb9ZPdlT/P2cglDEebV1VIh0PaoCn+jgDwcOqGelYyllHXCgQmIwNF3tSNkKIacB3o2P0CY+TgPQVBeVFSPVG6GOPrCenQU8DXTLCcI7/O5wmLvK2dFG5ldwO4bwfXZq2y05G3H3k1yBnipdSvuK5VxyrkrjUefQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fFIX6pB3w/4OGDJNh/1Z6sD/CVs4htzkBA0YRKpRTZE=;
- b=lXsGzNMir3oewPYiuPgAOzSGILrUpHXPMLF5KQzVoqdPKvYkXaLJgrBbGI24ZtK2SH2SnB5/2b6rNxP5dlf8u0o3xTf8y01g1c0ySha2fOsQ2WIF08dYDOyJqt8DBXkmSI4bE7cRsbnDQtu9X6hG5F8i5Ky/OV1Q6gJhp9ratlndPp6k29HSldeCI+6S3DPhOZo7jr/PVG4bsfZrhdUhAC81dy57LorRGYVzvXQHWnKQgOazANVIGwi+pUhwZFwADIEOHBL/655MgJGjL3YPz1PzceCQSpskVDg0CAn1GA45R6qiP19YVe12sUmMlCtvnNwSXWy82jctUb4hg5njhw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by BY5PR02MB6962.namprd02.prod.outlook.com (2603:10b6:a03:235::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.22; Fri, 23 Aug
- 2024 20:42:20 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Fri, 23 Aug 2024
- 20:42:20 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: =?iso-8859-2?Q?Petr_Tesa=F8=EDk?= <petr@tesarici.cz>,
-	"mhkelley58@gmail.com" <mhkelley58@gmail.com>
-CC: "kbusch@kernel.org" <kbusch@kernel.org>, "axboe@kernel.dk"
-	<axboe@kernel.dk>, "sagi@grimberg.me" <sagi@grimberg.me>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
-Subject: RE: [RFC 5/7] scsi: storvsc: Enable swiotlb throttling
-Thread-Topic: [RFC 5/7] scsi: storvsc: Enable swiotlb throttling
-Thread-Index: AQHa9MKd0/ezVkaXP0KX0eR0wB+/l7I0gPeAgAC/ZdA=
-Date: Fri, 23 Aug 2024 20:42:20 +0000
-Message-ID:
- <SN6PR02MB4157992C946E098413EA5D62D4882@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-	<20240822183718.1234-6-mhklinux@outlook.com>
- <20240823101959.1dfe251e@meshulam.tesarici.cz>
-In-Reply-To: <20240823101959.1dfe251e@meshulam.tesarici.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [fBKLKD3DKrg8us6rbyjEnIK/hdETv60G]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|BY5PR02MB6962:EE_
-x-ms-office365-filtering-correlation-id: 5280e0d8-7987-4b27-1de4-08dcc3b415c2
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|19110799003|15080799003|461199028|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- w9ZUV0jErhZRbd9CmF0VycLimMRkjE7j8HOtKphYkYB0/UHk93jOREyeKdPy8cyYj/nB8VPKARRdNu2s3ijiw09UbMhgNVZUz2MU7yhBpqY9oFAIUXKcK+Kv54oaZoQWBYFaM+4Ke2zlRJQISa+xUtE0Mf8Hk1kvU3Vro+iWbTBl4KUSKjqsDLZDfPOTTFIdQfg8mTscqMDADW9CaRh/cU5vdG+aasliHkwemrEKrgyyqvLe9CwAmJN1gtyXV7K0PdCcPpxSTgdAaQjp54MOk6Suavhz+K27lyAb1wwXfG75Dcbj5GPBEjej3lMYh09m/pOBLH0aBthNhixEyoIgEBkZcJQSv3wNEvav+F0zp5QkX4vh9aHgp4xd9DFsxy25BVvPuwU4ZAa0RqvDNEt8Y0nvDhmoNQ9cKJAvg0jqoKZ5vGIkjUj3sbEUTr8Qgj4xixinidCJcWsaGqssLFHEIFA29qZnC0g7sOpVBiQ3CulsAJkWvtBGNb9BhuEIs+mxCC3GrLQ6+pLCVEvgMAfxbkOeS2mUzvTGJoQIpgCQFMn/xCHKHzIhjVAM8i5Im494GZZEChD2hVZfNnvaYWWtElw6bFZQ0xQDw1omwrqSaGTORCO6ihj2TjX50OkEaZQcKS1EhGXcXDJOmEQdHnfXtgm2qsUFGwDsue8vB/kdyAzCFjJI9UpZBdiT5OHliV/2
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?zvUzcD/FjVKF9W+Sp9dZO7C9cB7y88MV1OpWFq/25yDiFu+k9toTYJVuO8?=
- =?iso-8859-2?Q?aTlKxscZaxIRHrmeD5iV5kxaj8BiyP7PiJHlstfF0UDWUcKIYYjZ3NuVGP?=
- =?iso-8859-2?Q?8qM/tuEEwjV3b0pMVG8DzdQD9lKzjHmcD9Yvnkjcm0uNDYmZy9DIZAfb9T?=
- =?iso-8859-2?Q?Qjy1fXi44kG6YaJwawOTU9j0bM88z6YCGatbuLkYCMjkr8XdGHchrMB3yX?=
- =?iso-8859-2?Q?rsXozW2CLVWOnuJi2m1iCES3FKHplKbHTSojQwccBEykj69I+5Hhq6bk+m?=
- =?iso-8859-2?Q?oPTfL/V8XMr4Y80R/8VfLTuyzE8jIs8PA3nd0i1GzuIp3MMYH6nOhyp1bZ?=
- =?iso-8859-2?Q?e7QmwO+r1YEuTpTvYsiLipQv2VrVkOvaOCUQIs7qsGLR2tnDhSmz0u0cbH?=
- =?iso-8859-2?Q?ycSP/KqqOCu7wTn/dlY2RauHBdqB80toM28WA4Nt1UgucDwcURLE47EN7D?=
- =?iso-8859-2?Q?qWMRDomiBaBOvSypWbWlCj53W5/CWBraQIPB8wjbOW7wzBfNswoSWibQh7?=
- =?iso-8859-2?Q?Ra4UcYkJdiIgq9daW8G4CUiZ0PSvZD+FOcOwyvu0o32ydDwenFEb6Ac4bF?=
- =?iso-8859-2?Q?kHnl1UxZWuS8JO38Xw2xxaoMaT3I6bqKWbxlpEhQ3xmsRppcIc3LjWfHCt?=
- =?iso-8859-2?Q?BBZjh1R52QsxO+5XJ0h/v+UlxLob49kVlnhzU/KdHzf/KexUN64mPRyfvz?=
- =?iso-8859-2?Q?5q/kgVkqfxB/RyAitwG8klK+BxjBS77xWtiuVhYCtpUqdRCN+C2M+EaCYx?=
- =?iso-8859-2?Q?6UQxl7z0VxsDxqpbvrlToZU1WUOMSPepe6UaFrf2IEWQX5iCV54ZI3/mkq?=
- =?iso-8859-2?Q?Tb93SpUtJTlqMdNKwxiZEczBKk8eouXlOP87KU/dUWh3zpDilSrqqh8+rs?=
- =?iso-8859-2?Q?W1qmsfcRsz/sqgP+yGcsREGVB07OoUKBk03fGyf7UC3C0EXwL/p6bN9+qi?=
- =?iso-8859-2?Q?6raLVmyT216yVVke3Hy70vuYkyFShP+Jd2mvIV3yK+V5NsbBO5aauQgGlY?=
- =?iso-8859-2?Q?vsXuKdXXR8pK6lDWNJeRGMDVuCgixxfAiF8Bj2+WWp9Pn+3fHn219HBXhL?=
- =?iso-8859-2?Q?alJVMuuZP5DcdbwoInJkuqeMhuG+U0+gAr3mZmCWX5S4fRKcC+Dx+6B1Da?=
- =?iso-8859-2?Q?3aETfB/GOO7YiD1OeURG2f9PjfwxzBfweUmgMMdf65a1tM6RnX0KC6fHXS?=
- =?iso-8859-2?Q?FcM9c0s5LUVio5cz5XMjwiQRcVjy0gUIR6vbtZacJN5e7w/Qvu9BQ9qA07?=
- =?iso-8859-2?Q?HkzIhed780fz2QIVzzU6FgL+IpyIB03S5z1h5LVMM=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030E1925B9;
+	Fri, 23 Aug 2024 20:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724445851; cv=none; b=dh5Mqg3WI/lQ6itru/U123ybONwXhthxhqPQoVX7kgbaN4a0Y2sYRQw4TpRwLPVYBafgvC7q0CoZKHYT3QjX6jq1cztosjpup2XG+VK+gPxFk9RiBROnuT6aR9ScktB2cj6FZidqouizuLOPJfNmPTxRyYEcACaQhCJtQa8ZSvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724445851; c=relaxed/simple;
+	bh=mY3ZlZr4LGd16AFsJBkwi3pqwy2Dk9HleHVv62NxpnQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ByfCD5s5Dll7R8SdDXwxSWnd+x+lNX84BtMJsIp0xm87v3zI57vAm+7Xes+1hcq+BvdnL9s9UI/unC5x2tAV/PC7tBnE/E+lIY//ZXyR8dKOszjGJO9HUOIQOmFyfT1eqh8tP1qPgaBcqoRM0Vm5RRhpEEH/XkNMyPVU2IWJ3lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IZCX53sM; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47NKi0gP024462;
+	Fri, 23 Aug 2024 15:44:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724445840;
+	bh=UgT1CQV66JpbZILH2YaDRh4UGWeqfWk110ZStUenq+w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=IZCX53sMWKs2CfjBxR/YeQihIjcTtndCS2xpyeouxaRo02qOIvVK0Zw5nRGbtnUsr
+	 jxLjDxRO7p7D9qdnxh3lJ3uYb+Ra9j3zmZkwa5pbnIvEEFsMgu2gl6FZ8fIa6FkXlY
+	 01C6Wvwlr/ViI42798TwQAsL/z1xIit8yJxhrDko=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47NKi0Ga018820
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 23 Aug 2024 15:44:00 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 23
+ Aug 2024 15:44:00 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 23 Aug 2024 15:44:00 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47NKi0ZW056531;
+	Fri, 23 Aug 2024 15:44:00 -0500
+Message-ID: <feee18cc-e75b-49d9-ac09-a0afbb0b00ca@ti.com>
+Date: Fri, 23 Aug 2024 15:44:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5280e0d8-7987-4b27-1de4-08dcc3b415c2
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 20:42:20.5909
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6962
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mmc: sdhci_am654: Add retry tuning
+To: Adrian Hunter <adrian.hunter@intel.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240821192435.1619271-1-jm@ti.com>
+ <20240821192435.1619271-2-jm@ti.com>
+ <47ed0a0b-dfaa-40e1-825a-9a42e66b887e@intel.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <47ed0a0b-dfaa-40e1-825a-9a42e66b887e@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Petr Tesa=F8=EDk <petr@tesarici.cz> Sent: Friday, August 23, 2024 1:2=
-0 AM
->=20
-> On Thu, 22 Aug 2024 11:37:16 -0700
-> mhkelley58@gmail.com wrote:
->=20
-> > From: Michael Kelley <mhklinux@outlook.com>
-> >
-> > In a CoCo VM, all DMA-based I/O must use swiotlb bounce buffers
-> > because DMA cannot be done to private (encrypted) portions of VM
-> > memory. The bounce buffer memory is marked shared (decrypted) at
-> > boot time, so I/O is done to/from the bounce buffer memory and then
-> > copied by the CPU to/from the final target memory (i.e, "bounced").
-> > Storage devices can be large consumers of bounce buffer memory because =
-it
-> > is possible to have large numbers of I/Os in flight across multiple
-> > devices. Bounce buffer memory must be pre-allocated at boot time, and
-> > it is difficult to know how much memory to allocate to handle peak
-> > storage I/O loads. Consequently, bounce buffer memory is typically
-> > over-provisioned, which wastes memory, and may still not avoid a peak
-> > that exhausts bounce buffer memory and cause storage I/O errors.
-> >
-> > To solve this problem for Coco VMs running on Hyper-V, update the
-> > storvsc driver to permit bounce buffer throttling. First, use
-> > scsi_dma_map_attrs() instead of scsi_dma_map(). Then gate the
-> > throttling behavior on a DMA layer check indicating that throttling is
-> > useful, so that no change occurs in a non-CoCo VM. If throttling is
-> > useful, pass the DMA_ATTR_MAY_BLOCK attribute, and set the block queue
-> > flag indicating that the I/O request submission path may sleep, which
-> > could happen when throttling. With these options in place, DMA map
-> > requests are pended when necessary to reduce the likelihood of usage
-> > peaks caused by storvsc that could exhaust bounce buffer memory and
-> > generate errors.
-> >
-> > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
->=20
-> LGTM, but I'm not familiar with this driver or the SCSI layer. In
-> particular, I don't know if it's OK to change the value of
-> host->queuecommand_may_block after scsi_host_alloc() initialized it
-> from a scsi host template, although it seems to be fine.
->=20
-> Petr T
+Hi Adrian,
 
-Yes, it's OK to change the value after scsi_host_alloc().
-The flag isn't consumed until scsi_add_host() is called
-later in storvsc_probe().
+On 8/23/24 8:45 AM, Adrian Hunter wrote:
+> On 21/08/24 22:24, Judith Mendez wrote:
+>> Add retry tuning up to 10 times if we fail to find
+>> a failing region or no passing itapdly. This is
+>> necessary since some eMMC has been observed to never
+>> find a failing itapdly on the first couple of tuning
+>> iterations, but eventually does. It has been observed that
+>> the tuning algorithm does not need to loop more than 10
+>> times before finding a failing itapdly.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+> 
+> Seems to have compile errors. Looks like 'dev' lines belong in
+> next patch.
+> 
+> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_calculate_itap’:
+> drivers/mmc/host/sdhci_am654.c:453:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+>    453 |         struct device *dev = mmc_dev(host->mmc);
+>        |                        ^~~
+> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_do_tuning’:
+> drivers/mmc/host/sdhci_am654.c:508:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+>    508 |         struct device *dev = mmc_dev(host->mmc);
+>        |                        ^~~
+> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_platform_execute_tuning’:
+> drivers/mmc/host/sdhci_am654.c:553:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+>    553 |         struct device *dev = mmc_dev(host->mmc);
+>        |                        ^~~
+> cc1: all warnings being treated as errors
 
-Note this maps to BLK_MQ_F_BLOCKING, which you can see in
-/sys/kernel/debug/block/<device>/hctx0/flags. Same for NVMe
-devices with my Patches 6 and 7. When debugging, I've been
-checking that /sys entry to make sure the behavior is as expected. :-)
+ok, will move to second patch.
 
-Michael
+> 
+>> ---
+>> Changes since v1:
+>> - Change logic in patch 1/2 from using recursive aproach
+>>    to calling a function iteratively for retuning
+>> ---
+>>   drivers/mmc/host/sdhci_am654.c | 54 ++++++++++++++++++++++++++--------
+>>   1 file changed, 42 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+>> index 64e10f7c9faa3..612f29fd7dfef 100644
+>> --- a/drivers/mmc/host/sdhci_am654.c
+>> +++ b/drivers/mmc/host/sdhci_am654.c
+>> @@ -86,6 +86,7 @@
+>>   
+>>   #define CLOCK_TOO_SLOW_HZ	50000000
+>>   #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
+>> +#define RETRY_TUNING_MAX	10
+>>   
+>>   /* Command Queue Host Controller Interface Base address */
+>>   #define SDHCI_AM654_CQE_BASE_ADDR 0x200
+>> @@ -151,6 +152,7 @@ struct sdhci_am654_data {
+>>   	u32 flags;
+>>   	u32 quirks;
+>>   	bool dll_enable;
+>> +	u32 tuning_loop;
+> 
+> Could use a comment explaining tuning_loop usage.
 
->=20
-> > ---
-> >  drivers/scsi/storvsc_drv.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-> > index 7ceb982040a5..7bedd5502d07 100644
-> > --- a/drivers/scsi/storvsc_drv.c
-> > +++ b/drivers/scsi/storvsc_drv.c
-> > @@ -457,6 +457,7 @@ struct hv_host_device {
-> >  	struct workqueue_struct *handle_error_wq;
-> >  	struct work_struct host_scan_work;
-> >  	struct Scsi_Host *host;
-> > +	unsigned long dma_attrs;
-> >  };
-> >
-> >  struct storvsc_scan_work {
-> > @@ -1810,7 +1811,7 @@ static int storvsc_queuecommand(struct Scsi_Host =
-*host,
-> struct scsi_cmnd *scmnd)
-> >  		payload->range.len =3D length;
-> >  		payload->range.offset =3D offset_in_hvpg;
-> >
-> > -		sg_count =3D scsi_dma_map(scmnd);
-> > +		sg_count =3D scsi_dma_map_attrs(scmnd, host_dev->dma_attrs);
-> >  		if (sg_count < 0) {
-> >  			ret =3D SCSI_MLQUEUE_DEVICE_BUSY;
-> >  			goto err_free_payload;
-> > @@ -2030,6 +2031,12 @@ static int storvsc_probe(struct hv_device *devic=
-e,
-> >  	 *    have an offset that is a multiple of HV_HYP_PAGE_SIZE.
-> >  	 */
-> >  	host->sg_tablesize =3D (max_xfer_bytes >> HV_HYP_PAGE_SHIFT) + 1;
-> > +
-> > +	if (dma_recommend_may_block(&device->device)) {
-> > +		host->queuecommand_may_block =3D true;
-> > +		host_dev->dma_attrs =3D DMA_ATTR_MAY_BLOCK;
-> > +	}
-> > +
-> >  	/*
-> >  	 * For non-IDE disks, the host supports multiple channels.
-> >  	 * Set the number of HW queues we are supporting.
+Sure no problem, will add.
+> 
+>>   
+>>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>>   };
+>> @@ -453,12 +455,14 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+>>   	int prev_fail_end = -1;
+>>   	u8 i;
+>>   
+>> -	if (!num_fails)
+>> -		return ITAPDLY_LAST_INDEX >> 1;
+>> +	if (!num_fails) {
+>> +		/* Retry tuning */
+>> +		return -1;
+>> +	}
+>>   
+>>   	if (fail_window->length == ITAPDLY_LENGTH) {
+>> -		dev_err(dev, "No passing ITAPDLY, return 0\n");
+>> -		return 0;
+>> +		/* Retry tuning */
+>> +		return -1;
+>>   	}
+>>   
+>>   	first_fail_start = fail_window->start;
+>> @@ -494,16 +498,18 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+>>   	return (itap > ITAPDLY_LAST_INDEX) ? ITAPDLY_LAST_INDEX >> 1 : itap;
+>>   }
+>>   
+>> -static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>> -					       u32 opcode)
+>> +static int sdhci_am654_do_tuning(struct sdhci_host *host,
+>> +				 u32 opcode)
+>>   {
+>>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>>   	unsigned char timing = host->mmc->ios.timing;
+>>   	struct window fail_window[ITAPDLY_LENGTH];
+>> +	struct device *dev = mmc_dev(host->mmc);
+>>   	u8 curr_pass, itap;
+>>   	u8 fail_index = 0;
+>>   	u8 prev_pass = 1;
+>> +	int ret = 0;
+>>   
+>>   	memset(fail_window, 0, sizeof(fail_window));
+>>   
+>> @@ -532,15 +538,38 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>>   	if (fail_window[fail_index].length != 0)
+>>   		fail_index++;
+>>   
+>> -	itap = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+>> -					  sdhci_am654->dll_enable);
+>> +	ret = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+>> +					 sdhci_am654->dll_enable);
+>>   
+>> -	sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
+>> +	return ret;
+> 
+> Kernel style is to return directly i.e.
+> 
+> 	return sdhci_am654_calculate_itap(host, fail_window, fail_index, sdhci_am654->dll_enable);
+> 
+> then don't need ret.
+
+Will fix.
+
+> 
+>> +}
+>>   
+>> -	/* Save ITAPDLY */
+>> -	sdhci_am654->itap_del_sel[timing] = itap;
+>> +static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>> +					       u32 opcode)
+>> +{
+>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>> +	unsigned char timing = host->mmc->ios.timing;
+>> +	struct device *dev = mmc_dev(host->mmc);
+>> +	int itapdly;
+>> +	int ret = 0;
+>>   
+>> -	return 0;
+>> +	itapdly = sdhci_am654_do_tuning(host, opcode);
+>> +
+>> +	while (sdhci_am654->tuning_loop < RETRY_TUNING_MAX && itapdly < 0) {
+>> +		sdhci_am654->tuning_loop++;
+>> +		itapdly = sdhci_am654_do_tuning(host, opcode);
+>> +	}
+> 
+> Better to try to have sdhci_am654_do_tuning() appear only once
+> e.g. something like:
+> 
+> 	do {
+> 		itapdly = sdhci_am654_do_tuning(host, opcode);
+> 		if (itapdly >= 0)
+> 			break;
+> 	} while (++sdhci_am654->tuning_loop < RETRY_TUNING_MAX);
+> 
+
+I generally do not like using do while loops, but in this case
+it is the more appropriate solution, thanks, will fix.
+
+> 
+>> +
+>> +	if (itapdly >= 0) {
+>> +		sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
+>> +		/* Save ITAPDLY */
+>> +		sdhci_am654->itap_del_sel[timing] = itapdly;
+>> +	} else {
+>> +		ret = -1;
+>> +	}
+> 
+> It is easier to read if the error path is separate e.g.
+> 
+> 	if (itapdly < 0)
+> 		return -1;
+> 
+> 	sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
+> 	/* Save ITAPDLY */
+> 	sdhci_am654->itap_del_sel[timing] = itapdly;
+> 
+> 	return 0;
+> 
+> Doesn't need ret then either.
+
+
+ok, yes this looks cleaner, thanks.
+
+> 
+>> +
+>> +	return ret;
+>>   }
+>>   
+>>   static const struct sdhci_ops sdhci_am654_ops = {
+>> @@ -908,6 +937,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>>   		goto err_pltfm_free;
+>>   	}
+>>   
+>> +	sdhci_am654->tuning_loop = 0;
+> 
+> It is a bit arbitrary having this at probe time.  Something like
+> putting it in an mmc card_init callback might make more sense?
+
+Sure I can move this. Thanks for reviewing!
+~ Judith
+
+> 
+>>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>>   
+>>   	pm_runtime_get_noresume(dev);
+> 
 
 
