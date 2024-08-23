@@ -1,193 +1,114 @@
-Return-Path: <linux-kernel+bounces-299254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9C995D209
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F4F95D20C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF3E2822E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3B01C21911
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101BA1891A3;
-	Fri, 23 Aug 2024 15:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51577189500;
+	Fri, 23 Aug 2024 15:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bP/gAoXf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XtsX8aow"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A091586D3;
-	Fri, 23 Aug 2024 15:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2BD1885BE
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428273; cv=none; b=ElbqH8xHV5WheODkgss1P3cflYlyP5Mx33vbRcoJwR0MvVg77+0k62U5ojg260LTc/IvJBiR+Ml0t3h8FZ0bFIUa86WUazIcL0FOEWgf3E8mP/9JZ4o3cEEwfSrvw7n9ZC0WjXAARhhF9gXOfTixVoRW6UkSFFxIGWleBBx/fL8=
+	t=1724428305; cv=none; b=DuVNnZSU0grBfk8sXh/1StD32VEMFH0/uhtiUSTazTqzL4g15xDop+8siw6mqmGQFcl32E4Za0QSRDUCnbmhwnzDOSTXuwMm1AfxM6XdX/nO29n8vZkQXO0VVFdAq0d48aM8jpsFA/LOFP7LDp9zLg2FtKuMQvNxJ8DX6TeGn1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428273; c=relaxed/simple;
-	bh=UJ8y9SbdyQJ2cpOyfwD7iZtYNXEMcqBlR4gxzqHEGxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZX+spkZFgsptPC28GbdMW+/yCURsdcYcC94l6Y1NC+v7jrubNAAHKSZ4a1jKFi0oL1RnE7wcaMCrKaFV+ZEb+5/ToEDRiUxDGBL+15VUtqm/tmIkQ+fWdUYDq0h6OOsR2vh/nXLeGfMDrxy2lIgkX+nLwK4SQCOquqQNoi5j6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bP/gAoXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04A3C32786;
-	Fri, 23 Aug 2024 15:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724428272;
-	bh=UJ8y9SbdyQJ2cpOyfwD7iZtYNXEMcqBlR4gxzqHEGxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bP/gAoXfI7Pog1TUdgOKN8s4SexOQTEN3/DKLmgzdIN7SXK+xlz+Cthyv9su1mGGk
-	 fMvwB1aVkboO3i9jKv4q2NL7YTh5eK+mlVgbJgFfmKJAJFkXMoR36JaAJ7kbwe6H/C
-	 ovTT++QqSEY9UCr8rwN/AIWGL0X4uiWDGyQir2eqwnWUY2voEpnJ5tADF8YPdq+lWC
-	 +W2ehjaR780BCokbQUzzqXlyMBjCY9EdItqnv6IdArAecyDWh+Y2D58x5m/94jPH8Q
-	 U8jjy+ZeqMBnk/nvj2fLQyAx7wS3yUpvjez5KbQYigJ9n+Y6MlMvfUxBhyOqvrvx/7
-	 pB6uqMUfCqB/w==
-Date: Fri, 23 Aug 2024 16:51:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: xianwei.zhao@amlogic.com
-Cc: Yiting Deng <yiting.deng@amlogic.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: rtc: Add Amlogic A311L2 and A113X2 rtc
-Message-ID: <20240823-rotunda-machinist-4f8dabbff479@spud>
-References: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
- <20240823-rtc-v1-1-6f70381da283@amlogic.com>
+	s=arc-20240116; t=1724428305; c=relaxed/simple;
+	bh=ems5Yuh3jeXb/TrU83+Z84W4Dg/l4S5Z1gzeQy+U0XE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OzT9pijll3b8kBCEWlc0XBK1aHjUhXud6EMyk9/vzV2oE6JOHX2N8KGPqmUxEz8Y15sjxvVz98802sV9H0zcbybYAyvDrWsBCUX8LiyeYXFQDMM+Y8K+vI+lv8r08AHWSxFxUc95/QDpP0WC6SdHVZexC4jTNY6FwYS3m3ZTjoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XtsX8aow; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so2092177e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724428302; x=1725033102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ems5Yuh3jeXb/TrU83+Z84W4Dg/l4S5Z1gzeQy+U0XE=;
+        b=XtsX8aow/fx7ogdaZkBDwSQXISD/DiagGXXcqboUz52273yDRUV6krqqVwO3MBeEhs
+         yZwDBN2Pg9BIlDKzLwyx8sSzcGE9O2l2/IAG9N3pMg3IGCEjlufEi1UpZnWqh5TUYVGt
+         RySqlA+818jsawq0W06BR4y/49Na8tKBJfetfZU63iW296zD2urQDy88yZVa8GroBUD+
+         6CTOfS8Ez6JP85dntfxpR+LB9R81dC0NswMAN8dYmx5eWoRiMoM2qLL09Y8+OkVk9QnQ
+         KcqBtcisb1Skz/PppXXgNtV6E8Qgk0f31y/vqJWDDLYTDfUFdHjum2/Qa/JNVK2thIqy
+         B7oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724428302; x=1725033102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ems5Yuh3jeXb/TrU83+Z84W4Dg/l4S5Z1gzeQy+U0XE=;
+        b=R2XnAr6UyIqnb2ay9Yp3MtixzdPO9mjbmgTxoa4exklikRKGV8ex2Dq4oPgpFYQ7mK
+         gqTsp0+lmfQictyYq9isEm7P5Z8DXM97k73TPS4ghCAdncPv4DqZxFlI9yONHpoydVkQ
+         0EyvONxN2HgK3t8a0o+Asx2G0S0D69/secMhqVO3TClZ5Wt8CFr61UcOn4v7vm4TRHqF
+         DPqDtWjK57sO0uclA/N6fttD3lbPsLNDk+MgnU0BBbjnhmSlF0HTd1ZaRV2+9uIdn2bN
+         09ZtF6YMHE7ZoVE4FMNdLC5/EbTj1cVDLSbmhKNHd81IEfqkfpHv7ELIbPoTUdiZgfgt
+         oPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVC/EEicKWglUwRPxpB8t3qkeMBNwF2IfErhhHXO3iJFeCxvahMGlY1N7bwNROrSYoYPunedNcPV27r1K8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX2ciA1VI2JgIIqfCUVkdf+4PJfwVBv3MWb71e9oJBRxo7Mf+x
+	rpL4ZLoPrVbLYUJRyUAVNjpc03FbK8VKQw2w7WBCipiGh9NoLCokVMobCG3R7izgAT2yW+IQ0Rl
+	O30dA+AhUC3EywISlKRsaWVxhJYppCBlulXD8Gg==
+X-Google-Smtp-Source: AGHT+IGvS1m3SwVCUZI5gnVQXJAs13Rd9dcYnhQeTub9j2B6KWYvXRtdAKKxqsWhnDiaK1fwjiJmwMVrg93543EtDjo=
+X-Received: by 2002:a05:6512:10cd:b0:52e:fa6b:e54a with SMTP id
+ 2adb3069b0e04-53438785b05mr1938698e87.30.1724428301706; Fri, 23 Aug 2024
+ 08:51:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pFpN10RskjPDX7Mw"
-Content-Disposition: inline
-In-Reply-To: <20240823-rtc-v1-1-6f70381da283@amlogic.com>
-
-
---pFpN10RskjPDX7Mw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
+In-Reply-To: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 17:51:30 +0200
+Message-ID: <CACRpkdYFc8vuz__7DkFSMFxUC=LSwCJmEun2KXgUvPMq+_e17A@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Remove support for platform data from matrix keypad driver
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>, Daniel Mack <daniel@zonque.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Arnd Bergmann <arnd@arndb.de>, soc@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 05:19:44PM +0800, Xianwei Zhao via B4 Relay wrote:
-> From: Yiting Deng <yiting.deng@amlogic.com>
->=20
-> Add documentation describing the Amlogic A113L2 and A113X2 rtc controller.
->=20
-> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../bindings/rtc/amlogic,amlogic-rtc.yaml          | 66 ++++++++++++++++=
-++++++
->  1 file changed, 66 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.ya=
-ml b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
-> new file mode 100644
-> index 000000000000..fa3d7838022e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/amlogic,amlogic-rtc.yaml
+On Mon, Aug 5, 2024 at 3:47=E2=80=AFAM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Filename matching a compatible please.
+> This series attempts to remove support for platform data from
+> matrix_keypad driver, and have it use generic device properties only
+> for the keypad configuration. Spitz is the only board [left] that
+> uses platform data.
+>
+> As part of the migration I am also dropping support for "clustered"
+> interrupt mode, as it was only available through platform data and there
+> are no users of it in the mainline kernel.
+>
+> Additionally gpio-keys device used by Spitz converted to use device
+> properties instead of platform data.
+>
+> I would prefer not to have the song and dance of merging first 2 patches
+> through the input tree, waiting, merging the spitz patches through SoC
+> tree, waiting, and finally merging the last patch to matrix keypad
+> through input again, so maybe we could merge it all through SoC?
+> Alternatively, I could merge everything through input. What do you
+> think?
 
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/amlogic,amlogic-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic Real Time Clock controller include a4, a5
-> +
-> +maintainers:
-> +  - Yiting Deng <yiting.deng@amlogic.com>
-> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
-> +
-> +description:
-> +  The Amlogic new chips used RTC module.
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - amlogic,a4-rtc
-> +      - amlogic,a5-rtc
+Sounds like a plan. The series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-The names you have chosen here do not match the patch description. What
-is going on there?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: RTC clock source, available 24M or 32K crystal
-> +          oscillator source. when using 24M, need to divide 24M into 32K.
-> +      - description: RTC module accesses the clock of the apb bus.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: rtc_osc
-> +      - const: rtc_sys_clk
-
-s/_clk//, they're all clocks.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    apb {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +
-> +        rtc: rtc@8e600 {
-
-And the label here can go, you've got no references to it :)
-
-Thanks,
-Conor.
-
-> +            compatible =3D "amlogic,a4-rtc";
-> +            interrupts =3D <GIC_SPI 131 IRQ_TYPE_EDGE_RISING>;
-> +            reg =3D <0x0 0x8e600 0x0 0x38>;
-> +            clocks =3D <&xtal_32k>, <&clkc_periphs 1>;
-> +            clock-names =3D "rtc_osc", "rtc_sys_clk";
-> +        };
-> +    };
->=20
-> --=20
-> 2.37.1
->=20
->=20
-
---pFpN10RskjPDX7Mw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsiv7AAKCRB4tDGHoIJi
-0pRTAQCos2kfCyu1HmMLs3vUDMHuAt4FObAjJDqXmI50lj4prAEAoCkTanOgaIFf
-mgPp56m+d+FLEo2EuVyr4VMVi4sgkAo=
-=N36O
------END PGP SIGNATURE-----
-
---pFpN10RskjPDX7Mw--
+Yours,
+Linus Walleij
 
