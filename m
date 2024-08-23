@@ -1,247 +1,176 @@
-Return-Path: <linux-kernel+bounces-298905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98A595CD06
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CB295CD15
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2F71C226AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B991F21712
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596CF56B7C;
-	Fri, 23 Aug 2024 12:52:21 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9FC186600;
+	Fri, 23 Aug 2024 13:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="E1b+okHv";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="QJMzhjba"
+Received: from smtpout42.security-mail.net (smtpout42.security-mail.net [85.31.212.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B11185B76;
-	Fri, 23 Aug 2024 12:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417540; cv=none; b=LEgJgqHOtgKRinfFk1FFsHYErQPASYn9IMwVp5++/vmwUqA+/IXjFUMCdJvAsZ/UVXA/WgpETnG4QOzarSjx80l0pybID+2PtFyFPNVD9VvsZ3xlvPfHVTjKiOtCglGswqpO4V/B15BPJWiwbaQCQUQeareauK2By/1F+VgBDIo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417540; c=relaxed/simple;
-	bh=MMKath5WwvO7L3+elI5+yBdP5O4pHtw49q2Ils6Ou1Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B2u9OyQ+L9YAVuRNJZdvsdG4aoHBbGXzoQQ/MVx5yUmiSdwuCzIwNDT6HJ4D+Ap9rI3aByGxJP0ZOy3V9RvUx5Gy9BcIEe7fgOqAHOWrlyPpBLKSbaOkch9pC/ys8mbo53gkDBYe8YY7jrKlTy8ZUeUca0BMUqm69blKr+r5J5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d3e93cceso272054285a.1;
-        Fri, 23 Aug 2024 05:52:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724417538; x=1725022338;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S9E6XTkrddueeZOivGiIofK2AhGee/oAp8YjyBl5PzE=;
-        b=RzrPPI5n0KYJORr+OA5u2AWThN3sfETMVx++P3fPNlsB7ntwUgYemuzgRbgf7eycoT
-         BHnvopxyMECRocTEim27YkP7zLV1abhRX9LBFHGa2owjJFg/uucAJR0nKeBKxD+SqKgK
-         OiS3a7LTBdHQhR1Eud6l/iA9VonZRjzPhP2H2QGIuN7Icm8kJ7cMp/D1irWxDgtApG7d
-         remIIM/cRzT5tDqPgtYeBXGxvLemI72+8kS7spi1ikUq61v1bfzJoJ29VvAsqzppUwCZ
-         jpo0Ujs0034+sckI/ttr956wJy4tYVSShotToX+vXCxMxLAEoYcclcdg4+4DxSIqyRdT
-         TyIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOKZyJtMPGUEHBkvYAkHA/esI6mzpATmBNGdAJZ6FNc04aPnn0Wbyf6U/1pPZhcittvWBU13cF8q8=@vger.kernel.org, AJvYcCWzaOqtsBMrI51GmXw10/IDToWtYt4ywRZ6kg0BF+ZQoBzG3A8LCOIfitzfSHrZzA/SOgbPBJRKhccMGsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHtxMHOa+j7urHhvvLNIQbPW3iMeycgSuNLDWm8VSMZrY22n/A
-	i3LoJKPSnhPRHedO5HCt8e34GXwjNNTF9R6UF5taOLPTlmiWA9XW
-X-Google-Smtp-Source: AGHT+IF3mA/YQvpHZgkDzEa+/SMAZxpXC7oi2zf6N4sk58c/EQ2mjae+vOE2n5jzZqc4FH/k7dNcfw==
-X-Received: by 2002:a05:620a:258f:b0:79f:12e9:1e51 with SMTP id af79cd13be357-7a688d09607mr398432085a.5.1724417537529;
-        Fri, 23 Aug 2024 05:52:17 -0700 (PDT)
-Received: from dogali.home (bras-base-mtrlpq3141w-grc-05-65-93-184-127.dsl.bell.ca. [65.93.184.127])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f41f249sm174739185a.126.2024.08.23.05.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:52:16 -0700 (PDT)
-From: Dave Vasilevsky <dave@vasilevsky.ca>
-To: glaubitz@physik.fu-berlin.de,
-	bhe@redhat.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org,
-	mpe@ellerman.id.au,
-	kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Dave Vasilevsky <dave@vasilevsky.ca>,
-	=?UTF-8?q?Reimar=20D=C3=B6ffinger?= <Reimar.Doeffinger@gmx.de>
-Subject: [PATCH] crash: Default to CRASH_DUMP=n when support for it is unlikely
-Date: Fri, 23 Aug 2024 08:51:56 -0400
-Message-Id: <20240823125156.104775-1-dave@vasilevsky.ca>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85287185E4E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724418005; cv=fail; b=FK75mSayiSlyNgBmODslyB6EhJ+9rlHAQ5aOgcHAxR6Ucc7WOZljR4Tdg9bCNDPHFI9DQgWzDWPRYBkSKiN9I83lcjm2EDB3bU+ScoQNXSbH63KBQLCJu/aoBRGqLi9Qs+mdh5SRnBjmQ7GSzh2dfxXszjz7OMm5MhZnAbVj0Q4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724418005; c=relaxed/simple;
+	bh=DDAZZCrLUwvG092AGlBuViDLywvdgox+xRJcsVoQKOE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dYgxbg8HS9xNvsuv30kRyJMi+0YAjko68A5tK8oqVkUGNZlMFGl96UOw2nhGw3xyK+nhBoMvhDspdddtKfjqBihr+zv46zhghqF/jt8YqiQHYsTvgI0LRSKOJp0km6EXL4lXWW4nLcIrb4Ex8Sxt8NIFsTh/ylGFTKuG8lsXjgE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=E1b+okHv; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=QJMzhjba reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx302.security-mail.net (Postfix) with ESMTP id AA086755D5
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:54:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1724417682;
+	bh=DDAZZCrLUwvG092AGlBuViDLywvdgox+xRJcsVoQKOE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=E1b+okHv+bU8rjuPaWY1EvouEft3b9uBOz3PC8t9YyPWhbtaRuIediWcMweaWo5mR
+	 Qlg3EFZ+Bd7PhUsp40W+m7npFYYq5UMUGHEB7L3fYNAWRNkOtYskN/WN1vr0dPNdyE
+	 VOaUNy7phYJJOgXjX32PUJG94NRerb/Nv2PNdxQI=
+Received: from fx302 (localhost [127.0.0.1]) by fx302.security-mail.net
+ (Postfix) with ESMTP id 59271752AB; Fri, 23 Aug 2024 14:54:42 +0200 (CEST)
+Received: from PA5P264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17010004.outbound.protection.outlook.com
+ [40.93.76.4]) by fx302.security-mail.net (Postfix) with ESMTPS id
+ 6ABB3753B4; Fri, 23 Aug 2024 14:54:41 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by MR1P264MB1569.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
+ 2024 12:54:39 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7897.014; Fri, 23 Aug
+ 2024 12:54:39 +0000
+X-Secumail-id: <1659d.66c88691.6904b.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gqcWEzVKBgdIy2ZYyu0FPf5TtjtabI5r5AirATky5Rbu71ev3BALqrLX1RBjxqSE6i2y0Tqukr3FioncOlfAHlTyKGLUFBIMl6ZPzjinZ/Wyeapf6fVHVYsC61fBoeS2Pq6mv40SCrzqE9vH1L/Se/KCLxohoVW/Fp+2hWPYoUajf4KDqzLCV8bAs933NUABVYg7PxhnKs82BZ1xQM2gThc3M9G2kgjw9xy6xfvHGwvitwhd3k2hQxJpC5Or8fjjCXYVL05tafKy2DzpJz1WP/h4nl3+EoFbGn9BUG24yA4NTQEAb09yCE2QIwk6t8SZnyEwaPCETeM+bxdN4ITxPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QXOkzNMaxotzdJpqRfAGfiBmoUYYgvW5swRT5RNFz/M=;
+ b=XCuXnn1hICjHpAh0qSV7ef9csPzOTnS4W2FOf3SIzJyL9QToCrJjt3ZX6ueBY7cP5mTrXUIlQGTnkjY0UIaOwLhkll/Q9xrDK3wZDyNV+UfpvFnOpasDaI7SotjKtcxgKcwX2mP5CL4NqjND8mCjSfT+fLpKXHDrx6zAvjIXhr+NSeLSh2aAjzUE0FgNp7S6sBC+OygTdzgddwWqzdIkGZEwqL5rHHoz2wfeVHdjUP2fqz1X76muf9/hN5FnBG8tbZYtMfYQyauCoxLZGhRlkRfLa87VzU73d3m6M542+rcuZmsIbw9lKhtFmVQeg3bN1zETuRRL5rOfuTNr4dApng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QXOkzNMaxotzdJpqRfAGfiBmoUYYgvW5swRT5RNFz/M=;
+ b=QJMzhjbaZL39fiFcoZqzaCnQhtUthkk3r3wscmlIOTbJatbjqFQnRJcJ9GUTCmEKwOwIuwcxK4cZ36Zb6cYr8/amE00lfMgyJPQrRqH0qkJWWF8hH1sSeYsiTaTNWljM9UqboAvcOH3iuXginyHwypGX7jvqqHEX3vM6SfGu7vfOs3cw8W5uwR269iFa5OMqQlqjrI76kt/AhGZe0DPFxDDR0LV7hbsqJ61FvVH9W9iJRfvs7PJHM6W3tFIEJqFYRwFyMAl16pfrmMXyyAbVm9i6R4eMESlLmSBNZKUyavYReeB/UllOXa10zR8Ai4A3wCAhS7TF1leHDb/UAHLqGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <f6d293a4-0261-4030-9e86-2f990ea49284@kalrayinc.com>
+Date: Fri, 23 Aug 2024 14:54:37 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 22/37] irqchip: Add kvx-core-intc core interrupt
+ controller driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, Clement Leger <clement@clement-leger.fr>, Vincent
+ Chardon <vincent.chardon@elsys-design.com>, Jules Maselbas
+ <jmaselbas@zdiv.net>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-23-ysionneau@kalrayinc.com>
+ <79eaca59-9ec3-424b-a2db-d27af72722d3@kernel.org>
+Content-Language: en-us, fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <79eaca59-9ec3-424b-a2db-d27af72722d3@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PA7P264CA0452.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:398::23) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|MR1P264MB1569:EE_
+X-MS-Office365-Filtering-Correlation-Id: 724ae01d-71ea-42c6-5add-08dcc372bff9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: o01ZllFZvSGald0VfI+T01xhaY2gIV5c9U992w8QupEYJrcw4js9bm0sI7LES3CRx81dICFtXuc8YpbSWEk/MiDTZXFII5Kv5XCelId+z8GG+Po1O7sf2OhK5bgAhtdNRd+gjzhOkqCQxqrUorG2Kc0wxPF0nYyVAhmieHzOC0WGGVfpzYFma0TKbdJpzH2QnSF0GjJK4Wr02ljhEOPhvEsYwGk04SIityQknbC9UJLZD8mhTbFReuUv3C84HeVj26GuTyg0vd0/bkD33tUcPS2aX5I2vXEmBoOwXFmtoSkjuTaYJ0HIhaVdqHkqsGTkZRHHGWnuU+uByQot6px5gwYEPrKlC4zf0peeUVN4oOnKeaHpcjvhdWD2YQBd3zYMjDZ21DNnrqxhyL7FAuznyI9ZwUZQQdu0Wd/kLHC9+zrncMel13R+qinMLF9n5AF+uTfg0u2EtT+9Zx9nA2WrLeq4mUG1AwAwIKBMR+KfZ2Xagi+ZrGIVfsfC/URXJ/uAmOSfvbyHfI6wQxqFT1WzoP820gxh0WTB2LUP9AvoFM8QKQGzOiQTrDF9UgkkPcyyZBcaIThZS3GptFPigEFYhsrr8xysb9jMz555eznxpxs482YaO5riF410PudRvDDH2rs9OF7XyvBNJb90GpsBvnK3HRbj75GSIHUt77ea90Hd5gflqfVSqrYIL3J7X1mzM4uUcKiD8VRU9GKpmVMbyBeIKW7UjTJnHhQFr4QpMux+84UIYjvJXmxWIxbFaaEtwu1XhXeQdsalzH2A6bMihjujU0fN8GEL7KGpe+QrVqCbdo3vGL/5bG53Q0GNIYPv/oqKwUzH7uPsxsnvmQ7bhSlnnyN1H5sMWZrioD9bOOm/GVW34al/XK6pS0BrS4h9k4ESNn0pswf3aLD4ABKB+cFjNeYsvPPp3LiKrHEYDFqWfiEoyHR8ZjoNCb9hFyDEKkw
+ dM/u36Bq6eGTprbI4zNJdgVHshFkpIse0yBl1/gXc0AXmOWzRDKGXpZsTNVahK2oRvgESWjmFmlxROeYpSl20JnMA2BOyUIUSagvEMVvV7zRYz1ob2o61Z6+vTvBsrBKs/iXvJd0WCGPACZmNhNdlDE1yFrzaPAwtOzQGXDd9PG11g4qK9QX0c4d0SQ8KHfB4u97qMKCyYaWQavr1jL9nvGPOrufROnbr0r7h3lWB5aKG1VgLq2jf0HmYIG7tac3VZ3TTiqrPW4glT+BwPJc59C0W1XPnCGlSFiCpZmYct6DXauvTxux3aZS2UePaNB7bxpyzlt3zkXwowKYykVwI5r6jPYlk78mrm7oHEutWB+S0Al9rVeWKRfDcZYzN8R7SCCXVWMKujiGquGbW9A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: BVFJGRCQw9yMewL8oLJkNu0jfypfCbLHWpEinDTMHNPceT5LMghSCWiZ6PI2UI0dHYVXn8a/p9MRaMwmihAmPTxB7MHhd0PGq+G6rtBEsFBoahIUhs+VEKdny19bF/uVSols8Xw6bM0xD9wkHCOQkQysvK63Nd2uQURlu69F+hk6tBj/4jqK/2VSDXeQDjtzUzrEk2J7h61+EwQ4O1SRitkW1VEweKjZKQ6UfNbw+eqLGAyjGDRX+TQ7bHoMOGFtMsNl/m6APXAw6FJA0y7ErUZUDakEaUaTGbwQyWzvySdI80J4mdGLk4Po5YWe5iRENikRSQfj2QI17smvQgoWMkV8CHsHp7yvl5QpqCpTXz7/hYbqfbNL/ulUKtM6xa3KnW95xYtPzw8kkwUZnpyJsTIeMhUx+9LfHSW0yp9FW8dk2NSZ/EyCJSU4vUMR0KymSpJa/6oMUEpbU1QA/G1DtrLKNgL1nM9zhZMNURiEMzJaW+sQS/iYUD9aOCW07z4d7y5wapB3V2aJy2JTDVbP/oTPMYTupqa9bDN362zIPuYVh6+3qgw9MiP3nFPdiHZS2m2qyPPVrtndzfUt2FGnC3QfSs+OjWSJep5QAx6dxmM+ERAz7fYX+550t9Jx0xtuhVvJtxwmh8Zgs/52XBXENRkJXCNEp763k0z8tHhmfZ5dVcIem4kc2eessVQR8GEtX9sjauSwY3ox5Fhycy6b0/rPerH/EZH577JtE2MIw+qNW5LEIovh/HhSv3oP8/0oJaZOk3fc9mFpFOBmfAZ+FIWfaaimMl82WRDXCKhDVvp6QVOFkHlGfh+WyXZP+i/Lmn4AQSX6MOEYdwgXZ3Sr5rZ2KgJtc5gEAZWtIYsAbGmY0EpvHqGNPPLQsY5mo5JA3vVilgmRdDj0UQWCdW9hFOvSiUdbGqyB30iJUhZKJcCKhYYilORKVPDMbCVjVqhv
+ hxwp5bSvo7J76ozWHQqzdrzNK50uhT+BrHHlnCRU8LqzdZpoc5Yq2wutjgpmmuhQOw+S7HM67lpHinH4aBD0gLr3GJM51O+R0qEFZAohbywN7uSR6eq/egM2VQp+dfLvcuugX+b2E6fpL3fZY/Ptw/xi+CCfGPOuwFCHgt3zqmJI1gi3fCffkHcWUMw3i+Ik6Wl2hjZpsli5+wkwWhaNqIBrtFymP6Ez8RgDsFhvsyU8TvuCd5OpZo8hd5lNGY+6XdwQyk2dl8pG9XejzhiKtu1jqYAIHWwJm2x7zdzuRG6DGYaL1ZbXUFbxeoxI3pLOZSim/GhXGa/ZHMVBD0iJQxFM7HFHXvCLFP4sBaXxddEGKJmdNJ1UBr+vhsjFndpSurKsc52HsnBW6+/DVsai8oAaZ+nWFtWtlXv/eU/+oVZrY35RkO+ehvOOjBKAW3TfHeBxZI+LlR27QdsR4n/c3KZDvd5jMQq2O2ZgTByH3VPMxXDglWSJOVw/wmG+KBTAQnGiKIFd50dELJdp23IETOMOe6q+H7JwuYBsuUlWFmsIBxgiUfSRo46RF/uL5XjjcTg1YtOTre+CbnUpUDyFBN/DKJW9xEcrBs3PapUtFOOftq394+D/N6K24hn8cr4fqrFem3XVn1AuQoH/aus5Y4BIW89YwOrEXSGgLXiMPTs8zShHY/Gl+9c10htm5mgC879DRnj/F757DRO5VRnXmA==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 724ae01d-71ea-42c6-5add-08dcc372bff9
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 12:54:39.6601
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V+RTKa+bBwJN6mVjD1drUEACt3fMvV61bbCmwZAPITLvMzdSnVOqoeq4IoKn6DQrfEDx/AxwEHdlkoOHQHIC1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR1P264MB1569
+X-ALTERMIMEV2_out: done
 
-Fixes boot failures on 6.9 on PPC_BOOK3S_32 machines using
-Open Firmware. On these machines, the kernel refuses to boot
-from non-zero PHYSICAL_START, which occurs when CRASH_DUMP is on.
+Hello Krzysztof,
 
-Since most PPC_BOOK3S_32 machines boot via Open Firmware, it should
-default to off for them. Users booting via some other mechanism
-can still turn it on explicitly.
+On 22/07/2024 14:32, Krzysztof Kozlowski wrote:
+> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+>> From: Yann Sionneau <ysionneau@kalrayinc.com>
+>>
+>> Each kvx core includes a hardware interrupt controller (core INTC)
+>> with the following features:
+>>  - 32 independent interrupt sources
+>>  - 4-bit priotity level
+>>  - Individual interrupt enable bit
+>>  - Interrupt status bit displaying the pending interrupts
+>>  - Priority management between the 32 interrupts
+>
+> ...
+>
+>> +
+>> +static int __init
+>> +kvx_init_core_intc(struct device_node *intc, struct device_node *parent)
+>> +{
+>> +	uint32_t core_nr_irqs;
+>> +	unsigned long cpuid;
+>> +	int ret;
+>> +
+>> +	ret = kvx_of_parent_cpuid(intc, &cpuid);
+>> +	if (ret)
+>> +		panic("core intc has no CPU parent\n");
+>> +
+>> +	if (smp_processor_id() != cpuid) {
+>> +		fwnode_dev_initialized(of_fwnode_handle(intc), true);
+>> +		return 0;
+>> +	}
+>> +
+>> +	if (of_property_read_u32(intc, "kalray,intc-nr-irqs", &core_nr_irqs))
+> There is no such property. Stop adding fake properties to your code.
 
-Also defaults to CRASH_DUMP=n on sh.
+Ack, I will replace this with a CORE_INTC_MAX_IRQ_NUM define
 
-Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
-Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
-Closes: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
-Fixes: 75bc255a7444 ("crash: clean up kdump related config items")
----
- arch/arm/Kconfig       | 3 +++
- arch/arm64/Kconfig     | 3 +++
- arch/loongarch/Kconfig | 3 +++
- arch/mips/Kconfig      | 3 +++
- arch/powerpc/Kconfig   | 4 ++++
- arch/riscv/Kconfig     | 3 +++
- arch/s390/Kconfig      | 3 +++
- arch/sh/Kconfig        | 3 +++
- arch/x86/Kconfig       | 3 +++
- kernel/Kconfig.kexec   | 2 +-
- 10 files changed, 29 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54b2bb817a7f..200995052690 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1597,6 +1597,9 @@ config ATAGS_PROC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config AUTO_ZRELADDR
- 	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
- 	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca6..43e08cc8204f 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1558,6 +1558,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- 	def_bool CRASH_RESERVE
- 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 70f169210b52..ce232ddcd27d 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -599,6 +599,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_SELECTS_CRASH_DUMP
- 	def_bool y
- 	depends on CRASH_DUMP
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 60077e576935..b547f4304d0c 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config PHYSICAL_START
- 	hex "Physical address where the kernel is loaded"
- 	default "0xffffffff84000000"
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index d7b09b064a8a..0f3c1f958eac 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -682,6 +682,10 @@ config RELOCATABLE_TEST
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	bool
-+	default y if !PPC_BOOK3S_32
-+
- config ARCH_SELECTS_CRASH_DUMP
- 	def_bool y
- 	depends on CRASH_DUMP
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 0f3cd7c3a436..eb247b5ee569 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -880,6 +880,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- 	def_bool CRASH_RESERVE
- 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index a822f952f64a..05a1fb408471 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
- 	  This option also enables s390 zfcpdump.
- 	  See also <file:Documentation/arch/s390/zfcpdump.rst>
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- menu "Processor type and features"
- 
- config HAVE_MARCH_Z10_FEATURES
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 1aa3c4a0c5b2..b04cfa23378c 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool BROKEN_ON_SMP
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool n
-+
- config ARCH_SUPPORTS_KEXEC_JUMP
- 	def_bool y
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 007bab9f2a0e..aa4666bb9e9c 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2087,6 +2087,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool X86_64 || (X86_32 && HIGHMEM)
- 
-+config ARCH_DEFAULT_CRASH_DUMP
-+	def_bool y
-+
- config ARCH_SUPPORTS_CRASH_HOTPLUG
- 	def_bool y
- 
-diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-index 6c34e63c88ff..4d111f871951 100644
---- a/kernel/Kconfig.kexec
-+++ b/kernel/Kconfig.kexec
-@@ -97,7 +97,7 @@ config KEXEC_JUMP
- 
- config CRASH_DUMP
- 	bool "kernel crash dumps"
--	default y
-+	default ARCH_DEFAULT_CRASH_DUMP
- 	depends on ARCH_SUPPORTS_CRASH_DUMP
- 	depends on KEXEC_CORE
- 	select VMCORE_INFO
 -- 
-2.34.1
+
+Yann
+
+
+
+
 
 
