@@ -1,108 +1,191 @@
-Return-Path: <linux-kernel+bounces-298217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2257495C3F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:53:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE3E95C3CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477A0B249DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02BAB1F23E52
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81334204B;
-	Fri, 23 Aug 2024 03:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7176A3A8D8;
+	Fri, 23 Aug 2024 03:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Bz9IFpiy"
-Received: from mail-m1973196.qiye.163.com (mail-m1973196.qiye.163.com [220.197.31.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQ0lsDik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBF762D0;
-	Fri, 23 Aug 2024 03:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD31126AF6;
+	Fri, 23 Aug 2024 03:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724385137; cv=none; b=BdMjmLPGUYX1h0wFxOZze2b63j9G6p/5Uu+rs88awWgv8+aIyGSXWZjLu7fSNyn8YabBZAdKURRgwE9Hl/WDhNHiu6DnET+a2jYls3gT+OtQD2z+ZBXYIQIgYUkDdFDkRT9Cbhngzfb/sqF7t6MTfBeoTzAgfLoqZ/zrWRXiXNY=
+	t=1724384677; cv=none; b=fvwDhoJC5BfFhSqBpIgQlBwJ3xJJ7BZuW1uGaRxzlkC65YI4MhbwSS0xpdAC+fqcFnOdhBxDdm9hlRcQ15ONbPjLCk61f3anorvA7AdyjvyhadL6cRftDgkHfK5V7wcGJyXmJL1X5hyQ1359UvF9wHHEtM6Kp6NEuyVpz4d/t7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724385137; c=relaxed/simple;
-	bh=OnYJ8PxUrRxU8L463SDY13PSihEaaPnMtZlOg0qTBl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mnEkILBdSPaSB5zx1YpmqhQBELbHfvBez/7QNf6pqxsZttJfq7RVPh+Quj/v2g9vcdW+zb3KK51TOUbnY7MDv7kpSpX2YHiUvbGe6+Eu3k+FkdxOxsxI/ZVou5ks+cz/njh2YgeyCgF0pRwLlD57pHnx9wOvZat2cEX6XQUK1Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Bz9IFpiy; arc=none smtp.client-ip=220.197.31.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=Bz9IFpiy268CyAP1qfIFGlZ/ayx6Mtjr+z9BhGwIX3Ocl1WXhpPM2xIFAy4ewpcFiMdazmkhSqFjljgn9ZRfKkeUZ3QZZHK7Cse3rkuEi9Ir8ln9WaJR2jSQuJMzwolH0xT7VX8hSHYIDU7MMOG+e5kUysSq/wO6sISDB+by0iw=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=vfagnm/2cZBspp0iuuHjQlsoD4A5ZXzku9bzq7Fy2kI=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 2E8007E03DF;
-	Fri, 23 Aug 2024 11:45:01 +0800 (CST)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com,
-	Ye Zhang <ye.zhang@rock-chips.com>
-Subject: [PATCH v2] gpio: rockchip: resolve overflow issues
-Date: Fri, 23 Aug 2024 11:43:06 +0800
-Message-Id: <20240823034314.62305-4-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823034314.62305-1-ye.zhang@rock-chips.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724384677; c=relaxed/simple;
+	bh=/YUaBwcec+lGu7wuHBNGfUXqG9aF13coT4vqLy/uLxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nO0QvCHDghG7TXEgu4OFdI8QWuQn9xhwBFxoEI6qIlAzgV2qCXv0iKIqW/GiV7sHjIImybJCO9femyx8gboZH/H9ee1gZanrMUh5opLuxffzUo+5GEglnb9SYKupxh/stJUBY9ifbRgzpGGs5oov1Vxd6c0dK6/OS05fqBIFkUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQ0lsDik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E1FC32786;
+	Fri, 23 Aug 2024 03:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724384677;
+	bh=/YUaBwcec+lGu7wuHBNGfUXqG9aF13coT4vqLy/uLxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pQ0lsDikQfwmRiAXX26XCNq+KbzGnGjP+d/3x4ap9M3ZWC3AeyUwBguPfcFysHm1p
+	 ECnnBb/N+gPRi0t1NG7yrZKQNSpqG/FMSxXsr1xPPIME8rLlG69UdqAdUzYP0CbG90
+	 XrtFPyGfzCTbXJiH16D8Xqqkp5fBmbPLHEMb62jVnC2ZnbwCUmW+FunkSkouCIs+Wi
+	 kEyuxp5HFVrfJzV24khXoW2t1RPLMbcUiLcHHCrOq0G5h+OWQOI2LsENGmwYPa9QzG
+	 W4zsnMdPmqlTaECNBFAnOZ4yIH3FB9/2mfBej4M1UCri5noQCgRRoPvwvQdudL1Afp
+	 5DXBNYHkZvsIA==
+Date: Thu, 22 Aug 2024 20:44:36 -0700
+From: Kees Cook <kees@kernel.org>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Erick Archer <erick.archer@outlook.com>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC] HID: ishtp-hid-client: replace fake-flex arrays with
+ flex-array members
+Message-ID: <202408222044.7EA51146E@keescook>
+References: <AS8PR02MB723760CB93942370E92F00638BF72@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <80976997acb82fe3e6ba54fa2708c8f40fb3eb00.camel@linux.intel.com>
+ <AS8PR02MB723798FF6CEF28DCB62FAC958BC42@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <4e68c0164022ca41494c6d577766dd4b66c93e9f.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0MeGlYdHkwfQhodSBgfQh1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a917d566dcd09cfkunm2e8007e03df
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBg6Kio4TzI3KCweTjQ9ThEa
-	PRoKCx1VSlVKTElPSENPTEtJSEJLVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSU5DTDcG
+In-Reply-To: <4e68c0164022ca41494c6d577766dd4b66c93e9f.camel@linux.intel.com>
 
-Prevent overflow issues when performing debounce-related calculations.
+On Tue, Jun 11, 2024 at 11:26:25PM -0700, srinivas pandruvada wrote:
+> On Sat, 2024-06-08 at 11:56 +0200, Erick Archer wrote:
+> > Hi Srinivas,
+> > First of all, thanks for looking at this ;)
+> > 
+> > On Sat, Jun 08, 2024 at 01:42:54AM -0700, srinivas pandruvada wrote:
+> > > On Sun, 2024-05-26 at 15:32 +0200, Erick Archer wrote:
+> > > > One-element arrays as fake flex arrays are deprecated [1] and we
+> > > > are
+> > > > moving towards adopting C99 flexible-array members, instead. This
+> > > > case
+> > > > also has more complexity because it is a flexible array of
+> > > > flexible
+> > > > arrays and this patch needs to be ready to enable the new
+> > > > compiler
+> > > > flag
+> > > > -Wflex-array-member-not-at-end (coming in GCC-14) globally.
+> > > > 
+> > > > So, define a new struct type for the single reports:
+> > > > 
+> > > > struct report {
+> > > > 	uint16_t size;
+> > > > 	struct hostif_msg_hdr msg;
+> > > > } __packed;
+> > > > 
+> > > > but without the payload (flex array) in it. And add this payload
+> > > > to
+> > > > the
+> > > > "hostif_msg" structure. This way, in the "report_list" structure
+> > > > we
+> > > > can
+> > > > declare a flex array of single reports which now do not contain
+> > > > another
+> > > > flex array.
+> > > > 
+> > > > struct report_list {
+> > > > 	[...]
+> > > >         struct report reports[];
+> > > > } __packed;
+> > > > 
+> > > > Also, use "container_of()" whenever we need to retrieve a pointer
+> > > > to
+> > > > the flexible structure, through which we can access the flexible
+> > > > array
+> > > > if needed.
+> > > > 
+> > > > Moreover, refactor the code accordingly to use the new structures
+> > > > and
+> > > > take advantage of this avoiding some pointer arithmetic and using
+> > > > the
+> > > > "struct_size" helper when possible.
+> > > > 
+> > > > This way, the code is more readable and safer.
+> > > 
+> > > Applied and tested, atleast didn't break anything.
+> > > 
+> > > But the explanation above didn't give me enough clue. You have
+> > > added a
+> > > payload[] in the  struct hostif_msg {} then using that as a message
+> > > pointer following the header. I think this description needs to be
+> > > better.
+> > 
+> > Yeah, I will try to improve the commit message. What do you think
+> > about
+> > the following parragrafs?
+> > 
+> > [I have copied part of the message to show where the new info will
+> > be]
+> > > > declare a flex array of single reports which now do not contain
+> > > > another flex array.
+> > > > 
+> > > > struct report_list {
+> > > > 	[...]
+> > > >         struct report reports[];
+> > > > } __packed;
+> > 
+> > Therefore, the "struct hostif_msg" is now made up of a header and a
+> > payload. And the "struct report" uses only the "hostif_msg" header.
+> > The perfect solution would be for the "report" structure to use the
+> > whole "hostif_msg" structure but this is not possible due to nested
+> > flexible arrays. Anyway, the end result is equivalent since this
+> > patch
+> > does attemp to change the behaviour of the code.
+> > 
+> > Now as well, we have more clarity after the cast from the raw bytes
+> > to
+> > the new structures.
+> > 
+> > > > 
+> > > > Also, use "container_of()" whenever we need to retrieve a pointer
+> > > > to
+> > > > the flexible structure, through which we can access the flexible
+> > > > array
+> > > > if needed.
+> > 
+> > I would like to know if it is enough :)
+> 
+> The apporoach is fine. But I don't like clubbing other changes like
+> struct_size(). That make code difficult to follow.
 
-Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Erick, can you respin this patch without the struct_size() change? I
+think it looks like it could land otherwise.
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 5f60162baaeb..bf22b103b6a2 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -209,11 +209,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
- 		freq = clk_get_rate(bank->db_clk);
- 		if (!freq)
- 			return -EINVAL;
--		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
-+		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
-+		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
- 		if (debounce > max_debounce)
- 			return -EINVAL;
- 
--		div = debounce * freq;
-+		div = (u64)debounce * freq;
- 		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
- 	} else {
- 		div_debounce_support = false;
+-Kees
+
+> 
+> Thanks,
+> Srinivas
+> 
+> 
+> 
+> > 
+> > Regards,
+> > Erick
+> > > 
+> > > Thanks,
+> > > Srinivas
+> 
+
 -- 
-2.34.1
-
+Kees Cook
 
