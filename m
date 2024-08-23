@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-299258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7125995D214
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB8295D216
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD5F28355F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7452A283CDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6991885BE;
-	Fri, 23 Aug 2024 15:53:44 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8681D18953E;
+	Fri, 23 Aug 2024 15:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOaBFcd8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD401586D3
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C188A3E;
+	Fri, 23 Aug 2024 15:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428423; cv=none; b=k1Kd9KLZVs+5x3Hka9ZvHcJOX52md2Nxiho3bWDVEvsh7sHegoysbcVm83qTkVPQf61pl2JkJe6e/x+mL+upBXbcXs2bBUJBrgz5lmDNHem3ix/w22eQlM7Dfd/KRT/bRLGIOXiIN8FiCebBEvG4n6aVwoGpffDYulUz7e51IAA=
+	t=1724428442; cv=none; b=La7B0+kqRrS1wx1JPx2ptuXr3EHpOHTKejW3dm8sdg8iELCA/cQkXDFvA0Yr7E13O0m6E9l9OzT8h9qISr3Ha5paELI8yesuTqFyeUpkWKRKwUxWi9Iy4maYgaanPF5vTSh8DxFwPRv4wuUCY3Tr/pXX9X0v3wFvVa9psW6R+5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428423; c=relaxed/simple;
-	bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=BNl7zZHQ7k7RGmIQz6c//0se6ZkjM5N5frQWon2NXW8r956GvPna4e7DGF7tm7rrBZRtC+LvAnq/TkhKWjLOOM2wmwMQ/6SYFJKpZGOoZM5Ia0qIwbzijop9zFtGzVFhSPxa+99F1yHiwpPjxHlbttY+JfdoWGysfl8CIjJBG7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d4c656946so23489555ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:53:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724428420; x=1725033220;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-        b=GiDjTG3n2HkHEBLo0uXEkYs12/080/3aIwSwAv0G9D/sU0crowDaOQaXiLmcTzIaxa
-         0xpVKsrKONSI1emvQvQMI/bio/R6dJBI7gVTCauLIcYWvdcwz+xq8suqAkyWW3v5iSXX
-         4qbLRdVDdZ1WPY5suPbQa1Sw7X+3mNn5qTIyJPP2tCfEhJUmg4hfWa5wplY8YVf0IbD6
-         Vg9Yz47eee6lLlUOXaK+TrK7BORUJ0vX7PNqVpYkRKwzvvs5L+MxqUMdA404byl0Zn8p
-         oIADVibkxNnDR7r+1Bp+AuIm7lpL/OB+vypYsQpqwdFOj7GXxAECmXWBzxssz/kYcenN
-         hGYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMnXTvODTWvry6POal+yBJDHltwXk5Tz1ecpM4tYdl4z9+2407ClKdkQePjAH6RCa7fa5HBBy2rQt1nBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5YXGYtWIQQA5aF+FyegycGEPAlmimk4kliL9h1h+jmBhRkxi+
-	nA79RudS1uPX67VWWSBiqAzNyCiIJ2jCo1UUz0xuu7imSom10itlrYvmdxgjlHk6M3tXQ0dLSD+
-	gBlSySQ4dKy4WiM9amEa+Yf6Avq9C/jv4JjFMtKveSr51z5B2OpoP4SQ=
-X-Google-Smtp-Source: AGHT+IFUNCAglEsiUPV2yQaA1koccQdeKu3i0k0ZWH21zwGXJcr2rcuAGnz9gfIWA60l0ygedc/tN+wNhawTube1zkhS5ZmGBh0g
+	s=arc-20240116; t=1724428442; c=relaxed/simple;
+	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZ19FxZR5oGJNn30sNj2EULOnnTCSNL6h+PZbz8/neS0h8S91YrF9Qpi22pvGf4aRXUx/rTV9S89aCOELwYq6bTy0GDgWsH++pB37Lb6XXYhapFQoGJFrB53kN50EO9IOGX/cCCHCpiVKw7JqUnMZLgQed3D+ixR/oNU28wVSq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOaBFcd8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0485C32786;
+	Fri, 23 Aug 2024 15:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724428442;
+	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LOaBFcd86Xy8xkLlgveZzv5oo4gHNIAjYJKRrV+TC2Bha+Q2oqc9RS+z+rkF4CG2r
+	 B5sh76TgNhE4pN1HNDODQfBdpvhseP3oeLf/V0phOsnkC5hYiwMbjJsfMPriDnpFr1
+	 1EElvFr60JqEx3pGRRsrwoGDMLKE7F2QsZnMtzWB5Q/WS/hPsK4+GUslyCRxbLUGht
+	 XO+yjRD7jZRykvbhuEAS1i5EBdSN5H5NjKTvTxqSBV4T7lUoAzYdSgLPfQhTWXGw2D
+	 QHPbQkcTkw6x9vSWAi+n/+lSqRlxg5S//qG88Jksy+7Ri/hrEtpjWPn2zUoehjlYa9
+	 jvQ1MPNHFTRYA==
+Date: Fri, 23 Aug 2024 16:53:57 +0100
+From: Will Deacon <will@kernel.org>
+To: Ashish Mhetre <amhetre@nvidia.com>, joro@8bytes.org
+Cc: robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
+Message-ID: <20240823155357.GC525@willie-the-truck>
+References: <20240806105135.218089-1-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a1:b0:39a:ea21:1202 with SMTP id
- e9e14a558f8ab-39e3ca01fc6mr1445915ab.5.1724428420656; Fri, 23 Aug 2024
- 08:53:40 -0700 (PDT)
-Date: Fri, 23 Aug 2024 08:53:40 -0700
-In-Reply-To: <c17970ff8aaf469db685f7e0cec7c914@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007442af06205bc7f5@google.com>
-Subject: Re: KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806105135.218089-1-amhetre@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-> #syz test:https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+On Tue, Aug 06, 2024 at 10:51:35AM +0000, Ashish Mhetre wrote:
+> The current __arm_lpae_unmap() function calls dma_sync() on individual
+> PTEs after clearing them. Overall unmap performance can be improved by
+> around 25% for large buffer sizes by combining the syncs for adjacent
+> leaf entries.
+> Optimize the unmap time by clearing all the leaf entries and issuing a
+> single dma_sync() for them.
+> Below is detailed analysis of average unmap latency(in us) with and
+> without this optimization obtained by running dma_map_benchmark for
+> different buffer sizes.
+> 
+> 		UnMap Latency(us)
+> Size	Without		With		% gain with
+> 	optimiztion	optimization	optimization
+> 
+> 4KB	3		3		0
+> 8KB	4		3.8		5
+> 16KB	6.1		5.4		11.48
+> 32KB	10.2		8.5		16.67
+> 64KB	18.5		14.9		19.46
+> 128KB	35		27.5		21.43
+> 256KB	67.5		52.2		22.67
+> 512KB	127.9		97.2		24.00
+> 1MB	248.6		187.4		24.62
+> 2MB	65.5		65.5		0
+> 4MB	119.2		119		0.17
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+> Changes in V2:
+> - Updated the commit message to be imperative.
+> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
+> 
+> Changes in V3:
+> - Used loop-local variables and removed redundant function variables.
+> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
+> - Merged both patches into this single patch by adding check for a
+>   NULL gather in __arm_lpae_unmap() itself.
+> 
+> Changes in V4:
+> - Updated the subject in commit message to correctly reflect the changes
+>   made in this patch.
+> ---
+>  drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
+>  1 file changed, 17 insertions(+), 14 deletions(-)
 
-unknown command "test:https://github.com/Paragon-Software-Group/linux-ntfs3.git"
+Acked-by: Will Deacon <will@kernel.org>
 
->
+Joerg, please can you pick this one up for -next?
+
+Cheers,
+
+Will
 
