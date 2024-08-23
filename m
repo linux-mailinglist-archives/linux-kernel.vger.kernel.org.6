@@ -1,183 +1,334 @@
-Return-Path: <linux-kernel+bounces-298765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1908E95CB4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6ADB95CB4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC8802831A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F7C281E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D232187563;
-	Fri, 23 Aug 2024 11:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3991C187353;
+	Fri, 23 Aug 2024 11:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Rtux/xMc"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2040.outbound.protection.outlook.com [40.107.117.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5C9pyqL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6418C187336;
-	Fri, 23 Aug 2024 11:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724412181; cv=fail; b=lGzS6bccWTGsolFIMzsbWA1t4t5BnFR97MffR6+1fzET9dTRhr2rCAhNF/3JCqBa0yCfjcfAKjPkp+bDiuFarFO5nL3uUmIXviR1S6UjrjEkNWwUSYw5sw2UmiL4gLS0t2V7I9P3mmUx41kNdUS9fgK7R5Kdu8Z323aytOn82wA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724412181; c=relaxed/simple;
-	bh=cfGkYQCcmNAUc95Nat5pEz7uCWdxmfyhHpMmYoR99vE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AGaylk1hvhD8SAAEkQQzw8+xzzvDdn2fLVT5sNyEPeGPD8JUL6BxzBnaeB+WGsshhQBYNIBrvfNngz8zy0RGke6FaoYU+6mIn43XNwZ7xLVyZkKqnEgDJUd8haOjXE/45jJp+5izxcN09BHKowQp8OSEMAZ5qNtLFy0ftHe1VRw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Rtux/xMc; arc=fail smtp.client-ip=40.107.117.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gv2V1vtG36yrchgEYDo4tNEKpYkyuHET2tgkyA6nkL7TgnHbEL5Ix+O/cT25vKwqOyNGB7PJglhOKUFqE241g1TcUKiSepjGTZWiJ4fy03KFOb9VehTqehU+YIlRNGNmhBKi+xsaiDhr3eV6Qk08DAHWt++1QKRskvWgLfNgmCZJJAUxsl+7uYAxFfFpjXfow5/SMpwfNdli+kD8xDK48OjFUwk8PJGQ5ZDj0fUXP5CboHjTGHwhrtK8avTo0Bculy52JHp3acSNO3G2/utwTDE9qjkN0wEeD0X/3uK8ED8znzE+5LSi7BtpwmuMazt3h7Dc6O0g62QG+VjuuWSs0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n9hbtM4HCHIb7KJlrzrX4pX+uhXEuibZpTzJt6XFzWI=;
- b=TlgzXZhv836wr5+8nK2csIXGhDLmlwGObZTuPOxRFgpZeYM/71nRXtI4v/Kwj7PL95T4xSgM7pn49h2lyFuItIOQeVpl3LMYGJ0zwSeyGFH8P9D/+U2Qi5re9HGsoa2PSPLTwX1WF1R4oTBUZ0xXWReZ68xCfLfKJHI5XRX/TIV8t8kIZo3zIJkeCgJRxz0Q6gEGGf2BUkOjkn0qdl6te9F0oNP8NMxvKZpiwgp9VpFkWCSElMomYxsTaoP2N9r1bUt3IHxScITOD95vLu1AVygpR+w6GPlWIWD/Yclh9yMfnmCYm5Kmw76hCQPanfJRewTTbnP8hufVFZAb73agOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9hbtM4HCHIb7KJlrzrX4pX+uhXEuibZpTzJt6XFzWI=;
- b=Rtux/xMcdk2xaAEUhsRBFW4k0LSN9CDxR/8UsGjhmbcKlgduz9RIZB07L3Yhj9sV4+LrAg0wO8AGt1tHdLJes7dZvfou4ax3WdzgDgn5iJ/uMXal0hrm0NQeYiY2ASlPrBq2lidA64DNcbgkjUacptro0MGhup6UmPxeec1nkk/ic3V/hKAjAqRJ/yuBiDNkOh2JcusGrmmd7JEy6iHAt1ZFGUEMHFJFVbsrh9qdE0Iv9b4wb37FlZwr74+vYnPxVuNdttAmwRHRHOfPcHXIa7BD0LtZVIm47u39REUs70ZUHQiB/yDVJO1uPMry21/MG13Iz9JuyipXjduIQ/QYYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
- by KL1PR0601MB5551.apcprd06.prod.outlook.com (2603:1096:820:c2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Fri, 23 Aug
- 2024 11:22:56 +0000
-Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
- ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
- 11:22:55 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: linux-block@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yang Ruibin <11162571@vivo.com>
-Subject: [PATCH v4] drivers:block:Cancel debugfs_create_dir() check
-Date: Fri, 23 Aug 2024 19:22:45 +0800
-Message-Id: <20240823112246.3905118-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR04CA0020.apcprd04.prod.outlook.com
- (2603:1096:404:15::32) To TYZPR06MB6263.apcprd06.prod.outlook.com
- (2603:1096:400:33d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C084F88C;
+	Fri, 23 Aug 2024 11:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724412195; cv=none; b=iOONNm+oc28lGYUvs+q9r2Y5dpdY1j9l7ylas6Pn39tmr1oJs2yo6A0rPGfCvFSjWPHhOTBFkeFap5L1e0D72Ofdjdx/kmDbux1hp6dpHUGbvlY2npnRsQeCFDOgWCj61kYhCm2NOBovsdD3+4SyXdhIrGPx+BEbwEH0CWFTQX0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724412195; c=relaxed/simple;
+	bh=xQE216ocBHq+xIY/QMEPgFRg/QumScGZ2C4WlmFG3d4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bm8/juLvbrEqf/YgpgA/Ioba9ssD36SmEVIh2Ju+6BBdAfitX/pJA0EqBZmt43D7qmfAIUMxym5uKrbFlqOa9aeqo+pNXCMBNit8fnnrKgB21iHwo9uMbZyR6Gb9u8ihy6rc9Ru2gwBvSARCBTNPMnTp8WRocnrTCdgwOV6iXdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5C9pyqL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 248AFC32786;
+	Fri, 23 Aug 2024 11:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724412194;
+	bh=xQE216ocBHq+xIY/QMEPgFRg/QumScGZ2C4WlmFG3d4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G5C9pyqL7N7Dy3J08b9Qjhhoy/4zzUYpFnzvZwIuZdzUOBIarktytWsxmxQy5Lknd
+	 2Ui+18KzXS7tPeBQmSuCN/P0+3u7Io5RA2mMPQ7C1IM8Q+qe5rGiHk9uYr2lJfPkWW
+	 7EFYpaRtmXcSIwLvNC6M/tYhgSWaARfLf9+j34xKEH6kBKoA5mfVLidFtoVqFejw0A
+	 Y6DsjPFQtjFXm3JJuI3dPaCjcvi0uASCzdQBZjt83NTnn/OTm+7byudLbDzeZl0zwx
+	 kpjYTas/G+MJoNRoYlgkSd9bn1oHIlRgyzdIoXKCpBISzCTeAjMbVrUXCqRVo8UMZK
+	 QFzqK18QwsHLw==
+Message-ID: <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
+Date: Fri, 23 Aug 2024 14:23:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|KL1PR0601MB5551:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e1efbdc-372f-4685-18af-08dcc365ef32
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014|81742002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G/22u/wTQmAzlQ1bV9iLnQrluYx50C14GrbKo9MCrYhm8HPF7WO2h0N/ue/t?=
- =?us-ascii?Q?6miT0Y6ble1VwuR40gMb01Tw/Ru6hz1RnGv3HgBgT2WibeCWmXOCeVJLFpvE?=
- =?us-ascii?Q?yYOwjx1DzfNKLBy3LlBzak0Lk6LZgkCoFP0qGVjXI13byDrWkOX8QOBjDW1j?=
- =?us-ascii?Q?xsIe/y4Rl/cXpq8a8/OlN8GuuI3oYQtB2+V5xQmFbwfiRTVYXiFJURpGf/RL?=
- =?us-ascii?Q?K4zzhEDyQw6bFcr/A5NBAY68R3Dp8LE1iagnwRlbw9Hwi1s6fES4rLVwdp8K?=
- =?us-ascii?Q?br9HVOz1pF4cqPGzD/pCjaau9GPy4yfuXyTww01wYqiTrzSd20yttEf/zPGB?=
- =?us-ascii?Q?cCpjS2RgF2LKU8ArVMaCawP4Ctzy3LG1xu8TuIiDVeOg4BbUX8/zN/oSZIVU?=
- =?us-ascii?Q?GLT5MzqhZwitfa7Smp1+YRFef2wo8/QpWMafRvdgxkQs+ItArSQSKvuW9BZn?=
- =?us-ascii?Q?QkEK/KDWdntEgXhwXzqmCl4/EpWYqromfFRTws/aZolzSSG7gxxdzTS+4YM/?=
- =?us-ascii?Q?j/6dVyKUOY41MTHWdYIe7MYN05f6rmJpOkdMQaE5uFQLtecL4H/fEnDmsEj4?=
- =?us-ascii?Q?uSe4zR5y9vc6pdnxkKkKaZsSgwmdEVQUcnF84p8cx9KWAHSeKOpD/dIbSVvK?=
- =?us-ascii?Q?7KHIjGH/oFDVDBxv70jxBIxR6LMUrmaWhy3mRwqX6IhhzO7EPhPJdEVyyi45?=
- =?us-ascii?Q?KCBqMWp0onkxaC0ia7Tz+PlVetXqncXSx4szdiLFZanh+YTb+GdSTtMs/PMN?=
- =?us-ascii?Q?WI6cOilhzIdE8wXLrBdUz57EYNk/bib1XWpEkxFmuszVvPZWiOOH4O10uwd2?=
- =?us-ascii?Q?mXpuis+o9QjEo/aQfo14cY+vS3cEAz6etcUHHc3pkrA0g9U4hbWhzUfxN1du?=
- =?us-ascii?Q?RwmM7Gg3+jIrWrTKrwI2OFt0QI015+QcrJiP6R1TbVOFX05oRbJy82lE2JZJ?=
- =?us-ascii?Q?K8iqy6vcQcLdjqZ5WM/k0oXK6vcfGv/KTdRzi4tzk0g520N7zb9vMaIA+2cr?=
- =?us-ascii?Q?2KTAu7EACNT4Pzuk9YqRmCMu1v8v4Pr27eULLgZx1KMZBW/PrrCFPz55aMTL?=
- =?us-ascii?Q?Bptlu3MO8ZRTxmT9GtUmGLR3+ZGXdV5JpB4F3NaAc1TAw4RmVT9QMZzdOGKM?=
- =?us-ascii?Q?leDjolhpluWP6/4e5+kyt9TTPhadHRYCdK6VHQmR/yEJAZYFwFitcPr+XFon?=
- =?us-ascii?Q?qFo5qBcAyx7P5uedGkBThk0tPGTS5Vs7cuvfXfgeMy03fB+0WynvFtqfjykl?=
- =?us-ascii?Q?swCrViKkXnE4vAuTPe3dWRxI6Rpu2+dLRbVaFR8qhi/J2rSWska0Znahel8L?=
- =?us-ascii?Q?gGKoInBdSh8CIs4RJrwFzrLcJVoYKlHtJVKpqEASf3dwNSdNsINKqjMR32Pv?=
- =?us-ascii?Q?vx338v8Xibcu5+pWr4MHE1VJgF1CrfNp+34jamFh5SWlXZnqm0Kq/UMOUGRD?=
- =?us-ascii?Q?8f/Jqe4gpPY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014)(81742002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xTNL7Le6o4j231x3/8xfStoMjiikOfKXj6UmtBhxWyvgcKT1yksMnym64wvc?=
- =?us-ascii?Q?7IG8rA6ep7Z4bjGtU0N44TR2wzgnp61NxoSroucrfX8Twg9WRjkzcJvdSpHm?=
- =?us-ascii?Q?+JvuSa6JCyob73Xbp+Ym0XDOstxyyQ61k4jiSLKUFWvdxVrrAE5CDQGZiXlC?=
- =?us-ascii?Q?HxTsnFH/a+LOwH8Rkhf6dxDznnE2E2LZ0I3gQIrGeAK3LDPsGAqX015Nvr1Y?=
- =?us-ascii?Q?2MBorNPNzbTk0q/1Cis0m6pX5e6ifdc2AuTwY/s1Z3s24T8XskFGw2iKRdld?=
- =?us-ascii?Q?xPQykXsieRiJK5LrX50YwOkH+3jM5uG/fvtWvFkhNYERIRYbHPiudmVQ0zvC?=
- =?us-ascii?Q?Gqc0Q000xCjSRF2I3L6M5QVtGIujE7ZeenrIKkAEyuRQkKBcC0W0bJM99rCl?=
- =?us-ascii?Q?4e3xb2cPCyl8qxErHe1n+686NYGbVRqkz/xLyhOyt8dZ/jWWg5brvXq4QiOG?=
- =?us-ascii?Q?DwaxuttnhhNBI41Dgw4iNw8f28zMRkhH118jeNRXkDnHaYS3xJRUiGJ2Hle8?=
- =?us-ascii?Q?TsxnFCc71eiKrGUNNELDG0HBHiciQMcnZYnQ8nG22fKvecF4jb3AVNSQBUo/?=
- =?us-ascii?Q?QtbznNll2CK3A5VVT87/0+NHZhzmL61POZ7q68IYws643pbQbxS2a6p6ZX8f?=
- =?us-ascii?Q?kAkvARxVxsVw7vyVbNgK1RjaEn7e9f5+chUwfQyDtSesk3QA+f5zCgnmjkk/?=
- =?us-ascii?Q?uCDF5dARDdZXzrgjv14xSXT+iCGcnrJxamTp91LrTf2WsE7J1tVE/J3wFI8q?=
- =?us-ascii?Q?VGQoILfDEJrtI7JxTXSxCglvXA6if42iOKfzSggL9c9x6+N54vyzr6GI9PwQ?=
- =?us-ascii?Q?ui4MmaUW9Xzy49u1iFY9ibxE0ddlW+gL5NyyGQG+e8kbNW7ficm96DmozptO?=
- =?us-ascii?Q?SDT6wmeqXRD1T9ylCXj1V01WvxlxN7/y/RjoNVUtzGU9jHUcUZzxXpDjqy8w?=
- =?us-ascii?Q?dOx2TyqHNYn2EzydEqY+8NGkwkkGO4UsFJKZ/T66Jb5Fpwtb2cUxpbTzmVC/?=
- =?us-ascii?Q?etAnfK2tqSbYmJE5DdtvsSoREbA7NNGUAuT87ogGB7H0+8HGSepRO96Xbci5?=
- =?us-ascii?Q?0axR4I/UBfZEifLeeqLkppGvuS8/yklWmcZklCyh4JpjJOILPM+LamP0rlVu?=
- =?us-ascii?Q?aOcdeEY33FFyH4Zg9V4lC+i1rE//Y6o6+m1YDCqzolFJrcwxnsOUBXALR/rs?=
- =?us-ascii?Q?X5Q2TmbUYYTmF9dVOXR+7bGib6v57iwmhV5g/VI5n03nYAnmicCq2lGG9k7J?=
- =?us-ascii?Q?dW7eZEzKJjLd6U5H8kvk2I+D1iMPnFXf+wxjR9KLMPF7Y0/LQOufgEIiUGKr?=
- =?us-ascii?Q?m4a3w0XgobKzceI5CGlUU36ReEELeI6cuL0BPAObDiMP9FFT4eUKJONJ6TkQ?=
- =?us-ascii?Q?JYv9FJYKwNF96CzVHqzfhndPcvYFdIjy+Rqyh1w9S/4Pa46xLg60EEFQQBZe?=
- =?us-ascii?Q?O5+dLRGe7PyzeT17PKPFegoekbHHeBwfLwe0BIqn2bn4aWCxCFYnGOsFKk8N?=
- =?us-ascii?Q?XlteNkYInjdizKfbK0zuWxQofaf3FHVz3CklLo0F0F5Ysm1XA4VZyT+/+hH/?=
- =?us-ascii?Q?5wg4SESHLuc+TltSBdWmnWfHtbF4vcKYhirJuYv0?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e1efbdc-372f-4685-18af-08dcc365ef32
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 11:22:55.4077
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9EQ2fEc3b47/BgA8YgnJ80XMaHaLVN+bMhjFVyW55w7WuaBYR8S6FJy2kU31ni75QuZtn3za3QfKCKvnLZkRvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5551
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
+To: Robert Nelson <robertcnelson@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
+ Jai Luthra <j-luthra@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Jared McArthur <j-mcarthur@ti.com>, Jason Kridner
+ <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>,
+ Drew Fustini <drew@beagleboard.org>
+References: <20240822170440.265055-1-robertcnelson@gmail.com>
+ <20240822170440.265055-2-robertcnelson@gmail.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240822170440.265055-2-robertcnelson@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-No need to check debugfs_create_dir() return value.
-It's safe to pass in errors that debugfs_create_dir() gives you.
+Hi,
 
-Fixes: f40eb99897af ("pktcdvd: remove driver.")
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
-Changes V4:
-- Remove the check for the return value of debugfs_create_dir()
----
- drivers/block/pktcdvd.c | 2 --
- 1 file changed, 2 deletions(-)
+On 22/08/2024 20:04, Robert Nelson wrote:
+> BeagleBoard.org BeagleY-AI is an easy to use, affordable open source
+> hardware single board computer based on the Texas Instruments AM67A,
+> which features a quad-core 64-bit Arm CPU subsystem, 2 general-purpose
+> digital-signal-processors (DSP) and matrix-multiply-accelerators (MMA),
+> GPU, vision and deep learning accelerators, and multiple Arm Cortex-R5
+> cores for low-power, low-latency GPIO control.
+> 
+> https://beagley-ai.org/
+> https://openbeagle.org/beagley-ai/beagley-ai
+> 
+> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: Vignesh Raghavendra <vigneshr@ti.com>
+> CC: Nishanth Menon <nm@ti.com>
+> CC: Andrew Davis <afd@ti.com>
+> CC: Jai Luthra <j-luthra@ti.com>
+> CC: Roger Quadros <rogerq@kernel.org>
+> CC: Siddharth Vadapalli <s-vadapalli@ti.com>
+> CC: Jared McArthur <j-mcarthur@ti.com>
+> CC: Jason Kridner <jkridner@beagleboard.org>
+> CC: Deepak Khatri <lorforlinux@beagleboard.org>
+> CC: Drew Fustini <drew@beagleboard.org>
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: devicetree@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+> Changes since v2:
+>  - added led indictors
+>  - sdhci1 use MMC1_SDCD.GPIO1_48 for card detect
+>  - cleaned up order of status = "okay"
+>  - wkup_i2c0 moved to 100000
+>  - eeprom added atmel,24c32
+>  - rtc added dallas,ds1340
+>  - sdhci1 use ti,fails-without-test-cd
+> Changes since v1:
+>  - fixed incorrect vdd-3v3-sd-pins-default name
+>  - updated hdmi VDD_1V2 regulator for production pcb
+>  - switched device tree name from k3-j722s-beagley-ai to k3-am67a-beagley-ai
+>  - removed cpsw_port2 node
+>  - enable UHS support for MMCSD
+> ---
+>  arch/arm64/boot/dts/ti/Makefile               |   1 +
+>  .../arm64/boot/dts/ti/k3-am67a-beagley-ai.dts | 406 ++++++++++++++++++
+>  2 files changed, 407 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> 
+> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+> index e20b27ddf901..c89c9b8bab38 100644
+> --- a/arch/arm64/boot/dts/ti/Makefile
+> +++ b/arch/arm64/boot/dts/ti/Makefile
+> @@ -110,6 +110,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm.dtb
+>  dtb-$(CONFIG_ARCH_K3) += k3-j721s2-evm-pcie1-ep.dtbo
+>  
+>  # Boards with J722s SoC
+> +dtb-$(CONFIG_ARCH_K3) += k3-am67a-beagley-ai.dtb
+>  dtb-$(CONFIG_ARCH_K3) += k3-j722s-evm.dtb
+>  
+>  # Boards with J784s4 SoC
+> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> new file mode 100644
+> index 000000000000..c8cbb875d4c7
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-am67a-beagley-ai.dts
+> @@ -0,0 +1,406 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 7cece5884b9c..3edb37a41312 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -498,8 +498,6 @@ static void pkt_debugfs_dev_new(struct pktcdvd_device *pd)
- 	if (!pkt_debugfs_root)
- 		return;
- 	pd->dfs_d_root = debugfs_create_dir(pd->disk->disk_name, pkt_debugfs_root);
--	if (!pd->dfs_d_root)
--		return;
- 
- 	pd->dfs_f_info = debugfs_create_file("info", 0444, pd->dfs_d_root,
- 					     pd, &pkt_seq_fops);
+<snip>
+
+> +
+> +&cpsw3g {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rgmii1_pins_default>, <&gbe_pmx_obsclk>;
+
+Why do you need OBSCLK for Ethernet MAC?
+The OBSCLK is connected to the Ethernet PHY via C406 which is not even populated.
+It seems that the PHY is clocked by a crystal oscillator X5 so doesn't really
+need OBSCLK in the stock configuration?
+
+> +
+> +	assigned-clocks = <&k3_clks 227 0>;
+> +	assigned-clock-parents = <&k3_clks 227 6>;
+> +	status = "okay";
+> +};
+> +
+> +&cpsw3g_mdio {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mdio_pins_default>;
+> +	status = "okay";
+> +
+> +	cpsw3g_phy0: ethernet-phy@0 {
+> +		reg = <0>;
+> +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+> +		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+> +		ti,min-output-impedance;
+> +	};
+> +};
+> +
+> +&cpsw_port1 {
+> +	phy-mode = "rgmii-rxid";
+> +	phy-handle = <&cpsw3g_phy0>;
+> +	status = "okay";
+> +};
+> +
+> +&main_gpio1 {
+> +	status = "okay";
+> +};
+> +
+> +&main_uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_uart0_pins_default>;
+> +	bootph-all;
+> +	status = "okay";
+> +};
+> +
+> +&mcu_pmx0 {
+> +
+> +	wkup_uart0_pins_default: wkup-uart0-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x02c, PIN_INPUT, 0)	/* (C7) WKUP_UART0_CTSn */
+> +			J722S_MCU_IOPAD(0x030, PIN_OUTPUT, 0)	/* (C6) WKUP_UART0_RTSn */
+> +			J722S_MCU_IOPAD(0x024, PIN_INPUT, 0)	/* (D8) WKUP_UART0_RXD */
+> +			J722S_MCU_IOPAD(0x028, PIN_OUTPUT, 0)	/* (D7) WKUP_UART0_TXD */
+> +		>;
+> +		bootph-all;
+> +	};
+> +
+> +	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x04c, PIN_INPUT_PULLUP, 0)	/* (C7) WKUP_I2C0_SCL */
+> +			J722S_MCU_IOPAD(0x050, PIN_INPUT_PULLUP, 0)	/* (C6) WKUP_I2C1_SDA */
+> +		>;
+> +		bootph-all;
+> +	};
+> +
+> +	gbe_pmx_obsclk: gbe-pmx-obsclk-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x0004, PIN_OUTPUT, 1) /* (A10) MCU_SPI0_CS1.MCU_OBSCLK0 */
+> +		>;
+> +	};
+> +};
+> +
+> +&wkup_uart0 {
+> +	/* WKUP UART0 is used by Device Manager firmware */
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&wkup_uart0_pins_default>;
+> +	bootph-all;
+> +	status = "reserved";
+> +};
+> +
+> +&wkup_i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&wkup_i2c0_pins_default>;
+> +	clock-frequency = <100000>;
+> +	bootph-all;
+> +	status = "okay";
+> +
+> +	tps65219: pmic@30 {
+> +		compatible = "ti,tps65219";
+> +		reg = <0x30>;
+> +		buck1-supply = <&vsys_5v0>;
+> +		buck2-supply = <&vsys_5v0>;
+> +		buck3-supply = <&vsys_5v0>;
+> +		ldo1-supply = <&vdd_3v3>;
+> +		ldo3-supply = <&vdd_3v3>;
+> +		ldo4-supply = <&vdd_3v3>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_irq_pins_default>;
+> +		interrupt-parent = <&gic500>;
+> +		interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		system-power-controller;
+> +		ti,power-button;
+> +		bootph-all;
+> +
+> +		regulators {
+> +			buck1_reg: buck1 {
+> +				regulator-name = "VDD_3V3";
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			buck2_reg: buck2 {
+> +				regulator-name = "VDD_1V8";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo1_reg: ldo1 {
+> +				regulator-name = "VDDSHV5_SDIO";
+> +				regulator-min-microvolt = <3300000>;
+> +				regulator-max-microvolt = <3300000>;
+> +				regulator-allow-bypass;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo2_reg: ldo2 {
+> +				regulator-name = "VDD_1V2";
+> +				regulator-min-microvolt = <1200000>;
+> +				regulator-max-microvolt = <1200000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo3_reg: ldo3 {
+> +				regulator-name = "VDDA_PHY_1V8";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo4_reg: ldo4 {
+> +				regulator-name = "VDDA_PLL_1V8";
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +		};
+> +	};
+> +
+> +	eeprom@50 {
+> +		compatible = "atmel,24c32";
+> +		reg = <0x50>;
+> +	};
+> +
+> +	rtc: rtc@68 {
+> +		compatible = "dallas,ds1340";
+> +		reg = <0x68>;
+> +	};
+> +};
+> +
+> +&sdhci1 {
+> +	/* SD/MMC */
+> +	vmmc-supply = <&vdd_mmc1>;
+> +	vqmmc-supply = <&vdd_sd_dv>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mmc1_pins_default>;
+> +	disable-wp;
+> +	cd-gpios = <&main_gpio1 48 GPIO_ACTIVE_LOW>;
+> +	cd-debounce-delay-ms = <100>;
+> +	ti,fails-without-test-cd;
+> +	bootph-all;
+> +	status = "okay";
+> +};
+
 -- 
-2.34.1
-
+cheers,
+-roger
 
