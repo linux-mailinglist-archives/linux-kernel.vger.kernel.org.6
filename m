@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-298599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833A495C942
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8C095C946
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B4BB229A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3183B213FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F6614D719;
-	Fri, 23 Aug 2024 09:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487C814B97B;
+	Fri, 23 Aug 2024 09:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BiSEEoow"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2126.outbound.protection.outlook.com [40.107.215.126])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="RGm1TUkC"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020090.outbound.protection.outlook.com [52.101.128.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3603814D431
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EE720DF4
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.90
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405435; cv=fail; b=mnv9fdYJ3tkl35IeXA4mNgw+qIb0zUOakg/7d3Wcv4brEMLuCThnc0+n5+WNsvjb0JVbUpGQHu/Lg0OBCAuiKFqRSJo0N8U4lXPu73W/Qw2oo0vhbYHMQBImDXArTNVm20hHyi2p+canTY+wfYyhQVGoXXqEJC9Wj043S3NOVyg=
+	t=1724405553; cv=fail; b=Q82MwQ3pGsklSr6wE02q5L9xfsdmHuk9MZTfEHmBHdsoOVnYpnvdLH4S2d5DmpcKODv608596pEYMcFEmeLSjOJkvRGlXt0m0BaMhH/crQs/GQciJ95YrWF0OJBRyW72yM5lTQUWXm+KSMpozVWN4XHutxpmrpigicGUTpkoAfQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405435; c=relaxed/simple;
-	bh=LDAMPVEjJyu4+5JkNYd4mqOTTsQx9QZtooCcETfvjdg=;
+	s=arc-20240116; t=1724405553; c=relaxed/simple;
+	bh=XYhT7avAZBFcgWcfeUwkLTcN/9ktXGvP5RC3Rr0WhDs=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=I1OWxNTZpZETe6gQCLq0RmCSr8cMgQGa2uoCm4lxtZIiEs3Cdub6uxpGm1vHNRrMxKvTCTFtWP3GWj4tQGMheDJELsTEeMiLlD1DfSpgjHItO86rlCZhuOL9RTXzFpqCgolusTi1Vfv3ipVFSk8Pry8JzLtaHl2HbDnFyCBuhwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=BiSEEoow; arc=fail smtp.client-ip=40.107.215.126
+	 Content-Type:MIME-Version; b=TXjrVOYCoo6V1tR49U8V7tMpMVaf2R4EeZOJrYErUlQqqUioc+5dWYmdhDuDTvApLj+FWxZQfP5T5Uv+yLbCAHvkGbA9QHo5X2oWVlvLWO6rMOIw5vhCbKUsAvbR+tQXBs0SQSS69Y3ptiAKHaq157Jo6ZnJTC5VvbVf6a06RVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=RGm1TUkC; arc=fail smtp.client-ip=52.101.128.90
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eSg6hzvJY9p/Y9zVgg10b1u0aCyR179/g8PsLOGzMlOlQCAsosFH5Hn3K4XG51kiwXD2qbARD9PdeNgsKuK5ltrk4aL7nobnewsq3SKPRwZwGwQM2ZwC6rB7uEc7fZdEbdgM48u4nSaLTQD7eLpuCVu5d+hQ2x3Q04Kh2XQBtB/vfJEtFHQaTGc87ULRUlnQeWo7rGEHgD3HDIhlfTuC1InCQW/anPaW6AWuaD7Kds4LU5VoKEyW/wbQgt9985f6Q2DcVaNpeoWzz5NhXe4gvKWshikfRcSF/F/k+Q7sVKNvxLCxtpqATjLzfADFCVdGly1PXCe4N82bNdWlyWzK1Q==
+ b=N0bhm6xVofBBwHaXbuMYFU/u7ocKbcdM4Ap/dT8EH6KbXjdAu7QZXoQMj6/+wkIylipyjENLHzXITpoXl/34hiRwOnPkbnvENNxphhQxZFrtOGFQhhkMyxfdh3Zxdm5jBa7Tb/f5G5elnli2Ji/nyOwfejbMMXhWcXsezaj4qmrbWj4XUy/3STthLpbinq3GenopSKqEA5V91stk1dVUabMsksLq+xTXd2hVEhrVW2UtPzMBWdx4xVsqe91FeaLDD2cmcVxFssSOy+rlpUNCapBNtCjeZsV4A4536LcyEz+adBKRToMTAicLJ5q8eFLv24jWaDRIUgUP3GRg+Olpww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HQbssgGgTXNnugrO5GEHdM9mhr7DRNwzqRb38GaOjDY=;
- b=Ms3XLfjNoWaS28QpTi/IwZ0toRFSRlfsGX7IyEQ13mLubKkhTOYj5iChl61KvVOrmnpEonJyudcbUfOkPT/OMjA7TyDRpSm0+eVLBytwmhq/O1Atl+A2ts22dXcD9GN7O5zfsRzw7oLQnpFZn7FQyAztvQUIFneMZCyH/sMVT8O1IL/cQhabAxHRy/PEmCr+HIhM5O+n2T93lPXVvCr7dTs/CB1N7ZVjZmgojlASnx9GVbd0MzHWnbiR65RQzWV+Y06odW9gsL1nHPiDHV5MPb+KKaoeGZILau9QvJ9AvmehQ1zqiuGUFpQZMINweeEt+WnpMbVbkHvJPPI004oL/w==
+ bh=TA0ozvkcu/DZcR8XWIjsmy4THjpPecQw+79xSQFzHBs=;
+ b=BQhJgEcxFsjCy5RfVkqTsOfnHWdT5Q8nY+hFP52vslBScZpOM5s9br812bnaJGXijWzJVjhqtF8kb8V56+YHO6Y6uVpu1clY5BDZaugi8ypbS1Kh0AXA6u90dI158KCH1cHqpzJ0cmJctHgZiHUkpAwfB8Dl5ChQBGX9PhC1okLHUPMB0hO820VuxoRtTIL7CsQUlyS5VNEn0YNobvjwvkqCTpidW4y8RE4iuYOkhkL/p2MAmUZzqQc3+TbwD7ltar8PU5yBsch3FnidtzVqWdaNnoxI/CVMw9nh9RNI0M7P9wvfoY8AwvuFKYSuiNvm5XQ8K5TEWsi6beEp3/hTJg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microsoft.com; dmarc=pass action=none
  header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HQbssgGgTXNnugrO5GEHdM9mhr7DRNwzqRb38GaOjDY=;
- b=BiSEEoowL3sOGgE+tPcxHZaCvN/GwvnYalACGbIpj1DsCUCMPRG/881tQSiQWJ4yw1gmpvqjwVfh3dVohzbqiiEtRipTQ1RZC6VMXwySBQvkLf6+TZ6/MSQvX55+qL7wfsUs9gGArTnQFcaa5Haz+nKkPJMD8LRnuW8iR69fVBA=
+ bh=TA0ozvkcu/DZcR8XWIjsmy4THjpPecQw+79xSQFzHBs=;
+ b=RGm1TUkCzJ7nJLfRaFWShrhMJY/2ShBrgMPg4tWgKlNNz5UpNgIiH+IWHeHslpIlZct/F8EgRSLmkHMwVmdHRRNQl+7U+IzpX/S6sw8chdqrgjLOQ8vwADKXNkvab5iVSeIZqQnFmay0PAUPPDabJUcYS42lSrgWyv3BdLkvn58=
 Received: from TYZP153MB0796.APCP153.PROD.OUTLOOK.COM (2603:1096:400:28d::11)
  by KL1P153MB1004.APCP153.PROD.OUTLOOK.COM (2603:1096:820:125::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.9; Fri, 23 Aug
- 2024 09:30:30 +0000
+ 2024 09:32:27 +0000
 Received: from TYZP153MB0796.APCP153.PROD.OUTLOOK.COM
  ([fe80::a481:ba0d:8985:aa6f]) by TYZP153MB0796.APCP153.PROD.OUTLOOK.COM
  ([fe80::a481:ba0d:8985:aa6f%5]) with mapi id 15.20.7918.006; Fri, 23 Aug 2024
- 09:30:30 +0000
+ 09:32:27 +0000
 From: Saurabh Singh Sengar <ssengar@microsoft.com>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>, "akpm@linux-foundation.org"
+To: Saurabh Singh Sengar <ssengar@microsoft.com>, Saurabh Sengar
+	<ssengar@linux.microsoft.com>, "akpm@linux-foundation.org"
 	<akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC: "wei.liu@kernel.org" <wei.liu@kernel.org>, "srivatsa@csail.mit.edu"
-	<srivatsa@csail.mit.edu>, "clameter@sgi.com" <clameter@sgi.com>,
-	"mgorman@techsingularity.net" <mgorman@techsingularity.net>
+	<srivatsa@csail.mit.edu>, "mgorman@techsingularity.net"
+	<mgorman@techsingularity.net>, "cl@linux.com" <cl@linux.com>
 Subject: RE: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
  after all CPUs bringup
 Thread-Topic: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
  after all CPUs bringup
-Thread-Index: AQHa7H7Nue5A+aHys0+ngkXGeUO6jLI0pOvA
-Date: Fri, 23 Aug 2024 09:30:29 +0000
+Thread-Index: AQHa7H7Nue5A+aHys0+ngkXGeUO6jLI0pOvAgAAAiqA=
+Date: Fri, 23 Aug 2024 09:32:26 +0000
 Message-ID:
- <TYZP153MB07963DDE4B7E01C575B143E2BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
+ <TYZP153MB0796B44322EAE4C712883201BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
 References: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
-In-Reply-To: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
+ <TYZP153MB07963DDE4B7E01C575B143E2BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To:
+ <TYZP153MB07963DDE4B7E01C575B143E2BE882@TYZP153MB0796.APCP153.PROD.OUTLOOK.COM>
 Accept-Language: en-IN, en-US
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -81,66 +84,66 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=microsoft.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: TYZP153MB0796:EE_|KL1P153MB1004:EE_
-x-ms-office365-filtering-correlation-id: 4eec2843-5c2c-4d12-c897-08dcc3563ab1
+x-ms-office365-filtering-correlation-id: 21604226-3381-46f0-cbd9-08dcc356806e
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?Gt7qGnQRYtFXoROwtnt1t/0FIUqgIoq5llRZMFkPcxdyS0BiYTxTNnuM/KhR?=
- =?us-ascii?Q?j4r9gJM63y6/lt3Tc8lQ85hCMCSCoxJl+6W6MSVuxnTSdk4q0schWfj5aAet?=
- =?us-ascii?Q?4Px1b3fHgcswKWmgNXuCPBhRE+/ToDnnt5e1GOJ/5itlH19K5etCfs+D9Ywy?=
- =?us-ascii?Q?N5jPIukG0ay95EvtZ8E0kwrGu8t+hYR46etH7DVuaJjaZw7d0VTigvWS/d9o?=
- =?us-ascii?Q?wU4fr/ymZti3j7yE0yuvhgKpGpfbOVB6yl0DJtMa1lOxySGdizLXOGLgEsGA?=
- =?us-ascii?Q?4L6CgrcMQ+h5tRLJDS5HLBwGMk9c7ESWgrpXRRi7lTI2+Du/sMDN9WcfSt6i?=
- =?us-ascii?Q?GWcalH22mVw39mkkZNrH5F+XJkInz19rV7PtsDpevzTMwSIrKNcg+GCMQXYG?=
- =?us-ascii?Q?17dQjA0KkJU4ZNkt0DRnksrASj/3hGzQsxuvcLsyFoLH02ixn68JGXAKynIX?=
- =?us-ascii?Q?2OpgrG/4S60ukK0zBceG86aXDsfm/5cZRmFbetsQ1Rba3NiMZq9U5uWXwx5e?=
- =?us-ascii?Q?N89gYtMzFHN8SVdo4460O3GZnOrCGqJOnuf/N9npFc2/q2VtGDVm1e6fCi0L?=
- =?us-ascii?Q?2X21hzz1/QBGCOIi4R9wy1UnT0OEEFya8Cg/nCJe+DV+6eQ9nx5X+SYyMREb?=
- =?us-ascii?Q?t/r7/IovQVom/rWxkrQm5TLRR4+lEGvQ9yabz41tOcc2kPZuteq1A/D6DRlq?=
- =?us-ascii?Q?8OOm5CXfPuvWD08F67jmhioyIH7Ke0qpyGpX0E07pfYNr6VTI712C2ZPew/a?=
- =?us-ascii?Q?92h+LLdvDqH7esKO3HHmjoovb4ebbiBAMzr4iEI7/xmzn7JJhFW1Lk7JKL7b?=
- =?us-ascii?Q?1jygjI9any1oen2jLX7Os7UV9BUu2t9iZeVM1Px2ktG3uI2ORrEiYFgDXMVT?=
- =?us-ascii?Q?rIrrNh/oxgSR7iFLUjHyFKoM/6dSBhn0Ms5UOtQZiyJpaiUG2csti09KIuuL?=
- =?us-ascii?Q?9ZUDAOPO8om+pUE2cEw1BP0yoF8uUU3N2DAxedE9xn9eqO0T8c7MjjFnKXVY?=
- =?us-ascii?Q?niTRw5yc9/YTJv2lxmwOMqD/VnKSA5JtcK7ajA71zXiacAkKfZFyki1G8NNT?=
- =?us-ascii?Q?WbnoEYp6Xh3AJfY2cMJ90aGAzo77FLMmO0XAjl4ldtpRkPmU2EdWhxwZ0ebP?=
- =?us-ascii?Q?/mIgNztfbQJM2NwJvqQunXfH+nOeSZvBQdC8M/48iAdUUheS4LEKzrJ9TGdz?=
- =?us-ascii?Q?64KozfHicrm5sB8jXBMREKBJ4Z39edicwbSnaIZTlmu0lSItjgwMyjIyXJ4F?=
- =?us-ascii?Q?irp4+9AuVu+IITNvOefS64vl3rs/S7tKAK1wVzHh85zBKdFdwrWzvRJ1/zl8?=
- =?us-ascii?Q?DQqf9BtE6IuHhkoJQq97IjvMtsn2eeu95eh0/TwoRVMs2HQj9MSh/bJBp1To?=
- =?us-ascii?Q?v+Z2ZuQDdFAgqdqCOTCQD1GQ+Vwco/A8izw1NYOh5nyuExCgLw=3D=3D?=
+ =?us-ascii?Q?6q0u5/1UDr+RmbFysvtpECJ2KsHVbbYeEQjVA96CeoMqCwGxMCCb6xvGk1ST?=
+ =?us-ascii?Q?j8XsBhP79yA+kjU4CG7Mhl+1pZxdP1xcSgHRD5BvMrl2jnNGVU/qP6h0k409?=
+ =?us-ascii?Q?UDt+vj27SEy3VA3bl9LO80rceEJmp7ArJan47kevOhG4xBscFhfqa4fJQI2B?=
+ =?us-ascii?Q?LpMmDpRMjs8tcTmwZi7dxHhJPCRTGdKIysderw18vynuNhn6AZOSDGVOGbd2?=
+ =?us-ascii?Q?wu3HAclkBYnuvwZHuwpx8O5JJ3W7trzPdWQyhda4p0o2IblVk1RicAxWIncn?=
+ =?us-ascii?Q?Nra/rALPe/cW9+gaya39PRfCafefJxv2/nYDwYKMVMssFX5fvHLC3/iZBsFl?=
+ =?us-ascii?Q?HRpq1pCai/8E/UBw3UMiNNU8XWDs5EUB9fqATsQxlsp2zp881EHM5syiSYVc?=
+ =?us-ascii?Q?vONafWPlcRcWKeuuFy1c3Bj1S4xAM9aQE66c6bD6Vo9sArI6QJa4O6cPNOgx?=
+ =?us-ascii?Q?LmRmpJcu3hoR3XH4y9F+E7fUncNcEdtsqmcTbfB33tSeKCVtrpkdxLS11t6H?=
+ =?us-ascii?Q?jH3LchuOdWw/AgOepVBKyQ3FO99+Pmx4UqvcjBSYtErHkDkahYF14rO3hvil?=
+ =?us-ascii?Q?g0YjsMHQcgiXIuVEpEY2vLiP8gE5QH3XS0VJ2Zft10zSYFQRwFrB4Lve3119?=
+ =?us-ascii?Q?YSdhlU5DDlthCmfCbNsPt8ILWPI5JSYUZDXJ223u7YjQ2RWMQRvUSH4Ouzt1?=
+ =?us-ascii?Q?4ulzAYhOy/BpMH9JNnjtj5aIDj17jHR5b0T/Wplc7qHTVARsln+uSHeAHr/k?=
+ =?us-ascii?Q?dCQQh7tSjIjw+6Bl+FPgk9mWkCUk8Lco6LYvxTpJRarZd5Clww5cUvDy7Tc4?=
+ =?us-ascii?Q?z8csj+sApINYpySWGI5vAyBek3bH/sRcanp5b22m5ZL+ku2oFdfnSBy2kTk2?=
+ =?us-ascii?Q?TdrNDURJZnsMsq0i/hPOMF0LEzwRcIyJAZTpxwBI2P5JMEl+mekGbuGNto4e?=
+ =?us-ascii?Q?eh6DW1Kw/6XXeCSe3LIEwl2TQmsiMw3GI8I9eJdDhsJvwt8h1cTrE6ZkIpGb?=
+ =?us-ascii?Q?/dXtpxcuuFIwPqTR0VG6TElvvLZxCjA3ta66+V8Chc+C3lKPmqUvzD8pLORP?=
+ =?us-ascii?Q?c7VYkntUV16Fy+wK5uNQQTfUdC3bLtxKUoW1rVJfzLkoWeB2aSvo6OeDnRGZ?=
+ =?us-ascii?Q?YydTVT3QWALFn28CPFzpTljvZoTLhYLI+p7dtYhGh7a9DBshHGeIHfdFeNPf?=
+ =?us-ascii?Q?2CFAJXuOdwPosHFimWeYfAPkDjhZJ/0hnMGM+QsbAhUdVFO9zTak3mE3WlDF?=
+ =?us-ascii?Q?vBauTLbMch2h7xi3ry/oSvrILvSGjOq3fbl68ncIbtQskKQ+LEBtiupZbmUb?=
+ =?us-ascii?Q?086DWTP+QF0GOjR3YsEw0v4XPZU7/Czib4a1eiTqrHUIhUUfRgswmm7jRIA2?=
+ =?us-ascii?Q?DZHUEceWCiUN5s2+g0f5d8nBCKQqXZSUzT6ieLCpnrKtM+tLmg=3D=3D?=
 x-forefront-antispam-report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZP153MB0796.APCP153.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?RyZlY5SatynRiW/Ebizb+tZ9/u43aO+HXb3ze/fRb5rgwAJOa3NlIrHMSUqX?=
- =?us-ascii?Q?OXi8DDg4884kHPEwrRVxWGXWdwu3mecukrNbEpzFeLug5QkQwYG/m142QKSJ?=
- =?us-ascii?Q?GKHovIHRgmnqOSZXNlji9b7n3QrOa1iLTh9laueNrbOk1hGOvXfc8MEHZJZL?=
- =?us-ascii?Q?VK+joMwu0uhTRJKeojLd2/8sRz/Q4zsKjKd+z5LW2Lj8htxL0ZDP0kS8/H3d?=
- =?us-ascii?Q?bRorznX1hibwpiqXGTpFmAbXBszIE/kK6NB2RiUpizJfYVc9fuJBe3L1atbK?=
- =?us-ascii?Q?/7ZCvQwQfGFIJVKVabnOaTlyGTNxuYT2jwnQApl1gCDnd7OZSLg9dJv3cwxH?=
- =?us-ascii?Q?8rBc/+vOOjBUKLNoTm2f/fte0TeKaFsxMXVTKbEnsR3ZlxaFM5tpx1tWjW3g?=
- =?us-ascii?Q?CSmMyUv51AoH/lpQ6irdVzlPhxjR1KE+cRY5iofBcJgIJiP1hGPiXwXi7v8k?=
- =?us-ascii?Q?jxkJUIFeXUziAv8z5CkF6VXkQggMrqq459WKT4ZoUe2vRbtHG0725ofUbkvO?=
- =?us-ascii?Q?HHqd2gdwpnJIKep58DgwT10TfmzOrLiiVnanE5Iymyf0UpKMxTzEpo0kte7w?=
- =?us-ascii?Q?ia8LYxUfb/ov2ZZPk7cS6hkAm5Vlt9o0eFYrIDWyyWlCEDzIv78HDmACTSx7?=
- =?us-ascii?Q?sxtsqFHpKCa/tL4r7FuSKkYK6j22FL+48GdHIuiysyZvBffRVcT/2CNuSr1S?=
- =?us-ascii?Q?V4MdNxFn1dEIvZQ6oJXfaTn1tlzhmt6KA+9GPwznTvVQJe+XnXp0ZH2XoDZa?=
- =?us-ascii?Q?xcmNl56VnJPIbNc6JpxalXu160gT1S44ladLS0YTNxTb3z11y7Xp5Hj7bxJf?=
- =?us-ascii?Q?aSSpegIpBDoWUN0o5jbsojGgH4Vu6I8hfUTJ3wzEBxeA5iS1VvyLqFuMea71?=
- =?us-ascii?Q?UcmZysOGu9Tj3Nq7GdKF02hwwMR9FO41IkkH5E5/vEATGbqzo0c86IrpIEJT?=
- =?us-ascii?Q?FFm1XGfwPNGNoSPLgME1xSorqQlOtpWk+af6Pd7+ZI7RJujPFpC9jIFiGx8h?=
- =?us-ascii?Q?rPP5CjWlSMrJ7/Kzv+OB+7IgD+OBFzPmrJ7ve5WYgWcea8F6NOu/KQ8vCPu6?=
- =?us-ascii?Q?Vr93VRxFiam5eWP+yrtYqfNGGp55xXnOhODFimNWzG32UHFSzpVCZXwe0aCd?=
- =?us-ascii?Q?PKn//R9mhWrCv6FtPGc+0dvJhHu2nVY50ll6LEDvDCB8XqVztM+euV6zjSUq?=
- =?us-ascii?Q?OIaL93DSjcScmYNcvvf5oSY/+FSsME56vH75KQUFI0FFO5l1yrKIgXI7q4pc?=
- =?us-ascii?Q?OeWl01rCw0OYOy6KLn8a5L1+WuBzruGtV7ombmn8ytdT3ou4YCCAbSQJLhmg?=
- =?us-ascii?Q?ZoIfEyp1El7uh9HyPoJdpcbKHuPOPwzQHVaLHAjucChsbkJbhfZIEuKgSor+?=
- =?us-ascii?Q?xJ/RDelkvmiszgwhZ0qmpuN/sR9cE1IOVUeiNLqXNCpyTgiTMbastbQbjt19?=
- =?us-ascii?Q?M56EPIYCiEhC56OvDOZBu6L5GK0qyzwLPwJJNWWk0GOVmip28D0xuAAbSD5b?=
- =?us-ascii?Q?sm++YHqWIKNoYGdw769NRTATVuzhI4G9laG4KWBp2pE3yJTtTKwV1OnuKr6T?=
- =?us-ascii?Q?JwX8ODFIxFSR2ya1Z7+AgH8ryHcALwdmZcyaXa86?=
+ =?us-ascii?Q?u8Bt243UbbKMb9WUA6NAkZBTq4gzJEms3aYUE7uKtUlTS10s3/jzsgGN/9iS?=
+ =?us-ascii?Q?aa5tPIRWVCdYDm3/XGR97zts0yvzHZo9zkDTFYkNv5MTh2AYfhiTWIIjakjF?=
+ =?us-ascii?Q?7brUvLh6K++0fglliZc9i9M18laJxEcOWvGmss9I1II7LKOLmi7hDZOZ502B?=
+ =?us-ascii?Q?qTq1A6zHtMYeTCrg6wvR/jd8gFaPqv1O7okQyBWloGSDcmxKqCwkQn08sZaG?=
+ =?us-ascii?Q?nfd7WpCq8zgqedyuMLnQqz7Wq6XoCzYh9opjMgfsyAUDcY0evCfgKGXYLyO4?=
+ =?us-ascii?Q?NSFt4Obm3ZmmyIUp0CzNQcXMU4Gtz27XtSDcRCa53siuxedkI2gucHyN28qr?=
+ =?us-ascii?Q?hRK6U4HWipfTxMAWAETTDatAyepPTibA+GCgMt3c5DzGSg9tFIWBxVFT67ri?=
+ =?us-ascii?Q?s8hNwyN+Lz85V6eMxSkMKZwR6ItCBsBRZ3QvW8M93hkwBYELw/Zp3wFEu3aS?=
+ =?us-ascii?Q?TLFOLx8TS2OafhnCTh+8PoFbVsiS/OoGz9LECSINZngibPQa8nsDbWNp2y21?=
+ =?us-ascii?Q?R1L0wsqactMBrUClKFys3XzHhefhw0uTxm6HQF7nJMR2Fh318yq6wl61uxY4?=
+ =?us-ascii?Q?5zZhVmlAdKYxq7WVFzYASMEmOYVVQPCVSEUtHoeXMoj8njbCelCNwpOZ+Jl4?=
+ =?us-ascii?Q?xdCSiOZYF7v6A+ENaiEZ0yjv6tw27zwcZA7JOpn+iiqqzwdzaJLDJkaQuIHr?=
+ =?us-ascii?Q?TmA/R3bkfXFVhvQ+VN7ir833BdMJ97XPOmi7hdW/aukIpbPFVWwHlvi34kuD?=
+ =?us-ascii?Q?P8wtPEWBXgufyrTx+mmy02c7Xn812cj9OJDWD91zzWWT2uuALU/xSrCXP/6R?=
+ =?us-ascii?Q?SmqQIYg/fsaZyibKrZ1lKN9M2CXntsxYaRNkmsmp5C4phK8oYwHZlW7GUhWM?=
+ =?us-ascii?Q?0/MBB6BZhY/KgVgEXtsQ7lwV9r2ihLzvR4YYMfb66iBIl/Axh/ek+WnF1CSh?=
+ =?us-ascii?Q?Ub9wPvHOXzNj6QoOSjzGhQ3yK+L+D5ilt9ZkYmXZwvGnyhE76b6q4TJMZHkQ?=
+ =?us-ascii?Q?+RcUlYFlRv/0BBzCx4OeLQtTTgEvmFdv0Dj3PU346Switqx1oWEjRv39Eb+T?=
+ =?us-ascii?Q?kgjk1p75xA8ORWzYTRp94sqsIYNp1z18+YedbkO++tVbCVGM034rvPZ+TnGd?=
+ =?us-ascii?Q?yPR5lqHORKyULKZt6h/5eR9YU93pjOWOOisAyLYSnJ7knMGDJ6x8OQurvFqQ?=
+ =?us-ascii?Q?MbVanADxEc8YTTRII/RiXJ8+nKvszgBWkY3zCQpIoy84Mzh6vAmd1l9RMkHX?=
+ =?us-ascii?Q?9kFFroFZRB7QIDYix3y/5/0X1hhCaaklhjgCWG4Flq8zt3QY33B+FGVQ60UQ?=
+ =?us-ascii?Q?tNS6pjkWA+XjN0KgDV94JPANYi10G/gt2t7MlfIXmqlqy5alVxqfXYX6yne9?=
+ =?us-ascii?Q?p4ECPyep1S3gqFsZSRqJymUrT+lnkk+iQlfp7hHBzQIPNLTveBUoxuYnue3I?=
+ =?us-ascii?Q?v9X48fTPlFd6TXxAGx7Klf0hpIGwPNz0qbtPkwn9lBM0lPh0C1B3Q9ENnkUA?=
+ =?us-ascii?Q?/lgwL1+Auqn+FniNm/P/BnyaV2ddDGu8D77S6mVhB/uxNldoBnWwieQ3K6dt?=
+ =?us-ascii?Q?rYM8NdmoBp/95tqZgbKBLqJdfzsWrl0uwODFtPMu?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -152,64 +155,74 @@ MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYZP153MB0796.APCP153.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eec2843-5c2c-4d12-c897-08dcc3563ab1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 09:30:29.8545
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21604226-3381-46f0-cbd9-08dcc356806e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 09:32:26.8611
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SF0PEoObdhLkcveH0cOyUoZsVJgU2UZbj6l0Yn1T8cvfCJnQnhNN8mBHbphihMVr8x48UDk/olAYnQLzlB1RmQ==
+X-MS-Exchange-CrossTenant-userprincipalname: 0SHFmay9xlw+J8ZChOdXQEVrpn7akR5rBqjKo2v/QUUABVR1cUujhAdwGv1Izor2y9MuH71CPqh51mmDlezc+w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P153MB1004
 
 
 
 > -----Original Message-----
-> From: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Sent: 12 August 2024 11:44
-> To: akpm@linux-foundation.org; linux-mm@kvack.org; linux-
-> kernel@vger.kernel.org
-> Cc: Saurabh Singh Sengar <ssengar@microsoft.com>; wei.liu@kernel.org;
-> srivatsa@csail.mit.edu
-> Subject: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds aft=
-er
-> all CPUs bringup
+> From: Saurabh Singh Sengar <ssengar@microsoft.com>
+> Sent: 23 August 2024 15:00
+> To: Saurabh Sengar <ssengar@linux.microsoft.com>; akpm@linux-
+> foundation.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org
+> Cc: wei.liu@kernel.org; srivatsa@csail.mit.edu; clameter@sgi.com;
+> mgorman@techsingularity.net
+> Subject: [EXTERNAL] RE: [PATCH v2] mm/vmstat: Defer the
+> refresh_zone_stat_thresholds after all CPUs bringup
 >=20
-> refresh_zone_stat_thresholds function has two loops which is expensive fo=
-r
-> higher number of CPUs and NUMA nodes.
 >=20
-> Below is the rough estimation of total iterations done by these loops bas=
-ed on
-> number of NUMA and CPUs.
 >=20
-> Total number of iterations: nCPU * 2 * Numa * mCPU
-> Where:
->  nCPU =3D total number of CPUs
->  Numa =3D total number of NUMA nodes
->  mCPU =3D mean value of total CPUs (e.g., 512 for 1024 total CPUs)
+> > -----Original Message-----
+> > From: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > Sent: 12 August 2024 11:44
+> > To: akpm@linux-foundation.org; linux-mm@kvack.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: Saurabh Singh Sengar <ssengar@microsoft.com>; wei.liu@kernel.org;
+> > srivatsa@csail.mit.edu
+> > Subject: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
+> > after all CPUs bringup
+> >
+> > refresh_zone_stat_thresholds function has two loops which is expensive
+> > for higher number of CPUs and NUMA nodes.
+> >
+> > Below is the rough estimation of total iterations done by these loops
+> > based on number of NUMA and CPUs.
+> >
+> > Total number of iterations: nCPU * 2 * Numa * mCPU
+> > Where:
+> >  nCPU =3D total number of CPUs
+> >  Numa =3D total number of NUMA nodes
+> >  mCPU =3D mean value of total CPUs (e.g., 512 for 1024 total CPUs)
+> >
+> > For the system under test with 16 NUMA nodes and 1024 CPUs, this
+> > results in a substantial increase in the number of loop iterations
+> > during boot-up when NUMA is enabled:
+> >
+> > No NUMA =3D 1024*2*1*512  =3D   1,048,576 : Here
+> refresh_zone_stat_thresholds
+> > takes around 224 ms total for all the CPUs in the system under test.
+> > 16 NUMA =3D 1024*2*16*512 =3D  16,777,216 : Here
+> > refresh_zone_stat_thresholds takes around 4.5 seconds total for all
+> > the CPUs in the system under test.
+> >
+> > Calling this for each CPU is expensive when there are large number of
+> > CPUs along with multiple NUMAs. Fix this by deferring
+> > refresh_zone_stat_thresholds to be called later at once when all the
+> > secondary CPUs are up. Also, register the DYN hooks to keep the
+> > existing hotplug functionality intact.
+> >
+> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 >=20
-> For the system under test with 16 NUMA nodes and 1024 CPUs, this results =
-in
-> a substantial increase in the number of loop iterations during boot-up wh=
-en
-> NUMA is enabled:
->=20
-> No NUMA =3D 1024*2*1*512  =3D   1,048,576 : Here refresh_zone_stat_thresh=
-olds
-> takes around 224 ms total for all the CPUs in the system under test.
-> 16 NUMA =3D 1024*2*16*512 =3D  16,777,216 : Here
-> refresh_zone_stat_thresholds takes around 4.5 seconds total for all the C=
-PUs
-> in the system under test.
->=20
-> Calling this for each CPU is expensive when there are large number of CPU=
-s
-> along with multiple NUMAs. Fix this by deferring
-> refresh_zone_stat_thresholds to be called later at once when all the
-> secondary CPUs are up. Also, register the DYN hooks to keep the existing
-> hotplug functionality intact.
->=20
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> CC: Mel Gorman and Christoph Lameter
 
-CC: Mel Gorman and Christoph Lameter
+
+Adding cl@linux.com instead of clameter@sgi.com for Christoph Lameter
+
+- Saurabh
 
