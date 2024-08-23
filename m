@@ -1,180 +1,94 @@
-Return-Path: <linux-kernel+bounces-298489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCF895C80A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8414295C80B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D947A1F22DD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E61F230C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046EC144D0C;
-	Fri, 23 Aug 2024 08:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE19D1442F4;
+	Fri, 23 Aug 2024 08:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="XC9qMPOO"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZS237N+k"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4047142E9D;
-	Fri, 23 Aug 2024 08:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B213C827
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401606; cv=none; b=ExdnjF/ctOb3YWfHbstWCISuF2/dpY2shUVSlDbzkijY945txTfOJVtek+QygrpAYhrxDMLRm9V12OLCfMVVCrUi/QWJ7UutaK7CBZIDjk3Ia4oQ4JPqbN8VYxUu1fxreTaQmoOV6pj6sI+swYBMT26cupWlCQDPE9qKboBvyXU=
+	t=1724401682; cv=none; b=VeRnFwpeADF+dtmCz+/RDhfeOxKx3GUnvfNiz6V+li/2zNrvy8u6XsWyb9T0dsXHfgGKJv9xrl3jSRSf/oaAABF8JJbPS1veJTC3iJturiyth5aBY6+yyOCf6bhqNcj+oZZT5JkYayNa3VBMKdiU/1h96gGCXhyEbpGeIf+HGD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401606; c=relaxed/simple;
-	bh=7T7/wu2fTf7TBVQfzGOrguX+PSXn0cZDoDAeHENBD68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eyGYWYYAhb5mwzviBXHklz44Ii9C7to3DY1GtmiskYoQxDyE1FE/egnN5eB878SGbrx/KIF9X4xSSrpIVv3o4MgJL8iYWP2KR1ynpTCk+xcpubqVKDFd2bbN70UCl0OZ4XHLxummS03YbStQr5zXYNG3OVDFmC3quGQ2iJ0DRR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=XC9qMPOO; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id DE4CB1EFCD7;
-	Fri, 23 Aug 2024 10:26:42 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1724401603; bh=Cb6PqhKpP7ar8ly8cR261dRzbAdFkd8uMnNKWb2a72o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XC9qMPOORHKhGxtuEqYZWhvcUQLSNDTTWFjMy7+rqMjBR9aYZGjGlBG+CmW7OwuBd
-	 79L2I6aLuc6yr04anJqToCOvN8WGrTn4Qj3hDxFjqcIPA19NIw9Qv5BX9fA94+0GLp
-	 l0KLIqCBvO5HvmmGNdpFXIx5W/2SAWYzfdlkVsvrgKK7684mvl3vazypXIiu4q3eT6
-	 ly51l/+pDVIJAnQLo31UocvED2gBi2BKjLawYJsX20XKZjre3ZP5ZDr36H+cLhz3Cq
-	 FS9QfPScXdp/I8kJkYGIub0pHKSC4fz0ZnE8ceUv/MIW5c8GKhp+GCt7HxqKo4RFyf
-	 E3DQF8XeboGVQ==
-Date: Fri, 23 Aug 2024 10:26:42 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: mhkelley58@gmail.com
-Cc: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
- sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, robin.murphy@arm.com, hch@lst.de,
- m.szyprowski@samsung.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-coco@lists.linux.dev
-Subject: Re: [RFC 7/7] nvme: Enable swiotlb throttling for NVMe PCI devices
-Message-ID: <20240823102642.3f7f893a@meshulam.tesarici.cz>
-In-Reply-To: <20240822183718.1234-8-mhklinux@outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-	<20240822183718.1234-8-mhklinux@outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1724401682; c=relaxed/simple;
+	bh=y5pO77tjw2lAZYfY/uwztr3YKG3CqampXp6SVr7OTWg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To; b=ZWk5+j806hbxPatAAEeT0ufbvooVNPbplQmLRkOoPHkax3sGy4TNQq/2B4p40AfUiVaachb9z7HV78D8r/0T45cxXbI734XZwS8OCjkkm2kx93dJyO4RBBgRn+mPK3QxH54LGDxI9Jb3CGztChPNga/SiQIjD4drjraKzRThdzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZS237N+k; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2A5B560003;
+	Fri, 23 Aug 2024 08:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724401677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fPoSqzGHrYVu/YdwFJNDRyoNYcUqqfUFAj7yMgwNIC0=;
+	b=ZS237N+kbz+VqWIzn5gQZ2UVMnB+pQVRm3X1Xc4fyr5TP59qRWsZKoLmKTYncL6d2n6/D/
+	3gnh5wZHwb3BUOHKeE/5hqpqEAR6ZACMQt2xyiT02pJNsysopKIemyxgMh+49SGngF1+AL
+	i7ZRgstEB0cV/WP7h0c3Pja4k3XM9FWSThzIr9Vkq4tqx+HWfi2qzqxN0534zjDmuQDi2D
+	/tATiv3sVqPpjbCTfRZsiAycQkhTATzRqNbpHWsVHatwx2A6GpLM2jBQhSDKWMp4hySi0r
+	5I22ZXJSS5f9qPgTboMia9XCZB4CCd2hwMXVnxGTEysSXU2qrSa3+KIMzMTU5A==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH RESEND v2 0/3] scripts/decode_stacktrace.sh: improve error
+ reporting and usability
+Date: Fri, 23 Aug 2024 10:27:41 +0200
+Message-Id: <20240823-decode_stacktrace-find_module-improvements-v2-0-d7a57d35558b@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+To: Konstantin Khlebnikov <koct9i@gmail.com>, 
+ Stephen Boyd <swboyd@chromium.org>, Sasha Levin <sashal@kernel.org>, 
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Thu, 22 Aug 2024 11:37:18 -0700
-mhkelley58@gmail.com wrote:
+This small series improves usability of scripts/decode_stacktrace.sh by
+improving the usage text and correctly reporting when modules are built
+without debugging symbols.
 
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> In a CoCo VM, all DMA-based I/O must use swiotlb bounce buffers
-> because DMA cannot be done to private (encrypted) portions of VM
-> memory. The bounce buffer memory is marked shared (decrypted) at
-> boot time, so I/O is done to/from the bounce buffer memory and then
-> copied by the CPU to/from the final target memory (i.e, "bounced").
-> Storage devices can be large consumers of bounce buffer memory because
-> it is possible to have large numbers of I/Os in flight across multiple
-> devices. Bounce buffer memory must be pre-allocated at boot time, and
-> it is difficult to know how much memory to allocate to handle peak
-> storage I/O loads. Consequently, bounce buffer memory is typically
-> over-provisioned, which wastes memory, and may still not avoid a peak
-> that exhausts bounce buffer memory and cause storage I/O errors.
-> 
-> For Coco VMs running with NVMe PCI devices, update the driver to
-> permit bounce buffer throttling. Gate the throttling behavior
-> on a DMA layer check indicating that throttling is useful, so that
-> no change occurs in a non-CoCo VM. If throttling is useful, enable
-> the BLK_MQ_F_BLOCKING flag, and pass the DMA_ATTR_MAY_BLOCK attribute
-> into dma_map_bvec() and dma_map_sgtable() calls. With these options in
-> place, DMA map requests are pended when necessary to reduce the
-> likelihood of usage peaks caused by the NVMe driver that could exhaust
-> bounce buffer memory and generate errors.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- Fix a typo
+- Add Stephen's review tag
+- Link to v1: https://lore.kernel.org/r/20240311-decode_stacktrace-find_module-improvements-v1-0-8bea42b421aa@bootlin.com
 
-LGTM.
+---
+Luca Ceresoli (3):
+      scripts/decode_stacktrace.sh: remove find_module recursion and improve error reporting
+      scripts/decode_stacktrace.sh: clarify command line
+      scripts/decode_stacktrace.sh: add '-h' flag
 
-Reviewed-by: Petr Tesarik <ptesarik@suse.com>
+ scripts/decode_stacktrace.sh | 49 ++++++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
+---
+base-commit: 45db3ab70092637967967bfd8e6144017638563c
+change-id: 20240311-decode_stacktrace-find_module-improvements-a02aee28fbaf
 
-Petr T
-
-> ---
->  drivers/nvme/host/pci.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 6cd9395ba9ec..2c39943a87f8 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -156,6 +156,7 @@ struct nvme_dev {
->  	dma_addr_t host_mem_descs_dma;
->  	struct nvme_host_mem_buf_desc *host_mem_descs;
->  	void **host_mem_desc_bufs;
-> +	unsigned long dma_attrs;
->  	unsigned int nr_allocated_queues;
->  	unsigned int nr_write_queues;
->  	unsigned int nr_poll_queues;
-> @@ -735,7 +736,8 @@ static blk_status_t nvme_setup_prp_simple(struct nvme_dev *dev,
->  	unsigned int offset = bv->bv_offset & (NVME_CTRL_PAGE_SIZE - 1);
->  	unsigned int first_prp_len = NVME_CTRL_PAGE_SIZE - offset;
->  
-> -	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req), 0);
-> +	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req),
-> +					dev->dma_attrs);
->  	if (dma_mapping_error(dev->dev, iod->first_dma))
->  		return BLK_STS_RESOURCE;
->  	iod->dma_len = bv->bv_len;
-> @@ -754,7 +756,8 @@ static blk_status_t nvme_setup_sgl_simple(struct nvme_dev *dev,
->  {
->  	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->  
-> -	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req), 0);
-> +	iod->first_dma = dma_map_bvec(dev->dev, bv, rq_dma_dir(req),
-> +					dev->dma_attrs);
->  	if (dma_mapping_error(dev->dev, iod->first_dma))
->  		return BLK_STS_RESOURCE;
->  	iod->dma_len = bv->bv_len;
-> @@ -800,7 +803,7 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
->  		goto out_free_sg;
->  
->  	rc = dma_map_sgtable(dev->dev, &iod->sgt, rq_dma_dir(req),
-> -			     DMA_ATTR_NO_WARN);
-> +			     dev->dma_attrs | DMA_ATTR_NO_WARN);
->  	if (rc) {
->  		if (rc == -EREMOTEIO)
->  			ret = BLK_STS_TARGET;
-> @@ -828,7 +831,8 @@ static blk_status_t nvme_map_metadata(struct nvme_dev *dev, struct request *req,
->  	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
->  	struct bio_vec bv = rq_integrity_vec(req);
->  
-> -	iod->meta_dma = dma_map_bvec(dev->dev, &bv, rq_dma_dir(req), 0);
-> +	iod->meta_dma = dma_map_bvec(dev->dev, &bv, rq_dma_dir(req),
-> +					dev->dma_attrs);
->  	if (dma_mapping_error(dev->dev, iod->meta_dma))
->  		return BLK_STS_IOERR;
->  	cmnd->rw.metadata = cpu_to_le64(iod->meta_dma);
-> @@ -3040,6 +3044,12 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct pci_dev *pdev,
->  	 * a single integrity segment for the separate metadata pointer.
->  	 */
->  	dev->ctrl.max_integrity_segments = 1;
-> +
-> +	if (dma_recommend_may_block(dev->dev)) {
-> +		dev->ctrl.blocking = true;
-> +		dev->dma_attrs = DMA_ATTR_MAY_BLOCK;
-> +	}
-> +
->  	return dev;
->  
->  out_put_device:
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 
