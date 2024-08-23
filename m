@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-298956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB795CE37
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:42:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CAD95CE40
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6311F2421B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:42:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1464BB253E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B144430;
-	Fri, 23 Aug 2024 13:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F98A188017;
+	Fri, 23 Aug 2024 13:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mankESo1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvKoed14"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869C3188591;
-	Fri, 23 Aug 2024 13:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04049186E55;
+	Fri, 23 Aug 2024 13:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420547; cv=none; b=jetnRM9VtTu6vKDXnKWvxFm7Z7GbA0xmO2cXfJJzHZmYUMqHohcncAr31Ilnm0d5oV1d+AUXPwJnHxxO0wZgh472rfzAFFGdL3alTAFyrRN72QiF+FFYn/jzI5cJILRKBfl5wYrWUpm4MWaqCoRYOPsUdSQZ1cKAZua7ZxgGRxk=
+	t=1724420611; cv=none; b=EHq9k2aOUfJiN7wUa7gP6G58+kU0Fg0yWimbMThrrantpkSlUeh5egBYAnahIr27Xaz/Jiyzdn7Wydo7d+Mw1sJvOh8XEslRs53ospnvj+ZvMpDR3zR9Gkyn2x8qc1zu3aFSvE5sNc1KGC/xmgDE4Xta3Q6FFJGXliRElkg/nMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420547; c=relaxed/simple;
-	bh=dCj6bF2nA2GRixqyvPE/0f13PcD/enz+/Phadf1/f3Q=;
+	s=arc-20240116; t=1724420611; c=relaxed/simple;
+	bh=ib4sJFch59+GHVbbNODHxykPpCp6swAnQhqC1AHvoNM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qse47AkYXrntTkR75m6ctRiiJAmdp6iBEsdlXOlfDQ/DgolRxQF5s8ADyRuG2o0jijNbyBSTQeJldAf9x2+irP76BzOqPPuHpuDpE8FQ0N9TtePn70tfEGGo36SWx45E17gEjBQyDl4GoUQXsmmr1ZHHR32YYDiqctgoiRz8CAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mankESo1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8C3C4AF09;
-	Fri, 23 Aug 2024 13:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724420545;
-	bh=dCj6bF2nA2GRixqyvPE/0f13PcD/enz+/Phadf1/f3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mankESo1CNmQtgGMz++7Ug3Bm1vjKtGPd2LSLkL4x6PWHB5ZPAVMRThPuTwU2LtDU
-	 s5ioHuIOl39Fa8+knwm17ifYkrY09p9+XEyv0/IfdJN7Kg1FFsFm927jcE9CBbTi5h
-	 LHraRL7jl1WDx6LmLfvsV3vMDArbjjdXcAeJ5pGqoUXULdmbNJLKEwNSYwBRKFnhtE
-	 8PQxHIFwX9oBsvMbOBNThmD8m3ghX1c3dG9z1uIxJH1LcliuSpoZvVq+hel7FtLlBp
-	 /TNrPxE/2PF4tm3jwugUF7tjIk5Qy/AfC1Rmu8euSgX883T7Uw26uD6nPoYUHNbqBf
-	 zzudNKj3ZC+fg==
-Date: Fri, 23 Aug 2024 10:42:21 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] perf trace: Collect augmented data using BPF
-Message-ID: <ZsiRvQiaIK4qN9Vs@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-10-howardchu95@gmail.com>
- <ZsiNef72pSLnQO_c@x1>
- <ZsiQyahfNYCAmbZq@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1+wSPbP5aMX5YgZLh3hNkT2ayhivwKi7zH3WEjXRhB8qjsWCyC5NprWuHHmnA6deJy4He8tB4e0xIYSV1jd4MjUNgpFEOtTx4WXFNhEB3zgzYc9gZCtXZlccpfuYLgi5z8inwB7meTkmCeBNclwHLDvYh0MKJ2X9xLfHRTXkjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvKoed14; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724420610; x=1755956610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ib4sJFch59+GHVbbNODHxykPpCp6swAnQhqC1AHvoNM=;
+  b=RvKoed14wIVS7WWbe2RILh/yRicWZ0WL0A0AW+JtRxsAgrgaGMyF9dl4
+   vzwOcfjh1GHgL65wPAffcZDDaZpeUCNol5EOiq0FVE9ISLml8wEtaTrBR
+   CcriEG7eMwWEiI7WR8QIUeYmN0XY4PMFMQMLj+HPvFZYn3QcH9mhRtnvz
+   aKdtqZ1A5Q7I8OmwUaz25InCGlCDFTtmUbxRhdLSSseujcf6yNlOF5U32
+   h2AHepGNGEj5ze+lj/WtaaxyhOGlAymFzbm3FzH2F05QozLXGSoNCraMZ
+   Z3dS9f3AveHvYs6Xx/nUadlBZKP+V/Y7o/eFNUmMblU3VfkGXBzMoAGlw
+   A==;
+X-CSE-ConnectionGUID: BoaZ8bdPTb+OjzvpNWABUw==
+X-CSE-MsgGUID: ZSNoBZc3T76LAXnOXVDy2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="40352809"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="40352809"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:29 -0700
+X-CSE-ConnectionGUID: S+vBFfveTkGCT/5A9bwGUw==
+X-CSE-MsgGUID: IoLQjP50Q9K73aFOWBIlnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="84980367"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:43:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shUZW-00000000oAz-2JFe;
+	Fri, 23 Aug 2024 16:43:22 +0300
+Date: Fri, 23 Aug 2024 16:43:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] regulator: Move OF-specific regulator lookup
+ code to of_regulator.c
+Message-ID: <ZsiR-kizxnvZufgR@smile.fi.intel.com>
+References: <20240822092006.3134096-1-wenst@chromium.org>
+ <20240822092006.3134096-3-wenst@chromium.org>
+ <ZsdBddTDuvNasHNq@smile.fi.intel.com>
+ <CAGXv+5FjwxGQgV6SdLfTeNRYbpcgwkEnCWvaZiWh4rs3bhs-2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZsiQyahfNYCAmbZq@x1>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5FjwxGQgV6SdLfTeNRYbpcgwkEnCWvaZiWh4rs3bhs-2A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 23, 2024 at 10:38:21AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Aug 23, 2024 at 10:24:09AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Aug 15, 2024 at 09:36:25AM +0800, Howard Chu wrote:
-> > > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > > @@ -427,7 +538,8 @@ int sys_enter(struct syscall_enter_args *args)
-> > >  	 * "!raw_syscalls:unaugmented" that will just return 1 to return the
-> > >  	 * unaugmented tracepoint payload.
-> > >  	 */
-> > > -	bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-> > > +	if (augment_sys_enter(args, &augmented_args->args))
-> > > +		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-> > 
-> > We shouldn't do that, instead we keep doing
-> > 
-> > 	bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-> > 
-> > And userspace will setup the syscalls_sys_enter map adding the generic
-> > pointer collector (augment_sys_enter) for syscalls that have pointers
-> > _and_ are not serviced by a pre-existing, specialized handler, this way
-> > we keep the ones we have already and that already take into account
-> > pretty printing network addresses based on the network family, knows how
-> > to pretty print flags (the perf_event_open, etc).
-> > 
-> > I'll try to do this now.
-> 
-> So, step by step, first this, and then hook it to the syscalls that:
-> 
-> 1) have a pointer to collect and no handler, i.e. as a last step in
-> assigning the functions to be tail called from the syscalls BPF map.
-> 
+On Fri, Aug 23, 2024 at 02:49:59PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Aug 22, 2024 at 9:47 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Aug 22, 2024 at 05:19:55PM +0800, Chen-Yu Tsai wrote:
 
-Sorry, sent the wrong patch, this one is the right one:
+...
 
-diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-index f29a8dfca044649b..4c8176f9a77ca5bb 100644
---- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-+++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-@@ -398,7 +398,11 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
- 	return bpf_map_lookup_elem(pids, &pid) != NULL;
- }
- 
--static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
-+// Will be tail called for syscalls with pointers, the setup is done
-+// in builtin-trace.c as the fallback for syscalls not handled by specialed code,
-+// like the network ones that need to look at one field to then decide how to
-+// pretty print a network specific address, etc.
-+int sys_enter_augmented(struct syscall_enter_args *args)
- {
- 	bool augmented, do_output = false;
- 	int zero = 0, size, aug_size, index, output = 0,
-@@ -480,7 +484,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
- 	if (!do_output)
- 		return 1;
- 
--	return augmented__beauty_output(ctx, payload, sizeof(struct syscall_enter_args) + output);
-+	return augmented__beauty_output(args, payload, sizeof(struct syscall_enter_args) + output);
- }
- 
- SEC("tp/raw_syscalls/sys_enter")
-@@ -511,8 +515,7 @@ int sys_enter(struct syscall_enter_args *args)
- 	 * "!raw_syscalls:unaugmented" that will just return 1 to return the
- 	 * unaugmented tracepoint payload.
- 	 */
--	if (augment_sys_enter(args, &augmented_args->args))
--		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
-+	bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
- 
- 	// If not found on the PROG_ARRAY syscalls map, then we're filtering it:
- 	return 0;
+> > > +/**
+> > > + * of_get_child_regulator - get a child regulator device node
+> > > + * based on supply name
+> > > + * @parent: Parent device node
+> > > + * @prop_name: Combination regulator supply name and "-supply"
+> > > + *
+> > > + * Traverse all child nodes.
+> > > + * Extract the child regulator device node corresponding to the supply name.
+> > > + * returns the device node corresponding to the regulator if found, else
+> > > + * returns NULL.
+> >
+> > At the same time you may fix kernel-doc warnings (no "Return" section) in these
+> > three (on your wish you may fix others in a separate change, but it's not
+> > related to this series).
+> 
+> As you said some other functions are missing it as well, so I'll do a
+> patch separate from this series to fix them all.
+
+But you need to fix them in this patch series. We do not add patches with known
+issues, which are really easy to fix beforehand.
+
+(And below seems you indirectly agrees on that)
+
+> > > + */
+
+...
+
+> > > +/** of_regulator_dev_lookup - lookup a regulator device with device tree only
+> >
+> > Something went wrong with the indentation.
+> 
+> Will fix, and also add a "Return" section.
+
+Thank you!
+
+> > > + * @dev: Device pointer for regulator supply lookup.
+> > > + * @supply: Supply name or regulator ID.
+> > > + *
+> > > + * If successful, returns a struct regulator_dev that corresponds to the name
+> > > + * @supply and with the embedded struct device refcount incremented by one.
+> > > + * The refcount must be dropped by calling put_device().
+> > > + * On failure one of the following ERR-PTR-encoded values is returned:
+> > > + * -ENODEV if lookup fails permanently, -EPROBE_DEFER if lookup could succeed
+> > > + * in the future.
+> > > + */
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
