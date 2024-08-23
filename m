@@ -1,75 +1,146 @@
-Return-Path: <linux-kernel+bounces-298530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311A095C873
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7842595C884
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01901F21DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A121C20CC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718AB1494D0;
-	Fri, 23 Aug 2024 08:54:18 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2452149C50;
+	Fri, 23 Aug 2024 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSPHkyXw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D7144C76
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE93149000;
+	Fri, 23 Aug 2024 08:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724403258; cv=none; b=Pv1ht31KC8B3Zc4U4IRx++/OTdID8+3v7NbaBQzoCci7d4LRrJv7+jx7Qg16A3HJhkMc7p/3mRPMh8nIUDa9zoNQVKjgwTOzdQYkU7hUmcSL0LPlZkJTLqpsrPuqkDiP08k/7MR7SPSujJkkV3cWdRp/K6YKo8mNGO8wLBB6kus=
+	t=1724403374; cv=none; b=a2jmxj8DzTLCV5T+DW7ojo5zxHtrs/KSKK8QtxmTe/+tpIg9tNEA/R+yv2eJFEfU72y31NbyNwkUmMRr9BYs5ke3jIAw91msupfve+cHV83c0hwVsohxEuwzGeo+nXYEO/Qesq9yiTkshM+z1RIW329i3OXKZNcfns3hvJg/kgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724403258; c=relaxed/simple;
-	bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=KabivoNuhKdlCkBjBLpUYVwqxPGaxruqO/zKtYbl718c4o2xPNsLLG8WxS+qxJiR71J+6S4HbFdJpYvc4p7kFrvZvgqNGuvj/D5qv3UJhk0mmOYteZFVyNc4XQ82wXXjlwYtfAXjUiPIu4HHVne1Rn3PzSuFSLu+I6Yk5gzVk78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d415635e6so19248315ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:54:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724403256; x=1725008056;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
-        b=Cir3q2badG6W6tQn1lj0QRy17m2fo7Yu543EJlEf6cMMiwMg4L6IcDqaJ7f1vljtgr
-         RuRpiSGdwuV5mLJQs/j8u5+9765sHYx/SfTbYS5zvEkO9F/rTvd+GM65+ieHfSTZv7A9
-         1SxoaKkqBsfdlWo43pvks7wuM/pTe95pmOXWbZVzVoAquSaaE+sOsURVtKFKIkGtuZSL
-         3w/khH1hjmygpyxjG8RslCRgLtJQbX32HiwgahswSrkcPw1suQHKNEx0wVULkCZtd6Yj
-         fNPOGJFw6F8Kp1TzJNaPOhbWHklDUGv2N2CISNezlMb8U85ljbZ5cAf0vAT3Dn084fCf
-         UE3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcx5Yb0pNrQj6B7Yu1jiBbWBgup1dxHztYOc3VxcE1IA5Aqzfn+MWNDynre0ZA+m7kBgyxdLJ5WsSfYfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU7nMja2jAgi0QjGhldhVp3O6tyB2bS19IEmtCw6r7NntvSNjs
-	gaeON5svbySNu2wa9jL4xglE71j4hYTSPzho+oEcAFm9LgMJ4FloTY88gTCuKfV5FdsTzX9fV5P
-	rda63E7uJcYGazF0T+I9Bp/0/V9q4KEaIlSWe3ffihFvY7XVZYbm5lX4=
-X-Google-Smtp-Source: AGHT+IHgUcZKM3rpcUM8/ceNNcL0vuTo1lAjtIrKGb7u0mDsIS/pO5t1ZFHuY5xhtes49eANjgu9fg23n/Id2lKtjPVJTg09g1ib
+	s=arc-20240116; t=1724403374; c=relaxed/simple;
+	bh=i0Xu0ojMn57FvVAOLSwT/qbq3Voen/aPH4CicZkeue4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BOKJd9vHNCPJW6l4tWRuUVEnQETa5svhBWi77TOWzqXgv9Z23aIclAWKbGXXKZAG45AzZP8wmA2o0lozaoscQQ5XMdymk7wBcjlvZ/N82FUtagAk0Du4IGUK5MyjJm7AJUYZkUIcPZ7aY+exPW+Sjz09SeqpU8pGyyekJh5EXz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSPHkyXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255CBC32786;
+	Fri, 23 Aug 2024 08:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724403373;
+	bh=i0Xu0ojMn57FvVAOLSwT/qbq3Voen/aPH4CicZkeue4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hSPHkyXwI86QVCzoy22Vd8ASUmGw2QWWlVCxaDiVnCbjNF+FvH7jRJUiVhMlauhcI
+	 Y7t3BtPoPYjuv9QJ2/Vc48Wv4C23x5/Ua5J3f0BLJxZyeTZcXOktYp7V9gRobOcBmN
+	 Q8uF+5vWcjSRfAs768OcSaS1R83jX3/tGJ4Wwwj7qlrRKw1s17FxzjPiqLcJzycHDP
+	 3jSg2utBfX15hzwtL/lgAVVYGd+VIcs9maeZsIuVZgaD6ooNyNZoOEI0DyojddvCrV
+	 OGcX3nDFwpdqSvYun2njrLnVu2JqHNpfVSzUHZGqXQ6jMVJ0DZj1unNEMFIObG6N8x
+	 0582IQMbCCK8g==
+Message-ID: <fd6b7276-cfb5-41ce-a25d-6278fe4d971e@kernel.org>
+Date: Fri, 23 Aug 2024 10:56:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2193:b0:39a:e9f5:5ed5 with SMTP id
- e9e14a558f8ab-39e3c8ee2eamr1227755ab.0.1724403255857; Fri, 23 Aug 2024
- 01:54:15 -0700 (PDT)
-Date: Fri, 23 Aug 2024 01:54:15 -0700
-In-Reply-To: <b7a4c61e-ffa5-424d-854f-0d3352a4ce83@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083e567062055eb47@google.com>
-Subject: Re: possible deadlock in ntfs_set_state (linux-ntfs3.git/master)
-From: syzbot <syzbot+c2ada45c23d98d646118@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drivers/pinctrl/samsung: Use kmemdup_array instead of
+ kmemdup for multiple allocation
+To: Shen Lichuan <shenlichuan@vivo.com>, s.nawrocki@samsung.com,
+ linus.walleij@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240823082407.48219-1-shenlichuan@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240823082407.48219-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> #syz test:https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+On 23/08/2024 10:24, Shen Lichuan wrote:
+> Let the kememdup_array() take care about
+> multiplication and possible overflows.
+> 
+> Using kmemdup_array() is more appropriate 
+> and makes the code easier to audit.
 
-unknown command "test:https://github.com/Paragon-Software-Group/linux-ntfs3.git"
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
->
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index e4464ee815f9..da24890f27f7 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -122,8 +122,8 @@ static int add_map_configs(struct device *dev, struct pinctrl_map **map,
+>  	if (WARN_ON(*num_maps == *reserved_maps))
+>  		return -ENOSPC;
+>  
+> -	dup_configs = kmemdup(configs, num_configs * sizeof(*dup_configs),
+> -			      GFP_KERNEL);
+> +	dup_configs = kmemdup_array(configs, num_configs,
+> +					sizeof(*dup_configs), GFP_KERNEL);
+
+Misaligned and wrapped too early.
+
+>  
+
+Best regards,
+Krzysztof
+
 
