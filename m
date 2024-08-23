@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-299186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8025E95D14C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A09495D14E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E491C219ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB141F232BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844BF188A1E;
-	Fri, 23 Aug 2024 15:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB0F188A2D;
+	Fri, 23 Aug 2024 15:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jRE1v6Zq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sKSG43sb"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyaghxWB"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7CC18891D
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6F185B49;
+	Fri, 23 Aug 2024 15:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724426646; cv=none; b=GweC7HdNUnZawtwy7+DQMwih0Yr42HXO2ZiDDKGES1yxvgQ3lMdBRSxJNOPbFU5XZ+TBl0hOz/6wCGCp1SEH1A3TYDXcBUoaKYXJarYLHY7f/1C4lUYW8nEWZGFDBq9b2BfrMXLGVY5SsB1tyBGQwVXD/R6zUB0DvsBv7Eh/dTs=
+	t=1724426708; cv=none; b=BUvvfHR/rCOi8/A+J3jwIPBlGSqRIHjr/4PyLwCM6u4QKxEnmDfUbO4Hn3UMOfZylWozyjYQPTt6OgxpXMvL30Rssra9sJqQbPFpQv50VcRLDacKSy/FMCnwNjsZpYYBnMbvzWRUboH6xet7n8KLlz6yK/GhF7WSPepq+9WL1i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724426646; c=relaxed/simple;
-	bh=dXXaT+XrLzWzSMAiHu2CPA6F0g3w3AL16WhsN2tFcTU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gjgGAkoaiQ3q/OuielGczgfw4GqMU/NXIMSAryEH7jFRxkcQImVP6Uxy6poiWOwPNMC8n0TSaI0CFEY0VT75jlAYsIdPnqBdNyo0nrvYC3chFWRXtHC/8eRS8GPWJ2u/WyNyCD7ABuDY9prxelz5GNTQ04MiDIR9rOZR5h8fCE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jRE1v6Zq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sKSG43sb; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6D000138FF2B;
-	Fri, 23 Aug 2024 11:24:03 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Fri, 23 Aug 2024 11:24:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724426643;
-	 x=1724513043; bh=7DkSDfC4nKtBQlrSWTZo8b6YkpGWZDzUq9d5F4Eo5Y8=; b=
-	jRE1v6Zq2US909ELF6jnrMrnVJK+p31B/UAlLV6BIpSV6yftsbt69khFVTsq5/8q
-	7qP4DRE1Fx1t3LYbfKZwcRfCKdoFRnZUKZdZ3GrrCFteQqAfPS+108gU8KQSiq/f
-	gHpBavBmeCy1sP/WbWZyPBMFFWB57rY8YpAy+P81zGgWAFTaC+w70PvCJleRFEYM
-	j+8t1j9Ux2QT98urcjHaWB3qTwVL27mCxgCknTGf6mCX1QC8EExpOFOXPkhJfiTQ
-	MWMRH3rWFj6KJS3XENDed8aylC2sfx3iRR9Z1naBWdu3lX/+qWrNZctjpbyfydtT
-	/b/BIf5BQofNbhXFc4CrlQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724426643; x=
-	1724513043; bh=7DkSDfC4nKtBQlrSWTZo8b6YkpGWZDzUq9d5F4Eo5Y8=; b=s
-	KSG43sb/qodEuIQIrOrxZ49SD6glxxnMaoyFWj80aebXIAkpgORyfnLLHzYZ0Uwv
-	3QySglveaR14U3HvwyEo7DvA4+jO5NGYss/Z+vHMAJsi0CTYIE9H5UkSWvJn6ost
-	tkS7v+m+s7IMd4UmO93X7yNapHdG9VQMEQb8+w3GIJ03Uey/NViyD06m5ad1lIo+
-	dcXOUZ5n87baHL7UaDgiOYuP9DK/huQ/xGleCNvfvLXkEVh694JSIUlWx8bIrXfx
-	P6Fo7tLhNYEVoCsiIu1QoxJiUW4WEw0XkzfLmQO8BjBSq2pxlfPBOGLb1jtBBz5a
-	O4FIkqWwcIKODXtsfuXqw==
-X-ME-Sender: <xms:k6nIZsNJhIHB-yDrgQbAYFxN0j47iv8-CX490YfySnB9YUOZfM7qhw>
-    <xme:k6nIZi-2UmFjG7XOh0MkvFSyNM0J72rYK8AFO1NpZjlU5GW_mIBWYpZ1DbE3Rss-a
-    UKkIkrSH9Vk9IpcOgU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvvddgkeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegstghmqdhkvghrnhgvlhdqfhgvvg
-    gusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepfhhlohhr
-    ihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopeifrg
-    hhrhgvnhhsthesghhmgidrnhgvthdprhgtphhtthhopehkihgvrhgrnhdrsghinhhghhgr
-    mhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrph
-    hinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehumhgr
-    nhhgrdhjrghinhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepuggrnh
-    drtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepghhrvghgkhhh
-    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrg
-    hrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:k6nIZjQkmmwA7bufIwMsCGGsoo_ehDcfeV8DxvFYdHHOdsPuvlkEzA>
-    <xmx:k6nIZkuO-3aoPWDIZLr8M5hnlZoYVSoU6dQPMDz2QHRBEtP-cwE2Kg>
-    <xmx:k6nIZke8Wh6IRPmejjYMXOzCV61tkuzbApf4tB77UfU_oOOwBwBOmA>
-    <xmx:k6nIZo2QJBZcg0vLoYk4_D1cpTcMcbyDdEXhoagBwkvLNOZvDsUi5A>
-    <xmx:k6nIZj98LaEDW8uSrVNVkh6vqb_lGoehWitlyQjRsl22bFtOxLWviYYl>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2A16E2220071; Fri, 23 Aug 2024 11:24:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724426708; c=relaxed/simple;
+	bh=mu9UKweC9V9eM6J6GCNNvhfyqUFybUoG/LWx3cRLPJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LO33X6U5xjgSkKH+Jpt9Ywsx1tExv6n2G7NzPiDuwxG3q3Ywc0uNHRGbjEogd0EHYjWKHs0mjeAVY2kT5xKZ2u8pLkYZOk0UPMFkd+BcV9LTvmw9xpggf5YDeEq629G5M26YJdgjl9Xbf39I4w7x6jPWIqRoWIS1kRb9LG+jN18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyaghxWB; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bf7a2035d9so29494206d6.1;
+        Fri, 23 Aug 2024 08:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724426706; x=1725031506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mu9UKweC9V9eM6J6GCNNvhfyqUFybUoG/LWx3cRLPJQ=;
+        b=VyaghxWBgIBM4N99HtS43bYTFhHdaKknAk2vVfX6JbRBayihvSySuRYwa+PYHVDYNt
+         onSjI4pgtWblysxNaTKNJJKJvCZMIJAoCvSRf5rLmMcpYZ1/fxwUBKm2ahsFYvhmR0LF
+         AR6RX/sFYZ5NFH7XLp+CW7Gin1iXhz9aLoNYrfhbyZe44JeCMFteuIKpf/dU1JEyPot4
+         NuvsHp8z5CMt0YhBfN58nN91ToGnydz0QXe4W7BVGjz7oSKa4fuIDwj0y4OnM8Iqgucd
+         I0cRjhUdXeakd04yWnYiPscMimTyotlsORYRoChqcpSAi/fp+hQQuXn402abotluDy8t
+         pFmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724426706; x=1725031506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mu9UKweC9V9eM6J6GCNNvhfyqUFybUoG/LWx3cRLPJQ=;
+        b=FbVITqquJsgrvp88mJ4NE6ez4YxhMGY/V63rg5sBTipRnha5HFUQJJkIxaDGy/k5wc
+         mXZXvTjby9gPaq1b2FqipuKHdYlg8WjKdsTA3PQ6F0cvgRllDFjeyXHGDyVu9RXRQd9d
+         svcFIAdU8IFkdZza2npvRnhmXA0jRsCwTl9g1B6VSKHqH+Xx2i8Yfn2fyly7pxv9Q55k
+         ymv6bt0QFa4KvwaSdP2Q45PEGw94X9R1BGIKNMuQpsPcb+xpuqkyEfWSq5Q8aJKjK0ml
+         APx9+kc6V8fBY189sxqY6SgBjqUZAt3hy7qJ40FXDS94m5unBYVtLAO5DEQRBjA0lS99
+         HOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+rtYCd5PK7xrMvDd3ZID7Mv/BL+GFXrB3kwvABJDJhDyUAXCazHpDStlLiIYauekO7zVYrP624cPK@vger.kernel.org, AJvYcCWPB1jEYt5rXJQCEw6p48ORcXd6+Zrs0I51gWvS/+hge2VxlfxqT/NxYBXhiZFQ/P7YGNkR+1VkIQ5yJ6um@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF+WrA8eVtpPZnqgmBcD5OKvwbZ+TQ5wZHpLEOWmLlHndXaSYE
+	wFSvtXuGCr4xMcqWslx+RWqpJQsF8BX67UJynn+/7mr4ZYrT1q/by5CvvugGPnPVvcY1n5VdV2+
+	OKLbgm3VXZXdwjVifshVagcgpQj0=
+X-Google-Smtp-Source: AGHT+IGoVva4JWtaN/yAOWV/xxGdHWcZXvWEgwo+5tN/1E6XCsWI98CURV6Xs5Nr2aGAcFUXE4P1qpf6FoQapiSYuK4=
+X-Received: by 2002:a05:6214:5d0f:b0:6b7:4398:5953 with SMTP id
+ 6a1803df08f44-6c16d4a11edmr46738446d6.7.1724426705863; Fri, 23 Aug 2024
+ 08:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 23 Aug 2024 15:23:42 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Umang Jain" <umang.jain@ideasonboard.com>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, "Dan Carpenter" <dan.carpenter@linaro.org>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "Kieran Bingham" <kieran.bingham@ideasonboard.com>,
- "Stefan Wahren" <wahrenst@gmx.net>,
- "Dave Stevenson" <dave.stevenson@raspberrypi.com>,
- "Phil Elwell" <phil@raspberrypi.com>
-Message-Id: <8174beea-9260-4248-abb5-4104a886b905@app.fastmail.com>
-In-Reply-To: <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
-References: <20240823-to_sent2-v1-0-8bc182a0adaf@ideasonboard.com>
- <20240823-to_sent2-v1-1-8bc182a0adaf@ideasonboard.com>
-Subject: Re: [PATCH 1/7] staging: vchiq: Factor out bulk transfer for
- VCHIQ_BULK_MODE_WAITING
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240822170440.265055-1-robertcnelson@gmail.com> <fe33a2tns5thgxwlyeqk7kh5lve6vqlfmkwiosh6mew3ohjcsl@rdiwvnqgoaw6>
+In-Reply-To: <fe33a2tns5thgxwlyeqk7kh5lve6vqlfmkwiosh6mew3ohjcsl@rdiwvnqgoaw6>
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Fri, 23 Aug 2024 10:24:39 -0500
+Message-ID: <CAOCHtYgi3PRHr1k99K3oLEXhD+bB0FpmXh3K60aLc=i6=J+6=w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: ti: Add BeagleY-AI
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
+	Jared McArthur <j-mcarthur@ti.com>, Jason Kridner <jkridner@beagleboard.org>, 
+	Deepak Khatri <lorforlinux@beagleboard.org>, Drew Fustini <drew@beagleboard.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024, at 15:14, Umang Jain wrote:
-> The bulk transfer is VCHIQ_BULK_MODE_WAITING is used by VCHIQ ioctl
-> interface. It is factored out to a separate function from
-> vchiq_bulk_transfer() to bulk_xfer_waiting_interruptible().
+On Fri, Aug 23, 2024 at 2:41=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> This is a part of vchiq_bulk_transfer refactoring. Each bulk mode
-> will have their dedicated functions to execute bulk transfers.
-> Each mode will be handled separately in subsequent patches.
+> On Thu, Aug 22, 2024 at 12:04:39PM -0500, Robert Nelson wrote:
+> > This board is based on ti,j722s family using the am67a variation.
+> >
+> > https://beagley-ai.org/
+> > https://openbeagle.org/beagley-ai/beagley-ai
+> >
+> > Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
 >
-> bulk_xfer_waiting_interruptible() is suffixed with "_interruptible"
-> to denote that it can be interrupted when a signal is received.
-> -EAGAIN maybe returned in those cases, similar to what
-> vchiq_bulk_transfer() does.
+> <form letter>
+> This is a friendly reminder during the review process.
 >
-> Adjust the vchiq_irq_queue_bulk_tx_rx() in the vchiq-dev.c to call
-> bulk_xfer_waiting_interruptible() for waiting mode. A temporary
-> goto label has been introduced to jump the call execution over
-> vchiq_bulk_transfer() for waiting mode only. When all dedicated bulk
-> transfer calls are introduced, this label shall be dropped.
+> It looks like you received a tag and forgot to add it.
 >
-> No function changes intended in this patch.
->
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> If you do not know the process, here is a short explanation: Please add
+> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+> or above your Signed-off-by tag. Tag is "received", when provided
+> in a message replied to you on the mailing list. Tools like b4 can help
+> here. However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for tags received on the version
+> they apply.
 
-This looks reasonable, just one think I would change:
+Yeah, Rob's ack was for v1.. then TI got involved and renamed the part
+family, so i emailed on v2 of the change j722s -> am67a, it was 95% of
+the patch, didn't know to add it back..
 
-> +int
-> +bulk_xfer_waiting_interruptible(struct vchiq_instance *instance, 
-> unsigned int handle,
-> +				void *userdata)
-> +{
-> +	struct vchiq_service *service = find_service_by_handle(instance, 
-> handle);
-> +	struct bulk_waiter *bulk_waiter = NULL;
+Regards,
 
-> +
-> +	bulk_waiter = userdata;
-
-Since you always pass a 'struct bulk_waiter' here, please
-replace the 'void *userdata' with the typed argument directly.
-
-       Arnd
+--=20
+Robert Nelson
+https://rcn-ee.com/
 
