@@ -1,115 +1,199 @@
-Return-Path: <linux-kernel+bounces-298927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E233A95CD86
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:15:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6422F95CD8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E1DB24535
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:15:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892571C22776
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5908186600;
-	Fri, 23 Aug 2024 13:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21856186601;
+	Fri, 23 Aug 2024 13:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcnOjdvJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b="Mp70CWP7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E36184544;
-	Fri, 23 Aug 2024 13:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418920; cv=none; b=m5yAWdBMQjZzBBfbQjKHOU/mr31/Ur01yMxMY6TRgYcSnfOwfVq6a6wLbsPIxnsed7G/aSOyUNwWD7jtNYt2fDFt8uUvFbNo8kN+GyDCBsAnZAmnT98+c+pj6FEPmrqHiQrLt2btnyo1wkIXojReYFqTH+xyEJ0VDCRoyeh9+Jw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418920; c=relaxed/simple;
-	bh=OsnZhEozgd8AMRsm0tfJjU7ndQ6UcudKoDyQM0UzRCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=daJYf8mvTV91zN0CnUgSPmaoZnQPe5H8oq1QJqIffLIwewPYBRt4stGf7cd35ehZd6ksj78Y7w4DwRSSAFC908AVsSvg99AHjD9m4oHnI8JKyGKmg68UecbrfgrVUQBu7Zy/UXJi3zIDBenAgyneH3StXJJsP0dNPK6Kim9Majw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcnOjdvJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22725C32786;
-	Fri, 23 Aug 2024 13:15:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724418919;
-	bh=OsnZhEozgd8AMRsm0tfJjU7ndQ6UcudKoDyQM0UzRCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LcnOjdvJ915qgQQPN3X1UBwBXjA8HWeE5McQzHvZJ1EO14ZrCSh17wRppX1tB1voU
-	 yvmUjyfOeuK/MXKKig1UQoEbR4rLMIYcRmjYQPkok8hYkP5D5uht/SXFNKJBox5FHp
-	 jKA4LJbOl8fJKu/Tks1y6M29239a0LnmxgEjWdH/0RqDwObH7k6zXYDEOEB7PDNdFO
-	 g1BCqwWRVHXN5Ysdhn82OLj5cBLfA2FRli7hP3I4drm3pATkz7OgHe4jw4S+PvMHSn
-	 +cO4DpqfssJEzKCrDsrUIZj7kPh65T0ajMvcRhc/FlkN8YIR5Onwixlm9Y6wF2+7oj
-	 i2oWrWIYN6aag==
-Date: Fri, 23 Aug 2024 10:15:16 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] perf trace: Pretty print struct data
-Message-ID: <ZsiLZCo4vfER18t3@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-7-howardchu95@gmail.com>
- <ZsiDhSPs4XYX4VP9@x1>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB5A184544
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724418953; cv=pass; b=XKPQ66WAIFeOQ+WoJQwn+nqXXbltPOAfupK1DdGVQ7FMUp+HLWjcKpJ3wlGnkdyYqo8+MLOXO9ggvX8rRd4rj7aGpyM6ID368ILstqMpx6l/MKccGxeHbt7sqGL/s01LOpk5tfM5Yr/v5A7aWhSzO/8j1p1pXdAhzBOCg5ANndM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724418953; c=relaxed/simple;
+	bh=+JIbLIGkjpPm4IBKm9c9dqnFloiyt2i03j0cM4un4rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Muw+CtjFkovJsrfqjP/sKGHT4Umcsy6ywSJaFJ1fCnQdTgQHGHH8pR4QicWmjHnbQXI5OLyKnkWpAjkphtIqdTcmU8PX0I5rLM/F5xJVp3NNg5BxgRdh8vVgFk06dzkRE4eKPeKGgr6/1f2Ue0/+IVIwHyo0LcgEdGhx0zYfr7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b=Mp70CWP7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: daniel.almeida@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724418946; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cd3xSoD3IjX74gVNZbUc2Ehc4GTHGd2A6Nignz8UqhEFkcvoW4TXVMgN5vNVvZFoESO5MiGMkBeVvOq/Uly/WNyQy05Zu6w3UWGX51N8qYANGIvwAwuN0Z3Wf8/2WEJpiTRkVSh6ofOL33qLztEwa/TiHyhTLdpjWvTbAbQYx7I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724418946; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bIOzjUb5MLRVm8nptIqhgliQ+vrgbIOHPw3AvGvE9rY=; 
+	b=G1PGLhlwSorowQJTRCbSyNoOsD3Fv1fV00k51GP+snaHg/NeLe+zBiZfbtGPGCdWF7meDSmTEwCtXLLYPZvUZCk9EelVrHddwFugugjHGS1UDnl5ljc0ZRmqaXZliAj/G1GkKQ0e01MJ9xA1U2QDUWE4j1T8NTAVYnbiq9Oi708=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=boris.brezillon@collabora.com;
+	dmarc=pass header.from=<boris.brezillon@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724418946;
+	s=zohomail; d=collabora.com; i=boris.brezillon@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=bIOzjUb5MLRVm8nptIqhgliQ+vrgbIOHPw3AvGvE9rY=;
+	b=Mp70CWP7T39pzvYYY98jbBji1E5CrZHBVhNvZq9vHiGcz7ktu6e9bRU/pcUnUjQg
+	fI6gCW74p0hodJ+Fu8B6YHUjVl61EIcjwPwHjE/C+tAFQzaVB1ckA1fMfk/txqCmWZh
+	x0JTah6xJhx0ZDWwdyimfTt4xKrMcpz3CLs9Vwfg=
+Received: by mx.zohomail.com with SMTPS id 1724418943978468.99591708195624;
+	Fri, 23 Aug 2024 06:15:43 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:15:34 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: liviu.dudau@arm.com, steven.price@arm.com, carsten.haitzler@arm.com,
+ robh@kernel.org, faith.ekstrand@collabora.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 RESEND 1/5] drm: panthor: expose some fw information
+ through the query ioctl
+Message-ID: <20240823151534.6e2f7f42@collabora.com>
+In-Reply-To: <20240821143826.3720-2-daniel.almeida@collabora.com>
+References: <20240710225011.275153-1-daniel.almeida@collabora.com>
+	<20240821143826.3720-1-daniel.almeida@collabora.com>
+	<20240821143826.3720-2-daniel.almeida@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsiDhSPs4XYX4VP9@x1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, Aug 23, 2024 at 09:41:41AM -0300, Arnaldo Carvalho de Melo wrote:
-> One other thing I think that the skel patch should come before these,
-> so that at this point in the series I could _test_ struct printing.
+On Wed, 21 Aug 2024 11:37:27 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-So I did that, need more polishing I have now:
+> This is of interest to userspace, and similar in nature to the GPU
+> and CSIF information we already return in the query ioctl.
+> 
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.h |  3 +++
+>  drivers/gpu/drm/panthor/panthor_drv.c    |  8 ++++++++
+>  drivers/gpu/drm/panthor/panthor_sched.c  |  5 +++++
+>  include/uapi/drm/panthor_drm.h           | 19 +++++++++++++++++++
+>  4 files changed, 35 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index e388c0472ba7..224c53dcfe6d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -100,6 +100,9 @@ struct panthor_device {
+>  	/** @csif_info: Command stream interface information. */
+>  	struct drm_panthor_csif_info csif_info;
+>  
+> +	/** @fw_info: Firmware info for the global interface */
+> +	struct drm_panthor_fw_info fw_info;
+> +
+>  	/** @gpu: GPU management data. */
+>  	struct panthor_gpu *gpu;
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index b8a84f26b3ef..fb30e119d9bf 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -164,6 +164,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  	_Generic(_obj_name, \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_fw_info, instr_features), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> @@ -765,6 +766,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  			args->size = sizeof(ptdev->csif_info);
+>  			return 0;
+>  
+> +		case DRM_PANTHOR_DEV_QUERY_FW_INFO:
+> +			args->size = sizeof(ptdev->fw_info);
+> +			return 0;
+> +
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -777,6 +782,9 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
+>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
+>  
+> +	case DRM_PANTHOR_DEV_QUERY_FW_INFO:
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->fw_info);
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 79ffcbc41d78..e0ecc8bcfaae 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -3495,6 +3495,11 @@ int panthor_sched_init(struct panthor_device *ptdev)
+>  	ptdev->csif_info.cs_slot_count = sched->cs_slot_count;
+>  	ptdev->csif_info.scoreboard_slot_count = sched->sb_slot_count;
+>  
+> +	ptdev->fw_info.version = glb_iface->control->version;
+> +	ptdev->fw_info.features = glb_iface->control->features;
+> +	ptdev->fw_info.group_num = glb_iface->control->group_num;
+> +	ptdev->fw_info.instr_features = glb_iface->control->instr_features;
+> +
+>  	sched->last_tick = 0;
+>  	sched->resched_target = U64_MAX;
+>  	sched->tick_period = msecs_to_jiffies(10);
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index aaed8e12ad0b..e235cf452460 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
+>  
+>  	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
+>  	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
+> +
+> +	/** @DRM_PANTHOR_DEV_QUERY_FW_INFO: Query firmware information */
+> +	DRM_PANTHOR_DEV_QUERY_FW_INFO,
+>  };
+>  
+>  /**
+> @@ -377,6 +380,22 @@ struct drm_panthor_csif_info {
+>  	__u32 pad;
+>  };
+>  
+> +/** struct drm_panthor_fw_info - FW information
+> + *
+> + * Structure grouping all queryable information relating to the global FW interface.
+> + */
+> +
+> +struct drm_panthor_fw_info {
+> +	/** @version: Global interface version */
+> +	__u32 version;
+> +	/** @features: Global interface features */
 
-⬢[acme@toolbox perf-tools-next]$ git log --oneline -10
-78bb4b917b942f7d (HEAD -> perf-tools-next) perf trace: Pretty print struct data
-027ae076fa7bc068 perf trace: Pass the richer 'struct syscall_arg' pointer to trace__btf_scnprintf()
-4f2ac4e8a8d9488a perf trace: Add trace__bpf_sys_enter_beauty_map() to prepare for fetching data in BPF
-545008dcff9e06f6 perf trace: Collect augmented data using BPF
-0b5a34a3cf98843a perf trace: Fix perf trace -p <PID>
-23da4ec3640538fa perf evlist: Introduce method to find if there is a bpf-output event
-00dc514612fe98cf perf python: Disable -Wno-cast-function-type-mismatch if present on clang
-b81162302001f411 perf python: Allow checking for the existence of warning options in clang
-1cfd01eb602d73b9 perf annotate-data: Copy back variable types after move
-895891dad7353d60 perf annotate-data: Update stack slot for the store
-⬢[acme@toolbox perf-tools-next]$
+The fact the information comes from the global interface is not
+super useful. How about replacing "Global interface" by "Firmware" in
+the description?
 
-And the comment on the struct pretty printer, added to the patch where
-it is introduced.
+> +	__u32 features;
+> +	/** @group_num: Number of CSG interfaces */
+> +	__u32 group_num;
+> +	/** @instr_features: Instrumentation features */
+> +	__u32 instr_features;
+> +};
+> +
+>  /**
+>   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+>   */
 
-Committer testing:
-
-After moving the changes to the BPF skel to _before_ this patch, we're
-able to test this patch at this point in the series:
-
-  root@number:~# perf trace -e connect ssh localhost
-       0.000 ( 0.008 ms): ssh/762249 connect(fd: 3, uservaddr: {2,}, addrlen: 16)                          = 0
-       0.014 ( 0.005 ms): ssh/762249 connect(fd: 3, uservaddr: {10,}, addrlen: 28)                         = 0
-       0.030 ( 0.032 ms): ssh/762249 connect(fd: 3, uservaddr: {10,}, addrlen: 28)                         = 0
-  root@localhost's password:     63.031 ( 0.035 ms): ssh/762249 connect(fd: 4, uservaddr: {1,{['/','v','a','r','/','r','u','n','/','.','h','e','i','m',],},}, addrlen: 110) = 0
-      64.037 ( 0.024 ms): ssh/762249 connect(fd: 4, uservaddr: {1,{['/','v','a','r','/','r','u','n','/','.','h','e','i','m',],},}, addrlen: 110) = 0
- 
-  root@number:~# strace -e connect ssh localhost
-  connect(3, {sa_family=AF_INET, sin_port=htons(22), sin_addr=inet_addr("127.0.0.1")}, 16) = 0
-  connect(3, {sa_family=AF_INET6, sin6_port=htons(22), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, "::1", &sin6_addr), sin6_scope_id=0}, 28) = 0
-  connect(3, {sa_family=AF_INET6, sin6_port=htons(22), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, "::1", &sin6_addr), sin6_scope_id=0}, 28) = 0
-  connect(4, {sa_family=AF_UNIX, sun_path="/var/run/.heim_org.h5l.kcm-socket"}, 110) = 0
-  connect(4, {sa_family=AF_UNIX, sun_path="/var/run/.heim_org.h5l.kcm-socket"}, 110) = 0
-  root@localhost's password:
-
-Which while getting the struct contents produces an end result that 
-conveys less info than the specilized connect BPF program we have, so we
-need to only use this generic BTF dumper approach when we _don't_ have
-an specialized one, at least at this point.
-
-In the future we really should get the BTF dumper to use the more
-specialized pretty printers that knows about how to pretty print network
-specific addresses based on the network family, etc.
 
