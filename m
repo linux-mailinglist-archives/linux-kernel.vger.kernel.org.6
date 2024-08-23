@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-298812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE9F95CBC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB7995CBC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1FD1F24E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9B1C23B4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BBD18787D;
-	Fri, 23 Aug 2024 11:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="LVKUqzQ4"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B9618786E;
+	Fri, 23 Aug 2024 11:56:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B4E17E01E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343ED143C5F;
+	Fri, 23 Aug 2024 11:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414146; cv=none; b=ks2wjOaVTEAUs7Iwvnowcy5wGC5blW2oHyu3wiWpOlq4ytFgJ68V5tr/6ZX8HuovCLOKbR+FnpG9JQ9BkO+ZgofWGPbsfXermQvz2XyD1iH9pQx+m23ByiowC0wkcF8OLn86L8vSISfB5rNMsLCk2aAWiPxM6wr+07gEvePhP6E=
+	t=1724414204; cv=none; b=o43RRT5Vxdljc7LREcr/Y/z1ZqDpZmuWfORSpeg03rDdP5sUl7B2mTka/3cp5Ds7lNc9L8gCQxZ1Gr3noQZJnPs9CVnnwX5RN70QDThvLRjYF/pNDSJm1EzBL0NxoJhL1Quz7dIFjonhePa3ZJjKNQJIx/tOTHgYp4HzbisGkQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414146; c=relaxed/simple;
-	bh=OAw1ctritTsq/dMDRD2dD5NaMmegvf7DkNQKeVfjH38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXxRSDsaPc7xcpiZwt7mVeQhjxgtIO8TkMojJL3s+Bqhd53SOSpE0ft0hDWIyH8ibjBWDUClBy853zFAfsicazAa7zyteumotG82z37QqKPG7tFlHNueSX2sibrKRdjTQlpGlTLySDWLUzpHPFwcqqkCBg3MYehVD9a2Q//e3FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=LVKUqzQ4; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso216972966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1724414142; x=1725018942; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D4BFrh763eCa6FHGzYT0flqYQBNlmub8RNPp8zn1r7E=;
-        b=LVKUqzQ4KGjvtvMrZr6glQbvAJFLUHeiMGrh0p6D9laRZsSXN++7NZra/tEZqakd2H
-         6Duc2PYSO3gVbafOSsvtYv1QaPWzjo8kK0yPEXoUcf8A+idMIoFFRcqG/lueIeCSQcrj
-         JqfrxwJX6kMV7borr0aV4T3lvrD1Yiox/W6L16wrONrav8IleEzMZ/x4QRJsKe1DBFbD
-         TtevtnT6e45GrDq84FCiaW+FKzh6bKccbaT/P9mFnanHb/D66vKwHkQf9YVK8k5q5Xh9
-         9Gi0oC0abw3/15YxNAxtuzNsb+Gtoj1mZ2UK3mjAGDSqZyipz35R8RmHQ8Sy/MdqdwaV
-         rg2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724414142; x=1725018942;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4BFrh763eCa6FHGzYT0flqYQBNlmub8RNPp8zn1r7E=;
-        b=rVuSaeVuwjRRH2pAEWOAu1zNoBd4zl7Q5esdourjiVW6/8rmv8vAEQu0uQPjt+WIod
-         Do0JgrnIYPHToZHIxGLCoavagRiT2n1DQ7uP238Ie8NYqvFeXmoEpLRUR6/ZDlnoqQRS
-         Bh3ZRNa2yx1XKddponDQ59tDwHOVbKMnZ0uBPoeglJ0eH0yp6jifMsrBPdN68zxJlS2S
-         GSHbUbqM4RLF10x3+nq34eOnc9vqW1E0YGLKLYugJpzx/rRpQ155tS724SZww64COVgd
-         KlqgTKILyF8GSPL1sMWfjWBqa0aW6hko4NPACgKRKtExfAaaH+4E32uPZgozFILdnQ4r
-         EsEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWfwBbBPPhPvPTnV5Zfpjvu3L3JOgfr9QYvVvThcsk+KjAV6ZTvLdhgMSd5b+xBiBMPPD0eCoAdeSN22E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj660CVGbUeaBViX+kF40hVJaYDgx8PtRO+iUVny4ETQHMPOXc
-	v3ZFR/u6fjtmAr+c2brTfRY0ON/aj8f87w5KdtHLdnKLTtYJSzaYz4ueeK2vQgk=
-X-Google-Smtp-Source: AGHT+IHc/MhbYWOLkuVUYhr6jE4YNr3rrbrwk4qzS4Q0NsvUyW8HecvlKHYggdIaUYJD+LQvJaCBAw==
-X-Received: by 2002:a17:906:d54c:b0:a86:9ac9:f3fa with SMTP id a640c23a62f3a-a86a54aa691mr169687166b.50.1724414141884;
-        Fri, 23 Aug 2024 04:55:41 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47d1dfsm252646566b.149.2024.08.23.04.55.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 04:55:41 -0700 (PDT)
-Date: Fri, 23 Aug 2024 13:55:40 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Feng zhou <zhoufeng.zf@bytedance.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
-	hawk@kernel.org, john.fastabend@gmail.com, bigeasy@linutronix.de,
-	lorenzo@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Subject: Re: [PATCH bpf-next v2] net: Don't allow to attach xdp if bond slave
- device's upper already has a program
-Message-ID: <Zsh4vPAPBKdRUq8H@nanopsycho.orion>
-References: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
+	s=arc-20240116; t=1724414204; c=relaxed/simple;
+	bh=MBf7otlcpTgpp7tPlJUEgl08qH3djO0uuaYTsvCnv/I=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hGCbJErM8Ky1gzGD2AGpJoAs6sZSSWe+gsfi2q0UxqMgF0d573cdF+MjrnDEyMerGN+zlWb+MjBgCl660s2qutbSGtYSTiR/PymfF1ASp25aA8pRmq1uYVZLaLa0L+z4Ph/eubHorLmXIDZAq6QwOioY+ASdKFv8E+AoHt1l6DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqz3y4sQ8z6K9Pw;
+	Fri, 23 Aug 2024 19:53:34 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1F602140B18;
+	Fri, 23 Aug 2024 19:56:39 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 12:56:38 +0100
+Date: Fri, 23 Aug 2024 12:56:37 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Santosh Shilimkar <ssantosh@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Roger Quadros <rogerq@kernel.org>, Tony Lindgren
+	<tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Michal Simek <michal.simek@amd.com>,
+	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 7/7] memory: pl353-smc: simplify with
+ devm_clk_get_enabled()
+Message-ID: <20240823125637.00007fe4@Huawei.com>
+In-Reply-To: <20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
+References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
+	<20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823084204.67812-1-zhoufeng.zf@bytedance.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Fri, Aug 23, 2024 at 10:42:04AM CEST, zhoufeng.zf@bytedance.com wrote:
->From: Feng Zhou <zhoufeng.zf@bytedance.com>
->
->Cannot attach when an upper device already has a program, This
->restriction is only for bond's slave devices or team port, and
->should not be accidentally injured for devices like eth0 and vxlan0.
+On Fri, 23 Aug 2024 12:16:02 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-What if I attach xdp program to solo netdev and then I enslave it
-to bond/team netdev that already has xdp program attached?
-What prevents me from doing that?
-
-
->
->Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
->Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
->---
->Changelog:
->v1->v2: Addressed comments from Paolo Abeni, Jiri Pirko
->- Use "netif_is_lag_port" relace of "netif_is_bond_slave"
->Details in here:
->https://lore.kernel.org/netdev/3bf84d23-a561-47ae-84a4-e99488fc762b@bytedance.com/T/
->
-> net/core/dev.c | 10 ++++++----
-> 1 file changed, 6 insertions(+), 4 deletions(-)
->
->diff --git a/net/core/dev.c b/net/core/dev.c
->index f66e61407883..49144e62172e 100644
->--- a/net/core/dev.c
->+++ b/net/core/dev.c
->@@ -9502,10 +9502,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
-> 	}
+> Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
+> make code simpler.
 > 
-> 	/* don't allow if an upper device already has a program */
->-	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
->-		if (dev_xdp_prog_count(upper) > 0) {
->-			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
->-			return -EEXIST;
->+	if (netif_is_lag_port(dev)) {
->+		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
->+			if (dev_xdp_prog_count(upper) > 0) {
->+				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
->+				return -EEXIST;
->+			}
-> 		}
-> 	}
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+LGTM.
+Follow up suggestion inline.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/memory/pl353-smc.c | 36 +++---------------------------------
+>  1 file changed, 3 insertions(+), 33 deletions(-)
 > 
->-- 
->2.30.2
->
+> diff --git a/drivers/memory/pl353-smc.c b/drivers/memory/pl353-smc.c
+> index c75b99e49970..994c7a792e34 100644
+> --- a/drivers/memory/pl353-smc.c
+> +++ b/drivers/memory/pl353-smc.c
+> @@ -75,34 +75,21 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
+>  	const struct of_device_id *match = NULL;
+>  	struct pl353_smc_data *pl353_smc;
+>  	struct device_node *child;
+> -	int err;
+>  
+>  	pl353_smc = devm_kzalloc(&adev->dev, sizeof(*pl353_smc), GFP_KERNEL);
+>  	if (!pl353_smc)
+>  		return -ENOMEM;
+>  
+> -	pl353_smc->aclk = devm_clk_get(&adev->dev, "apb_pclk");
+> +	pl353_smc->aclk = devm_clk_get_enabled(&adev->dev, "apb_pclk");
+>  	if (IS_ERR(pl353_smc->aclk))
+>  		return dev_err_probe(&adev->dev, PTR_ERR(pl353_smc->aclk),
+>  				     "aclk clock not found.\n");
+>  
+> -	pl353_smc->memclk = devm_clk_get(&adev->dev, "memclk");
+> +	pl353_smc->memclk = devm_clk_get_enabled(&adev->dev, "memclk");
+>  	if (IS_ERR(pl353_smc->memclk))
+>  		return dev_err_probe(&adev->dev, PTR_ERR(pl353_smc->memclk),
+>  				     "memclk clock not found.\n");
+>  
+> -	err = clk_prepare_enable(pl353_smc->aclk);
+> -	if (err) {
+> -		dev_err(&adev->dev, "Unable to enable AXI clock.\n");
+> -		return err;
+> -	}
+> -
+> -	err = clk_prepare_enable(pl353_smc->memclk);
+> -	if (err) {
+> -		dev_err(&adev->dev, "Unable to enable memory clock.\n");
+> -		goto disable_axi_clk;
+> -	}
+> -
+>  	amba_set_drvdata(adev, pl353_smc);
+>  
+>  	/* Find compatible children. Only a single child is supported */
+> @@ -115,30 +102,14 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
+>  		break;
+>  	}
+>  	if (!match) {
+With change below this becomes unconditional as we'll have already
+returned in the loop for the good path.
+
+Might as well use dev_err_probe() here as well to save a few lines.
+
+> -		err = -ENODEV;
+>  		dev_err(&adev->dev, "no matching children\n");
+> -		goto disable_mem_clk;
+> +		return -ENODEV;
+>  	}
+>  
+>  	of_platform_device_create(child, NULL, &adev->dev);
+>  	of_node_put(child);
+
+An additional cleanup looks sensible here.
+
+Push this last bit into the loop and use 
+
+for_each_available_child_of_node_scoped()
+
+Assuming you don't already have a patch doing that :)
+
+>  
+>  	return 0;
+> -
+> -disable_mem_clk:
+> -	clk_disable_unprepare(pl353_smc->memclk);
+> -disable_axi_clk:
+> -	clk_disable_unprepare(pl353_smc->aclk);
+> -
+> -	return err;
+> -}
+> -
+> -static void pl353_smc_remove(struct amba_device *adev)
+> -{
+> -	struct pl353_smc_data *pl353_smc = amba_get_drvdata(adev);
+> -
+> -	clk_disable_unprepare(pl353_smc->memclk);
+> -	clk_disable_unprepare(pl353_smc->aclk);
+>  }
+>  
+>  static const struct amba_id pl353_ids[] = {
+> @@ -157,7 +128,6 @@ static struct amba_driver pl353_smc_driver = {
+>  	},
+>  	.id_table = pl353_ids,
+>  	.probe = pl353_smc_probe,
+> -	.remove = pl353_smc_remove,
+>  };
+>  
+>  module_amba_driver(pl353_smc_driver);
+> 
+
 
