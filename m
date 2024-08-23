@@ -1,111 +1,247 @@
-Return-Path: <linux-kernel+bounces-298901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FFD95CCF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98A595CD06
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF50C289199
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2F71C226AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48DE188A07;
-	Fri, 23 Aug 2024 12:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t6spEVrL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596CF56B7C;
+	Fri, 23 Aug 2024 12:52:21 +0000 (UTC)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3703518893C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B11185B76;
+	Fri, 23 Aug 2024 12:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417504; cv=none; b=Tl6QX+gmQxBHvJDzi+ZkwUhS3xCkGchH87uWh04wXKbv89YVt8rZIa9rN5isFIANQIjQ0dRW9DZSSBtCw8BUdr0yKBQlbWBGEmaNWreekFEO7PqmSbxnL9ivbV7JHVZX1LmmbnZiUMPMZXI683UxT4eznOEyMdTZ7gqVpBhnTME=
+	t=1724417540; cv=none; b=LEgJgqHOtgKRinfFk1FFsHYErQPASYn9IMwVp5++/vmwUqA+/IXjFUMCdJvAsZ/UVXA/WgpETnG4QOzarSjx80l0pybID+2PtFyFPNVD9VvsZ3xlvPfHVTjKiOtCglGswqpO4V/B15BPJWiwbaQCQUQeareauK2By/1F+VgBDIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417504; c=relaxed/simple;
-	bh=0GYm2ySTIWpR5t1AhOZzOLn2pSAeaQl/xmm0Un/1iQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hov5snh7HU6VieiQWTeJ8FO8/Jh4Gf7ryRPYdwIujnfmk3xgMlbt4QP9Zf7xklMK3Rqu7eMoLD+1Z6qY22M3iJC2PspHzWOXMNzCDvKEMjUdrkw40pMRwCmqYqfDCbLu4POQ7JlzQhN0r1sj6ab8xrPQZH4DjtfT0J5O2arJPQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t6spEVrL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4280bca3960so14762145e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724417501; x=1725022301; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hoe5j+zL5nAbiCIUvREYQpVSE2yifQUHpqXLQ7XWoEA=;
-        b=t6spEVrLkloBDjLQeUDFN+MUth0UW8hqeZpFlanPz2oBDR3JDzu/fbfPbXX43b0cOY
-         a8BLTtQZSX3u41B/IwylFYhNl2BPxA1K3MT93NS3QD47sCw36DvzJqTGZu3B5hKQaP8m
-         5Up9cRi4WJHnUQSEomb3SU1wzHy8x7OPoVxeOph1AXsWs4RdLMScglQZsBBmtiQWYJEv
-         bYnzXfk2ZW6YGfw1/HPDbeMJJq9fVsLoIPzlRnCc3n5/pTIEtlqX7ragzk4FKYp01iyD
-         VXOWcWYwx+v8dljmchxKr/L5psdvXUxor1baIibjrQ0kM4SxdU25GLpcmEwtPfCVM9Xm
-         C1cg==
+	s=arc-20240116; t=1724417540; c=relaxed/simple;
+	bh=MMKath5WwvO7L3+elI5+yBdP5O4pHtw49q2Ils6Ou1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=B2u9OyQ+L9YAVuRNJZdvsdG4aoHBbGXzoQQ/MVx5yUmiSdwuCzIwNDT6HJ4D+Ap9rI3aByGxJP0ZOy3V9RvUx5Gy9BcIEe7fgOqAHOWrlyPpBLKSbaOkch9pC/ys8mbo53gkDBYe8YY7jrKlTy8ZUeUca0BMUqm69blKr+r5J5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d3e93cceso272054285a.1;
+        Fri, 23 Aug 2024 05:52:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724417501; x=1725022301;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hoe5j+zL5nAbiCIUvREYQpVSE2yifQUHpqXLQ7XWoEA=;
-        b=GnybOvg6p9LAvyC6L5Kw1wr7t6zw5A5DiHFjfVpeRDhleoYrOEqtEkaG/HGv638Ehp
-         9K36JniNOMNX5lsQli3cvjd1+ykFDJ7HNtxNWTBXIeMOJWH2d+BtgGBODJ7oSUnGjsjN
-         Ndz8omWTVDQJKX3jYqQA3jPqzVmAvGrzK52tUR9IE8thvrqPggntDtwx+Y+U6ja5UDgQ
-         1ztRyYZn8gq644x5kE+WraWZv2IG2IbwgB/yn2RwlHhTDdnEipU5+LqtjeQaNd7fSZ4d
-         CwZAkoRFvD9g2kABYm1CZUEcVkCGSk0+iE3wBk9hmd0c/aBVb/tKM5aYnviwmKNDG48F
-         wVNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0NJZ65UcTE0urjsqaVql634aDduS6HbeGLpSWl3pem73c74tLKU+z8M5t4CP13GfB7hL7Zevt2rIUctw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLCi289vTsp+ZCiVmb1h9Qr6s5uavzrQN7d392ZRvd8BATYI00
-	UAYXtKQCsjbXqe4JHNWvynmyjkMnObfY8fiWoRtgYp6BxhhsrzFXVBlxtBxjTfU=
-X-Google-Smtp-Source: AGHT+IHkggqQwYF252ozofkl8OYWm3rlLNjamoptyTPU8soyrbqGqbFpghbuhPHDyrmStFxt8rYQdw==
-X-Received: by 2002:adf:e54a:0:b0:371:8dcc:7f9e with SMTP id ffacd0b85a97d-37311840e04mr1346482f8f.2.1724417501372;
-        Fri, 23 Aug 2024 05:51:41 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ffeb8sm4092416f8f.88.2024.08.23.05.51.40
+        d=1e100.net; s=20230601; t=1724417538; x=1725022338;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S9E6XTkrddueeZOivGiIofK2AhGee/oAp8YjyBl5PzE=;
+        b=RzrPPI5n0KYJORr+OA5u2AWThN3sfETMVx++P3fPNlsB7ntwUgYemuzgRbgf7eycoT
+         BHnvopxyMECRocTEim27YkP7zLV1abhRX9LBFHGa2owjJFg/uucAJR0nKeBKxD+SqKgK
+         OiS3a7LTBdHQhR1Eud6l/iA9VonZRjzPhP2H2QGIuN7Icm8kJ7cMp/D1irWxDgtApG7d
+         remIIM/cRzT5tDqPgtYeBXGxvLemI72+8kS7spi1ikUq61v1bfzJoJ29VvAsqzppUwCZ
+         jpo0Ujs0034+sckI/ttr956wJy4tYVSShotToX+vXCxMxLAEoYcclcdg4+4DxSIqyRdT
+         TyIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOKZyJtMPGUEHBkvYAkHA/esI6mzpATmBNGdAJZ6FNc04aPnn0Wbyf6U/1pPZhcittvWBU13cF8q8=@vger.kernel.org, AJvYcCWzaOqtsBMrI51GmXw10/IDToWtYt4ywRZ6kg0BF+ZQoBzG3A8LCOIfitzfSHrZzA/SOgbPBJRKhccMGsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHtxMHOa+j7urHhvvLNIQbPW3iMeycgSuNLDWm8VSMZrY22n/A
+	i3LoJKPSnhPRHedO5HCt8e34GXwjNNTF9R6UF5taOLPTlmiWA9XW
+X-Google-Smtp-Source: AGHT+IF3mA/YQvpHZgkDzEa+/SMAZxpXC7oi2zf6N4sk58c/EQ2mjae+vOE2n5jzZqc4FH/k7dNcfw==
+X-Received: by 2002:a05:620a:258f:b0:79f:12e9:1e51 with SMTP id af79cd13be357-7a688d09607mr398432085a.5.1724417537529;
+        Fri, 23 Aug 2024 05:52:17 -0700 (PDT)
+Received: from dogali.home (bras-base-mtrlpq3141w-grc-05-65-93-184-127.dsl.bell.ca. [65.93.184.127])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f41f249sm174739185a.126.2024.08.23.05.52.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:51:41 -0700 (PDT)
-Date: Fri, 23 Aug 2024 15:51:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] powercap: intel_rapl: Change an error pointer to NULL
-Message-ID: <fa719c6a-8d3b-4cca-9b43-bcd477ff6655@stanley.mountain>
+        Fri, 23 Aug 2024 05:52:16 -0700 (PDT)
+From: Dave Vasilevsky <dave@vasilevsky.ca>
+To: glaubitz@physik.fu-berlin.de,
+	bhe@redhat.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org,
+	mpe@ellerman.id.au,
+	kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Dave Vasilevsky <dave@vasilevsky.ca>,
+	=?UTF-8?q?Reimar=20D=C3=B6ffinger?= <Reimar.Doeffinger@gmx.de>
+Subject: [PATCH] crash: Default to CRASH_DUMP=n when support for it is unlikely
+Date: Fri, 23 Aug 2024 08:51:56 -0400
+Message-Id: <20240823125156.104775-1-dave@vasilevsky.ca>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The rapl_find_package_domain_cpuslocked() function is supposed to
-return NULL on error.  This new error patch returns ERR_PTR(-EINVAL) but
-none of the callers check for that so it would lead to an Oops.
+Fixes boot failures on 6.9 on PPC_BOOK3S_32 machines using
+Open Firmware. On these machines, the kernel refuses to boot
+from non-zero PHYSICAL_START, which occurs when CRASH_DUMP is on.
 
-Fixes: 26096aed255f ("powercap/intel_rapl: Fix the energy-pkg event for AMD CPUs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Since most PPC_BOOK3S_32 machines boot via Open Firmware, it should
+default to off for them. Users booting via some other mechanism
+can still turn it on explicitly.
+
+Also defaults to CRASH_DUMP=n on sh.
+
+Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+Closes: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
+Fixes: 75bc255a7444 ("crash: clean up kdump related config items")
 ---
- drivers/powercap/intel_rapl_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/Kconfig       | 3 +++
+ arch/arm64/Kconfig     | 3 +++
+ arch/loongarch/Kconfig | 3 +++
+ arch/mips/Kconfig      | 3 +++
+ arch/powerpc/Kconfig   | 4 ++++
+ arch/riscv/Kconfig     | 3 +++
+ arch/s390/Kconfig      | 3 +++
+ arch/sh/Kconfig        | 3 +++
+ arch/x86/Kconfig       | 3 +++
+ kernel/Kconfig.kexec   | 2 +-
+ 10 files changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index d110c5da5cfe..2881687d7900 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -2157,7 +2157,7 @@ struct rapl_package *rapl_find_package_domain_cpuslocked(int id, struct rapl_if_
- 		      topology_physical_package_id(id) : topology_logical_die_id(id);
- 		if (uid < 0) {
- 			pr_err("topology_logical_(package/die)_id() returned a negative value");
--			return ERR_PTR(-EINVAL);
-+			return NULL;
- 		}
- 	}
- 	else
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 54b2bb817a7f..200995052690 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1597,6 +1597,9 @@ config ATAGS_PROC
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool y
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config AUTO_ZRELADDR
+ 	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
+ 	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a2f8ff354ca6..43e08cc8204f 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1558,6 +1558,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool y
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+ 	def_bool CRASH_RESERVE
+ 
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 70f169210b52..ce232ddcd27d 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -599,6 +599,9 @@ config ARCH_SUPPORTS_KEXEC
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool y
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config ARCH_SELECTS_CRASH_DUMP
+ 	def_bool y
+ 	depends on CRASH_DUMP
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 60077e576935..b547f4304d0c 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool y
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config PHYSICAL_START
+ 	hex "Physical address where the kernel is loaded"
+ 	default "0xffffffff84000000"
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index d7b09b064a8a..0f3c1f958eac 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -682,6 +682,10 @@ config RELOCATABLE_TEST
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	bool
++	default y if !PPC_BOOK3S_32
++
+ config ARCH_SELECTS_CRASH_DUMP
+ 	def_bool y
+ 	depends on CRASH_DUMP
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0f3cd7c3a436..eb247b5ee569 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -880,6 +880,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool y
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+ 	def_bool CRASH_RESERVE
+ 
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index a822f952f64a..05a1fb408471 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
+ 	  This option also enables s390 zfcpdump.
+ 	  See also <file:Documentation/arch/s390/zfcpdump.rst>
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ menu "Processor type and features"
+ 
+ config HAVE_MARCH_Z10_FEATURES
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 1aa3c4a0c5b2..b04cfa23378c 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool BROKEN_ON_SMP
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool n
++
+ config ARCH_SUPPORTS_KEXEC_JUMP
+ 	def_bool y
+ 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 007bab9f2a0e..aa4666bb9e9c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2087,6 +2087,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
+ config ARCH_SUPPORTS_CRASH_DUMP
+ 	def_bool X86_64 || (X86_32 && HIGHMEM)
+ 
++config ARCH_DEFAULT_CRASH_DUMP
++	def_bool y
++
+ config ARCH_SUPPORTS_CRASH_HOTPLUG
+ 	def_bool y
+ 
+diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+index 6c34e63c88ff..4d111f871951 100644
+--- a/kernel/Kconfig.kexec
++++ b/kernel/Kconfig.kexec
+@@ -97,7 +97,7 @@ config KEXEC_JUMP
+ 
+ config CRASH_DUMP
+ 	bool "kernel crash dumps"
+-	default y
++	default ARCH_DEFAULT_CRASH_DUMP
+ 	depends on ARCH_SUPPORTS_CRASH_DUMP
+ 	depends on KEXEC_CORE
+ 	select VMCORE_INFO
 -- 
-2.43.0
+2.34.1
 
 
