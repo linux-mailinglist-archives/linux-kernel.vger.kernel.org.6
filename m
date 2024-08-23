@@ -1,76 +1,114 @@
-Return-Path: <linux-kernel+bounces-299756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683A495D9B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66BA95D9BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3EF1F24937
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76CBF1F24A4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628081C8FD8;
-	Fri, 23 Aug 2024 23:28:13 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105B71C86EE;
+	Fri, 23 Aug 2024 23:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aAB3ZG/v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622C61FFC
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4F71448ED
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724455693; cv=none; b=iUDtWx8rjBrVZeU13dw4+MSCdliE4wX4z+cjQCWLV5L7v6IV6dW/3Ovhy+KVwkGcDfL9guBodB7P5FIyWiE6Nwx2A+v67dxY9PwdyTBok5nlFmmYtDhGLeoGieFyeMC8sL6MVRRlKF8GEW7ExqnJ4dyYhVy/Gwp0hGvAeshFFdA=
+	t=1724455941; cv=none; b=GN/OVKH0XrBwVLABZHKxfjQUAKC1iz2XM410Tel0oGGGvTvU17HMiuJPfkC1n8ikuI02UzAKlM7B2wVlo43RHVauObTb5X71O2Fb6zBnB8JyuMyC+2bXSXAd4FPSUCCDq2+aEU+BqRLSgE2VWw381QZalHdAnTDH5f+8b/r3AJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724455693; c=relaxed/simple;
-	bh=Rr1yHC4GkVt44KsDGAllWQXvdIIBCeFGse21PqnOdqc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EC3TL9wTBGjkHPgEA1Tn01S5t2fN015zHFQ2gOMtMLBllXc1FKH4tlT0NOErgUD1xwPXIduEkDtCqi8IgWQR52Xkm+VVmClKUH2CfSTkWOWWAlZ0Vqww/vrzj/xitfnELnYQB7dFibmVVqvJqB82BJOjKHrZ54ao8N0nbKgLiDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso22513055ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:28:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724455690; x=1725060490;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rr1yHC4GkVt44KsDGAllWQXvdIIBCeFGse21PqnOdqc=;
-        b=MYxPLiPym+Uar6g0clqGASCD+OeIhE514PbTXhkr7YnRCrOX84bM7WHWzzw8bvaLES
-         2NxMmOlfBYAhGWrDcBHrNpswWFzeLgnYb2l5y6rdm9W47zEZr7OT0WCuPJFmUzvIXtkw
-         LbFVS1K41v497ORpVXfa064jPNLFzmWooQ5lkw5AVOpuGRpeW0tZNBr2bzc24En2xkXJ
-         vSe9QsrCyyKKAFean4GENkWAVaH0WZvE1/1jwrWahIqeKBfoTUttRmQMS/CZJbkubW/i
-         yyTVEnOduhVWi47iivKSH3eyhhBiodboI6Nj0Ska8Xz0LBjbeT6M7hONkPGIx8h9t/YF
-         oGUA==
-X-Gm-Message-State: AOJu0Ywn/37Gnqj7dXq4S6Bpb9H0NepqnM7JPnVf4T4Az0MjPg8fewl9
-	GlbJ2JiD6zfQFKjgxRmWU9wO+Gu4wPw6ZfKc4lKVKsn/82/1Vx57P3nrgv/g5KgLqijSiNOxKzp
-	nUxlJ/SO7bFroQ7qEJ6O5jgCRQuIBj7+2Zy4+hT1rAWmzSO3hcQdOkzI=
-X-Google-Smtp-Source: AGHT+IG1H9yIHFIyE9R9r4d3pfM03uTn2uA8Z55xpM1gHPco3mZwX11eLC4qdpNDgvkmJEUzYJpLcuZiL7afWaDK3xKPjetmcfe1
+	s=arc-20240116; t=1724455941; c=relaxed/simple;
+	bh=QE6tOL6lECwZKber38VSosgwzqzqRhMJZ2xKrVtB2VA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBQkxmDSpKjoRCw6oRWkINuloUTB398hDra+Lg5jPc+nVCTZDB//JCOixzx1hTwIiUYL3yzmh7MA5sIcSpvLS136Ndtx1+XtixIJXPiP7gD3juK/cb9WesZC9v1zijsBiL1NEPgD5+ZcAd1wKKH+CVepXocMXbmm7be6wIqOZh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aAB3ZG/v; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724455940; x=1755991940;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QE6tOL6lECwZKber38VSosgwzqzqRhMJZ2xKrVtB2VA=;
+  b=aAB3ZG/v0q2GK2CKKOMM6AUkRP38E7CQ914SWbQvIVW/fZVCCLvONgSB
+   5bU3bU759JsqnWghjNC6FxIuKixOIqII57dbwdTBaYwFUNr7UsnigtbCV
+   ndYoATNU2wp98TTPc5137zMFV87RuxrB7MfeVWKe0FCuIygerQaQL+fxI
+   mKgBLg44bPD+xfQPFTO0QUV6lnGXFOeIM4nDE0ypCTZ+hu98kDqhHnJMc
+   BNNlhJGveIpCRDF3hx3nBn4bvcB85c/Gh7vP5/1y1BYHGFxDqcyTlY1jh
+   h3GZWidycvOD4o3IzxWqVs4w7P+Z4VOy1GSA+pmYqPWI8StxGFGZ9SvhA
+   A==;
+X-CSE-ConnectionGUID: UTSde5iYSIaOnP+jCqsMNQ==
+X-CSE-MsgGUID: ui6T3g8wTzy7C/HRMCZJuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="22921167"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="22921167"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 16:32:19 -0700
+X-CSE-ConnectionGUID: zAqVGhdPRYqF1K9RMoqgUg==
+X-CSE-MsgGUID: BjivJ/TpRm6wJxYFjpQODA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="66867863"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO intel.com) ([10.245.246.236])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 16:32:14 -0700
+Date: Sat, 24 Aug 2024 01:32:10 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Michal Mrozek <michal.mrozek@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Tejas Upadhyay <tejas.upadhyay@intel.com>,
+	Shekhar Chauhan <shekhar.chauhan@intel.com>,
+	Gustavo Sousa <gustavo.sousa@intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v3] drm/i915/gt: Use kmemdup_array instead of kmemdup for
+ multiple allocation
+Message-ID: <Zskb-gt8gmridvM9@ashyti-mobl2.lan>
+References: <20240821024145.3775302-1-yujiaoliang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d85:b0:383:4db4:cbe0 with SMTP id
- e9e14a558f8ab-39e3ca065e0mr2600955ab.5.1724455690645; Fri, 23 Aug 2024
- 16:28:10 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:28:10 -0700
-In-Reply-To: <0000000000004492c2061b8b3796@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000df429d06206220b6@google.com>
-Subject: Re: [syzbot] kernel BUG in bch2_bucket_alloc_freelist
-From: syzbot <syzbot+3d2944b5612507034fc4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821024145.3775302-1-yujiaoliang@vivo.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Yu,
 
-***
+On Wed, Aug 21, 2024 at 10:41:27AM +0800, Yu Jiaoliang wrote:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> v2:
+> - Change subject
+> - Leave one blank line between the commit log and the tag section
+> - Fix code alignment issue
+> 
+> v3:
+> - Fix code alignment
+> - Apply the patch on a clean drm-tip
+> 
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+> Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-Subject: kernel BUG in bch2_bucket_alloc_freelist
-Author: kent.overstreet@linux.dev
+merged to drm-intel-gt-next.
 
-#syz fix: bcachefs: Don't use the new_fs() bucket alloc path on an initialized fs
+Thanks,
+Andi
 
