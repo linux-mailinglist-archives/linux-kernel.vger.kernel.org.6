@@ -1,175 +1,100 @@
-Return-Path: <linux-kernel+bounces-298934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AF295CDAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:21:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C720595CDB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A7B1C226A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 403D7B21EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5810186E2E;
-	Fri, 23 Aug 2024 13:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AA71865F5;
+	Fri, 23 Aug 2024 13:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+U/ybQ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Mxc/exIp"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0BC18562A;
-	Fri, 23 Aug 2024 13:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D857185945
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419303; cv=none; b=fLgSRmF92QtnQxSKKgJyElq0iA2OA112ee5SJjyDMuhsiJF1g0ErawUs3T/xDLfHmXHXIjpirLDcwWW4Lq1QJ5QV46KTSJHap1kU8C5X8XrmbLXi+avswHvGuiLtHKx0/IgPxHByY0Fe0rX4rWOwXsl5FHHfT9eE5PQ6XrMvTco=
+	t=1724419388; cv=none; b=cjlnVz7qrTOv1GHFoM/z0buoLVJY/PMRmX/AdDyYId3qttkCciuFk3SZv9zmybGe3qMrrQeqEyrWpIYj8jy7OSu5/h9+9qSyxaQgE5U0BuNFY3TNtB7hPdyXoz38OahtMRlfaGX12jKsAmfIC4MaB3MtEzSbkBs0yn1yWHG3CSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419303; c=relaxed/simple;
-	bh=raWe8OEdcYkXh26uvYEiz8FdGz1HJ2MMltZJKs0Gaww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NhHb8Rq8uD1yo4JIbZDhGaCYzrNx7yeeDO7J5T+qYocxzs9ii0nPCXvUivZIKchi07Cr4VvhixTqySDxvCxW9EtkjPLuJRcKijvIy5Mcntlsaebjz9dDe93WQv9z5KutpMlnTlvXmqID28xwzY3SlxoZB4X7dGx5rXtlQSGDvLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+U/ybQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD3AC4AF09;
-	Fri, 23 Aug 2024 13:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724419302;
-	bh=raWe8OEdcYkXh26uvYEiz8FdGz1HJ2MMltZJKs0Gaww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+U/ybQ3ztl5F8my+cKpaMq9Y+qRNgf/cLka6IAj2rJJSIayX/8tep7azsrb8Sje3
-	 /ztHADGvfdGrGTh2eVgIyhuJK+7yY3tN6dJNseP4NWoap3xWdmOjLmVYPWH8Sir387
-	 c9Pi2NskdVfWihBAta/4gODNKf19bA29PdYmrfYGLc/SUmg95XzzK0HZb+r//MPskh
-	 h8c/3Ft3qDK5j6AJZxyTDji9Yv3FYaIhrbVDYQxZhPgP3zXYC2TWWO3SSaCDZbQmEp
-	 tkYiQBN1gyhai6h9M6AA3HyP2Bl5yLbKJ0BG7KWVxXFQ1qBa9sLnaqKTuZPa6WM5hc
-	 urpLD4esjJgDw==
-Date: Fri, 23 Aug 2024 14:21:34 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-Message-ID: <20240823132133.GC32156@willie-the-truck>
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
- <20240820143503.GD28338@willie-the-truck>
- <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
- <20240823122423.GB32110@willie-the-truck>
- <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
- <20240823125739.GA32156@willie-the-truck>
- <CAH5fLgiCr3hOEX1yaqy66OMsbPTtEhA4FCmRiw20zY64vYKHPw@mail.gmail.com>
+	s=arc-20240116; t=1724419388; c=relaxed/simple;
+	bh=XM6HmEJxj6EyPKid3Kb3NOSJyXdKUdl0YZ/v//OzdLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F+zuoCGhxJZH6NTt+fUgVKg9gkm9omUjjtEXqE/7yn14Rf86iCR/ncZRG1bvzxeTr2kJGG02y6rXRhapO6ztTCxe40FOKsiD5q5WIwKDxFILfYtRT8VJvNgHS98IEoxJyF0uebjJ7LpdmpfjYVoaodKZZ5CvkkulzZm5TDKV6CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Mxc/exIp; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-81f94ce2272so71541639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:23:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724419384; x=1725024184; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5sQ4rHVCuaeEBgkCad1ajOipG0bmLn0/+w11Ce8vn/Q=;
+        b=Mxc/exIpkdAhCGojxKI7DYtBYKi9pR24FooLfcCBqfiwmCCE+qhOZaPiKWpH5OSAlx
+         qzlwg457zrosKpxwegmcEkPBFkXt4mmB2AvGd1HxUPn+lQazCXc5eLcYDO3jAZ48fMCJ
+         qyXlys9AUKkoLhWc1KW9MvgqaqcPeJjuyKVGlyB6Sqojy4cV5JKk1OAex/ZK/9ipDRLc
+         BnVaQgYZkL4C1yI3PsaHYEbFPn5pKBLNJGl32WsmXP61hBD76Uj/LTSyiituDgBvx6CI
+         t9sGpZLHkg+rgzwj9Gcc9tQP7lEPocnBegM4Nxog3zhXLNBi5bP7Kk/oQvgfhmkB/JUI
+         tPew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724419384; x=1725024184;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5sQ4rHVCuaeEBgkCad1ajOipG0bmLn0/+w11Ce8vn/Q=;
+        b=Q7cv2uecE6qyrgn2yrov4BZRMNr7r2RvmaQb877RkWrU/XOYhHxPnZSB6WapjRHfLt
+         c9YaxU32b6QLMgj7LrUNbKrjVAMCjPge/DYRMIKo7rm2Zw/+skk8kXJ6czKNsABZgEVl
+         z7F1zohHq+LriWkB9cvgiJQP6AWdPio7C5seOgYFnl9neSLr1RvAQZHVrqpGew44C8hK
+         jjJrqmMlQnTOgis9Vtwsm0fkdjdIhM/Up1IJt6xCifjSI3K5iVa12MCVb7WuBb3K3Q/W
+         GSgnQ8sqfRAMm3RmjDewpkKO/TTTitOOp2jEjymhD+Bekam9EBTcCaF5Q0rTtqJA+h7i
+         sYtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXy7snRyTxqnoPYPo5LbCd9La59WcqbJ3ixKzNSZqLw9x04vBePuVlQxltp8WtfII6zc99vGmQifvKlL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQD9yd7sEjV9Vhh2O2zbVjJReBDL70kxc0sXLaYf5uRxiikQsz
+	bXUVlStBDM/gDW79dX32uOfCvjWUa5ARHDt079TD8DNlsnhi4BYn/aGlems6R8Q=
+X-Google-Smtp-Source: AGHT+IF7uzcrWaVhZ2hG2W38v2yp0g4ETQmvc/+nod5ukjF1aqg9oGSWxD6rxP/E2XtHC4UaaZMotw==
+X-Received: by 2002:a05:6602:14cd:b0:7fa:56f0:ad87 with SMTP id ca18e2360f4ac-8278732f754mr287101339f.10.1724419383815;
+        Fri, 23 Aug 2024 06:23:03 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8253d5cad72sm112166339f.30.2024.08.23.06.23.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 06:23:03 -0700 (PDT)
+Message-ID: <1da3ce76-c55c-405a-a878-6633832bf541@kernel.dk>
+Date: Fri, 23 Aug 2024 07:23:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgiCr3hOEX1yaqy66OMsbPTtEhA4FCmRiw20zY64vYKHPw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drivers:block:Cancel debugfs_create_dir() check
+To: Yang Ruibin <11162571@vivo.com>, linux-block@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240823112246.3905118-1-11162571@vivo.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240823112246.3905118-1-11162571@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 03:09:40PM +0200, Alice Ryhl wrote:
-> On Fri, Aug 23, 2024 at 2:57 PM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Fri, Aug 23, 2024 at 02:38:20PM +0200, Alice Ryhl wrote:
-> > > On Fri, Aug 23, 2024 at 2:24 PM Will Deacon <will@kernel.org> wrote:
-> > > >
-> > > > On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
-> > > > > On Tue, Aug 20, 2024 at 4:35 PM Will Deacon <will@kernel.org> wrote:
-> > > > > > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> > > > > > > diff --git a/init/Kconfig b/init/Kconfig
-> > > > > > > index fe76c5d0a72e..d857f6f90885 100644
-> > > > > > > --- a/init/Kconfig
-> > > > > > > +++ b/init/Kconfig
-> > > > > > > @@ -1909,7 +1909,7 @@ config RUST
-> > > > > > >       depends on !MODVERSIONS
-> > > > > > >       depends on !GCC_PLUGINS
-> > > > > > >       depends on !RANDSTRUCT
-> > > > > > > -     depends on !SHADOW_CALL_STACK
-> > > > > > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
-> > > > > >
-> > > > > > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_SCS is
-> > > > > > specific to arm64 and the only other architecture selecting
-> > > > > > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel it would
-> > > > > > be cleaner to move this logic into the arch code selecting HAVE_RUST.
-> > > > > >
-> > > > > > That is, it's up to the architecture to make sure that it has whatever
-> > > > > > it needs for SCS to work with Rust if it claims to support Rust.
-> > > > > >
-> > > > > > What do you think?
-> > > > >
-> > > > > The `select RUST if ...` is going to get really complicated if we
-> > > > > apply that rule in general. Having options here allows us to split
-> > > > > them across several `depends on` clauses. I'm not sure it will even
-> > > > > work, I had issues with cyclic Kconfig errors previously. I also don't
-> > > > > think it's unreasonable for the architecture to say it supports both
-> > > > > options when it really does support both; they are just mutually
-> > > > > exclusive. I also think there is value in having all of the options
-> > > > > that Rust doesn't work with in one place.
-> > > >
-> > > > I'm not sure I follow why this will get really complicated. Isn't it as
-> > > > straightforward as the diff below, or did I miss something?
-> > >
-> > > Hmm. I tried this but I wasn't able to enable Rust with this setup.
-> > > Even though the deps of RUSTC_SUPPORTS_ARM64 are ok, it doesn't seem
-> > > to be enabled and I can't find it in menuconfig. I think we need to
-> > > have a `select RUSTC_SUPPORTS_ARM64` somewhere.
-> >
-> > Sorry, yes, my diff was a little half-arsed:
-> >
-> > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > > index a2f8ff354ca6..2f5702cb9dac 100644
-> > > > --- a/arch/arm64/Kconfig
-> > > > +++ b/arch/arm64/Kconfig
-> > > > @@ -231,7 +231,7 @@ config ARM64
-> > > >         select HAVE_FUNCTION_ARG_ACCESS_API
-> > > >         select MMU_GATHER_RCU_TABLE_FREE
-> > > >         select HAVE_RSEQ
-> > > > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> > > > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
-> > > >         select HAVE_STACKPROTECTOR
-> > > >         select HAVE_SYSCALL_TRACEPOINTS
-> > > >         select HAVE_KPROBES
-> > > > @@ -265,6 +265,11 @@ config ARM64
-> > > >         help
-> > > >           ARM 64-bit (AArch64) Linux support.
-> > > >
-> > > > +config RUSTC_SUPPORTS_ARM64
-> > > > +       bool
-> >
-> > This line ^^^ should be 'def_bool y'.
-> 
-> Ah, I see, I guess I learned something today. It also seems to work if
-> I add `default y`.
-> 
-> I can change it if you think this is better. I still think there's
-> some value in having everything in one place, but it's not a big deal.
-> Either way, it should be temporary for a few kernel releases as we'll
-> eventually only support compiler versions where this works.
+On 8/23/24 5:22 AM, Yang Ruibin wrote:
+> No need to check debugfs_create_dir() return value.
+> It's safe to pass in errors that debugfs_create_dir() gives you.
 
-I do like moving the reference to UNWIND_PATCH_PAC_INTO_SCS into the
-arch code, so if you could respin along these lines then that would be
-great.
+Subject line is still wrong, as has been mentioned before for your
+posting. If in doubt, just run git log on a file and see what the
+customary title prefix is for a given file.
 
-Thanks,
+-- 
+Jens Axboe
 
-Will
 
