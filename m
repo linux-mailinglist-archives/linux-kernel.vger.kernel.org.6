@@ -1,155 +1,99 @@
-Return-Path: <linux-kernel+bounces-299329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8334995D30F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:19:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB2695D317
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392471F221CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB581C22033
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D20319258C;
-	Fri, 23 Aug 2024 16:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCFD18CC1C;
+	Fri, 23 Aug 2024 16:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZC90Fm8O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnypJmEb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6E418BC14;
-	Fri, 23 Aug 2024 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B439218CC0C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429891; cv=none; b=Wlkf7KVlT9LvtI8Zj7zEmdcufP2KK31XRIbOUDknjeO8KZrPNRRti1HLnDguD3xuCdNXK3B2/zspjKOfTy7tn/2NAaiMq3fYM62CRRFTaEdKBxTdE6xt9m1ur+bKuCXcCAIBQvIc6HHp6zML0frRJrgM4MYKwK6N/g85EiEVoR0=
+	t=1724429962; cv=none; b=r+6yqN08MkZkvUaw7/UfOacyYSpbWLtwylqNpbOYRrGWacTgGMiGw/BBi9LnI280/nVHaWNk1F45UrgtlyMEHq+pNGIDqEvV/WtCfk0QN6/LoZnaWBAnS1sb1SKjGLeqAsxGhNtW3QOU+bQiMmnX6mSRs0XB8FfzVCDX86s7tSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429891; c=relaxed/simple;
-	bh=PgdByvdiAfbXaDotznDJ0dcWaZ63H3JEqmGBNQTkNik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgcTzg9XirlC8Soo4v9EwWMNFSWmIl/fQzjqksfiaoA5fG6p+u+cYF+vOUa6ib9wJ4MfqSfNXiV+S0XUN9FaBJUHaRAXXGuOE9npoHTSy73vP4lv+kUSUmWqAvj3TDysWy1BfjMeBkr/WQfs3fcBON4LV7MI5gi4CzQkulT0Y2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZC90Fm8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD95EC32786;
-	Fri, 23 Aug 2024 16:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724429891;
-	bh=PgdByvdiAfbXaDotznDJ0dcWaZ63H3JEqmGBNQTkNik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZC90Fm8Oaw+MQx+uDsJmmODI2/hX9icvDed7tm4bS+eYRSFHflJN7lzWx7rLqnZVc
-	 /EeRQapRZtyrKflOGlW921S5f2NsO84csxAlObYlSnAoSpArgtGMI1fyIeP9JFeMd+
-	 wxx6FxANYeXN8kJP5XsIVDrOFWBOYyRpjxLF9MXQEWWoYz/NUKfioM1Mo5XKWcUVb2
-	 Xrli84Wyw2O4//SzdGKFRgz5B8WyBrbhzXS4McahzOIuBxJGTEl95FGQdPqujyGtbz
-	 LFS9h83DMHMURzMQNRTkjhJuj8I+FBR4OPZ7ykSCmj8rKCnV6Ksfnx4Ww39PmTXW/w
-	 TNlBbNLVZYIWg==
-Date: Fri, 23 Aug 2024 17:18:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	gregkh@linuxfoundation.org, mturquette@baylibre.com,
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
- #reset-cells for RZ/G3S
-Message-ID: <20240823-plywood-unfixed-d8d8a2d93f14@spud>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
- <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
- <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
+	s=arc-20240116; t=1724429962; c=relaxed/simple;
+	bh=5vO7pzc8y86vVax8BXK3Xl2hqG8JqjqtPluxEyc5ETA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=PZLK6SLpkl4AS4VQdUopMhb4mO5G9j3V9mK2n5OO273U8TGaQX3TSWwhtFltNNa1adU/wsb53HQQKcVyWelCtmXgGHNV0Dg8uczmfYdEnF1ROzRKT+0yjEIYCzi1Ec8Gm2zWwSILcsPrRey9ypvt8KDvUbN+QwqPNgOE7pwN4+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fnypJmEb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724429959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a7OM/W0EJtp2+JAIBDghW4ypLqo6G3RHtMu+hNZuDVs=;
+	b=fnypJmEbQRVL8sjStiSiKHwWMwPmBRIIedg7WqA7JSKQjWU/6ek/t8frM8HiDj47uPDaZg
+	CfEjmpFaNcrjDEiyTHPFe94TmGn4Y4lRsDVMvpU6E/99JNQbEzr+K4gJgftHf36Hh/tnG3
+	v4VXtGdhtw+RexiOB1h8jPY9YU/e5Vg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-iuW8mKDwMJKn3vMTBBxWRA-1; Fri,
+ 23 Aug 2024 12:19:14 -0400
+X-MC-Unique: iuW8mKDwMJKn3vMTBBxWRA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DDF911955BED;
+	Fri, 23 Aug 2024 16:19:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6ACE019560AA;
+	Fri, 23 Aug 2024 16:19:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240823161209.434705-1-dhowells@redhat.com>
+References: <20240823161209.434705-1-dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>, Jeremy Allison <jra@samba.org>,
+    samba-technical@lists.samba.org
+Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    linux-kernel@vger.kernel.org
+Subject: Samba llseek bug
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GSCRsUY2DblipIOX"
-Content-Disposition: inline
-In-Reply-To: <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <434991.1724429946.1@warthog.procyon.org.uk>
+Date: Fri, 23 Aug 2024 17:19:06 +0100
+Message-ID: <434992.1724429946@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+Note that whilst testing my cifs fixes with the generic/075 and generic/112
+xfstests, the tests occasionally hit a bug in Samba whereby llseek() fails
+because there are too many extents in the server file for the server to
+report.  I've noted this before:
 
---GSCRsUY2DblipIOX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	https://lore.kernel.org/linux-cifs/349671.1716335639@warthog.procyon.org.uk/
 
-On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
-> Hi, Conor,
->=20
-> On 22.08.2024 19:42, Conor Dooley wrote:
-> > On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The RZ/G3S System controller has registers to control signals that need
-> >> to be de-asserted/asserted before/after different SoC areas are power
-> >> on/off. This signals are implemented as reset signals. For this docume=
-nt
-> >> the #reset-cells property.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >> ---
-> >>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
-> >>  1 file changed, 16 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg=
-2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-=
-sysc.yaml
-> >> index 4386b2c3fa4d..6b0bb34485d9 100644
-> >> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc=
-=2Eyaml
-> >> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc=
-=2Eyaml
-> >> @@ -42,12 +42,28 @@ properties:
-> >>        - const: cm33stbyr_int
-> >>        - const: ca55_deny
-> >> =20
-> >> +  "#reset-cells":
-> >> +    const: 1
-> >> +
-> >>  required:
-> >>    - compatible
-> >>    - reg
-> >> =20
-> >>  additionalProperties: false
-> >> =20
-> >> +allOf:
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            const: renesas,r9a08g045-sysc
-> >> +    then:
-> >> +      required:
-> >> +        - "#reset-cells"
-> >=20
-> > Given this is new required property on an existing platform, I'd expect
-> > some mention of why it used to be okay to not have this but is now
-> > required. Did firmware or a bootloader stage take things out of reset?
->=20
-> On previous SoCs the SYS controller has no support for controlling the
-> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
-> I'll add a note about this on next version.
+is there a fix for this I can try?
 
-My initial thought here wasn't about previous SoCs though, it was
-because you didn't add the compatible in this series for /this/ SoC.
-What's worth noting isn't about the prior SoCs, it is about what makes
-it okay for this one.
+David
 
---GSCRsUY2DblipIOX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsi2PAAKCRB4tDGHoIJi
-0g2cAQDP31P2uZ2yJsxRp9QIUYTgXjcHmhTZPcFjJt8BD980TgD8DlBwXJ0T9MnS
-uL/Znkm4rQCaBJlq8vpNa0dgniF1pAQ=
-=Yj0N
------END PGP SIGNATURE-----
-
---GSCRsUY2DblipIOX--
 
