@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-299160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F4995D111
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615F695D098
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A7E1C23571
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:11:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F1C1C2280E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816231917EC;
-	Fri, 23 Aug 2024 15:07:07 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F5E188901;
+	Fri, 23 Aug 2024 15:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JtCOLmxP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E81190067;
-	Fri, 23 Aug 2024 15:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D49D186E4A;
+	Fri, 23 Aug 2024 15:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425627; cv=none; b=OWDHtvBiK5Bd14zRTVW06vvDNHek48BidTJAbm/OnyEEXecTuJxPa5EuW44qsgByX1ALci6ECOF74I7ZQfVKQygbSux6mFGtA/soJk26KDQ8icleVuYB35jh62l7NbZqoQJP5w3JjvMU3HF0FNLLiVIAkYxknqKQtMowQ9yQp90=
+	t=1724425259; cv=none; b=gztdX9e8HxopCOd0HbF1en34Ecm8joGnmvI9niTMdbNW/+rnHgJ+GOChzmD1sURpfZrpy52P9GqWJQVJVABKc1SEBrUM9sBVtIWMOC67hBV8/88ahqwK9HGGihAkFswNkWEvxMwDK9Z7nYABxxatR2zKXS1NiwPVY3OiwLB6U4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425627; c=relaxed/simple;
-	bh=YsfC9+nD/qkrgp3ee7v8HRgNjCCd0CcWxmByb8pZZgg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oXArq9emJBF0rFJFwCSu2J3id+kIBgz3lchguJUXDe2m10NhZ2dKknpcquf7P9hLh4JzGC4Kk8Z5Eq1UI/1SV96bLYA/R7RAa02yEHuZlK4dvtcauWxYslWBi3QVvTrpj5g+aOgkIpIxMdnJt8ebjQMsTPz5266kRNNMuhCA5fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wr3M50qK6z1S8VB;
-	Fri, 23 Aug 2024 23:06:57 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id CAD9A18001B;
-	Fri, 23 Aug 2024 23:07:02 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 23 Aug 2024 23:07:02 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v14 11/11] mm: page_frag: add an entry in MAINTAINERS for page_frag
-Date: Fri, 23 Aug 2024 23:00:39 +0800
-Message-ID: <20240823150040.1567062-12-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240823150040.1567062-1-linyunsheng@huawei.com>
-References: <20240823150040.1567062-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1724425259; c=relaxed/simple;
+	bh=Ci0FUoZVqpuzfnCSAxxyhv4Is6mVnbOTGRED7EYQL2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RF9CMDE2O8GLbD0f1HRjXgMry7IsgGbUDDehppqK3qT2sFjN6guew/QIrHpI9o2F9OmqMd8X3wg1mUB5v08YVwjnCTvx5pAIlWq1KcPnrCoY9nF6AyyGhsKvEH/KeLgIOp0eA3fkHzxi5xjGnA9oVu8YlKdLWz+HVABT/qt4q9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JtCOLmxP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 86400497;
+	Fri, 23 Aug 2024 16:59:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724425192;
+	bh=Ci0FUoZVqpuzfnCSAxxyhv4Is6mVnbOTGRED7EYQL2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JtCOLmxPrcL7nD3TLfIIA3nPba6zmxpCzbu8tNvAPXob+5FbhIZIXVqvMAByXWYGK
+	 eY9nsL+X20KX9n2MN+s4rP63PrloNdI4rUQU3fZ5ztbDimNZOfe6zFZD74zids1kO7
+	 CYn3u+aDieWAPkFqv2h1atloO09/G5tYs5lHWKUc=
+Date: Fri, 23 Aug 2024 18:00:54 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
+Message-ID: <20240823150054.GP26098@pendragon.ideasonboard.com>
+References: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240626055108.GA10453@pendragon.ideasonboard.com>
+ <CA+V-a8tcWVTzDgBMhn8aQaX934MKwOePp3PhMF4TcXqBK2nhAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <CA+V-a8tcWVTzDgBMhn8aQaX934MKwOePp3PhMF4TcXqBK2nhAA@mail.gmail.com>
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add an entry in MAINTAINERS to indicate the
-new subsystem/library's maintainer, maillist, status and file
-lists of page_frag.
+On Fri, Aug 23, 2024 at 02:33:49PM +0100, Lad, Prabhakar wrote:
+> On Wed, Jun 26, 2024 at 6:51 AM Laurent Pinchart wrote:
+> > On Tue, Jun 25, 2024 at 01:32:44PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > All the RZ/G2L DU specific components are located under the rz-du folder,
+> > > so it makes sense to move the RZ/G2L MIPI DSI driver there instead of
+> > > keeping it in the rcar-du folder. This change improves the organization
+> > > and modularity of the driver configuration by grouping related settings together.
+> >
+> > I was thinking the same the other day. Thanks for beating me at sending
+> > a patch :-)
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > Do you or Biju has committer rights to drm-misc to push this patch ?
+>
+> We dont, can you please queue this patch via your tree?
 
-Alexander is the original author of page_frag, add him in the
-MAINTAINERS too.
+I don't have other pending patches for DRM at the moment. Tomi, could
+you push this to drm-misc ?
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7b291c3a9aa4..14d01fa02aa8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17237,6 +17237,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	tools/testing/selftests/mm/page_frag
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
 -- 
-2.33.0
+Regards,
 
+Laurent Pinchart
 
