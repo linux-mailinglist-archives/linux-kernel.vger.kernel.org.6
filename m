@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-298089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A8095C1EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA3B95C1EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AC21C22BA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98E11F241F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC60A21;
-	Fri, 23 Aug 2024 00:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B23A2A;
+	Fri, 23 Aug 2024 00:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTVZz4YE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gMxmBpXG"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAB117C;
-	Fri, 23 Aug 2024 00:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54138197
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371527; cv=none; b=D2Uwh4Hw3FcbAHPR5syVCrx8/0XJHSf3vuTu3dow05xHpFHsmygp2bGHUBkOaAQgcObvKPa2FwoXy91azHiMCHSKgh/5kOY5JenmtlpjNrUlkZy/G5Cueo0NvTQdHzFFO4hERGiMb+v8ncqZDwT824QUWSoWS7+1TzQ6SSUNYj0=
+	t=1724371566; cv=none; b=XXpc7MOw9Sc3VJPs8b0zxiWVE3R0UoRRU3CSKGJlglX/QB+FONYsIY9sw7HPyXWFBzx3yiJXOoaLqo8qYzaZTo+UwIyTnFH3ts41d9JIRRD9aG1nLwAqRMaWmV0X7kuShGlh7drNGAGXGbqp3fapcQzECWf5wf/3jnmNE5wdeSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371527; c=relaxed/simple;
-	bh=aVeJe/7KLuyfzsfAXhhlrtTjGT4oThY97aPYWYhQF0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NQzrI+PEhoFjdHHbfvNQlsTiqMrjaeIDh2WZIST8Ry9DSCD0QUhyHhWd3+nKbnY6/HWuNWCxWGT6vgQIpRjyYBZAA6W42Hlt3zW3VVFhyvmSoSG+gx3NXp5HW+J+nIdBp4LUp+r77YD9BFgLICM1wxP5osw57rxEAxu2h7zAXWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTVZz4YE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CBFC32782;
-	Fri, 23 Aug 2024 00:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724371526;
-	bh=aVeJe/7KLuyfzsfAXhhlrtTjGT4oThY97aPYWYhQF0A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jTVZz4YEPR8OkLTX3s51yozSUOWo5LbCs2D16ppX7+fj+iG2YuA+B87To7r58lA/k
-	 9OIjL+7Ux/j4+/3EoQknaz11d+/CkSau4jgiimojc0cVPUCcXrxTCQVc6kYDk44Ivp
-	 ZEauXX+xUq6LPl0VYYGRbw9Tkv2VYowwFtRp1pxfwP1lCPUWuFtKn/B+zAr2MSG+Hu
-	 gGnbm+EGaK1Z4bfr1fYnmLadDrsTz4tAVCSv4R04rhdtkpSzV4Jkrr082CrxmEjp5f
-	 0717RoIpRCOyxcCHFkNQdFYcEV6FYdgAoWol+bwdzMlvGuzPYbKH4eEahkxcqhhZbp
-	 rK6ghTimYPnCQ==
-From: Kees Cook <kees@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Cc: Justin Stitt <justinstitt@google.com>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Hao Luo <haoluo@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-sparse@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] string: Check for "nonstring" attribute on strscpy() arguments
-Date: Thu, 22 Aug 2024 17:05:22 -0700
-Message-Id: <172437152070.4121900.7735546714762971895.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240805214340.work.339-kees@kernel.org>
-References: <20240805214340.work.339-kees@kernel.org>
+	s=arc-20240116; t=1724371566; c=relaxed/simple;
+	bh=4iv64pRtCw7dW8hTYbxzB/BoF83GDOhTtw/b5ukR+O0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c6p+g7qtwxxIKhZg2k0NQjtXewiwPh29K95iF4oI2nuY9OK9oEDZSlwJ6eaCJZywzgIHTrfllepIRBJMC30JH6sSFl9U8X8RsR+aTd/ES/2D9V0HxQ18Z8ggo+7gakmTcQDAknkrlsCOhcRA6LcXHafApDhuXs0iw4KpkA6+uIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gMxmBpXG; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso1922704e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724371561; x=1724976361; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2PT7YMor9FcgwOjC3cZXMnMxjtj8zbdFSuetCOJ+xA=;
+        b=gMxmBpXGsZMhwERbfNd37JAcsZCeOUu1mxqS7VWbQjHvugFXYZJccq9uq033IU379u
+         dk7f+SeDbzTy5nTv9sok7ewsT6RXv6iEOcRam2BZrvLao/iki5TSN6ajcII+leqn4/5z
+         zGzAie9XQUsbAsKjVQ1ajb1dgLwrQ98vm/DvE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724371561; x=1724976361;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G2PT7YMor9FcgwOjC3cZXMnMxjtj8zbdFSuetCOJ+xA=;
+        b=Py5zHvqbTD3Ms9OAB0x+fioO4IGrk12uB8hDHHHiZ74q5rfvDNXU/gyRW6uqh0+l50
+         57gepajP6mlXas0pqrRVhHb+pZHhp04X5qpOMu/sZdhMrHVPeh67WRsvinvNrdwKNn5n
+         hoHq8klek/91kM5KG3lNc6tmTLuBqD4VTmA4AZSCjWe7eo6gpnZJqpJ13NNmKGwkKfgY
+         r5QmLbb4kMzaEQ2aEKo7AS07yEbTXj5wKgHwJk0VYntmY3LVIEElnvLrOUymzbdgZo2z
+         tW5EdVC9mYiJQNX/NbB09ny02p3i110D0rNX0pLXKBRszXJqU9wgjbgPY2eeRuDTgFQE
+         psQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW277aLIx4lVyYKFdHu8SuPiZtMVXnLdG2t8yyYb0Tjp/lJz9HNZgNq5ITq/QuKMz2uiaeopLizpTJ/mtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkyUei1Ksdqrnauim67kzQsYmuybyq047C9HeZTc/CGi8QmsyF
+	R0YOkiMgzYqK4ScwWqjRrtwkeioKvHHqugqd2KTxraMusxV/KxEh8gl0BvlNecemk/A7YIZL/BA
+	Yo1i6qA==
+X-Google-Smtp-Source: AGHT+IGyaEO2A7wWmb2GqMTLV9APhC9z7OzG0DwE8IU3ci51tOYbzqFzJnoC1AMzOHDXj98E6js73Q==
+X-Received: by 2002:a05:6512:281c:b0:533:97b:e272 with SMTP id 2adb3069b0e04-534387babcemr260984e87.41.1724371560691;
+        Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4360c0sm179323266b.108.2024.08.22.17.06.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bec78c3f85so1766727a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:06:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZtuK56DE0m/Flzkbc0GYOGl3dLP9Xe3iFIJ5ilDNSDCoTzQwCexM31RUMVsx5jPuFc8wpDgoTX4/oKtQ=@vger.kernel.org
+X-Received: by 2002:aa7:c68e:0:b0:5bf:17f:4b7b with SMTP id
+ 4fb4d7f45d1cf-5c0891b21aemr159924a12.32.1724371559743; Thu, 22 Aug 2024
+ 17:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240822131542.785546-1-mjguzik@gmail.com>
+In-Reply-To: <20240822131542.785546-1-mjguzik@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Aug 2024 08:05:43 +0800
+X-Gmail-Original-Message-ID: <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+Message-ID: <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 05 Aug 2024 14:43:44 -0700, Kees Cook wrote:
-> GCC already checks for arguments that are marked with the "nonstring"[1]
-> attribute when used on standard C String API functions (e.g. strcpy). Gain
-> this compile-time checking also for the kernel's primary string copying
-> function, strscpy().
-> 
-> Note that Clang has neither "nonstring" nor __builtin_has_attribute().
-> 
-> [...]
+On Thu, 22 Aug 2024 at 21:15, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> The refcount shares the cacheline with uid, gid and other frequently
+> read fields.
 
-Applied to for-next/hardening, thanks!
+So moving the refcount around looks sensible, but I don't see why you
+moved 'non_rcu' away from the rcu head union.
 
-[1/1] string: Check for "nonstring" attribute on strscpy() arguments
-      https://git.kernel.org/kees/c/559048d156ff
+Isn't 'non_rcu' accessed exactly when the refcount is accessed too? So
+putting it in the same cacheline with ->usage would seem to make
+sense, and you literally moved the RCU head there.
 
-Take care,
+Why not move it as a union, and keep the non-rcu bit with the RCU head?
 
--- 
-Kees Cook
+Yes, it is rarely actually written to and as such can be "mostly
+read-only", but since it is both read and written next to refcounts,
+why do that?
 
+Did I miss some common use?
+
+               Linus
 
