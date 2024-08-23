@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-298852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E9A95CC32
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA1A95CC36
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64EBF1C21605
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C711C215C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC270185950;
-	Fri, 23 Aug 2024 12:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369F4185945;
+	Fri, 23 Aug 2024 12:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFPdNDAj"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="UyR6++HB"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B6D185956;
-	Fri, 23 Aug 2024 12:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EACF3A28D;
+	Fri, 23 Aug 2024 12:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724415307; cv=none; b=HbisZs3SWuUcBz6nR50nb2rFD/IApIAh4e9pGz+VmblBCQNSkWAK+56l92sLUZCcTqgNzEFW/3E0IRoUut0GPJa5k5KcSkoBVOqQkhONFUgDSNvDG3/vEpjTh6GjtM7ldZCZqrnBPH26SRbqAG9hGLnYOCqfyyQXx93ToalLp7E=
+	t=1724415334; cv=none; b=PkWnAlsJXw1UiEq6hbHvR2B/Sw+lD3K0+mA8vYEyNxb4Uh2w5hDjGluwAbwKaN7SPjaEICaJzge2s7jD+lMWmMp+mRt/nRrzmNeyrxGCL8yqcRblbcZEZdbISkk/m6DutBcb5FKwo9rgcQ++mw+mlXxf3L48bHXP2h6sTq+C8sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724415307; c=relaxed/simple;
-	bh=g/1Oq/yHT4tjam+4FYlzrz2icgTGmfy0guEfrhFFlNs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aYrFvEaipHAwdFijNorVTVKaRc0vVuhFZJ7SrCrj60qtI6SxVZ3LhGpupm1iS75DubtD73/fF/oSfItA5OvOIsLahHyx2YkKDQYYS7J2NVhQAJqpGT8ZRk8GsaF4lhPRWZ82BKZlWHP7ldUFswEK+b8zgrGarjimEAkUJm8L/tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFPdNDAj; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86933829dcso220811866b.3;
-        Fri, 23 Aug 2024 05:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724415304; x=1725020104; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FwsCcLX0nWUuLEDkenDmm++3B8eZkIMKdByDwW9AmVU=;
-        b=VFPdNDAjfxjIKksZxQkDN/wfbYW8G2AhxJfp4AgtW9PVVGwupDvNGHH6nHkf7Z1DYV
-         b/oZCXianBY9c5kX4Z7i8CLiwUJgPLy52fbmeFNGaGXjpHBjPRHCP/+PmMVKmUyIE5ld
-         jy6FhNdE2VtHATWMVVVR0KPjsxV5tCV5Nk7JSYUgj5fmhGFc6PO5tnvk0VsnPza/iYgj
-         4BZzyuwtJu13pDgORYEvOplu6rYhX/kO+Jwb0EfBwg4powsc+D9UHCu+/USO1I4Tnm3s
-         /szs6SZtN2ZGMDLRcpuup/fZyj43W0UULCepIksCKivqhiBwheY1+20L9qUOtRX6Y/n4
-         XmKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724415304; x=1725020104;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FwsCcLX0nWUuLEDkenDmm++3B8eZkIMKdByDwW9AmVU=;
-        b=nmkFjB8f8jE+swf4AGeIDTvsN79AY9X8b4iDAH2pZR6k2eUlKapHsuvqBFNvB6hht8
-         +M7voiDGBKfcQ5GyBUVmzIfcoGWMWBSdSZyuy7p2ve+gpmFfBkzw+uRhgTLoPCx4VBSa
-         whX9o39DqcUjDwWH5rCBr45MZoSizR626ip8LkTsB/orhY9p+ZfPDYqlf+NuQb7rKyZE
-         2E2WspY7fmxJWGCG/iJ06XAugOjSJ8Fx1JAqRcKOngOVu465cRrs11sQd2GZY35NUNMZ
-         SjS/ql1MIo4uE5SYCcTDPR1jlmBOyk2oEeb0iZpIdM6DOEuqVFhPoFZirUSQJj6qhpr3
-         3vJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFqDHgvbSFcuwB+meMqdK27OAi9V5IYEbKjm+ueHq7wLR4HongLZdM3rWBL0SAz1Ttw/50ZLxoUuelH/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxue26HWd7zb6TxCQOoywUtk92RMSvoieSpgc51yRLgIAIvAgaD
-	oTLcKf+d/DkaGSjgfHB8n1/NH3cofw1GUP9cQtMk5hEjtKUTsDym
-X-Google-Smtp-Source: AGHT+IGPKc9wvhxY8vdbiv2GzHUYcza+qlwoZLh4gEg11mnxyQwmBlXoDWFoeNz4r/sjl7l/H8IJoA==
-X-Received: by 2002:a17:907:3d92:b0:a86:812a:d2b6 with SMTP id a640c23a62f3a-a86a52b917emr151810866b.23.1724415303701;
-        Fri, 23 Aug 2024 05:15:03 -0700 (PDT)
-Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f487800sm253720366b.178.2024.08.23.05.15.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Aug 2024 05:15:03 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1724415334; c=relaxed/simple;
+	bh=1v/8KbfeGCwfvhavOFD9X3prZgd/g3pYHdW7NHM/4h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ah/m+y8ZgN6QEx1bY/Xd06yxjbxjeRMwSQJ7KT8lYu7hlgYsboDDeq53NAJ+8IFDfowD3csfBvqPuNJWR715MPfHU2ZD9a/+l7lcon5hb2har23JhsDxxh5cjG1pAtFqM1oMwEbGjF1GB8s3y2KdUaoxaJU1lZrVI/qD4ercOmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=UyR6++HB; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1724415316; x=1725020116; i=j.neuschaefer@gmx.net;
+	bh=h0BQB0MX4qUA3/Dn+xSqWXZtaezatHOedl+Kg5HoD1c=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=UyR6++HBhq6qq43EyD0NdghBR9fobTpWMSvyT34NWlTQBtODLblFUm9CuMFKv3JS
+	 XvygoTUbydjTgTX4t98hXwetY/rtkQzfKswfbUQWG4XUKbc6nhaiJytqrUicOsZHl
+	 5eJLJ+wrcaWSRvnd3aK9BPKuSLciQOjCmK6jPSSMcCHya9RxFbTJm2gq1D640334d
+	 CDeEiq8GjM5EcJ2+Z3odyvYndGFwLPopKXN8RRoj7aNZo7t4B4sKhiceWb4MvezDn
+	 T6DO6S9WN4G48lB1Fv8SM830sk/8XYpadz5rS7RrZ929n1rOIsOg6jfnZLe7EH7ac
+	 zl6b5YqoX1MSxlpU4Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([84.44.134.213]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5QF5-1siq6j37zx-008Cax; Fri, 23
+ Aug 2024 14:15:16 +0200
+Date: Fri, 23 Aug 2024 14:15:12 +0200
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: j.neuschaefer@gmx.net, broonie@kernel.org, openbmc@lists.ozlabs.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] spi: wpcm-fiu: Use
+ devm_platform_ioremap_resource_byname()
+Message-ID: <Zsh9UA4iXvMzm2HW@probook>
+References: <20240820123518.1788294-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
- mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
-Date: Fri, 23 Aug 2024 14:14:52 +0200
-Cc: stable@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Yosry Ahmed <yosryahmed@google.com>,
- Nhat Pham <nphamcs@gmail.com>,
- Linux-MM <linux-mm@kvack.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <21AB948C-2A05-4AE1-9E8F-8441C89D36AD@gmail.com>
-References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
- <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-X-Mailer: Apple Mail (2.3776.700.51)
+In-Reply-To: <20240820123518.1788294-1-ruanjinjie@huawei.com>
+X-Provags-ID: V03:K1:K7cBbWoIShlD66049cmP2FqksWnx3SN+H5lXc21nFVbBvdqE/B9
+ U2bnn5C7QchLuXPugvq4JJViBCFCyxJVwHaoue/jLmBmuHzBDQbssFZnv4pHZM8RoBmDBH7
+ zYba+W1Q8G4bz9sj80cnVv94dxzFMArr6ng489n+Yf4GvsaFn7tehUrcGCpgtbCGe3bbFnS
+ SSHutCmO/PK8eo7gE2wmA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Lh+VwlgWObU=;GJNmrYaMKTYmGGyPde2c8PtyC89
+ d0XquKzpM3w9sQ3Ttun4EdmGS+2Yxr5xXHDiANRgVImt4CbvTqGf3qQsZIX7mJXXg5IOifawD
+ 4OasJRwKY7Qn1t01Lb5/BFZT4ZO21IKpCgwVMAXll7DMMn7njL41+g7ZkBnF7gDZjJ4z9emsn
+ QLWXhoY4nh1hoBrdejLylxJptP6U1SekHXLHeFOSHt00rxWdq2fBgqhPAkXKdV2yax1U3l273
+ YUSRzIfpK4mcuRjIBDLKPgaLirpchLDi35azvucT2uG85qO1ukyTLwU3oNwTH2jMT9mryxfsC
+ /tm4VR0xaQ9PUDttUlqpzGHZotLvYvcF8z0zEPeJL9CKh51gZNeuF0jaRqEXD3K4ufHrI3CZ4
+ 9TkgrOE4BkMjxOEnC0z6zXsWGGCSA3sksmwUwpHihqBjswjTjGHrmf4GH0bB3d7N7U3/erXyY
+ rr1tyNqtwiHwx10f85cM1aiXTc6948AdjWOZdq6N7MUWbsO14aG2ArpaG9MxQa4Ip1cNREU1d
+ SGhSa+W/HsTWiyJV1MfHQ9vIqia/Xlb275mCwSoCj2Rci9FYAEKHGWiODzLT7Rgu05VYhs1Ei
+ tGjKqpapt8ygNCIpDNuxNn2glVgY65WjCUbk16Qov4IwWPIqgQLaQe4fp3stI/4jz1xW7RczA
+ PQg8MDYf353lSeUOtweKLYEJZ7GS6kB2fA3f5o/9eP647J2bZ6l//CnmDyHvHUzzvKtA8ddGI
+ nDIVs7ZTsmCXdiv21wGj9YFhGYT8CJNxoly9+KHSa/iirJ9p6Pz46TvpfVe9yjtES7zNSWgZP
+ grZSzqK6ygRvC5IW3lTkx2vg==
 
+On Tue, Aug 20, 2024 at 08:35:18PM +0800, Jinjie Ruan wrote:
+> Use the devm_platform_ioremap_resource_byname() helper instead of
+> calling platform_get_resource_byname() and devm_ioremap_resource()
+> separately.
+>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
+Looks good to me, thanks!
 
-> Wiadomo=C5=9B=C4=87 napisana przez Linux regression tracking (Thorsten =
-Leemhuis) <regressions@leemhuis.info> w dniu 23.08.2024, o godz. 13:51:
->=20
->  If that is the case nobody might
-> look into this unless you are able to provide more details, like the
-> result of a bisction
-> =
-(https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.ht=
-ml
-> ) -- that's just how it is=E2=80=A6
->=20
+Reviewed-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 
-oh well - bisecting might be painful as to provoke oops - usually i need =
- - literally  - multiple days of constant 12c/24t compilation=E2=80=A6
-
-
+> ---
+>  drivers/spi/spi-wpcm-fiu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/spi/spi-wpcm-fiu.c b/drivers/spi/spi-wpcm-fiu.c
+> index 886d6d7771d4..47e485fd8f84 100644
+> --- a/drivers/spi/spi-wpcm-fiu.c
+> +++ b/drivers/spi/spi-wpcm-fiu.c
+> @@ -448,8 +448,7 @@ static int wpcm_fiu_probe(struct platform_device *pd=
+ev)
+>  	fiu =3D spi_controller_get_devdata(ctrl);
+>  	fiu->dev =3D dev;
+>
+> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "control");
+> -	fiu->regs =3D devm_ioremap_resource(dev, res);
+> +	fiu->regs =3D devm_platform_ioremap_resource_byname(pdev, "control");
+>  	if (IS_ERR(fiu->regs)) {
+>  		dev_err(dev, "Failed to map registers\n");
+>  		return PTR_ERR(fiu->regs);
+> @@ -459,8 +458,7 @@ static int wpcm_fiu_probe(struct platform_device *pd=
+ev)
+>  	if (IS_ERR(fiu->clk))
+>  		return PTR_ERR(fiu->clk);
+>
+> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory");
+> -	fiu->memory =3D devm_ioremap_resource(dev, res);
+> +	fiu->memory =3D devm_platform_ioremap_resource_byname(pdev, "memory");
+>  	fiu->memory_size =3D min_t(size_t, resource_size(res), MAX_MEMORY_SIZE=
+_TOTAL);
+>  	if (IS_ERR(fiu->memory)) {
+>  		dev_err(dev, "Failed to map flash memory window\n");
+> --
+> 2.34.1
+>
 
