@@ -1,160 +1,111 @@
-Return-Path: <linux-kernel+bounces-299440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591E895D4A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2274495D4A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E73AEB22052
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5507E1C21FFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9D6191F8D;
-	Fri, 23 Aug 2024 17:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4221190486;
+	Fri, 23 Aug 2024 17:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHPWSEM9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/wnBe5s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A292191493;
-	Fri, 23 Aug 2024 17:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1030A188A12;
+	Fri, 23 Aug 2024 17:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435155; cv=none; b=VIWwLscxtrhdh/c8LdSE9ys6bkxZrqCElGi4QFcLEw40czrnJS+/xJXoPIBRz5iV8fa0XKsJ0MxxqRR1Crc+mSpTvKhndLTelTklbw6nhVtiGmwfob8x5slzO9XJ+9zxqZu9i5V36QqrbB0nY98SbDszHne0w+/2dI5++3DKHTw=
+	t=1724435232; cv=none; b=AS1qBWAwOTCy+AN3eWOSmCWnAXNCIYjGn5vzvxcM+bE7+iAFfcWuclb92bE7Pn7crRh5OW2Yx+78o4HhHTad7R9n4fvP0LMjqINYSTkXAIeJXATBQXKOVDG6Um3K5UF57QMepQ34HYW/PP9hZa56XnWmCiPBz9w6Dfa071+kQYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435155; c=relaxed/simple;
-	bh=mr01yUEvX26NmVp0jXUcMup0uPWebEfYc7j3GsM8fjs=;
+	s=arc-20240116; t=1724435232; c=relaxed/simple;
+	bh=7ze++N9tAqQa+Vfl2HhIKMb98yr0SEaVJcjB5T/i8MA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=jDOAupVUdyzbauKUJHpulGD3RrcOJzoSLW44Mm/qSZAPWSD5YZb3QFEPwx5uXoLoUkzzraUgfgBY4dQFKTqb51kWis9pp9gSDht47zqMQ2MO1T1CA0sVwMTk29RcNW+2DO0uWRRZPS29Y0Wshajd2EQPPfPH51avvk2sCwncz0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHPWSEM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86113C32786;
-	Fri, 23 Aug 2024 17:45:54 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=Ym5bvvB3Bv2oipOb4xBc7OeLwNXSxobCXV6fCwIQMIijw8l8aNu4IA1YKQvrSmlILxLPETzDWJzXrt6fGWjj1cjXN1AvvYZvbL4PDGVGtDhGMag/hvRaNNgwLv5j35rQQMswb0MoI4Y227dDCcKaBDwBqPROqPkAES1Mhtkc38Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/wnBe5s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A20C32786;
+	Fri, 23 Aug 2024 17:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724435154;
-	bh=mr01yUEvX26NmVp0jXUcMup0uPWebEfYc7j3GsM8fjs=;
+	s=k20201202; t=1724435231;
+	bh=7ze++N9tAqQa+Vfl2HhIKMb98yr0SEaVJcjB5T/i8MA=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eHPWSEM9ZihA42Y4ZITQjghgyKSJcIG+f546BaW4ykszsvYxOtxHN3kY+roDFfypS
-	 1Z9tclp0ated/Dhp/CvM2h9Ud1w3QZ0bHZ2CTxLSlxzllhTeLw5uPjmHTGHMKpkj4/
-	 lmXTBuktRhntuUv0huFq2r3cauXx9sAoYuaR7MG4J2Gfb81ZobYpbyP1N+62I+hBEx
-	 5mrnYORL607W41D7saiW13gfbqhH9lxljbJxnnkQOkizrXTjNhjEQPOsvWSUTv6MV/
-	 MhbpPkybGZDDzm0hTA/q1WEp4NF7mpuV2RFgVBiP/sTbhrP6B7qssbGeadwmnRBufj
-	 LJkiPqsE47CKQ==
-Date: Fri, 23 Aug 2024 12:45:52 -0500
+	b=R/wnBe5szUSqLSLq6C5ICB/yz51hjIp1iPiDRh/iQPa7c57g6vB0joavp+YxoNS0q
+	 4GzcZfNxqi2e3mV3mg6ynO3aqVTemsRNXxLZHMbfGlFh6mCN6O9JT5dn4OzpgPnJ56
+	 wRgIFVdH6iglqZpDPlyOGAJocWcpaPKGI3+k98/gAzBYCg63K8Te2dtRwdntmdKhka
+	 RPIoFoleh9+aSY+LujEQ3IZ/Zzf6ZVlad4yNdG11s20HaYR9UeUVtQ7lcIANYHAlRR
+	 yV+yUTDvEUXVYaSC/DkgaUX1q1cFezBhrlZkce8D+h8cRST3lj/OYmmPG0qGTMxRPt
+	 oWKitiOVrTI7Q==
+Date: Fri, 23 Aug 2024 12:47:09 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev, Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Anup Patel <anup@brainfault.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Robert Moore <robert.moore@intel.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Drew Fustini <dfustini@tenstorrent.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
-Subject: Re: [PATCH v8 08/17] ACPI: pci_link: Clear the dependencies after
- probe
-Message-ID: <20240823174552.GA375227@bhelgaas>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kunwu Chan <chentao@kylinos.cn>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] PCI: Make pci_bus_type constant
+Message-ID: <20240823174709.GA375542@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsgtNbBLfP3SygYv@sunil-laptop>
+In-Reply-To: <20240823074202.139265-1-kunwu.chan@linux.dev>
 
-On Fri, Aug 23, 2024 at 12:03:25PM +0530, Sunil V L wrote:
-> On Thu, Aug 22, 2024 at 04:44:15PM -0500, Bjorn Helgaas wrote:
-> > On Mon, Aug 12, 2024 at 06:29:20AM +0530, Sunil V L wrote:
-> > > RISC-V platforms need to use dependencies between PCI host bridge, Link
-> > > devices and the interrupt controllers to ensure probe order. The
-> > > dependency is like below.
-> > > 
-> > > Interrupt controller <-- Link Device <-- PCI Host bridge.
-> > > 
-> > > If there is no dependency between Link device and PCI Host Bridge,
-> > > then PCI devices may be probed prior to Link devices.  If a PCI
-> > > device is probed before its Link device, we won't be able to find
-> > > its INTx mapping.
-> > 
-> > This seems to explain why we want these dependencies, which is useful,
-> > but *this* patch only removes the dependencies.
-> > 
-> > Maybe this description should be in the patch that *adds* the
-> > dependencies, e.g., "ACPI: RISC-V: Implement function to add implicit
-> > dependencies"?
-> >
-> Okay. Let me move this to the patch you suggested.
+On Fri, Aug 23, 2024 at 03:42:01PM +0800, Kunwu Chan wrote:
+> From: Kunwu Chan <chentao@kylinos.cn>
+> 
+> Since commit d492cc2573a0 ("driver core: device.h: make struct
+> bus_type a const *"), the driver core can properly handle constant
+> struct bus_type, move the pci_bus_type variable to be a constant
+> structure as well, placing it into read-only memory which can not be
+> modified at runtime.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 
-Given my forgetfulness and your pointing out that this *does* add the
-dependencies (by virtue of adding PNP0C0F to the acpi_honor_dep_ids[]
-list), it does make sense here.
+Applied to pci/misc for v6.12, thanks!
 
-> > > So, add the link device's HID to dependency honor list and clear the
-> > > dependency after probe is done so that the dependent devices are
-> > > unblocked to probe.
-
-Maybe expanding this to "Add the link devices HID (PNP0C0F) to the
-acpi_honor_dep_ids[] dependency list" would help connect this all
-together?
-
-> > This still claims this patch adds HID, which I don't think it does.
-> >
-> Please see below.
+> ---
+>  drivers/pci/pci-driver.c | 2 +-
+>  include/linux/pci.h      | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index f412ef73a6e4..35270172c833 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -1670,7 +1670,7 @@ static void pci_dma_cleanup(struct device *dev)
+>  		iommu_device_unuse_default_domain(dev);
+>  }
 >  
-> > > Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> > > Tested-by: BjÃ¶rn TÃ¶pel <bjorn@rivosinc.com>
-> > > ---
-> > >  drivers/acpi/pci_link.c | 2 ++
-> > >  drivers/acpi/scan.c     | 1 +
-> > >  2 files changed, 3 insertions(+)
-> > > 
-> > > diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
-> > > index aa1038b8aec4..b727db968f33 100644
-> > > --- a/drivers/acpi/pci_link.c
-> > > +++ b/drivers/acpi/pci_link.c
-> > > @@ -748,6 +748,8 @@ static int acpi_pci_link_add(struct acpi_device *device,
-> > >  	if (result)
-> > >  		kfree(link);
-> > >  
-> > > +	acpi_dev_clear_dependencies(device);
-> > > +
-> > >  	return result < 0 ? result : 1;
-> > >  }
-> > >  
-> > > diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> > > index 28a221f956d7..753539a1f26b 100644
-> > > --- a/drivers/acpi/scan.c
-> > > +++ b/drivers/acpi/scan.c
-> > > @@ -863,6 +863,7 @@ static const char * const acpi_honor_dep_ids[] = {
-> > >  	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
-> > >  	"RSCV0001", /* RISC-V PLIC */
-> > >  	"RSCV0002", /* RISC-V APLIC */
-> > > +	"PNP0C0F",  /* PCI Link Device */
->
-> This is the change which I meant adding HID to the honor list. Do you
-> recommend to make this change separate patch so that it doesn't confuse
-> with adding a new HID to the probe match table?
-
-Oh, right, sorry.  I remember working this out in the past, but I had
-forgotten.
-
-I think it makes sense in this patch because the add and removal are
-matched when they're in the same patch.
-
-Sorry for the noise!
-
-Bjorn
+> -struct bus_type pci_bus_type = {
+> +const struct bus_type pci_bus_type = {
+>  	.name		= "pci",
+>  	.match		= pci_bus_match,
+>  	.uevent		= pci_uevent,
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 4246cb790c7b..0d6c1c089aca 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1098,7 +1098,7 @@ enum pcie_bus_config_types {
+>  
+>  extern enum pcie_bus_config_types pcie_bus_config;
+>  
+> -extern struct bus_type pci_bus_type;
+> +extern const struct bus_type pci_bus_type;
+>  
+>  /* Do NOT directly access these two variables, unless you are arch-specific PCI
+>   * code, or PCI core code. */
+> -- 
+> 2.41.0
+> 
 
