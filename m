@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-299414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E08A95D44A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E2A95D44C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6BAEB21701
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9DB1F235F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA50191F64;
-	Fri, 23 Aug 2024 17:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A512D1922DB;
+	Fri, 23 Aug 2024 17:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="b7EgIJHt"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="nMfkGg2n"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9523B18DF81
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855D8191F81
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434309; cv=none; b=l4rkhqSOojEKwLTidHZ5pPHxilbMZqmT8y0eXxcwZGoYDtjTpUVZZ+ZJTVGNTmaBXo1vplNvMYd1R3yyY8HSTEaJ7/rNEar0wQh7sgNpZEdIxZTTVvMScWsqfdnpXtK9Y5T1Rng9Dhe4FoZc3RXRqcN5nKmg7vMcGp+cfDHzfK4=
+	t=1724434311; cv=none; b=F7MjM1RX1gXCxfEJbaFBLsvFMky9aMGm2A19eHdHw35NPkk40qEPV7HEA9vjyZBp0/Tghc+QIS0Jr+AYZAkBT8qh7JfxUnwvyA9GzSJLcJFB1zlbuZGrrzTHxGoMjCegiP9tFgeLrh0UwK6zPrYGxJCSUBcPZIp7nOA4GQqVceI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434309; c=relaxed/simple;
-	bh=VNWu2J39++LQzHtTrd4Q6xUHjBc0llUb4IP1EArdOZw=;
+	s=arc-20240116; t=1724434311; c=relaxed/simple;
+	bh=LxeFyxsuYCcPtr/MQv2af2sWojNlmhphYuIJiMvBues=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e2bQDwG69oy7TJCphcWz/rw0vKWyjdXPqcHqLk0GiDVAgPznPxAGiP63oCzjdiHNysSNUaeaGbftoLHRXP0ELwUbdSyBwD6pnb3KL7xKDDS8pj2LFpAsGCMSsHVJ6UFOk3xMF3Mha9n+VwVsgprDOqgCygGMYuntBgP+F40/3mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=b7EgIJHt; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=k9h8xAXKIof0zcroChLt/WqsaHq6N5+5BS2QJbsa73IATWEKMY4ztKhP3ujseHC4vLb3EHCvfNVheKBxi6gR+D3kL0W/bQJ0XFNRLyr3edSWd8PjyHUC0P7bVTxvTsg3iuh7Sp+O4zPd2dMFDt6E2YfBKk14d58tQvNmlYgYDcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=nMfkGg2n; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7b594936e9bso1616559a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:31:47 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-714262f1bb4so1842596b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724434307; x=1725039107; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1724434310; x=1725039110; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7yL0MPvBF8bNsfhufIdh1IITs7ZJ9No4pUlKB9Ss45Q=;
-        b=b7EgIJHtUTkvQqKhxVwAF7xGob00f5q8CfXcd7qGXd8PgMUOj34bO7KPDgzIcX+27F
-         2O48J7fmJ7tCwTVMxHID7qp6H+A3i4F6CYqIjTdXhA3T3KV8JDtqyq/BpHfA7qUXZjjS
-         yM0hGzoXmLXtgPT4TaENEKnz05Z//SRu/AgxI=
+        bh=VENZ7u9r+KFqHJZ3BdWz6q0JyzsBYDvzURd4w22e1CM=;
+        b=nMfkGg2nH8Ecfi9ElHrvrwn+pvkDxnum08m8jDN2+sCJKx0URNWDCJoHn2ArjkGC5J
+         leUXvC7dYpd8tKD9N/YGP7GZLRznRU94kGCzqcq9TCdXl3HHOKrwBE1QdjvRTLF0Zawi
+         8JA4WZ08FPYWcz11kc0zTUH5dHwKrinagm6b0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724434307; x=1725039107;
+        d=1e100.net; s=20230601; t=1724434310; x=1725039110;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7yL0MPvBF8bNsfhufIdh1IITs7ZJ9No4pUlKB9Ss45Q=;
-        b=cNwx3W1um0IVm8EfTpe8vBkjVJNTp1Vh3JGxQYMbgqvXg4dlgLi3nL/BuAcIm/rgll
-         RI7AIZsrf8Ljqin3+qZDR/p1wN6euhH8o7r2Uv5WmwSfd05v7HMysZz7rx2rrB90GSeG
-         Ve14MwJuwqIPmzDnK8T1qgV7G/VDmBAG0fm6kkCsyZwQQEW1sMLynJ+1sRsNtwMiNHoj
-         jWEwciv+9srr+m5PuhFum0hMS7S3txQhsvC6eVCGLM2WG7Crracxdxf7TFHi/BHqVNVp
-         ao+8fRBiEJBDSIXAwPK54bAL0keh5TTjSTMXFHKI6qlTjBmWfHBE3pwbR1vtZyYqXeDK
-         jkDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYvNj0hXm/wUKOuI1NuS4UY2QB1UL4C4lSaljlONDvHenVMKlv+DFU4Gv/+WmwPwrHs3oYfQnCv/r+kB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUIfWYkLXGR94nnTw02lU0Z9t+mNWhZ3osmiP805Jz5yQ7n9Mm
-	SRDGx7KYMM7oGW/47xMymBiCC/9oITGH5y1wVsqJFwgY0q/urHdiBD5Wev50ydk=
-X-Google-Smtp-Source: AGHT+IFmojFMICV8FHNtia4R5sPL+9AeNF/vbaHALXfPws8KtlkVXl3M4m9hBDPIXTtBqi5YwD+2Nw==
-X-Received: by 2002:a05:6a21:a343:b0:1c2:956a:a909 with SMTP id adf61e73a8af0-1cc89dbc287mr3646076637.27.1724434300683;
-        Fri, 23 Aug 2024 10:31:40 -0700 (PDT)
+        bh=VENZ7u9r+KFqHJZ3BdWz6q0JyzsBYDvzURd4w22e1CM=;
+        b=Pl7A1uxfkgx+YjTb9ql15Bb1/U4cT4peGtSHMUJ8nmZj7VAn9sEGH0GgINX5D5pxhm
+         Ge30RKSCF3+LZYQ9d+1o4JzwXg7wn57a07uAeuXvAuH7PGDtbF4v7rXM3tFcbVaqCT9I
+         nidKLzVhkZxXcY6FmRql3+DTaYjllYeayRBHGHtABnvSRSNrBDJG7y/3/owfwafkUY/d
+         Jsj0kthzA/cllzqloWvC/7UZkjPBB53eEwCN5T8n035XP8M8BuePPRevHJayU+ke7kSj
+         lSAymqkpGPu3Uc4MqO8ngcF8w55NvMSv0+muUMtTBI/33D6ih5xzf2M9ToqxclDUesvY
+         h2TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX2oFTIC0JnIZYEE7vwt01M2aMEYImfkq0RfJIm7lCUjv/kM9T+l1rmn9zXAJf1BXNkih1HvCB80MP3eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLvaOimorH2MWyn9ihudH028wa8bWhnDTBvrkUBC8XJXVMUL3Q
+	9kyX8QqqCI21OrQNJj3elykq9vivb6o6Xfb/y9+Ouk+rDc1enTKIxG/a+pa5rKo=
+X-Google-Smtp-Source: AGHT+IF80kFwwD0giG0CoU1G7lJncioYNLPbf5NvDHI5LFjxf5lo8LyJnGR5gbXJE+GOFTJmyqHKtA==
+X-Received: by 2002:a05:6a00:888:b0:70d:2ba1:2402 with SMTP id d2e1a72fcca58-71445f3cc63mr3053603b3a.29.1724434309626;
+        Fri, 23 Aug 2024 10:31:49 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430964fsm3279624b3a.150.2024.08.23.10.31.39
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430964fsm3279624b3a.150.2024.08.23.10.31.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 10:31:40 -0700 (PDT)
+        Fri, 23 Aug 2024 10:31:49 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: amritha.nambiar@intel.com,
@@ -85,13 +85,10 @@ Cc: amritha.nambiar@intel.com,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Lorenzo Bianconi <lorenzo@kernel.org>,
 	Daniel Borkmann <daniel@iogearbox.net>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 1/6] net: Add sysfs parameter irq_suspend_timeout
-Date: Fri, 23 Aug 2024 17:30:52 +0000
-Message-Id: <20240823173103.94978-2-jdamato@fastly.com>
+Subject: [PATCH net-next 2/6] net: Suspend softirq when prefer_busy_poll is set
+Date: Fri, 23 Aug 2024 17:30:53 +0000
+Message-Id: <20240823173103.94978-3-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240823173103.94978-1-jdamato@fastly.com>
 References: <20240823173103.94978-1-jdamato@fastly.com>
@@ -105,9 +102,17 @@ Content-Transfer-Encoding: 8bit
 
 From: Martin Karsten <mkarsten@uwaterloo.ca>
 
-This patch doesn't change any behavior but prepares the code for other
-changes in the following commits which use irq_suspend_timeout as a
-timeout for IRQ suspension.
+When NAPI_F_PREFER_BUSY_POLL is set during busy_poll_stop and the
+irq_suspend_timeout sysfs is nonzero, this timeout is used to defer
+softirq scheduling, potentially longer than gro_flush_timeout. This can
+be used to effectively suspend softirq processing during the time it
+takes for an application to process data and return to the next
+busy-poll.
+
+The call to napi->poll in busy_poll_stop might lead to an invocation of
+napi_complete_done, but the prefer-busy flag is still set at that time,
+so the same logic is used to defer softirq scheduling for
+irq_suspend_timeout.
 
 Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
 Co-developed-by: Joe Damato <jdamato@fastly.com>
@@ -115,91 +120,44 @@ Signed-off-by: Joe Damato <jdamato@fastly.com>
 Tested-by: Joe Damato <jdamato@fastly.com>
 Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
 ---
- rfc -> v1:
-   - Removed napi.rst documentation from this patch; added to patch 6.
+ net/core/dev.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
- include/linux/netdevice.h |  2 ++
- net/core/dev.c            |  3 ++-
- net/core/net-sysfs.c      | 18 ++++++++++++++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 0ef3eaa23f4b..31867bb2ff65 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1857,6 +1857,7 @@ enum netdev_reg_state {
-  *	@gro_flush_timeout:	timeout for GRO layer in NAPI
-  *	@napi_defer_hard_irqs:	If not zero, provides a counter that would
-  *				allow to avoid NIC hard IRQ, on busy queues.
-+ *	@irq_suspend_timeout:	IRQ suspension timeout
-  *
-  *	@rx_handler:		handler for received packets
-  *	@rx_handler_data: 	XXX: need comments on this one
-@@ -2060,6 +2061,7 @@ struct net_device {
- 	struct netdev_rx_queue	*_rx;
- 	unsigned long		gro_flush_timeout;
- 	int			napi_defer_hard_irqs;
-+	unsigned long		irq_suspend_timeout;
- 	unsigned int		gro_max_size;
- 	unsigned int		gro_ipv4_max_size;
- 	rx_handler_func_t __rcu	*rx_handler;
 diff --git a/net/core/dev.c b/net/core/dev.c
-index e7260889d4cb..3bf325ec25a3 100644
+index 3bf325ec25a3..74060ba866d4 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -11945,6 +11945,7 @@ static void __init net_dev_struct_check(void)
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, _rx);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_flush_timeout);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, napi_defer_hard_irqs);
-+	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, irq_suspend_timeout);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_ipv4_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, rx_handler);
-@@ -11956,7 +11957,7 @@ static void __init net_dev_struct_check(void)
- #ifdef CONFIG_NET_XGRESS
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, tcx_ingress);
- #endif
--	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 104);
-+	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 112);
- }
+@@ -6230,7 +6230,12 @@ bool napi_complete_done(struct napi_struct *n, int work_done)
+ 			timeout = READ_ONCE(n->dev->gro_flush_timeout);
+ 		n->defer_hard_irqs_count = READ_ONCE(n->dev->napi_defer_hard_irqs);
+ 	}
+-	if (n->defer_hard_irqs_count > 0) {
++	if (napi_prefer_busy_poll(n)) {
++		timeout = READ_ONCE(n->dev->irq_suspend_timeout);
++		if (timeout)
++			ret = false;
++	}
++	if (ret && n->defer_hard_irqs_count > 0) {
+ 		n->defer_hard_irqs_count--;
+ 		timeout = READ_ONCE(n->dev->gro_flush_timeout);
+ 		if (timeout)
+@@ -6366,9 +6371,13 @@ static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
+ 	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
  
- /*
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 0e2084ce7b75..fb6f3327310f 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -440,6 +440,23 @@ static ssize_t napi_defer_hard_irqs_store(struct device *dev,
- }
- NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
- 
-+static int change_irq_suspend_timeout(struct net_device *dev, unsigned long val)
-+{
-+	WRITE_ONCE(dev->irq_suspend_timeout, val);
-+	return 0;
-+}
-+
-+static ssize_t irq_suspend_timeout_store(struct device *dev,
-+					 struct device_attribute *attr,
-+					 const char *buf, size_t len)
-+{
-+	if (!capable(CAP_NET_ADMIN))
-+		return -EPERM;
-+
-+	return netdev_store(dev, attr, buf, len, change_irq_suspend_timeout);
-+}
-+NETDEVICE_SHOW_RW(irq_suspend_timeout, fmt_ulong);
-+
- static ssize_t ifalias_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t len)
- {
-@@ -664,6 +681,7 @@ static struct attribute *net_class_attrs[] __ro_after_init = {
- 	&dev_attr_tx_queue_len.attr,
- 	&dev_attr_gro_flush_timeout.attr,
- 	&dev_attr_napi_defer_hard_irqs.attr,
-+	&dev_attr_irq_suspend_timeout.attr,
- 	&dev_attr_phys_port_id.attr,
- 	&dev_attr_phys_port_name.attr,
- 	&dev_attr_phys_switch_id.attr,
+ 	if (flags & NAPI_F_PREFER_BUSY_POLL) {
+-		napi->defer_hard_irqs_count = READ_ONCE(napi->dev->napi_defer_hard_irqs);
+-		timeout = READ_ONCE(napi->dev->gro_flush_timeout);
+-		if (napi->defer_hard_irqs_count && timeout) {
++		timeout = READ_ONCE(napi->dev->irq_suspend_timeout);
++		if (!timeout) {
++			napi->defer_hard_irqs_count = READ_ONCE(napi->dev->napi_defer_hard_irqs);
++			if (napi->defer_hard_irqs_count)
++				timeout = READ_ONCE(napi->dev->gro_flush_timeout);
++		}
++		if (timeout) {
+ 			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
+ 			skip_schedule = true;
+ 		}
 -- 
 2.25.1
 
