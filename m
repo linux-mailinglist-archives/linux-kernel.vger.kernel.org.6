@@ -1,140 +1,109 @@
-Return-Path: <linux-kernel+bounces-299044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F70095CF83
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FE795CF7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AB56B2714A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B5BB2CB5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826A1A2C1E;
-	Fri, 23 Aug 2024 14:05:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5EE18892E;
+	Fri, 23 Aug 2024 14:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L22WcKiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D20E1A2866
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027DE18892C;
+	Fri, 23 Aug 2024 14:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421917; cv=none; b=mMzyKzMjmk5t/QSVAXkK3Ns/o276/cJ0mbMS919FHUZ28VPjgRHijDXn25VSvI4WGlHcHBT+qrXyw9otYVMxusKIW3GwnhmtAPiDvZPlvBgWcaTYYGGwukR7qRuquG2ZlAtczkA7mzTXPD/RBaWKY3dw6w5VtGbykDD3NTP8KBU=
+	t=1724421944; cv=none; b=it03pT1gEnxjh2vQ0BoG/WCEWDXutxMDKtO+DqsHohqz2EuXwnyG432Mg2NrM4Unaj5uEOpGSl7EyP5YR9eodBkCJThyIcRyhx21Ri8F3Hb6Sjn5lNTVhkQN230zDObhqG89DcXaLXNKb3zmbKPBAVBPSXhNzgrxGPgPftDL99E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421917; c=relaxed/simple;
-	bh=AqkOfvfNc9NvSgAbdMoj8rgdg2S7o/v1UgIhgeSl2/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjPvYdcnBy7oGI41nKoKjmhwkm7B0o4XC1bj8AIBmJZsEHzcEKXMJXGY0eq54OdUGkFD4Ycr34UzRaA79W26gd+uIlr7f16O6nnAOVVwKnnRZFKDdhWgf/4lQGtmyKVs1gWCBu7xxX4Aw2xpa91BQ6iWu0VYmtNmI3VOX9nw7XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1shUuS-0001dh-AO; Fri, 23 Aug 2024 16:05:00 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1shUuQ-002UxU-VB; Fri, 23 Aug 2024 16:04:58 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1shUuQ-001dQP-2U;
-	Fri, 23 Aug 2024 16:04:58 +0200
-Date: Fri, 23 Aug 2024 16:04:58 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, kernel@pengutronix.de,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <ZsiXCqNOs0dHF379@pengutronix.de>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
- <Zsbi2xcxBGE7o9uE@eichest-laptop>
- <ZscNO2PKNlK3ru_7@pengutronix.de>
- <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
- <ZsiTMITWF0Tj3o8Q@eichest-laptop>
+	s=arc-20240116; t=1724421944; c=relaxed/simple;
+	bh=LZ6MiG4YRlQZkMjpzaXtBjLp8oaosKcR3U5nFR+187w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d0VQ96kMeTLDzEol9FNCP7pxCFu+/L/gfpNycchKtQiRuISencH6wXzktE+8GYGcaDytWsexz85TOEzM+EsiqRaXCyKACY+qO20N9IAxfDArWP/RAk91KwEmt1flrTsdfrj9YDmuYFkwZklSJLEW42i9Crymu41l3xNasc0SYMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L22WcKiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C121C32786;
+	Fri, 23 Aug 2024 14:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724421943;
+	bh=LZ6MiG4YRlQZkMjpzaXtBjLp8oaosKcR3U5nFR+187w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L22WcKiu10qAndF7o3dFaaVrkLBj4KLMk8gCR91d2rhUR5R1MxdSQFvT6ueZKIiIA
+	 mMGDlGSNu52I1HuSMAr9ixpGvlLdYlzH+3KRHJdTQMN8pmxyQCWO8StDSeZvxMDord
+	 Za4EPei89Ian4nZb1qGAKulNnYUeeyTffz9nKfkfiIBrC60v4rhoMwbKvDSJEI/+UM
+	 6cv5FIPVmY+tZedG3qGg+2inowjxSYFc1Y3t/Oxup8ZDkGzWxrPACCqQb9YfyGoHsO
+	 +BIhFIkpDggdF6XiicTV4UEs5FnqtiGRzDHudHFxhYD6sL5TFiJmgNbZQVZzQg3DFR
+	 /IqNbvDV6a+8Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>,
+	Foster Snowhill <forst@pen.gy>,
+	Georgi Valkov <gvalkov@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Sasha Levin <sashal@kernel.org>,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 1/9] usbnet: ipheth: race between ipheth_close and error handling
+Date: Fri, 23 Aug 2024 10:05:21 -0400
+Message-ID: <20240823140541.1975737-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZsiTMITWF0Tj3o8Q@eichest-laptop>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.224
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 03:48:32PM +0200, Stefan Eichenberger wrote:
-> Hi Andi,
-> 
-> On Fri, Aug 23, 2024 at 02:35:54AM +0200, Andi Shyti wrote:
-> > Hi,
-> > 
-> > On Thu, Aug 22, 2024 at 12:04:43PM GMT, Oleksij Rempel wrote:
-> > > On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
-> > > > Hi Andi,
-> > > > 
-> > > > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> > > > > Hi Stefan,
-> > > > > 
-> > > > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> > > > > >  		goto rpm_disable;
-> > > > > >  	}
-> > > > > >  
-> > > > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > > > > > +
-> > > > > 
-> > > > > you might also want to add the multi-master boolean property in
-> > > > > the binding.
-> > > > 
-> > > > We discussed this internally and weren't sure when it was required
-> > > > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-> > > > bindings. Is it still required if it is part of the dt-schema?
-> > > > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-> > > 
-> > > The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
-> > > every thing not in this yaml
-> > > 
-> > > > If so, I will add it in the next version.
-> > > 
-> > > Yes, please.
-> > 
-> > sorry for the confusion, please don't add it. I had a chat with
-> > Krzysztof and I will quote him: "this is a core property, coming
-> > with dtschema, so they dont need to update bindings".
-> > 
-> > He also sent a cleanup to remove the only binding using it.
-> 
-> No problem, thanks for the clarification. 
-> 
-> Should I still separate the multi-master patch from the rest of the
-> series, even though it doesn't seem to fix the problem Fabio sees? I did
-> some more testing today and the workarounds he found do not solve the
-> problem I see, so they are definitely not the same.
+From: Oliver Neukum <oneukum@suse.com>
 
-I'll try to review your DMA patches next week.
+[ Upstream commit e5876b088ba03a62124266fa20d00e65533c7269 ]
 
-Regards,
-Oleksij
+ipheth_sndbulk_callback() can submit carrier_work
+as a part of its error handling. That means that
+the driver must make sure that the work is cancelled
+after it has made sure that no more URB can terminate
+with an error condition.
+
+Hence the order of actions in ipheth_close() needs
+to be inverted.
+
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Foster Snowhill <forst@pen.gy>
+Tested-by: Georgi Valkov <gvalkov@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/usb/ipheth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index 06d9f19ca142a..0774d753dd316 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -353,8 +353,8 @@ static int ipheth_close(struct net_device *net)
+ {
+ 	struct ipheth_device *dev = netdev_priv(net);
+ 
+-	cancel_delayed_work_sync(&dev->carrier_work);
+ 	netif_stop_queue(net);
++	cancel_delayed_work_sync(&dev->carrier_work);
+ 	return 0;
+ }
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.43.0
+
 
