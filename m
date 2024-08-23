@@ -1,89 +1,76 @@
-Return-Path: <linux-kernel+bounces-298964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8103C95CE5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12B095CE5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1119A1F221BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B3E1F252E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45032188596;
-	Fri, 23 Aug 2024 13:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B995A1DFE8;
+	Fri, 23 Aug 2024 13:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gN5sNAri"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FUJGztjL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C5A42AAE;
-	Fri, 23 Aug 2024 13:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C12A188586
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420917; cv=none; b=DyqWwvrNH58HSoOAHeQh89bVJar38GEsMtKIa8nqC+TTaZQe5TObje89bcgk4zeo14LaHa/XCv6GcSUpMgLQDVPF+ATKoHGvHgpPMMPhLwEGEVZRZ8wtbrJVVaiMESpzbBzkziw2Q/aNmJJCtOpOFkBTVbYl8pJfeSEnc/6bfgQ=
+	t=1724420935; cv=none; b=qXcCin2BCQPbBEF/9ezmKC7KtBh5iI7YZkwGZKgS6AVJpAbsiIwnPBLw89M1u6TXd5zKlkeAJ9aUWlbGUKuNjVNnCtjAou0Ri4C3mutq2QyOqd7t0DgCuGQvIJWS8qKcdUTfAsm/ZfhkEceGw5JstJBfLAO1Nv3roh/IWtA8fBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420917; c=relaxed/simple;
-	bh=marIxUI4id/urQjGYVyABoFpJCtk9eZAhTRVhqbZCGQ=;
+	s=arc-20240116; t=1724420935; c=relaxed/simple;
+	bh=Ym08cutI5xEzCEv/yynu0Y9cHmBRT00cN4KOxX6TVJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzodAvRHEfkJAz2nOF4FuUyLSqlAEYEXAn/HirqB0wxDBVRtD2U2ZGtLEarRKymTULs2F6H/e4HIKI9JQasgZwTOd1yFQSAeFP85Y3U5xIV8IwDciKjMCoG0CGAocSmUUG0QOaINhCcEoHOKqz4a8KUbkhNFZ/BTplziOot1IYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gN5sNAri; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bf006f37daso3364287a12.1;
-        Fri, 23 Aug 2024 06:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724420914; x=1725025714; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QwrD/lbeRNRzoVUmgjpRWde1MN0URKCkPBQFtW3a+vw=;
-        b=gN5sNAriRfr7FYvXaM0M3Q8RzvD8rugkNnEtgyrfMItPCb5Nwa+3Imr/RhTu6iDCXF
-         6Eo9KTqrcpMwTI9mq5L6lGwvUTI89DJoFVEyT+T4hqlYgsYms64S4Wc0UMZKCQni1uum
-         h8jJ4jKNrI+kRSkw/1gpxERNTNvB30xozMihIPSkwZEuf9YwqUEVLWYF+kPtc/6iWFID
-         7VXB5v0uH4Voma5BsinSC1HRc10i9SLu8y7xZh+pkWu4CcgzT2fzkJVHJqB4/6sOkUDF
-         l2Y/qevv+ESQj4pimGiOhR53vsK3bnXJw/FynimzbFPCKCVdme0/nqJ0fNrPzEQZiDhl
-         K6Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724420914; x=1725025714;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QwrD/lbeRNRzoVUmgjpRWde1MN0URKCkPBQFtW3a+vw=;
-        b=Vr9QCh3nYzRRHTel2KNtz0iuTwUFw8tdxnj++wjhWSk1aho/hi62pjmo6nhapRoYH/
-         iKFJnQQohg/olknd/nJIFqAQPmVFSuJgke96Eu5rXomdT9/2qBf/6ithPswmg1p6/q6R
-         phLi38yl6DZEbo9bqkOwxvX+0G3pb7YFB54clfv7il5bk820Z6BKemvipBHjGGY9m0vv
-         SgQ5COona8/njqbb3NzKLWtvMBFdg113eL01QyHgDZ/RnP+fezWhSPIAKUOW5qLn92aU
-         jS8neO6Q/E6/IZLBqC/JRwKSo39WrLxFCMzSG0RxQYRxVwzznsWdxpyu90kcR/2O5gej
-         fNow==
-X-Forwarded-Encrypted: i=1; AJvYcCVLFB6uQKr3Zwrnz8AoGX/E39xBu8e5lS4B4Mi1mtM66oEWiDqwXi7TOBNrS7hA6mLRO1l/RPL+HHbDthxM@vger.kernel.org, AJvYcCWq7JssjmafJLleD/x8C1mffW/tLDn2lvGct3ZJxUnQ5jR7R05Vi692RtSR5wlk0hKtg1rM/SzyRLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQz2qpvfOJwapP/vQU+VitAHWatZu3xZ90+QXeDkeWCeZEgnoZ
-	ArDtFg5QSsInVuqjGsOqHReaw0V0o7WtbhinSIojusYHETAA2did
-X-Google-Smtp-Source: AGHT+IHd2Dy4icrEZJ3J8EXqviPjWTYhwIADABNxwIWTMxUTKe6s4D9yDboiSs3kZIrTIP397YtD6A==
-X-Received: by 2002:a05:6402:35ce:b0:5c0:8ff8:d7da with SMTP id 4fb4d7f45d1cf-5c08ff8d8d6mr325127a12.12.1724420913934;
-        Fri, 23 Aug 2024 06:48:33 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:48ba:80d8:cf77:1f49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c438fsm2110850a12.61.2024.08.23.06.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 06:48:33 -0700 (PDT)
-Date: Fri, 23 Aug 2024 15:48:32 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <ZsiTMITWF0Tj3o8Q@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
- <Zsbi2xcxBGE7o9uE@eichest-laptop>
- <ZscNO2PKNlK3ru_7@pengutronix.de>
- <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/2/NaZCgKfksKjxNa5UtrNBt93pAYdafMtAcVj4+CgiUxPXEyy4GWhetA1QdyqmyP3DmQiJk446Sv20Pr39Wtnb01ZzGKXoSEfvrZHNTP1z4Aiyh1XYjKwtTSIx8EN4WszTBpeRx3TJUH8tLlTd6krUjBRc6C9s5bhUwU2g9zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FUJGztjL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724420933; x=1755956933;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ym08cutI5xEzCEv/yynu0Y9cHmBRT00cN4KOxX6TVJg=;
+  b=FUJGztjLyhGNwFRA7FqCU6v4zdiQ+H5QYzYvusxQzfCagFBL5H7fov2j
+   IhjzWD+ZI0gv2wWl0E1xSJJLMfIOsf77wJSrSqnkm7CUuQ41RiXS1xdVs
+   KWCgD6duCIf2atMWYrWCDAIKOXHFlr+jKU1QS2XaU02pq6DKTQteqq2fl
+   WImq8fQbDNfrwS//eafMutpSvBVS3EC4N9WKdUFnX+H6gaNB0K94RVLAw
+   Zfa6OpifopHv/A5neVibRTS11UQwyG3FGwx0z6Hy0HSsG9v/7NwwYc36b
+   8n9ZVu3mODDuQVczC6FFfTLHUT5bgYvp3qHzSzxgpB+m2jiwJlvBBGXQo
+   A==;
+X-CSE-ConnectionGUID: gCZQ3agTSF+iNnBT0ZKvgw==
+X-CSE-MsgGUID: c2+SWGdJTEy5GszCN9tolw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22752810"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22752810"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:48:53 -0700
+X-CSE-ConnectionGUID: FxHibKbjT+S4KOjPU6mnIw==
+X-CSE-MsgGUID: f+81n/SQQ9WvPNyrFRjjLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61804479"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:48:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shUel-00000000oGQ-16uV;
+	Fri, 23 Aug 2024 16:48:47 +0300
+Date: Fri, 23 Aug 2024 16:48:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: linux@armlinux.org.uk, krzk@kernel.org, andi.shyti@kernel.org,
+	robh@kernel.org, gregkh@linuxfoundation.org, suzuki.poulose@arm.com,
+	rmk+kernel@armlinux.org.uk, linux-kernel@vger.kernel.org,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: [PATCH] amba: make amba_bustype constant
+Message-ID: <ZsiTPjtnZZIW-K4k@smile.fi.intel.com>
+References: <20240823064203.119284-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,55 +79,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
+In-Reply-To: <20240823064203.119284-1-kunwu.chan@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Andi,
-
-On Fri, Aug 23, 2024 at 02:35:54AM +0200, Andi Shyti wrote:
-> Hi,
+On Fri, Aug 23, 2024 at 02:42:03PM +0800, Kunwu Chan wrote:
+> From: Kunwu Chan <chentao@kylinos.cn>
 > 
-> On Thu, Aug 22, 2024 at 12:04:43PM GMT, Oleksij Rempel wrote:
-> > On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
-> > > Hi Andi,
-> > > 
-> > > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> > > > Hi Stefan,
-> > > > 
-> > > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> > > > >  		goto rpm_disable;
-> > > > >  	}
-> > > > >  
-> > > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > > > > +
-> > > > 
-> > > > you might also want to add the multi-master boolean property in
-> > > > the binding.
-> > > 
-> > > We discussed this internally and weren't sure when it was required
-> > > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-> > > bindings. Is it still required if it is part of the dt-schema?
-> > > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-> > 
-> > The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
-> > every thing not in this yaml
-> > 
-> > > If so, I will add it in the next version.
-> > 
-> > Yes, please.
-> 
-> sorry for the confusion, please don't add it. I had a chat with
-> Krzysztof and I will quote him: "this is a core property, coming
-> with dtschema, so they dont need to update bindings".
-> 
-> He also sent a cleanup to remove the only binding using it.
+> Since commit d492cc2573a0 ("driver core: device.h: make struct
+> bus_type a const *"), the driver core can properly handle constant
+> struct bus_type, move the amba_bustype variable to be a constant
+> structure as well, placing it into read-only memory which can not be
+> modified at runtime.
 
-No problem, thanks for the clarification. 
+...
 
-Should I still separate the multi-master patch from the rest of the
-series, even though it doesn't seem to fix the problem Fabio sees? I did
-some more testing today and the workarounds he found do not solve the
-problem I see, so they are definitely not the same.
+> -extern struct bus_type amba_bustype;
+> +extern const struct bus_type amba_bustype;
 
-Regards,
-Stefan
+Can we actually hide this from the outside, i.e. make it static in the C file,
+and introduce the dev_is_amba() helper instead?
+
+P.S. You may look at the PNP bus case (some of the latest patches there).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
