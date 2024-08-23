@@ -1,132 +1,198 @@
-Return-Path: <linux-kernel+bounces-299092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE4E95CFFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24C795D000
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A801F21A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1F72837E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296EB198E85;
-	Fri, 23 Aug 2024 14:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDFE18FC7F;
+	Fri, 23 Aug 2024 14:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="a22HQPNS"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wohz4vfn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC9718F2F6;
-	Fri, 23 Aug 2024 14:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074818892E;
+	Fri, 23 Aug 2024 14:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724422889; cv=none; b=NjBgjwCyvsNEj61VP4lOfKye/m4lynF+O69Bwrsb309CpyxQGtoxlCt9oHiAw8H7bI1QtCIOB/f2AtXPdFH5y1znyx07myhpo3YSC1Zs2bt2rNUmG/wfDxCH35TPyZT8fMk5riqlPEEnRWu7w88drT5ZpaAdMInOlMlq7ENLR/4=
+	t=1724422965; cv=none; b=ShoneoAQx56+J9tY9mslCRH5u9O2ryKqe1F9NMLPZASfORRGbyJWPAKCri7wurMpACwbrRzxpPGF/rjlxTS5rSzQ1GOMg8jX1VQPFqO3WXufLgn393oMf2/zaq0s6Un/thwRk/a94fg1NIEkjL/cY4rx+S33LWSGlYkfthRg9zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724422889; c=relaxed/simple;
-	bh=KDRD2oYXYie9kDAA42seyxHGHOyyCETQhmnxsrJHo/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BEYUDZaq7v0avAetBgDmd4jFS51Ubk0L9u154gC230birx95XYJpLULTYQXYwI6fpoXBv1ovJuQpVLtYdYKMwCRnzxTF22H6tST9kUftvwMJaJ4BImZ9o/zt0sBv9flp4s/cD9AY8aEpwXHa0l4ryVQDp+OmkonTx1hKnuh3myQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=a22HQPNS; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HfhTAcd3m1L5HJA9yejn7UHuUl2R1wfvxVwgaWJLsos=; b=a22HQPNSHQGY5pRF+CT2WXlT0o
-	J04wjqrnAacN3RU3ohkdIg4BOvqfxDRascAyQnsAm64tDKblDlu4ajfIkzw5yMeEyt0YyBAaSb6N7
-	+L5P93oAtCwvyi94N0tPaEZXTrweurK0y1eAkkKUbdt2U0yZus2nZdtZHu5XefjvHNuRWcXfuB1Ns
-	uP9IBsOUetBGOSkRAYZK82CkUcRfzbWy6FRa6/RpICx44rhpU3jJjQuTmKRtEWZuz/zK7spYDqJgp
-	vAdVWG+ya9fkrGWqGq6UfX8FQi+XOLAa8IKZ1ZEIwGsHOHlvXFS359UO0I06wQtQcyiQ4KhiB8Kwt
-	W8wlg1Mg==;
-Received: from i53875ae2.versanet.de ([83.135.90.226] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shVAB-0005tA-Ep; Fri, 23 Aug 2024 16:21:15 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- David Wu <david.wu@rock-chips.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- kernel@collabora.com, Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: net: Add support for rk3576 dwmac
-Date: Fri, 23 Aug 2024 16:21:58 +0200
-Message-ID: <9856424.ag9G3TJQzC@diego>
-In-Reply-To: <20240823141318.51201-3-detlev.casanova@collabora.com>
-References:
- <20240823141318.51201-1-detlev.casanova@collabora.com>
- <20240823141318.51201-3-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1724422965; c=relaxed/simple;
+	bh=UotOEqLkbDEfMvs99+UwExGDRHVD9lfUITGnAWoc0Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1usz8+/bMRf/6TyVC1gJAeIlZHZhzBEzCAbqJnir5/NmFrpG586rvpaQ8LC9xVYMZc1mIHTx4W8UJl6tNpkU/3OmvJF1KW/hKJ85z16eG/a0eZGVITG2y1bezWh+JLzJ+TyY4bMAyIs93glfr/6CBDPbkHrLPiKXgKiydCyJ5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wohz4vfn; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724422963; x=1755958963;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UotOEqLkbDEfMvs99+UwExGDRHVD9lfUITGnAWoc0Us=;
+  b=Wohz4vfnIqkQLQf4zpWwNZm9QZ+LLZrFyNvTBjaWs1uphAKFtXKnhe6U
+   6smK+2S02TZPEYb/cckWb2yZyiSAAuaFki+4vmnEWUbef7nbPxTYhkktn
+   OmNLX/2c5KgIUmP+zvtBH07GLpJVNEb6QK+YvcKjy4+s1CcFLjItF+ZSx
+   kICjH+6J2j0U+u9FRKMglFmgVtSQLFoIawT7uzshcHJNzSQ+QjkCDBEM1
+   GncIXTHR5YcYqmyn9kkhV2/qiRGMkelvVz1NxYukyNZyHyaQzcP4h+Qol
+   tjg23YKtAa8iFUMp8PBvme6h1M97Ne6sNqES9Ftd2VjkD3wmrxrVJI42Q
+   g==;
+X-CSE-ConnectionGUID: 83cjXKkqQtKcUjIHdj1g+A==
+X-CSE-MsgGUID: RO7dJdorSV2nYO/yVwx8oQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23061858"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23061858"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:22:42 -0700
+X-CSE-ConnectionGUID: 79lO3hlVQbOm/FE+LreU+Q==
+X-CSE-MsgGUID: lX9qaAAlRDa/KRt/yhBQ1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="66130463"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:22:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1shVBU-00000000ooV-3ZTv;
+	Fri, 23 Aug 2024 17:22:36 +0300
+Date: Fri, 23 Aug 2024 17:22:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: subramanian.mohan@intel.com
+Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, giometti@enneenne.com,
+	corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, eddie.dong@intel.com,
+	christopher.s.hall@intel.com, pandith.n@intel.com,
+	thejesh.reddy.t.r@intel.com, david.zage@intel.com,
+	srinivasan.chinnadurai@intel.com
+Subject: Re: [PATCH v12 1/3] pps: generators: Add PPS Generator TIO Driver
+Message-ID: <ZsibLHt0iNJM4d02@smile.fi.intel.com>
+References: <20240823070109.27815-1-subramanian.mohan@intel.com>
+ <20240823070109.27815-2-subramanian.mohan@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823070109.27815-2-subramanian.mohan@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Am Freitag, 23. August 2024, 16:11:14 CEST schrieb Detlev Casanova:
-> Add a rockchip,rk3576-gmac compatible for supporting the 2 gmac
-> devices on the rk3576.
+On Fri, Aug 23, 2024 at 12:31:06PM +0530, subramanian.mohan@intel.com wrote:
+> From: Subramanian Mohan <subramanian.mohan@intel.com>
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
->  Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 2 ++
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml     | 1 +
->  2 files changed, 3 insertions(+)
+> The Intel Timed IO PPS generator driver outputs a PPS signal using
+> dedicated hardware that is more accurate than software actuated PPS.
+> The Timed IO hardware generates output events using the ART timer.
+> The ART timer period varies based on platform type, but is less than 100
+> nanoseconds for all current platforms. Timed IO output accuracy is
+> within 1 ART period.
 > 
-> diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-> index 6bbe96e352509..f8a576611d6c1 100644
-> --- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-> @@ -25,6 +25,7 @@ select:
->            - rockchip,rk3368-gmac
->            - rockchip,rk3399-gmac
->            - rockchip,rk3568-gmac
-> +          - rockchip,rk3576-gmac
->            - rockchip,rk3588-gmac
->            - rockchip,rv1108-gmac
->            - rockchip,rv1126-gmac
-> @@ -52,6 +53,7 @@ properties:
->        - items:
->            - enum:
->                - rockchip,rk3568-gmac
-> +              - rockchip,rk3576-gmac
->                - rockchip,rk3588-gmac
->                - rockchip,rv1126-gmac
->            - const: snps,dwmac-4.20a
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 3eb65e63fdaec..4e2ba1bf788c9 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -80,6 +80,7 @@ properties:
->          - rockchip,rk3328-gmac
->          - rockchip,rk3366-gmac
->          - rockchip,rk3368-gmac
-> +        - rockchip,rk3576-gmac
->          - rockchip,rk3588-gmac
->          - rockchip,rk3399-gmac
->          - rockchip,rv1108-gmac
-> 
+> PPS output is enabled by writing '1' the 'enable' sysfs attribute. The
+> driver uses hrtimers to schedule a wake-up 10 ms before each event
+> (edge) target time. At wakeup, the driver converts the target time in
+> terms of CLOCK_REALTIME to ART trigger time and writes this to the Timed
+> IO hardware. The Timed IO hardware generates an event precisely at the
+> requested system time without software involvement.
 
+...
 
+> +#include <linux/bits.h>
+> +#include <linux/bitfield.h>
+
+These two should be swapped in ordering
+
+> +#include <linux/cleanup.h>
+> +#include <linux/container_of.h>
+> +#include <linux/cpu.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/hrtimer.h>
+> +#include <linux/io-64-nonatomic-hi-lo.h>
+> +#include <linux/kstrtox.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/timekeeping.h>
+> +#include <linux/types.h>
+
+...
+
+> +#define SAFE_TIME_NS			(10 * NSEC_PER_MSEC) /* Safety time to set hrtimer early */
+
+It's better to have
+
+/* ...comment... */
+...definition...
+
+...
+
+> +static enum hrtimer_restart hrtimer_callback(struct hrtimer *timer)
+> +{
+> +	struct pps_tio *tio = container_of(timer, struct pps_tio, timer);
+> +	ktime_t expires, now;
+> +	u32 event_count;
+> +
+> +	guard(spinlock)(&tio->lock);
+> +
+> +	/* Check if any event is missed. If an event is missed, TIO will be disabled*/
+
+/*
+ * Missing space at the of the comment. But since it's two-sentences comment,
+ * make it multi-line like in this example.
+ */
+
+> +	event_count = pps_tio_read(tio, TIOEC);
+> +	if (tio->prev_count && tio->prev_count == event_count)
+> +		goto err;
+> +	tio->prev_count = event_count;
+
++ Blank line.
+
+> +	expires = hrtimer_get_expires(timer);
+
+(1)
+
+> +	now = ktime_get_real();
+> +
+
+The location of this blank line seems incorrect and should be moved to (1) above.
+
+> +	if (now - expires >= SAFE_TIME_NS)
+> +		goto err;
+> +
+> +	tio->enabled = pps_generate_next_pulse(tio, expires + SAFE_TIME_NS);
+> +	if (!tio->enabled)
+> +		return HRTIMER_NORESTART;
+> +
+> +	hrtimer_forward(timer, now, NSEC_PER_SEC / 2);
+> +	return HRTIMER_RESTART;
+
++ Blank line.
+
+> +err:
+> +	dev_err(tio->dev, "Event missed, Disabling Timed I/O");
+> +	pps_tio_disable(tio);
+> +	return HRTIMER_NORESTART;
+> +}
+
+...
+
+Note, the above are nit-picks and may be applied if you ever need a v13 to be
+sent. For now let's wait for the more serious comments against the series.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
