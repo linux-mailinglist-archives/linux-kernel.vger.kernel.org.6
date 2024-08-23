@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-299119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C51C95D057
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FD995D055
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5941F23412
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C684286160
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22981885B9;
-	Fri, 23 Aug 2024 14:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEC618859A;
+	Fri, 23 Aug 2024 14:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r49CN/aQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YiJwgQf2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CE91865ED;
-	Fri, 23 Aug 2024 14:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EA187FFC;
+	Fri, 23 Aug 2024 14:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424463; cv=none; b=DN9TlWcgY10Hgtp1k33nWTmRIPtFTzwqCtyLf5NiW7oZj+phmErPphGsGvB6SBgk1OglHh2Cgwj0kRc6tS5t6aFQbgZT7/tcDteL+QZSBsGD5O82vZXwZK7iz/DyUDZBxucCt0wtJ3uhhOuAT8RQyT/yU+nO57vGY9RGzzmqUB8=
+	t=1724424452; cv=none; b=WMcqjKKJvBxQHq4pspGj2zr4iaqyo5RLfdlgnAviRPYTHRmU1YfWJxObXkEW2PuFzRL30+cCUSN0T2vb6jlTeimcrplP0/Zv29lcVUPFykzYBb1WeB9ZufIc79tpoX+1kl6X+/Y27pNMM9/DRAIIYi6/sRtMuL4i+vf6QT3HkUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424463; c=relaxed/simple;
-	bh=QkVDrRG+bwVo2Que5A45k+H96lRpMPjMgglMy/BFh4Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:From:Cc:
-	 References:In-Reply-To; b=dqWP07Z56W1vPlJzfr9yKDc8uiExV+qyHX/BOw5Jzneer43VEPZyknwiYu202gp3PmRIWsyEweL40YxNtkeUiVBYGqLC76fzxJliBqmkGG7uzOcXzNg6sF05XDpwquWCvO0ksWW6hXBXyytKWarBIVp7k01CHrKUWdtMMx5iAPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r49CN/aQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NEdgVV013718;
-	Fri, 23 Aug 2024 14:47:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	mime-version:content-transfer-encoding:content-type:date
-	:message-id:to:subject:from:cc:references:in-reply-to; s=pp1;
-	 bh=UHCoi8H9SkJyWN+bg3VEga0aQtVxmmJrvg/q91th08M=; b=r49CN/aQWgqY
-	j2AUdWjl8Ngjr8AZ1IWoV3IxsWoUTlYa6x0Yrp4msTsicTm3fDxuVNKfGiP2pyaN
-	28OgaytO3CI2ocOYtFgGAa9pT5NRvYtOYRiCfBY9SAsbwSQPDqhWtlpH9vtGpPPb
-	X73kqh3BXJ1j+Nk3FCtJckZcAwFiNYcHWkeX5Tb53SSSolMsZFbSplcQQRYy/x95
-	iGIiJeJfLgX4ynn0rrhWequtQZUAHhNSF3K0Czs6Xm+nAYNKNR9RhK58N3L0h/4s
-	1Y8EN1SyaFhG3YWHTMdR+ulR8o/gkPMcsFB+WjT2hdtWRvtPwK91NGvTaH32Y5YI
-	1IHgvG+5Jg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vc6r0yr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 14:47:31 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NElVtM028079;
-	Fri, 23 Aug 2024 14:47:31 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vc6r0yk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 14:47:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NB61Wc019044;
-	Fri, 23 Aug 2024 14:47:29 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qaayf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 14:47:29 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NElOUZ54591752
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 14:47:26 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 14A7D20043;
-	Fri, 23 Aug 2024 14:47:24 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF5B320040;
-	Fri, 23 Aug 2024 14:47:23 +0000 (GMT)
-Received: from darkmoore (unknown [9.171.45.196])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Aug 2024 14:47:23 +0000 (GMT)
+	s=arc-20240116; t=1724424452; c=relaxed/simple;
+	bh=YL/VDv295SPOhXOitCTzd13TM7g0QJYMAfTlI6SFv78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Owu9UAlfXjekPhNSUmG8Td4XshpxgZxN6ZgDCPcDqL6IXE8fbIzQWa40jfVqns1tevOW+GXs9bm+KSK1TiZDs91VNgxN8zCgi1cRDOTAyyhKCEx/RgGUIDw97vpOyl+jrFoYV7Qbg2hAHMu+6qHiNcubhsFMFU+XgH1H9lFmbsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YiJwgQf2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=A6JtJ+roSbECN+POR7GhhHD1vIdACn5juW9yqsSZRLs=; b=YiJwgQf2BBX4aZKtSk/5IZx/5A
+	R49JjQqTl7A71auWQpc7jIzi8Vp2eDt28x0H86mb6LvIwzKJvdNgE5pdgAeDJbfVfHJ2dzCd6a819
+	o6ngnrTU5ayWb2b4uuLIwZTcqb7ZdTHuA994tBcMRH0ofbPrCorzwAQCIBxgHuTeH42VSnmSTbVml
+	BcqtqKRNC+VZucRop0/JK/5+ctFkCskQsPd91RzAx4plDQu/0J0fGvAhTwvskYM4f68m3ApC/6AD8
+	ZGO6SV9IAiQK6oBdqLL7dvZERzxi7LA5i/FhXtmqfNcQ50lwdKga49Zqrchee+BiBqqGatK+ZF1yJ
+	UamWfcfw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1shVZU-0000000BphE-1AHl;
+	Fri, 23 Aug 2024 14:47:24 +0000
+Date: Fri, 23 Aug 2024 15:47:24 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+	Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosryahmed@google.com>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+Message-ID: <Zsig_AZDT5zOO1Wg@casper.infradead.org>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <CAKEwX=PEye=VcXF=r-A9B47VsNtpLLxz5cJiswzuQXBio8rizA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 23 Aug 2024 16:47:18 +0200
-Message-Id: <D3NDG2T6LAPQ.2NWIY72YYTM3F@linux.ibm.com>
-To: "Hariharan Mari" <hari55@linux.ibm.com>, <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] KVM: s390: selftests: Add regression tests for
- SORTL and DFLTCC CPU subfunctions
-From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
-Cc: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <shuah@kernel.org>,
-        <frankja@linux.ibm.com>, <borntraeger@linux.ibm.com>,
-        <imbrenda@linux.ibm.com>, <david@redhat.com>, <pbonzini@redhat.com>
-X-Mailer: aerc 0.17.0
-References: <20240823130947.38323-1-hari55@linux.ibm.com>
- <20240823130947.38323-2-hari55@linux.ibm.com>
-In-Reply-To: <20240823130947.38323-2-hari55@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: joBWqXu38rRWeSJVLAbCt0vd2B5HOrnU
-X-Proofpoint-GUID: feQMs60FA9k7UMgDuvCz7jUoq6a6etmR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- spamscore=0 bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- mlxlogscore=593 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230107
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKEwX=PEye=VcXF=r-A9B47VsNtpLLxz5cJiswzuQXBio8rizA@mail.gmail.com>
 
-On Fri Aug 23, 2024 at 3:05 PM CEST, Hariharan Mari wrote:
-> Introduce new regression tests to verify the ASM inline block in the SORT=
-L
-> and DFLTCC CPU subfunctions for the s390x architecture. These tests ensur=
-e
-> that future changes to the ASM code are properly validated.
->
-> The test procedure:
->
-> 1. Create a VM and request the KVM_S390_VM_CPU_MACHINE_SUBFUNC attribute
->    from the KVM_S390_VM_CPU_MODEL group for this VM. This SUBFUNC attribu=
-te
->    contains the results of all CPU subfunction instructions.
-> 2. For each tested subfunction (SORTL and DFLTCC), execute the
->    corresponding ASM instruction and capture the result array.
-> 3. Perform a memory comparison between the results stored in the SUBFUNC
->    attribute (obtained in step 1) and the ASM instruction results (obtain=
-ed
->    in step 2) for each tested subfunction.
->
-> This process ensures that the KVM implementation accurately reflects the
-> behavior of the actual CPU instructions for the tested subfunctions.
->
-> Suggested-by: Janosch Frank <frankja@linux.ibm.com>
-> Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+On Fri, Aug 23, 2024 at 10:35:19AM -0400, Nhat Pham wrote:
+> On Fri, Aug 23, 2024 at 9:13 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> >
+> > That said, zswap could handle this better.  There's no need to panic the
+> > entire machine over being unable to read a page from swap.  Killing just
+> > the process that needed this page is sufficient.
+> 
+> Agree 100%. It is silly to kill the entire host for a swap read error,
+> and extra silly to kill the process because we fail to writeback - for
+> all we know that page might never be needed by the process again!!!
+> 
+> >
+> > Suggested patch at end after the oops.
+> >
+> > @@ -1601,6 +1613,7 @@ bool zswap_load(struct folio *folio)
+> >         bool swapcache = folio_test_swapcache(folio);
+> >         struct xarray *tree = swap_zswap_tree(swp);
+> >         struct zswap_entry *entry;
+> > +       int err;
+> >
+> >         VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> >
+> > @@ -1638,10 +1651,13 @@ bool zswap_load(struct folio *folio)
+> >         if (!entry)
+> >                 return false;
+> >
+> > -       if (entry->length)
+> > -               zswap_decompress(entry, folio);
+> > -       else
+> > +       if (entry->length) {
+> > +               err = zswap_decompress(entry, folio);
+> > +               if (err)
+> > +                       return false;
+> 
+> Here, if zswap decompression fails and zswap load returns false, the
+> page_io logic will proceed as if zswap does not have the page and
+> reads garbage from the backing device instead. This could potentially
+> lead to silent data/memory corruption right? Or am I missing something
+> :) Maybe we could be extra careful here and treat it as if there is a
+> bio read error in the case zswap owns the page, but cannot decompress
+> it?
 
-LGTM
+Ah; you know more about how zswap works than I do.  So it's not a
+write-through cache?  I guess we need to go a bit further then and
+return an errno from zswap_load -- EIO/ENOENT/0 and handle that
+appropriately.
 
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-
-> ---
->  tools/testing/selftests/kvm/Makefile          |   2 +
->  .../selftests/kvm/include/s390x/facility.h    |  50 +++++++++
->  .../selftests/kvm/lib/s390x/facility.c        |  14 +++
->  .../kvm/s390x/cpumodel_subfuncs_test.c        | 105 ++++++++++++++++++
->  4 files changed, 171 insertions(+)
->  create mode 100644 tools/testing/selftests/kvm/include/s390x/facility.h
->  create mode 100644 tools/testing/selftests/kvm/lib/s390x/facility.c
->  create mode 100644 tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_t=
-est.c
-
-[...]
+> The rest seems solid to me :)
 
