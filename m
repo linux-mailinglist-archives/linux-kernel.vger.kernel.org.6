@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-298686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F94A95CA36
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8B295CA38
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6522874FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:16:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1E71F26D1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D493C18732D;
-	Fri, 23 Aug 2024 10:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A833C17D345;
+	Fri, 23 Aug 2024 10:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cz1QJ9wU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RktEO2id"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6301161313
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E649516DEA7;
+	Fri, 23 Aug 2024 10:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408029; cv=none; b=qp3VqgEdrh+YjT5RRGGh5Czcmv+08P1aDmBXcNeVmqJCWbl3iIY4+3/nCcrfnp54qY0w8de/xvEf2t7uj6y4XAEoqNDifywk/32hz2rpgrb6C/uBbf+hAx4DamYR9a5T/tTzYp+m+M78AqKv0gJXrHkxwLHKrB0waDnessVuBJQ=
+	t=1724408060; cv=none; b=f3tB4qMbs739lepDiHrGsnNUoc+XHZoRHOOwxTxz/5EGMk0nuepJoZIvGalvsQMczPbHrHRw1IWFqyES3jbZD3XBBmlnKDhrdVvf2eDTSo25OQ8rdL11LO+F+ID/OFQfGYoJW2dIZ2xIFNAtDrCrCmKutMTA5q91Q5LAF0nRb34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408029; c=relaxed/simple;
-	bh=kwZWXCCJPaCGeMaKS+UIFXgZpykCQVIrE/gdE6I9zBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ey51axjFl9Y/S4Zmpr+gyUxQ6UeBr+YJBcgqm62mc7DHbONvGA9l8XVHnaOfEYUPNiDorTTtJLalhqfvGfIfBn3r907gSdq6+VCD500gwuTOUZNIxWwecXgX7SlEmNsZsr7V5lmiTt/FQ3KoX0X7iRc9SwsZ1H5SoAtTSzUzxRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cz1QJ9wU; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724408027; x=1755944027;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kwZWXCCJPaCGeMaKS+UIFXgZpykCQVIrE/gdE6I9zBs=;
-  b=cz1QJ9wUMO+mXMMdaE30vORBdvV1m/RhcUUDEwuQO8hm7juT8viW+FWV
-   k9FBkOvZH2YDsZAcK4a4yhZ3n+lDJdsBrvhDRwSZUza3Gy76Yz3IkFV9o
-   pJAf2b+7z/wAkPYqhmJ5YITp0IUnIY7fCYYjDOuz2XAy8YdtXgaWqODN6
-   gehCdi8B2h5FVJhjNNPLBl4YXIfADLw15TBS7Y3nNi1Xpq4idc9WKLbtJ
-   a3NBvMMm/lQthHmjv3tgQLNqWXb3axMmrZ3TZlt37CEXRzn7fhpal+p6G
-   Ic/WFnJFOrlvw4C3GD4Nr9ay+TxN0Cq4YRiAiylD7qRY8NSeSrEudkqHR
-   g==;
-X-CSE-ConnectionGUID: 2ijc3o5PROWaC/qYr7Jg6w==
-X-CSE-MsgGUID: GrRR0Q7PRJWR8Ej6vA17Tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="13167759"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="13167759"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:13:47 -0700
-X-CSE-ConnectionGUID: 1/mEJVR5TOKsiLPNedotmw==
-X-CSE-MsgGUID: +Hqgk3NWRPWU33pEWC81OA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61902924"
-Received: from mylly.fi.intel.com (HELO [10.237.72.154]) ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Aug 2024 03:13:45 -0700
-Message-ID: <34e8083e-1439-442d-a979-03ac5b65ae38@linux.intel.com>
-Date: Fri, 23 Aug 2024 13:13:43 +0300
+	s=arc-20240116; t=1724408060; c=relaxed/simple;
+	bh=u5lw8UspajSFqGtayZeIbVel7rKthz8PEhaJjxm3L7w=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=eev94ohQC6vyfixKFb+hOWpfVhGpgKY0n/Up91IjRIuRiqnpEYpZg2JTd5XdvQiWGMQWYyWwyJbev/JMYRQVqEj1QzPJWdOIFKMU6BgE6d4WfAhgqEFJXt3J5F+tf7Nj3mhOeCOOJmeUAfva8uNWth2LXE8tQyeFLPl1g/rUQL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RktEO2id; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDADC32786;
+	Fri, 23 Aug 2024 10:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724408059;
+	bh=u5lw8UspajSFqGtayZeIbVel7rKthz8PEhaJjxm3L7w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RktEO2idr5o/1XLIgVXMrmqb368+rqLqe7n9sDJIkjCJUwZ5N8jWhvARk+X/2yqtZ
+	 P+0zfWH9Q998CHHJ0ylQ/DLopezwsCgimB0vijMI9bqSRmu2A82y4eqHBFS5PGwwJm
+	 34PQfZZuO+TnLwosALqDljRp9JGabKiq/N6gQf4R14m5FVPAXbpbJagdxe6V621Zxf
+	 4R2zrfNvDTofJ1WYdZANi6+gRQUXqwwbkrOb1/mT/eYAg9+z4nJQ9a3XNE1oxC7x5h
+	 S+eFDt4UO1whYU9SDv640fDL3KZoKv5xCssU+tQ64MY/fnLEVb6Mq1FMDprLEv8A6C
+	 LC89y4sN21ItQ==
+Message-ID: <b0ca6a6ee44947633df125a567524286.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.11-rc3
+Date: Fri, 23 Aug 2024 11:13:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] i3c: mipi-i3c-hci: Add a quirk to set Response
- buffer threshold
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
- <20240821133554.391937-7-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240821133554.391937-7-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 8/21/24 4:35 PM, Shyam Sundar S K wrote:
-> The current driver sets the response buffer threshold value to 1
-> (N+1, 2 DWORDS) in the QUEUE THRESHOLD register. However, the AMD
-> I3C controller only generates interrupts when the response buffer
-> threshold value is set to 0 (1 DWORD).
-> 
-> Therefore, a quirk is added to set the response buffer threshold value
-> to 0.
-> 
-> Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-> Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-> Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
->   drivers/i3c/master/mipi-i3c-hci/core.c       |  6 +++++-
->   drivers/i3c/master/mipi-i3c-hci/hci.h        |  2 ++
->   drivers/i3c/master/mipi-i3c-hci/hci_quirks.c | 11 +++++++++++
->   3 files changed, 18 insertions(+), 1 deletion(-)
-> 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
+
+  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.11-rc3
+
+for you to fetch changes up to e17465f78eb92ebb4be17e35d6c0584406f643a0:
+
+  spi: pxa2xx: Move PM runtime handling to the glue drivers (2024-08-22 13:34:06 +0100)
+
+----------------------------------------------------------------
+spi: Fixes for v6.11
+
+A small collection of fixes here, all driver specific and none of them
+too serious.  For whatever reason runtime PM seems to have been causing
+a bunch of issues recently.
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      spi: pxa2xx: Do not override dev->platform_data on probe
+      spi: pxa2xx: Move PM runtime handling to the glue drivers
+
+Carlos Song (1):
+      spi: spi-fsl-lpspi: limit PRESCALE bit in TCR register
+
+Sean Anderson (1):
+      spi: zynqmp-gqspi: Scale timeout by data size
+
+Vignesh Raghavendra (1):
+      spi: spi-cadence-quadspi: Fix OSPI NOR failures during system resume
+
+ drivers/spi/spi-cadence-quadspi.c | 14 +++++++++++++-
+ drivers/spi/spi-fsl-lpspi.c       | 31 +++++++++++++++++++++++++++++--
+ drivers/spi/spi-pxa2xx-pci.c      | 15 ++++++++++++++-
+ drivers/spi/spi-pxa2xx-platform.c | 26 +++++++++++++++++++++-----
+ drivers/spi/spi-pxa2xx.c          | 20 +++-----------------
+ drivers/spi/spi-pxa2xx.h          |  3 ++-
+ drivers/spi/spi-zynqmp-gqspi.c    | 30 ++++++++++++++++++++++++------
+ 7 files changed, 106 insertions(+), 33 deletions(-)
 
