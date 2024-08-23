@@ -1,188 +1,140 @@
-Return-Path: <linux-kernel+bounces-299453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0550295D4C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:59:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033EA95D4D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 860961F247AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3253A1C21934
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAC9191477;
-	Fri, 23 Aug 2024 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36894191F6B;
+	Fri, 23 Aug 2024 18:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsrySR33"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="l27QRTqJ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16538F6B;
-	Fri, 23 Aug 2024 17:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E4F190482
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435976; cv=none; b=XzmtkjTIYr3oZLxGZZfi7MPpfdjgMg1Dnu5pdRurxXWs9VARXCMLcsWFspeJLbb2NPnx414ugpLuk5KALzItkc5HSjUcrAM3+jujP/n/+CHxn9XUaYfcJkjH6xlA4Cgtg1kM3QOxW1LyQXPWcZ4XAm5ZinZsKIUjP9bME82vD3w=
+	t=1724436134; cv=none; b=d+f/vNq26UmhNwtXTDxtogSXisgjdROhAmGs4zyyVPdYTl5HqLOuTvB+eG9MF7cLypBpPp74c16n5Bl4zZRAuesbr5NBjnnljH6TZm7LoePNgBf6swvXLt1uNJ4vNb7UmEpbE+2nLFmNEg8tJK6/9MwJlCVijXrPUIBLLuK3Gjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435976; c=relaxed/simple;
-	bh=iuIrOXmtyg8nSKD4Cb/rTg5D9ty27V+8hU5rG7y9h4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiT1rvCV95wT81Dx0U0/wHOCGy02yhr+8XECuAe6K4f86p9amtCVNLhJN8WTYE8uShDUtlXcPBJnUvUMV18l2I2tpfcXY1zLlBqEl8NH8jN6taC+nxVd+lMJ98W+8iGytPVg6GKwxv04GbzakOjFwCFNaKj93yeoodEPeVAC84A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsrySR33; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so320009566b.1;
-        Fri, 23 Aug 2024 10:59:34 -0700 (PDT)
+	s=arc-20240116; t=1724436134; c=relaxed/simple;
+	bh=KFzisPDMHJo7Ln/wIh4AWQVO8V7I807m5GrKhyN8ij8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qlFci61ScO0DR2TlRZFUsqTtmaIMtVmHektrBZIrZNhNq1lgMh8HKjVWi4QoG6N6F6ojOm0wDcCxKVbQzv4v2ZaRkI5iYW79Q9LqyrWc6HYDbUijszuwZoI0ry9cip1pGuYgCOeyfOK0fuRmc6IHd842g5/ffXaxus4fQ3MqVIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=l27QRTqJ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3174626a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724435973; x=1725040773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fN5FZjGc/Ma9BSW/s6M5/plXev0WIRsR3amu0H9Pa1M=;
-        b=XsrySR33G6DoYpQP0aQ1OodLz2a744lerKP70SGFRIPiB8IThKs9Mw95mMA68I7F2L
-         7rC+5Qy6KEFPPuQQzzXqkKCt6vxJ85TuAYJp5UCRtsPfD+A9x+8eM84DRsDhnbwBSMSg
-         PKYUuFIqicbuE50XOgbzeXXyCV2MMqLOXgTlazhFKM+cZGej+ISCvjL2/MKkhHUMNLYB
-         +NbFbhSYwYrPwwGpMqOzrmCvoL27LDH8i5bGtem09Zeo9kO6eHMqPmnlQZpq7JTWVw7m
-         lFwJWOU5v9yQT5LvgZ/GeOCu3nKl6wjLhsqKUwSGS2iHEcSB5aZABAUok15PZLlwTqJG
-         NlKg==
+        d=fastly.com; s=google; t=1724436131; x=1725040931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=chz6WNcKqUHubBnvxXzbFav7NB3CIhhztw7hfQz7I5k=;
+        b=l27QRTqJRTTUaiTKpACtd8J3FUkDUDPzEGPK4pPrp44NcNINlNuoSBJoVWAcjg1cDM
+         SM7DaqTr3jnKTQKM1PhtrnTcJ4eeqEC15ltlplRiHgPlS5bgd2zr3VWkLeGanWDVJxK0
+         tSc/kuFODF7dlcZr67az1SAlHNOklIMOlgfoI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724435973; x=1725040773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fN5FZjGc/Ma9BSW/s6M5/plXev0WIRsR3amu0H9Pa1M=;
-        b=J+Nlt5EgZgw8RQpRHiWSeB6o5kUAH+2yVwC2DPkg0cB91WOOrMeTjVvY0vPVw2lMH0
-         q/CCh8hr7rAZpt//LFeA9+nOUji84MfxIDm/1HM2jCu8Ad/zq347rndPngrwnGCB0D5q
-         3OuFwmBrRTPsNscG18g69lGlwxUFxlpTCA6j0XifCfyKcLrNTjx5Isktf0NYZBTiKDlx
-         Mso2T/6qKRSb34h2NLVJ4DBYoXflZYTweh3GOUDu9U6FdyupqjwQgNhKssO2E8avvOHX
-         VVmFc8KJG3WZeI/tyJVOSKoiK7CkEM0EhC29JHOYZY3H0W1x1BzxUF/+P89zcmijzPm5
-         eFYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC+ml9HuEXlgR+auUqUQQCM7jH2cIyzn/xikF1uLXq+cnNPyP3JAcaIWHeM0pi8erZMgjZw8eQI/HltYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqjqruVGM/0Ho0qLz0r4VsxqjgCWwvsMPCDbtmREpqooqXN5IH
-	e6N6drgl1MXns+sPXpMSOveuhRePStmPI14CJNrV5sn4bGyLSGhA+jkWE6aDCxtgQGJhIYUD399
-	mJmih9fB3LIBep7uFejeI0kS5p6I=
-X-Google-Smtp-Source: AGHT+IFJVh7gDpAqq/5aZUkFu4I1rIGXzIzFh2Ybqb/2YJDfMzVuZIiLUTf7koddK7M3IM3poWcvfrluk40Dv9kQOv8=
-X-Received: by 2002:a17:907:efcb:b0:a86:7adb:b327 with SMTP id
- a640c23a62f3a-a86a530135dmr212593566b.40.1724435972980; Fri, 23 Aug 2024
- 10:59:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724436131; x=1725040931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=chz6WNcKqUHubBnvxXzbFav7NB3CIhhztw7hfQz7I5k=;
+        b=HfhIz3Rh6XByiWlDPLZO6cjsTaNw7ccuPnZigMDs/xL1mpnvQG8iJvWU4zNuCSfF53
+         oBz2K8ZDcNucW3gElfK8Pc0sAClpOfbEFyua9nA7ZfxeCOoFlIXlIiBBsC3chdDMP3fT
+         UdRqZ0aYzr5GRiGFZFd/Nw7iksqT4jpMBdALcYBtVE66UOQa4s2Meul00LzZDSfgt5Br
+         47Vls4NP/ne8kdS5gEdju0VnGA9Oqpjx64ILcj1yr31wKKDftw6GjxlI3qwGNimna/Sx
+         Kyy7gWvAWBN68FlgBA0l8OUQj/3F0krRNi8/UTPW4Gl3gebxb3/7I0/SuzKOIRU3Fegw
+         2tvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAml1hskR3v3GijRtjMj9mSZU8gDk8YAgulct7IB6drW8vVUiZSZMyo9FYW33pqL0Hz96XY4YNMW/wFf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9iwUqwutIuxsN+jOl9bSoMljC75Y695D3jAhESypMZmrJW3xf
+	PJXH8z7cxYm6CQs1neyzBhhNZzl/08gpiWASSWqUhrs5mj2o4zHifLLOQYN335U=
+X-Google-Smtp-Source: AGHT+IHLmogsSLL4RG6OHQXTCvoGTD7y9oeQstqmNv9alfhru+JJ/kqYHZ2RPkrU6o+dIL+xFV2BAw==
+X-Received: by 2002:a05:6402:2743:b0:5c0:88fe:261b with SMTP id 4fb4d7f45d1cf-5c0891637dbmr1859486a12.11.1724436130569;
+        Fri, 23 Aug 2024 11:02:10 -0700 (PDT)
+Received: from LQ3V64L9R2 ([185.226.39.209])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c43e7sm2387276a12.70.2024.08.23.11.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 11:02:10 -0700 (PDT)
+Date: Fri, 23 Aug 2024 19:02:08 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/6] net: Add control functions for irq
+ suspension
+Message-ID: <ZsjOoJBQBls7dl8o@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240823173103.94978-1-jdamato@fastly.com>
+ <20240823173103.94978-4-jdamato@fastly.com>
+ <CANn89iJmp2yviC=Z-n7-=suw8N=SJ7uoy0xy5LMQRKDhubNBZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7deb753f-bf86-47ce-89bf-8277aca4293e@camlingroup.com> <fbd8debf-46ab-407a-beda-43e083bffee7@camlingroup.com>
-In-Reply-To: <fbd8debf-46ab-407a-beda-43e083bffee7@camlingroup.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Aug 2024 20:58:56 +0300
-Message-ID: <CAHp75VeqOV7GEqMs6fMi2Fax-97zt+ykEXaptng=pi_BDKU5Bg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] serial: sc16is7xx: convert bitmask definitions to
- use BIT() macro
-To: Lech Perczak <lech.perczak@camlingroup.com>
-Cc: linux-serial@vger.kernel.org, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>, Andy Shevchenko <andy@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>, 
-	=?UTF-8?Q?Pawe=C5=82_Lenkow?= <pawel.lenkow@camlingroup.com>, 
-	Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iJmp2yviC=Z-n7-=suw8N=SJ7uoy0xy5LMQRKDhubNBZg@mail.gmail.com>
 
-On Fri, Aug 23, 2024 at 7:55=E2=80=AFPM Lech Perczak
-<lech.perczak@camlingroup.com> wrote:
->
-> Now that bit definition comments were cleaned up, convert bitmask
-> definitions to use BIT() macro for clarity.
-> Convert SC16IS7XX_IIR_* bitmask constants, to use GENMASK() macro, where
-> applicable - while at that, realign comments.
-> Compose SC16IS7XX_LSR_BRK_ERROR_MASK using aforementioned constants,
-> instead of open-coding it, and remove now unneeded comment.
+On Fri, Aug 23, 2024 at 07:56:32PM +0200, Eric Dumazet wrote:
+> On Fri, Aug 23, 2024 at 7:31 PM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > From: Martin Karsten <mkarsten@uwaterloo.ca>
+> >
+> > The napi_suspend_irqs routine bootstraps irq suspension by elongating
+> > the defer timeout to irq_suspend_timeout.
+> >
+> > The napi_resume_irqs routine effectly cancels irq suspension by forcing
+> > the napi to be scheduled immediately.
+> >
+> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Co-developed-by: Joe Damato <jdamato@fastly.com>
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Tested-by: Joe Damato <jdamato@fastly.com>
+> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > ---
+> 
+> You have not CC me on all the patches in the series, making the review
+> harder then necessary.
 
-comments
+My sincere apologies, Eric, and thank you for your time reviewing
+this.
 
-...
+I used a script I'd been using for a while to generate the CC list,
+but it clearly has a bug.
 
->  /* IIR register bits */
-> -#define SC16IS7XX_IIR_NO_INT_BIT       (1 << 0) /* No interrupts pending=
- */
-> -#define SC16IS7XX_IIR_ID_MASK          0x3e     /* Mask for the interrup=
-t ID */
-> -#define SC16IS7XX_IIR_THRI_SRC         0x02     /* TX holding register e=
-mpty */
-> -#define SC16IS7XX_IIR_RDI_SRC          0x04     /* RX data interrupt */
-> -#define SC16IS7XX_IIR_RLSE_SRC         0x06     /* RX line status error =
-*/
-> -#define SC16IS7XX_IIR_RTOI_SRC         0x0c     /* RX time-out interrupt=
- */
-> -#define SC16IS7XX_IIR_MSI_SRC          0x00     /* Modem status interrup=
-t
-> -                                                 * - only on 75x/76x
-> -                                                 */
-> -#define SC16IS7XX_IIR_INPIN_SRC                0x30     /* Input pin cha=
-nge of state
-> -                                                 * - only on 75x/76x
-> -                                                 */
-> -#define SC16IS7XX_IIR_XOFFI_SRC                0x10     /* Received Xoff=
- */
-> -#define SC16IS7XX_IIR_CTSRTS_SRC       0x20     /* nCTS,nRTS change of s=
-tate
-> -                                                 * from active (LOW)
-> -                                                 * to inactive (HIGH)
-> -                                                 */
-> +#define SC16IS7XX_IIR_NO_INT_BIT       BIT(0)          /* No interrupts =
-pending */
-
-> +#define SC16IS7XX_IIR_ID_MASK          GENMASK(5,1)    /* Mask for the i=
-nterrupt ID */
-
-This is okay, but the rest of the bit combinations are better to have
-to be plain numbers as usually they are listed in this way in the
-datasheets. Note as well that 0x00 is a valid value which you can't
-express using BIT() or GENMASK() (and this is usually the main point
-to *not* convert them to these macros).
-
-> +#define SC16IS7XX_IIR_THRI_SRC         BIT(1)          /* TX holding reg=
-ister empty */
-> +#define SC16IS7XX_IIR_RDI_SRC          BIT(2)          /* RX data interr=
-upt */
-> +#define SC16IS7XX_IIR_RLSE_SRC         GENMASK(2,1)    /* RX line status=
- error */
-> +#define SC16IS7XX_IIR_RTOI_SRC         GENMASK(3,2)    /* RX time-out in=
-terrupt */
-> +#define SC16IS7XX_IIR_MSI_SRC          0x00            /* Modem status i=
-nterrupt
-> +                                                        * - only on 75x/=
-76x
-> +                                                        */
-> +#define SC16IS7XX_IIR_INPIN_SRC                GENMASK(5,4)    /* Input =
-pin change of state
-> +                                                        * - only on 75x/=
-76x
-> +                                                        */
-> +#define SC16IS7XX_IIR_XOFFI_SRC                BIT(4)          /* Receiv=
-ed Xoff */
-> +#define SC16IS7XX_IIR_CTSRTS_SRC       BIT(5)          /* nCTS,nRTS chan=
-ge of state
-> +                                                        * from active (L=
-OW)
-> +                                                        * to inactive (H=
-IGH)
-> +                                                        */
-
-...
-
-> +#define SC16IS7XX_LSR_BRK_ERROR_MASK   (SC16IS7XX_LSR_OE_BIT | \
-> +                                       SC16IS7XX_LSR_PE_BIT | \
-> +                                       SC16IS7XX_LSR_FE_BIT | \
-> +                                       SC16IS7XX_LSR_BI_BIT)
-
-It's better to start from the next line
-
-#define SC16IS7XX_LSR_BRK_ERROR_MASK     \
-        (SC16IS7XX_LSR_OE_BIT | ...
-
-
---=20
-With Best Regards,
-Andy Shevchenko
+For any future revisions I will be sure to explicitly include you.
 
