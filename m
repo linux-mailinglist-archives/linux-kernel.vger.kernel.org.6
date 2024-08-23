@@ -1,73 +1,60 @@
-Return-Path: <linux-kernel+bounces-299394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F6C95D3F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D79995D3F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C414D1C20C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:03:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68F3281E6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14BD191F62;
-	Fri, 23 Aug 2024 17:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5C01922C5;
+	Fri, 23 Aug 2024 17:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXU6+DF8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITACbNYg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3907118BB97;
-	Fri, 23 Aug 2024 17:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212B191F80
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432560; cv=none; b=YU+kUnuK2XE35ih84WdZxIobvuS2LC7h4GhRREg9i4Up4f6267HRlv233eKcH2cq07o7e+L2XwL+QUsGmWKaT4Ex59sTI8X96MXdFpENy6fo9f1rgAkMvWZev0OCWV6m5bwR/ZXAaGwMRB3NDhU1yEbcIP95bwmtbolH1fQJ5jY=
+	t=1724432562; cv=none; b=rMTB7O8/2Q8Pl3aHs4ycOICTmZyQNMZxMKcHJwo5WNYiGwg/n4DYjtflhXwaIxArxLkDLxlSXRUsG0jHCi2zDac7ub1pC2GNqTAdw4hY69+xmj+1ksswmkHCNN4jmgRD5lWBwxrufTzYM3rSXzEK/2xKwbPEGHNf/jrKIXSttvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432560; c=relaxed/simple;
-	bh=LrsQbM+9Culzk5ZY9Zi1h3Hk51nvlJlLN7JY3gYeZ58=;
+	s=arc-20240116; t=1724432562; c=relaxed/simple;
+	bh=CTLpVEJ9EQmqF+fgzEF/eWSuGq+2R/j1YEfrcM59j5k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qElWmEXSVfgaXJ1IUNdFg57fqbDZyfCUUP7rszVfCeob/MHUPZH+6qOital58Xfkd1AC2Tl86XEWW48/ksoHoXPN+6QO3Khnzdi1sX5UemUnlHitEMmw+lpX5o7APFaGNaT7GTU3iQkmSWlC/jaafuOGohzq+dUdBmq3hwsxx+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXU6+DF8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35515C4AF0B;
-	Fri, 23 Aug 2024 17:02:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Xvfz9jFqQyxDTJ9YLMlwiRQ7kr5lBsy9a2GwIBDtN0J9CnSsRr5In6EA7Cpq5JmO8RRm5APPFwtFSefJvEPqVDJQT9c0W/9m1ViYyolcueB7w3eYxFMt+Zo5EqyTo4DzMizkDbWx0mshpYdmQ6wftyn48vCDPz+rogto3tBq1Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITACbNYg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEA2C32786;
+	Fri, 23 Aug 2024 17:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724432559;
-	bh=LrsQbM+9Culzk5ZY9Zi1h3Hk51nvlJlLN7JY3gYeZ58=;
+	s=k20201202; t=1724432561;
+	bh=CTLpVEJ9EQmqF+fgzEF/eWSuGq+2R/j1YEfrcM59j5k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KXU6+DF89znEUirCTp35mYNCLYojgYk8MR4FlxokFC7tSsPoU37sbQtr02dfE1X7J
-	 9n0mLdPKtVRtwVpQFcLDbssODFWM9GoSU46M/qpPWDhir5xrMW7tSy3Y4WQh6KV5EV
-	 Sb2/OznrLSC4d7Hf2fVVFY6wBAIxM6+ymWj/1+upUnGdmhbqbLUkc3c1N/gK8fzKXy
-	 KGveAS0qbHrTaxhR/za4wjDURJtnpYOEWmqE3i2S35JIrwREglgcbxVUyFdIjzfNWY
-	 mf3gAeJfXjvLm6qU1lLly3DakzOWHRx35GILq/HXgMCN+TGUoxaYzOWA3D9+f6QZYJ
-	 m/yyAyJIpThuA==
+	b=ITACbNYg03anW1iBY9/jWHwq36xaLa9EfXK7pdqYh7Tf7xwTCJQuZowenPBwMg4nf
+	 nvMmDNebxjle5f62fmwuh/g8c0jJ6TBunf2+stqO89E36aFE7HpBM4txE8ZGgrt7EV
+	 wi4wqxOLc3PK205rWkWqP2bQ4IR8BkGvAXOMjGddE8toxWcx+f5hUEumOnWAKOu/9H
+	 IRkJze+QS1J+++foK4nilDaENoL0xqms6Td2S9DzpbcXClWY3Z1ame1derYn2uYyIF
+	 FSFpiTuDktjdI9aQXwWLTrJtULXSTY9itltxAv9PAOsccsZF0GijHVDli5klZmIFSc
+	 RhCrERGIb7ROw==
 From: Will Deacon <will@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Mark Rutland <mark.rutland@arm.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	quic_vbadigan@quicinc.com,
-	quic_nitegupt@quicinc.com,
-	quic_skananth@quicinc.com,
-	quic_ramkri@quicinc.com,
-	quic_parass@quicinc.com,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v2 0/4] perf/dwc_pcie: Fix registration issue in multi PCIe controller instances
-Date: Fri, 23 Aug 2024 18:02:12 +0100
-Message-Id: <172442564702.2792102.12095795549059563421.b4-ty@kernel.org>
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2] drivers/perf: Fix ali_drw_pmu driver interrupt status clearing
+Date: Fri, 23 Aug 2024 18:02:13 +0100
+Message-Id: <172442543794.2791566.7487559494853957932.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240816-dwc_pmu_fix-v2-0-198b8ab1077c@quicinc.com>
-References: <20240816-dwc_pmu_fix-v2-0-198b8ab1077c@quicinc.com>
+In-Reply-To: <1724297611-20686-1-git-send-email-renyu.zj@linux.alibaba.com>
+References: <2a70eaa3-f1c5-4803-948b-4b8eb86190c6@linux.alibaba.com> <1724297611-20686-1-git-send-email-renyu.zj@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,26 +64,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024 20:47:19 +0530, Krishna chaitanya chundru wrote:
-> When there are multiple of instances of PCIe controllers, registration
-> to perf driver fails with this error. This is because of having same
-> bdf value for devices under two different controllers.
+On Thu, 22 Aug 2024 11:33:31 +0800, Jing Zhang wrote:
+> The alibaba_uncore_pmu driver forgot to clear all interrupt status
+> in the interrupt processing function. After the PMU counter overflow
+> interrupt occurred, an interrupt storm occurred, causing the system
+> to hang.
 > 
-> Update the logic to use sbdf which is a unique number in case of
-> multi instance also.
+> Therefore, clear the correct interrupt status in the interrupt handling
+> function to fix it.
 > 
 > [...]
 
 Applied to will (for-next/perf), thanks!
 
-[1/4] perf/dwc_pcie: Fix registration issue in multi PCIe controller instances
-      https://git.kernel.org/will/c/e669388537c4
-[2/4] Documentation: dwc_pcie_pmu: Update bdf to sbdf
-      https://git.kernel.org/will/c/96a37ec98664
-[3/4] perf/dwc_pcie: Always register for PCIe bus notifier
-      https://git.kernel.org/will/c/b94b05478fb6
-[4/4] perf/dwc_pcie: Add support for QCOM vendor devices
-      https://git.kernel.org/will/c/db9e7a83d308
+[1/1] drivers/perf: Fix ali_drw_pmu driver interrupt status clearing
+      https://git.kernel.org/will/c/a3dd920977dc
 
 Cheers,
 -- 
