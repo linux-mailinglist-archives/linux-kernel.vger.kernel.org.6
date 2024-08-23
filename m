@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-298244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E1E95C45B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE8395C463
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E469E1C2158C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9578282304
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A985D481A7;
-	Fri, 23 Aug 2024 04:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D06947773;
+	Fri, 23 Aug 2024 04:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBde79ix"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELP7+sYj"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C768488;
-	Fri, 23 Aug 2024 04:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AFB171A7
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724388476; cv=none; b=FyPYoRJSJXtrgvQD6n4AYHiMFjP5G7n50e5ao6D/tq6/5wHvqCtaONBGXKXcWFfv4iTAt54bXhzk8AG9grKjLFCMUblWN31CKnx0cgZeXGf2biErL/KUdwMW8h9c9WqGlVKypVlROsPwvRpiIcBj0vEfW2hkdU1WSrBwpscTP3U=
+	t=1724388701; cv=none; b=rezwnvx/OZtR+R6H2cltCX0iQM9mOuLC0TFmzEBvxKR23HhmtzlzBftR8tCAvn2clQWkTZINTlpmLFfQ4ojl+eDGPJsff6jfO8509QVN790x7iX6p3IVJ77ygKNsgvBKsvmXBxSWoLsRDdc7Thyi/r6sdwX5/gHGII+PYEVxOsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724388476; c=relaxed/simple;
-	bh=akOHYPcqAlPNdJi8z2ZDHB+o9im3fBWDzL3WOFAk6b4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oyYY3kN3LjkrnZq36n2gAXGed0UTD7ZT8P+6uDEFWa4JycnNHfHHBPcWn9w0D/vyx3JsTRbH5VXseeVgrBvILK2+fnR30ITEK0HgoZP6Jbx8RTO40oTwetNRNS/a4GE43RaqrjLwxNkQqi5yVZb5DY2Au8B93tg6m6NZ/SsMNeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBde79ix; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-268d0979e90so235213fac.3;
-        Thu, 22 Aug 2024 21:47:54 -0700 (PDT)
+	s=arc-20240116; t=1724388701; c=relaxed/simple;
+	bh=av52YwTepcH6w/o67nFB6yHuFTLUA2dnDh7MCHEeOCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/UEv6Ey6ji9KmDcnSfolZirZ/KEG+vc4BTNplcqLUnIizBsCLVE+WsJwUd65uzQDltxmTeS92EBIOtfyquOt00kM7NXQ0uMJ76ATShTj08Q04JWYCv0Xvzze5cv+Q49BXw5SbG2x8YPVKK15v/D1+rVDgIHC/1kyRS9rkJuqhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELP7+sYj; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so1574920276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724388473; x=1724993273; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yk2OgddYqVT69t5+ZZWTdnG00mbBe5e/zNQgU/sdUF4=;
-        b=nBde79ixgDiXoNxfVwPmGWbdkOaCooCNJHMtXgadXRzz+ZVFFWx7yQm9a7F3eVScMm
-         yQ/OQzz3eSzgQo+MHIp00IXZXKl9tAwUbTZFgWZFFOB6KuHOsh/DPxgzoDqQ/wgxEzxq
-         3Cccy2epVMXNqN1V1FHXsP7tLmWgL9Svj3FZvWzfk4wfkqUBp4lI9jCdmJhFD+TikpVX
-         JE62PkE0nSTI1HdzvckzikZAEBZqz2/NsG+HSiDJ8AJhP/fpw6M/QqTiWTiTLNy12fvD
-         VvIU+1MaEVtDwDwSzqPXpAqIARtm5Dbw6a8f3+4hYwfZfaiFiLLgeBNaY6wJwkNZkbwu
-         qasA==
+        d=linaro.org; s=google; t=1724388698; x=1724993498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oESpv3vgGdcQLt0Ql+k5B2VyzNSZkxEYUIwO5fuPsiw=;
+        b=ELP7+sYjijPCRt4HDxVned5Ydjobi3/+P3EHmGZz+YwKCriO+C9kkT8qdaEMgVjb1I
+         t2ghiU6Jw7eGzz8Cta64ytFM5BhmVdMtK+yFz8OFgCJuQEcLajbBfhYX4SYTiV95c71u
+         dfhAvYTk49tqhC+1f4TIsJI7m047DrqdTarTlWe0HeGz2+WtN0ucuqWzcBYHdywE5GwG
+         ImwxXsBZr0z+hdhfo+WUEiIM+O2JQ9Zf+xpy5i0+uIsxk4K4hzog5W3AlPJDvfGBPykz
+         7nq/o/XBPDZVCHx63/6wkN7Q4QCwzWqqpJ/vDMJe5hi6rjITZ3OmYjguQjLneNIY1wpE
+         taOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724388473; x=1724993273;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yk2OgddYqVT69t5+ZZWTdnG00mbBe5e/zNQgU/sdUF4=;
-        b=pvnO/peOwZmQo0ScUkgkhCq6VwpZlfPs2SLgLeKm31smj9LXHLK0zWgCgclpDlV5qU
-         nGxPOLScTqpAtSF/ZUCzLuQZ+1HERoj8avMt6BGXwTibobVckHVdULVsa7W5D2db0cRe
-         MNZjFDw/UiIWa26qg4uGNBk9r5uDGshZrDXMlBJKw/FE2CA0O+uDq5OEeZbqimti8U3t
-         KM0UVAW3GfLKnvI/PRvEDLXcRFNu+8NyAb8IS+y3zkvUEVd5PYbK+fOjpe/WeMIcBng7
-         fgRQKktXraPFHXFGu2bRC/5xb/3uN+r1ikj0vb8xOXHp+eAFIzJjdstWB2aqYcj5YFww
-         qhZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMzODnxsghuVWj53S3vQAmuCOYw42EIRmYha58JBHfaebYcKCHJ3T8AoCE6G77h6Ga9aCcPQcQSgRG3Q91vkI=@vger.kernel.org, AJvYcCWQlT1Sc632pWl1J+szFSFAQdc6ptHVbfz9xBjx5jgEt0C5PPpG2OZpbsYfaY5KMdDlqkWPHHKvX/CTtMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcMqyTHAIztPit6Yx9hpIOs5QpWMYocVcabXLgkDsANwCywfxd
-	tOWd6V/xe1gb6I44oP37ljAxHh1RmEIP4HMOni/NyDBnU3QBnqO1OuvKRhUzdXdhTcww4dgif7f
-	nYjm5DlEdMdI+dKyw3kc+gjlk4MY=
-X-Google-Smtp-Source: AGHT+IGY7DwKXhvQ5zpGHR0/UzXbuNvDsv/962OGJWFddCuiCEgrDK8ClArbJk2wzkHnise655QEIhEQiYTQLyedR04=
-X-Received: by 2002:a05:6358:910e:b0:1b1:a6bd:7d1b with SMTP id
- e5c5f4694b2df-1b5c1e81bfamr85237255d.0.1724388473318; Thu, 22 Aug 2024
- 21:47:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724388698; x=1724993498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oESpv3vgGdcQLt0Ql+k5B2VyzNSZkxEYUIwO5fuPsiw=;
+        b=l7HBE+aXjPSSe+R7kZV79Y61jgd2vjCiDDxMK1rw8RVTssr5/Zo1AuiZt5SY/NLJYK
+         ocnYoMQ8qsRITUwX9GWo0qWo5ZWP3VFxQGz9R0V/hp4kFMotsTYgt+SARtEY5RRiK5rZ
+         LVGc92vAaNJ5zlEsyf5ltezQdOAlEjOOdBxc17WrANonLjVRiiaGw5Ut3o/D3GA3SbjA
+         wXVG1BCUmWGU089QcZzOLGkLuvO4SEut9qnGVulywsCQzZckVIQ02d89Hwp3vT3+TJnW
+         Cuq+MXUwYQQgYyg8XAsbk03TWPAKOKl8+BmIJJDS+mOGv0Q+DL0Bvg76SOWcT+tDBZAP
+         KJlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq4Fu7J1R6gu9xFz7npSJqHRQZnCGNs99Cssp9r2BpW6NOoommBuSNHboPwaXkE1bDlfKAS+JBIORmCcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy/HhdLjuFntvKQOWv7a7EVE3tYFtoDVGFC+YG1MHo1Xu2iVI+
+	U9BsjTLSQVfwPp/Xw2HcYsE/Wzwfq6nW2eWuR1TME7UgE5KP7nxeHhMiDD06+Cw=
+X-Google-Smtp-Source: AGHT+IG+UUr9I9Kx1MlKaSJloMw5/2s4SAd5IoTJFMRYf/mmnYNzNHQPyKBfwKFBt3C3MSKzrS4zpQ==
+X-Received: by 2002:a05:6902:1b09:b0:e0b:43a0:3ce with SMTP id 3f1490d57ef6-e17a868b00dmr1160643276.57.1724388698425;
+        Thu, 22 Aug 2024 21:51:38 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143432f089sm2174710b3a.185.2024.08.22.21.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 21:51:37 -0700 (PDT)
+Date: Fri, 23 Aug 2024 10:21:35 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <quic_kdybcio@quicinc.com>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Ilia Lin <ilia.lin@kernel.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/10] OPP/pmdomain: Assign required_devs for required
+ OPPs through genpd
+Message-ID: <20240823045135.fifawemuwaxafeb7@vireshk-i7>
+References: <20240822224547.385095-1-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814-linked-list-v5-0-f5f5e8075da0@google.com>
-In-Reply-To: <20240814-linked-list-v5-0-f5f5e8075da0@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 23 Aug 2024 06:47:40 +0200
-Message-ID: <CANiq72=9dWLGjU6cTUWaqNPBXgs9CV1Lo_NDpLr3c-fOcfMgaA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/10] Add Rust linked list for reference counted values
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822224547.385095-1-ulf.hansson@linaro.org>
 
-On Wed, Aug 14, 2024 at 10:06=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> This patchset contains a Rust implementation of a doubly-linked list for
-> use with reference counted values. Linked lists are famously hard to
-> implement in Rust [1] given the cyclic nature of the pointers, and
-> indeed, this implementation uses unsafe to get around that.
->
-> Linked lists aren't great for cache locality reasons, but it can be hard
-> to avoid them for cases where you need data structures that don't
-> allocate. Most linked lists in Binder are for collections where order
-> matters (usually stacks or queues). There are also a few lists that are
-> just collections, but linked lists are only used for this purpose in
-> cases where the linked list is cold and performance isn't that
-> important. The linked list is chosen over Vec in this case so that I
-> don't have to worry about reducing the capacity of the vector. (Our
-> red/black trees are a much better place to look for improving cache
-> locality of collections in Rust Binder, and the upcoming xarray bindings
-> would help with that.)
->
-> Please see the Rust Binder RFC [2] for usage examples.
->
-> The linked lists are used all over Rust Binder, but some pointers for
-> where to look for examples:
->
-> [PATCH RFC 04/20] rust_binder: add work lists
-> Implements the work lists that store heterogeneous items. Uses the
-> various macros a bunch.
->
-> [PATCH RFC 10/20] rust_binder: add death notifications
-> Uses the cursor. Also has objects with multiple prev/next pointer pairs.
->
-> [PATCH RFC 15/20] rust_binder: add process freezing
-> Uses the iterator with for loops.
->
-> Link: https://rust-unofficial.github.io/too-many-lists/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08=
-ba9197f637@google.com/ [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On 23-08-24, 00:45, Ulf Hansson wrote:
+> Changes in v3:
+> 	- Combine the two series [1] and [2] into one.
+> 	- A few minor changes to consumer drivers.
+> 	- Clarification in commit messages.
+> 
+> Through dev_pm_opp_set_config() the _opp_attach_genpd() allows consumer
+> drivers to attach a device to its PM domains. Their corresponding virtual
+> devices that are created by genpd during attach, are later being assigned
+> as the required_devs for the corresponding required OPPs. In principle,
+> using dev_pm_opp_set_config() for this works fine.
+> 
+> However, attaching a device to its PM domains is in general better done
+> with dev_pm_domain_attach|detach_list(). To avoid having two different ways
+> to manage this, this series prepare for the removal of _opp_attach_genpd().
+> 
+> Moreover, it converts the few existing users of the _opp_attach_genpd() into
+> dev|devm__pm_domain_attach(), allowing the final patch to drop the redundant
+> code that becomes redundant.
+> 
+> To test this, I have used a QEMU setup, with local PM test-drivers to try to
+> test all various combinations of single/multi power/performance PM domains for
+> a device. Hopefully I have covered it all, but I would certainly appreciate if
+> someone could help to run a slew of tests on some HWs.
+> 
+> Note, due to dependencies I think this whole series is best funneled together
+> through my pmdomain tree. If you think there may be issues with this approach,
+> please let me know so we can figure out the best merging strategy.
+> 
+> Kind regards
+> Ulf Hansson
+> 
+> [1]
+> https://lore.kernel.org/all/20240718234319.356451-1-ulf.hansson@linaro.org/
+> [2]
+> https://lore.kernel.org/all/20240723144610.564273-1-ulf.hansson@linaro.org/
+> 
+> 
+> Ulf Hansson (10):
+>   OPP: Fix support for required OPPs for multiple PM domains
+>   OPP: Rework _set_required_devs() to manage a single device per call
+>   pmdomain: core: Manage the default required OPP from a separate
+>     function
+>   OPP/pmdomain: Set the required_dev for a required OPP during genpd
+>     attach
+>   pmdomain: core: Drop the redundant dev_to_genpd_dev()
+>   OPP: Drop redundant code in _link_required_opps()
+>   drm/tegra: gr3d: Convert into devm_pm_domain_attach_list()
+>   media: venus: Convert into devm_pm_domain_attach_list() for OPP PM
+>     domain
+>   cpufreq: qcom-nvmem: Convert to dev_pm_domain_attach|detach_list()
+>   OPP: Drop redundant _opp_attach|detach_genpd()
 
-Applied to `rust-next`-- thanks everyone!
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-    [ Replaced `compile_fail` with `ignore` and a TODO note. Removed
-      `pub` from example to clean `unreachable_pub` lint. - Miguel ]
-
-    [ Fixed a few typos. - Miguel ]
-
-Cheers,
-Miguel
+-- 
+viresh
 
