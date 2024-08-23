@@ -1,211 +1,166 @@
-Return-Path: <linux-kernel+bounces-298417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD36E95C6F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:51:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A9C95C702
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2125D1F22749
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB62C1C221BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B60313C683;
-	Fri, 23 Aug 2024 07:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9611E13D24C;
+	Fri, 23 Aug 2024 07:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MKDVcRCr"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="g9r4KbF8"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38AC28DC3
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7313CF8E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724399470; cv=none; b=elMzf9GCX5/g+wTy++v9MEjJPq2MuNjLJdJTgXI+1HhZNT4DZaDLIN/1GFGAoHrB0+mgMJ9EIw/z3lfcuw/zr+VxEcv0SYt+Oba5vxrGHYixqcHznCa/RR6CofNQJeA5sJDmX4cbEn0Rdvp2NP1ROLhJp2+AIa6FgSQLi2TZ+HM=
+	t=1724399654; cv=none; b=LGUAZ21j71W1bZ9SNIkrDVR28Jvj9xsQOmvy5e5BoqwN2URUTRB3IOn5xmfpE/ZqCOf7vGzpuHeOQFQYRLKF2DME/NBfUdOBPocJ0cPjML08zaW2eL0YcAdnPrSdKGrif8WM0E/EevmSVho4/Ep6Psj5XQ2zO62RkAt5oGKJHSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724399470; c=relaxed/simple;
-	bh=D4dhUmGSSacH4bz6ZKMoE07XsjL2wQLHWjSO4llLsis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qT8HnE8/B4R5NpzkZoRQp8pwHGHu2TXDWhyZTjOE8f62e1SEqnhyAZir6w0yyxGsp8VtL8rcvhXtoq3ldOMyvyOTlbTQQmhas2Xt0KiYSGGJjlGgQqxyTh0G12noqSb/KbfNneRIAlOvVwlqBV8a0iMMxCMHIPaYkmriqNTP0Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MKDVcRCr; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53438aa64a4so404798e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:51:08 -0700 (PDT)
+	s=arc-20240116; t=1724399654; c=relaxed/simple;
+	bh=o/OpwKFjjA1yEkgqJPpN5d/tMG8m+GDhUM0qxhUcYY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PzuS7BZ34yT27yvXGGeoEMxuubn3/eexpej/ObR8jH5UcdWl/lUDWHZaFCDJR79fbc/4Z6NQulxt5b4N/w5sTveGORFxsI3ZItEKkLUgNcV7pp7E/TiFqjP5Ic9KlUmVTb59za9Zvo0ZCBaTMh3VC/NWHLmFqk8Gi6hkN23n86Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=g9r4KbF8; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bede548f7cso2313089a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724399467; x=1725004267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uVFI/kAx4GZJG5dq3c75HD5Ktn0yw4zArYMGtwgACRE=;
-        b=MKDVcRCrwnZoEeb+iUSJ6TUiVZscT7NDTYhkq0ZL6YKaO/EjTTs40ys/TYVaIr9tBI
-         lWgd9shhPf3TnCOjlh15Oe5AImjSeXWcI+LgXIp4+BcH8pCPFLYy6mPu7dPIMO8sEDow
-         cXuh/uszJ0OCobsVpRg8uUJXdGEPeQi29vbTs=
+        d=tuxon.dev; s=google; t=1724399650; x=1725004450; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K9F6H3c2NVmBHPEentW34dAviw4YhqEZNXwnJa/lgq4=;
+        b=g9r4KbF8boXqlaHvOateW8bGYMOhm34jwDwKIzmDuP1vp+uaDAMhXYzuv8uRWqW6NU
+         MjQpU5jSy34jCJgQsLy3OfHRHE2J8AD5feeCkPjYbiZym6eyDruMe4iG7rnPOYfD/o+H
+         BLtzTTlheSsMNwT4cNUiRze65dOg2tFpv3MV+MnBt0LfwwoF6nSucA0oQRk0EY9dVBMi
+         qG4Ut+4xYurOL3y2yUSb1yaubM0eSpK7enfDo5saLzwG1C+R5wyWSq4YghqlUp9IuouO
+         LPm25Wnfdv6AGWlXbWDSmlMPCUVTWHdZlxblshHuKgCvMap2fmCwSzJtCo5MW1XzPcCE
+         BriA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724399467; x=1725004267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uVFI/kAx4GZJG5dq3c75HD5Ktn0yw4zArYMGtwgACRE=;
-        b=eSqP7svXE0FCOkYDIVXnVe+zwIFxHuO9tWpZ8QRNsJggv49Eyn0kRiGvXp2u5RkkDY
-         B2CGp38AftCZsR73aes5fU2JpRlQqLsbVY051eA0ZODEULxaAuaEy69bk6n+J6ji4FU6
-         OzJdS6RhRF9h6XbVg6MWBa4GT1PCgoQtBYd9JJPt/cszfcU9c8B7DqGyJvTH2R5U2QUN
-         1DdqUttV/0i4zRsMWJ78dhS4LQnC/er1bdoWvZKHvDGUiGBubnFaW8j7rVbmy9iIWQHI
-         6bzuJcCHRJQjKDfVvfxuXUAZ4Zl5lyeaXldmWRs/mLcJJ48SPZP/j5BaaaEZUAsWoEos
-         hk6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU5fwiCoQh4wtBOPQ/u51++SN5QmuCE5KymBw7ct//kMfiZOW/RxFJUsFtPOQhFS0sKUAxeLSnEn7IN1sA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1qBpoQdi/+O4WHeNcyq+CCphHeL3MQCnLWLvP8S8xUV5iQzu
-	xQACk8YbjJT+vrhrg3gvT3fq+W1Jkc3af7i0fNVIQVn9SkUBhweh86f/grUvMbD1ihb1IukvY3I
-	ie+20CYk8ZeGRc2P8VdEKK/xHmcf5AmNlffv0
-X-Google-Smtp-Source: AGHT+IGwq8qrwQzH9MhG9+f2TAUzL+lDTX48ZdahHSVAEA0ONPP07O3k9tJzluNvWAvmzLEjq7LhXUIOSOn/Kv6k6WU=
-X-Received: by 2002:a05:6512:3087:b0:52c:dc25:d706 with SMTP id
- 2adb3069b0e04-53438868deemr943389e87.52.1724399466989; Fri, 23 Aug 2024
- 00:51:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724399650; x=1725004450;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K9F6H3c2NVmBHPEentW34dAviw4YhqEZNXwnJa/lgq4=;
+        b=WhAwldhZLIO3dhy6Ofny2S4OOpdavYP7skb/Nc9Oi5Ufz0D6ZFDwD7l8CT3HKGSG4b
+         H+84BidlgSA7EJvd5OK7Rv9aXDoxfXFDLx+jyH2LgsvYAL5xikRakViIqS/6H39TeePO
+         cRGSC89Az6WgGOI8pTXUSk6Zrtdn2D8mrDmfyrUxhNGA439BqY8+yhFk+AZ47eigpPAF
+         2v+UI7zZM3QvcbU7ADbcKNE9FnSg9/mHGbHyQy5T8O3xSGpcf3w57iw97xspk1LscQ25
+         SJTnqEcUloBctJcu4JUwWac3GZE7+AZXnCGqjLNTnmDf7nSV4WKox4AcjxnrsKWH2yia
+         zXXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRUo8cUs2tWTEgkazBhpes3BBsflEJHE3s5t7LerucQFGW/cRWuDOIXI7tihs6uSwdvT63CHnp42+Hjls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtiXLcGhgzGHXK2czz1akBF/iY0gBxggPcgp6N1byfPB96YPQz
+	gW7ZPY/JPjZOPEK49lSDfjwpBUBtF4xexnyZFndDlZql6GmREqGKYuAaxfMcBzE=
+X-Google-Smtp-Source: AGHT+IEoQJnrG7rJ9f2StMomCkVPrYJqe5+JdS66nZak9PuSepkUhwJhO+/TtFtd6qLUxl+/AblgVw==
+X-Received: by 2002:a05:6402:4303:b0:5be:e999:18ab with SMTP id 4fb4d7f45d1cf-5c0891a1ccemr803908a12.23.1724399649843;
+        Fri, 23 Aug 2024 00:54:09 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3eabe1sm1754112a12.52.2024.08.23.00.54.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 00:54:09 -0700 (PDT)
+Message-ID: <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
+Date: Fri, 23 Aug 2024 10:54:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822092006.3134096-1-wenst@chromium.org> <20240822092006.3134096-6-wenst@chromium.org>
- <ZsdNA2b9CDRrtno2@smile.fi.intel.com>
-In-Reply-To: <ZsdNA2b9CDRrtno2@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 23 Aug 2024 15:50:55 +0800
-Message-ID: <CAGXv+5H0eGEjQU8qbKjua5qfbL2FaX2bMSyQg0PMVQrFfaiR8g@mail.gmail.com>
-Subject: Re: [PATCH v5 05/10] gpiolib: Add gpio_property_name_length()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
+ #reset-cells for RZ/G3S
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 22, 2024 at 10:37=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 22, 2024 at 05:19:58PM +0800, Chen-Yu Tsai wrote:
-> > The I2C device tree component prober needs to get and toggle GPIO lines
-> > for the components it intends to probe. These components may not use th=
-e
-> > same name for their GPIO lines, so the prober must go through the devic=
-e
-> > tree, check each property to see it is a GPIO property, and get the GPI=
-O
-> > line.
-> >
-> > Instead of duplicating the GPIO suffixes, or exporting them to the
-> > prober to do pattern matching, simply add and export a new function tha=
-t
-> > does the pattern matching and returns the length of the GPIO name. The
-> > caller can then use that to copy out the name if it needs to.
->
-> ...
->
-> > +/**
-> > + * gpio_property_name_length - Returns the GPIO name length from a pro=
-perty name
-> > + * @str:     string to check
->
-> It's property name, so, I would name this 'propname'.
+Hi, Conor,
 
-Ack.
+On 22.08.2024 19:42, Conor Dooley wrote:
+> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The RZ/G3S System controller has registers to control signals that need
+>> to be de-asserted/asserted before/after different SoC areas are power
+>> on/off. This signals are implemented as reset signals. For this document
+>> the #reset-cells property.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> index 4386b2c3fa4d..6b0bb34485d9 100644
+>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>> @@ -42,12 +42,28 @@ properties:
+>>        - const: cm33stbyr_int
+>>        - const: ca55_deny
+>>  
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>>  
+>>  additionalProperties: false
+>>  
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: renesas,r9a08g045-sysc
+>> +    then:
+>> +      required:
+>> +        - "#reset-cells"
+> 
+> Given this is new required property on an existing platform, I'd expect
+> some mention of why it used to be okay to not have this but is now
+> required. Did firmware or a bootloader stage take things out of reset?
 
-> > + * This function checks if the given name matches the GPIO property pa=
-tterns, and
-> > + * returns the length of the name of the GPIO. The pattern is "*-<GPIO=
- suffix>"
-> > + * or just "<GPIO suffix>".
-> > + *
-> > + * Returns:
-> > + * The length of the string before '-' if it matches "*-<GPIO suffix>"=
-, or
->
-> What about "x-y-gpios"? It's unclear what will be the behaviour.
+On previous SoCs the SYS controller has no support for controlling the
+signals going to different peripherals (USB, PCIE in case of RZ/G3S).
+I'll add a note about this on next version.
 
-I thought it was implied that the '-' mentioned here is the one before the
-suffix. I made it more explicit.
-
-> > + * 0 if no name part, just the suffix, or
-> > + * -EINVAL if the string doesn't match the pattern.
-> > + */
-> > +int gpio_property_name_length(const char *str)
->
-> gpio_get_... ?
-
-Ack.
-
-> > +{
-> > +     size_t len;
-> > +
-> > +     len =3D strlen(str);
->
-> If it has a thousands characters...?
-
-Shouldn't matter much? I suppose using strrchr() as you suggested
-requires one less pass.
-
-> > +     /* string need to be at minimum len(gpio) */
-> > +     if (len < 4)
-> > +             return -EINVAL;
->
-> Do we really need it here? See below as well.
->
-> > +     /* Check for no-name case: "gpio" / "gpios" */
-> > +     for (const char *const *p =3D gpio_suffixes; *p; p++)
-> > +             if (!strcmp(str, *p))
-> > +                     return 0;
->
-> > +     for (size_t i =3D len - 4; i > 0; i--) {
-> > +             /* find right-most '-' and check if remainder matches suf=
-fix */
-> > +             if (str[i] !=3D '-')
-> > +                     continue;
-> > +
-> > +             for (const char *const *p =3D gpio_suffixes; *p; p++)
-> > +                     if (!strcmp(str + i + 1, *p))
-> > +                             return i;
-> > +
-> > +             return -EINVAL;
-> > +     }
->
-> This can be combined with the above
->
->         for (const char *const *p =3D gpio_suffixes; *p; p++) {
->                 /*
->                  * Find right-most '-' and check if remainder matches suf=
-fix.
->                  * If no separator found, check for no-name cases.
->                  */
->                 dash =3D strrchr(propname, '-');
-
-I believe this line could be moved out of the for-loop. Otherwise it
-looks much more concise compared to my version. I'll omit the comment
-though, as it is just rehashing the kerneldoc description, and now
-that the function is so short, it shouldn't be hard to read.
-
-I'll add you as "Suggested-by".
+Thank you,
+Claudiu Beznea
 
 
-Thanks
-ChenYu
-
->                 if (!strcmp(dash ? dash + 1 : propname, *p))
->                         return i;
->         }
->
-> > +     return -EINVAL;
-> > +}
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> 
+>> +    else:
+>> +      properties:
+>> +        "#reset-cells": false
+>> +
+>>  examples:
+>>    - |
+>>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> -- 
+>> 2.39.2
+>>
 
