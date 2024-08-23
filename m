@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-299259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB8295D216
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A15795D21B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7452A283CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BD628362D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8681D18953E;
-	Fri, 23 Aug 2024 15:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9690189539;
+	Fri, 23 Aug 2024 15:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOaBFcd8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rGt1E5cn"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C188A3E;
-	Fri, 23 Aug 2024 15:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AA31885A1
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428442; cv=none; b=La7B0+kqRrS1wx1JPx2ptuXr3EHpOHTKejW3dm8sdg8iELCA/cQkXDFvA0Yr7E13O0m6E9l9OzT8h9qISr3Ha5paELI8yesuTqFyeUpkWKRKwUxWi9Iy4maYgaanPF5vTSh8DxFwPRv4wuUCY3Tr/pXX9X0v3wFvVa9psW6R+5M=
+	t=1724428486; cv=none; b=i/f8g8OhioHaKvyIyAJ5d04ca5W+xPMJuv8wZabOtGKyGOx56dEKwQXsXK8/HIbDurTwvTZtdmZNIFCYm2yb6AfUsBICfsaoltz1RWJHhe9xl3y9nc/H/oFYSlx/ilaE2VpjaCyYtaPCbbNjwnFWEvfTnJUXdp5yBpwKqtrOtgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428442; c=relaxed/simple;
-	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZ19FxZR5oGJNn30sNj2EULOnnTCSNL6h+PZbz8/neS0h8S91YrF9Qpi22pvGf4aRXUx/rTV9S89aCOELwYq6bTy0GDgWsH++pB37Lb6XXYhapFQoGJFrB53kN50EO9IOGX/cCCHCpiVKw7JqUnMZLgQed3D+ixR/oNU28wVSq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOaBFcd8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0485C32786;
-	Fri, 23 Aug 2024 15:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724428442;
-	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LOaBFcd86Xy8xkLlgveZzv5oo4gHNIAjYJKRrV+TC2Bha+Q2oqc9RS+z+rkF4CG2r
-	 B5sh76TgNhE4pN1HNDODQfBdpvhseP3oeLf/V0phOsnkC5hYiwMbjJsfMPriDnpFr1
-	 1EElvFr60JqEx3pGRRsrwoGDMLKE7F2QsZnMtzWB5Q/WS/hPsK4+GUslyCRxbLUGht
-	 XO+yjRD7jZRykvbhuEAS1i5EBdSN5H5NjKTvTxqSBV4T7lUoAzYdSgLPfQhTWXGw2D
-	 QHPbQkcTkw6x9vSWAi+n/+lSqRlxg5S//qG88Jksy+7Ri/hrEtpjWPn2zUoehjlYa9
-	 jvQ1MPNHFTRYA==
-Date: Fri, 23 Aug 2024 16:53:57 +0100
-From: Will Deacon <will@kernel.org>
-To: Ashish Mhetre <amhetre@nvidia.com>, joro@8bytes.org
-Cc: robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-Message-ID: <20240823155357.GC525@willie-the-truck>
-References: <20240806105135.218089-1-amhetre@nvidia.com>
+	s=arc-20240116; t=1724428486; c=relaxed/simple;
+	bh=HtH6qdjMIdNtGGtymO0i5WzD6uli6CQK2z4uzaNG4FU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1Xt+nF/TQ/sPzGcxsdJN5uZkFf0JOlVFaNbikQuDVC3a2x92mvkdwtpZKIoZbPHSMDmxRf1w2hqvpvAkgrtYHG0+dxOEqzEw0BheXTJB90ysyEaQACwOx0uJLHPkVfcREljPXzyJNKrirz0eAtiv5c19IP9Od6WHmEhE9wCO4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rGt1E5cn; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-498de7a11b9so760300137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724428483; x=1725033283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HtH6qdjMIdNtGGtymO0i5WzD6uli6CQK2z4uzaNG4FU=;
+        b=rGt1E5cn2AxIdVu6Tsk37EKwsewAAstndYElxOF86jIeDZtfyzwfWTNE+vWgHXIzaD
+         xnvYxFW13cYqqihZC86i7UtkxWwARXNcmdo+AI3r/XXrZnOPhcMiTh/ZHJWOwGA8k3c/
+         kcHIQ2cB51pE3gtBH0FLYtqHLSKLcMXp6o0blRxgdJ9GhgwzdkzexUenMAHBleFcPUmG
+         t6EdMzzV46M5CZdX3bvauNDhAN3dnj6/zIITNkyzuNhcXJeAo+Zbi/WvZdU04DyzHpy5
+         n0FJwrho670O2swnnUtcCH2VDMkE1iIzN6snalb4XQweFir3TlB1SSnr4EbykgKDJDFy
+         SNgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724428483; x=1725033283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HtH6qdjMIdNtGGtymO0i5WzD6uli6CQK2z4uzaNG4FU=;
+        b=DlEI2EwTJLYvwoBq3M3fk5SXYGz4xr1Wp6ErsMBwMZsxnLl1iM2zs+yNqCZ+OKedYu
+         kHvykay/Lh6zGX6P1IQr9kkODgAl2Lu6jzAYNRmzPZgAYLXPLJ2PzoL7bufUQGEuMmpM
+         eg72HCT2gU9NWBVcc2akE7nshWirdux7VL2tBotV/5IXhPzox33VgCJOOQx0zinfZJuG
+         BVsm5lRnIZvc2Q8QL77HqxdEZ30YzwHAd3M1t69Vu8dv4N7ALPLY1AgMh5YrGSSpMQE0
+         2B64EIF/Z8N3+9AXN9CiEReU+KvZ5Iv61sU6btv4Fu3SwjFuVTgr03yWzKD56xWwIOcM
+         DXCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfvU0CSdE71RcxRdmKW8I2Ag8N0TdVlrXa1NTwX0tTGJXdH7oGmEQewQiEDLzAbQsq2xzDvm1k0uo0aH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO9aZ6i3+azKcjKquKSp737nBG9PLJE3tEGWktcQWDP8nJzHTQ
+	UiCywY8NPPF6agQoehga+1LQ2/yOcIqrpXonhb+6IwHjOIb5rV7GrfSEGiP1bnZAudjRei7V9m9
+	Moww04oF/oH3m/IPxIrqVE4cWCVjWMppD6DPYtg==
+X-Google-Smtp-Source: AGHT+IG1JZThU0IKB0v806PR64JcpLViiPaNVXo5A6m1YTr+RoSCgI0tMbvBD/tvM/LTvUHRsK0DDSy3l7BR399yJcQ=
+X-Received: by 2002:a05:6102:3907:b0:493:ce48:a2ed with SMTP id
+ ada2fe7eead31-498f4c4190amr2791122137.29.1724428482611; Fri, 23 Aug 2024
+ 08:54:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806105135.218089-1-amhetre@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240819064721.91494-1-aardelean@baylibre.com>
+ <20240819064721.91494-8-aardelean@baylibre.com> <3c4edf41-fd3b-4258-9b9e-a81b25568403@baylibre.com>
+In-Reply-To: <3c4edf41-fd3b-4258-9b9e-a81b25568403@baylibre.com>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Fri, 23 Aug 2024 18:54:31 +0300
+Message-ID: <CA+GgBR9H66u0mB-cQt_6tT2kh9TCW0Bm_BiHEUyVGvmGHBGEJg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, jic23@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
+	gstols@baylibre.com, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 10:51:35AM +0000, Ashish Mhetre wrote:
-> The current __arm_lpae_unmap() function calls dma_sync() on individual
-> PTEs after clearing them. Overall unmap performance can be improved by
-> around 25% for large buffer sizes by combining the syncs for adjacent
-> leaf entries.
-> Optimize the unmap time by clearing all the leaf entries and issuing a
-> single dma_sync() for them.
-> Below is detailed analysis of average unmap latency(in us) with and
-> without this optimization obtained by running dma_map_benchmark for
-> different buffer sizes.
-> 
-> 		UnMap Latency(us)
-> Size	Without		With		% gain with
-> 	optimiztion	optimization	optimization
-> 
-> 4KB	3		3		0
-> 8KB	4		3.8		5
-> 16KB	6.1		5.4		11.48
-> 32KB	10.2		8.5		16.67
-> 64KB	18.5		14.9		19.46
-> 128KB	35		27.5		21.43
-> 256KB	67.5		52.2		22.67
-> 512KB	127.9		97.2		24.00
-> 1MB	248.6		187.4		24.62
-> 2MB	65.5		65.5		0
-> 4MB	119.2		119		0.17
-> 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
-> Changes in V2:
-> - Updated the commit message to be imperative.
-> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
-> 
-> Changes in V3:
-> - Used loop-local variables and removed redundant function variables.
-> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
-> - Merged both patches into this single patch by adding check for a
->   NULL gather in __arm_lpae_unmap() itself.
-> 
-> Changes in V4:
-> - Updated the subject in commit message to correctly reflect the changes
->   made in this patch.
-> ---
->  drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
->  1 file changed, 17 insertions(+), 14 deletions(-)
+On Mon, Aug 19, 2024 at 6:33=E2=80=AFPM David Lechner <dlechner@baylibre.co=
+m> wrote:
+>
+> On 8/19/24 1:47 AM, Alexandru Ardelean wrote:
+> > The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
+> > The main difference between AD7606C-16 & AD7606C-18 is the precision in
+> > bits (16 vs 18).
+> > Because of that, some scales need to be defined for the 18-bit variants=
+, as
+> > they need to be computed against 2**18 (vs 2**16 for the 16 bit-variant=
+s).
+> >
+> > Because the AD7606C-16,18 also supports bipolar & differential channels=
+,
+> > for SW-mode, the default range of 10 V or =C2=B110V should be set at pr=
+obe.
+> > On reset, the default range (in the registers) is set to value 0x3 whic=
+h
+> > corresponds to '=C2=B110 V single-ended range', regardless of bipolar o=
+r
+> > differential configuration.
+> >
+> > Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
+> >
+> > And the AD7606C-18 variant offers 18-bit precision. The unfortunate eff=
+ect
+> > of this 18-bit sample size, is that there is no simple/neat way to get =
+the
+> > samples into a 32-bit array without having to do a home-brewed bit-buff=
+er.
+> > The ADC must read all samples (from all 8 channels) in order to get the
+> > N-th sample (this could be reworked to do up-to-N-th sample for scan-di=
+rect).
+> > There doesn't seem to be any quick-trick to be usable to pad the sample=
+s
+> > up to at least 24 bits.
+> > Even the optional status-header is 8-bits, which would mean 26-bits of =
+data
+> > per sample.
+> > That means that when using a simple SPI controller (which can usually r=
+ead
+> > 8 bit multiples) a simple bit-buffer trick is required.
+> >
+> Maybe it would be better to just use .bits_per_word =3D 18 for the 18-bit
+> ADC and not worry about "simple" SPI controller support for that one?
+>
 
-Acked-by: Will Deacon <will@kernel.org>
++cc Mark Brown for some input on the SPI stuff
 
-Joerg, please can you pick this one up for -next?
+I'm generally fine with choosing to not support SPI controllers that
+can't do padding to 16/32 bit arrays
 
-Cheers,
+But, at the same time: would it be an interesting topic to implement
+(in the SPI framework) some SW implementation for padding a series of
+18-bit samples to 32-bit arrays?
+(Similarly, this could work for 10-15 bit samples into 16 bit arrays).
 
-Will
+Apologies if this is already implemented and I missed it.
+
+But if there isn't such a functionality (padding done in SW inside the
+SPI framework), then I could probably spin-up a proposal.
+I think that the functionality could be spun-up in a separate
+patch-set/discussion; and this patchset would just go with
+"bits_per_word =3D 18".
+
+It could be done as a new field in the "struct spi_transfer", or
+something else like "spi_pad_rx_to_nbits(struct spi_device *)"
+Or other suggestions welcome
+
+Thanks
+Alex
 
