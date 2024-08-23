@@ -1,75 +1,121 @@
-Return-Path: <linux-kernel+bounces-299284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DA395D253
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 592F695D256
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BD12830FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13EAC282565
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C591898E6;
-	Fri, 23 Aug 2024 16:03:35 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1064118BB82;
+	Fri, 23 Aug 2024 16:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IN50sgtq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C50184550
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2837F18953D;
+	Fri, 23 Aug 2024 16:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429014; cv=none; b=uofNSeLgjKEeTBh17eHvS+hQpDGgaWxghZU32mk0GzRHCMfLqs5tYNqm8hSv5sxAEES3l3rAqm+ZNotzFYgKmBgMFV/BZrSowigM0ijYs4fsreJmDcux3BllMvn+uawJTBN65MWFA+jYtZmrQ+zlXIRmvfcb+GTsmspMmgiiQCI=
+	t=1724429018; cv=none; b=AMm15MCf/CR6IWjco5xpJUCFwAVYYh6nQI0/CHWjji22qs4p4K7U45JAZjQlQ6QdtY/9LPess59x29qV2IALQ4TqgDzBHUm8kiICyWEi0RiPRzgvjhs734DVc1oY6EGqw1jofIPgXdiB8A/+wrDStDygTtE6bu8L7tsPvqAb7EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429014; c=relaxed/simple;
-	bh=O8h/oDQ9OhVrNtG8+8Hq2SPgYnNHP2/INVqE1bKs624=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=ZXlipVF/lnYq+6OIEzJb4axur6tRqgmj/TZdEsPy7sTthYcDYsOreNzC+TUh59MDqmAbDHPvkFL61237D3qHXl/Np+H1RnHEE5rsf4jR9QIjtjvE2cpy6U1FR0QXWM/fqGtQgqLBd4UxEA2joYJuXtfJcBkTFCFiEKJFt9lmOOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d2ced7e8eso19935055ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724429012; x=1725033812;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O8h/oDQ9OhVrNtG8+8Hq2SPgYnNHP2/INVqE1bKs624=;
-        b=FeMDzutm5wKEdKfrC7O78W7o+h+17qr2f27sJ58fNvUKFTHbWyQJGIOjVlivGNP1ih
-         rAYNXqHd4kQGNO6USdAVEH+aeiZ/LaVn8U/yTH+xUkJh9ohmBUKquTGOkqXcHc45Mp4d
-         PmVPdg2LZsKpQRWFSjUHoKpLd+DqPVGnUqsHXLSagxLCsVja16phBQWqerNBSdhI8+UP
-         od7Ge4Fmlt0IhJyDBKmDYLreXzmOhyTIcelUUlF6EcgK5Wm1UoVlKHbBLL+Lvy3sbFvI
-         17jfr9UOz7rcGjs6ijN41HwdKvdixyELBhMf/CUkEWhGfWCpY841T6OIqMEOWY6Mhr7i
-         8dLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKOS3shjMo6lV/AoAI3j9T24I+ABVj75S2Goyj93dXv/EMKA+45RYPaKYb2KQ8LMwCL0BFQ8Pd1MJnnQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG391/HLXFVzQCVJ2n7L44XslBZB4N7ZIXd21feJgo27gQNN+s
-	dYGxhKsvJI7ZBaIHHJbEAS/pYmUT19sRIZZcbzfCSYfPKEPE1UPiQi2oSUu8i1Qs2Og+BODKM6U
-	ML/jx2vPOKMBqizgpDqBZCIyi3NxlZX5J/vsPuVHlLIkYK5UIEL36Bwg=
-X-Google-Smtp-Source: AGHT+IGqMlpcJ8qnY5g97+g8OlMMKjwRSt8aWEZUVLv0aafV7XuVaQqcUfI1QUE10rtsJdXnIKZ9Pz/5shwda6MK8Z/xwQ0fpg16
+	s=arc-20240116; t=1724429018; c=relaxed/simple;
+	bh=sAXWLmq5dCO5ShdooN53JdvnZT7SiGU/RUtmqaz6qbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekJXDT1X4Asd/R5pQdFjHYoX0YXuzehE8NsUxbOrvWJ12pATtwDcketiV8U8pJKTS9SApHSDy0PK6rJmngL7/ktV418bjs67F6L/j6adQ7OvjfcYsmllrEsQo3voq9BNsflOZQhZbPWix83Mr+a90XGqt8R2iYUzFeraLJz+vzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IN50sgtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46A2C4AF0B;
+	Fri, 23 Aug 2024 16:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724429017;
+	bh=sAXWLmq5dCO5ShdooN53JdvnZT7SiGU/RUtmqaz6qbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IN50sgtqrPVIzkoHO4a0F3/Y59lc8ASOmMQbGkDUnDwpfB5fDG9+W2giqHuleMonm
+	 lnPbpvKgNhnbEN7JH6Rcv8xCMn++bj2xTAeRfVU8EIKfJp6QkL0yPeqY6wv07YDw7n
+	 p8yPQgNHlPUieuuFDmB7y2Dsz63NsKzyBr2RZLfvAoZTALAhjobDtKgYF0auRAgoNp
+	 9OYoZ868xAeDxMYBjYiwZZEcQxeoy9ej795pxgvFQqC/aqdVtuPJAzNGcJdc1mL8SJ
+	 xjQEaCnVm2cu7e1xKd/8QuRfU5TMaSddx5ibXvXFNQ3BY1SByH5H63oTj2LhHcONgD
+	 o/GuGB996tc8w==
+Date: Fri, 23 Aug 2024 09:03:37 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 4/7] xfs: Support FS_XFLAG_ATOMICWRITES for forcealign
+Message-ID: <20240823160337.GA865349@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-5-john.g.garry@oracle.com>
+ <20240821170734.GJ865349@frogsfrogsfrogs>
+ <a2a0ec49-37e5-4e0f-9916-d9d05cf5bb96@oracle.com>
+ <20240822203842.GT865349@frogsfrogsfrogs>
+ <d4e9baa3-d7d2-4e89-bc5d-91c85dbd4b8b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d19:b0:397:9426:e7fc with SMTP id
- e9e14a558f8ab-39e3c8d2ad1mr1803895ab.0.1724429012407; Fri, 23 Aug 2024
- 09:03:32 -0700 (PDT)
-Date: Fri, 23 Aug 2024 09:03:32 -0700
-In-Reply-To: <0131cdd475994b9c8f73a2cc202ba0b1@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b9a47d06205bea40@google.com>
-Subject: Re: possible deadlock in attr_data_get_block
-From: syzbot <syzbot+36bb70085ef6edc2ebb9@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com
-Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4e9baa3-d7d2-4e89-bc5d-91c85dbd4b8b@oracle.com>
 
-> #syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+On Fri, Aug 23, 2024 at 09:39:44AM +0100, John Garry wrote:
+> On 22/08/2024 21:38, Darrick J. Wong wrote:
+> > > > This (atomicwrites && !forcealign) ought to be checked in the superblock
+> > > > verifier.
+> > > You mean in xfs_fs_validate_params(), right?
+> > xfs_validate_sb_common, where we do all the other ondisk superblock
+> > validation.
+> 
+> I don't see any other xfs_has_XXX checks in xfs_validate_sb_common(), but
+> this could be the first...
 
-This bug is already marked as fixed. No point in testing.
+The superblock verifier runs at a lower level in the filesystem -- it
+checks that the ondisk superblock doesn't contain any inconsistent
+fields or impossible feature combinations, etc.  Once the ondisk
+superblock is verified, the information there is used to set XFS_FEAT_*
+bits in m_features, which is what the xfs_has_* predicates access.
 
->
+Therefore, you have to look at the raw superblock fields, not the
+xfs_has_ predicates:
+
+	if ((sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES) &&
+	    !(sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)) {
+		xfs_warn(mp, "atomic writes feature requires force align feature.");
+		return -EINVAL;
+	}
+
+The reason for checking this state here is that atomicwrites absolutely
+requires forcealign and that dependency will always be true.
+
+> The only other place in which I see a pattern of similar SB feature flag
+> checks is in xfs_finish_flags() for checking xfs_has_crc() &&
+> xfs_has_noattr2().
+> 
+> So if we go with xfs_validate_sb_common(), then should the check in
+> xfs_fs_fill_super() for xfs_has_forcealign() && xfs_has_realtime()/reflink()
+> be relocated to xfs_validate_sb_common() also:
+
+No.  Contrast the above with (forcealign && !realtime), which at least
+in theory is temporary, so that should live in xfs_fs_fill_super.  Or
+put another way, xfs_fs_fill_super is where we screen out the kernel
+being too stupid to support something it found on disk.
+
+--D
+
+> 
+> https://lore.kernel.org/linux-xfs/20240813163638.3751939-8-john.g.garry@oracle.com/
+> 
+> Cheers,
+> John
+> 
 
