@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-298093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED90795C201
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D10D95C212
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981E41F2421C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09419285326
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49F68469;
-	Fri, 23 Aug 2024 00:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2872EEDC;
+	Fri, 23 Aug 2024 00:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjQwJABN"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U56DRAnA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87E94687
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA0C63A;
+	Fri, 23 Aug 2024 00:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371767; cv=none; b=UGZYBCMiZ2y+bX16Xym9DTfPe9YYGL0wXH4G5Ffqv/TXGBzEq2w1I0fzG0eCQH6U+E8mc7WLsp37LXgwGb0PoXWP22Q8RELKSdqV0i6/bCVlSwbsGqPYQnXY9iX6T9A3SP+Rhiwi7S6IMDn5ZmAc9+AXfyB0vEhjtBIVyGK6ir0=
+	t=1724371937; cv=none; b=SIperVK4gAo6Kl62x9sU0gLHsjaemfAe4T7FiAcpbycCYlBunqLtdHBxGc1TPTKAfw9bj7RF8nSpgeVSnX3ZQMwcQCUOmQhBo3wuK+hI6KA9ZMybI3NxE/EaT41U020ZMxyXdj1qyGLETxLn29xjhYMVPzCwmcHWmZMurWmhOvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371767; c=relaxed/simple;
-	bh=dN3nffBm/hBLpyVwnZSRJcqVI+KkswlXdU5KaorlImA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pA1H0Ywq8TCPCEot1UKvweYL2KvaebHmJdCCTjP4eCzl5IG8jkOapKPD4NqrKlgM1SOnFfW4KIuORrWaxxGeMq3MwUDo8dRVCZjvKc8NqFbR0b0NPwL1+rC+zLu0JAnjS/IpNZJvgcfIaBApOXrGkjRnMwpmd3DQkVzdIRQDJnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjQwJABN; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7b8884631c4so626635a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 17:09:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724371765; x=1724976565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mNja2/ozWCmydptxs77W9+XMG2tb/ebDVa2ly4AGNiY=;
-        b=PjQwJABN2ObyfcH46IocAdmOijqtcU8JVTSDW+LajbUgnlBJ3/78zigyPKltHU2FO8
-         bRRQjxJXRbJKSV8XeWZHQIUl8z7Yq/SsTkIohNkfZWnsGLOUJVcia41ntTsrRoJMEROx
-         7IV2Jrszkt2dQpBSCJntqylCYVoIp0H7ZItSWsXxBrwWmrVC7VLZF2ABccmMU+S6RiiZ
-         1QLRR/z/VAqM6hUc7uB6BS9+FNMObS/4rnEvST+s2GPO9jpmYmT1IWcG/GyycreQ3EF8
-         Whl2+u+LMOa2DSKVeBRfftrAQ5X9s/GZ+FonRq2sodKmZ71DTyCe3zpmBj2M0M69LxC+
-         cPIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724371765; x=1724976565;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mNja2/ozWCmydptxs77W9+XMG2tb/ebDVa2ly4AGNiY=;
-        b=WHyaZ/sUiw2HCT5jQMdF5VeoEKypUhQgUm/OdUSdAEusIj7gnXMWBoIYjpKcxBv2AC
-         gYJJ5YV3ibPjSe0H2zZVX1vih8N543HsuIXeETpAULxVauxIOvWOhz7aTtxAvlb5NsPU
-         WEIaA5N+CgUM76ao0mOl+Ryuj2sw8g4bDomzn+t/asDpvbcXi228qdGQYH6+uRAUQujA
-         dYwF7AaInpRX6fnQjR2Nv7alVJ6sl+ia6QPiqrJ9IFZmLRj6uLlF2yL4jBD4zgG6Uv+d
-         I+H5D0HpT6vyQD149UDNUynG1DQwLS+xu8u+QI7lahBe6g4Zs9IY5UYYtSH+B2HcFnSb
-         Ol+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUpxYtHj71nLLz86FE2iTOMba192i+1QRF12zjXF4nOpLPfHOcsLvNRt2UbjqrfZeXWTVsDWta1Ovpo65c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9dEDLg2tN6FWqg0rXnD397iKOjx0VnA/cSkY5HzCGlu3ChGvT
-	PBLYnKOpnE/uz1Eqs9H/ocpPMCo5oZBguG0d2s8nmGL9YG1wWs6u
-X-Google-Smtp-Source: AGHT+IGKWKjSWYgDm6yIXSf6/K0YSgfrE5p8+Ncc86a1SVKlp2BKaq8MC1YyKcz5qitvJmBQmaVbVw==
-X-Received: by 2002:a05:6300:4c:b0:1c4:c160:2859 with SMTP id adf61e73a8af0-1cc89dcf828mr849786637.31.1724371764849;
-        Thu, 22 Aug 2024 17:09:24 -0700 (PDT)
-Received: from localhost.localdomain (dhcp11819.ime.unicamp.br. [143.106.118.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385608eb5sm17929185ad.188.2024.08.22.17.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 17:09:24 -0700 (PDT)
-From: Gabriel Maciel Raad <ffunctor@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH v2 2/2] Staging: rtl8192e: Remove unnecessary blank line
-Date: Thu, 22 Aug 2024 21:08:38 -0300
-Message-ID: <20240823000838.8207-3-ffunctor@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240823000838.8207-1-ffunctor@gmail.com>
-References: <20240823000838.8207-1-ffunctor@gmail.com>
+	s=arc-20240116; t=1724371937; c=relaxed/simple;
+	bh=hR348iFeerciLqBqWHS3fQeIxVKDvQfpmtUSU4LpnR4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M+zvhRD2ZEAZNYaVQw7ZaD++EF2vDQFUJtSQ9UV9MU1M9AuQbTShrfEZDbUwce7bl2Xb29xmpv3lNl0sV6XPj0ulhAl/+xMCdjccf+cpM9ImQkmaNC3d/BaS8hUIn5guzd2somNixLKMOqE0e4rt1Eq9AP4DBSmbB2KglrvNSeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U56DRAnA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E629C32782;
+	Fri, 23 Aug 2024 00:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724371937;
+	bh=hR348iFeerciLqBqWHS3fQeIxVKDvQfpmtUSU4LpnR4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=U56DRAnAIl4WrFQvlPLEWvV4zoUhuOOkJnrxO8Hrdfui+dr0sRNl1mMqFuoLQcljh
+	 KpaGDfWV3W7UT6+WTf8lHFJV606WPyn6rohpw6VWdO5a9DAGGr+bR6+/zIM3ThKcyQ
+	 y4axf3sIzkn6GgsuLgASAbD863nuHlvPEG60F0y3k1TEDGjHpEXqL+0DpRDTtG58ED
+	 K+43zzwYZQ/shBs996oZhSYhuICZShrlXWldSyJSe0ZPz2g4r5lSDFKl4WCXwId6u5
+	 a3mSVGUx6iqtTNtqOVVgJFhrNIN7n9/+2zocDa9sltXiqviKQwbiEbNLzqDMN1Y+tl
+	 pdopWggV/qNqw==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 22 Aug 2024 17:12:13 -0700
+Subject: [PATCH] x86/resctrl: Annotate __get_mem_config_intel() as __init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANzTx2YC/x3N0QqDMAxA0V+RPC9Q4zZkvzJG6WraBTSONgxB/
+ PcVH8/LvTtULsIVHt0OhX9SZdWG/tJB/ATNjDI1Azm6upEIt/GOhatFKzNmNr/w4uOqSbIXNZ5
+ RVAyHkByFWz+4d4AW+xZOsp2j5+s4/kyu4AV4AAAA
+To: Fenghua Yu <fenghua.yu@intel.com>, 
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1536; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=hR348iFeerciLqBqWHS3fQeIxVKDvQfpmtUSU4LpnR4=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGnHLz84X8XOkPy4bFNjt9SaiQ2m505eE87olbG6ornn6
+ O0O09sHO0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBETBYyMjTbcSZfv2xycsGG
+ s269Plctyva2Js2Ydalc9ErK2ujC75qMDBNjrlZ+2iawbS2bp4klV/6xd9pq7+eWb3ln96D/cOI
+ hbX4A
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Remove unneeded blank line in rtl92e_leisure_ps_enter to silence the
-folowing checkpatch.pl warning:
+After a recent LLVM change [1] that deduces __cold on functions that
+only call cold code (such as __init functions), there is a section
+mismatch warning from __get_mem_config_intel(), which got moved to
+.text.unlikely. as a result of that optimization:
 
-CHECK: Blank lines aren't necessary after an open brace '{'
+  WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
 
-Signed-off-by: Gabriel Maciel Raad <ffunctor@gmail.com>
+Mark __get_mem_config_intel() as __init as well since it is only called
+from __init code, which clears up the warning.
+
+Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
-Changes in v2:
-- Split the changes in two patches
----
- drivers/staging/rtl8192e/rtl8192e/rtl_ps.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/cpu/resctrl/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c b/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
-index 1f881c27d4b4..7b6247acf6f4 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
-@@ -209,7 +209,6 @@ void rtl92e_leisure_ps_enter(struct net_device *dev)
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 1930fce9dfe9..b28646f1d9d6 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
+ 	return false;
+ }
  
- 	if (psc->bLeisurePs) {
- 		if (psc->lps_idle_count >= RT_CHECK_FOR_HANG_PERIOD) {
--
- 			if (priv->rtllib->ps == RTLLIB_PS_DISABLED)
- 				_rtl92e_ps_set_mode(dev, RTLLIB_PS_MBCAST | RTLLIB_PS_UNICAST);
- 		} else {
+-static bool __get_mem_config_intel(struct rdt_resource *r)
++static bool __init __get_mem_config_intel(struct rdt_resource *r)
+ {
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	union cpuid_0x10_3_eax eax;
+
+---
+base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
+change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+
+Best regards,
 -- 
-2.46.0
+Nathan Chancellor <nathan@kernel.org>
 
 
