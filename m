@@ -1,233 +1,202 @@
-Return-Path: <linux-kernel+bounces-299726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3121C95D948
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:29:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AFC95D951
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD2BE2865C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:29:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 662E1B223A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756951C93A3;
-	Fri, 23 Aug 2024 22:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608CC1C8FB6;
+	Fri, 23 Aug 2024 22:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoGt3Lk5"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="euEpsW/R"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F88B191F6B;
-	Fri, 23 Aug 2024 22:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2E31C825C;
+	Fri, 23 Aug 2024 22:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724452135; cv=none; b=koUNy5jQTW93sKvFkjBz1ohC746nA+v3a/zH2xes70BenaDMhbM+oX/A7iGA9quYr1E5mJD3jNbHVdRwh8LQC3MK+LZDCZ33jrjKLPEjnLZrYHxk5QQPw2lqBY5thmQGxfsllkO8XgAroyyGrn6oGOOoPE/Zoordu0h/S/9yea0=
+	t=1724452671; cv=none; b=DIQblYY/lm8xNjtQcUGEQv7ShvxKJvXZ2i1Nb7cBIyDk5baNDFcNuoLXrS322TcblkhpsGVkIvPP1atkX9HJ19oI9N3n2T+2L/9ygzLWOKbfZ4UC1enieYZb4wXfOfq4XosOFeveCHyGrAJ+8nmLDnrluM6oSPgartTosff5/iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724452135; c=relaxed/simple;
-	bh=lhFa9C+TdLA9AgtlhB86iziIxZ2TXHCWtZB1vVjHBhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MpZ7qluwTEViuy/zzRbplw7W0h1C7jpzxAYFMl2HVtRfjOw8ce8JC3vnw81/brflFY/biecbvtZRHZiaFblY+XTbx09xwmw0Va+XztxIApXlIGhEckFTee1bE6E+Sjgoc02Wto56yzG2Uz1U0M5hG+TnXxhl43OAJWU7C4AzApM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eoGt3Lk5; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso25471125e9.2;
-        Fri, 23 Aug 2024 15:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724452132; x=1725056932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WWtV3/DOt8P4Xpd14+mqShRwy4l1Z4jup7YrAn/As/k=;
-        b=eoGt3Lk5h8fuUauRSQT+ylePqwjJdA+2xEonafeov1/xrb4ndZB6yKzdENgmmqeYcs
-         +vm/Gi3MJ1ppaJMOzN6MwFbdo2r1/oxV0VMQks6DeYPnuU84yiDxYJUqO68/fB8l+A//
-         dTwMypuos5AJFhEqQaL1D0njyJ6nSnDITUg7IPISvH5m8lqSmnxq7HCYOj07aTwnnPdv
-         bP8HYSP+jtOXNQDzzMcbAVaSWFBX/8Bf++rgGhqf1EsYnF1/Fh9d4W42FI5YsdVX9FnC
-         ifG1eUQ/lE2I2sb9NrjXEDu8jDd6g0sUnkKQ134hfB+k1qezDY9ojEzBINHIrKivkAi0
-         9G9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724452132; x=1725056932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WWtV3/DOt8P4Xpd14+mqShRwy4l1Z4jup7YrAn/As/k=;
-        b=fsoK6IpuVs5gzMm7b5PkTzdHnrMZxZHoxfPJMo3Yt8YSKiDSx+WpuGPYGP4V1yXQqd
-         Od/gtqMMiP8NGeJlt75tAICtWGugkGcabACJxXqA/fT0k+xOXSSpf3EIupz5O1oHw7r1
-         RqnNyi1GBL8f/WGLPewkH36dMPcLK0ic39nzgh9x+wKvKixtiX4yLvI288xOv5zu7jL7
-         mA4ceArKDvAYHsCw6MSHdZ7bir7C1zWhOB1SQ+7yAKjivRZXaSqHDfLkTIatRzKyKfBb
-         nfw5WAepYf0ZgMqA0mFdA/1bsv+KXU6MFwwT+XW0jowpn5JidoTRvc6XY5ihfULFtBMu
-         w/tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhMvsOMqSjTuFd31iKjUkrCr0xOtVeIbqqlUVbSomQ5WV3vFXCSk+EL2roMAU4JWT0k2uT91NQw0fP6fpE@vger.kernel.org, AJvYcCVj1TAi3gXfhzJGJNvXavmGnPBKnzqxpnJpTkNmCXrQtmTKJYbER7zcP2DUG88OMUee1x9KMP2q@vger.kernel.org, AJvYcCVsdSxxdf1rv5zC2tjQRkNRmVx2BmeZxHaIvdzhHDgZ5bMu/pcVXXECS9GJJ++cURjgtIg=@vger.kernel.org, AJvYcCXkHSMMn5SvPCrV+ovSjnVy0AWWWwTvEWXaphz0kBCRthhdTfHRxMd23OLmmdRWpN8wcot/2nDC4bR5bXhEXzZD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIPFtcow+VgEnziaHUeNoPzFGIw50r/wzXlBokEepHsQscaEQn
-	EaFL+4JsR3iEpXjlR52o89LVrVSJtsAQ+evAimL/f2eZtRumikCC8SCrh+vdGbsIutJxdEAm4je
-	3cv3T9M6LpiraGMBWB7lgyLX6L+k=
-X-Google-Smtp-Source: AGHT+IHC28T0OxdS5xfWVXMn6jPEmfd/fTwBRe4M2YVY0z1mCKUZOIrmxvOKGo0k/glS1YBPx9wJCuP9gjWxOW50vjk=
-X-Received: by 2002:a5d:58d9:0:b0:368:6564:751b with SMTP id
- ffacd0b85a97d-37311864454mr2589305f8f.32.1724452131607; Fri, 23 Aug 2024
- 15:28:51 -0700 (PDT)
+	s=arc-20240116; t=1724452671; c=relaxed/simple;
+	bh=5lJMjkVy2tm5qnlzq9NMC4tzlBZKbVFvZMcYoZY640g=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=Lr4l6+kayPJSymXNERsArksHsG9M8aiboXq22YXU8gZ9XSGeg8JFXMuoVtG6hFcMlm3YTbjh1Xh5c2NKOCsznuWkcnHi7o2xwvv4eTwZHRQCUy+4Fg8i4Yi3h5qZwj9D4tSBaOS2AgffaukSiM3yknwjisB8RfTh9usOO5sgFR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=euEpsW/R; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240823223740euoutp02f94f307961b576faf3625d7f885e0bef~ufI7mAKbF2371223712euoutp02a;
+	Fri, 23 Aug 2024 22:37:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240823223740euoutp02f94f307961b576faf3625d7f885e0bef~ufI7mAKbF2371223712euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724452660;
+	bh=la+dmPvqL+EWy5obzmiWKZwg6xJbELHXa4/+KgHJQwI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=euEpsW/Rvuc6d+ZRYsoU9kpXOZqIO++KiBbHwjcWs7/27Epw182ChL8xMtFKb95fM
+	 TQHtpAcTSWP2lKpO4EGch0IhOeIey6GRhieK5D8Sg0YzyRPcbkwQs7IbGBtdSyoIw9
+	 vuLKEyuiOhE1azL29fu+Is0jX1o9WBP/kZSc662U=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240823223739eucas1p1d2e2fdb71acba6555e61a19e652330fd~ufI6vhsU00738507385eucas1p1H;
+	Fri, 23 Aug 2024 22:37:39 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id E1.39.09875.33F09C66; Fri, 23
+	Aug 2024 23:37:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240823223738eucas1p267239cadb138dd98aca9726a2730f898~ufI51jkkR2704127041eucas1p2c;
+	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240823223738eusmtrp19f8d1b50dbf15807756173e179310203~ufI50aIvc0353703537eusmtrp1W;
+	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-5f-66c90f334884
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id C3.02.09010.23F09C66; Fri, 23
+	Aug 2024 23:37:38 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240823223738eusmtip2280dc31c1420e8cf3bd6b408a3157d73~ufI5guU1S2640326403eusmtip2Q;
+	Fri, 23 Aug 2024 22:37:38 +0000 (GMT)
+Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 23 Aug 2024 23:37:38 +0100
+Date: Sat, 24 Aug 2024 00:37:36 +0200
+From: Daniel Gomez <da.gomez@samsung.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
+	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
+	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
+	Moore <paul@paul-moore.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
+	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
+	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
+	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
+	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
+	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+	<gost.dev@samsung.com>, Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
+Message-ID: <20240823223736.mosqrdcwqanvdpmd@AALNPWDAGOMEZ1.aal.scsc.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816-ups-bpf-next-selftests-use-khdr-v1-0-1e19f3d5b17a@kernel.org>
- <20240816-ups-bpf-next-selftests-use-khdr-v1-1-1e19f3d5b17a@kernel.org>
- <CAADnVQ+JBq8-6Rhi_LHX470uj2_2xxJAhgdUfg_abUxEDqpdJQ@mail.gmail.com> <6a693ad6-f145-48c1-b3a7-d441d3764e73@kernel.org>
-In-Reply-To: <6a693ad6-f145-48c1-b3a7-d441d3764e73@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 23 Aug 2024 15:28:40 -0700
-Message-ID: <CAADnVQKnEuQ4XZROLWH47mEZNwnJ9TuyTrauOnuobcLgVMrimw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] selftests: bpf: use KHDR_INCLUDES for the
- UAPI headers
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2024080758-dedicator-smoky-44be@gregkh>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0ybZRTG9363FkbZRyHjDQwd6DCTjbkB+i4iilv0S6bgosaoiVrHR0e4
+	NS0IU4lMkNtg497RjVKKtFyHKwVLudQh0FXGiMFsMCybGbchdxgXR1YpZbr/fuc5zzk5z5u8
+	XJy/QrlxI2LiWHGMIMqLsieae9b7D/rtMoW/tHoOouu3lRiaU2UD1FMziaNWixlHluY8HP3x
+	cI5CKRUNFFprnMTQ3Q41hmZL96Di2goKyX83EWhK+yuBNPdvkWhDr8PQgP4yhW5U5HDQaKGB
+	QmP3VRQqX2gi0F/3BknUctlEovaGAQppBpZIlJapIlF69RiF5nMtGNIb1gk03n6dREXr0xSa
+	ye3moOF8KYEMslscVLUmBajf2MNBzbo+gCb6CwAqGR4G6G/d5mbtdB6JlGmvoNQ/A9BQ5U+c
+	N3yYOnkdYNp6+iimfUVBMPrORoppkZk5jEITz6R2zZBMRdsDjNHUZFKMPFOOMZaceyTTZVFy
+	mPLkIpyRm04yhtI6DnP3nBF7D35iHxjGRkV8xYoPBX1hf7rYLBKtOiQOjv2AJ4Nq+yzA5ULa
+	HyoLhVnAjsunqwBs1T2TBew3eRnA9DtNmK1YAvDqL3LM6rIOlFy4BGwNNYANRaOc/1zm6lLS
+	VjQC2GvoJ60jBL0Pds1Lt5ii98MOk4ZjZRfaD17ok21N4/TNXVAlndsyOdOvwUl1G2VlHn0C
+	muVl2+wETSWjhJVx+gBUtC5S1hA47Q7Vj7lW2Y4OgBlT2YTtVE94Ma96m5Pgb9o7W3kgXbsT
+	PjQ1k7bGcajQDnFs7AynjNpt3gN7C54sEsIfr8i2WQTbhmWk7fFehedvRNnkYDittOayyo5w
+	cMbJdqUjzG+W4jaZBzPS+Da3N6wdmSZywXOyp3LJnsol+z+XAuA1wJWNl0QLWcmRGDbBVyKI
+	lsTHCH1PxUZrwObX6H1sXNYB9dSCbyfAuKATQC7u5cL7cqQ7nM8LE5z5mhXHfi6Oj2IlncCd
+	S3i58vaFPcvyaaEgjo1kWRErftLFuHZuyVjG2XEdC/K/l8jU1MTk1fp5mX71Y8ek4haqcsRf
+	4Hl0h2Xc4+VDq94NL7ydcD4lOCMgZKn+/Y7ZgLqI7H8+Gkq4krT4YdCRWvNgXBlv7gOfadeg
+	R/z67zx2pKhCVHuzNhZ3xpXnOCRqXPTjmXo/V/9jvsszIcVVUZ8tB35z8Xb7NZfG4LV3Z5YX
+	HaoHnfannyp4/dHs2QCT4Zq7QrI7sm7kuE/Z4pnynyVpR59X8ss7tSsHdn8L8Xfy2rGmhZS2
+	roORiVme3VWfJiHlVKv3xoTfA4XnpVDpzbHKbudYcXxKodBdYtmbXSwykr6TxsOpG6GNHoEb
+	4aYTuW+edAvNZ3vXat/yIiSnBYdfxMUSwb8QAe+siQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTZxTG8957e29hdNwVFl8+lkCNW0QtFCi8bAjO6XYJy7It2bLgDFa4
+	ghEoa6mbc1vqVEYRQnETRoWKMMAyEC0fKQgSO2hphBFF0AX5GtQB5UOEoTCka8Vl/vdLnvM8
+	5+Tk4eL8AtKbezgtg5WlSVIEpCtxc908vCPY3XIoaHnZC3XdLcPQfGUOQKbqSRxdsw/hyN6U
+	j6M7f8+T6GR5HYme1E9iaOR6FYbmSnxRwa/lJNLeshBouuE3AunHBzhorcWAob6WYhJ1l+dS
+	aOKndhJZxytJdHGhkUBjo/c4qLnYwkFtdX0k0vctclCmqpKDftBZSfRQbcdQS/sKgR60dXHQ
+	uZUZEs2qOyk0eLaQQO2aAQpdelIIUK/ZRKEmQw9Af/X+CFDR4CBANoMjuWEmn4PKMsPRqfti
+	9EfFFWrXNqZGWwOYVlMPybQtlxJMi7GeZJo1QxRTqlcwpzpmOUx56xTG6KtVJKNVaTHGnjvK
+	YTrsZRRzUXkOZ7SWj5j2khqKGTljxj6EccJImVSRwfolS+UZOwX7RChYKIpAwuDQCKEoJHz/
+	m8FiQWBUZCKbcvgoKwuMOiBMLhhKT3/s9tU962lcCXSu2cCFC+lQWJR3HmQDVy6frgDw+74b
+	YEPwhVeX+jkb7AHXBrLJjaEFANutq5hT4NP1ABad5DqZoLfAjoeFzwwkvRVet+gpJ3vSITCv
+	R0M5zTj9uzssWe3HnYIHvRNOVrWSTubRsXBIe+H5hkYM3skaABvCK9BSNEE4Gae3w9JrjxxD
+	XAf7wKr1Z4tdaDHMms4hNi71hz/n657zt3Dx6QOgBh6aF5I0LyRp/k8qBXg18GQV8tSkVHmw
+	UC5JlSvSkoQJ0lQ9cBS0ybTSYAC66QWhEWBcYASQiws8eQeHOw/xeYmSY1+zMmm8TJHCyo1A
+	7PhFPu79aoLU0fC0jHhRWJBYFBoWESSOCAsRbOLFpGdJ+HSSJIM9wrLprOw/H8Z18VZiKYb3
+	x6h3s+bss9rFHM8xYmq04gOf1yv9extd8+QJzae73jprEH53w91avv1qa0fivi+83Ibf89nN
+	+PIeKXcdBwdG1v+piP445LMTl+t180dVNrPSVhKUu5moxZsUMdLxy8baz93QiCRaGRXuV2OP
+	nou/sPU19Z7GhaR3bq8YOKvdZ9jdzXsks0vjv2BeR3h8lfmTgxSjjvx0aXSLyG43ztxsi/Gb
+	zTPF3SquIsbd9sCqx6rN5223bZENWlOdJDt2Ymr/peU4c+2oba//1HDA2v2XYt7I1xUdf0pu
+	utKssL58TG8Q9Qb9mf2ldEdgf+zdbQSZ0s2P6DwxrM58+5vlALGAkCdLRAG4TC75F3l4CCUp
+	BAAA
+X-CMS-MailID: 20240823223738eucas1p267239cadb138dd98aca9726a2730f898
+X-Msg-Generator: CA
+X-RootMTR: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+	<CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
+	<2024080753-debug-roulette-8cb1@gregkh>
+	<3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
+	<2024080758-dedicator-smoky-44be@gregkh>
 
-On Sat, Aug 17, 2024 at 7:51=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org=
-> wrote:
->
-> Hi Alexei,
->
-> Thank you for the review.
->
-> On 17/08/2024 09:22, Alexei Starovoitov wrote:
-> > On Fri, Aug 16, 2024 at 7:56=E2=80=AFPM Matthieu Baerts (NGI0)
-> > <matttbe@kernel.org> wrote:
-> >>
-> >> Instead of duplicating UAPI header files in 'tools/include/uapi', the
-> >> BPF selftests can also look at the header files inside the kernel
-> >> source.
-> >>
-> >> To do that, the kernel selftests infrastructure provides the
-> >> 'KHDR_INCLUDES' variable. This is what is being used in most selftests=
-,
-> >> because it is what is recommended in the documentation [1]. If the
-> >> selftests are not executed from the kernel sources, it is possible to
-> >> override the variable, e.g.
-> >>
-> >>   make KHDR_INCLUDES=3D"-I${HDR_DIR}/include" -C "${KSFT_DIR}"
-> >>
-> >> ... where ${HDR_DIR} has been generated by this command:
-> >>
-> >>   make headers_install INSTALL_HDR_PATH=3D"${HDR_DIR}"
-> >>
-> >> Thanks to 'KHDR_INCLUDES', it is no longer needed to duplicate header
-> >> files for userspace test programs, and these programs can include UAPI
-> >> header files without the 'uapi' prefix.
-> >>
-> >> Note that it is still required to use 'tools/include/uapi' -- APIDIR,
-> >> which corresponds to TOOLS_INCLUDES from lib.mk -- for the BPF program=
-s,
-> >> not to conflict with what is already defined in vmlinux.h.
-> >>
-> >> Link: https://docs.kernel.org/dev-tools/kselftest.html#contributing-ne=
-w-tests-details [1]
-> >> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> >> ---
-> >>  tools/testing/selftests/bpf/Makefile                       | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/assign_reuse.c      | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/tc_links.c          | 4 ++--
-> >>  tools/testing/selftests/bpf/prog_tests/tc_netkit.c         | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/tc_opts.c           | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/user_ringbuf.c      | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/xdp_bonding.c       | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/xdp_cpumap_attach.c | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/xdp_devmap_attach.c | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/xdp_do_redirect.c   | 2 +-
-> >>  tools/testing/selftests/bpf/prog_tests/xdp_link.c          | 2 +-
-> >>  tools/testing/selftests/bpf/xdp_features.c                 | 4 ++--
-> >>  12 files changed, 14 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/self=
-tests/bpf/Makefile
-> >> index 4eceb491a8ae..6a7aeae7e206 100644
-> >> --- a/tools/testing/selftests/bpf/Makefile
-> >> +++ b/tools/testing/selftests/bpf/Makefile
-> >> @@ -37,7 +37,7 @@ CFLAGS +=3D -g $(OPT_FLAGS) -rdynamic               =
-                    \
-> >>           -Wall -Werror -fno-omit-frame-pointer                       =
-  \
-> >>           $(GENFLAGS) $(SAN_CFLAGS) $(LIBELF_CFLAGS)                  =
-  \
-> >>           -I$(CURDIR) -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)        =
-  \
-> >> -         -I$(TOOLSINCDIR) -I$(APIDIR) -I$(OUTPUT)
-> >> +         -I$(TOOLSINCDIR) $(KHDR_INCLUDES) -I$(OUTPUT)
-> >>  LDFLAGS +=3D $(SAN_LDFLAGS)
-> >>  LDLIBS +=3D $(LIBELF_LIBS) -lz -lrt -lpthread
-> >>
-> >> diff --git a/tools/testing/selftests/bpf/prog_tests/assign_reuse.c b/t=
-ools/testing/selftests/bpf/prog_tests/assign_reuse.c
-> >> index 989ee4d9785b..3d06bf5a1ba4 100644
-> >> --- a/tools/testing/selftests/bpf/prog_tests/assign_reuse.c
-> >> +++ b/tools/testing/selftests/bpf/prog_tests/assign_reuse.c
-> >> @@ -1,6 +1,6 @@
-> >>  // SPDX-License-Identifier: GPL-2.0
-> >>  /* Copyright (c) 2023 Isovalent */
-> >> -#include <uapi/linux/if_link.h>
-> >> +#include <linux/if_link.h>
-> >
-> > No. This is not an option.
-> > User space shouldn't include kernel headers like this.
-> > Long ago tools/include directory was specifically
-> > created to break such dependency.
-> > Back then it was done for perf.
->
-> I'm sorry, but I think we are not talking about the same thing here:
-> here, I'm only modifying the "normal" userspace programs, not the ones
-> used to generate the BPF objects. Perf is a special case I suppose, it
-> needs to know the kernel internals. It is the same with BPF programs
-> requiring vmlinux.h. But I think "normal" userspace programs in the
-> sefltests can use the UAPI headers, no?
+On Wed, Aug 07, 2024 at 04:19:42PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
+> > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
+> > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
+> > > > This patch set allows for building the Linux kernel for arm64 in macOS with
+> > > > LLVM.
+> > > 
+> > > Is this a requirement somewhere that this must work?  It seems like an
+> > > odd request, what workflows require cross-operating-system builds like
+> > > this?
+> > 
+> > This isn't a requirement, but it would, for example, support workflows for QEMU
+> > users and developers on macOS. They could build/compile the kernel natively and
+> > use it to launch QEMU instances, simplifying their process.
+> 
+> But that's not a real workload of anyone?  How often does this ever come
+> up?  Who is going to maintain this cross-build functionality over time?
 
-Not really. perf is a normal user space that doesn't look into
-kernel internals.
-It's used to rely on a few .h from kernel src tree for convenience,
-since they're not present in what's installed after 'make headers'.
-Hence the tools/include dir was created.
+The delta is becoming very small thanks to the latest patches from Masahiro.
+Earlier this week (next-20240820) [1] I rebased the work with all the feedback
+and the patch series has been reduced to 7.
 
-Using KHDR_INCLUDES is fine, but it's not ok to search replace
-s/uapi\/linux/linux/ everywhere.
-Like the example I quoted above.
-tools/.../if_link.h is much older than include/uapi/linux/if_link.h
-and it's ok.
-We're not planning to update it.
-It's like building selftests on the system with older glibc.
-There is no requirement to have every .h in the tools/ dir
-up-to-date with the latest in include/.
-We're doing it for bpf.h because new selftests typically need
-something from bpf.h that was just added in the previous patch.
+For the maintenance part, I suggest keeping a CI to build and boot the lastest
+linux-next tag available. I can set this up here [2] and take the responsability
+for maintaining that. But I would be convenient to add documentation for it in
+the LLVM section and mark this as 'experimental'. If that's okay, I will prepare
+a v2 with this.
 
-> I understand that I could indeed fix my initial problem by duplicating
-> mptcp.h in tools/include/uapi/linux/, but this doesn't look to be
-> allowed any more by the Netdev maintainers, e.g. recently, 'ethtool.h'
-> has been duplicated there in commit 7effe3fdc049 ("tools: Add ethtool.h
-> header to tooling infra"), but removed quickly after in commit
-> bbe91a9f6889 ("tools: remove redundant ethtool.h from tooling infra").
-> In this case, it was fine to simply drop it, because the linked test
-> doesn't require a recent version. Jakub mentioned [4] that these
-> duplicated headers should be avoided, and the ones generated by 'make
-> headers' should be used instead: what is being suggested here.
+[1] https://github.com/SamsungDS/linux/commits/b4/macos-build-support/
+[2] https://github.com/SamsungDS/linux
 
-This is a different issue. There are very few .h in tools/ that
-needs a sync.
-bpf.h is one of them. ethtool.h is certainly not.
-
-you need something for mpctp.h. Let's talk about it,
-but switching everything to KHDR_INCLUDES is not ok,
-since there are a bunch of things in play.
-Sometimes selftests are built standalone and with non-glibc-s.
-
-Also realize that bpf selftests are not really kselftests.
-We use a few common .mk for convenience. That's about it.
+> 
+> thanks,
+> 
+> greg k-h
 
