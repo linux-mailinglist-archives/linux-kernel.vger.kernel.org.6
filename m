@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-299550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A55B95D61F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503EE95D61D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21A1B229FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D352C1F23EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F113E193410;
-	Fri, 23 Aug 2024 19:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3443419306B;
+	Fri, 23 Aug 2024 19:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ALsNO2kV"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OpARkPMA"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2061.outbound.protection.outlook.com [40.107.93.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FAB192D61
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A70192B68
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724441808; cv=fail; b=LGGrBxf9h7aAlpSBDbKv2y1HDkwIsfbqX9Kr+n+VdnJUOOPSs4ac5eBY8gKHIiwjnQmPMTv5LZSxgyLQIxIb42fsg+MrKPSxZUail36dwDrVdrTz08BPt5NdaEZYlz1lYDVef4BA2usbo9eK9gNfu2XPcHfwxJKwVbbJ1uxlm3c=
+	t=1724441807; cv=fail; b=mde5f9SEiB5LDgn1cQcIObiBlhD0ymgL5XQmUGIRjFZ76EXx8UyDIDOa67D9flMur9YmKgToy4RmlwBUit7IYrQG2LR98NG7nftHuIBKvko/DZEMD32gkhtSWojsjspBOt7apYaHk6FBhLbUZsErjUwmR3bLFQTvMh58DtHdF24=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724441808; c=relaxed/simple;
-	bh=O7SlO4jUWxkYC5eZi4nXFGEuF8oLFU4y6r+7/UlpaVE=;
+	s=arc-20240116; t=1724441807; c=relaxed/simple;
+	bh=2FzFvosHtwJ3Ohvbho68iW3zK++sKJ+7blGWzs3zOXg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R/oWYNVxp8qD3R8a3AtAarc6LFntbi5cTMtvHTvHSsBgy+qM77xd2bVhmahQnE+zzYtmMp4F3Zuaa1QpmddkFflVhYTcg8ZGBMMlkGYrVWHyx9QqRxFUrgtxBG9EN7E63h0oVtoRs0IRslkcIYQcJmW2c67cfT+lwfsFXFwaCfE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ALsNO2kV; arc=fail smtp.client-ip=40.107.244.64
+	 MIME-Version:Content-Type; b=gFYI08iyyyCp6FOdgVJdRSZSFQ+uDmi6GaySivGnaPqgRH/jjlBVIEyx3O9+YylQ8eCNCe6hg0uunPmmV6L77zKkybY8WDy9o/ZfOBvYKILqFaxYdvcFDPgtJI+JJeG6ykUcKHBDoTMqstQRQdZrOxCaCkBTorMJKaBDYo9gOG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OpARkPMA; arc=fail smtp.client-ip=40.107.93.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ec25Fu0KVgOkM4yHYb1LTlK5N9XXSUUFcpstMD10M3FKFcnlqmcJoGuALa0E3v/eSTnF7awDjj5jIixjeFTsT8pzOzURfYRXONuxmfltTCWw2Oc3duUWzrjt+ZGRYNQ1wTGKJv+0yY3hriiKSnrjKZhhwVn2q/nTBzn91QuJk6WUqzywnAHiMg0BopnDILQI1pJ2rJkwd8tlbiWXGRBRk73ntB/stQirYrRhviwXyY9TaytjajansIg7kqwY4V1ujJoWMVH6rFVCSaV9i3FaH+EnlKZV9vZEt0DssaylAsn7Q7OCImwBvjsJFGTc1Y6/cz34fUAZ4Qg1yW82S3sZxw==
+ b=gI4HnmrqD+UJKi1TDmVqqlFkRMKRb5JYcMT5A3AK4fHUyUf/bNwCPOlQOvlmnmOMyzwqtcb9Y3h39ShhlMCDTM5z2AIOWACdsf76L4rqIQCDq9WPGOQQvR18WUnzy41LQhgpd8qQFQh4cS8v5+HVSWXUAISSzlzmWW/W17FeYHTTpzFCDVr/WCq4C74LnFrPTl6S2mpSvVmigvlvjmWQH+3pHE1y0C7iJlybcZAeIwwa42UdZt2AAUDUskBztV3SKaJ8X5ONT5Y5C96hqI2ZWyPIEAzDCdKoP92LnWA4r0r/rUQ2mOczt2eAj/q4dtlCrQneb+ptpWmhWZ7mFtI5qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=726QpRcn+lvf4rCuApM2KwRHNgakfInv/OKNIzKT6VQ=;
- b=pMzY17WE7Z+Q64BVu/+mXTipzfGBqP8LRFacc6Hfw0mwIcCjKARD7m3pFWZgwlWeJKZhdWgyf+CqZTdk175IYi5TFu+wDY59oaSlBH39kMXt5GvA/of4IdVtp1m98frqlxa8XHLqU3QmevR5Ef2wIUUHealFG8wA+Pybsz7nPyFG6CvXddERB9iHN9wd9f4uLG38gZhpiZhJhgIdeb40NXSciPF0lkRycIrmAB15853Bw01F/TJ+az2A3saVEHE3T/pJAzjiCw3c/x6PRVDzbtqF+7FC7s+rSDw9JEExhrO2KgEEihmXoPS700hR+CIJN8TXYzDsQIwE2N1l4eMifg==
+ bh=87Cir7MUe+90Zd8HQRFVV15Z21B672vcEXroWazgwgg=;
+ b=WRqy621ZsX7veYtjsK9uj3d/oRaukkw3pvP2T6BW/yEX0dlWOG1kaH4qysLPEJW2CIab/ZtdAQE7ZKJIQb77cjfCghavsME8+btwLff2mAFuSVQgnnKmUqwVTmCPHAWX5BrYwhnWX+FaGTvAUNGUokLgiBHCI05MytfgpjSzvUQ07PG7iZ+2NU8thM8YcWIXO3k1Fwvkp0YEebExpJIVutbVIN3z/VQVM5F5ZumNEsuabWnplZKcxpfVNDGSeG17SViWlLBkYYctF1WC44NcTbMilFbjntOd5AucSWXNFFd3EUpdOhf/BFcKwnJG0brjiSHjMM6/EDKCfzombyaa9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=726QpRcn+lvf4rCuApM2KwRHNgakfInv/OKNIzKT6VQ=;
- b=ALsNO2kVBUmJ2vUnwUE1CXvArrfVNOqZFf17Aop7yZKl9HufKx3nohIM3b4HuPkIgIEjTygJfjN5TbyC36tB07e9ftlcFQrbroJj8bNNqNr2pTBb9FXi/8bQmhwYUjljAOnlsphJhV5oWHM2V388aiUMHRpl2N/Uk+JLdDI9+60=
-Received: from BN9PR03CA0603.namprd03.prod.outlook.com (2603:10b6:408:106::8)
- by LV3PR12MB9187.namprd12.prod.outlook.com (2603:10b6:408:194::20) with
+ bh=87Cir7MUe+90Zd8HQRFVV15Z21B672vcEXroWazgwgg=;
+ b=OpARkPMAQRESpBjU2iz82I4pyZga0fqaaK3+0M3NlZzDqBSwdMe2G0++Qyq49hE9guqMCGRkzfSB/a0foCcPQYiiweXeui0SAQ9Kg3vcHWPOMHKi9nHD8+IcKa6okYYKWiuh/wxQjuBbaPI87LhKq5I9imGx5/A0mQ+aFzu/IsM=
+Received: from BN9PR03CA0612.namprd03.prod.outlook.com (2603:10b6:408:106::17)
+ by PH0PR12MB8128.namprd12.prod.outlook.com (2603:10b6:510:294::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.18; Fri, 23 Aug
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Fri, 23 Aug
  2024 19:36:41 +0000
 Received: from BL02EPF00021F6D.namprd02.prod.outlook.com
- (2603:10b6:408:106:cafe::59) by BN9PR03CA0603.outlook.office365.com
- (2603:10b6:408:106::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Fri, 23 Aug 2024 19:36:40 +0000
+ (2603:10b6:408:106:cafe::f4) by BN9PR03CA0612.outlook.office365.com
+ (2603:10b6:408:106::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19 via Frontend
+ Transport; Fri, 23 Aug 2024 19:36:41 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,14 +64,18 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
  BL02EPF00021F6D.mail.protection.outlook.com (10.167.249.9) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Fri, 23 Aug 2024 19:36:39 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ 15.20.7897.11 via Frontend Transport; Fri, 23 Aug 2024 19:36:41 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 Aug
- 2024 14:36:37 -0500
+ 2024 14:36:39 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 Aug
+ 2024 14:36:39 -0500
 Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 23 Aug 2024 14:36:36 -0500
+ Transport; Fri, 23 Aug 2024 14:36:38 -0500
 From: Jason Andryuk <jason.andryuk@amd.com>
 To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
@@ -82,9 +86,9 @@ To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
 	<pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
 CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>, "Jason
  Andryuk" <jason.andryuk@amd.com>
-Subject: [PATCH v3 2/5] x86/pvh: Make PVH entrypoint PIC for x86-64
-Date: Fri, 23 Aug 2024 15:36:27 -0400
-Message-ID: <20240823193630.2583107-3-jason.andryuk@amd.com>
+Subject: [PATCH v3 3/5] x86/pvh: Set phys_base when calling xen_prepare_pvh()
+Date: Fri, 23 Aug 2024 15:36:28 -0400
+Message-ID: <20240823193630.2583107-4-jason.andryuk@amd.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240823193630.2583107-1-jason.andryuk@amd.com>
 References: <20240823193630.2583107-1-jason.andryuk@amd.com>
@@ -96,195 +100,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6D:EE_|LV3PR12MB9187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f063824-6117-4102-c97d-08dcc3aae8fd
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6D:EE_|PH0PR12MB8128:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61909554-2875-4dce-f921-08dcc3aae9f0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026|921020;
+	BCL:0;ARA:13230040|82310400026|7416014|36860700013|376014|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6VL/RPA3wdiowMbkNy1f1F3Kkr5OHmKjey+aP+IGeny5J5dPWadp+Vr7/KbJ?=
- =?us-ascii?Q?IU/znlteWzqOaHDKIab35BDhdRMPwiBzLYuo1SsJ10XwnVmMu8rMVmQWwYvn?=
- =?us-ascii?Q?3gqCn9e7dNqoke3SHTGW83XK54PmDzdnCuQrO1MO+mZXMHpizzHT95C1QVnX?=
- =?us-ascii?Q?9p1GzMUNUNZarjwP/dnWEllcDLLsewFf3m7SR2zQzYX9xmgcK9ZmX+47o9Ir?=
- =?us-ascii?Q?ktf6xvByWe9H8Mf5yBoEzatuJmumaBQICgXC6WvfteL3fGZZVCd0cB+hYLFQ?=
- =?us-ascii?Q?IDqNzTQtL/8Q1+nz1r98izAnUxTaGNmzevXolKOQTT7Jz2s45h565vY9awdL?=
- =?us-ascii?Q?Q1r3GX+vpQv+Ylz1ORicQFcrwx/MuuZRMbXdFvpAE9POQ5ZewTL37I4u3HrY?=
- =?us-ascii?Q?vr07j786qyZZ2LU/FjHEOYmcD23Cf/lJyUTT6chXYOkUT6dqyvfQEFIfl5Hs?=
- =?us-ascii?Q?vT5EyKDtnDQcCYxQMastdGwGcR1H1d36bz0zuEzCvvH3KSU88L1L8gvifwWn?=
- =?us-ascii?Q?ofep+lRZJIkgWLQyNkdjLiw3oOpSrNQ2pf8tlzCzzIQpF8IGs9CSXx1L5/+E?=
- =?us-ascii?Q?Df0mxbktz4xkFd12vvYKlN/EwocNms7bWOjq6Q7JjH8YwswPYe91iTje8Cme?=
- =?us-ascii?Q?hvqk4mDm1nS+LnudxjColk/o1djRd21fwfr3nQrmL6QrzK1KUXWDyu7n72zc?=
- =?us-ascii?Q?YiPLeP3w5TTxxpijhPNaxqkO+vOTkdPgJk2+RpRDbowYwZFAqbP/E+SfX350?=
- =?us-ascii?Q?EagGJUVfWvTqQpBrTx2wTq+/cccUXuG456Wjn4TB22m/3bfs101oLbfio9bb?=
- =?us-ascii?Q?NHYXHoe0EpILEWMKev3dHJXTxJTH+IVrH47kwe4I/KOFt4xXplnAz76NztrJ?=
- =?us-ascii?Q?Rd9U9UpjeaT6DZvQNYW5anT2bTcPfPxsDE6nB1PSVv0FZ5P3iMsz3LW7l+V1?=
- =?us-ascii?Q?1X+oBhOXiP2ih6xiFXct9GSuLowhh5x+nS+XDVgOmp2fRP4z3z4+SPJ5OUWF?=
- =?us-ascii?Q?e9/kn+1ASj7Wjts8Xkfeps81gQ+VpxG1c3TYkgfigcKttKO/HVmS33iAlhM9?=
- =?us-ascii?Q?a0d43qf44GUkVf9uvxgJqQWvOTe5j5Z+Zeextx4Pgg2SXxO1wya+Y6cfMW5l?=
- =?us-ascii?Q?fTFeSeT0P0S3vbKnIBrAg2WeseMuGDmdzoALCnLUA++9K1P/Uidu3sCK24fT?=
- =?us-ascii?Q?VSjOxIAFrRTMWLJ28FqjKhKpp0xG/E5WGG8K2sddUBgUeZ4KmNrdwmqshV1s?=
- =?us-ascii?Q?CuIExXOh22lSAYG4CM5Ho462zy05NxYgdSLXVA2Z7Ln3HX1FivbZh7VbsDnK?=
- =?us-ascii?Q?9/PGKCRfYXgE32/T9zuOqJUO7cfvuYfogtBSPeB+RSsbWDSeND38qExIi5JI?=
- =?us-ascii?Q?/6XXM5Cbol37RDpcrYTl7FkdD4ehqG+d5SOvT5hMDZea3fLy5WCEGRdAIMI8?=
- =?us-ascii?Q?HZRzVmV9miuzt8CFJh7fYY2z0wlXkfspfHjVZVeDbLaeFaJEk16QaQ=3D=3D?=
+	=?us-ascii?Q?KP4L1JWxRIeBpE0EEJO8LpP5IlZX6HTTBy+87aBKiwKesa0foNZXpOPd+2Hd?=
+ =?us-ascii?Q?o58fZbj/1bkOQ0/7w2eUfvi3no+csR/v5S1h5IxXiC+zULrTwYxO4rVSj7Ng?=
+ =?us-ascii?Q?CBS5L+EbRCdca/+pv9VYd1Dd85ERLMsAA4ypNYvNFMtwmblFpjHIzuf4Zrbq?=
+ =?us-ascii?Q?0lpS7nwszZzs4a93u9+HvkLLz528joXOhm2B+WU45K1ymnc8nlqO6TbVIk7x?=
+ =?us-ascii?Q?+H7KHH61Szp4VoVJfWyiFx6FPXEiTs/Ie+TZ5yDzhYjefpckFPoBY2ovcAPo?=
+ =?us-ascii?Q?lZeG3bfV/dRvWonrZaRVjWPDUPYT0AVjFSr+L++cnODjapESASOqaBDDB7DZ?=
+ =?us-ascii?Q?6cskcdTksGlpBXuvgwfpsPTk0uMRtVkWWB1efj9HMa6OzutwqNIxT6S3RjZ1?=
+ =?us-ascii?Q?E/LWpEoR7AYhILzdmXseg3M9s0wZt2qTvkdcA2XeE4Z0ndbhPhIYL7TuJXhT?=
+ =?us-ascii?Q?8MRsKyJZy2fBnHgDcHDA38g2ObURwu81uPFyWxjE8AA7pncDcOhqR0VvJW1B?=
+ =?us-ascii?Q?tsBWo66E+Afvv80PlBUwn6tTWXDMHw62dnz6JOtDMJqmgWv3DJ+gpAzUE3ol?=
+ =?us-ascii?Q?kHq0gcQTHA3o27mT7bdQNlwkYnGe+ktEvv2WCAP0rWosncovNasmX8T3rG8z?=
+ =?us-ascii?Q?JfeKCpwgUXnDy5Vzc9GN26oCS5jYjV0msCXQ9igCa0kmKb5BramzJTjk0jrg?=
+ =?us-ascii?Q?N2e9XYeefoAfp6uV2vlBvJBN5bW84EDPF6oRIibtV3ppKxFqcpClkbHjjtZJ?=
+ =?us-ascii?Q?7UTCPii1jrgK2R9o8mv3o+/tX7/3Mkzel3NqWTNzWO3RlTdALh48kNbdkK9R?=
+ =?us-ascii?Q?xuZ19cNicF6Mp2EbBuPBqHZr4ywBBQvvIY9JkBtdC7svUOBDddo7U072s8qd?=
+ =?us-ascii?Q?pJDchFycruSv1QZYZqWmDXVPDmq4qYAj/4e5HHOLFHd9w8kOpyEDJfs1yEof?=
+ =?us-ascii?Q?3Zd5cTuTfpPFlsgrYGfStmiCOMEW3O44bs4Qo6MJivQ5GusiGAB1cZDgElhl?=
+ =?us-ascii?Q?rBxSd4BrlPVu2CKLRmSDEqdbeGZW7yFbN/GkKZ5KVnb8w4DG0ct5C4x7EA9S?=
+ =?us-ascii?Q?bpNaxjHoaUnm6UTUj5yh8RkN9+61b4BTsZ6A0a7SNMST4VoDdhzb/0NIlFM3?=
+ =?us-ascii?Q?RJCGDgARdh2gZQgcDjNoHAIpDpNFFJCGMpsMrFCGQX4E+drVjHc/lA8Rju9f?=
+ =?us-ascii?Q?zKis5LYgDsNKN/lz/fTKQiOgm3sTdJ6OM5FPAkp1j9xV2+OurWs04O+ttCYJ?=
+ =?us-ascii?Q?ZiSKUnn6z521fzyoc5o/0FgvbJL8GklbR+2t+Z1Z1pNLULBK+ewdVc2ca+C4?=
+ =?us-ascii?Q?GrTG/ayHLCHhxtHbcj9B9CvQ0HBr7k9ocMFA2awCdBeG5fhomUF/nxCLsBQO?=
+ =?us-ascii?Q?IS7/IH0nc0ZR8ObZfQ4QFdrhoWBJW1D+s/VFzvGKr1EG1kU3DKe//lFD/0SI?=
+ =?us-ascii?Q?raPo6OBPdY3eak84qie+VKd9A5kao5HG?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026)(921020);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(36860700013)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 19:36:39.9789
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 19:36:41.5726
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f063824-6117-4102-c97d-08dcc3aae8fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61909554-2875-4dce-f921-08dcc3aae9f0
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BL02EPF00021F6D.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9187
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8128
 
-The PVH entrypoint is 32bit non-PIC code running the uncompressed
-vmlinux at its load address CONFIG_PHYSICAL_START - default 0x1000000
-(16MB).  The kernel is loaded at that physical address inside the VM by
-the VMM software (Xen/QEMU).
-
-When running a Xen PVH Dom0, the host reserved addresses are mapped 1-1
-into the PVH container.  There exist system firmwares (Coreboot/EDK2)
-with reserved memory at 16MB.  This creates a conflict where the PVH
-kernel cannot be loaded at that address.
-
-Modify the PVH entrypoint to be position-indepedent to allow flexibility
-in load address.  Only the 64bit entry path is converted.  A 32bit
-kernel is not PIC, so calling into other parts of the kernel, like
-xen_prepare_pvh() and mk_pgtable_32(), don't work properly when
-relocated.
-
-This makes the code PIC, but the page tables need to be updated as well
-to handle running from the kernel high map.
-
-The UNWIND_HINT_END_OF_STACK is to silence:
-vmlinux.o: warning: objtool: pvh_start_xen+0x7f: unreachable instruction
-after the lret into 64bit code.
+phys_base needs to be set for __pa() to work in xen_pvh_init() when
+finding the hypercall page.  Set it before calling into
+xen_prepare_pvh(), which calls xen_pvh_init().  Clear it afterward to
+avoid __startup_64() adding to it and creating an incorrect value.
 
 Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
 v2:
-Use rip-relative loads in 64bit mode
-Direct jmp to startup_64
+Fix comment style
+Add Juergen's R-b
+s/LOAD_PHYSICAL_ADDR/_pa(pvh_start_xen)/ in case they differ
 ---
- arch/x86/platform/pvh/head.S | 46 ++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ arch/x86/platform/pvh/head.S | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index f7235ef87bc3..ba4d0eab4436 100644
+index ba4d0eab4436..14b4345d9bae 100644
 --- a/arch/x86/platform/pvh/head.S
 +++ b/arch/x86/platform/pvh/head.S
-@@ -7,6 +7,7 @@
- 	.code32
- 	.text
- #define _pa(x)          ((x) - __START_KERNEL_map)
-+#define rva(x)          ((x) - pvh_start_xen)
- 
- #include <linux/elfnote.h>
- #include <linux/init.h>
-@@ -54,7 +55,25 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	UNWIND_HINT_END_OF_STACK
- 	cld
- 
--	lgdt (_pa(gdt))
-+	/*
-+	 * See the comment for startup_32 for more details.  We need to
-+	 * execute a call to get the execution address to be position
-+	 * independent, but we don't have a stack.  Save and restore the
-+	 * magic field of start_info in ebx, and use that as the stack.
-+	 */
-+	mov  (%ebx), %eax
-+	leal 4(%ebx), %esp
-+	ANNOTATE_INTRA_FUNCTION_CALL
-+	call 1f
-+1:	popl %ebp
-+	mov  %eax, (%ebx)
-+	subl $rva(1b), %ebp
-+	movl $0, %esp
-+
-+	leal rva(gdt)(%ebp), %eax
-+	leal rva(gdt_start)(%ebp), %ecx
-+	movl %ecx, 2(%eax)
-+	lgdt (%eax)
- 
- 	mov $PVH_DS_SEL,%eax
- 	mov %eax,%ds
-@@ -62,14 +81,14 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	mov %eax,%ss
- 
- 	/* Stash hvm_start_info. */
--	mov $_pa(pvh_start_info), %edi
-+	leal rva(pvh_start_info)(%ebp), %edi
- 	mov %ebx, %esi
--	mov _pa(pvh_start_info_sz), %ecx
-+	movl rva(pvh_start_info_sz)(%ebp), %ecx
- 	shr $2,%ecx
- 	rep
- 	movsl
- 
--	mov $_pa(early_stack_end), %esp
-+	leal rva(early_stack_end)(%ebp), %esp
- 
- 	/* Enable PAE mode. */
- 	mov %cr4, %eax
-@@ -84,30 +103,33 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	wrmsr
- 
- 	/* Enable pre-constructed page tables. */
--	mov $_pa(init_top_pgt), %eax
-+	leal rva(init_top_pgt)(%ebp), %eax
- 	mov %eax, %cr3
- 	mov $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
- 
- 	/* Jump to 64-bit mode. */
--	ljmp $PVH_CS_SEL, $_pa(1f)
-+	pushl $PVH_CS_SEL
-+	leal  rva(1f)(%ebp), %eax
-+	pushl %eax
-+	lretl
- 
- 	/* 64-bit entry point. */
- 	.code64
- 1:
-+	UNWIND_HINT_END_OF_STACK
-+
- 	/* Set base address in stack canary descriptor. */
- 	mov $MSR_GS_BASE,%ecx
--	mov $_pa(canary), %eax
-+	leal canary(%rip), %eax
+@@ -125,7 +125,20 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
  	xor %edx, %edx
  	wrmsr
  
++	/*
++	 * Calculate load offset and store in phys_base.  __pa() needs
++	 * phys_base set to calculate the hypercall page in xen_pvh_init().
++	 */
++	movq %rbp, %rbx
++	subq $_pa(pvh_start_xen), %rbx
++	movq %rbx, phys_base(%rip)
  	call xen_prepare_pvh
++	/*
++	 * Clear phys_base.  __startup_64 will *add* to its value,
++	 * so reset to 0.
++	 */
++	xor  %rbx, %rbx
++	movq %rbx, phys_base(%rip)
  
  	/* startup_64 expects boot_params in %rsi. */
--	mov $_pa(pvh_bootparams), %rsi
--	mov $_pa(startup_64), %rax
--	ANNOTATE_RETPOLINE_SAFE
--	jmp *%rax
-+	lea pvh_bootparams(%rip), %rsi
-+	jmp startup_64
- 
- #else /* CONFIG_X86_64 */
- 
-@@ -143,7 +165,7 @@ SYM_CODE_END(pvh_start_xen)
- 	.balign 8
- SYM_DATA_START_LOCAL(gdt)
- 	.word gdt_end - gdt_start
--	.long _pa(gdt_start)
-+	.long _pa(gdt_start) /* x86-64 will overwrite if relocated. */
- 	.word 0
- SYM_DATA_END(gdt)
- SYM_DATA_START_LOCAL(gdt_start)
+ 	lea pvh_bootparams(%rip), %rsi
 -- 
 2.34.1
 
