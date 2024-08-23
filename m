@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-299568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA34695D6A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AEF95D753
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A36E1C21211
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF461F24516
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC21A199236;
-	Fri, 23 Aug 2024 20:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A27193061;
+	Fri, 23 Aug 2024 20:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="REjBGlHD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPrd2Mdu"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C825219885F;
-	Fri, 23 Aug 2024 20:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95722629D;
+	Fri, 23 Aug 2024 20:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724443314; cv=none; b=FzgPPTA2bqEVcbBGut09C3w3LyYJKuQD5HUHVVnQBKNnSWTRNgdD7Hc1c3kJp+E7oIawBnLOZKnH5j1IIItc8z3Av1/EufmuQUFo75+5IFqd9m7pltYILEmXMx+0q8CYI8GZiMcMmDxlYE+4oljRDFJnwJeihkDO12TuoWO1AYc=
+	t=1724443478; cv=none; b=L1QNBJc/8qFRZ2o4qOZqYF+IE3pGt5KYy92Px2jBd49AEWra+32ci6sKwhhkvJ99xIq+OOyQW/FxC6INvtM0qMHiBrEHsONlFB/li0CPeW84u6+z8okiw5i8TJQ/7O3ko7t7nVl/nq/9xWL8mqi6GmJJ1IXF8zSafNMxD8/msdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724443314; c=relaxed/simple;
-	bh=a9XdbNnhsqmdk2ytxNMqfMWVUfezMJN0Vr05It/qaiM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LXuwxRbT71wTu0WvJr6lkIAEzQshIFs/B3g4MURcM/ACkrV9y8key1BuNgWtZyYc9Qm12WWCFwOri4wKf4j5GrsrLuP6A72rIfhJclqMbQDnaOZo49mXvyF+3ZwlfCvH4qiqjahzEJrJw5s5iO8bkZJYnwCT8JyWJG3i5CBbkNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=REjBGlHD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBU4fG030891;
-	Fri, 23 Aug 2024 20:01:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=wSDtq68I7uDNo/wbJ3iq3q2X
-	ihGqFZxt70raNw8+vJA=; b=REjBGlHDvC1Ar5VW6kQawzYJsupdYm4TPh+NpxeO
-	nrIDz7+C1Ugx9NoYRokS+SLnjSMUH69OCnbh8J2rcrbXE+DyI2AX7LrbYYyv2I5u
-	oajMzAQ3q6Nqao27W0AtvrukpMmuVHJVYW8lB/Pgja5zyB8OtuXaz4kSiiyR1Y7g
-	Z07xZd2hHSi67WJU/Bi/qZPas7cbNVuTj16xjrpJ4E2/mTarfcIQA2fFit+Gawc2
-	kOifQglHZlS5CZeQ+HUBywi5wSwiJdVijfeXbIyjYgZ6pJNocDUHjLb3tqHYMC01
-	KzDe7jdvyqh5EK4V8c4qWvZOE3ut/Eb7IXH/2WdTx89vkA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415ck9gpy6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 20:01:22 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47NK1Mm5001817
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 20:01:22 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 23 Aug 2024 13:01:21 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH v25 30/33] ALSA: usb-audio: qcom: Use card and PCM index from QMI request
-Date: Fri, 23 Aug 2024 13:00:58 -0700
-Message-ID: <20240823200101.26755-31-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240823200101.26755-1-quic_wcheng@quicinc.com>
-References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1724443478; c=relaxed/simple;
+	bh=vBMFW3S6/emgLYIA/pyWgD6xA2AxQPFZFD52j7NNL94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5CGDYNEBH98PC17XWnjczh4sl/5B4dq8W+AQ66rpiD60i4GheKdKMungWnaaNEdMMWd8X0vPteqg4FpYlby7RvCYG7xKlZ/Gi6IXo1zto7aB/4PFTCJxenZ5NlkvpHKnJ+q7XMo86NHFv81D/5tGOpiaou49FEw9FiXu/AMBjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPrd2Mdu; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d3c05dc63eso1873621a91.0;
+        Fri, 23 Aug 2024 13:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724443476; x=1725048276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=biUs/757bH5NsZ4eSYz1JE5GQhX8t4jdTgh1Ue+Vau0=;
+        b=JPrd2Mdu/9nXRVMI2ZUMH0fmpXr7Lz7K4G5Kba4LN3rBhbZ6cJC74YXsxpVmHmt7vI
+         uQF/pFNYfEhpsQ2yHgguqleIsKEN1bEWAmiqx7GIKDdbAR+oUMB8QR7g4Qgh6VbEDbi0
+         BvqpsovEw3GEzp866sRKWAHrDh+nKWKfhoW7Jw3+WruaRBTnwgewZOwcPeB9oqvpvj5C
+         TgbiNPhNZyma13cdTkkza6D0yLFAARagRW9SYxKI/1+y6O4G/y/Rmumw6kvMba4qgt+o
+         3Zu3R0HRE/tFd/5L6hDucj+/pOZnRMww3SfEthIWnXik7ZzTkc/NljW93ELvVD52D+7u
+         CiYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724443476; x=1725048276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=biUs/757bH5NsZ4eSYz1JE5GQhX8t4jdTgh1Ue+Vau0=;
+        b=At4Q/9u2BDZ/KRFoYl4/88WNYm7BRTigw0O8R+++iW2nT7W5kMAACEkhHTAmjPPFaj
+         qoQ9/XJcOO3aXEdsMGkyNT74P+IMwYin00fp8zddey6CEmjPWo82bnG/1Fmptgj2RMv8
+         t/cXP5zTLxkK45WBJimbs/4mo+P8XNQ/zfi882aHzbsVE32QxDVQ2HXCUFcd7RzyyKDw
+         GsjyHYSlIHJdI3bn9bcV66CtSanS6vpOWgyGxH6/MBUy8fJGZGaYeaH1DkQG7sHmqZNN
+         uYwlSEouE9Fe37p9Arvv8wPZ04oMCoICryz2D2K71TD7IEFkgbPlRu0+TKL1FREe6Bt4
+         BDCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUx1n9WcHL+3ceZdv2L7HKY6WbZrmT/eeNDaIWIi4MVbwQaREAi7vqFvtNCrekLac09Zxa2nwtoL9xFiQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHTCzO46NfoaDGfMUQqknENLIzySuuRAqWFBaLyQBeXqLSRb5s
+	C/Paah2c/UUkUNrEK+HAOrx3g6hIvWUDaem+Iyo8U7Eljt9H9ZxDbWrLZA==
+X-Google-Smtp-Source: AGHT+IGksbuUqVXKmHwr9EnBTGnKLIQjTNZSeuXT6qn5maGz7TOHNpL16d99Jikjl24oKoVew1NA+g==
+X-Received: by 2002:a17:90a:4cc7:b0:2cd:2992:e8dc with SMTP id 98e67ed59e1d1-2d646bd1741mr3470448a91.5.1724443475600;
+        Fri, 23 Aug 2024 13:04:35 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb007csm6852366a91.44.2024.08.23.13.04.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 13:04:35 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org,
+	o.rempel@pengutronix.de
+Subject: [PATCHv2 net-next] net: ag71xx: add missing reset_control_put
+Date: Fri, 23 Aug 2024 13:04:18 -0700
+Message-ID: <20240823200433.7542-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: g4hY__1NnRcF8Y-BhYCKLWScWhqM2jp4
-X-Proofpoint-ORIG-GUID: g4hY__1NnRcF8Y-BhYCKLWScWhqM2jp4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
- suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230147
+Content-Transfer-Encoding: 8bit
 
-Utilize the card and PCM index coming from the USB QMI stream request.
-This field follows what is set by the ASoC USB backend, and could
-potentially carry information about a specific device selected through the
-ASoC USB backend.  The backend also has information about the last USB
-sound device plugged in, so it can choose to select the last device plugged
-in, accordingly.
+The original downstream driver used devm instead of of. The latter
+requires reset_control_put to be called in all return paths.
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- sound/usb/qcom/qc_audio_offload.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ v2: don't call after ag71xx_mdio_probe. Already done.
+ drivers/net/ethernet/atheros/ag71xx.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-index b76c61678738..b57e152398b2 100644
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -106,8 +106,6 @@ struct uaudio_qmi_dev {
- 	bool er_mapped;
- 	/* reference count to number of possible consumers */
- 	atomic_t qdev_in_use;
--	/* idx to last udev card number plugged in */
--	unsigned int last_card_num;
- };
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 89cd001b385f..7fbe95108067 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -722,8 +722,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+ 	mnp = of_get_child_by_name(np, "mdio");
+ 	err = devm_of_mdiobus_register(dev, mii_bus, mnp);
+ 	of_node_put(mnp);
+-	if (err)
++	if (err) {
++		reset_control_put(ag->mdio_reset);
+ 		return err;
++	}
  
- struct uaudio_dev {
-@@ -1255,7 +1253,7 @@ static int prepare_qmi_response(struct snd_usb_substream *subs,
- 
- 	pcm_dev_num = (req_msg->usb_token & QMI_STREAM_REQ_DEV_NUM_MASK) >> 8;
- 	xfer_buf_len = req_msg->xfer_buff_size;
--	card_num = uaudio_qdev->last_card_num;
-+	card_num = (req_msg->usb_token & QMI_STREAM_REQ_CARD_NUM_MASK) >> 16;
- 
- 	if (!uadev[card_num].ctrl_intf) {
- 		dev_err(&subs->dev->dev, "audio ctrl intf info not cached\n");
-@@ -1448,8 +1446,7 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
- 
- 	direction = (req_msg->usb_token & QMI_STREAM_REQ_DIRECTION);
- 	pcm_dev_num = (req_msg->usb_token & QMI_STREAM_REQ_DEV_NUM_MASK) >> 8;
--	pcm_card_num = req_msg->enable ? uaudio_qdev->last_card_num :
--				ffs(uaudio_qdev->card_slot) - 1;
-+	pcm_card_num = (req_msg->usb_token & QMI_STREAM_REQ_CARD_NUM_MASK) >> 16;
- 	if (pcm_card_num >= SNDRV_CARDS) {
- 		ret = -EINVAL;
- 		goto response;
-@@ -1701,7 +1698,6 @@ static void qc_usb_audio_offload_probe(struct snd_usb_audio *chip)
- 		sdev->card_idx = chip->card->number;
- 		sdev->chip_idx = chip->index;
- 
--		uaudio_qdev->last_card_num = chip->card->number;
- 		snd_soc_usb_connect(usb_get_usb_backend(udev), sdev);
+ 	return 0;
+ }
+@@ -1924,12 +1926,14 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	err = ag71xx_phylink_setup(ag);
+ 	if (err) {
+ 		netif_err(ag, probe, ndev, "failed to setup phylink (%d)\n", err);
++		reset_control_put(ag->mdio_reset);
+ 		return err;
  	}
  
+ 	err = devm_register_netdev(&pdev->dev, ndev);
+ 	if (err) {
+ 		netif_err(ag, probe, ndev, "unable to register net device\n");
++		reset_control_put(ag->mdio_reset);
+ 		platform_set_drvdata(pdev, NULL);
+ 		return err;
+ 	}
+@@ -1941,6 +1945,14 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static void ag71xx_remove(struct platform_device *pdev)
++{
++	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct ag71xx *ag = ag = netdev_priv(ndev);
++
++	reset_control_put(ag->mdio_reset);
++}
++
+ static const u32 ar71xx_fifo_ar7100[] = {
+ 	0x0fff0000, 0x00001fff, 0x00780fff,
+ };
+@@ -2025,6 +2037,7 @@ static const struct of_device_id ag71xx_match[] = {
+ 
+ static struct platform_driver ag71xx_driver = {
+ 	.probe		= ag71xx_probe,
++	.remove_new	= ag71xx_remove,
+ 	.driver = {
+ 		.name	= "ag71xx",
+ 		.of_match_table = ag71xx_match,
+-- 
+2.46.0
+
 
