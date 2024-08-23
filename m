@@ -1,113 +1,167 @@
-Return-Path: <linux-kernel+bounces-298836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB83295CC0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F51095CC0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8B51C212A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD14284D1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4571518455E;
-	Fri, 23 Aug 2024 12:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04875185954;
+	Fri, 23 Aug 2024 12:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="AlP+oVmv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="szyg5AMw"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gnpeNykl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39BD18455C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C77184550;
+	Fri, 23 Aug 2024 12:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414838; cv=none; b=nE3W+9azHnDU3NTMQcJdOHzAQTn/v3SyZWBDMMFw8VHgiUF/dAWKePtF/ByLZdNn/OrfRvbl9dSKxRQhGtQACeof+7bcEDvegG5IuN2U33QngRUlnsQcmeRMrHIbJgGnmWbXcupeqfyG+WGH9PPJQurmQZ1XX4iryjGGfDVLYB0=
+	t=1724414840; cv=none; b=WedkJr1WVV0sVIYw9A/zlo+eltnMqBxUqRj2TfoMksRLqs1OOXTRnu7BxawLgM4oWtxw+pa/JBEXNAVC7CshA+giuc68t+tI7/zaYYBhU6aSkzxFyfXJ4CROdlYuKSJz7s+9y9MF7unqclS7xkMqBaWRZ/MGvb9EhSmv2cONGT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414838; c=relaxed/simple;
-	bh=uSVrhrv6Dc7wuCwjo33hnUT0DxnS5caUjWj4Ol+DrLU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ji3BhjqcKEMwcz4FUPKqssgHocSe7TrXuP6pt/HjpE9TCOnQ6YSxTlZ0hA+HsCjziLNORYSVAFadr+Tj1TWyKXjcIoVXOv9ry2n+4sKZsMhUkEKphs5WlQPDZr0CU3eATYfvk0UyBNOVuTPQKOin6YR1i3A+Gs/ep3PZW41lh/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=AlP+oVmv; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=szyg5AMw reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1724414834; x=1755950834;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ihSUvSsm7Y8t7CNtMvS4+H5qmgcvWj9X9pKNtLPIO64=;
-  b=AlP+oVmvUnovPPNrxkxLFbgcoj2yd88xdMf9bcnl4+u4sV2u0dVzDWjD
-   FBhbFkGMS2fFrhzhEuCtew6pe6wZ5jUb4GDu7A8tBTy8/awvTucF6MPk2
-   mNYMVE8IRvFQLFqXZymgk0M1uMrj0bg06ryL2US6BUOHAYJKLKxN8Y7EZ
-   VcAUGvQSYni250SnmJ9ReKE8Rz8tQp0kmjDwxq5BQA5f2rUSj4HS8IVA2
-   7HiGx6dfXnthclre6CT1KKNJh6ZJfTSHYPRACBUIuOVVOaqkCjutbT8eM
-   WGZo1FL53if83UHTH2a6yqxRIIP97BtnHQWifOvRPSdHXB0uY2Lt/wauc
+	s=arc-20240116; t=1724414840; c=relaxed/simple;
+	bh=GmmITxJvuf72+kfLPPaBWOkkyO9Pa4/VVNNaJ/o/los=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Pj5GUzg0RHrnL0neNv04q3+BIW3BqprnL1Z3BIrstsisIl0y1VdpFRXjDWYI2aeB9Ig2G6am9uNdhsn9hHcJKBk7QwXS9KNhfVxP9q9R3zGppCjpw23E4yh6ZQXGf+Qd9fSA7xXH+3i64JMlijBJsmzGINoFLd283/01kvxs3Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gnpeNykl; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724414839; x=1755950839;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=GmmITxJvuf72+kfLPPaBWOkkyO9Pa4/VVNNaJ/o/los=;
+  b=gnpeNyklvVx8h/lQ24/byJzvc0loNkG8u3574SHOWqaMw8d+O8g4ci3i
+   F89jY9nHbcUFtBppyyx/YQ5oh6yfp5L47KWkiZdWz6xkb/YRfoeXVQ1vf
+   QstDqwVatE9W91rflPfrC05Jh1rdeXGYbix2UnjIsuPknejUWnfq6F4nU
+   8RFLhmmnec9lOOllFeDJrblceO4GCXckP3kR8QR1hIFN8nKlMMgAG4kg4
+   NAP/8lGAl4P2+V9kaNdEf/NK1JbFz94/Qp0vuUYtw9TrDXdvyrjyp7qHw
+   7aDSFRrRtvl3RDXLkkKwcIisrr+Bh4WWV7ovPPJo1VmOSNyb9phCn3rm4
    Q==;
-X-CSE-ConnectionGUID: EF7zU0P+TaW+BrQ25TKWGw==
-X-CSE-MsgGUID: 5v9bj1SUTlGwigFBwcZaQQ==
-X-IronPort-AV: E=Sophos;i="6.10,170,1719871200"; 
-   d="scan'208";a="38559731"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 Aug 2024 14:07:11 +0200
-X-CheckPoint: {66C87B6F-B-AFDE3C8E-D8665302}
-X-MAIL-CPID: E6B497D7F3DD345CB49F5550C7320772_4
-X-Control-Analysis: str=0001.0A782F1C.66C87B6F.0078,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 046631691A1;
-	Fri, 23 Aug 2024 14:07:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1724414827; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=ihSUvSsm7Y8t7CNtMvS4+H5qmgcvWj9X9pKNtLPIO64=;
-	b=szyg5AMwLtb9vU57/T85+WWVqh4khxM/CqtW/EAImnw54yzWSrFAerHz/gjUUszZPcCOAo
-	n6bIuQuuEWKoSOZB/TeMMLPT5/KPze5/AqrwURuYgoyC+amG/av+rbK4/AaBvrzSbGvVgN
-	gwHwJ+MF5XEikF1QhKbFhhsAuH/IlND/iXz/BwFLj3U1A0eWkmeC2m5fIWNoBsfa2EHU3K
-	PjUzGvUo1JkWfs9HudNQ+q+3MNMt6cZAc1tT6Tn44tREuJuz8I0qzcIB8bLHgIRQoXDLdI
-	UWi9L5jomlPZS66/wIf/LJkgHymqZNQh3qd5yJ/lvHYkcaY7RjtznEaPcCo5iQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: 
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH Resend v2 1/1] MAINTAINERS: Fix 32-bit i.MX platform paths
-Date: Fri, 23 Aug 2024 14:07:04 +0200
-Message-Id: <20240823120705.3672820-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+X-CSE-ConnectionGUID: dL7IDij2RviuwpwenSDjwA==
+X-CSE-MsgGUID: ybTqT4IDTvK609CxLBpKPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23033119"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23033119"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 05:07:18 -0700
+X-CSE-ConnectionGUID: K4oJ9jpPRMOJQTS2At7iLQ==
+X-CSE-MsgGUID: 5ouiCCrSRR2Qlpwz6QBFpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="62501211"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 05:07:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 15:07:10 +0300 (EEST)
+To: Mario Limonciello <superm1@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Mathias Nyman <mathias.nyman@intel.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>, 
+    Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v4 3/5] PCI: Verify functions currently in D3cold have
+ entered D0
+In-Reply-To: <20240823042508.1057791-5-superm1@kernel.org>
+Message-ID: <561b6865-cba3-d640-b56d-072d06b94026@linux.intel.com>
+References: <20240823042508.1057791-1-superm1@kernel.org> <20240823042508.1057791-5-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/mixed; BOUNDARY="8323328-1541883532-1724414664=:2230"
+Content-ID: <0c5fdc0a-f1cf-5b47-eac4-adb56783f51c@linux.intel.com>
 
-The original patch was created way before the .dts movement on arch/arm.
-But it was patch merged after the .dts reorganization. Fix the arch/arm
-paths accordingly.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Another try to get these entries fixed.
+--8323328-1541883532-1724414664=:2230
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <f1fc49f7-b589-1d47-a5a9-af0ac9fe67d5@linux.intel.com>
 
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Thu, 22 Aug 2024, Mario Limonciello wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 899ec8cb221bb..89ebaaeda0ea0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23373,9 +23373,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
- L:	linux@ew.tq-group.com
- S:	Supported
- W:	https://www.tq-group.com/en/products/tq-embedded/
--F:	arch/arm/boot/dts/imx*mba*.dts*
--F:	arch/arm/boot/dts/imx*tqma*.dts*
--F:	arch/arm/boot/dts/mba*.dtsi
-+F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
- F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
- F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
- F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
--- 
-2.34.1
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>=20
+> It is reported that USB4 routers and downstream devices may behave
+> incorrectly if a dock cable is plugged in at approximately the time that
+> the autosuspend_delay is configured. In this situation the device has
+> attempted to enter D3cold, but didn't finish D3cold entry when the PCI
+> core tried to transition it back to D0.
+>=20
+> Empirically measuring this situation an "aborted" D3cold exit takes
+> ~60ms and a "normal" D3cold exit takes ~6ms.
+>=20
+> The PCI-PM 1.2 spec specifies that the restore time for functions
+> in D3cold is either 'Full context restore or boot latency'.
+>=20
+> As PCIe r6.0 sec 5.8 specifies that the device will have gone
+> through a conventional reset, it may take some time for the
+> device to be ready.
+>=20
+> Wait up to 1 sec as specified in PCIe r6.0 sec 6.6.1 for a device
+> in D3cold to return to D0.
+>=20
+> Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/pci/pci.c | 11 +++++++++++
+>  drivers/pci/pci.h |  1 +
+>  2 files changed, 12 insertions(+)
+>=20
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b7717155e2fd0..7e861b6923d0a 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1425,6 +1425,17 @@ int pci_power_up(struct pci_dev *dev)
+>  =09else if (state =3D=3D PCI_D2)
+>  =09=09udelay(PCI_PM_D2_DELAY);
+> =20
+> +=09/*
+> +=09 * D3cold -> D0 will have gone through a conventional reset and may n=
+eed
+> +=09 * time to be ready.
+> +=09 */
+> +=09if (dev->current_state =3D=3D PCI_D3cold) {
+> +=09=09int ret;
+> +
+> +=09=09ret =3D pci_dev_wait(dev, PCI_DEV_WAIT_D3COLD_D0, PCI_RESET_WAIT);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09}
+>  end:
+>  =09dev->current_state =3D PCI_D0;
+>  =09if (need_restore)
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 477257e843952..a675f5d55f298 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -11,6 +11,7 @@ enum pci_reset_type {
+>  =09PCI_DEV_WAIT_BUS_RESET,
+>  =09PCI_DEV_WAIT_RESUME,
+>  =09PCI_DEV_WAIT_DPC,
+> +=09PCI_DEV_WAIT_D3COLD_D0,
 
+Don't you need to add a string for this too? :-/
+
+I wonder if it would be prudent to add PCI_DEV_WAIT_MAX and=20
+use static_assert() for the sizeof the pci_reset_types[] in patch 1 to=20
+autodetect mismatch (though it won't help if something is added in the=20
+middle of the list).
+
+--=20
+ i.
+--8323328-1541883532-1724414664=:2230--
 
