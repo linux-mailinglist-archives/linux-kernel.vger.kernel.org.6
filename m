@@ -1,276 +1,302 @@
-Return-Path: <linux-kernel+bounces-298547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A38195C8AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:59:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17CF95C8B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0C11F24E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC602B23E26
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1FD14EC7E;
-	Fri, 23 Aug 2024 08:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VhVBZE5L"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2A21494D6;
+	Fri, 23 Aug 2024 08:58:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B8D187345
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AF81487CD
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724403457; cv=none; b=cEUoHTvdfKzFxn+07iPmSLBZQVyq+knaVz5HtPbF/uSxDKHtKzqXNtoYwXAEL1vNrXxPrJvy8CylKsKHEWj8eFrZZ6NX7NljKl48F6UMOhHg+Fv+5k4V8mv1swKejV3vVRPhKwsZk+udDVo66umYMjZj+q0gAaJ46TpWBOG0EfA=
+	t=1724403537; cv=none; b=c6Df5TBuJz+SMYI0lwAM5NTLk8zowtLXMlrB6GE+Na+OxdhfihqeqF9ilfRmD0Ujcm0i5/rrvcnw+3zpzR2dPz5zZ+GbcGMtAzlmVfmdmn8CECxdoixLh2zEcCRpeEnnUz/Sl9cyTjTf/gQZQwlQLolg/jjCJPUyZV0JEu27YHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724403457; c=relaxed/simple;
-	bh=8lnr6Y8CYYR/tsZAaXobHIHOJeKtPwwM0WSm4dTdVDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C+5WrDsaznAqjtdAzwytjj1bvz/iTdSTuIPJShDSXowJvNd0ER0PfWX7dz0Vxvc1UZX2HrcqHpNjZ+JvvwfITEwqElHj/AGMr2n4KOhZN2rU2dD8CgqstBv89U93FdcoDs7NcidheGUcg+wR4/w3OHxqyJ17VhtE8fvyHQuyIms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VhVBZE5L; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so4929188a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:57:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724403454; x=1725008254; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
-        b=VhVBZE5L/aEEE2/7LjYy06WdCtsSgxaG+d6aA7NeA94fGwTS5kX1ydoD8o2qTuYP/B
-         IvT5TJ87fAAQybiZKAeGQvZpM/3q4Ca9eXDLUzzDxqxp0M/IKV0POPl4ZTyhVNjyNLxp
-         tu7hN056Gk/pr+OwRiZrugubbh89cjJ5rf5U7+c3MjsJRP+pS5VRHhQIb+XizvykEjHo
-         LlL+H2lI+kd3hE1Izzz/M7ju5MpUbKzvGK6Yoq1p0q9qs0faP6t3zmyqjCIZTrzs8FdF
-         XCin7p/7dHOa0BH9cTIrsjetG1CKTvEg19UyWqtp+wW4hu8G+FdwMkYBn9LH6N+AvelU
-         4IOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724403454; x=1725008254;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
-        b=PBNyS9d9tHP/8e0Zz0VM3zIF+I8zblFV/B9Tob4YGYNd8P/rHFeyC5Qhm2fcxfQE1s
-         ofDb2F95kv4oA15lIfMZ9lw5g2l6Vttza1IuhetgpJ4PBcjkIqtroQRBy8fWBzoB/jsR
-         f5rl7hquTLgSrNzpuJrzepqeLRpnNCrwSkJYt8LummeEfxzHq1YWkImZoh6NcX7xyLki
-         Hc+M9cd8DUwoR6nvlgeXZceTGBb9TPL1DutEAQ8yrIj6o+W6M74As1LF+FLUuVPr35/n
-         FyaLVr+iBfgYg1o9EQEkCQ8drcKZvTsdYpfALtsNl/JTFLFQ4yyfNSZtW+03rXgj4dO6
-         uqrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+RSZzXYnobbEtEXzOD1MRzUfQSF9evbi1iM6L3eE3LDdwonTq7VSeUxI7FwVqgvyp3eG/H+gVzLzs56Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7VOSkmL/FaVcuS7TK0jFLWTcn1uQwVUzUpg+MSmie16Q+H4Za
-	MAIEqPYVyvdvv7Ur5R0/jWMe5AsnmSJrop2l+ST+0PcwCR77sIpS8ups0vjz68Q=
-X-Google-Smtp-Source: AGHT+IEuOD6mMoOYP1+ZXn8J654fsnrlqdSXKZuQL602YsnGpaYCCO0kwwL9QjY/ps2l0W7ExxRiUw==
-X-Received: by 2002:a17:906:c144:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a86a309ae59mr140738466b.26.1724403454000;
-        Fri, 23 Aug 2024 01:57:34 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f299e28sm230756866b.56.2024.08.23.01.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 01:57:33 -0700 (PDT)
-Message-ID: <8faa6b6d-a013-4a71-a8b7-af02ac92d94b@tuxon.dev>
-Date: Fri, 23 Aug 2024 11:57:30 +0300
+	s=arc-20240116; t=1724403537; c=relaxed/simple;
+	bh=ErZHWrLJX53EcbopzWI2wuIZn0BNXyHzPimQT+eZKVM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GvlmAG80ZiNsDFSbmmAtkDSgyyQVf2qGSRAhGy4547XB1Jq94W3nmI8iKc4KCz+7FbA/zDeRGE7IdKNtxKW5TDCxKz6P4aCrPd2XBpZFAPkA8jkxAgNI9GGkm8Ff4Ya/T+OOzj/KqBvRkNDY+wuDKRVqtdqS4mRBREJnZDZKzSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqv6423sfz6F98r;
+	Fri, 23 Aug 2024 16:55:08 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D7B3914065B;
+	Fri, 23 Aug 2024 16:58:52 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 09:58:52 +0100
+Date: Fri, 23 Aug 2024 09:58:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Huisong Li <lihuisong@huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+Subject: Re: [PATCH v2 6/6] soc: hisilicon: kunpeng_hccs: Support low power
+ feature for the specified HCCS type
+Message-ID: <20240823095851.0000004e@Huawei.com>
+In-Reply-To: <20240823031059.32579-7-lihuisong@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+	<20240823031059.32579-1-lihuisong@huawei.com>
+	<20240823031059.32579-7-lihuisong@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to
- initialize the bus
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>, "vkoul@kernel.org"
- <vkoul@kernel.org>, "kishon@kernel.org" <kishon@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Cc: "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-11-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi, Biju,
+On Fri, 23 Aug 2024 11:10:59 +0800
+Huisong Li <lihuisong@huawei.com> wrote:
 
-On 23.08.2024 10:35, Biju Das wrote:
-> Hi Claudiu,
+> Add the low power feature for the specified HCCS type by increasing
+> and decreasing the used lane number of these HCCS ports on platform.
 > 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: Thursday, August 22, 2024 4:28 PM
->> Subject: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S need to initialize the USB BUS before transferring data due to hardware limitation.
->> As the register that need to be touched for this is in the address space of the USB PHY, and the UBS
->> PHY need to be initialized before any other USB drivers handling data transfer, add support to
->> initialize the USB BUS.
->>
->> As the USB PHY is probed before any other USB drivers that enables clocks and de-assert the reset
->> signals and the BUS initialization is done in the probe phase, we need to add code to de-assert reset
->> signal and runtime resume the device (which enables its clocks) before accessing the registers.
->>
->> As the reset signals are not required by the USB PHY driver for the other USB PHY hardware variants,
->> the reset signals and runtime PM was handled only in the function that initialize the USB BUS.
->>
->> The PHY initialization was done right after runtime PM enable to have all in place when the PHYs are
->> registered.
-> 
-> There is no user for this patch. The first user is RZ/G3S and you should merge this patch with
-> next one.
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
 
-I think this is a matter of taste... This is how I usually format the
-patches (for scenarios like this) and got no request for squashing.
+Hi Huisong,
 
-Anyway, I can do it your way, too.
+A few comments inline, but all minor things.
 
-Thank you,
-Claudiu Beznea
+With at least the "none" string print dropped as it's in an error path
+that shouldn't be hit you can add
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
+The early return comment and whitespace suggestion are things you
+can act on if you liek for v2.
+
+Jonathan
+
+> ---
+>  .../sysfs-devices-platform-kunpeng_hccs       |  37 ++
+>  drivers/soc/hisilicon/Kconfig                 |   7 +-
+>  drivers/soc/hisilicon/kunpeng_hccs.c          | 378 +++++++++++++++++-
+>  drivers/soc/hisilicon/kunpeng_hccs.h          |  14 +
+>  4 files changed, 433 insertions(+), 3 deletions(-)
 > 
-> Cheers,
-> Biju
-> 
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 50 ++++++++++++++++++++++--
->>  1 file changed, 47 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> index 7594f64eb737..cf4299cea579 100644
->> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->> @@ -19,12 +19,14 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/regulator/consumer.h>
->> +#include <linux/reset.h>
->>  #include <linux/string.h>
->>  #include <linux/usb/of.h>
->>  #include <linux/workqueue.h>
->>
->>  /******* USB2.0 Host registers (original offset is +0x200) *******/
->>  #define USB2_INT_ENABLE		0x000
->> +#define USB2_AHB_BUS_CTR	0x008
->>  #define USB2_USBCTR		0x00c
->>  #define USB2_SPD_RSM_TIMSET	0x10c
->>  #define USB2_OC_TIMSET		0x110
->> @@ -40,6 +42,10 @@
->>  #define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)	/* For EHCI */
->>  #define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)	/* For OHCI */
->>
->> +/* AHB_BUS_CTR */
->> +#define USB2_AHB_BUS_CTR_MBL_MASK	GENMASK(1, 0)
->> +#define USB2_AHB_BUS_CTR_MBL_INCR4	2
->> +
->>  /* USBCTR */
->>  #define USB2_USBCTR_DIRPD	BIT(2)
->>  #define USB2_USBCTR_PLL_RST	BIT(1)
->> @@ -111,6 +117,7 @@ struct rcar_gen3_chan {
->>  	struct extcon_dev *extcon;
->>  	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
->>  	struct regulator *vbus;
->> +	struct reset_control *rstc;
->>  	struct work_struct work;
->>  	struct mutex lock;	/* protects rphys[...].powered */
->>  	enum usb_dr_mode dr_mode;
->> @@ -125,6 +132,7 @@ struct rcar_gen3_chan {  struct rcar_gen3_phy_drv_data {
->>  	const struct phy_ops *phy_usb2_ops;
->>  	bool no_adp_ctrl;
->> +	bool init_bus;
->>  };
->>
->>  /*
->> @@ -650,6 +658,35 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
->>  	return candidate;
->>  }
->>
->> +static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
->> +{
->> +	struct device *dev = channel->dev;
->> +	int ret;
->> +	u32 val;
->> +
->> +	channel->rstc = devm_reset_control_array_get_shared(dev);
->> +	if (IS_ERR(channel->rstc))
->> +		return PTR_ERR(channel->rstc);
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = reset_control_deassert(channel->rstc);
->> +	if (ret)
->> +		goto rpm_put;
->> +
->> +	val = readl(channel->base + USB2_AHB_BUS_CTR);
->> +	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
->> +	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
->> +	writel(val, channel->base + USB2_AHB_BUS_CTR);
->> +
->> +rpm_put:
->> +	pm_runtime_put(dev);
->> +
->> +	return ret;
->> +}
->> +
->>  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)  {
->>  	const struct rcar_gen3_phy_drv_data *phy_data; @@ -703,6 +740,15 @@ static int
->> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->>  		goto error;
->>  	}
->>
->> +	platform_set_drvdata(pdev, channel);
->> +	channel->dev = dev;
->> +
->> +	if (phy_data->init_bus) {
->> +		ret = rcar_gen3_phy_usb2_init_bus(channel);
->> +		if (ret)
->> +			goto error;
->> +	}
->> +
->>  	channel->soc_no_adp_ctrl = phy_data->no_adp_ctrl;
->>  	if (phy_data->no_adp_ctrl)
->>  		channel->obint_enable_bits = USB2_OBINT_IDCHG_EN; @@ -733,9 +779,6 @@ static int
->> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->>  		channel->vbus = NULL;
->>  	}
->>
->> -	platform_set_drvdata(pdev, channel);
->> -	channel->dev = dev;
->> -
->>  	provider = devm_of_phy_provider_register(dev, rcar_gen3_phy_usb2_xlate);
->>  	if (IS_ERR(provider)) {
->>  		dev_err(dev, "Failed to register PHY provider\n"); @@ -762,6 +805,7 @@ static void
->> rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
->>  	if (channel->is_otg_channel)
->>  		device_remove_file(&pdev->dev, &dev_attr_role);
->>
->> +	reset_control_assert(channel->rstc);
->>  	pm_runtime_disable(&pdev->dev);
->>  };
->>
->> --
->> 2.39.2
-> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> index d4c355e0e0bb..d1b3a95a5518 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> +++ b/Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
+> @@ -87,3 +87,40 @@ Contact:	Huisong Li <lihuisong@huawei.com>
+>  Description:
+>  		This interface is used to show all HCCS types used on the
+>  		platform, like, HCCS-v1, HCCS-v2 and so on.
+> +
+> +What:		/sys/devices/platform/HISI04Bx:00/available_inc_dec_lane_types
+> +What:		/sys/devices/platform/HISI04Bx:00/dec_lane_of_type
+> +What:		/sys/devices/platform/HISI04Bx:00/inc_lane_of_type
+> +Date:		August 2024
+> +KernelVersion:	6.12
+> +Contact:	Huisong Li <lihuisong@huawei.com>
+> +Description:
+> +		These interfaces under /sys/devices/platform/HISI04Bx/ are
+> +		used to support the low power consumption feature of some
+> +		HCCS types by changing the number of lanes used. The interfaces
+> +		changing the number of lanes used are 'dec_lane_of_type' and
+> +		'inc_lane_of_type' which require root privileges. These
+> +		interfaces aren't exposed if no HCCS type on platform support
+> +		this feature. Please note that decreasing lane number is only
+> +		allowed if all the specified HCCS ports are not busy.
+> +
+> +		The low power consumption interfaces are as follows:
+> +
+> +		============================= ==== ================================
+> +		available_inc_dec_lane_types: (RO) available HCCS types (string) to
+> +						   increase and decrease the number
+> +						   of lane used, e.g. HCCS-v2.
+
+See below. There is an apparent value of 'none' available, but I think in reality the
+interface doesn't exist if that is present. So drop it as it will just cause confusion.
+
+> +		dec_lane_of_type:             (WO) input HCCS type supported
+> +						   decreasing lane to decrease the
+> +						   used lane number of all specified
+> +						   HCCS type ports on platform to
+> +						   the minimum.
+> +						   You can query the 'cur_lane_num'
+> +						   to get the minimum lane number
+> +						   after executing successfully.
+> +		inc_lane_of_type:             (WO) input HCCS type supported
+> +						   increasing lane to increase the
+> +						   used lane number of all specified
+> +						   HCCS type ports on platform to
+> +						   the full lane state.
+> +		============================= ==== ================================
+
+> +static int hccs_wait_serdes_adapt_completed(struct hccs_dev *hdev, u8 type)
+> +{
+> +#define HCCS_MAX_WAIT_CNT_FOR_ADAPT	10
+> +#define HCCS_QUERY_ADAPT_RES_DELAY_MS	100
+> +#define HCCS_SERDES_ADAPT_OK		0
+> +
+> +	struct hccs_inc_lane_req_param *req_param;
+> +	u8 wait_cnt = HCCS_MAX_WAIT_CNT_FOR_ADAPT;
+> +	struct hccs_desc desc;
+> +	u8 adapt_res;
+> +	int ret;
+> +
+> +	do {
+> +		hccs_init_req_desc(&desc);
+> +		req_param = (struct hccs_inc_lane_req_param *)desc.req.data;
+> +		req_param->port_type = type;
+> +		req_param->opt_type = HCCS_GET_ADAPT_RES;
+> +		ret = hccs_pcc_cmd_send(hdev, HCCS_PM_INC_LANE, &desc);
+> +		if (ret) {
+> +			dev_err(hdev->dev, "query adapting result failed, ret = %d.\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +		adapt_res = *((u8 *)&desc.rsp.data);
+> +		if (adapt_res == HCCS_SERDES_ADAPT_OK)
+> +			break;
+
+return 0; here perhaps?
+
+> +
+> +		msleep(HCCS_QUERY_ADAPT_RES_DELAY_MS);
+> +	} while (--wait_cnt);
+> +
+> +	if (adapt_res != HCCS_SERDES_ADAPT_OK) {
+
+With above early exit in good path, this can be unconditional perhaps?
+
+> +		dev_err(hdev->dev, "wait for adapting completed timeout.\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	return ret;
+> +}
+
+> +static ssize_t inc_lane_of_type_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +			      const char *buf, size_t count)
+> +{
+> +	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
+> +	bool full_lane;
+> +	u8 port_type;
+> +	int ret;
+> +
+> +	ret = hccs_parse_pm_port_type(hdev, buf, &port_type);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&hdev->lock);
+
+Another comment for a future patch series perhaps.
+
+guard(mutex)(&hdev->lock); in all these will make the code quite a bit cleaner.
+
+> +	ret = hccs_get_all_spec_port_full_lane_sta(hdev, port_type, &full_lane);
+> +	if (ret || full_lane)
+> +		goto out;
+> +
+> +	ret = hccs_start_inc_lane(hdev, port_type);
+> +out:
+> +	mutex_unlock(&hdev->lock);
+> +	return ret == 0 ? count : ret;
+> +}
+> +static struct kobj_attribute inc_lane_of_type_attr =
+> +		__ATTR(inc_lane_of_type, 0200, NULL, inc_lane_of_type_store);
+> +
+> +static ssize_t available_inc_dec_lane_types_show(struct kobject *kobj,
+> +						 struct kobj_attribute *attr,
+> +						 char *buf)
+> +{
+> +	struct hccs_dev *hdev = device_kobj_to_hccs_dev(kobj);
+> +
+> +	if (hdev->caps & HCCS_CAPS_HCCS_V2_PM)
+> +		return sysfs_emit(buf, "%s\n",
+> +				  hccs_port_type_to_name(hdev, HCCS_V2));
+> +
+> +	return sysfs_emit(buf, "%s\n", "none");
+
+Can we get here? I thought this was only registered if the condition
+above is true?
+
+Maybe worth keeping a fallback here as a code hardening measure, but
+perhaps return -EINVAL; is fine?
+
+
+> +}
+> +static struct kobj_attribute available_inc_dec_lane_types_attr =
+> +		__ATTR(available_inc_dec_lane_types, 0444,
+> +		       available_inc_dec_lane_types_show, NULL);
+>  
+>  static ssize_t used_types_show(struct kobject *kobj,
+>  			       struct kobj_attribute *attr, char *buf)
+> @@ -1215,11 +1553,49 @@ static struct kobj_attribute used_types_attr =
+>  static void hccs_remove_misc_sysfs(struct hccs_dev *hdev)
+>  {
+>  	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +
+> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
+> +		return;
+> +
+> +	sysfs_remove_file(&hdev->dev->kobj,
+> +			  &available_inc_dec_lane_types_attr.attr);
+> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
+> +	sysfs_remove_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
+>  }
+>  
+>  static int hccs_add_misc_sysfs(struct hccs_dev *hdev)
+>  {
+> -	return sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	int ret;
+> +
+> +	ret = sysfs_create_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!(hdev->caps & HCCS_CAPS_HCCS_V2_PM))
+> +		return 0;
+> +
+> +	ret = sysfs_create_file(&hdev->dev->kobj,
+> +				&available_inc_dec_lane_types_attr.attr);
+> +	if (ret)
+> +		goto used_types_remove;
+> +
+> +	ret = sysfs_create_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
+> +	if (ret)
+> +		goto inc_dec_lane_types_remove;
+
+I can sort of see why no line break makes some sense here given these
+two files are closely related, but I'd still add one here as I think
+visual consistency is more important for readability reasons.
+
+> +	ret = sysfs_create_file(&hdev->dev->kobj, &inc_lane_of_type_attr.attr);
+> +	if (ret)
+> +		goto dec_lane_of_type_remove;
+> +
+> +	return 0;
+> +
+> +dec_lane_of_type_remove:
+> +	sysfs_remove_file(&hdev->dev->kobj, &dec_lane_of_type_attr.attr);
+> +inc_dec_lane_types_remove:
+> +	sysfs_remove_file(&hdev->dev->kobj,
+> +			  &available_inc_dec_lane_types_attr.attr);
+> +used_types_remove:
+> +	sysfs_remove_file(&hdev->dev->kobj, &used_types_attr.attr);
+> +	return ret;
+>  }
+>  
+>  static void hccs_remove_die_dir(struct hccs_die_info *die)
+
 
