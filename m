@@ -1,357 +1,304 @@
-Return-Path: <linux-kernel+bounces-298814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A01295CBCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4029195CBCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7D811F24FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0192821F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A05518787F;
-	Fri, 23 Aug 2024 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AEC18858A;
+	Fri, 23 Aug 2024 11:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVJ6usbv"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epQqbInX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25081186298;
-	Fri, 23 Aug 2024 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99D1187847;
+	Fri, 23 Aug 2024 11:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414216; cv=none; b=mYEy9yTJQi5QUt4m8DA/kYOLuz273V3U4sEHIMRq5WsP1JCdOe3uXUf9fxcjoGj28ZsNOebW1GyHEazzZU9TEFmtLuBfQlVjuuZ4y6isCb5N4QkDikP0aH3RBLbJOkYEKdpgUpBDlMBaWMtBTumVu23Cd0jZZ+LjSbTu01/CS2I=
+	t=1724414227; cv=none; b=d5aCalg8ettDfRRMm1Y40FtcSikG+MP09vPQXMgnVmJUOi/FGhqGtksbeXYkE9n0kAMtL5n9TLOhRWEsHKn25YmIl2dHL6y9gDJu5yuzWWwfz5fqYSHpoCZuSRUXc9NcVB8aWuUV51ukhr58kKwFHLATMR+RsnajRcGJKoBTYJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414216; c=relaxed/simple;
-	bh=WDg99TsPmFuwg03XPMsu7QBSjftuxiBjFonlSiKHfio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vsf/J6le8sziJWIvukYLBLXzJtAEZ2ExZq8VdezifPjaBlwyLtHImjeZVs8kvZ3j7rseoOJ86p7SP4wMerwyhSmmbdMtBpIKKuVBaKzJNpP+wEnOMHZEbOTcqtTdkitghJo8KootLFV+p4B7g4abT0e41ib+TjmMzSz4ExX38+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVJ6usbv; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533496017f8so2525227e87.0;
-        Fri, 23 Aug 2024 04:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724414212; x=1725019012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qgZV4tyks6GAMQWfK4L38P65yZL2kRRfBpNWa0hJOFY=;
-        b=hVJ6usbv6dwS3tim2cGVdsbins/D62Wnql4rsi+gEenYz4m/P093jRCNUF/Sz3ut4L
-         g5D0o2c3MVjOs5e2KIoX8naW/5EsxQiTvEa9359tcCviyw0+try80rcOvl3X8cIzyKGg
-         jHKN6oUkwNxbbKLyUfpmsl4Sg9HXhTyxqP2rFeCUdSd6eDa25hvdKSD4/Wss/DDPPyND
-         gZ6QyouRAXr4R9hbi+uQoaWC+t/Nbncp68YvhFOn8hhb5lz+vvTC4GPfk8JAEAAgy4WL
-         VE/Ob8r++f+bDpIvPN2nbjH7wtHNl7lTlwaDnUFi5aq8ak8SOLpffcXNES8IFZcnGkmB
-         bgVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724414212; x=1725019012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qgZV4tyks6GAMQWfK4L38P65yZL2kRRfBpNWa0hJOFY=;
-        b=Q02R2hZoIUfjwC0+dlWdZbg/WvSWd9hresWAConu/ZfMVCg1RtSI/a1UyOjL6lCvU0
-         IWhgPwLX6YQy0IR+LBGXRW8kMuRO32kTCyVKSMWS2txNmOEf6+l817FxXNTRUxkREF5Y
-         6pC9eNyiUC6VDtGoDXC4pwMzF+uHiTSIzOzhZxI+qCrL/i/pPvFx+wKxr0ljVr+TDbmd
-         1FNBDK40ZCvRfES67t117rv+OhBSMpBijiWJFFZoMEcXA+P2/KZQa/RHQONXNziExtCr
-         YumLoa958WTxEFKSfNFsdCw5YlmA0d+aLEVCH05V8tbnhx5MLwvW3U8R/FMbYMExqKn2
-         +oVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT1Exf8oNYp1hEFbW1HOxnbLL4ToaFr73JKgOc8yVOCg8ST6Ofa4LxR3QzKc0Yvxibk20ZTb2KNN0MNcA=@vger.kernel.org, AJvYcCVZ8u6JB1fjE7yrtL4VDe0Bj0YhGQtFJ4uUBYpf0vNSVHdZEbC4iFkK17NIwINJCv3Z+pANtT4U@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIUIiZhhnB7Xzi+G9MLIeejyEyvXHqqFOvDgEj1QPFx9C6yA18
-	cVHwql9rZQ5ukYWS5grWl4WqDWY0zUTEwv5FYXR9sKMkgOQdU21O
-X-Google-Smtp-Source: AGHT+IHdAqAk6DpZd9sGZOVHkcPaqutovShJdwo7b99VJ/xrWNo1e0HoCkmY7ZKsjoXcxQ0Oe8N1rg==
-X-Received: by 2002:a05:6512:ad1:b0:533:4b76:cb59 with SMTP id 2adb3069b0e04-53438869c7fmr1528825e87.57.1724414211306;
-        Fri, 23 Aug 2024 04:56:51 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d8b8sm532166e87.216.2024.08.23.04.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 04:56:50 -0700 (PDT)
-Date: Fri, 23 Aug 2024 14:56:46 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, xfr@outlook.com
-Subject: Re: [PATCH net-next v6 1/7] net: stmmac: move stmmac_fpe_cfg to
- stmmac_priv data
-Message-ID: <ekzmq7y5is7em2zlsmf4bzne4z346dkyvynynmd45m7iqulamq@sle2yzzx7o4t>
-References: <cover.1724409007.git.0x1207@gmail.com>
- <8c6e74ee569d33ee5c7db78e3964c60001b3fb48.1724409007.git.0x1207@gmail.com>
+	s=arc-20240116; t=1724414227; c=relaxed/simple;
+	bh=B97GWLVIdXC8TO85HGWaNAJLewjppBPRRXHX3Hkk548=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NJkXuaiLH/O4kdGm4ZbHckaa4EbwFAdwoySmhft3t1izi2W0pMa92LxnqsS0CwZW56I6uVROa/4wqHvVoxUbgkE+jmVvR/Y8LRVMIRA0Lv2kfZN/Lt7QkYwM5eHwwYlotYL1laCmUGa4h3Pvm55wmoyN8kDQyD6DHceYyFl3c4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epQqbInX; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724414226; x=1755950226;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=B97GWLVIdXC8TO85HGWaNAJLewjppBPRRXHX3Hkk548=;
+  b=epQqbInXTelM3z3EDTcd6HUEJ9GB9j7byl4onE+CFuz1PHqFkRMSV0Pu
+   +dpecNiy8ywD4veJ8AgiYnxvUoLqwC+mlM5g8i16+ebLjOXEkbqeSO9mL
+   bHqIJPKP4id7+VdSwKAJb+hy2aeUC7rA8MccROdhIK2pxevC1Np5H0K0+
+   93BAFF5alHlCVxTwBksfuJh3li1DMsB3UfXRDQ1yLKViN0XbFbS89xerE
+   32qkmPsTEwPj1VneXJmN9Lk3ZKLjgWxWPafbIRMC+4T26V5AN+gK260H3
+   Yzzxdn81+C3SNUb67AYX1BxRziGbCpVR5/GOLMfMBRlyEn1wjicEqUT9t
+   Q==;
+X-CSE-ConnectionGUID: RWOg8lZjQPawO02aUzmE9g==
+X-CSE-MsgGUID: cvSDkiiST7SsaKZWa2GbiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22690773"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22690773"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 04:57:05 -0700
+X-CSE-ConnectionGUID: r/YtzQ8RTOyZyCATh1WQYg==
+X-CSE-MsgGUID: XAaZUiFDRwuQt1zj6QYP4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="84960961"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 04:57:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 14:56:57 +0300 (EEST)
+To: Mario Limonciello <superm1@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Mathias Nyman <mathias.nyman@intel.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>, 
+    Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v4 1/5] PCI: Use an enum for reset type in
+ pci_dev_wait()
+In-Reply-To: <20240823042508.1057791-2-superm1@kernel.org>
+Message-ID: <9b8626c8-46fd-6e2d-12ad-592889128172@linux.intel.com>
+References: <20240823042508.1057791-1-superm1@kernel.org> <20240823042508.1057791-2-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c6e74ee569d33ee5c7db78e3964c60001b3fb48.1724409007.git.0x1207@gmail.com>
+Content-Type: multipart/mixed; boundary="8323328-979799848-1724414217=:2230"
 
-On Fri, Aug 23, 2024 at 06:50:08PM +0800, Furong Xu wrote:
-> By moving the fpe_cfg field to the stmmac_priv data, stmmac_fpe_cfg
-> becomes platform-data eventually, instead of a run-time config.
-> 
-> Suggested-by: Serge Semin <fancer.lancer@gmail.com>
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-979799848-1724414217=:2230
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 22 Aug 2024, Mario Limonciello wrote:
+
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>=20
+> A string is passed to all callers of pci_dev_wait() which is utilized
+> to demonstrate what kind of reset happened when there was a problem.
+>=20
+> This doesn't allow making the behavior for different reset types
+> conditional though. Lay some plumbing to allow making comparisons of
+> reset types with integers instead. No functional changes.
+>=20
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
 > ---
->  drivers/net/ethernet/stmicro/stmmac/hwif.h    |  2 ++
->  drivers/net/ethernet/stmicro/stmmac/stmmac.h  | 30 ++++++++++++++++++-
->  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 20 ++++++-------
->  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 16 ++--------
->  include/linux/stmmac.h                        | 28 -----------------
->  5 files changed, 44 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> index 7e90f34b8c88..d3da82982012 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-> @@ -26,6 +26,8 @@
->  })
->  
-
->  struct stmmac_extra_stats;
-> +struct stmmac_fpe_cfg;
-> +enum   stmmac_mpacket_type;
->  struct stmmac_priv;
->  struct stmmac_safety_stats;
->  struct dma_desc;
-
-Not sure whether it's supposed to be alphabetically ordered, but using
-additional spaces to align the names seems an abnormal approach. I
-failed to find any similar sample in kernel. So seeing the driver
-doesn't implement the forward declarations as you suggest I'd convert
-this to just:
-
- struct stmmac_extra_stats;
- struct stmmac_priv;
- struct stmmac_safety_stats;
-+struct stmmac_fpe_cfg;
-+enum stmmac_mpacket_type;
- struct dma_desc;
-
-Other than that the patch looks good:
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-
-Thanks
--Serge(y)
-
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> index b23b920eedb1..458d6b16ce21 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> @@ -146,6 +146,33 @@ struct stmmac_channel {
->  	u32 index;
->  };
->  
-> +/* FPE link state */
-> +enum stmmac_fpe_state {
-> +	FPE_STATE_OFF = 0,
-> +	FPE_STATE_CAPABLE = 1,
-> +	FPE_STATE_ENTERING_ON = 2,
-> +	FPE_STATE_ON = 3,
-> +};
-> +
-> +/* FPE link-partner hand-shaking mPacket type */
-> +enum stmmac_mpacket_type {
-> +	MPACKET_VERIFY = 0,
-> +	MPACKET_RESPONSE = 1,
-> +};
-> +
-> +enum stmmac_fpe_task_state_t {
-> +	__FPE_REMOVING,
-> +	__FPE_TASK_SCHED,
-> +};
-> +
-> +struct stmmac_fpe_cfg {
-> +	bool enable;				/* FPE enable */
-> +	bool hs_enable;				/* FPE handshake enable */
-> +	enum stmmac_fpe_state lp_fpe_state;	/* Link Partner FPE state */
-> +	enum stmmac_fpe_state lo_fpe_state;	/* Local station FPE state */
-> +	u32 fpe_csr;				/* MAC_FPE_CTRL_STS reg cache */
-> +};
-> +
->  struct stmmac_tc_entry {
->  	bool in_use;
->  	bool in_hw;
-> @@ -339,11 +366,12 @@ struct stmmac_priv {
->  	struct workqueue_struct *wq;
->  	struct work_struct service_task;
->  
-> -	/* Workqueue for handling FPE hand-shaking */
-> +	/* Frame Preemption feature (FPE) */
->  	unsigned long fpe_task_state;
->  	struct workqueue_struct *fpe_wq;
->  	struct work_struct fpe_task;
->  	char wq_name[IFNAMSIZ + 4];
-> +	struct stmmac_fpe_cfg fpe_cfg;
->  
->  	/* TC Handling */
->  	unsigned int tc_entries_max;
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index d9fca8d1227c..529fe31f8b04 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -968,7 +968,7 @@ static void stmmac_mac_config(struct phylink_config *config, unsigned int mode,
->  
->  static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+> v3->v4:
+>  * Use index-based array initialization format for pci_reset_types
+>  * Fix LKP reported sparse issue
+> ---
+>  drivers/pci/pci-driver.c |  2 +-
+>  drivers/pci/pci.c        | 29 +++++++++++++++++++----------
+>  drivers/pci/pci.h        | 11 ++++++++++-
+>  drivers/pci/pcie/dpc.c   |  2 +-
+>  4 files changed, 31 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index f412ef73a6e4b..ac3cfbfa137d9 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -572,7 +572,7 @@ static void pci_pm_bridge_power_up_actions(struct pci=
+_dev *pci_dev)
 >  {
-> -	struct stmmac_fpe_cfg *fpe_cfg = priv->plat->fpe_cfg;
-> +	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
->  	enum stmmac_fpe_state *lo_state = &fpe_cfg->lo_fpe_state;
->  	enum stmmac_fpe_state *lp_state = &fpe_cfg->lp_fpe_state;
->  	bool *hs_enable = &fpe_cfg->hs_enable;
-> @@ -3536,7 +3536,7 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
->  	if (priv->dma_cap.fpesel) {
->  		stmmac_fpe_start_wq(priv);
->  
-> -		if (priv->plat->fpe_cfg->enable)
-> +		if (priv->fpe_cfg.enable)
->  			stmmac_fpe_handshake(priv, true);
->  	}
->  
-> @@ -5982,7 +5982,7 @@ static int stmmac_set_features(struct net_device *netdev,
->  
->  static void stmmac_fpe_event_status(struct stmmac_priv *priv, int status)
->  {
-> -	struct stmmac_fpe_cfg *fpe_cfg = priv->plat->fpe_cfg;
-> +	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
->  	enum stmmac_fpe_state *lo_state = &fpe_cfg->lo_fpe_state;
->  	enum stmmac_fpe_state *lp_state = &fpe_cfg->lp_fpe_state;
->  	bool *hs_enable = &fpe_cfg->hs_enable;
-> @@ -7381,7 +7381,7 @@ static void stmmac_fpe_lp_task(struct work_struct *work)
->  {
->  	struct stmmac_priv *priv = container_of(work, struct stmmac_priv,
->  						fpe_task);
-> -	struct stmmac_fpe_cfg *fpe_cfg = priv->plat->fpe_cfg;
-> +	struct stmmac_fpe_cfg *fpe_cfg = &priv->fpe_cfg;
->  	enum stmmac_fpe_state *lo_state = &fpe_cfg->lo_fpe_state;
->  	enum stmmac_fpe_state *lp_state = &fpe_cfg->lp_fpe_state;
->  	bool *hs_enable = &fpe_cfg->hs_enable;
-> @@ -7427,17 +7427,17 @@ static void stmmac_fpe_lp_task(struct work_struct *work)
->  
->  void stmmac_fpe_handshake(struct stmmac_priv *priv, bool enable)
->  {
-> -	if (priv->plat->fpe_cfg->hs_enable != enable) {
-> +	if (priv->fpe_cfg.hs_enable != enable) {
->  		if (enable) {
->  			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
-> -						priv->plat->fpe_cfg,
-> +						&priv->fpe_cfg,
->  						MPACKET_VERIFY);
->  		} else {
-> -			priv->plat->fpe_cfg->lo_fpe_state = FPE_STATE_OFF;
-> -			priv->plat->fpe_cfg->lp_fpe_state = FPE_STATE_OFF;
-> +			priv->fpe_cfg.lo_fpe_state = FPE_STATE_OFF;
-> +			priv->fpe_cfg.lp_fpe_state = FPE_STATE_OFF;
->  		}
->  
-> -		priv->plat->fpe_cfg->hs_enable = enable;
-> +		priv->fpe_cfg.hs_enable = enable;
->  	}
+>  =09int ret;
+> =20
+> -=09ret =3D pci_bridge_wait_for_secondary_bus(pci_dev, "resume");
+> +=09ret =3D pci_bridge_wait_for_secondary_bus(pci_dev, PCI_DEV_WAIT_RESUM=
+E);
+>  =09if (ret) {
+>  =09=09/*
+>  =09=09 * The downstream link failed to come up, so mark the
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index ffaaca0978cbc..e4a7f5dfe6bf4 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -181,6 +181,15 @@ static int __init pcie_port_pm_setup(char *str)
 >  }
->  
-> @@ -7898,7 +7898,7 @@ int stmmac_suspend(struct device *dev)
->  	if (priv->dma_cap.fpesel) {
->  		/* Disable FPE */
->  		stmmac_fpe_configure(priv, priv->ioaddr,
-> -				     priv->plat->fpe_cfg,
-> +				     &priv->fpe_cfg,
->  				     priv->plat->tx_queues_to_use,
->  				     priv->plat->rx_queues_to_use, false);
->  
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> index 996f2bcd07a2..9cc41ed01882 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> @@ -282,16 +282,6 @@ static int tc_init(struct stmmac_priv *priv)
->  	if (ret)
->  		return -ENOMEM;
->  
-> -	if (!priv->plat->fpe_cfg) {
-> -		priv->plat->fpe_cfg = devm_kzalloc(priv->device,
-> -						   sizeof(*priv->plat->fpe_cfg),
-> -						   GFP_KERNEL);
-> -		if (!priv->plat->fpe_cfg)
-> -			return -ENOMEM;
-> -	} else {
-> -		memset(priv->plat->fpe_cfg, 0, sizeof(*priv->plat->fpe_cfg));
-> -	}
-> -
->  	/* Fail silently as we can still use remaining features, e.g. CBS */
->  	if (!dma_cap->frpsel)
->  		return 0;
-> @@ -1076,7 +1066,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
->  	/* Actual FPE register configuration will be done after FPE handshake
->  	 * is success.
->  	 */
-> -	priv->plat->fpe_cfg->enable = fpe;
-> +	priv->fpe_cfg.enable = fpe;
->  
->  	ret = stmmac_est_configure(priv, priv, priv->est,
->  				   priv->plat->clk_ptp_rate);
-> @@ -1109,9 +1099,9 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
->  		mutex_unlock(&priv->est_lock);
->  	}
->  
-> -	priv->plat->fpe_cfg->enable = false;
-> +	priv->fpe_cfg.enable = false;
->  	stmmac_fpe_configure(priv, priv->ioaddr,
-> -			     priv->plat->fpe_cfg,
-> +			     &priv->fpe_cfg,
->  			     priv->plat->tx_queues_to_use,
->  			     priv->plat->rx_queues_to_use,
->  			     false);
-> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-> index 338991c08f00..d79ff252cfdc 100644
-> --- a/include/linux/stmmac.h
-> +++ b/include/linux/stmmac.h
-> @@ -138,33 +138,6 @@ struct stmmac_txq_cfg {
->  	int tbs_en;
->  };
->  
-> -/* FPE link state */
-> -enum stmmac_fpe_state {
-> -	FPE_STATE_OFF = 0,
-> -	FPE_STATE_CAPABLE = 1,
-> -	FPE_STATE_ENTERING_ON = 2,
-> -	FPE_STATE_ON = 3,
-> -};
-> -
-> -/* FPE link-partner hand-shaking mPacket type */
-> -enum stmmac_mpacket_type {
-> -	MPACKET_VERIFY = 0,
-> -	MPACKET_RESPONSE = 1,
-> -};
-> -
-> -enum stmmac_fpe_task_state_t {
-> -	__FPE_REMOVING,
-> -	__FPE_TASK_SCHED,
-> -};
-> -
-> -struct stmmac_fpe_cfg {
-> -	bool enable;				/* FPE enable */
-> -	bool hs_enable;				/* FPE handshake enable */
-> -	enum stmmac_fpe_state lp_fpe_state;	/* Link Partner FPE state */
-> -	enum stmmac_fpe_state lo_fpe_state;	/* Local station FPE state */
-> -	u32 fpe_csr;				/* MAC_FPE_CTRL_STS reg cache */
-> -};
-> -
->  struct stmmac_safety_feature_cfg {
->  	u32 tsoee;
->  	u32 mrxpee;
-> @@ -232,7 +205,6 @@ struct plat_stmmacenet_data {
->  	struct fwnode_handle *port_node;
->  	struct device_node *mdio_node;
->  	struct stmmac_dma_cfg *dma_cfg;
-> -	struct stmmac_fpe_cfg *fpe_cfg;
->  	struct stmmac_safety_feature_cfg *safety_feat_cfg;
->  	int clk_csr;
->  	int has_gmac;
-> -- 
-> 2.34.1
-> 
+>  __setup("pcie_port_pm=3D", pcie_port_pm_setup);
+> =20
+> +static const char * const pci_reset_types[] =3D {
+> +=09[PCI_DEV_WAIT_FLR] =3D "FLR",
+> +=09[PCI_DEV_WAIT_AF_FLR] =3D "AF_FLR",
+> +=09[PCI_DEV_WAIT_D3HOT_D0] =3D "PM D3HOT->D0",
+> +=09[PCI_DEV_WAIT_BUS_RESET] =3D "bus reset",
+> +=09[PCI_DEV_WAIT_RESUME] =3D "resume",
+> +=09[PCI_DEV_WAIT_DPC] =3D "DPC",
+> +};
+> +
+>  /**
+>   * pci_bus_max_busnr - returns maximum PCI bus number of given bus' chil=
+dren
+>   * @bus: pointer to PCI bus structure to search
+> @@ -1279,7 +1288,7 @@ void pci_resume_bus(struct pci_bus *bus)
+>  =09=09pci_walk_bus(bus, pci_resume_one, NULL);
+>  }
+> =20
+> -static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeo=
+ut)
+> +static int pci_dev_wait(struct pci_dev *dev, enum pci_reset_type reset_t=
+ype, int timeout)
+>  {
+>  =09int delay =3D 1;
+>  =09bool retrain =3D false;
+> @@ -1317,7 +1326,7 @@ static int pci_dev_wait(struct pci_dev *dev, char *=
+reset_type, int timeout)
+> =20
+>  =09=09if (delay > timeout) {
+>  =09=09=09pci_warn(dev, "not ready %dms after %s; giving up\n",
+> -=09=09=09=09 delay - 1, reset_type);
+> +=09=09=09=09 delay - 1, pci_reset_types[reset_type]);
+>  =09=09=09return -ENOTTY;
+>  =09=09}
+> =20
+> @@ -1330,7 +1339,7 @@ static int pci_dev_wait(struct pci_dev *dev, char *=
+reset_type, int timeout)
+>  =09=09=09=09}
+>  =09=09=09}
+>  =09=09=09pci_info(dev, "not ready %dms after %s; waiting\n",
+> -=09=09=09=09 delay - 1, reset_type);
+> +=09=09=09=09 delay - 1, pci_reset_types[reset_type]);
+>  =09=09}
+> =20
+>  =09=09msleep(delay);
+> @@ -1339,10 +1348,10 @@ static int pci_dev_wait(struct pci_dev *dev, char=
+ *reset_type, int timeout)
+> =20
+>  =09if (delay > PCI_RESET_WAIT)
+>  =09=09pci_info(dev, "ready %dms after %s\n", delay - 1,
+> -=09=09=09 reset_type);
+> +=09=09=09 pci_reset_types[reset_type]);
+>  =09else
+>  =09=09pci_dbg(dev, "ready %dms after %s\n", delay - 1,
+> -=09=09=09reset_type);
+> +=09=09=09pci_reset_types[reset_type]);
+> =20
+>  =09return 0;
+>  }
+> @@ -4536,7 +4545,7 @@ int pcie_flr(struct pci_dev *dev)
+>  =09 */
+>  =09msleep(100);
+> =20
+> -=09return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
+> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_FLR, PCIE_RESET_READY_POLL_MS);
+>  }
+>  EXPORT_SYMBOL_GPL(pcie_flr);
+> =20
+> @@ -4603,7 +4612,7 @@ static int pci_af_flr(struct pci_dev *dev, bool pro=
+be)
+>  =09 */
+>  =09msleep(100);
+> =20
+> -=09return pci_dev_wait(dev, "AF_FLR", PCIE_RESET_READY_POLL_MS);
+> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_AF_FLR, PCIE_RESET_READY_POLL_M=
+S);
+>  }
+> =20
+>  /**
+> @@ -4648,7 +4657,7 @@ static int pci_pm_reset(struct pci_dev *dev, bool p=
+robe)
+>  =09pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, csr);
+>  =09pci_dev_d3_sleep(dev);
+> =20
+> -=09return pci_dev_wait(dev, "PM D3hot->D0", PCIE_RESET_READY_POLL_MS);
+> +=09return pci_dev_wait(dev, PCI_DEV_WAIT_D3HOT_D0, PCIE_RESET_READY_POLL=
+_MS);
+>  }
+> =20
+>  /**
+> @@ -4822,7 +4831,7 @@ static int pci_bus_max_d3cold_delay(const struct pc=
+i_bus *bus)
+>   * Return 0 on success or -ENOTTY if the first device on the secondary b=
+us
+>   * failed to become accessible.
+>   */
+> -int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_t=
+ype)
+> +int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, enum pci_rese=
+t_type reset_type)
+>  {
+>  =09struct pci_dev *child __free(pci_dev_put) =3D NULL;
+>  =09int delay;
+> @@ -4959,7 +4968,7 @@ int pci_bridge_secondary_bus_reset(struct pci_dev *=
+dev)
+>  =09=09=09      __builtin_return_address(0));
+>  =09pcibios_reset_secondary_bus(dev);
+> =20
+> -=09return pci_bridge_wait_for_secondary_bus(dev, "bus reset");
+> +=09return pci_bridge_wait_for_secondary_bus(dev, PCI_DEV_WAIT_BUS_RESET)=
+;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_bridge_secondary_bus_reset);
+> =20
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 79c8398f39384..477257e843952 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -4,6 +4,15 @@
+> =20
+>  #include <linux/pci.h>
+> =20
+> +enum pci_reset_type {
+> +=09PCI_DEV_WAIT_FLR,
+> +=09PCI_DEV_WAIT_AF_FLR,
+> +=09PCI_DEV_WAIT_D3HOT_D0,
+> +=09PCI_DEV_WAIT_BUS_RESET,
+> +=09PCI_DEV_WAIT_RESUME,
+> +=09PCI_DEV_WAIT_DPC,
+> +};
+> +
+>  /* Number of possible devfns: 0.0 to 1f.7 inclusive */
+>  #define MAX_NR_DEVFNS 256
+> =20
+> @@ -137,7 +146,7 @@ void pci_msi_init(struct pci_dev *dev);
+>  void pci_msix_init(struct pci_dev *dev);
+>  bool pci_bridge_d3_possible(struct pci_dev *dev);
+>  void pci_bridge_d3_update(struct pci_dev *dev);
+> -int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *reset_t=
+ype);
+> +int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, enum pci_rese=
+t_type reset_type);
+> =20
+>  static inline void pci_wakeup_event(struct pci_dev *dev)
+>  {
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> index 2b6ef7efa3c11..95cd985244729 100644
+> --- a/drivers/pci/pcie/dpc.c
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -174,7 +174,7 @@ pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
+>  =09pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+>  =09=09=09      PCI_EXP_DPC_STATUS_TRIGGER);
+> =20
+> -=09if (pci_bridge_wait_for_secondary_bus(pdev, "DPC")) {
+> +=09if (pci_bridge_wait_for_secondary_bus(pdev, PCI_DEV_WAIT_DPC)) {
+>  =09=09clear_bit(PCI_DPC_RECOVERED, &pdev->priv_flags);
+>  =09=09ret =3D PCI_ERS_RESULT_DISCONNECT;
+>  =09} else {
+>=20
+--8323328-979799848-1724414217=:2230--
 
