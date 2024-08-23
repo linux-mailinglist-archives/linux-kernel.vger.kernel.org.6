@@ -1,90 +1,165 @@
-Return-Path: <linux-kernel+bounces-298264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3673B95C4E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:32:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EB695C4EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87B9286424
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:32:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5DD1C24102
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF8454662;
-	Fri, 23 Aug 2024 05:32:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6CF5464B;
+	Fri, 23 Aug 2024 05:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fc6mA+IR"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0742C190
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724391125; cv=none; b=DTMXnNHenI3yFYmVnfDX7DznxphBfcFCJchiiIEWZbXdONg9XSiaV5McYEVuPZyJ/ZVOQrO3UQxKySikhKuEzwZl4R/F8ODlUPzUc2HgI0Y5VVcxm1dGs4gCt0zBBVw6HKlnqIY+8AjXrnO8Of0DPpTezdqylwfwALQFfeNj8Ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724391125; c=relaxed/simple;
-	bh=tjrQgKnSLxU6gqtQhbFxAS8Cues4EU6rrdqxMr7StuI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ozXqZ5EPPwBbRtPmKdBj9NNorQKv1VTtcv3clXrRDGaUBovQVLyMul51IUElwdjVIbI/e9y0TmyRGywvzHgx8F9UcOOcYPTfvLvS23u75bPgK8+CtbuzEEvF8M4Gc52jY1a6Y0uo+/vbUdzTk8Mcq0jQwxZ3RG4YNkLpJkm0ATY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2c44422eso15296775ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724391123; x=1724995923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G2PVRUYIT6Fc4Ub3JqcZqbEIaTP7rGZEx+EtrUsZTBk=;
-        b=pK7PKylNWV3Iqgeh5IgQ6tqtAdhYVIO3SPTgmV33xVXAnv5bYiySwm18nbssO83jJm
-         Cc3WjJjm/zKOi5f1ZTwg5ugkyncBXstSEKTtoEwM48FH2up0y7lpLZycOn4b/4TkA+nj
-         FG5MxKmB45osUt5hSmsepCOr8apxQtzUbBM+oYTxXqsja0K3wstj/c721DQOekFdO2PG
-         20Ju72IFhJEl4e1ls8+avwjh73GlX45G4GQVyVInstGLjwfXPIf7ZfE/GQuB4wCGWV31
-         zW6tLj+AjEZeBp1MEcN/ufpsmCm80l6DJ8TKn6ewYdQ9JKb1fa2SuQWwE7G8XNZxlBAx
-         JSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVd1MxNSNeIcOy/zAH22Ky63q+fqt7M+2fcx6zRPz8i4tTKtO/+jkilJdTARTSTQ40ARj5X2/cke2Qn1fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ+da01quRCiHR1G7rbRH38TU2CSZkycTIa8ODtwjTWZeqUAHq
-	7QpmDpd47Xo0gV/ufnJ9acUn8PlJPDNaVlpi13tjeoFqubbtmFMC1bfQrxa+sGdk8YVIJkPJAE7
-	q2HOyMMEuiu2akNZbW+RP05P2nKEVigaN1cXp9eVdWpG/yGglSITEbIU=
-X-Google-Smtp-Source: AGHT+IGxIGinQXrgQeu1aksPsuMqmFhb2nPAuudXA4Gm4V7OxTKgl3xmHX00DpYnL37BZRFpnyg+c5Cac15bGnSmjxGVFZZxOwqf
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D8E2C190;
+	Fri, 23 Aug 2024 05:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724391482; cv=fail; b=gKU812UxQ7qsNkvN4Pu5Cs0lzgiKeU2puSLF9pUFgIFIjIsAzfpojyAKip7mPPiq6GLE/kQ6HSX+gKWiEytY2Tn/i9uoL8bog7vaBorkSNhEukhR3Knxiw04Rsbr+SMOz0OT5l2EbE5a+PmS0d3uEu1u6yq34n45i7tZdGKBW/8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724391482; c=relaxed/simple;
+	bh=0GzJ+ugz+DBKSrbFCoBlMVsCsijCS7rE7chDJi/qVBg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AUoXMAmC9eu6hMIYLuWc9Vx36zTfoxHIE7cm5df0dx+0JBdl86EZ36mVMCIuCn0Oy9WQQ7EwmTqlvddxsrtyYhKCSYoDZbkNkD1sqffrrkLIJyhCWWl6rNqwNN6tDEdLTL9elpyIZr0OGRwxx3Ja7JVIoc/PKXWnnA/LbMU0dLw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fc6mA+IR; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r84s/z5LQN8ZrScto5oz+XfgAWaiHbDldZBeVdDg9G/OcwB4rufzc1z9/o5eP9cYB3vZ9rOpnH+fb1cMKp682Eo2euKt4PjVEhFAhc4zzgIzlu6WwSvQVenspu0/9Nq38hfvjX5ajprk3IgoDjTBOiS/l99sqOfPmHZ20UsrPLxGjnzTU57P0AKv5651Mibs02dcBuB1GuAW2541FpLL+f70i7/2J/W/4F4PgJfG5I3wnA7kamVatUKenkEWgYlVwgMlvjkL292qqo0DCTRcOIIgBnqv+4X6jMnWmaDqFUqIRFvPSj1f+Bu1lLWbu96iizvm4bQtEyr9g4lcOLBhXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eeKlnDepmMi9IDfMiUFngf9HBgG7pYCvvsYjAObbtV0=;
+ b=xLGcdnNHY+4eXy8uBxSKG2stKbwJfJZOpYAnD703aJ6ek1IjhnDuFl32ybcteRvQqZf0Rh6yRKW2C8N38EFJs7m0H9yqVT6ksbPiim8S0UOWMwjycpJmVZAZC1ULoIkXflcKZ+JuIcJ+W36WLSZvkH88YeqFB3SJVLrv1dgqUobCIEmexpGUxgDccMCVj/j2y83W1rMv9Spt8sfNwSQzOj4LXsqGM1Z/SISCfDo3RzltIMNb0QWhFF6GebW/MXLHUiq2bthMLV+tVDPVUZruXMptHcz4o92BMdTWVe6zp7xFExdpPIQxraAvqOvoDs56019Ssvq3FUSr7FdAbRYyqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eeKlnDepmMi9IDfMiUFngf9HBgG7pYCvvsYjAObbtV0=;
+ b=Fc6mA+IR2cTopE+jH2Dm7+oIy5AzMhrzLkmbg7pu2Et+yJNXGeoL3edyY8BZ5ezzHnZdi1oSWV6mjEmstWZpp/Uq3AQsCPmEz6gN0dIEvcy+dsqteSBs3Gh0n7AtgqSENYeK4TsJPv7v77ni6oLQOP2wJk4HtwmZcE3I+R0QTe4=
+Received: from SA9PR03CA0021.namprd03.prod.outlook.com (2603:10b6:806:20::26)
+ by DS0PR12MB7778.namprd12.prod.outlook.com (2603:10b6:8:151::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.16; Fri, 23 Aug
+ 2024 05:37:57 +0000
+Received: from SA2PEPF00003AE4.namprd02.prod.outlook.com
+ (2603:10b6:806:20:cafe::6e) by SA9PR03CA0021.outlook.office365.com
+ (2603:10b6:806:20::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19 via Frontend
+ Transport; Fri, 23 Aug 2024 05:37:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003AE4.mail.protection.outlook.com (10.167.248.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7897.11 via Frontend Transport; Fri, 23 Aug 2024 05:37:56 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 23 Aug 2024 00:37:51 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
+	<yung-chuan.liao@linux.intel.com>, <ranjani.sridharan@linux.intel.com>,
+	<lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
+	<venkataprasad.potturu@amd.com>, <cristian.ciocaltea@collabora.com>,
+	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>
+Subject: [PATCH 0/2] Add SOF support for ACP7.0 based platform
+Date: Fri, 23 Aug 2024 11:07:37 +0530
+Message-ID: <20240823053739.465187-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6a:b0:39d:300f:e91e with SMTP id
- e9e14a558f8ab-39e3ca0d343mr429575ab.6.1724391123033; Thu, 22 Aug 2024
- 22:32:03 -0700 (PDT)
-Date: Thu, 22 Aug 2024 22:32:03 -0700
-In-Reply-To: <d97aeee7219040e77c575d78995307cb7e87fcf8.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057b4b806205318ab@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in clear_inode
-From: syzbot <syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE4:EE_|DS0PR12MB7778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a6c2f0c-607f-4a58-dd64-08dcc335bde1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G+ZRS6uqax4Y4DMnZJfA2foRqpzQrD0vDIzW7seo5y6DvW+y5sBBLpiLvkSt?=
+ =?us-ascii?Q?k2OWmniDN7gJjexh+lh79fG7/fueK3mzpfJbXEZZ9Dnncyg9P6eZ3GJxLtqQ?=
+ =?us-ascii?Q?RNYC/0Zfv10eQNnjpK4Te5WFbDYzrpzSaAHrbP9S/zzVNE8KDEl962X8pWqj?=
+ =?us-ascii?Q?o5ervTGA7Vb4LpJh60BMqJCcATZ5qH5mv0nbhlc8Dc6axdZZ/QS2JcGbADRa?=
+ =?us-ascii?Q?Xvywxehd7vRgOIo+F2GRk4yxrXA0HoBDeUHIPp9fOr+ezRncHFwbTRavpbMu?=
+ =?us-ascii?Q?xKrcILsrBRHc1AhSr640QRxly5nvlszO0jIHpqsNZY2Zk5El+FeG5D/QguKL?=
+ =?us-ascii?Q?9oqbVn4aCZ0gm2gyyP8pZMAqT9K9GGRROKZlreX5xeTQ5/670ag2ylulcUCU?=
+ =?us-ascii?Q?a6RF4LKz2uxaMJmbWo1nY5/lqJHfYp//MU+NtC/ju6EXOZJsqarPSrB/c9bm?=
+ =?us-ascii?Q?xST1QwStq/vb9NDV62I+6nnCmQ2DCxlfg+lOznfTZTjoDItRWmKiwlfFE0yn?=
+ =?us-ascii?Q?mXmgLPOODZUWL+1HN2YCF0MduNKE5IPXzVBrDfpQX6STCeNkaYb35IqOjQiB?=
+ =?us-ascii?Q?MADKlkqY+EKa5x20H/uxwUdW1vjEEMavMr/aTf+BTLP3qS402W6Emg8lNPUO?=
+ =?us-ascii?Q?w2HQlrxAUtGzy/ejuC7cdYzruATPf3zygXGwzoGqCpM6jikF1U7uwCKngsTQ?=
+ =?us-ascii?Q?pnDc2bFW4FrsxSRYxQ6m6V32Cslr9DDZd1QWy8r+DTzoQVft0MDkpYvLd9uU?=
+ =?us-ascii?Q?nfPX3Z3qPyYL7eVGfqd8/Xg1ghXP3uhl/kYvpaSV2x5d04hNL4cBrSmmQr6Y?=
+ =?us-ascii?Q?lHHIAHcaukapjzcmla03ebG4rrcvr282Wn8+Tu4LHdTb9NPJtI1Qq20ot2dB?=
+ =?us-ascii?Q?baaxLR74bWtX+LriCVLjHZYcmy3Vl7lAKcwM0XmViAk3lSbSshK1rrEHoo1e?=
+ =?us-ascii?Q?VRCASnmbBL1UCmSslW7/7LjA3Yx0MgfRaYzCs0NpSi4pQoALUvHwTxrGKM/2?=
+ =?us-ascii?Q?canfwFJZEPi7r0mVD8rostbf4Jk2kYQI/gdoBF0toQGu4MwBKriqwNapvYhz?=
+ =?us-ascii?Q?K99dE6ic/aAZD4XamDcrn3CtBsoGacDzobSzz/R8h04sCClO8h89y91GI/u5?=
+ =?us-ascii?Q?Z3vFZDB+j1i8GMipaCXUbNe6ULUXu0J/F4Nzrykzi//TqsPSJ5mrX2j5Ernu?=
+ =?us-ascii?Q?/w7zT9uBdkK6gyx7FFB7mmjrkBRYxtVuRByvtUAkL+lvk4uXPVUoJ8WWbLBR?=
+ =?us-ascii?Q?R3WbpvK7nvmisz7wkX/eYJiSOfpx+lZxY9+NpXRlNzExDQ/dWWWUZhAYz5IW?=
+ =?us-ascii?Q?9xkioQSE+Uw0IVg8l+uLVQt1zkPAmr0gkE7/r3JudnyEKh0sPJlXJ2QNKiNZ?=
+ =?us-ascii?Q?sAlZv25zjUfkbKjkzCGwg6jsPV6xZAYcwbrS9d2OCuhaHhmIoA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 05:37:56.5365
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a6c2f0c-607f-4a58-dd64-08dcc335bde1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7778
 
-Hello,
+This patch series adds SOF support for ACP7.0 based platform.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Link: https://github.com/thesofproject/linux/pull/5139
 
-failed to apply patch:
-checking file fs/inode.c
-Hunk #1 FAILED at 723.
-1 out of 1 hunk FAILED
+Vijendar Mukunda (2):
+  ASoC: amd: Add acpi machine id for acp7.0 version based platform
+  ASoC: SOF: amd: add support for acp7.0 based platform
 
+ sound/soc/amd/acp-config.c         |  12 +++
+ sound/soc/amd/mach-config.h        |   1 +
+ sound/soc/sof/amd/Kconfig          |  10 ++
+ sound/soc/sof/amd/Makefile         |   4 +-
+ sound/soc/sof/amd/acp-dsp-offset.h |  24 ++++-
+ sound/soc/sof/amd/acp.c            |  65 ++++++++++---
+ sound/soc/sof/amd/acp.h            |   9 ++
+ sound/soc/sof/amd/acp70.c          | 142 +++++++++++++++++++++++++++++
+ sound/soc/sof/amd/pci-acp70.c      | 112 +++++++++++++++++++++++
+ 9 files changed, 365 insertions(+), 14 deletions(-)
+ create mode 100644 sound/soc/sof/amd/acp70.c
+ create mode 100644 sound/soc/sof/amd/pci-acp70.c
 
-
-Tested on:
-
-commit:         d30d0e49 Merge tag 'net-6.10-rc3' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=399230c250e8119c
-dashboard link: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12ae4b05980000
+-- 
+2.34.1
 
 
