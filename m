@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-298397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EAC95C6B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDFB95C6BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487671C23683
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564C228596C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE9913C9D4;
-	Fri, 23 Aug 2024 07:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9k+qXRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EDD13C9C0;
+	Fri, 23 Aug 2024 07:40:39 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929828DC3;
-	Fri, 23 Aug 2024 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5613BBE9;
+	Fri, 23 Aug 2024 07:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724398770; cv=none; b=HezAOMDGlWgi3Nn2Y1802fVq4EeLyeNGeGllNS+kfSpGMQMDVzLE39kK8fSOXzh95u1i76kYpiZ/x0/xjKo7uGgxaBJX65fwdJ3OMbwDSxAuq5d5RN2n5k1reB9Ly2wbdfNS4vuePXW1DdyZ6stvOR4uryjyl3bR/1YtPOEj5LQ=
+	t=1724398838; cv=none; b=j1igHn+cDikkOaVr8C3IGklHXDypl5qR1pw17chJ4QFFgbq58UiaXToY7nkx40Krt7jZCQ9c4jzLwpPitCJzTZtJO1tEVaHSaZx8UEDs5t/fJHN25aSDazp0oi87SrRLK5kBs4WQP4xxT5+jdW7muo2NPZBYgFDh99vs1ZJNNVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724398770; c=relaxed/simple;
-	bh=yrY4MvbAAsyshVBJLGoNFKybYVfSioJ4X11AzeVycvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWPw/8+oGdKiVg/Rh4Sw41U9abfJHhbvm5ZxbqmRQdJoI8tuQxYn+W84dtcC7nFEgMSKkxCJHr8aCioPkmiEc+LHD8KQvOiWpHsVoTWhYp/BYsuhUnembWABr4Q5duB4WBnpgbQ5LK15fXT9paGgYMkOQ9blMW9jvYs7gs144+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9k+qXRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD8EC32786;
-	Fri, 23 Aug 2024 07:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724398770;
-	bh=yrY4MvbAAsyshVBJLGoNFKybYVfSioJ4X11AzeVycvw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C9k+qXRxNWil19NhlGVhujfdVEVnD3rfjxAEd3po7vCFTT+V69Zy3isX9kiL7OR9h
-	 jTgp0fMtQCBwgDdyDGxVBU0bHjn5UdzFNe6r7UJzkOeKTaZpzXLpQBxONzA9Fyftmv
-	 JNJvGQxZ9Bfe9hM8UKpZtr+IKR8NsPU725aj3zswbYDY09JL9Aj45PhKXFbNJCMDFP
-	 bLkPgamqpqdeBCzvO6u7hxunIxYul4l3YshRutRB0c13fSovt1Ndfj5A0eihIKp7nW
-	 oAdmK1TdStHIVa8qJ/IVCC3mbgSOsLYYmSXYvZ4vKtvJpYtOa1/NqCcSngVup8NtZY
-	 NMqr7aPhbthSA==
-Date: Fri, 23 Aug 2024 09:39:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jinlong Mao <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: Add qcom,qmi-id for remote etm
-Message-ID: <lklauccjrhrnnk7d4i3scpzgdva6isvidt3jjefk7xtpsg6hhb@w4w423apm7in>
-References: <20240822064122.5231-1-quic_jinlmao@quicinc.com>
- <20240822064122.5231-2-quic_jinlmao@quicinc.com>
- <x45dqaramqjwqjmwf5fbagzsrzb4f4qaohpaaohrdfjkmq2oil@x3sz4jeqnmj5>
- <13ac63cb-8ef8-41e4-8758-82635cbfade4@quicinc.com>
+	s=arc-20240116; t=1724398838; c=relaxed/simple;
+	bh=UdwupIWDvBzCFihB9mufJiXZ2wkegy+QV/GKQai76Xc=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cFoAfT9C5hPsF1y45y+WKb5pmo5wnFm9MqXSg/xVXDXtjxO+0Hzu0B023Ucdnqsw5FjBjFSxo23eYkeMLhT+UFc654evJ7BlrCruJMkssEYqha2ExXlP6mvso1BXH/i9RJVfLuS4AaSYeJNdhqMlNOJjkeQNOpZD+iu5CaDCIAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WqsQ91B6kzpSwG;
+	Fri, 23 Aug 2024 15:38:57 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D7801800D2;
+	Fri, 23 Aug 2024 15:40:31 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 23 Aug 2024 15:40:30 +0800
+Subject: Re: [PATCH] codetag: debug: mark codetags for pages which
+ transitioned from being poison to unpoison as empty
+To: Hao Ge <hao.ge@linux.dev>, Suren Baghdasaryan <surenb@google.com>
+CC: <kent.overstreet@linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, Hao Ge <gehao@kylinos.cn>,
+	<stable@vger.kernel.org>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <pasha.tatashin@soleen.com>, <david@redhat.com>
+References: <20240822025800.13380-1-hao.ge@linux.dev>
+ <e360598c-cb58-cf9d-9247-430b8df9b3b7@huawei.com>
+ <b2f51535-ca38-ac67-03b4-1aa45b2a7429@linux.dev>
+ <CAJuCfpHUZBkGtu8CL=5cxNMtJa4iNyJ8gBVu2Ho_WOXCRzzfTA@mail.gmail.com>
+ <eb021308-76f4-216f-77e2-1de8ab72b083@linux.dev>
+ <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <292d1141-4edf-ee60-a145-4ca06600076a@huawei.com>
+Date: Fri, 23 Aug 2024 15:40:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <13ac63cb-8ef8-41e4-8758-82635cbfade4@quicinc.com>
+In-Reply-To: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-On Fri, Aug 23, 2024 at 03:16:07PM +0800, Jinlong Mao wrote:
+On 2024/8/23 11:37, Hao Ge wrote:
+> Hi Suren and Miaohe
 > 
 > 
-> On 2024/8/22 15:41, Krzysztof Kozlowski wrote:
-> > On Wed, Aug 21, 2024 at 11:41:18PM -0700, Mao Jinlong wrote:
-> > > qcom,qmi-id is the instance id used by qmi API to communicate with
-> > > remote processor.
-> > > 
-> > > Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> > > ---
-> > >   .../bindings/arm/qcom,coresight-remote-etm.yaml        | 10 ++++++++++
-> > >   1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> > > index 4fd5752978cd..27e5f18bfedf 100644
-> > > --- a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> > > @@ -20,6 +20,13 @@ properties:
-> > >     compatible:
-> > >       const: qcom,coresight-remote-etm
-> > > +  qcom,qmi-id:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    description:
-> > > +      This id is used by qmi API to communicate with remote processor for
-> > > +      enabling and disabling remote etm. Each processor has its unique instance
-> > > +      id.
-> > > +
-> > >     out-ports:
-> > >       $ref: /schemas/graph.yaml#/properties/ports
-> > >       additionalProperties: false
-> > > @@ -31,6 +38,7 @@ properties:
-> > >   required:
-> > >     - compatible
-> > > +  - qcom,qmi-id
-> > 
-> > That's an ABI break.
-> > 
-> > Best regards,
-> > Krzysztof
-> Hi Krzysztof,
+> On 8/23/24 09:47, Hao Ge wrote:
+>> Hi Suren and Miaohe
+>>
+>>
+>> Thank you all for taking the time to discuss this issue.
+>>
+>>
+>> On 8/23/24 06:50, Suren Baghdasaryan wrote:
+>>> On Thu, Aug 22, 2024 at 2:46 AM Hao Ge <hao.ge@linux.dev> wrote:
+>>>> Hi Miaohe
+>>>>
+>>>>
+>>>> Thank you for taking the time to review this patch.
+>>>>
+>>>>
+>>>> On 8/22/24 16:04, Miaohe Lin wrote:
+>>>>> On 2024/8/22 10:58, Hao Ge wrote:
+>>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>>
+>>>>> Thanks for your patch.
+>>>>>
+>>>>>> The PG_hwpoison page will be caught and isolated on the entrance to
+>>>>>> the free buddy page pool. so,when we clear this flag and return it
+>>>>>> to the buddy system,mark codetags for pages as empty.
+>>>>>>
+>>>>> Is below scene cause the problem?
+>>>>>
+>>>>> 1. Pages are allocated. pgalloc_tag_add() will be called when prep_new_page().
+>>>>>
+>>>>> 2. Pages are hwpoisoned. memory_failure() will set PG_hwpoison flag and pgalloc_tag_sub()
+>>>>> will be called when pages are caught and isolated on the entrance to buddy.
+>>> Hi Folks,
+>>> Thanks for reporting this! Could you please describe in more details
+>>> how memory_failure() ends up calling pgalloc_tag_sub()? It's not
+>>> obvious to me which path leads to pgalloc_tag_sub(), so I must be
+>>> missing something.
+>>
+>>
+>> OK,Let me describe the scenario I encountered.
+>>
+>> In the Link [1] I mentioned,here is the logic behind it:
+>>
+>> It performed the following operations:
+>>
+>> madvise(ptrs[num_alloc], pagesize, MADV_SOFT_OFFLINE)
+>>
+>> and then the kernel's call stack looks like this:
+>>
+>> do_madvise
+>>
+>> soft_offline_page
+>>
+>> page_handle_poison
+>>
+>> __folio_put
+>>
+>> free_unref_page
+>>
 > 
-> Sorry, I didn't get your point.
-> Could you please share more details ?
+> I just reviewed it and I think I missed a stack.
+> 
+> Actually, it's like this
+> 
+> do_madvise
+> 
+> soft_offline_page
+> 
+> soft_offline_in_use_page
+> 
+> page_handle_poison
+> 
+> __folio_put
+> 
+> free_unref_page
+> 
+> 
+> And I've come up with a minimal solution. If everyone agrees, I'll send the patch.look this
+> 
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/mm/page_alloc.c#L1056
+> 
+> Let's directly call clear_page_tag_ref after pgalloc_tag_sub.
 
-Adding new required properties is an ABI break. Nothing in commit msg
-explained why this is okay or even needed.
+I tend to agree with you. It should be a good practice to call clear_page_tag_ref()
+whenever page_tag finished its work. Do you think below code is also needed?
 
-Best regards,
-Krzysztof
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index de54c3567539..707710f03cf5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1104,6 +1104,7 @@ __always_inline bool free_pages_prepare(struct page *page,
+        reset_page_owner(page, order);
+        page_table_check_free(page, order);
+        pgalloc_tag_sub(page, 1 << order);
++       clear_page_tag_ref(page);
 
+        if (!PageHighMem(page)) {
+                debug_check_no_locks_freed(page_address(page),
+
+Thanks.
+.
 
