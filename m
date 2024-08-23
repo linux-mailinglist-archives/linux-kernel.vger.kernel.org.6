@@ -1,201 +1,166 @@
-Return-Path: <linux-kernel+bounces-298868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799D495CC60
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8310195CC64
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3265C2823C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E429283777
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A57185945;
-	Fri, 23 Aug 2024 12:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAE185B40;
+	Fri, 23 Aug 2024 12:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qUPstVKw"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2049.outbound.protection.outlook.com [40.107.117.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="JDzLukDl"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94B7376E0;
-	Fri, 23 Aug 2024 12:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724416243; cv=fail; b=sL1IVGvRnBZQ4f70P4zWs5pYH65zEYYdg2zKGxtIic+aq2Pht9K7jHf6sHP2HTl20JKOi7kOK3B5WODzk5CFE8Ux7/lhFdUCjBJ/xOTEnNBAhqzILoJbuFL6rUIwEBZmn8Ij5SGb9umK6lDt3ZTmAKcgT0ihl2X0SKqWLiNVAhE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724416243; c=relaxed/simple;
-	bh=IzXhiwzOuYP4F7YgimgaS60hqtmAqa2o6PzmDpB7V8o=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Z0YiC2kS2Sk5QY8rSUJ04sCv8dTeApZzyOqsQyW8mqKNNcIkVhmZRro7zFqwMw5rcqtLj0l8ppIiyHFWF2kPwgEIt40LYwtYdjUTnTQZAsXRNlIpypt/00SvQY1/o3AtOUDqysDG2h3+aaiTM5Ijc8IrxG662L77dSjaXQADqtk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qUPstVKw; arc=fail smtp.client-ip=40.107.117.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cP+KUOn8cXTj0LnlIrofZoOOH3i+C/9rJT2Bpr2AebBJli1MqtIansZOKmQko6g1W4EfEKf9MEVUKnwDmVE7KcXex7JgSlf9rb9y6M+pQH7keyXtH6+BpmZ3p7WOlfKUqIaxe5Wkw8+qkXwm08UijjSjDx+GNVw4eqYyJgH7KujrodqNoHgdo3haxxVNwVnOLoYPblU1JbtYivSdeVItilrlZu7gxCxFVEnftwN5LVGsFKAirpu79rGi4RefDNaWQSjgHT48+53LbnyX4U02rBvajRaKD7MmNITZHbbXbYMnbKMFWNQS+Kc1vkvIB7dqQyKWovdKyUsQ0pySA0qJ3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d7bpAQ7cupdvEUiLMqx9JD8lyHyWFdLB7t/mchCwnAo=;
- b=uZxpqL/Ol5ihUscpfl1CI2w4OsF5qpm/XKqIcO5lninZZEpW+piXoGDGI1/5aRmxu3Zd7gFRNqeiOhpFrAemSMuZc0STL8Y2wj89AUyhxNGDWjtzx/x0wQUt8dAg7qkKXvwxHJ+FwxgRdr3VkAbV1LCJwoAe4zZ72rIwOq0wd597O7x1sfNtLbtm+B9GOEwXme/ksPCRrM/Nsz/VPnXnFIy9flfB4KY8n+3kPM2piicB52cwujGcMLwqox6J7tTGFkPrxyDkYWFki/nkjp/8oyqBbhExB+/xKEbhwC7phvx4DijtKtVAh5a0CKMMcysWJ2wMKHZxFpPRYJX/tMmoBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d7bpAQ7cupdvEUiLMqx9JD8lyHyWFdLB7t/mchCwnAo=;
- b=qUPstVKw3Xaz8MvZdr73xOsCToHZczuQqNl1i7zYVYQJC3NavUtTAeW7SkPGeJsD6802Wqk8H3t4NpZH/tDGJUN6PNnIEt9BMcdKAfMjb8pqPe2FoCno268tDnkj6hNz0IrlB+p/Gq49cGOPEjqe1GpFzs6+sye8RDcfj11Zi/YlJGfnL9Sg2vTK42R1DhbNSnnQQ6/g3CjQW+RRO28Z59TEIOXa5IiclVRJPgLZe1nsl2PyUJCwNmJiC5yWnV0wnny7P9KG3us3dY1wuQirL6j0FcHQaBEa0aEkXZm32LNSa78//yU1tqkltHMcPMZpqJrlNcD67FRX37/Dzouhuw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB6332.apcprd06.prod.outlook.com (2603:1096:101:123::11)
- by TY0PR06MB5529.apcprd06.prod.outlook.com (2603:1096:400:27b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 12:30:38 +0000
-Received: from SEZPR06MB6332.apcprd06.prod.outlook.com
- ([fe80::6b3f:3bee:4364:6919]) by SEZPR06MB6332.apcprd06.prod.outlook.com
- ([fe80::6b3f:3bee:4364:6919%4]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
- 12:30:37 +0000
-From: ying zuxin <yingzuxin@vivo.com>
-To: Helge Deller <deller@gmx.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	yang.yang@vivo.com,
-	ying zuxin <yingzuxin@vivo.com>
-Subject: [PATCH] fbdev: mmp: Use devm_clk_get_enabled() helpers
-Date: Fri, 23 Aug 2024 20:29:57 +0800
-Message-Id: <20240823123027.5753-1-yingzuxin@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0172.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::28) To SEZPR06MB6332.apcprd06.prod.outlook.com
- (2603:1096:101:123::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF319566A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724416393; cv=none; b=i8SCJOIOv+86GLLSUm2r9OxjoDguO7S7Ygo2biAR1KWD5mw1GDT3ZKC2hBOR2mrkvLd2HtnU+HQIcjCaSIzgol6ed4cI31bW9pIDllA8WsdA8g0SlWDMOZ+TTSBTI8K31/li+gVT7k4nTePFNqvWOHckarwzYKlXuSfCsLtanA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724416393; c=relaxed/simple;
+	bh=KaWzfTx7aivUj5r4qnX69PVpWi6RJY06+4V84ASbd40=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nyRyjJUT4UjOB/V1/W+Cu1/wvsEGzKZLMypeYhX8ZcB8Mguy0mSAidTkUkeaLnN9IO2iggpweUGkqdf0t+BQfDIHxmUWIv7p5HGuxVTT/s6eOcEk5ymV/kFp228esy5nG1GFom53V5LmPeMsIt5dMJToho2w4rUcDKr5/+Lc6n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=JDzLukDl; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5beccb39961so290413a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724416390; x=1725021190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ze74uMNv/Wj8RDboLKvxC9QND1isMlgj04bWbL5LCXI=;
+        b=JDzLukDlW9RM9kTleyicm5EbXzEmeIKaJUCbmqWtfAWh52qDNjDtmIZqDZr4ufdIIj
+         /LxX/7Y0eVgzwXrcKJfgLLOM9KN3EwecZICaU4yUwTLlgbIkbGHW4tuXZUMpLJUPAL4/
+         tUzo2L5yWYQY3F1L2K3QRAEGngv4Fkuxo9MKEbX0fZq2caNiR46j6ZoIPzxc3sHKs8Li
+         p7IQRCioQHUd7EcImJaM63GDGZgphYFabZCsw5R2w8+3y6Dq3AHtqlH7RcC85od5gEXt
+         tRbPVOHhkrP5pK8VUM8cMWeX+0Ro9IECuzk/wILfhoWOtP6Gq/QuZnl7y09uxwpT1LDD
+         U+Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724416390; x=1725021190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ze74uMNv/Wj8RDboLKvxC9QND1isMlgj04bWbL5LCXI=;
+        b=Lp/eyYEXBCSdZm0kRN1vi5/4oB2P/oGzw1e71olvTvz3j+ahpH7/xWQzFkDTCDyU71
+         tz088UboM5mRJRK7Yfmjmi0RmQdwvYnFx9KnryPABc7rVEcNwq4LLruDhlbuir/OykuK
+         uePvsGalSPlBpwCUfzO6WS16HsrAURtttO8Qo2Sc2riBEZl+5bUBOfDUK7tZ5fZbdLzq
+         c1yHUgYXy87ABlSac8OgzBC//UXfBxILozG58y3pKXv4fq0J3wrIwF16o37761QWPsz4
+         q1+IwMGusymH/bVBxs+n4U3ioXHafBhbyRtd93jiSaH6vqkbH2eHPcA4wJaW9VFruLky
+         zV1w==
+X-Gm-Message-State: AOJu0YxAsfc/zFHmJTIn6aCykk9VFTeykQcJu49SmdCYVRm72wOWZqJr
+	OrvaHhu/Rii35KS4EKJ4W+165jejEn/7Oe5dbKTP32tptN+v02Eu6ji3jgSVLJg=
+X-Google-Smtp-Source: AGHT+IFi8C2ckvVTPaFMb3zoPvCuBmWultnoZJdb41ih83dnKe7kJzFBdBe3Ht+YJJpk2SuhYxJOug==
+X-Received: by 2002:a17:906:c105:b0:a86:a4cf:a197 with SMTP id a640c23a62f3a-a86a54a8e30mr87749766b.5.1724416390033;
+        Fri, 23 Aug 2024 05:33:10 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f437bsm252713466b.197.2024.08.23.05.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 05:33:09 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: kees@kernel.org,
+	gustavoars@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	mcgrof@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] params: Annotate struct module_param_attrs with __counted_by()
+Date: Fri, 23 Aug 2024 14:33:00 +0200
+Message-ID: <20240823123300.37574-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB6332:EE_|TY0PR06MB5529:EE_
-X-MS-Office365-Filtering-Correlation-Id: 94be780e-5b6c-4caa-b6b7-08dcc36f6497
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?exNZgJHnelyKQQK+pDBj3PnIVpJyTuCVtRLYTX4TM17S8I87QXfORd4BvTwd?=
- =?us-ascii?Q?bTwQEGZFqvbiMxOBBpQ/4hbS+gpG8+X3aOptzp9dTEcuRE+6jj/gyI+aKyKu?=
- =?us-ascii?Q?DQU0IZ0//hCO0EI+S3qjoh4Go7CqWpAQflNgwE+Z4p063smSPCmTaNBk8tf2?=
- =?us-ascii?Q?ZtMbAIT1M1xBNd4c68e+n4SsANNiJO/JmZs+BeCyNFtWcJ5rL2OTEioo0cY8?=
- =?us-ascii?Q?aCKZK14Gz4Sye2jcOEDg36CfxkdolTxz94+mlZEyBm9i2UBEkYRq8ew3yQSJ?=
- =?us-ascii?Q?YYZ6dO+bQ9TWoqVaNZ0PBSQpfSEmq5glaHZfXXKe6fBALujUK9Cffgf6R74k?=
- =?us-ascii?Q?fLIea/NOWztB0LeB+LrsP/b/2KL357r8bvVU3o3Do176yaPz9UI+rYqANV4j?=
- =?us-ascii?Q?F6uF11pDUht3bugUfUPl7HFcOeFLRpAX2nMOLRryTSHGAkNpr/g1wfqH7blK?=
- =?us-ascii?Q?sy3CpAMF+VY9JNXHm8ufkMxDiTuPT/hNvolCsNLAu3iKbMn/sHfwZV6qnO/s?=
- =?us-ascii?Q?Za/BpXtTQkaXKuyGKsfG0t+RHSelM1RR/Bi7MsGZel2UMtzmDN6LL4FISt6E?=
- =?us-ascii?Q?h0Q6UMgsNejfijy+EyUljJpEMW9wa51Pm/SCMNizS2bXfwac8uznWGM7wwRq?=
- =?us-ascii?Q?UnoH/UenS6F5fqEQSfWL29ked6j5mNwfinTqhEgiJxOBrdkOj/y+/xpuJmQJ?=
- =?us-ascii?Q?GvdHFQwbOEXPd/Ejx80z07DAKhOUb7DZZKt4UbPQfCTSEwXIsbCVE0hAbc5o?=
- =?us-ascii?Q?tZ3kQW3bCaMMlNdTIU9w6A24Qk27MpcIUnH05fkP3o1d+lb70mJr17nWlH6v?=
- =?us-ascii?Q?6xVfdhi+ya9T5aEpjG+sxqQK7TDlltH1yQ5fu9Cc6e3ShxxRWK4TUqc81NdK?=
- =?us-ascii?Q?/h3O07OhVmA7DHNzt/eNtUKz6YmNiaux1c8SBhyA2HOyDTSblspB3LBkUGtd?=
- =?us-ascii?Q?r1oBwPHAayj7BEzprIhoxRCdGoex+bkze7H9P4WzYV8FKdO1vwesk+nneTQY?=
- =?us-ascii?Q?MTZRduiebrtbF/Kw/27gnBzUIrQpRmmtcKyzf7Gkv1DWCuM/ouK6dgXEZ7QD?=
- =?us-ascii?Q?pFTD8rjK8Vqm+ZGJVUIwySZlLixxZgmYlLHe2D3SsIvfQcdih/m5pk9E4ZwR?=
- =?us-ascii?Q?WJV9tzBN2I8hNsB9tYvkhh/IyvliAoG+HOt7EnjVc/EKenuHo+whj2QWPpl3?=
- =?us-ascii?Q?QKbcgJ2xI/6bUFFN424EgBefGoQ3L4Sq/BD1Sd6DKJi+KRoC1ORMV2lqDIro?=
- =?us-ascii?Q?mYOUVGhDtYaXNlEJ/eSHNGZYqzRVvM6zKmxkkf/W1Vh06GiwjiC6Xh/jp7Tc?=
- =?us-ascii?Q?MHP1FEBn3QbkO4EEeGk1xoCnEFksXENcq3UMl+0HMpxZPNnoHDF2Vc/9dhVk?=
- =?us-ascii?Q?2tlh32puH1w4X0tv5GWWbN7HStwvw1F1ptHsMywCcji6YjjEng=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB6332.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+gSqx12Wpm+p+ScQLoJf348zO7DacvVe8DcpRULlUbEvFT5pjAM15hS/sajB?=
- =?us-ascii?Q?yl1D6TzrN5+lvot4Nt4f1RsSlhUP7X/PnKjVZ7wAtB5ZPb29TPP3VzJQcXvZ?=
- =?us-ascii?Q?QoQkA5s/t1O5hKf5HQ+e9ix00oiGPRDjgJl11iUDLC0ShkJKuhCE8GPoso8t?=
- =?us-ascii?Q?Fr83HyYNCXDfJyN3kQcCSFB2Holwo0SLZTqmgV26ihoGlPmstLThBaRxn8TP?=
- =?us-ascii?Q?3BaXk7s+jaXWGKtQw9C4SbGAi4DLMbV0ijhx69a/Er/tQ9vEyZIwS6I93pGq?=
- =?us-ascii?Q?+d5mkjDU0k6dNOcO2azAX13UViH5Sl1mQ7KRKmVtd6s+UpplsmPlln1TRGDu?=
- =?us-ascii?Q?+Pt7ePvrENJls6A9rjZF0HAKO7B9JcC9B/54rOUR07PRqC+XArcwqumBobK8?=
- =?us-ascii?Q?f+X3nTuTbbyhc4EwuFsgDAYZjM9g5lluVGGV6gURige/HAXmoonXCtimabcu?=
- =?us-ascii?Q?O7aPtID+yfOqP4thOStXmQ9SKHKyqZ8MAifz9nyLI1eYo+w/HDNn6Xym7CRi?=
- =?us-ascii?Q?4jDJWY4qfTXsyjD5Vp1f8lDJAN3QGSxW0Cpq/MhGa2rFM6mKoFAQCnxyMh2S?=
- =?us-ascii?Q?FtVKsj2iKaSPTcfhhXn2P15se1mt4A4xpUjmDG79G+2PcvJd1BAYBfKbahCy?=
- =?us-ascii?Q?aNZOC3R7lwFVK0mzRtLzmkyTy/k071rImD9bE/i2uKN4fqTsmZbsTeOgcVev?=
- =?us-ascii?Q?Vl8FKNSFRFYlgHaC3FksGZDrFqtsLVYmrAqUy6iWPhAfy2MDRx5/b/2lNkmU?=
- =?us-ascii?Q?hRQCT4qrtZNWEb6UCCG2il+mKjBuUG29OE/J5LfboO2KcU8JVyCgEbC5+P8Z?=
- =?us-ascii?Q?VlTTHnoWw0uv4z8+7CQ/vtuRhL/TcWOTCqBGgYXnrDLc5/z0YArNGR2q+1mj?=
- =?us-ascii?Q?NSKOX0yRrcj2oMayONu3Sm24fUelW81OhDQEGTTwVxoMjbY8duWtSAu+cc9E?=
- =?us-ascii?Q?ArI+bwjeVB96sRtIwVuzvUijO653QNnPDVJMUvx6vKVZNU4fnDfeVYKPGlsg?=
- =?us-ascii?Q?AmtC7y6hbM0l5rlBs78QFVc3jD3ycgMAXRlYi4Uo679a8fRmJd7fLGqAxxEh?=
- =?us-ascii?Q?HvdKIUOxDxbMvDgGN/pc31v8ekMvbLla5crVXoeRxb7CKgACiKcxk5dhX4wu?=
- =?us-ascii?Q?FXIRwcYvz3kLwUVcmkaPdO/qXRyWM0fUYTGRNoneycSGgZJTNE9EcpysHioa?=
- =?us-ascii?Q?RpXmOXhIc2BC6hRdT1eNtYR/44ckJ9BTi7wpITRNlVDT7JjIAnwEZQDDp+sq?=
- =?us-ascii?Q?6NTt/5/+0GlkaLdIKZwzt8nEtDRh05vSshrL4WssphAr8f6NFaRpbI3tCpI4?=
- =?us-ascii?Q?afoEncCS2ybVmKUH3L0Irzj+tUkgm8tHwQgFhx/rndEkeXD1mMVFc1hK8Sb1?=
- =?us-ascii?Q?0ts9NDJfIwRn6JtLQICjGyCjFbxtvWAhYFttjs5sZV4zc4sf/8rBtfHCF7ek?=
- =?us-ascii?Q?4njfjgd0LnbVvtyPMSqA6CCPNfU1/hEodp3o15XHuBP1Ms84FHqJuW96EZ+S?=
- =?us-ascii?Q?iXDYO8HxVWNizCJVLFCGgQFcAS2sP/Y6ltdxHxwCq8gDKgXfPTFaJq6uXC8R?=
- =?us-ascii?Q?AgW0MFH579TeVADAzhn2hdly6+hGRZhlfU1iUT8j?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94be780e-5b6c-4caa-b6b7-08dcc36f6497
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB6332.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 12:30:37.7418
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 787Gb8ihiFYEEAfQjt1RXXBagpc+EEXaYYZJlJ4JjfEGyP8NatedIHJ3VX8974rGYaPaqDU+QnnsSjztqoIKng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5529
+Content-Transfer-Encoding: 8bit
 
-The devm_clk_get_enabled() helpers:
-    - call devm_clk_get()
-    - call clk_prepare_enable() and register what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
+Add the __counted_by compiler attribute to the flexible array member
+attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-This simplifies the code and avoids the calls to clk_disable_unprepare().
+Increment num before adding a new param_attribute to the attrs array and
+adjust the array index accordingly. Increment num immediately after the
+first reallocation such that krealloc() for the NULL terminator only
+needs to add 1 (instead of 2) to mk->mp->num.
 
-Signed-off-by: ying zuxin <yingzuxin@vivo.com>
+Use struct_size() instead of manually calculating the size for the
+reallocation.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ kernel/params.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-index a20a2c408127..03e23173198c 100644
---- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-+++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-@@ -512,16 +512,13 @@ static int mmphw_probe(struct platform_device *pdev)
+diff --git a/kernel/params.c b/kernel/params.c
+index 2e447f8ae183..160b66dbc0b0 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -551,7 +551,7 @@ struct module_param_attrs
+ {
+ 	unsigned int num;
+ 	struct attribute_group grp;
+-	struct param_attribute attrs[];
++	struct param_attribute attrs[] __counted_by(num);
+ };
+ 
+ #ifdef CONFIG_SYSFS
+@@ -651,35 +651,33 @@ static __modinit int add_sysfs_param(struct module_kobject *mk,
  	}
  
- 	/* get clock */
--	ctrl->clk = devm_clk_get(ctrl->dev, mi->clk_name);
-+	ctrl->clk = devm_clk_get_enabled(ctrl->dev, mi->clk_name);
- 	if (IS_ERR(ctrl->clk)) {
- 		ret = PTR_ERR(ctrl->clk);
- 		dev_err_probe(ctrl->dev, ret,
- 			      "unable to get clk %s\n", mi->clk_name);
- 		goto failed;
- 	}
--	ret = clk_prepare_enable(ctrl->clk);
--	if (ret)
--		goto failed;
+ 	/* Enlarge allocations. */
+-	new_mp = krealloc(mk->mp,
+-			  sizeof(*mk->mp) +
+-			  sizeof(mk->mp->attrs[0]) * (mk->mp->num + 1),
++	new_mp = krealloc(mk->mp, struct_size(mk->mp, attrs, mk->mp->num + 1),
+ 			  GFP_KERNEL);
+ 	if (!new_mp)
+ 		return -ENOMEM;
+ 	mk->mp = new_mp;
++	mk->mp->num++;
  
- 	/* init global regs */
- 	ctrl_set_default(ctrl);
-@@ -556,7 +553,6 @@ static int mmphw_probe(struct platform_device *pdev)
- 		path_deinit(path_plat);
- 	}
+ 	/* Extra pointer for NULL terminator */
+ 	new_attrs = krealloc(mk->mp->grp.attrs,
+-			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 2),
++			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 1),
+ 			     GFP_KERNEL);
+ 	if (!new_attrs)
+ 		return -ENOMEM;
+ 	mk->mp->grp.attrs = new_attrs;
  
--	clk_disable_unprepare(ctrl->clk);
- failed:
- 	dev_err(&pdev->dev, "device init failed\n");
+ 	/* Tack new one on the end. */
+-	memset(&mk->mp->attrs[mk->mp->num], 0, sizeof(mk->mp->attrs[0]));
+-	sysfs_attr_init(&mk->mp->attrs[mk->mp->num].mattr.attr);
+-	mk->mp->attrs[mk->mp->num].param = kp;
+-	mk->mp->attrs[mk->mp->num].mattr.show = param_attr_show;
++	memset(&mk->mp->attrs[mk->mp->num - 1], 0, sizeof(mk->mp->attrs[0]));
++	sysfs_attr_init(&mk->mp->attrs[mk->mp->num - 1].mattr.attr);
++	mk->mp->attrs[mk->mp->num - 1].param = kp;
++	mk->mp->attrs[mk->mp->num - 1].mattr.show = param_attr_show;
+ 	/* Do not allow runtime DAC changes to make param writable. */
+ 	if ((kp->perm & (S_IWUSR | S_IWGRP | S_IWOTH)) != 0)
+-		mk->mp->attrs[mk->mp->num].mattr.store = param_attr_store;
++		mk->mp->attrs[mk->mp->num - 1].mattr.store = param_attr_store;
+ 	else
+-		mk->mp->attrs[mk->mp->num].mattr.store = NULL;
+-	mk->mp->attrs[mk->mp->num].mattr.attr.name = (char *)name;
+-	mk->mp->attrs[mk->mp->num].mattr.attr.mode = kp->perm;
+-	mk->mp->num++;
++		mk->mp->attrs[mk->mp->num - 1].mattr.store = NULL;
++	mk->mp->attrs[mk->mp->num - 1].mattr.attr.name = (char *)name;
++	mk->mp->attrs[mk->mp->num - 1].mattr.attr.mode = kp->perm;
  
+ 	/* Fix up all the pointers, since krealloc can move us */
+ 	for (i = 0; i < mk->mp->num; i++)
 -- 
-2.39.0
+2.46.0
 
 
