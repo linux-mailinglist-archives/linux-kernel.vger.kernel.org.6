@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-298627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0966E95C99B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:50:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B23B95C98C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BAE1C2368C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D77E2861F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569C617C211;
-	Fri, 23 Aug 2024 09:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0741514CE;
+	Fri, 23 Aug 2024 09:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lSByrbPM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="aFalVEeg"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1E816BE14;
-	Fri, 23 Aug 2024 09:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672D3BBC2;
+	Fri, 23 Aug 2024 09:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406576; cv=none; b=jCmcECOHT8YrljWMz06Z1OKzAACFWp+QBoKnKqatafi72+loDlcPTjd6HJaQ3FSlcnG/hTPAxRbNklghAV5eIaXIxRtaq3B8xkoH4nBxUMgrd0RqG+dO1LUFRX91Q+rEp9QsK2SqIlOs2zavSwvxd1I5/aLk/h+ly2/ZSlPe3r8=
+	t=1724406535; cv=none; b=bNwB37awEY3/dxKaUaN/gydapM6FXAk5MnxD0mDCCDtkKe7D2kuZQqB3dIA+Q9osL8bf5dz/Zl4o73umVS4vG0FAlsL4iEV3lqXKB/1NLbFdTqH98yzApnGpV99X/bxFscauCy4MqV5+L/8Ht9rDvROYeoKomg3EMfc4hZPfR+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406576; c=relaxed/simple;
-	bh=BWC2BNE0WdULX0ket+f5Ts7vqbpY9Klk/uO7qZahgCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FGNdDhgNQi2iOc89FbHIKlY28ytBPxpekB3/1ETid+vBjvCrma7XVXxZ48Rw9ZkIo4CV0i5euLkG/lHD2cqGB+4+TggKy3tBZa/XVzxuDpfIT+bTAhPnh0DcKDW7AuKMa92KD9eiuYVQqHzxxpHWEMJLfDBsJaH5tfPFaNeKb7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lSByrbPM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N2NBsk007469;
-	Fri, 23 Aug 2024 09:49:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A5hD6ZsYUmPkntcLlBxGe4qafZ5/vCau/ZVh9D9Doec=; b=lSByrbPMBnfLkRv9
-	S5rZ88i7VK38bfT08i+ilwyrfuzTk7OUhKyrvpUo8ZTi9E6M7DYSYjn2/UadlOmB
-	k8Myo/1IX6RK3XZKVETc6/TpmQ5Zy4oQztW7CnTsNRZ0BgtRZM6S9/7jhrMIMHgY
-	Kp6EWQy8uHYzOn/HguugRp8qs8/xk/rsQtAfiVafBr6SIhJX2dcxl0/t/VHfE59b
-	+w4DHBqB5dGikTamqIwcnOE/24skgnX8u10RAa+++diosp2wgLPhRdB61RlVMdjM
-	lcxQNqEo4NFkdKjjyYHyj8ATxuN0AcygLY/JlhYo7O5Ksp87ZwhgzMdPUdMvc0WL
-	G3/oXQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415gsd62gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 09:49:30 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N9nThK006273
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 09:49:29 GMT
-Received: from [10.151.37.150] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
- 2024 02:49:26 -0700
-Message-ID: <f0134870-7349-4e9d-80e1-d254873d5035@quicinc.com>
-Date: Fri, 23 Aug 2024 15:19:23 +0530
+	s=arc-20240116; t=1724406535; c=relaxed/simple;
+	bh=h1xWXPHzrXPLCdrB79AAp1D1069JKR0kkedffJdQ448=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SlAJ8GBYsHN2Knxmrx68qdo0iGKGV25IsVnb0D2Rnf6LixE5OLpECsF0kSNweIqxRpN4tbdi2p4ZwngavsDImIo5UbguftwnJKb8PtiNxeqCs2fdRc9TUWVyL8ojaxSgivd8tJBs6s3Ag1OBIL1UHbcMJGAV6lb/WnMpWvetAWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=aFalVEeg; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nYMPr8WyjPeQWRWVZs2WMwxKYUMtLVmh6JMdsc9vbyA=; b=aFalVEegxwCLNqld3X5vkG1HsK
+	EYWFqDLp26dS1grO0wAxG8dhG1/2CnBU/TD7SbwVEnWo0YBtSekR8q0BtuY2CIFEF8VM5BIjYPmEh
+	D8o2fEQZI2GxD8OY1/1x//Wc2N9qNyLD+OPfGNviL6EEbd8INkuZ4k+Q/6x3albeZftISnBNUbWSU
+	PsGBBFB85gnwLEmYsDDHHODWsZ5s0miwSTLNp8xfq5Tz0kIV6/vEyGgM/M965Yy5d+0sCcSt1lSPL
+	62r38r6OSWSK6MEhWlRoYO99nfspsiUH7w5S+oRDiChQHzfDBGwx29f0kheWFrP1CfBEseqVkf+Qo
+	LOYdfaMQ==;
+Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1shQuX-0003xF-Hz; Fri, 23 Aug 2024 11:48:49 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v4 3/4] dt-bindings: pinctrl: Add rk3576 pinctrl support
+Date: Fri, 23 Aug 2024 11:49:30 +0200
+Message-ID: <22692139.hxa6pUQ8Du@diego>
+In-Reply-To: <20240822195706.920567-4-detlev.casanova@collabora.com>
+References:
+ <20240822195706.920567-1-detlev.casanova@collabora.com>
+ <20240822195706.920567-4-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add new driver for WCSS secure PIL loading
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <4d1c0d17-20b8-4989-9757-61031e9f03a4@kernel.org>
- <807c9315-bf88-4a0a-9632-2ce471b329b6@quicinc.com>
- <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
-Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <2b5105c6-ccc1-47fb-b22c-010537f39681@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0N6AiRCZ5mhR_HSI00BqgE4xPZ25DK4M
-X-Proofpoint-ORIG-GUID: 0N6AiRCZ5mhR_HSI00BqgE4xPZ25DK4M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_06,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=860 clxscore=1015 lowpriorityscore=0 impostorscore=0
- mlxscore=0 phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408230071
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Am Donnerstag, 22. August 2024, 21:53:38 CEST schrieb Detlev Casanova:
+> Add the compatible string for the rk3576 SoC.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+>  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> index 20e806dce1ec..6a23d845f1f2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> @@ -45,6 +45,7 @@ properties:
+>        - rockchip,rk3368-pinctrl
+>        - rockchip,rk3399-pinctrl
+>        - rockchip,rk3568-pinctrl
+> +      - rockchip,rk3576-pinctrl
+>        - rockchip,rk3588-pinctrl
+>        - rockchip,rv1108-pinctrl
+>        - rockchip,rv1126-pinctrl
+> 
 
 
-On 8/22/2024 4:58 PM, Krzysztof Kozlowski wrote:
-> On 22/08/2024 12:43, Gokul Sriram P wrote:
->> On 8/20/2024 4:42 PM, Krzysztof Kozlowski wrote:
->>> On 20/08/2024 10:55, Gokul Sriram Palanisamy wrote:
->>>> This series depends on q6 clock removal series [1].
->>> How? So this cannot be tested and merged?
->> Yes. Though TrustZone enables these clocks, since Linux Kernel will
->> consider these clock as unused.
->> These clock will be disabled so we cannot bring Q6 out of reset. So we
->> have the dependency set.
->> I posted this as a separate series because [1] 'remove unnecessary q6
->> clocks' series was already reviewed for some
->> versions.
-> This is not a dependency in the kernel workflow. Nothing gets broken,
-> nothing stops this patch from merging. Your remark is confusing and will
-> either start questions or prevent applying the patchset.
->
-Ok, got it. It will not break anything. Will post this series as 
-independent series in v2.
 
-thanks,
-
-Gokul
 
 
