@@ -1,137 +1,267 @@
-Return-Path: <linux-kernel+bounces-299622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D377F95D7B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:22:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9EE95D7B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B0A8B21E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7101F249D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FA4192D6B;
-	Fri, 23 Aug 2024 20:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF3F192B6B;
+	Fri, 23 Aug 2024 20:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjAbOOgP"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="sjxe3Usi"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26334192D76
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC53558B7
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724444094; cv=none; b=IQN1N74zTpQqi0QWIpZ0a/gaqveT4glBINV7TLbKD+iCaPHjIgHTfdfj+YKRw9xuOgc6othniq9RpWm0zH++BD3Q5oHP6YptJ52rA8KMF370F1lpiB26uKIp2FhZdL4suGULf6mnKNgn+RRBMls/xGQ5P/7oBTTdHSXDUz989m0=
+	t=1724444155; cv=none; b=Um4V13EbWxqcvL/ZaDp707ajyFZYLSBrbOMPLRWBPLtLJW4klPTk8hy0Zn3kKmOZ+/TCDf8EYG5ce1s3E741SfTwrWXI36RZje50zaA2nEIlEviEZRt/J6YgavNz58uY9U6Ufs+kuVAkZsdq74OP7c/nqqEGwfSJKleRJXMMKe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724444094; c=relaxed/simple;
-	bh=+Vm3qvk0NHvRMc87oPOrkYfGOmGZxU4opat5zBcurtg=;
+	s=arc-20240116; t=1724444155; c=relaxed/simple;
+	bh=nc8WEFOsdWUuzawTIRKrp1AuH0gA1orr36E/e+nLHhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvfL4LLLuIWH7jNbczvyFA0b9UC3dVSdwxpotnZUs66YvFrntQWWOQyiLi7HhO8baOm4jo4FrrRwcO27dV7KFxbSOvTn7Wn1vcTJS/17Mf4y/7uUsiYyFqGJrkDYnnqsoWID3ZChx2Am5byKBx1jpFAeifTSPIM44Ft/SOHFKsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjAbOOgP; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202508cb8ebso17255135ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:14:52 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdgShlbRfLO98vUtBnRKWBmoTRT8oJxLbo3d0YlKOSiYDCCeXdvk/VzmX6L7sGL503wewyGcM0Quvym1sgglS310xH1yCy1jqLmrdeqaHAQUqs5vL4p/Ue9g4DfXvD6YA/2FMAwh8MF7SQPnT+AqGRe4v1nFYJjCLmsrHMXYB9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=sjxe3Usi; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8682bb5e79so335412266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724444092; x=1725048892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pYQzSMz6zS5VJiOY1cNxgEf0zBFVgF3RmEdhGw7bsks=;
-        b=hjAbOOgPXodXRFQybGGxu74i7+oi+GIppYHvy7jzsoRkLIWdC4H+PkeNESmE6UU5Qv
-         X6LukHB0m2gSpse1SxgUZma9hZIresuUVKOyvRqG3b7L+xfwMzZrDsiFLukYsPhfzEz4
-         rsPa5MKfjSHcnzas/tbFMW/WWwcnZ92YFKgObkFW3iRhI+CbnSwFbl/ISBk4KtDpzXNz
-         /8vtiZVqKK1kgvNB9rHktlxwNRAKsu1vc6q+mXZXoVI9ang0MeOsrhJvdinYhHUDIVoW
-         KL/kJmakVxRgi42sYcgiOphjfCiuKYJtfgWFpdDvZo8hH4lRHrcdugJlD8klrfcam8nx
-         OcTw==
+        d=fastly.com; s=google; t=1724444152; x=1725048952; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TvepJA4PZWA959Ft+rZeK+/JSerRWD/WGD1+NbMgnLs=;
+        b=sjxe3UsipnfDUe/BhSJ582HWh6TTXvX4E5s91F72juTLUaLxUVCQGOqf7m8xvsamqj
+         tkj0fwCWRU/ejCnQSLWey0BTPy5ZOUZ69QmKGqWWX4VrXRk/9ErgHULIw4ORuW8e2JEA
+         Bz8YqNz3tiwPZ45VuKA37/Jzf5hVhimIBa61k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724444092; x=1725048892;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pYQzSMz6zS5VJiOY1cNxgEf0zBFVgF3RmEdhGw7bsks=;
-        b=seNBDmKhDtScSW69z46dYcjK0e8hDTT4u1ntEP1rrZx1epOhTF70mcBotgEHAPEWmr
-         lbrWe07IN7+4g686cyfrRv5mMcGWFVTEKnG27qe7Eit5CcO/UmfqCHycX4fAxtV6H2IX
-         f+59GHWbJCEnn3mpJmuvgUqSBJ26kJf1F/AzN+gBNg74JBd1slKYMWQ10CFYK99wQP45
-         hWEriKOWStBEjt3ywnXKigvsOfK8I4k42E7YhEd6C826+q+vJcikqoBNTNI0G8GNiTQE
-         8XpjJigBEHZQvtXchyPpQOhJ8GvxndByUCAVGoUpgwDre7/4TMNnl9wdCQD20nlbt5Mm
-         hY7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU9hODDEbJGYcDz8rZ+NUnTBw62jCian9mMll3Z70VH7DlBOnfJudA0tbSRR2C1eFrlCBC/oBWuGfNxwH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9FE+GvBjSvMBldj7i/w9bzEozpYozddoTLz1kQVhXv1apJi0Q
-	kzUM2SUvqpR0OVPaq1doJ+MIbEth5C6sthZK8G26FxXaqRBIRTRJ
-X-Google-Smtp-Source: AGHT+IHGHpInpaZxYNi+LuoNgksFQT5m/rKhEYd5Q7NZdSEJaCPo+OY5E4yW8rroDGwG7jsuuxL+Bw==
-X-Received: by 2002:a17:902:ec84:b0:1fd:9a23:90c4 with SMTP id d9443c01a7336-2039e6be9b2mr37448325ad.65.1724444092309;
-        Fri, 23 Aug 2024 13:14:52 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20393f37480sm20867725ad.187.2024.08.23.13.14.51
+        d=1e100.net; s=20230601; t=1724444152; x=1725048952;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TvepJA4PZWA959Ft+rZeK+/JSerRWD/WGD1+NbMgnLs=;
+        b=TgBMVcxRAUomYftcbUQo+ajx/+23L53ich0Xaci0IKPVmEhDUaWQ5nWp6XWTmQwJbr
+         Srs3XYbkE1idfzW6Yyn/dnL6CeX6GIIXc0M9dNs4SrZV+9zZacMD0ieBKQeHkJOcXpVJ
+         Azu0q8H2smdMYec8gG/HtsyS6LDpbqkua3v+iDJvC4XV6aNfqS1/hSCekCBvx/d0X6YD
+         bLUcBdU9DFuWxzlVegvqFYU3B/QkoV4DEs4RmmV5qakt5SS2yzdS16q32l/pIOXnY8WV
+         MMWpZXZwqcln6ZOSQsp12WW7R9KuD3zQMCfVW173wJsrY/t1Eu9vRneJ2PKiG/jMzkke
+         tr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVAeu1G3LOAOUQBqeXXXrJULtwt5M+Bk7JAi0PayCbajCnDLMUmCbHGreEi+4pz1wCJhKoh1K9z4q216wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWdQi6u7XV4H/tKKvlMa7MeytmZjgVgKDU5zhGl/50qOXE5WCe
+	e4tVcaFGJ1LFgutyxSgNK7g4BOGxW2cZrhtzuPM2qsm2SM5RrHrT74uo9CytGFk=
+X-Google-Smtp-Source: AGHT+IFdDxBzJQY3oD6t/LoSsgJYuNnoWg3jkhc/eSKhhrbO26MmxuFE6Wy7/Rcq2eO3fyR28pSd6Q==
+X-Received: by 2002:a17:907:7203:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a86a54de3c3mr204032566b.59.1724444151417;
+        Fri, 23 Aug 2024 13:15:51 -0700 (PDT)
+Received: from LQ3V64L9R2 ([185.226.39.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436be2sm303374266b.138.2024.08.23.13.15.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 13:14:51 -0700 (PDT)
-Date: Fri, 23 Aug 2024 13:14:49 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [RFC PATCH v1 4/6] sched: NUMA-aware per-memory-map concurrency
- IDs
-Message-ID: <ZsjtuTsKuS1k1RK_@yury-ThinkPad>
-References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
- <20240823185946.418340-5-mathieu.desnoyers@efficios.com>
+        Fri, 23 Aug 2024 13:15:51 -0700 (PDT)
+Date: Fri, 23 Aug 2024 21:15:49 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 1/6] net: Add sysfs parameter irq_suspend_timeout
+Message-ID: <Zsjt9XwIiqAVk0Et@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240823173103.94978-1-jdamato@fastly.com>
+ <20240823173103.94978-2-jdamato@fastly.com>
+ <CANn89iJE01V4TBCXg=w=M8=75TXypuYMJ_pXBUrN9NdRRAtAZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240823185946.418340-5-mathieu.desnoyers@efficios.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iJE01V4TBCXg=w=M8=75TXypuYMJ_pXBUrN9NdRRAtAZg@mail.gmail.com>
 
-On Fri, Aug 23, 2024 at 02:59:44PM -0400, Mathieu Desnoyers wrote:
-> The issue addressed by this change is the non-locality of NUMA accesses
-> to data structures indexed by concurrency IDs: for example, in a
-> scenario where a process has two threads, and they periodically run one
-> after the other on different NUMA nodes, each will be assigned mm_cid=0.
-> As a consequence, they will end up accessing the same pages, and thus at
-> least one of the threads will need to perform remote NUMA accesses,
-> which is inefficient.
+On Fri, Aug 23, 2024 at 07:39:56PM +0200, Eric Dumazet wrote:
+> On Fri, Aug 23, 2024 at 7:31 PM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > From: Martin Karsten <mkarsten@uwaterloo.ca>
+> >
+> > This patch doesn't change any behavior but prepares the code for other
+> > changes in the following commits which use irq_suspend_timeout as a
+> > timeout for IRQ suspension.
+> >
+> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Co-developed-by: Joe Damato <jdamato@fastly.com>
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Tested-by: Joe Damato <jdamato@fastly.com>
+> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > ---
+> >  rfc -> v1:
+> >    - Removed napi.rst documentation from this patch; added to patch 6.
+> >
+> >  include/linux/netdevice.h |  2 ++
+> >  net/core/dev.c            |  3 ++-
+> >  net/core/net-sysfs.c      | 18 ++++++++++++++++++
+> >  3 files changed, 22 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index 0ef3eaa23f4b..31867bb2ff65 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -1857,6 +1857,7 @@ enum netdev_reg_state {
+> >   *     @gro_flush_timeout:     timeout for GRO layer in NAPI
+> >   *     @napi_defer_hard_irqs:  If not zero, provides a counter that would
+> >   *                             allow to avoid NIC hard IRQ, on busy queues.
+> > + *     @irq_suspend_timeout:   IRQ suspension timeout
+> >   *
+> >   *     @rx_handler:            handler for received packets
+> >   *     @rx_handler_data:       XXX: need comments on this one
+> > @@ -2060,6 +2061,7 @@ struct net_device {
+> >         struct netdev_rx_queue  *_rx;
+> >         unsigned long           gro_flush_timeout;
+> >         int                     napi_defer_hard_irqs;
+> > +       unsigned long           irq_suspend_timeout;
+> >         unsigned int            gro_max_size;
+> >         unsigned int            gro_ipv4_max_size;
+> >         rx_handler_func_t __rcu *rx_handler;
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index e7260889d4cb..3bf325ec25a3 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -11945,6 +11945,7 @@ static void __init net_dev_struct_check(void)
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, _rx);
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_flush_timeout);
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, napi_defer_hard_irqs);
+> > +       CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, irq_suspend_timeout);
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_max_size);
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_ipv4_max_size);
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, rx_handler);
+> > @@ -11956,7 +11957,7 @@ static void __init net_dev_struct_check(void)
+> >  #ifdef CONFIG_NET_XGRESS
+> >         CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, tcx_ingress);
+> >  #endif
+> > -       CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 104);
+> > +       CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 112);
+> >  }
+> >
+> >  /*
+> > diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+> > index 0e2084ce7b75..fb6f3327310f 100644
+> > --- a/net/core/net-sysfs.c
+> > +++ b/net/core/net-sysfs.c
+> > @@ -440,6 +440,23 @@ static ssize_t napi_defer_hard_irqs_store(struct device *dev,
+> >  }
+> >  NETDEVICE_SHOW_RW(napi_defer_hard_irqs, fmt_dec);
+> >
+> > +static int change_irq_suspend_timeout(struct net_device *dev, unsigned long val)
+> > +{
+> > +       WRITE_ONCE(dev->irq_suspend_timeout, val);
+> > +       return 0;
+> > +}
+> > +
+> > +static ssize_t irq_suspend_timeout_store(struct device *dev,
+> > +                                        struct device_attribute *attr,
+> > +                                        const char *buf, size_t len)
+> > +{
+> > +       if (!capable(CAP_NET_ADMIN))
+> > +               return -EPERM;
+> > +
+> > +       return netdev_store(dev, attr, buf, len, change_irq_suspend_timeout);
+> > +}
+> > +NETDEVICE_SHOW_RW(irq_suspend_timeout, fmt_ulong);
+> > +
+> >  static ssize_t ifalias_store(struct device *dev, struct device_attribute *attr,
+> >                              const char *buf, size_t len)
+> >  {
+> > @@ -664,6 +681,7 @@ static struct attribute *net_class_attrs[] __ro_after_init = {
+> >         &dev_attr_tx_queue_len.attr,
+> >         &dev_attr_gro_flush_timeout.attr,
+> >         &dev_attr_napi_defer_hard_irqs.attr,
+> > +       &dev_attr_irq_suspend_timeout.attr,
+> >         &dev_attr_phys_port_id.attr,
+> >         &dev_attr_phys_port_name.attr,
+> >         &dev_attr_phys_switch_id.attr,
+> > --
+> > 2.25.1
 > 
-> That being said, the same issue theoretically exists due to false
-> sharing of cache lines by threads running on after another on different
+> 
+> Please no more per-device sysfs entry, shared by all the users of the device.
+> 
+> Let's not repeat past mistakes.
+> 
+> Nowadays, we need/want per receive-queue tuning, preferably set with netlink.
 
-running one after another you mean?
+Thanks for the feedback, Eric. We appreciate your consideration
+and guidance.
 
-> cores/CPUs within a single NUMA node, but the extent of the performance
-> impact is lesser than remote NUMA accesses.
-> 
-> Solve this by making the rseq concurrency ID (mm_cid) NUMA-aware. On
-> NUMA systems, when a NUMA-aware concurrency ID is observed by user-space
-> to be associated with a NUMA node, guarantee that it never changes NUMA
-> node unless either a kernel-level NUMA configuration change happens, or
-> scheduler migrations end up migrating tasks across NUMA nodes.
-> 
-> There is a tradeoff between NUMA locality and compactness of the
-> concurrency ID allocation. Favor compactness over NUMA locality when
-> the scheduler migrates tasks across NUMA nodes, as this does not cause
-> the frequent remote NUMA accesses behavior. This is done by limiting the
-> concurrency ID range to minimum between the number of threads belonging
-> to the process and the number of allowed CPUs.
-> 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Ben Segall <bsegall@google.com>
-> ---
-> Changes since v0:
-> - Rename "notandnot" to "nor".
+May we ask what your thoughts are, overall, about getting a
+mechanism like this accepted?
+
+We want to make sure that this, in principle, is acceptable before
+iterating further and going down the path of netlink, if required.
+
+On the specific netlink bit in your comment, we agree in principle,
+however:
+
+  1. Our code integrates directly with existing sysfs parameters.
+     If we make our parameter settable via netlink, but the others
+     remain as sysfs parameters then the interface for users
+     becomes a bit cumbersome.
+
+     And, so the urge will be to move all parameters to netlink
+     for ease of use for the user.
+
+     As we mentioned in our cover letter: we agree that doing so is
+     a good idea, but we hope to convince you (and the other
+     maintainers) that the netlink work can come later as a separate
+     change which affects the existing parameters we integrate with
+     as well as the parameter we are introducing, at the same time.
+
+  2. The proposed mechanism yields a substantial performance and
+     efficiency improvement which would be valuable to users. It would
+     be unfortunate to block until all of this could be moved to
+     netlink, first.
+
+  3. While adding a new sysfs parameter does affect the ABI
+     permanently, it doesn't prevent us from making these parameters
+     per-NAPI in the future. This series adds strength to the argument
+     that these parameters should be per-NAPI because our results show
+     the impact these parameters can have on network processing very
+     clearly in a range of scenarios.
+
+We appreciate your thoughts on the above as we want to ensure we
+are moving in the right direction.
 
