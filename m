@@ -1,71 +1,83 @@
-Return-Path: <linux-kernel+bounces-298126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BAE95C2CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52ADD95C2CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52882850F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD94284B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 01:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A891864C;
-	Fri, 23 Aug 2024 01:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BBD17C66;
+	Fri, 23 Aug 2024 01:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jZfEICnS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKwML1ib"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B0D18E3F;
-	Fri, 23 Aug 2024 01:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1B411717;
+	Fri, 23 Aug 2024 01:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724376540; cv=none; b=VpPtkPoh7T4vyIZVDqw3b6BDXB4yQoH1QRD5v4qkhURx8XyZUCo3eTdHaLDZHoPosIVjcWiWpf8GKdVI4Za1HgfnVQ14qp39x82Xl+LUntHyhfM1uZNeHAZBGxg7btD8dzFBT03i1r5OT8LivWghQCGohS/OnGP0GPonSaOdmSU=
+	t=1724376653; cv=none; b=I0lO96kIgC3grff7D5DgGpJTS2i+In/bw0LCaLHPhs2X6ST9fw6SLq1RoBcUW62RMGSxr6c7Zc1YnkyZ4Fzpgrh7fYkSxpXNh6PY7oB2y55+VGKaxR4wamjATaguHGyYAKk2vHWo6xH8qiTJexyabKu2bACtQSxa4oMMyP4Y3Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724376540; c=relaxed/simple;
-	bh=0Cxc3iKYNDScIHAUvpIRZpSffqwLhiK5znIxktp6S4A=;
+	s=arc-20240116; t=1724376653; c=relaxed/simple;
+	bh=HofqKVSX8hweqL6tlQcJRK+U2s4peJlN5tm1BKQFY+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ob+7c749DjkLg0qZF/pWO1PRToKXhq7fP+SXNYTH8dVGhPOFKAkQ8RaMU16T54jwSQ28/qXwcaunMemOEtRfCuvi3O1RTNomPF2Vx0TgHss4UX72DHt9mACliH2enF+60oNPL0DxY5RQzP/tLlyvHp4riBPWlqn2XRIzsfVi5wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jZfEICnS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=p7dISyo9lY5Z89dZ4GJEbBQCoecv2wea0bN/8HHoo+Y=; b=jZfEICnS9nZb/DJ/FK1psCTIMg
-	C549TQuquvan/e3LR1KwDFFIN0Ml4GTTSjP7QNfwXUIJAY9OY6391PZfpeMliWq+fhYaK8C6RQK0n
-	YzJzxnwJk+QfpIvJZmupIfGTWO0A9mFPI33g8gWG7uniMNqWBpGVC2G5+lCXkJHBdxw0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1shJ6V-005U4s-Lj; Fri, 23 Aug 2024 03:28:39 +0200
-Date: Fri, 23 Aug 2024 03:28:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Chad Monroe <chad.monroe@adtran.com>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: phy: aquantia: allow forcing order of
- MDI pairs
-Message-ID: <71391388-4c18-4239-b74d-807dfc48bbc5@lunn.ch>
-References: <5173302f9f1a52d7487e1fb54966673c448d6928.1724244281.git.daniel@makrotopia.org>
- <ed46220cc4c52d630fc481c8148fc749242c368d.1724244281.git.daniel@makrotopia.org>
- <a59be297-1a55-4cce-a3e1-7568e3d4e66c@lunn.ch>
- <ZsYTZK4Ku2LoZ4SA@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlO/veaxgiCap/AsfOEzadUOyhbWk25xj997N2BgEb7sF71U4V3yvvrNgOQ0pYSexttoDep1Q5/rdiD/sHeMsIMjhvfK8gEh34Z9q2jJnkCH9aXEHXyoKIP1XayRhIZv5wTrFfYmD5mpkr9/zeLi2zfe3FfxYV6EgRxKk4RtR4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKwML1ib; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso1030888a12.1;
+        Thu, 22 Aug 2024 18:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724376651; x=1724981451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ihi7wzSMhY5GnCD6Z9YDyGcT9vUYowgSoRe9ny56RKs=;
+        b=fKwML1ibAozG5fqvYfRvfb5HYsf30tv2YXqbODaNom4oFq3eQFluTIwwIoUKkJ8fJ3
+         9XExf5NgTb0mH9j/wn42YrTpxbhhlW2XUFVhdeEtCXij43OrYkcdRMliHYyOjwZRlkHk
+         vc/FE/DN9hiZIN4WMDOOznc6Q/WqdLifonrEG26EIascOr6q0X9UlRrVsyNOwfzhfRti
+         ozvx+0U1RNoyWCkd8dftVdQd/OfVndeUO28LMnneAKtEsb1Hzwawwug2AZ/KNopdgg50
+         30IiIlTvwUtMzjXIIFDlcVaKwTKmIKQhP0UKA9svOLvQht5tV/u2F27K6l/BkzC/ulN0
+         CNCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724376651; x=1724981451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ihi7wzSMhY5GnCD6Z9YDyGcT9vUYowgSoRe9ny56RKs=;
+        b=BbATG4u7CzbdVuQPtL2q6AB5iOzz919sQ+FJjrAqqdGjw6SwvyMyYj0pwkn2nYmlmY
+         iFzT6m3sp3IQbGbQrpSes3BvLcQWh3BMsWS4ieeMhfftrF+dRHLNjb/YmGNaAcJqJKv1
+         aCexcMLBrCwxRMcVeL717jnZ1nyNu2zp3trx4qOSKvA1cvxN9XWucJ+HZ49F2/HB+TLd
+         /6Aw/TmZm2h3jqPlBs+zMa2bIAs4ZJw6oS8yo+INoKRQA0wE+tmd61myeBsemGWvKTbT
+         gg2IIfk1VV5qiSu1a8x0ZmIDdbSFPMqezgMgrxrWgiertMWdtHVNy8EqtpYycp5dl4If
+         rcfA==
+X-Forwarded-Encrypted: i=1; AJvYcCX44B1R8UF5PufbLZzZb547poyfg4A1656KqZWzz0J7893BqEoMwNY63pb72rbwMVhj4mtlRMqt9+sD4cA=@vger.kernel.org, AJvYcCXRn55rWCvRXuUNnvvqJuS0S6ZnNZnWYkK2cWG6nbk8gM53aqaZhIdOqF8IiiHrqPIzJGUPDyI+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDElydkVHjDlnOHYh3KgILKM80vlk5SZ6j9mYsejnlaZSPuleX
+	XyH4b8ChWp7iqPfnbHpHJj+6oXLkS643QF4pUhB0v06uOG/EBe8s
+X-Google-Smtp-Source: AGHT+IEUjYPI40y3iHamCoD/f4OnT066ID5vY9jdGC3TDvPbeMcs+wyBdQkE5gL/FDck0Afo4eiFJQ==
+X-Received: by 2002:a05:6a20:2d27:b0:1c6:a83c:d5db with SMTP id adf61e73a8af0-1cc89dd1450mr1019077637.31.1724376650893;
+        Thu, 22 Aug 2024 18:30:50 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430f6e7sm1979338b3a.160.2024.08.22.18.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 18:30:50 -0700 (PDT)
+Date: Thu, 22 Aug 2024 18:30:47 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+Message-ID: <ZsfmR69nVPZj_8oE@google.com>
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+ <ZsfRqT9d6Qp_Pva5@google.com>
+ <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,37 +86,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZsYTZK4Ku2LoZ4SA@makrotopia.org>
+In-Reply-To: <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
 
-On Wed, Aug 21, 2024 at 05:18:44PM +0100, Daniel Golle wrote:
-> On Wed, Aug 21, 2024 at 06:07:06PM +0200, Andrew Lunn wrote:
-> > On Wed, Aug 21, 2024 at 01:46:50PM +0100, Daniel Golle wrote:
-> > > Normally, the MDI reversal configuration is taken from the MDI_CFG pin.
-> > > However, some hardware designs require overriding the value configured
-> > > by that bootstrap pin. The PHY allows doing that by setting a bit which
-> > > allows ignoring the state of the MDI_CFG pin and configuring whether
-> > > the order of MDI pairs should be normal (ABCD) or reverse (DCBA).
-> > > 
-> > > Introduce two boolean properties which allow forcing either normal or
-> > > reverse order of the MDI pairs from DT.
+On Fri, Aug 23, 2024 at 08:46:12AM +0800, Zijun Hu wrote:
+> On 2024/8/23 08:02, Dmitry Torokhov wrote:
+> > Hi,
 > > 
-> > How does this interact with ethtool -s eth42 [mdix auto|on|off]
+> > On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>
+> >> An uninitialized variable @data.have_async may be used as analyzed
+> >> by the following inline comments:
+> >>
+> >> static int __device_attach(struct device *dev, bool allow_async)
+> >> {
+> >> 	// if @allow_async is true.
+> >>
+> >> 	...
+> >> 	struct device_attach_data data = {
+> >> 		.dev = dev,
+> >> 		.check_async = allow_async,
+> >> 		.want_async = false,
+> >> 	};
+> >> 	// @data.have_async is not initialized.
 > > 
-> > In general, you want mdix auto, so the two ends figure out how the
-> > cable is wired and so it just works.
-> 
-> It looks like Aquantia only supports swapping pair (1,2) with pair (3,6)
-> like it used to be for MDI-X on 100MBit/s networks.
-> 
-> When all 4 pairs are in use (for 1000MBit/s or faster) the link does not
-> come up with pair order is not configured correctly, either using MDI_CFG
-> pin or using the "PMA Receive Reserved Vendor Provisioning 1" register.
-> 
-> And yes, I did verify that Auto MDI-X is enabled in the
-> "Autonegotiation Reserved Vendor Provisioning 1" register.
+> > No, in the presence of a structure initializer fields not explicitly
+> > initialized will be set to 0 by the compiler.
+> > 
+> really?
+> do all C compilers have such behavior ?
 
-Is it possible to read the strap configuration?  All DT needs to
-indicate is that the strap is inverted.
+Yes, all conforming to the C standard.
 
-	Andrew
+Thanks.
+
+-- 
+Dmitry
 
