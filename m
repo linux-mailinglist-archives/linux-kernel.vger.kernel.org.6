@@ -1,173 +1,205 @@
-Return-Path: <linux-kernel+bounces-298973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61D795CE7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E8F95CE7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9C01C22F33
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973CB1C23236
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C9E188598;
-	Fri, 23 Aug 2024 13:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE77D1885AC;
+	Fri, 23 Aug 2024 13:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b="N+a0pMmj"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YdQsh6CQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359EB46556
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D759188595
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421432; cv=none; b=ujLcq6l+LC6cogtUO6pe7tUzi+w+AvY85smEc6na/a6tNARToAbJSdtGhfterJqY6har5h/m/wFVa4kK+7qyq76t+W8wdgHclLdoLdVqnhIMjjiLoSbpSGeBuXxbzSTeFUOVoOT1DTa4fP9Idf+kxQQKuR3mr3iAmobd6O4HqMU=
+	t=1724421455; cv=none; b=IAdkqZhX77Q5Y93z4yUXUPew/3zyaBlwnByyh2HjEo1lBP+h0VVOUH/BwgJGMpf85ggDSue0J6X2V971uSEVaB8CeFQarlpgTd3a4xX8QByVGRcO219Je/6lkwU1L5htFCu0m51F+L45Cp7pCajEqyjh28U5e9wqFpHI9wypI8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421432; c=relaxed/simple;
-	bh=Hct+fFSW9c9vUbZKkWYHlkYkWzjV+myTSNDEd8GyNZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gyw+w3jCbkPBbv0XrDaSJ1GPkIbhzCiWcj2aCpLkgQSj57OHW74WrdtrbjMJOIoQvyWfAS53nbaRiil6NJQc24ePHVQuKc9BFk9wJUB8FfYClTNNx6C0W9X2Jqxv+PybSGY4R/0xQ8ZwK5dXWWkXYBe/AudGxYZtd+Dwbj7J7KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net; spf=pass smtp.mailfrom=fenniak.net; dkim=pass (2048-bit key) header.d=fenniak.net header.i=@fenniak.net header.b=N+a0pMmj; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fenniak.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fenniak.net
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3bae081efso1569840a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fenniak.net; s=google; t=1724421429; x=1725026229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=35XQX7bIYPMcCPaB6P3F7Jnu4KwL6KW54O+hnKmNXUc=;
-        b=N+a0pMmjj/BxypeU+scxrfL54OLRS1wdzmJx7uUnULDz+n7L2WvHHPyCRjIK4v8/f/
-         P2veucSxhknoADw/hxuHt/5bpYpjePpMLfGWKnPRRPqhmL3i2Yk5W63kkTeztQ9Of7Mx
-         lAi3A1XilbBJJPxoLg71hWmW2vOhME5zpUd+QHOfEuEISiERP1ZEljEY5J0pNRc7kjnA
-         XUkRb1gWyfgAb0U41ixQ3bN7Q7Rz3wrr27vZ1vOvNc6JINq5lklAeMkCcxhR9o0VgJ4f
-         7Aq0bFy+d2fJNjk5Unos45vfvA6rrAqFeVKcnGaESz6tUQrfYObQv81mfg28Wtrb1J7+
-         RbXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724421429; x=1725026229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=35XQX7bIYPMcCPaB6P3F7Jnu4KwL6KW54O+hnKmNXUc=;
-        b=Ibc2LnAsBG9FTGVKC9c0FYu8Jcws0y7YOb/1hZz4qpUjchUXZVvaV3pnofiGsWNGeR
-         bHjii+jnDhKeaxC4sQTC5Jmy4rRS5KPrGMSTLicrxBMjunNPL4JIN7w75G8GG41/LUCE
-         ATYW5PHbffpqDxL0orqOfhDAr0e8ePFYfeNSax2mbcB4k04xq1jP5Ob8fOb6cyCIRAzY
-         kegFiJcAqeta0zOcgL2+2U95pIc4DfEL+/3+GNQyoBkr2CiQ06qo7bW9fJarUhQYDUJU
-         8UIoW+kbVwx9reuQNEknWDUK3v7QhXgMRRFHnLqeh753gSloN6LDyZbW3v3E3pPZW1SY
-         eZ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJkBwpIsQZphYBRS9okGfgVKRW7sqs0SFUK4nEA6rA2dILsBk7/O+IvAYU/WjTfbCXJ1ueYHd8Gf6UwwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr6f6jZ+t0ndJuNbAErDIV5y82/rg8ekcvUMMlF5X6rJuklpw2
-	lavTPEoMWU3hPHJYctvik6+EhlrbojI4WgiiSargOcSlXPmYlEZ/g2crNPGy+Fw=
-X-Google-Smtp-Source: AGHT+IGiBAWiVmuhaMRuDYBJY9TDgplLBlPfGGbZIGjwQ+hUM0XWf5CO11KnFeBGhUQCjD46P9Y3Yw==
-X-Received: by 2002:a17:90a:4cc2:b0:2d3:b93d:ba48 with SMTP id 98e67ed59e1d1-2d646bd1a27mr2594098a91.8.1724421429460;
-        Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
-Received: from zenbook-nixos.tail73afb.ts.net (d104-205-214-17.abhsia.telus.net. [104.205.214.17])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d613a5c550sm4126103a91.30.2024.08.23.06.57.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 06:57:09 -0700 (PDT)
-From: Mathieu Fenniak <mathieu@fenniak.net>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Mathieu Fenniak <mathieu@fenniak.net>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D. Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA
-Date: Fri, 23 Aug 2024 15:56:28 +0200
-Message-ID: <20240823135630.128447-1-mathieu@fenniak.net>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
-References: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
+	s=arc-20240116; t=1724421455; c=relaxed/simple;
+	bh=LDNpPxi4G7n+Ft5t7DksRyjmvULIrLPrUtYNcHz4Z0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FXa17CObBa7hWQYCldlDEqjpKuULzMy4w7kaUBqwmrjZinPa1scT5WD3BLif0B53Is9cWefNAR3Ujz0DxGz+HkGR9dkLIpNQs1zcIk0bWDeYptTni2NYyql8j/3fNLo8Jt3fELFlE/LITPZdITFLbZbsOT40qcbM4++II3Cn2tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YdQsh6CQ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724421454; x=1755957454;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LDNpPxi4G7n+Ft5t7DksRyjmvULIrLPrUtYNcHz4Z0c=;
+  b=YdQsh6CQzSXEqUigSHPsnMSby91OSNXa8UDKvqhoJku6cvb05zc7SyAV
+   c1j3JO0mkQTD0Bhwlm1GNx5IeoxuyB3kCt3GfJFQib5+yUJsV1ge8d8kG
+   HuMnUW0Fq1MZ/LcL/MmPOv6a77gj+OsDocR/+iLV+Ncu8ICG4DJm7PNVU
+   Ueau/LFKhNo73Hy4ZokB4KTNCxJEk+LiDespHfLnd+G0Q4m5SeA9Y9xiR
+   zUPc7VTuBWMWqZMc+iTkO2wQ5Tj/LJn511nBt2Tu0Wdww+yHMAZ16QmmU
+   SU/rxmXjbEysiT7z7Gw2KmAvlapORPl+2vSNHRQKz2MIsRBODdqrUVsa+
+   A==;
+X-CSE-ConnectionGUID: 3XoAJeWDSfCOycmIjUzIlA==
+X-CSE-MsgGUID: WG6sMD0XTbuxcuy2JXvSiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22855674"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22855674"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:57:31 -0700
+X-CSE-ConnectionGUID: 0uEkEY4ORs+PVwHI0m7kmQ==
+X-CSE-MsgGUID: GJ5iRcg5Q5iLt+E33hvCcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="66622762"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 23 Aug 2024 06:57:28 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1shUn8-000Dlc-10;
+	Fri, 23 Aug 2024 13:57:26 +0000
+Date: Fri, 23 Aug 2024 21:56:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuntao Liu <liuyuntao12@huawei.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ imx7d_enet_init+0x18 (section: .text.unlikely.imx7d_enet_init) ->
+ imx7d_enet_clk_sel (section: .init.text)
+Message-ID: <202408232129.sx7nsk3e-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The Asus Zenbook Duo (UX8406MA) has a keyboard which can be
-placed on the laptop to connect it via USB, or can be removed from the
-laptop to reveal a hidden secondary display in which case the keyboard
-operates via Bluetooth.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3d5f968a177d468cd13568ef901c5be84d83d32b
+commit: ed0f941022515ff40473ea5335769a5dc2524a3f ARM: 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+date:   2 months ago
+config: arm-randconfig-002-20240823 (https://download.01.org/0day-ci/archive/20240823/202408232129.sx7nsk3e-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408232129.sx7nsk3e-lkp@intel.com/reproduce)
 
-When it is placed on the secondary display to connect via USB, it emits
-a keypress for a wireless disable. This causes the rfkill system to be
-activated disconnecting the current wifi connection, which doesn't
-reflect the user's true intention.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408232129.sx7nsk3e-lkp@intel.com/
 
-Detect this hardware and suppress any wireless switches from the
-keyboard; this keyboard does not have a wireless toggle capability so
-these presses are always spurious.
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-Signed-off-by: Mathieu Fenniak <mathieu@fenniak.net>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/platform/x86/asus-nb-wmi.c | 20 +++++++++++++++++++-
- drivers/platform/x86/asus-wmi.h    |  1 +
- 2 files changed, 20 insertions(+), 1 deletion(-)
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+>> WARNING: modpost: vmlinux: section mismatch in reference: imx7d_enet_init+0x18 (section: .text.unlikely.imx7d_enet_init) -> imx7d_enet_clk_sel (section: .init.text)
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/poly1305-arm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp737.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp864.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp869.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp932.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_euc-jp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-5.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-13.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-u.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-ru.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-roman.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/prime_numbers.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_helpers_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_rhashtable.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_keys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_key_base.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_linear_ranges.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cmdline_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/overflow_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/fortify_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/siphash_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-eth.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-hif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-apmixed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-topckgen.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-venc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/clk-qcom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/gcc-msm8976.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/cppi41.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_kunit_helpers.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_buddy_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_cmdline_parser_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_connector_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_damage_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_dp_mst_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_exec_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_format_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_framebuffer_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_gem_shmem_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_managed_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_mm_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_modes_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sii9234.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index fceffe2082ec..ed3633c5955d 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -145,6 +145,10 @@ static struct quirk_entry quirk_asus_ignore_fan = {
- 	.wmi_ignore_fan = true,
- };
- 
-+static struct quirk_entry quirk_asus_zenbook_duo_kbd = {
-+	.ignore_key_wlan = true,
-+};
-+
- static int dmi_matched(const struct dmi_system_id *dmi)
- {
- 	pr_info("Identified laptop model '%s'\n", dmi->ident);
-@@ -516,6 +520,15 @@ static const struct dmi_system_id asus_quirks[] = {
- 		},
- 		.driver_data = &quirk_asus_ignore_fan,
- 	},
-+	{
-+		.callback = dmi_matched,
-+		.ident = "ASUS Zenbook Duo UX8406MA",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "UX8406MA"),
-+		},
-+		.driver_data = &quirk_asus_zenbook_duo_kbd,
-+	},
- 	{},
- };
- 
-@@ -630,7 +643,12 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
- 	case 0x32: /* Volume Mute */
- 		if (atkbd_reports_vol_keys)
- 			*code = ASUS_WMI_KEY_IGNORE;
--
-+		break;
-+	case 0x5D: /* Wireless console Toggle */
-+	case 0x5E: /* Wireless console Enable */
-+	case 0x5F: /* Wireless console Disable */
-+		if (quirks->ignore_key_wlan)
-+			*code = ASUS_WMI_KEY_IGNORE;
- 		break;
- 	}
- }
-diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-wmi.h
-index cc30f1853847..d02f15fd3482 100644
---- a/drivers/platform/x86/asus-wmi.h
-+++ b/drivers/platform/x86/asus-wmi.h
-@@ -40,6 +40,7 @@ struct quirk_entry {
- 	bool wmi_force_als_set;
- 	bool wmi_ignore_fan;
- 	bool filter_i8042_e1_extended_codes;
-+	bool ignore_key_wlan;
- 	enum asus_wmi_tablet_switch_mode tablet_switch_mode;
- 	int wapf;
- 	/*
 -- 
-2.44.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
