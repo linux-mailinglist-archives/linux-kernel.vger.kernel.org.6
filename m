@@ -1,111 +1,183 @@
-Return-Path: <linux-kernel+bounces-298865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1EE795CC59
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:28:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AD295CC5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2562874CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17CD1C21811
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744D4186610;
-	Fri, 23 Aug 2024 12:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4160185B4B;
+	Fri, 23 Aug 2024 12:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rzmgum9L"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e62ZF5T1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534B5185B5A;
-	Fri, 23 Aug 2024 12:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689E8185954;
+	Fri, 23 Aug 2024 12:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724416081; cv=none; b=Ku9ZnNsmdto0kUmd7/UmOkxTDZhIZLkvIP74VCpjk23oH+kR5Bo4t6xcHXPxEiSypID3xjkaR64XGYYh99KHNlnuuFOhk7ZBBNnwKR4GnB8pgMQQsbctYw7+pRn4hk0XCLqPaWK4yhlPhKQCk390u06C5ZeM0wZdZRAAPQuYBQE=
+	t=1724416099; cv=none; b=DBGOSk5rLfxk9/bJiKRJmZJWtoqfwC2/cSMP9Zl6QsvAo6WS6qV9LgFdbTMcA/FsWMucgqprVhkSy/q+kjvZGC1sNsmkvS6oAKRAN40y/YAsLKfn4USk5DSO5Mpv4X7GdN2dAz+aw/GphslfYdsPog01JrfB3LNvmgfRllPGiRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724416081; c=relaxed/simple;
-	bh=AAJU18OBl8o8+iDmdG41Ki05MWpShLtTzqE+u3kWNwI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ffknpFqWBJQ3dJjDyZHkGrmMeb/bSxGYlHp+AtICGM0kG/vwgj4KMO+kGSuzWKsKdnMP0VvS4yRpy2pfuajA+BMaJiioq09mPHa+JG9YNEu7B9NFlQ0HI060Y1il5rALivpwtRvOOZhwebrM1HC5VggoL4weKKfQ5PTTVm1JS08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rzmgum9L; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1724416099; c=relaxed/simple;
+	bh=tbPSjcRXyyHSc6osHTksRXqjP80geuvCMKoYxn0fHgc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=oyGilkS/YOlMQQBxV643bUt0Da1OQ7zrRQ4H5TdR/JaH3ZEW32798rYkkj7DFkbhjoPoGatpOfkoQORYahIbaN4nNa3+1XBmusgcx6Pws4xjgL6cx8tjH4gwT5rXSW4E+AZuvm7S9l/PknmGzveJGFwqUN8aptduw8Ecv6ILtNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e62ZF5T1; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724416079; x=1755952079;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AAJU18OBl8o8+iDmdG41Ki05MWpShLtTzqE+u3kWNwI=;
-  b=Rzmgum9LXWohg4N8TKyAZIciL3v47SybuKAyu6tH6jOJjst5Y1rCMN72
-   QQy/G2hqEqtaNUPugkzXOq7b5l+nVLt4e/rauvzLumkXIlO1zYwynC4ny
-   mHG2KXRHM6q6ZHTIwaA34mm4EtzA0P19HvD1LtumVG6WgSVT/cWCsnwGJ
-   jLEUcBfVIfvGfRCUmQuSbZFEg6LtP+ssVAmL8z4Mzx23m0DDlNQfRT4+O
-   YVkHcP6SH9c/UbCNF2CIVsubKJVGxF5E+/TOST2qRkiaKkFkRPaX8HmqE
-   zcgzMkyOzKNzRyAkPPAQxO0mYyWh1D0wJ0rEGV63P8i7KrQ4xZfWNoM2x
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724416097; x=1755952097;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=tbPSjcRXyyHSc6osHTksRXqjP80geuvCMKoYxn0fHgc=;
+  b=e62ZF5T11sFAV1O8IbmRmOCus+8W+xXAsIcAB+PcZcuzPPscxX4kAOyW
+   GGXXqbCmciOm6BBz4ZMI07aeK+LSvQ7zQhU/Yto2LU6MhM6NC4OfeF/Cf
+   X6/B+XwP4aFtzNYaSBa9XJOaYdJmvRpTZblOSlZ8rC2AOAZbiqRljBASy
+   jD6jpRX65lghCixDc8YHL0p6j47MK5VEPDKBFVylVClfitVkqhCVhnZGH
+   59MJdWktpoYfvyW63t6F88WeSoseAa+vZks+KnS6UiGPcVpEK1gAppgjN
+   UJABCfa6uBYQS75jSZs/OB7Mol6kA7HmlgLuWE+OfG4/Sp8VZRCsGkncV
    w==;
-X-CSE-ConnectionGUID: rDZOZxKYRGu2u+L6hg58hQ==
-X-CSE-MsgGUID: j2lyweIKQPuiHDwPt1WV/g==
+X-CSE-ConnectionGUID: /1L6h/B6QFSvhaI6ODvxpQ==
+X-CSE-MsgGUID: qkapkDnDRhG+ad6Esqv48Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33504413"
 X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="198251697"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Aug 2024 05:27:54 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 23 Aug 2024 05:27:35 -0700
-Received: from daire-X570.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 23 Aug 2024 05:27:33 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <daire.mcnamara@microchip.com>,
-	<ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v9 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Fri, 23 Aug 2024 13:27:17 +0100
-Message-ID: <20240823122717.1159133-4-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823122717.1159133-1-daire.mcnamara@microchip.com>
-References: <20240823122717.1159133-1-daire.mcnamara@microchip.com>
+   d="scan'208";a="33504413"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 05:28:16 -0700
+X-CSE-ConnectionGUID: abEu6HtoQIGEFNWJsRFfnA==
+X-CSE-MsgGUID: RLjjoL7DRsWFeRlozvZWmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61641908"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 05:28:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 15:28:10 +0300 (EEST)
+To: Tero Kristo <tero.kristo@linux.intel.com>
+cc: srinivas.pandruvada@linux.intel.com, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] Documentation: admin-guide: pm: Add efficiency vs.
+ latency tradeoff to uncore documentation
+In-Reply-To: <20240821131321.824326-2-tero.kristo@linux.intel.com>
+Message-ID: <dabdc81e-d743-6402-f87a-dee2d6b906b8@linux.intel.com>
+References: <20240821131321.824326-1-tero.kristo@linux.intel.com> <20240821131321.824326-2-tero.kristo@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/mixed; boundary="8323328-1221077555-1724416090=:2230"
 
-From: Conor Dooley <conor.dooley@microchip.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
+--8323328-1221077555-1724416090=:2230
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, 21 Aug 2024, Tero Kristo wrote:
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index 612633ba59e2..5f5f2b25d797 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -44,6 +44,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-coherent: true
-+
-   ranges:
-     minItems: 1
-     maxItems: 3
--- 
-2.34.1
+> Added documentation about the functionality of efficiency vs. latency tra=
+deoff
+> control in intel Xeon processors, and how this is configured via sysfs.
+>=20
+> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+> ---
+>  .../pm/intel_uncore_frequency_scaling.rst     | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>=20
+> diff --git a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.=
+rst b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
+> index 5ab3440e6cee..fb83aa2b744e 100644
+> --- a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
+> +++ b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
+> @@ -113,3 +113,54 @@ to apply at each uncore* level.
+> =20
+>  Support for "current_freq_khz" is available only at each fabric cluster
+>  level (i.e., in uncore* directory).
+> +
+> +Efficiency vs. Latency Tradeoff
 
+Does this section even cover the "tradeoff" part in its body? Why not call=
+=20
+it directly "Control" after ELC?
+
+> +-------------------------------
+> +
+> +In the realm of high-performance computing, particularly with Xeon
+> +processors, managing uncore frequency is an important aspect of system
+> +optimization. Traditionally, the uncore frequency is ramped up rapidly
+> +in high load scenarios. While this strategy achieves low latency, which
+> +is crucial for time-sensitive computations, it does not necessarily yiel=
+d
+> +the best performance per watt, =E2=80=94a key metric for energy efficien=
+cy and
+> +operational cost savings.
+
+This entire paragraph feels more prose or history book than documentation=
+=20
+text. I'd suggest using something that goes more directly into the point
+about what ELC brings to the table (I suppose the goal is "performance=20
+per watt" optimization, even that goal is only implied by the current=20
+text, not explicitly stated as the goal here).
+
+--=20
+ i.
+
+> +The Efficiency vs. Latency Control (ELC) feature allows user to influenc=
+e
+> +the uncore frequency scaling algorithm. Hardware monitors the average CP=
+U
+> +utilization across all cores at regular intervals. If the average CPU
+> +utilization is below a user defined threshold (elc_low_threshold_percent=
+),
+> +the user defined uncore frequency floor frequency will be used
+> +(elc_floor_freq_khz), minimizing latency. Similarly in high load scenari=
+o
+> +where the CPU utilization goes above the high threshold value
+> +(elc_high_threshold_percent) instead of jumping to maximum uncore
+> +frequency, uncore frequency is increased in 100MHz steps until the power
+> +limit is reached.
+> +
+> +Attributes for efficiency latency control:
+> +
+> +``elc_floor_freq_khz``
+> +=09This attribute is used to get/set the efficiency latency floor freque=
+ncy.
+> +=09If this variable is lower than the 'min_freq_khz', it is ignored by
+> +=09the firmware.
+> +
+> +``elc_low_threshold_percent``
+> +=09This attribute is used to get/set the efficiency latency control low
+> +=09threshold. This attribute is in percentages of CPU utilization.
+> +
+> +``elc_high_threshold_percent``
+> +=09This attribute is used to get/set the efficiency latency control high
+> +=09threshold. This attribute is in percentages of CPU utilization.
+> +
+> +``elc_high_threshold_enable``
+> +=09This attribute is used to enable/disable the efficiency latency contr=
+ol
+> +=09high threshold. Write '1' to enable, '0' to disable.
+> +
+> +Example system configuration below, which does following:
+> +  * when CPU utilization is less than 10%: sets uncore frequency to 800M=
+Hz
+> +  * when CPU utilization is higher than 95%: increases uncore frequency =
+in
+> +    100MHz steps, until power limit is reached
+> +
+> +  elc_floor_freq_khz:800000
+> +  elc_high_threshold_percent:95
+> +  elc_high_threshold_enable:1
+> +  elc_low_threshold_percent:10
+>=20
+--8323328-1221077555-1724416090=:2230--
 
