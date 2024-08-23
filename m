@@ -1,404 +1,209 @@
-Return-Path: <linux-kernel+bounces-298254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8AD95C4D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:21:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0166595C4D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C213B21EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239CE1C21B7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0139E54662;
-	Fri, 23 Aug 2024 05:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E5853E15;
+	Fri, 23 Aug 2024 05:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="tt6hXxNF"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kQWIwuba"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607939FD8;
-	Fri, 23 Aug 2024 05:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898352F71
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724390504; cv=none; b=MDm5XyovJYb7L9AP0qUyc6bnK++GW/k3i3xxQU4+/a4WlqDAhMWZVNIk1lGtUnYTInNqVOsLsTRm3EEwf32MEwS8tiaq+l6D/lSDJamneuylRp+lgbb45LGquTADYdQUI5wp+LaqONkFvLrKpj+K7mL031w+Mjmz2Rnln3rjPOs=
+	t=1724390525; cv=none; b=geNX2FyQ8AIFqv/YR5aFQpwaVobgxOXjmouH7XGoQmmUDXOmBljnP/qz+czhkPiUoUqIiC9zA7Y4MOF6CP/2WAuZCkqUP/R0KKvaLzSWyndM0kiPUXjXPzlgVcaeBhyQBKTWOBf3DIRxEN1N8JT0r3fdEMzxpKannRxwQ5EDH3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724390504; c=relaxed/simple;
-	bh=v1A1e65n/qn1iejLvvYbI8gr1mD4rZAAZMeJYSA9+O4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=PM9N0+RoTie5pPgO1G5CF3TRY4WYRnvG4NJpmjIZfdptuaktYAvPLi8Z/QwDDeSFUxQnMp/LI8LYEKBtSWs3N5PoNjm5dbJUP/8SW6c2tdxKqdFvGD2Jxx6uQg3FmmQV30+QaAVoeL8FnDnrMAZ2a7JegBeyUl/j85UK5JkXOlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=tt6hXxNF; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1724390525; c=relaxed/simple;
+	bh=02oePitC1YRTMIq8qs60oNRbz/9WvpkZje6s3ZT0Kw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtzPVu8Ywqx0l+XwnyY4Zn7bvzYrEBSxtmRBgFHYdcCPognMqxlM9orcSEOM8LrVDh6HbL2fFL8E9iqGtRGPN7CqruzkznFYNGGvFnKvKLZjlF1Oh1hEnWe2RB6+y2bK0gTFOe9u6IcIWUNQRKOlHeyvOssbUmHAT42X34EGT/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kQWIwuba; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bebb241fddso5149a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 22:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724390520; x=1724995320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uet9U2HrK3DDTVPxLWw7T/TPH3t4QYpkiQ6FRu69I08=;
+        b=kQWIwubaBJhbHpQtlonn5vyKtxBmV3tBW9l7Qajn3ZW+kSsK4QKlpHuhpOGv+kPsIi
+         ZyiryTyIeCQMPMW1R6M8oUCvCUuuhoO06tp0f7wtlW/3XFPD3cuYwSJMElwsyJHsl0Fx
+         T2tgLPf0YwMGlA36nvS+Fjod+q6CNcncSONc3SV3C5kf0Kl3zr0Pm16R2fsDVRT6Po2j
+         WHRYx0dQO0puvjTzosxFwDnTJAh0b3uNYvYipTIWvXjNYLWk4e8H6TKWN5TuLsbjPn4T
+         RuKpeuqvTfHkubHYNFEispo6cukfwYCAcL0phK2u5glc3i4yzxYN2buiDukfbxUxIp+j
+         45vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724390520; x=1724995320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uet9U2HrK3DDTVPxLWw7T/TPH3t4QYpkiQ6FRu69I08=;
+        b=uZZWDbO1X65FXi0abR3vc19jw7QWu8UQUQCtFpKr1ACIKTi4RdotHuo6fT4MsdQ0I0
+         eqqX1kQGa3qq/t5ya1efgZ0H4desPza4L9fykJbfHxEIKMuGC7eKsEco5rcZFHcMuJBc
+         TqmJILWR+ZSMWdeoB4f/fj0mi+c4sDvhMOP35TLwsp3sVWkHXK3a5LIgG+ysmHHLtRcj
+         nWWqmfLuoTSOlnhQ1Gz+zckggnj6smvDq8e/scnNnj5Z2sKbM6EpzE/h9rmcRpD0iaKZ
+         na5Ak7A51RepUkUEgL37BEpofRyKYA374irV0DvqRbJxtYXBIBPWYn+YK1Avp/bz+Gwh
+         9KGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Pd3UZiZKTtbtlwMt5HNVPoWl36jkZRnph9YS4QaRf0vqMsNbYwKn7eXdcnVT8JsVNCfUzaHGNe5Z9RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeiTvTtq1zLA5y4o8TUTBcp5kWwNblHCDYopKJ+1vDuJz7cA8/
+	UGf/smMx/zyWoE3D+78ICEZGXRplfyM2VeNuJvaQGvmauP4sB5fhO8eTe5wPZQ==
+X-Google-Smtp-Source: AGHT+IHX7tl5DbRivNHSGrXaXjN7w0N7ivyfde8OdjfcE2wwK+UU5/Q3ZPbA/FFuKu71Tegra0xcDA==
+X-Received: by 2002:a05:6402:51d1:b0:59f:9f59:9b07 with SMTP id 4fb4d7f45d1cf-5c0870abd46mr92310a12.4.1724390520099;
+        Thu, 22 Aug 2024 22:22:00 -0700 (PDT)
+Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110436sm3247482f8f.11.2024.08.22.22.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 22:21:59 -0700 (PDT)
+Date: Fri, 23 Aug 2024 05:21:58 +0000
+From: Sebastian Ene <sebastianene@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
+	ardb@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, james.morse@arm.com,
+	vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev,
+	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v8 5/6] KVM: arm64: Initialize the ptdump parser with
+ stage-2 attributes
+Message-ID: <Zsgcdjh4EvqFWMlA@google.com>
+References: <20240816123906.3683425-1-sebastianene@google.com>
+ <20240816123906.3683425-6-sebastianene@google.com>
+ <86plq3xoly.wl-maz@kernel.org>
+ <8634mwy1mt.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724390499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HzmZvveC6wUkegWFjFcZ6vvPhaoSjhDXWntSKAiTTl8=;
-	b=tt6hXxNFGDsfply3auC4MRRuFYG/g4Dm1wWJ8DptWYPMMff2J4SLcVmSms9hBUPKjQJkrX
-	9KJTuYDLjeWTjLa8EVbSDDUiUYdDp7ho+wVypTf5uboiyRvO1gFbxTQ+0TIHgQ+nKa6+3Z
-	2r6OHSmyYTqXvQiLyg5L8ZGOWgnuJIuukYCojZFZS2o9n1/C9VohN13F4/eCwxbqUCToMt
-	UhORguUlLFlQgGWvuYELTg4DtQUjL6jh6tCLJIj+GEPVJW4mXp48yKXUslcNZSg2EAcxU6
-	DI/B7llbB12Th77hefD9r6WPMHxqprShobuYkEXw/cR39dI6s7012PBT0Z71Iw==
-Date: Fri, 23 Aug 2024 07:21:39 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Linus
- Walleij <linus.walleij@linaro.org>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Steven Liu <steven.liu@rock-chips.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, kernel@collabora.com, Sascha Hauer
- <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/4] pinctrl: rockchip: Add rk3576 pinctrl support
-In-Reply-To: <20240822195706.920567-5-detlev.casanova@collabora.com>
-References: <20240822195706.920567-1-detlev.casanova@collabora.com>
- <20240822195706.920567-5-detlev.casanova@collabora.com>
-Message-ID: <b7f6a7217f3c0b6c92668197b14ae9f2@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8634mwy1mt.wl-maz@kernel.org>
 
-Hello Detlev,
+On Thu, Aug 22, 2024 at 05:15:54PM +0100, 'Marc Zyngier' via kernel-team wrote:
+> On Tue, 20 Aug 2024 15:20:25 +0100,
+> Marc Zyngier <maz@kernel.org> wrote:
+> > 
+> > On Fri, 16 Aug 2024 13:39:05 +0100,
+> > Sebastian Ene <sebastianene@google.com> wrote:
+> > > 
+> > > Define a set of attributes used by the ptdump parser to display the
+> > > properties of a guest memory region covered by a pagetable descriptor.
+> > > Build a description of the pagetable levels and initialize the parser
+> > > with this configuration.
+> > > 
+> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > ---
+> > >  arch/arm64/kvm/ptdump.c | 135 ++++++++++++++++++++++++++++++++++++++--
+> > >  1 file changed, 129 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> > > index 52483d56be2e..79be07ec3c3c 100644
+> > > --- a/arch/arm64/kvm/ptdump.c
+> > > +++ b/arch/arm64/kvm/ptdump.c
+> > > @@ -14,6 +14,51 @@
+> > >  #include <kvm_ptdump.h>
+> > >  
+> > >  
+> > > +#define MARKERS_LEN		(2)
+> > > +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
+> > > +
+> > > +struct kvm_ptdump_guest_state {
+> > > +	struct kvm		*kvm;
+> > > +	struct ptdump_pg_state	parser_state;
+> > > +	struct addr_marker	ipa_marker[MARKERS_LEN];
+> > > +	struct ptdump_pg_level	level[KVM_PGTABLE_MAX_LEVELS];
+> > > +	struct ptdump_range	range[MARKERS_LEN];
+> > > +};
+> > > +
+> > > +static const struct ptdump_prot_bits stage2_pte_bits[] = {
+> > > +	{
+> > > +		.mask	= PTE_VALID,
+> > > +		.val	= PTE_VALID,
+> > > +		.set	= " ",
+> > > +		.clear	= "F",
+> > > +	}, {
+> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > > +		.set	= "R",
+> > > +		.clear	= " ",
+> > > +	}, {
+> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> > > +		.set	= "W",
+> > > +		.clear	= " ",
+> > > +	}, {
+> > > +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> > > +		.val	= PTE_VALID,
+> > > +		.set	= " ",
+> > > +		.clear	= "X",
+> > > +	}, {
+> > > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> > > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> > > +		.set	= "AF",
+> > > +		.clear	= "  ",
+> > > +	}, {
+> > > +		.mask	= PTE_TABLE_BIT | PTE_VALID,
+> > > +		.val	= PTE_VALID,
+> > > +		.set	= "BLK",
+> > > +		.clear	= "   ",
+> > > +	},
+> > > +};
+> > > +
+> > >  static int kvm_ptdump_visitor(const struct kvm_pgtable_visit_ctx *ctx,
+> > >  			      enum kvm_pgtable_walk_flags visit)
+> > >  {
+> > > @@ -40,15 +85,81 @@ static int kvm_ptdump_show_common(struct seq_file *m,
+> > >  	return kvm_pgtable_walk(pgtable, 0, BIT(pgtable->ia_bits), &walker);
+> > >  }
+> > >  
+> > > +static int kvm_ptdump_build_levels(struct ptdump_pg_level *level, u32 start_lvl)
+> > > +{
+> > > +	static const char * const level_names[] = {"PGD", "PUD", "PMD", "PTE"};
+> > 
+> > How about 5 level page tables, which we support since v6.8? The
+> > architecture uses a SL=-1 in this case, and I have the feeling this is
+> > going to expose in a lovely way, given that you use a u32 for
+> > start_level... :-/
+> 
 
-On 2024-08-22 21:53, Detlev Casanova wrote:
-> From: Steven Liu <steven.liu@rock-chips.com>
-> 
-> Add support for the 5 rk3576 GPIO banks.
-> 
-> Signed-off-by: Steven Liu <steven.liu@rock-chips.com>
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+Hello Marc,
 
-Thanks for the patch.  I had a rather detailed look at the patch,
-while focusing on having no regressions introduced, and I found none.
-So, please feel free to include:
+> Talking to Oliver, I just had an epiphany: we never have a 5th level
+> with KVM, because we always use concatenated page tables at the start
+> level. So the depth is still 4 levels, but we get up to 16 pages at
+> level 0, and that's how we expand the IPA space from 48 to 52 bits.
+> 
 
-Acked-by: Dragan Simic <dsimic@manjaro.org>
+Thanks for letting me know. Then it should be fine keeping that as an
+unisgned integer.
 
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 207 +++++++++++++++++++++++++++++
->  drivers/pinctrl/pinctrl-rockchip.h |   1 +
->  2 files changed, 208 insertions(+)
+> So by the look of it, your code should still be OK with only 4 levels.
 > 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c
-> index 0eacaf10c640..914b27b5838d 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -84,6 +84,27 @@
->  		},							\
->  	}
+
+Thanks,
+Seb
+
+> Apologies for leading you in the wrong direction.
 > 
-> +#define PIN_BANK_IOMUX_FLAGS_OFFSET_PULL_FLAGS(id, pins, label, 
-> iom0,	\
-> +					       iom1, iom2, iom3,	\
-> +					       offset0, offset1,	\
-> +					       offset2, offset3, pull0,	\
-> +					       pull1, pull2, pull3)	\
-> +	{								\
-> +		.bank_num	= id,					\
-> +		.nr_pins	= pins,					\
-> +		.name		= label,				\
-> +		.iomux		= {					\
-> +			{ .type = iom0, .offset = offset0 },		\
-> +			{ .type = iom1, .offset = offset1 },		\
-> +			{ .type = iom2, .offset = offset2 },		\
-> +			{ .type = iom3, .offset = offset3 },		\
-> +		},							\
-> +		.pull_type[0] = pull0,					\
-> +		.pull_type[1] = pull1,					\
-> +		.pull_type[2] = pull2,					\
-> +		.pull_type[3] = pull3,					\
-> +	}
-> +
->  #define PIN_BANK_DRV_FLAGS(id, pins, label, type0, type1, type2, 
-> type3) \
->  	{								\
->  		.bank_num	= id,					\
-> @@ -1120,6 +1141,11 @@ static int rockchip_get_mux(struct
-> rockchip_pin_bank *bank, int pin)
->  	if (bank->recalced_mask & BIT(pin))
->  		rockchip_get_recalced_mux(bank, pin, &reg, &bit, &mask);
+> 	M.
 > 
-> +	if (ctrl->type == RK3576) {
-> +		if ((bank->bank_num == 0) && (pin >= RK_PB4) && (pin <= RK_PB7))
-> +			reg += 0x1ff4; /* GPIO0_IOC_GPIO0B_IOMUX_SEL_H */
-> +	}
-> +
->  	if (ctrl->type == RK3588) {
->  		if (bank->bank_num == 0) {
->  			if ((pin >= RK_PB4) && (pin <= RK_PD7)) {
-> @@ -1234,6 +1260,11 @@ static int rockchip_set_mux(struct
-> rockchip_pin_bank *bank, int pin, int mux)
->  	if (bank->recalced_mask & BIT(pin))
->  		rockchip_get_recalced_mux(bank, pin, &reg, &bit, &mask);
+> -- 
+> Without deviation from the norm, progress is not possible.
 > 
-> +	if (ctrl->type == RK3576) {
-> +		if ((bank->bank_num == 0) && (pin >= RK_PB4) && (pin <= RK_PB7))
-> +			reg += 0x1ff4; /* GPIO0_IOC_GPIO0B_IOMUX_SEL_H */
-> +	}
-> +
->  	if (ctrl->type == RK3588) {
->  		if (bank->bank_num == 0) {
->  			if ((pin >= RK_PB4) && (pin <= RK_PD7)) {
-> @@ -2038,6 +2069,142 @@ static int rk3568_calc_drv_reg_and_bit(struct
-> rockchip_pin_bank *bank,
->  	return 0;
->  }
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
 > 
-> +#define RK3576_DRV_BITS_PER_PIN		4
-> +#define RK3576_DRV_PINS_PER_REG		4
-> +#define RK3576_DRV_GPIO0_AL_OFFSET	0x10
-> +#define RK3576_DRV_GPIO0_BH_OFFSET	0x2014
-> +#define RK3576_DRV_GPIO1_OFFSET		0x6020
-> +#define RK3576_DRV_GPIO2_OFFSET		0x6040
-> +#define RK3576_DRV_GPIO3_OFFSET		0x6060
-> +#define RK3576_DRV_GPIO4_AL_OFFSET	0x6080
-> +#define RK3576_DRV_GPIO4_CL_OFFSET	0xA090
-> +#define RK3576_DRV_GPIO4_DL_OFFSET	0xB098
-> +
-> +static int rk3576_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-> +					int pin_num, struct regmap **regmap,
-> +					int *reg, u8 *bit)
-> +{
-> +	struct rockchip_pinctrl *info = bank->drvdata;
-> +
-> +	*regmap = info->regmap_base;
-> +
-> +	if (bank->bank_num == 0 && pin_num < 12)
-> +		*reg = RK3576_DRV_GPIO0_AL_OFFSET;
-> +	else if (bank->bank_num == 0)
-> +		*reg = RK3576_DRV_GPIO0_BH_OFFSET - 0xc;
-> +	else if (bank->bank_num == 1)
-> +		*reg = RK3576_DRV_GPIO1_OFFSET;
-> +	else if (bank->bank_num == 2)
-> +		*reg = RK3576_DRV_GPIO2_OFFSET;
-> +	else if (bank->bank_num == 3)
-> +		*reg = RK3576_DRV_GPIO3_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 16)
-> +		*reg = RK3576_DRV_GPIO4_AL_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 24)
-> +		*reg = RK3576_DRV_GPIO4_CL_OFFSET - 0x10;
-> +	else if (bank->bank_num == 4)
-> +		*reg = RK3576_DRV_GPIO4_DL_OFFSET - 0x18;
-> +	else
-> +		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
-> +
-> +	*reg += ((pin_num / RK3576_DRV_PINS_PER_REG) * 4);
-> +	*bit = pin_num % RK3576_DRV_PINS_PER_REG;
-> +	*bit *= RK3576_DRV_BITS_PER_PIN;
-> +
-> +	return 0;
-> +}
-> +
-> +#define RK3576_PULL_BITS_PER_PIN	2
-> +#define RK3576_PULL_PINS_PER_REG	8
-> +#define RK3576_PULL_GPIO0_AL_OFFSET	0x20
-> +#define RK3576_PULL_GPIO0_BH_OFFSET	0x2028
-> +#define RK3576_PULL_GPIO1_OFFSET	0x6110
-> +#define RK3576_PULL_GPIO2_OFFSET	0x6120
-> +#define RK3576_PULL_GPIO3_OFFSET	0x6130
-> +#define RK3576_PULL_GPIO4_AL_OFFSET	0x6140
-> +#define RK3576_PULL_GPIO4_CL_OFFSET	0xA148
-> +#define RK3576_PULL_GPIO4_DL_OFFSET	0xB14C
-> +
-> +static int rk3576_calc_pull_reg_and_bit(struct rockchip_pin_bank 
-> *bank,
-> +					 int pin_num, struct regmap **regmap,
-> +					 int *reg, u8 *bit)
-> +{
-> +	struct rockchip_pinctrl *info = bank->drvdata;
-> +
-> +	*regmap = info->regmap_base;
-> +
-> +	if (bank->bank_num == 0 && pin_num < 12)
-> +		*reg = RK3576_PULL_GPIO0_AL_OFFSET;
-> +	else if (bank->bank_num == 0)
-> +		*reg = RK3576_PULL_GPIO0_BH_OFFSET - 0x4;
-> +	else if (bank->bank_num == 1)
-> +		*reg = RK3576_PULL_GPIO1_OFFSET;
-> +	else if (bank->bank_num == 2)
-> +		*reg = RK3576_PULL_GPIO2_OFFSET;
-> +	else if (bank->bank_num == 3)
-> +		*reg = RK3576_PULL_GPIO3_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 16)
-> +		*reg = RK3576_PULL_GPIO4_AL_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 24)
-> +		*reg = RK3576_PULL_GPIO4_CL_OFFSET - 0x8;
-> +	else if (bank->bank_num == 4)
-> +		*reg = RK3576_PULL_GPIO4_DL_OFFSET - 0xc;
-> +	else
-> +		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
-> +
-> +	*reg += ((pin_num / RK3576_PULL_PINS_PER_REG) * 4);
-> +	*bit = pin_num % RK3576_PULL_PINS_PER_REG;
-> +	*bit *= RK3576_PULL_BITS_PER_PIN;
-> +
-> +	return 0;
-> +}
-> +
-> +#define RK3576_SMT_BITS_PER_PIN		1
-> +#define RK3576_SMT_PINS_PER_REG		8
-> +#define RK3576_SMT_GPIO0_AL_OFFSET	0x30
-> +#define RK3576_SMT_GPIO0_BH_OFFSET	0x2040
-> +#define RK3576_SMT_GPIO1_OFFSET		0x6210
-> +#define RK3576_SMT_GPIO2_OFFSET		0x6220
-> +#define RK3576_SMT_GPIO3_OFFSET		0x6230
-> +#define RK3576_SMT_GPIO4_AL_OFFSET	0x6240
-> +#define RK3576_SMT_GPIO4_CL_OFFSET	0xA248
-> +#define RK3576_SMT_GPIO4_DL_OFFSET	0xB24C
-> +
-> +static int rk3576_calc_schmitt_reg_and_bit(struct rockchip_pin_bank 
-> *bank,
-> +					   int pin_num,
-> +					   struct regmap **regmap,
-> +					   int *reg, u8 *bit)
-> +{
-> +	struct rockchip_pinctrl *info = bank->drvdata;
-> +
-> +	*regmap = info->regmap_base;
-> +
-> +	if (bank->bank_num == 0 && pin_num < 12)
-> +		*reg = RK3576_SMT_GPIO0_AL_OFFSET;
-> +	else if (bank->bank_num == 0)
-> +		*reg = RK3576_SMT_GPIO0_BH_OFFSET - 0x4;
-> +	else if (bank->bank_num == 1)
-> +		*reg = RK3576_SMT_GPIO1_OFFSET;
-> +	else if (bank->bank_num == 2)
-> +		*reg = RK3576_SMT_GPIO2_OFFSET;
-> +	else if (bank->bank_num == 3)
-> +		*reg = RK3576_SMT_GPIO3_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 16)
-> +		*reg = RK3576_SMT_GPIO4_AL_OFFSET;
-> +	else if (bank->bank_num == 4 && pin_num < 24)
-> +		*reg = RK3576_SMT_GPIO4_CL_OFFSET - 0x8;
-> +	else if (bank->bank_num == 4)
-> +		*reg = RK3576_SMT_GPIO4_DL_OFFSET - 0xc;
-> +	else
-> +		dev_err(info->dev, "unsupported bank_num %d\n", bank->bank_num);
-> +
-> +	*reg += ((pin_num / RK3576_SMT_PINS_PER_REG) * 4);
-> +	*bit = pin_num % RK3576_SMT_PINS_PER_REG;
-> +	*bit *= RK3576_SMT_BITS_PER_PIN;
-> +
-> +	return 0;
-> +}
-> +
->  #define RK3588_PMU1_IOC_REG		(0x0000)
->  #define RK3588_PMU2_IOC_REG		(0x4000)
->  #define RK3588_BUS_IOC_REG		(0x8000)
-> @@ -2332,6 +2499,10 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank,
->  		rmask_bits = RK3568_DRV_BITS_PER_PIN;
->  		ret = (1 << (strength + 1)) - 1;
->  		goto config;
-> +	} else if (ctrl->type == RK3576) {
-> +		rmask_bits = RK3576_DRV_BITS_PER_PIN;
-> +		ret = ((strength & BIT(2)) >> 2) | ((strength & BIT(0)) << 2) |
-> (strength & BIT(1));
-> +		goto config;
->  	}
-> 
->  	if (ctrl->type == RV1126) {
-> @@ -2469,6 +2640,7 @@ static int rockchip_get_pull(struct
-> rockchip_pin_bank *bank, int pin_num)
->  	case RK3368:
->  	case RK3399:
->  	case RK3568:
-> +	case RK3576:
->  	case RK3588:
->  		pull_type = bank->pull_type[pin_num / 8];
->  		data >>= bit;
-> @@ -2528,6 +2700,7 @@ static int rockchip_set_pull(struct
-> rockchip_pin_bank *bank,
->  	case RK3368:
->  	case RK3399:
->  	case RK3568:
-> +	case RK3576:
->  	case RK3588:
->  		pull_type = bank->pull_type[pin_num / 8];
->  		ret = -EINVAL;
-> @@ -2793,6 +2966,7 @@ static bool rockchip_pinconf_pull_valid(struct
-> rockchip_pin_ctrl *ctrl,
->  	case RK3368:
->  	case RK3399:
->  	case RK3568:
-> +	case RK3576:
->  	case RK3588:
->  		return (pull != PIN_CONFIG_BIAS_PULL_PIN_DEFAULT);
->  	}
-> @@ -3949,6 +4123,37 @@ static struct rockchip_pin_ctrl rk3568_pin_ctrl 
-> = {
->  	.schmitt_calc_reg	= rk3568_calc_schmitt_reg_and_bit,
->  };
-> 
-> +#define RK3576_PIN_BANK(ID, LABEL, OFFSET0, OFFSET1, OFFSET2, 
-> OFFSET3)	\
-> +	PIN_BANK_IOMUX_FLAGS_OFFSET_PULL_FLAGS(ID, 32, LABEL,		\
-> +					       IOMUX_WIDTH_4BIT,	\
-> +					       IOMUX_WIDTH_4BIT,	\
-> +					       IOMUX_WIDTH_4BIT,	\
-> +					       IOMUX_WIDTH_4BIT,	\
-> +					       OFFSET0, OFFSET1,	\
-> +					       OFFSET2, OFFSET3,	\
-> +					       PULL_TYPE_IO_1V8_ONLY,	\
-> +					       PULL_TYPE_IO_1V8_ONLY,	\
-> +					       PULL_TYPE_IO_1V8_ONLY,	\
-> +					       PULL_TYPE_IO_1V8_ONLY)
-> +
-> +static struct rockchip_pin_bank rk3576_pin_banks[] = {
-> +	RK3576_PIN_BANK(0, "gpio0", 0, 0x8, 0x2004, 0x200C),
-> +	RK3576_PIN_BANK(1, "gpio1", 0x4020, 0x4028, 0x4030, 0x4038),
-> +	RK3576_PIN_BANK(2, "gpio2", 0x4040, 0x4048, 0x4050, 0x4058),
-> +	RK3576_PIN_BANK(3, "gpio3", 0x4060, 0x4068, 0x4070, 0x4078),
-> +	RK3576_PIN_BANK(4, "gpio4", 0x4080, 0x4088, 0xA390, 0xB398),
-> +};
-> +
-> +static struct rockchip_pin_ctrl rk3576_pin_ctrl __maybe_unused = {
-> +	.pin_banks		= rk3576_pin_banks,
-> +	.nr_banks		= ARRAY_SIZE(rk3576_pin_banks),
-> +	.label			= "RK3576-GPIO",
-> +	.type			= RK3576,
-> +	.pull_calc_reg		= rk3576_calc_pull_reg_and_bit,
-> +	.drv_calc_reg		= rk3576_calc_drv_reg_and_bit,
-> +	.schmitt_calc_reg	= rk3576_calc_schmitt_reg_and_bit,
-> +};
-> +
->  static struct rockchip_pin_bank rk3588_pin_banks[] = {
->  	RK3588_PIN_BANK_FLAGS(0, 32, "gpio0",
->  			      IOMUX_WIDTH_4BIT, PULL_TYPE_IO_1V8_ONLY),
-> @@ -4005,6 +4210,8 @@ static const struct of_device_id
-> rockchip_pinctrl_dt_match[] = {
->  		.data = &rk3399_pin_ctrl },
->  	{ .compatible = "rockchip,rk3568-pinctrl",
->  		.data = &rk3568_pin_ctrl },
-> +	{ .compatible = "rockchip,rk3576-pinctrl",
-> +		.data = &rk3576_pin_ctrl },
->  	{ .compatible = "rockchip,rk3588-pinctrl",
->  		.data = &rk3588_pin_ctrl },
->  	{},
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.h
-> b/drivers/pinctrl/pinctrl-rockchip.h
-> index 849266f8b191..6ebbb0a88ce7 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.h
-> +++ b/drivers/pinctrl/pinctrl-rockchip.h
-> @@ -197,6 +197,7 @@ enum rockchip_pinctrl_type {
->  	RK3368,
->  	RK3399,
->  	RK3568,
-> +	RK3576,
->  	RK3588,
->  };
 
