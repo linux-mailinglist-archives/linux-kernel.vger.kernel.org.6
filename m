@@ -1,188 +1,193 @@
-Return-Path: <linux-kernel+bounces-298915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D455F95CD49
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:10:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFEB95CD77
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608EF1F22A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C481C220A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23037186612;
-	Fri, 23 Aug 2024 13:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E97C186E3B;
+	Fri, 23 Aug 2024 13:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTbbNuKL"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fLmaP+2Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A8F18660F
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6EC16BE14;
+	Fri, 23 Aug 2024 13:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418597; cv=none; b=ikx3yDnqDbQMyobBMIzTjOHTcHmGLche1pKUCbjNyP4FvPxVnKesx4cFCKa9ItttFveMQd0rBBAbPxN/TAeH3qoqeEdw++FZIHlxzMc/MCUxLhu95l8Y6PWcCSgBnfCLjXTbcNRHKfMXofkRg7C9yoxoDSVMrfbZJLvEINvtdE8=
+	t=1724418755; cv=none; b=rICTEe1+vVhgRGXgwDFT2bFYKCOE+8K6FnConXSOz3jyZvtLvrNj2SC6QTUtql28f8PZhgIMhDvrFZ91IWSvEnr7GYdai7BFo/pMVN0tflu/dQCAtRBuuxgm+joFV6GAtEy4dh0quFWSwYkANk6+Et1H7Ldyd/q0lne5lapq/e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418597; c=relaxed/simple;
-	bh=2inkt1HSSs8yK7Ur07Zj94tWlD+ohh7t2EGYKUEOAik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPXQwrI1jPXGaa/BpvMP/Ka2KXcHrMi9HNh/5mCeeDKF3hXFP1nMmBtvE5H+ZPFNGfBT3tKJhPOzXCAn4C5ps6O55pqIrlpBZ3iBgmhjemg2u7M4XvvoX3/mYN06YxLJi1P3Cq9Wo6iuyT66wm7MeDTsWV+EQ0PHs1TpNWaid6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTbbNuKL; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3717ff2358eso1016642f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724418594; x=1725023394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KwoowZQ8l1stDEvT19fP7caRf72q5eyqM6wnhXRpiRY=;
-        b=dTbbNuKLcEyl4HtUqNncwrEb0B2l8Z9XUC1zMtqG6OeTPQQX4/so3f0nwR0z5C9x2m
-         6MYhU0be033xeN/SiKjqYIuHuTb6G11xtyyRujy0Aswc2k+HxNW3H7rfESLaQGWDE9O9
-         SnxbglKO4gNjaUudzVky9deE+5gSdXYfOa1hYCvWR8yVkE342WAy9cQ+8qujNr/Y1MOA
-         K/9J/YjZCBMG7gvGTFEGAGgNBQkAuxFhzXlS0x2IydvQRX8NZC7J6zOzlEADKJlGtk59
-         eFCg8aH/8zukWb2DMMZR4A/VhUdiSs+hRBT/22sYHBgZOcvXae3RdJz0PKghCAvBA6Zj
-         QgnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724418594; x=1725023394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KwoowZQ8l1stDEvT19fP7caRf72q5eyqM6wnhXRpiRY=;
-        b=DoU51Kxh/L6hWGTSxiWjs8BSBN9UONesj7moTECBiwrjIw2jnYNEKvSDflvcZoZ5iu
-         O+myhHNFgNJpEjRYYGoBqOceRoOr10oEwqP8BFFdt+RI3y+1mKbKBv1suj45lYdSCGuG
-         tdQMZlqcUtWsO0tymqeK9mGGf0fABskmLUwKlA7lA0/NszhQ+JISPE7GhLAnUXXS7o2G
-         Bz/3IqLGea9+Cv6Aa3qXEg5mjBjBDhoSVUfRBY0kDIk7pX01K4jOXlwlUX3CjFXdeeHM
-         WGPkehGY5TMyHLCjl8KZd3fj3KDwjuLDTtIspEuo7qtftegPkDEjzNBhYJFadcOAHohJ
-         DFJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFcwdhjQ+W8jY5Vt6zYGD851uiJat1FZhtMvxEVSjeYsVDVWHgoTMXN3YL3uJpy/PJphu3fUJKHSVlvQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwljuTo5NbPio5zLL0j51Ff8tgGC7uYEq8Xpg9w9vdrHIMDReAu
-	8lg+Jc3ZkYsm9PVVb08QS819hTr7ZKAj5TaPGtZyvz7d4OFp4UJHTzt3mq8bmdkAB7+1rt6ZKPq
-	Qlfn86Ax9Ucz4ltF4Lfq9KM+mHuA9SmHEmBbA
-X-Google-Smtp-Source: AGHT+IHSoz5W9toLLADJUc7iP/4LDGyEBX8p4Wby0q53+YdJDBKyN8rx0Hivs+lO7ItAXkZ5QjAK4OX3+0uD3SrYGL8=
-X-Received: by 2002:a5d:4a08:0:b0:371:8bc4:4f with SMTP id ffacd0b85a97d-373118e2fc6mr1266378f8f.51.1724418593573;
- Fri, 23 Aug 2024 06:09:53 -0700 (PDT)
+	s=arc-20240116; t=1724418755; c=relaxed/simple;
+	bh=aVTST2pl/08bBIa3GVyrZCUMPOdhpKBeUaF1VGe3Dxw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F4qazEfCo+6GJP3foTkl5y1up2s8wYfS8Je9xYFM9FE/K+I1JdNiqENJWY8cxeLzMCdawbvLIBOF/UvnIlZNQDcqoovPdQiX0wWFP3BaF+7NbdM0/LojV/2rXDaCoxVhrtG+FyoO3DjkRz0dW/BOPg8ohsMm34AoYbv8otym64k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fLmaP+2Q; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724418754; x=1755954754;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=aVTST2pl/08bBIa3GVyrZCUMPOdhpKBeUaF1VGe3Dxw=;
+  b=fLmaP+2Qzp6XhfQqEYdBjKrZnMPq/mPfvzZrySUpYE+YagUekAzKLmXj
+   RfYxm4iwWLVfn79gy1fk0bOUdyBzDZjgBUFmE2clquP7vQeKL4P7/Rjsm
+   vLQ6P++y6FInjpB6ZnGhyzYIWKaBJM0awyZ8xnsNaDbVURRqAtgWYQMEg
+   tqdFj6Tr7DFPyMGR/xsvzW6eN8+lB5775J5mA3u3qzUr6Xx2xVaa7mLxV
+   TZrbtdbl63LE8X2FvdiAsl6+ADpKwcc08N7Z89+OFOt8lgOaoUwSCY3lp
+   sQIImVK+AQ2ZBbja6qenI+OAUbJH9NJ4P2c8jB9N6rKew62DfgGwQyeYy
+   g==;
+X-CSE-ConnectionGUID: K8cBoZqjTTCpFz+FiJfmtA==
+X-CSE-MsgGUID: 4UJYp7XASICFmVtwSyRqjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="34044237"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="34044237"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:12:33 -0700
+X-CSE-ConnectionGUID: mw48ja6wRTmvfcVTOAJWXQ==
+X-CSE-MsgGUID: l75Az5neRyeO5EdQnEuHZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="92584826"
+Received: from kkkuntal-desk3 (HELO [10.124.222.88]) ([10.124.222.88])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:12:32 -0700
+Message-ID: <863beeab7f6ecf36796394c75e95fc7a0396a862.camel@linux.intel.com>
+Subject: Re: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency
+ latency control to sysfs interface
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Tero
+	Kristo <tero.kristo@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org,  LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 23 Aug 2024 09:12:21 -0400
+In-Reply-To: <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com>
+References: <20240821131321.824326-1-tero.kristo@linux.intel.com>
+	 <20240821131321.824326-4-tero.kristo@linux.intel.com>
+	 <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
- <20240820143503.GD28338@willie-the-truck> <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
- <20240823122423.GB32110@willie-the-truck> <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
- <20240823125739.GA32156@willie-the-truck>
-In-Reply-To: <20240823125739.GA32156@willie-the-truck>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 23 Aug 2024 15:09:40 +0200
-Message-ID: <CAH5fLgiCr3hOEX1yaqy66OMsbPTtEhA4FCmRiw20zY64vYKHPw@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 2:57=E2=80=AFPM Will Deacon <will@kernel.org> wrote=
-:
->
-> On Fri, Aug 23, 2024 at 02:38:20PM +0200, Alice Ryhl wrote:
-> > On Fri, Aug 23, 2024 at 2:24=E2=80=AFPM Will Deacon <will@kernel.org> w=
-rote:
-> > >
-> > > On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
-> > > > On Tue, Aug 20, 2024 at 4:35=E2=80=AFPM Will Deacon <will@kernel.or=
-g> wrote:
-> > > > > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> > > > > > diff --git a/init/Kconfig b/init/Kconfig
-> > > > > > index fe76c5d0a72e..d857f6f90885 100644
-> > > > > > --- a/init/Kconfig
-> > > > > > +++ b/init/Kconfig
-> > > > > > @@ -1909,7 +1909,7 @@ config RUST
-> > > > > >       depends on !MODVERSIONS
-> > > > > >       depends on !GCC_PLUGINS
-> > > > > >       depends on !RANDSTRUCT
-> > > > > > -     depends on !SHADOW_CALL_STACK
-> > > > > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >=3D 10800=
-0 && UNWIND_PATCH_PAC_INTO_SCS
-> > > > >
-> > > > > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_=
-SCS is
-> > > > > specific to arm64 and the only other architecture selecting
-> > > > > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel i=
-t would
-> > > > > be cleaner to move this logic into the arch code selecting HAVE_R=
-UST.
-> > > > >
-> > > > > That is, it's up to the architecture to make sure that it has wha=
-tever
-> > > > > it needs for SCS to work with Rust if it claims to support Rust.
-> > > > >
-> > > > > What do you think?
-> > > >
-> > > > The `select RUST if ...` is going to get really complicated if we
-> > > > apply that rule in general. Having options here allows us to split
-> > > > them across several `depends on` clauses. I'm not sure it will even
-> > > > work, I had issues with cyclic Kconfig errors previously. I also do=
-n't
-> > > > think it's unreasonable for the architecture to say it supports bot=
-h
-> > > > options when it really does support both; they are just mutually
-> > > > exclusive. I also think there is value in having all of the options
-> > > > that Rust doesn't work with in one place.
-> > >
-> > > I'm not sure I follow why this will get really complicated. Isn't it =
-as
-> > > straightforward as the diff below, or did I miss something?
-> >
-> > Hmm. I tried this but I wasn't able to enable Rust with this setup.
-> > Even though the deps of RUSTC_SUPPORTS_ARM64 are ok, it doesn't seem
-> > to be enabled and I can't find it in menuconfig. I think we need to
-> > have a `select RUSTC_SUPPORTS_ARM64` somewhere.
->
-> Sorry, yes, my diff was a little half-arsed:
->
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index a2f8ff354ca6..2f5702cb9dac 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -231,7 +231,7 @@ config ARM64
-> > >         select HAVE_FUNCTION_ARG_ACCESS_API
-> > >         select MMU_GATHER_RCU_TABLE_FREE
-> > >         select HAVE_RSEQ
-> > > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> > > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
-> > >         select HAVE_STACKPROTECTOR
-> > >         select HAVE_SYSCALL_TRACEPOINTS
-> > >         select HAVE_KPROBES
-> > > @@ -265,6 +265,11 @@ config ARM64
-> > >         help
-> > >           ARM 64-bit (AArch64) Linux support.
-> > >
-> > > +config RUSTC_SUPPORTS_ARM64
-> > > +       bool
->
-> This line ^^^ should be 'def_bool y'.
+T24gRnJpLCAyMDI0LTA4LTIzIGF0IDE2OjAzICswMzAwLCBJbHBvIErDpHJ2aW5lbiB3cm90ZToK
+PiBPbiBXZWQsIDIxIEF1ZyAyMDI0LCBUZXJvIEtyaXN0byB3cm90ZToKPiAKPiA+IEFkZCB0aGUg
+VFBNSSBlZmZpY2llbmN5IGxhdGVuY3kgY29udHJvbCBmaWVsZHMgdG8gdGhlIHN5c2ZzCj4gPiBp
+bnRlcmZhY2UuCj4gPiBUaGUgc3lzZnMgZmlsZXMgYXJlIG1hcHBlZCB0byB0aGUgVFBNSSB1bmNv
+cmUgZHJpdmVyIHZpYSB0aGUKPiA+IHJlZ2lzdGVyZWQKPiA+IHVuY29yZV9yZWFkIGFuZCB1bmNv
+cmVfd3JpdGUgZHJpdmVyIGNhbGxiYWNrcy4gVGhlc2UgZmllbGRzIGFyZSBub3QKPiA+IHBvcHVs
+YXRlZCBvbiBvbGRlciBub24gVFBNSSBoYXJkd2FyZS4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
+VGVybyBLcmlzdG8gPHRlcm8ua3Jpc3RvQGxpbnV4LmludGVsLmNvbT4KPiA+IC0tLQo+ID4gwqAu
+Li4vdW5jb3JlLWZyZXF1ZW5jeS1jb21tb24uY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHwgNDIKPiA+ICsrKysrKysrKysrKysrKystLS0KPiA+IMKgLi4uL3VuY29yZS1mcmVxdWVu
+Y3ktY29tbW9uLmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEzICsrKysrLQo+
+ID4gwqAyIGZpbGVzIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4g
+PiAKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9pbnRlbC91bmNvcmUtZnJl
+cXVlbmN5L3VuY29yZS0KPiA+IGZyZXF1ZW5jeS1jb21tb24uYyBiL2RyaXZlcnMvcGxhdGZvcm0v
+eDg2L2ludGVsL3VuY29yZS0KPiA+IGZyZXF1ZW5jeS91bmNvcmUtZnJlcXVlbmN5LWNvbW1vbi5j
+Cj4gPiBpbmRleCA0ZTg4MDU4NWNiZTQuLmUyMmI2ODNhN2E0MyAxMDA2NDQKPiA+IC0tLSBhL2Ry
+aXZlcnMvcGxhdGZvcm0veDg2L2ludGVsL3VuY29yZS1mcmVxdWVuY3kvdW5jb3JlLWZyZXF1ZW5j
+eS0KPiA+IGNvbW1vbi5jCj4gPiArKysgYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9pbnRlbC91bmNv
+cmUtZnJlcXVlbmN5L3VuY29yZS1mcmVxdWVuY3ktCj4gPiBjb21tb24uYwo+ID4gQEAgLTYwLDEx
+ICs2MCwxNiBAQCBzdGF0aWMgc3NpemVfdCBzaG93X2F0dHIoc3RydWN0IHVuY29yZV9kYXRhCj4g
+PiAqZGF0YSwgY2hhciAqYnVmLCBlbnVtIHVuY29yZV9pbmRleAo+ID4gwqBzdGF0aWMgc3NpemVf
+dCBzdG9yZV9hdHRyKHN0cnVjdCB1bmNvcmVfZGF0YSAqZGF0YSwgY29uc3QgY2hhcgo+ID4gKmJ1
+Ziwgc3NpemVfdCBjb3VudCwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIGVudW0gdW5jb3JlX2luZGV4IGluZGV4KQo+ID4gwqB7Cj4gPiAtwqDC
+oMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQgaW5wdXQ7Cj4gPiArwqDCoMKgwqDCoMKgwqB1bnNpZ25l
+ZCBpbnQgaW5wdXQgPSAwOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGludCByZXQ7Cj4gPiDCoAo+ID4g
+LcKgwqDCoMKgwqDCoMKgaWYgKGtzdHJ0b3VpbnQoYnVmLCAxMCwgJmlucHV0KSkKPiA+IC3CoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVJTlZBTDsKPiA+ICvCoMKgwqDCoMKg
+wqDCoGlmIChpbmRleCA9PQo+ID4gVU5DT1JFX0lOREVYX0VGRl9MQVRfQ1RSTF9ISUdIX1RIUkVT
+SE9MRF9FTkFCTEUpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoa3N0
+cnRvYm9vbChidWYsIChib29sICopJmlucHV0KSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIC1FSU5WQUw7Cj4gPiArwqDCoMKgwqDCoMKg
+wqB9IGVsc2Ugewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChrc3RydG91
+aW50KGJ1ZiwgMTAsICZpbnB1dCkpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRUlOVkFMOwo+ID4gK8KgwqDCoMKgwqDCoMKgfQo+ID4g
+wqAKPiA+IMKgwqDCoMKgwqDCoMKgwqBtdXRleF9sb2NrKCZ1bmNvcmVfbG9jayk7Cj4gPiDCoMKg
+wqDCoMKgwqDCoMKgcmV0ID0gdW5jb3JlX3dyaXRlKGRhdGEsIGlucHV0LCBpbmRleCk7Cj4gPiBA
+QCAtMTAzLDYgKzEwOCwxOCBAQCBzaG93X3VuY29yZV9hdHRyKG1heF9mcmVxX2toeiwKPiA+IFVO
+Q09SRV9JTkRFWF9NQVhfRlJFUSk7Cj4gPiDCoAo+ID4gwqBzaG93X3VuY29yZV9hdHRyKGN1cnJl
+bnRfZnJlcV9raHosIFVOQ09SRV9JTkRFWF9DVVJSRU5UX0ZSRVEpOwo+ID4gwqAKPiA+ICtzdG9y
+ZV91bmNvcmVfYXR0cihlbGNfbG93X3RocmVzaG9sZF9wZXJjZW50LAo+ID4gVU5DT1JFX0lOREVY
+X0VGRl9MQVRfQ1RSTF9MT1dfVEhSRVNIT0xEKTsKPiA+ICtzdG9yZV91bmNvcmVfYXR0cihlbGNf
+aGlnaF90aHJlc2hvbGRfcGVyY2VudCwKPiA+IFVOQ09SRV9JTkRFWF9FRkZfTEFUX0NUUkxfSElH
+SF9USFJFU0hPTEQpOwo+ID4gK3N0b3JlX3VuY29yZV9hdHRyKGVsY19oaWdoX3RocmVzaG9sZF9l
+bmFibGUsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgVU5DT1JFX0lOREVY
+X0VGRl9MQVRfQ1RSTF9ISUdIX1RIUkVTSE9MRF9FTkFCTEUpOwo+ID4gK3N0b3JlX3VuY29yZV9h
+dHRyKGVsY19mbG9vcl9mcmVxX2toeiwKPiA+IFVOQ09SRV9JTkRFWF9FRkZfTEFUX0NUUkxfRlJF
+USk7Cj4gPiArCj4gPiArc2hvd191bmNvcmVfYXR0cihlbGNfbG93X3RocmVzaG9sZF9wZXJjZW50
+LAo+ID4gVU5DT1JFX0lOREVYX0VGRl9MQVRfQ1RSTF9MT1dfVEhSRVNIT0xEKTsKPiA+ICtzaG93
+X3VuY29yZV9hdHRyKGVsY19oaWdoX3RocmVzaG9sZF9wZXJjZW50LAo+ID4gVU5DT1JFX0lOREVY
+X0VGRl9MQVRfQ1RSTF9ISUdIX1RIUkVTSE9MRCk7Cj4gPiArc2hvd191bmNvcmVfYXR0cihlbGNf
+aGlnaF90aHJlc2hvbGRfZW5hYmxlLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBVTkNPUkVfSU5ERVhfRUZGX0xBVF9DVFJMX0hJR0hfVEhSRVNIT0xEX0VOQUJMRSk7Cj4gPiAr
+c2hvd191bmNvcmVfYXR0cihlbGNfZmxvb3JfZnJlcV9raHosCj4gPiBVTkNPUkVfSU5ERVhfRUZG
+X0xBVF9DVFJMX0ZSRVEpOwo+ID4gKwo+ID4gwqAjZGVmaW5lCj4gPiBzaG93X3VuY29yZV9kYXRh
+KG1lbWJlcl9uYW1lKcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ID4gwqDCoMKgwqDCoMKgwqDCoHN0YXRpYyBzc2l6
+ZV90IHNob3dfIyNtZW1iZXJfbmFtZShzdHJ1Y3Qga29iamVjdCAqa29iaizCoFwKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3Qga29ial9hdHRyaWJ1dGUKPiA+ICphdHRyLCBj
+aGFyICpidWYpXAo+ID4gQEAgLTE0Niw3ICsxNjMsOCBAQCBzaG93X3VuY29yZV9kYXRhKGluaXRp
+YWxfbWF4X2ZyZXFfa2h6KTsKPiA+IMKgCj4gPiDCoHN0YXRpYyBpbnQgY3JlYXRlX2F0dHJfZ3Jv
+dXAoc3RydWN0IHVuY29yZV9kYXRhICpkYXRhLCBjaGFyICpuYW1lKQo+ID4gwqB7Cj4gPiAtwqDC
+oMKgwqDCoMKgwqBpbnQgcmV0LCBmcmVxLCBpbmRleCA9IDA7Cj4gPiArwqDCoMKgwqDCoMKgwqBp
+bnQgcmV0LCBpbmRleCA9IDA7Cj4gPiArwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBpbnQgdmFsOwo+
+ID4gwqAKPiA+IMKgwqDCoMKgwqDCoMKgwqBpbml0X2F0dHJpYnV0ZV9ydyhtYXhfZnJlcV9raHop
+Owo+ID4gwqDCoMKgwqDCoMKgwqDCoGluaXRfYXR0cmlidXRlX3J3KG1pbl9mcmVxX2toeik7Cj4g
+PiBAQCAtMTY4LDEwICsxODYsMjQgQEAgc3RhdGljIGludCBjcmVhdGVfYXR0cl9ncm91cChzdHJ1
+Y3QKPiA+IHVuY29yZV9kYXRhICpkYXRhLCBjaGFyICpuYW1lKQo+ID4gwqDCoMKgwqDCoMKgwqDC
+oGRhdGEtPnVuY29yZV9hdHRyc1tpbmRleCsrXSA9ICZkYXRhLQo+ID4gPmluaXRpYWxfbWluX2Zy
+ZXFfa2h6X2tvYmpfYXR0ci5hdHRyOwo+ID4gwqDCoMKgwqDCoMKgwqDCoGRhdGEtPnVuY29yZV9h
+dHRyc1tpbmRleCsrXSA9ICZkYXRhLQo+ID4gPmluaXRpYWxfbWF4X2ZyZXFfa2h6X2tvYmpfYXR0
+ci5hdHRyOwo+ID4gwqAKPiA+IC3CoMKgwqDCoMKgwqDCoHJldCA9IHVuY29yZV9yZWFkKGRhdGEs
+ICZmcmVxLCBVTkNPUkVfSU5ERVhfQ1VSUkVOVF9GUkVRKTsKPiA+ICvCoMKgwqDCoMKgwqDCoHJl
+dCA9IHVuY29yZV9yZWFkKGRhdGEsICZ2YWwsIFVOQ09SRV9JTkRFWF9DVVJSRU5UX0ZSRVEpOwo+
+ID4gwqDCoMKgwqDCoMKgwqDCoGlmICghcmV0KQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBkYXRhLT51bmNvcmVfYXR0cnNbaW5kZXgrK10gPSAmZGF0YS0KPiA+ID5jdXJyZW50
+X2ZyZXFfa2h6X2tvYmpfYXR0ci5hdHRyOwo+ID4gwqAKPiA+ICvCoMKgwqDCoMKgwqDCoHJldCA9
+IHVuY29yZV9yZWFkKGRhdGEsICZ2YWwsCj4gPiBVTkNPUkVfSU5ERVhfRUZGX0xBVF9DVFJMX0xP
+V19USFJFU0hPTEQpOwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKCFyZXQpIHsKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpbml0X2F0dHJpYnV0ZV9ydyhlbGNfbG93X3RocmVzaG9s
+ZF9wZXJjZW50KTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpbml0X2F0dHJp
+YnV0ZV9ydyhlbGNfaGlnaF90aHJlc2hvbGRfcGVyY2VudCk7Cj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgaW5pdF9hdHRyaWJ1dGVfcncoZWxjX2hpZ2hfdGhyZXNob2xkX2VuYWJs
+ZSk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaW5pdF9hdHRyaWJ1dGVfcnco
+ZWxjX2Zsb29yX2ZyZXFfa2h6KTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqBkYXRhLT51bmNvcmVfYXR0cnNbaW5kZXgrK10gPSAmZGF0YS0KPiA+ID5lbGNfbG93X3Ro
+cmVzaG9sZF9wZXJjZW50X2tvYmpfYXR0ci5hdHRyOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoGRhdGEtPnVuY29yZV9hdHRyc1tpbmRleCsrXSA9ICZkYXRhLQo+ID4gPmVsY19o
+aWdoX3RocmVzaG9sZF9wZXJjZW50X2tvYmpfYXR0ci5hdHRyOwo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoGRhdGEtPnVuY29yZV9hdHRyc1tpbmRleCsrXSA9Cj4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCZkYXRhLQo+ID4gPmVsY19o
+aWdoX3RocmVzaG9sZF9lbmFibGVfa29ial9hdHRyLmF0dHI7Cj4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgZGF0YS0+dW5jb3JlX2F0dHJzW2luZGV4KytdID0gJmRhdGEtCj4gPiA+
+ZWxjX2Zsb29yX2ZyZXFfa2h6X2tvYmpfYXR0ci5hdHRyOwo+ID4gK8KgwqDCoMKgwqDCoMKgfQo+
+IAo+IFJldmlld2VkLWJ5OiBJbHBvIErDpHJ2aW5lbiA8aWxwby5qYXJ2aW5lbkBsaW51eC5pbnRl
+bC5jb20+Cj4gCj4gQnV0IEkgaGF2ZSB0byBzYXkgSSdtIG5vdCBiaWcgZmFuIG9mIHRoaXMgZnVu
+Y3Rpb24gdHJlYXRpbmcgYW55IGVycm9yCj4gYXMgCj4gYW4gaW1wbGljaXQgaW5kaWNhdGlvbiBv
+ZiBFTEMgbm90IHN1cHBvcnRlZC4KQWxzbyB0aGVyZSBpcyBhIGNoZWNrIGZvciB2ZXJzaW9uIG51
+bWJlciwgd2hpY2ggc3VwcG9ydHMgRUxDLiBTbyB0aGlzCmNvbmRpdGlvbiB3aWxsIG5ldmVyIGJl
+IHRydWUgdW5sZXNzIHNvbWUgSU8gcmVhZCBmYWlsdXJlLgoKPiAKPiBJcyB0aGF0IGV2ZW4gZ29p
+bmcgdG8gYmUgdHJ1ZSBhZnRlciB0aGlzOgo+IAo+IMKgCj4gaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
+bmVsLm9yZy9wcm9qZWN0L3BsYXRmb3JtLWRyaXZlci14ODYvcGF0Y2gvMjAyNDA4MjAyMDQ1NTgu
+MTI5NjMxOS0xLXNyaW5pdmFzLnBhbmRydXZhZGFAbGludXguaW50ZWwuY29tLwo+IAo+IC4uLmFz
+IHJvb3RfZG9tYWluIGlzIGVsaW1pbmF0ZWQgZm9yIG90aGVyIHJlYXNvbnMgdGhhbiBFTEMgCj4g
+c3VwcG9ydGVkL25vdC1zdXBwb3J0ZWQgKC1FTk9EQVRBIHJldHVybiBwYXRoKT8KRXZlbiBpZiBF
+TEMgaXMgbm90IHN1cHBvcnRlZCwgYnV0IGFsbCBvdGhlcnMgZmllbGRzIHdpbGwgYWx3YXlzIGJl
+CnN1cHBvcnRlZCBmcm9tIGJhc2UgdmVyc2lvbi4gVGhlIGFib3ZlIGNoYW5nZSBkb2Vzbid0IGRv
+IGFueXRoaW5nIHdpdGgKcm9vdCBkb21haW4uCgpUaGFua3MsClNyaW5pdmFzCj4gCgo=
 
-Ah, I see, I guess I learned something today. It also seems to work if
-I add `default y`.
-
-I can change it if you think this is better. I still think there's
-some value in having everything in one place, but it's not a big deal.
-Either way, it should be temporary for a few kernel releases as we'll
-eventually only support compiler versions where this works.
-
-Alice
 
