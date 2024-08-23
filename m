@@ -1,321 +1,169 @@
-Return-Path: <linux-kernel+bounces-299551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD78895D620
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BA495D622
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D222A1C218F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E27A1C223E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF5B193423;
-	Fri, 23 Aug 2024 19:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C751925BC;
+	Fri, 23 Aug 2024 19:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FjkcPNpZ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4sKgN5KW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+TpWoHjI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832DE192D67
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724441809; cv=fail; b=q1DPXudkOkyydVEZXtRgUqbb3ytUI0HS7S1JyGHUiJH7QUNwe/LsixXBNEJSXnnWvuu5/GF/tc5wLFEvs4HTY+oXsPmjhh0SMCNmEo56GHn5EC6j5p4E+rccVfqGIn3JNvASYx0nRO+/hCXabrjizVm5SAQp34gfdxnEnkXzsZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724441809; c=relaxed/simple;
-	bh=CVU2+bDXpAWA5TJBkKZQjGoGHZ62mwlaj9OtmASatIU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CZQwRGPtLMy+yWcr2QgS02bg/2ZvpGxsXANZ728dIFbgAQB4Bo2P343LXWXsxHEnaiAuwpvQhvPczzDETqSdzF2GRdi/vyKC7z5zDZEeG9uk+WYFh4AgHWQQKE/5rCO7zDRAKX03HxWyBlbw81oAU4JiDxGA+FGOpVM/MCSIsbE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FjkcPNpZ; arc=fail smtp.client-ip=40.107.237.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vrLdvVAYNnK0GXqQoPQm4dyZhaTVDxuvnrEqN6inGJdNrYhU4z25N2fHaSwOxCwifPjhi/rlVRt2HPZvA6l5MlwALoGjQhhRwkpTF5leYyv0YjU4iW4HlsrtbqtQZtZgwxaYo+6naUP3KKVW31PU6ArynM8DedR23wRiLoPIbqrBhfknUFxcJomkrRkPNDno654xRrKfeCmZnStmauXwWLOpfxhWyKqMLPBDsnr4xfxzx/i9Sv7OSD+WSWwrummQ2g874nS4owIPGFVRg1e1Em7DJFidqK0/dxJjrNJ0pZgIBQzPEsLq9Cj5c1SwNljktDnQSszUvgjqTxEUXiFhJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=54RpaQe43r3m1s3jgsbEk0pLsaUFOLQtoTRxmGcRr5Q=;
- b=xU8bLOxXWQBIDXUnfFu0V6bIeC69ocSKPjGVRgA12hHb/79sN9Tf/x1UhCWHVEexeJpVhBU2FJfDNCXG4BPE/D+Ay88kcI+463RqKZ8KTgn04s7vDMyj9o07874oiHq2MKTc9nJlA28/c609c8nYskmNi7x7/E/rrR0XSwM7MQdowiFAQ9Oiy96Oyr4XWD0eFIE1/gP8tbyXewy6DEhPAfS5bdap5mNfY3KeEBf9Jdw1McqbVOmF1QPp4+IZOMxxNdGGCT+Q+mV0rp0zP1MR0FmgzxnLnOodIAlGWa1O1LQqGhNfflbX1CXgxKoRB1RTAPUNCbeL95qTON4OzM4lzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=54RpaQe43r3m1s3jgsbEk0pLsaUFOLQtoTRxmGcRr5Q=;
- b=FjkcPNpZ1ZKQqoTmzy3n3sNLAaQ/2kAC31pgibFrQ2PikK3IWsJNhQ5rQIYqWXCuP/zqeW6Jb4nKuFHrfSkT4xTYkTTLrXK+Lf67f+fvNSFW8/+eW2shQVhYnrZvgtVRmf1NeIHJHSCxMeHQGhFbyIh4qeYDf8LpK8AzaFlb4Ic=
-Received: from BN8PR03CA0030.namprd03.prod.outlook.com (2603:10b6:408:94::43)
- by SA1PR12MB6822.namprd12.prod.outlook.com (2603:10b6:806:25d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Fri, 23 Aug
- 2024 19:36:44 +0000
-Received: from BL02EPF00021F6C.namprd02.prod.outlook.com
- (2603:10b6:408:94:cafe::ce) by BN8PR03CA0030.outlook.office365.com
- (2603:10b6:408:94::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
- Transport; Fri, 23 Aug 2024 19:36:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL02EPF00021F6C.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.11 via Frontend Transport; Fri, 23 Aug 2024 19:36:43 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 23 Aug
- 2024 14:36:43 -0500
-Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 23 Aug 2024 14:36:42 -0500
-From: Jason Andryuk <jason.andryuk@amd.com>
-To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
-	<boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Stefano Stabellini <sstabellini@kernel.org>, "Oleksandr
- Tyshchenko" <oleksandr_tyshchenko@epam.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
-CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>, "Jason
- Andryuk" <jason.andryuk@amd.com>
-Subject: [PATCH v3 5/5] x86/pvh: Add 64bit relocation page tables
-Date: Fri, 23 Aug 2024 15:36:30 -0400
-Message-ID: <20240823193630.2583107-6-jason.andryuk@amd.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240823193630.2583107-1-jason.andryuk@amd.com>
-References: <20240823193630.2583107-1-jason.andryuk@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F36194141;
+	Fri, 23 Aug 2024 19:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724441833; cv=none; b=kW8IKGl07nY8uPkHc9i02UWSk1KiDhGNC8JNcq3Dij9zgzVS1UmC6soIXN/6LA9h0Fbx+qCnae2uVny/Ti6NovtrHo7h/181Z4Jvw7oNH0VZ8+J/DRy1Z80OkHJcf5Tr8fWAsjKMuZm0JJQq0ixX8qLwvovtCN0j+P70mYGagtI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724441833; c=relaxed/simple;
+	bh=tDGUKTFFDz+eQxsRkH4HW2hZZRnnBbdQ4HgH8QC1MN8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=erqGCjd1BP8o3PBOIG3M/Dln1lRGii3R7o3WQWKwdX+3u+M73YLnlsmrYkc6p3duCKkTzJWhy7QYlPsVrUciq0kyjE3QQDsNRmyydrYVCgYIbeO1/1Zts4BoSPLZRjMeSkzbWMh3ENgeRUDCs2lXgYQyZg0p+qNA5If1FDZP0Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4sKgN5KW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+TpWoHjI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724441830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tMNEXEy8LYfPeU3VbzTfPdg4TGW9cMVuwbChRPo7i7I=;
+	b=4sKgN5KWiNBncsCtsH6uSpXyjbo6eqenis78E4xLBjhXODaAck6vSCWKpuTlq6Ho8Ggv1s
+	pPaK221WKIj4MyIXZ8OR/sPGaoFZ5+/2tQOUxzNlI+SU5HBX0e1B68GJ9jkp+bHJxMwDLY
+	K+8gv94qKrVAJdmFcg9wf40gKzjLCi2NSS8CXHXYIMRubcPMKaqgSfWVs3Hkf5WCRBNey/
+	MlJAFZ67u+0u7t65sipXt5nqD/0bEWbBrRn/9Cw6NguaKId3J40kRVm4Dvc7XJGNieXPmP
+	dd6O1pfM84ujh86SkfhWH2wiqIYZy5E12OrvTK2Q3SobR93bpNsWrOaOqHJ9hA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724441830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tMNEXEy8LYfPeU3VbzTfPdg4TGW9cMVuwbChRPo7i7I=;
+	b=+TpWoHjIka6H4IBx57soiRDpswa7rWr7Oi/TIDSP5GZyGTGP1vs27aOqGRkURYye7dFDp3
+	QqB8CB/Y8wDq4bBw==
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Serge Semin <fancer.lancer@gmail.com>, Paul
+ Burton <paulburton@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v3 09/10] irqchip: irq-mips-cpu: Rework software IRQ
+ handling flow
+In-Reply-To: <20240810-b4-mips-ipi-improvements-v3-9-1224fd7c4096@flygoat.com>
+References: <20240810-b4-mips-ipi-improvements-v3-0-1224fd7c4096@flygoat.com>
+ <20240810-b4-mips-ipi-improvements-v3-9-1224fd7c4096@flygoat.com>
+Date: Fri, 23 Aug 2024 21:37:09 +0200
+Message-ID: <87y14nf2u2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6C:EE_|SA1PR12MB6822:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f124fd5-18ca-4ed9-1407-08dcc3aaeb49
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kfGL76HojrxbYgwwBDmpX+cNmS9nZnQffV2efutiCAaLOqj5QxTU9Q2qUtLe?=
- =?us-ascii?Q?Axzp4zhDdm2rdA76xJSyEpx+5PpSRBQ/jG7MNBzGNQ4m5jFZGEQ8lU26+PPm?=
- =?us-ascii?Q?TAa7l/4dD89wjkkG7bK/z3Gg0HsM6saP3V4HBQY522fBY10aOsiJL+0bQnrH?=
- =?us-ascii?Q?7jCr9iot1JeY0g2Ijo3frjQLfCZT5/37eFgp0s+UnbYmR6Wcat0R3uRSED4e?=
- =?us-ascii?Q?39qmsRzk6ntGdSDwqWF06IfQEU/8EMMS6FVm+dYECz/Kds+SR6hJk1KfF07x?=
- =?us-ascii?Q?xPamdRPUmvj1y+oYKpNHGNsWLoWBqc4U0RBFoXUU5ITLWGtF95mCNgxkhOI1?=
- =?us-ascii?Q?ngxvvbCWDKGspH1EnGU4OuuY6GHBzXOLqOq+k9IjYXjCGystsXnfDyY8UnBu?=
- =?us-ascii?Q?kM/Xj9KuDyyFcKKLteXht6bnYnu9tCE+lBB+/DWl8FwFVCwygUMk12ezD27c?=
- =?us-ascii?Q?5e/tzR1ppddxQ29DQuHiJErfesky7ZsE2ig35DLSXb46vcKKo0nMlT+GgXMf?=
- =?us-ascii?Q?b5gGVnBC9jLGfQRuorZNKvdAkjiVynrE2D6EEoMQLe3BlpLMWZ57QXAHJVAD?=
- =?us-ascii?Q?lHcD/QTsDP7R7I9Zrh1HudEUUahw/A0ms+rXYbGUJgk4vVqYiSKFFmLbSXZt?=
- =?us-ascii?Q?Ow/hAC7+76AwOSnUtRrDkyLYkrqlOHnEjEchPkEh9MGNTaM+uo8nr0Gllb0P?=
- =?us-ascii?Q?DWyTjxyG3Pra3+qOmIaes5FzyTtNddDRb6N67sSvsSUVmPhP885XhdG4t3RT?=
- =?us-ascii?Q?RS8KwAIFziFHyXMn8wpvB5zPacieogWW14Zgl/NNy+zHRBZQtH3nKeXZE6AZ?=
- =?us-ascii?Q?GvLNOeXv+nn6rFgnwT2JDJ2gDy9FsZLuBARyeUuWmGG8pxxAnngrrsCyh9xZ?=
- =?us-ascii?Q?/dH8FAuOxolOeYRMa71wFunkBH/HF3ahNOKnoXt+534ZZx4gVGr0b/ZXT7ME?=
- =?us-ascii?Q?R9hY1eVON+WHCXML32eQL2YHxwbhOYmbJgHjwtjbqJtiTJsHjJfmrThaulR2?=
- =?us-ascii?Q?E9zk1XXY+Ng4KJ3EonWwqf53Gt8h7EpysOIDy7P+fhVRnf2wNNZSmVogw7RT?=
- =?us-ascii?Q?s0T4xh/GhrESOpTBMWldS+3KzfY2tjKzygpYaiJn8QJtQ4bdF/ya+hYj/bTk?=
- =?us-ascii?Q?WhHmbX+UG2cCnx36SST3LdOAim9NwbLomj8Ea04JM4JKRb3eIlhyG9S7sLTp?=
- =?us-ascii?Q?ZZJQayJCLYsUfs2QNwDQwvkgm7eUhvAZx1blXDii66hMXcOHeJCH2vrzeec4?=
- =?us-ascii?Q?+bBk0YsnNOtVwDtBm/33D8tZJDczYy2y+1oMeTO4s+VwE2x2vAZGZuJCUpn6?=
- =?us-ascii?Q?eyvDjhlN7BIIlVWGiOsBeWTnlDiFZxK0ZKf4/cy2IYqZlx0eoYPyCehcHTYQ?=
- =?us-ascii?Q?/xMEYYFcXyELKqpzrc5C0JapW8quVx+LsZnx/9Yrcue+Vzt/DHVVlV5smDZE?=
- =?us-ascii?Q?HGr0/A1hc6VoX8POkkJW1FEipT8TfWHE?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 19:36:43.7965
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f124fd5-18ca-4ed9-1407-08dcc3aaeb49
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6822
 
-The PVH entry point is 32bit.  For a 64bit kernel, the entry point must
-switch to 64bit mode, which requires a set of page tables.  In the past,
-PVH used init_top_pgt.
+On Sat, Aug 10 2024 at 13:39, Jiaxun Yang wrote:
 
-This works fine when the kernel is loaded at LOAD_PHYSICAL_ADDR, as the
-page tables are prebuilt for this address.  If the kernel is loaded at a
-different address, they need to be adjusted.
+Please fix the subsystem prefix.
 
-__startup_64() adjusts the prebuilt page tables for the physical load
-address, but it is 64bit code.  The 32bit PVH entry code can't call it
-to adjust the page tables, so it can't readily be re-used.
+> Remove unnecessary irq_chip hooks for software interrupts,
+> and don't mask them in ack hook to match kernel's expectation
+> on handling flow.
 
-64bit PVH entry needs page tables set up for identity map, the kernel
-high map and the direct map.  pvh_start_xen() enters identity mapped.
-Inside xen_prepare_pvh(), it jumps through a pv_ops function pointer
-into the highmap.  The direct map is used for __va() on the initramfs
-and other guest physical addresses.
+What's that expectation? You fail to explain why the current code is not
+matching them.
 
-Add a dedicated set of prebuild page tables for PVH entry.  They are
-adjusted in assembly before loading.
+> Create a irq_chip for regular (non-MT) mode software interrupts
+> so they will be acked as well.
 
-Add XEN_ELFNOTE_PHYS32_RELOC to indicate support for relocation
-along with the kernel's loading constraints.  The maximum load address,
-KERNEL_IMAGE_SIZE - 1, is determined by a single pvh_level2_ident_pgt
-page.  It could be larger with more pages.
+I'm failing to understand what this is about due to the lack of
+information above.
 
-Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
----
-v3:
-Include asm/pgtable.h to avoid 32bit build failure
+> -static struct irq_chip mips_cpu_irq_controller = {
+> +static unsigned int mips_sw_irq_startup(struct irq_data *d)
+> +{
+> +	clear_c0_cause(C_SW0 << d->hwirq);
+> +	back_to_back_c0_hazard();
+> +	unmask_mips_irq(d);
+> +	return 0;
+> +}
+> +
+> +static void mips_sw_irq_ack(struct irq_data *d)
+> +{
+> +	clear_c0_cause(C_SW0 << d->hwirq);
+> +	back_to_back_c0_hazard();
+> +}
 
-v2:
-Use some defines: PTRS_PER_PGD, PTRS_PER_PMD, PAGE_SIZE
-Add some spaces around operators and after commas
-Include asm/pgtable_64.h
-s/LOAD_PHYSICAL_ADDR/_pa(pvh_start_xen)/ in case they differ
----
- arch/x86/platform/pvh/head.S | 104 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 103 insertions(+), 1 deletion(-)
+Please move these functions to the place which actually requires them,
+i.e. after the cpu controller struct and before the new one.
 
-diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 14b4345d9bae..64fca49cd88f 100644
---- a/arch/x86/platform/pvh/head.S
-+++ b/arch/x86/platform/pvh/head.S
-@@ -16,6 +16,7 @@
- #include <asm/segment.h>
- #include <asm/asm.h>
- #include <asm/boot.h>
-+#include <asm/pgtable.h>
- #include <asm/processor-flags.h>
- #include <asm/msr.h>
- #include <asm/nospec-branch.h>
-@@ -102,8 +103,47 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	btsl $_EFER_LME, %eax
- 	wrmsr
- 
-+	mov %ebp, %ebx
-+	subl $_pa(pvh_start_xen), %ebx /* offset */
-+	jz .Lpagetable_done
-+
-+	/* Fixup page-tables for relocation. */
-+	leal rva(pvh_init_top_pgt)(%ebp), %edi
-+	movl $PTRS_PER_PGD, %ecx
-+2:
-+	testl $_PAGE_PRESENT, 0x00(%edi)
-+	jz 1f
-+	addl %ebx, 0x00(%edi)
-+1:
-+	addl $8, %edi
-+	decl %ecx
-+	jnz 2b
-+
-+	/* L3 ident has a single entry. */
-+	leal rva(pvh_level3_ident_pgt)(%ebp), %edi
-+	addl %ebx, 0x00(%edi)
-+
-+	leal rva(pvh_level3_kernel_pgt)(%ebp), %edi
-+	addl %ebx, (PAGE_SIZE - 16)(%edi)
-+	addl %ebx, (PAGE_SIZE - 8)(%edi)
-+
-+	/* pvh_level2_ident_pgt is fine - large pages */
-+
-+	/* pvh_level2_kernel_pgt needs adjustment - large pages */
-+	leal rva(pvh_level2_kernel_pgt)(%ebp), %edi
-+	movl $PTRS_PER_PMD, %ecx
-+2:
-+	testl $_PAGE_PRESENT, 0x00(%edi)
-+	jz 1f
-+	addl %ebx, 0x00(%edi)
-+1:
-+	addl $8, %edi
-+	decl %ecx
-+	jnz 2b
-+
-+.Lpagetable_done:
- 	/* Enable pre-constructed page tables. */
--	leal rva(init_top_pgt)(%ebp), %eax
-+	leal rva(pvh_init_top_pgt)(%ebp), %eax
- 	mov %eax, %cr3
- 	mov $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
-@@ -198,5 +238,67 @@ SYM_DATA_START_LOCAL(early_stack)
- 	.fill BOOT_STACK_SIZE, 1, 0
- SYM_DATA_END_LABEL(early_stack, SYM_L_LOCAL, early_stack_end)
- 
-+#ifdef CONFIG_X86_64
-+/*
-+ * Xen PVH needs a set of identity mapped and kernel high mapping
-+ * page tables.  pvh_start_xen starts running on the identity mapped
-+ * page tables, but xen_prepare_pvh calls into the high mapping.
-+ * These page tables need to be relocatable and are only used until
-+ * startup_64 transitions to init_top_pgt.
-+ */
-+SYM_DATA_START_PAGE_ALIGNED(pvh_init_top_pgt)
-+	.quad   pvh_level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.org    pvh_init_top_pgt + L4_PAGE_OFFSET * 8, 0
-+	.quad   pvh_level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.org    pvh_init_top_pgt + L4_START_KERNEL * 8, 0
-+	/* (2^48-(2*1024*1024*1024))/(2^39) = 511 */
-+	.quad   pvh_level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
-+SYM_DATA_END(pvh_init_top_pgt)
-+
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level3_ident_pgt)
-+	.quad	pvh_level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.fill	511, 8, 0
-+SYM_DATA_END(pvh_level3_ident_pgt)
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level2_ident_pgt)
-+	/*
-+	 * Since I easily can, map the first 1G.
-+	 * Don't set NX because code runs from these pages.
-+	 *
-+	 * Note: This sets _PAGE_GLOBAL despite whether
-+	 * the CPU supports it or it is enabled.  But,
-+	 * the CPU should ignore the bit.
-+	 */
-+	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
-+SYM_DATA_END(pvh_level2_ident_pgt)
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level3_kernel_pgt)
-+	.fill	L3_START_KERNEL, 8, 0
-+	/* (2^48-(2*1024*1024*1024)-((2^39)*511))/(2^30) = 510 */
-+	.quad	pvh_level2_kernel_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.quad	0 /* no fixmap */
-+SYM_DATA_END(pvh_level3_kernel_pgt)
-+
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level2_kernel_pgt)
-+	/*
-+	 * Kernel high mapping.
-+	 *
-+	 * The kernel code+data+bss must be located below KERNEL_IMAGE_SIZE in
-+	 * virtual address space, which is 1 GiB if RANDOMIZE_BASE is enabled,
-+	 * 512 MiB otherwise.
-+	 *
-+	 * (NOTE: after that starts the module area, see MODULES_VADDR.)
-+	 *
-+	 * This table is eventually used by the kernel during normal runtime.
-+	 * Care must be taken to clear out undesired bits later, like _PAGE_RW
-+	 * or _PAGE_GLOBAL in some cases.
-+	 */
-+	PMDS(0, __PAGE_KERNEL_LARGE_EXEC, KERNEL_IMAGE_SIZE / PMD_SIZE)
-+SYM_DATA_END(pvh_level2_kernel_pgt)
-+
-+	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_RELOC,
-+		     .long CONFIG_PHYSICAL_ALIGN;
-+		     .long LOAD_PHYSICAL_ADDR;
-+		     .long KERNEL_IMAGE_SIZE - 1)
-+#endif
-+
- 	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY,
- 	             _ASM_PTR (pvh_start_xen - __START_KERNEL_map))
--- 
-2.34.1
+> +
+> +static const struct irq_chip mips_cpu_irq_controller = {
+>  	.name		= "MIPS",
+>  	.irq_ack	= mask_mips_irq,
+>  	.irq_mask	= mask_mips_irq,
+> @@ -60,11 +74,19 @@ static struct irq_chip mips_cpu_irq_controller = {
+>  	.irq_enable	= unmask_mips_irq,
+>  };
+>  
+> +static const struct irq_chip mips_cpu_sw_irq_controller = {
+> +	.name		= "MIPS",
+> +	.irq_startup	= mips_sw_irq_startup,
+> +	.irq_ack	= mips_sw_irq_ack,
+> +	.irq_mask	= mask_mips_irq,
+> +	.irq_unmask	= unmask_mips_irq,
+> +};
 
+  
+>  asmlinkage void __weak plat_irq_dispatch(void)
+>  {
+> @@ -152,11 +170,14 @@ asmlinkage void __weak plat_irq_dispatch(void)
+>  static int mips_cpu_intc_map(struct irq_domain *d, unsigned int irq,
+>  			     irq_hw_number_t hw)
+>  {
+> -	struct irq_chip *chip;
+> +	const struct irq_chip *chip;
+>  
+> -	if (hw < 2 && cpu_has_mipsmt) {
+> -		/* Software interrupts are used for MT/CMT IPI */
+> -		chip = &mips_mt_cpu_irq_controller;
+> +	if (hw < 2) {
+> +		chip = &mips_cpu_sw_irq_controller;
+> +#ifdef CONFIG_MIPS_MT
+> +		if (cpu_has_mipsmt)
+> +			chip = &mips_mt_cpu_irq_controller;
+> +#endif
+
+Please move this into a helper function:
+
+#ifdef CONFIG_MIPS_MT
+static inline const struct irq_chip *mips_get_cpu_irqchip(void)
+{
+        return cpu_has_mipsmt ? &mips_mt_cpu_sw_irq_controller : &mips_cpu_sw_irq_controller;
+}
+#else
+#define 
+static inline const struct irq_chip *mips_get_cpu_irqchip(void)
+{
+        return &mips_cpu_sw_irq_controller;
+}
+#endif
+
+Hmm?
+
+Thanks,
+
+        tglx
 
