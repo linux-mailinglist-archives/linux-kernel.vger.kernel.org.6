@@ -1,213 +1,128 @@
-Return-Path: <linux-kernel+bounces-298523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7EE95C860
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:49:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1584495C863
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D021C21BAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC1C284B4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86391482F0;
-	Fri, 23 Aug 2024 08:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583941482F0;
+	Fri, 23 Aug 2024 08:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8xYP4k3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gp44Cj1z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232244C76;
-	Fri, 23 Aug 2024 08:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF9944C76
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402968; cv=none; b=J2e/2FnJKzA6eNyTaAl3eRJKZ5COAvvyVzY7l7qdJe6BOFsZUFzWfQLJqD9zbq4M5fG04y8jyoeKo9YXLhgFmPDZ8BMqrdkq9FSoChptZpm3Ge0O87FYqp2s/wO+sI7HruquKkOmZXT4UaekgPoXd7oITm8jTItCDaErXoo50Nc=
+	t=1724403053; cv=none; b=nMgerCmzqFL33MniEnQTaBfn3QEFQugxtBOXW6Baq1F2cuaSh2Eh4HanQxBurYcy9VrUSodElu5Qk/sZifwuirvHABEJr4joY798npKIgHwtQLlXaSiAWVPEkx5prRADLfJLqyAOez2R65OE39qGFpSkou6xATSlNEQ+hyqr5zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402968; c=relaxed/simple;
-	bh=zCE2kZSuqOPFejVfzIWBbTQf/qt0/VX9kCnDZTFKx2Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GxbEYGCyBA4P5VNPX8EmD6OBtCPtEjDV69w+rKFcJFM78HTEPHabA8An0RqyiEWR41I/Zmqg98DsF0NSwlA8RBv2bPWoqP73g0pzWvr7me2aztGbJ8oiLtV3JakqXvn4L3jnhThFm5gqSi8yAOFnNtMNnspPXJnzqOkTbwClVvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8xYP4k3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCCFC32786;
-	Fri, 23 Aug 2024 08:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724402968;
-	bh=zCE2kZSuqOPFejVfzIWBbTQf/qt0/VX9kCnDZTFKx2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i8xYP4k3ewj6fE4mQ+/VBWhzCjnSPwmNYTT4N81gCesGnl05TVs7xarsdMDTEhsua
-	 WrQETnlwpTX8Uzjzo9d0Ez1otntpVCMyp10pxmCDz4RwHLpMp5oSqxjr4U/1V1kyYD
-	 PNOu5j9E56plxGGMvIqPZ5AT9+2jhN+mUiaFGMSYbPWWWBfp2FPdI6IMVwacvfGVfl
-	 FjGp41usHf/BBtikuakb0zBMszV/+TfNy9PuUSyBqwzK/oP+5fS2WkHf80VV4pLorU
-	 ZxcCsUdHX2A0fMZQ1+rdPmLoFCQ8cAddOVxQUt5Jp9+6YJBwbe81vbt7V0FYLCnk9f
-	 QDtEvaVyThBOg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1shPz3-006Bvc-Vn;
-	Fri, 23 Aug 2024 09:49:26 +0100
-Date: Fri, 23 Aug 2024 09:49:25 +0100
-Message-ID: <86zfp3wrmy.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Kunkun Jiang <jiangkunkun@huawei.com>
-Cc: 	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse
- <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui
- Yu <yuzenghui@huawei.com>,
-	"open list:IRQ\
- SUBSYSTEM" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM SMMU\
- DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	kvmarm@lists.linux.dev,
-	"wanghaibin.wang@huawei.com" <wanghaibin.wang@huawei.com>,
-	nizhiqiang1@huawei.com,
-	"tangnianyao@huawei.com" <tangnianyao@huawei.com>,
-	wangzhou1@hisilicon.com
-Subject: Re: [bug report] GICv4.1: multiple vpus execute vgic_v4_load at the same time will greatly increase the time consumption
-In-Reply-To: <87o75kgspg.ffs@tglx>
-References: <a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com>
-	<86msl6xhu2.wl-maz@kernel.org>
-	<f1574274-efd8-eb56-436b-5a1dd7620f2c@huawei.com>
-	<867cc9x8si.wl-maz@kernel.org>
-	<bd3c3103-a6d7-a91b-911d-5bc5f2382dae@huawei.com>
-	<864j7cybay.wl-maz@kernel.org>
-	<87o75kgspg.ffs@tglx>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724403053; c=relaxed/simple;
+	bh=S4820Yj8epkSdTFs9Td/DHO5A96eHtVbmEjYzzVrkKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sxu9P7/t92/dZsZbayoeHNDHjbfsf0W+24NvRxv5CJUXav16PcqH7l5Ytxy+FFmYM75UANrLFwgBVPrfxOBXDdjNl884uOymia9FixdZpqY1wT1ble9PqKr+4+OCJdWNc2RSDjD0tYr0JvvvRl47+5V0dJTeOsG111Rz4oc0pCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gp44Cj1z; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724403051; x=1755939051;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=S4820Yj8epkSdTFs9Td/DHO5A96eHtVbmEjYzzVrkKE=;
+  b=gp44Cj1zszbeaHueZOQJz4A3vZmGfeD3Arzcwl7pg7nMpYrfQt0T74F+
+   TTzZDIClJuhYyb8GOSuPAmIMlzcT1TX/RRDPGIGgIs3PVLm5ev9azVjbP
+   /bWzui23vs7/9uqPIx/Ig9IcbayC18Z2tPw8fweGVsaxi/xOfHX52tkjX
+   tfpYxORK2UzZT2ZOP9mTX3dvntwys8XbhTH8/LJDJDGCqL5Il1NTHCWu3
+   /iHQumCwx7iQ1elQ1ZkFXhfODyYHGVgXBjPJdPN23021Z6QsqS0xfF+Jz
+   Aj613ZNf5akWbBL0k/BpjCx1ZivsLMg7UJlVqmYlUhaeZQm0Az7OwGN6w
+   g==;
+X-CSE-ConnectionGUID: X4JZnnCmQraKM916Z/x2CA==
+X-CSE-MsgGUID: KCVti8/MSyuzyQk+nblD7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22671272"
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="22671272"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 01:50:51 -0700
+X-CSE-ConnectionGUID: iv/lGtahQDqenJfIU935KQ==
+X-CSE-MsgGUID: /EvWJKMYS0mXx8taZkTpig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="66055615"
+Received: from mylly.fi.intel.com (HELO [10.237.72.154]) ([10.237.72.154])
+  by fmviesa005.fm.intel.com with ESMTP; 23 Aug 2024 01:50:49 -0700
+Message-ID: <c394ba6d-c219-4b9f-aa6b-3a48389c317a@linux.intel.com>
+Date: Fri, 23 Aug 2024 11:50:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, jiangkunkun@huawei.com, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, wanghaibin.wang@huawei.com, nizhiqiang1@huawei.com, tangnianyao@huawei.com, wangzhou1@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] i3c: mipi-i3c-hci: Read HC_CONTROL_PIO_MODE only
+ after i3c hci v1.1
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+ Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240821133554.391937-1-Shyam-sundar.S-k@amd.com>
+ <20240821133554.391937-3-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240821133554.391937-3-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 22 Aug 2024 22:20:43 +0100,
-Thomas Gleixner <tglx@linutronix.de> wrote:
+Hi
+
+On 8/21/24 4:35 PM, Shyam Sundar S K wrote:
+> The HC_CONTROL_PIO_MODE bit was introduced in the HC_CONTROL register
+> starting from version 1.1. Therefore, checking the HC_CONTROL_PIO_MODE bit
+> on hardware that adheres to older specification revisions (i.e., versions
+> earlier than 1.1) is incorrect. To address this, add an additional check
+> to read the HCI version before attempting to read the HC_CONTROL_PIO_MODE
+> status.
 > 
-> On Thu, Aug 22 2024 at 13:47, Marc Zyngier wrote:
-> > On Thu, 22 Aug 2024 11:59:50 +0100,
-> > Kunkun Jiang <jiangkunkun@huawei.com> wrote:
-> >> > but that will eat a significant portion of your stack if your kernel is
-> >> > configured for a large number of CPUs.
-> >> > 
-> >> 
-> >> Currently CONFIG_NR_CPUS=4096,each `struct cpumask` occupies 512 bytes.
-> >
-> > This seems crazy. Why would you build a kernel with something *that*
-> > big, specially considering that you have a lot less than 1k CPUs?
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+>   drivers/i3c/master/mipi-i3c-hci/core.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> That's why CONFIG_CPUMASK_OFFSTACK exists, but that does not help in
-> that context. :)
->
-> >> > The removal of this global lock is the only option in my opinion.
-> >> > Either the cpumask becomes a stack variable, or it becomes a static
-> >> > per-CPU variable. Both have drawbacks, but they are not a bottleneck
-> >> > anymore.
-> >> 
-> >> I also prefer to remove the global lock. Which variable do you think is
-> >> better?
-> >
-> > Given the number of CPUs your system is configured for, there is no
-> > good answer. An on-stack variable is dangerously large, and a per-CPU
-> > cpumask results in 2MB being allocated, which I find insane.
-> 
-> Only if there are actually 4096 CPUs enumerated. The per CPU magic is
-> smart enough to limit the damage to the actual number of possible CPUs
-> which are enumerated at boot time. It still will over-allocate due to
-> NR_CPUS being insanely large but on a 4 CPU machine this boils down to
-> 2k of memory waste unless Aaarg64 is stupid enough to allocate for
-> NR_CPUS instead of num_possible_cpus()...
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+> index b02fbd7882f8..d1952a5619d4 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+> @@ -33,6 +33,7 @@
+>   #define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
+>   
+>   #define HCI_VERSION			0x00	/* HCI Version (in BCD) */
+> +#define HCI_VERSION_V1			0x100   /* MIPI HCI Version number v1.0 */
+>   
+>   #define HC_CONTROL			0x04
+>   #define HC_CONTROL_BUS_ENABLE		BIT(31)
+> @@ -756,7 +757,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
+>   	/* Try activating DMA operations first */
+>   	if (hci->RHS_regs) {
+>   		reg_clear(HC_CONTROL, HC_CONTROL_PIO_MODE);
+> -		if (reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE) {
+> +		if (regval > HCI_VERSION_V1 && (reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE)) {
+>   			dev_err(&hci->master.dev, "PIO mode is stuck\n");
+>   			ret = -EIO;
+>   		} else {
 
-No difference between arm64 and xyz85.999 here.
+Actually here after this patch regval doesn't contain the version but 
+HC_CONTROL which is read some line above. HCI_VERSION read is added by 
+the patch 3/6 so this patch alone may cause a regression.
 
-> 
-> That said, on a real 4k CPU system 2M of memory should be the least of
-> your worries.
-
-Don't underestimate the general level of insanity!
-
-> 
-> > You'll have to pick your own poison and convince Thomas of the
-> > validity of your approach.
-> 
-> As this is an operation which is really not suitable for on demand
-> or large stack allocations the per CPU approach makes sense.
-
-Right, so let's shoot for that. Kunkun, can you please give the
-following hack a go with your workload?
-
-Thanks,
-
-	M.
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index dd53298ef1a5..b6aa259ac749 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -224,15 +224,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	struct irq_desc *desc = irq_data_to_desc(data);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	const struct cpumask  *prog_mask;
-+	struct cpumask *tmp_mask;
- 	int ret;
- 
--	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
--	static struct cpumask tmp_mask;
-+	static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
- 
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
- 
--	raw_spin_lock(&tmp_mask_lock);
-+	tmp_mask = this_cpu_ptr(&__tmp_mask);
-+
- 	/*
- 	 * If this is a managed interrupt and housekeeping is enabled on
- 	 * it check whether the requested affinity mask intersects with
-@@ -258,11 +259,11 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 
- 		hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
- 
--		cpumask_and(&tmp_mask, mask, hk_mask);
--		if (!cpumask_intersects(&tmp_mask, cpu_online_mask))
-+		cpumask_and(tmp_mask, mask, hk_mask);
-+		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
- 			prog_mask = mask;
- 		else
--			prog_mask = &tmp_mask;
-+			prog_mask = tmp_mask;
- 	} else {
- 		prog_mask = mask;
- 	}
-@@ -272,16 +273,14 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	 * unless we are being asked to force the affinity (in which
- 	 * case we do as we are told).
- 	 */
--	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
--	if (!force && !cpumask_empty(&tmp_mask))
--		ret = chip->irq_set_affinity(data, &tmp_mask, force);
-+	cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
-+	if (!force && !cpumask_empty(tmp_mask))
-+		ret = chip->irq_set_affinity(data, tmp_mask, force);
- 	else if (force)
- 		ret = chip->irq_set_affinity(data, mask, force);
- 	else
- 		ret = -EINVAL;
- 
--	raw_spin_unlock(&tmp_mask_lock);
--
- 	switch (ret) {
- 	case IRQ_SET_MASK_OK:
- 	case IRQ_SET_MASK_OK_DONE:
-
--- 
-Without deviation from the norm, progress is not possible.
+I'd say better to use already set hci->version_major and 
+hci->version_minor since then code is not vulnerable if some other 
+regval = reg_read(OTHER_REG) is added later before this code block.
 
