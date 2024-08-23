@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-299733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5AB95D964
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C1495D965
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114511F2310E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9661C21EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2721C8FD7;
-	Fri, 23 Aug 2024 22:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD1B1C93DC;
+	Fri, 23 Aug 2024 22:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlkjijJQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuB06APX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1083195
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 22:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7AB195;
+	Fri, 23 Aug 2024 22:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724453833; cv=none; b=ZYrIJ95i8vphyoT/+9LvHBJeRmNPJXlWis414b0ICZRMo1Ca7e4IfvuqQQF36Y2cxLD2x7e8rljrsqLfGn8r5Sb96Y3qZLNUayUvVYOs5WjV/GjzvBd+NJPd3GWBFjc3lpbWFekRWc/EPb41XYLOvH6/2D5QDSHg4HDBrd/cTcM=
+	t=1724453837; cv=none; b=oKug8Rz04hpavn2pl08jU7maAtuUCl59msZlRoe3CsSI3n/VsQES1s+73RsbeTVDDpd9GZEiIjD/35cvy9lScqc5EIupeJwRHjsK3phQpbPEa30iXHCzHXwhepjU0umMavR2eAXTyQEOgy3NNX4Hjs7KDCk9A8fkfT0zQLcaoWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724453833; c=relaxed/simple;
-	bh=WGw6JUm1Y5hmOvtgjkIEwcbBD5ApOo8rwtxWsE1F5wQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uY2pF5JmtK+V1sahauPyKnDARpG2F3FqweEoy1hKLfy7eEsmgIJtWkCo0V9YJIxo2DcqPJgQAK5+SbRdjdw3TdVnZ/CDYxkP/pbMCcgMjPodP39KngHILgKtkn9qaAI+wvzzU+QsMnpi33E/ZqJtkAWSDfjzZ5ygFtsS5lfmdso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlkjijJQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD65C32786;
-	Fri, 23 Aug 2024 22:57:11 +0000 (UTC)
+	s=arc-20240116; t=1724453837; c=relaxed/simple;
+	bh=5re0XXR5mMdIdi6tFfPqPdlxaclMxPhMNEH4/z7dZyY=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ui35kwPLhRihcWHIku5WgQa3OhRjHxEKrwY9Lx5xx57kY+VW5FS1iVH6raaIlAxV4AcZlvbThRWL0RA5QAviDaXghRBwwOB4ckYYfu1O3haX1Bcp8Qa3M5/AQrke44UOdqXvyOv6bIfz1sUT7Q4uAwv+pi1ebwOx4gdaS/oADCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuB06APX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10BCC32786;
+	Fri, 23 Aug 2024 22:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724453833;
-	bh=WGw6JUm1Y5hmOvtgjkIEwcbBD5ApOo8rwtxWsE1F5wQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=XlkjijJQJ/RpkjEC34A9BX3PPwf58RcM4qt35rUiOphnmpA7qmgAoQw/sf3w8/YVV
-	 z7ZdXpi0m56yccfYUEY7M2MP5eHKvRBbPkPZcdvDThhVf6jyEX2/uJ3dJ96A9l0Y+r
-	 Fk4wIKPOQLC6rUyJUJWyoeZQY1H2aTyEW0CA00vrcv2up9Ab4fzOTggw3LJgnUM3Ie
-	 i4s+m4mNpHeDGEL4PaMJR7QdLSzt2zFw5XGaYo1vbbv1fjfftPb4CVGJBCCT2gErng
-	 bdgQJCuSdV8cH55bQSrtQgfT0XRJC0VXyp/cdJWE6w/gcx31zfkDJp37apWM+IdDY6
-	 mwD/9CBjWoP+g==
+	s=k20201202; t=1724453837;
+	bh=5re0XXR5mMdIdi6tFfPqPdlxaclMxPhMNEH4/z7dZyY=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=DuB06APXyTAKSMi6OlPwnSqwvvVomlNUhFx7Y57PGJc1DYO59tBWOnJWLBFt+Xy/L
+	 2F2TWlU52hNiiswGvB26J+jlKZNWarQ4jrs4bTKJZD49XvR5v2a6cMkYdv8a6vicla
+	 YtdwPxsS1ZFJuHTIHbeDp648kMZMAfF2IAA/ZsGDRsXaPmnoOYU4+rhbBGLFPToaWC
+	 JZI1NxGzti92u8fuGKy+K7mDCt/yp9xD9N9Ll8RqEQxhWUi0OY6rVvVl9LlYWif+Ru
+	 hrKGk96uk65pYwS1tgKxzyMab/Ev7zh9rNlfZ+xYpEp7Ei97s8FIJ+L8KZRsU8SCRl
+	 86VOZFlVCGBVg==
 From: Mark Brown <broonie@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- maple-tree@lists.infradead.org, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
-References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
-Subject: Re: (subset) [PATCH 0/5] regmap: Improve lock handling with maple
- tree
-Message-Id: <172445383117.842265.10956767948362419603.b4-ty@kernel.org>
-Date: Fri, 23 Aug 2024 23:57:11 +0100
+To: j.neuschaefer@gmx.net, openbmc@lists.ozlabs.org, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240820123518.1788294-1-ruanjinjie@huawei.com>
+References: <20240820123518.1788294-1-ruanjinjie@huawei.com>
+Subject: Re: [PATCH -next] spi: wpcm-fiu: Use
+ devm_platform_ioremap_resource_byname()
+Message-Id: <172445383531.842317.17431935290870556217.b4-ty@kernel.org>
+Date: Fri, 23 Aug 2024 23:57:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,27 +60,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Thu, 22 Aug 2024 20:13:34 +0100, Mark Brown wrote:
-> The lockdep asserts in the maple tree code and the double locking that
-> we're doing continue to cause issues, most recently some warnings
-> reported by Cristian Ciocaltea due to dynamic cache allocations in
-> interrupt context (which are an issue in themselves, but still).  Let's
-> start trying to improve the situation by configuring the regmap lock as
-> an external lock for maple tree, allowing it to do it's asserts without
-> having a separate lock.
+On Tue, 20 Aug 2024 20:35:18 +0800, Jinjie Ruan wrote:
+> Use the devm_platform_ioremap_resource_byname() helper instead of
+> calling platform_get_resource_byname() and devm_ioremap_resource()
+> separately.
 > 
-> [...]
+> 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[2/5] regmap: Hold the regmap lock when allocating and freeing the cache
-      commit: fd4ebc07b4dff7e1abedf1b7fd477bc04b69ae55
-[3/5] regmap: Use locking during kunit tests
-      commit: 290d6e5d6498703accffc66849b7fb2d4d7503ff
+[1/1] spi: wpcm-fiu: Use devm_platform_ioremap_resource_byname()
+      commit: 3bf2a5359b0bde22418705ec862ac5077312e4c2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
