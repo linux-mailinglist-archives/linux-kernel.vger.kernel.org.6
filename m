@@ -1,205 +1,106 @@
-Return-Path: <linux-kernel+bounces-299732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F5095D961
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:55:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5AB95D964
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C3628379C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114511F2310E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE661C8FD9;
-	Fri, 23 Aug 2024 22:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2721C8FD7;
+	Fri, 23 Aug 2024 22:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ux/qa2If"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlkjijJQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AFA1C825C;
-	Fri, 23 Aug 2024 22:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1083195
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 22:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724453699; cv=none; b=Nvg5Y0GPVy/HP7csg2KbymN+GtlhwD9GFFV/2PBEklI/nLub3Pmb2pJlS65Ze6ziyM/7iSTWTHC2T/KZPBdKWC1p7pH/jBdTZ0jJhigPBUXmtrC56JFMHP1JgoRP4HihrTDr/A/cryFKY618iBJUCNo/lzlTBiVQPUHshQBUJ8I=
+	t=1724453833; cv=none; b=ZYrIJ95i8vphyoT/+9LvHBJeRmNPJXlWis414b0ICZRMo1Ca7e4IfvuqQQF36Y2cxLD2x7e8rljrsqLfGn8r5Sb96Y3qZLNUayUvVYOs5WjV/GjzvBd+NJPd3GWBFjc3lpbWFekRWc/EPb41XYLOvH6/2D5QDSHg4HDBrd/cTcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724453699; c=relaxed/simple;
-	bh=Rnj+dk2XHjizn5i53H8f9IyUV6MwSkaqFicjA03ZnqI=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=MJypA8HNcM5F8U/d2YKUGYdIdZz7qNalfKtxWmO/NTMaU6ap3c5B1Nfs+36MrbWBFvYUGES6dtnxHIGikpJXA+6rs54/6Dqn1OXElkRC3sFvwM/+Wrl7L/Bv/AqeedPyIqV5w7aF+5ojAqjYiMt4FXF4Oxj/ERg44LYSTr7rZuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ux/qa2If; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240823225453euoutp026a4c1e9d554dbce0fba5d82bb33e8c10~ufX940N8x0994209942euoutp02M;
-	Fri, 23 Aug 2024 22:54:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240823225453euoutp026a4c1e9d554dbce0fba5d82bb33e8c10~ufX940N8x0994209942euoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724453693;
-	bh=WZywpxZk213zxxUl31497eHvW1dsZ+KqGEl5j8Wx7YI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Ux/qa2IftSlmEfjUkiRYodMEceK94MePWDuHOrGKbBtBLxgI5Xzqk77nhgNloL46K
-	 4+sUO+BwP8os6IGpz/lpGM5WxluxoZ9UYHpSgPe7uiHOcxDJMH1i5OtWRbrto9ahX5
-	 NpOlMgQBAsUcxMoKWU8vqIQWCN6/r/YH03F77MtE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240823225453eucas1p1eb9974f802f13dbd765f97f84c89c7e5~ufX9WRNYf1031110311eucas1p1k;
-	Fri, 23 Aug 2024 22:54:53 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id AC.99.09875.C3319C66; Fri, 23
-	Aug 2024 23:54:53 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240823225452eucas1p16c2a886d94d236a72889bbaccef65274~ufX8PS9uX1030710307eucas1p1U;
-	Fri, 23 Aug 2024 22:54:51 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240823225451eusmtrp140cbc81b3a594842dbec333e3f0c13be~ufX8LeoJo2368423684eusmtrp1g;
-	Fri, 23 Aug 2024 22:54:51 +0000 (GMT)
-X-AuditID: cbfec7f4-11bff70000002693-21-66c9133c0156
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id CA.86.08810.B3319C66; Fri, 23
-	Aug 2024 23:54:51 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240823225451eusmtip13ade4e62403833e6c850d99cd91c7f36~ufX77yOEz1404214042eusmtip1L;
-	Fri, 23 Aug 2024 22:54:51 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 23 Aug 2024 23:54:51 +0100
-Date: Sat, 24 Aug 2024 00:54:50 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Nicolas Schier <nicolas@fjasle.eu>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada
-	<masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, "Lucas De
- Marchi" <lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
-	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
-	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
-	Moore <paul@paul-moore.com>, Stephen Smalley
-	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
-	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
-	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
-	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
-	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
- (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>
-Subject: Re: [PATCH 08/12] include: add elf.h support
-Message-ID: <20240823225450.spuvjs5b5ruujim4@AALNPWDAGOMEZ1.aal.scsc.local>
+	s=arc-20240116; t=1724453833; c=relaxed/simple;
+	bh=WGw6JUm1Y5hmOvtgjkIEwcbBD5ApOo8rwtxWsE1F5wQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uY2pF5JmtK+V1sahauPyKnDARpG2F3FqweEoy1hKLfy7eEsmgIJtWkCo0V9YJIxo2DcqPJgQAK5+SbRdjdw3TdVnZ/CDYxkP/pbMCcgMjPodP39KngHILgKtkn9qaAI+wvzzU+QsMnpi33E/ZqJtkAWSDfjzZ5ygFtsS5lfmdso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlkjijJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD65C32786;
+	Fri, 23 Aug 2024 22:57:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724453833;
+	bh=WGw6JUm1Y5hmOvtgjkIEwcbBD5ApOo8rwtxWsE1F5wQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XlkjijJQJ/RpkjEC34A9BX3PPwf58RcM4qt35rUiOphnmpA7qmgAoQw/sf3w8/YVV
+	 z7ZdXpi0m56yccfYUEY7M2MP5eHKvRBbPkPZcdvDThhVf6jyEX2/uJ3dJ96A9l0Y+r
+	 Fk4wIKPOQLC6rUyJUJWyoeZQY1H2aTyEW0CA00vrcv2up9Ab4fzOTggw3LJgnUM3Ie
+	 i4s+m4mNpHeDGEL4PaMJR7QdLSzt2zFw5XGaYo1vbbv1fjfftPb4CVGJBCCT2gErng
+	 bdgQJCuSdV8cH55bQSrtQgfT0XRJC0VXyp/cdJWE6w/gcx31zfkDJp37apWM+IdDY6
+	 mwD/9CBjWoP+g==
+From: Mark Brown <broonie@kernel.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ maple-tree@lists.infradead.org, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
+References: <20240822-b4-regmap-maple-nolock-v1-0-d5e6dbae3396@kernel.org>
+Subject: Re: (subset) [PATCH 0/5] regmap: Improve lock handling with maple
+ tree
+Message-Id: <172445383117.842265.10956767948362419603.b4-ty@kernel.org>
+Date: Fri, 23 Aug 2024 23:57:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240807-mottled-stoic-degu-d1e4cb@lindesnes>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0yTZxTG837XAhY/ignvxM2JkWxkIC66vcsYg2RkX6IZ3maWbZnr5AMc
-	BbEFRI2GiFRA2nERKh0ybnIpFbRgB5RLVuRSLmFbJ/ciE/CCIHKRgDA6auvmf7/znOd5zzl/
-	vDxcsEBt5h2PiOLEEUKRG2VPaFuXezw/cTYEe99+AVB7XwGGZopTAGpVPcKRzmzCkVmbhqO/
-	ns9QKL6wkkJLVY8wdK+xBENPr21BWeWFFMr9w0CgyepmAmnGekm0WleDIWNdDoW6CmU0Gr/S
-	RKGJsWIK5c/eJtDfo/0kqs0xkKih0kghjXGeRNKkYhJdKpug0LNUM4YeNLSTKHN5ikLTqS00
-	GkpXEKhJ2Uuj0iUFQD1trTTS1nQD9LAnA6DsoSGAntSsP1o9lUaiAumH6OLwHjRw/Sbt58Gq
-	c9WArW/tptiGxTyCrdNXUWyt0kSzeZpo9uKdaZItrH+MsRpVEsXmJuVirFk2SrJ3zAU0mx+X
-	ibO5hgNs0zU1zd673Ibth1/b+wRxouMxnHin7/f2oYvlpVjkCD+2tVSLxYEV+2Rgx4PMbjgg
-	f4AnA3uegCkFUP4wg7AWCwCONv9DWot5ABflg9irSGbWE8zaKAGwsrCI/s+VV7RgK6oAXGt8
-	RlkiBLMDJijjgYUp5l3YaNDQFt7EuMPV2QuUJYAzFRthf1cnYWk4M3vgY+UCbmE+sxcW9UlJ
-	KztBQ/b4Sw/OvAfzdHPrYd46u8KSNZ5FtmM+hsN6GW1ddRu8mlZGWPkc7KgefLk2ZHIcYLui
-	xGb6DC5l5dhMznCyrdqmb4GdGSk2PQQWVShtHAnrh5SkZS5cHybvElllf9ibr8OtsiPsn3ay
-	bukI07UKm8yHiVKB1e0Oy0emiFSwXfnaXcrX7lL+f1cewFXAhYuWhIdwkvcjuFNeEmG4JDoi
-	xOvYiXANWP8YnWttCzWgZHLWSw8wHtADyMPdNvF/GGkJFvCDhKfPcOITR8XRIk6iB648ws2F
-	vyNoKydgQoRRXBjHRXLiV12MZ7c5DjsZpMzfu73btzTA87Br2NjyhMktpezHwJ8H7C50TF76
-	RnLw+daBDcx5Vh6zWzp8bGXbV/ohodOg9yp5P8aobk58Q3M98wU2HyhqWJMtKcdUkSrPU4RJ
-	w5IDrmnGihtnw9w/8JkJn9vodaNGXUz4pHn+OaLfL1d8JBt0+emAuvvsaYerX4Sa0rS/ZHso
-	vL5NqdqnG5Gedwp4+ptOlvpOYuwE74pDER18JOzNy9/5OXsfHp+eCcgMePsW76R/26HyL+Od
-	98X63YrqdUxf6TDWklUbRE2mt7T07y1HDqqjBH1B2Z86+d49Yz50LmExPlDkEb0rzD+Z0h11
-	vy/69fObc3cTduar3AhJqHCXBy6WCP8FA997SIcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0yTVxiHc76v/VowZJ8F5gm4BLooG7JKgcLLRWKyf75lYU6zxWzOQQcV
-	yICSXggumTKtIGjlsgFaSoOtIJdGthZIRS6ultZGmTEIuHGRBXDIRexwChnYFbpl/vec9/ze
-	5z05ebkkr4oK4mbnKSSyPHEOn/Jl3XnlmHgv0d95LLJ7Sgi3R/UELDedR2BvnSPhhnuCBHdX
-	JQkP/lqm4LShnYJV8xwBj/quEvC0fifUtBko0N13smC+4xYLTNMjbFjvthAw1K2l4K5BzYGZ
-	H/opmJ1uouCyq5MFv089ZMN1rZMNve1DFJiGVthQXNrEhpKWWQqeVbgJeNx7mw3Va4sULFUM
-	cGCsqpYF/ZoRDjSv1iK457BzoMsyiOCPe98juDQ2hmDB4pF2LFayQV8cB6pxEfza+CNnfzhj
-	1BkR02MfpJjeFw0spttqppjrmgkO02BSMirbEpsx9DwhGFNrKcXoSnUE41ZPsRmbW89hLhdV
-	k4zOeZDprzdymEfnHMTH+HNBkkyqVEhCsqRyxT7+ESFECYTxIIiKiRcIo+OOJkSJ+HuTkzIk
-	OdkFEtne5DRB1ou2ZiJ/0q/Q3txFFKG/fcuQDxfTMbi6ZoEoQ75cHt2IsGXUwPFe7MQ/PR9m
-	e9kfr4+UUd6QyxOabSe9BzPC03OTxGaKRe/CZzSn0SZT9Lu4z2naMgXQu/G669RWN0lfewMv
-	v3RsNfjTIvxE85zcZD/6Q3xltHhrHI9uIrFW/aa3vh07L82wNpmkI3DDjT89Iq6Hg/HVV9zN
-	sg+diMet6n9fHYovVrawvPwtXtl4jCqQv+Y1k+Y1k+Z/UwMiW1GARCnPzcyVCwVyca5cmZcp
-	SJfmmpBnObvsa2YL0s27BFZEcJEVYS7JD/D7anLgGM8vQ3z8G4lMmipT5kjkViTyfEUlGRSY
-	LvVsd54iVRgbKRLGxMZHiuJjo/k7/D7IPyvm0ZliheRriSRfIvuvj+D6BBURZ5rf/iXhztS6
-	tjbMOLa/92LcDD4VuLJds0+xO0Qv4C+d8LE8XaspmB12RRruBxmhx1aWkpQqj7KnZ4x/VOib
-	G279Leydmp8zSpyUg/8gvDUtNGGgfs9wnn+danDbAelw2+HvDqX2ZlMBY89CN1hpI+dDVK6w
-	sBJl7EKBWRWREnlwOSexPDT41qGoVbY29OZw8MPglpvdnx1NUd/F8yMqfVCpyl41flbeeWS6
-	1PJpXN2OL/Y4qPKkTmOXbVeWLeLLjsHy91NOXNPXFWmZ6WjbckHdW2q18JMLJwXurI11+0lq
-	sXEJoXP9yZxt87yXdRd8nLLj5FwyKq4vhFpzYB+fJc8SC8NJmVz8D+zmgCYlBAAA
-X-CMS-MailID: 20240823225452eucas1p16c2a886d94d236a72889bbaccef65274
-X-Msg-Generator: CA
-X-RootMTR: 20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-	<20240807-macos-build-support-v1-8-4cd1ded85694@samsung.com>
-	<CGME20240807110435eucas1p2eca071b0a0122b8686d43c57bd94dc8c@eucas1p2.samsung.com>
-	<2024080717-cross-retiree-862e@gregkh>
-	<dxkmmrlhlhsrjulnyabfgcr37ojway2dxaypelf3uchkmhw4jn@z54e33jdpxmr>
-	<2024080720-skyline-recapture-d80d@gregkh>
-	<20240807-mottled-stoic-degu-d1e4cb@lindesnes>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Wed, Aug 07, 2024 at 05:46:03PM +0200, Nicolas Schier wrote:
-> On Wed, Aug 07, 2024 at 04:18:54PM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Aug 07, 2024 at 02:13:57PM +0000, Daniel Gomez wrote:
-> > > > Also, as this is not internal for the kernel, but rather for userspace
-> > > > builds, shouldn't the include/ path be different?
-> > > 
-> > > Can you suggest an alternative path or provide documentation that could help
-> > > identify the correct location? Perhaps usr/include?
-> > 
-> > That is better than the generic include path as you are attempting to
-> > mix userspace and kernel headers in the same directory :(
+On Thu, 22 Aug 2024 20:13:34 +0100, Mark Brown wrote:
+> The lockdep asserts in the maple tree code and the double locking that
+> we're doing continue to cause issues, most recently some warnings
+> reported by Cristian Ciocaltea due to dynamic cache allocations in
+> interrupt context (which are an issue in themselves, but still).  Let's
+> start trying to improve the situation by configuring the regmap lock as
+> an external lock for maple tree, allowing it to do it's asserts without
+> having a separate lock.
 > 
-> Please keep in mind, that usr/include/ currently does not hold a single
-> header file but is used for dynamically composing the UAPI header tree.
-> 
-> In general, I do not like the idea of keeping a elf.h file here that
-> possibly is out-of-sync with the actual system's version (even though
-> elf.h should not see that much changes).  Might it be more helpful to
-> provide a "development kit" for Linux devs that need to build on MacOS
-> that provides necessary missing system header files, instead of merging
-> those into upstream?
+> [...]
 
-I took this suggestion and tried pushing a Homebrew formula/package here [1].
-I think I chose a wrong name and maybe something like "development kit" would
-have been better. However, would it be possible instead to include the *.rb file
-in the scripts/ directory? So users of this can generate the development kit in
-their environments. I would maintain the script to keep it in sync with the
-required glibc version for the latest kernel version.
+Applied to
 
-[1] https://github.com/Homebrew/homebrew-core/pull/181885
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-> 
-> Kind regards,
-> Nicolas
-> 
-> -- 
-> Nicolas
+Thanks!
+
+[2/5] regmap: Hold the regmap lock when allocating and freeing the cache
+      commit: fd4ebc07b4dff7e1abedf1b7fd477bc04b69ae55
+[3/5] regmap: Use locking during kunit tests
+      commit: 290d6e5d6498703accffc66849b7fb2d4d7503ff
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
