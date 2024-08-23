@@ -1,189 +1,325 @@
-Return-Path: <linux-kernel+bounces-299381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFAC95D3D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF7D95D3C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839C52852A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 817F8284D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBDB18D64F;
-	Fri, 23 Aug 2024 16:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iag1mVuO"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CE518CC0B;
+	Fri, 23 Aug 2024 16:53:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6985818594C;
-	Fri, 23 Aug 2024 16:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B72741C69;
+	Fri, 23 Aug 2024 16:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432079; cv=none; b=YMeCGPWyVKIBnHrBmepN/dXhjWokljYHQRtD9ijCuEF9NuJcUw4Bc3GeXKHvVrlfB1qRXC4t3bjC6IvkQoliXypgWXpZGZPXq1YNJHu5u0iEPz3+V94rLGty8xFAMTv6gKUAWT8B1jSvAsWkoUm4UltwAISW0agDytARkWtD+E0=
+	t=1724432034; cv=none; b=N3XIM2g9RMq4lMdP9153Jrn9TGfYBW2tXTJOZuoTJS/Cg61VVYjUhb9o+8Yx/QZ3sZ2XnkaZPP53zD4p2ygYGeaADy3tl6gXArGrPlGTnlW+614KoN+uSdzYzAt4Gs5wJEEW8pejGh2p/dGK3ER0v2y1gDAiylnRy1ekkbnJPvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432079; c=relaxed/simple;
-	bh=5VhG0B8dTv3e3c3BO1l1k7Sja5Ij0EPbr7H3pKg3dZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EkN1QUJyemzS0XhFi/yUiQOyHgU4ElGDSRInk1EIDKkAyorXoB47tVvBi4U/tmdZmBhI/1AK7ALDhtlJUFkPL0BAPjMhO77DSPYLbMZu+LGZ6BvjjlAhFu43jALvJPDs0n+bjraiDExSj0/P+ClR6fmMJ9jFmzo7riw5HxPTxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iag1mVuO; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3f07ac2dcso25226441fa.2;
-        Fri, 23 Aug 2024 09:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724432075; x=1725036875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zon1U6XI7RDgoBlJOOvO1r9gIw8jdWpzCbK+CHqcbzY=;
-        b=Iag1mVuOlAK02O89s8ItagdB7KxFb/l0VtZOm8QwRTDcwq44pmumRwJepDOZ4P7Fzh
-         4iNwbkT+1Wcn49sQZ8RXBdH2uAzcFNq1fAp9YE8Fh8khq75Ql+FIMVpQNgnnHrTVU5ET
-         LTGADfJqgJZYWShl6ev6eMCcv3Ul9WQakW0MJsOhayQ1iJ3CcFozVPp+tplzK3HtzluY
-         ejClO0qBIPU9yy0Z13IT9uNBcLWx9kRT8ZfpXnSeQvBe8zBivgRjixMJfuLSI79NxL7q
-         en+uo+dH0ga0prp4K+Y81joqv1uwsRoOT5LlYbp0VtlnkacE+PjUkDGqLa4VSA8JdK97
-         1R4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724432075; x=1725036875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zon1U6XI7RDgoBlJOOvO1r9gIw8jdWpzCbK+CHqcbzY=;
-        b=sqkBlh/uhvV2iTukQAO00mQjon+W8ytsW6MaAe9pce8bSaAo1f1FsVt+GoMMyF122T
-         eMgcCeSRZMKQcTPQEGLFEuUeTvC5NWkO+tr5+mX0gx8bKWudHi7VxuszmoDGagvMrwmj
-         aFxtk87ScExLLBReMFEH3Lo6lIkrbioYEID2uereMgfweB1tL5i3KBxYQ2JhhYsQ8Vn8
-         /tXV4VVLgSfFCq///E+eZ/jaYFTKwXa3F2D3WRzFdG2w3UX2J3+9uL/RMllVfeXOW7tv
-         DMHYlWnfh9W4dbr0lbBx3+wteHJcVe2PzoKOGfMJTb8CElD0yZMYwpCk+vxXtVGHvlW+
-         +O8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX6ydRtiBvzYpU4C8SAk+3Ny4FazqYB2zlQ2/9OnOf7Qm1OF3O86yjO3IkCXHz9Y3JgpS3yIoAT@vger.kernel.org, AJvYcCX87qUH4nxV8xcbbgRkyGOwzEpSBhttpretXi47lu8IxpnxJpbgypo60sAMQIeupMYA5AJFsTjkTcxFPj0cWwIJeSU=@vger.kernel.org, AJvYcCXkZZQZZ3I33aYQPDPHW4rH4EZ16AETMhRjBPI7AEi1Sbqikc715O4G3vam62UKt6Tc9rs23ibXt+FVdKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXQ0YSyeDubJ31X62fKThoAHAuFKQcyPd15+PI5UczLX24jCOa
-	j6UNEtNeS3J1xOAovfEe2gSQQ4xRMJ7aI7g8mrYJwp41COGGTQgJ8gZpKTJltftCY38iVsszB8M
-	g8L7x5cM9vSYcwDdCnWjDNadh9lI=
-X-Google-Smtp-Source: AGHT+IFEzl8US1Mj3j70Ag46lDtaK4hvgcjCEPbcQtWo5rRj98mh3iglrl7HOszxszM05TikzwLuQPgOV0GYu+wm+ic=
-X-Received: by 2002:a2e:9d07:0:b0:2f3:f794:b18 with SMTP id
- 38308e7fff4ca-2f4f57357bcmr15390471fa.11.1724432075088; Fri, 23 Aug 2024
- 09:54:35 -0700 (PDT)
+	s=arc-20240116; t=1724432034; c=relaxed/simple;
+	bh=yMArncYlB7nM88PEv2EqVNYAWznkEZrzbiNh8nkDNqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qWCZJgQ359E23UhnCko5s0HLJqQqUHHQITj7yJng9BnXmOMtzmRQLu0Re+pjkuaOdIqO1PUbOkq+VhKbz/3oOAS6luHuylJNC3fl5qX3oGfa1APE0211t4iGxSwP5XcuELgiPqytLN/hQzIzYoH6thbl5jvs5tJ3XkJS0FZZmZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD404C32786;
+	Fri, 23 Aug 2024 16:53:52 +0000 (UTC)
+Date: Fri, 23 Aug 2024 12:54:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: tglozar@redhat.com
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240823125426.404f2705@gandalf.local.home>
+In-Reply-To: <20240820130001.124768-1-tglozar@redhat.com>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823072122.2053401-1-frank.li@vivo.com> <20240823072122.2053401-8-frank.li@vivo.com>
-In-Reply-To: <20240823072122.2053401-8-frank.li@vivo.com>
-From: Marcin Wojtas <marcin.s.wojtas@gmail.com>
-Date: Fri, 23 Aug 2024 18:54:23 +0200
-Message-ID: <CAHzn2R39CuQS3WJYs7=2jeg8LvhTrYC8xKmOiTDZKLhmbsLqig@mail.gmail.com>
-Subject: Re: [net-next v2 7/9] net: ethernet: marvell: mvneta: Convert to devm_clk_get_enabled()
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com, 
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, ulli.kroll@googlemail.com, linus.walleij@linaro.org, 
-	linux@armlinux.org.uk, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, kees@kernel.org, 
-	justinstitt@google.com, u.kleine-koenig@pengutronix.de, horms@kernel.org, 
-	sd@queasysnail.net, linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-pt., 23 sie 2024 o 09:07 Yangtao Li <frank.li@vivo.com> napisa=C5=82(a):
->
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
->
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
+On Tue, 20 Aug 2024 15:00:01 +0200
+tglozar@redhat.com wrote:
 
-Reviewed-by: Marcin Wojtas <marcin.s.wojtas@gmail.com>
+> From: Tomas Glozar <tglozar@redhat.com>
+>=20
+> When running timerlat with a userspace workload (NO_OSNOISE_WORKLOAD),
+> NULL pointer dereference can be triggered by sending consequent SIGINT
+> and SIGTERM signals to the workload process. That then causes
+> timerlat_fd_release to be called twice in a row, and the second time,
+> hrtimer_cancel is called on a zeroed hrtimer struct, causing the NULL
+> dereference.
+>=20
+> This can be reproduced using rtla:
+> ```
+> $ while true; do rtla timerlat top -u -q & PID=3D$!; sleep 5; \
+>  kill -INT $PID; sleep 0.001; kill -TERM $PID; wait $PID; done
+> [1] 1675
+> [1]+  Aborted (SIGTERM)      rtla timerlat top -u -q
+> [1] 1688
+> client_loop: send disconnect: Broken pipe
+> ```
+> triggering the bug:
+> ```
+> BUG: kernel NULL pointer dereference, address: 0000000000000010
+> Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 6 PID: 1679 Comm: timerlatu/6 Kdump: loaded Not tainted
+> 6.10.0-rc2+ #1
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-1.fc39
+> 04/01/2014
+> RIP: 0010:hrtimer_active+0xd/0x50
+> RSP: 0018:ffffa86641567cc0 EFLAGS: 00010286
+> RAX: 000000000002e2c0 RBX: ffff994c6bf2e2c8 RCX: ffff994b0911ac18
+> RDX: 0000000000000000 RSI: ffff994b02f10700 RDI: ffff994c6bf2e2c8
+> RBP: ffff994c6bf2e340 R08: ffff994b158f7400 R09: ffff994b0911ac18
+> R10: 0000000000000010 R11: ffff994b00d40f00 R12: ffff994c6bf2e2c8
+> R13: ffff994b02049b20 R14: ffff994b011806c0 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff994c6bf00000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000010 CR3: 0000000139020006 CR4: 0000000000770ef0
+> PKRU: 55555554
+> Call Trace:
+>   <TASK>
+>   ? __die+0x24/0x70
+>   ? page_fault_oops+0x75/0x170
+>   ? mt_destroy_walk.isra.0+0x2b3/0x320
+>   ? exc_page_fault+0x70/0x160
+>   ? asm_exc_page_fault+0x26/0x30
+>   ? hrtimer_active+0xd/0x50
+>   hrtimer_cancel+0x15/0x40
+>   timerlat_fd_release+0x48/0xe0
+>   __fput+0xed/0x2c0
+>   task_work_run+0x59/0x90
+>   do_exit+0x275/0x4b0
+>   do_group_exit+0x30/0x80
+>   get_signal+0x917/0x960
+>   ? vfs_read+0xb7/0x340
+>   arch_do_signal_or_restart+0x29/0xf0
+>   ? syscall_exit_to_user_mode+0x70/0x1f0
+>   ? syscall_exit_work+0xf3/0x120
+>   syscall_exit_to_user_mode+0x1a0/0x1f0
+>   do_syscall_64+0x89/0x160
+>   ? clear_bhb_loop+0x25/0x80
+>   ? clear_bhb_loop+0x25/0x80
+>   ? clear_bhb_loop+0x25/0x80
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   RIP: 0033:0x7f75790fd9ec
+> ...
+>   </TASK>
+> ```
+>=20
+> Fix the NULL pointer dereference by checking tlat_var->kthread for zero
+> first in timerlat_fd_release, before calling hrtimer_cancel.
+> tlat_var->kthread is always non-zero unless the entire tlat_var is zero,
+> since it is set to the TID of the userspace workload in timerlat_fd_open
+> under a mutex.
+>=20
 
-Thanks!
-Marcin
+So debugging this a bit more (with my persistent ring buffer!), I realize
+this is just fixing a symptom and not the real issue (and I added my other
+patch which fixes the kthread issue).
+
+I added trace_printk() for every place the tlat->timer gets initialized,
+started, canceled and memset to zero (via the memset() function). Those
+looked like this:
+
+	for_each_cpu(cpu, cpu_online_mask) {
+		tlat_var =3D per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+		trace_printk("memset 0 %px\n", &tlat_var->timer);
+		memset(tlat_var, 0, sizeof(*tlat_var));
+	}
+
+	trace_printk("start timer %px for %px\n", &tlat->timer, tlat->kthread);
+	hrtimer_start(&tlat->timer, next_abs_period, HRTIMER_MODE_ABS_PINNED_HARD);
+
+ etc.
 
 
->  drivers/net/ethernet/marvell/mvneta_bm.c | 16 +++++-----------
->  drivers/net/ethernet/marvell/mvneta_bm.h |  1 -
->  2 files changed, 5 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/net/ethernet/marvell/mvneta_bm.c b/drivers/net/ether=
-net/marvell/mvneta_bm.c
-> index 3f46a0fed048..bfd1ed12d98c 100644
-> --- a/drivers/net/ethernet/marvell/mvneta_bm.c
-> +++ b/drivers/net/ethernet/marvell/mvneta_bm.c
-> @@ -411,6 +411,7 @@ static int mvneta_bm_probe(struct platform_device *pd=
-ev)
->  {
->         struct device_node *dn =3D pdev->dev.of_node;
->         struct mvneta_bm *priv;
-> +       struct clk *clk;
->         int err;
->
->         priv =3D devm_kzalloc(&pdev->dev, sizeof(struct mvneta_bm), GFP_K=
-ERNEL);
-> @@ -421,17 +422,14 @@ static int mvneta_bm_probe(struct platform_device *=
-pdev)
->         if (IS_ERR(priv->reg_base))
->                 return PTR_ERR(priv->reg_base);
->
-> -       priv->clk =3D devm_clk_get(&pdev->dev, NULL);
-> -       if (IS_ERR(priv->clk))
-> -               return PTR_ERR(priv->clk);
-> -       err =3D clk_prepare_enable(priv->clk);
-> -       if (err < 0)
-> -               return err;
-> +       clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
->
->         err =3D mvneta_bm_get_sram(dn, priv);
->         if (err < 0) {
->                 dev_err(&pdev->dev, "failed to allocate internal memory\n=
-");
-> -               goto err_clk;
-> +               return err;
->         }
->
->         priv->pdev =3D pdev;
-> @@ -452,8 +450,6 @@ static int mvneta_bm_probe(struct platform_device *pd=
-ev)
->
->  err_sram:
->         mvneta_bm_put_sram(priv);
-> -err_clk:
-> -       clk_disable_unprepare(priv->clk);
->         return err;
->  }
->
-> @@ -473,8 +469,6 @@ static void mvneta_bm_remove(struct platform_device *=
-pdev)
->
->         /* Dectivate BM unit */
->         mvneta_bm_write(priv, MVNETA_BM_COMMAND_REG, MVNETA_BM_STOP_MASK)=
-;
-> -
-> -       clk_disable_unprepare(priv->clk);
->  }
->
->  static const struct of_device_id mvneta_bm_match[] =3D {
-> diff --git a/drivers/net/ethernet/marvell/mvneta_bm.h b/drivers/net/ether=
-net/marvell/mvneta_bm.h
-> index e47783ce77e0..396dced914aa 100644
-> --- a/drivers/net/ethernet/marvell/mvneta_bm.h
-> +++ b/drivers/net/ethernet/marvell/mvneta_bm.h
-> @@ -94,7 +94,6 @@ enum mvneta_bm_type {
->
->  struct mvneta_bm {
->         void __iomem *reg_base;
-> -       struct clk *clk;
->         struct platform_device *pdev;
->
->         struct gen_pool *bppi_pool;
-> --
-> 2.39.0
->
+And here's the result I found:
+
+           <...>-909     [005] ....1    69.830509: timerlat_fd_release: can=
+cel timer ffff88823c6b5b28 for ffff88810dae6780
+           <...>-909     [005] ....1    69.830511: timerlat_fd_release: mem=
+set 0 ffff88823c6b5b28
+           <...>-902     [001] ....1    69.831296: timerlat_fd_release: can=
+cel timer ffff88823c4b5b28 for ffff88810dae5640
+           <...>-902     [001] ....1    69.831300: timerlat_fd_release: mem=
+set 0 ffff88823c4b5b28
+           <...>-901     [000] ....1    69.831319: timerlat_fd_release: can=
+cel timer ffff88823c435b28 for ffff888110b8d640
+           <...>-901     [000] ....1    69.831323: timerlat_fd_release: mem=
+set 0 ffff88823c435b28
+           <...>-905     [003] ....1    69.831371: timerlat_fd_release: can=
+cel timer ffff88823c5b5b28 for ffff88810dae0000
+           <...>-905     [003] ....1    69.831375: timerlat_fd_release: mem=
+set 0 ffff88823c5b5b28
+           <...>-904     [002] ....1    69.831390: timerlat_fd_release: can=
+cel timer ffff88823c535b28 for ffff88810dae2280
+           <...>-904     [002] ....1    69.831394: timerlat_fd_release: mem=
+set 0 ffff88823c535b28
+           <...>-907     [004] ....1    69.831442: timerlat_fd_release: can=
+cel timer ffff88823c635b28 for ffff88810dae33c0
+           <...>-907     [004] ....1    69.831446: timerlat_fd_release: mem=
+set 0 ffff88823c635b28
+           <...>-911     [007] ....1    69.832689: timerlat_fd_release: can=
+cel timer ffff88823c7b5b28 for ffff88810dae1140
+           <...>-911     [007] ....1    69.832693: timerlat_fd_release: mem=
+set 0 ffff88823c7b5b28
+           <...>-916     [005] .....    69.838927: osnoise_workload_start: =
+memset 0 ffff88823c435b28
+           <...>-916     [005] .....    69.838931: osnoise_workload_start: =
+memset 0 ffff88823c4b5b28
+           <...>-916     [005] .....    69.838932: osnoise_workload_start: =
+memset 0 ffff88823c535b28
+           <...>-916     [005] .....    69.838933: osnoise_workload_start: =
+memset 0 ffff88823c5b5b28
+           <...>-916     [005] .....    69.838934: osnoise_workload_start: =
+memset 0 ffff88823c635b28
+           <...>-916     [005] .....    69.838935: osnoise_workload_start: =
+memset 0 ffff88823c6b5b28
+           <...>-916     [005] .....    69.838936: osnoise_workload_start: =
+memset 0 ffff88823c735b28
+           <...>-916     [005] .....    69.838938: osnoise_workload_start: =
+memset 0 ffff88823c7b5b28
+           <...>-910     [006] ....1    69.841066: timerlat_fd_release: can=
+cel timer ffff88823c735b28 for 0000000000000000
+           <...>-910     [006] d...1    69.841134: console: Oops: general p=
+rotection fault, probably for non-canonical address 0xdffffc0000000002: 000=
+0 [#1] PREEMPT SMP KASAN PTI
+           <...>-910     [006] d...1    69.844649: console: KASAN: null-ptr=
+-deref in range [0x0000000000000010-0x0000000000000017]
+           <...>-910     [006] d...1    69.846887: console: CPU: 6 UID: 0 P=
+ID: 910 Comm: timerlatu/6 Not tainted 6.11.0-rc3-test-00027-g014f473a3416-d=
+irty #128 70de8528c323e5e87113ad73b5320a6d112a9ae6
+           <...>-910     [006] d...1    69.851008: console: Hardware name: =
+QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+           <...>-910     [006] d...1    69.853750: console: RIP: 0010:hrtim=
+er_active+0x58/0x300
+           <...>-910     [006] d...1    69.855118: console: Code: 48 c1 ee =
+03 41 54 48 01 d1 48 01 d6 55 53 48 83 ec 20 80 39 00 0f 85 30 02 00 00 49 =
+8b 6f 30 4c 8d 75 10 4c 89 f0 48 c1 e8 03 <0f> b6 3c 10 4c 89 f0 83 e0 07 8=
+3 c0 03 40 38 f8 7c 09 40 84 ff 0f
+           <...>-910     [006] d...1    69.860562: console: RSP: 0018:ffff8=
+8810c7a7718 EFLAGS: 00010202
+           <...>-910     [006] d...1    69.860569: console:
+           <...>-910     [006] d...1    69.862099: console: RAX: 0000000000=
+000002 RBX: ffff88823c735b28 RCX: ffffed10478e6b6b
+           <...>-910     [006] d...1    69.864181: console: RDX: dffffc0000=
+000000 RSI: ffffed10478e6b6c RDI: ffff88823c735b28
+           <...>-910     [006] d...1    69.866262: console: RBP: 0000000000=
+000000 R08: ffff88823c735b58 R09: ffff88823c735b60
+           <...>-910     [006] d...1    69.868359: console: R10: ffff88810d=
+ae4fe7 R11: ffffed102027af0a R12: ffff88823c735b28
+           <...>-910     [006] d...1    69.870459: console: R13: ffffffffa1=
+4f8d8b R14: 0000000000000010 R15: ffff88823c735b28
+           <...>-910     [006] d...1    69.872576: console: FS:  0000000000=
+000000(0000) GS:ffff88823c700000(0000) knlGS:0000000000000000
+           <...>-910     [006] d...1    69.874764: console: CS:  0010 DS: 0=
+000 ES: 0000 CR0: 0000000080050033
+           <...>-910     [006] d...1    69.876332: console: CR2: 00007fc741=
+ad5f90 CR3: 00000001f729e006 CR4: 0000000000170ef0
+           <...>-910     [006] d...1    69.878275: console: Call Trace:
+           <...>-910     [006] d...1    69.878954: console:  <TASK>
+
+The timer that crashed (and the other timers would eventually too) was
+ffff88823c735b28, and just looking at that timer from the above:
+
+           <...>-910     [006] ....1    69.827589: wait_next_period.isra.0:=
+ start timer ffff88823c735b28 for ffff88810dae4500
+           <...>-910     [006] ....1    69.828557: wait_next_period.isra.0:=
+ start timer ffff88823c735b28 for ffff88810dae4500
+           <...>-910     [006] ....1    69.829529: wait_next_period.isra.0:=
+ start timer ffff88823c735b28 for ffff88810dae4500
+           <...>-916     [005] .....    69.838936: osnoise_workload_start: =
+memset 0 ffff88823c735b28
+           <...>-910     [006] ....1    69.841066: timerlat_fd_release: can=
+cel timer ffff88823c735b28 for 0000000000000000
+
+It was the memset that cleared it and then calling hrtimer_cancel() on that
+broke it. But notice something else here. The timer is never canceled!
+That's a real bug.
+
+This wasn't caused by the file descriptor closing twice and
+timerlat_fd_release called again. There's no such thing otherwise there
+would be lots of broken code in the kernel.
+
+I added a trace_dump_stack():
+
+	for_each_cpu(cpu, cpu_online_mask) {
+		tlat_var =3D per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+		trace_printk("memset 0 %px\n", &tlat_var->timer);
+		trace_dump_stack(0);
+		memset(tlat_var, 0, sizeof(*tlat_var));
+	}
+
+And have this:
+
+           <...>-924     [006] .....    42.574419: osnoise_workload_start: =
+memset 0 ffff88823c7b5b28
+           <...>-924     [006] .....    42.574423: <stack trace>
+ =3D> __ftrace_trace_stack
+ =3D> osnoise_workload_start
+ =3D> timerlat_tracer_start
+ =3D> rb_simple_write
+ =3D> vfs_write
+ =3D> ksys_write
+ =3D> do_syscall_64
+ =3D> entry_SYSCALL_64_after_hwframe
+           <...>-913     [007] ....1    42.580553: timerlat_fd_release: can=
+cel timer ffff88823c7b5b28 for 0000000000000000
+           <...>-913     [007] d...1    42.580599: console: Oops: general p=
+rotection fault, probably for non-canonical address 0xdffffc0000000002: 000=
+0 [#1] PREEMPT SMP KASAN PTI
+
+
+=46rom your test case:
+
+> $ while true; do rtla timerlat top -u -q & PID=3D$!; sleep 5; \
+>  kill -INT $PID; sleep 0.001; kill -TERM $PID; wait $PID; done
+
+The "kill -INT $PID" caused the write to osnoise_workload_start(), and the
+after 1ms you do the "kill -TERM $PID" that kill the process which closes
+the file descriptor right after the reset.
+
+The real fix here looks to be:
+
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 66a871553d4a..400a72cd6ab5 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -265,6 +265,8 @@ static inline void tlat_var_reset(void)
+ 	 */
+ 	for_each_cpu(cpu, cpu_online_mask) {
+ 		tlat_var =3D per_cpu_ptr(&per_cpu_timerlat_var, cpu);
++		if (tlat_var->kthread)
++			hrtimer_cancel(&tlat_var->timer);
+ 		memset(tlat_var, 0, sizeof(*tlat_var));
+ 	}
+ }
+@@ -2579,7 +2581,8 @@ static int timerlat_fd_release(struct inode *inode, s=
+truct file *file)
+ 	osn_var =3D per_cpu_ptr(&per_cpu_osnoise_var, cpu);
+ 	tlat_var =3D per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+=20
+-	hrtimer_cancel(&tlat_var->timer);
++	if (tlat_var->kthread)
++		hrtimer_cancel(&tlat_var->timer);
+ 	memset(tlat_var, 0, sizeof(*tlat_var));
+=20
+ 	osn_var->sampling =3D 0;
+
+I'll make this into a real patch and send it out.
+
+-- Steve
 
