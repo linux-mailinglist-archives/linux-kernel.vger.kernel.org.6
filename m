@@ -1,145 +1,104 @@
-Return-Path: <linux-kernel+bounces-298582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAE595C90E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 126AE95C918
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214BB1F215E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA7C1F23056
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729AC14AD30;
-	Fri, 23 Aug 2024 09:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1A14F9D4;
+	Fri, 23 Aug 2024 09:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goqUiArV"
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7gLxvXO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4147F13C918;
-	Fri, 23 Aug 2024 09:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90C114A0AD;
+	Fri, 23 Aug 2024 09:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724404763; cv=none; b=Fsfc5hEelr0VSZ4ybgQ5oeEgiCsrKQsa2chiEifM4JlfKx5sBfAWuZhQWrr8owfVaZu9DYDknFh6Zsg/mMDaSCUemfUBRc9mvV7v1Dgeg+XuDvziM0g/Q79afoJnD2muScjOLqtaW/WdGKRPpjLP/tr3gzZWjrw9pkZkn2ZJO6g=
+	t=1724404787; cv=none; b=sSMBSqAKvcf9edNyP38EnfiJeCTWfFeKLupGbKC3GAhrQlk4RXh7BKj2RLNrH1hSTxn7FbLYwLCGWM+LnoTKf4m365ituw2fIM6dPxQeSW3sDeAPZ/kW41Ck2QZ6xSyM28jSnofVLPEy14P30f7B6YKgoruSMeZ8iedc3OJKN4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724404763; c=relaxed/simple;
-	bh=IibTBgqhw45+iOawqa2uxmYxJEzTC+NgkR167nJ9zRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvW+QD/bF5Mrk8bvuOkHhhy3qR6U/lCirWKHgiQZfy33KLrFPUp/Ia0T7EiOKK+RgMUvNgHWGXJwa6KyyFBY1tJ3dJ3qFVqlF1XbqAT7mf9OXq/yXCfY/dfujakW7LD8MHAeEzfFlzAh4DG43PPdnqTUXdTzhOoWA+3DSlHUXng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=goqUiArV; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-842ef41238fso539609241.0;
-        Fri, 23 Aug 2024 02:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724404761; x=1725009561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Aanka2PpayLsWVfpyn/8lArNZtYk4+n0lwBfiN9yMw=;
-        b=goqUiArV6HRsUejpA88mnf/o1OS6g5fP5Zvbk1u0IfIC/W7YwjkOSK3kPJWgLDbQ7y
-         p2TO1b1zWY52j3fR/8c2pTkRSSgi4Jz3oLdVS8x7XUuei7DlbKalbqEa0Xykv85xI+/z
-         RdTn9EjtQxQjEdpOwLJYuDVn0hq4r8eq2twIKhmKCuHwxaLxPQn20BITQ/QBd22EdaEk
-         KjmNE6O/1sxwMLZbao8JDZTj3BCND9w4amZWmf/pnDC3yuW1SEs0OJ6mR40KFWWqUAkB
-         ai4NOBz8Fj38D5prOq0rV5EOJnWHu1N67xcO4RCNRvS336Ekpx1hpjWKyU7hDNArrYtJ
-         uLcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724404761; x=1725009561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Aanka2PpayLsWVfpyn/8lArNZtYk4+n0lwBfiN9yMw=;
-        b=A8e6Y11Yjq7hILzjvmAGeZO07OsvmZgef+nGemZHHgPERy+5qNsURerdZu/NKCOaJd
-         D5nr3QgaDBMLzfqNNlzjJXyusCJKBTb+P4hMVtoc1qRLTz9JqBez43zasgiij43GsLzh
-         edHcZyZNrH+q09k7K3Wz8OvaIlAS1sICfwLM0cEulQC9yotGmtVQxzI7wlG64phJd6q9
-         DtuS6qd+VdpHbt+PSXFJN6149HLolwpZ448W6ohiRNYquZeiLNtZvWSJtkVRWus7eKu3
-         zSNhgQ5rDz7gBRgrAklWhVYQRuIgRoOARh3td39WyQr0L0+2EArBqwL3MivklTjqzyPM
-         7V3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+yr5V0F26oDtuCAenMPjUmLDOdz6wrQbULT995zk1wzsxxmHNkaN21Mqpd3Kin/ZIdjNkUxtZG0ltarJm@vger.kernel.org, AJvYcCXhvTyHthMTzjVAy3KOUTzxqAlGxBtO6AlMVBhsqHvHhhuLFvp8UCs0UE+cwTN/qs7Ep7mlvCmTMKmwJlhR@vger.kernel.org, AJvYcCXjqfWvLziLZ/VZ0oBrvGwTyi3nZR/V1cd9cPdr9zpoo5KjJPWZDySDhkvWx8ECB0bSHXhGUi0qNsOml8HrDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVikcaZUEnKB0kOZdkyfnMa28+QDHxA9SxZ61XhMJmDNFp9RYJ
-	/FpdQZqW/fFaUn7xiRLBbnU5FktrAa6gr7wNC1++duEyKJKR7k65u30fWQ9zEZMpbJcgAjB9Hha
-	Zx4YotEjtTwqdJAZv3aOOFZ6z5NI=
-X-Google-Smtp-Source: AGHT+IE9kgNHk6QBa2umXgprmSxk1o4/YViXD66++2xa1BzhHFTA6Y543TCkCl52NCRZ5fO8JYHBI4NWztjCTln4krY=
-X-Received: by 2002:a05:6102:38c8:b0:493:b484:ac06 with SMTP id
- ada2fe7eead31-498f4bfa0b1mr2011900137.21.1724404760959; Fri, 23 Aug 2024
- 02:19:20 -0700 (PDT)
+	s=arc-20240116; t=1724404787; c=relaxed/simple;
+	bh=KhN+NQf/vdSEEkKAVXu1CtJtcHLdjhi4HZJpa/pUdy4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZRkZQiTcpuKREKWZD18lhN2aMb9CL+5m+x7rwGskN4Zm1U/TEmSN/eo3C85kkAwbPOs//WPnW0Cp0BPn1cbF1k0YGxcrT2FF1WTGKavSRqv1FgQMBiK6xDRSPivvJWirH0pccG1lE8T65+Xb0uwaHOXLj9mR46tzkZYbNf6J6a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7gLxvXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 48572C32786;
+	Fri, 23 Aug 2024 09:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724404787;
+	bh=KhN+NQf/vdSEEkKAVXu1CtJtcHLdjhi4HZJpa/pUdy4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=J7gLxvXOn4aeIF7NFISf1/JDSUeB1BUVaekOwiLso82LgXmHjOQjxUDp3986i+AiQ
+	 iJoCWGm/BRexqJB75wJ6r+H/8tAHuuI7Cx0l1JlPO5RVXXJ0nuvtmrVOmejndXV0A5
+	 o/e3K08o1JQJUfLGMqTXfQlnm8RxHMNKYXJ2+qL/e1aXy7IHric+DNRiQKPN0zx8tq
+	 TbyY2PfE1oH8zUv+yTLHyxp7R+kHDlpzk3zr2+jtTk4uuoNECQMYHwFA1CSC/grqBE
+	 S0J6RuZ5M5JwtCBjo6QFwmN5aw0PCEeN+r/4zKGHkLvnEyw+RYcO8UBHwwRAIkFOEv
+	 JJDcONpnQBdWg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9B3C531DC;
+	Fri, 23 Aug 2024 09:19:47 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/3] support for amlogic rtc
+Date: Fri, 23 Aug 2024 17:19:43 +0800
+Message-Id: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708072208.25244-1-ed.tsai@mediatek.com>
-In-Reply-To: <20240708072208.25244-1-ed.tsai@mediatek.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 23 Aug 2024 11:19:09 +0200
-Message-ID: <CAOQ4uxjySyTMRQDuFDsA1XVK210K+8CHh3LoSU2zYynh5OyF_w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] backing-file: convert to using fops->splice_write
-To: ed.tsai@mediatek.com, Christian Brauner <brauner@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, chun-hung.wu@mediatek.com, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC9UyGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyNj3aKSZF1DI/PkFAtDS6NEQ2MloMqCotS0zAqwKdGxtbUAA60T+FU
+ AAAA=
+To: Yiting Deng <yiting.deng@amlogic.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724404784; l=839;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=KhN+NQf/vdSEEkKAVXu1CtJtcHLdjhi4HZJpa/pUdy4=;
+ b=HsWgzJib2xTeA8gPpNPJiGUQhNPcfsMJfbZcceA8byJwSKYLP9/PfVVJ32Xkd/3txvcwOEw6o
+ 2DM3LDAMKS+Dt84agCJgAMYxbroDNzqH9v7mHjfL6C3XJeTD0HiZATj
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Christian,
+Add rtc driver and bindigns for the amlogic A113L2 and A113X2 SoCs
 
-Would you mind picking up this fix via the vfs tree?
-The reason that the Fixes tag points to fuse passthrough patch is twofold:
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Yiting Deng (3):
+      dt-bindings: rtc: Add Amlogic A311L2 and A113X2 rtc
+      rtc: support for the Amlogic on-chip RTC
+      MAINTAINERS: Add an entry for Amlogic RTC driver
 
-1. fuse passthrough is a new user of backing_file_splice_write() which
-    can have a fuse or overlayfs backing file with custom ->splice_write()
-2. overlayfs can have a backing upper file which is a fuse passthrough
-    file with a custom ->splice_write()
+ .../bindings/rtc/amlogic,amlogic-rtc.yaml          |  66 +++
+ MAINTAINERS                                        |   8 +
+ drivers/rtc/Kconfig                                |  12 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-amlogic.c                          | 589 +++++++++++++++++++++
+ 5 files changed, 676 insertions(+)
+---
+base-commit: dff71e5c6076314f3eefe700abd6af834c57bd64
+change-id: 20240823-rtc-127cd8192a13
 
-Thanks,
-Amir.
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-On Mon, Jul 8, 2024 at 9:23=E2=80=AFAM <ed.tsai@mediatek.com> wrote:
->
-> From: Ed Tsai <ed.tsai@mediatek.com>
->
-> Filesystems may define their own splice write. Therefore, use the file
-> fops instead of invoking iter_file_splice_write() directly.
->
 
-Fixes: 5ca73468612d ("fuse: implement splice read/write passthrough")
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-> Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
-> ---
->  fs/backing-file.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/backing-file.c b/fs/backing-file.c
-> index afb557446c27..8860dac58c37 100644
-> --- a/fs/backing-file.c
-> +++ b/fs/backing-file.c
-> @@ -303,13 +303,16 @@ ssize_t backing_file_splice_write(struct pipe_inode=
-_info *pipe,
->         if (WARN_ON_ONCE(!(out->f_mode & FMODE_BACKING)))
->                 return -EIO;
->
-> +       if (!out->f_op->splice_write)
-> +               return -EINVAL;
-> +
->         ret =3D file_remove_privs(ctx->user_file);
->         if (ret)
->                 return ret;
->
->         old_cred =3D override_creds(ctx->cred);
->         file_start_write(out);
-> -       ret =3D iter_file_splice_write(pipe, out, ppos, len, flags);
-> +       ret =3D out->f_op->splice_write(pipe, out, ppos, len, flags);
->         file_end_write(out);
->         revert_creds(old_cred);
->
-> --
-> 2.18.0
->
 
