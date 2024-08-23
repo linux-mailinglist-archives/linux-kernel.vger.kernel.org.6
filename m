@@ -1,148 +1,101 @@
-Return-Path: <linux-kernel+bounces-299321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C22095D2F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E73095D2FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DA02891FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B974E1F223A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F07B18C337;
-	Fri, 23 Aug 2024 16:14:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9690118BC19;
+	Fri, 23 Aug 2024 16:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zeVrAUHt"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA68C189F30;
-	Fri, 23 Aug 2024 16:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5428A18893B
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429696; cv=none; b=YXTRSz0PqUnQcKpD9hhQD16spPrIem9iwLFFshMO9HeMwloAuZxo8tePNDzCTh58eFV1I4MGrg6aPMjnl6ygV8Clj/qSUds/C3ufObY0a6J9KidXMhyAlMEdkMguanExmTR4BcZoImujWu3dYkcWN9WFmnvRpLn9rlKEm4px7Sk=
+	t=1724429723; cv=none; b=TvXBIrmUcMXJDz+5+eFJN6CEId/P5WN+gyf64Dqvtlj5UFcnNOik4ouflnzb24dWUyKwpSHPqMQpMCjbnK++BJUwuuj8TTYVPhvljfRln8MwN+ZtMblQe0NA0RyUvxu7bktln30OJ9eLn0sIJaD8fanQrOQkoTBG5x7W3SSXcRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429696; c=relaxed/simple;
-	bh=BxE+Xupm139zg462Cjs0vMijPCyBQD6iq3AylruF/IM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hyKpcwUcL5V2mKaX0h8Lu4gcxeVKe9r6muFJIbXBI5NeLWEN5V27yow43uDXvqviVL5dJhvoBPyiS3437lmbpUd8rZkloByri79ZIGfJIlegZGYF+5qtV2ee5CKKdY2kPluRUL5B+/a3jzDNG/+hMrG+XEg9qhzj51eCKl+dMpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wr4nt5mdWz6K61S;
-	Sat, 24 Aug 2024 00:11:46 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B97A3140A35;
-	Sat, 24 Aug 2024 00:14:51 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 17:14:51 +0100
-Date: Fri, 23 Aug 2024 17:14:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
-	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
-	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
-Subject: Re: [PATCH v3 11/25] cxl/mem: Expose DCD partition capabilities in
- sysfs
-Message-ID: <20240823171450.00007af4@Huawei.com>
-In-Reply-To: <66c7f3d977851_1719d29424@iweiny-mobl.notmuch>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
-	<20240816-dcd-type2-upstream-v3-11-7c9b96cba6d7@intel.com>
-	<8649e30c-a43a-4096-a32f-e31bf3e71d90@intel.com>
-	<66c7f3d977851_1719d29424@iweiny-mobl.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724429723; c=relaxed/simple;
+	bh=C5Gy3ZId6yOjmctbIVasH93MCo94aby8IKwF+9R6dBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jhqjAG898md2E3JBFw81WS/H2zqkbrcyCdb+8v5GmoXB3jNruStMqo9noJlVnop86edsPkMHNfyWekiXDmsZivnhlrnXz+LjKAUx5t4yAnv5fAu3wB9hr6M2SC3CxiQqgHfY0FrE+8Mo+8MHq/Y20FDx98m90tggqSYLVSuwzjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zeVrAUHt; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efdf02d13so3152640e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724429720; x=1725034520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C5Gy3ZId6yOjmctbIVasH93MCo94aby8IKwF+9R6dBY=;
+        b=zeVrAUHtYNyzCVOhCxPtOx/PFzqms4CRAYeAMWfQJUkSo7cJqHtyXh7i/oE3v+Po5x
+         qpeBRPUMWnNwhkmhSW1aeq80/n5yEWDrmulqnyeceJRFkYLBtDYcgoLoQ5ZxjpJWSRaI
+         tbhBmr6YJDBOXaVU8MLixHqo0vRJPk0ts1KIxgWYEz+rM1r1/f7St5Wk8HJ+9L5Il9h0
+         vasVXLH1bdtnBT38s0wSeObDv805d/v9Fdpb7yQ1nRRxGGCUMJOVuYcrZg5shvT07eC8
+         znK9ji7bqVeLElGXb9KY0O0livs+EljLeTA2Ddwg4xXfuhMZtEEUeBMZ79EouPI3z5WU
+         ThUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724429720; x=1725034520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C5Gy3ZId6yOjmctbIVasH93MCo94aby8IKwF+9R6dBY=;
+        b=kg7OVuoFG3dPNvemuyrJLFq4/YB9DNl7S/bhgVaRneLWXgZwQvcam8n8hH1Zs3Lxnc
+         4ve1bqN2hTuspNByChiJCtPBPNWsfD3xYb2KmPSZJ2V1C167e+HLS8QfuZKl6YY/iQAh
+         VOR0AI1u4UpoFapDMGDH3k8UouBeu1OB7mRsrkY9U3SogxGfp8XuMNeX444cwQKGkBzY
+         2sUrUeBBz0/pnlk6ffErFijSVYUMK+1IWdC4/FRN+10bh+ULo+BhiCtjHmKqS3Or13EF
+         s+/KcqkHLm1Ps9NeQkvAK1f4wUPge8X46h/MgBj7GYDAGNVlSwffZsyMRjT33mF7zNRp
+         wktA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzkOOBGePevu/8uipcnI0v27WE4HFJGNc8vKWAadwzaRoJpkB8gKmYhCe7sdYiIzU3wFvkw8C2QXvdP9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBthCk/3glOnL4/Cnk+8wPcq4xnHg2N2u17XMz4jBPILhOHQh2
+	wV5YYpV9cbNGaH3qWS7uCneCCF1LPeaU2x3JEgaWAC49IpAmang824V3LCsC/W5k0Efv9eZkp8R
+	XqW+BFFTjyl4jKi0E1TMRHT50CnvI5dMQ9j8Z7OV6P1gK+Bpj
+X-Google-Smtp-Source: AGHT+IGJPc27ebiUmoATDf9yag8DXGApJ/P5FrQbUYThINyChz3wQOt+1Fq/9yZmuLv1y4j4c8GOPP45gknN67Is4t4=
+X-Received: by 2002:a05:6512:68f:b0:533:4785:82ab with SMTP id
+ 2adb3069b0e04-5343883d67fmr2325707e87.1.1724429720087; Fri, 23 Aug 2024
+ 09:15:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240812070108.100923-1-hal.feng@starfivetech.com>
+In-Reply-To: <20240812070108.100923-1-hal.feng@starfivetech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 18:15:09 +0200
+Message-ID: <CACRpkdZQGpVusAg3tZ-sNC2WENrBdLhN3SaEYFCbyx_fVmKDrA@mail.gmail.com>
+Subject: Re: [PATCH v1] pinctrl: starfive: jh7110: Correct the level trigger
+ configuration of iev register
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Conor Dooley <conor@kernel.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Jianlong Huang <jianlong.huang@starfivetech.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 22 Aug 2024 21:28:41 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Mon, Aug 12, 2024 at 9:02=E2=80=AFAM Hal Feng <hal.feng@starfivetech.com=
+> wrote:
 
-> Dave Jiang wrote:
-> > 
-> > 
-> > On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:  
-> > > From: Navneet Singh <navneet.singh@intel.com>
-> > > 
-> > > To properly configure CXL regions on Dynamic Capacity Devices (DCD),
-> > > user space will need to know the details of the DC partitions available.
-> > > 
-> > > Expose dynamic capacity capabilities through sysfs.
-> > > 
-> > > Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> > > Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > ---
-> > > Changes:
-> > > [iweiny: remove review tags]
-> > > [Davidlohr/Fan/Jonathan: omit 'dc' attribute directory if device is not DC]
-> > > [Jonathan: update documentation for dc visibility]
-> > > [Jonathan: Add a comment to DC region X attributes to ensure visibility checks work]
-> > > [iweiny: push sysfs version to 6.12]
-> > > ---
-> > >  Documentation/ABI/testing/sysfs-bus-cxl | 12 ++++
-> > >  drivers/cxl/core/memdev.c               | 97 +++++++++++++++++++++++++++++++++
-> > >  2 files changed, 109 insertions(+)
-> > > 
-> > > diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> > > index 957717264709..6227ae0ab3fc 100644
-> > > --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> > > +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> > > @@ -54,6 +54,18 @@ Description:
-> > >  		identically named field in the Identify Memory Device Output
-> > >  		Payload in the CXL-2.0 specification.
-> > >  
-> > > +What:		/sys/bus/cxl/devices/memX/dc/region_count
-> > > +		/sys/bus/cxl/devices/memX/dc/regionY_size  
-> > 
-> > Just make it into 2 separate entries?  
-> 
-> Do you mean in the docs?
+> A mistake was made in level trigger register configuration. Correct it.
+>
+> Fixes: 447976ab62c5 ("pinctrl: starfive: Add StarFive JH7110 sys controll=
+er driver")
+> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
 
-Assuming yes, then I think it would be cleaner as two separate entries
-+ Maybe even one for the directory which can then have
-the visibility statement.
+Patch applied for fixes!
 
-> 
-> Ira
-> 
-> > 
-> > DJ  
-> > > +Date:		August, 2024
-> > > +KernelVersion:	v6.12
-> > > +Contact:	linux-cxl@vger.kernel.org
-> > > +Description:
-> > > +		(RO) Dynamic Capacity (DC) region information.  The dc
-> > > +		directory is only visible on devices which support Dynamic
-> > > +		Capacity.
-> > > +		The region_count is the number of Dynamic Capacity (DC)
-> > > +		partitions (regions) supported on the device.
-> > > +		regionY_size is the size of each of those partitions.
-> > >  
-> > >  What:		/sys/bus/cxl/devices/memX/pmem/qos_class
-> > >  Date:		May, 2023  
-> 
-> [snip]
-> 
-
+Yours,
+Linus Walleij
 
