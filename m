@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-299508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91AA695D5A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:59:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E043195D5A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370891F23102
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:59:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F063B2305A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8E1922C9;
-	Fri, 23 Aug 2024 18:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B288E19258A;
+	Fri, 23 Aug 2024 18:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="l5FCax2L"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oK7ZVNsW"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2082.outbound.protection.outlook.com [40.107.21.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EE191499
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724439531; cv=none; b=YPpt+3/VKPdeCgzgnW+Rz0L1+9q1btlr+/YNP433eACVI1+9v530CuBKD9tAMw2I6nZAqbgkW0CRRTIZ/HGbdCgaE0R7PxfytE9ro6mk8a46VEocRUbi35F0h9l2akFj9bPXZecz/Ap2oS5Poru8X4bzusevrRqOngNu/Ydo70w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724439531; c=relaxed/simple;
-	bh=OL8zr06dGVXX8/JNnl4KISBbwjutHYB3v6J2H8cHVqs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P+mMpdfMYn+pOhmzOq3Nwl9KDEKon8UnrhaxTTDYvYPDWeJz2W/9pg535MVMfC772T2pUjl/cuYcvJxH+UIrUfV4J7CaaR111l+b5xTytwb4UwQG0R2p/V4laOuVl35b3O0uenroyEtKuOhFWQBgw8BIYclhpxK2w0QRDH5GvG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=l5FCax2L; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-714261089c1so1711635b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724439529; x=1725044329; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yorPWSJYc8UNX8jsP1Uyq6fHvCa9beJkHZhYtqkCUp4=;
-        b=l5FCax2LBK5Dp5Yw3Zw83gIAe1yQ6+D8b5mjofVnRjtq4i/Xt08D8htqEfAHbpwz2Q
-         nDM/EAmkL+OXhAADjDACh2vfVpizrYhAWB7a9hXSLjyZXI5sbnIMprqt3Y1zPncJp7h9
-         3pTnqCkvVSs+JOlWQwpq0I4Ceg1iWmSfnnL9O2skrmswWTSX8ZS/lL1rKOKa3CXrRxdr
-         peOeJvKCmAGnh0+TajU+g95Ws1LyvsrU3SpdK/NJ3fyjbSLgTskiqOZv28VEJ6jQwnNP
-         zb59DTFPaR17LdB2jfI9NVzD7IZ2bqWy6/lSMZNSyg5GmoSd/m42zmdzJBVAUmow6JEQ
-         Cm0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724439529; x=1725044329;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yorPWSJYc8UNX8jsP1Uyq6fHvCa9beJkHZhYtqkCUp4=;
-        b=ame2pStkiHkm4AV3XRxuDGfAxi+6OsmUi8T5IcF3U78V7vtWFbAGQJHzHZn3F2hB9r
-         x4c7curSEpC8Hyi00Jv7h54I2lBTDIJhVP7+ZD2OEsjDXfwdsOY7gR0Zcav4USS8Teqz
-         1IHZ3wQInNqjZ4v+X/DUrBqOj8udrag8YgMAh2e1oE0/v47X+/Ln8mMqeszi9QItuLom
-         I6l0P1JlL6sNtxKAMC0bJv6Jp1KLk3EzUCIKYtXfANQBd+hYplRJOWnVlhbm7ktvDa0R
-         1TDBHBC7roQjNk5kFMCXvXjTQjcwRH3vxb60EteND7C3pCcsu3eAK84GI3PicZd2xH8c
-         JSTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNG7ORMW03AZVAovokBaCiz/uf3Rc0Rm6+W9yNp9c1F2ygrgIovLSy8B8vXGGVDY5ffvQ2nIStVmWX8iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxajeIJ5Yypngr9+eOXZ15D3o7hGjzz4XUXicjzjyPfhv/0NpVV
-	TNplP8KsyZJh/7rsvU5iZM5c2h5yzMm79xtxRXXJmMt9Odmcgkq9c3ZZdi+39NxzOE8MI0MvjEi
-	k
-X-Google-Smtp-Source: AGHT+IFawJQXOP4HPBZOeYzX+BNP0Qr+kt+7szwDGJXyVIrQHEtcZM9vyLrqns+0VupnLR/ut52lcA==
-X-Received: by 2002:aa7:8ec2:0:b0:714:2371:7a02 with SMTP id d2e1a72fcca58-7143173d6b0mr11838910b3a.5.1724439528774;
-        Fri, 23 Aug 2024 11:58:48 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342731acsm3366222b3a.88.2024.08.23.11.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 11:58:48 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Fri, 23 Aug 2024 11:58:38 -0700
-Subject: [PATCH] libperf: Add perf_evsel__id() function
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B254191499;
+	Fri, 23 Aug 2024 18:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724439565; cv=fail; b=numpH2WnzMTivmgaNhcYzhqy3llQWD4Nb85ZLuhvWR5yiQzmQ5/4PNaDT9KE5UknZn4+V1qUKkWoVxS6qDuSjvMUPNNmrZc9+/ixTAQSWbDy4w64+6QdrDBqGuhaFQzZQHFZK6n46cBV84z3sPOkTjXd3GWTzUpM/Wo1D8uNT5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724439565; c=relaxed/simple;
+	bh=dduFh6vi4JiMytp7+kfzKYlqowbmjsl2yaGq08TOS+g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HjjDwUbtw5zRoar7wHFTHV2K3L/jsuJwy3JZKDfRSSwzUlqiLy1t9E80wycF9WBJ5za1MwXx+OzvIsjdupJS3SELVHw049+GAHQu/Ie982k2uLJI8dKUefbhRRmBtkv2WrYkQFGMs0EAnkWgwoTMUqdBGcWHk8ufb4UnO9GU+N4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oK7ZVNsW; arc=fail smtp.client-ip=40.107.21.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JcoRXukbvbu4qAoCx2IsR3XFNSzt+DHjHGEbmUL3/nUYo2GHHtnwSzJagLNPRzdQEwKSUY1W3OROCY58Iz0631Br+gUqlhprrwiwi4//MhXXbqGeZQmXwif3WPggjUohQw8TyznKuuyqRnKuNWME53+ImEnvg6YuQPl416RZq5E8x2rVf2sRhUUXJowvkIDCEUEliiWz4eq0cpmdY6F014tQTXjngDMmD3TPD5lna54m+zqqaB9E1eTvq6f/VjApJf26cSEseT0TnS/owFAZNc+2Z+MzVWAOYKHFd9tzT2vTxYV2JkdwzRxvANfibzPv+OSuBizVqePvlEvghRsaMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yao/OaFYngt2iMgvWy2pOVT34nmA2HLiSOJ4IP+fR44=;
+ b=D8Dw16OKX7MLTgKMUYFjaEtYfX5A3AlwO38GXSMV6GHckya1ZMj+vdpvYkXVaXlk5BzG5U42IS1YnZj3M7mChneTiueVmif2bEWTIwJpRRvDnUn4j/P9sK47q170SZ2k8Qrtn7kLSIv69FnhASGU1Bj8Vmu7Ylv3icSZ66rtses0VjVB5/m0ZaS51otvFMN8941eA67e/xp6/Ngq8Ygxdrf/DFK6rUSZRPkyHt1pYNnj/YWokjdnpFRY6XA4EEMdsUXsAy3sDHrGcRIPg51m8fTobswadhuxFAhOZne2+cotyRUDER89CV+P6zYIAow9NkWyuOwh2rcxyz4x2ga7Pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yao/OaFYngt2iMgvWy2pOVT34nmA2HLiSOJ4IP+fR44=;
+ b=oK7ZVNsWusALnh1KUqa3Y0+fFOEIRvEmfNlqR6L3ALWqpSrb7WCd5u9UPfntnG/YfFmyj1aegsh/NkktLrheIig05ShshaBvWd2e71u+Uov+ifdByaARWpX8L8Du5LWLCYXmaRaDxwvjXTJZtG+fxU0b4cO5Mx3Nh8KCvMPhuesTsDX4YWFrke73jCcmlbJvSv6dD+9p+rHHieDIRJWSPBkNuBOoAu/IX0Oa8ekJnyIXfJ6W1MBt7dVZmMIq/nuObfVtuSWxDjt2UfOA9XuNHTQHp/2Q2gjzdcTir5tqmuuhGLflL1l2T1gMsKL+d8PR2+5HDjquCiRSYrlujRvAdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB7869.eurprd04.prod.outlook.com (2603:10a6:102:c4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 23 Aug
+ 2024 18:59:12 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+ 18:59:12 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pci@vger.kernel.org (open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: PCI: layerscape-pci: Add deprecated property 'num-viewport'
+Date: Fri, 23 Aug 2024 14:58:54 -0400
+Message-Id: <20240823185855.776904-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR05CA0060.namprd05.prod.outlook.com
+ (2603:10b6:a03:74::37) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-perf_evsel_get_id-v1-1-0ffa204c4164@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAN3byGYC/x3MWwqAIBBG4a3EPCc4YhRtJUK6/NZAVGhIEO096
- fF7OOehiCCI1BYPBSSJcuwZXBY0rcO+QMmcTUYbqxtj1IngHVLE5hZcTmblazB7riptR8rdGeD
- l/p9d/74fnmOTE2MAAAA=
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2669; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=OL8zr06dGVXX8/JNnl4KISBbwjutHYB3v6J2H8cHVqs=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9qJ2/e/z2PYuvAu97UFoUdsy6v/Jz1gOX6m9fH2Ex/el
- 1/p/MD2oaOUhUGMg0FWTJGF51oDc+sd/bKjomUTYOawMoEMYeDiFICJBLEzMvTlS9xX3MDvE3GY
- r+BidplB9JKrod93y/1ff+6oEn/NMTuGPxys4dMPaC4wMV6m53Vm1ZkZ11Y6MFzY6JB88cR6geJ
- Tj/kA
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7869:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31c10818-8307-4547-b153-08dcc3a5acea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|366016|52116014|376014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?B7SdswzHPzpr+mY7rU4rTbrPd4F84vghVXvvJzWW7R//TLQ4G3Lm59uy9yVc?=
+ =?us-ascii?Q?KgvQQvPu+PA8W1gxksMf0NdMTNRJzHmNG5Wi7EY1Q7ezhoZm6J7sXG55OaIi?=
+ =?us-ascii?Q?kLr1iZy4MOWTC0zc+NFYPxjkp6j3WhN4ROfPDAn4EpNxF+t0zAxLzNQFElEt?=
+ =?us-ascii?Q?0Jw+U7XUHS8AnxT8WBrUyH1jGcT+csY5+C6QVhyeruHLeRO6XIRSOWaK6FEm?=
+ =?us-ascii?Q?UWOP+FSq/1/wgUB7OR8q5KhllpORwr9u77TDYdhMJJ/ilhvmKNOepwtTYUSF?=
+ =?us-ascii?Q?9SiS7t2OktBfoAgNL4Xg4rVeEsZzOLvaD2i2OKrl7KWXEbspAYCjc/3l9SVG?=
+ =?us-ascii?Q?fkI+8Vs4Po7gDgYt2z/UJWK7RiOgCDdgFUFdd2wl3gN6CZTqXLenHaY99NBD?=
+ =?us-ascii?Q?ynVLN7fZL/UfTMe0umaquL2Ev1bw37Ur/RUHxmY63DneJ50k8BBqt1hmdIYT?=
+ =?us-ascii?Q?Qh7ZPDFgVxet0vw+3dkGR4PHXXYfJLKy0RWpG8FZuqSE+TroVya6AHFWbyxP?=
+ =?us-ascii?Q?TPPlVZnAGgPqBXoJiExy3VUoupOL3XJmu70fMYZHnMQJyakaLhUjeOy4ZHT/?=
+ =?us-ascii?Q?BxmHNxcRR2pT1Za6KMv1M4knkZOkXpHRzqm7QyDascw7rMQRnAp/IGDx5dTN?=
+ =?us-ascii?Q?IkJlslOceE77p4FxPgw6UppnkldvaeoYedXUrauyCaIlgGLANPZN4u0b6nWN?=
+ =?us-ascii?Q?ZFdzwZTfmHUqccwWAG+TGAqNQOnJBixSxcSAjt8jkPjLDSXrc4NyjYnDbi/k?=
+ =?us-ascii?Q?QEWJZuBPCyRX0O0LtHtB4hfbga60PD1joWIB9tmGRivkeIcXW8RdDxSV9PbW?=
+ =?us-ascii?Q?enAG6E2dvSoTHMoPNXtsK/RX0/gO3sZHODnj7FUGBWDRLRr+iiLIKJOs8FCq?=
+ =?us-ascii?Q?5SNsQUB87LJDyJ/wv2AfTGyuLFiPtn6f1W4pSmhyfRUBFA/3Gq84gxd+sXNG?=
+ =?us-ascii?Q?x/TLfS63yrxVsZSePGgPswcuPJRhn7WaucMAiqyuvh60lWL3kOCcbOGobRfF?=
+ =?us-ascii?Q?v0Hx9EHE1OcPWCNk6kiaw+i91ArB2kUZZ73ropF/3ok6PgdSa0gQyi5YxQQv?=
+ =?us-ascii?Q?1hzyCWNEPi4FACEVGu5Kxn95Msd5Cjt2fb8Ad2xFBy3PxSvgK/ml0cAlcOjr?=
+ =?us-ascii?Q?Q0VVMJdj0YEjaucRajVjhvUXyYs0YxeMdzGFN9oaz+oiNEXnA0FS5iu1nkUf?=
+ =?us-ascii?Q?PiHr583vpnLNxl9nqIUIjedAfyiqiPGhjeuMqoIg4nKK6o0ejgt3bwXldk81?=
+ =?us-ascii?Q?sB6ifwXxRoHcdy2jIIOXfOLZeEZs5/BNAqRju/ZaJun6qX2M+Kj2buS8jcCg?=
+ =?us-ascii?Q?WdACVl+l3gU6P6D5xwe1NRV3OzYHPSEJ/IH21T3PRnPBKyz6ugNdEfYbXUFY?=
+ =?us-ascii?Q?WzcT+g4A9ExyiS4EIXtv3sfiZIWd/QralnyNkz1GVGQPyfwZb6aRhpmG7EPF?=
+ =?us-ascii?Q?wATWjvz0Zh4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1wgEBiXw0qr3kDA0TDE1ZBaFEbyItmrGlNPuTicNNRH4FBr6C0CdYcOtLXG6?=
+ =?us-ascii?Q?b3HHCWMQSdbgOMPUPTjymRWdFc5M5UJGJQkfn1WAqOyN8xF8sshZ6pLJgKaM?=
+ =?us-ascii?Q?8f5HiKBy16G33+Ebcc0Uh/QEHSwP9gHHbtqqAaVrrZe5ZEFzIUQa2EfN0ztu?=
+ =?us-ascii?Q?J0n6/aA/Q8aEJCwpBHxKDUK3NnscRofZ7C+hQTKMQKcOK1LyoxSKrIWFbx4H?=
+ =?us-ascii?Q?xp7B91VmFgCqk4fT1E0bI0U1/i9wWJlOHfbPQJuW3oPzeWVW2DHzb6oT4ash?=
+ =?us-ascii?Q?2CiXAk+aJY52wjf/wfbWQt2VVIgZWSCaaOWLc37B5Qt58WM8rYKR9oDdyQCu?=
+ =?us-ascii?Q?D2a3ZO5SV4WNfO8xMJvNqjMBg+5P6aWMyOt11ihR76k7HbR3xPjsch0aVvyG?=
+ =?us-ascii?Q?J4fgitIwV5IhGlMRN/1XQsZw8YYYbp/Isdq+WRmVyNBMeXbXla3zSU/+KPi9?=
+ =?us-ascii?Q?r4vojn1VLhgpXLFqDYR+flMqnC4wWLS8ZqXT2Ty0RHx/+cjQEF+6X8EuvmdG?=
+ =?us-ascii?Q?ChsMOa3SbKVtndmw0/qS3jvpHG7ctlQHY3p4GxU58V14q1fNLLzHvYUWR1zS?=
+ =?us-ascii?Q?Dst2EE77P2L+htBeRNW08JDBHsI/JryWm6+QFBcaA47uc8uruk74yU0eGQMt?=
+ =?us-ascii?Q?yIUXcmxHKKgYc+AeGi8UdV9BoQgE705eC1RC2TWI29zmvWd77VMaQKcuxznb?=
+ =?us-ascii?Q?/uhK+chdDnoBO4vwKwCiDwwhN0l+TnbkD7VaaLOE2vNTskwouE4+nJBgQ2ar?=
+ =?us-ascii?Q?l0myj5plAtEtPrnfrmTDX6F46DnPHwUH+pSrHQJ2pFU55dlqNz2+bhFSIK97?=
+ =?us-ascii?Q?57b4gGIg6tP+LBxp4BMquNs68cDwBcF25WMSfqtAB2e455OH8k/AFUAhQt/h?=
+ =?us-ascii?Q?pPard9EH2O/zfT72Hucuxyc42oyhIP+vxPgut5I3GhELXA/K95qrR+AIGlKN?=
+ =?us-ascii?Q?KjfhqiKb07/QpJ319jPjQ3lQ/5w8rEi/cEJgDBm8HsEPRwwJneowU6E1aqIQ?=
+ =?us-ascii?Q?csMmMb8JVzOBauQu/Lv1vMqWutT9N7q8xFcujBa222x0viLuix+VRL0WMbFy?=
+ =?us-ascii?Q?ugl8g4896whVQPOG1Vd2RFAp3f+t93kP0TaKUvV9iKpTsMz0iG1qnFPWiwuO?=
+ =?us-ascii?Q?LmD70NlxIwoU92qF2q7WMQP7G41L46K5LSD8E/kWRd5mjd1mObhMk2DimzG6?=
+ =?us-ascii?Q?hYtoDRFP91O1DhQhVtHqaQp0EfLLfrKqUrtjR7wQEfmZGH5aFutOkLb54ghU?=
+ =?us-ascii?Q?xGJZzrpavt6RdCTE4D0nTkrJo/N100alVpCi8UI+k4smUgZkqE/qyNkqGhMY?=
+ =?us-ascii?Q?ws/Pgb5geE73y+TNzjv4FXqMfARduWrNM6/NnrRbNq1B4LLBozXRb5Jgvm0z?=
+ =?us-ascii?Q?p6Phoz7A2JtI6mnj4GUfpYkpJcjbNTDHOXTIvyFA92rPf6xgDq+Samel0Z6o?=
+ =?us-ascii?Q?MVps/iXF3UP/whl5LZF+sW7qZDrfw7xAIdqjnwvfEvctjfng2WEQZ3b3wLQJ?=
+ =?us-ascii?Q?WXnelSTwel79YiAjMtUKMkL/N0Ogam2+pjRH5z88dPZu85eYIREH5WsMKtyf?=
+ =?us-ascii?Q?SyPWWYvmpW74RHMbbQc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31c10818-8307-4547-b153-08dcc3a5acea
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 18:59:12.0559
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4c/ZdBFQMdURExluSzIlK5AnKeMc8DdMjFu3it5vEPllcwqTNbn+tdk/wo0U/jEa4UgwhiDij6T2oTgfCM/4Gg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7869
 
-Introduce perf_evsel__id() to collect the id of an evsel. It is not
-currently possible when using libperf to determine the id of an evsel.
-This will allow applications to link the id returned by PERF_SAMPLE_ID
-to the event being sampled.
+Copy the 'num-viewport' property from snps,dw-pcie-common.yaml to
+fsl,layerscape-pcie.yaml to address the below warning. This is necessary
+due to historical reasons where fsl,layerscape-pcie.yaml does not
+directly reference snps,dw-pcie-common.yaml.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+/arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: pcie@3400000: Unevaluated properties are not allowed ('num-viewport' was unexpected)
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- tools/lib/perf/Documentation/libperf.txt |  2 ++
- tools/lib/perf/evsel.c                   | 10 ++++++++++
- tools/lib/perf/include/perf/evsel.h      |  1 +
- 3 files changed, 13 insertions(+)
+ .../devicetree/bindings/pci/fsl,layerscape-pcie.yaml      | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/lib/perf/Documentation/libperf.txt b/tools/lib/perf/Documentation/libperf.txt
-index fcfb9499ef9c..69c1d7efb659 100644
---- a/tools/lib/perf/Documentation/libperf.txt
-+++ b/tools/lib/perf/Documentation/libperf.txt
-@@ -94,6 +94,8 @@ SYNOPSIS
-   void perf_evlist__enable(struct perf_evlist *evlist);
-   void perf_evlist__disable(struct perf_evlist *evlist);
- 
-+  void perf_evsel__id(struct perf_evsel *evsel, u64 *id);
-+
-   #define perf_evlist__for_each_evsel(evlist, pos)
- 
-   void perf_evlist__set_maps(struct perf_evlist *evlist,
-diff --git a/tools/lib/perf/evsel.c b/tools/lib/perf/evsel.c
-index c07160953224..765b17045342 100644
---- a/tools/lib/perf/evsel.c
-+++ b/tools/lib/perf/evsel.c
-@@ -484,6 +484,16 @@ int perf_evsel__disable(struct perf_evsel *evsel)
- 	return err;
- }
- 
-+int perf_evsel__id(struct perf_evsel *evsel, __u64 *id)
-+{
-+	int i;
-+	int err = 0;
-+
-+	for (i = 0; i < xyarray__max_x(evsel->fd) && !err; i++)
-+		err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ID, (unsigned long)id, i);
-+	return err;
-+}
-+
- int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter)
- {
- 	int err = 0, i;
-diff --git a/tools/lib/perf/include/perf/evsel.h b/tools/lib/perf/include/perf/evsel.h
-index 6f92204075c2..1457e5a46b28 100644
---- a/tools/lib/perf/include/perf/evsel.h
-+++ b/tools/lib/perf/include/perf/evsel.h
-@@ -41,6 +41,7 @@ LIBPERF_API int perf_evsel__enable_cpu(struct perf_evsel *evsel, int cpu_map_idx
- LIBPERF_API int perf_evsel__enable_thread(struct perf_evsel *evsel, int thread);
- LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
- LIBPERF_API int perf_evsel__disable_cpu(struct perf_evsel *evsel, int cpu_map_idx);
-+LIBPERF_API int perf_evsel__id(struct perf_evsel *evsel, __u64 *id);
- LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
- LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
- LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
+diff --git a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
+index 2f79551f6083c..ea7aa8c83a553 100644
+--- a/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/fsl,layerscape-pcie.yaml
+@@ -71,6 +71,14 @@ properties:
+     minItems: 1
+     maxItems: 2
 
----
-base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-change-id: 20240822-perf_evsel_get_id-f7e11f15504b
--- 
-- Charlie
++  num-viewport:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    deprecated: true
++    description:
++      Number of outbound view ports configured in hardware. It's the same as
++      the number of outbound AT windows.
++    maximum: 256
++
+ required:
+   - compatible
+   - reg
+--
+2.34.1
 
 
