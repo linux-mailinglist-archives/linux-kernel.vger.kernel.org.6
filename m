@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-298386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C4495C692
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE56195C694
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175CA1F250CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6F2285876
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653D813C820;
-	Fri, 23 Aug 2024 07:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3EB13C820;
+	Fri, 23 Aug 2024 07:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7LgLcZF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNCEbbOO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FBB49658;
-	Fri, 23 Aug 2024 07:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F1913BC2F;
+	Fri, 23 Aug 2024 07:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724398504; cv=none; b=N1rSHVjWSTRYOw0Y7wtttIDkg5Z/3f1tO/ZDqypogus/la6iMsRcvXgJ0bZpTzDFEgFQpJuJKDozKOz055slk0T+HZcfKATzXu2aHBLJMOBRjw7MvzEGqDhR8vlsnI8uMgfefMLAEv+UnT93LW7VxBzWuhrDMZZjiO15NHeYEIc=
+	t=1724398530; cv=none; b=nkiVXqUVujkM6O4pjJpziP+8ckqZpEKcJqgRwARksEgk+SwPmt9qiVV4Fb74WhLTAZKQr3eDY7KgDSQS8+h77SWjt+ddVlgfBaZ/81892Cu1Mv7Y1wXT5OJ94y88TjAqzqWyyfSinLQOHApGpaksut8TvMJVI6ZqJXW1ztkW5lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724398504; c=relaxed/simple;
-	bh=xm/Zy8RPb/4qtOGQsXzDj/I3iSozFPibaFGaA1E0fuY=;
+	s=arc-20240116; t=1724398530; c=relaxed/simple;
+	bh=31BzUJaUWOeYiOCtZiE1g2D7WGT7TmHDMKeTPn/GCnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSQe/F02r2YvL8SlLStw+buCHKhfhQXr+K8j0Yx58VursvkCs1VZxzOSUPXlHsyCodnVAkVe9oP6Q/fY6xu8zv29k3YOfOVvqGXpVp/nMme7j89uJAbsw0+u0zaFuK3XcK/6U+nKnMQA9mYAuhxxIYDjObJzaAj4/ku3SXNG+8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7LgLcZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41B5C32786;
-	Fri, 23 Aug 2024 07:34:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTHWb/E+HnIvjsrhELV6ZtQJC04d+cSLys72ibRMBpM3Xu3xndSqvNtNWtZrtANnaegLW+yjkInBMHnIJIwRo0lgCEOvjGL6RMpaVqHTq/7UbI9Q0WOJCVmy/ZbioNy1lWvyLNwp+g9QhmZtGKBGQmDRCoNF7HyEjz9wvJ72ILY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNCEbbOO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78381C4AF0B;
+	Fri, 23 Aug 2024 07:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724398504;
-	bh=xm/Zy8RPb/4qtOGQsXzDj/I3iSozFPibaFGaA1E0fuY=;
+	s=k20201202; t=1724398529;
+	bh=31BzUJaUWOeYiOCtZiE1g2D7WGT7TmHDMKeTPn/GCnU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z7LgLcZFBStjr9MkjKbCyCmQVX/G2x+oTxqr67hEYzE/1MOhbvSgMfHxYkg9IXITV
-	 L992gVPykZ/x3bW6PzeHcGREanTR1gHPQpaBn4oxwiRHB0oHzkA3QDe/6ov5lGU8xD
-	 TYyOtMPiJGB1dE0GjTLNbBi8EwUDhLNFF1pE3e5OCgVgqZZM395yqRZxWVlhZFcts7
-	 rSwJSfYb47uA/nqnOg9JV01gOOvLNC8jzoxTmFlGl40TxLftMlKGwBtHixJZbC88cp
-	 F3tjqXmCiPOpuYWfTIDeGJulvzQuTKFy/41dxPNoapnUqKN0AnyGksk2YcoU3QDQt0
-	 VnYW0c9Pb9VXw==
-Date: Fri, 23 Aug 2024 09:34:54 +0200
+	b=hNCEbbOOoeVLJ1Drg2L1X13c1P83VH65FS9OE9Aj61YcAp0bRJneicrxjGhsHb/bK
+	 EvmRvaKXgpgPeCB0ovQekYAn8uaDbcgOQj2T9i4JeckbUQdUBNNNqguqEfxs+gvPyj
+	 Fm6CFz2guFUbx9HlPkyWkEl7xWPlBA987qn9sJxNPztMYTWzT7WyoE8vn2IC3RsMs6
+	 S3K8lnmXNjlNxBpkXqt5w8LCbUuk1MOqZBPds2o+L3txnipuWdMPdUigzVhgvVAEmZ
+	 lSUoaImTp3Vf+8ud3+NqsHRxCs+W3dOXy91HC1V7JRWmHMMLuGKexNgqFneF4JmDGL
+	 +9RbuTm81MzhA==
+Date: Fri, 23 Aug 2024 09:35:22 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Detlev Casanova <detlev.casanova@collabora.com>
 Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
@@ -50,11 +50,10 @@ Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>, Shresth Prasad <shresthprasad7@gmail.com>, 
 	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v4 1/4] dt-bindings: soc: rockchip: Add rk3576 syscon
- compatibles
-Message-ID: <6o6mzsaldua2wvc6swxs7yz5sy7bkus34xtpojkli6fonhczaw@bxe6f5dwb35u>
+Subject: Re: [PATCH v4 3/4] dt-bindings: pinctrl: Add rk3576 pinctrl support
+Message-ID: <bsaurbgipklfm5gaa3iem4xp5iuck6hv2lnl4zohqktk3k56kl@3qfuxoiv77f2>
 References: <20240822195706.920567-1-detlev.casanova@collabora.com>
- <20240822195706.920567-2-detlev.casanova@collabora.com>
+ <20240822195706.920567-4-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,12 +62,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240822195706.920567-2-detlev.casanova@collabora.com>
+In-Reply-To: <20240822195706.920567-4-detlev.casanova@collabora.com>
 
-On Thu, Aug 22, 2024 at 03:53:36PM -0400, Detlev Casanova wrote:
-> Add all syscon compatibles for RK3576.
+On Thu, Aug 22, 2024 at 03:53:38PM -0400, Detlev Casanova wrote:
+> Add the compatible string for the rk3576 SoC.
 > 
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml | 1 +
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
