@@ -1,107 +1,75 @@
-Return-Path: <linux-kernel+bounces-299250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254B695D200
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274DF95D206
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584831C20CCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73CDBB275ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9506185E4E;
-	Fri, 23 Aug 2024 15:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OxuRE89G"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007871885AF;
+	Fri, 23 Aug 2024 15:48:36 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6287A1885A2
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA9B185E4E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428093; cv=none; b=NL0v8fL3uS4KgnKdhOLjyPvJFfRO653VBKrw2F0mFuF5wtv2ZQt5JBzb0Sh7LOHL2/sypUtPXnUALkyjbVq0CixCO73R+3xuB2edDuaUJRybLteohmUPbPNprkyYzE+xSItyqOBBmeX43C/MU1eVz0PKgClcuAQsNEwufYbihH0=
+	t=1724428115; cv=none; b=YLbrJZv56sB3AK5+WWKdUdQ48GFUZw4K5sPrqpWGFwJyRKUUMUWGnN9KdRIygdj4uY4kgEc4kUnSs0SpVABOvdWJYgqm6klIjDvC1rPK98i2La8Gm8RPfkfD6xDMFw3FnjMBKSQbmPzclutIjH4fb1Ta6VhVq1jihzMLFOqwtNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428093; c=relaxed/simple;
-	bh=LmPjT004Pu+b0lGXNhjt9mxzluLGxiZs+Qgq47unh9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A4IQKonBM2Uvf9rfvlHTQL1EgmxltCVutylXnbns7WVPE/WoKyhThNrP6jKMBp5q0bgXefZKGDowVWGZ2irisU0KF2LBLuI3S5MRARRoRS1gA6CsUMGW3K9ET4DNI7QBv4iAN9tJJWAaOIZEQdSeXeceArhfjnKGOyxZQKNxevs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OxuRE89G; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334b0e1a8eso2698878e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724428089; x=1725032889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LmPjT004Pu+b0lGXNhjt9mxzluLGxiZs+Qgq47unh9M=;
-        b=OxuRE89GlU3SEWYQpWlwh5UrcHuh/xEyEGicpZHNvWmbW5BSSEgMNh72jWOMPtEPlq
-         tQXi/9JvQTugSgUDmnjHvzE89vWSyu6VLEFxC1tvEyVDvcSe+WfckfHd/J/N8djZaw4Y
-         h0g1CJx60joy5/ERAqNPmbHldffa77rSI4Obj+4pIGGseW4jB2gIxHZAD+ZljUzfRXOq
-         p7A6w0oFKMdqJVVamEsv/K0Zgb1B92j7by1HCC+ZyR80iOp5rQsQq89h070t4F6E3IeN
-         cv7nales0LHYXO22IGLgZKtt6+vwh7nWaCNCnrnfRiIBjqCMiMCQYeDlUX+1gtDbmlks
-         i1Hg==
+	s=arc-20240116; t=1724428115; c=relaxed/simple;
+	bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=XmVe74SSCgdRUPVMxNCqElELWuyTem/dNwg3M8MPv92OkdZiWJ0X+1azop1Lu4dSlDT5FHUHc21uPued+8bO2iTEZDx3zMPuBihdkPC5NFvvmNziIY251qkvWSTizNigENOYxt2ei8Mlgdh8qzq5BZ27lftTqUFfEgHGqzuV9BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2dee9722so23386045ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:48:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724428089; x=1725032889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LmPjT004Pu+b0lGXNhjt9mxzluLGxiZs+Qgq47unh9M=;
-        b=mHj7w9Gistkswl37L+bo+a98AQYMfrVV4pVDeu9qx5KUBHLAqm5jlHeOYvn46c7WBU
-         SmLyL81CFXa9HKtwalmFYrNMnsxJUc48FisG7vxAiHj72PpFReRWujHVLhzJG9ZoRnSh
-         oAqUCEA94StTLnPbctDp7dy5i8psyRNcWnYEZCgIF2x/8RSLOUuIFLHb9M3dlJyz8Aj/
-         rFzee9Lro3U9js8F7X2Kca8PClGi0V9Vn22HVXiM8cskL6N3GnRBsbc2adAX2WOtkJWN
-         X9YsFpwS20L4pGsFkxoPd4uWzIQgaBdZrZHu84bbhjqdmN60yTulsC6eux0jAwImJ3Yq
-         6qQg==
-X-Gm-Message-State: AOJu0Yyy0P6aeCF7SNTQZrVf0kVHGLGHeo4HI3XWA1KJI5+9ELoPVA7c
-	6gFqEOInGij/wn3qRyGvJ4Zb9iCntjIsrJRJu7wHQGVE4gMi2sVrVJ0BwjZCfKxC0t++6kLKvCO
-	HWX0as02ctqqAMYIivAmG3Csozs/gMUxnWpYY4w==
-X-Google-Smtp-Source: AGHT+IGPIsPltYDrMbENTRG8ZR5qzvz5WC80feYuFQqeN6sGzjfgHPtnsMGj6lpcAU4PIZVuuR1kVHhNrtGIoL9x7eA=
-X-Received: by 2002:a05:6512:4016:b0:533:ad6:8119 with SMTP id
- 2adb3069b0e04-534387786e0mr2117298e87.14.1724428089108; Fri, 23 Aug 2024
- 08:48:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724428113; x=1725032913;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UhC5ISVNW0c95Dp8v4Y5XXSGKXsDIbg+03MjLXbTZug=;
+        b=NekwsXSFyKba3/mkbAU1E3hl973d585Q5c81/BLRhaYjqVzT27P8CoUWK897lLsY2c
+         pnN+WtZjq/umf017UI3Q9TlnCNa0XlRCzDYvT3uOk8Lj4iXZvNlfOlEUO0fPbN6wFJJo
+         tb4L9rIf2GvOhTlTSBUoTfEmI74Ib96SoAclZBILVQYfyzpCr1UR8MzXT5fOz/RAoadP
+         qsU5oy+LgkB5xhO7qxhwb57IOII06iSTC8FEG1ysL35zmI8zsJ5y/+hpzsdnx03b5rmC
+         nZF9zXUe5bryTxz1o9eUo4jNfrUOGQvh8kRsrheMLlrImTTj3oyloQIZQ/JJ9voneusr
+         IMHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVAqvGvfBxEL0fQlSwPnViX3OJn4VFCtdoYOjISgnlqbXvsfK1W5RdnT9eHUtm1Z1p7ox1NQ16nWbiiYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIknSC56LQoeQV8+ct90IORpjtAWxbWbs34yjORMFZ73as1MN0
+	c9XLoX8BjQ5lsLegDOLWq6q4airZIp/itL3pIfJ8OtMj4vQEABkAkHOha+upmIUXeEZDzNdyKyu
+	ep3pN+ayffxbOtnUbr4vW+CZ5PKFoZQelUzLW2FbrahDbaOySlUZQ7zI=
+X-Google-Smtp-Source: AGHT+IElBLTuWBHWubK5SYKzmDvZ4QrDYFk4UWI1cHl3ZU6/vsFdxvMm92EE0vzJ6EfBAQNdrQUU216oyWArLOdaVuvZ7J1USU0J
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822195706.920567-1-detlev.casanova@collabora.com>
-In-Reply-To: <20240822195706.920567-1-detlev.casanova@collabora.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 23 Aug 2024 17:47:58 +0200
-Message-ID: <CACRpkdZW+g4_szvMhuYXFHCjoekYKdux8s9u6zXkhDSDuF_i1A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] Add pinctrl support for rk3576
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shresth Prasad <shresthprasad7@gmail.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, kernel@collabora.com
+X-Received: by 2002:a05:6e02:20c2:b0:395:fa9a:318e with SMTP id
+ e9e14a558f8ab-39e3c8e3417mr1570545ab.0.1724428113326; Fri, 23 Aug 2024
+ 08:48:33 -0700 (PDT)
+Date: Fri, 23 Aug 2024 08:48:33 -0700
+In-Reply-To: <ecc8f199b5a940f19a7c999d966d0282@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000022c2e806205bb58c@google.com>
+Subject: Re: possible deadlock in mi_read
+From: syzbot <syzbot+bc7ca0ae4591cb2550f9@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 9:57=E2=80=AFPM Detlev Casanova
-<detlev.casanova@collabora.com> wrote:
+> #syz test:https://github.com/Paragon-Software-Group/linux-ntfs3.git master
 
-> Add support for the pinctrl core on the rk3576 SoC.
-> The patch from downstream has been rebased.
+unknown command "test:https://github.com/Paragon-Software-Group/linux-ntfs3.git"
+
 >
-> The grf driver is added support for the rk3576 default values:
-> - enable i3c weakpull SW control
-> - disable jtag on sdmmc IO lines
->
-> Changes since v3:
-> - Set GRF bits through the GRF driver
-> - Drop the rockchip,sys-grf phandle
-
-Patches 3 & 4 applied to the pinctrl tree!
-
-Thanks,
-Linus Walleij
 
