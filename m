@@ -1,125 +1,229 @@
-Return-Path: <linux-kernel+bounces-298734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B3A95CAC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:47:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2272395CAC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979AF1F278BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954421F27859
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF93B187338;
-	Fri, 23 Aug 2024 10:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BDA38389;
+	Fri, 23 Aug 2024 10:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cL9Er7Yo"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibkeJOep"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFA038389;
-	Fri, 23 Aug 2024 10:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2A13D521;
+	Fri, 23 Aug 2024 10:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724410065; cv=none; b=FWEl8pWxSaoGaDpHNdez/arogWSOPoaMYremMyPM7ygG8G950kvLv5p8i1llK1y9PVsZ51EUz2Ot2PjLmikNFfBgm6MYCJ1bMOkomJdibFTcNTgoIx95xI+U5JvokTYlove+IiwcflfuhDII4KDSieP9BBZ40z12b1bFbUO4agI=
+	t=1724410081; cv=none; b=Ka3M4TYHy+lAoj9/1JoUaWezzRQnSwbjGvuXtkopieaAEWUHJ+Yvnz6TTsEH41utnL1j0jFaCIRy81Dak+eTca1zJ/dfJfPTasqbpaLMRxrTau+eVp2Geom7ZfuLywW1kPgNyvGQUQNJKUonDsqM+eGfZuNvkNfNoFJYjp73tck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724410065; c=relaxed/simple;
-	bh=ttTyBEILRVwY9d6sl1DeHkKHm+sgdXWOVwRlZIYg3LM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HGA1H8Dis/4NOZgw5EYQ885xSN/mzpSYSZyKd6g9QwQURuvbGijLIiXzMedD7GxxohF0VouEEbAWUtCaNNb6yvO5244uds182Z9eRFMAdDToCzOPDglbJvdm5xEECdjEeMUUR2C3xfFYzPQ53MppD0ExHzCWyeD1uTr3MfShxDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cL9Er7Yo; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FNbXOx598TDYgdA8NaIEZsBVSraU+CQsgIhi1d4qqCQ=; b=cL9Er7Yo/5KkgBw8fyyBzi8wrU
-	XCc2z9xbbhkK5fhWM6Jj5Wzcza/+zd8fAcZcg7yCjAoxeO/vWqqh2QFSqwYkWlH0QhGnugHcvizYe
-	r+6R1gmBabHMxT6fcZYEO83j41sM5fpRmFaFjrEiz/bvDQ0kS5oC82wStifK6Rv0PWQwr9v1+GVJk
-	GfCuXCM62S2N5k5dHj4q5WHmtpd8eagMIKMTWNA9bWi/iXi0lueH4ngGgaanT4MHwrvAz8nutz/4d
-	baOQFeg0ZgxP8jILyEjC9tXnFLNAO7RuC86h3rFow8eF+69lnZXch0wdzf22VV3b5MCLECps3z+du
-	f4syM6Pw==;
-Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shRoz-0004MQ-7M; Fri, 23 Aug 2024 12:47:09 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Conor Dooley <conor@kernel.org>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>
-Subject:
- Re: [PATCH v4 3/4] dt-bindings: display: rockchip: Add schema for RK3588 HDMI
- TX Controller
-Date: Fri, 23 Aug 2024 12:47:50 +0200
-Message-ID: <3137870.U3zVgo479M@diego>
-In-Reply-To: <20240822-pushchair-premises-f4055779216a@spud>
-References:
- <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
- <4167579.6PsWsQAL7t@diego> <20240822-pushchair-premises-f4055779216a@spud>
+	s=arc-20240116; t=1724410081; c=relaxed/simple;
+	bh=NKm3f1B9QJ6K69xxHvh7IgtXJY+ohX6aX8m8wLn6acU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GHnse7EalOTmIHnUBZMW03GzqmPtPMMRv315jmuAjiXCVxANJhYHLtte3q4AvPxiImeVA/b7ilGrw9rbYNSAXf2MGqesYxhwK4rBUQqnv2vU9PJXQ/5DAmfEie5n8YE+V9IRO+VgCbBbcKJ9EZafDcvzcUh74B6Y50ndFH9oO3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibkeJOep; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724410079; x=1755946079;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=NKm3f1B9QJ6K69xxHvh7IgtXJY+ohX6aX8m8wLn6acU=;
+  b=ibkeJOep4an6MlghVnhbHorUzTXDSxAf77Bo/OfLI3QiGOdosEuAIpKF
+   d+Td0TsqCc72OiPA3zHppliAk03UBRi+yYgnhyGgZvWs/QkhT6Riwr7xL
+   70pL2RjcvbumQWA9A9vQ8NbscSVfWfKMTmEI2Ut95c9UGNrc0PBPn6UYI
+   TpiGXdtXME0l5w6NsLQCMLReYHxJB1Jrs4m/Y+hS+fQjRJKe2vGg1i7M5
+   Rlefj5l03VwBubx5+V6z0LgZ/cPG76UTFkoIn8mW+tCqgLFAZSNin4SjW
+   +Sq3ZxvGYERWHHULgczB3tRs9P5khDSFwtUXbAsItEzLO74E6oVYbX2F/
+   g==;
+X-CSE-ConnectionGUID: u3Fs8ddgSrSjQt97crT28A==
+X-CSE-MsgGUID: mqmkBf7aSWeWKnH2Eia70Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22394220"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22394220"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:47:58 -0700
+X-CSE-ConnectionGUID: ddgtkcR0TCGB+IRDQ/XVzw==
+X-CSE-MsgGUID: 0DsskcZgShOrlbVorBl7sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="65969012"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.2])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 03:47:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 23 Aug 2024 13:47:51 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+    Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, 
+    Fenghua Yu <fenghua.yu@intel.com>
+Subject: Re: [PATCH v2 3/3] kselftest: Provide __cpuid_count() stub on non-x86
+ archs
+In-Reply-To: <cd09f5e0-2353-4223-b02c-aa8461c1dbe5@intel.com>
+Message-ID: <3f75d979-44f9-6386-85df-e45214f7da7e@linux.intel.com>
+References: <20240822081114.4695-1-ilpo.jarvinen@linux.intel.com> <20240822081114.4695-4-ilpo.jarvinen@linux.intel.com> <cd09f5e0-2353-4223-b02c-aa8461c1dbe5@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/mixed; BOUNDARY="8323328-1295042213-1724410012=:2230"
+Content-ID: <3f24d78d-0267-2b58-a6a0-321fe52b826b@linux.intel.com>
 
-Am Donnerstag, 22. August 2024, 10:41:10 CEST schrieb Conor Dooley:
-> On Thu, Aug 22, 2024 at 09:01:34AM +0200, Heiko St=FCbner wrote:
-> > @Conor: just for me, did some shift happen in our understanding of dt-
-> > best-practices in terms of syscon via phandle vs. syscon via compatible?
-> >=20
-> > Because Rockchip boards are referencing their GRFs via phandes forever
-> > but similar to the soc vs non-soc node thing, I'd like to stay on top of
-> > best-practices ;-)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1295042213-1724410012=:2230
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <b1624f03-7646-ddf5-677a-9ae3886cbdc7@linux.intel.com>
+
+On Thu, 22 Aug 2024, Reinette Chatre wrote:
+
+> Hi Ilpo,
 >=20
-> If IP blocks, and thus drivers, are going to be reused between devices,
-> using the phandles makes sense given that it is unlikely that syscon
-> nodes can make use of fallback compatibles due to bits within that "glue"
-> changing between devices. It also makes sense when there are multiple
-> instances of an IP on the device, which need to use different syscons.
-> My goal is to ask people why they are using these type of syscons
-> phandle properties, cos often they are not required at all - for example
-> with clocks where you effectively need a whole new driver for every
-> single soc and having a phandle property buys you nothing.
+> On 8/22/24 1:11 AM, Ilpo J=E4rvinen wrote:
+> > Building resctrl selftest fails on ARM because it uses __cpuid_count()
+> > that fails the build with error:
+> >=20
+> >    CC       resctrl_tests
+> > In file included from resctrl.h:24,
+> >                   from cat_test.c:11:
+> > In function 'arch_supports_noncont_cat',
+> >      inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
+> > ../kselftest.h:74:9: error: impossible constraint in 'asm'
+> >     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
+> >        |         ^~~~~~~
+> > cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
+> >    301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+> >        |                 ^~~~~~~~~~~~~
+> > ../kselftest.h:74:9: error: impossible constraint in 'asm'
+> >     74 |         __asm__ __volatile__ ("cpuid\n\t"       \
+> >        |         ^~~~~~~
+> > cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
+> >    303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+> >        |                 ^~~~~~~~~~~~~
+> >=20
+> > The resctrl selftest would run that code only on Intel CPUs but
+> > as is, the code cannot be build at all.
+> >=20
+> > Provide an empty stub for __cpuid_count() if it is not supported to
+> > allow build to succeed. The stub casts its arguments to void to avoid
+> > causing variable unused warnings.
+> >=20
+> > Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT te=
+st")
+> > Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Tested-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> > Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> > ---
+> >=20
+> > v2:
+> > - Removed RFC & added Fixes and Tested-by
+> > - Fixed the error message's line splits
+> > - Noted down the reason for void casts in the stub
+> > ---
+> >   tools/testing/selftests/kselftest.h | 6 ++++++
+> >   tools/testing/selftests/lib.mk      | 4 ++++
+> >   2 files changed, 10 insertions(+)
+> >=20
+> > diff --git a/tools/testing/selftests/kselftest.h
+> > b/tools/testing/selftests/kselftest.h
+> > index b8967b6e29d5..71593add1b39 100644
+> > --- a/tools/testing/selftests/kselftest.h
+> > +++ b/tools/testing/selftests/kselftest.h
+> > @@ -70,10 +70,16 @@
+> >    * have __cpuid_count().
+> >    */
+> >   #ifndef __cpuid_count
+> > +#ifdef HAVE_CPUID
+> >   #define __cpuid_count(level, count, a, b, c, d)
+> > \
+> >   =09__asm__ __volatile__ ("cpuid\n\t"=09=09=09=09\
+> >   =09=09=09      : "=3Da" (a), "=3Db" (b), "=3Dc" (c), "=3Dd" (d)=09\
+> >   =09=09=09      : "0" (level), "2" (count))
+> > +#else
+> > +#define __cpuid_count(level, count, a, b, c, d)=09do {
+> > \
+> > +=09(void)a; (void)b; (void)c; (void)d;=09=09=09=09\
+>=20
+> The changelog states that this casting to void is done to avoid unused
+> variable warnings.
+> It is thus unexpected that not all parameters obtain the same casting
+> treatment. It looks
+> to me as though this only targets the resctrl selftest usage where the "l=
+evel"
+> and "count"
+> parameters are constants.
 
-I guess I'm of two minds here.
+The reason is entirely separate from what resctrl selftest expects.=20
+a-d are output parameters for __cpuid_count(), they need this treatment=20
+because they are typically not initialized but set by __cpuid_count() so=20
+if __cpuid_count() is doing literally nothing, nothing touches those=20
+four variables leading to unused variable warning.
 
-=46or me at least it makes sense to spell out the dependency to the
-syscon in the devicetree and not just have that hidden away inside the
-driver.
+> This is intended as a general kselftest solution so
+> I believe
+> that all parameters would need this casting to handle the cases where "le=
+vel"
+> and/or
+> "count" are variables.
 
-But on the other hand, we already have the per-soc configuration [0]
-defining which grf bits needs to be accessed, so adding a
+No, the same issue does not exist for input parameters because it would be=
+=20
+a valid warning. Passing uninitialized (and thus unused) input variable=20
+is wrong so the calling logic is wrong. Thus, I don't see how the same=20
+error could ever occur in a legitimate case for those two parameters.
 
-	.lanecfg1_grf_compat =3D "rockchip,rk3568-vo"
+> > +} while (0)
+> > +#endif
+> >   #endif
+> >     /* define kselftest exit codes */
+> > diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/l=
+ib.mk
+> > index d6edcfcb5be8..236db9b24037 100644
+> > --- a/tools/testing/selftests/lib.mk
+> > +++ b/tools/testing/selftests/lib.mk
+> > @@ -199,6 +199,10 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
+> >   # Build with _GNU_SOURCE by default
+> >   CFLAGS +=3D -D_GNU_SOURCE=3D
+> >   +ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+> > +CFLAGS +=3D -DHAVE_CPUID=3D
+> > +endif
+>=20
+> My earlier comment [1] when this work started remains. This technique dep=
+ends
+> on environment passing ARCH, which cannot be guaranteed. Looking at other
+> usages of ARCH in the kselftest Makefiles it seems that the pattern is to
+> initialize ARCH with "uname -m" if unset.
+>=20
+> > +
+> >   # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
+> >   # make USERCFLAGS=3D-Werror USERLDFLAGS=3D-static
+> >   CFLAGS +=3D $(USERCFLAGS)
+>=20
+> Reinette
+>=20
+> [1]
+> https://lore.kernel.org/lkml/db16db55-5f68-484f-ba9f-3312b41bf426@intel.c=
+om/
 
-would not create overhad, as the grf regs and bits and rearranged
-all the time anyway.
+Ah, sorry. I'd missed that comment because it started mid-paragraph.
 
+I wonder if I can safely touch ARCH or if there are caveats and it would=20
+be better to use some other makefile variable.
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c#n1652
-taking DSI as an example, where this is even more obvious
-
-
+--=20
+ i.
+--8323328-1295042213-1724410012=:2230--
 
