@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-299450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D61C95D4C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:57:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D5895D4C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5F21F23353
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15010284596
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BF31917EC;
-	Fri, 23 Aug 2024 17:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65781922C9;
+	Fri, 23 Aug 2024 17:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w3KW09pJ"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RzIKVp2l"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65A519047C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC74B191F7D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435811; cv=none; b=HTQnFIz1aZ5ZAGosDNqucMy2meCw52Tiu4+hMlKJHIPh4X3wx0QAuyCMlwUAXsrAIvSXQvHVSf9ezXVXRyCSuzHBCUMl/Ea40TYltKq2FseE1DGgdCP5rj0D3FcU9011oHAINaGpIIhOv+Lc0HYlRKNze8bx1/knlyLQ+L5nLO4=
+	t=1724435815; cv=none; b=F1dkAR1ggAfR5DIpjzXUMUpcRH5eM3X/cSWGDppCmYNUsNOil5Rnq7rWt2M7NELa3RbDDGIyZ0owJ6BbdWK26iKen/B3luDB1aVl4wEpL8m+tPSD20I7tbSSJtKzxcSo3WM05FwccxjxgLVfUzCnzA2+NGXNhnPhyZ4oOcMgkhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435811; c=relaxed/simple;
-	bh=5EAkUOO1eNEpKl7lKdwoXdo6q7cdLYxByZqnNvS2DqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DjHMJbdMjblK7aelP2CHPSYrU5NAJiAeJWKXCptWeeObOogdexKbrx70O3tclNg652IqSSQXgYTNhwNGmRJg53KLxnVhCe82kZ+ouqiulZkRPDfv03JLo22K12UHqOYhKYdsMlyUPtnSKmA3yQwkg+YwpU1p0y+viJvkL7tNkQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w3KW09pJ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so3014463a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724435807; x=1725040607; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5EAkUOO1eNEpKl7lKdwoXdo6q7cdLYxByZqnNvS2DqU=;
-        b=w3KW09pJHwVoSx83XSoHMZVpqQ8WDKITgQEZZ992sW2HY01oc4hTZ2gzyuEkDkq/AU
-         E0Ee7OisTrkFHlTzW41WlD8aOA2x0bQL7R59CHpmSGP17bDRVpXB9v2butLq+vMBLNZm
-         EaLPJyLrN3apHRfS9mjDVTQEco+uED5XCHoviVFXTsinisYRqtPXY9tIP6KGD43Xoujb
-         T4QqYAk7xiMjLz+mO3bPF4sgBjDVoWEpckdgSgahpNp2Hpet2p0rgDhIa6HMWEyKTRgQ
-         O/Taj75+RxzQ50LunrA13gwoUY290UMkosxJFbB8D4PGygCrmod+ZiPMOwUPEilH82sp
-         aSjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724435807; x=1725040607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5EAkUOO1eNEpKl7lKdwoXdo6q7cdLYxByZqnNvS2DqU=;
-        b=s1cuds+U53nYZUSvADpu5IyAXJnB+qtiw8oAeg4yk7PsRgb158c/fPgTWJxAtwK+mg
-         Tf3nbpi+8JoQYHMn7Psb6D7U7Kdq3wkqr92JGjBkGFpJGasrYzmSKn2FF00vqRuCjEb2
-         4H2hxQHWR9An676q84rKJCegSEIZJp6BOyWiamsDHfLzfZgEtSKdSl8xCUUhxTvefn4g
-         z9VxUynYuArHKPQBbZU0tbFQkR3CHR/QwFHohbyGmbsFoHUuyhjnpZras1IKeH4mizJw
-         cc74BZG+V/uSwUUoZphBXW1DsDQBOVzWs2mYq6KGG79DK/AVc3CoNewqjaLcUjUfxq5F
-         IVIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUREGqqI+Dr+3bQlxF1a5FkYC7JyXu8xwnaTiWspDo7bDJ08tjDQ+FHJx0YtDL+i+KrVf3ad74EQacpI4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdyDwjBX2O2WGzLRtf8oXTI7/c4Uzl3/w8c7/iaFG/QYg4gq0/
-	g3a1FLThobXAw02QMur8pRfxTLZaTBYh+++K9bGlL/fDuHw76ecCxdXfZso+CI2eXdBTq1MYr+c
-	GcZoPYM2+fWRYb8y/TU7kKWHD4G1JDMAxluZh
-X-Google-Smtp-Source: AGHT+IFwFUkQt4oN9JaPIbh+hQ2AzBqEeVIVAQ4tf/anTJHMyeMMgrfIltpAuTebGN8cKml67ilk6JUfiTdxWvuwcdI=
-X-Received: by 2002:a17:907:1c20:b0:a7d:e84c:a9e7 with SMTP id
- a640c23a62f3a-a86a54d1acfmr234712566b.53.1724435806499; Fri, 23 Aug 2024
- 10:56:46 -0700 (PDT)
+	s=arc-20240116; t=1724435815; c=relaxed/simple;
+	bh=VBzVAwuKH3+gjLqgTGuBToxhf5P7iitEPvAXj/30XTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp/2svKwEY9PH2HKGV062FPW4U97ZGOOiPn0XxSWRoncOBeuIaetUB+5EUGDH5poT9O0uKsc9H6fQ+qZzYRQu+Liu+s2sLqer2P1ouSXHUTo8mSRZPy6g5c2uxEdcJzjJLopyQxGqXAHLDCgYBdKLrZBCrZ3f37ltFd1TmYqk8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RzIKVp2l; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 23 Aug 2024 10:56:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724435810;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=un5k90vrbN5RPrqbHK8kokOeMqPyoW5VK7qLx4GdDLA=;
+	b=RzIKVp2lSda6MKYMug//blydJHWrCxPVCiU1LWPBGEJ92gxsN6wp82o9lw4SBRfN3JlW8P
+	Zxnl/ADb0DfX+2Gfr5m9BICh4TKpC2WchF0QEtrTZ9y3gbFON2/dNiUpUnou3B7cw0lrav
+	8icY6fHth+MNPBkAEm3R4DlYAVO7gEU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Barry Song <21cnbao@gmail.com>
+Cc: hanchuanhua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, 
+	hughd@google.com, kaleshsingh@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, 
+	ryan.roberts@arm.com, senozhatsky@chromium.org, shy828301@gmail.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
+	yosryahmed@google.com, hch@infradead.org, ryncsn@gmail.com
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io
+ devices
+Message-ID: <i6jki2zocqzsjcjgraf6lyl7m3cjzv5lnsuluq5xnvznw7bsge@4easx2ucpxml>
+References: <20240821074541.516249-1-hanchuanhua@oppo.com>
+ <20240821074541.516249-3-hanchuanhua@oppo.com>
+ <qim6ug5d3ibrn6mgrk7oybml7qatgw654y2t6wlc25pnpddr2i@yniwf64alx23>
+ <CAGsJ_4wgC+yaCYinv8FYm9RHJfT5wiFxHMn_WTGysdpiH0HS7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823173103.94978-1-jdamato@fastly.com> <20240823173103.94978-4-jdamato@fastly.com>
-In-Reply-To: <20240823173103.94978-4-jdamato@fastly.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 23 Aug 2024 19:56:32 +0200
-Message-ID: <CANn89iJmp2yviC=Z-n7-=suw8N=SJ7uoy0xy5LMQRKDhubNBZg@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/6] net: Add control functions for irq suspension
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com, 
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net, 
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org, 
-	willy@infradead.org, willemdebruijn.kernel@gmail.com, skhawaja@google.com, 
-	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>, 
-	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4wgC+yaCYinv8FYm9RHJfT5wiFxHMn_WTGysdpiH0HS7g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 23, 2024 at 7:31=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> From: Martin Karsten <mkarsten@uwaterloo.ca>
->
-> The napi_suspend_irqs routine bootstraps irq suspension by elongating
-> the defer timeout to irq_suspend_timeout.
->
-> The napi_resume_irqs routine effectly cancels irq suspension by forcing
-> the napi to be scheduled immediately.
->
-> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> Co-developed-by: Joe Damato <jdamato@fastly.com>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> Tested-by: Joe Damato <jdamato@fastly.com>
-> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> ---
+Hi Barry,
 
-You have not CC me on all the patches in the series, making the review
-harder then necessary.
+On Thu, Aug 22, 2024 at 05:13:06AM GMT, Barry Song wrote:
+> On Thu, Aug 22, 2024 at 1:31 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Wed, Aug 21, 2024 at 03:45:40PM GMT, hanchuanhua@oppo.com wrote:
+> > > From: Chuanhua Han <hanchuanhua@oppo.com>
+> > >
+> > >
+> > > 3. With both mTHP swap-out and swap-in supported, we offer the option to enable
+> > >    zsmalloc compression/decompression with larger granularity[2]. The upcoming
+> > >    optimization in zsmalloc will significantly increase swap speed and improve
+> > >    compression efficiency. Tested by running 100 iterations of swapping 100MiB
+> > >    of anon memory, the swap speed improved dramatically:
+> > >                 time consumption of swapin(ms)   time consumption of swapout(ms)
+> > >      lz4 4k                  45274                    90540
+> > >      lz4 64k                 22942                    55667
+> > >      zstdn 4k                85035                    186585
+> > >      zstdn 64k               46558                    118533
+> >
+> > Are the above number with the patch series at [2] or without? Also can
+> > you explain your experiment setup or how can someone reproduce these?
+> 
+> Hi Shakeel,
+> 
+> The data was recorded after applying both this patch (swap-in mTHP) and
+> patch [2] (compressing/decompressing mTHP instead of page). However,
+> without the swap-in series, patch [2] becomes useless because:
+> 
+> If we have a large object, such as 16 pages in zsmalloc:
+> do_swap_page will happen 16 times:
+> 1. decompress the whole large object and copy one page;
+> 2. decompress the whole large object and copy one page;
+> 3. decompress the whole large object and copy one page;
+> ....
+> 16.  decompress the whole large object and copy one page;
+> 
+> So, patchset [2] will actually degrade performance rather than
+> enhance it if we don't have this swap-in series. This swap-in
+> series is a prerequisite for the zsmalloc/zram series.
+
+Thanks for the explanation.
+
+> 
+> We reproduced the data through the following simple steps:
+> 1. Collected anonymous pages from a running phone and saved them to a file.
+> 2. Used a small program to open and read the file into a mapped anonymous
+> memory.
+> 3.  Do the belows in the small program:
+> swapout_start_time
+> madv_pageout()
+> swapout_end_time
+> 
+> swapin_start_time
+> read_data()
+> swapin_end_time
+> 
+> We calculate the throughput of swapout and swapin using the difference between
+> end_time and start_time. Additionally, we record the memory usage of zram after
+> the swapout is complete.
+> 
+
+Please correct me if I am wrong but you are saying in your experiment,
+100 MiB took 90540 ms to compress/swapout and 45274 ms to
+decompress/swapin if backed by 4k pages but took 55667 ms and 22942 ms
+if backed by 64k pages. Basically the table shows total time to compress
+or decomress 100 MiB of memory, right?
+
+> >
+> > > [2] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.com/
+> >
+> 
+> Thanks
+> Barry
 
