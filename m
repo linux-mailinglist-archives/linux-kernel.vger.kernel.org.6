@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-298692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611F295CA44
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E2095CA47
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9395B1C20C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8441C20EBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E331885BB;
-	Fri, 23 Aug 2024 10:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBD118785B;
+	Fri, 23 Aug 2024 10:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lmvqonSO"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HN8Um5lz"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA4118858B
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F2E1885A2
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408175; cv=none; b=h9UUOcK7qm1/A++w8V4rXxZlVOyF2oB2xTVp3QXkZjom3fX69Y/NeADyI1m64dib9gkIBEKsOlTXaqRaeemNW4+zQoSaRZdB6vhW1MnQosYt+6D53pC0gyHV+7bW931wYpl+1vUUec86nDWhJ1Z27B9mdzC9ABxkyUwltsyXR7M=
+	t=1724408177; cv=none; b=LueDPlBMUGHm6BkDrqgoeMsQ0Fosk1Yit6Qy2sC+kZTeVso4itf+zOCITdF7w4OHo8uyiywSq/ZUJLsQj4PVHvvpaKH8nFS+dFnap+w8eNG+4iABiRPZ650dKzJOIfWrBi/WfyyTV6AjSrI3m8rZ44iuOBbjAjgVnjiV4wUL36E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408175; c=relaxed/simple;
-	bh=IlZEpsC5zLoI1hcyp/Rq4r/SZxK68xgrN7mWoEs36F4=;
+	s=arc-20240116; t=1724408177; c=relaxed/simple;
+	bh=ZwCto+Ttph4EufVXEro/gEKUqJQirV37As8vR+9RWpU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c0WVITrtlHolxM/ELTwKOm784vMVmmqjD+MPBLnJrQHXo2mRnVytNWUuFVeEuGZJxCpSkOIzUca/31msqDWB9KtT2LUq4FxYV0Llnz7QHDhdD7fAKdaF5HBZE7CrwDW+9zsTq7zAIY9mP4PfgQbVTdHdOx/MKrBx22xLelDj9eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lmvqonSO; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:To:Cc; b=hwWOqlhyLr8M/n6ByxYehRGgQP5YEIg2HepxCz+CBE2lMMs6g01FMI5G1RAHUVf4eyXVxfrGViN0ycASPa2LY+Il4jeGn8oJ9WXRHRw1fILqpQjdpmwfdLMOX4tPI4WHNEOBnhTo5x2luWCxaePEFHA1HQCkHoABfS+1/TXGKJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HN8Um5lz; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a868b4d67c6so12240766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:16:13 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bec254f773so240218a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 03:16:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724408172; x=1725012972; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724408174; x=1725012974; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N7t5hccTkDQZVo5vU52s+pXfo+StB90U/RzqpPMyIi8=;
-        b=lmvqonSOzJiLZ0xeswHBSr4v8vSVhBf+5IfrvBkew0ziCFeewkR6An/6rR8pAnLQPu
-         4pBtwgUCFQOa8Y4gryQHj1qjfTG4UcMhRV+F5LQ9oCaMECYudOuzcLlNV/G/LbhKPDX8
-         d8pXyjZEsIAwWcLvtcTJ65Yt/mNsi/oAyicWuk5BYrd1mp52IyxKgc4wsA3MzSf8VvHt
-         uqejoBtmxijuF6EmcGkFQMNr2t5of1PPrYTZ2fA4MSDFMsW+ef4zPI/JeU+bmkgPQiAL
-         QaJldRzm/qPpk02Fa7+BaGDX1Mfb79rlz2hHU+mPIYYqClsyN6kCF1X0+7eRWj5bIXNp
-         81tw==
+        bh=G7t3y5+/zYw1uRCizz7bvbUmiS1vcdmMCZnETRzZwr0=;
+        b=HN8Um5lz5NFy/2ogaturIBc7T5AP2lo0uJxdQLThIY6dRpwdws6GINXvcPFYaSBjNV
+         BksXRaR2pT92cN29J2ihDsW8crQIFnByk3Q9WBG4izAqA+2Cqbn2BSNecT/Cx9UTy659
+         1j+zefbd08fuqDGZe7n9jyvknl4WoWvfJ+Vux8dZ4IZe3uRAIQiMrNicneCD0M9wPRBV
+         E/g8Fw8ytkUqIyccEcDCXNBYBr0+kp6rsEboX0NWccmJmhMpFNOyK0bt/Cpj1+laID3D
+         h6Agmk/W7DD1UJuU6NiFUf2+0iyFPTXiVrSzJqyTq/6ZfirjLvmRT9bwWIVxBfSBtA33
+         vRbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724408172; x=1725012972;
+        d=1e100.net; s=20230601; t=1724408174; x=1725012974;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N7t5hccTkDQZVo5vU52s+pXfo+StB90U/RzqpPMyIi8=;
-        b=o7rd+LghgkZ5PfFu4Eo/kkuLKKPmbZvzWSzsJWmZkW30AaRkldfNODa8jm6HpN6mny
-         kvdrk6JbUa+ks1ilzfnKBw4ZtZTa54DpMEHv9uhYLBqa3Und6NN6kDyOAHJjdIXi7tIf
-         45ffQy+YP+pnfMAXLlEQPIOdmrga7REyEvvtvXR/3hg5cTWVLrRcYMl7cRaNy/tkEa4V
-         5REB7ngOpnp4c6aEB5G7/Mzc/5NUwvVlIk7b62yqFPZHTn+eHd2EDaMFWdpRQn98TU2T
-         dZ6hmZLZaQtNwYA3IimHgNv17FZc2bV3sZrHMevdI73pOLmA+FICnAmuc0CC5+kw8bSf
-         49IQ==
-X-Gm-Message-State: AOJu0YwuSogC5PwUTLt5PuB4Na861ILSmcM1/5B0S7l6Q5US6o4o0z7t
-	/IKC8/f0g3uGxh7O8sOfBJoEW41y3HjS/5us5Q0yLy9+Lui9tp7jB42xrNoaIpo=
-X-Google-Smtp-Source: AGHT+IFlkL5s7rmHHgYZMRB1BLvikyDv99I8y83akU4jvf5DqV38Aa2gkHT1IB1hClppKtMqNTmTRA==
-X-Received: by 2002:a17:907:2d07:b0:a7a:ab8a:38b with SMTP id a640c23a62f3a-a86a54b66aemr78280566b.7.1724408172034;
-        Fri, 23 Aug 2024 03:16:12 -0700 (PDT)
+        bh=G7t3y5+/zYw1uRCizz7bvbUmiS1vcdmMCZnETRzZwr0=;
+        b=GovKBu7Dccynzu3qztQ5HOjLXRpNc0J13jCm+zSZtk+u2CpKxo/osaFHK0RCxgwRED
+         37Bt6fut7vsPqGXA0eoeP4fMqZcPF7gh15cGjObLARh6Zq5DpgGJXDgp5ihKAYPNd91c
+         KuzSa/bWdYzQ8UhZedHm7FIZO1gS2qvMCS5qD3ZEaBXG3iQNM1eLJletP5phM8jpG19y
+         NrDaGQxRUXdWtveBUNsq7O2PXSjrdy8rOzc/IZ7mE3PoKjugCS9BCQLWL6T2E3Keyv42
+         oOI3techcQGSSGuVhOtO3KUtNPymU39BwxR9YfCcdLR548GcRGw7lsePY6L3KgC2OcIj
+         gGNw==
+X-Gm-Message-State: AOJu0YwKg+dHiZcnT1E2XH7vOEhPHz1ycRnlGhOJSeA+5koC0Tgl7hUX
+	7SfPlEeo5w3zuF+mFCOvQOmKeTzwAaQNpHlA0ot75nmOGensS856B6VDzfb7ghU=
+X-Google-Smtp-Source: AGHT+IFfy+OGNSeG7SJwkUpL7Mu8EF/PyhzdcUVTDpOXbF/eS35DAJqbkG6gabVNuzT1c5TAzBjNFg==
+X-Received: by 2002:a17:907:7f2a:b0:a83:a86a:549a with SMTP id a640c23a62f3a-a86a5185ae4mr70199966b.1.1724408173829;
+        Fri, 23 Aug 2024 03:16:13 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2a1df5sm237912166b.68.2024.08.23.03.16.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2a1df5sm237912166b.68.2024.08.23.03.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 03:16:11 -0700 (PDT)
+        Fri, 23 Aug 2024 03:16:12 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 23 Aug 2024 12:15:59 +0200
-Subject: [PATCH 4/7] memory: pl172: simplify with dev_err_probe()
+Date: Fri, 23 Aug 2024 12:16:00 +0200
+Subject: [PATCH 5/7] memory: pl172: simplify with devm_clk_get_enabled()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-b4-cleanup-h-guard-v1-4-01668915bd55@linaro.org>
+Message-Id: <20240823-b4-cleanup-h-guard-v1-5-01668915bd55@linaro.org>
 References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
 In-Reply-To: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
 To: Santosh Shilimkar <ssantosh@kernel.org>, 
@@ -88,50 +88,88 @@ Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=898;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1959;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=IlZEpsC5zLoI1hcyp/Rq4r/SZxK68xgrN7mWoEs36F4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmyGFh/t4Skn3nDrz6/5TT4P0rYPwiS3a/epBSf
- tzcKzaA2ZGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZshhYQAKCRDBN2bmhouD
- 1+xjD/4ruvUAwsgXVGQc0suOEQkGhBJDCb2yPwHptmIN2/Cz6v83MTq62MWytE7rdN2phWy9O3f
- 56yiu1nANYWS2NWDWO0kosm/uUjEqkMGqtyWK/pnQejkUhHMa4rQ/myL9xx+HZW2K3Bh2SBDgZ4
- 6ZLwIlHfAB+fzB0X83HHUe2/aotZPqNrnysD9mIh1EM+nHlTPLNoJoNKc/uo29G6m8kTrPLKxb3
- 4ToplKvocyNwTPLYUwT02C0KUtbB4+d67+xx4nnPm2ubzPHbPKnZnS+jbuwKER2b9fIS8ZbeUoj
- WX+UYhccc7ySZNT482TECCo2+TluRj3/4f5ICmM5nxGQURDdJzq1x9lD198O2PaLdE/FiARsnAr
- wNC7qaAzZAhAoVmnNPRgCwEjVKu5yIgB5OzGNR7vlx9DNUoF/IlGWo5jMIGFFj3yUaxhIogBX0J
- A3nJPQTAKEtc+2u15w3TROpLzcw3tVqexUTmSFeR91i0uFz0P2KJUpNFRWWBAkCp3AxGjbK/zXd
- 4FmSICD+VMNMNlwqhQzeBvd03X74EDItoXYvmul61L5I7l0xuE+toFTcEqCRosdTG3A252FL2h2
- ZY84cfqj/xdyvUssSD/4su/wROzfVx5QHgVWPUclmNz+/5zVaNC0wF3+DUE0HOQsmv0NQf0lX5/
- 7CE8apeWgpQcD2Q==
+ bh=ZwCto+Ttph4EufVXEro/gEKUqJQirV37As8vR+9RWpU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmyGFiSXY1vA0zswAcRg937hXMqwpJ4t2399ap6
+ Zc17P/RQWiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZshhYgAKCRDBN2bmhouD
+ 17p1EACCnXOOL7qiPpF1BVtDZJyarNwyghSByLJr+OShMsFmzfL5fqK3GScCm0Bj5tf5tFbpbQ5
+ 4DJJ1trhs+rjYKho1Euf2qMyByMQviKQz7374W4xt5N/ovZJ+Fg9sOhE1mO+En6Hvna0dmajS/c
+ oiu4h3guIuqxSo6dpFkaHPOhgpZbEb3Dtfd3iAx9PuxXu4mijxyh/YGo0Y2A1YKcvyE6DUOvk9M
+ jJa54LPKp7VRceGAFUBCGQj1cm9CQrQaMW4nO+kb99NfInXzV14s3UOvQwucjesIiDJUpSVMkO/
+ Psn2QKZBU9tWM8MLWMm8C9u293iSX+xawdxcNKFbI/OQjBpq8H+DfVviF8tK5MYL3SPgYyEMEE9
+ 86s2CghofhJi17lfZOairekgkW5n0bAEY3Zmg3EjZhaNeev73dDZVaWuKZfEwuH3BFppKfdjuOu
+ nETH6p8zg3F/8eCvi1KLZNVcb3dhzw2AfFmlbhmkpKAFE5nwO8opG2o8k7gjNAgxUq/HDW9wbb7
+ h2aPwn5RP7JFlkphz5esizu/oNSCTe7oK41p5khXYS9v1azXwXO+DgGQYYsIBuGn2gnjAWvsos9
+ x4EDWmHau7gceYlm6H87WjiER4YPR9KTS+u84BmTDWnYnRgCnMR9dJcbzYSt/BY9Oj3Z26zNX6a
+ IbxrCHk2x5zf8AQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use dev_err_probe() to avoid dmesg flood on actual defer.  This makes
-the code also simpler.
+Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
+make code simpler.  Change to dev_err_probe() in handling clk_get_rate()
+error to make it even simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/pl172.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/memory/pl172.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/memory/pl172.c b/drivers/memory/pl172.c
-index 9eb8cc7de494..390012401f64 100644
+index 390012401f64..db5fbee34077 100644
 --- a/drivers/memory/pl172.c
 +++ b/drivers/memory/pl172.c
-@@ -217,10 +217,9 @@ static int pl172_probe(struct amba_device *adev, const struct amba_id *id)
+@@ -216,28 +216,20 @@ static int pl172_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (!pl172)
  		return -ENOMEM;
  
- 	pl172->clk = devm_clk_get(dev, "mpmcclk");
--	if (IS_ERR(pl172->clk)) {
--		dev_err(dev, "no mpmcclk provided clock\n");
--		return PTR_ERR(pl172->clk);
--	}
-+	if (IS_ERR(pl172->clk))
-+		return dev_err_probe(dev, PTR_ERR(pl172->clk),
-+				     "no mpmcclk provided clock\n");
+-	pl172->clk = devm_clk_get(dev, "mpmcclk");
++	pl172->clk = devm_clk_get_enabled(dev, "mpmcclk");
+ 	if (IS_ERR(pl172->clk))
+ 		return dev_err_probe(dev, PTR_ERR(pl172->clk),
+ 				     "no mpmcclk provided clock\n");
  
- 	ret = clk_prepare_enable(pl172->clk);
+-	ret = clk_prepare_enable(pl172->clk);
+-	if (ret) {
+-		dev_err(dev, "unable to mpmcclk enable clock\n");
+-		return ret;
+-	}
+-
+ 	pl172->rate = clk_get_rate(pl172->clk) / MSEC_PER_SEC;
+-	if (!pl172->rate) {
+-		dev_err(dev, "unable to get mpmcclk clock rate\n");
+-		ret = -EINVAL;
+-		goto err_clk_enable;
+-	}
++	if (!pl172->rate)
++		return dev_err_probe(dev, -EINVAL,
++				     "unable to get mpmcclk clock rate\n");
+ 
+ 	ret = amba_request_regions(adev, NULL);
  	if (ret) {
+ 		dev_err(dev, "unable to request AMBA regions\n");
+-		goto err_clk_enable;
++		return ret;
+ 	}
+ 
+ 	pl172->base = devm_ioremap(dev, adev->res.start,
+@@ -267,16 +259,11 @@ static int pl172_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ err_no_ioremap:
+ 	amba_release_regions(adev);
+-err_clk_enable:
+-	clk_disable_unprepare(pl172->clk);
+ 	return ret;
+ }
+ 
+ static void pl172_remove(struct amba_device *adev)
+ {
+-	struct pl172_data *pl172 = amba_get_drvdata(adev);
+-
+-	clk_disable_unprepare(pl172->clk);
+ 	amba_release_regions(adev);
+ }
+ 
 
 -- 
 2.43.0
