@@ -1,205 +1,196 @@
-Return-Path: <linux-kernel+bounces-298974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E8F95CE7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:57:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A832A95CE81
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973CB1C23236
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8D928449A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE77D1885AC;
-	Fri, 23 Aug 2024 13:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9272E1885B0;
+	Fri, 23 Aug 2024 13:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YdQsh6CQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lg+KsNiV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D759188595
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D68188593;
+	Fri, 23 Aug 2024 13:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421455; cv=none; b=IAdkqZhX77Q5Y93z4yUXUPew/3zyaBlwnByyh2HjEo1lBP+h0VVOUH/BwgJGMpf85ggDSue0J6X2V971uSEVaB8CeFQarlpgTd3a4xX8QByVGRcO219Je/6lkwU1L5htFCu0m51F+L45Cp7pCajEqyjh28U5e9wqFpHI9wypI8g=
+	t=1724421481; cv=none; b=ktOe06xqt1h2OWQzq9jng8RFs1rzULZwTavI9WUzNORb5TvT9PlC/09ZLx90LFBhQCyUB+HdN+KxZiayLYM88CLIGR9FspZJdXwQF3XKNkHn0Hg+GdF+Rufs01L/fxRxvYG5FTzSFHxrvydexvj1yfBUGqzAuZAUVn2AHFQeWdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421455; c=relaxed/simple;
-	bh=LDNpPxi4G7n+Ft5t7DksRyjmvULIrLPrUtYNcHz4Z0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FXa17CObBa7hWQYCldlDEqjpKuULzMy4w7kaUBqwmrjZinPa1scT5WD3BLif0B53Is9cWefNAR3Ujz0DxGz+HkGR9dkLIpNQs1zcIk0bWDeYptTni2NYyql8j/3fNLo8Jt3fELFlE/LITPZdITFLbZbsOT40qcbM4++II3Cn2tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YdQsh6CQ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724421454; x=1755957454;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=LDNpPxi4G7n+Ft5t7DksRyjmvULIrLPrUtYNcHz4Z0c=;
-  b=YdQsh6CQzSXEqUigSHPsnMSby91OSNXa8UDKvqhoJku6cvb05zc7SyAV
-   c1j3JO0mkQTD0Bhwlm1GNx5IeoxuyB3kCt3GfJFQib5+yUJsV1ge8d8kG
-   HuMnUW0Fq1MZ/LcL/MmPOv6a77gj+OsDocR/+iLV+Ncu8ICG4DJm7PNVU
-   Ueau/LFKhNo73Hy4ZokB4KTNCxJEk+LiDespHfLnd+G0Q4m5SeA9Y9xiR
-   zUPc7VTuBWMWqZMc+iTkO2wQ5Tj/LJn511nBt2Tu0Wdww+yHMAZ16QmmU
-   SU/rxmXjbEysiT7z7Gw2KmAvlapORPl+2vSNHRQKz2MIsRBODdqrUVsa+
-   A==;
-X-CSE-ConnectionGUID: 3XoAJeWDSfCOycmIjUzIlA==
-X-CSE-MsgGUID: WG6sMD0XTbuxcuy2JXvSiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22855674"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="22855674"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:57:31 -0700
-X-CSE-ConnectionGUID: 0uEkEY4ORs+PVwHI0m7kmQ==
-X-CSE-MsgGUID: GJ5iRcg5Q5iLt+E33hvCcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="66622762"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 23 Aug 2024 06:57:28 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shUn8-000Dlc-10;
-	Fri, 23 Aug 2024 13:57:26 +0000
-Date: Fri, 23 Aug 2024 21:56:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuntao Liu <liuyuntao12@huawei.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: WARNING: modpost: vmlinux: section mismatch in reference:
- imx7d_enet_init+0x18 (section: .text.unlikely.imx7d_enet_init) ->
- imx7d_enet_clk_sel (section: .init.text)
-Message-ID: <202408232129.sx7nsk3e-lkp@intel.com>
+	s=arc-20240116; t=1724421481; c=relaxed/simple;
+	bh=xQPnZ8W32sDl4wNzWjiG9LXxKgrpiFGgtEis6Xo2Lxs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To:
+	 References:In-Reply-To; b=ZwhFjH/G9D5vZeYgT7HRdB3cuSEN9kvoUbwkfrBONe89nhZOVJkb8RDk/HRkCYUR+BJfE/WV2wa48s9QOtNyxcHNAQBjmTvBiKzvYkB6DhnameXoSF2DN1poMGjMsne4Nf9h3+2vUgNMacOmYDxyoF6Uiv3r0uKOttFrZSaXiE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lg+KsNiV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N6edqM005285;
+	Fri, 23 Aug 2024 13:57:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	mime-version:content-transfer-encoding:content-type:date
+	:message-id:subject:from:cc:to:references:in-reply-to; s=pp1;
+	 bh=CL9e6c4NVt96VpMFW1BS0QLB3uYCWbXLJv5FCaiWfsQ=; b=lg+KsNiV3L8U
+	RhyM67d8l0eBQih03wfT2oqgFkIfQxIGU/Mt87P8YEon9S9K1Ykxe7JpryT2J81F
+	uqGg16XkcokQ9/+UHWAJT6Z0rA38cRHq2AMwSxSWqG9hhb9NAOMvFcY5GUouE4Hj
+	H6k7GtMqk0FVdJdx6SCeEbwxm7WifdnMxkV94LdiCRT9ABB3dc+q/HGGd/MgouNW
+	cG9D/gn1TWJiWWvJKToSAckJqUriAM8zk9bY1LrpqwkEuO3QsS0vhsM0DNEmE+AA
+	eaoDRb8hks4P27v1gytSXejwPVzYqY3dC1kRWjagzGK9hS3Ojk7nwN/4Aqe8CuiT
+	Ug0IExqFMw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb656ga-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:57:54 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NDvsEg014434;
+	Fri, 23 Aug 2024 13:57:54 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb656g4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:57:54 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NB0i9m019105;
+	Fri, 23 Aug 2024 13:57:53 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qa5h0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 13:57:53 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NDvlPi14549434
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 13:57:49 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 23F4A2005A;
+	Fri, 23 Aug 2024 13:57:47 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E49902004B;
+	Fri, 23 Aug 2024 13:57:46 +0000 (GMT)
+Received: from darkmoore (unknown [9.171.45.196])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 Aug 2024 13:57:46 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 23 Aug 2024 15:57:41 +0200
+Message-Id: <D3NCE36F09WE.18YM4PED9CTGF@linux.ibm.com>
+Subject: Re: [PATCH v3 5/5] KVM: s390: selftests: Add regression tests for
+ PLO subfunctions
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <shuah@kernel.org>,
+        <frankja@linux.ibm.com>, <borntraeger@linux.ibm.com>,
+        <imbrenda@linux.ibm.com>, <david@redhat.com>, <pbonzini@redhat.com>
+To: "Hariharan Mari" <hari55@linux.ibm.com>, <linux-kselftest@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240823130947.38323-1-hari55@linux.ibm.com>
+ <20240823130947.38323-6-hari55@linux.ibm.com>
+In-Reply-To: <20240823130947.38323-6-hari55@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nQQ-YW8oV9XxOs8HESfLtdVrKmfr56xy
+X-Proofpoint-GUID: zEVmvc18RV8ju2HWZqcG8Q7OGykI1Dvu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408230099
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3d5f968a177d468cd13568ef901c5be84d83d32b
-commit: ed0f941022515ff40473ea5335769a5dc2524a3f ARM: 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-date:   2 months ago
-config: arm-randconfig-002-20240823 (https://download.01.org/0day-ci/archive/20240823/202408232129.sx7nsk3e-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408232129.sx7nsk3e-lkp@intel.com/reproduce)
+On Fri Aug 23, 2024 at 3:05 PM CEST, Hariharan Mari wrote:
+> Extend the existing regression test framework for s390x CPU subfunctions
+> to include tests for the Perform Locked Operation (PLO) subfunction
+> functions.
+>
+> PLO was introduced in the very first 64-bit machine generation.
+> Hence it is assumed PLO is always installed in the Z Arch.
+> The test procedure follows the established pattern.
+>
+> Suggested-by: Janosch Frank <frankja@linux.ibm.com>
+> Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
+> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408232129.sx7nsk3e-lkp@intel.com/
+LGTM
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
->> WARNING: modpost: vmlinux: section mismatch in reference: imx7d_enet_init+0x18 (section: .text.unlikely.imx7d_enet_init) -> imx7d_enet_clk_sel (section: .init.text)
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/poly1305-arm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp737.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp864.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp865.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp869.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp932.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_euc-jp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-5.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-13.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-u.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-ru.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-roman.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/prime_numbers.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_helpers_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_rhashtable.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_keys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_key_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_linear_ranges.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cmdline_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/overflow_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/fortify_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/siphash_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-eth.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-hif.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-apmixed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-topckgen.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/clk-qcom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/gcc-msm8976.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/cppi41.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_kunit_helpers.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_buddy_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_cmdline_parser_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_connector_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_damage_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_dp_mst_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_exec_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_format_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_framebuffer_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_gem_shmem_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_managed_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_mm_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_modes_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sii9234.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
+> ---
+>  .../kvm/s390x/cpumodel_subfuncs_test.c        | 32 +++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>
+> diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b=
+/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> index fe45fb131583..222ba1cc3cac 100644
+> --- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> +++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+> @@ -19,6 +19,8 @@
+> =20
+>  #include "kvm_util.h"
+> =20
+> +#define PLO_FUNCTION_MAX 256
+> +
+>  /* Query available CPU subfunctions */
+>  struct kvm_s390_vm_cpu_subfunc cpu_subfunc;
+> =20
+> @@ -33,6 +35,31 @@ static void get_cpu_machine_subfuntions(struct kvm_vm =
+*vm,
+>  	TEST_ASSERT(!r, "Get cpu subfunctions failed r=3D%d errno=3D%d", r, err=
+no);
+>  }
+> =20
+> +static inline int plo_test_bit(unsigned char nr)
+> +{
+> +	unsigned long function =3D nr | 0x100;
+> +	int cc;
+> +
+> +	asm volatile("	lgr	0,%[function]\n"
+> +			/* Parameter registers are ignored for "test bit" */
+> +			"	plo	0,0,0,0(0)\n"
+> +			"	ipm	%0\n"
+> +			"	srl	%0,28\n"
+> +			: "=3Dd" (cc)
+> +			: [function] "d" (function)
+> +			: "cc", "0");
+> +	return cc =3D=3D 0;
+> +}
+> +
+> +/* Testing Perform Locked Operation (PLO) CPU subfunction's ASM block */
+> +static void test_plo_asm_block(u8 (*query)[32])
+> +{
+> +	for (int i =3D 0; i < PLO_FUNCTION_MAX; ++i) {
+> +		if (plo_test_bit(i))
+> +			(*query)[i >> 3] |=3D 0x80 >> (i & 7);
+> +	}
+> +}
+> +
+>  /* Testing Crypto Compute Message Authentication Code (KMAC) CPU subfunc=
+tion's ASM block */
+>  static void test_kmac_asm_block(u8 (*query)[16])
+>  {
+> @@ -196,6 +223,11 @@ struct testdef {
+>  	testfunc_t test;
+>  	int facility_bit;
+>  } testlist[] =3D {
+> +	/*
+> +	 * PLO was introduced in the very first 64-bit machine generation.
+> +	 * Hence it is assumed PLO is always installed in Z Arch.
+> +	 */
+> +	{ "PLO", cpu_subfunc.plo, sizeof(cpu_subfunc.plo), test_plo_asm_block, =
+1 },
+>  	/* MSA - Facility bit 17 */
+>  	{ "KMAC", cpu_subfunc.kmac, sizeof(cpu_subfunc.kmac), test_kmac_asm_blo=
+ck, 17 },
+>  	{ "KMC", cpu_subfunc.kmc, sizeof(cpu_subfunc.kmc), test_kmc_asm_block, =
+17 },
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
