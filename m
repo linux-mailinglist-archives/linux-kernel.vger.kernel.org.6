@@ -1,189 +1,254 @@
-Return-Path: <linux-kernel+bounces-299165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DD295D11D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C3495D120
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666EA1C23AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ECD81C23C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424D01CD3D;
-	Fri, 23 Aug 2024 15:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B002188A0F;
+	Fri, 23 Aug 2024 15:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w0zHCJVa"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="huwcS2DW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E0E188A04
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF68186E4A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425906; cv=none; b=rDQwrOSYIGih2zFiz1DA8iZ95+p3/umPiEHxDo6wQ1BrM5kPaBny7z8+HA4Y1yvHppiUU6F8PRQ4nkgj9rI1JHZi4CrMWMp5qOCFP9j/NPfRWq+u1NTw3SfZ01xLU9jFw7sCgsPvxhFgta6d1Ff1mkT80S3iQx0VCgIuw9win/8=
+	t=1724425956; cv=none; b=nCdq7ZOeeb758GoQRLkxuEtsbHnRFu2tcjNnyipmkv+eLBSb7N4uYqkUH/orH8Hv9tiSRKmqL3QDexdxZMCw89zXQbMSNFgMM0+T0JasOg73j1XbVtW8vWm/8Tfqidwk7F5/2j7HZ5k3ju8dud+2fbrFt5Rs4UchVV8VBVuRtcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425906; c=relaxed/simple;
-	bh=J2m/8kM3Eksumot+0e5Qr4kZ77hFkIhw/oyWA6o/sAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgNdb5H5HCX0lqx30Fi9T/QguJ7dZiVGbeTHt/oyD2ZOw0yBU0gAqkuzXQh2amoGEqoNk/5MegP6sW6Sqh8IulaEQQ5O54v3gEkoBaMDo+hCcfRGKh0Atbd/NeUJFgCHL2ZZGcuBYiuikf9cEKqe4P8UrKvT5Rt8T9+nO03vg18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w0zHCJVa; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-202318c4f45so21210215ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:11:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724425904; x=1725030704; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sIYcAgm41yET+3iAzpj+piLKV5uf4+0K2w+mHEHP/7A=;
-        b=w0zHCJVaFrBSstn8gmnHiCSunKDpLH9QCNSsW2LhJkVyL+bQor1j1xHVIAvR5C5bnL
-         lEzQlmWe8fUsU/jFgzE8Gc6x0Td0hEI2bOJ9grwFRGPln5O1NHLvsehyMEtG6hXTYJsP
-         QNgzsUxhrgwmGBcF1L3hCx7X6kRdqmP7U45f7oGHg252pyCTYdJ4b05BGHkLneI78YOO
-         oabUe9N7QIEP+kmcSPgenjSwW9nPAOH2t7kpViJOZGV5Eq4f5LD4gh7QHDHQeUEn8wPd
-         te5kHreUnLyPaSj8c3JKA3H/tpOaPaPZfKu2yHr+FZxXCVGKAAZGknsIg99fytuM4lh6
-         s/0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724425904; x=1725030704;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sIYcAgm41yET+3iAzpj+piLKV5uf4+0K2w+mHEHP/7A=;
-        b=igZL9GZVLHzQvpvX3KUVQFbYsmdyAqr20kIgv5fVDIkwT+hpV7e/3zxbxotLE7mTq0
-         WMHHtY2/yyktHedlgHno+JSV+Z4b+zs9XQCduEPvkuPjxWAjocmxf2Sr4jwv8Oy69Nqq
-         IKrJuXc+HMZrVTpUmxkmgh2dzAe1wGlsxLxKV3XhZxaJ2K4ytK3rt4SEqcY8bDlF/TNp
-         vgtoCpfZmRmFfyFXQZC2tCZeDXyHK9qi18fv4pYLVO0Qg0ttMMISQ0qLcU4H0L3SITj+
-         3FWuA1sX7YyGRgRQSQnbjGDALDdwL6dqMIVjmY0Fm0bqFEZJhGUbZpAIO18HwBe0ypFX
-         xXSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXivseqFnyqFO1pSLqj199rQvLZ/B4+pAXSBcc9zRTsXoeTWLtL4U6OaVT61dwwxm1HGMCUaO/9e/NzPfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEHuOnUaLeJLnhuwkZyi1tm1Ma66IX9Ye0zIHvrjpCyX7S8PwH
-	zYmVKDJJoj+fAPZjKOlPErzNnET+E+TXgIv7PJZLXSIxHA53GlmgIRt9ZU23Sw==
-X-Google-Smtp-Source: AGHT+IG2k5GBFXoUK9l7h4yhbfmeQq5niMC3flczZuEr6fujoA/Vb88l72kyi2UM/C9ceKBX3J/7Ug==
-X-Received: by 2002:a17:902:d487:b0:203:a150:e5f5 with SMTP id d9443c01a7336-203a150e627mr25037255ad.0.1724425904010;
-        Fri, 23 Aug 2024 08:11:44 -0700 (PDT)
-Received: from thinkpad ([120.60.50.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385566490sm29534265ad.38.2024.08.23.08.11.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 08:11:43 -0700 (PDT)
-Date: Fri, 23 Aug 2024 20:41:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-Message-ID: <20240823151127.upu2sbqff3vt7p3r@thinkpad>
-References: <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
- <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
- <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
- <7f48f71c-7f57-492c-47df-6aac1d3b794b@quicinc.com>
- <aa311052-deba-4d13-9ede-1d863a4f362e@kernel.org>
- <20240822141622.tw7vcoc4ciwbydsw@thinkpad>
- <9cff09b0-d039-4e65-b6dc-57adaf94c12e@kernel.org>
- <20240823094419.7l2kvly4mnajrm4z@thinkpad>
- <ececab1a-b4c7-49ac-8a76-038d672a0dd4@kernel.org>
+	s=arc-20240116; t=1724425956; c=relaxed/simple;
+	bh=4gtdQqtCFuAhiErcVOJdYNhZ62ZagUdQ3AaOrDAmOKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kuUrnmSFmHiQXnMNnntQAisVhaSBHmcj3cDAl4V5cMVDB0MKU6cGZumisdEWjOB2rneQYLCRTHtWbwAfB93emqPf6Z0v9DQzv0mVKSlbU69uVggCvmxtcmVbwE6M26/3uOxn1o6YndM5ZLNFknxxMg+3WRTj1g5AaSr7SjWm+TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=huwcS2DW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NF9JlA014479;
+	Fri, 23 Aug 2024 15:12:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=ehYtOPwpL+7EbLCFZzDY05S020zqMOSSQsxSjNu
+	1MTM=; b=huwcS2DW6JqyaAwfbX9wJs/oKXRhu0bN5NqTOPQ3UaQ3Ljhhc14zLZw
+	+mx8v69wPcP9hBSJOhLuGQ6le//fTMOkOX5JVbf8KtFs2aALwZ97Twje+5Yx+Cr7
+	PttqSK3XxWsc+4mCOBZrboUwbjyxCijkTfuWZDdPq04cknbDx6todkBj0glc+4t8
+	uo34iM3xLY9baeLamMh62r4M4/idTXHo3SnQoBOX4SniFInV1HjjgX7ipInQ84WC
+	/33BImRDP45lNvg3dTZyqzkqKxzx0hXhXKtkmvWhu2nUWbUP8ZfdMyHGUXY7GPLk
+	ZrlVGzMZ9ShaDQYJBFArt/jAzwv45Ww==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vtj80ad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 15:12:19 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NFCJbf020043;
+	Fri, 23 Aug 2024 15:12:19 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 416vtj80a9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 15:12:19 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBHc0i019050;
+	Fri, 23 Aug 2024 15:12:18 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376qae0t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 15:12:18 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47NFCBCu53477710
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Aug 2024 15:12:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 85E9A2004F;
+	Fri, 23 Aug 2024 15:12:11 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B251520043;
+	Fri, 23 Aug 2024 15:12:09 +0000 (GMT)
+Received: from ltcrain34-lp2.aus.stglabs.ibm.com (unknown [9.3.101.41])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 Aug 2024 15:12:09 +0000 (GMT)
+From: Narayana Murty N <nnmlinux@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com,
+        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+Subject: [PATCH v2] powerpc/pseries/eeh: Fix pseries_eeh_err_inject
+Date: Fri, 23 Aug 2024 10:11:58 -0500
+Message-ID: <20240823151158.92602-1-nnmlinux@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vWGBd6PpRxzd7zd1iZIda1yibW-5n0xf
+X-Proofpoint-GUID: B6dA0RuJ8B3SvHhveRONLaaB-VQYHN9u
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ececab1a-b4c7-49ac-8a76-038d672a0dd4@kernel.org>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_11,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=999 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408230111
 
-On Fri, Aug 23, 2024 at 03:51:25PM +0200, Krzysztof Kozlowski wrote:
-> On 23/08/2024 11:44, Manivannan Sadhasivam wrote:
-> > On Fri, Aug 23, 2024 at 11:01:37AM +0200, Krzysztof Kozlowski wrote:
-> >> On 22/08/2024 16:16, Manivannan Sadhasivam wrote:
-> >>> On Mon, Aug 05, 2024 at 04:43:47PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 05/08/2024 07:57, Krishna Chaitanya Chundru wrote:
-> >>>>>>
-> >>>>> Hi Krzysztof,
-> >>>>>
-> >>>>> QPS615 has a 3 downstream ports and 1 upstream port as described below
-> >>>>> diagram.
-> >>>>> For this entire switch there are some supplies which we described in the
-> >>>>> dt-binding (vdd18-supply, vdd09-supply etc) and one GPIO which controls
-> >>>>> reset of the switch (reset-gpio). The switch hardware can configure the
-> >>>>> individual ports DSP0, DSP1, DSP2, upstream port and also one integrated
-> >>>>> ethernet endpoint which is connected to DSP2(I didn't mentioned in the
-> >>>>> diagram) through I2C.
-> >>>>>
-> >>>>> The properties other than supplies,i2c client, reset gpio which
-> >>>>> are added will be applicable for all the ports.
-> >>>>> _______________________________________________________________
-> >>>>> |   |i2c|                   QPS615       |Supplies||Resx gpio |
-> >>>>> |   |___|              _________________ |________||__________|
-> >>>>> |      ________________| Upstream port |_____________         |
-> >>>>> |      |               |_______________|            |         |
-> >>>>> |      |                       |                    |         |
-> >>>>> |      |                       |                    |         |
-> >>>>> |  ____|_____              ____|_____            ___|____     |
-> >>>>> |  |DSP 0   |              | DSP 1  |            | DSP 2|     |
-> >>>>> |  |________|              |________|            |______|     |
-> >>>>> |_____________________________________________________________|
-> >>>>>
-> >>>>
-> >>>> I don't get why then properties should apply to main device node.
-> >>>>
-> >>>
-> >>> The problem here is, we cannot differentiate between main device node and the
-> >>> upstream node. Typically the differentiation is not needed because no one cared
-> >>> about configuring the upstream port. But this PCIe switch is special (as like
-> >>> most of the Qcom peripherals).
-> >>>
-> >>> I agree that if we don't differentiate then it also implies that all main node
-> >>> properties are applicable to upstream port and vice versa. But AFAIK, upstream
-> >>> port is often considered as the _device_ itself as it shares the same bus
-> >>> number.
-> >>
-> >> Well, above diagram shows supplies being part of the entire device, not
-> >> each port. That's confusing. Based on diagram, downstream ports do not
-> >> have any supplies... and what exactly do they supply? Let's look at
-> >> vdd18 and vdd09 which sound main supplies of the entire device. In
-> >> context of port: what exactly do they power? Which part of the port?
-> >>
-> > 
-> > The supplies for the downstream ports are derived from the switch power supply
-> > only. There is no way we can describe them as the port suppliers are internal to
-> > the device.
-> 
-> IIUC, this means supplies are not valid for downstream ports, so it is a
-> proof that binding is not correct. I don't get why we keep poking this
-> and get to the same conclusions I had 3 weeks ago.
-> 
-> Basically the binding is saying that downstream ports are identical to
-> the device. Including the aspect of having more downstream ports (so
-> device -> downstream ports -> downstream ports -> downstream ports ...
-> infinite). To remind that was my conclusion:
-> 
-> "Downstream port is not the same as device. Why downstream port has the
-> same supplies? To which pins are they connected?"
-> 
+VFIO_EEH_PE_INJECT_ERR ioctl is currently failing on pseries
+due to missing implementation of err_inject eeh_ops for pseries.
+This patch implements pseries_eeh_err_inject in eeh_ops/pseries
+eeh_ops. Implements support for injecting MMIO load/store error
+for testing from user space.
 
-Ok. I seem to have missed your above comment and you are right. I was just
-clarifying the upstream port discussion as we cannot differentiate between
-upstream port and main device node.
+The check on PCI error type code is moved to platform code, since
+the eeh_pe_inject_err can be allowed to more error types depending
+on platform requirement.
 
-For downstream port, I hope Krishna will fix the binding.
+Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+---
 
-- Mani
+Testing:
+========
+vfio-test [1] by Alex Willamson, was forked and updated to add
+support inject error on pSeries guest and used to test this
+patch[2].
 
+References:
+===========
+[1] https://github.com/awilliam/tests
+[2] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
+
+================
+Changelog:
+V1:https://lore.kernel.org/all/20240822082713.529982-1-nnmlinux@linux.ibm.com/
+- Resolved build issues for ppc64|le_defconfig by moving the
+pseries_eeh_err_inject() definition outside of the CONFIG_PCI_IOV
+code block.
+- New eeh_pe_inject_mmio_error wrapper function added to avoid
+CONFIG_EEH is not set.
+---
+ arch/powerpc/include/asm/eeh.h               |  6 ++-
+ arch/powerpc/kernel/eeh.c                    |  9 +++--
+ arch/powerpc/platforms/pseries/eeh_pseries.c | 39 +++++++++++++++++++-
+ 3 files changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
+index 91a9fd53254f..8da6b047a4fe 100644
+--- a/arch/powerpc/include/asm/eeh.h
++++ b/arch/powerpc/include/asm/eeh.h
+@@ -308,7 +308,7 @@ int eeh_pe_reset(struct eeh_pe *pe, int option, bool include_passed);
+ int eeh_pe_configure(struct eeh_pe *pe);
+ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
+ 		      unsigned long addr, unsigned long mask);
+-
++int eeh_pe_inject_mmio_error(struct pci_dev *pdev);
+ /**
+  * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
+  *
+@@ -338,6 +338,10 @@ static inline int eeh_check_failure(const volatile void __iomem *token)
+ 	return 0;
+ }
+ 
++static inline int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
++{
++	return -ENXIO;
++}
+ #define eeh_dev_check_failure(x) (0)
+ 
+ static inline void eeh_addr_cache_init(void) { }
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index d03f17987fca..49ab11a287a3 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1537,10 +1537,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
+ 	if (!eeh_ops || !eeh_ops->err_inject)
+ 		return -ENOENT;
+ 
+-	/* Check on PCI error type */
+-	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
+-		return -EINVAL;
+-
+ 	/* Check on PCI error function */
+ 	if (func < EEH_ERR_FUNC_MIN || func > EEH_ERR_FUNC_MAX)
+ 		return -EINVAL;
+@@ -1851,6 +1847,11 @@ static const struct file_operations eeh_dev_break_fops = {
+ 	.read   = eeh_debugfs_dev_usage,
+ };
+ 
++int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
++{
++	return eeh_debugfs_break_device(pdev);
++}
++
+ static ssize_t eeh_dev_can_recover(struct file *filp,
+ 				   const char __user *user_buf,
+ 				   size_t count, loff_t *ppos)
+diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
+index b1ae0c0d1187..1893f66371fa 100644
+--- a/arch/powerpc/platforms/pseries/eeh_pseries.c
++++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
+@@ -784,6 +784,43 @@ static int pseries_notify_resume(struct eeh_dev *edev)
+ }
+ #endif
+ 
++/**
++ * pseries_eeh_err_inject - Inject specified error to the indicated PE
++ * @pe: the indicated PE
++ * @type: error type
++ * @func: specific error type
++ * @addr: address
++ * @mask: address mask
++ * The routine is called to inject specified error, which is
++ * determined by @type and @func, to the indicated PE
++ */
++static int pseries_eeh_err_inject(struct eeh_pe *pe, int type, int func,
++				  unsigned long addr, unsigned long mask)
++{
++	struct	eeh_dev	*pdev;
++
++	/* Check on PCI error type */
++	if (type != EEH_ERR_TYPE_32 && type != EEH_ERR_TYPE_64)
++		return -EINVAL;
++
++	switch (func) {
++	case EEH_ERR_FUNC_LD_MEM_ADDR:
++	case EEH_ERR_FUNC_LD_MEM_DATA:
++	case EEH_ERR_FUNC_ST_MEM_ADDR:
++	case EEH_ERR_FUNC_ST_MEM_DATA:
++		/* injects a MMIO error for all pdev's belonging to PE */
++		pci_lock_rescan_remove();
++		list_for_each_entry(pdev, &pe->edevs, entry)
++			eeh_pe_inject_mmio_error(pdev->pdev);
++		pci_unlock_rescan_remove();
++		break;
++	default:
++		return -ERANGE;
++	}
++
++	return 0;
++}
++
+ static struct eeh_ops pseries_eeh_ops = {
+ 	.name			= "pseries",
+ 	.probe			= pseries_eeh_probe,
+@@ -792,7 +829,7 @@ static struct eeh_ops pseries_eeh_ops = {
+ 	.reset			= pseries_eeh_reset,
+ 	.get_log		= pseries_eeh_get_log,
+ 	.configure_bridge       = pseries_eeh_configure_bridge,
+-	.err_inject		= NULL,
++	.err_inject		= pseries_eeh_err_inject,
+ 	.read_config		= pseries_eeh_read_config,
+ 	.write_config		= pseries_eeh_write_config,
+ 	.next_error		= NULL,
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.2
+
 
