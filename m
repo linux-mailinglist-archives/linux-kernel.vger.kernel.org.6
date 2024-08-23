@@ -1,173 +1,272 @@
-Return-Path: <linux-kernel+bounces-298959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB64E95CE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:44:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFD695CE49
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72714281CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4E49B25C52
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C44188595;
-	Fri, 23 Aug 2024 13:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B26187855;
+	Fri, 23 Aug 2024 13:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUV8zti0"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WiIncQkn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C281885A9;
-	Fri, 23 Aug 2024 13:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262CD1DA23;
+	Fri, 23 Aug 2024 13:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420627; cv=none; b=aTIiFsD48o5cbA9g0e3D2D1qo2A62pJbYYPKxweJuq1SAdQk1IVDPR8CKfyVYfLcJtwCkx0b87qBSmyeeqzxKFRPigM9NNFwXjvSCWw82EhNGX2BOm2MiPa4X4wGnPe90tM2vYtXNjHcnMCi8E7oQMefBZhfU/mIgnQPb2NJXbs=
+	t=1724420752; cv=none; b=bMSXWrtwXZ6bHKMNFvD6SD/UmAeRxW0pg5PGQMz3Jkx2gxs1LoFWLPCi+b7Fk7pilVkpBHuBFV+TYo9neMbiejFtlJ1dyAYkIA7aGp/CWBJPMGYePbYAaW/IOzpRRPASIs6Os53gvJjMlmhrBsfNFRDYJoTjqn94OEfUVPnnG4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420627; c=relaxed/simple;
-	bh=ba1vCLOtZm/skZMHl+kh9JAeamdeHMIUzI4d2QX8+kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qelw+MJ3M3OLvL0gaJ/B/9ho0GvtViR1rrwD3KMllEHnPcyq15EDC4FEkarhGG5vb2P0xGWD1DehHWt+qJ7IMPHGahg9TRnhXxjqLCX9rRvsoy8jG4nzGZMmfyyNOF4Eh2NTgcLOLkMHoX4P1UCAY0tJ7UVweaa8w7QIO7hqgfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUV8zti0; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso3243531a12.1;
-        Fri, 23 Aug 2024 06:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724420624; x=1725025424; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ume1kDbmwm/gc9DUAKqcuXKYCh92rtcN1bT0exEyFMM=;
-        b=ZUV8zti04tjUZkapzFAbxHpxkhP7RJpM9WITsOfb35BoyrfAbppHrVOMPTc4ZcL9GQ
-         GAdSoyWRJbdg2K/ZaDkKdzXSZeGi1chfdw6BdC/c0qzOEjHl5ih//I7bl8L15oLGOo8F
-         iwfxcrollgGQfKKIaHEi7AAhfakIbklMELRLztTv2YkY/+ajx/7HA2LmFeLqGF8+JILA
-         lj02FwXggGq+k9O1v+ySLHsKiKHx11YtvGzln05U8bbKKbAlQbjl7OHjH5kWbYT/ey9q
-         vDGb7KemUDPXjtpLQTf2QpKtUn3Tr1P9GgC/IzLEjnYuh5cqUsZ8FZEGnMD/5myuaUSR
-         VK2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724420624; x=1725025424;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ume1kDbmwm/gc9DUAKqcuXKYCh92rtcN1bT0exEyFMM=;
-        b=EBj5PyeAKBP5Rg65opaxWQyOu5bVWMolnGvK1hEqPjzrmTn6sW1DACNWKfmYVT7MRx
-         HOUbiGWUA5bn65rPbOocUgk4r2Bs6hpVYRkiodLCGj+IvWlQpronZ8PaJZKn1FjpdZy4
-         kZFI8Fc/xIzjSDSqVHVcp76INhmUBxF0nVfCz33MNGiB5E30732tT5CvtPQ3Vivy3jqx
-         Qk+Xn/QCPJ2ynngYjSWxj5MVJp3DiWeI7gGX21XYIqHaE7rD9lCHkdNBU/klc2nKIn4T
-         rjTdTBwVq5ZEmHQVhVIoT9hHuDi4DthO7NNJ9xQ35+MZrYK2+V+g3kMpU1SfOyJV4qWV
-         +eEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU47u62ax0PHcDMGf2Ws+LbLZujtXV4c5iyEZxbq6CMlQxInCCZlM7nUiMfxHK7FekFVfvgkNt+Rho30MsH@vger.kernel.org, AJvYcCVpwuw79p9FHEADxlEnYZ3L3t1fbrmWln3Rj+GhfkfUL1gJZeQeGDcqVxi0YFShrZnCxNMvD8jle2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrMUU9koECmaDacOUaYS+GyFXCAGhnagDoP6WwrqoLdPbv8OpE
-	9IMXnzHVxp6skMmc4gc5uBiflZOXEyiccLYOwv2r/mcEm93Htu/e
-X-Google-Smtp-Source: AGHT+IHkv19M7e8G9uSEo4T7jKRhNlTTjiPTlWEKNa6PzU2aS6HcQNrZT7CqJ7oV33O7LbaaAkrHSg==
-X-Received: by 2002:a05:6402:3489:b0:5be:facd:aa51 with SMTP id 4fb4d7f45d1cf-5c0891ab86emr1553255a12.31.1724420623614;
-        Fri, 23 Aug 2024 06:43:43 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:48ba:80d8:cf77:1f49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3cb0bdsm2103844a12.37.2024.08.23.06.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 06:43:42 -0700 (PDT)
-Date: Fri, 23 Aug 2024 15:43:41 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: o.rempel@pengutronix.de, kernel@pengutronix.de, andi.shyti@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, Frank.Li@nxp.com,
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <ZsiSDUYmxPKnNdHD@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <CAOMZO5CYUNESmBdZBMSMwNraQbqvvsF5fn8i+nHr=MB_T_AG7w@mail.gmail.com>
- <CAOMZO5CeT+LvQ__3GUf6teL3=8pZe5qxmFffYJX-h3E27UXwtQ@mail.gmail.com>
+	s=arc-20240116; t=1724420752; c=relaxed/simple;
+	bh=R/xkkX2hUZsj94OumiLVIhS4A5KWcMOJtBZpo2RJTrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PA5S8kiVGDF3NwK+Hb6dhFeRPXsV7wriRPtjLzcbBh2njRBs1BH4hJgKji5hRi/se33O70QRs/XomkMI/udOe1d8hkhE+hmZi54q/1Z0TfZOi4oATByYtfApTSaYHSTFii6pNu4ORSHD6Aa8SrlZ4etCVVpSSmVZ/3c8A1c/AOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WiIncQkn; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724420750; x=1755956750;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=R/xkkX2hUZsj94OumiLVIhS4A5KWcMOJtBZpo2RJTrI=;
+  b=WiIncQknYX33hPIWdIbj+dHumZZY3o98iOm8ZNI0UC6XUMHwFeCEvO5Q
+   UtYllduEwNRop0ZNyti6qme3lKgWzy6iQttDxSEJO8xyRyndtVxIks0jP
+   bjxJpkW3Jx2V9HdMUBMZ+w+dSj8NsIcTttnRAKq8Xp7YGZ5W3qQsfJOm1
+   9jZT/WmI10GlrM8gyvOMHrIMe0sa/BOG8Vj/0sXQTVlaWZRKzsRHjPPRg
+   zZPXar45g2S7UfXaPyFCGdS7mymciMBMt5TYxvcUUpZuQmI6uRNrFTk5U
+   xdwmfPwi1DifsR+SkqVpeuKuZiaV+Ai/O7yvg3NlJkBosWE7dggAw5hSt
+   Q==;
+X-CSE-ConnectionGUID: KpiUf8eFTgGHwiUHeD8zmw==
+X-CSE-MsgGUID: uWMVGszHRgm/RjvLf/j/XA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22410452"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22410452"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:45:49 -0700
+X-CSE-ConnectionGUID: cPnlL1GMRCCqHG5CnNTHBQ==
+X-CSE-MsgGUID: 16RWvN6OTKazFjkrTNbsQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="66723568"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.96.163])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 06:45:47 -0700
+Message-ID: <47ed0a0b-dfaa-40e1-825a-9a42e66b887e@intel.com>
+Date: Fri, 23 Aug 2024 16:45:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mmc: sdhci_am654: Add retry tuning
+To: Judith Mendez <jm@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240821192435.1619271-1-jm@ti.com>
+ <20240821192435.1619271-2-jm@ti.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240821192435.1619271-2-jm@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOMZO5CeT+LvQ__3GUf6teL3=8pZe5qxmFffYJX-h3E27UXwtQ@mail.gmail.com>
 
-Hi Fabio,
+On 21/08/24 22:24, Judith Mendez wrote:
+> Add retry tuning up to 10 times if we fail to find
+> a failing region or no passing itapdly. This is
+> necessary since some eMMC has been observed to never
+> find a failing itapdly on the first couple of tuning
+> iterations, but eventually does. It has been observed that
+> the tuning algorithm does not need to loop more than 10
+> times before finding a failing itapdly.
+> 
+> Signed-off-by: Judith Mendez <jm@ti.com>
 
-On Thu, Aug 22, 2024 at 08:07:44AM -0300, Fabio Estevam wrote:
-> Hi Stefan and Oleksij,
+Seems to have compile errors. Looks like 'dev' lines belong in
+next patch.
+
+drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_calculate_itap’:
+drivers/mmc/host/sdhci_am654.c:453:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+  453 |         struct device *dev = mmc_dev(host->mmc);
+      |                        ^~~
+drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_do_tuning’:
+drivers/mmc/host/sdhci_am654.c:508:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+  508 |         struct device *dev = mmc_dev(host->mmc);
+      |                        ^~~
+drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_platform_execute_tuning’:
+drivers/mmc/host/sdhci_am654.c:553:24: error: unused variable ‘dev’ [-Werror=unused-variable]
+  553 |         struct device *dev = mmc_dev(host->mmc);
+      |                        ^~~
+cc1: all warnings being treated as errors
+
+> ---
+> Changes since v1:
+> - Change logic in patch 1/2 from using recursive aproach
+>   to calling a function iteratively for retuning
+> ---
+>  drivers/mmc/host/sdhci_am654.c | 54 ++++++++++++++++++++++++++--------
+>  1 file changed, 42 insertions(+), 12 deletions(-)
 > 
-> On Wed, Aug 21, 2024 at 8:01 AM Fabio Estevam <festevam@gmail.com> wrote:
-> 
-> > This fixes a pca953x probe error on an imx8mp board running linux-stable 6.6:
-> >
-> > [    1.893260] pca953x 2-0020: failed writing register
-> > [    1.898258] pca953x 2-0020: probe with driver pca953x failed with error -11
-> >
-> > Could you please add a Fixes tag and Cc stable so that this can reach
-> > the stable kernels?
-> >
-> > Tested-by: Fabio Estevam <festevam@denx.de>
-> 
-> I am sorry, but I have to withdraw my Tested-by tag.
-> 
-> For debugging purposes, I kept 'fw_devlink=off' in the kernel command
-> line and that's what made it work.
-> 
-> Removing 'fw_devlink=off' I still get the probe failure, even with all
-> the series from Stefan applied:
-> 
-> [    1.849097] pca953x 2-0020: supply vcc not found, using dummy regulator
-> [    1.855857] pca953x 2-0020: using no AI
-> [    1.859965] i2c i2c-2: <i2c_imx_write> write failed with -6
-> [    1.865578] pca953x 2-0020: failed writing register: -6
-> 
-> In my case, I can get the pca953x driver to probe successfully in one
-> of the following cases:
-> 
-> 1. Select pca953x as a module instead of built-in
-> 
-> or
-> 
-> 2. Pass 'fw_devlink=off' in the kernel command line
-> 
-> or
-> 
-> 3.  Register the i2c-imx driver as module_platform_driver():
-> 
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -1586,17 +1586,7 @@ static struct platform_driver i2c_imx_driver = {
->         .id_table = imx_i2c_devtype,
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index 64e10f7c9faa3..612f29fd7dfef 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -86,6 +86,7 @@
+>  
+>  #define CLOCK_TOO_SLOW_HZ	50000000
+>  #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
+> +#define RETRY_TUNING_MAX	10
+>  
+>  /* Command Queue Host Controller Interface Base address */
+>  #define SDHCI_AM654_CQE_BASE_ADDR 0x200
+> @@ -151,6 +152,7 @@ struct sdhci_am654_data {
+>  	u32 flags;
+>  	u32 quirks;
+>  	bool dll_enable;
+> +	u32 tuning_loop;
+
+Could use a comment explaining tuning_loop usage.
+
+>  
+>  #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
 >  };
-> 
-> -static int __init i2c_adap_imx_init(void)
-> -{
-> -       return platform_driver_register(&i2c_imx_driver);
-> -}
-> -subsys_initcall(i2c_adap_imx_init);
-> -
-> -static void __exit i2c_adap_imx_exit(void)
-> -{
-> -       platform_driver_unregister(&i2c_imx_driver);
-> -}
-> -module_exit(i2c_adap_imx_exit);
-> +module_platform_driver(i2c_imx_driver);
-> 
-> or
-> 
-> 4. Use the NXP vendor kernel imx_6.1.22_2.0.0 kernel
-> 
-> Stefan, do you get the arbitration errors if you try methods 2 or 3 above?
+> @@ -453,12 +455,14 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+>  	int prev_fail_end = -1;
+>  	u8 i;
+>  
+> -	if (!num_fails)
+> -		return ITAPDLY_LAST_INDEX >> 1;
+> +	if (!num_fails) {
+> +		/* Retry tuning */
+> +		return -1;
+> +	}
+>  
+>  	if (fail_window->length == ITAPDLY_LENGTH) {
+> -		dev_err(dev, "No passing ITAPDLY, return 0\n");
+> -		return 0;
+> +		/* Retry tuning */
+> +		return -1;
+>  	}
+>  
+>  	first_fail_start = fail_window->start;
+> @@ -494,16 +498,18 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
+>  	return (itap > ITAPDLY_LAST_INDEX) ? ITAPDLY_LAST_INDEX >> 1 : itap;
+>  }
+>  
+> -static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+> -					       u32 opcode)
+> +static int sdhci_am654_do_tuning(struct sdhci_host *host,
+> +				 u32 opcode)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>  	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+>  	unsigned char timing = host->mmc->ios.timing;
+>  	struct window fail_window[ITAPDLY_LENGTH];
+> +	struct device *dev = mmc_dev(host->mmc);
+>  	u8 curr_pass, itap;
+>  	u8 fail_index = 0;
+>  	u8 prev_pass = 1;
+> +	int ret = 0;
+>  
+>  	memset(fail_window, 0, sizeof(fail_window));
+>  
+> @@ -532,15 +538,38 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+>  	if (fail_window[fail_index].length != 0)
+>  		fail_index++;
+>  
+> -	itap = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+> -					  sdhci_am654->dll_enable);
+> +	ret = sdhci_am654_calculate_itap(host, fail_window, fail_index,
+> +					 sdhci_am654->dll_enable);
+>  
+> -	sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
+> +	return ret;
 
-I have tried method 3 an it did not work for me. I still have the same
-issue as before that sometimes the timeout occurs and the ads1015 will
-not ack anymore. So the patch series is still the only way I found so
-far to get rid of the problem. I also checked the datasheet of a pca953x
-device (PCAL6416A) and it doesn't seem to have a timeout mechanism.
-Therefore, I don't think we are affected by the same issue.
+Kernel style is to return directly i.e.
 
-Regards,
-Stefan
+	return sdhci_am654_calculate_itap(host, fail_window, fail_index, sdhci_am654->dll_enable);
+
+then don't need ret.
+
+> +}
+>  
+> -	/* Save ITAPDLY */
+> -	sdhci_am654->itap_del_sel[timing] = itap;
+> +static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
+> +					       u32 opcode)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +	unsigned char timing = host->mmc->ios.timing;
+> +	struct device *dev = mmc_dev(host->mmc);
+> +	int itapdly;
+> +	int ret = 0;
+>  
+> -	return 0;
+> +	itapdly = sdhci_am654_do_tuning(host, opcode);
+> +
+> +	while (sdhci_am654->tuning_loop < RETRY_TUNING_MAX && itapdly < 0) {
+> +		sdhci_am654->tuning_loop++;
+> +		itapdly = sdhci_am654_do_tuning(host, opcode);
+> +	}
+
+Better to try to have sdhci_am654_do_tuning() appear only once
+e.g. something like:
+
+	do {
+		itapdly = sdhci_am654_do_tuning(host, opcode);
+		if (itapdly >= 0)
+			break;
+	} while (++sdhci_am654->tuning_loop < RETRY_TUNING_MAX);
+
+
+> +
+> +	if (itapdly >= 0) {
+> +		sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
+> +		/* Save ITAPDLY */
+> +		sdhci_am654->itap_del_sel[timing] = itapdly;
+> +	} else {
+> +		ret = -1;
+> +	}
+
+It is easier to read if the error path is separate e.g.
+
+	if (itapdly < 0)
+		return -1;
+
+	sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
+	/* Save ITAPDLY */
+	sdhci_am654->itap_del_sel[timing] = itapdly;
+
+	return 0;
+
+Doesn't need ret then either.
+
+> +
+> +	return ret;
+>  }
+>  
+>  static const struct sdhci_ops sdhci_am654_ops = {
+> @@ -908,6 +937,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
+>  		goto err_pltfm_free;
+>  	}
+>  
+> +	sdhci_am654->tuning_loop = 0;
+
+It is a bit arbitrary having this at probe time.  Something like
+putting it in an mmc card_init callback might make more sense?
+
+>  	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
+>  
+>  	pm_runtime_get_noresume(dev);
+
 
