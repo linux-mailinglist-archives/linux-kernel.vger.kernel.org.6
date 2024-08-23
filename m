@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-298774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F1B95CB64
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228D995CB6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378FE1F247AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB1F2852A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2292C17E01F;
-	Fri, 23 Aug 2024 11:32:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F0C149019
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BCA18756A;
+	Fri, 23 Aug 2024 11:33:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB388469D;
+	Fri, 23 Aug 2024 11:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724412738; cv=none; b=mDvDYrbWwKzI3d15KWgN0IPC0C3lqIE/iZ9GWAh4Bc8WP4vYrxuGXlpXOCRzNolr1gE2Ud1fcuTCpPQTOwgNxjceVtxByYasr5azz66jayDbtz1QyQowRIm64yt+ev6pvrAR7Sn0u+EuP/q9wzgo2uM9Kjdkq05SG/yWnP2UWaU=
+	t=1724412817; cv=none; b=YCFy7igpz9MRBmM89/wT58RrJACsHB5rAjJSBi4zt97QJu/enPDBEGlQn9yutDc9w6esMeBKcxBqF/4Z1du+aWrarn3GenWANeuU0AOYC4Y+nrYXA/KxBish+6PIujYQEDX+zD4Bo1eyPPXuv/yVyE1kOoCAxK0VNj+mwtBN8Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724412738; c=relaxed/simple;
-	bh=tFbfVnyr3DIYx/NWQgwm34eLvi/SUarX/FL3vR17cYE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C2++dwC2Jkn5ye9rA5dhDxbPZ4Fshh7fnfqeH0rVSJX2fkB+crgi25fTUMYV4DxX6/tx3sJFDAtYeqemosco1N4GLTWxZxCBRx877SHlOvhVUAZGsNPRHXGMdm/txY464H2JQ4MaoaqjOAqGisvYTRET6FIPIubrvxMbD5/xmsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqyWm6gp2z6K5qM;
-	Fri, 23 Aug 2024 19:29:08 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44505140447;
-	Fri, 23 Aug 2024 19:32:13 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 12:32:04 +0100
-Date: Fri, 23 Aug 2024 12:32:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<krzk@kernel.org>, <jic23@kernel.org>
-Subject: Re: [PATCH -next 1/5] drm/rockchip: Use
- for_each_child_of_node_scoped()
-Message-ID: <20240823123203.00002aac@Huawei.com>
-In-Reply-To: <20240823092053.3170445-2-ruanjinjie@huawei.com>
-References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
-	<20240823092053.3170445-2-ruanjinjie@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724412817; c=relaxed/simple;
+	bh=Ya0YompZ78xHu5FXa+le+gsHI9P9F7LCgLYaQw87L/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=En98Ngroz4E8P5Kbu2BjSHFHXd8BqYSgt1GktI3qkX94D+ExSxoWu1ZtHhOqgcetoNGl3HV+C5YFa/HQyzVQVZ0ns125BIUJApxVJQFjSSHIgUPh/W2eKYqbLlGHjDyKzGID7TpFphgDtE8NTkLr/rd8pCTYYocanGGNvFMidgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E547DA7;
+	Fri, 23 Aug 2024 04:33:54 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 323ED3F58B;
+	Fri, 23 Aug 2024 04:33:26 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v6 0/8] perf auxtrace: Support multiple AUX events
+Date: Fri, 23 Aug 2024 12:32:58 +0100
+Message-Id: <20240823113306.2310957-1-leo.yan@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 17:20:49 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+This series is to support multiple events with the *same* type in Perf
+AUX trace. As the events are same type, the trace data shares the same
+format and can be decoded by the same decoder.
 
-> Avoids the need for manual cleanup of_node_put() in early exits
-> from the loop.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Note, a more complex case - different types of AUX events, (e.g. Arm
+CoreSight event and Arm SPE events are enabled simultaneously) - is
+still not supported.
 
-There is more to do here, and looking at the code, I'm far from
-sure it isn't releasing references it never had.
+Patch 01 is to change the perf core layer in the kernel to allow
+multiple AUX events to output to single FD, so that '--per-thread' mode
+can be supported.
 
-> ---
->  drivers/gpu/drm/rockchip/rockchip_lvds.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> index 9a01aa450741..f5b3f18794dd 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-> @@ -548,7 +548,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->  	struct drm_encoder *encoder;
->  	struct drm_connector *connector;
->  	struct device_node *remote = NULL;
-> -	struct device_node  *port, *endpoint;
+Patches 02 and 03 are refactoring with using evsel__is_aux_event().
 
-Odd extra space before *port in original. Clean that up whilst here.
+Patch 04 validates the AUX events' CPU map. It presumes the AUX events
+do not overlap for CPU maps, otherwise, it returns failure.
 
+Patches 05, 06, 07 are to support multiple AUX events for buffer mapped
+index.
 
-> +	struct device_node  *port;
+Patch 08 is to support multiple Arm SPE events during report phase.
 
-Use __free(device_node) for *port as well.
+The patch series has been tested with multiple Arm SPE events (arm_spe_0
+and arm_spe_1). And verified this patch series on Intel-PT test for no
+regression.
 
-So where the current asignment is.
-	struct device_node *port = of_graph_get_port_by_id(dev->of_node, 1);
+Changes from v5:
+- Changed to comparing string "arm_spe" in patch 08, as "arm_spe"
+  is a general even name and passed Arm SPE test.
 
->  	int ret = 0, child_count = 0;
->  	const char *name;
->  	u32 endpoint_id = 0;
-> @@ -560,15 +560,13 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->  			      "can't found port point, please init lvds panel port!\n");
->  		return -EINVAL;
->  	}
-> -	for_each_child_of_node(port, endpoint) {
-> +	for_each_child_of_node_scoped(port, endpoint) {
->  		child_count++;
->  		of_property_read_u32(endpoint, "reg", &endpoint_id);
->  		ret = drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
->  						  &lvds->panel, &lvds->bridge);
-> -		if (!ret) {
-> -			of_node_put(endpoint);
-> +		if (!ret)
->  			break;
+Changes from v4:
+- Used 'evsel->name' to replace 'evsel->pmu_name' in patch 08.
 
-This then can simply be
-			return dev_err_probe(dev, ret,
-					     "failed to find pannel and bridge node\n");
-> -		}
+Changes from v3:
+- Changed to compare .setup_aux() callback in patch 01 (Peter.Z).
+- Picked up patches 02 / 03 with evsel__is_aux_event() refactoring.
+- Added new patch 08.
 
-Various other paths become direct returns as well.
+Changes from v2:
+- Added patch 01 for support per-thread mode (Adrian).
+- Added patch 02 for verifying CPU maps without overlapping (Adrian).
+- Reworked patches to fix the regression on Intel-PT (Ian).
 
->  	}
-
-The later code with remote looks suspect as not obvious who got the reference that
-is being put but assuming that is correct, it's another possible place for __free based
-cleanup.
+Changes from v1:
+- Added comment in patch 01 for iterating AUX events (Adrian)
+- Added patch 02 for removing unused field 'pmu' (Adrian)
 
 
->  	if (!child_count) {
->  		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
+Leo Yan (8):
+  perf/core: Allow multiple AUX PMU events with the same module
+  perf auxtrace: Use evsel__is_aux_event() for checking AUX event
+  perf auxtrace: Remove unused 'pmu' pointer from struct auxtrace_record
+  perf auxtrace: Introduce auxtrace_record__validate_events()
+  perf auxtrace: Refactor evlist__enable_event_idx()
+  perf auxtrace: Bails out after finding the event for the map index
+  perf auxtrace: Iterate all AUX events when finish reading
+  perf arm-spe: Support multiple events in arm_spe_evsel_is_auxtrace()
+
+ kernel/events/core.c                  |   9 +-
+ tools/perf/arch/arm/util/cs-etm.c     |   1 -
+ tools/perf/arch/arm64/util/arm-spe.c  |   1 -
+ tools/perf/arch/arm64/util/hisi-ptt.c |   1 -
+ tools/perf/arch/x86/util/intel-bts.c  |   1 -
+ tools/perf/arch/x86/util/intel-pt.c   |   1 -
+ tools/perf/builtin-record.c           |   4 +
+ tools/perf/util/arm-spe.c             |  11 +--
+ tools/perf/util/auxtrace.c            | 114 +++++++++++++++++++++++---
+ tools/perf/util/auxtrace.h            |   8 +-
+ 10 files changed, 125 insertions(+), 26 deletions(-)
+
+-- 
+2.34.1
 
 
