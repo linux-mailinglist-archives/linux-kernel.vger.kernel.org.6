@@ -1,322 +1,509 @@
-Return-Path: <linux-kernel+bounces-299445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8734695D4B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F04D95D4BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2711F23CC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8D5284164
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE3190665;
-	Fri, 23 Aug 2024 17:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808CD190675;
+	Fri, 23 Aug 2024 17:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VySAkGup";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="T4BKVapf"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k20cIOi2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250DD188A1E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435516; cv=fail; b=sv2lIWT7gK4ejSlOQ4OckgDvaoDv3dQus2U8KkfyeMqYxg32KcC5E3QgN+bLwGQ1DGp/7yzX8+S1NjbOZjBGMT/RnytyWlS90BfhmgxSWiRKT7Anb+vcL/6vdE0DBZt6xiWc14oENuMGfEJmdAtgomxvMlsCJnMJbk1w5LkJoFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435516; c=relaxed/simple;
-	bh=SCu3NWXfc2Do2O47D3KlQpLEoEaKKXHCMoq/2cJ2H4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KMibeySbVVczWwOrCmROooucScmEIkHTSqTgs3GU9ReEVXIkTaWGv1jobppP5Ff0QnJK3tYnqpR/fi8Azzut0kIM8rJmHtBTL7t3BtRqnbUBC6bjqA7bsgsf85RTehDZMibshSZ1F44YL1dL3CH9S2/zfQfLkfs7nhye3nRrRFE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VySAkGup; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=T4BKVapf; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NH0UMs010829;
-	Fri, 23 Aug 2024 17:51:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=YkDpvAM/2kCiDJGiaYHyE6BnqUalnHh9gDqxHP3VvJ8=; b=
-	VySAkGupEokdfoJuZN3Z6g7LMbW1noIe7gUPj5SNsGFybCVnflplUQDdLj29+X2T
-	Oa0Yt3W1Xk3D2rp2lRhYa5oR/0xcFkgvu0E9LprKIsZDfYPa8IxkODC/zoNVtYSR
-	8uGb9/2O5xA7UDbnk9SKE7szMbJGJpPVSJPEyOwQnjGkx7MfZSct7Y4s5qb5GHpP
-	vYGHLaV+CS6qY2pgqmhF4VLp2UAOMLISkhTRD1P/hyOtnBUrZLdLyPUpO1fjqVAw
-	MlXu7jg+cRN1h/pZFB9NNg7MYfuztE+9Ifw/q8k7V1MtRvaV0qWVE+RF0B+C1wFe
-	i1QeRQ0iyUmaDfAeTPn1jg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m4v4xxq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 17:51:33 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47NH99pb029752;
-	Fri, 23 Aug 2024 17:51:31 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 416xjusjbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 17:51:31 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BksLyPkH1czEBu6MJQLNj4rTb9AW79Th7Pwyq3WG64K6lgOMOOaPDZgb4iK3oPwv79xnnsZGSxSge1zdvRUjh4GUGtn9P48v+Uoohx6UdCAlg1aylkbl8Ac/0J9oYZR4ludrunv76ue2+3cTCSnQVKae4ol3ync+cKj4d1WFJw5Sp9q3ThV0If48l8O3/SeEmkHEtemQiXCHNkP0uXOYjRsp997blIidiyzHfWJFbA+JHVQLnLcptBJxM8WM0YxHMp9c9SlI7bSo3vwShXSGfH3ZPD+ep825bPTc7JALkvj2GTK+7r15XhFoW5eqAoV1crbM+huXB2bJNQ4vW3R4pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YkDpvAM/2kCiDJGiaYHyE6BnqUalnHh9gDqxHP3VvJ8=;
- b=RSIo6C0273OTieLY6UoiJipcfbt53/mn5/WXQ0SwefzAxLElOVIS9m0ai7KYjNQMsbeGyoKGuA8Fdz++fI08QSk9DKJCPT5GO2Kn+2ErZDvITzFFYXPile49mZHA498PO4+fnOcHC3bDcKflWXcMJe/WVj07XNFrlpq7DdCkW5m7dGGZzPfzjjGki9eFaJuFAKP/+Upx4pOZ7STbutJrW4y8qR5vNMC3pGOZ6LtdEdc42gjmZw3yhjOXp3ULIkCAydyrR4ZEDssP3T7dmLRhk8rxYRZxZE0yuwlDrXQojsS0vCGceA/i/YbfdF48U0+V20oacIKJUumchQMSc/MGVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YkDpvAM/2kCiDJGiaYHyE6BnqUalnHh9gDqxHP3VvJ8=;
- b=T4BKVapf6RlFOodEQd3ThXbTzTHjaWAiQim6Ru7gAFYEXS9i8M0nsO84Ia9HlcbBCDlOg78+tFN3as/qqWttYHFnFJrb88JAhoOcb76YChNrzALypCajHczbeS9GHb2bVPkiSTgCClmLv2hsSPNcspyQjXeNd/yEe6bpFvetEPE=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by MN6PR10MB8045.namprd10.prod.outlook.com (2603:10b6:208:4fb::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.9; Fri, 23 Aug
- 2024 17:51:30 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 17:51:30 +0000
-Date: Fri, 23 Aug 2024 13:51:28 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Hao Li <haoli.tcs@gmail.com>
-Cc: Peng Zhang <zhangpeng.00@bytedance.com>, akpm@linux-foundation.org,
-        maple-tree@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] maple_tree: simplify mas_wr_node_walk for improved
- readability
-Message-ID: <k7mse2jyysazfayjayamr75dxtsjx3dbgvci65jhaaiye2l7qi@hwwvinj2mgoa>
-References: <20240823081729.GA23434@systemsresearch.io>
- <8f98e3e8-b6c4-4888-bfc7-204bea32004b@bytedance.com>
- <20240823093824.GA566@systemsresearch.io>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240823093824.GA566@systemsresearch.io>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT1PR01CA0110.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2c::19) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51187188A1E;
+	Fri, 23 Aug 2024 17:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724435710; cv=none; b=ma1DoGUQBzKKlEVRf1kx6Mcv1umZDCdooAb4ab5ZssNNkkMlVmGFX/M0PBs97NgDfEiEGEJaE4BSuWw1Fc9kqgoD9zKK9UTD/vuR1CIL6L4CxdoTMYhAsLe7wLlbxN6v1yu1Pho9p3cfG1Hs7nCl5VBEVzvtEtQ98xhKnk+2gV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724435710; c=relaxed/simple;
+	bh=UOxjvt9pGASK1dIWt41XAXbmntqOAXtF5gBonB4kaaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HL/CcmZ3Ql5oM0iMfJIQQeb+IJzsX3BdXZ7caetZ9aB0KG3E/lwhnzys0ipYnTgQrWy101R0cNcz8/8n8d95EpU6krqcEB58eHDv4lac2Ti6788zNF03hMMiL+UI5ThLY6HVgWdpLHhJWIZpIVaUVzC2KexkNtEb6/j3oOemOOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k20cIOi2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 995E8C4AF09;
+	Fri, 23 Aug 2024 17:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724435709;
+	bh=UOxjvt9pGASK1dIWt41XAXbmntqOAXtF5gBonB4kaaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=k20cIOi2NsiNke0cyddJDXA0709XN9pkSxbL2o1Vy3SuDhl8wRPkzd2shvqW1sWZi
+	 AGwMfKRGimshpYyE6f+2Qv794mt0dhVi7TGTUsXJsrbqcD0BPCqUXpt5TXsy7tXRBk
+	 h8A5jSPnk3C8LkFrMhVKqCBtWswamPdnAIX0IKRcmSZYu3qW4yMv82o991IaA3tzXw
+	 F1F56619cVMh7ZOxS4YCK9t85BF+QdAM7yuxE0rC26qf8pEIV0+GoWs7wt3BnnaNuy
+	 LLXqCin2JqQGnmmgSG3w68vBXNz3fFzJ+v9N1s8aYrh2qUGkaaqHO5YLx8lEnhCrda
+	 ZmLoeuJS6rUgg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334c4d6829so2994736e87.2;
+        Fri, 23 Aug 2024 10:55:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7S5MVbycc7XNfSmC+yf1xgbYCkZGBFqmmpMz/zm4NdLNR3PhmggbnRCMBLFnmOHVobxS/bUknjDXUEQQ=@vger.kernel.org, AJvYcCXE6nMhQLy1BJnQi3dXhc6os8uriCHVcIuzt1XDLvc63xikjE8C5/C6ipXFWIVnEX/ptFeao/6rHmhP5Ck0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMl+FMeliJir5W+hKX3UHKgYWP0g528H/9HvRPRBIWNgky+x9T
+	xW5PBciBmU9A6Ae+bEiMfupGa2xs+h/VOaSR5ivy6zas8AxPNexvJvvBCYYBkSboo88vebxhiDy
+	diQOurSNXi5xU28qp9FNDW9tk6Zg=
+X-Google-Smtp-Source: AGHT+IFPjZ8XOKb8LplakpJoEmjuYPSajrf1IroJYlFFS+eIZFbY+UJ53iYMccc/F7YlTZs0fk3qI5M6CHDST2SHyiA=
+X-Received: by 2002:a05:6512:3d8d:b0:52e:97dd:327b with SMTP id
+ 2adb3069b0e04-5343877a93dmr2257515e87.23.1724435708200; Fri, 23 Aug 2024
+ 10:55:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|MN6PR10MB8045:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41d57270-2ab2-4b37-3484-08dcc39c37e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a1NTTENvMXd5THQ0dWdXMFZVWE5RaGxuNS9iNlJueW5HRjJ3NDNPeDgzTGdt?=
- =?utf-8?B?cXY5Zm9vVzZqYUt2STl5Wk9XMlRzK1E2UFczcVF2NTh4V1RpZ0k5dkJWc1Mw?=
- =?utf-8?B?OUdjc1M4Y2RQSEE4K1RjMjgvYjA5djBRN3pmK2RPNFE2ZDRFeVpUaFJMSEhX?=
- =?utf-8?B?L2w5NzZ5ei91NllZSUMrampoU3lqVFMzenM3TGdHa3pyMG1XL3lBMFd6S21F?=
- =?utf-8?B?ZmZFcXovdWZJUE1SSUY4MkEzM0pOYTZZNGNVZGNKR1ZpL0MxMEVMQkFXMS9z?=
- =?utf-8?B?aW01SU5sK3plSTlKN3N6cjlob2F6Sit1UjVQYzMycWo1UDhXR054b1lqckRL?=
- =?utf-8?B?YVdhUEhHalRBa0kwelZlVFNFSVcyUFRLaEpDSWpLOTlMcStrR0tVWDJYdjNS?=
- =?utf-8?B?R1owZDlWMHRJNmltYTFsblpBSXNaTFltY1Mxb2U0TDhEMEpheVF5ZTJ4UHFD?=
- =?utf-8?B?THJMVFI1WFBKU0FBd3A1TGsrWDRvVmVOTWVDVUxrT3kydXVYeEExS0Y1OEc0?=
- =?utf-8?B?dGNhS3ZZeFZwMVJ4MENKOCs5NDMrbzRLUU5nU1lmTG93TGFWeW1qd3F5SFkx?=
- =?utf-8?B?bzdOODcwcWE1dHRsQ2d1ekJWVW5UbkpTZmpKQ2Ruald1bHR1RmorZmZnSXh6?=
- =?utf-8?B?Wnp4dWN4Tzc3Ykx5WTRDbzFuN2hOZXVrbDgyeitoQXBXdmw1WGdBTTg3bjMw?=
- =?utf-8?B?ejBQc0FlbmNUVDNQRTlPeXQvemMyaktHbGwxWU9udGtLOG8zK3RiaHQwK1lO?=
- =?utf-8?B?RkVhMkJZTnkvK2tXSElBWmR1alFndEhYc3RBaVdqRVVteUMwdlZHUFhETDVI?=
- =?utf-8?B?THpQL3VqbUQ4R3V6Uno0dG5DRHVJUkxwbTlqSDlWcVh6M2xaSmlnZ0psKzJL?=
- =?utf-8?B?Mkp2b0JlZFM4QllhTm9kQ3BMOWNlb2NJVThuWU1oVGROUnl3ZWlkaXFFOENh?=
- =?utf-8?B?dHl4RkpnL2c3VzVlSmMrQ3FwUzFVU2FmWjRCYW4yQ3U4SG0yU3ZuWWk2di9K?=
- =?utf-8?B?ckpzRHQ4bVZrM0FvZEk4cmJSYmkrckdDZDJlblpVUERyMytwRko0QmdENW81?=
- =?utf-8?B?azhOY2xrdFJJOUpxc3IwOWJVR01GbmQrazcvQVNGQ0VCajdPMm5GVWV1ZGNo?=
- =?utf-8?B?Mm1QYWU1UFE2T2lxdGxIZ1h6Yy84eTE0UVl5VU5aUUNLOGp0YzZJWFVlY0Fj?=
- =?utf-8?B?azk1SWhoZ1htOEZnellYcXlBdUJFM1F5aEYwRTdqMmZ5alFUMzhUbjNER29l?=
- =?utf-8?B?WnRrZGlmUFZBNXJ5WDBMQXl5TG51eXpoc0VhaDNNUEhtcStQT3hsOHI1aGxt?=
- =?utf-8?B?RDRnaUExTVk3T1hlUFp6eVBZRXh5UWZmT3kwZ245YjUvcWZkRUJoenZJWjZa?=
- =?utf-8?B?MVdTMzhLN3RrUzdFOXhCMkZYeVRZSlJieE9pNlNsWWxqSGVwMVJOVXZhWGlK?=
- =?utf-8?B?L0Z5QnhGaGM5VWlYWEw1aFBtc2RpNG9qWFZMaXc2OCtTbjl6MVNyb1QrVmFz?=
- =?utf-8?B?ZlhKQ0hyUGx6NTRLL2RRRXVHYzhaT3VrZWxtb0tBTGxwTmJCMW15eStJUFds?=
- =?utf-8?B?ODB1MWhCRVoxZCtaSGJmcHFmTE9zSGVxbGoyNVZuSXZlOGFRNnYyWGtYNzhj?=
- =?utf-8?B?TytDdUd3WGFqK1psSVRhMGhYSEFIZTVDTE5aZjRtcTgzNGNJY1g1Q2tXNThK?=
- =?utf-8?B?dWxZMDRpZS9JYnFXeHNvY01FVmRIakJLeVpmT1pFTFo0TUgxTkRacFJ2WTVo?=
- =?utf-8?B?OVo0RitXMFdIdmw3YWE1ZFpVYWlySk5rK1lvUlBPZW0rRGg4bDlvdmNwTnho?=
- =?utf-8?B?V1NHZjJPMEpXckJKRDhYQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Yy9GRkVPNXVBc1NWcWVhbkQ0dU9yd0lRckxaNnREVEd5S1NnVnBJY0NiOVEr?=
- =?utf-8?B?blNNenFhU3lZWTBvekMzU1Qxa1daa0VzaW1GR2V6Z3FWOGI5eCsyVWl3NGVY?=
- =?utf-8?B?WHkyOEdFTjA1cVIyRDIxV3EwUVIybFRTdTdKaUwyemFYUlA2WS9FdVpyRGZo?=
- =?utf-8?B?QmVVakREd1ZKK2JoSDFyRkQ3clp0cGpWTVV6QW1tdE05U0JmNm5ZTEJ1S2Mz?=
- =?utf-8?B?OXord3ljc0JjQjlaQjl2NkluUDlTMmxzT0dlbjR0RHFXdlhnYkh4K3ZmbGF1?=
- =?utf-8?B?T3BSeWZXWmF4L25YNWdwVXd6dUxvU1gxWjBZSzJTcEFKMzNXaXl6V3hCRDlm?=
- =?utf-8?B?M1BkbWgxeGhQMG5NZXNyNkhCZFpZVkVGWExpSjgrejB2eGk4eE02QWx4YkFQ?=
- =?utf-8?B?WUMrZU0xSXN3VG45SHY2MGNwYjUyMVBKcm1DU2c5YktEYVJzSm0wZUQ4bWk0?=
- =?utf-8?B?L3VuTmF1KzJPWWpGVFc3S0h4ZHRMZ1VxY1FmUGdmQ0k0ZmF0STJEL2JhMzBQ?=
- =?utf-8?B?c3B2Yi9ITjNQWXJMdHA4MlhKNW1QWU50QWhQT1dtQVVCa1g5RGVPbzg5RkJP?=
- =?utf-8?B?VVl4YWhYR2pDTExYaHFqZTZtMlZ2VlVWWThUaVI2RmdXTklmbkRueTQvb2VP?=
- =?utf-8?B?NjJnMzRSb1Z2Z2xlL0R1UzhlbktOOXh4anBZTFYvZC83ODlrS1djVWlYbi80?=
- =?utf-8?B?b3RsVXVYdzF4bURQM0RDNDNDYzF0WThrU0pua2FiMUZvc0pKQUxiSDM2M2VC?=
- =?utf-8?B?YXZlNWdYT1I0bFV3NU8wa2dEYXhzeGsyem9qZXpJRTUzSHBFbm8zTmVZUmNy?=
- =?utf-8?B?ek1JS3hJQS9BRmpjS25CcmtEc0plT1FRaWt5dkN6QkJFSU52dXRmTDg5RGR5?=
- =?utf-8?B?MCtiam5Lb1Z5b2hseklnWG5RQTNUcE9FV2dFZlNBWEswQTJFN1pQNEk4Vjho?=
- =?utf-8?B?dEZ0K0czYjFaZU42dVN1aVZQSy9OcS9KbEkxUUl4WDZFQzZiMTNJZEJ0cGJk?=
- =?utf-8?B?TWFGRWpqbDEzenhaWC8rKzlPb1p4QXdZbHJNY2RaQlNTWWlyOVVvZU9UOWJ2?=
- =?utf-8?B?czEyRjMzdnNTSzA4TmM4RTZPLzJhcXZjSTRmZU5UTVNoL2JyZVpwVWFmbG0v?=
- =?utf-8?B?N1V0QTFDQzRVL1FpYm1MSUU5R29qdmVuN212M2V6bVRSa21VMjRnM3RKMVVY?=
- =?utf-8?B?UVpqQjFKeml0bi9udTJMVkJ2S3lHQkYxYVJxMGdpYldObVJzcVpYMFRSM2lE?=
- =?utf-8?B?SUxZeFo4TjNUdlM1dndUc3Y5UXk1dXExckhWMmlPbkUyTys2V1BDaUFjQ3Y2?=
- =?utf-8?B?VCtuSjc0TXVRb1Y1eHFPNVhmVGtVemtSMmhGbzhzUVZWNFRRcGpTUkc3c0pi?=
- =?utf-8?B?a05Eak1zQWd5K2xoYzJuU2RLMEp2blBCeDcrVWlPaXpNZ1ExRWdMQ2tpazFj?=
- =?utf-8?B?bTl5S3hHSmFrQTd3ZFYwZ25VcExDa2luNUc0a2lLOTV3TElmU09yeTc1ZE5v?=
- =?utf-8?B?Q3QwbHJBM3plcGhjVVo5aFJ4aTZLN3JMSW9lTitJZ0w2OEJFKytLbkljWjdy?=
- =?utf-8?B?VkxyZ0Z6cnlRYTZ5Y09ENWZRVElHcDUrUWJ6YkRlVzJKczAxei9TUHNDZUdH?=
- =?utf-8?B?TE53ZWRlemN4eHh5ZlMxM3htWGpXTlFOVzJxNlVadDJobE9acjFObGUxQlpv?=
- =?utf-8?B?S2FMRFlYdHNOZDYyQlhNWC80RzZ2MzVCYVVhNXptQjZ4U3FMUFNjZWZvcUMx?=
- =?utf-8?B?d2d3aVAxS1BFV2xpYnFidmM4eFFWZTZEUzgyVUU0RUdtSlJ1N3RJWFd6VnVy?=
- =?utf-8?B?TTVMbFFXblFObTNxNWtmSmx2Sml5bXR0WXBPK2xsejVwZWZFN2kyV3REb1Rv?=
- =?utf-8?B?dkFWamJWL3dhVDVzRUZaRmJGVTlremFwSkdSMUlpRTdwc3RteWlMNnJJYnkz?=
- =?utf-8?B?eDEvSUFzMWx1Z3B3OHdhREVYQ0dPdHdhNE5xN0lEWEVyUTNZNW9DNC85QkVI?=
- =?utf-8?B?VHFWOTZvN0VnR091bzhIbXpCd1dHd2JnQUluK2lRQ2NkNWhsTlJHUXhqL09q?=
- =?utf-8?B?NXcyTTFWYmtZMStJalVTc1FJd2t6bUtHWkZEdkxoUUhyd09kS2lTci8ycG9D?=
- =?utf-8?B?dm1PRmF3aVhSWnpaUTUwUGdUbEliZWQvWk56UFUrSnk4NzJySTNpemdsTDBx?=
- =?utf-8?B?OHc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qMlaBVDmnObJqQr/CzNXHRXmNTlx7ugZgASWSogeQquyDtVlbG1xGQvtMwfK5E14Szo8RtV4Gb9mvAmcWDp0mmHGq1BsN1gDpGqYoqfRKSKuiyvI4umaZn2kfB7Xj175z5y3TxuBrdCrOA/S/hPLocN0UAas2Os7sbE0BPWmvGGQO0awrZZcUraVno6uAJ435tJHbeiSGZ10F4vXpyeAnzVaBNgfpu2ao3OtfxtSgnyFzN0pxWdPGgaII2DAufCsQztCZebueLyx1Vt1G7lwyWiN8k3d46tvyiPvclaokoTeCUQDA/HRK3YdMSeo9rfC0aSe/IvxzhyWnM6StXrV+6a+lOnD1Qy7dhNuYuIsRaoHB+OT4rMKvYpf3sBLPs96REoX5pWiRPut04/SOgDtdFz1BP8Yol8PrRZt4osCOFK7mqFr9HlDOFx4bfykiJutUSEI7GtQ32vqcRH7wsujl8DFbloNEf6cSLQ7unOOSgSSlEU5mByO3CzDqcO60WtO3copjyL1gAXm4PEAkdPznlphGhlFP/5I4Ij1aViASaT4/LqIy8pL9l5TtqzVLyTyfywE80QB12B3utFpE9tArODn+r4xVQMsGB0KZEK2zJ0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41d57270-2ab2-4b37-3484-08dcc39c37e2
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 17:51:30.1945
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7d7vrWHsIHWsXm1bdfdAsmH6vncG75UFT88ah74Fu9jEcMlBsyRv5DvK/jO+UYwgsj7wCbzuBQx4wr7RsD1azA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR10MB8045
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_14,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408230131
-X-Proofpoint-ORIG-GUID: T_kF4oFSfpg3pqjHfHLJEgv5sHzVPlPp
-X-Proofpoint-GUID: T_kF4oFSfpg3pqjHfHLJEgv5sHzVPlPp
+References: <20240823034455.3593819-1-mcgrof@kernel.org>
+In-Reply-To: <20240823034455.3593819-1-mcgrof@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 24 Aug 2024 02:54:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT79Vgo4f335_XAfS36xqNcTm08=oz8aNqkj0LiJFbn4Q@mail.gmail.com>
+Message-ID: <CAK7LNAT79Vgo4f335_XAfS36xqNcTm08=oz8aNqkj0LiJFbn4Q@mail.gmail.com>
+Subject: Re: [RFC] kconfig: add optional selective yaml output support
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: kdevops@lists.linux.dev, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Hao Li <haoli.tcs@gmail.com> [240823 05:38]:
-> On Fri, Aug 23, 2024 at 05:07:31PM +0800, Peng Zhang wrote:
-> >=20
-> >=20
-> > =E5=9C=A8 2024/8/23 16:17, Hao Li =E5=86=99=E9=81=93:
-> > > Refactor mas_wr_node_walk to make the code more clear and easier to
-> > > understand. The main changes are:
+On Fri, Aug 23, 2024 at 12:45=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.or=
+g> wrote:
+>
+> kconfig is used outside of Linux, and one of the uses of Kconfig is to
+> also allow kconfig to be used for automation on kdevops by leveraging
+> a smaller subset of variables for yaml run time for ansible runs.
+> There is no need to clutter a full yaml file with every single config
+> we have as we do in the kernel, and so this lets users decide if they
+> want all or just a few select key symbols as part of the yaml output.
+>
+> What this will do is save us the pain of doing the selective transformati=
+on
+> we currently do and let's us only annotate what we need for runtime with
+> ansible.
+>
+> You can test with the Linux kernel config (that's not what we use):
+>
+> export KCONFIG_YAMLCFG=3D".yaml"
+> export KCONFIG_YAMLCFG_ALL=3D"y"
+> rm -f .config .yaml
+> make defconfig
+> head -10 .yaml
+> ---
+> cc_version_text: "gcc (Debian 13.3.0-1) 13.3.0"
+> cc_is_gcc: True
+> gcc_version: 130300
+> clang_version: 0
+> as_is_gnu: True
+> as_version: 24250
+> ld_is_bfd: True
+> ld_version: 24250
+> lld_version: 0
+>
+> You can also use the selective mechanism "output yaml" on any symbol,
+> so that we only output those. This also paves the way to let us later
+> use kconfig for direct json transformations directly from the same
+> kconfig logic.
+>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>
+> Long ago, I envisioned we could do this so to simplify the addition of
+> new workflows and remove all the stupid Makefile transformations we have
+> in kdevops today to generate extra_vars.yaml.
+>
+> Feedback welcome.
+>
+> I completley understand if this is not desirable upstream.
 
-Thank you for your patch, but I don't think this is a good change.
 
-NACK
+Agree.
+Not desirable upstream.
 
-> > >=20
-> > > 1. Replace the forward-iterating loop with a backward-iterating loop.
-> > >   This simplifies the logic for determining the correct range
-> > >   containing mas->index.
-> > I don't think iterating in reverse is a good idea, it makes the code
-> > different from everywhere else.
->=20
 
-I also agree with Peng that having one loop go a different way seems
-like it's asking for trouble.
 
-> I understand your concern about consistency in iteration direction.
->=20
-> While the original code correctly handled all cases, the process wasn't
-> as definitive or clear.
->=20
-> The new approach unifies the logic by eliminating the need to treat
-> `offset >=3D count` as a special case. This results in a more
-> straightforward and consistent flow throughout the function, which
-> provides a more deterministic and easy-to-follow path through the logic.
-> We can more clearly see and understand how we're determining the correct
-> range for `mas->index` without having to mentally parse complex
-> conditional logic.
->=20
-> > >=20
-> > > 2. Eliminate the ternary operator.
+> However
+> kdevops does aim to track kconfig upstream using a git sub tree already,
+> it follows linux-next, and so getting support upstream is easier rather
+> than going with a branch for our git subtree.
+>
+> The only puzzle I have is why when we use the selective method, we end
+> up with tons of empty lines.. Any ideas? Example of how one can use this
+> this on random symbols in case it is not clear, with the selective
+> method:
+>
+> If we use this for example:
+>
+>   diff --git a/fs/efivarfs/Kconfig b/fs/efivarfs/Kconfig
+>   index edec8a19c894..2faf651725dc 100644
+>   --- a/fs/efivarfs/Kconfig
+>   +++ b/fs/efivarfs/Kconfig
+>   @@ -3,6 +3,7 @@ config EFIVAR_FS
+>         tristate "EFI Variable filesystem"
+>         depends on EFI
+>         default m
+>   +     output yaml
+>         help
+>           efivarfs is a replacement filesystem for the old EFI
+>           variable support via sysfs, as it doesn't suffer from the
+>
+> In this case we'd end up with just:
+>
+> export KCONFIG_YAMLCFG=3D".yaml"
+> unset KCONFIG_YAMLCFG_ALL
+> rm -f .config .yaml
+> make defconfig
+> cat .yaml | cat -s
+> ---
+>
+> efivar_fs: m
+>
+> Thoughts?
+>
+>  scripts/kconfig/confdata.c | 152 ++++++++++++++++++++++++++++++++++++-
+>  scripts/kconfig/expr.h     |   1 +
+>  scripts/kconfig/lexer.l    |   2 +
+>  scripts/kconfig/parser.y   |  11 +++
+>  4 files changed, 163 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index 76193ce5a792..78d188320040 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -233,6 +233,20 @@ static const char *conf_get_rustccfg_name(void)
+>         return name ? name : "include/generated/rustc_cfg";
+>  }
+>
+> +static bool conf_yaml_enable_all(void)
+> +{
+> +       char *name =3D getenv("KCONFIG_YAMLCFG_ALL");
+> +
+> +       return name ? true: false;
+> +}
+> +
+> +static const char *conf_get_yaml_config_name(void)
+> +{
+> +       char *name =3D getenv("KCONFIG_YAMLCFG");
+> +
+> +       return name ? name : NULL;
+> +}
+> +
+>  static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, =
+char *p)
+>  {
+>         char *p2;
+> @@ -623,9 +637,103 @@ static void __print_symbol(FILE *fp, struct symbol =
+*sym, enum output_n output_n,
+>         free(escaped);
+>  }
+>
+> -static void print_symbol_for_dotconfig(FILE *fp, struct symbol *sym)
+> +static char *conf_name_to_yaml(struct symbol *sym)
+> +{
+> +       const char *name =3D sym->name;
+> +       size_t len =3D strlen(name);
+> +       size_t i, j =3D 0;
+> +       char *yaml_name =3D (char *) malloc(len + 1);
+> +
+> +       if (!yaml_name)
+> +               return NULL;
+> +
+> +       for (i =3D 0; i < len; i++) {
+> +               if (name[i] =3D=3D '_')
+> +                       yaml_name[j++] =3D '_';
+> +               else
+> +                       yaml_name[j++] =3D tolower(name[i]);
+> +       }
+> +
+> +       yaml_name[j] =3D '\0';
+> +
+> +    return yaml_name;
+> +}
+> +
+> +static char *conf_value_to_yaml(struct symbol *sym, const char *val)
+> +{
+> +       char *yaml_value =3D NULL;
+> +
+> +       switch (sym->type) {
+> +       case S_INT:
+> +               yaml_value =3D strdup(val);
+> +               break;
+> +       case S_HEX:
+> +            asprintf(&yaml_value, "0x%s", val);
+> +            break;
+> +        case S_STRING:
+> +           /* Wrap strings in quotes */
+> +            asprintf(&yaml_value, "\"%s\"", val);
+> +            break;
+> +        case S_BOOLEAN:
+> +        case S_TRISTATE:
+> +               if (strcmp(val, "y") =3D=3D 0)
+> +                       yaml_value =3D strdup("True");
+> +               else if (strcmp(val, "n") =3D=3D 0)
+> +                       yaml_value =3D strdup("False");
+> +               else
+> +                       yaml_value =3D strdup(val); /* m in tristate */
+> +               break;
+> +        default:
+> +               /* In case type is unknown */
+> +               yaml_value =3D strdup(val);
+> +               break;
+> +       }
+> +
+> +       return yaml_value;
+> +}
+> +
+> +static void __print_yaml_symbol(FILE *fp, struct symbol *sym,
+> +                               enum output_n output_n,
+> +                               bool escape_string)
+> +{
+> +       const char *val;
+> +       char *yaml_config =3D NULL;
+> +       char *yaml_config_value =3D NULL;
+> +
+> +       if (!fp || sym->type =3D=3D S_UNKNOWN)
+> +               return;
+> +       if (!conf_yaml_enable_all() && !(sym->flags & SYMBOL_YAML))
+> +               return;
+> +
+> +       val =3D sym_get_string_value(sym);
+> +
+> +       yaml_config =3D conf_name_to_yaml(sym);
+> +       if (!yaml_config)
+> +               return;
+> +
+> +       yaml_config_value =3D conf_value_to_yaml(sym, val);
+> +       if (!yaml_config_value) {
+> +               free(yaml_config);
+> +               return;
+> +       }
+> +
+> +       if ((sym->type =3D=3D S_BOOLEAN || sym->type =3D=3D S_TRISTATE) &=
+&
+> +           output_n !=3D OUTPUT_N && *val =3D=3D 'n') {
+> +               if (output_n =3D=3D OUTPUT_N_AS_UNSET && conf_yaml_enable=
+_all())
+> +                       fprintf(fp, "# %s: False\n", yaml_config);
+> +               return;
+> +       }
+> +
+> +       fprintf(fp, "%s: %s\n", yaml_config, yaml_config_value);
+> +
+> +       free(yaml_config);
+> +       free(yaml_config_value);
+> +}
+> +
+> +static void print_symbol_for_dotconfig(FILE *fp, FILE *yaml, struct symb=
+ol *sym)
+>  {
+>         __print_symbol(fp, sym, OUTPUT_N_AS_UNSET, true);
+> +       __print_yaml_symbol(yaml, sym, OUTPUT_N_AS_UNSET, true);
+>  }
+>
+>  static void print_symbol_for_autoconf(FILE *fp, struct symbol *sym)
+> @@ -748,11 +856,24 @@ int conf_write_defconfig(const char *filename)
+>         struct symbol *sym;
+>         struct menu *menu;
+>         FILE *out;
+> +       FILE *yaml_out =3D NULL;
+> +       const char *yaml_config =3D NULL;
+> +
+> +       yaml_config =3D conf_get_yaml_config_name();
+>
+>         out =3D fopen(filename, "w");
+>         if (!out)
+>                 return 1;
+>
+> +       if (yaml_config) {
+> +               yaml_out =3D fopen(yaml_config, "w");
+> +               if (!yaml_out) {
+> +                       fclose(out);
+> +                       return 1;
+> +               }
+> +               fprintf(yaml_out, "---\n");
+> +       }
+> +
+>         sym_clear_all_valid();
+>
+>         menu_for_each_entry(menu) {
+> @@ -783,21 +904,25 @@ int conf_write_defconfig(const char *filename)
+>                         if (sym =3D=3D ds && sym_get_tristate_value(sym) =
+=3D=3D yes)
+>                                 continue;
+>                 }
+> -               print_symbol_for_dotconfig(out, sym);
+> +               print_symbol_for_dotconfig(out, yaml_out, sym);
+>         }
+>         fclose(out);
+> +       if (yaml_out)
+> +               fclose(yaml_out);
+>         return 0;
+>  }
+>
+>  int conf_write(const char *name)
+>  {
+>         FILE *out;
+> +       FILE *yaml_out =3D NULL;
+>         struct symbol *sym;
+>         struct menu *menu;
+>         const char *str;
+>         char tmpname[PATH_MAX + 1], oldname[PATH_MAX + 1];
+>         char *env;
+>         bool need_newline =3D false;
+> +       const char *yaml_config;
+>
+>         if (!name)
+>                 name =3D conf_get_configname();
+> @@ -815,18 +940,33 @@ int conf_write(const char *name)
+>         if (make_parent_dir(name))
+>                 return -1;
+>
+> +       yaml_config =3D conf_get_yaml_config_name();
+> +
+>         env =3D getenv("KCONFIG_OVERWRITECONFIG");
+>         if (env && *env) {
+>                 *tmpname =3D 0;
+>                 out =3D fopen(name, "w");
+> +               if (yaml_config)
+> +                       yaml_out =3D fopen(yaml_config, "w");
+>         } else {
+>                 snprintf(tmpname, sizeof(tmpname), "%s.%d.tmp",
+>                          name, (int)getpid());
+>                 out =3D fopen(tmpname, "w");
+> +               if (yaml_config)
+> +                       yaml_out =3D fopen(yaml_config, "w");
+>         }
+>         if (!out)
+>                 return 1;
+>
+> +       if (yaml_config) {
+> +               if (!yaml_out) {
+> +                       fclose(out);
+> +                       return 1;
+> +               }
+> +               fprintf(yaml_out, "---\n");
+> +       }
+> +
+> +
+>         conf_write_heading(out, &comment_style_pound);
+>
+>         if (!conf_get_changed())
+> @@ -852,9 +992,11 @@ int conf_write(const char *name)
+>                         if (need_newline) {
+>                                 fprintf(out, "\n");
+>                                 need_newline =3D false;
+> +                               if (yaml_config)
+> +                                       fprintf(yaml_out, "\n");
+>                         }
+>                         sym->flags |=3D SYMBOL_WRITTEN;
+> -                       print_symbol_for_dotconfig(out, sym);
+> +                       print_symbol_for_dotconfig(out, yaml_out, sym);
+>                 }
+>
+>  next:
+> @@ -879,6 +1021,8 @@ int conf_write(const char *name)
+>                 }
+>         }
+>         fclose(out);
+> +       if (yaml_out)
+> +               fclose(yaml_out);
+>
+>         for_all_symbols(sym)
+>                 sym->flags &=3D ~SYMBOL_WRITTEN;
+> @@ -898,6 +1042,8 @@ int conf_write(const char *name)
+>         }
+>
+>         conf_message("configuration written to %s", name);
+> +       if (yaml_config)
+> +               conf_message("yaml configuration written to %s", yaml_con=
+fig);
+>
+>         conf_set_changed(false);
+>
+> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+> index 2bc96cd28253..88e8a2a06f67 100644
+> --- a/scripts/kconfig/expr.h
+> +++ b/scripts/kconfig/expr.h
+> @@ -132,6 +132,7 @@ struct symbol {
+>  #define SYMBOL_CHECK      0x0008  /* used during dependency checking */
+>  #define SYMBOL_VALID      0x0080  /* set when symbol.curr is calculated =
+*/
+>  #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFI=
+G) */
+> +#define SYMBOL_YAML       0x0400  /* write symbol to file (KCONFIG_YAMLC=
+FG) */
+>  #define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to=
+ .config */
+>  #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
+>  #define SYMBOL_WARNED     0x8000  /* warning has been issued */
+> diff --git a/scripts/kconfig/lexer.l b/scripts/kconfig/lexer.l
+> index 8dd597c4710d..190937070fb1 100644
+> --- a/scripts/kconfig/lexer.l
+> +++ b/scripts/kconfig/lexer.l
+> @@ -120,6 +120,7 @@ n   [A-Za-z0-9_-]
+>  "menuconfig"           return T_MENUCONFIG;
+>  "modules"              return T_MODULES;
+>  "on"                   return T_ON;
+> +"output"               return T_OUTPUT;
+>  "prompt"               return T_PROMPT;
+>  "range"                        return T_RANGE;
+>  "select"               return T_SELECT;
+> @@ -127,6 +128,7 @@ n   [A-Za-z0-9_-]
+>  "string"               return T_STRING;
+>  "tristate"             return T_TRISTATE;
+>  "visible"              return T_VISIBLE;
+> +"yaml"                 return T_YAML;
+>  "||"                   return T_OR;
+>  "&&"                   return T_AND;
+>  "=3D"                    return T_EQUAL;
+> diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+> index 61900feb4254..f298f052dddc 100644
+> --- a/scripts/kconfig/parser.y
+> +++ b/scripts/kconfig/parser.y
+> @@ -69,6 +69,7 @@ struct menu *current_menu, *current_entry, *current_cho=
+ice;
+>  %token T_MODULES
+>  %token T_ON
+>  %token T_OPEN_PAREN
+> +%token T_OUTPUT
+>  %token T_PLUS_EQUAL
+>  %token T_PROMPT
+>  %token T_RANGE
+> @@ -77,6 +78,7 @@ struct menu *current_menu, *current_entry, *current_cho=
+ice;
+>  %token T_STRING
+>  %token T_TRISTATE
+>  %token T_VISIBLE
+> +%token T_YAML
+>  %token T_EOL
+>  %token <string> T_ASSIGN_VAL
+>
+> @@ -234,6 +236,15 @@ config_option: T_MODULES T_EOL
+>         modules_sym =3D current_entry->sym;
+>  };
+>
+> +/* When we want to output symbols as part of an additional output format=
+s */
+> +
+> +config_option: T_OUTPUT T_YAML T_EOL
+> +{
+> +       printd(DEBUG_PARSE, "%s will be part of the yaml output file %s:%=
+d:\n",
+> +              current_entry->sym->name, cur_filename, cur_lineno);
+> +       current_entry->sym->flags |=3D SYMBOL_YAML;
+> +};
+> +
+>  /* choice entry */
+>
+>  choice: T_CHOICE T_EOL
+> --
+> 2.43.0
+>
 
-This is not more clear as one may miss that the loop may not execute at
-all. So you eliminated the ternary operator, but have all but hidden the
-assignment.  I would rather an if/else for verbosity, but not enough to
-reject the patch that added it in the first place.
 
-You also replaced the "unsigned char count" with an "int idx", for some
-reason.  It seems like you've rewritten it so it's more clear for you.
-
-> > >=20
-> > > The new implementation maintains the same functionality as before, bu=
-t
-> > > with improved readability. The performance characteristics remain
-> > > essentially the same, as we cannot predict which interval mas->index
-> > > will fall into.
-
-We do favour the left side of the tree to increase data density, so it
-is more likely to find what we are looking for in the lower slots (but
-not by a whole lot right now). There will probably be more of this
-favouring in the future - minimum span for internal nodes.
-
-BENCH_NODE_STORE went from 8.79, 8.85, 8.79 seconds to 9.68, 9.74, 9.72.
-This change is slower.  It may be because you removed all the temporary
-variables that avoided dereferencing, so the compiler can't be as smart
-about optimisation.  I'm not really interested in finding out why it's
-slower as I don't think this is a good change on the grounds of other
-reasons stated as well.
-
-Thanks,
-Liam
-
-> > >=20
-> > > Signed-off-by: Hao Li <haoli.tcs@gmail.com>
-> > > ---
-> > >   lib/maple_tree.c | 18 ++++++++----------
-> > >   1 file changed, 8 insertions(+), 10 deletions(-)
-> > >=20
-> > > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> > > index fe1b01b29..0b3eb55d8 100644
-> > > --- a/lib/maple_tree.c
-> > > +++ b/lib/maple_tree.c
-> > > @@ -2203,7 +2203,7 @@ static inline void mas_node_or_none(struct ma_s=
-tate *mas,
-> > >   static inline void mas_wr_node_walk(struct ma_wr_state *wr_mas)
-> > >   {
-> > >   	struct ma_state *mas =3D wr_mas->mas;
-> > > -	unsigned char count, offset;
-> > > +	int idx;
-> > >   	if (unlikely(ma_is_dense(wr_mas->type))) {
-> > >   		wr_mas->r_max =3D wr_mas->r_min =3D mas->index;
-> > > @@ -2213,16 +2213,14 @@ static inline void mas_wr_node_walk(struct ma=
-_wr_state *wr_mas)
-> > >   	wr_mas->node =3D mas_mn(wr_mas->mas);
-> > >   	wr_mas->pivots =3D ma_pivots(wr_mas->node, wr_mas->type);
-> > > -	count =3D mas->end =3D ma_data_end(wr_mas->node, wr_mas->type,
-> > > +	mas->end =3D ma_data_end(wr_mas->node, wr_mas->type,
-> > >   				       wr_mas->pivots, mas->max);
-> > > -	offset =3D mas->offset;
-> > > -
-> > > -	while (offset < count && mas->index > wr_mas->pivots[offset])
-> > > -		offset++;
-> > > -
-> > > -	wr_mas->r_max =3D offset < count ? wr_mas->pivots[offset] : mas->ma=
-x;
-> > > -	wr_mas->r_min =3D mas_safe_min(mas, wr_mas->pivots, offset);
-> > > -	wr_mas->offset_end =3D mas->offset =3D offset;
-> > > +	wr_mas->r_max =3D mas->max;
-> > > +	idx =3D mas->end - 1;
-> > > +	while (idx >=3D mas->offset && wr_mas->pivots[idx] >=3D mas->index)
-> > > +		wr_mas->r_max =3D wr_mas->pivots[idx--];
-> > > +	wr_mas->offset_end =3D mas->offset =3D idx + 1;
-> > > +	wr_mas->r_min =3D mas_safe_min(mas, wr_mas->pivots, mas->offset);
-> > >   }
-> > >   /*
+--=20
+Best Regards
+Masahiro Yamada
 
