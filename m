@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-299103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C80E95D020
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:38:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262FA95D030
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF3781C20859
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AE94B2AEA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCE41885BB;
-	Fri, 23 Aug 2024 14:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C761189B88;
+	Fri, 23 Aug 2024 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBXezxNw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIkSXfAt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147F5156C69;
-	Fri, 23 Aug 2024 14:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCFD3BBC0;
+	Fri, 23 Aug 2024 14:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724423506; cv=none; b=coCHjzI8m0yZVYA5Z4k7LJXC4LnTv2x/2Fc2LYXPL/Y+xVzg0Xe+ItESTBnjl6rptIJTScok/GiQDnndgtNXJzDxg6KDX4RQLiJ0R7dMQWtMjUMcAMoLcLh2Q1OQWzKj0tbMF9R9dxA6zC4f4yv+iG8Kx+aYVvRzMAf6abC6YpM=
+	t=1724423588; cv=none; b=SDPWJGjJRb/eB77eQB59vjzIVz06mxY3dhakGSY9/P5snJj568wbm4+oX2cNN5Ot2K4dT17C6eBGuZjVgpJFvu+GD0drsLRr1JQbgXXBm+mmyuERUKF3kR8bI9VedvVQBpYQRvsTtWuADgg+EUKrVhS560Vnebak3Jo2+eNj6DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724423506; c=relaxed/simple;
-	bh=LwUq28SkG8E+/YKm/8sOQQ48YIzJcrP8OzR6eBypW9o=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qhtPygKnsN0pBwzNLGgjFMxc7KfhYqn9yvEyKCrC+qqhp1kzhhivqlATCv+RLlOY/KGJSUSPSoThDOpSkFm/7nruvbyXG1pMFkhYPwS9uIvNtKwNwjW0l4nE7Xolv7rCsOjx3RHWXk4pOwJsbgo3Z3wx22KNDb0f1HxF+lfmKmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBXezxNw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D64C32786;
-	Fri, 23 Aug 2024 14:31:45 +0000 (UTC)
+	s=arc-20240116; t=1724423588; c=relaxed/simple;
+	bh=QS1E7YlYU83ircHH/+tUWA3+lbIf/YzH74r9ILKvUQ4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Y0As0HQwo6LuvoaPzDfWUFlckT0J9LgAy1PQCm1iCE7tFMrDdil+N+nR2o8WJbPbndv5gd7EgsuTJ3KqE4+gOINSVzfLntN7ix0yqEjqcZPvxaNcQzlIR04O6PZ1vHJ8kmIrSAjNKuvYvTJLWPYFBP8FKjis5pHWSfxF7R6YWII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIkSXfAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1827EC4AF0B;
+	Fri, 23 Aug 2024 14:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724423505;
-	bh=LwUq28SkG8E+/YKm/8sOQQ48YIzJcrP8OzR6eBypW9o=;
+	s=k20201202; t=1724423588;
+	bh=QS1E7YlYU83ircHH/+tUWA3+lbIf/YzH74r9ILKvUQ4=;
 	h=From:Date:Subject:To:Cc:From;
-	b=WBXezxNw/9eO8SRZv3rgkB5wE9BknD+pDegRnzf+mlsppx/sKAe5O+zwDfVPtZCPO
-	 6g/GnvcA8LqW2ditXlgggWzADDs4lc1nZE5kEV4XVqZNpb2Fzw7u0yQy0ROG6PN64E
-	 4NVW3vSDx4EJ7iR0yRgCVjbBC3zKRkf2b5sJ9UZtYS+f9XxJKb1m83yRiQ6lUmZf50
-	 ORyXiltJRJG/llUJpYS13K5iH4nS/lyR0+2Swhf/EyLzDsIOa7BMctnP0s1kBuEtNA
-	 o6dpo4r7YcqRrO+ZRIFklDA+8RUvb960xjdOHRwW3x6pqM/Ddhou8Kf22+c/8IC7Gx
-	 81xZeXEo5dIoQ==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-270298a3b6eso1406853fac.3;
-        Fri, 23 Aug 2024 07:31:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhztWJL8HoQEXcN3oxgK/9or0QHjAdAC2Cl2EYoxqBmHun/DmWCI7LjkE8TsdMmMd/zAHQUkAvWwbc1g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXRBS4KlOCJZBgAg5fOUWYsPErRqm/2UJrILJSo/ySvOzneYPd
-	8vbN4CuBHZ0sar2z/iPV5umR6Q5fTDdACNLDT+Xwl8VdWz+BGANHYL76pl9AQv+/WVAdwi8HY72
-	Lz4IoE4Zka5RMzQLvrgU6Mp5EZnU=
-X-Google-Smtp-Source: AGHT+IHPQq0WNeAxgjoc5b5cM9PZ4/F3qN8QyagMqFqWhbOgEOmqXftpk5cOGZme5orPcNWBO0JJoZlvQofeacWH4fY=
-X-Received: by 2002:a05:6870:2807:b0:261:23f6:78d with SMTP id
- 586e51a60fabf-273e6697212mr2727261fac.41.1724423505029; Fri, 23 Aug 2024
- 07:31:45 -0700 (PDT)
+	b=MIkSXfAteYdrLCYDoaZA5ckRtt5GghBo6/gx8NEIVmp/xetp2uvwf0hswnnzGtHlO
+	 +XlMgvkILOcxjTql0J15juid0bPwioOvGkkrlfxlGdiWI6uehy9270cEsRiCC5DcR6
+	 fySjovkeqD5DECRjWCCxweG/ZnsjI0eOrGWk2zW5tRX5sxZDXIE43n08lvd4IOsTjs
+	 hxns6yap4DDsrUP+/Wt5pc12BwlWXDIPFLubN4SInphqKUFWNCCW0nUBQqIuHFA7E5
+	 ox3EyNfyEIfpzMFaikuWi5ZvZT2/+5nsJG88DK7FE+XsibH7DSxz++nKDI28i/lZxj
+	 yo6x59FYiXqXg==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093472356dso1539217a34.0;
+        Fri, 23 Aug 2024 07:33:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3nA8AwpAQTz5ICRHZkuevLOpedUCF7zpGPnLjwV6Y0IGjmMly3ppvMu9XDnO8sJycw07JnicLDJ4KSMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr8bjbv7RjrNw1tTQfcIZ3jzU7W4szcXMSKbyj5I/vd1E8VjsO
+	yM8VMMn66qj2g2ZAl2EiBYjCRFkxkHyzA8odWTe20hRoSmDYsLVEDQfq0Xa7i75X1sey8gS1t4i
+	xSkTSU3KuKZ0SIVCcv7oX26rw2+c=
+X-Google-Smtp-Source: AGHT+IHQTurZp/7M396/cD8Y45dC3BwWhKm0YGmREek5xr7qquC7Vt21IYBrl5zOuAKipikQHh8efKgx8QeIIkKvrJ8=
+X-Received: by 2002:a05:6870:8a25:b0:261:1dfb:3f35 with SMTP id
+ 586e51a60fabf-273e672a2a0mr2643693fac.48.1724423587327; Fri, 23 Aug 2024
+ 07:33:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,13 +56,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Aug 2024 16:31:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hKYgjNEwQd+veUh01goACD4L1BWAsj7h-=4NCfFwRN-g@mail.gmail.com>
-Message-ID: <CAJZ5v0hKYgjNEwQd+veUh01goACD4L1BWAsj7h-=4NCfFwRN-g@mail.gmail.com>
-Subject: [GIT PULL] Thermal control fixes for v6.11-rc5
+Date: Fri, 23 Aug 2024 16:32:56 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hJobeqPY7fZCQAiZg-fP=Vyeak-6mEt5Rt2cdat5ChvQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hJobeqPY7fZCQAiZg-fP=Vyeak-6mEt5Rt2cdat5ChvQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v6.11-rc5
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Linus,
@@ -70,45 +70,38 @@ Hi Linus,
 Please pull from the tag
 
  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- thermal-6.11-rc5
+ acpi-6.11-rc5
 
-with top-most commit c0a1ef9c5be72ff28a5413deb1b3e1a066593c13
+with top-most commit 5c7bb62cb8f53de71d8ab3d619be22740da0b837
 
- thermal: of: Fix OF node leak in of_thermal_zone_find() error paths
+ ACPI: video: Add backlight=native quirk for Dell OptiPlex 7760 AIO
 
 on top of commit 47ac09b91befbb6a235ab620c32af719f8208399
 
  Linux 6.11-rc4
 
-to receive thermal control fixes for 6.11-rc5.
+to receive ACPI fix for 6.11-rc5.
 
-These fix error handling in the thermal debug code and OF node reference
-leaks in the thermal OF driver.
-
-Specifics:
-
- - Use IS_ERR() in checks of debugfs_create_dir() return value instead of
-   checking it against NULL in the thermal debug code (Yang Ruibin).
-
- - Fix three OF node reference leaks in thermal_of (Krzysztof Kozlowski).
+This fixes backlight control on a Dell All In One system where a
+backlight controller board is attached to a UART port and the
+dell-uart-backlight driver binds to it, but the backlight is actually
+controlled by other means (Hans de Goede).
 
 Thanks!
 
 
 ---------------
 
-Krzysztof Kozlowski (3):
-      thermal: of: Fix OF node leak in thermal_of_trips_init() error path
-      thermal: of: Fix OF node leak in thermal_of_zone_register()
-      thermal: of: Fix OF node leak in of_thermal_zone_find() error paths
-
-Yang Ruibin (1):
-      thermal/debugfs: Fix the NULL vs IS_ERR() confusion in
-debugfs_create_dir()
+Hans de Goede (3):
+      ACPI: video: Add Dell UART backlight controller detection
+      platform/x86: dell-uart-backlight: Use acpi_video_get_backlight_type()
+      ACPI: video: Add backlight=native quirk for Dell OptiPlex 7760 AIO
 
 ---------------
 
- drivers/thermal/thermal_debugfs.c |  6 +++---
- drivers/thermal/thermal_of.c      | 23 ++++++++++++++---------
- 2 files changed, 17 insertions(+), 12 deletions(-)
+ drivers/acpi/video_detect.c                     | 22 ++++++++++++++++++++++
+ drivers/platform/x86/dell/Kconfig               |  1 +
+ drivers/platform/x86/dell/dell-uart-backlight.c |  8 ++++++++
+ include/acpi/video.h                            |  1 +
+ 4 files changed, 32 insertions(+)
 
