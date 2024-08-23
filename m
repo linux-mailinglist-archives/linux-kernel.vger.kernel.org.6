@@ -1,147 +1,178 @@
-Return-Path: <linux-kernel+bounces-298527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1BD95C86B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B2195C86D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF8E8B2501C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96051C21C35
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E55149C40;
-	Fri, 23 Aug 2024 08:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0211474D7;
+	Fri, 23 Aug 2024 08:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R09RmYji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SUMuf+H/"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D2F1474D7;
-	Fri, 23 Aug 2024 08:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F521448E1
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724403180; cv=none; b=X4GqHLf5i/NLtj1/4mzALaquaZFbuDfBB06GTC4wosDQb/NgRT4LmcUV6XWhZgm9YSrHBisud+e2g80zBa4Wu+/C7g0xb4ghr2O/aaRxpuJj7CqyfkfvPvCHKAaNsWNfyGqOJW3ytn3FSqVzGaK8kP2F4y35ySqbNxKVgGNLwpQ=
+	t=1724403208; cv=none; b=AtmlhYz0gzvwY9oP54oMuqE0aPspgN/pXdbKY0GdnS0UdDLvNISBW+86HyzI/T92z6rW+lLy68egutG6eM/muB5nCceQdVN6BwuwTesW4TuKa6oyYfP82FPe85Xhb0PZ5hBnmUdOQvrOe8MTOk7ezy2t4sfyvPzxQ5+cHVH2/Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724403180; c=relaxed/simple;
-	bh=jAZUNSCTbHtTAT0sSpKgfRRhAh8SlMCuJUduXH9mB7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBgjsD/bPyG8GfOfYA0CppYYoMpG3cyJyAF7M93vTcrCj5EW5SbtpZG08BjJI1yDDFwrlTgWt76lj0y/u3RUKYSOBposDKNgX8TjM5qZhH3jNx0psQwS163c7ZEnFn1C9KXXGEdPmDI/RKPaJnGZ/D6IFe80xZFN/u7lCKx/gZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R09RmYji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829E2C32786;
-	Fri, 23 Aug 2024 08:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724403179;
-	bh=jAZUNSCTbHtTAT0sSpKgfRRhAh8SlMCuJUduXH9mB7A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R09RmYjiwtTqkfNMmTKr4TVTin70hUYiOpGx+It/8f4eXUYTtl8Ie1GCdLKCNW2xz
-	 E6Jk8hTjXowNmJ3zMIpQLkyDJ587Ykafxye2NscNSPef0NSiM83y09yJvAV06bgCH9
-	 b4Z1MiC/f/hJaPW225ar2Al0709airtUWZ2ZlS093ibcry2R3f37MfgwoNHxLm3/3Q
-	 j8dcqrpGcsTGHYZ3ZH6ZpiLnzL/yokhOV72Y8UE14Rcexrt8zGOgJySPcH8hxK0VAS
-	 6v6vlrgZGEpaqrn5o4i+Ul1P3Cx9F0UOpXpGiN46gd2gqYjMjn1htCU7bJ62wyjO3C
-	 SuI9wFv0jMK5A==
-Message-ID: <e0f8dfd7-7232-4814-a5c9-58acd5c11d53@kernel.org>
-Date: Fri, 23 Aug 2024 10:52:54 +0200
+	s=arc-20240116; t=1724403208; c=relaxed/simple;
+	bh=Czg/K8OYgGDUZKZ32LDsFwF1lH6BFPUIGzT9yRSBDJo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OufILy5hq4rTw8RpodRvTUCW1m56UhihPpFbFHiLCMDe0wWDFD1RTn68IsD/FcjZLK1/5YfPlySi1ReGpqwt9V0U4GowjJdbkvC3335U5NtNpK0gVSELo6v0tcGIJAnXtBcI25BW9Doe6Kst5kqgHNQrwNx10Vvnn0RkFBqB0Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SUMuf+H/; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d3d7a1e45fso1261221a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724403206; x=1725008006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ezFQroxpGkaUsSdMcah57ZHaQ9w5KjbUOSox/PwRH50=;
+        b=SUMuf+H/LY7unKIiQ3uFyTTubrpi0/t7bx/ytZuaDRyZFqkf9E2tiBMh31X9H5NYZ0
+         qBnee29k7Th69WqQKu5Ev9nKraQ0BInB/QZJIMpR9WZwRuPfC24DL+1ge8NJdyN/SdhK
+         UtXZIO8KH579RCdKWOstRNNb9+XqB+5Oep+TRFeC78cOeDbMzBCB34DL63DB7ETrv4fw
+         aG6AD3/c6/a5QH5ZrHF4S+tkdTEkO14B1MkDJ7ngCyIiy6ZjA1Vf9eOkMi8GomOlPV15
+         pXlBu2yArknbGKrZAinhdyfLU0bjEPPJwNEZzWjGkCw4rKujChMVT60eSYEEPQ6rGWPW
+         ZYkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724403206; x=1725008006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ezFQroxpGkaUsSdMcah57ZHaQ9w5KjbUOSox/PwRH50=;
+        b=L8Gn7UWotRu9H5QFiFThz+OBN0I1aFg6iQoncnZizoinJ0kE4A6SLlyV3WIxStU2Mq
+         HB7hkbreQHbbkkcwElNBNO934CgHk3CfJxceDgfnaQeBmXqJcHZYuddPDAojIn+oIMbB
+         euldCBgCxPT6rckmaCLolE9KniUwJrNt/qpwhm5qsQtRD4WR3HlAvNKsPwSjmI2wOuS5
+         dxm4M7U9Fh3I4f6hzjjtrz0YG0jS6SlW+P53gPYBHCgbTKNg1fchxzDrHORjDdQ/KGj5
+         3EkrEIZ8iWOPeUCIiCtgT7ZfurUQrT37gp+sdydUiPSUJoMwPYPPx2GaabD1JmlIehd+
+         y7WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUIShioKFqCDwU4y1Ebi41GRc9IR16F87t/whA5UuqgmQr5M/n3rfsoqWZQTZ+MksDG+717HRInIjSWH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5aFFXVQDtFSt8pIaAqfa3oRc+kBkd9rBvDkmVjdowhGz6wrbo
+	/XP5E9XMrtwAyHA+9zPIk8sBdPwKADl0gZUOyIEhiBMgxcVTl84HQexOq/4yPWE=
+X-Google-Smtp-Source: AGHT+IFaylOAd/toGYXIX2p8c9dCa2PThSma27XXT7LPRvz9cAudRL9wgkqY+ZW7DLfNiPVNny90yw==
+X-Received: by 2002:a17:90a:2ce2:b0:2cb:4b88:2aaf with SMTP id 98e67ed59e1d1-2d646bb512amr1410015a91.12.1724403205819;
+        Fri, 23 Aug 2024 01:53:25 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613b2048fsm3430129a91.54.2024.08.23.01.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 01:53:25 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: edumazet@google.com,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	dsahern@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: [PATCH bpf-next v2] bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4 via INET6 API
+Date: Fri, 23 Aug 2024 16:53:13 +0800
+Message-Id: <20240823085313.75419-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
- acquire mutex
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
- <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
- <Zsd-aVM6504L_hqi@google.com>
- <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
- <ZshJMRCe4LvpYNmZ@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZshJMRCe4LvpYNmZ@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/08/2024 10:32, Dmitry Torokhov wrote:
-> On Fri, Aug 23, 2024 at 08:06:17AM +0200, Krzysztof Kozlowski wrote:
->> On 22/08/2024 20:07, Dmitry Torokhov wrote:
->>> On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
->>>> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
->>>>> Guard notation is more compact and ensures that the mutex will be
->>>>> released when control leaves the function.
->>>>>
->>>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->>>>> ---
->>>>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
->>>>>  1 file changed, 2 insertions(+), 6 deletions(-)
->>>>>
->>>>
->>>> You need to include cleanup.h (unless some other patch already did it
->>>> and I missed it?)
->>>
->>> Guard for mutexes defined in mutex.h which is pulled in indirectly, and
->>
->> guard() is not in mutex.h and in general we are including headers for
->> the things directly used in the unit.
-> 
-> Oh, but it is:
-> 
-> https://elixir.bootlin.com/linux/v6.10/source/include/linux/mutex.h#L196
-> 
-> DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-That's DEFINE_GUARD, not guard().
+when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
+fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+use ip_queue_xmit, inet_sk(sk)->tos.
 
-Best regards,
-Krzysztof
+So bpf_get/setsockopt needs add the judgment of this case. Just check
+"inet_csk(sk)->icsk_af_ops == &ipv6_mapped".
+
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408152034.lw9Ilsj6-lkp@intel.com/
+Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+---
+Changelog:
+v1->v2: Addressed comments from kernel test robot
+- Fix compilation error
+Details in here:
+https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
+
+ include/net/tcp.h   | 2 ++
+ net/core/filter.c   | 6 +++++-
+ net/ipv6/tcp_ipv6.c | 6 ++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 2aac11e7e1cc..ea673f88c900 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(const struct request_sock_ops *ops,
+ 					    struct tcp_options_received *tcp_opt,
+ 					    int mss, u32 tsoff);
+ 
++bool is_tcp_sock_ipv6_mapped(struct sock *sk);
++
+ #if IS_ENABLED(CONFIG_BPF)
+ struct bpf_tcp_req_attrs {
+ 	u32 rcv_tsval;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index ecf2ddf633bf..02a825e35c4d 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -5399,7 +5399,11 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
+ 			  char *optval, int *optlen,
+ 			  bool getopt)
+ {
+-	if (sk->sk_family != AF_INET)
++	if (sk->sk_family != AF_INET
++#if IS_BUILTIN(CONFIG_IPV6)
++	    && !is_tcp_sock_ipv6_mapped(sk)
++#endif
++	    )
+ 		return -EINVAL;
+ 
+ 	switch (optname) {
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 200fea92f12f..125c69f1d085 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -92,6 +92,12 @@ static const struct tcp_sock_af_ops tcp_sock_ipv6_mapped_specific;
+ #define tcp_inet6_sk(sk) (&container_of_const(tcp_sk(sk), \
+ 					      struct tcp6_sock, tcp)->inet6)
+ 
++bool is_tcp_sock_ipv6_mapped(struct sock *sk)
++{
++	return (inet_csk(sk)->icsk_af_ops == &ipv6_mapped);
++}
++EXPORT_SYMBOL_GPL(is_tcp_sock_ipv6_mapped);
++
+ static void inet6_sk_rx_dst_set(struct sock *sk, const struct sk_buff *skb)
+ {
+ 	struct dst_entry *dst = skb_dst(skb);
+-- 
+2.30.2
 
 
