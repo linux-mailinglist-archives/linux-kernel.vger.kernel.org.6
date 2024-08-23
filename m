@@ -1,186 +1,132 @@
-Return-Path: <linux-kernel+bounces-298227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3434E95C419
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:17:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C45995C41C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D503C2857AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6601C22D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 04:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701DA41C73;
-	Fri, 23 Aug 2024 04:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C453141746;
+	Fri, 23 Aug 2024 04:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q/51xwf8"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="kBmFzLSq"
+Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DEB2D030
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149BC8493;
+	Fri, 23 Aug 2024 04:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724386665; cv=none; b=TVz0F5zdPt9w9ndurkcpCfJQv6cdd3vQwTAg/a+3sJkDdznF2j0DrQbLitU2bpJb4NYbsdSgK9DARD/wv3Y8Q4qFbb/m4kVNTfN36e+UZG+tG7O1ub0fniK7G/2L5fiVYAzdXhfugDBgiUQ0WIjy7FqApdzxJ8NzWnHnwOYResQ=
+	t=1724386931; cv=none; b=uObzMKbL61hfJXxbxWtHYuo9tfRzz/yQf9LgaoZacw2Aq84Z937kxhuhe4W56W515/iAjlzJ9TJL67mytwvjYDiz8l6PJRTvA3abE+WDICkKB/nTqUn7EucwBuFOf0ilZRvOVnj7Zxiz3Jg5e4p0igBEl549uZQzEXrBq5pxURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724386665; c=relaxed/simple;
-	bh=zFZdx23HnzLYC+NY4UvZuHsDGkKcK3j50SHMCYMhn8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UVwo9cztNnO8S2TITZIQg26Shs7IbliGL+LEalbsaum5eTaMQcRmqvKXqgwU7FFSwOzZsG72NMcjRf0cXWulLFHnnfQReKiK3VcoKIUJfCvlrdjVeCLno+ykTI++X4piFw7ouNtaUByy0hN8dceo+ikkRxGKYAnX2fQtxulpmok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q/51xwf8; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4fc92316e1bso434608e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2024 21:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724386663; x=1724991463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mSZlGnS8Yi3PbWaYIYLB38Taazl30a+zo2QRNYAbZFM=;
-        b=q/51xwf82lQPr1lkYUVbLgEUngxXlP0A3oQwTQ7GaXO1OfVh+zGnp3QsbgIc9eP5yv
-         fmBxlvtwuzVqOZ4g/DgKZNis/QuhcoKLsjdNhg0vboi9u7y1G3g27EF7+ND0DNcqk7Hu
-         yqjduAeWa4GfSmEThAUe24K7lS69KOKCUue3IC13JUKq1ptcDmO3zGAGbFjR74QAJ5OZ
-         GG0bZLlfgrwuD0ni02Qwg5//7Lax/eU6qhFsUYE03E9Bz7HC9+CNioDObseUeQBMCqXI
-         Mn6JdWDdKyg8EkrVqaGQNFjnB1maMJYwGrPCM0VK6FAyw/nvu6kP4OlCKjircLG2TLzf
-         GAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724386663; x=1724991463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mSZlGnS8Yi3PbWaYIYLB38Taazl30a+zo2QRNYAbZFM=;
-        b=ns9GXx8/TsR+4eGe9qUAAimPDDa91qRJTGmWgkIyN//tV6r0qoOe4F7jeNjhyOuyWd
-         lWdBYSLfHWK7pgkTnFTS0UxpZD8oeRCxf3rJS8tjNU/TgzeBYAIngkkOMKcwb3fltw7I
-         HEGpluRt7p9SR/lqtps+3HyC9TLsLNydySSLx+IZAQJ8IairEHQQy5DKQNYAvhDCxhuV
-         yXVrYrlTqyiK/hkSChEglzLfpPdi6FTOqLoofmQJotv99T8GlL8magMcwJ7Bxi/hCAjT
-         wu0hpnysak0RVJst3W/6FJlG5f3uVHpJcTiSM1+ceXLRjIK+onxiTAVWnlF9xBAvjDR4
-         VzAA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2OIZnnHOuzSYirjG6MR/Dlv1QJPS5LJ13hB9Nex5c7bN9pdBydCv76mbyAdpkFz3Sfutr7venAnGqnFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ44CsoXvJjd21jN+6+McbxSoagBpwkLbxp/FCon58+fepuW06
-	wilHGgYn1+G5YlyJhov5URWhhihMKqR8Uqlr/wq6K28DWrcHQ9Z7HmKvFhGIhsmzphA31Yj1Gnh
-	vG+GfbgbjnBSk95/iouduikVv8whYxd5nsNy6
-X-Google-Smtp-Source: AGHT+IGTRkdxlYLCBHLBkK8lFNaUjUTKqaXwIu200VLpRBRtKJFoYnuJVYx/nbFGmpdRfWc9b1eiNg4P6qxnoqjwhRQ=
-X-Received: by 2002:a05:6122:1e0f:b0:4f6:ad39:dab1 with SMTP id
- 71dfb90a1353d-4fd1a53145fmr1162809e0c.5.1724386662652; Thu, 22 Aug 2024
- 21:17:42 -0700 (PDT)
+	s=arc-20240116; t=1724386931; c=relaxed/simple;
+	bh=UMZmjfIQQppW5FBj5Cfp3EiH06h7bCNCtk7oX1uUOeg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EKAIpqLdcQiBch0aVRCdHEyil1UDGKvMu+FuJe3FngZlC/gKQwW9RYYah2sbhHfbQzXcqobqOlbEcqgh8Yz7ZyeJA4JhAVSVNk2cbldcpI/o/KhWRNfJS9fOVRhcPizS3BhiYePNi5jb+80pScMxS7Dw1mHb657nDMrQs+B1P1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=kBmFzLSq; arc=none smtp.client-ip=67.231.149.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0050095.ppops.net [127.0.0.1])
+	by m0050095.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 47N00S8A031371;
+	Fri, 23 Aug 2024 05:21:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=jan2016.eng;
+	 bh=cGXwzZW6puFHvf9eX5tFFmg48Ujn6u8t7jVW9QRA8V8=; b=kBmFzLSqdnlv
+	UElbWA9YM/LgmyZq1/vD4BluEhEhvDxw+KFpI9YLt55M0QlTMH4OBrjmjz9+uVMQ
+	A5mEDcNv2xrNq3+8xkbJsvVWiyhVfJCUYY2ivgGuVUKmVL2sksN5SBlR8FV0ha0O
+	bwe8g1S08+ZzQxhnV4lnV3Tv5pmXfSXExbUcQT9dmNBMmryKHC6wXb2gzgtBdqIj
+	XJtSmV0y5e4ZKkcV1+vp7QHyziy9Av2Pg0yatcDgjUL5659VAq98YELVkgYojm+J
+	XE+eRw0BafaUHinUeZlFv9/lz8SioWbVsqrabEzU2pvMcD8Z8ZAKLtnD81JhUJrB
+	fuuQvlyGNQ==
+Received: from prod-mail-ppoint8 (a72-247-45-34.deploy.static.akamaitechnologies.com [72.247.45.34] (may be forged))
+	by m0050095.ppops.net-00190b01. (PPS) with ESMTPS id 4149pgryy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 05:21:56 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint8.akamai.com [127.0.0.1])
+	by prod-mail-ppoint8.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 47N3qi1o010641;
+	Fri, 23 Aug 2024 00:21:54 -0400
+Received: from prod-mail-relay18.dfw02.corp.akamai.com ([172.27.165.172])
+	by prod-mail-ppoint8.akamai.com (PPS) with ESMTP id 412q6y28ck-1;
+	Fri, 23 Aug 2024 00:21:54 -0400
+Received: from [100.64.0.1] (unknown [172.27.166.123])
+	by prod-mail-relay18.dfw02.corp.akamai.com (Postfix) with ESMTP id A6D1619F9;
+	Fri, 23 Aug 2024 04:21:52 +0000 (GMT)
+Message-ID: <759b06be-9fb8-4fc1-bc93-3f03b3665152@akamai.com>
+Date: Thu, 22 Aug 2024 21:21:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820043543.837914-1-suleiman@google.com> <20240820043543.837914-3-suleiman@google.com>
- <ZsWJsPkrhDReU4ez@intel.com>
-In-Reply-To: <ZsWJsPkrhDReU4ez@intel.com>
-From: Suleiman Souhlal <suleiman@google.com>
-Date: Fri, 23 Aug 2024 13:17:31 +0900
-Message-ID: <CABCjUKCBQq9AMCVd0BqOSViPn=Q3wiVByOvJNhNpHvqx=Ef-4g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] KVM: x86: Include host suspended time in steal time.
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ssouhlal@freebsd.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/1] tcp: check skb is non-NULL in tcp_rto_delta_us()
+From: Josh Hunt <johunt@akamai.com>
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240823021333.1252272-1-johunt@akamai.com>
+ <20240823021333.1252272-2-johunt@akamai.com>
+ <CAL+tcoDh1GUL-m-UXM=WenN74wXLsgudEScJedfa=AEzt1Rs9g@mail.gmail.com>
+ <44bae648-9ced-4b57-b7c4-95f7740dceae@akamai.com>
+Content-Language: en-US
+In-Reply-To: <44bae648-9ced-4b57-b7c4-95f7740dceae@akamai.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=595
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408230027
+X-Proofpoint-GUID: _FaWKvZUKphm0-7AgJeyltWnUJo1DGkD
+X-Proofpoint-ORIG-GUID: _FaWKvZUKphm0-7AgJeyltWnUJo1DGkD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=390 clxscore=1015 bulkscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408230027
 
-On Wed, Aug 21, 2024 at 3:31=E2=80=AFPM Chao Gao <chao.gao@intel.com> wrote=
-:
->
-> On Tue, Aug 20, 2024 at 01:35:42PM +0900, Suleiman Souhlal wrote:
-> >When the host resumes from a suspend, the guest thinks any task
-> >that was running during the suspend ran for a long time, even though
-> >the effective run time was much shorter, which can end up having
-> >negative effects with scheduling. This can be particularly noticeable
-> >if the guest task was RT, as it can end up getting throttled for a
-> >long time.
-> >
-> >To mitigate this issue, we include the time that the host was
-> >suspended in steal time, which lets the guest subtract the duration from
-> >the tasks' runtime.
-> >
-> >Note that the case of a suspend happening during a VM migration
-> >might not be accounted.
-> >
-> >Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> >---
-> > arch/x86/include/asm/kvm_host.h |  1 +
-> > arch/x86/kvm/x86.c              | 11 ++++++++++-
-> > 2 files changed, 11 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_=
-host.h
-> >index 4a68cb3eba78f8..728798decb6d12 100644
-> >--- a/arch/x86/include/asm/kvm_host.h
-> >+++ b/arch/x86/include/asm/kvm_host.h
-> >@@ -898,6 +898,7 @@ struct kvm_vcpu_arch {
-> >               u8 preempted;
-> >               u64 msr_val;
-> >               u64 last_steal;
-> >+              u64 last_suspend_ns;
-> >               struct gfn_to_hva_cache cache;
-> >       } st;
-> >
-> >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> >index 70219e4069874a..104f3d318026fa 100644
-> >--- a/arch/x86/kvm/x86.c
-> >+++ b/arch/x86/kvm/x86.c
-> >@@ -3654,7 +3654,7 @@ static void record_steal_time(struct kvm_vcpu *vcp=
-u)
-> >       struct kvm_steal_time __user *st;
-> >       struct kvm_memslots *slots;
-> >       gpa_t gpa =3D vcpu->arch.st.msr_val & KVM_STEAL_VALID_BITS;
-> >-      u64 steal;
-> >+      u64 steal, suspend_ns;
-> >       u32 version;
-> >
-> >       if (kvm_xen_msr_enabled(vcpu->kvm)) {
-> >@@ -3735,6 +3735,14 @@ static void record_steal_time(struct kvm_vcpu *vc=
-pu)
-> >       steal +=3D current->sched_info.run_delay -
-> >               vcpu->arch.st.last_steal;
-> >       vcpu->arch.st.last_steal =3D current->sched_info.run_delay;
-> >+      /*
-> >+       * Include the time that the host was suspended in steal time.
-> >+       * Note that the case of a suspend happening during a VM migratio=
-n
-> >+       * might not be accounted.
-> >+       */
-> >+      suspend_ns =3D kvm_total_suspend_ns();
-> >+      steal +=3D suspend_ns - vcpu->arch.st.last_suspend_ns;
-> >+      vcpu->arch.st.last_suspend_ns =3D suspend_ns;
->
-> The document in patch 3 states:
->
->   Time during which the vcpu is idle, will not be reported as steal time
->
-> I'm wondering if all host suspend time should be reported as steal time,
-> or if the suspend time during a vCPU halt should be excluded.
+On 8/22/24 8:33 PM, Josh Hunt wrote:
+> On 8/22/24 8:27 PM, Jason Xing wrote:
+>>
+>> Hello Josh,
+>>
+>> On Fri, Aug 23, 2024 at 11:02 AM Josh Hunt <johunt@akamai.com> wrote:
+>>>
+>>> There have been multiple occassions where we have crashed in this path
+>>> because packets_out suggested there were packets on the write or 
+>>> retransmit
+>>> queues, but in fact there weren't leading to a NULL skb being 
+>>> dereferenced.
+>>
+>> Could you show us the detailed splats and more information about it so
+>> that we can know what exactly happened?
+> 
+> Hey Jason
+> 
+> Yeah for some reason my cover letter did not come through which has the 
+> oops info that we hit. I'll resend it now. Fingers crossed it goes 
+> through this time :)
+> 
+> Josh
+Seems like our mail server is block the cover letter for some reason 
+right now. I'll have to figure out why tomorrow. I filed a bug with 
+Ubuntu as well as sending this patch upstream b/c the kernel we're 
+running is a stock Ubuntu kernel. The bug report there has most of what 
+I put in the cover letter:
 
-I think the statement about idle time not being reported as steal isn't
-completely accurate, so I'm not sure if it's worth the extra complexity.
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2077657
 
->
-> >       unsafe_put_user(steal, &st->steal, out);
-> >
-> >       version +=3D 1;
-> >@@ -12280,6 +12288,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
-> >
-> >       vcpu->arch.arch_capabilities =3D kvm_get_arch_capabilities();
-> >       vcpu->arch.msr_platform_info =3D MSR_PLATFORM_INFO_CPUID_FAULT;
-> >+      vcpu->arch.st.last_suspend_ns =3D kvm_total_suspend_ns();
->
-> is this necessary? I doubt this because KVM doesn't capture
-> current->sched_info.run_delay here.
-
-Isn't run_delay being captured by the scheduler at all time?
-
-We need to initialize last_suspend_ns otherwise the first call to
-record_steal_time() for a VCPU would report a wrong value if
-the VCPU is started after the host has already had a suspend.
-
-Thanks,
--- Suleiman
+Josh
 
