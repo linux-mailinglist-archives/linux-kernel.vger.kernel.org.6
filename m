@@ -1,201 +1,152 @@
-Return-Path: <linux-kernel+bounces-298216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBA295C3EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC1595C3F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02AF284FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50F4284C3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A063A8C0;
-	Fri, 23 Aug 2024 03:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1503BB59;
+	Fri, 23 Aug 2024 03:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JKiR1lsT"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2057.outbound.protection.outlook.com [40.107.215.57])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fMD/EMXC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B96BFB5;
-	Fri, 23 Aug 2024 03:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724385114; cv=fail; b=Nx/jvVFe6xToPb1uy0KowhT/5apssTfHR5u3PVB5ePb/0MKZCHyDxjnmCaDOu7nUxF/+/Ph91vLYDc98xgvSyG23Z+5RFRkgCsfLAdAN4fV6EdiKozEQV53moCUjcIYzaQx4UxRUVvaL86yqBojLlWsNk+/XPjwm4N8HpZiR0Aw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724385114; c=relaxed/simple;
-	bh=e56qIJqbwOCTZn9ppef18ZoaON5sqKdeil9QshSltV4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t+oj51nx4QkmGNEZqx1eNSgh91jg7nwsBBJb8Gn0sTZbmn+Z35ukSX/zydfEopchLWFofr6mNrbri6mtktpKM09w/YIy64JHNmDc8Ij13p2bmroL2iyHjO8UPtzlcBVNKSxH1xVwlQwKU9skzlMCV1/IqBH8CuUdFn1r4zDDF1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JKiR1lsT; arc=fail smtp.client-ip=40.107.215.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EN0Z3lqOJFYL46yiwMXlSZdUcK+ID2/iW9r28x/Jkr8Vd6EKwZx1Ldj+z3JQLNWbsNo5rBuJ7TO005QoRXVu7aUy98p1ieU59WZffB/tHCoLSIBbGaxtvDEw0cyS+0Ky4yMKms8P7j9O1TWn4qfxNMqFuU2kJXG06TzbtAAjIU0X4v7sc36EoH1X7d6xP0iSF0ZIE6W7CUndBRyYAMqGnL19hDaUbHWjgvcApS6Lg4O7JBBmiW9IaDKHqaFNGDGm1Fkm3XRQCtulv/hywDE+YKVauVIe9Ixr/aWnx9ARe3FLstkthO77Smt48wQdtk9T/iiFoTXcj7dRLxPEvKGwaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OwKDZYmGKw9a3hNIv/FBwEXst76Lx9rzoYJLz6Z3k/Y=;
- b=prji6Z3pq+c6ncOgvKtBivzaB9dO5S/DCWTleAgcPk83YT7Ypmu0BgFE3FPNIe9tnloLNJO3PP8EehgBDBexqXOvodrWI16jaNIBPGOsU7RYB28NobWc5pEscVe19TDOevrZ+CGVEsOhpSzywDupBOhMnBlsZPhewiT89cnv6vz8yNcFAOuRLIZJXdQMcvtzcdAEySwzknTsIwYQEd7YYlLCKXDFpeb2+SXEzf+6xnyqw2ZPY4Z7quh4I87rBjKeXi3z3eCwolhrWgXTkyxueI9yII4kIktT8kVKclpKqrcshk/j6+t7rjrbEiVWP/p7dq35iCr8tXFiRGfvAZhrkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OwKDZYmGKw9a3hNIv/FBwEXst76Lx9rzoYJLz6Z3k/Y=;
- b=JKiR1lsTXX6l/FLQ7/PfOblEaZRnTnt9cKsnK5IdfMCD90dGn+7dZIvcWZR/Z5Tx+o1wpffqbhs1FDIBfOCo8ujms8x8S9+qZs1tJmwLKdohJLJjTTNSfinTJQrYLKN4Uxb6lLwAV/vBLt0uTPUMOY24Ksa1YrA1RzlW6eUVW37UPrtvfHqHYO9fyRLXy9L57CUjFuOMkAcSbJ8iMh4bt73NcEr0vKxVZfir8ibdFQWdljfKybnE/UF4o6SZ4FYDpYJoxO6BInXjqKPlMYLr+8UgbI9DWYBdCXghi+0bv1OO2yL4NN8CNWhANv2kymrGzlqRc1vFHWR9dlsE9LIkJw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TYZPR06MB5949.apcprd06.prod.outlook.com (2603:1096:400:337::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 23 Aug
- 2024 03:51:49 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 03:51:49 +0000
-From: Rong Qianfeng <rongqianfeng@vivo.com>
-To: biju.das.jz@bp.renesas.com,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Rong Qianfeng <rongqianfeng@vivo.com>
-Subject: [PATCH v3 4/4] i2c: jz4780: Use dev_err_probe()
-Date: Fri, 23 Aug 2024 11:51:16 +0800
-Message-Id: <20240823035116.21590-5-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20240823035116.21590-1-rongqianfeng@vivo.com>
-References: <20240823035116.21590-1-rongqianfeng@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR02CA0061.apcprd02.prod.outlook.com
- (2603:1096:404:e2::25) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A9E376F5;
+	Fri, 23 Aug 2024 03:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724385364; cv=none; b=s07musmpNJppAY4CkxYvcCV76HLuAMI6XcBaQ9MdIpU4JX7Iz55XssdUgfUoQLC8bL7ftwdrNMtjIZsMP/l/IT1zwVQ39azW6GszXtfVHu7BVvSQh585SDkLbTl98tNFW9Cih+TAxGZr+nkiZGHYbBzvm8Ck2SjetYh/EDobAdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724385364; c=relaxed/simple;
+	bh=2AyBwNgb7DIa0JNt2Fz81HViRTDcOhLiD0D1a3AaBmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=guk8zAsA+qJzTAsL8qz6AJr9k1dOBXOtTBk0BCoBWovPwzfZxZ4Jip1EhNiU7sDkMNiB37hZl5mFe24czxwm7RSe7+2TnyGVwtm0lCOAk3pW5b7qbHKBwGqLsLsnZfCBy6k+9s8eUnh1Guuw8y58YKVa2MuijGI4OTHtmm+UvaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fMD/EMXC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N1bSpV029167;
+	Fri, 23 Aug 2024 03:55:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hfVMfd86bB+e1t/sj0VCJowMBVBCH8eMSo0glFt878E=; b=fMD/EMXC79Hdqofo
+	GXyfnRE95SWQuVak3/l5e/zyGK9XeboyaXjF0fF8skV4gKU+mR6kLZI2dOVyutlc
+	UfxN8i4xfC5IX1lf3Ma8ois9+PW9YSawCB5vBm2Lny7I27fo8eaw7NW57jM8uaPX
+	eylT/1zmKuWnmgXWo/G6mcnuzfTpu+B4TSA2hgQQSk9MEftxV4GqlZQjLo8Orj5x
+	zBVHNVHtkQ/hsBifuxIH+uD5AhFhlgc4E82qntTzNEGCwEB+CKjsSd7w/tyPhC7w
+	IBPqfFSKsRRtSULaWpCo/CBYxju8hL+i53Cj2oeOgTj11HaVYKbhbhI35d8/Wom4
+	T//FiQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4159adexs5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 03:55:58 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47N3tvEm008642
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Aug 2024 03:55:57 GMT
+Received: from [10.216.30.134] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
+ 2024 20:55:55 -0700
+Message-ID: <70bc6ef9-32df-44a7-bb63-3741bb0b4cdd@quicinc.com>
+Date: Fri, 23 Aug 2024 09:25:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB5949:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5c33e95-2bd1-412e-009b-08dcc326ea78
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7/xM5XR2brAIxjwJ4/ztbQHCCnuZ60O5Rq3ydCHRjWA9ZB/dZeQvmsJV4kTG?=
- =?us-ascii?Q?q9i46rguHokiQgZd8Gg1IRgwYSam7mrc4LAKEe8HD1n7O8yPf4H1BX1Z0ZWV?=
- =?us-ascii?Q?WGQBlbSZ9BLHFAC0mV5npqr+G91ClfVQRhsS6RgeRkYmFJA3LzGyALVb1yNc?=
- =?us-ascii?Q?0Tomn7M7CpGNRCJ2uULpxS92aHMkHPDz1bXCloLJUwyYjhuYXIbHyh2xTlzd?=
- =?us-ascii?Q?U6ypfKtANHdSjqFoDucXsdPsmZjtCWt9weuJPkjAU6vxBuceGfd7MzEkPs1N?=
- =?us-ascii?Q?+a5BF5L8kBaqvKUYKKqAs0ZxjwX+BnQG8HSnvoyQ9HjFXwO20KOjqm9JraQI?=
- =?us-ascii?Q?IlHTh4+qvEQOluQafgvoeXYESVedmllLpES1KWa5IkG6qxsCFt9rYt0fPMr+?=
- =?us-ascii?Q?bxGa9QtEUK7y4eYBi4iUq+vtqDsanOMfeVMvM48mMdh2gdDFJn5DfIEKOShQ?=
- =?us-ascii?Q?d4ghnz2526eZA3WJ5/UMl1LdImrc95V/mqv3rT9NubfIZOCiFFCPyJPQLkPW?=
- =?us-ascii?Q?QzkJ9Gf9uDPh2ld54eX0xUo7+KLKNWLWFVfKZNp11H4wL+8KEpWb9A69oJsa?=
- =?us-ascii?Q?xNeuLJMzI2ivPh0vjoUAohA1Ww5GYl4sitA5pTZzQYdYF+VQyQECVBg/6gbU?=
- =?us-ascii?Q?JsK4aWFKfZzcA61Jy3qpMWB059q+OTKMZjzzZ+cNdHJHzPYhNEtMU4igmdzH?=
- =?us-ascii?Q?p6kED0vFAtehwchi0+si4Gjoer49PWSaozo1cJJN0FTQslmIK3FsR7984YG8?=
- =?us-ascii?Q?Vh8wm+hUTRtJ4azAGIpBixNJlVEjAYIrzITAntQr+Dy0P4h6mzqvGQNt7VoZ?=
- =?us-ascii?Q?fzh2lLLzt4/IVrwJk8gwjn9rLb4QomlNmi94MjPuIsRbZ7ThEgkqQ495orUY?=
- =?us-ascii?Q?InSwyfNdN0coSDlA/KcZZAUKjmYNyknXvkrhKJF/GrYquVvdSTC8i81ZiUA/?=
- =?us-ascii?Q?esprMlpqCXu+TiLyWTkoB/3La8Ru1FmfZQ8/r/jxZO3wFfFezSatRDkAjVD7?=
- =?us-ascii?Q?MDYGHqRhF9uJWf3ncpStBnF/WlWP33YKF/NcXwV1bJapOK0pnn8tXYEyNpCw?=
- =?us-ascii?Q?ccqhV9D5aYJtnURr/79TTZaOXZaD5jdcFuIVDdij0QoHgNkTeHhv+fqdEYf0?=
- =?us-ascii?Q?oBzY7nK4FYTp1KKoCxssujet0xnugWsJBqcJVR+iFrlrtWI59uJxTWHt249N?=
- =?us-ascii?Q?CjO1Waz56kKwrNmZMMFHXnCEEO0489hcaN6V06Y8QIRaRLkBwMD6Xe/C0fis?=
- =?us-ascii?Q?/HHEfQjeS1WWT4DtnBrjgA4dZ++qPny7P+6dil0DYS1Pl3cdW80W8wqLqNiG?=
- =?us-ascii?Q?k+tvnHiJsqwzSTM/gRN7OEOwdjL/zyKk/+/hpcHi3+eYWCJB1JnmrocLJLNv?=
- =?us-ascii?Q?kYtsa+FU7W15FAH4h2d5yBa+owoaZDKUlfySxCw2kxXV8aP6xA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lY8MRPAD1ST1m+YueggdrTOiVdtygdM8MQFHi6JlLANH9FEMNLy6b1AC2JhD?=
- =?us-ascii?Q?ThAPHzv9lLJL0sIxoc1HuFNGkx0Fg/AYcqgyAOvJp/6Wxd3z2zpygaUvFah5?=
- =?us-ascii?Q?u9bE7xszyeX8knFAn3G12U11Evge13Zaw2FLcvis0B03DtKpUJbbFkt91pcz?=
- =?us-ascii?Q?k0siUgafoFflaKdijGwIsooYZ05PnHf9+hXoHcC42fbNmefvAZkuSnx3ambe?=
- =?us-ascii?Q?4E0y6U+zhpMzYWWLMaqWC0IjNSXO5gHaNnL/kP5t0eYhx0iPhBCYxk9SihoI?=
- =?us-ascii?Q?uFicrBY5+3+JAsCnjxbI0AqYAcswZ7LqZqXj1W6LXkHwg1qq6qOgIIw+rX5M?=
- =?us-ascii?Q?GFt9geZT9SDOdABkvrAx8UjofsC5TSj8t0fiyMGpqocQCS4ODAsigv0yhp4b?=
- =?us-ascii?Q?Ni2zbOFrYL8wygqTx31GzY055D3wE6H4Or2Mak/LV8A5q7BJuDcv86KHywgN?=
- =?us-ascii?Q?0Tt3F4dg6gG1YDh0pRRxSMitmZ1XM/kh8E7U1/t/k8TRyesUnhiqpQPi6C3z?=
- =?us-ascii?Q?q7kIqC312I5aCLLOafaKHk0nCkykEjti7JJlL2GYAgwRbARWaimYWWEGmVwp?=
- =?us-ascii?Q?Sztxnc6Ce3rDM04KGmSr3QJt3ks6bQJOew3TOE6weNY8pwCDc0Hl9YzEvdKp?=
- =?us-ascii?Q?5s/fHTzKT8/AfM5GQ/fbaonwmvivx9mmSeBnu7pSBiN36iVcAH9epY71EfL4?=
- =?us-ascii?Q?NONQbOC2Q9b1Sx9Gj3/l4iT8bNzymxpsPC40V/OiiXEah70wpnGjdWqUfGm6?=
- =?us-ascii?Q?hTJ8RJKPwRuN+0w2LA0yx3qaOIQVwYR95uX7zjtuuE7Bi9UYOuCOxeMOg7RC?=
- =?us-ascii?Q?ZBUR5dwOgzMbik0hmPlXNWof58/KXPvu/tw9DwaJWZwkgD7ekFfB0I2BqTny?=
- =?us-ascii?Q?9IrdkWM6Wgy25svtyJhkqMjXelYW7spXALGrIpAtqVXGxhwXbn+ENIP89EX2?=
- =?us-ascii?Q?ioNPh4YIznsL8VsGfviWW0Reua3X4RzPpi56LFg1rG5vssL9EHxcSPrVXNqi?=
- =?us-ascii?Q?GvgWsIuWoDdZtSurH5k7j8eHLT3XsfVmmjg2OgdHg5xRvLR6OnuUwjem0kKz?=
- =?us-ascii?Q?eqRg2bI3ub7QHafVCH6qtdEj4iwoIOSIyPXqO9NDdGaANy5LjOyDb/b1Q+Zc?=
- =?us-ascii?Q?ZR3VZz9ms2VibI0Xx/0JWDzxrb35FwK9oGaPxzMdCp6b03sQ+1CY6PEY199u?=
- =?us-ascii?Q?1tz35x3T7R12tIjjjiFCE2CfaPWjj0XfoDIxo4rukrfJF3zFySMxT0BFr0Ah?=
- =?us-ascii?Q?zVp4Z+oE8PEX/CmgL4cqUTevomxpd4lQqjB5x+l6lwL0hQ23UTCuhuxMB5Ft?=
- =?us-ascii?Q?LIhfg+H00w8bYcdkFJCzTWsWCoC4iQELlBlVW0qFcCDMxgSu1Ix/t9Hv1Iwm?=
- =?us-ascii?Q?niAYzKQBdkCoaskyRcVqL29PtSAZlksriCs66x5fgMmVXgtSL36xULjuLeRJ?=
- =?us-ascii?Q?OEK1Y0LGrQGn1zM8A/jH/HeJ0aVzBIediS97iBJ5jkUPGAq9kTFHboj+GgeT?=
- =?us-ascii?Q?Uasdq4Je0HNRdClBagffj4iWnSbE6SRuaeWoGmIg9oL0i11XuPJH4otq9t7W?=
- =?us-ascii?Q?h2zZDDsdx8kV39V74H94pKtHvLm6yVAyMOXUuaMv?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5c33e95-2bd1-412e-009b-08dcc326ea78
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 03:51:49.1545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tPojTmkI08xIe6hB2tf1q29IB4TbV1uL/YN8U3Tbda+U3BXJ8hqbRAjbPT5z2qwMqzMmAyx0GN1VJqnnD20WuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5949
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
+ dwc3_qcom_read_usb2_speed
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
+ <2024082211-eleven-stinking-9083@gregkh>
+Content-Language: en-US
+From: Faisal Hassan <quic_faisalh@quicinc.com>
+In-Reply-To: <2024082211-eleven-stinking-9083@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vjaIg_SgraZiorTuFj5mDY4bTIX_a1wj
+X-Proofpoint-ORIG-GUID: vjaIg_SgraZiorTuFj5mDY4bTIX_a1wj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-23_02,2024-08-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408230025
 
-No more special handling needed here, so use dev_err_probe()
-to simplify the code.
 
-Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
----
- drivers/i2c/busses/i2c-jz4780.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-jz4780.c b/drivers/i2c/busses/i2c-jz4780.c
-index f5362c5dfb50..0cb52a6d05b5 100644
---- a/drivers/i2c/busses/i2c-jz4780.c
-+++ b/drivers/i2c/busses/i2c-jz4780.c
-@@ -798,17 +798,15 @@ static int jz4780_i2c_probe(struct platform_device *pdev)
- 
- 	ret = of_property_read_u32(pdev->dev.of_node, "clock-frequency",
- 				   &clk_freq);
--	if (ret) {
--		dev_err(&pdev->dev, "clock-frequency not specified in DT\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+					"clock-frequency not specified in DT\n");
- 
- 	i2c->speed = clk_freq / 1000;
--	if (i2c->speed == 0) {
--		ret = -EINVAL;
--		dev_err(&pdev->dev, "clock-frequency minimum is 1000\n");
--		return ret;
--	}
-+	if (i2c->speed == 0)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+					"clock-frequency minimum is 1000\n");
-+
- 	jz4780_i2c_set_speed(i2c);
- 
- 	dev_info(&pdev->dev, "Bus frequency is %d KHz\n", i2c->speed);
--- 
-2.39.0
+On 8/22/2024 3:03 PM, Greg Kroah-Hartman wrote:
+> On Tue, Aug 13, 2024 at 04:48:47PM +0530, Faisal Hassan wrote:
+>> Null pointer dereference occurs when accessing 'hcd' to detect speed
+>> from dwc3_qcom_suspend after the xhci-hcd is unbound.
+>> To avoid this issue, ensure to check for NULL in dwc3_qcom_read_usb2_speed.
+>>
+>> echo xhci-hcd.0.auto > /sys/bus/platform/drivers/xhci-hcd/unbind
+>>   xhci_plat_remove() -> usb_put_hcd() -> hcd_release() -> kfree(hcd)
+>>
+>>   Unable to handle kernel NULL pointer dereference at virtual address
+>>   0000000000000060
+>>   Call trace:
+>>    dwc3_qcom_suspend.part.0+0x17c/0x2d0 [dwc3_qcom]
+>>    dwc3_qcom_runtime_suspend+0x2c/0x40 [dwc3_qcom]
+>>    pm_generic_runtime_suspend+0x30/0x44
+>>    __rpm_callback+0x4c/0x190
+>>    rpm_callback+0x6c/0x80
+>>    rpm_suspend+0x10c/0x620
+>>    pm_runtime_work+0xc8/0xe0
+>>    process_one_work+0x1e4/0x4f4
+>>    worker_thread+0x64/0x43c
+>>    kthread+0xec/0x100
+>>    ret_from_fork+0x10/0x20
+>>
+>> Fixes: c5f14abeb52b ("usb: dwc3: qcom: fix peripheral and OTG suspend")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
+>> ---
+>>  drivers/usb/dwc3/dwc3-qcom.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+>> index 88fb6706a18d..0c7846478655 100644
+>> --- a/drivers/usb/dwc3/dwc3-qcom.c
+>> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+>> @@ -319,13 +319,15 @@ static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
+>>  static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct dwc3_qcom *qcom, int port_index)
+>>  {
+>>  	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
+>> -	struct usb_device *udev;
+>> +	struct usb_device __maybe_unused *udev;
+> 
+> This change is not relevant to this overall patch, please remove it and
+> submit it separately if still needed.
 
+Understood. I’ll remove the change from this patch and submit it
+separately if it’s still required. Thank you for the feedback!
+
+> 
+> thanks,
+> 
+> greg k-h
+
+Thanks,
+Faisal
 
