@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-298083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8C095C1CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD4895C1D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0957D1C20E9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCCE71C22566
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2381109;
-	Fri, 23 Aug 2024 00:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434067E8;
+	Fri, 23 Aug 2024 00:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hmhFd/DC"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3LYS8SW"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4594C631;
-	Fri, 23 Aug 2024 00:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530F3B64C;
+	Fri, 23 Aug 2024 00:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371321; cv=none; b=XoZe0itQNKULKb70DkL4zCUDIERqzk8op0XHrVaIe8/UtFUViePcfwFOBj1tUuZp7kpfMxyTPc5cH37+I0R8zA1sRbf0xRpl7IP8+hddJAcqwe+cnwr8n3nPiK5OxgYT0jRDyQ3ZZ3eZZML6PYQcIMl7bMMbi8MtdFdzg+IM4NM=
+	t=1724371374; cv=none; b=X8yt5UydHl7WTrH86MNZKMBLnFBp/2o68viw93ulIeSEvuxKuGuKx8401cVnM6hHhy5mgC3LLi34+6Yrrri0fC8sST+vokSSV4RqLW3yXYtKf5+pydNZhM5cFCxigchUEafWjuWQjN+VizOyhZ5cuLtAFD7NdqAWXeUUDUiklQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371321; c=relaxed/simple;
-	bh=AkGMr/4GiilXB0TyYUMOrZI0rt4Zs9G2rPhD2KI9vgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AXwC1DuUzJhKarJfwQaUxp5TOsfTcb0YXL7P9Jpdw2MIvbkn3ZF4WirDX1h3ljCXUS0mui60MJg6+nGwyTcnqb2D5u9//sGZNdLH2YKfzjOls7IZVBQ5hWah1oXtuwiQsHkLFSe1F1Uneq+uah26ldNEBydISlLaKDtFOv52eyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hmhFd/DC; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1724371374; c=relaxed/simple;
+	bh=+B8Zf+qNab8dy7kut1N/Onir4GRcrJ78u1T4k/V3gjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ckC3K+Gj2QvlbKX4ZJou6FS19U9WZxcKnlD0cKgYJIobqdytPTIHJV+Lsg7p4/0bKgpN7ueffXi0eVPI+Y1mXLG77S4XpgQf6tBRl1bjBOrx8P1kaeGlVRDAXwisuViZcy5vKDbTlPppAHgR+Ml4e5mJdITHys/+crlEsJ03GQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D3LYS8SW; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3eabcd293so15878601fa.2;
-        Thu, 22 Aug 2024 17:02:00 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7142a93ea9cso1129712b3a.3;
+        Thu, 22 Aug 2024 17:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724371318; x=1724976118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FZXhseYTPdiEAsaCZyp0/eUGXOH14KUMciIsgJkUDzE=;
-        b=hmhFd/DCrGY6iZNPxsZ24bN9ktSW2djRbHtIVbWHYimwVgbGrCtGicATmEtTp9ziiX
-         eMAyHFdgrvQiOru2QNo0Btq4nO378gw+GGs+tJdcYZqvu6D0TnbRh2MZSkj+VWrDxu3u
-         epPEhORYruUCDCVGeDzcfHqoxMLONVkdr0M+QJUW53UAc9N66YE4FW4+kjhR5GPBANjf
-         7HpJ/g+8bK/6YTTzTkYYLl30afgtrqSEHxNvAh+6/o2jQHOzVOQGeXDYh3Ygn8Or61Do
-         fvyiU0VCj3uNegzn5WInTFXYgktc/vig1rMZsf+ZcTj5n00CO56n0F0yFNuNZz4jdqHX
-         F2pw==
+        d=gmail.com; s=20230601; t=1724371372; x=1724976172; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=98gnejDKaLO3dsc2ZNwfjSy1JDPda+0qVNeGwsqKFYM=;
+        b=D3LYS8SWM4OEAa3cHqB36lKT6ULXK0rtQFp17wphmjqQgGng9OUStq1xfuKsMDlnLT
+         1JPmiR3Ws1K7G7IVsLaNsTDqFFJFlgJ3+w5CgQEKPIrJxPIGd1dDewx8bWHaaV4ymfs8
+         KKy206GCA0Y5elHTXH0ML+vpddYDXKLhF37uigkpQCQIlBA6D5VWT4fnYGe097ENtYF+
+         a+toD0QZPqerhdo+j15JYEMU0QgHGgVYLstE9Ow+fehTWheQutkdeHG4vfaRrxR8S53w
+         hP4Y2MpUHwoqfpGYiLZilVy7HPILL8iRcZ1GCtvOhA3PF4jTZIQ37H6itThPMFs5mpjg
+         dR2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724371318; x=1724976118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZXhseYTPdiEAsaCZyp0/eUGXOH14KUMciIsgJkUDzE=;
-        b=bOmrErHbTfKDVA0+Vz5EYLeRMe/0sF5xQkoy/FtngDdayvRTyb++FsLrOyznAN+J/N
-         98vns8mBLtAjnB6QZfAPCy4W4jBUOaxtS80TbCfdSvn2D+uYuXDEjBfjDGhcTXbF7pzh
-         iBM0DcuQU1Z4Fp7zU7VSZoWBtFs6TJuhnFtRKHnics1/QN/2hu6btt9dfYcyAKHUmLRj
-         Si1KEpsv3Z17IiMk+19JnJhhxwir1KrlmpNhU33TnUFgVbx/zJEHcWsYH1bqdr2C6a4n
-         8lGjGjT5TwSYk5wxT2qQduVaZ9kbXWz454X6AOiSzc5UvkgiXIibb2jF9yfG2vGbjyCg
-         Fcog==
-X-Forwarded-Encrypted: i=1; AJvYcCWKDYvGnjRIXzPMIN1rNrCmxZdLjruT7lcTIUzkg+rMrFpvBMDKl/MQpq+e0SYiLwzthtaADsXSeuLSgyFF@vger.kernel.org, AJvYcCXZMVg/LaD72GJsxjngEXZ/e6eJ5bSnlPVu0qppl+v1BAi8x4uVycgZVpsTfCsURPmay8Z3bpmQa5TeX2uT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgMiSsTmRAHPuT+fFzmCpc/nOLDgBBV0XuoKtg9jZ/RQF+jhtq
-	Y09pmQiQS0OeX5RL7EZTfgVGmTyTRg5sF1EMXRl738wjAPM7bqbr
-X-Google-Smtp-Source: AGHT+IHhHWZf9vpNIAFQ0R09BUx/Ka3OjJk//K6B4lxZ33XIVlPX1Apvk/xy8KlJbFosWsKjoueAWw==
-X-Received: by 2002:a2e:a595:0:b0:2f2:bbcf:1b83 with SMTP id 38308e7fff4ca-2f4f57aa5e7mr1018501fa.45.1724371317606;
-        Thu, 22 Aug 2024 17:01:57 -0700 (PDT)
-Received: from [192.168.1.14] (host-80-104-252-9.retail.telecomitalia.it. [80.104.252.9])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c43a5sm1414410a12.66.2024.08.22.17.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 17:01:57 -0700 (PDT)
-Message-ID: <3c0ce811-ae61-4d09-8eb4-054afeaa1969@gmail.com>
-Date: Fri, 23 Aug 2024 02:01:55 +0200
+        d=1e100.net; s=20230601; t=1724371373; x=1724976173;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98gnejDKaLO3dsc2ZNwfjSy1JDPda+0qVNeGwsqKFYM=;
+        b=U3HmKj3KZ3FbDbrgq8EtS+/Mprv5caoLTrr2qbXZ+hMkR05BBQAuqShLWRC0f+TZtU
+         LUZMO6zz8x0mwpPBbfa7MIIKgJ5gulE3AFebnEEq9eXeBGwUFInjhxhQcK8V9PPcS99o
+         yvWc+c+XuJ1Frk9y9zyaiQRQMp2uwU64Z7VwhzGk+X37FacbAJwFFN+QDFdES3NVvZZ1
+         +Z6Rx5cMbFFL4Q9XqTl6cg5xd724KPELxf2FJEvtqsK7F4qhpod/U220MWdct7/YRzby
+         dkVta08Gd45AKV+59822Jr8LHb2w15kWX7DRQwY3eGdr7H5/QTZdVbaOY1SawNE8nHnU
+         CJQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYKrsN2+8DA+aQcDNKfVyx++f96HbxBbBF2FQAW+JcQ1rAvI9AvuevVCiFFNwdSe+6bBdqZVAZeKVFbq0=@vger.kernel.org, AJvYcCXTFBy8M7xqmB6QjWumOhhhDo1caM9gEuTR+vmRtpqLgHIy9rhh9piX9M6Z/134TxeocXjnhWll@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPmn3uINnfJmO2M0RBChGpFK+lzAC5W0iaNoGtKLB21mnOvcIN
+	7MSqndmu27Cvpq1rksqTl/DHEYlGvFLukFe1ZWR2qgUnmNTcLf+2qlbvFQ==
+X-Google-Smtp-Source: AGHT+IFuJJdXrj7vSFjNsmUwiYecIehQy3YqxS92vV6AQfPGURczpl8Awv/qDMobK7kTttR8gFpprg==
+X-Received: by 2002:a05:6a00:1e0b:b0:714:2ba6:e5c9 with SMTP id d2e1a72fcca58-71445772473mr717070b3a.7.1724371372460;
+        Thu, 22 Aug 2024 17:02:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430c10asm1990378b3a.176.2024.08.22.17.02.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 17:02:52 -0700 (PDT)
+Date: Thu, 22 Aug 2024 17:02:49 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+Message-ID: <ZsfRqT9d6Qp_Pva5@google.com>
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] drm/msm/A6XX: Add a flag to allow preemption to
- submitqueue_create
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- Connor Abbott <cwabbott0@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <20240815-preemption-a750-t-v1-6-7bda26c34037@gmail.com>
- <20240819203128.hit2csdpbbsybkoq@hu-akhilpo-hyd.qualcomm.com>
- <CACu1E7GnwjS3Hv140emJ_-yJKDd+FB75upF9z3pDTj7Ey7zWRA@mail.gmail.com>
- <20240822192144.e7u3fhlqpeyypbxp@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <20240822192144.e7u3fhlqpeyypbxp@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
 
-On 8/22/24 9:21 PM, Akhil P Oommen wrote:
-> On Tue, Aug 20, 2024 at 11:48:33AM +0100, Connor Abbott wrote:
->> On Mon, Aug 19, 2024 at 9:31 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>>
->>> On Thu, Aug 15, 2024 at 08:26:16PM +0200, Antonino Maniscalco wrote:
->>>> Some userspace changes are necessary so add a flag for userspace to
->>>> advertise support for preemption.
->>>
->>> So the intention is to fallback to level 0 preemption until user moves
->>> to Mesa libs with level 1 support for each new GPU? Please elaborate a bit.
->>>
->>> -Akhil.
->>
->> Yes, that's right. My Mesa series fixes L1 preemption and
->> skipsaverestore by changing some of the CP_SET_MARKER calls and
->> register programming and introducing CP_SET_AMBLE calls and then
->> enables the flag on a7xx.
-> 
-> And we want to control L1 preemption per submitqueue because both
-> freedreno and turnip may not have support ready at the same time?
-> 
-> Antonino, since this is a UAPI update, it is good to have these details
-> captured in the commit msg for reference.
-> 
-> -Akhil.
-> 
+Hi,
 
-Sure I will update the commit message. Anyway that could be a valid 
-reason but there is also nothing preventing you from loading different 
-versions of mesa in two different processes so having one globally 
-enable preemption and break it for the other wouldn't be ideal. It felt 
-natural to have it per submitqueue.
+On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> An uninitialized variable @data.have_async may be used as analyzed
+> by the following inline comments:
+> 
+> static int __device_attach(struct device *dev, bool allow_async)
+> {
+> 	// if @allow_async is true.
+> 
+> 	...
+> 	struct device_attach_data data = {
+> 		.dev = dev,
+> 		.check_async = allow_async,
+> 		.want_async = false,
+> 	};
+> 	// @data.have_async is not initialized.
 
-Best regards,
+No, in the presence of a structure initializer fields not explicitly
+initialized will be set to 0 by the compiler.
+
+There is no issue here.
+
+Thanks.
+
 -- 
-Antonino Maniscalco <antomani103@gmail.com>
-
+Dmitry
 
