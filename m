@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-299074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCEE895CFC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796B895CFC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5304B282BA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8F81F261E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498CC188A23;
-	Fri, 23 Aug 2024 14:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DCB18951C;
+	Fri, 23 Aug 2024 14:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JM1Zh8FO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="j16wgxcS"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FCC17E01F;
-	Fri, 23 Aug 2024 14:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724422218; cv=none; b=CrwQ+fhn+k23ZD63YzEX0PzRYhPvuO6PznQqEepGM2P/3YqY+PuuAxHeQcJZ56PsGzcrI+aXJzBerp61/P/m9LxNWRERsgScVXtP33hzJZEipFSO9qk4J90tSEb0etQoEyXm5LdfHljYqdfZfT+gbxE2bBPU1RyiesQtsLszguo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724422218; c=relaxed/simple;
-	bh=VzqXcNJ759Uw818gSbn6I73cmLxqgn7iNqCDboRjbAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1Ji8TK6H9LnVF17o8Xan72WZqmbxPvqtgcOABBLLoNbGzPfPL4YJzjSC7jqD8Qn3zXkCG0319SYk2xOkVjIJbU0POZKebHLloKVIJJKEk92k9igIXWxggHh9PoXNCjYNuwzmgo3hp6LdBAHoEhCOZS5fPFnbCqOfe5ViDomyzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JM1Zh8FO; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724422217; x=1755958217;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VzqXcNJ759Uw818gSbn6I73cmLxqgn7iNqCDboRjbAk=;
-  b=JM1Zh8FOP+tWF9h2fYWY4/LF9kw6ss1Hb6BrKLOd2wTaF65wLpRvPaXm
-   csAmJxK+npRaCM6imbASVIylV8J/uJMsdQF/1jPAWIScMhux17wXhqHnE
-   weVQnnxziKTfgnptRh30hesQFOQLjHN/GRZj4OIYLPBH9x7I/O0pnegQZ
-   qrLlG9FtbW+LbQPTcmUZOD/LpB33tkkGOoUQp9r494pswl34ES7PelnPi
-   W9Y1WKMn578zrHDyvUWlVIzmA3DmVG/Dil+no+udpbz2PE7aUTkpykXKv
-   DjrTRp/ZC9doM27bkrPfgcyoIJvL77GBHTs7OcPxij8hLrdIeuQIX7HwD
-   g==;
-X-CSE-ConnectionGUID: K4xJo2oVRNySujoRfosK/A==
-X-CSE-MsgGUID: 9EsboOftSu+KuUhVyYwIxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="34270419"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="34270419"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:10:16 -0700
-X-CSE-ConnectionGUID: wCFesym4TmKvBgkwOXW/zQ==
-X-CSE-MsgGUID: fmOD+iE2TcaOQ418eE3lkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61825177"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa009.fm.intel.com with SMTP; 23 Aug 2024 07:10:13 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 23 Aug 2024 17:10:12 +0300
-Date: Fri, 23 Aug 2024 17:10:12 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: gregkh@linuxfoundation.org, badhri@google.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kyletso@google.com, rdbabiera@google.com
-Subject: Re: [PATCH v3] usb: roles: add lockdep class key to struct
- usb_role_switch
-Message-ID: <ZsiYRAJST/2hAju1@kuha.fi.intel.com>
-References: <20240822223717.253433-1-amitsd@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6041F16B391;
+	Fri, 23 Aug 2024 14:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724422354; cv=pass; b=LO4oZdeQOez6mc8ebMF/5o5DFMn1GiwdQTbCASHvIUCtzhDKdWJDsvVcwP2xXRgDnNZWS4+0JPOP6fQSygZ+opj73bLAtvyemR1txqll01l1JWNLjxMnZO4dATVdWw5+PDsVNSXb+xfn4IJFGiIbndB1PeW/v7vL1htjCcmRwwk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724422354; c=relaxed/simple;
+	bh=SeCRgX61JmozfhfSQUkYku6wrmQzGTNTLZ8b8QvcxX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P6xE4UC4rnNvaIQHg6Mp7+WxkKnQtIWh5TPgG8AOJGd/4N9edKeRGo4bmW96ahqO9KBOcTDOPIhw6Xk3uAiJs7fauS2RCVkCwSCX7UC8z2JBH+eZ2aO+0KW7EvWzhAL1EG/W3I+Xws+mR2vTa1aPtwmP9qXoj1wLIbObQKweDKA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=j16wgxcS; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724422312; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CrToZ2LTI//Gtte2hJPQcZ5QDN3uDirJqmj6R94r4N99Rbo4pAcHJ6JNdarmMzkEBpZSaLOFNlq/oDGKAg5gN+qfHGE6GEM+YUFWn8xcca65Cf2glLacy4w6ntuR8tof5ZtEPftnF+E8nrsAQUdmGRdd+eP3plHpLgnxRUEk7I8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724422312; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lNp4RfIxi4nUXP7c0Aub3ROaeoojv7EDzsSfORBjjkE=; 
+	b=kbuhsOTJ3xVK/tDGbTBlwkX0UY7Mpu8vkInysRClwom94FqXCu4HH10B1eLl66Zmfa5q3S3FD1evCvg+7Al53IfPtVT0FmikSPANKwRaMHDKdxBik8YMuPwYhwxEC66EgheFyBIeV7B7CcsIFEo/bEPGFCdQTf53XjmGnIxqDB8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724422312;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=lNp4RfIxi4nUXP7c0Aub3ROaeoojv7EDzsSfORBjjkE=;
+	b=j16wgxcSJxUO1zGqi/UroUioB6/Ww52ql5liESPdnZOVqwk/aSTsYxSFeoCFmyXz
+	uN0O/2Ecu09IUH3arc/q0HKIHzbK3g3bVe7mXFdhPF9TH4cpaFsp0+UJprejLqRdEBH
+	oMXB7agPk6YwuXuePWrRV2JFeGJQWCfBWWnMVAbo=
+Received: by mx.zohomail.com with SMTPS id 1724422310105193.1328447504353;
+	Fri, 23 Aug 2024 07:11:50 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	David Wu <david.wu@rock-chips.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v3 0/3] Add GMAC support for rk3576
+Date: Fri, 23 Aug 2024 10:11:12 -0400
+Message-ID: <20240823141318.51201-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822223717.253433-1-amitsd@google.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Aug 22, 2024 at 03:37:15PM -0700, Amit Sunil Dhamne wrote:
-> There can be multiple role switch devices running on a platform. Given
-> that lockdep is not capable of differentiating between locks of
-> different instances, false positive warnings for circular locking are
-> reported. To prevent this, register unique lockdep key for each of the
-> individual instances.
-> 
-> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
-> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+Add the necessary constants and functions to support the GMAC devices on
+the rk3576.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Changes since v2:
+- Fix typos in RK3576_GMAC_CLK_SELET_*
+- Also fix typo for RK3588_GMAC_CLK_SELET_*
 
-> ---
-> v1->v2
-> - Avoid usage of ifdefs.
-> v2->v3
-> - Removed redundancies.
-> - Completed peer review and added reviewer signature.
-> ---
->  drivers/usb/roles/class.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-> index d7aa913ceb8a..7aca1ef7f44c 100644
-> --- a/drivers/usb/roles/class.c
-> +++ b/drivers/usb/roles/class.c
-> @@ -11,6 +11,7 @@
->  #include <linux/usb/role.h>
->  #include <linux/property.h>
->  #include <linux/device.h>
-> +#include <linux/lockdep.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/slab.h>
-> @@ -33,6 +34,8 @@ struct usb_role_switch {
->  	usb_role_switch_set_t set;
->  	usb_role_switch_get_t get;
->  	bool allow_userspace_control;
-> +
-> +	struct lock_class_key key;
->  };
->  
->  #define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
-> @@ -396,6 +399,9 @@ usb_role_switch_register(struct device *parent,
->  
->  	sw->registered = true;
->  
-> +	lockdep_register_key(&sw->key);
-> +	lockdep_set_class(&sw->lock, &sw->key);
-> +
->  	/* TODO: Symlinks for the host port and the device controller. */
->  
->  	return sw;
-> @@ -412,6 +418,9 @@ void usb_role_switch_unregister(struct usb_role_switch *sw)
->  {
->  	if (IS_ERR_OR_NULL(sw))
->  		return;
-> +
-> +	lockdep_unregister_key(&sw->key);
-> +
->  	sw->registered = false;
->  	if (dev_fwnode(&sw->dev))
->  		component_del(&sw->dev, &connector_ops);
-> 
-> base-commit: ca7df2c7bb5f83fe46aa9ce998b7352c6b28f3a1
-> -- 
-> 2.46.0.184.g6999bdac58-goog
+Changes since v1:
+- Add binding in net/snps,dwmac.yaml too
+
+Detlev.
+
+David Wu (1):
+  ethernet: stmmac: dwmac-rk: Add GMAC support for RK3576
+
+Detlev Casanova (2):
+  ethernet: stmmac: dwmac-rk: Fix typo for RK3588 code
+  dt-bindings: net: Add support for rk3576 dwmac
+
+ .../bindings/net/rockchip-dwmac.yaml          |   2 +
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 164 +++++++++++++++++-
+ 3 files changed, 163 insertions(+), 4 deletions(-)
 
 -- 
-heikki
+2.46.0
+
 
