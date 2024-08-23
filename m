@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-298277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B5B95C510
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8B595C50E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3C4281E71
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19FE1C2134D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A2C74BE1;
-	Fri, 23 Aug 2024 05:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628A26E2AE;
+	Fri, 23 Aug 2024 05:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wQPaHuAL"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugVotz1p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839048CCC
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D47D5464B;
+	Fri, 23 Aug 2024 05:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724392575; cv=none; b=j+NzFwxATBcpjvDA8/H1syBVRBdxrRkaU20myl+I6Xcjk6/0nO3blVaBqTnBKvcvwFtxi5HlWpafczrY/9y+cSwUaW2bdDcC/OPue7RSA386jiRDtalNMD/3xTtMqGdKG7d/sVt1r79o/R/6S6Umc/2sv1ks/dGewul+FMKBRRQ=
+	t=1724392575; cv=none; b=IlaMYb1jUnaTkZo6rlGGgHAVfJJOfaex+6RVoS3ESVxhhjW4gib+MglBf/x/aWMBlObfocwnuxYWAlEPKnkiVwiCSn3EcmgRj7si1clSs/XMp/J5W1iGgDe3f0Np8nwulYWUk5kUoP8bOqCm+QLggVEQQm3GBjbHJHiPl1UgkIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724392575; c=relaxed/simple;
-	bh=UH/845C3CKqyzAbizs/Nu/leaga8purHzb9PP0avFys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AptvWbI6dlKYpezdWwh4okSEsWwosefpn+sJ1I5htldS+nxaZoB1jSXU9mo/iiLV0xcfg4xeTfX1kGn+siF2vnqTLCkvgJ+UFhjA80DGsXuKitIlXvbgYz4a1rVeZ00QYvt9kWukz+DuX8mg8pxcdtnA+tTOJ81uRzNWsCz9ATM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wQPaHuAL; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <70f73586-670e-43d0-adf4-0950a9b3940d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724392570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X4VR43m38UmF4fnbqpzcLCBIxvAClHFKLB7ul2q3ync=;
-	b=wQPaHuALIFdCW4qTRlYfHw74flRHn/b7xx0uFq3raDuJb2dLDad+2jdqLdaZjDCbcEAaKO
-	MyVZZoIkY8I17v2cv3G4BXW/qFjDj1mGRz3xc+UIey2Tse3mHDQ0Tw2HhZx5jMlAE1QvQQ
-	k7u+Svvf2DM07yq2qsH4t27rWkvK/Fg=
-Date: Fri, 23 Aug 2024 13:56:02 +0800
+	bh=5LiBOirHa4/3WcTTbqSgaXl3F8Z0uPmHwxXkUB6akuE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=aAHz0Lpc5nZhMC30rJRK/UVoHW3b5semgR3euHgC9ap+ouQFyyHOZ23HkE8YxDxEKs+iOoYMmrUTIEa/G67hw7jBVlF5hvPqbbhEQ1wSWXjWp5VbCtzT7odU964woUxdQKHjqSWHTiDYE/XWxZRZRYCEUj1V59xdV8orJU9EvUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugVotz1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491B6C32786;
+	Fri, 23 Aug 2024 05:56:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724392575;
+	bh=5LiBOirHa4/3WcTTbqSgaXl3F8Z0uPmHwxXkUB6akuE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=ugVotz1pO0bTIKXbwo3pZOknV+SfLRU1t3YBPX52rov6OiME9yG+BKscP4MaWLUxL
+	 hC/4WMOmDJaS+o6hBOReRuop3Uc+9PSnjmL1Q62TL0VizLRUySeyWcXwJV+3cBUy+F
+	 y40uuq8Nhp5WgC8E1tTijL6OCQr4MEz41zNP8PPFozln+WlKv7OCw3PGJ5zKKmcg4a
+	 b3pNilqqGGGWSrblgScI4mroPY/msXVhR/UwRUe3GzYWRTaPFmnm5stjV0sDJ4pIdV
+	 KSq2n76HOTs+AWvVtzMRXBRGV8ZY/C9EzIzRwjtgWpn+7/x0EqlsxTE5K1pRiWj7Kb
+	 RgyqtytnueDtg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: dan.carpenter@linaro.org,  benjamin.berg@intel.com,
+  daniel.gabay@intel.com,  gregory.greenman@intel.com,
+  johannes.berg@intel.com,  linux-kernel@vger.kernel.org,
+  linux-wireless@vger.kernel.org,  miriam.rachel.korenblit@intel.com
+Subject: Re: [PATCH RESEND] wifi: iwlwifi: mvm: fix an error code in
+ iwl_mvm_alloc_sta_after_restart()
+References: <575625da-60bc-4444-a5f3-a7acf925f1e5@suswa.mountain>
+	<20240823030423.1781977-1-make24@iscas.ac.cn>
+Date: Fri, 23 Aug 2024 08:56:11 +0300
+In-Reply-To: <20240823030423.1781977-1-make24@iscas.ac.cn> (Ma Ke's message of
+	"Fri, 23 Aug 2024 11:04:23 +0800")
+Message-ID: <87wmk7vl38.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] RDMA/rxe: Use sizeof instead of hard code number
-To: zhenwei pi <pizhenwei@bytedance.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- zyjzyj2000@gmail.com, leonro@nvidia.com
-References: <20240822065223.1117056-1-pizhenwei@bytedance.com>
- <20240822065223.1117056-2-pizhenwei@bytedance.com>
- <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
- <20240822123649.GP3773488@nvidia.com>
- <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
+Ma Ke <make24@iscas.ac.cn> writes:
 
-在 2024/8/23 10:30, zhenwei pi 写道:
->
-> On 8/22/24 20:36, Jason Gunthorpe wrote:
-> > On Thu, Aug 22, 2024 at 07:59:32PM +0800, Zhu Yanjun wrote:
-> >> 在 2024/8/22 14:52, zhenwei pi 写道:
-> >>> Use 'sizeof(union rdma_network_hdr)' instead of hard code GRH length
-> >>> for GSI and UD.
-> >>>
-> >>> Signed-off-by: zhenwei pi
-> >>> ---
-> >>> drivers/infiniband/sw/rxe/rxe_resp.c | 2 +-
-> >>> 1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c 
-> b/drivers/infiniband/sw/rxe/rxe_resp.c
-> >>> index 6596a85723c9..bf8f4bc8c5c8 100644
-> >>> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
-> >>> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-> >>> @@ -351,7 +351,7 @@ static enum resp_states 
-> rxe_resp_check_length(struct rxe_qp *qp,
-> >>> for (i = 0; i < qp->resp.wqe->dma.num_sge; i++)
-> >>> recv_buffer_len += qp->resp.wqe->dma.sge[i].length;
-> >>> - if (payload + 40 > recv_buffer_len) {
-> >>> + if (payload + sizeof(union rdma_network_hdr) > recv_buffer_len) {
-> >>
-> >> The definition of union rdma_network_hdr is as below
-> >>
-> >> 797 union rdma_network_hdr {
-> >> 798 struct ib_grh ibgrh;
-> >> 799 struct {
-> >> 800 /* The IB spec states that if it's IPv4, the header
-> >> 801 * is located in the last 20 bytes of the header.
-> >> 802 */
-> >> 803 u8 reserved[20];
-> >> 804 struct iphdr roce4grh;
-> >> 805 };
-> >> 806 };
-> >>
-> >> The length is 40 byte.
-> >
-> > This looks like the right struct to me if this is talking about the
-> > special 40 byte blob that is placed in front of UD verbs completions.
-> >
-> > Jason
->
-> Yes, this is the front part(40 bytes) of UD/GSI verbs completion.
->
-When running, you can print the value of the front part (40 bytes) of 
-UD/GSI to confirm that these 40 bytes are the union rdma_network_hdr.
+> Dan Carpenter<dan.carpenter@linaro.org> wrote:.
+>> The Subject says RESEND but doesn't explain why you are resending..
+>> You probably meant v2, but again it needs an explanation..
+>> .
+>> On Fri, Aug 02, 2024 at 12:27:40PM +0800, Ma Ke wrote:.
+>> > This error path should return -EINVAL instead of success..
+>> .
+>> Why do you feel that way?  Have you tested it?  What is the user visible.
+>> effect of this bug?.
+>> .
+>> I slightly feel hypocritical because I have send lots of commit messages.
+>> with exactly this commit message.  The difference is that I only send.
+>> really easy patches where it's obvious what the intent was.  A normal.
+>> kernel developer wouldn't need to leave their email client or view any.
+>> outside information to see that my patch is correct.  If a patch is not.
+>> dead easy, I normally just report it.  (Sometimes I report dead easy.
+>> bugs as well because I am lazy and maybe it's the end of my work day.
+>> or whatever)..
+>> .
+>> This patch on the other hand is more subtle and it's not clear why the.
+>> continue statements changed into returns..
+>> .
+>> regards,.
+>> dan carpenter.
+> Thank you for your response to the vulnerability I submitted. Yes, we .
+> believe there is a similar issue. As described in [1], it gets pointers .
+> which are handled under the protection mechanism. If the path is error, it .
+> should return -EINVAL directly instead of success.
 
-If these 40 bytes are the union rdma_network_hdr,
+The commit message should explain _why_ it should return an error.
+Currently there's no explanation neither in the commit message or in
+your email.
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-
-Best Regards,
-
-Zhu Yanjun
-
->
-> -- 
-> zhenwei pi
->
 -- 
-Best Regards,
-Yanjun.Zhu
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+https://docs.kernel.org/process/submitting-patches.html
 
