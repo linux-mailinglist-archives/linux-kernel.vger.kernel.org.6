@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-298095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952AF95C216
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:12:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F417195C21E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B251C20D7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:12:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5785FB2472A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043C5A2A;
-	Fri, 23 Aug 2024 00:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7133C36;
+	Fri, 23 Aug 2024 00:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIqeUo97"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CM8/L7yq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443B019E;
-	Fri, 23 Aug 2024 00:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9E115BB;
+	Fri, 23 Aug 2024 00:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371958; cv=none; b=LFWqCdtEiCZbYiqYUP4M/pLH9H6aM5W3cnwQDXyLPi3Hx4KdbOpN2oe3sJQ+M9VtTDP6QfELP2Uv7ocQBVgOl4C+QQzMzdO/Uof73aDh05qdE9fHYoXke3MVgdjd4ts4im/qjlrDWh+nMAJpgCjgzKY9hFkVlylb/W/MvwSdvZ0=
+	t=1724372051; cv=none; b=VT+cbDyjcNaUFveh/ATQy4laLC/KJDYe+p3u9IruG8rF/4N9qae9THvshsdWhTgk+pXR2l02Ui4IV6KfKN2HL8GAswYIwOzeeRlxqj8zctDmj7k48svTftKDO9o5lx8sg1ZxlnoRxjvivDi8LRma6ht1itfpRgEnRD0CZDxZEZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371958; c=relaxed/simple;
-	bh=8clxRUF3beC9N/kDrAYpJXurCOaFpHqIVwlbhvPhZ3Q=;
+	s=arc-20240116; t=1724372051; c=relaxed/simple;
+	bh=iDmaBG6z6YoiKpM23bepku69gBSFtObY8NshOuaeQkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6SHU/w669j08Z1KBRQQO772IwkwZLhBF46aoSuyQ06MJRDqk9IGPPBfY4frwHCnFSWh8OhAavAVYCEtlU+T11ZRR7/rG27LXYMr2KPD+C/Rxbn2QdfRupBEMzrnjVtaKmDR5eCj/5W/0PGZ79spBr2FrMSN3vk+qCzmJesX8NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIqeUo97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE7CC32782;
-	Fri, 23 Aug 2024 00:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724371957;
-	bh=8clxRUF3beC9N/kDrAYpJXurCOaFpHqIVwlbhvPhZ3Q=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqStKmRVNeVcvm5tPZJBle+lSu+QTq3mRLyKh1PU0L7aeC0iBsXHti4ZviAtAIP0jjqYPoKmycHKGalvPEKlWFiiF9ARt9THG0QfwaQVtfpOk305wlCfDGw2UZC4WJW7ZJe5j/ushyMCTFR7n+F2oRfXVQW5xQacR7kKF+gnm1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CM8/L7yq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0590CC4AF0B;
+	Fri, 23 Aug 2024 00:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724372051;
+	bh=iDmaBG6z6YoiKpM23bepku69gBSFtObY8NshOuaeQkI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qIqeUo97omLg8jkf89PXA1rOZipTUyvSQtem2frcLErpT/zp5EUJuu7kC9CiV946o
-	 Xmrisj2z6WX/DLTfF/Zaf01mCn3rgKzP6bXCNnQRcDicics2i2QPPV7SgRXb7WL4dB
-	 3SkOgmaTIiey2A2KUrq2/J5d20xk20qHhbShQc9VoSsR88wjTagUUjXv6yPKEFXyo/
-	 Mg2AWlZkuvkIOPJdTuxK1liodPMBiCTA666e6872+fU6Vp49wSQlaXQOJmla/G6xB9
-	 tUYAVht4cTHV95sBUXcUVHNrjzd2jC49Xop+20cRwKp/FhLCXC0xtFAAwU2IIT+x4r
-	 XX7PNKhZ/c4zA==
-Date: Thu, 22 Aug 2024 17:12:37 -0700
-From: Kees Cook <kees@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Mirsad Todorovac <mtodorovac69@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
- syscall_get_arguments()
-Message-ID: <202408221712.DC796105C@keescook>
-References: <20240708202202.work.477-kees@kernel.org>
- <842a88e0-90ae-48be-91c9-8a7c3a8359a9@intel.com>
+	b=CM8/L7yqOFfhSsrSWhEx/MMfSAX7/RreTVztlmHG0BBxmbI+PZ1WVhquBzTYGbLea
+	 n8oZhMj2lE6CWgvUsMIidO82t1FfXjCVdmSnYLDcvLCtDlg/Oi7XC/BSPWEjQ3tmU3
+	 pG99JxaKgrDX/E1wFoDqDeUC+TElnP1KmSvLWxnU=
+Date: Fri, 23 Aug 2024 08:14:08 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+Message-ID: <2024082315-capably-broiler-b4e6@gregkh>
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,36 +56,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <842a88e0-90ae-48be-91c9-8a7c3a8359a9@intel.com>
+In-Reply-To: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
 
-On Thu, Jul 11, 2024 at 02:01:53PM -0700, Dave Hansen wrote:
-> On 7/8/24 13:22, Kees Cook wrote:
-> ...
-> > diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-> > index 2fc7bc3863ff..7c488ff0c764 100644
-> > --- a/arch/x86/include/asm/syscall.h
-> > +++ b/arch/x86/include/asm/syscall.h
-> > @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
-> >  					 struct pt_regs *regs,
-> >  					 unsigned long *args)
-> >  {
-> > -	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
-> > +	args[0] = regs->bx;
-> > +	args[1] = regs->cx;
-> > +	args[2] = regs->dx;
-> > +	args[3] = regs->si;
-> > +	args[4] = regs->di;
-> > +	args[5] = regs->bp;
-> >  }
-> >  
+On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> Yeah, that's much less magic.  I'll stick this in the queue to go in to
-> the tree in a few weeks.
+> An uninitialized variable @data.have_async may be used as analyzed
+> by the following inline comments:
 > 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> static int __device_attach(struct device *dev, bool allow_async)
+> {
+> 	// if @allow_async is true.
+> 
+> 	...
+> 	struct device_attach_data data = {
+> 		.dev = dev,
+> 		.check_async = allow_async,
+> 		.want_async = false,
+> 	};
+> 	// @data.have_async is not initialized.
 
-Ping. I can take it via the hardening tree if you want, though?
+As Dmitry said, this is incorrect, please fix your broken code analysis
+tool, it is obviously not working properly :(
 
--- 
-Kees Cook
+thanks,
+
+greg k-h
 
