@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-299290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5764495D25C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6231295D25D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DA02822C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B0CC1F215DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925F818BBA3;
-	Fri, 23 Aug 2024 16:04:43 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9923F18951B;
+	Fri, 23 Aug 2024 16:05:00 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AEB18B466
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D964C18BB82
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724429083; cv=none; b=gUxKuxz8eWBFuuzQOskhhPiOexjXjEjU56N+vgPNBUlZoVK7tXeNwJRIha1dJrcCHQ1nIN40qxRthAHJRuO225F43oP924pN7BQYJk1KaLo9/jO8SS+FsZa+aQws37+FtXVfjHvq4waLxrDFjoxFPXdFA5ISkLwWesMm/9hU82g=
+	t=1724429100; cv=none; b=izQYNKwtHT1OM4X++40IhN0+SHzVAzCTIwSHnj64q5TLdNbd0mNTqvMe7+UAz6YZuAmZryGRXyNc2oCVYwVqVYj59mdJMCgeSoTumFOxBXmc+q+ENr8fmoCBJPZtu21zF/Ab32F0Lbm30Gm/2oHjrBnPcoHU+BAVR0GPy26h+9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724429083; c=relaxed/simple;
-	bh=myxzuBIwG2Mo0coTeeYdtFic57FitjVELZpP0iplrHU=;
+	s=arc-20240116; t=1724429100; c=relaxed/simple;
+	bh=Cp2pgca+yiV7OzD1NdSZQbL+bCUa+O+yEXL91qOfnzI=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sn7Dn8/SIj3yMGpDwkYraRbYx6dvIJDf9aPoMwWUOUUbmOIO8eOOL0JNpwGRwTn0NOdcWxOxdjaWs1sflKOl7q/j4UuY5tsP1V+wq5SeEt+UHOUJXZoSZP2wQCsDnZhqdTbK7its5vpj4bv1m7GrKUsu7tAcpL5ENEMYjvnq/ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+	 Content-Type; b=n68WmKGISxY8gH7JDZUSXOeDrO/RQ3aAWS7gknMiqdSJoXi44T+gbbNQ9aGjn+s2TFxHKg9QvmMCct0T5iIPpBVFzLx9iV1qtUzSyaIQoczGzohwF5GRdrvUHKONge/RuQKZN9Zo8s2M6Z3I55VLJwogv3u37tv8hAi1qkVzdlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9504974dso192936239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:04:41 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d244820edso19267415ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:04:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724429081; x=1725033881;
+        d=1e100.net; s=20230601; t=1724429098; x=1725033898;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=myxzuBIwG2Mo0coTeeYdtFic57FitjVELZpP0iplrHU=;
-        b=XYe1Te7PCCp7GYzgPX+82jfiWX44INaUtUxXIw5v6btw2PYqMlNi0YkoIBXy6ZNqDr
-         y5RWSpk9R+ap1j6Cxp58lr5lKDcZg0k/xKHuMZ6fG2P6gVuulcza0gq/KXlfhwrmdMH9
-         NtvTgijXKJ5hYN7lZpXb359noMWajgCs49BKknCL8MDMa0G8Ii5Hno1IhJs1yP3BVayk
-         iXSUKhDGRi/riMNgng2dhvyIRYIHO9dLGP9U38BJb+3FzkFFZmauajc4K9S8Ns2lLzcW
-         sKa1jdfxb7/BASIA8LcbW5c4nuzZ1KAtCuAOhkvRNk3tBZuA5/hI/T7qAv3Kk/tEWjHw
-         euAw==
-X-Gm-Message-State: AOJu0YzpZbBB8VBOPCckJXyvnGWkceU0kIrKf9I/sVvsidjqjHWvJcIt
-	vUiwNuZyWsbOIByi1vkJ76Z4YOZMYNwZ+N24U0Qia7bqDdEK33r20SJuBACZCV1n/mF8FXiQ/dD
-	1GlVVPh0gKPlACrRU+hercbpwXcCp9VGRzQvaf1/Dd3OoB5vV0oKet1g=
-X-Google-Smtp-Source: AGHT+IEcqRoC3Lsbae2YHIsUknX1YlJc7v17l4QTKwe/l+virBh6Tuz8g/OL6X5/FzHVP8HeTS9K4OGskHFsqSzXYBEd5sTRGHML
+        bh=Cp2pgca+yiV7OzD1NdSZQbL+bCUa+O+yEXL91qOfnzI=;
+        b=bRYLlDD0jXYjpN1DAoTvHkPZ2TjxIL+x5vItlfn3Ep2uxQGWFaZ1KNomXENQZDL5cA
+         BUF7kly2q+5JUdOOyesex6Cb6zEVnvpOEVBNibr3pgd/wvCRAwGpgYWbGZkXq9Emn8xA
+         KxNcZTxklc9qz3i85PqrOr9mmzx6ghtt1JIfdkTpiGgr50KSMBKBgcunApF0XQ1lrr/q
+         YTR9K6v7kv82pynqXp7QPBtDnSv67AtgC2EDmKxOuQeQ9ggEQvhaodjX1GTGJ/qVJ/VN
+         2oAEIpmF3T+74H/tEZqjWypH6rYlmdfoEnn8Sgr+rD6eRPiJWcAZLRGg+hHbVqM6jzI+
+         YObQ==
+X-Gm-Message-State: AOJu0YysKo5RDrNwZHECXjm+PHNiHIYGXLZnpO7Cn8jPezW7Iz0wIEhw
+	GQ969S6GoDX5rlCs5hft/aycxOJPqHKLXLWj3C+FzjeAqZT3P3/HcesJ/GVA2NgQHilRN2eAF80
+	MLbtMugpPf5vZj3iqdtOezLpBy9QtkjpJUduDNloEedG5TtIdmPmbz7E=
+X-Google-Smtp-Source: AGHT+IFF4UizVlYxyNwHcxGvW4sXWmWUvmeyqFGeywvSsdP6PKJUKaXv7ZZSWIfvRYMF0IlkENQ6tp1dD9KdJpNMKGnHE3wUTDiC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8904:b0:4ca:7128:6c70 with SMTP id
- 8926c6da1cb9f-4ce82b6c530mr86089173.6.1724429080855; Fri, 23 Aug 2024
- 09:04:40 -0700 (PDT)
-Date: Fri, 23 Aug 2024 09:04:40 -0700
-In-Reply-To: <00000000000077d29606186c5e99@google.com>
+X-Received: by 2002:a05:6e02:1fc6:b0:39d:1144:e784 with SMTP id
+ e9e14a558f8ab-39e3c9fa817mr2143465ab.4.1724429098001; Fri, 23 Aug 2024
+ 09:04:58 -0700 (PDT)
+Date: Fri, 23 Aug 2024 09:04:57 -0700
+In-Reply-To: <000000000000be9914061763f17a@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ce165c06205bee98@google.com>
-Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in decompress_lznt
-From: syzbot <syzbot+39b2fb0f2638669008ec@syzkaller.appspotmail.com>
+Message-ID: <000000000000d3b8a106205beff2@google.com>
+Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference in attr_make_nonresident
+From: syzbot <syzbot+5b6ed16da1077f45bc8e@syzkaller.appspotmail.com>
 To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -69,8 +69,9 @@ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
 ***
 
-Subject: UBSAN: array-index-out-of-bounds in decompress_lznt
+Subject: BUG: unable to handle kernel NULL pointer dereference in attr_make_nonresident
 Author: almaz.alexandrovich@paragon-software.com
 
 #syz test: https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+
 
