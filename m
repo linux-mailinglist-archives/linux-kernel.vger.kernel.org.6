@@ -1,169 +1,180 @@
-Return-Path: <linux-kernel+bounces-298483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821FC95C7F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:22:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9831895C7F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106321F261A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:22:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D139BB24D92
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41047143C6E;
-	Fri, 23 Aug 2024 08:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A96142904;
+	Fri, 23 Aug 2024 08:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="OEui8JWO"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yYx8GKtq"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E9D140397;
-	Fri, 23 Aug 2024 08:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3271C47773
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401356; cv=none; b=bjZqmk3dp6HT3prq19ao6/0UGe/Y1y6k5u3uKQbzOFVHRyyVfxvbWWSTEyLmafTZqivtoh5CfitCTCb4zu60lPtK/F3YNTaZkXR62LOa5cu0goVXrHgAyat+EFHlNnSC0nnvuU+q0Y4QxonICO3+wdxeVS76QPhhSj+XZUbQd30=
+	t=1724401383; cv=none; b=UP2IS+pcDRRS2VagzYGelihJREuAD9KvYMmyJm67nBcsc/iw6EMe12v+0zHexDR4soQXjWlmCUfxW3b+JAOmFroYBt5jwHKk8cl/YGq8ZfMjwaTO95lYvGaMdfIkCAducWVkH7z3Df0kQzU8WEvqmr6t9QB+5iKZRShRK8oLHz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401356; c=relaxed/simple;
-	bh=SN03MvplYGLYS3Ez9HBdXBkwhl2F8dh3j3O/JVS9lds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=onWbptSNHxtkn0P+/iawO+OchRIfm8NEpXM325kwXDBMCUTdTUMrpPvjvD5kDTpE6MflA28hN4Llqe2qXaumW9oBb0rla9VkNaF5AVCvnhr7nqqahBLVL4IyGPdNGQvySRhb4TWCg7egcrnt1gnZEYLNBcRdL86HQnMi0U6b3Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=OEui8JWO; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 174A91EDDE4;
-	Fri, 23 Aug 2024 10:22:32 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1724401352; bh=QcbuVrnSLvYWlw/4wWxnpJHFEiLVUSrBLQYJUm8AiQM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OEui8JWOUqmhI7bjHT/b2HCKNOcFPQxCUr641ZDqRi7RKL2PxGsSn5lU56hqpmDW9
-	 G7f4RasFO1/aHLQpYZaAZ/zj9O48xNWcsBKLCZxN6BXSY7Lv+Cg9dKb6pHoW4oJaBD
-	 yyJi/oMd84J+zIWPJY7I1ruJi9W0azntPTfrMDLJSc9CDu3m04hEIeiiOvEgIjuNFw
-	 8JHkkbSx2Ss3E1mTliS0ZsR7uaCcF/lixNun7AdWbA1A0EQsw/3WEQoU6tPknplOUL
-	 R2FFbTnNcxBEwM6ABXaznsLXSwURBvJVaUzBzVKh8cor9oqa9TbZUWqN75yWsyhwM5
-	 Xe+b0P5jM99yQ==
-Date: Fri, 23 Aug 2024 10:22:31 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: mhkelley58@gmail.com
-Cc: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
- sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, robin.murphy@arm.com, hch@lst.de,
- m.szyprowski@samsung.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-coco@lists.linux.dev
-Subject: Re: [RFC 6/7] nvme: Move BLK_MQ_F_BLOCKING indicator to struct
- nvme_ctrl
-Message-ID: <20240823102231.5def53f4@meshulam.tesarici.cz>
-In-Reply-To: <20240822183718.1234-7-mhklinux@outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-	<20240822183718.1234-7-mhklinux@outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1724401383; c=relaxed/simple;
+	bh=meKlzzHsUw73VS4maSYzZ1ZNSe9fG9pNTCuxgTqSwmo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=flMtTUujD//kQ0faFEj+ySliZCpJs+rU6urEc76XmomuSjWjYeAtMzUVi2T/QMZ751mZ6VxIElQllTJgNCResOcTtKKtDUMOKx76WUtyrtGJLCz2BKcOHWKclVSlY1rTgSovLVM9yW68Svk5VDVcuEtRwhhivhCAVydBqYP/D7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yYx8GKtq; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428119da952so13115885e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 01:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724401380; x=1725006180; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qc4wLUWi1Q+2Pe5opNOMu1JRII1BPT5sStPy3UveR5g=;
+        b=yYx8GKtqnIhcuKM2Gizuid8/bjCMJlBoO/jtnDYiViayGGqGYUhFCDB3S0CFxfEygr
+         AK8k5iJXji2xsvBVG5Ps2IZQS9768NutZ8Q+w9zYTFpJ77+jw4VwRHWOzCTdEQ6t8hgD
+         FEqa7ChKYesDthv+AexgFPk91ZXvv7d9jVtppKK+NcuPhZoJXfeYuveyTpmbefsb3+Rc
+         Yxod6p27sUBXLkJhb2v/i14cIK1NTOIo4iwcn0yQdPKt3dEShkb28lZxNyUrQsQrzOtJ
+         pGl3450PCDrDhzeJIFIff7CxtHMeoqWaQ+46hY72YWP0hgHkTig18hhQ2SvGUYE5mayu
+         bJvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724401380; x=1725006180;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Qc4wLUWi1Q+2Pe5opNOMu1JRII1BPT5sStPy3UveR5g=;
+        b=FzgWqaAFp83DQCiM14AL9M/wM5/1+8O3V+PR2bxrhXbsS8PrB+Ygw+5MlM6QWb5Eoy
+         PfTacaSTVKg3jCOPomHhHrfRt5u4nGWuYx4nFuT2Qv2Pg8SYM1xeG1FhBdntkJbSApFL
+         8awFSFEsDU2PaW71Y8Lyt+j4k0p4ePJ525lyKVBhbHrJOwz+E3jUBY0X3k3xU35JFhCm
+         6cR+AvWa3GVmLEbZN+dUHSRKOKQASWbct8/6L0DlNn6DoB/VG2CeahrXiCWcBjZxAPAY
+         5IdIMO6iAllRviY+WUm+2Zcqs6waPXCm5jflNwrlufZv5ORjiK5IgUtWB3i4BjwcJ+pP
+         qheg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvQszylFggbJ+AtE1nlgq+/c8p5K/WeENp2LfiaGV5bssn45MRbXSiXwK3Fx7GXOWVL9B4gzYNstb+Ygk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS6QINdCykjTlkBYG6Me0Swh0noEQphL667NCB5xnyn/Pagmys
+	IGnNWsqjhSSLYfjXrOovHN1q93qxJ/hBR0KdOvhpMsjvsBZH2LUPJLznpZm+8Mk=
+X-Google-Smtp-Source: AGHT+IGsJclyRKt8iDBR8hUT5br0NSiyxooWh2o8K/cqt5NhzX54de3+f5WlTDDBrQXur1IMfj43hA==
+X-Received: by 2002:a05:600c:cc5:b0:426:54c9:dfed with SMTP id 5b1f17b1804b1-42acc9f66d1mr10896105e9.28.1724401379995;
+        Fri, 23 Aug 2024 01:22:59 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:995c:3fea:6b19:4a51? ([2a01:e0a:982:cbb0:995c:3fea:6b19:4a51])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac516251fsm50749625e9.25.2024.08.23.01.22.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 01:22:59 -0700 (PDT)
+Message-ID: <95f0517a-ed86-4905-85e5-a123880c6fa8@linaro.org>
+Date: Fri, 23 Aug 2024 10:22:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 0/7] Preemption support for A7XX
+To: Antonino Maniscalco <antomani103@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 22 Aug 2024 11:37:17 -0700
-mhkelley58@gmail.com wrote:
-
-> From: Michael Kelley <mhklinux@outlook.com>
+On 15/08/2024 20:26, Antonino Maniscalco wrote:
+> This series implements preemption for A7XX targets, which allows the GPU to
+> switch to an higher priority ring when work is pushed to it, reducing latency
+> for high priority submissions.
 > 
-> The NVMe setting that controls the BLK_MQ_F_BLOCKING flag on the
-> request queue is currently a flag in struct nvme_ctrl_ops, where
-> it is not writable. A new use case needs this flag to be writable
-> based on a determination made during the NVMe device probe function.
+> This series enables L1 preemption with skip_save_restore which requires
+> the following userspace patches to function:
 > 
-> Move this setting to struct nvme_ctrl, and update the only user to
-> set it in the new location.
+> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
 > 
-> No functional change.
+> A flag is added to `msm_gem_submit` to only allow submissions from compatible
+> userspace to be preempted, therefore maintaining compatibility.
 > 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-
-LGTM.
-
-Reviewed-by: Petr Tesarik <ptesarik@suse.com>
-
-Petr T
-
+> Some commits from this series are based on a previous series to enable
+> preemption on A6XX targets:
+> 
+> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
+> 
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
 > ---
->  drivers/nvme/host/core.c | 4 ++--
->  drivers/nvme/host/nvme.h | 2 +-
->  drivers/nvme/host/tcp.c  | 3 ++-
->  3 files changed, 5 insertions(+), 4 deletions(-)
+> Antonino Maniscalco (7):
+>        drm/msm: Fix bv_fence being used as bv_rptr
+>        drm/msm: Add submitqueue setup and close
+>        drm/msm: Add a `preempt_record_size` field
+>        drm/msm/A6xx: Implement preemption for A7XX targets
+>        drm/msm/A6xx: Add traces for preemption
+>        drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
+>        drm/msm/A6xx: Enable preemption for A7xx targets
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 33fa01c599ad..f1ce325471f1 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -4495,7 +4495,7 @@ int nvme_alloc_admin_tag_set(struct nvme_ctrl *ctrl, struct blk_mq_tag_set *set,
->  		set->reserved_tags = 2;
->  	set->numa_node = ctrl->numa_node;
->  	set->flags = BLK_MQ_F_NO_SCHED;
-> -	if (ctrl->ops->flags & NVME_F_BLOCKING)
-> +	if (ctrl->blocking)
->  		set->flags |= BLK_MQ_F_BLOCKING;
->  	set->cmd_size = cmd_size;
->  	set->driver_data = ctrl;
-> @@ -4565,7 +4565,7 @@ int nvme_alloc_io_tag_set(struct nvme_ctrl *ctrl, struct blk_mq_tag_set *set,
->  		set->reserved_tags = 1;
->  	set->numa_node = ctrl->numa_node;
->  	set->flags = BLK_MQ_F_SHOULD_MERGE;
-> -	if (ctrl->ops->flags & NVME_F_BLOCKING)
-> +	if (ctrl->blocking)
->  		set->flags |= BLK_MQ_F_BLOCKING;
->  	set->cmd_size = cmd_size,
->  	set->driver_data = ctrl;
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index ae5314d32943..28709f166cab 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -338,6 +338,7 @@ struct nvme_ctrl {
->  	unsigned int shutdown_timeout;
->  	unsigned int kato;
->  	bool subsystem;
-> +	bool blocking;
->  	unsigned long quirks;
->  	struct nvme_id_power_state psd[32];
->  	struct nvme_effects_log *effects;
-> @@ -546,7 +547,6 @@ struct nvme_ctrl_ops {
->  	unsigned int flags;
->  #define NVME_F_FABRICS			(1 << 0)
->  #define NVME_F_METADATA_SUPPORTED	(1 << 1)
-> -#define NVME_F_BLOCKING			(1 << 2)
->  
->  	const struct attribute_group **dev_attr_groups;
->  	int (*reg_read32)(struct nvme_ctrl *ctrl, u32 off, u32 *val);
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 9ea6be0b0392..6b9fdf7dc1ac 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -2658,7 +2658,7 @@ static const struct blk_mq_ops nvme_tcp_admin_mq_ops = {
->  static const struct nvme_ctrl_ops nvme_tcp_ctrl_ops = {
->  	.name			= "tcp",
->  	.module			= THIS_MODULE,
-> -	.flags			= NVME_F_FABRICS | NVME_F_BLOCKING,
-> +	.flags			= NVME_F_FABRICS,
->  	.reg_read32		= nvmf_reg_read32,
->  	.reg_read64		= nvmf_reg_read64,
->  	.reg_write32		= nvmf_reg_write32,
-> @@ -2762,6 +2762,7 @@ static struct nvme_tcp_ctrl *nvme_tcp_alloc_ctrl(struct device *dev,
->  	if (ret)
->  		goto out_kfree_queues;
->  
-> +	ctrl->ctrl.blocking = true;
->  	return ctrl;
->  out_kfree_queues:
->  	kfree(ctrl->queues);
+>   drivers/gpu/drm/msm/Makefile              |   1 +
+>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c |   3 +
+>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 339 ++++++++++++++++++++++-
+>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
+>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 441 ++++++++++++++++++++++++++++++
+>   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
+>   drivers/gpu/drm/msm/msm_gpu.h             |   7 +
+>   drivers/gpu/drm/msm/msm_gpu_trace.h       |  28 ++
+>   drivers/gpu/drm/msm/msm_ringbuffer.h      |   8 +
+>   drivers/gpu/drm/msm/msm_submitqueue.c     |  10 +
+>   include/uapi/drm/msm_drm.h                |   5 +-
+>   11 files changed, 995 insertions(+), 16 deletions(-)
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240815-preemption-a750-t-fcee9a844b39
+> 
+> Best regards,
 
+For what is worth, I've tested it on the SM8650 QRD with the Mesa 30544 MR & vkcube
+
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+
+If you think of more tests to run, please tell me.
+
+Neil
 
