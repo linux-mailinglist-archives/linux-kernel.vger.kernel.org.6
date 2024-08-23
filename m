@@ -1,164 +1,321 @@
-Return-Path: <linux-kernel+bounces-298578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D4E95C906
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:17:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83F895C909
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3B91C219A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3863B1F22C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6FB14A633;
-	Fri, 23 Aug 2024 09:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3390614A0BD;
+	Fri, 23 Aug 2024 09:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aZL1PpEh"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="i918EeGa"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2041.outbound.protection.outlook.com [40.107.215.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25A713B5A1
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724404661; cv=none; b=WBA49sdLFuotnEiJNe4tMsA9bwwwq9Qb6dDUHxDTjvnTLdsBPLc48Cfbzvod/sBLPKtSCmMgaNI19L3xjcWELdy+jeY5w0fg+Id1Olr5ub9K/2CUqISOsLBDcSs28bnFQJo5PCf9zyB/z0VxLPpelhy8g2AglRo9WT6S/iWl/vo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724404661; c=relaxed/simple;
-	bh=4GVbHIIC4eaOibBpLaXkJ71skZHGhocz4QHlAcTLKe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JHp7cYdB/kRVJrITflGshX2QSjU+eOyJOrUimoxpokCe9Nj9Pht/qNzEwSCM8qeN+J2XtQxRi1s2/k8CzRZyOjKfOy8sOeFInnRT3it4qGfg3DwJnr6ssViJlSUfGbYgJqeWXXqwlVOEc7bAH+PU69PtjSeqWv21YQJb7fZu/kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aZL1PpEh; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7e2ddf38-7c42-4ef1-8a7b-8c0f6deec8d5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724404655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MYAgZEIQ1inCCgirecBe7KorljVm5Cf3XOLj7E/21WE=;
-	b=aZL1PpEhIwruD5rmwNy3Z0gC/2++iMXwJJvPRVxXRstK06556ZHe5EeMbY0j8bXLUHZ6IU
-	eZpAcXo05xX7Ad+wXn9uubObBMKPDoDJNSED5PxfPyZkw33jGSmRhXvOlbZA3slHFn3ARa
-	CxisxadGcbF+h/DL6t4OCPgJ3idJSmU=
-Date: Fri, 23 Aug 2024 17:17:26 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F0813B5A1
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724404705; cv=fail; b=OUct4q4eq5J+nbDgUTr2zJcnBsMb1XYST1hA26ByS3AdZ7C4wqi3/7CQsvIGnSRGcnNpxG+VRO4/D4iNrLg5xhDM1xHJDEP63gXXwyDeVWqdoc/xC1RJrATg3AGhITd3lu1koUNzWKxs7TWnase1T0UzCGMZ46qwUwcvvu8ts0k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724404705; c=relaxed/simple;
+	bh=67RnMkkjFUznXLrLb+Uc3Y3Y70vBJKEqKvC5whqXScI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nkVzDsve0AlrAH9H6OhvKGEr2ZEU/+PTruwTbgG5Bbm6DMiIUAPTzeF180NqU4m2YW7+EFWHHzwCo57i0tPptUl73/aHY6v3aeaShnHHMXKGt68v5/x2d1u1iTCUlVMOyanYWLqSoSG0ziAyc+LHawee9rC5mf1e9EmSil0WUhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=i918EeGa; arc=fail smtp.client-ip=40.107.215.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ILT1v18o3DKXnVb1yuMijepoWT6oHYThcD91aJ6NXDXUngHnDs7ZYKu3xADMR2tgl1l/852IG2UWwh1rDiAUCFoLi7hdhbHkeVdsfLZl7uSaLmEMWvEtRS3kjDnZ0A51Ng0a/OmSOvUy3lCcQckNSlQD0NLoWSPP6d6fyObfJLKUrQbk1345qYrJHx8yNbPAhKwoZN9RN9+dF6e7nNIrnrCwDVZFPfnnGxk4CP975bkvvxjDIvGBsJ4fr2cmjsDqb9/mAazBQWxuRfjDq0OMfAhDfqnjSuIgpgl2DaJZmsL8+C+ZTwOtLybdaGRoeVjg8Gm4VrxLfBVaUlvlM5DQig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GDfq7uCV4cOOT5ffh/W2TF1PKI5RyE/Rz3fgtwhWspQ=;
+ b=bpjrgVtGpKxx54hDObBtxfqY7hPphXIEKi7fF5gfEPuDo6JHRXtZPNfMVn8NgkF3lU4VIFovmsb/n8KpDSFCVjOSaAwAdzpxmn6/KrXjzzMn/6b8B8IdgSXJQZODWJYv9tAmHwVDuqHsCfH+k6NX3udlpDoJD3JfDGiJ/3kg29sXBFZPrvAu/Y0xELyTKIb4nDymrsfkZATu+ttaXFP7VB8IvN9rRW8nx34myREuox4s2D8kQsSXzFRWtGbZ5Xtr0X7uO3sCpYld19ctXaCIX+UXnsfgow/I1NClEuWUcgn6EOqZEgRd03/VfBo3ROlKmC/RqMc+0WAerPQas8Hkdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GDfq7uCV4cOOT5ffh/W2TF1PKI5RyE/Rz3fgtwhWspQ=;
+ b=i918EeGanKNVdhYzr4lVpKxCQbNXNU04rna5TLg41hIl80nZsh9/FADX/iKkYy8/mk0N3gXjDslhJ43abKkmak3Hyfq4714AJ4j9c0GX6p9Eva/fjDq2TUN9alaCVB9KU5NLwJEgHAlG+GrUVC1lgWYNu83RV5y2FMWW3+K4wjxuMztPcZH0VfDj3ZcASk8lqVzGMGt4yFcs1Cdj5/xtAHgoOOZyD6gVylHW4B4uYzNshQ8DT5LHL6j7Vz9E96FlBWrI8ySCCIZ8UibjDAZmRrPf5PT/kIciCXPZoFoYefSBGj8so9Iogi0ggy9YWS++0GRIGnu2vIIguRYuUfXPHQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by JH0PR06MB6293.apcprd06.prod.outlook.com (2603:1096:990:10::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Fri, 23 Aug
+ 2024 09:18:19 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
+ 09:18:19 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Kenneth Feng <kenneth.feng@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Yang Ruibin <11162571@vivo.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v2] drivers:smumgr:fix up the misspellings
+Date: Fri, 23 Aug 2024 17:18:02 +0800
+Message-Id: <20240823091803.3452513-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWP286CA0015.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:178::13) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] RDMA/rxe: Use sizeof instead of hard code number
-To: zhenwei pi <pizhenwei@bytedance.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, zyjzyj2000@gmail.com, leonro@nvidia.com
-References: <20240822065223.1117056-1-pizhenwei@bytedance.com>
- <20240822065223.1117056-2-pizhenwei@bytedance.com>
- <d933e865-2b6b-41c1-a0f2-46f8fef3cc17@linux.dev>
- <20240822123649.GP3773488@nvidia.com>
- <CABoGonKvG9AyuVPMG29b3q5bGr7ZAH5RsGg7TOtkcaAZm9F-Dg@mail.gmail.com>
- <70f73586-670e-43d0-adf4-0950a9b3940d@linux.dev>
- <10810dec-37b5-463f-bc7b-f88d2e4385d9@bytedance.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <10810dec-37b5-463f-bc7b-f88d2e4385d9@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|JH0PR06MB6293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 059dfa63-e920-428a-2aee-08dcc35486fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|921020|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1mx3mysgk6lfDS+6cG+T5pzdNrAt8QEp7nSW0mBRSRy2JfeYb9SHNmYM2jv/?=
+ =?us-ascii?Q?WhMPMEUq1uS34dNMRWOPWUJU0uu4qhjzXhnhrnnoq2V/wh/1ZcJYhmMb3+i9?=
+ =?us-ascii?Q?cCzmq84tgHbQtp181kcyGqAtaT/ve1Xq7t3l4ax6/oqYg1XOZeRjTYthRysA?=
+ =?us-ascii?Q?GKzbRUXYVNVxhrQHbyZsVm1iryR04fQfmX+8ZdUoHuEu6BoxGZq72Dlvz92C?=
+ =?us-ascii?Q?bxDdxnoHBrtt83VZ2u7NpNNe8XpwCu4SWdABuTYOUvmMAXMOpomZbh9wvTJd?=
+ =?us-ascii?Q?JbSuQoFgeArx9WOo0PZ+eKU0/JKAbg0nyVKotlh+uEVPSd1WzTfM9yOLsQGF?=
+ =?us-ascii?Q?WcD46SFBI/Eaujf3SlfYdI5tszwRjuAaVyTnBWwEk+iJoTXLD/Q6lUdXS925?=
+ =?us-ascii?Q?NHSmPzPdBYSOjf2ASet0GjZWJs9a08Nkw+BsCJ12YtXchrAvkTUVVbPgj5jq?=
+ =?us-ascii?Q?9MKSq3+wL0z1OYBvR57P0GqS032p6PjxOcKvTJX3UL7Ppp1H457WIUmRq1e+?=
+ =?us-ascii?Q?CNsp4jRYSbvGx/DMx+m8y2ZekQGjiZVPRBzM8fMMwXDb3HykpRvwTGlBrsoL?=
+ =?us-ascii?Q?B8pBphMlm8gYwebaKALKgSc0GPkJbx2kW+gq5EXY0+9yogIZMgPkqwUPo+6C?=
+ =?us-ascii?Q?ealpjf7VC09JW56YyWw8TkVvP3lmIwJm/GgszVI7h/skf8O4GbDLUjThq3oV?=
+ =?us-ascii?Q?zHG8r0srJH/NEsPKXl2gYAhTRKAytJ1Axywd8Aywp4jJ079iIhU9No9B8T2U?=
+ =?us-ascii?Q?yNz5twLtjyXAi9bktAMuz+y/VsxcXb+V1yTgfKChf0wWfJmZYhPbySS+RjYU?=
+ =?us-ascii?Q?Ku5ZzPe4pbgGFsnKatI1v7hj/YyLDviFLGazw4mZGvQoY250vxGIlx0aZuP7?=
+ =?us-ascii?Q?lPlv80jrKAE0XMwCFv20VvMmUJMk6l6BuyXKGfxh4olMSgfRtXKor6vERVqd?=
+ =?us-ascii?Q?ektNm1WH7fnOx04gVpfqfHrkw72sep4wr4o8rNujdrHnXVjGmzZT4tKlrc6B?=
+ =?us-ascii?Q?uD6wivOiy7t+LMAQdUew66cJaebrgBboFY7+1axAfJb8jwtJyjSlICwXD9ww?=
+ =?us-ascii?Q?HZI9xHo1tfm82rF7H6AzBvNFIzJ/5u9e6f8BWzJqN/tnGUI0t5jhdUZMI3n1?=
+ =?us-ascii?Q?bF4gWKliJb1xTXhZYylhmpb/D6QRgvTCHS/Sgzp2n7biHoKK0lsoeED5OxJf?=
+ =?us-ascii?Q?3LDLUOduJLSeT7ZwGZFFEcMS9HNIB918ZclYOHz4WJS074/CllreLV6iB2Fp?=
+ =?us-ascii?Q?26NovM23UHxemRegiipE7bb1elXy1UsqrVsrROOD9DNFldhT3GZbuYlHiR5t?=
+ =?us-ascii?Q?DDhX3rAYQVM5jIIyDB7RWsWATOIkjk9X0DBhhdRQ/wGXpWZyqd+RA7NPlbpv?=
+ =?us-ascii?Q?MhHDLEE5R4d3vOwsPMSS17Ut4QQJ/R3TMbosx3qnSth12WyPnxSU9fyPpFrL?=
+ =?us-ascii?Q?mKZYP56QGaeSoXKVLXx/FHvCHuvu8CGW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(921020)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?A+zvkhptrJZJGxEl6B8zu3tXrhHt+OFLOY5fKW9wiMMM1cyI+td5Qpgqvfw0?=
+ =?us-ascii?Q?tq/EcdocwbVz/SOFzk4BslkPSE9LjVzXbh5PXlMxSTTAqELCCagjpMCTMhk/?=
+ =?us-ascii?Q?+4HM9/Mn03qNEl184k6RoVe1unFX0owrQP+eWYSm8Ixc96AGRyvEokay2cf9?=
+ =?us-ascii?Q?xmaSXN47kcEDTw+kEWTWpt0Hxsi8EE185NcnwiMNUzSLuf9re3wpWk6Z3FwW?=
+ =?us-ascii?Q?5kqUYE5RSxwk4XAJ3/YF3c09O2xDSU3ujyxS3DWNIqvVxFXlr9NT1ZNfu89z?=
+ =?us-ascii?Q?5OdS9ELAuInQJXSFEExtj7PpyAP9By2c/AWIFdZvGgkOrYqQdNp0SOd8WPcz?=
+ =?us-ascii?Q?vGmEKv9Esr60tOXQTqXuMX1O9jysq5PuBVmhk+5Vfr13mrqhP1AMROLJxRqM?=
+ =?us-ascii?Q?2Lch3npy0RGO28UiBCHzvoXNeqJN2X3xt+gM9WmmWbSE9XwYNDhPTngcRApm?=
+ =?us-ascii?Q?RGTV4MaIng41G2wkC20xy1q1ibtaQReWosWxj4QjGVvK8IEgByf7PXgS91ep?=
+ =?us-ascii?Q?cc/J+SpFX1FewoMVNggMWTPGEKDznT+NmdbuHtWviV+Zb/5/FLL/gKEIZE14?=
+ =?us-ascii?Q?ZXtFps3HgQ5MZ/DHca5tarzinW362raIlnMm2D8pDVDaHfMfTbffzcTVX3lW?=
+ =?us-ascii?Q?6i/SXF8Snndtkxu6RQ5D/56HGsP6HsL1JqL+Zk/+9DTDHNtvEMLluWsqo48y?=
+ =?us-ascii?Q?ym+yyJsMfNQiAdmhqJJjoPr4qw+B3QMzodjReuFj2p2zvPgi5kKmw3mxqARV?=
+ =?us-ascii?Q?hRP1XArnuIAZe8ZvIElRFshPzGCl9JGiarfor1EQEsSjFdeeWs2HCqPdbehl?=
+ =?us-ascii?Q?251JgqZygI9pQXaxp0CmOTpDcT1gyjgF7mNeilrY1L9opjXw1XOotKldo6zP?=
+ =?us-ascii?Q?Spv4Y6r9FOtptlMLp7rbh9AVy5Hk2fb070jg0f3+wLgiiickFeMRC9xvJodx?=
+ =?us-ascii?Q?uMg/PjvomveGZ/yX3+opSTHU4I6wMiCUfALdQW6tY23Z+mX4bxi01azSGdqe?=
+ =?us-ascii?Q?2KBVnGd2ksvXkRxmEtY93iPFeXF1jYquwpIXDIqGeAjsbkMPDc9DUbqOr5Rf?=
+ =?us-ascii?Q?DIqbRN9EUT9KlEtnJOTJDdMeYsmu5cufBOPJtAg+cxD6F2zm3Jc50UwZ2R6p?=
+ =?us-ascii?Q?h/6SQ+xybQxdRq8AS+jji+MSDfu7U49gDkex4loQ+GLde0TlrXZPYs63z+jA?=
+ =?us-ascii?Q?he8DvkxuwzRRdILEaQFZDd6nkTTZ/SlBN9360jOu01ud7l6RARt0fMXeuxT0?=
+ =?us-ascii?Q?x2Pj+MnFY2X/BCEQVFpHK05Xde31nP3fVRAKGpZw0fDo+Twl83q5WURodmuh?=
+ =?us-ascii?Q?Ps/FDow/RsyPUEWjzQQRQOfBjuXFI4h/cg8AcsVajgWX2e2TV5ODdbgpOsKs?=
+ =?us-ascii?Q?xu9DjOdPKRHg6GYGSIF4cmVzMhCQqCzyRXQQc6zvyJBDSdTCCbFlXl3H6uK0?=
+ =?us-ascii?Q?WF8JQBkjfaxU0F2CmWpK+PdmSX8n3dAcGT8FrmRL0ureHa22SbJdJmtEdiJt?=
+ =?us-ascii?Q?l+RR9K6MSmvCyGNrgp7UOmzLlzui3bpZHv+D+HAXQgDgO/HCgC5so26ewx6T?=
+ =?us-ascii?Q?caLkds9yT54gauyTm/U2VGfuD+VU+NWOQN1vuZJU?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 059dfa63-e920-428a-2aee-08dcc35486fb
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 09:18:19.0865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iHqu/VT3yxWaVIOkOkMxRVOFWrnHNG1uBx2w8zqLUnHAVrWnEw0y9jYQDmtxBneEdz62hg2uaH+FDM1ChW3QoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6293
 
+Hightest is a typo.  It should be highest.Please ensure
+the consistency of variable naming.
 
-在 2024/8/23 16:23, zhenwei pi 写道:
->
->
-> On 8/23/24 13:56, Zhu Yanjun wrote:
->>
->> 在 2024/8/23 10:30, zhenwei pi 写道:
->>>
->>> On 8/22/24 20:36, Jason Gunthorpe wrote:
->>> > On Thu, Aug 22, 2024 at 07:59:32PM +0800, Zhu Yanjun wrote:
->>> >> 在 2024/8/22 14:52, zhenwei pi 写道:
->>> >>> Use 'sizeof(union rdma_network_hdr)' instead of hard code GRH 
->>> length
->>> >>> for GSI and UD.
->>> >>>
->>> >>> Signed-off-by: zhenwei pi
->>> >>> ---
->>> >>> drivers/infiniband/sw/rxe/rxe_resp.c | 2 +-
->>> >>> 1 file changed, 1 insertion(+), 1 deletion(-)
->>> >>>
->>> >>> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/ 
->>> infiniband/sw/rxe/rxe_resp.c
->>> >>> index 6596a85723c9..bf8f4bc8c5c8 100644
->>> >>> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
->>> >>> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
->>> >>> @@ -351,7 +351,7 @@ static enum resp_states 
->>> rxe_resp_check_length(struct rxe_qp *qp,
->>> >>> for (i = 0; i < qp->resp.wqe->dma.num_sge; i++)
->>> >>> recv_buffer_len += qp->resp.wqe->dma.sge[i].length;
->>> >>> - if (payload + 40 > recv_buffer_len) {
->>> >>> + if (payload + sizeof(union rdma_network_hdr) > recv_buffer_len) {
->>> >>
->>> >> The definition of union rdma_network_hdr is as below
->>> >>
->>> >> 797 union rdma_network_hdr {
->>> >> 798 struct ib_grh ibgrh;
->>> >> 799 struct {
->>> >> 800 /* The IB spec states that if it's IPv4, the header
->>> >> 801 * is located in the last 20 bytes of the header.
->>> >> 802 */
->>> >> 803 u8 reserved[20];
->>> >> 804 struct iphdr roce4grh;
->>> >> 805 };
->>> >> 806 };
->>> >>
->>> >> The length is 40 byte.
->>> >
->>> > This looks like the right struct to me if this is talking about the
->>> > special 40 byte blob that is placed in front of UD verbs completions.
->>> >
->>> > Jason
->>>
->>> Yes, this is the front part(40 bytes) of UD/GSI verbs completion.
->>>
->> When running, you can print the value of the front part (40 bytes) of 
->> UD/GSI to confirm that these 40 bytes are the union rdma_network_hdr.
->>
->> If these 40 bytes are the union rdma_network_hdr,
->>
->> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
->>
->> Best Regards,
->>
->> Zhu Yanjun
->>
->
-> Hi Yanjun,
->
-> I test on mlx-cx5 by command: ibv_ud_pingpong -d mlx5_2 -g 3 -r 1 -n 1
->
-> Dump the front 64 bytes:
-> 00000000000000000000000000000000000000004502043436f340000111448c
-> 0a0b73120a0b73107b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b
->
-> Byte[0, 20) (rdma_network_hdr::reserved[20]) are filled by zero, 
-> byte[20,40) (rdma_network_hdr::roce4grh) are filled by IPv4 header.
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
+---
+Changes V2:
+- Replaced the word "hightest_pcie_level_enabled" with "hightest_pcie_level_enabled".
+---
+ .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c    | 16 ++++++++--------
+ .../amd/pm/powerplay/smumgr/polaris10_smumgr.c   | 16 ++++++++--------
+ .../drm/amd/pm/powerplay/smumgr/vegam_smumgr.c   | 16 ++++++++--------
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
-Got it. Thanks a lot.
-
-I am fine with your commit.
-
-Best Regards,
-
-Zhu Yanjun
-
->
->>>
->>> -- 
->>> zhenwei pi
->>>
->
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+index 5e43ad2b2..e16efc44d 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+@@ -1014,7 +1014,7 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	struct SMU73_Discrete_GraphicsLevel *levels =
+ 			smu_data->smc_state_table.GraphicsLevel;
+ 	uint32_t i, max_entry;
+-	uint8_t hightest_pcie_level_enabled = 0,
++	uint8_t hightest_pcie_level_enabled = 0,
+ 			lowest_pcie_level_enabled = 0,
+ 			mid_pcie_level_enabled = 0,
+ 			count = 0;
+@@ -1054,27 +1054,27 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	} else {
+ 		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+-						(1 << (hightest_pcie_level_enabled + 1))) != 0))
+-			hightest_pcie_level_enabled++;
++						(1 << (highest_pcie_level_enabled + 1))) != 0))
++			highest_pcie_level_enabled++;
+ 
+ 		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << lowest_pcie_level_enabled)) == 0))
+ 			lowest_pcie_level_enabled++;
+ 
+-		while ((count < hightest_pcie_level_enabled) &&
++		while ((count < highest_pcie_level_enabled) &&
+ 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
+ 			count++;
+ 
+ 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
+-				hightest_pcie_level_enabled ?
++				highest_pcie_level_enabled ?
+ 						(lowest_pcie_level_enabled + 1 + count) :
+-						hightest_pcie_level_enabled;
++						highest_pcie_level_enabled;
+ 
+-		/* set pcieDpmLevel to hightest_pcie_level_enabled */
++		/* set pcieDpmLevel to highest_pcie_level_enabled */
+ 		for (i = 2; i < dpm_table->sclk_table.count; i++)
+-			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
++			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
+ 
+ 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
+ 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
+index ff6b563ec..d785cc646 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
+@@ -1050,7 +1050,7 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	struct SMU74_Discrete_GraphicsLevel *levels =
+ 			smu_data->smc_state_table.GraphicsLevel;
+ 	uint32_t i, max_entry;
+-	uint8_t hightest_pcie_level_enabled = 0,
++	uint8_t highest_pcie_level_enabled = 0,
+ 		lowest_pcie_level_enabled = 0,
+ 		mid_pcie_level_enabled = 0,
+ 		count = 0;
+@@ -1114,27 +1114,27 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	} else {
+ 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+-						(1 << (hightest_pcie_level_enabled + 1))) != 0))
+-			hightest_pcie_level_enabled++;
++						(1 << (highest_pcie_level_enabled + 1))) != 0))
++			highest_pcie_level_enabled++;
+ 
+ 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << lowest_pcie_level_enabled)) == 0))
+ 			lowest_pcie_level_enabled++;
+ 
+-		while ((count < hightest_pcie_level_enabled) &&
++		while ((count < highest_pcie_level_enabled) &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
+ 			count++;
+ 
+ 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
+-				hightest_pcie_level_enabled ?
++				highest_pcie_level_enabled ?
+ 						(lowest_pcie_level_enabled + 1 + count) :
+-						hightest_pcie_level_enabled;
++						highest_pcie_level_enabled;
+ 
+-		/* set pcieDpmLevel to hightest_pcie_level_enabled */
++		/* set pcieDpmLevel to highest_pcie_level_enabled */
+ 		for (i = 2; i < dpm_table->sclk_table.count; i++)
+-			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
++			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
+ 
+ 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
+ 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
+index 34c9f59b8..3e73f380a 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
+@@ -878,7 +878,7 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	struct SMU75_Discrete_GraphicsLevel *levels =
+ 			smu_data->smc_state_table.GraphicsLevel;
+ 	uint32_t i, max_entry;
+-	uint8_t hightest_pcie_level_enabled = 0,
++	uint8_t highest_pcie_level_enabled = 0,
+ 		lowest_pcie_level_enabled = 0,
+ 		mid_pcie_level_enabled = 0,
+ 		count = 0;
+@@ -925,27 +925,27 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
+ 	} else {
+ 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+-						(1 << (hightest_pcie_level_enabled + 1))) != 0))
+-			hightest_pcie_level_enabled++;
++						(1 << (highest_pcie_level_enabled + 1))) != 0))
++			highest_pcie_level_enabled++;
+ 
+ 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << lowest_pcie_level_enabled)) == 0))
+ 			lowest_pcie_level_enabled++;
+ 
+-		while ((count < hightest_pcie_level_enabled) &&
++		while ((count < highest_pcie_level_enabled) &&
+ 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
+ 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
+ 			count++;
+ 
+ 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
+-				hightest_pcie_level_enabled ?
++				highest_pcie_level_enabled ?
+ 						(lowest_pcie_level_enabled + 1 + count) :
+-						hightest_pcie_level_enabled;
++						highest_pcie_level_enabled;
+ 
+-		/* set pcieDpmLevel to hightest_pcie_level_enabled */
++		/* set pcieDpmLevel to highest_pcie_level_enabled */
+ 		for (i = 2; i < dpm_table->sclk_table.count; i++)
+-			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
++			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
+ 
+ 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
+ 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
 -- 
-Best Regards,
-Yanjun.Zhu
+2.34.1
 
 
