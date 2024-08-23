@@ -1,192 +1,193 @@
-Return-Path: <linux-kernel+bounces-299427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BC595D46B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:36:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F130795D463
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250381F22EE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C3FBB21CF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A738618BC02;
-	Fri, 23 Aug 2024 17:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A683192B79;
+	Fri, 23 Aug 2024 17:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rgKiTFkM"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CcciBic4"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0508819340F;
-	Fri, 23 Aug 2024 17:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E14192597
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434438; cv=none; b=bFYQQYDEWS4QvBMqZtsomIHc34BYrnFANzpPaqY6ZRyu+eHE6xOJ/kilwtY+W7VvEtnuYrZ8R4iREyqK4a3/qpc8mbaWyGM3WEMo6zEpF7qzJ1GCYiAAgYvi17OS9xmADSDpBenPGnIKStOLG9uwg/FgeCyGGJVPLWudCeAAWtw=
+	t=1724434424; cv=none; b=CbFbFBWO/3lExNcNWMN9jReQyfOJsLnowQxFnAwQ27Fq1l3UTDidu/tPvFU2Q/eI6O1DwMy5RiWHSly2J0aiP+o0U0rO1RdOpKRgNhBiO8UTzsA6AFkevIVBLfgT+arPPBf8yto56C+aS+4lNUpyESmogPTT20YNJ4D99hJkreA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434438; c=relaxed/simple;
-	bh=iQpoigWzX/rCtHnlrNJZvORb33k7MxgvPTAPsaqq3PE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZUEEcHQTSSaJ6KceKHhyYfaSncrhGfpXjwRFNiytv3BUpssi6PJxFyH3+Mz2NXwy5s75C0z3ZAvxCCLM3i5Uz3q8CJVoCP7e2b9JxejXoaviKbeMYRou+T07hPcDiloDjSxiY2p6AZm8zaSU/AImNG5N2wqRW7aukU2Yc1ufwnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rgKiTFkM; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=kaq/p7WWGkDPfkYXS5iXH7ESr86fZs1bSaN+LK5hniQ=; b=rgKiTFkMBobH15FQLLakWX0RAP
-	BzP7Bp1kevVfr/cme/57GIHDALcfZ1lGwmnKxIOM8WrPIuby9AUXJoXDxgvGKgXGCC4Tg00Mn+AoA
-	MRwGNdt7ymV7BBzymaAUEy+K4L/XWHkOfS2vHUhT01/y29VxGZB2kQzsZ+r0Rh2DWs1MtmEx5cINo
-	m9Qwyn8bOOMGlztD8IvEGcPOaG9zZAZ3C88BD6FJiA0XbC5/Fn0JrT1l8HcxCWzaV/B1wKTyC6FHx
-	QnbSrwG7cY3a8z8U1I/DStbyOAsUzfEDxqYSNaQfB7UIK6RD6zfcc6pgfwJgZUZndopllnDW7+VVS
-	Znx9VXCg==;
-Received: from [179.118.186.198] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1shYAT-0048Ww-Do; Fri, 23 Aug 2024 19:33:45 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	krisman@kernel.org,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 2/5] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
-Date: Fri, 23 Aug 2024 14:33:29 -0300
-Message-ID: <20240823173332.281211-3-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240823173332.281211-1-andrealmeid@igalia.com>
-References: <20240823173332.281211-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1724434424; c=relaxed/simple;
+	bh=qcQ+kss4ewa/66kGgpNaE9eqqDVNwNbhn7AywTnrHtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFAhWfOe5rIaYk8o840pm1YsNUjLOL/WWq/4kplcfTUOKIsQ0WmNa2VVO/uGw4MqQGXKqkt5wYDKyZGHgkx4X6beuCxjDQGBZuiQ7UQJBdDyj7LJylJW+Ooqob640Fl0XQQT0Myk85n2RceFuwa2iUa9i7pLmN14rM2MINIyLNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CcciBic4; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fee2bfd28so15801cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 10:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724434421; x=1725039221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yrDhJJ/5EwfF2mTCDXTG+gotDkVPsxK/KucvLDLQTiE=;
+        b=CcciBic4zvRVLh33+8o2yMSFUGLiiTUr58ji+H5HnsPcZ20CHgx7ZKpT+e7Gq84xEv
+         NjLNGEyTwUG883V/NOlqxEaekGDKwfvMLMODCTLx6adZxtnFX68sqM31CyTPmAaUAM9o
+         2nZf+uzfEASqWzP6lhUEXaUM6l2ZzvCFVaX/ONJ0UCYEv7790WvKaC5d2lxCab0tGt0h
+         Y5Ecy8CsaBpSLYbaZlsMDovlN7aucp5SLMP9t1Rjy+RuCUnn9oeTDOvuqHNJkKVcpk8Y
+         5MHOV0Y56xHJsW3ZKD0Nyj3HaBq74I7XVWPLvBYG2kyxdyBmPrru+q158ovpfcibHogx
+         5Zjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724434421; x=1725039221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yrDhJJ/5EwfF2mTCDXTG+gotDkVPsxK/KucvLDLQTiE=;
+        b=pGD7pncIRC6q0Hukjz+wp+LP6cmMkM+M3dheOmu9D8V3yLnshnRHAHdikGV/O5E3IB
+         YN4Nx0k39tRkhkU5t8W0x9jzWGMkUQIZDmcr1d0UIJVUec4rcwrPTi9Qlpm1ExGdmjVQ
+         PSbL4nHA91T7fnOGXhsH26A7WyyyeGoJD0bSX+Ahoqd2wu65Kqdu/ZHFc4xxbQqMmqs7
+         XKF4WLs3T0uBQJLhL+r4zNh9O5ylIp2O3IDGsvWVWUZHAqCft+eWtblee9VqYfYurR2e
+         D0sfIJFcHBS9wCYs75FYhUSqT+Fx85WNVYWtX6mTRKRWJeC4Y0wBq5EVVUkZNIpk0tZl
+         X1qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrGjxpy5UaU4ViDMPCCDfslw/ag4TSIaCCLUHraUnTyT2mo4CwGIOkLixLwMGhp7xEaYSrExasYeXktXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlv/+l2xxA9bgCt6WUx0csapibrkkdhtgPCBQgSeFdbP0DFquT
+	fsvX4wuxS9Q9/Gf4THz8c+bVspkiRVXQHl7Ds7S7NTKyMuVWvBqW/RtzxORBTP5xNrSZBxfifMa
+	TwVIHd+2oHxszmw//VhA394N89YdVcg6p1tFS
+X-Google-Smtp-Source: AGHT+IGvAzMr5/ZaOUktkFhC0qDUCbo7Vm+q/xR1nu+IqMWWE+GBkW4jlqZo/fn8sWKxDdXpRsMmFHVkI6I4KCCgk7I=
+X-Received: by 2002:a05:622a:1443:b0:447:d7ff:961d with SMTP id
+ d75a77b69052e-45509e77b0emr3262991cf.9.1724434420482; Fri, 23 Aug 2024
+ 10:33:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240816182533.2478415-1-jmattson@google.com> <20240816182533.2478415-2-jmattson@google.com>
+ <93effd6c-124e-07fd-57ca-ed271fb50665@amd.com>
+In-Reply-To: <93effd6c-124e-07fd-57ca-ed271fb50665@amd.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 23 Aug 2024 10:33:29 -0700
+Message-ID: <CALMp9eSn_u8add6pT5L8LT1vVqj=2y1zcHvgqxiiW+x-aCjNCA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Venkatesh Srinivas <venkateshs@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable setting flag FS_CASEFOLD_FL for tmpfs directories, when tmpfs is
-mounted with casefold support. A special check is need for this flag,
-since it can't be set for non-empty directories.
+On Fri, Aug 23, 2024 at 9:06=E2=80=AFAM Tom Lendacky <thomas.lendacky@amd.c=
+om> wrote:
+>
+> On 8/16/24 13:25, Jim Mattson wrote:
+> > From Intel's documention [1], "CPUID.(EAX=3D07H,ECX=3D0):EDX[26]
+> > enumerates support for indirect branch restricted speculation (IBRS)
+> > and the indirect branch predictor barrier (IBPB)." Further, from [2],
+> > "Software that executed before the IBPB command cannot control the
+> > predicted targets of indirect branches (4) executed after the command
+> > on the same logical processor," where footnote 4 reads, "Note that
+> > indirect branches include near call indirect, near jump indirect and
+> > near return instructions. Because it includes near returns, it follows
+> > that **RSB entries created before an IBPB command cannot control the
+> > predicted targets of returns executed after the command on the same
+> > logical processor.**" [emphasis mine]
+> >
+> > On the other hand, AMD's IBPB "may not prevent return branch
+> > predictions from being specified by pre-IBPB branch targets" [3].
+> >
+> > However, some AMD processors have an "enhanced IBPB" [terminology
+> > mine] which does clear the return address predictor. This feature is
+> > enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
+> >
+> > Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
+> > accordingly.
+> >
+> > [1] https://www.intel.com/content/www/us/en/developer/articles/technica=
+l/software-security-guidance/technical-documentation/cpuid-enumeration-and-=
+architectural-msrs.html
+> > [2] https://www.intel.com/content/www/us/en/developer/articles/technica=
+l/software-security-guidance/technical-documentation/speculative-execution-=
+side-channel-mitigations.html#Footnotes
+> > [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1=
+040.html
+> > [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-doc=
+s/programmer-references/24594.pdf
+> >
+> > Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features=
+ as derived in generic x86 code")
+> > Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  v2: Use IBPB_RET to identify semantic equality (Venkatesh)
+> >
+> >  arch/x86/kvm/cpuid.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index 2617be544480..044bdc9e938b 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
+> >       kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+> >       kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+> >
+> > -     if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IB=
+RS))
+> > +     if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
+> > +         boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
+> > +         boot_cpu_has(X86_FEATURE_AMD_IBRS))
+> >               kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+> >       if (boot_cpu_has(X86_FEATURE_STIBP))
+> >               kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> > @@ -759,8 +761,10 @@ void kvm_set_cpu_caps(void)
+> >        * arch/x86/kernel/cpu/bugs.c is kind enough to
+> >        * record that in cpufeatures so use them.
+> >        */
+> > -     if (boot_cpu_has(X86_FEATURE_IBPB))
+> > +     if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> >               kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+> > +             kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+>
+> Should IBPB_RET be conditionally set? I would think that you would only
+> want to set IBPB_RET if either IBPB_RET or SPEC_CTRL is set on the hyperv=
+isor.
+>
+>                 if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) ||
+>                     boot_cpu_has(X86_FEATURE_SPEC_CTRL)
+>                         kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
+>
+> Right?
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- include/linux/shmem_fs.h |  6 +++---
- mm/shmem.c               | 40 +++++++++++++++++++++++++++++++++-------
- 2 files changed, 36 insertions(+), 10 deletions(-)
+Right. This clause is intended to set cross-vendor capabilities, so it
+should be:
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 1a1196b077a6..acec92564122 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -42,10 +42,10 @@ struct shmem_inode_info {
- 	struct inode		vfs_inode;
- };
- 
--#define SHMEM_FL_USER_VISIBLE		FS_FL_USER_VISIBLE
-+#define SHMEM_FL_USER_VISIBLE		(FS_FL_USER_VISIBLE | FS_CASEFOLD_FL)
- #define SHMEM_FL_USER_MODIFIABLE \
--	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
--#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
-+	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
-+#define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL | FS_CASEFOLD_FL)
- 
- struct shmem_quota_limits {
- 	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
-diff --git a/mm/shmem.c b/mm/shmem.c
-index aa272c62f811..67b6ab580ca2 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2617,9 +2617,26 @@ static int shmem_initxattrs(struct inode *, const struct xattr *, void *);
-  * chattr's fsflags are unrelated to extended attributes,
-  * but tmpfs has chosen to enable them under the same config option.
-  */
--static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
-+static int shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
- {
--	unsigned int i_flags = 0;
-+	unsigned int i_flags = 0, old = inode->i_flags;
-+	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
-+
-+	if (fsflags & FS_CASEFOLD_FL) {
-+		if (!sbinfo->casefold)
-+			return -EOPNOTSUPP;
-+
-+		if (!S_ISDIR(inode->i_mode))
-+			return -ENOTDIR;
-+
-+		if (dentry && !simple_empty(dentry))
-+			return -ENOTEMPTY;
-+
-+		i_flags |= S_CASEFOLD;
-+	} else if (old & S_CASEFOLD) {
-+		if (dentry && !simple_empty(dentry))
-+			return -ENOTEMPTY;
-+	}
- 
- 	if (fsflags & FS_NOATIME_FL)
- 		i_flags |= S_NOATIME;
-@@ -2630,10 +2647,12 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
- 	/*
- 	 * But FS_NODUMP_FL does not require any action in i_flags.
- 	 */
--	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE);
-+	inode_set_flags(inode, i_flags, S_NOATIME | S_APPEND | S_IMMUTABLE | S_CASEFOLD);
-+
-+	return 0;
- }
- #else
--static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
-+static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags, struct dentry *dentry)
- {
- }
- #define shmem_initxattrs NULL
-@@ -2680,7 +2699,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
- 	info->fsflags = (dir == NULL) ? 0 :
- 		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
- 	if (info->fsflags)
--		shmem_set_inode_flags(inode, info->fsflags);
-+		shmem_set_inode_flags(inode, info->fsflags, NULL);
- 	INIT_LIST_HEAD(&info->shrinklist);
- 	INIT_LIST_HEAD(&info->swaplist);
- 	simple_xattrs_init(&info->xattrs);
-@@ -3788,16 +3807,23 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct shmem_inode_info *info = SHMEM_I(inode);
-+	int ret, flags;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 	if (fa->flags & ~SHMEM_FL_USER_MODIFIABLE)
- 		return -EOPNOTSUPP;
- 
--	info->fsflags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
-+	flags = (info->fsflags & ~SHMEM_FL_USER_MODIFIABLE) |
- 		(fa->flags & SHMEM_FL_USER_MODIFIABLE);
- 
--	shmem_set_inode_flags(inode, info->fsflags);
-+	ret = shmem_set_inode_flags(inode, flags, dentry);
-+
-+	if (ret)
-+		return ret;
-+
-+	info->fsflags = flags;
-+
- 	inode_set_ctime_current(inode);
- 	inode_inc_iversion(inode);
- 	return 0;
--- 
-2.46.0
+    if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+        kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
 
+Passing through AMD_IBPB_RET from the hardware should be done by
+adding the bit to the mask for CPUID_8000_0008_EBX.
+
+I'll send out a v3.
+
+Thanks!
+
+> Thanks,
+> Tom
+>
+> > +     }
+> >       if (boot_cpu_has(X86_FEATURE_IBRS))
+> >               kvm_cpu_cap_set(X86_FEATURE_AMD_IBRS);
+> >       if (boot_cpu_has(X86_FEATURE_STIBP))
 
