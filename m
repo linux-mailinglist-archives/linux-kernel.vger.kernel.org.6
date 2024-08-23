@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-298768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C7095CB54
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A00E95CB56
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45552283055
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369C61C21AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816618755F;
-	Fri, 23 Aug 2024 11:24:16 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45150187563;
+	Fri, 23 Aug 2024 11:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NclLPKMw"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C661E89C;
-	Fri, 23 Aug 2024 11:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2413A1E89C;
+	Fri, 23 Aug 2024 11:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724412256; cv=none; b=mzctsttSlxS0d88V85CYGOooln/b/HYhb8l5uuWG2Fjk6nWzkw7mDVNhXSe2Ey3E4XzkTgv7AYMvgobs5eK3k3KjprDc9U5GwfWGm7AuH2vcRp1bNjdb7Hy0sHvc6qM7ASR2dsAVfmR6Tlnoza78/yUOvL93xEXvJ46SY+/mOUI=
+	t=1724412335; cv=none; b=VMG6mWs7SeuipcNpB4gytyU8cb70nUnqFEkeIHF5BBJ6jSMYbsA+qi+T2h5YoBlGKKWx6KUmjCkAbKTRYHWJ4aJyp69AEmwl7h1JGVlS5NejhpBBlYZ3C6ks7rZaKQFCUH91+fHAdIN6LRHnETRByd7Ht197G74B/PKSMnOrvn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724412256; c=relaxed/simple;
-	bh=Vyx/TlcmDNCHy0FXHrijGVUjSihnYDxjMgJaB2QEmhU=;
+	s=arc-20240116; t=1724412335; c=relaxed/simple;
+	bh=6uGqft5RWsJ4fj6CsF3sr3+D2VV0YYpJf7EJFcWj0Bw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iOezKp6MLAP0J9gTOD1IeRlYS1VfrjzPjwsFri5i4t7OcUdz6gFNIRjxbUGOE6D2UfOL5xqnTNBB1h9OQjqCU3r30GMTqxoq7PhMC89f2dH271lKuL+25bsNeHxLLVVEA/9kuMsTgTvmGBmsPtrVtIVKAAybPr8eCXN1mMrCLGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=Girf4vKfWxt8ECvkCfqTdiyuyzl1nhQZQ7awDPG5abIQAGOmwtSNZixtF2llgI2UV3MZIIrdD1LQAfodNsz4G9HIeuO7/znRhRsM8et81svZyiEltp7VHCAIzJFHas/0HU66P/Jf5Ekmy4sVYRUamEQFz7EZxwFyAh+vZMb0zhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NclLPKMw; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-691bb56eb65so16923317b3.0;
-        Fri, 23 Aug 2024 04:24:14 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6b4412fac76so17303157b3.1;
+        Fri, 23 Aug 2024 04:25:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724412333; x=1725017133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LgLcsDJ1rGtU1f7pbspf9pH0cVjS36T3natW/Fq7ym8=;
+        b=NclLPKMw9c5Ezh834lvhv4uDsbbTXmqLZkGw7crCEMpPGEqI/QKqNxy891r8WxF2cv
+         GrDx4TNUxZWiCQodYktN8oDv31LbR+e+mCiaQUH8TpXykh4eUBKOcCXxTWwmqHYdqP/f
+         G0DhqOxBmzkHKu0dHD3cirRf6Qhb9D5lzj5tjopgt2WcU8s/zUR6oCoRaWDXGA/F0EU3
+         wkYO67NGUl9NIg60jwI5FXQHiSp7VTTJjd8Z8Uaje6lGra+N3fw2bFKtThjjYax5TTHB
+         ljuAc9KeJOQnTAJOvDl1UXMnwytZsLPmS7erW0Zf9bLGmSorBdfCvYqKxVZ5ygVj7C60
+         J+6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724412253; x=1725017053;
+        d=1e100.net; s=20230601; t=1724412333; x=1725017133;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dj5VovZ20bk+QpLNOLkrMw84voMi0CVYaIroeUtSYtE=;
-        b=EWz2V1lUxfp//+jJ6s9CfhOt3EvHbG3aqGUlelvY4DP7qmbI0VBfRrxhzBo6iARGkp
-         KPGu/lbaOQAiPD853WE1+ecaYQiqMCvM6Fh7+flT8StDu48EqfPTA8omrY/wVEViYjP3
-         eLEpQF8C+q5L/OdRSAhTRhcUshVIobbesZp/8w27waVDxcO6cY8BaCzO/RoAurgngTPS
-         4kKp3vmJ4ON0WC71fbfwXPYyIDRHEbsBVKVqkjACduWNCwY039IyQ3dMRMs7VREFnBfV
-         jRuDfq/gdWZy2o4IV/2Kc6tH34eyTKopH9mDGu5nVepMuGGUyNXG6ZQgAvRFaPJ0Iq9y
-         r9Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCV/bm3f3N7g7KL6qY4hGJeh8g+rAs0uyeNLEHDppdq8rB52zLgLXs/kJRA4TippAGmkL2XHc360eyqWVJjUhtQSZ00=@vger.kernel.org, AJvYcCXJETkj6xJm2wt7VRFk6PyMiX5at65ZREJF5pbRwF66re1ligDQ+TVQqNPaWVJn5o5eIT2x8lxz37Ii@vger.kernel.org, AJvYcCXsLNCpnBEH5MAnID9Krtc0o9HyNEavl43WV5Fa7f4pAp1A3OM4ORiM3sUhiTOJfaOikFYGahIxlV0nbLMQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpm49/ahTQZLuxJYZCoMqP4P+C1jXb8k48/Foaa0gCQhMOUXQq
-	KmFqtyFvYbgxjCIWmapx2vPoFAfrgRVP5mq4YLxykXAJr65cxTFygZKmjV+G
-X-Google-Smtp-Source: AGHT+IGahmQMjaCOt34Do1O0gLmbCxGtXuqdtk1WktGE6WVeKMVzc7OdF94n4MLQ8x10lQiTlW2LzQ==
-X-Received: by 2002:a05:690c:f94:b0:6ae:1e27:c993 with SMTP id 00721157ae682-6c625390575mr22003937b3.7.1724412252865;
-        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9a93sm5142737b3.89.2024.08.23.04.24.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6b59a67ba12so18175217b3.1;
-        Fri, 23 Aug 2024 04:24:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVN+NxRpppJsVKSUJn3GIw3ykYs++xHfQaKnxQSeqsbWesF7Vr4/9pn4gy5BokFxjQxeXntRm2o7WNRy+it3RCn9Ds=@vger.kernel.org, AJvYcCVWovh2PF5kD3AXeXlJMAoejdHz3AHamsHBmR2CH8RPbCqjm/OSoOnoc26XqM6oNVprmFG8TMzwLUsiMyo3@vger.kernel.org, AJvYcCVcL+1BZve9EREOI1GZiXiBeU6S3llN5jRo2QyobzBKYKTwPUbu83pzsmFfZHnvYst7ZmrHyZdO/f+2@vger.kernel.org
-X-Received: by 2002:a05:690c:6611:b0:64b:7500:2e9 with SMTP id
- 00721157ae682-6c6253900fdmr21154827b3.9.1724412252461; Fri, 23 Aug 2024
- 04:24:12 -0700 (PDT)
+        bh=LgLcsDJ1rGtU1f7pbspf9pH0cVjS36T3natW/Fq7ym8=;
+        b=SjlZIikVRyt17EqJKexwZHe27Q/smeAqNQGx+QyANYDPGO69daHP5kwIsMFLoQHxKB
+         cDAz8OVlwiMeeNEQ5tD/4sh9ifzCNYF1+iwwUdE8KXOeViCrjYsYsQ4aRR8IHzpwlZ/d
+         ba4U9yLunzRSPP5oDM9od8L0nT4m3IU9rgN3WtTTgU8iarTDLIoi2gS9uC5gsFIcu4WN
+         ZWpOz987BGov7+3XN5ltzKoMKtpf9ub4tsv2jIBlxqYKeFW8T1pHyNHzvMPjllYfBZB8
+         q13tWT1vOOg6BmRuFmXPoO3i2UiALtlRWzkQnVSfV9uqQq/+cYR8Qmi7EaRyfddFb0KW
+         zwIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaRLVpM+wwBMI2bT8gcMF/5kiPTXfrPPOUHkXZ/nrdJ6nLVeaTLea73Pi/CGCThrxx7e7KeMj5@vger.kernel.org, AJvYcCXgF3OMWwJZath43t6SAjEQfQ0Q7Arjpw3m7Ya3A3pYQQmLBhcPIWe3S6+w0TkoPdimI8VsMa9zSW9EJBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvgTHSDb8on1cPwecSyCTXFVKaPZsDn8aNJcReJcH67wR9NiRm
+	Cq5HA/jpPmWScXXcW2OeOUo9Bh8eiMnBdecgZ6zilCw+ggs5orFTiT4vDrA2hgGTr8/zjF0e7k/
+	KDu8RlJYJUlWRI08EzVPZmePTz9Y1fOu3
+X-Google-Smtp-Source: AGHT+IEYORL0mYqtQdjUXfYBdnRmYhaE6Ni6wnFvlJu03g3aq5V4LTkfCW6DXd/1pB3hupQZuzSYCSl1QJVm/BTloVk=
+X-Received: by 2002:a05:690c:3241:b0:6be:92c7:a27e with SMTP id
+ 00721157ae682-6c6286b8f29mr18795587b3.28.1724412332929; Fri, 23 Aug 2024
+ 04:25:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730122436.350013-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240730122436.350013-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 13:24:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWB+v7WCn3YqfPaShCHvPEcwu9vrXVugFpyc9vyMJZApg@mail.gmail.com>
-Message-ID: <CAMuHMdWB+v7WCn3YqfPaShCHvPEcwu9vrXVugFpyc9vyMJZApg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] arm64: dts: renesas: Correct GICD and GICR sizes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Marc Zyngier <maz@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240819122348.490445-1-bbhushan2@marvell.com>
+ <20240819122348.490445-2-bbhushan2@marvell.com> <20240820153549.732594b2@kernel.org>
+ <CAAeCc_=Nmh25RDaY4SA2CHsu2mqgdtKEo62b4QKSV4V8icHMMw@mail.gmail.com> <20240822074845.5f932d6d@kernel.org>
+In-Reply-To: <20240822074845.5f932d6d@kernel.org>
+From: Bharat Bhushan <bharatb.linux@gmail.com>
+Date: Fri, 23 Aug 2024 16:55:21 +0530
+Message-ID: <CAAeCc_mOjgWbftER2VmzK747D2gqqGqXrX29WeD+eRWkd-hqdw@mail.gmail.com>
+Subject: Re: [net-next,v6 1/8] octeontx2-pf: map skb data as device writeable
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Bharat Bhushan <bbhushan2@marvell.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sgoutham@marvell.com, gakula@marvell.com, 
+	sbhatta@marvell.com, hkelam@marvell.com, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, jerinj@marvell.com, 
+	lcherian@marvell.com, richardcochran@gmail.com, b@mx0a-0016f401.pphosted.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-On Tue, Jul 30, 2024 at 2:26=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> This patch series aims to correct GICD and GICR sizes on RZ/G2L(LC),
-> RZ/G2UL, RZ/V2L and RZ/G3S SoCs. These SoCs are equipped with GIC-600.
+On Thu, Aug 22, 2024 at 8:18=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> GIC-600 supports MBI by default, so GICD size is set to 128kB.
-> On RZ/G2UL and RZ/G3S SoC despite being single core the GICR size is set
-> to 256kB as dumping the GICR_IIDR register shows it has two instances of
-> GICR.
+> On Thu, 22 Aug 2024 09:15:43 +0530 Bharat Bhushan wrote:
+> > On Wed, Aug 21, 2024 at 4:06=E2=80=AFAM Jakub Kicinski <kuba@kernel.org=
+> wrote:
+> > > On Mon, 19 Aug 2024 17:53:41 +0530 Bharat Bhushan wrote:
+> > > > Crypto hardware need write permission for in-place encrypt
+> > > > or decrypt operation on skb-data to support IPsec crypto
+> > > > offload. So map this memory as device read-write.
+> > >
+> > > How do you know the fragments are not read only?
+> >
+> > IOMMU permission faults will be reported if the DMA_TO_DEVICE direction=
+ flag
+> > is used in dma_map_page_attrs(). This is because iommu creates read onl=
+y mapping
+> > if the DMA_TO_DEVICE direction flag is used.  If the direction flag use=
+d in
+> > dma_map_pages() is DMA_BIDIRECTIONAL then iommu creates mapping with
+> > both read and write permission.
 >
-> v1->v2
-> - Dropped changes for single core
-> - Updated commit message
+> The other way around, I understand that your code makes the pages
+> writable for the device. What I'm concerned about is that if this
+> code path is fed Tx skbs you will corrupt them. Are these not Tx
+> skbs that you're mapping? Have you fully CoW'd them to make sure
+> they are writable?
 
-Thanks for your series!
-I have to trust you on this, and will queue this series in
-renesas-devel for v6.12, with s/kB/KiB/g.
+This code is mapping skb data for hardware to over-write plain-text with
+cypher-text and update authentication data (in-place encap/auth).
+This patch series doesn't take care of CoWing for skb data. Actually I was
+not aware of that before your comment.
 
-Gr{oetje,eeting}s,
+To understand your comment better, If the device writes to shared skb data
+without CoWing then we have an issue. Is that correct?
 
-                        Geert
+I do not see any other driver supporting IPsec crypto offload ensuring
+skb data CoWing,
+but there is a possibility that those devices are not doing in-place
+encap and auth (encap
+and auth data written to separate buffer). I do not have clarity about
+this, This skb is set for
+IPSEC crypto offload, Is this the driver which has to ensure that the
+skb is writeable or the
+network stack (xfrm layer) will ensure the same. If it is former then
+add code to call skb_unshare().
+Please suggest.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks
+-Bharat
 
