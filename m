@@ -1,293 +1,132 @@
-Return-Path: <linux-kernel+bounces-299636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B65895D7F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51BF95D7F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DB0284488
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E850C1C227B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16DD1C6F7D;
-	Fri, 23 Aug 2024 20:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638FC1C7B64;
+	Fri, 23 Aug 2024 20:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IZCX53sM"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YZg3sNwk"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030E1925B9;
-	Fri, 23 Aug 2024 20:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F14D1BA296
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724445851; cv=none; b=dh5Mqg3WI/lQ6itru/U123ybONwXhthxhqPQoVX7kgbaN4a0Y2sYRQw4TpRwLPVYBafgvC7q0CoZKHYT3QjX6jq1cztosjpup2XG+VK+gPxFk9RiBROnuT6aR9ScktB2cj6FZidqouizuLOPJfNmPTxRyYEcACaQhCJtQa8ZSvk=
+	t=1724445884; cv=none; b=ubwQi5f0jKiUkconNfcRKt6QoEsU/uhgXVnIudRyVEUlAxthdQnKNHwPWOYWehwguLlAgz16scakJmbdz4QHuoxseDfPV2S9VMOYGCtwCkiDEPN2QvgLvFNrX6eI0TPD28UUaXZ/+TwMaR+e6W6GIbmBSs6qYCy8/to9rZngxq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724445851; c=relaxed/simple;
-	bh=mY3ZlZr4LGd16AFsJBkwi3pqwy2Dk9HleHVv62NxpnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ByfCD5s5Dll7R8SdDXwxSWnd+x+lNX84BtMJsIp0xm87v3zI57vAm+7Xes+1hcq+BvdnL9s9UI/unC5x2tAV/PC7tBnE/E+lIY//ZXyR8dKOszjGJO9HUOIQOmFyfT1eqh8tP1qPgaBcqoRM0Vm5RRhpEEH/XkNMyPVU2IWJ3lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IZCX53sM; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47NKi0gP024462;
-	Fri, 23 Aug 2024 15:44:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724445840;
-	bh=UgT1CQV66JpbZILH2YaDRh4UGWeqfWk110ZStUenq+w=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=IZCX53sMWKs2CfjBxR/YeQihIjcTtndCS2xpyeouxaRo02qOIvVK0Zw5nRGbtnUsr
-	 jxLjDxRO7p7D9qdnxh3lJ3uYb+Ra9j3zmZkwa5pbnIvEEFsMgu2gl6FZ8fIa6FkXlY
-	 01C6Wvwlr/ViI42798TwQAsL/z1xIit8yJxhrDko=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47NKi0Ga018820
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 23 Aug 2024 15:44:00 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 23
- Aug 2024 15:44:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 23 Aug 2024 15:44:00 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47NKi0ZW056531;
-	Fri, 23 Aug 2024 15:44:00 -0500
-Message-ID: <feee18cc-e75b-49d9-ac09-a0afbb0b00ca@ti.com>
-Date: Fri, 23 Aug 2024 15:44:00 -0500
+	s=arc-20240116; t=1724445884; c=relaxed/simple;
+	bh=ZwiuRkNlvL5/cpgehJtrZvPOsmmD7YzQQKxEkRl2Hew=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ok62zymJVLgxLlmRI7CpdO+WJoBdbfe/j5VFojWDRsSDN2Baic6DvXajDtJ/MtQfnmWuH2VpvqPfgFP24Y84EesbOApSgMeAWhC99pVsQLDVSFigUalTjH2Rpa/ckHSwKPpwCeP1FmQeVU+TxzcoxGfQfQNab/JSrB1CmisCg6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YZg3sNwk; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a4df9dc885so159401085a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724445882; x=1725050682; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qHJoSIvn3TQXsP4HGj1BbikslhYUk1pFvCcRMop1S9M=;
+        b=YZg3sNwkNGMeG/eiokK/lIh4Dxw8z5yo9GdIgFeIM03es0JOyx0TKpZdlV31M+jyGs
+         VrjT6an/notCGn+UTWZQIKW75G5dGQvt1hW1ZAFCoRTQErX5TwE8hvN1o9nnyE4C8rql
+         IP9uhWhhuwAIQlk82NFPqQcF22Sf3kYVFDVaA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724445882; x=1725050682;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qHJoSIvn3TQXsP4HGj1BbikslhYUk1pFvCcRMop1S9M=;
+        b=OGBt0C6epkM+fvIemZHTRIb36qafKjBGqGhoOw7sJiWaewmVT6JA/FBW339pH4zYLs
+         SvYY5IiM6S5c7bVeRRIQ8hPejKK+Vi6twgOiK9Y62O99qf2+i84FWmxxXg1cpanDUHMw
+         cKkMk6uaLdlD45De4Rjv2gOqgocUubTrjIGaDk8oCSxHMRAx3MGsmEmKvyJG80Z2AFBT
+         N8+Xy7AN9UEYr19Z3PEVTDHueINDy7Yvkp3tzRETKX0Qb/DMuQUK2py86F6qDZx1/90x
+         jhYjb4OasF+Q7Ghh00yjOoaM+4gKbH9z7bRnwCvJkjT+htsN2Fs80e19b9whofJOEZsf
+         4+MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWccoRwBhZm5pa6XlHLKn0ZMoOxs8i//z7J1ytYxYRBcxoglYd+UdS5QOSLRGKWw24XWsPLxF9RKcwfBgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb+tNat1uf/yfMbEQTofRWcm+WvPKiygCs0dVbn0k9un5b18qP
+	cIY2F5GZBrSZoCAi/xGcFJcIEybqs4lDbT6Y3dx6Oolv5OIJYYaPIswckk5CZytHtNkZzdegHtp
+	YParuqGZURw5282/WlZ0rZuKpDcL2NQwIgYt2
+X-Google-Smtp-Source: AGHT+IER+vkUNoi1LrSh0oKYCE+8iNRAFkc0O4BKptBtu1VAQywG251TPcXwcoPrrjWuSke5xL1qPKa71h4z9pa/Llc=
+X-Received: by 2002:a05:620a:1aaa:b0:795:e9cd:f5b8 with SMTP id
+ af79cd13be357-7a67d497dd3mr1281397585a.23.1724445881936; Fri, 23 Aug 2024
+ 13:44:41 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 23 Aug 2024 13:44:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mmc: sdhci_am654: Add retry tuning
-To: Adrian Hunter <adrian.hunter@intel.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240821192435.1619271-1-jm@ti.com>
- <20240821192435.1619271-2-jm@ti.com>
- <47ed0a0b-dfaa-40e1-825a-9a42e66b887e@intel.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <47ed0a0b-dfaa-40e1-825a-9a42e66b887e@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <ZsdNEWX-eeLiokZl@tzungbi-laptop>
+References: <20240819223834.2049862-1-swboyd@chromium.org> <20240819223834.2049862-17-swboyd@chromium.org>
+ <ZsdNEWX-eeLiokZl@tzungbi-laptop>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Fri, 23 Aug 2024 13:44:41 -0700
+Message-ID: <CAE-0n50Tuxp0WjFoTx+_i1L4cSOajSNHWPh32PPoXvskJByJJg@mail.gmail.com>
+Subject: Re: [PATCH v3 16/17] platform/chrome: cros_ec_typec: Support DP muxing
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, 
+	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Adrian,
+Quoting Tzung-Bi Shih (2024-08-22 07:37:05)
+> On Mon, Aug 19, 2024 at 03:38:30PM -0700, Stephen Boyd wrote:
+> > @@ -671,6 +674,20 @@ static int cros_typec_configure_mux(struct cros_typec_data *typec, int port_num,
+> >       if (port->mux_flags == resp.flags && port->role == pd_ctrl->role)
+> >               return 0;
+> >
+> > +     dp_enabled = resp.flags & USB_PD_MUX_DP_ENABLED;
+> > +     hpd_asserted = resp.flags & USB_PD_MUX_HPD_LVL;
+> > +     /*
+> > +      * Assume the first port to have HPD asserted is the one muxed to DP
+> > +      * (i.e. active_port). When there's only one port this delays setting
+> > +      * the active_port until HPD is asserted, but before that the
+> > +      * drm_connector looks disconnected so active_port doesn't need to be
+> > +      * set.
+> > +      */
+> > +     if (dp_bridge && hpd_asserted && !dp_bridge->active_port)
+> > +             dp_bridge->active_port = port;
+> > +
+> > +     is_active_port = !dp_bridge || dp_bridge->active_port == port;
+>
+> Why `!dp_bridge`?  When will `dp_bridge` be NULL?
 
-On 8/23/24 8:45 AM, Adrian Hunter wrote:
-> On 21/08/24 22:24, Judith Mendez wrote:
->> Add retry tuning up to 10 times if we fail to find
->> a failing region or no passing itapdly. This is
->> necessary since some eMMC has been observed to never
->> find a failing itapdly on the first couple of tuning
->> iterations, but eventually does. It has been observed that
->> the tuning algorithm does not need to loop more than 10
->> times before finding a failing itapdly.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
-> 
-> Seems to have compile errors. Looks like 'dev' lines belong in
-> next patch.
-> 
-> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_calculate_itap’:
-> drivers/mmc/host/sdhci_am654.c:453:24: error: unused variable ‘dev’ [-Werror=unused-variable]
->    453 |         struct device *dev = mmc_dev(host->mmc);
->        |                        ^~~
-> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_do_tuning’:
-> drivers/mmc/host/sdhci_am654.c:508:24: error: unused variable ‘dev’ [-Werror=unused-variable]
->    508 |         struct device *dev = mmc_dev(host->mmc);
->        |                        ^~~
-> drivers/mmc/host/sdhci_am654.c: In function ‘sdhci_am654_platform_execute_tuning’:
-> drivers/mmc/host/sdhci_am654.c:553:24: error: unused variable ‘dev’ [-Werror=unused-variable]
->    553 |         struct device *dev = mmc_dev(host->mmc);
->        |                        ^~~
-> cc1: all warnings being treated as errors
+I'll add a comment.
 
-ok, will move to second patch.
-
-> 
->> ---
->> Changes since v1:
->> - Change logic in patch 1/2 from using recursive aproach
->>    to calling a function iteratively for retuning
->> ---
->>   drivers/mmc/host/sdhci_am654.c | 54 ++++++++++++++++++++++++++--------
->>   1 file changed, 42 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
->> index 64e10f7c9faa3..612f29fd7dfef 100644
->> --- a/drivers/mmc/host/sdhci_am654.c
->> +++ b/drivers/mmc/host/sdhci_am654.c
->> @@ -86,6 +86,7 @@
->>   
->>   #define CLOCK_TOO_SLOW_HZ	50000000
->>   #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
->> +#define RETRY_TUNING_MAX	10
->>   
->>   /* Command Queue Host Controller Interface Base address */
->>   #define SDHCI_AM654_CQE_BASE_ADDR 0x200
->> @@ -151,6 +152,7 @@ struct sdhci_am654_data {
->>   	u32 flags;
->>   	u32 quirks;
->>   	bool dll_enable;
->> +	u32 tuning_loop;
-> 
-> Could use a comment explaining tuning_loop usage.
-
-Sure no problem, will add.
-> 
->>   
->>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->>   };
->> @@ -453,12 +455,14 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
->>   	int prev_fail_end = -1;
->>   	u8 i;
->>   
->> -	if (!num_fails)
->> -		return ITAPDLY_LAST_INDEX >> 1;
->> +	if (!num_fails) {
->> +		/* Retry tuning */
->> +		return -1;
->> +	}
->>   
->>   	if (fail_window->length == ITAPDLY_LENGTH) {
->> -		dev_err(dev, "No passing ITAPDLY, return 0\n");
->> -		return 0;
->> +		/* Retry tuning */
->> +		return -1;
->>   	}
->>   
->>   	first_fail_start = fail_window->start;
->> @@ -494,16 +498,18 @@ static u32 sdhci_am654_calculate_itap(struct sdhci_host *host, struct window
->>   	return (itap > ITAPDLY_LAST_INDEX) ? ITAPDLY_LAST_INDEX >> 1 : itap;
->>   }
->>   
->> -static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
->> -					       u32 opcode)
->> +static int sdhci_am654_do_tuning(struct sdhci_host *host,
->> +				 u32 opcode)
->>   {
->>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->>   	unsigned char timing = host->mmc->ios.timing;
->>   	struct window fail_window[ITAPDLY_LENGTH];
->> +	struct device *dev = mmc_dev(host->mmc);
->>   	u8 curr_pass, itap;
->>   	u8 fail_index = 0;
->>   	u8 prev_pass = 1;
->> +	int ret = 0;
->>   
->>   	memset(fail_window, 0, sizeof(fail_window));
->>   
->> @@ -532,15 +538,38 @@ static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
->>   	if (fail_window[fail_index].length != 0)
->>   		fail_index++;
->>   
->> -	itap = sdhci_am654_calculate_itap(host, fail_window, fail_index,
->> -					  sdhci_am654->dll_enable);
->> +	ret = sdhci_am654_calculate_itap(host, fail_window, fail_index,
->> +					 sdhci_am654->dll_enable);
->>   
->> -	sdhci_am654_write_itapdly(sdhci_am654, itap, sdhci_am654->itap_del_ena[timing]);
->> +	return ret;
-> 
-> Kernel style is to return directly i.e.
-> 
-> 	return sdhci_am654_calculate_itap(host, fail_window, fail_index, sdhci_am654->dll_enable);
-> 
-> then don't need ret.
-
-Will fix.
-
-> 
->> +}
->>   
->> -	/* Save ITAPDLY */
->> -	sdhci_am654->itap_del_sel[timing] = itap;
->> +static int sdhci_am654_platform_execute_tuning(struct sdhci_host *host,
->> +					       u32 opcode)
->> +{
->> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
->> +	unsigned char timing = host->mmc->ios.timing;
->> +	struct device *dev = mmc_dev(host->mmc);
->> +	int itapdly;
->> +	int ret = 0;
->>   
->> -	return 0;
->> +	itapdly = sdhci_am654_do_tuning(host, opcode);
->> +
->> +	while (sdhci_am654->tuning_loop < RETRY_TUNING_MAX && itapdly < 0) {
->> +		sdhci_am654->tuning_loop++;
->> +		itapdly = sdhci_am654_do_tuning(host, opcode);
->> +	}
-> 
-> Better to try to have sdhci_am654_do_tuning() appear only once
-> e.g. something like:
-> 
-> 	do {
-> 		itapdly = sdhci_am654_do_tuning(host, opcode);
-> 		if (itapdly >= 0)
-> 			break;
-> 	} while (++sdhci_am654->tuning_loop < RETRY_TUNING_MAX);
-> 
-
-I generally do not like using do while loops, but in this case
-it is the more appropriate solution, thanks, will fix.
-
-> 
->> +
->> +	if (itapdly >= 0) {
->> +		sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
->> +		/* Save ITAPDLY */
->> +		sdhci_am654->itap_del_sel[timing] = itapdly;
->> +	} else {
->> +		ret = -1;
->> +	}
-> 
-> It is easier to read if the error path is separate e.g.
-> 
-> 	if (itapdly < 0)
-> 		return -1;
-> 
-> 	sdhci_am654_write_itapdly(sdhci_am654, itapdly, sdhci_am654->itap_del_ena[timing]);
-> 	/* Save ITAPDLY */
-> 	sdhci_am654->itap_del_sel[timing] = itapdly;
-> 
-> 	return 0;
-> 
-> Doesn't need ret then either.
-
-
-ok, yes this looks cleaner, thanks.
-
-> 
->> +
->> +	return ret;
->>   }
->>   
->>   static const struct sdhci_ops sdhci_am654_ops = {
->> @@ -908,6 +937,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
->>   		goto err_pltfm_free;
->>   	}
->>   
->> +	sdhci_am654->tuning_loop = 0;
-> 
-> It is a bit arbitrary having this at probe time.  Something like
-> putting it in an mmc card_init callback might make more sense?
-
-Sure I can move this. Thanks for reviewing!
-~ Judith
-
-> 
->>   	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
->>   
->>   	pm_runtime_get_noresume(dev);
-> 
-
+'dp_bridge' is NULL when this driver is running on non-DT platforms,
+i.e. ACPI, or there isn't a graph/ports node for this device. The latter
+could happen if there's some AP controlled piece of hardware that is a
+typec switch, connected directly to a usb-c-connector. This is the case
+on Kukui where we send the DP lanes directly to the usb-c-connector.
 
