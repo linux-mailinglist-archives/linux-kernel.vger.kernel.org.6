@@ -1,138 +1,279 @@
-Return-Path: <linux-kernel+bounces-298976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6F795CE85
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:58:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A86095CE8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2A72874DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C329AB25B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9664F1885AF;
-	Fri, 23 Aug 2024 13:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A411885AC;
+	Fri, 23 Aug 2024 13:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="Lxj52fyB"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ihKMXpWO"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D34446556;
-	Fri, 23 Aug 2024 13:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421496; cv=pass; b=lvEwZrQKK4Qcah6wiMWtSkPlKS/RuxwHJ/+OCLez9RNumxJx4G4nPWx1yo+OgfUblgGEL9M3t1noSBPFC+N5x37O22s/5/MIjIQM9t5t5cqcYFlM6uDnE8FEMSyKrSLt1nFpk6hsPbL54eO9Nsd8lBkAxNNgIiLMTgfV3ghYp3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421496; c=relaxed/simple;
-	bh=8uXcFSMv87HBxfxi406lOYcJB7H9WTB9xyeIwa9mp4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tMkkivGXjq+G/wCDY6g+LvVDAhh71WtPCNGnQFwnJaEFb7sQc3IvaFv5m/ubjcjqGiRsAqytz8bEZsIchfGUEojHW3QYR3wqQeDMBOQFrCqxp76R3EoHzPjcSYubwXAR0dcELE/UVLaRgbFXDGmsitxG9Q8FlOVpyHDHWJVZrCY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=Lxj52fyB; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724421470; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GDPz/g/0PE8TsvUffPhJb5xFnnvYmh8NHidQtwVVNtGwqQN6y+hmvZh4opApLAoKcHlwg8DP6IQBbQzFXaEBT6JvdkUULvaUNDE8qlF0ILzvI9n5LWSw5gVnF2ldH7q+DIDx7Ek432XYRZI3yIMcYtfX8dR23s2nRrJsMP/Nvy0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724421470; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kuZvVtZXyDgNs8GUeQXGg1EUr2Zv7tffNce03fa0RVg=; 
-	b=bOcATYv7i3aqBVyDW1uyhoqEUm0COFA9aXUWP7RDeUIB1+YSpNU7RCoGywCCfuwWtimjK56LHL7DtvGNNqEDHL+U3WNDVigd/uiFw9QtYwLLlj+fjO/RXYWHbBNn853ofnVLGL71/2hqSfO6LWcv7/v/BgJ/gk0gIOVR5lMeedc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724421470;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=kuZvVtZXyDgNs8GUeQXGg1EUr2Zv7tffNce03fa0RVg=;
-	b=Lxj52fyBvT1b5O4j4mkPGnjNytR8FSVteU4N+BujCzwLHEG8okCTf3gBhIlxvMSL
-	FhqIZ88M6vBg0nwdCRl9CXxjJiq/K/pvzjgxFRGV7gGpI1h3FskAF3p0k70Vknvhcwk
-	hLCi1W2H4o7Zksa4aCJGPdS4w4L0DxEEt1Z9kBFg=
-Received: by mx.zohomail.com with SMTPS id 1724421468552780.7042801261449;
-	Fri, 23 Aug 2024 06:57:48 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- Shawn Lin <shawn.lin@rock-chips.com>
-Subject:
- Re: [PATCH v4 3/4] mmc: dw_mmc-rockchip: Skip all phases bigger than 270
- degrees
-Date: Fri, 23 Aug 2024 09:59:29 -0400
-Message-ID: <1894989.tdWV9SEqCh@trenzalore>
-In-Reply-To: <711f2561ac3d84bcd5bbe26723869b47@manjaro.org>
-References:
- <20240822212418.982927-1-detlev.casanova@collabora.com>
- <20240822212418.982927-4-detlev.casanova@collabora.com>
- <711f2561ac3d84bcd5bbe26723869b47@manjaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B14D46556
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724421582; cv=none; b=JFpvealjEaRsyXBU5rQo6NzoDZv9oNR9N8qBVDS96TCEJ+BPcWlEAs2/7c+BReIvgRAnDAbc/DGAfIfEFvhYxYuSWI3M8sCznf/DQws0BEEUqOTQheOhlekokxHxB4DpJSKVkY5uXObdBONyPE2GzLtdjUFW+ahVSBeSR6+5ZSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724421582; c=relaxed/simple;
+	bh=AGZmhe0T2AgEMIHy2xceRfJbrR2RLVCYdBoG5yI9gQQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=trixWk/evU2XR+wCvi0/nVmYH0nZNg3FvJaa9lOkiuAuoxrjrov6FPjAipnNPzYYsIG/eNmFqeEvFcjMimekWOnK96L68h2vhR6ewImYfj/Or6UUxhLoPmlbKZvWL9AjN1Bqxnt9/QPtFGv3qnbrMk3rfB06Cs07dL13TqYuHlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ihKMXpWO; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2d3c6b19444so2132269a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724421581; x=1725026381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4xJQmay/XmAEKHbSiksTaIcglpDFUxbk2mW4DZp5Gak=;
+        b=ihKMXpWOv9AXwVY8hzzhysTroQBZpGP2WN92smvOKWkiWOQC7VZZusBQfX7AwPLYKM
+         pFxYynBng/tyyOtd7NFiPe9HFartP4wRWutnhTE38hIbMonqXX14MUxR/S2QR5w5twut
+         Rx9lWBjPrexnCf88UgbR49zimN0YEmeVIk2ifhD0dHnva3OVDeeiQi58LexUiz2XOhwd
+         ljtJFLtkqkfEco0aQ8rptLOYKq0bb4ANjhl3f0lq2ML9JAlagX2lUrE8RXB1lNEoHL2K
+         4ctg6DzfQYMuV7EUW6J+wV6iSVT+WAo4lOkKgCWoTseAfCrEPWJ2dl2rDhmuyeb2SEIs
+         Hryg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724421581; x=1725026381;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4xJQmay/XmAEKHbSiksTaIcglpDFUxbk2mW4DZp5Gak=;
+        b=Dqakz/bhpv2sJCp/MoC5NWxdxfMAojo9FoxwOb61mzrPyvLRYpwBOh7+jxy4QwANWi
+         fj+IHrLYt3E3G4AsR3uWO/R19fSqsu8Hi1H9FQKcjxADahD401h8mTDjp6rgK8n7NLyg
+         MahDw8wQQp5+7p9SKsZxc9bl7HjdnQF/lkU2oY20aWSYqA0plhXUSPimYjpMBlFgasx2
+         huHuWarx/dDCmbktPDGb9ec31IwJN0eX1fp5jX68ECBvpV2t2TXJt9Rz3LEPB0x4ztg1
+         5L5j34Tmf/Nzqn6Nr88LpXl2mrqVsqfUnIougTxbMUF2XQGXpwBY5Xfx0QrM/FoevE1U
+         IHbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSJtyI9UWYSM5Lj5dH+fcm5mFueS5ZpmIIAksC8cYV9NgEFmArsetnwUGmvZBvK6L/MuZ98Ad2lNZFJd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFcYcov5YqI4tbEQco4K3QIzxlXcQeIkTfS2q96KlBprfvXXsE
+	efvznGky/qoVoFfeSfB8hpZE3L9xfze9vIZytf3UHOfe7fyd1m+tJBBlwzIm+3JeylqGn1LcEtP
+	xww==
+X-Google-Smtp-Source: AGHT+IGGV5ZRy7+pcKSjaNr2Hgurjyx7riaEDaS/XwMLv28GIWrDw40sqoM7olDfEF+E/zZm/sj4g4tPKhE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:5d8b:b0:2c2:e0f0:f40c with SMTP id
+ 98e67ed59e1d1-2d646d7023emr41095a91.6.1724421580473; Fri, 23 Aug 2024
+ 06:59:40 -0700 (PDT)
+Date: Fri, 23 Aug 2024 06:59:39 -0700
+In-Reply-To: <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Mime-Version: 1.0
+References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-2-mlevitsk@redhat.com>
+ <Zr_JX1z8xWNAxHmz@google.com> <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
+ <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
+ <ZsYQE3GsvcvoeJ0B@google.com> <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
+Message-ID: <ZsiVy5Z3q-7NmNab@google.com>
+Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
+ architectural msrs
+From: Sean Christopherson <seanjc@google.com>
+To: mlevitsk@redhat.com
+Cc: kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>
 Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dragan,
+On Fri, Aug 23, 2024, mlevitsk@redhat.com wrote:
+> =D0=A3 =D1=81=D1=80, 2024-08-21 =D1=83 09:04 -0700, Sean Christopherson =
+=D0=BF=D0=B8=D1=88=D0=B5:
+> > > static inline bool is_noncanonical_address(u64 la, struct kvm_vcpu *v=
+cpu,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int flags)
+> > > {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (flags & (X86EMUL_=
+F_INVLPG | X86EMUL_F_MSR | X86EMUL_F_DT_LOAD))
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return !__is_canonical_address(la, max_host_virt=
+_addr_bits());
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return !__is_canonical_address(la, vcpu_virt_add=
+r_bits(vcpu));
+> > > }
+>=20
+> This can work in principle, although are you OK with using these emulator=
+ flags
+> outside of the emulator code?
 
-On Friday, 23 August 2024 01:45:07 EDT Dragan Simic wrote:
-> Hello Detlev,
-> 
-> On 2024-08-22 23:15, Detlev Casanova wrote:
-> > From: Shawn Lin <shawn.lin@rock-chips.com>
-> > 
-> > Per design recommendation, it'd better not try to use any phase
-> > which is bigger than 270. Let's officially follow this.
-> 
-> Would it be possible to provide a reference to the actual design
-> specification?  This change affects all users of the dw_mmc-rockchip
-> driver, so in case any regressions are found later, having as much
-> detail as possible can only be beneficial.
+Yep, they're already used in VMX's vmx_get_untagged_addr(). =20
 
-I don't have the reference and only trusting rockchip on this. This could be 
-specific to rockchip hardware.
-Anyway, the drivers works well on my side on my rk3576 armsom sige5 without 
-this patch, so I'm willing to drop it completely.
+> I am asking because the is_noncanonical_address is used in various places=
+ across KVM.
 
-> > Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> > (cherry picked from commit 2a53aab5cfa43065b2e979959d727332a8a03c03)
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  drivers/mmc/host/dw_mmc-rockchip.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
-> > b/drivers/mmc/host/dw_mmc-rockchip.c
-> > index 2748f9bf2691..1458cb5fd5c7 100644
-> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> > @@ -310,6 +310,9 @@ static int dw_mci_rk3288_execute_tuning(struct
-> > dw_mci_slot *slot, u32 opcode)
-> > 
-> >  	/* Try each phase and extract good ranges */
-> >  	for (i = 0; i < priv->num_phases; ) {
-> > 
-> > +		/* Cannot guarantee any phases larger than 270 would 
-work well */
-> > +		if (TUNING_ITERATION_TO_PHASE(i, priv->num_phases) > 
-270)
-> > +			break;
-> > 
-> >  		rockchip_mmc_set_phase(host, true,
-> >  		
-> >  				       TUNING_ITERATION_TO_PHASE(
-> >  						
-> >  						i,
+...
 
+> > > We wouldn't want wrapper for everything, e.g. to minimize the risk of=
+ creating a
+> > > de factor implicit default, but I think those three, and maybe a code=
+/fetch
+> > > variant, will cover all but a few users.
+> > >=20
+> > > > > About fixing the emulator this is what see:
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0emul_is_noncanoni=
+cal_address
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0__load_segment_descriptor
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0load_segment_descriptor
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_lldt
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_ltr
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0em_lgdt_lidt
+> > > > >=20
+> > > > >=20
+> > > > >=20
+> > > > > While em_lgdt_lidt should be easy to fix because it calls
+> > > > > emul_is_noncanonical_address directly,
+> > >=20
+> > > Those don't need to be fixed, they are validating the memory operand,=
+ not the
+> > > base of the descriptor, i.e. aren't exempt from CR4.LA57.
+>=20
+> Are you sure?
 
+Nope.  Re-reading what I wrote, I have no idea what code past me was lookin=
+g at.
 
+I even contradicted myself later on:
 
+  So the explicit emul_is_noncanonical_address() check in __load_segment_de=
+scriptor()
+  needs to be tagged X86EMUL_F_BASE, but otherwise it all should Just Work =
+(knock wood).
+
+so yeah, ignore this.
+
+> em_lgdt_lidt reads its memory operands (and checks that it is canonical t=
+hrough
+> linearize) with read_descriptor and that is fine because this is memory f=
+etch,=C2=A0
+> and then it checks that the base address within the operand is canonical.
+>=20
+> This check needs to be updated, as it is possible to load non canonical G=
+DT and IDT
+> base via lgdt/lidt (I tested this).
+>=20
+> For em_lldt, em_ltr, the check on the system segment descriptor base is
+> in __load_segment_descriptor:
+>=20
+> ...
+>  ret =3D linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
+>  if (ret !=3D X86EMUL_CONTINUE)
+>  return ret;
+>  if (emul_is_noncanonical_address(get_desc_base(&seg_desc) |
+>  ((u64)base3 << 32), ctxt))
+>  return emulate_gp(ctxt, err_code);
+>=20
+> ...
+>=20
+>=20
+> 64 bases are possible only for system segments, which are
+> TSS, LDT, and call gates/IDT descriptors.
+>=20
+>=20
+> We don't emulate IDT fetches in protected mode, and as I found out the ha=
+rd way after
+> I wrote a unit test to do a call through a call gate, the emulator doesn'=
+t
+> support call gates either)
+>=20
+> Thus I can safely patch __load_segment_descriptor.
+
+Agreed.
+
+And thinking more about how this is likely implemented in ucode, this is pr=
+obably
+working as intended.  The the SDM gives CPUs a _lot_ of leeway:
+
+  In 64-bit mode, an address is considered to be in canonical form if addre=
+ss
+  bits 63 through to the most-significant implemented bit by the microarchi=
+tecture
+  are set to either all ones or all zeros.
+
+as does the APM:
+
+  Long mode defines 64 bits of virtual address, but implementations of the =
+AMD64
+  architecture may support fewer bits of virtual address. Although implemen=
+tations
+  might not use all 64 bits of the virtual address, they check bits 63 thro=
+ugh the
+  most-significant implemented bit to see if those bits are all zeros or al=
+l ones.
+  An address that complies with this property is said to be in canonical ad=
+dress
+  form. If a virtual-memory reference is not in canonical form, the impleme=
+ntation
+  causes a general-protection exception or stack fault.
+
+I suspect that CR4.LA_57 is only consulted when the CPU is actually consumi=
+ng the
+address, i.e. is (or is about to, e.g. for code fetches) generating a memor=
+y
+access.
+
+Heh, and for MPX, the SDM kinda sorta confirms that LA57 is ignored, though=
+ I
+doubt the author of this section intended their words to be taken this way =
+:-)
+
+  WRMSR to BNDCFGS will #GP if any of the reserved bits of BNDCFGS is not z=
+ero or
+  if the base address of the bound directory is not canonical. XRSTOR of BN=
+DCFGU
+  ignores the reserved bits and does not fault if any is non-zero; similarl=
+y, it
+  ignores the upper bits of the base address of the bound directory and sig=
+n-extends
+  the highest implemented bit of the linear address to guarantee the canoni=
+cality
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^^^^^^
+  of this address.
+
+> > > There _is_ an indirect canonical check on the _descriptor_ (the actua=
+l descriptor
+> > > pointed at by the selector, not the memory operand).=C2=A0 The SDM is=
+ calls this case
+> > > out in the LFS/LDS docs:
+> > >=20
+> > > =C2=A0 If the FS, or GS register is being loaded with a non-NULL segm=
+ent selector and
+> > > =C2=A0 any of the following is true: the segment selector index is no=
+t within descriptor
+> > > =C2=A0 table limits, the memory address of the descriptor is non-cano=
+nical
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>=20
+> I tested that both ltr and lldt do ignore CR4.LA57 by loading from a desc=
+riptor
+> which had a non canonical value and CR4.LA57 clear.
 
