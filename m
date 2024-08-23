@@ -1,214 +1,323 @@
-Return-Path: <linux-kernel+bounces-299098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD80095D00E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:36:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E7C95D019
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C005D1C23E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA3D1C20DA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F3F192592;
-	Fri, 23 Aug 2024 14:27:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E5A188A24;
+	Fri, 23 Aug 2024 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G2ZmqA3j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DsqwgGk/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G2ZmqA3j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DsqwgGk/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CB81885B4;
-	Fri, 23 Aug 2024 14:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588C118893E;
+	Fri, 23 Aug 2024 14:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724423264; cv=none; b=ra+srR0Kil/nXcI2EgsGGH5I3QYpISWVobCUwTElFqbBBK6hfHsvPF92fVHBHdL4UlNGa8NnD0oxT03ifXI5FNofG2l7PWCIyAB0Yi31YAjiuhysgynipcdZh8qiHmYVc9XbhWqYQ314FwdONnKLAxubqPJosA0WvuJRDDbod2Y=
+	t=1724423381; cv=none; b=XRBbN32uFZBlssJzUiiOdU+XMX6CJ3kPJfuUl1lYiVW7ABpQw4Hfzwh9WONHAP73woiN3qmooNwiq/58DkcqCqf62SDQGy1MdmxI0cEcfWqcpQ9aQNoK+RXWk3mLp34XKMuYN2CQ0ntDgoIBYh+UbIoP/YsIzG31I2U5UHeSdEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724423264; c=relaxed/simple;
-	bh=9k7CClA6sa61+VicUj+S+AsdLiPejttykMy8S3HoJ1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YEbUqOhrZkq8MS9rrSZ8cQ0BCAquOh2Ce0DKx4sgeu671P+gF+poTbC8pSBt7iM+a2vN6bqIYkTF/+O1Ft/Rt4OBMltoef5HDIrdbzMeuWOrcrAHBQAOm36nCpFK18v4ggcU5kUy0JlV0/BDi/Xb2bgKxIialm8ZYSzbWQTUaCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76455C32786;
-	Fri, 23 Aug 2024 14:27:43 +0000 (UTC)
-Date: Fri, 23 Aug 2024 10:28:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tomas Glozar <tglozar@redhat.com>, John
- Kacur <jkacur@redhat.com>, "Luis Claudio R. Goncalves"
- <lgoncalv@redhat.com>
-Subject: [PATCH] tracing/osnoise: Protect the per CPU kthread variable with
- mutex
-Message-ID: <20240823102816.5e55753b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724423381; c=relaxed/simple;
+	bh=lp10Mqw6LXG/DjpZXEPfNmKQcCCj50TX0zJgtwnyKNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUoyL1yOdOCFbnCsMOQW1gqJ7WqZ6T9o3WDNoLAuCbVDg91QWBh1oqGKN+2YsYBSH24MKcZRmYFtALj++xwv9vicZbtN75fyFWm0KqTcOvNlWThb5cIOroHtLOYzQsF6W8O1Eop5Bx6rPssk9Edp2aw1J5gg7AWCN89uODAQ+Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G2ZmqA3j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DsqwgGk/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G2ZmqA3j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DsqwgGk/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 67D412032B;
+	Fri, 23 Aug 2024 14:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724423377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
+	b=G2ZmqA3jupyUI0AEdPJVcxxkwSMAD7CNDtl4KzQplpZ0QJkA2FpIjuNwBUmYsrboUu9bgG
+	Vdz1BVDAeUa07NBunxrekClO/HRLvW1HkiKxypD64ckyeWunoVmmxJ/p9EZXPNPM+nUu8g
+	t7FwVzuyBkMRdGTYB0iZ2W/5qFq6mK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724423377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
+	b=DsqwgGk/OpeATe6KFZOanOZ4G+INUhYuOyybxzmRTm6n/rB+2hsYPMvJ6Q2ACLT5vfsX2v
+	GTJAXdeBxMiVeIBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724423377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
+	b=G2ZmqA3jupyUI0AEdPJVcxxkwSMAD7CNDtl4KzQplpZ0QJkA2FpIjuNwBUmYsrboUu9bgG
+	Vdz1BVDAeUa07NBunxrekClO/HRLvW1HkiKxypD64ckyeWunoVmmxJ/p9EZXPNPM+nUu8g
+	t7FwVzuyBkMRdGTYB0iZ2W/5qFq6mK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724423377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
+	b=DsqwgGk/OpeATe6KFZOanOZ4G+INUhYuOyybxzmRTm6n/rB+2hsYPMvJ6Q2ACLT5vfsX2v
+	GTJAXdeBxMiVeIBg==
+Date: Fri, 23 Aug 2024 16:29:36 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	linux-modules@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+	Lucas De Marchi <lucas.de.marchi@gmail.com>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jiri Slaby <jslaby@suse.com>, Jan Engelhardt <jengelh@inai.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] kmod /usr support
+Message-ID: <20240823142936.GK26466@kitsune.suse.cz>
+References: <e3yow7ih6af2hxzkmjay2oan3jypmo4hda64vxvpfco66ajcew@i3zewn4nbklf>
+ <cover.1699618135.git.msuchanek@suse.de>
+ <xbgto5tttcah4mrtyjih72ubod3qb375ww6e2fd4pi342rg4eg@wipwd57q43cc>
+ <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
+ <5gx6vt4tzgk4zvboxrrahexr4ja6zm6fisjshdvnlfihsysqzb@quhp42ydtvh2>
+ <20240822083600.GF26466@kitsune.suse.cz>
+ <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[intel.com,vger.kernel.org,suse.com,gmail.com,inai.de,kernel.org,google.com,fjasle.eu];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:email]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Fri, Aug 23, 2024 at 10:03:05PM +0900, Masahiro Yamada wrote:
+> On Thu, Aug 22, 2024 at 5:36 PM Michal Suchánek <msuchanek@suse.de> wrote:
+> >
+> > Hello,
+> >
+> > On Thu, Aug 22, 2024 at 01:05:11AM -0500, Lucas De Marchi wrote:
+> > > On Tue, Dec 19, 2023 at 05:37:31PM GMT, Masahiro Yamada wrote:
+> > > > On Thu, Dec 7, 2023 at 3:37 AM Lucas De Marchi <lucas.demarchi@intel.com> wrote:
+> > > > >
+> > > > > On Fri, Nov 10, 2023 at 01:13:53PM +0100, Michal Suchanek wrote:
+> > > > > >Hello,
+> > > > > >
+> > > > > >This is resend of the last patch in the series that adds prefix support
+> > > > > >to kernel module location together with additional patch for validating
+> > > > > >the user supplied input to options that are interpreted as directories.
+> > > > > >
+> > > > > >Thanks
+> > > > >
+> > > > > applied, thanks
+> > > > >
+> > > > > Lucas De Marchi
+> > > >
+> > > >
+> > > >
+> > > > If I understood this correctly, MODULE_DIRECTORY is determined
+> > > > by "configure --with-module-directory=...", and there is no
+> > > > way to change it after that.
+> > > >
+> > > >
+> > > > If so, how to work with cross-building?
+> > > >
+> > > > Cross-building is typical when building embedded Linux systems.
+> > >
+> > > I was thinking the `pkg-config --variable=module_directory`
+> > > from the target would be sufficient, but...
+> > >
+> > > >
+> > > >
+> > > > Consider this scenario:
+> > > >
+> > > > - Your build machine adopts
+> > > >    MODULE_DIRECTORY=/usr/lib/modules
+> > > > - The target embedded system adopts
+> > > >    MODULE_DIRECTORY=/lib/modules
+> > > >
+> > > > (or vice a versa)
+> > > > depmod is used also for cross-building because
+> > > > it is executed as a part of "make module_install".
+> > > >
+> > > >
+> > > > The counterpart patch set for Kbuild provides
+> > > > KERNEL_MODULE_DIRECTORY, which only changes
+> > > > the destination directory to which *.ko are copied.
+> > > >
+> > > > You cannot change the directory where the
+> > > > depmod searches for modules, as it is fixed
+> > > > at the compile-time of kmod.
+> > > >
+> > > >
+> > > >
+> > > >
+> > > > In this case, what we can do is to build another
+> > > > instance of kmod configured for the target system,
+> > >
+> > > the target system may not even have depmod actually, so using just the
+> > > host one seems more appropriate. But target should have the kmod.pc for
+> > > the pkg-config call to work.
+> > >
+> > > > and use it for modules_install:
+> > > >
+> > > > 1. In the kmod source directory
+> > > >    ./configure --with=module-directory=/lib/modules
+> > > >    make
+> > > >
+> > > > 2. make modules_install INSTALL_MOD_PATH=<staging-dir>
+> > > >     KERNEL_MODULE_DIRECTORY=/lib/modules
+> > > >     DEPMOD=<new-depmod-you-has-just-built>
+> > > >
+> > > >
+> > > >
+> > > > If you use OpenEmbedded etc., this is what you do
+> > > > because host tools are built from sources.
+> > > >
+> > > > But, should it be required all the time?
+> > > > Even when the target embedded system uses
+> > > > busybox-based modprobe instead of kmod?
+> > >
+> > > no, I don't think we can rely on depmod from the target.
+> > >
+> > > >
+> > > >
+> > > >
+> > > > depmod provides --basedir option, which changes
+> > > > the prefix part, but there is no way to override
+> > > > the stem part, MODULE_DIRECTRY.
+> > > >
+> > > > In the review of the counter patch set,
+> > > > I am suggesting an option to override MODULE_DIRECTRY
+> > > > (let's say --moduledir) at least for depmod.
+> > >
+> > > ok
+> > >
+> > > >
+> > > > (Perhaps modinfo too, as it also supports --basedir)
+> > > >
+> > > >
+> > > >
+> > > > Then, we can change scripts/depmod.sh so that
+> > > > Kbuild can propagate KERNEL_MODULE_DIRECTORY
+> > > > to depmod.
+> > > >
+> > > >
+> > > > if  <depmod supports --moduledir>; then
+> > > >    set -- "$@"  --moduledir "${KERNEL_MODULE_DIRECTORY}"
+> > > > fi
+> > > >
+> > > >
+> > > >
+> > > > Does it make sense?
+> >
+> > It does not make sense for the common case: building kernel for the host
+> > system.
+> >
+> > Then overriding the directory is wrong, and using what kmod was compiled
+> > with is needed to get correct module directory layout.
+> 
+> 
+> NACK.
+> 
+> scripts/Makefile.modinst and depmod must agree about
+> the install destination.
+> 
+> Both must refer to the same ${KERNEL_MODULE_DIRECTORY}.
 
-The start_kthread() and stop_thread() code was not always called with the
-interface_lock held. This means that the kthread variable could be
-unexpectedly changed causing the kthread_stop() to be called on it when it
-should not have been, leading to:
+Nack to what, exactly?
 
- while true; do
-   rtla timerlat top -u -q & PID=$!;
-   sleep 5;
-   kill -INT $PID;
-   sleep 0.001;
-   kill -TERM $PID;
-   wait $PID;
-  done
+And what needs to agree here, exactly?
 
-Causing the following OOPS:
+If the kmod was compiled with a non-default kernel module directory then
+for depmod and scripts/Makefile.modinst to agree the kernel makefile
+should extract the directory it was compile with from kmod kmod, and
+that is the change that was not merged.
 
- Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
- KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
- CPU: 5 UID: 0 PID: 885 Comm: timerlatu/5 Not tainted 6.11.0-rc4-test-00002-gbc754cc76d1b-dirty #125 a533010b71dab205ad2f507188ce8c82203b0254
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
- RIP: 0010:hrtimer_active+0x58/0x300
- Code: 48 c1 ee 03 41 54 48 01 d1 48 01 d6 55 53 48 83 ec 20 80 39 00 0f 85 30 02 00 00 49 8b 6f 30 4c 8d 75 10 4c 89 f0 48 c1 e8 03 <0f> b6 3c 10 4c 89 f0 83 e0 07 83 c0 03 40 38 f8 7c 09 40 84 ff 0f
- RSP: 0018:ffff88811d97f940 EFLAGS: 00010202
- RAX: 0000000000000002 RBX: ffff88823c6b5b28 RCX: ffffed10478d6b6b
- RDX: dffffc0000000000 RSI: ffffed10478d6b6c RDI: ffff88823c6b5b28
- RBP: 0000000000000000 R08: ffff88823c6b5b58 R09: ffff88823c6b5b60
- R10: ffff88811d97f957 R11: 0000000000000010 R12: 00000000000a801d
- R13: ffff88810d8b35d8 R14: 0000000000000010 R15: ffff88823c6b5b28
- FS:  0000000000000000(0000) GS:ffff88823c680000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000561858ad7258 CR3: 000000007729e001 CR4: 0000000000170ef0
- Call Trace:
-  <TASK>
-  ? die_addr+0x40/0xa0
-  ? exc_general_protection+0x154/0x230
-  ? asm_exc_general_protection+0x26/0x30
-  ? hrtimer_active+0x58/0x300
-  ? __pfx_mutex_lock+0x10/0x10
-  ? __pfx_locks_remove_file+0x10/0x10
-  hrtimer_cancel+0x15/0x40
-  timerlat_fd_release+0x8e/0x1f0
-  ? security_file_release+0x43/0x80
-  __fput+0x372/0xb10
-  task_work_run+0x11e/0x1f0
-  ? _raw_spin_lock+0x85/0xe0
-  ? __pfx_task_work_run+0x10/0x10
-  ? poison_slab_object+0x109/0x170
-  ? do_exit+0x7a0/0x24b0
-  do_exit+0x7bd/0x24b0
-  ? __pfx_migrate_enable+0x10/0x10
-  ? __pfx_do_exit+0x10/0x10
-  ? __pfx_read_tsc+0x10/0x10
-  ? ktime_get+0x64/0x140
-  ? _raw_spin_lock_irq+0x86/0xe0
-  do_group_exit+0xb0/0x220
-  get_signal+0x17ba/0x1b50
-  ? vfs_read+0x179/0xa40
-  ? timerlat_fd_read+0x30b/0x9d0
-  ? __pfx_get_signal+0x10/0x10
-  ? __pfx_timerlat_fd_read+0x10/0x10
-  arch_do_signal_or_restart+0x8c/0x570
-  ? __pfx_arch_do_signal_or_restart+0x10/0x10
-  ? vfs_read+0x179/0xa40
-  ? ksys_read+0xfe/0x1d0
-  ? __pfx_ksys_read+0x10/0x10
-  syscall_exit_to_user_mode+0xbc/0x130
-  do_syscall_64+0x74/0x110
-  ? __pfx___rseq_handle_notify_resume+0x10/0x10
-  ? __pfx_ksys_read+0x10/0x10
-  ? fpregs_restore_userregs+0xdb/0x1e0
-  ? fpregs_restore_userregs+0xdb/0x1e0
-  ? syscall_exit_to_user_mode+0x116/0x130
-  ? do_syscall_64+0x74/0x110
-  ? do_syscall_64+0x74/0x110
-  ? do_syscall_64+0x74/0x110
-  entry_SYSCALL_64_after_hwframe+0x71/0x79
- RIP: 0033:0x7ff0070eca9c
- Code: Unable to access opcode bytes at 0x7ff0070eca72.
- RSP: 002b:00007ff006dff8c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
- RAX: 0000000000000000 RBX: 0000000000000005 RCX: 00007ff0070eca9c
- RDX: 0000000000000400 RSI: 00007ff006dff9a0 RDI: 0000000000000003
- RBP: 00007ff006dffde0 R08: 0000000000000000 R09: 00007ff000000ba0
- R10: 00007ff007004b08 R11: 0000000000000246 R12: 0000000000000003
- R13: 00007ff006dff9a0 R14: 0000000000000007 R15: 0000000000000008
-  </TASK>
- Modules linked in: snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec snd_hwdep snd_hda_core
- ---[ end trace 0000000000000000 ]---
+Overriding the directory with an option only for the kernel build will
+make modules_install install the modules in the wrong directory.
 
-This is because it would mistakenly call kthread_stop() on a user space
-thread making it "exit" before it actually exits.
+Of course, the user is free to move them elsewhere afterwards but I
+would say they should not need to do that.
 
-Add the proper locking around the calls to start_kthread() and
-stop_kthread().
+Then there is the possibility that the build is for a different target
+system, and the host kmod and scripts/Makefile.modinst agreeing is not
+enough.
 
-Link: https://lore.kernel.org/all/CAP4=nvRTH5VxSO3VSDCospWcZagawTMs0L9J_kcKdGSkn7xT_Q@mail.gmail.com/
+Then either a 'cross' kmod can be built, and this will again work so
+long as both path and pkgconfig path point to this modified kmod.
 
-This was debugged by using the persistent ring buffer:
+Or kmod can grow an option to set the kernel module directory
+dynamically. However, setting it to the current hardcoded value will
+again break the case when building for the current system with
+non-default kernel module directory location.
 
-Link: https://lore.kernel.org/all/20240823013902.135036960@goodmis.org/
+Unless both is done - that is the default is read from kmod, user is
+provided with an option to override the default, and whatever ends up
+being used by scripts/Makefile.modinst is then passed back to depmod.
 
-Cc: stable@vger.kernel.org
-Fixes: c8895e271f799 ("trace/osnoise: Support hotplug operations")
-Reported-by: Tomas Glozar <tglozar@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_osnoise.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Or do you envision some other solution?
 
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index 66a871553d4a..97864f1bb227 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2106,7 +2106,9 @@ static int osnoise_cpu_init(unsigned int cpu)
-  */
- static int osnoise_cpu_die(unsigned int cpu)
- {
-+	mutex_lock(&interface_lock);
- 	stop_kthread(cpu);
-+	mutex_unlock(&interface_lock);
- 	return 0;
- }
- 
-@@ -2239,8 +2241,11 @@ static ssize_t osnoise_options_write(struct file *filp, const char __user *ubuf,
- 	 */
- 	mutex_lock(&trace_types_lock);
- 	running = osnoise_has_registered_instances();
--	if (running)
-+	if (running) {
-+		mutex_lock(&interface_lock);
- 		stop_per_cpu_kthreads();
-+		mutex_unlock(&interface_lock);
-+	}
- 
- 	mutex_lock(&interface_lock);
- 	/*
-@@ -2355,8 +2360,11 @@ osnoise_cpus_write(struct file *filp, const char __user *ubuf, size_t count,
- 	 */
- 	mutex_lock(&trace_types_lock);
- 	running = osnoise_has_registered_instances();
--	if (running)
-+	if (running) {
-+		mutex_lock(&interface_lock);
- 		stop_per_cpu_kthreads();
-+		mutex_unlock(&interface_lock);
-+	}
- 
- 	mutex_lock(&interface_lock);
- 	/*
-@@ -2951,7 +2959,9 @@ static void osnoise_workload_stop(void)
- 	 */
- 	barrier();
- 
-+	mutex_lock(&interface_lock);
- 	stop_per_cpu_kthreads();
-+	mutex_unlock(&interface_lock);
- 
- 	osnoise_unhook_events();
- }
--- 
-2.43.0
+Thanks
 
+Michal
+
+> > Or it would make sense if both was done:
+> >
+> > Default KERNEL_MODULE_DIRECTORY to what kmod was compiled with, and
+> > then pass the actual value to depmod so that depmod uses the compiled-in
+> > value by default, and the user-provided value when
+> > KERNEL_MODULE_DIRECTORY was overridden by the user.
+> >
+> > Thanks
+> >
+> > Michal
+> 
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
