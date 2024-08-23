@@ -1,92 +1,147 @@
-Return-Path: <linux-kernel+bounces-298099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9EE95C23B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:18:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563C495C246
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67FB4B221DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:18:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB871F23792
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C80218046;
-	Fri, 23 Aug 2024 00:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645ABA46;
+	Fri, 23 Aug 2024 00:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQAvZtuz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrTV72OX"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F8712B6C;
-	Fri, 23 Aug 2024 00:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16205171A5;
+	Fri, 23 Aug 2024 00:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724372296; cv=none; b=jZGNaZfwXQr9bBeu+8bsthj02cQOsSHoqfcZaqgiB28vAH+QYsMKXwWD1ZJYsR6syMMnI92l6H21xota+lfM3Z6v1b6btEX/rFzI1j/HC29X10avDdxTgYgX+OtdcL+4PJPvDHBEunIgGfXjbNxsnWS8YaRyqWsx98dSoJ7qrvA=
+	t=1724372395; cv=none; b=L2ziGFq4PxAcIF9QRv5YwhQ1EVOrjHbWxH1FOrU9zrgf0XOi6VpSy+Di8f2FNYAq694Y0X1H1ZHYsawgVE6xV9kI68riIg44ZIqEtbVpMhguGqSHlCxhCiPwmRWXun+bVOW74tKS1m4dZF0qW9bYdXFwNmaU6KdRimrgHBnvCgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724372296; c=relaxed/simple;
-	bh=2HVUjJT8ysAAiOf7lEZcT9lCdiA5BBbCXrDdPmIUcNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RoTxT0emSmSo/7CLKJ6rOvUmHFOk1BwnLWl7au2nSuzzCR4f37HvHV0dRQGFt36lLAfGjAExSQE2lA5y1CurytB6hH3tkRvOgiInAhWY/Iw66cg2yI/zwxjzSIHZHRZQvfWT9ZNbi2zjFeWE+tZ1DDH+iO8m2MPQE43Wc0Jd7zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQAvZtuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434A5C4AF09;
-	Fri, 23 Aug 2024 00:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724372296;
-	bh=2HVUjJT8ysAAiOf7lEZcT9lCdiA5BBbCXrDdPmIUcNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PQAvZtuzpNYxB2uELf0d5qDY3obDWfFhPA0o45PDaSrQD3a8FQYcWes6DKm7l1XEF
-	 VR2Rfe6xpQ31NRd3yHh3tdCi8OixGO+Ewj19j91vYid1HQ7nSaiFoIbIrQbAwuNrfU
-	 omAQI3dNoZ4qpnc7NLt+wN/rw0BBaVbKtuXVeD5NhLJLpvcTOL0+vxVfVryVgxTqKL
-	 t1sTZC8e842HNFwELMwFhVuhAtjrwbEDNnPd4b4NvJsjexeveJW1HhsJeha55320Pi
-	 vezfQflMJ9wzQpd1AmvQHjsJMoPwbi2Nf4W+nK5vrSvu42XfAaCFEAjopzRQYffii5
-	 w9v0VgIxCEEcQ==
-Date: Thu, 22 Aug 2024 17:18:15 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] Documentation: KUnit: Update filename best practices
-Message-ID: <202408221717.1138DB3D1C@keescook>
-References: <20240724201354.make.730-kees@kernel.org>
- <CABVgOSmXqv_+20OKjVAPJoqrP1EvBk+1WUqF4wBsefegxYNiWA@mail.gmail.com>
+	s=arc-20240116; t=1724372395; c=relaxed/simple;
+	bh=F2lLLOIZ5MdL4ATGWpjDdNMqu/+FrhRvRhi5CgSEkxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KJ0aqlP/XFi4D2rCBE4PUxJsnSxqIAZWI4ycQnYD/WnQa2N6r22fyaS+G8C+qAwtZHqYNDhABD+t3OqK5rlbM6yfp5cHZ1TMMg3yysn8+6Gh0d5CjP+ZCSaMV2YRYt/hTkoOdsJEPYRxrBCLznyYzfmLrLR+N4+iIJApytDPl6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrTV72OX; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7d26c2297eso186765066b.2;
+        Thu, 22 Aug 2024 17:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724372392; x=1724977192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AFn5gD+eI+oFc3WZUBSmujCGXwdn3up3L1zAyTOtMZs=;
+        b=NrTV72OXEK0meH7V5F5mY7EM5Z8VaB8iFu90QMIop7r/5FagPgtpKZVh+ne4Zx2a+3
+         Rd8uFRDyjLjwIKB8degIPq/QkPenctZ6RzHBfOWEjeEzXE3+aFXAqraCVtf78cVM1Hzp
+         K7wHhga3RECrSnU5h0hJDZm/kiMtOCPZticWxP/kwU6Aexllm2EdKXNBb1j7ZIEym//y
+         GzFQe3Uoa+w4OWQBDePxvIge9CN138H25i5vP4QRBvDejmoOoOh3QN1k8tHIwGOE3hlV
+         A6g/GUCAC3nHnC+zYbbmpj7c/afPAMIF5Ltl9f32gydf5/y6aVHRd2JV4J1TNsLPbFu7
+         u0Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724372392; x=1724977192;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AFn5gD+eI+oFc3WZUBSmujCGXwdn3up3L1zAyTOtMZs=;
+        b=IcTyKSfCum01EFlad/pXpC9AGZ+BT89YKarhy+fF6bD0poYfm/5eUfz/rTk8yxYYs0
+         /f5VrAkKQZq3DMRD6LWSdMgezmO9mItuACfrN4eB9fFEc40tjiRgnX76Wo5FnyzUv6QR
+         uk9VvHU3HlzUil8kTNlqhe2b1qZkX08NKmse8eVYo1Xhj0rYZfX28XH1t+IbrEPvtgIq
+         RDPLyEDZwgoT0uVxsGGEolOl8tSFF/gO1PSiMK196dLNowSKCQnLKXiEtV93DQ0aJ9pJ
+         +egIBLt5Ly59hSCg7Yzmw3JdemfoES5zTuYkVauh/RZ+hd3umMLpAkK7dfgVe98Z/Z6F
+         Xpjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWJnQRsfbq+HEkbiuv2Vdfb9b7YVsxv4YQHGNmO5VozpUhArKcMfHOUYEPBmZ3T+6pWFAi7a6PHN0vGndJ@vger.kernel.org, AJvYcCUejGU7prfbA8IboNYAyGs9W/yNyFRptQUdmv/jjHarhJF07Dr0yCxTAPVRyOY6YLSR1msdBPc3Hrh8ByCb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxNeOyhqD0n6mDPU9MlO+tzxjBWLzXy2x6KMwGXkWIBSKjyh/4
+	jS5uZ+zxxmLRLGSPAjNxBOylj9LlObyqQNkVSbKHwEaMYyZsazOO
+X-Google-Smtp-Source: AGHT+IGEdE1pbgGLiaspl7QobJK5Wc6J6u40OI9jibZkTpdAQBLwU1nX+HnLn66He1iLWtKUtIO7IQ==
+X-Received: by 2002:a17:906:fe4b:b0:a7a:bae8:f2a1 with SMTP id a640c23a62f3a-a86a54899f5mr28977066b.42.1724372391803;
+        Thu, 22 Aug 2024 17:19:51 -0700 (PDT)
+Received: from [192.168.1.14] (host-80-104-252-9.retail.telecomitalia.it. [80.104.252.9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f6686sm179971366b.221.2024.08.22.17.19.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 17:19:51 -0700 (PDT)
+Message-ID: <27840bd4-aac4-49ca-9c98-60913c352076@gmail.com>
+Date: Fri, 23 Aug 2024 02:19:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOSmXqv_+20OKjVAPJoqrP1EvBk+1WUqF4wBsefegxYNiWA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] drm/msm/A6xx: Implement preemption for A7XX targets
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <20240815-preemption-a750-t-v1-4-7bda26c34037@gmail.com>
+ <20240819200837.etzn7oaoamnceigr@hu-akhilpo-hyd.qualcomm.com>
+ <14591112-4455-49b4-8b1a-3feffc4d343f@gmail.com>
+ <20240822192347.ffezairwoqqolssl@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-US
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <20240822192347.ffezairwoqqolssl@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 03:14:36PM +0800, David Gow wrote:
-> On Thu, 25 Jul 2024 at 04:14, Kees Cook <kees@kernel.org> wrote:
-> >
-> > Based on feedback from Linus[1] and follow-up discussions, change the
-> > suggested file naming for KUnit tests.
-> >
-> > Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
-> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
+On 8/22/24 9:23 PM, Akhil P Oommen wrote:
+> On Wed, Aug 21, 2024 at 04:34:15PM +0200, Antonino Maniscalco wrote:
+>> On 8/19/24 10:08 PM, Akhil P Oommen wrote:
+>>> On Thu, Aug 15, 2024 at 08:26:14PM +0200, Antonino Maniscalco wrote:
+>>>> This patch implements preemption feature for A6xx targets, this allows
+>>>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+>>>> hardware as such supports multiple levels of preemption granularities,
+>>>> ranging from coarse grained(ringbuffer level) to a more fine grained
+>>>> such as draw-call level or a bin boundary level preemption. This patch
+>>>> enables the basic preemption level, with more fine grained preemption
+>>>> support to follow.
+>>>>
+>>>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+>>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>>>> ---
+>>>
+>>> No postamble packets which resets perfcounters? It is necessary. Also, I
+>>> think we should disable preemption during profiling like we disable slumber.
+>>>
+>>> -Akhil.
+>>>
+>>
+>> You mention that we disable slumber during profiling however I wasn't able
+>> to find code doing that. Can you please clarify which code you are referring
+>> to or a mechanism through which the kernel can know when we are profiling?
+>>
 > 
-> Looks good to me. (And it seems like sphinx is okay with it, too,
-> which is always nice.)
+> Please check msm_file_private_set_sysprof().
 > 
-> We normally take these changes in via the kunit tree, but if you want
-> to try to push it through along with the naming changes, that's fine
-> by me.
+> -Akhil
 > 
-> Reviewed-by: David Gow <davidgow@google.com>
+>> Best regards,
+>> -- 
+>> Antonino Maniscalco <antomani103@gmail.com>
+>>
 
-Hi! Just a quick check: I haven't seen this land in -next yet. Are you
-still planning to take this?
+I see, thank you. So as Connor said in the other message we want to 
+distinguish the case of system profiling where we do want preemption and 
+application level profiling where we do not want it. So sysprof is not 
+the condition we want to check for to disable preemption, correct?
 
+Best regards,
 -- 
-Kees Cook
+Antonino Maniscalco <antomani103@gmail.com>
+
 
