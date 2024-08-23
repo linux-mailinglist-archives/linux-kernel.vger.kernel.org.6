@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-298366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5D895C64C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C479895C64E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8F82857D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 039F31C21A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C4713AA32;
-	Fri, 23 Aug 2024 07:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E09113AD06;
+	Fri, 23 Aug 2024 07:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bTUua/IY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZISEXs6r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="icCA3zmo"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAE313959D;
-	Fri, 23 Aug 2024 07:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94B13959D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397105; cv=none; b=qxH4qvAqgWoHlHfWPMSYJQY7R39RP39gYIuRVkwqqLXtlsVSZkI+Dc1RCLp0i+7P/A/0lxBlx7mTozBENI/gYBUSxlinfAATLCMSSkyRzKlgAaPPs370u7OiBfVLtSBvhG3CC8br7a/ykCg2AF61nnxCk3nG2FWN1E5SMt2FgwY=
+	t=1724397136; cv=none; b=bDYyTlbPF/VXIv2L1SLlLY5Bjj21xGiVOFwkCUpi5eufjdHfoMHFPcB5MOtQbOAS+n2rJoB8R9ehnOne59T7aEu+sOXHtaV3KQklDTRMgImFEaRCLSBME06MAg7se39gVUT349AEnMRSwyVfKen5hUzRpvOtNSVb/J3/A4mDd5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397105; c=relaxed/simple;
-	bh=Jayald4Katio5aLTprP9W5CAIVwLFsjHRfBhF5nIChM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EkPvlzUjdn/0xqr91nq1Ez0ns/1emyKkr8XxjD31sSDBMAMFqfQ4h/E3yrOjKHgNDznAj1CFYlfrwpqtWTE8cQINHdGlQ7cyOUAKrIfDqQWAuHcnIMrC2GMQwGTuP7DfvtYuSCI5kOyxnPliLnHcVNBqF08jQS72ehLAJUdatT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bTUua/IY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZISEXs6r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 23 Aug 2024 09:11:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724397102;
+	s=arc-20240116; t=1724397136; c=relaxed/simple;
+	bh=QjcH1BEuWHmNibEMoZBPcc66J96gyQ7uYowHOvFzxO4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGY3/DsLE8la+ZpMN/2qv553SgjyN9wJzgUGwMtu+XNyCfleoAxJOTklmtT+pWsOqRMuedSKunkQKXda5A80BEvvPNzBO1Xw3xSzqgpEutGGG3+EADZCFprqf9PA9wXvMTzcO0edT1lnCFCwbjGkjjEsaJ+SvFjAysnDMhjmsjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=icCA3zmo; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fd2acc68-ca3f-4d83-554b-a2aa89ad7b5c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724397132;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zP+bUoeBqUw+8ExQP+EVY6XY5NKStTtQ7noACJ4Tdek=;
-	b=bTUua/IYXOIhYn0FXUqFXmPywumTQYdVgHnqGwDaGu9bM3c11A2fGqhrMFljKxEGNqTPsG
-	2cX9+G1mecIDdhlDIlWgYxMdTrQolAHSK7WXbQX4GrQdebWTLlxRPdZE0eGgHJRyd30oP2
-	Kk+qDklZH/UXJmOemzbLKuPcywBuYeqiKVGVqgVtOCau4qdb1VwdQqpEiPyQABxD3y0tRR
-	jgWrqLvI02fGPgmNimDrQ1s15R1VIE5lw8vL+xB0YkCMXjdPn2lZ/5iWk+JpIqqSwaDgQ0
-	B9U5FbMv00a5VjSi9/j1pqDB+JIWIdoaC+qMTBc+GPYb9QLlQpzEBGCTF11Cvg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724397102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zP+bUoeBqUw+8ExQP+EVY6XY5NKStTtQ7noACJ4Tdek=;
-	b=ZISEXs6rdLqgociRq0zsMoOGOR8f+NMof/+gutuyNcf6DoSco7u5ppIG60hdAHTkIe7zl4
-	u9nBaPcUjfNUbWDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Petr Mladek <pmladek@suse.com>
-Cc: williams@redhat.com, john.ogness@linutronix.de,
-	Derek Barbosa <debarbos@redhat.com>, tglx@linutronix.de,
-	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: A Comparison of printk between upstream and linux-rt-devel
-Message-ID: <20240823071141.IJwRFmZ8@linutronix.de>
-References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+	bh=a6n0wnoPAcJF/7kS5yMq3pmT0HLmPp3tJepFRPvQRNc=;
+	b=icCA3zmoXUMtT3rgGRychKf9R9fXaktHv8p6kd+QscAiQZaezEF9LHbn5fnhxJFbrC4tOM
+	QCYjV/O93mu8Fvq0GGb01ThJ9W8AkBzt+UT1HysrbgAvJRWs/3WEAcRp6SCbB6sCjrT44a
+	OMG5ZQ3m2kiISEwhY6U1CFZNdIUSlSc=
+Date: Fri, 23 Aug 2024 15:12:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+Subject: Re: [PATCH] selftests/bpf: Fix incorrect parameters in NULL pointer
+ checking
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ bpf <bpf@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Hao Ge <gehao@kylinos.cn>
+References: <20240820023447.29002-1-hao.ge@linux.dev>
+ <02dd26b5-16a0-4732-80e4-c7bf183e965a@linux.dev>
+ <58f57d70-a787-4012-8763-cc6eb642ef8a@stanley.mountain>
+ <CAADnVQ+iTrTmbMcjt7fR7uTS=1tFcjv=z2CY6fO-4=kkM4YSMw@mail.gmail.com>
+ <cc10c08a-a9aa-48e1-896f-46b566930271@stanley.mountain>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <cc10c08a-a9aa-48e1-896f-46b566930271@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-08-22 12:32:15 [-0400], Derek Barbosa wrote:
-> Hi,
-> 
-> TLDR: plain, vanilla 6.11.0-0.rc3 is slower on flush and 
-> does not print traces in panic/crash context consistently.
+Hi Dan and Alexei
 
-Petr, the whole thread is at
-	https://lore.kernel.org/ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb
 
-your email address had a typo in it.
+I apologize for any inconvenience my mistake may have caused to both of you.
 
-Sebastian
+
+On 8/22/24 06:31, Dan Carpenter wrote:
+> On Wed, Aug 21, 2024 at 03:07:27PM -0700, Alexei Starovoitov wrote:
+>> On Wed, Aug 21, 2024 at 2:50 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>>> On Wed, Aug 21, 2024 at 02:03:17PM -0700, Yonghong Song wrote:
+>>>> On 8/19/24 7:34 PM, Hao Ge wrote:
+>>>>> From: Hao Ge <gehao@kylinos.cn>
+>>>>>
+>>>>> Smatch reported the following warning:
+>>>>>       ./tools/testing/selftests/bpf/testing_helpers.c:455 get_xlated_program()
+>>>>>       warn: variable dereferenced before check 'buf' (see line 454)
+>>>>>
+>>>>> It seems correct,so let's modify it based on it's suggestion.
+>>>>>
+>>>>> Actually,commit b23ed4d74c4d ("selftests/bpf: Fix invalid pointer
+>>>>> check in get_xlated_program()") fixed an issue in the test_verifier.c
+>>>>> once,but it was reverted this time.
+>>>>>
+>>>>> Let's solve this issue with the minimal changes possible.
+>>>>>
+>>>>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>>>> Closes: https://lore.kernel.org/all/1eb3732f-605a-479d-ba64-cd14250cbf91@stanley.mountain/
+>>>>> Fixes: b4b7a4099b8c ("selftests/bpf: Factor out get_xlated_program() helper")
+>>>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>>>> In the future, please change subject '[PATCH] ...' to '[PATCH bpf-next] ...'
+>>>> so CI can properly test it.
+>>> It feels like there should be a technical solution to this.  The CI system is
+>>> something on AWS and it's too expensive to just check every patch that's sent to
+>>> the bpf list?  My understanding is that there are only two bpf trees.
+>>>
+>>>          if [ "$FIXES_HASH" == "" ] ; then
+>>>                  TREE=next
+>>>          elif git merge-base --is-ancestor $FIXES_HASH origin/master ; then
+>>>                  TREE=linus
+>>>          else
+>>>                  TREE=next
+>>>          fi
+>>>
+>>> These days the zero day bot people are checking around a thousand git trees.
+>>> They pull emails off the various lists and apply them to the right places.  It's
+>>> a doable thing.
+>> Dan,
+>>
+>> Various people pointed out that you need to use the proper subject in
+>> the patches.
+>> You clearly knew that rule and yet you ignored it,
+>> and worse still you keep coming up with these excuses.
+>> Don't be surprised that people who are supposed to review your patches
+>> will take a long time to reply or "forget" about them as you "forget"
+>> about patch submission rules.
+
+
+Perhaps it was referring to me? Regardless, I will reflect on myself and 
+make improvements.
+
+
+> You're emailing the wrong person.  This isn't my patch.  I don't send BPF
+> patches.
+>
+> regards,
+> dan carpenter
 
