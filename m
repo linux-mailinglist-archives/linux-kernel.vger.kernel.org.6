@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-299491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E17B95D578
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:48:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9AC595D57B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 295891F235E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D026B22F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB43191494;
-	Fri, 23 Aug 2024 18:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9C019258D;
+	Fri, 23 Aug 2024 18:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F7QfnfJD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clVQMXmV"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9F8F6B;
-	Fri, 23 Aug 2024 18:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCD18F6B;
+	Fri, 23 Aug 2024 18:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724438881; cv=none; b=hTW5jn3w2lnaxP4BHkXh2klqzTVlOuyUZS1t9MGFXHfVfGxkvUCErSn+u7wpAyi5scjN3609aVFTepa26foL6yzOZU2gmwdHbgJFa8PGrgnqza98iBCuEwaBugGe/w6lVS/PUCRpaoIaCndoIv00C4NJgqcnrk7QGCc5e2XQgD0=
+	t=1724438888; cv=none; b=PumeXJISjSAtByOt1CpSQ3o5My/N7BqXn8HciZMSwrhzCM20ePF0K9s+ASLW2wDwkScww48+/wlPfX4XWGIQR6ZajHxyJE6ANW+e4BJ/G7eUDJDTV3cqzflhyK0BlQAtRy3TPvLkVKBs4x6Xe+5B/si7/FFFCe0SGlHpu6F4Rio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724438881; c=relaxed/simple;
-	bh=Y5H1f02bfP18o0eJ+LoR6Sc1Cx4Rlj1kHHn4/9asXyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbcyV3vufYGBmEUqHvku1QwZ4G5DptLWXyy7zdVhhMC0kkIi42etVJYT9qNnt/KpGJApE6XMBuZsAiRQ+lIffhfAfhXJQusdHIsv0E//xgm6WpQSOiRH8KQol46dtkCv5aJf+xDLQUjrYHXnLZ+dVSRyosyUAt0V9G8fO+CgOAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F7QfnfJD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724438879; x=1755974879;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y5H1f02bfP18o0eJ+LoR6Sc1Cx4Rlj1kHHn4/9asXyI=;
-  b=F7QfnfJDZIY5oRYcK7/BSAONKdHfX/bKojlxgVUs35YwXOhYFzZfPmDd
-   VgXizsjSky7T+B2NBxP73ltdShXSyC4ynVSEuOdxV+50SPmJVXZv/Lgpj
-   P3qN2FSfmor4m/sM7FzC7Xi7W/G/U95DHdlMZLRlTtEt9jua2GRWa1J09
-   0mndjECwp2ZktXm49ZvpXtymLO79a7lOzm1P+sEv89c9YtEScUr2r6ucI
-   4cR6tHIMaQ9zvRfG9VmkBYPX80mIhuTnJjnWR6CWuj76vo2mU0KiRJzg7
-   OvDF+mFfn+OAaG1g08cALzLiXW8P2BbiM/Z+NKF2SzSkT2lEgjT8hpLpf
-   Q==;
-X-CSE-ConnectionGUID: PAoB8B+mQ2GI+05QZQQNmA==
-X-CSE-MsgGUID: Kii+wUytTnuskxKyyy/WvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="13175511"
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="13175511"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 11:47:59 -0700
-X-CSE-ConnectionGUID: bKHjxvGKRHCYYKn26MzvHw==
-X-CSE-MsgGUID: Q2kZeuerQiS1odKhdrtKlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="62180236"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 11:47:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shZJj-00000000zPw-1AM6;
-	Fri, 23 Aug 2024 21:47:23 +0300
-Date: Fri, 23 Aug 2024 21:47:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] iio: pressure: bmp280: Use bulk read for humidity
- calibration data
-Message-ID: <ZsjZOkglW1lGDNr8@smile.fi.intel.com>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-2-vassilisamir@gmail.com>
+	s=arc-20240116; t=1724438888; c=relaxed/simple;
+	bh=POw5n4uPK+5Wgj6bZ8E7UNaTIEwC7nnmx+EmsVvH934=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qj75PVCELCyH1/9f3JOqLIqIIH+cZF+uurkY+e96absUUNcCnckdFgM78Kz7u7Bi1SSoWFQVxkffuppUhv95VVUnoJ9sOiHUcWGw6FlkEOo1kd2sPfL0UM44jemdhI1jHjr7LA5tXz8qKY4tr8XeYGiLpRJL4HDVB9TiOZOXuZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clVQMXmV; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7143c9e68a3so112039b3a.0;
+        Fri, 23 Aug 2024 11:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724438885; x=1725043685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uk0/C1AkOx81lEeJcP/sdwvaYycc+SWwymWZxuohJG4=;
+        b=clVQMXmV5vVjU+NC2+gMp76TTA3xN3S2+dCJhnfgBJAqtjdreG0od8yayRxFNBXZfD
+         kvON9+HlfxUuaO34sYDEwlBBRZOofA01VKt9aHbywNGfUdeItjhUObzylYxOQeRIRecI
+         MjVsrHrVpTHsUO5f6wbTqS0JwdU8C3PPjIMHh4Ea+IMPqocFFWN9gVRcMhvLMF7a9Y0h
+         RcH++ovff7XWtxDHjiH6Y5QM58aKF51I8ex0Xi2pZo7MDFjfLQspFpwEtSt0wWGOalsC
+         crzd31/rtXjdIam8XoVOfsXzQx7nUeD2gEAapmSZ7AUEDUJDsAYAq+EymCPioq1F7N8A
+         LOHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724438885; x=1725043685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uk0/C1AkOx81lEeJcP/sdwvaYycc+SWwymWZxuohJG4=;
+        b=EfVj6PA007KAB4u2hJudTYTjPCj/f6p61IEDmFtoNQ5Nfuvof5v46uFqJdjv2w64BX
+         i45agn3n4VJldXNykpUDUk/svUnqsapaflXytxsgqBGmN+bh3s8DlTs5ox0I6dcJoCoV
+         WJYgktch/XhlSbp7dRtYO1n8xnoHSRCiBTxYLXrug9XrKYOF54m4MiRTICfQJ53Bg5ym
+         U6nYblZr74nIkKCXGzPCB6vkRLeIO67a7LOJ/sy0FozXhlc75RoNAArSjfdhGg5uNeY2
+         kJvj65kLCFxbDn1L9iXU2eXtTP9Fo1Rs0Z3eSk8gCdNEuSQrdCoHoiKNCkCWEn/j1CRY
+         tkDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVO1IF4MK0/7C2C7mcPzc2wmmQIgM2XraJRXpIXy8jos9cj5IPKnienBtlArvoQGo8Yzh1YImwMyOiuAgj3@vger.kernel.org, AJvYcCVPpsOsuhu2yevFIdKrhTc4H/QQdHG8p+4GZMqULw4vhG+zW2BW4Nqqm8LDtrKExXWaNl1JZGsu3uWFrlux@vger.kernel.org, AJvYcCVpiVvYZXmUpoDMpQCS9cl1p0ttOtVELKHYod+S5ilpbIwvxbbwp6R1lGcTbPRiAPFfrho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKRsblVJmbKbPq4dBFv9+PT9UDlVXLSZHBO+9Tp03J6iO9XQ0L
+	vL3Q1qZdbClSV2rll/4E1QriFmUhLVUf0PrtQb4z+Fyun8pvg88Ju/Q5d2E77CMPFg3XNZoL6qh
+	0TbMkcOvOx4V3MJnIYI2qzygmqVQ=
+X-Google-Smtp-Source: AGHT+IHU1bqef0K7taMb7NU7AZLtkpaTLnqF/hx5h78WBNReGSNhGIsYsg5UQYCcuDeEKg1DlAP70nhcV8uXO1TKuAc=
+X-Received: by 2002:a05:6a20:1589:b0:1c6:ecf5:4418 with SMTP id
+ adf61e73a8af0-1cc8a01c07bmr2328000637.4.1724438885555; Fri, 23 Aug 2024
+ 11:48:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823181714.64545-2-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240728125527.690726-1-ojeda@kernel.org> <CAK7LNARhR=GGZ2Vr-SSog1yjnjh6iT7cCEe4mpYg889GhJnO9g@mail.gmail.com>
+ <ZsiV0V5-UYFGkxPE@bergen>
+In-Reply-To: <ZsiV0V5-UYFGkxPE@bergen>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 23 Aug 2024 20:47:53 +0200
+Message-ID: <CANiq72khCDjCVbU=t+vpR+EfJucNBpYhZkW2VVjnXbD9S77C0A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: pahole-version: avoid errors if executing fails
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 08:17:08PM +0200, Vasileios Amoiridis wrote:
-> Convert individual reads to a bulk read for the humidity calibration data.
+On Fri, Aug 23, 2024 at 4:00=E2=80=AFPM Nicolas Schier <nicolas@fjasle.eu> =
+wrote:
+>
+> Do we have to catch all possibilities?  Then, what about this:
 
-...
+Something like that sounds good to me too -- we do something similar
+in `rust_is_available.sh`. We also have a `1` in the beginning of
+(most of) the `sed` commands there to check only the first line.
 
-> +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
-> +	calib->H3 = data->bme280_humid_cal_buf[H3];
+I guess it depends on whether Masahiro thinks the extra
+checks/complexity is worth it. Here I was aiming to catch the case he
+reported, i.e. non-successful programs.
 
-> +	h4_upper = FIELD_GET(BME280_COMP_H4_GET_MASK_UP,
-> +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-> +	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, h4_upper);
-
-This is a bit confusing. I would add a tmp variable and have this as
-
-	tmp = FIELD_GET(BME280_COMP_H4_GET_MASK_UP,
-			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, tmp);
-
-Also note indentation issues.
-
-> +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
-> +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-> +	calib->H4 = sign_extend32(h4_upper | h4_lower, 11);
-> +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
-> +			get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
-> +	calib->H6 = data->bme280_humid_cal_buf[H6];
-
-...
-
->  		/* Calibration data buffers */
->  		__le16 bmp280_cal_buf[BMP280_CONTIGUOUS_CALIB_REGS / 2];
->  		__be16 bmp180_cal_buf[BMP180_REG_CALIB_COUNT / 2];
-
-Side note: I would see rather sizeof(__Xe16) than 2:s in the above definitions.
-
-> +		u8 bme280_humid_cal_buf[BME280_CONTIGUOUS_CALIB_REGS];
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Cheers,
+Miguel
 
