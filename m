@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-298869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8310195CC64
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:33:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D41595CC69
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E429283777
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315651F25C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAE185B40;
-	Fri, 23 Aug 2024 12:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E39185B42;
+	Fri, 23 Aug 2024 12:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="JDzLukDl"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKBxorso"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF319566A
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73155566A;
+	Fri, 23 Aug 2024 12:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724416393; cv=none; b=i8SCJOIOv+86GLLSUm2r9OxjoDguO7S7Ygo2biAR1KWD5mw1GDT3ZKC2hBOR2mrkvLd2HtnU+HQIcjCaSIzgol6ed4cI31bW9pIDllA8WsdA8g0SlWDMOZ+TTSBTI8K31/li+gVT7k4nTePFNqvWOHckarwzYKlXuSfCsLtanA0=
+	t=1724416402; cv=none; b=BmGyHf6XPts4hITHTX3++qpUrVKU7BwzxFJxB0n8nG8um9bv2icvnGFKEgLfURUkF82Lx7yQ5eA07UIVC75ugcgu+NRRYFm3Fgrk9h9hfEUhCnU3Trs6ub/6W6nkanzCX71gFnX8oFlc1wLyx3AC+Bws5nnYfNpnChuC/iCneAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724416393; c=relaxed/simple;
-	bh=KaWzfTx7aivUj5r4qnX69PVpWi6RJY06+4V84ASbd40=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nyRyjJUT4UjOB/V1/W+Cu1/wvsEGzKZLMypeYhX8ZcB8Mguy0mSAidTkUkeaLnN9IO2iggpweUGkqdf0t+BQfDIHxmUWIv7p5HGuxVTT/s6eOcEk5ymV/kFp228esy5nG1GFom53V5LmPeMsIt5dMJToho2w4rUcDKr5/+Lc6n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=JDzLukDl; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5beccb39961so290413a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:33:11 -0700 (PDT)
+	s=arc-20240116; t=1724416402; c=relaxed/simple;
+	bh=/Ukm4fm7znP/Ta7B6ApX6f4A6aUn1RWroLgpHGfuj58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F8Dvx1Zqv43Jyh5fQqnqgsYl14fVGJx0rsTL7DcuHYaUw9xtxYhgDltZOIJttDW4l5S4ndp7mtNcF7RE8sYeMTF9FE5bBggDV7DnM+GXsLI1HQC8eLNywgU39vX0iNqw3MDwP7mKnhiZb9twJMRhmM1HPYdRIYSUD3kvpEnFVcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKBxorso; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so275525166b.1;
+        Fri, 23 Aug 2024 05:33:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724416390; x=1725021190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ze74uMNv/Wj8RDboLKvxC9QND1isMlgj04bWbL5LCXI=;
-        b=JDzLukDlW9RM9kTleyicm5EbXzEmeIKaJUCbmqWtfAWh52qDNjDtmIZqDZr4ufdIIj
-         /LxX/7Y0eVgzwXrcKJfgLLOM9KN3EwecZICaU4yUwTLlgbIkbGHW4tuXZUMpLJUPAL4/
-         tUzo2L5yWYQY3F1L2K3QRAEGngv4Fkuxo9MKEbX0fZq2caNiR46j6ZoIPzxc3sHKs8Li
-         p7IQRCioQHUd7EcImJaM63GDGZgphYFabZCsw5R2w8+3y6Dq3AHtqlH7RcC85od5gEXt
-         tRbPVOHhkrP5pK8VUM8cMWeX+0Ro9IECuzk/wILfhoWOtP6Gq/QuZnl7y09uxwpT1LDD
-         U+Mw==
+        d=gmail.com; s=20230601; t=1724416399; x=1725021199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4kZ4U6DAAC5ZTrsCyacBjxvIViMUSw/QAxySbFMAfbA=;
+        b=YKBxorsoiujLTAgbFJeNILmP7oiA/MQyg5HcOBvAUUCLyxPdmSOcKuvfevz6pck4I+
+         i4wGMXEdA8J5y3XH2lTd4BZ/3MPUgDZT3t/h9zLmKMGCgsZmN+2T1AKn1U2zqBrizfZw
+         L5mbFpnIXp6qZtvcMB9fZ+xDHsedW3nqGzMfCUAiXkYNkQmZs+Imts2YM9J/aQ0Aw9H0
+         tn/8OaKN00Z6B0E+IHSNr2a09wtNIrOd39j1V8NKXuBmRiBca44PCghHy2SZubX2WVVY
+         WQhpKuyeWel67mHKoC5GAg0RBqzUe9mVoOIA4jXssU3x0pz0rrKfbu/Mt71AUodKr+lO
+         B6bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724416390; x=1725021190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ze74uMNv/Wj8RDboLKvxC9QND1isMlgj04bWbL5LCXI=;
-        b=Lp/eyYEXBCSdZm0kRN1vi5/4oB2P/oGzw1e71olvTvz3j+ahpH7/xWQzFkDTCDyU71
-         tz088UboM5mRJRK7Yfmjmi0RmQdwvYnFx9KnryPABc7rVEcNwq4LLruDhlbuir/OykuK
-         uePvsGalSPlBpwCUfzO6WS16HsrAURtttO8Qo2Sc2riBEZl+5bUBOfDUK7tZ5fZbdLzq
-         c1yHUgYXy87ABlSac8OgzBC//UXfBxILozG58y3pKXv4fq0J3wrIwF16o37761QWPsz4
-         q1+IwMGusymH/bVBxs+n4U3ioXHafBhbyRtd93jiSaH6vqkbH2eHPcA4wJaW9VFruLky
-         zV1w==
-X-Gm-Message-State: AOJu0YxAsfc/zFHmJTIn6aCykk9VFTeykQcJu49SmdCYVRm72wOWZqJr
-	OrvaHhu/Rii35KS4EKJ4W+165jejEn/7Oe5dbKTP32tptN+v02Eu6ji3jgSVLJg=
-X-Google-Smtp-Source: AGHT+IFi8C2ckvVTPaFMb3zoPvCuBmWultnoZJdb41ih83dnKe7kJzFBdBe3Ht+YJJpk2SuhYxJOug==
-X-Received: by 2002:a17:906:c105:b0:a86:a4cf:a197 with SMTP id a640c23a62f3a-a86a54a8e30mr87749766b.5.1724416390033;
-        Fri, 23 Aug 2024 05:33:10 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f437bsm252713466b.197.2024.08.23.05.33.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:33:09 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: kees@kernel.org,
-	gustavoars@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	mcgrof@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] params: Annotate struct module_param_attrs with __counted_by()
-Date: Fri, 23 Aug 2024 14:33:00 +0200
-Message-ID: <20240823123300.37574-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724416399; x=1725021199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4kZ4U6DAAC5ZTrsCyacBjxvIViMUSw/QAxySbFMAfbA=;
+        b=qMJdgX3kGjdu80LNLmlwJE8QECT/RwBLrzvUfqfu4Cpxb9i9pstzoYpLAckzgSNlmy
+         QqGzBHW34o6x/+sod55HfJQ9SVbT0vhffa2h4U+62WleRuzqrbI1sFnftvaMTxvyNqtq
+         donXF8mZVJBrlYxPCs+mXFw4zXdPwi9QqrUEwNmQTbvrKgnLUsbHsuB6tTg7KDVupBwG
+         OztNnzQ3RNs7m9ykI5IvX80/7l+MCgN38UUbqN5vDkKevy0b8IzoaejPXmR7XCoRmYaD
+         SXTZWTyqQE9A+zT5bZjsbiYVj7iK6yycpm1fnIafsC2O+xHS/4fWEeFh5QWtjlA1GpbX
+         rI1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVEyT58mmh8SHvJyewmwIG6ijg2pR/dm9HJMfIdPsoybmMp/9VTATXTgjIQ//Af7aCmzD02lb+4d8b1Mzk=@vger.kernel.org, AJvYcCX5fVKfvQshs+r3pY3gaIdJZg8DX9jIK5tgrNFTV2wZdkTgYoUr0Ik+ex1E/B88lFEASjb7yZ2CuiH1yeR3TxUzu8MmKmlP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAW9lloU6OYe7NLkkzzmBrIXS1rfJd66FbMKOglBqc7WiArMsh
+	32e2oYOkVDp6LTlO/zNaUfx7sTSR4Vv0er+4a406aa6A8Txid9FbLF8liQVW/VwhR+TRjMGkUs9
+	iPNZInhjG1wVLeJY1wAI+8po4c/U=
+X-Google-Smtp-Source: AGHT+IGlQ5kyAhs/JlrLdhyKzBWhsT9Wcv37IYTrMREOj30x1g61xzJENwkJO1BiIan9knqxXqgVO3ICfBLJ3CIOs3E=
+X-Received: by 2002:a17:907:7e9a:b0:a86:a4b1:d2c0 with SMTP id
+ a640c23a62f3a-a86a54b8ce4mr193002566b.53.1724416398473; Fri, 23 Aug 2024
+ 05:33:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240822131542.785546-1-mjguzik@gmail.com> <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+In-Reply-To: <CAHk-=wj-UanKTT-NZKLVjK3mgQsC0Ptv8mK8AM7LfZhj2dVCUA@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 23 Aug 2024 14:33:05 +0200
+Message-ID: <CAGudoHEjjuGOwf=KkZjNUTPXSr6E8w8Dvz6=_CiKVHsUOY8KeA@mail.gmail.com>
+Subject: Re: [RESEND PATCH] cred: separate the refcount from frequently read fields
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the __counted_by compiler attribute to the flexible array member
-attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Fri, Aug 23, 2024 at 2:06=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 22 Aug 2024 at 21:15, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > The refcount shares the cacheline with uid, gid and other frequently
+> > read fields.
+>
+> So moving the refcount around looks sensible, but I don't see why you
+> moved 'non_rcu' away from the rcu head union.
+>
+> Isn't 'non_rcu' accessed exactly when the refcount is accessed too? So
+> putting it in the same cacheline with ->usage would seem to make
+> sense, and you literally moved the RCU head there.
+>
+> Why not move it as a union, and keep the non-rcu bit with the RCU head?
+>
+> Yes, it is rarely actually written to and as such can be "mostly
+> read-only", but since it is both read and written next to refcounts,
+> why do that?
+>
+> Did I miss some common use?
+>
 
-Increment num before adding a new param_attribute to the attrs array and
-adjust the array index accordingly. Increment num immediately after the
-first reallocation such that krealloc() for the NULL terminator only
-needs to add 1 (instead of 2) to mk->mp->num.
+It gets looked at every time you grab a ref.
 
-Use struct_size() instead of manually calculating the size for the
-reallocation.
+The layout with the change is this:
+        /* --- cacheline 1 boundary (64 bytes) --- */
+        kuid_t                     uid
+__attribute__((__aligned__(64))); /*    64     4 */
+        kgid_t                     gid;                  /*    68     4 */
+        kuid_t                     suid;                 /*    72     4 */
+        kgid_t                     sgid;                 /*    76     4 */
+        kuid_t                     euid;                 /*    80     4 */
+        kgid_t                     egid;                 /*    84     4 */
+        kuid_t                     fsuid;                /*    88     4 */
+        kgid_t                     fsgid;                /*    92     4 */
+        unsigned int               securebits;           /*    96     4 */
+        bool                       non_rcu;              /*   100     1 */
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/params.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+        /* XXX 3 bytes hole, try to pack */
 
-diff --git a/kernel/params.c b/kernel/params.c
-index 2e447f8ae183..160b66dbc0b0 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -551,7 +551,7 @@ struct module_param_attrs
- {
- 	unsigned int num;
- 	struct attribute_group grp;
--	struct param_attribute attrs[];
-+	struct param_attribute attrs[] __counted_by(num);
- };
- 
- #ifdef CONFIG_SYSFS
-@@ -651,35 +651,33 @@ static __modinit int add_sysfs_param(struct module_kobject *mk,
- 	}
- 
- 	/* Enlarge allocations. */
--	new_mp = krealloc(mk->mp,
--			  sizeof(*mk->mp) +
--			  sizeof(mk->mp->attrs[0]) * (mk->mp->num + 1),
-+	new_mp = krealloc(mk->mp, struct_size(mk->mp, attrs, mk->mp->num + 1),
- 			  GFP_KERNEL);
- 	if (!new_mp)
- 		return -ENOMEM;
- 	mk->mp = new_mp;
-+	mk->mp->num++;
- 
- 	/* Extra pointer for NULL terminator */
- 	new_attrs = krealloc(mk->mp->grp.attrs,
--			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 2),
-+			     sizeof(mk->mp->grp.attrs[0]) * (mk->mp->num + 1),
- 			     GFP_KERNEL);
- 	if (!new_attrs)
- 		return -ENOMEM;
- 	mk->mp->grp.attrs = new_attrs;
- 
- 	/* Tack new one on the end. */
--	memset(&mk->mp->attrs[mk->mp->num], 0, sizeof(mk->mp->attrs[0]));
--	sysfs_attr_init(&mk->mp->attrs[mk->mp->num].mattr.attr);
--	mk->mp->attrs[mk->mp->num].param = kp;
--	mk->mp->attrs[mk->mp->num].mattr.show = param_attr_show;
-+	memset(&mk->mp->attrs[mk->mp->num - 1], 0, sizeof(mk->mp->attrs[0]));
-+	sysfs_attr_init(&mk->mp->attrs[mk->mp->num - 1].mattr.attr);
-+	mk->mp->attrs[mk->mp->num - 1].param = kp;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.show = param_attr_show;
- 	/* Do not allow runtime DAC changes to make param writable. */
- 	if ((kp->perm & (S_IWUSR | S_IWGRP | S_IWOTH)) != 0)
--		mk->mp->attrs[mk->mp->num].mattr.store = param_attr_store;
-+		mk->mp->attrs[mk->mp->num - 1].mattr.store = param_attr_store;
- 	else
--		mk->mp->attrs[mk->mp->num].mattr.store = NULL;
--	mk->mp->attrs[mk->mp->num].mattr.attr.name = (char *)name;
--	mk->mp->attrs[mk->mp->num].mattr.attr.mode = kp->perm;
--	mk->mp->num++;
-+		mk->mp->attrs[mk->mp->num - 1].mattr.store = NULL;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.attr.name = (char *)name;
-+	mk->mp->attrs[mk->mp->num - 1].mattr.attr.mode = kp->perm;
- 
- 	/* Fix up all the pointers, since krealloc can move us */
- 	for (i = 0; i < mk->mp->num; i++)
--- 
-2.46.0
+        kernel_cap_t               cap_inheritable;      /*   104     8 */
+        kernel_cap_t               cap_permitted;        /*   112     8 */
+        kernel_cap_t               cap_effective;        /*   120     8 */
+        /* --- cacheline 2 boundary (128 bytes) --- */
 
+Thus consumers which grab the ref and then look at the most commonly
+used fields get the non_rcu + rest combo "for free".
+
+consumers which already had a ref don't suffer any extra misses
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
