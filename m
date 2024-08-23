@@ -1,396 +1,114 @@
-Return-Path: <linux-kernel+bounces-298638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD40795C9B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:53:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7790395C94F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476301F2597A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DA0286003
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202EF18859A;
-	Fri, 23 Aug 2024 09:51:44 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DCC185B69;
-	Fri, 23 Aug 2024 09:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1494C14C584;
+	Fri, 23 Aug 2024 09:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MIObJiob"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4E13A86C;
+	Fri, 23 Aug 2024 09:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406703; cv=none; b=S8iJc0WSGh8C79E6g7BtdwttfwAs2dr2F27MIfvZUXipb+za3q5v7y9W40/Y0LVw2Ko14HEGvCc25S6JfSvuJJKKxdLLJRhndYL+8zBuRoeHEGteCC5+o7zoafqqMuWfbLsp6y/BwZPyvyr36WebBnVsQsKxYe7+yH8jd3C3D8o=
+	t=1724405637; cv=none; b=BLt/OZllwYY1+gHA4ioD7DTXPK1dPGYF8e+wJuBQu1O1ZFaooIdE06dki7w3gYMmwW5pZ3U8bHnCJEiC/drhdcuo0dFoK7LjWvWkg0h9K630640GjGmz2pahwfE9ovL3g6hMWG2jGcAdts4yiHUuzObz9QdNVP0tOKccAK/qD98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406703; c=relaxed/simple;
-	bh=fVOcDv9lR6Rld+W4kBGuXX4gQmL7Lwh7WQPMg42QENE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sOIH0SGRFOtvWUeoLMYqsS/5+bq3F4b2dVzjw5vavQIjatGyU1yB2kGjM54Fl6j8QOEAGKnGHnwlbcmWNatk5sEH2uOJIKJrI2gktRhXovsLyCVsbloBuWYW9KERyWn7hee+s2yvkSuCaM6PORBllukEV7I9TXCsv8y+DMN38KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.185])
-	by gateway (Coremail) with SMTP id _____8Dxi+qqW8hmIkodAA--.62615S3;
-	Fri, 23 Aug 2024 17:51:38 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.185])
-	by front1 (Coremail) with SMTP id qMiowMCxC2ekW8hm2SsfAA--.39816S7;
-	Fri, 23 Aug 2024 17:51:37 +0800 (CST)
-From: Xianglai Li <lixianglai@loongson.cn>
-To: linux-kernel@vger.kernel.org
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xianglai li <lixianglai@loongson.cn>
-Subject: [[PATCH V2 05/10] LoongArch: KVM: Add EXTIOI device support
-Date: Fri, 23 Aug 2024 17:33:59 +0800
-Message-Id: <20240823093404.204450-6-lixianglai@loongson.cn>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240823093404.204450-1-lixianglai@loongson.cn>
-References: <20240823093404.204450-1-lixianglai@loongson.cn>
+	s=arc-20240116; t=1724405637; c=relaxed/simple;
+	bh=94Oj+6Hrgb9H/+EtnwJQvyp/Aoq0Ek+bMHAQYtZ3rNs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YpcKVSAODsysnrIHPnoairFru4PH57Br7l5HcH4yMJRf1vZWI8+YlU30rhg1gMdZrCyFuP4+/YAIcb0QaC9sreBokyDujau55IAUMx5d+QUSrsBhEnr2vwzhz0uejvDwMc8YjVn/BbC9c8X0L4lptZO9aooX+Rp4o31l1HslJWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MIObJiob; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=VSF0ofpqVbXipZjEn2ptobw3B3A2X9stUgfiIscvRIA=; b=MIObJiobwizHAH4f2xl+A2u+a8
+	J+AB8MybckpNLriEASHgl19CpzbLeJDJ/sNbbvxT0f7AxAZvto7rgfG6XMZFIiT8X6qm3hDO+1pHx
+	0gX1jcWYT6RmjkGqS6ELqqmJqQ99JkuDes2StMr/E791bFH86B4SIwzDl+lmhTFYzZx9PrKRo8XYc
+	wgVJo/+5bWQHbKz4WgdQJ+A8RTXU75QuTFFWiBC9HLKgJw0oP3aD06ecgmQaFEODEgk44lCscrXaq
+	OP0cD1euUqu1GrsgnFr/bhGtFgV5L4mnmUzDKGwZ3x1guNrMyx1XhEGvKMP5hZ1MWsxbE+234zYcD
+	C7D95/Lg==;
+Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1shQg5-0003r5-2j; Fri, 23 Aug 2024 11:33:53 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
+ tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
+ tim.chen@rock-chips.com, elaine.zhang@rock-chips.com,
+ Ye Zhang <ye.zhang@rock-chips.com>
+Subject: Re: [PATCH v2] gpio: rockchip: resolve overflow issues
+Date: Fri, 23 Aug 2024 11:34:34 +0200
+Message-ID: <2735393.uZKlY2gecq@diego>
+In-Reply-To: <20240823034314.62305-4-ye.zhang@rock-chips.com>
+References:
+ <20240823034314.62305-1-ye.zhang@rock-chips.com>
+ <20240823034314.62305-4-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxC2ekW8hm2SsfAA--.39816S7
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Added device model for EXTIOI interrupt controller,
-implemented basic create destroy interface,
-and registered device model to kvm device table.
+Am Freitag, 23. August 2024, 05:43:06 CEST schrieb Ye Zhang:
+> Prevent overflow issues when performing debounce-related calculations.
 
-Signed-off-by: Tianrui Zhao <zhaotianrui@loongson.cn>
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
----
-Cc: Bibo Mao <maobibo@loongson.cn> 
-Cc: Huacai Chen <chenhuacai@kernel.org> 
-Cc: kvm@vger.kernel.org 
-Cc: loongarch@lists.linux.dev 
-Cc: Paolo Bonzini <pbonzini@redhat.com> 
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn> 
-Cc: WANG Xuerui <kernel@xen0n.name> 
-Cc: Xianglai li <lixianglai@loongson.cn> 
+Please add some more explanation here.
+I.e. something about previous max_debounce calculation does overflow
+the type of max_debounce
 
- arch/loongarch/include/asm/kvm_extioi.h |  93 +++++++++++++++++
- arch/loongarch/include/asm/kvm_host.h   |   2 +
- arch/loongarch/kvm/Makefile             |   1 +
- arch/loongarch/kvm/intc/extioi.c        | 130 ++++++++++++++++++++++++
- arch/loongarch/kvm/main.c               |   6 ++
- include/uapi/linux/kvm.h                |   2 +
- 6 files changed, 234 insertions(+)
- create mode 100644 arch/loongarch/include/asm/kvm_extioi.h
- create mode 100644 arch/loongarch/kvm/intc/extioi.c
+Thanks
+Heiko
 
-diff --git a/arch/loongarch/include/asm/kvm_extioi.h b/arch/loongarch/include/asm/kvm_extioi.h
-new file mode 100644
-index 000000000000..d624b4aab73a
---- /dev/null
-+++ b/arch/loongarch/include/asm/kvm_extioi.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#ifndef LOONGARCH_EXTIOI_H
-+#define LOONGARCH_EXTIOI_H
-+
-+#include <kvm/iodev.h>
-+
-+#define EXTIOI_IRQS			256
-+#define EXTIOI_ROUTE_MAX_VCPUS		256
-+#define EXTIOI_IRQS_U8_NUMS		(EXTIOI_IRQS / 8)
-+#define EXTIOI_IRQS_U16_NUMS		(EXTIOI_IRQS_U8_NUMS / 2)
-+#define EXTIOI_IRQS_U32_NUMS		(EXTIOI_IRQS_U8_NUMS / 4)
-+#define EXTIOI_IRQS_U64_NUMS		(EXTIOI_IRQS_U8_NUMS / 8)
-+/* map to ipnum per 32 irqs */
-+#define EXTIOI_IRQS_NODETYPE_COUNT	16
-+
-+#define EXTIOI_BASE			0x1400
-+#define EXTIOI_SIZE			0x900
-+
-+#define EXTIOI_VIRT_BASE		(0x40000000)
-+#define EXTIOI_VIRT_SIZE		(0x1000)
-+
-+#define LS3A_IP_NUM			8
-+
-+struct loongarch_extioi {
-+	spinlock_t lock;
-+	struct kvm *kvm;
-+	struct kvm_io_device device;
-+	struct kvm_io_device device_extern;
-+	uint32_t num_cpu;
-+	uint32_t features;
-+	uint32_t status;
-+
-+	/* hardware state */
-+	union nodetype {
-+		u64 reg_u64[EXTIOI_IRQS_NODETYPE_COUNT / 4];
-+		u32 reg_u32[EXTIOI_IRQS_NODETYPE_COUNT / 2];
-+		u16 reg_u16[EXTIOI_IRQS_NODETYPE_COUNT];
-+		u8 reg_u8[EXTIOI_IRQS_NODETYPE_COUNT * 2];
-+	} nodetype;
-+
-+	/* one bit shows the state of one irq */
-+	union bounce {
-+		u64 reg_u64[EXTIOI_IRQS_U64_NUMS];
-+		u32 reg_u32[EXTIOI_IRQS_U32_NUMS];
-+		u16 reg_u16[EXTIOI_IRQS_U16_NUMS];
-+		u8 reg_u8[EXTIOI_IRQS_U8_NUMS];
-+	} bounce;
-+
-+	union isr {
-+		u64 reg_u64[EXTIOI_IRQS_U64_NUMS];
-+		u32 reg_u32[EXTIOI_IRQS_U32_NUMS];
-+		u16 reg_u16[EXTIOI_IRQS_U16_NUMS];
-+		u8 reg_u8[EXTIOI_IRQS_U8_NUMS];
-+	} isr;
-+	union coreisr {
-+		u64 reg_u64[EXTIOI_ROUTE_MAX_VCPUS][EXTIOI_IRQS_U64_NUMS];
-+		u32 reg_u32[EXTIOI_ROUTE_MAX_VCPUS][EXTIOI_IRQS_U32_NUMS];
-+		u16 reg_u16[EXTIOI_ROUTE_MAX_VCPUS][EXTIOI_IRQS_U16_NUMS];
-+		u8 reg_u8[EXTIOI_ROUTE_MAX_VCPUS][EXTIOI_IRQS_U8_NUMS];
-+	} coreisr;
-+	union enable {
-+		u64 reg_u64[EXTIOI_IRQS_U64_NUMS];
-+		u32 reg_u32[EXTIOI_IRQS_U32_NUMS];
-+		u16 reg_u16[EXTIOI_IRQS_U16_NUMS];
-+		u8 reg_u8[EXTIOI_IRQS_U8_NUMS];
-+	} enable;
-+
-+	/* use one byte to config ipmap for 32 irqs at once */
-+	union ipmap {
-+		u64 reg_u64;
-+		u32 reg_u32[EXTIOI_IRQS_U32_NUMS / 4];
-+		u16 reg_u16[EXTIOI_IRQS_U16_NUMS / 4];
-+		u8 reg_u8[EXTIOI_IRQS_U8_NUMS / 4];
-+	} ipmap;
-+	/* use one byte to config coremap for one irq */
-+	union coremap {
-+		u64 reg_u64[EXTIOI_IRQS / 8];
-+		u32 reg_u32[EXTIOI_IRQS / 4];
-+		u16 reg_u16[EXTIOI_IRQS / 2];
-+		u8 reg_u8[EXTIOI_IRQS];
-+	} coremap;
-+
-+	DECLARE_BITMAP(sw_coreisr[EXTIOI_ROUTE_MAX_VCPUS][LS3A_IP_NUM], EXTIOI_IRQS);
-+	uint8_t  sw_coremap[EXTIOI_IRQS];
-+};
-+
-+void extioi_set_irq(struct loongarch_extioi *s, int irq, int level);
-+int kvm_loongarch_register_extioi_device(void);
-+#endif /* LOONGARCH_EXTIOI_H */
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index 7c89e26c23c3..fa2b2617e54d 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -20,6 +20,7 @@
- #include <asm/kvm_mmu.h>
- #include <asm/loongarch.h>
- #include <asm/kvm_ipi.h>
-+#include <asm/kvm_extioi.h>
- 
- /* Loongarch KVM register ids */
- #define KVM_GET_IOC_CSR_IDX(id)		((id & KVM_CSR_IDX_MASK) >> LOONGARCH_REG_SHIFT)
-@@ -114,6 +115,7 @@ struct kvm_arch {
- 	s64 time_offset;
- 	struct kvm_context __percpu *vmcs;
- 	struct loongarch_ipi *ipi;
-+	struct loongarch_extioi *extioi;
- };
- 
- #define CSR_MAX_NUMS		0x800
-diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
-index 36c3009fe89c..a481952e3855 100644
---- a/arch/loongarch/kvm/Makefile
-+++ b/arch/loongarch/kvm/Makefile
-@@ -19,5 +19,6 @@ kvm-y += tlb.o
- kvm-y += vcpu.o
- kvm-y += vm.o
- kvm-y += intc/ipi.o
-+kvm-y += intc/extioi.o
- 
- CFLAGS_exit.o	+= $(call cc-option,-Wno-override-init,)
-diff --git a/arch/loongarch/kvm/intc/extioi.c b/arch/loongarch/kvm/intc/extioi.c
-new file mode 100644
-index 000000000000..b8c796c41a00
---- /dev/null
-+++ b/arch/loongarch/kvm/intc/extioi.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#include <asm/kvm_extioi.h>
-+#include <asm/kvm_vcpu.h>
-+#include <linux/count_zeros.h>
-+
-+static int kvm_extioi_write(struct kvm_vcpu *vcpu,
-+			struct kvm_io_device *dev,
-+			gpa_t addr, int len, const void *val)
-+{
-+	return 0;
-+}
-+
-+static int kvm_extioi_read(struct kvm_vcpu *vcpu,
-+			struct kvm_io_device *dev,
-+			gpa_t addr, int len, void *val)
-+{
-+	return 0;
-+}
-+
-+static const struct kvm_io_device_ops kvm_extioi_ops = {
-+	.read	= kvm_extioi_read,
-+	.write	= kvm_extioi_write,
-+};
-+
-+static int kvm_extioi_virt_read(struct kvm_vcpu *vcpu,
-+				struct kvm_io_device *dev,
-+				gpa_t addr, int len, void *val)
-+{
-+	return 0;
-+}
-+
-+static int kvm_extioi_virt_write(struct kvm_vcpu *vcpu,
-+				struct kvm_io_device *dev,
-+				gpa_t addr, int len, const void *val)
-+{
-+	return 0;
-+}
-+
-+static const struct kvm_io_device_ops kvm_extioi_virt_ops = {
-+	.read	= kvm_extioi_virt_read,
-+	.write	= kvm_extioi_virt_write,
-+};
-+
-+static int kvm_extioi_get_attr(struct kvm_device *dev,
-+				struct kvm_device_attr *attr)
-+{
-+	return 0;
-+}
-+
-+static int kvm_extioi_set_attr(struct kvm_device *dev,
-+				struct kvm_device_attr *attr)
-+{
-+	return 0;
-+}
-+
-+static void kvm_extioi_destroy(struct kvm_device *dev)
-+{
-+	struct kvm *kvm;
-+	struct loongarch_extioi *extioi;
-+
-+	if (!dev || !dev->kvm || !dev->kvm->arch.extioi)
-+		return;
-+	kvm = dev->kvm;
-+	extioi = kvm->arch.extioi;
-+	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &extioi->device);
-+	kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &extioi->device_extern);
-+	kfree(extioi);
-+}
-+
-+static int kvm_extioi_create(struct kvm_device *dev, u32 type)
-+{
-+	int ret;
-+	struct loongarch_extioi *s;
-+	struct kvm_io_device *device, *device1;
-+	struct kvm *kvm = dev->kvm;
-+
-+	/* extioi has been created */
-+	if (kvm->arch.extioi)
-+		return -EINVAL;
-+
-+	s = kzalloc(sizeof(struct loongarch_extioi), GFP_KERNEL);
-+	if (!s)
-+		return -ENOMEM;
-+	spin_lock_init(&s->lock);
-+	s->kvm = kvm;
-+
-+	/*
-+	 * Initialize IOCSR device
-+	 */
-+	device = &s->device;
-+	kvm_iodevice_init(device, &kvm_extioi_ops);
-+	mutex_lock(&kvm->slots_lock);
-+	ret = kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS,
-+			EXTIOI_BASE, EXTIOI_SIZE, device);
-+	mutex_unlock(&kvm->slots_lock);
-+	if (ret < 0) {
-+		kfree(s);
-+		return ret;
-+	}
-+
-+	device1 = &s->device_extern;
-+	kvm_iodevice_init(device1, &kvm_extioi_virt_ops);
-+	ret = kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS,
-+			EXTIOI_VIRT_BASE, EXTIOI_VIRT_SIZE, device1);
-+	if (ret < 0) {
-+		kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device);
-+		kfree(s);
-+		return ret;
-+	}
-+	kvm->arch.extioi = s;
-+	return 0;
-+}
-+
-+static struct kvm_device_ops kvm_extioi_dev_ops = {
-+	.name = "kvm-loongarch-extioi",
-+	.create = kvm_extioi_create,
-+	.destroy = kvm_extioi_destroy,
-+	.set_attr = kvm_extioi_set_attr,
-+	.get_attr = kvm_extioi_get_attr,
-+};
-+
-+int kvm_loongarch_register_extioi_device(void)
-+{
-+	return kvm_register_device_ops(&kvm_extioi_dev_ops,
-+					KVM_DEV_TYPE_LA_EXTIOI);
-+}
-diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
-index a1cec0b1fd7f..0fae4f648554 100644
---- a/arch/loongarch/kvm/main.c
-+++ b/arch/loongarch/kvm/main.c
-@@ -9,6 +9,7 @@
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/kvm_csr.h>
-+#include <asm/kvm_extioi.h>
- #include "trace.h"
- 
- unsigned long vpid_mask;
-@@ -370,6 +371,11 @@ static int kvm_loongarch_env_init(void)
- 
- 	/* Register loongarch ipi interrupt controller interface. */
- 	ret = kvm_loongarch_register_ipi_device();
-+	if (ret)
-+		return ret;
-+
-+	/* Register loongarch extioi interrupt controller interface. */
-+	ret = kvm_loongarch_register_extioi_device();
- 	return ret;
- }
- 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 3c8b058ec522..cdb39aa01e95 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1160,6 +1160,8 @@ enum kvm_device_type {
- #define KVM_DEV_TYPE_RISCV_AIA		KVM_DEV_TYPE_RISCV_AIA
- 	KVM_DEV_TYPE_LA_IPI,
- #define KVM_DEV_TYPE_LA_IPI		KVM_DEV_TYPE_LA_IPI
-+	KVM_DEV_TYPE_LA_EXTIOI,
-+#define KVM_DEV_TYPE_LA_EXTIOI		KVM_DEV_TYPE_LA_EXTIOI
- 
- 	KVM_DEV_TYPE_MAX,
- 
--- 
-2.39.1
+> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
+> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+> ---
+>  drivers/gpio/gpio-rockchip.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index 5f60162baaeb..bf22b103b6a2 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -209,11 +209,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
+>  		freq = clk_get_rate(bank->db_clk);
+>  		if (!freq)
+>  			return -EINVAL;
+> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
+> +		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
+> +		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
+>  		if (debounce > max_debounce)
+>  			return -EINVAL;
+>  
+> -		div = debounce * freq;
+> +		div = (u64)debounce * freq;
+>  		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
+>  	} else {
+>  		div_debounce_support = false;
+> 
+
+
+
 
 
