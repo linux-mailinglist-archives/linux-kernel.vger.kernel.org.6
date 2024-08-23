@@ -1,108 +1,410 @@
-Return-Path: <linux-kernel+bounces-298105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD5C95C280
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9FF95C283
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F551F23F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A2F1C21D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FD1125AC;
-	Fri, 23 Aug 2024 00:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2B712B6C;
+	Fri, 23 Aug 2024 00:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbScTtEt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wantyapps.xyz header.i=@wantyapps.xyz header.b="sjKEkmQm"
+Received: from mail.wantyapps.xyz (mail.wantyapps.xyz [66.135.5.160])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75844C148;
-	Fri, 23 Aug 2024 00:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE4CC148;
+	Fri, 23 Aug 2024 00:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.135.5.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724373359; cv=none; b=mALAnSH62G371VdQa2aSMorWZnMDwVUokF9fNH8yQ8lYmFOWsIzGd2OzFeKxM2ZDxxzIyxmitWd+m3JT+8qHLASNxUh0EHdjB0wI3XIK9gZSWpGs2DVyY+f34QeFn+JyBZrO2PvZGQY4sEp4GfheP5i61qNIIHmNq1FQjDBkErs=
+	t=1724373519; cv=none; b=aYW6FD7OhBTgTgg5za0jyFQSTy3tdTJJvYdjy0fcAmLhWfKdAheCWDBXO1fBLuupeFRkSxzLjoR/XCzL4GoXN5QvO0lOiLTaJjg1ruHTjkLLlUtMVmxVs1hmA09Ge+D1Hrqpv9WJ4egLDtHMVdXztFE30OxyZZlun+sUEuVr+uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724373359; c=relaxed/simple;
-	bh=34CmkLcFRdcnkwr6YeKCo6bJ1EHYGUz+YRnm7Cd3Z3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2PEEhLD0hh9nUq1MTVWWTenHQRP2KmOgY1fobt9UXQI8T2imli1R6HYtoc9GeBlZutbbK777TTHHIyAlb9+qjuyB+2CZHUC5x/sjLhIh9S0ljaQH4jLEo1ijXWY7oSn4DIrvR7mrP7NaLZV3+L3ywMUWG1jRo7xUm570VqbuHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HbScTtEt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6405BC32782;
-	Fri, 23 Aug 2024 00:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724373359;
-	bh=34CmkLcFRdcnkwr6YeKCo6bJ1EHYGUz+YRnm7Cd3Z3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HbScTtEtW+3XIRz5a5aap2TFlTnkIt7ghdCQj//95o+Z+5uw7DPLug2Jd2sY8izkS
-	 lMrT9PdQkVhcFn0jS2DzEFLduHAMc4kYm6Q/tOvgc8+wGl5IBx8EuGx6xCXFTw6Vu/
-	 fieGIsC7ADX8wtIQQPu7WAL7E2NHBJOB3r2nF/m5gOoKkDnYXJkzvsNitmUpvb1Nam
-	 Ws+lkkQMztMpVzUegABv5nfZGDEyLWJYIO9BUVr/irdxoM72ykL4ogZuKTtkCdtUlN
-	 8qvWTWJs8AL6jEacmmhSnfb7iGzbkW1rcTxYr8yjVJ9+LMqWTDTIudezeiMEHHeHB7
-	 EWsuC/+cAcr+w==
-Date: Fri, 23 Aug 2024 02:35:54 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Stefan Eichenberger <eichest@gmail.com>, kernel@pengutronix.de, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com, 
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
- <Zsbi2xcxBGE7o9uE@eichest-laptop>
- <ZscNO2PKNlK3ru_7@pengutronix.de>
+	s=arc-20240116; t=1724373519; c=relaxed/simple;
+	bh=I+8tRpfyUrBe2V7U7HVsggUxN5K+Mw0VQASzGgsBNc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTjj+0uwLU8lX8ZrqXPMM+bPxABD/DsTEhD4oM8heJRX0mq86RjvgcLRyWvvTx5rhJgmOt0vkPBoyAUikqHE3qQpUh3Ey8uBNYexDjU9aSZJrdhZ8UgNQkPjk6qL2l4BYCDEn3hMvWMLxPMDdqA/2qtdJdqjsVftRQaHx5qpGyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=wantyapps.xyz; spf=pass smtp.mailfrom=wantyapps.xyz; dkim=pass (2048-bit key) header.d=wantyapps.xyz header.i=@wantyapps.xyz header.b=sjKEkmQm; arc=none smtp.client-ip=66.135.5.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=wantyapps.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wantyapps.xyz
+Received: from multivac.localdomain (unknown [147.235.206.10])
+	by mail.wantyapps.xyz (Postfix) with ESMTPSA id A9A6A7D13A;
+	Fri, 23 Aug 2024 00:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=wantyapps.xyz;
+	s=mail; t=1724373516;
+	bh=I+8tRpfyUrBe2V7U7HVsggUxN5K+Mw0VQASzGgsBNc8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sjKEkmQmfQXsPGQc/dwvpbh5ZtrcZatbW+xRAzRHsJs/relFRXxCh0XLgM/9T8/Qn
+	 l7VVhplcWU8JBnZ5V8Id08ZF5GkSR6gQNBIIu7OvGEeXPqrso1qEnhBcnG/lMsGJ7b
+	 f8e0jLvvFqWWSR8FpdTn6max92hRmCY/3JP0Le7mJPDg2ojBbmfoQ+qTGAncpz0Eyl
+	 5RqJ6AuQEHgMeooPgfhIzD3pK8oe3cRT6/ajB2gwh5QYNvkWDljKp8koGti57CtT1R
+	 SdN/vdB56CVFNDcGu4MVMmIEZuZAKcCZVfxXJ9n800merYo8XfMbxoH9sXm0x1axYC
+	 YJ00jrQkOu2Lw==
+From: me@wantyapps.xyz
+To: 
+Cc: me@wantyapps.xyz,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: bfusb: Fix multiple issues reported by checkpatch.pl
+Date: Fri, 23 Aug 2024 03:38:23 +0300
+Message-ID: <20240823003831.3568918-1-me@wantyapps.xyz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZscNO2PKNlK3ru_7@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Uri Arev <me@wantyapps.xyz>
 
-On Thu, Aug 22, 2024 at 12:04:43PM GMT, Oleksij Rempel wrote:
-> On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
-> > Hi Andi,
-> > 
-> > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> > > Hi Stefan,
-> > > 
-> > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> > > >  		goto rpm_disable;
-> > > >  	}
-> > > >  
-> > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > > > +
-> > > 
-> > > you might also want to add the multi-master boolean property in
-> > > the binding.
-> > 
-> > We discussed this internally and weren't sure when it was required
-> > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-> > bindings. Is it still required if it is part of the dt-schema?
-> > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-> 
-> The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
-> every thing not in this yaml
-> 
-> > If so, I will add it in the next version.
-> 
-> Yes, please.
+This fixes the following CHECKs and WARNINGs reported in bfusb.c.
 
-sorry for the confusion, please don't add it. I had a chat with
-Krzysztof and I will quote him: "this is a core property, coming
-with dtschema, so they dont need to update bindings".
+Reported by checkpatch.pl:
+-------
+bfusb.c
+-------
+CHECK: No space is necessary after a cast
++               urb = ((struct bfusb_data_scb *) skb->cb)->urb;
 
-He also sent a cleanup to remove the only binding using it.
+CHECK: No space is necessary after a cast
++               urb = ((struct bfusb_data_scb *) skb->cb)->urb;
 
-Thanks,
-Andi
+CHECK: No space is necessary after a cast
++       struct bfusb_data_scb *scb = (void *) skb->cb;
+
+CHECK: Alignment should match open parenthesis
++       usb_fill_bulk_urb(urb, data->udev, pipe, skb->data, skb->len,
++                       bfusb_tx_complete, skb);
+
+CHECK: braces {} should be used on all arms of this statement
++       if (err) {
+[...]
++       } else
+[...]
+
+CHECK: Unbalanced braces around else statement
++       } else
+
+CHECK: Alignment should match open parenthesis
++               while ((atomic_read(&data->pending_tx) < BFUSB_MAX_BULK_TX) &&
++                               (skb = skb_dequeue(&data->transmit_q))) {
+
+CHECK: No space is necessary after a cast
++       struct sk_buff *skb = (struct sk_buff *) urb->context;
+
+CHECK: No space is necessary after a cast
++       struct bfusb_data *data = (struct bfusb_data *) skb->dev;
+
+CHECK: Please don't use multiple blank lines
++
++
+
+CHECK: No space is necessary after a cast
++       skb->dev = (void *) data;
+
+CHECK: No space is necessary after a cast
++       scb = (struct bfusb_data_scb *) skb->cb;
+
+CHECK: Alignment should match open parenthesis
++       usb_fill_bulk_urb(urb, data->udev, pipe, skb->data, size,
++                       bfusb_rx_complete, skb);
+
+CHECK: No space is necessary after a cast
++                               struct hci_event_hdr *hdr = (struct hci_event_hdr *) buf;
+
+WARNING: Missing a blank line after declarations
++                               struct hci_event_hdr *hdr = (struct hci_event_hdr *) buf;
++                               pkt_len = HCI_EVENT_HDR_SIZE + hdr->plen;
+
+CHECK: No space is necessary after a cast
++                               struct hci_acl_hdr *hdr = (struct hci_acl_hdr *) buf;
+
+WARNING: Missing a blank line after declarations
++                               struct hci_acl_hdr *hdr = (struct hci_acl_hdr *) buf;
++                               pkt_len = HCI_ACL_HDR_SIZE + __le16_to_cpu(hdr->dlen);
+
+CHECK: No space is necessary after a cast
++                               struct hci_sco_hdr *hdr = (struct hci_sco_hdr *) buf;
+
+WARNING: Missing a blank line after declarations
++                               struct hci_sco_hdr *hdr = (struct hci_sco_hdr *) buf;
++                               pkt_len = HCI_SCO_HDR_SIZE + hdr->dlen;
+
+CHECK: No space is necessary after a cast
++       struct sk_buff *skb = (struct sk_buff *) urb->context;
+
+CHECK: No space is necessary after a cast
++       struct bfusb_data *data = (struct bfusb_data *) skb->dev;
+
+WARNING: braces {} are not necessary for single statement blocks
++               if (count < len) {
++                       bt_dev_err(data->hdev, "block extends over URB buffer ranges");
++               }
+
+CHECK: No space is necessary after a cast
++       nskb->dev = (void *) data;
+
+CHECK: Alignment should match open parenthesis
++       if (usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
++                               0, 1, 0, NULL, 0, USB_CTRL_SET_TIMEOUT) < 0) {
+
+CHECK: multiple assignments should be avoided
++       data->udev->toggle[0] = data->udev->toggle[1] = 0;
+
+CHECK: Alignment should match open parenthesis
++               err = usb_bulk_msg(data->udev, pipe, buf, size,
++                                       &len, BFUSB_BLOCK_TIMEOUT);
+
+CHECK: Unnecessary parentheses around 'len != size'
++               if (err || (len != size)) {
+
+CHECK: Alignment should match open parenthesis
++       err = usb_bulk_msg(data->udev, pipe, NULL, 0,
++                                       &len, BFUSB_BLOCK_TIMEOUT);
+
+CHECK: Alignment should match open parenthesis
++       err = usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
++                               0, 2, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
+
+CHECK: multiple assignments should be avoided
++       data->udev->toggle[0] = data->udev->toggle[1] = 0;
+
+CHECK: Alignment should match open parenthesis
++       usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
++                               0, 0, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
+
+Signed-off-by: Uri Arev <me@wantyapps.xyz>
+---
+ drivers/bluetooth/bfusb.c | 57 ++++++++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index cab93935cc7f..a41b746b63a8 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -84,7 +84,7 @@ static struct urb *bfusb_get_completed(struct bfusb_data *data)
+ 
+ 	skb = skb_dequeue(&data->completed_q);
+ 	if (skb) {
+-		urb = ((struct bfusb_data_scb *) skb->cb)->urb;
++		urb = ((struct bfusb_data_scb *)skb->cb)->urb;
+ 		kfree_skb(skb);
+ 	}
+ 
+@@ -99,7 +99,7 @@ static void bfusb_unlink_urbs(struct bfusb_data *data)
+ 	BT_DBG("bfusb %p", data);
+ 
+ 	while ((skb = skb_dequeue(&data->pending_q))) {
+-		urb = ((struct bfusb_data_scb *) skb->cb)->urb;
++		urb = ((struct bfusb_data_scb *)skb->cb)->urb;
+ 		usb_kill_urb(urb);
+ 		skb_queue_tail(&data->completed_q, skb);
+ 	}
+@@ -110,7 +110,7 @@ static void bfusb_unlink_urbs(struct bfusb_data *data)
+ 
+ static int bfusb_send_bulk(struct bfusb_data *data, struct sk_buff *skb)
+ {
+-	struct bfusb_data_scb *scb = (void *) skb->cb;
++	struct bfusb_data_scb *scb = (void *)skb->cb;
+ 	struct urb *urb = bfusb_get_completed(data);
+ 	int err, pipe;
+ 
+@@ -125,7 +125,7 @@ static int bfusb_send_bulk(struct bfusb_data *data, struct sk_buff *skb)
+ 	pipe = usb_sndbulkpipe(data->udev, data->bulk_out_ep);
+ 
+ 	usb_fill_bulk_urb(urb, data->udev, pipe, skb->data, skb->len,
+-			bfusb_tx_complete, skb);
++			  bfusb_tx_complete, skb);
+ 
+ 	scb->urb = urb;
+ 
+@@ -137,8 +137,9 @@ static int bfusb_send_bulk(struct bfusb_data *data, struct sk_buff *skb)
+ 			   urb, err);
+ 		skb_unlink(skb, &data->pending_q);
+ 		usb_free_urb(urb);
+-	} else
++	} else {
+ 		atomic_inc(&data->pending_tx);
++	}
+ 
+ 	return err;
+ }
+@@ -158,7 +159,7 @@ static void bfusb_tx_wakeup(struct bfusb_data *data)
+ 		clear_bit(BFUSB_TX_WAKEUP, &data->state);
+ 
+ 		while ((atomic_read(&data->pending_tx) < BFUSB_MAX_BULK_TX) &&
+-				(skb = skb_dequeue(&data->transmit_q))) {
++		       (skb = skb_dequeue(&data->transmit_q))) {
+ 			if (bfusb_send_bulk(data, skb) < 0) {
+ 				skb_queue_head(&data->transmit_q, skb);
+ 				break;
+@@ -172,8 +173,8 @@ static void bfusb_tx_wakeup(struct bfusb_data *data)
+ 
+ static void bfusb_tx_complete(struct urb *urb)
+ {
+-	struct sk_buff *skb = (struct sk_buff *) urb->context;
+-	struct bfusb_data *data = (struct bfusb_data *) skb->dev;
++	struct sk_buff *skb = (struct sk_buff *)urb->context;
++	struct bfusb_data *data = (struct bfusb_data *)skb->dev;
+ 
+ 	BT_DBG("bfusb %p urb %p skb %p len %d", data, urb, skb, skb->len);
+ 
+@@ -197,7 +198,6 @@ static void bfusb_tx_complete(struct urb *urb)
+ 	read_unlock(&data->lock);
+ }
+ 
+-
+ static int bfusb_rx_submit(struct bfusb_data *data, struct urb *urb)
+ {
+ 	struct bfusb_data_scb *scb;
+@@ -218,15 +218,15 @@ static int bfusb_rx_submit(struct bfusb_data *data, struct urb *urb)
+ 		return -ENOMEM;
+ 	}
+ 
+-	skb->dev = (void *) data;
++	skb->dev = (void *)data;
+ 
+-	scb = (struct bfusb_data_scb *) skb->cb;
++	scb = (struct bfusb_data_scb *)skb->cb;
+ 	scb->urb = urb;
+ 
+ 	pipe = usb_rcvbulkpipe(data->udev, data->bulk_in_ep);
+ 
+ 	usb_fill_bulk_urb(urb, data->udev, pipe, skb->data, size,
+-			bfusb_rx_complete, skb);
++			  bfusb_rx_complete, skb);
+ 
+ 	skb_queue_tail(&data->pending_q, skb);
+ 
+@@ -274,7 +274,7 @@ static inline int bfusb_recv_block(struct bfusb_data *data, int hdr, unsigned ch
+ 		switch (pkt_type) {
+ 		case HCI_EVENT_PKT:
+ 			if (len >= HCI_EVENT_HDR_SIZE) {
+-				struct hci_event_hdr *hdr = (struct hci_event_hdr *) buf;
++				struct hci_event_hdr *hdr = (struct hci_event_hdr *)buf;
+ 				pkt_len = HCI_EVENT_HDR_SIZE + hdr->plen;
+ 			} else {
+ 				bt_dev_err(data->hdev, "event block is too short");
+@@ -284,7 +284,7 @@ static inline int bfusb_recv_block(struct bfusb_data *data, int hdr, unsigned ch
+ 
+ 		case HCI_ACLDATA_PKT:
+ 			if (len >= HCI_ACL_HDR_SIZE) {
+-				struct hci_acl_hdr *hdr = (struct hci_acl_hdr *) buf;
++				struct hci_acl_hdr *hdr = (struct hci_acl_hdr *)buf;
+ 				pkt_len = HCI_ACL_HDR_SIZE + __le16_to_cpu(hdr->dlen);
+ 			} else {
+ 				bt_dev_err(data->hdev, "data block is too short");
+@@ -294,7 +294,7 @@ static inline int bfusb_recv_block(struct bfusb_data *data, int hdr, unsigned ch
+ 
+ 		case HCI_SCODATA_PKT:
+ 			if (len >= HCI_SCO_HDR_SIZE) {
+-				struct hci_sco_hdr *hdr = (struct hci_sco_hdr *) buf;
++				struct hci_sco_hdr *hdr = (struct hci_sco_hdr *)buf;
+ 				pkt_len = HCI_SCO_HDR_SIZE + hdr->dlen;
+ 			} else {
+ 				bt_dev_err(data->hdev, "audio block is too short");
+@@ -332,8 +332,8 @@ static inline int bfusb_recv_block(struct bfusb_data *data, int hdr, unsigned ch
+ 
+ static void bfusb_rx_complete(struct urb *urb)
+ {
+-	struct sk_buff *skb = (struct sk_buff *) urb->context;
+-	struct bfusb_data *data = (struct bfusb_data *) skb->dev;
++	struct sk_buff *skb = (struct sk_buff *)urb->context;
++	struct bfusb_data *data = (struct bfusb_data *)skb->dev;
+ 	unsigned char *buf = urb->transfer_buffer;
+ 	int count = urb->actual_length;
+ 	int err, hdr, len;
+@@ -365,9 +365,8 @@ static void bfusb_rx_complete(struct urb *urb)
+ 			buf   += 3;
+ 		}
+ 
+-		if (count < len) {
++		if (count < len)
+ 			bt_dev_err(data->hdev, "block extends over URB buffer ranges");
+-		}
+ 
+ 		if ((hdr & 0xe1) == 0xc1)
+ 			bfusb_recv_block(data, hdr, buf, len);
+@@ -480,7 +479,7 @@ static int bfusb_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 		return -ENOMEM;
+ 	}
+ 
+-	nskb->dev = (void *) data;
++	nskb->dev = (void *)data;
+ 
+ 	while (count) {
+ 		size = min_t(uint, count, BFUSB_MAX_BLOCK_SIZE);
+@@ -534,13 +533,14 @@ static int bfusb_load_firmware(struct bfusb_data *data,
+ 	pipe = usb_sndctrlpipe(data->udev, 0);
+ 
+ 	if (usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
+-				0, 1, 0, NULL, 0, USB_CTRL_SET_TIMEOUT) < 0) {
++			    0, 1, 0, NULL, 0, USB_CTRL_SET_TIMEOUT) < 0) {
+ 		BT_ERR("Can't change to loading configuration");
+ 		kfree(buf);
+ 		return -EBUSY;
+ 	}
+ 
+-	data->udev->toggle[0] = data->udev->toggle[1] = 0;
++	data->udev->toggle[0] = 0;
++	data->udev->toggle[1] = 0;
+ 
+ 	pipe = usb_sndbulkpipe(data->udev, data->bulk_out_ep);
+ 
+@@ -550,9 +550,9 @@ static int bfusb_load_firmware(struct bfusb_data *data,
+ 		memcpy(buf, firmware + sent, size);
+ 
+ 		err = usb_bulk_msg(data->udev, pipe, buf, size,
+-					&len, BFUSB_BLOCK_TIMEOUT);
++				   &len, BFUSB_BLOCK_TIMEOUT);
+ 
+-		if (err || (len != size)) {
++		if (err || len != size) {
+ 			BT_ERR("Error in firmware loading");
+ 			goto error;
+ 		}
+@@ -562,7 +562,7 @@ static int bfusb_load_firmware(struct bfusb_data *data,
+ 	}
+ 
+ 	err = usb_bulk_msg(data->udev, pipe, NULL, 0,
+-					&len, BFUSB_BLOCK_TIMEOUT);
++			   &len, BFUSB_BLOCK_TIMEOUT);
+ 	if (err < 0) {
+ 		BT_ERR("Error in null packet request");
+ 		goto error;
+@@ -571,13 +571,14 @@ static int bfusb_load_firmware(struct bfusb_data *data,
+ 	pipe = usb_sndctrlpipe(data->udev, 0);
+ 
+ 	err = usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
+-				0, 2, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
++			      0, 2, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
+ 	if (err < 0) {
+ 		BT_ERR("Can't change to running configuration");
+ 		goto error;
+ 	}
+ 
+-	data->udev->toggle[0] = data->udev->toggle[1] = 0;
++	data->udev->toggle[0] = 0;
++	data->udev->toggle[1] = 0;
+ 
+ 	BT_INFO("BlueFRITZ! USB device ready");
+ 
+@@ -590,7 +591,7 @@ static int bfusb_load_firmware(struct bfusb_data *data,
+ 	pipe = usb_sndctrlpipe(data->udev, 0);
+ 
+ 	usb_control_msg(data->udev, pipe, USB_REQ_SET_CONFIGURATION,
+-				0, 0, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
++			0, 0, 0, NULL, 0, USB_CTRL_SET_TIMEOUT);
+ 
+ 	return err;
+ }
+-- 
+2.46.0
+
 
