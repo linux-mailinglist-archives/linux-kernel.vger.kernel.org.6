@@ -1,156 +1,356 @@
-Return-Path: <linux-kernel+bounces-299107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C21195D034
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5135195D036
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 316B81C21CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:42:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 772921C2203A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9918858F;
-	Fri, 23 Aug 2024 14:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126D8188590;
+	Fri, 23 Aug 2024 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pb7Ej9Nq"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a0v0Mdl9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28271E4B2;
-	Fri, 23 Aug 2024 14:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BED1E4B2;
+	Fri, 23 Aug 2024 14:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724424170; cv=none; b=UISUUH8cvs8VGoxB/sEE5EfTPx2M/sDo7Xyu/CekCDyxzn4BbIWFOEbQBXUQIdGob7RhpwikF6Ucv+zCZrulE5kXwRNgR/wUl3rAqEHBezSORVBQRo8RySlmKSYMAJ6WSyxS8/xjn3vfoeY+7C5Op5cqi7fvx3SihEWB9ryJ1xw=
+	t=1724424186; cv=none; b=oQZQ7ROn4xqNiKnw70xLFJogTxnCr+ZiCHvERaKL4/iq/+4G/28dyZ/sgttuSe5hJMH3W1DmfOV3WQYq9hvvsvyzmyTzAYj49iOIBjY4YFpvZekVfsJpDlhdRmCY1qB+5aCkzVZj4DNF6ySKkZN1rMjYvMGNroVQGrMGdgyVnCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724424170; c=relaxed/simple;
-	bh=/qfHppgrQzACRGTSJ/t3noBs4cqe1n90vsQH7YIsqSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKDKNq9kkAphl2ys9zbPSTtysPFzEhn5rvTta37bJHVifYvPHTGM2amcSQ86Tz6+65yT2yR+VpQsbsqw30gF9rcQ+tB+nFWHKkSeBw4Fb/+oVnCQBp3DHDK8o72bMonEQwMovab7m5ZJVoEAy/vuSkOUheG3txrNhD6ihNM4v+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pb7Ej9Nq; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so2683118a12.2;
-        Fri, 23 Aug 2024 07:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724424167; x=1725028967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LV5pX2MG/y9Od0ZypEKmss4zCvIjkPOalHMBZaJ1+Ug=;
-        b=Pb7Ej9NqeZGwDNzbNnxWiJ4yFZliYcBvNavONphv3a2bdm0ISmJCnRQhkAQd1LlC+c
-         g9fXoP+Q+ImCrz9etcERdAV8VwiNs1oFM1b2Gk2Fy5jRlwUVgmq9+B++ganlfX1ZoQUJ
-         q/LZWcCKLpx+I+cLPxQLTUrUc7pniuib3lqAGfZ1u8FUrHLa1XsCS1Ik3Ywz7Rx4w4gd
-         rrXDXFBLpZ36qpCnMNdRFJmdZJ79OLh3r2Lt14sypJJIoKdD5z2fU8+xAkW27s3BoO0/
-         RGqK/rIYuw1/KMjtF1x8Y5rd7xjPaSffO1UWnBB+mBQib5NLeERhUiHDrtQJGZAPg4zm
-         bQ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724424167; x=1725028967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LV5pX2MG/y9Od0ZypEKmss4zCvIjkPOalHMBZaJ1+Ug=;
-        b=XusqAjhYJ2DX2J95q+L/jthpCUJBRDWXGRFGsOMYQTF82jL2tqPaH1WKgr6edqqYTV
-         WniqlpR2JyVllGg0fP2eOgvtRstb8b9N1ZTpnmnnphZP/dOsP9iEzP460MyYtoIMT9+v
-         pmncdk4ZVyBBo2NGCSvQ18/GRaxkCT9ZUxaZHHe7jMIEny90n83Vc8bQSr7m2tPL3dZj
-         GWBvqXcBRTedCQkLs8aGEzi0FNE5BRFgZJoCn7gxDBck9fvnIYMcPViTxsVHvrVrSmPn
-         Bj/Iik9f8Dc2nkQm+kl1G64G4lIaI7ZsrR5Nrv6o6fRTYZ7Y3KhbPOiFxWc2SyQGisNU
-         cfkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVws7j3em6xmeSss3ytKuIadO4H4fR58Rk4lZeMFQFuAPrEclMcKmFJf7T42Fz6dyF1pGQjphTg0lg=@vger.kernel.org, AJvYcCXWVkLMkK4JThR9ySQWLg33NnW6uDsMp7Ofr9KiTfT5L6WbWYeqo1nD9tJaqCofWiDbfyLKuITMkjLzeV+n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygxa1hI9lojuManVSGwyMlIzuGumA7jbJrK0Sb/bfpbgYeEnKk
-	pkhUwMuRAKY9lbI9FCwRO994j8Gbc6KG4SWcy157KCSKTVHY3VeO
-X-Google-Smtp-Source: AGHT+IGwetwCqXvv36+SgUec6tmmzyF7k13urczzdeBDsGK/FPZM9wWzm9eMTCI/L76tBdldq1w91w==
-X-Received: by 2002:a05:6402:278e:b0:5bf:257f:9ee5 with SMTP id 4fb4d7f45d1cf-5c0891a97f4mr1705242a12.34.1724424166808;
-        Fri, 23 Aug 2024 07:42:46 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:48ba:80d8:cf77:1f49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c6ce9sm2169541a12.72.2024.08.23.07.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 07:42:46 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:42:44 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andi Shyti <andi.shyti@kernel.org>, kernel@pengutronix.de,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
- mode
-Message-ID: <Zsif5NYIu4NR5ZfI@eichest-laptop>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-2-eichest@gmail.com>
- <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
- <Zsbi2xcxBGE7o9uE@eichest-laptop>
- <ZscNO2PKNlK3ru_7@pengutronix.de>
- <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
- <ZsiTMITWF0Tj3o8Q@eichest-laptop>
- <ZsiXCqNOs0dHF379@pengutronix.de>
+	s=arc-20240116; t=1724424186; c=relaxed/simple;
+	bh=qZ56w3M6m3+Ib8naPKDYErrKF3TaH8hFo9WLkYydJzM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C/BXYutimvzm1OlnxuctS7z+hOEHzhyoOByAeGgff7ivsSM5ZMGzwZeq9Fu5d/s0eSnfxCBjSh4FLXziIeXg75FuJxLZWok61f0Rm7uoGsD342UsBnpEB91C92eIEgHNFS/DWUIQqbwM6wBv796chjAmPOOV41c3YjXZxmWRyd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a0v0Mdl9; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724424184; x=1755960184;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=qZ56w3M6m3+Ib8naPKDYErrKF3TaH8hFo9WLkYydJzM=;
+  b=a0v0Mdl9lDZQkvZidrgErS1QbPdA+9dH4rpIqfbB5FjTTGkVx/BZ+8xr
+   hh03Lu0EZr6VwDrOMbo0/nx+WwiTdhNK1MakKkChwQ6Ot6vOT5CipNdfW
+   zA9Ooy9fWeVRwpKGDkt5W7/x8J1i5/Cv5g5SPhBYwwwdHwGGdYv1i9IB6
+   kVw6J16A/nVRyCvButqboZKG4bt/T8Z6ZLx136qYmni1diT93E7fpRgEC
+   y/3i+zxtdqrjwx7xP7w4hSz7J0Sck0hia83ZJSoCeBBmWiest/vFKsKcP
+   jmfD/7qfdTOCa5E97nmMEaLjCFeQJsPRov6symNYbMIIEt6MAA7Qc06Hz
+   g==;
+X-CSE-ConnectionGUID: IEG7RJbuSwaEiMcG3SmBqg==
+X-CSE-MsgGUID: 418bNt1CSjavI9YjlA28HA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23065402"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23065402"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:43:03 -0700
+X-CSE-ConnectionGUID: a5eHacTfTqqnx1IZrmwa/g==
+X-CSE-MsgGUID: 1Ya/CHx2RSmABdRzQJWmDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="92542015"
+Received: from kkkuntal-desk3 (HELO [10.124.222.88]) ([10.124.222.88])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:43:03 -0700
+Message-ID: <5ea774f522a365ef42c9e3729d123f9be4b04726.camel@linux.intel.com>
+Subject: Re: [PATCH 3/3] platform/x86/intel-uncore-freq: Add efficiency
+ latency control to sysfs interface
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Tero Kristo <tero.kristo@linux.intel.com>, Hans de Goede
+	 <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, LKML
+	 <linux-kernel@vger.kernel.org>
+Date: Fri, 23 Aug 2024 10:43:01 -0400
+In-Reply-To: <6adc07a2-14bc-6910-5d51-a0f68fc8ef46@linux.intel.com>
+References: <20240821131321.824326-1-tero.kristo@linux.intel.com>
+	 <20240821131321.824326-4-tero.kristo@linux.intel.com>
+	 <4cf8d691-d00c-3603-6722-06394f00bdfc@linux.intel.com>
+	 <863beeab7f6ecf36796394c75e95fc7a0396a862.camel@linux.intel.com>
+	 <6adc07a2-14bc-6910-5d51-a0f68fc8ef46@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsiXCqNOs0dHF379@pengutronix.de>
 
-Hi Oleksij,
+On Fri, 2024-08-23 at 16:29 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Fri, 23 Aug 2024, srinivas pandruvada wrote:
+> > On Fri, 2024-08-23 at 16:03 +0300, Ilpo J=C3=A4rvinen wrote:
+> > > On Wed, 21 Aug 2024, Tero Kristo wrote:
+> > >=20
+> > > > Add the TPMI efficiency latency control fields to the sysfs
+> > > > interface.
+> > > > The sysfs files are mapped to the TPMI uncore driver via the
+> > > > registered
+> > > > uncore_read and uncore_write driver callbacks. These fields are
+> > > > not
+> > > > populated on older non TPMI hardware.
+> > > >=20
+> > > > Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+> > > > ---
+> > > > =C2=A0.../uncore-frequency-common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 42
+> > > > ++++++++++++++++---
+> > > > =C2=A0.../uncore-frequency-common.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 +++=
+++-
+> > > > =C2=A02 files changed, 49 insertions(+), 6 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/platform/x86/intel/uncore-
+> > > > frequency/uncore-
+> > > > frequency-common.c b/drivers/platform/x86/intel/uncore-
+> > > > frequency/uncore-frequency-common.c
+> > > > index 4e880585cbe4..e22b683a7a43 100644
+> > > > --- a/drivers/platform/x86/intel/uncore-frequency/uncore-
+> > > > frequency-
+> > > > common.c
+> > > > +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-
+> > > > frequency-
+> > > > common.c
+> > > > @@ -60,11 +60,16 @@ static ssize_t show_attr(struct uncore_data
+> > > > *data, char *buf, enum uncore_index
+> > > > =C2=A0static ssize_t store_attr(struct uncore_data *data, const cha=
+r
+> > > > *buf, ssize_t count,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 enum uncore_index index)
+> > > > =C2=A0{
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int input =3D 0=
+;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
+> > > > =C2=A0
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, =
+&input))
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (index =3D=3D
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE) {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtobool(buf, (bool *)&input))
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn -EINVAL;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (kstrtouint(buf, 10, &input))
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret=
+urn -EINVAL;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > > > =C2=A0
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&uncore_=
+lock);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_writ=
+e(data, input, index);
+> > > > @@ -103,6 +108,18 @@ show_uncore_attr(max_freq_khz,
+> > > > UNCORE_INDEX_MAX_FREQ);
+> > > > =C2=A0
+> > > > =C2=A0show_uncore_attr(current_freq_khz, UNCORE_INDEX_CURRENT_FREQ)=
+;
+> > > > =C2=A0
+> > > > +store_uncore_attr(elc_low_threshold_percent,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > > +store_uncore_attr(elc_high_threshold_percent,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
+> > > > +store_uncore_attr(elc_high_threshold_enable,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
+> > > > +store_uncore_attr(elc_floor_freq_khz,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
+> > > > +
+> > > > +show_uncore_attr(elc_low_threshold_percent,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > > +show_uncore_attr(elc_high_threshold_percent,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD);
+> > > > +show_uncore_attr(elc_high_threshold_enable,
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE);
+> > > > +show_uncore_attr(elc_floor_freq_khz,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_FREQ);
+> > > > +
+> > > > =C2=A0#define
+> > > > show_uncore_data(member_name)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0
+> > > > \
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static ssize_t show=
+_##member_name(struct kobject
+> > > > *kobj,=C2=A0\
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct
+> > > > kobj_attribute
+> > > > *attr, char *buf)\
+> > > > @@ -146,7 +163,8 @@ show_uncore_data(initial_max_freq_khz);
+> > > > =C2=A0
+> > > > =C2=A0static int create_attr_group(struct uncore_data *data, char
+> > > > *name)
+> > > > =C2=A0{
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, freq, index =3D=
+ 0;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret, index =3D 0;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int val;
+> > > > =C2=A0
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(m=
+ax_freq_khz);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(m=
+in_freq_khz);
+> > > > @@ -168,10 +186,24 @@ static int create_attr_group(struct
+> > > > uncore_data *data, char *name)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[=
+index++] =3D &data-
+> > > > > initial_min_freq_khz_kobj_attr.attr;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[=
+index++] =3D &data-
+> > > > > initial_max_freq_khz_kobj_attr.attr;
+> > > > =C2=A0
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
+, &freq,
+> > > > UNCORE_INDEX_CURRENT_FREQ);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
+, &val,
+> > > > UNCORE_INDEX_CURRENT_FREQ);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > > > current_freq_khz_kobj_attr.attr;
+> > > > =C2=A0
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D uncore_read(data=
+, &val,
+> > > > UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ret) {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_low_threshold_percent);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_percent);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_high_threshold_enable);
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0init_attribute_rw(elc_floor_freq_khz);
+> > > > +
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > > > elc_low_threshold_percent_kobj_attr.attr;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > > > elc_high_threshold_percent_kobj_attr.attr;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0&da=
+ta-
+> > > > > elc_high_threshold_enable_kobj_attr.attr;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0data->uncore_attrs[index++] =3D &data-
+> > > > > elc_floor_freq_khz_kobj_attr.attr;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > >=20
+> > > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > >=20
+> > > But I have to say I'm not big fan of this function treating any
+> > > error
+> > > as=20
+> > > an implicit indication of ELC not supported.
+> >=20
+> > Also there is a check for version number, which supports ELC.
+>=20
+> AFAICT, the version number check is not on the path that is called
+> from=20
+> create_attr_group().
+>=20
+> The version number check is in uncore_probe() which then propagates
+> this=20
+> knowledge into read/write_eff_lat_ctrl() using ->elc_supported.
 
-On Fri, Aug 23, 2024 at 04:04:58PM +0200, Oleksij Rempel wrote:
-> On Fri, Aug 23, 2024 at 03:48:32PM +0200, Stefan Eichenberger wrote:
-> > Hi Andi,
-> > 
-> > On Fri, Aug 23, 2024 at 02:35:54AM +0200, Andi Shyti wrote:
-> > > Hi,
-> > > 
-> > > On Thu, Aug 22, 2024 at 12:04:43PM GMT, Oleksij Rempel wrote:
-> > > > On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
-> > > > > Hi Andi,
-> > > > > 
-> > > > > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
-> > > > > > Hi Stefan,
-> > > > > > 
-> > > > > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
-> > > > > > >  		goto rpm_disable;
-> > > > > > >  	}
-> > > > > > >  
-> > > > > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
-> > > > > > > +
-> > > > > > 
-> > > > > > you might also want to add the multi-master boolean property in
-> > > > > > the binding.
-> > > > > 
-> > > > > We discussed this internally and weren't sure when it was required
-> > > > > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
-> > > > > bindings. Is it still required if it is part of the dt-schema?
-> > > > > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
-> > > > 
-> > > > The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
-> > > > every thing not in this yaml
-> > > > 
-> > > > > If so, I will add it in the next version.
-> > > > 
-> > > > Yes, please.
-> > > 
-> > > sorry for the confusion, please don't add it. I had a chat with
-> > > Krzysztof and I will quote him: "this is a core property, coming
-> > > with dtschema, so they dont need to update bindings".
-> > > 
-> > > He also sent a cleanup to remove the only binding using it.
-> > 
-> > No problem, thanks for the clarification. 
-> > 
-> > Should I still separate the multi-master patch from the rest of the
-> > series, even though it doesn't seem to fix the problem Fabio sees? I did
-> > some more testing today and the workarounds he found do not solve the
-> > problem I see, so they are definitely not the same.
-> 
-> I'll try to review your DMA patches next week.
+I mean uncore_read() should fail if the current platform doesn't
+support ELC.
+Here that check is via a flag cluster_info->elc_supported.
 
-Perfect, thank you, no need to hurry.
+>=20
+> > So this
+> > condition will never be true unless some IO read failure.
+>=20
+> So are you saying ->elc_supported check is not required (added by
+> patch=20
+> 2)? It return -EOPNOTSUPP not because of an "IO read failure"??
+>=20
+I take back IO read fail. readq() will never fail here. uncore_read()
+can only fail on non TPMI platforms only for IO issues.
 
-Regards,
-Stefan
+ We should check elc_supported.
+
+
+> > > Is that even going to be true after this:
+> > >=20
+> > > =C2=A0
+> > > https://patchwork.kernel.org/project/platform-driver-x86/patch/202408=
+20204558.1296319-1-srinivas.pandruvada@linux.intel.com/
+> > >=20
+> > > ...as root_domain is eliminated for other reasons than ELC=20
+> > > supported/not-supported (-ENODATA return path)?
+> >=20
+> > Even if ELC is not supported, but all others fields will always be
+> > supported from base version. The above change doesn't do anything
+> > with
+> > root domain.
+>=20
+> ??
+>=20
+> read/write_eff_lat_ctrl() check for ->root_domain and return -ENODATA
+> if it is true. If that patch from you I linked above is applied, this
+> line=20
+> won't execute on some systems:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpmi_uncore->root_cluster=
+.root_domain =3D true;
+>=20
+Yes and will return without calling any callbacks for any attribute for
+root domain only on these systems. So read/write_eff_lat_ctrl() will
+not be called for root domain. For other domains the callbacks are
+called before this check.=20
+
+> Will that cause an issue (for read/write_eff_lat_ctrl())?
+We don't present ELC fields on root_domain on any system.
+
+Can you tell what kind of issues you are worried about, may be I am not
+getting?
+
+>=20
+> My concern here is that misusing error values like this to do=20
+> supported/not-supported check leads to fragility that would not occur
+> if errors would be treated as hard errors and supported is checked by
+> other means (which would be easy here using ->elc_supported, AFAICT).
+>=20
+
+Attribute creation is in common part which includes non TPMI systems,
+which we still support for all clients for several gens.
+
+We can add a feature mask as part of struct uncore_data and avoid
+calling uncore_read() and treat uncore_read() error as hard errors as a
+separate change. elc_supported can be moved to this structure, but I
+want to avoid as we will be adding some more features, which are again
+TPMI specific, so more flags will be needed.
+
+Thanks,
+Srinivas
+
+
+
+
+
 
