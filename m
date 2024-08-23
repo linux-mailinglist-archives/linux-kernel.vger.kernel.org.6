@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-298299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38BE95C56B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C6895C56E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485F6281D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321A51F219CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FAE78C91;
-	Fri, 23 Aug 2024 06:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816C07D3F4;
+	Fri, 23 Aug 2024 06:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQRba9Vp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THfzAoP8"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37413F9F9;
-	Fri, 23 Aug 2024 06:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5006B4A08;
+	Fri, 23 Aug 2024 06:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724394319; cv=none; b=RikP9pej3yiqCaYwLfIKjMTQpJWqhXbDDZTRCYhj8Ikng4jkQAG5CBEGoErbDS0sInv2zGxe1wWL+sxUfRLOHLMhIt1MinxY9XMRGSfRba9sud5pOwHV6r2ap/6SjXABtuWgThFScr2B4yqUqrtntQOxrL+dSr9Htl5I0dnFrKw=
+	t=1724394339; cv=none; b=QAzbYDuT7SwdHJ8JfPjPyMjYPc0fh87NUDc5+oIi+7lM8+bebSh+H2Z+nC13GMA1JUAJvCqIffM8rJKaESyz62f8rdKHdMqxho5VnfLlG2ZpTh06Ewqks3QT941hIYZnT3aEVza9Kb+Z+MbH9I/cwajUFGrhJ506SX+kar3pGRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724394319; c=relaxed/simple;
-	bh=b8+xbNGFFvZbVGIexd79/RcpSXAvJrYf5MtQPw1Ekwc=;
+	s=arc-20240116; t=1724394339; c=relaxed/simple;
+	bh=EJerxnPxRB0KW1TVZXRDHwhScilR90S9r+lwAZVL1rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URG+/blS8GCnvdOzK4mWu8i4QMUaMwklpV0fRKKgGPam91BftpVkYFQie3kVdXwt4QtAm14G/IJNCAKKAiDHHU7zFf7cioXJxA9FZk8jT6M5QM+km44WX/0uvwXbqGAtMqY240dr1YVZ5aT/4mLVFOorA51cRMYGlYHXAHfHvDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQRba9Vp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C50A0C32786;
-	Fri, 23 Aug 2024 06:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724394318;
-	bh=b8+xbNGFFvZbVGIexd79/RcpSXAvJrYf5MtQPw1Ekwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qQRba9Vp2fQAnj5NBv733OgeOIJPKOiIjvmObyInyW2R04kw4bXgvMWuEe1QME8Jq
-	 mmzzSoXqa30HT+OpFd/N2P20zKoWGFhfB/W0m5YTl9be+xPo/0qBzkTeumRnFzfOSW
-	 OdgKtQYCH7EyPXUP3ZFJPpoDuW99QryzMMRiHpB25pIRbc6ry9BtKFMZNQwuOC55Gp
-	 5JKBQHBaIRVfSGnCUqV4lt81ff2HNCRmloRN0ml85tO+KYX1TWus8VhbriMGdC776N
-	 lFkqQVlB6qtJ98JVgftuEPb9OQp5qgfudRQE4UnYvti4yR0DxSb4vUg4UnKox0g9+A
-	 lhWlh0Rreol0Q==
-Date: Fri, 23 Aug 2024 08:25:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com, 
-	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com, 
-	robin.murphy@arm.com
-Subject: Re: [PATCH v2 2/5] dt-bindings: arm: sse710: Add Host Base System
- Control
-Message-ID: <s6zorfinldyjslnsv2z6quyahvt6yurfe3mxflbcdftumishm5@wwgsjqb2vg2u>
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-3-abdellatif.elkhlifi@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvHb48cZPV8r9+NKUblZVlE4/UQdptHKbdhr+847lqECBDMF62gb4+pT0q6/oIcee66W6nMVb4Uk45PKUQmVXEiNLR03XL+jSGdfwn5KvcBEfjBgeT31o97BAD5FdZvrcykiwT476C3YrVZMfsauFXmteJ4sylKADaMtVsSSlVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THfzAoP8; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7cd9e634ea9so909684a12.0;
+        Thu, 22 Aug 2024 23:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724394337; x=1724999137; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1lnOT/8D3piyd5h7N4Z3HdqGdyLvt9g914K4psbQ7x4=;
+        b=THfzAoP8Rz2t1/Yv3yVz9qPnPm7uNv5xNxxIRC/j92ryd9qyijmi5YgC3/UQv0nDdK
+         5BgzaLZfDzG4iE8XPFJDBpYBrlv+xR7Up6Z3WgIpfsLu3F4SdxPUEMcpZoHZ59fBq3WR
+         25VOtRshP9sUCjM+Y14RIhIi7y/31da1Uv2056yV9hIN5yEMQrvNsAAtVlU5y882bpXo
+         UIlgrR+rF/lI0Z7q5N5SQmiQNW9cI46LHAfV1CwWEk+RSKLSFAdsKidt8dUFpDnjYqqs
+         ZSltlWYs+FzAsl4xbWtY8hFCmSRtRq0zqz4t9nR+7NzyLTzwJu++D0cyEu9s7xHLzq+w
+         tHDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724394337; x=1724999137;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lnOT/8D3piyd5h7N4Z3HdqGdyLvt9g914K4psbQ7x4=;
+        b=I3slc9E8iT6/NN8/GosBG65jFzu/9+b9QsyfU+pL8E93tiZrCnrqOg1s2cyV4KfEOx
+         bWQjmkiZGlT0FvbRg+RtuZsD3jCKI0zMAHOymjg9xFLIldMJS80jXp5yqenLVnOPCqs5
+         GvROLbhMHxL7qkrgKHjRLb96fN6dIuCzplHivBHTt8TEiU/jpwrYSgXtLkbqnk+Esx7O
+         MQwxWYeONBRf6YUq4jyWcHnNGeqIRuPDCbAUtSJZPuQpB9f8m8SYSgDMu12lM/mFKsvG
+         rok4roGQi3U25uqPTiTA21w9ufFG9DIEN7a6pttMpzDCBknoMjF72KNO+GxgdNEjOsZs
+         kAyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkqJM6+wWc14NJ0V+hWN7Fe8dPIVxeYZs/BgSLB4cSF2Cj4jdrs2iFmEu1FehtgH04/x94KD+3@vger.kernel.org, AJvYcCW17uFFe3JaVa944BNDGm1lsyFqne9QAw02OW2P9jaobflo6yHNvBXNyTHhThad4AnT7/J0SW147VOVFUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1xuCBR77cz7y0dd39gJPFpqeAkegtHfW+Bq2gXU48fi1m4Zy
+	aW4iiQSabkg7X2lawH+4U7w+i08z/uJBvTfBgLdTIHXAe/X1fZlfOZCiUQ==
+X-Google-Smtp-Source: AGHT+IEmbZYP1rA5gPbO2k30cZOYoJ1peNpiBFndLlP2Fc+eYx6CAZ1QycIFCu6Frapn7LzbEX8U8A==
+X-Received: by 2002:a05:6a20:d818:b0:1c4:d4b2:ffe6 with SMTP id adf61e73a8af0-1cc89d68929mr1783006637.19.1724394337165;
+        Thu, 22 Aug 2024 23:25:37 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb9037a2sm5392608a91.13.2024.08.22.23.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 23:25:36 -0700 (PDT)
+Date: Thu, 22 Aug 2024 23:25:34 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+Message-ID: <ZsgrXg3JR-Z1z-sr@google.com>
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+ <ZsfRqT9d6Qp_Pva5@google.com>
+ <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
+ <2024082318-labored-blunderer-a897@gregkh>
+ <Zsfk-9lf1sRMgBqE@google.com>
+ <2024082349-democrat-cough-bf77@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822170951.339492-3-abdellatif.elkhlifi@arm.com>
+In-Reply-To: <2024082349-democrat-cough-bf77@gregkh>
 
-On Thu, Aug 22, 2024 at 06:09:48PM +0100, Abdellatif El Khlifi wrote:
-> Add devicetree binding schema for the SSE-710 Host Base System Control
+On Fri, Aug 23, 2024 at 02:11:45PM +0800, Greg Kroah-Hartman wrote:
+> On Thu, Aug 22, 2024 at 06:25:15PM -0700, Dmitry Torokhov wrote:
+> > On Fri, Aug 23, 2024 at 09:14:12AM +0800, Greg Kroah-Hartman wrote:
+> > > On Fri, Aug 23, 2024 at 08:46:12AM +0800, Zijun Hu wrote:
+> > > > On 2024/8/23 08:02, Dmitry Torokhov wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+> > > > >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> > > > >>
+> > > > >> An uninitialized variable @data.have_async may be used as analyzed
+> > > > >> by the following inline comments:
+> > > > >>
+> > > > >> static int __device_attach(struct device *dev, bool allow_async)
+> > > > >> {
+> > > > >> 	// if @allow_async is true.
+> > > > >>
+> > > > >> 	...
+> > > > >> 	struct device_attach_data data = {
+> > > > >> 		.dev = dev,
+> > > > >> 		.check_async = allow_async,
+> > > > >> 		.want_async = false,
+> > > > >> 	};
+> > > > >> 	// @data.have_async is not initialized.
+> > > > > 
+> > > > > No, in the presence of a structure initializer fields not explicitly
+> > > > > initialized will be set to 0 by the compiler.
+> > > > > 
+> > > > really?
+> > > > do all C compilers have such behavior ?
+> > > 
+> > > Oh wait, if this were static, then yes, it would all be set to 0, sorry,
+> > > I misread this.
+> > > 
+> > > This is on the stack so it needs to be zeroed out explicitly.  We should
+> > > set the whole thing to 0 and then set only the fields we want to
+> > > override to ensure it's all correct.
+> > 
+> > No we do not. ISO/IEC 9899:201x 6.7.9 Initialization:
+> > 
+> > "21 If there are fewer initializers in a brace-enclosed list than there
+> > are elements or members of an aggregate, or fewer characters in a string
+> > literal used to initialize an array of known size than there are
+> > elements in the array, the remainder of the aggregate shall be
+> > initialized implicitly the same as objects that have static storage
+> > duration."
+> > 
+> > That is why you can 0-initialize a structure by doing:
+> > 
+> > 	struct s s1 = { 0 };
+> > 
+> > or even
+> > 
+> > 	struct s s1 = { };
 > 
-> SSE-710 is implemented by the Corstone-1000 IoT Reference Design
-> Platform [1].
-> 
-> The Host Base System Control has registers to control the clocks, power,
-> and reset for SSE-710 subsystem [2]. It resides within AONTOP power domain.
-> The registers are mapped under the SSE-710 Host System memory map [3].
-> 
-> [1]: https://developer.arm.com/Processors/Corstone-1000
-> [2]: https://developer.arm.com/documentation/102342/latest/
-> [3]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
-> 
-> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> ---
->  .../arm/arm,sse710-host-base-sysctrl.yaml     | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml b/Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
-> new file mode 100644
-> index 000000000000..e344a73e329d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/arm,sse710-host-base-sysctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SSE-710 Host Base System Control
-> +
-> +maintainers:
-> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
-> +
-> +description: |+
+> {sigh}  I always get this wrong, also there's the question "are holes
+> in the structure also set to 0" which as you can see from the above
+> spec, should also be true.  But numerous places in the kernel explicitly
+> use memset() to "make sure" of that.
 
-Drop |+
+I think it has more to do with our preference for having declarations
+before code, so if there is complex or conditional initialization then
+it is more natural to declare uninitialized variable, and then later
+explicitly memset() it and assign required values to members.
 
-> +  The Host Base System Control has registers to control the clocks, power, and
-> +  reset for SSE-710 subsystem. It resides within AONTOP power domain.
-> +  The registers are mapped under the SSE-710 Host System memory map.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - arm,sse710-host-base-sysctrl
-> +      - const: simple-mfd
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^extsys[0-1]$":
+Thanks.
 
-^remoteproc-[01]$
-
-> +    description:
-> +      SSE-710 subsystem supports up to two External Systems.
-> +    $ref: /schemas/remoteproc/arm,sse710-extsys.yaml#
-> +    unevaluatedProperties: false
-> +
-> +additionalProperties: false
-
-This goes after "required:" block.
-
-> +
-> +required:
-> +  - compatible
-
-Best regards,
-Krzysztof
-
+-- 
+Dmitry
 
