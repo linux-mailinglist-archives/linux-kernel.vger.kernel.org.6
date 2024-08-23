@@ -1,405 +1,522 @@
-Return-Path: <linux-kernel+bounces-298260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4F095C4DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B4395C4E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4933D1F225BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC5D2856C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6342D53E15;
-	Fri, 23 Aug 2024 05:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461A055887;
+	Fri, 23 Aug 2024 05:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YA9erHbP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="aG0MIKaq"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8082D030;
-	Fri, 23 Aug 2024 05:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C46D2D030;
+	Fri, 23 Aug 2024 05:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724390883; cv=none; b=fte1JNTpv+HzekTlOImRIewMh+2Dl4z/5DX8zaSHty/NiE1FbqdkzmOsAqm8KfWzhnqOYj6AvyceGUrSTYwivjrjh/Nzx5sauHPGFTZYSwHnfNL3lZAUCjQTF3G0BWxEsZ7zNvIFAn7cDoEXdUiRIKQjsjss0SktV1D9U/HuBo4=
+	t=1724390931; cv=none; b=MowYDL/bPAir751eACV9ajDZgQ5ssswDafEv5TT6Wu+MJ8Hr5i4tHXqqGHbveuVpBhLW4hGmpBsjePUrR4Mx1dZl8xZJL4cICxvhmbLlVog4pXYaQ4TWMM8aaNqTFcp/zLAaYTydRk7FwQklfHT5nBksI/g4hamWUWMoVS7Go0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724390883; c=relaxed/simple;
-	bh=c7qApBl51bfhxd404S2wpkfQ0Lt7MvDfsrBPa5+skCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llrJ3e5OIGVTW8ZHpAF/Tzz8JUyGmkJ1nlpaH9FV7gUUYAB6NPz/NvvaOLKf/TiW9WBsqY2WUuFVc5yLsQEnyAU0IHbNub1HU/qK3TQlwKy3S+tcL0UO74vsnrvYTS6iapnqIlHrkLNCz716wtG+Jhyea7gR8wf6VKQScLQh5CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YA9erHbP; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724390881; x=1755926881;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=c7qApBl51bfhxd404S2wpkfQ0Lt7MvDfsrBPa5+skCQ=;
-  b=YA9erHbPQJ16fxswyQdzL5k6jxhEOfyUE/ukPgiHD2Uq2gSA1DBj0Hap
-   yx3+nreJ2j1hKr1CDk1QAqNNSxKEm6uFQtQ0+w4xCm87WlC8pXl9JBkHO
-   jKGL1zreB06SUMuLkdmoOGX4Pxo/e8EdKeJgXj5vDPGHZoPc2ZNNVq1k1
-   3iqZCaEirs/i2RKoz/sF+y6sUT2RYlFRmcA2Y8w1BhzbQRd7hNunSaRsh
-   haeAB+ztEOgzSAzzvupP7h+ENzypS2Gx+Vtf0acnpCASfiVWee4RwvFHB
-   QNfi3zohf9O7cksM9+X7bkuA08v4db358sKgHSf608YwTgWiy1AIPqkGc
-   Q==;
-X-CSE-ConnectionGUID: ER7LYwZjSi+q0IY7mobKfw==
-X-CSE-MsgGUID: O348NyKnRienaY1FlRkjgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="25739629"
-X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
-   d="scan'208";a="25739629"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 22:28:01 -0700
-X-CSE-ConnectionGUID: KJgO4XoAT5ScEyNVvc8JAw==
-X-CSE-MsgGUID: c0DJFLUOS2uGIIedthIRhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
-   d="scan'208";a="92416312"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 22 Aug 2024 22:27:55 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id EAECD2AA; Fri, 23 Aug 2024 08:27:53 +0300 (EEST)
-Date: Fri, 23 Aug 2024 08:27:53 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v2] gpio: rockchip: support ACPI
-Message-ID: <20240823052753.GK1532424@black.fi.intel.com>
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-11-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724390931; c=relaxed/simple;
+	bh=VEz68Q/PGI/b+bQPYA9Jk07Ecj8GIbCvxR999fURZog=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=XPaeEFPw4/m/qNxXHirENQp3DXzwMS4WqU3gLfD/ltdHLvF6jeCeNEAXMDJlPqYyHnO/SBplfVOw2frFWKR8WkjWSzFZ1h6NU8Wn9pVpjWCWVih6xqaL+il/j+zCm0cfYafXABjUDKXDaw8A9BS5KOUdVaVjbO5w3erQHoJkz3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=aG0MIKaq; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724390913; bh=0F31VW0Vg/SeSM6uOuGxaUAlsfE+xhn/rulCATYSmYk=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=aG0MIKaqBM5RZfwjel7pZ5S78sM72LNooCbiCVjA8wQf8Sg1hkJKrXxNMTkainYvO
+	 IkdUnMYVus0h4KrIp4Ag4XcuFq1ji9CNiNxl6AdjdWsXnZUYhAEQgryR0TtkGrC/gY
+	 W5RAG+7HyAoI4H2Q8tWgQPFJBMCkKi5VKpVWaTag=
+Received: from smtpclient.apple ([115.238.42.178])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 71DB887B; Fri, 23 Aug 2024 13:28:29 +0800
+X-QQ-mid: xmsmtpt1724390909torce1ny1
+Message-ID: <tencent_B65111F737A62A64BBD1900F5F1040DBC805@qq.com>
+X-QQ-XMAILINFO: NhpLzBn2I3Xw6y93mc10H1OC6wJmLC4wZ5DDYBZUpo5CGpDfTODxG5IDCT7YFx
+	 Jen6w1Wkf1AMxuf3Cje9EcHOlmsdXxWXKYKXLAexaavo/6OIkmtB/dcwKMTzUozmIEYQAteNX5yE
+	 5mp/IKrxwgYoHxsyZ37YkVqx956MPYvzptIXh5mX5YNOyFpBV9HebGDObVThC73XBmV4fSAoMaOY
+	 KW8sNrV/vI8sAvbYejuQvTAhYNSYSWdW1sbyLl3T2TFHOGMnZhDALMoQUdJPKgLLAqZtn5x12cFX
+	 3Tjce3B8JCPpi+h1WxDQIAYi9EJnlg2uaN/VweCyABkGpV16nZqsxDnHhnCqslN/LPh1e7TVXiwj
+	 OySf7n71Xr0r1TH0omftkJBoo2Zxx6lnZvhuCTiFza7gtcp08yjFrWyEH+i1Lv9NaNicXQq3cCJt
+	 jmYMUHBkfMc8DX/cT0C1Ho12hQj1NfTahlE/2zXut8JExjC+myUGBtn8nhh/hMN1CRZ2fn++kPSQ
+	 wol0i3YUCAVLzOYfKkpZNhMYH3Bqwsb1uPVn9XuFI4XlXPFhplMq7YN04MtIvTBNa5ZmCWQEqEoH
+	 a8cVgARzq6amgMJytyIS9CzluMrwBLy/bw62F+Sedr5J+wjVpSOn9Rd2LDIc2QVKkvomyzop9xNh
+	 CBo9MX0sVvLr3lObqbZqBcRsOMsyFvR8evLTofYW+MgfqM20Nb0EOOooyA5q7Q5U6su8qXtXhwUI
+	 dMVGzmzlOchFGtIWtSe+iIi3XfkFjk9XV649CbJeNGmecuwogaB6yFZHJtDAOtDuW1jYFLnnvXkl
+	 rjHKAdZsicXdsS0lRFVULGVg9oYzZSBrfiJCkvMsQFm4YCwdsKVwVMq7ezpfC6VQQF3xwVqOYI3T
+	 fByhzu3cfqEIt0lqEF/r3OMbwLjfAmSZzLDndB8SQJ6lXwcIV4R4OTmsXqqeIqGDgO+gzyi41PtM
+	 4SOOOYZ+ANyA5US3Xp9aP0LOJV/F/ogPb3hViyj5s=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240823034314.62305-11-ye.zhang@rock-chips.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v3 1/3] riscv: mm: Use hint address in mmap if available
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <ZsgSgm0zEE2t/9tK@ghost>
+Date: Fri, 23 Aug 2024 13:28:18 +0800
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ rsworktech@outlook.com,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org,
+ linux-doc@vger.kernel.org,
+ linux-api@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <9617F778-0AB2-44A6-B19C-C05C66924770@cyyself.name>
+References: <mhng-7d9e2b27-a53d-4579-b78e-0aec038290fb@palmer-ri-x1c9>
+ <tencent_86551D71707162B243861AC9F8EC0573B409@qq.com>
+ <ZsgSgm0zEE2t/9tK@ghost>
+To: Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi,
 
-On Fri, Aug 23, 2024 at 11:43:13AM +0800, Ye Zhang wrote:
-> Adds support for Advanced Configuration and Power Interface (ACPI) within
-> the Rockchip GPIO driver.
-> 
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-> ---
->  drivers/gpio/gpio-rockchip.c | 160 +++++++++++++++++++++++------------
->  1 file changed, 105 insertions(+), 55 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 4f8d50626fcc..9e4a8cd94c66 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -6,6 +6,7 @@
->   * Copyright (c) 2021 Rockchip Electronics Co. Ltd.
->   */
->  
-> +#include <linux/acpi.h>
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
->  #include <linux/device.h>
-> @@ -17,10 +18,12 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
 
-Why this is needed for ACPI support?
+> On Aug 23, 2024, at 12:39, Charlie Jenkins <charlie@rivosinc.com> =
+wrote:
+>=20
+> On Thu, Aug 22, 2024 at 10:51:54AM +0800, Yangyu Chen wrote:
+>>=20
+>>=20
+>>> On Aug 22, 2024, at 06:17, Palmer Dabbelt <palmer@dabbelt.com> =
+wrote:
+>>>=20
+>>> On Mon, 19 Aug 2024 18:58:18 PDT (-0700), rsworktech@outlook.com =
+wrote:
+>>>> On 2024-08-20 01:00, Charlie Jenkins wrote:
+>>>>> On Mon, Aug 19, 2024 at 01:55:57PM +0800, Levi Zim wrote:
+>>>>>> On 2024-03-22 22:06, Palmer Dabbelt wrote:
+>>>>>>> On Thu, 01 Feb 2024 18:28:06 PST (-0800), Charlie Jenkins wrote:
+>>>>>>>> On Wed, Jan 31, 2024 at 11:59:43PM +0800, Yangyu Chen wrote:
+>>>>>>>>> On Wed, 2024-01-31 at 22:41 +0800, Yangyu Chen wrote:
+>>>>>>>>>> On Tue, 2024-01-30 at 17:07 -0800, Charlie Jenkins wrote:
+>>>>>>>>>>> On riscv it is guaranteed that the address returned by mmap =
+is less
+>>>>>>>>>>> than
+>>>>>>>>>>> the hint address. Allow mmap to return an address all the =
+way up to
+>>>>>>>>>>> addr, if provided, rather than just up to the lower address =
+space.
+>>>>>>>>>>>>> This provides a performance benefit as well, allowing
+>>>>>>>>> mmap to exit
+>>>>>>>>>>> after
+>>>>>>>>>>> checking that the address is in range rather than searching =
+for a
+>>>>>>>>>>> valid
+>>>>>>>>>>> address.
+>>>>>>>>>>>>> It is possible to provide an address that uses at most the =
+same
+>>>>>>>>>>> number
+>>>>>>>>>>> of bits, however it is significantly more computationally =
+expensive
+>>>>>>>>>>> to
+>>>>>>>>>>> provide that number rather than setting the max to be the =
+hint
+>>>>>>>>>>> address.
+>>>>>>>>>>> There is the instruction clz/clzw in Zbb that returns the =
+highest
+>>>>>>>>>>> set
+>>>>>>>>>>> bit
+>>>>>>>>>>> which could be used to performantly implement this, but it =
+would
+>>>>>>>>>>> still
+>>>>>>>>>>> be slower than the current implementation. At worst case, =
+half of
+>>>>>>>>>>> the
+>>>>>>>>>>> address would not be able to be allocated when a hint =
+address is
+>>>>>>>>>>> provided.
+>>>>>>>>>>>>> Signed-off-by: Charlie Jenkins<charlie@rivosinc.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>> arch/riscv/include/asm/processor.h | 27 =
++++++++++++---------------
+>>>>>>>>>>> -
+>>>>>>>>>>> 1 file changed, 11 insertions(+), 16 deletions(-)
+>>>>>>>>>>>>> diff --git a/arch/riscv/include/asm/processor.h
+>>>>>>>>>>> b/arch/riscv/include/asm/processor.h
+>>>>>>>>>>> index f19f861cda54..8ece7a8f0e18 100644
+>>>>>>>>>>> --- a/arch/riscv/include/asm/processor.h
+>>>>>>>>>>> +++ b/arch/riscv/include/asm/processor.h
+>>>>>>>>>>> @@ -14,22 +14,16 @@
+>>>>>>>>>>>=20
+>>>>>>>>>>> #include <asm/ptrace.h>
+>>>>>>>>>>>=20
+>>>>>>>>>>> -#ifdef CONFIG_64BIT
+>>>>>>>>>>> -#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+>>>>>>>>>>> -#define STACK_TOP_MAX        TASK_SIZE_64
+>>>>>>>>>>> -
+>>>>>>>>>>> #define arch_get_mmap_end(addr, len, flags)            \
+>>>>>>>>>>> ({                                \
+>>>>>>>>>>>     unsigned long
+>>>>>>>>>>> mmap_end;                    \
+>>>>>>>>>>>     typeof(addr) _addr =3D (addr);                \
+>>>>>>>>>>> -    if ((_addr) =3D=3D 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+>>>>>>>>>>> is_compat_task())) \
+>>>>>>>>>>> +    if ((_addr) =3D=3D 0 ||                    \
+>>>>>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||  =
+  \
+>>>>>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
+>>>>>>>>>>> 1)))            \
+>>>>>>>>>>>         mmap_end =3D STACK_TOP_MAX;            \
+>>>>>>>>>>> -    else if ((_addr) >=3D VA_USER_SV57) \
+>>>>>>>>>>> -        mmap_end =3D STACK_TOP_MAX;            \
+>>>>>>>>>>> -    else if ((((_addr) >=3D VA_USER_SV48)) && (VA_BITS >=3D
+>>>>>>>>>>> VA_BITS_SV48)) \
+>>>>>>>>>>> -        mmap_end =3D VA_USER_SV48;            \
+>>>>>>>>>>>     else                            \
+>>>>>>>>>>> -        mmap_end =3D VA_USER_SV39;            \
+>>>>>>>>>>> +        mmap_end =3D (_addr + len);            \
+>>>>>>>>>>>     mmap_end;                        \
+>>>>>>>>>>> })
+>>>>>>>>>>>=20
+>>>>>>>>>>> @@ -39,17 +33,18 @@
+>>>>>>>>>>>     typeof(addr) _addr =3D (addr);                \
+>>>>>>>>>>>     typeof(base) _base =3D (base);                \
+>>>>>>>>>>>     unsigned long rnd_gap =3D DEFAULT_MAP_WINDOW - (_base);  =
+  \
+>>>>>>>>>>> -    if ((_addr) =3D=3D 0 || (IS_ENABLED(CONFIG_COMPAT) &&
+>>>>>>>>>>> is_compat_task())) \
+>>>>>>>>>>> +    if ((_addr) =3D=3D 0 ||                    \
+>>>>>>>>>>> +        (IS_ENABLED(CONFIG_COMPAT) && is_compat_task()) ||  =
+  \
+>>>>>>>>>>> +        ((_addr + len) > BIT(VA_BITS -
+>>>>>>>>>>> 1)))            \
+>>>>>>>>>>>         mmap_base =3D (_base);                \
+>>>>>>>>>>> -    else if (((_addr) >=3D VA_USER_SV57) && (VA_BITS >=3D
+>>>>>>>>>>> VA_BITS_SV57)) \
+>>>>>>>>>>> -        mmap_base =3D VA_USER_SV57 - rnd_gap; \
+>>>>>>>>>>> -    else if ((((_addr) >=3D VA_USER_SV48)) && (VA_BITS >=3D
+>>>>>>>>>>> VA_BITS_SV48)) \
+>>>>>>>>>>> -        mmap_base =3D VA_USER_SV48 - rnd_gap; \
+>>>>>>>>>>>     else                            \
+>>>>>>>>>>> -        mmap_base =3D VA_USER_SV39 - rnd_gap; \
+>>>>>>>>>>> +        mmap_base =3D (_addr + len) - rnd_gap; \
+>>>>>>>>>>>     mmap_base;                        \
+>>>>>>>>>>> })
+>>>>>>>>>>>=20
+>>>>>>>>>>> +#ifdef CONFIG_64BIT
+>>>>>>>>>>> +#define DEFAULT_MAP_WINDOW    (UL(1) << (MMAP_VA_BITS - 1))
+>>>>>>>>>>> +#define STACK_TOP_MAX        TASK_SIZE_64
+>>>>>>>>>>> #else
+>>>>>>>>>>> #define DEFAULT_MAP_WINDOW    TASK_SIZE
+>>>>>>>>>>> #define STACK_TOP_MAX        TASK_SIZE
+>>>>>>>>>>>>> I have carefully tested your patch on qemu with sv57. A
+>>>>>>>>> bug that
+>>>>>>>>>> needs
+>>>>>>>>>> to be solved is that mmap with the same hint address without
+>>>>>>>>>> MAP_FIXED
+>>>>>>>>>> set will fail the second time.
+>>>>>>>>>>> Userspace code to reproduce the bug:
+>>>>>>>>>>> #include <sys/mman.h>
+>>>>>>>>>> #include <stdio.h>
+>>>>>>>>>> #include <stdint.h>
+>>>>>>>>>>> void test(char *addr) {
+>>>>>>>>>>    char *res =3D mmap(addr, 4096, PROT_READ | PROT_WRITE,
+>>>>>>>>>> MAP_ANONYMOUS
+>>>>>>>>>>> MAP_PRIVATE, -1, 0);
+>>>>>>>>>>    printf("hint %p got %p.\n", addr, res);
+>>>>>>>>>> }
+>>>>>>>>>>> int main (void) {
+>>>>>>>>>>    test(1<<30);
+>>>>>>>>>>    test(1<<30);
+>>>>>>>>>>    test(1<<30);
+>>>>>>>>>>    return 0;
+>>>>>>>>>> }
+>>>>>>>>>>> output:
+>>>>>>>>>>> hint 0x40000000 got 0x40000000.
+>>>>>>>>>> hint 0x40000000 got 0xffffffffffffffff.
+>>>>>>>>>> hint 0x40000000 got 0xffffffffffffffff.
+>>>>>>>>>>> output on x86:
+>>>>>>>>>>> hint 0x40000000 got 0x40000000.
+>>>>>>>>>> hint 0x40000000 got 0x7f9171363000.
+>>>>>>>>>> hint 0x40000000 got 0x7f9171362000.
+>>>>>>>>>>> It may need to implement a special arch_get_unmapped_area =
+and
+>>>>>>>>>> arch_get_unmapped_area_topdown function.
+>>>>>>>>>>=20
+>>>>>>>>> This is because hint address < rnd_gap. I have tried to let =
+mmap_base =3D
+>>>>>>>>> min((_addr + len), (base) + TASK_SIZE - DEFAULT_MAP_WINDOW). =
+However it
+>>>>>>>>> does not work for bottom-up while ulimit -s is unlimited. You =
+said this
+>>>>>>>>> behavior is expected from patch v2 review. However it brings a =
+new
+>>>>>>>>> regression even on sv39 systems.
+>>>>>>>>>=20
+>>>>>>>>> I still don't know the reason why use addr+len as the =
+upper-bound. I
+>>>>>>>>> think solution like x86/arm64/powerpc provide two address =
+space switch
+>>>>>>>>> based on whether hint address above the default map window is =
+enough.
+>>>>>>>>>=20
+>>>>>>>> Yep this is expected. It is up to the maintainers to decide.
+>>>>>>> Sorry I forgot to reply to this, I had a buffer sitting around =
+somewhere
+>>>>>>> but I must have lost it.
+>>>>>>>=20
+>>>>>>> I think Charlie's approach is the right way to go.  Putting my =
+userspace
+>>>>>>> hat on, I'd much rather have my allocations fail rather than =
+silently
+>>>>>>> ignore the hint when there's memory pressure.
+>>>>>>>=20
+>>>>>>> If there's some real use case that needs these low hints to be =
+silently
+>>>>>>> ignored under VA pressure then we can try and figure something =
+out that
+>>>>>>> makes those applications work.
+>>>>>> I could confirm that this patch has broken chromium's partition =
+allocator on
+>>>>>> riscv64. The minimal reproduction I use is chromium-mmap.c:
+>>>>>>=20
+>>>>>> #include <stdio.h>
+>>>>>> #include <sys/mman.h>
+>>>>>>=20
+>>>>>> int main() {
+>>>>>>    void* expected =3D (void*)0x400000000;
+>>>>>>    void* addr =3D mmap(expected, 17179869184, PROT_NONE,
+>>>>>> MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+>>>>>>    if (addr !=3D expected) {
+>>>>> It is not valid to assume that the address returned by mmap will =
+be the
+>>>>> hint address. If the hint address is not available, mmap will =
+return a
+>>>>> different address.
+>>>>=20
+>>>> Oh, sorry I didn't make it clear what is the expected behavior.
+>>>> The printf here is solely for debugging purpose and I don't mean =
+that
+>>>> chromium expect it will get the hint address. The expected behavior =
+is
+>>>> that both the two mmap calls will succeed.
+>>>>=20
+>>>>>>        printf("Not expected address: %p !=3D %p\n", addr, =
+expected);
+>>>>>>    }
+>>>>>>    expected =3D (void*)0x3fffff000;
+>>>>>>    addr =3D mmap(expected, 17179873280, PROT_NONE, =
+MAP_PRIVATE|MAP_ANONYMOUS,
+>>>>>> -1, 0);
+>>>>>>    if (addr !=3D expected) {
+>>>>>>        printf("Not expected address: %p !=3D %p\n", addr, =
+expected);
+>>>>>>    }
+>>>>>>    return 0;
+>>>>>> }
+>>>>>>=20
+>>>>>> The second mmap fails with ENOMEM. Manually reverting this commit =
+fixes the
+>>>>>> issue for me. So I think it's clearly a regression and breaks =
+userspace.
+>>>>>>=20
+>>>>> The issue here is that overlapping memory is being requested. This
+>>>>> second mmap will never be able to provide an address at =
+0x3fffff000 with
+>>>>> a size of 0x400001000 since mmap just provided an address at =
+0x400000000
+>>>>> with a size of 0x400000000.
+>>>>>=20
+>>>>> Before this patch, this request causes mmap to return a completely
+>>>>> arbitrary value. There is no reason to use a hint address in this =
+manner
+>>>>> because the hint can never be respected. Since an arbitrary =
+address is
+>>>>> desired, a hint of zero should be used.
+>>>>>=20
+>>>>> This patch causes the behavior to be more deterministic. Instead =
+of
+>>>>> providing an arbitrary address, it causes the address to be less =
+than or
+>>>>> equal to the hint address. This allows for applications to make
+>>>>> assumptions about the returned address.
+>>>>=20
+>>>> About the overlap, of course the partition allocator's request for
+>>>> overlapped vma seems unreasonable.
+>>>>=20
+>>>> But I still don't quite understand why mmap cannot use an address =
+higher
+>>>> than the hint address.
+>>>> The hint address, after all, is a hint, not a requirement.
+>>>>=20
+>>>> Quoting the man page:
+>>>>=20
+>>>>>  If another mapping already exists there, the kernel picks
+>>>>>       a new address that may or may not depend on the hint.  The
+>>>>>       address of the new mapping is returned as the result of the =
+call.
+>>>>=20
+>>>> So for casual programmers that only reads man page but not =
+architecture
+>>>> specific kernel documentation, the current behavior of mmap on =
+riscv64
+>>>> failing on overlapped address ranges are quite surprising IMO.
+>>>>=20
+>>>> And quoting the man page again about the errno:
+>>>>=20
+>>>>>      ENOMEM No memory is available.
+>>>>>=20
+>>>>>      ENOMEM The process's maximum number of mappings would have =
+been
+>>>>>             exceeded.  This error can also occur for munmap(), =
+when
+>>>>>             unmapping a region in the middle of an existing =
+mapping,
+>>>>>             since this results in two smaller mappings on either =
+side
+>>>>>             of the region being unmapped.
+>>>>>=20
+>>>>>      ENOMEM (since Linux 4.7) The process's RLIMIT_DATA limit,
+>>>>>             described in getrlimit(2), would have been exceeded.
+>>>>>=20
+>>>>>      ENOMEM We don't like addr, because it exceeds the virtual =
+address
+>>>>>             space of the CPU.
+>>>>>=20
+>>>>=20
+>>>> There's no matching description for the ENOMEM returned here.
+>>>> I would suggest removing "because it exceeds the virtual address
+>>>> space of the CPU." from the last item if the ENOMEM behavior here
+>>>> is expected.
+>>>>=20
+>>>>> This code is unfortunately relying on the previously mostly =
+undefined
+>>>>> behavior of the hint address in mmap.
+>>>>=20
+>>>> Although I haven't read the code of chromium's partition allocator =
+to
+>>>> judge whether it should
+>>>> be improved or fixed for riscv64, I do know that the kernel "don't =
+break
+>>>> userspace" and "never EVER blame the user programs".
+>>>=20
+>>> Ya, sorry for breaking stuff.
+>>>=20
+>>> The goal here was to move to the mmap flag behavor similar to what =
+arm64 and x86 have, as that was done in a way that didn't appear to =
+break userspace -- or at least any real userspace programs.  IIRC that =
+first test was pretty broken (it actually depended on the hint address), =
+but sounds like that's not the case.
+>>>=20
+>>> I think maybe this is just luck: we didn't chunk the address space =
+up, we're just hinting on every bit, so we're just more likely to hit =
+the exhaustion.  Doesn't really matter, though, as if it's breaking =
+stuff so we've got to deal with it.
+>>>=20
+>>> Charlie and I are just talking, and best we can come up with is to =
+move to the behavior where we fall back to larger allocation regions =
+when there's no space in the smaller allocation region.=20
+>>=20
+>>=20
+>> For this solution, the only difference from the mmap behavior of
+>> x86 and aarch64 is that we will first try to allocate some memory
+>> from an address less or equal to the request address + size. But
+>> for most cases, I think there is no need to do that, especially for
+>> those addresses < BIT(47), as most program works fine on x86-64,
+>> which has 47bit available userspace address space to use. And for
+>> that program that wants an address < BIT(32), we already have
+>> MAP_32BIT now.
+>>=20
+>> I think we can just fix like that patch:
+>> =
+https://lore.kernel.org/lkml/tencent_B2D0435BC011135736262764B511994F4805@=
+qq.com/
+>=20
+> This patch does not satisfy the requirement of having the ability to =
+guarantee
+> that mmap returns an address that is less than the hint address.
 
->  #include <linux/of_irq.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/regmap.h>
->  
->  #include "../pinctrl/core.h"
-> @@ -210,6 +213,7 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
->  		freq = clk_get_rate(bank->db_clk);
->  		if (!freq)
->  			return -EINVAL;
-> +
+Indeed. My intuition is to remove it and align it with x86 and aarch64.
 
-Unrelated whitespace change.
+> This
+> patch only allows an address to be less than the DEFAULT_MAP_WINDOW
+> which is 32 bits on sv32, 39 bits on sv39, and 48 bits on sv48 or =
+sv57.
+>=20
+> This patch also again falls into the trap of using the hint address to
+> forcefully restrict the address space.
 
->  		div = (u64)(GENMASK(23, 0) + 1) * 1000000;
->  		if (bank->gpio_type == GPIO_TYPE_V2)
->  			max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
-> @@ -515,7 +519,7 @@ static int rockchip_interrupts_register(struct rockchip_pin_bank *bank)
->  	struct irq_chip_generic *gc;
->  	int ret;
->  
-> -	bank->domain = irq_domain_add_linear(bank->of_node, 32,
-> +	bank->domain = irq_domain_create_linear(dev_fwnode(bank->dev), 32,
->  					&irq_generic_chip_ops, NULL);
+Indeed. However, x86 and aarch64 also use this behavior to restrict
+va >=3D BIT(47) by default unless we have the hint address larger
+than BIT(47).
 
-I wonder if it would be simpler to first convert the driver to use
-fwnodes and then in a separate patch, add the ACPI glue?
+> I agree with Levi that it is not
+> very good behavior to have a "hint" cause mmap to fail if conforming =
+to
+> the hint isn't possible. Instead, I believe it to be more logical to =
+try
+> to allocate at the hint address, otherwise give a random address.
+>=20
 
->  	if (!bank->domain) {
->  		dev_warn(bank->dev, "could not init irq domain for bank %s\n",
-> @@ -637,25 +641,9 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
->  	return ret;
->  }
->  
-> -static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
-> +static void rockchip_gpio_get_ver(struct rockchip_pin_bank *bank)
->  {
-> -	struct resource res;
-> -	int id = 0;
-> -
-> -	if (of_address_to_resource(bank->of_node, 0, &res)) {
-> -		dev_err(bank->dev, "cannot find IO resource for bank\n");
-> -		return -ENOENT;
-> -	}
-> -
-> -	bank->reg_base = devm_ioremap_resource(bank->dev, &res);
-> -	if (IS_ERR(bank->reg_base))
-> -		return PTR_ERR(bank->reg_base);
-> -
-> -	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
-> -	if (!bank->irq)
-> -		return -EINVAL;
-> -
-> -	id = readl(bank->reg_base + gpio_regs_v2.version_id);
-> +	int id = readl(bank->reg_base + gpio_regs_v2.version_id);
->  
->  	switch (id) {
->  	case GPIO_TYPE_V2:
-> @@ -672,8 +660,6 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
->  		bank->gpio_type = GPIO_TYPE_V1;
->  		pr_info("Note: Use default GPIO_TYPE_V1!\n");
->  	}
-> -
-> -	return 0;
->  }
->  
->  static struct rockchip_pin_bank *
-> @@ -695,61 +681,120 @@ rockchip_gpio_find_bank(struct pinctrl_dev *pctldev, int id)
->  	return found ? bank : NULL;
->  }
->  
-> +static int rockchip_gpio_of_get_bank_id(struct device *dev)
-> +{
-> +	static int gpio;
-> +	int bank_id = -1;
+I also agree with this.
 
-Instead of this -1 probably good to use something like -ENODEV or so.
+> The current behavior can then be maintained through the flag
+> MAP_BELOW_HINT. This way the user explicitly selects that they want =
+mmap
+> to fail if an address could not be found within the hint address
+> constraints.
+>=20
 
-Also suggest doing the analogous to ACPI way here so that you have the
-stub function when CONFIG_OF is not set. This makes it bit more
-consistent IMO.
+I think restricting the addresses with the MAP_BELOW_HINT flag
+would be the best choice. However, it remains a problem: What should
+the behavior be when there is no MAP_BELOW_HINT? I think we can
+fallback to Sv48 on the Sv57 machine by default to align with x86
+and aarch64.
 
-> +
-> +	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> +		bank_id = of_alias_get_id(dev->of_node, "gpio");
-> +		if (bank_id < 0)
-> +			bank_id = gpio++;
-> +	}
-> +
-> +	return bank_id;
-> +}
-> +
-> +#ifdef CONFIG_ACPI
-> +static int rockchip_gpio_acpi_get_bank_id(struct device *dev)
-> +{
-> +	struct acpi_device *adev;
-> +	unsigned long bank_id = -1;
+> - Charlie
+>=20
+>>=20
+>>> Charlie's going to try and throw together a patch for that, =
+hopefully it'll sort things out.
+>>>=20
+>>>>> The goal of this patch is to help
+>>>>> developers have more consistent mmap behavior, but maybe it is =
+necessary
+>>>>> to hide this behavior behind an mmap flag.
+>>>>=20
+>>>> Thank you for helping to shape a more consistent mmap behavior.
+>>>> I think this should be fixed ASAP either by allowing the hint =
+address to
+>>>> be ignored
+>>>> (as suggested by the Linux man page), or hide this behavior behind =
+an
+>>>> mmap flag as you said.
+>>>>=20
+>>>>> - Charlie
+>>>>>=20
+>>>>>> See alsohttps://github.com/riscv-forks/electron/issues/4
+>>>>>>=20
+>>>>>>>> - Charlie
+>>>>>> Sincerely,
+>>>>>> Levi
+>>>>>>=20
+>>>>=20
+>>>> I accidentally introduced some HTML into this reply so this reply =
+is
+>>>> resent as plain text.
+>>>>=20
+>>>> Sincerely,
+>>>> Levi
 
-Ditto here regarding -1, also this does not need to be initialized at
-all here.
 
-> +	const char *uid;
-> +	int ret;
-> +
-> +	adev = ACPI_COMPANION(dev);
-> +	if (!adev)
-> +		return -ENXIO;
-
-Or -ENODEV? And is this even possible?
-
-> +
-> +	uid = acpi_device_uid(adev);
-> +	if (!uid || !(*uid)) {
-
-There are bunch of helpers for this such as acpi_dev_hid_uid_match() and
-the like. Not sure if you can use them here but wanted to mention. We
-use these in Intel driver for example in intel_pinctrl_get_soc_data() in
-case you want to check an example.
-
-Also the !(*uid) looks horrible. Can it be empty string?
-
-> +		dev_err(dev, "Cannot retrieve UID\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = kstrtoul(uid, 0, &bank_id);
-> +
-> +	return !ret ? bank_id : -ERANGE;
-> +}
-> +#else
-> +static int rockchip_gpio_acpi_get_bank_id(struct device *dev)
-> +{
-> +	return -ENOENT;
-> +}
-> +#endif /* CONFIG_ACPI */
-> +
->  static int rockchip_gpio_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *np = dev->of_node;
-> -	struct device_node *pctlnp = of_get_parent(np);
->  	struct pinctrl_dev *pctldev = NULL;
->  	struct rockchip_pin_bank *bank = NULL;
-> -	struct rockchip_pin_deferred *cfg;
-> -	static int gpio;
-> -	int id, ret;
-> +	int bank_id = 0;
-> +	int ret;
->  
-> -	if (!np || !pctlnp)
-> -		return -ENODEV;
-> +	bank_id = rockchip_gpio_acpi_get_bank_id(dev);
-> +	if (bank_id < 0) {
-> +		bank_id = rockchip_gpio_of_get_bank_id(dev);
-> +		if (bank_id < 0)
-> +			return bank_id;
-
-So here with your of_ function you would get -1 which is -EPERM so which
-is probably not what you want.
-
-> +	}
->  
-> -	pctldev = of_pinctrl_get(pctlnp);
-> -	of_node_put(pctlnp);
-> -	if (!pctldev)
-> -		return -EPROBE_DEFER;
-> +	if (!ACPI_COMPANION(dev)) {
-> +		struct device_node *pctlnp = of_get_parent(dev->of_node);
-
-Should it check instead that it has the dev->of_node and not assume that
-if it does not have ACPI compantion device it is then enumerated from DT?
-
-> -	id = of_alias_get_id(np, "gpio");
-> -	if (id < 0)
-> -		id = gpio++;
-> +		pctldev = of_pinctrl_get(pctlnp);
-> +		of_node_put(pctlnp);
-> +		if (!pctldev)
-> +			return -EPROBE_DEFER;
->  
-> -	bank = rockchip_gpio_find_bank(pctldev, id);
-> -	if (!bank)
-> -		return -EINVAL;
-> +		bank = rockchip_gpio_find_bank(pctldev, bank_id);
-> +		if (!bank)
-> +			return -ENODEV;
-> +	}
->  
-> +	if (!bank) {
-> +		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
-> +		if (!bank)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	bank->bank_num = bank_id;
->  	bank->dev = dev;
-> -	bank->of_node = np;
-> +	bank->of_node = dev->of_node;
-> +
-> +	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(bank->reg_base))
-> +		return PTR_ERR(bank->reg_base);
-> +
-> +	bank->irq = platform_get_irq(pdev, 0);
-> +	if (bank->irq < 0)
-> +		return bank->irq;
->  
->  	raw_spin_lock_init(&bank->slock);
->  
-> -	bank->clk = devm_clk_get(dev, "bus");
-> -	if (IS_ERR(bank->clk)) {
-> -		bank->clk = of_clk_get(dev->of_node, 0);
-> +	if (!ACPI_COMPANION(dev)) {
-
-Ditto here.
-
-Also maybe it needs to have separate probe paths for ACPI and DT because
-this makes it look kind of confusing.
-
-> +		bank->clk = devm_clk_get(dev, "bus");
->  		if (IS_ERR(bank->clk)) {
-> -			dev_err(dev, "fail to get apb clock\n");
-> -			return PTR_ERR(bank->clk);
-> +			bank->clk = of_clk_get(dev->of_node, 0);
-> +			if (IS_ERR(bank->clk)) {
-> +				dev_err(dev, "fail to get apb clock\n");
-> +				return PTR_ERR(bank->clk);
-> +			}
->  		}
-> -	}
->  
-> -	ret = rockchip_get_bank_data(bank);
-> -	if (ret)
-> -		return ret;
-> -
-> -	bank->db_clk = devm_clk_get(dev, "db");
-> -	if (IS_ERR(bank->db_clk)) {
-> -		bank->db_clk = of_clk_get(dev->of_node, 1);
-> -		if (IS_ERR(bank->db_clk))
-> -			bank->db_clk = NULL;
-> +		bank->db_clk = devm_clk_get(dev, "db");
-> +		if (IS_ERR(bank->db_clk)) {
-> +			bank->db_clk = of_clk_get(dev->of_node, 1);
-> +			if (IS_ERR(bank->db_clk))
-> +				bank->db_clk = NULL;
-> +		}
->  	}
->  
->  	clk_prepare_enable(bank->clk);
->  	clk_prepare_enable(bank->db_clk);
->  
-> +	rockchip_gpio_get_ver(bank);
-> +
->  	/*
->  	 * Prevent clashes with a deferred output setting
->  	 * being added right at this moment.
-> @@ -763,8 +808,13 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
->  	}
->  
->  	while (!list_empty(&bank->deferred_pins)) {
-> +		struct rockchip_pin_deferred *cfg;
-> +
->  		cfg = list_first_entry(&bank->deferred_pins,
->  				       struct rockchip_pin_deferred, head);
-> +		if (!cfg)
-> +			break;
-> +
-
-These changes look unrelated?
-
->  		list_del(&cfg->head);
->  
->  		switch (cfg->param) {
-> @@ -789,7 +839,7 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
->  	mutex_unlock(&bank->deferred_lock);
->  
->  	platform_set_drvdata(pdev, bank);
-> -	dev_info(dev, "probed %pOF\n", np);
-> +	dev_info(dev, "probed %pfw\n", dev_fwnode(dev));
-
-Is this really useful inro for user to see?
-
->  
->  	return 0;
->  err_unlock:
-> -- 
-> 2.34.1
 
