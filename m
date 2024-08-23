@@ -1,334 +1,165 @@
-Return-Path: <linux-kernel+bounces-299643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578C295D80D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CF395D80E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1441C2218E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E8A1F22D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4C91C7B97;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D01C7B9D;
 	Fri, 23 Aug 2024 20:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="STS8bVK4"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="npx5LQns"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523941922E4
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906C21C6F74
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 20:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724446317; cv=none; b=U+8efj6crCrVFpl3cfebYCHERYjfIhpwlMEr8Lgh/QVzSfB9ugDGKHRZD790dNZEQ2LCs+fU/tKCAkuAg4pJX84922GTVXoqoTZ05lzaMqhBWfXZhYOoTWbNm1RjYmBwLdr1QQx0ws6FOFgenWGHg7NIySwBb/y8fRexS4ryuOg=
+	t=1724446318; cv=none; b=m6Ti7eed226Vw142/vVySFCL5CQ6CzozQoKLjkfSaj0EdG5jMeW+/5iKSGQB+MSxfbz+PhcDRLtxEGjg55dm5RWCIQH7Q67vsTZPsRju9OdmGSJItPzYsYru7/jR36+9gJ4n9E++D/ul1dyxKMeqauu0jqdXQam+/gTfwx4EKIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724446317; c=relaxed/simple;
-	bh=gQWnVtHzGUD5Eaocx7K6D34k/NCBwU4GS1eCmtQ1dOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oe2QMHwc/ngZUjKiKAI4jm2K1Wum7ltwdJpC8+jBRG8GC6lRmJ0bargmfauzB5KKPa1fdLZmIcigVSlaORBVgleG6YOkrpz3Bw6JODB8UUJL0KUccSaqxGhz5LkSth2Kv5sGufAA+/a6LrfNDO5uUrm2xiqcAY2YmaT71BDiRcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=STS8bVK4; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1724446314;
-	bh=gQWnVtHzGUD5Eaocx7K6D34k/NCBwU4GS1eCmtQ1dOo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=STS8bVK4p0tgRs5uYG10QsWsHkhes9/aZZsq1kceRLu6944iCcV/79F5i7WJL9RDD
-	 2QFrKHdPDSIYpa5JHFl36TpgoZxBedCJmFfyQC++e5VXjcoZe5tD5d3e1iqZiTGQfr
-	 cDEtCy285OOHvtSU7XaGsEPrb60EyVLJsOP6GB7bFwm9MErjTJ3yNyLvkc7gmf7z06
-	 uZcRQVPSkpJ5JvCjbM6Ww0v5OsBZYZbEmLnQ05rfWuvsBoqnJlOZxIM3jeZfo4zprU
-	 KCeOjcgZQSBm2p3g7Po+NBilaqur7VK82fBIlACNYLlo7bQlbr/NRCz1nj26kVH0LI
-	 rYUq/37SUowuA==
-Received: from [IPV6:2606:6d00:100:4000:b243:804e:3bbd:91c9] (unknown [IPv6:2606:6d00:100:4000:b243:804e:3bbd:91c9])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WrC161XrRz1Hxl;
-	Fri, 23 Aug 2024 16:51:54 -0400 (EDT)
-Message-ID: <2c54b801-5f78-4f5a-bed0-a944ac5248e4@efficios.com>
-Date: Fri, 23 Aug 2024 16:51:26 -0400
+	s=arc-20240116; t=1724446318; c=relaxed/simple;
+	bh=bKd1KFIsTfdo0frRE8bJ8i0KEJ/2iwudwsdn/26fG+g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D7M9aV2WEa8uqY+i7nsuWocfw/Lq+RRvzjOam2EOz4ezt4dMget6lukPIo26u60lXUsCmCn7+hrzNqaQllOT5tRWst3gvSor2ffve09c+soVYNITpDdpe3j05BltZKf+ruz1gn/vD8+0LycupS3blg/h8Q5rwtUYSnIkJKQuMVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=npx5LQns; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7141d43582cso2324038b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724446316; x=1725051116; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ctQASBnAfMkHAKJOQaWxeii39ASnQwWqjqj9rHx00g=;
+        b=npx5LQnsQJ87FPGqJITy6BO6GdWWEk4d1LjP7N56NN5Q6nRTabGqy+Lz/8ISye0yHa
+         q7YHnKgoc3KxZhXQLKl8tPZS2S6g05WfjVRjwbzao2T3ZJMVeyUe1aNuyuGxqO2sldj7
+         g85o0vVkSWDmK9f05hN7aaWqioHKQikskW2U+gy4SKar1U7HdpMuEi1w/vNhkqz/nYwb
+         98j4WrpdNrF/cWeDOuArCuniYQAwv035OaC5QyplddGh1dP+zhSKhSkSDRqo8J7LDEQR
+         EXnQyc5XNkoo/7/Fff3SAjlZ+SuVC/mQY6G78ss50W9jEljOki2eC6aBi9Xzbqn4vIyq
+         K5/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724446316; x=1725051116;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ctQASBnAfMkHAKJOQaWxeii39ASnQwWqjqj9rHx00g=;
+        b=N0xzWQAiYsHqBF7awScuRLVrAlzCMXgrv1lWurRmeN/OcAlhSSKKSzSBbpiMJ8a9T/
+         X0EGcm3v3EQlHkdDok4MkmbnGFKZrXKNMOQ5GTX7UmNwIwMwapLRXbILzPMiTMxtebTo
+         DNSZrIA5jRqHOJJ+XOBj2r7Djx7mlidwf6gHt9ki7luqNOf79I/5r+6DWcXRyxsLVxKC
+         Qkt/ASG4xA8B4MtB3esPdnBV/EFz505GcMPFdP2qmqbnVJEdFev+vegqF2DbICo3dXw8
+         q7aaLIZx9j2mGs+2/edJMB+FeyHwzkfBrb17bd0VcaBz2I1xoUUnPjoI5T0CkkFbTXxs
+         32ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWu4cfjzUOG1N2P0P7TyhZlP6UrKaWXIiyQLL2cv7lJO7Hffla6hyPexI/5OFwTh8qq+c8ndXy0UbkR0t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXI7tmEjQ116AUhwc9wc/s3kydpJPZn6qV8ciK9WogJv3VD6Xy
+	til4XUTxdCGgSFvJ1M5fE2kI3BQuqsgjnYVyVpiD+eT6b+AVi0X/Esd/8K2HDxnOPW/wPlfWlUf
+	EAw==
+X-Google-Smtp-Source: AGHT+IFbru/8gFjKaY81EkFinVTdW1msPDmscCyfWgoiWQ/qtgYtS0UPrE0L1yvmUuYMHt9kmGMF67CMfdQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:914d:b0:705:ca19:2d08 with SMTP id
+ d2e1a72fcca58-71445af579dmr25489b3a.6.1724446315529; Fri, 23 Aug 2024
+ 13:51:55 -0700 (PDT)
+Date: Fri, 23 Aug 2024 13:51:54 -0700
+In-Reply-To: <26e72673-350c-a02d-7b77-ebfd42612ae6@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 2/6] lib: Implement find_{first,next,nth}_nor_bit,
- find_first_andnot_bit
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>,
- Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240823185946.418340-1-mathieu.desnoyers@efficios.com>
- <20240823185946.418340-3-mathieu.desnoyers@efficios.com>
- <Zsjg1H_V8eq3-grK@yury-ThinkPad>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <Zsjg1H_V8eq3-grK@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240823185323.2563194-1-jmattson@google.com> <20240823185323.2563194-5-jmattson@google.com>
+ <26e72673-350c-a02d-7b77-ebfd42612ae6@amd.com>
+Message-ID: <Zsj2anWub8v9kwBA@google.com>
+Subject: Re: [PATCH v3 4/4] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Jim Mattson <jmattson@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Sandipan Das <sandipan.das@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Venkatesh Srinivas <venkateshs@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On 2024-08-23 21:19, Yury Norov wrote:
-> On Fri, Aug 23, 2024 at 02:59:42PM -0400, Mathieu Desnoyers wrote:
->> Allow finding the first, next, or nth bit within two input bitmasks
->> which is zero in both masks.
->>
->> Allow fiding the first bit within two input bitmasks which is set in
->> first mask and cleared in the second mask. find_next_andnot_bit and
->> find_nth_andnot_bit already exist, so find the first bit appears to be
->> missing.
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Yury Norov <yury.norov@gmail.com>
->> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+On Fri, Aug 23, 2024, Tom Lendacky wrote:
+> On 8/23/24 13:53, Jim Mattson wrote:
+> > From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
+> > enumerates support for indirect branch restricted speculation (IBRS)
+> > and the indirect branch predictor barrier (IBPB)." Further, from [2],
+> > "Software that executed before the IBPB command cannot control the
+> > predicted targets of indirect branches (4) executed after the command
+> > on the same logical processor," where footnote 4 reads, "Note that
+> > indirect branches include near call indirect, near jump indirect and
+> > near return instructions. Because it includes near returns, it follows
+> > that **RSB entries created before an IBPB command cannot control the
+> > predicted targets of returns executed after the command on the same
+> > logical processor.**" [emphasis mine]
+> > 
+> > On the other hand, AMD's IBPB "may not prevent return branch
+> > predictions from being specified by pre-IBPB branch targets" [3].
+> > 
+> > However, some AMD processors have an "enhanced IBPB" [terminology
+> > mine] which does clear the return address predictor. This feature is
+> > enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
+> > 
+> > Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
+> > accordingly.
+> > 
+> > [1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
+> > [2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
+> > [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
+> > [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
+> > 
+> > Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
+> > Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  arch/x86/kvm/cpuid.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index ec7b2ca3b4d3..c8d7d928ffc7 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
+> >  	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
+> >  	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
+> >  
+> > -	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
+> > +	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
+> > +	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
+> > +	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
+> >  		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
+> >  	if (boot_cpu_has(X86_FEATURE_STIBP))
+> >  		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
+> > @@ -759,6 +761,8 @@ void kvm_set_cpu_caps(void)
+> >  	 * arch/x86/kernel/cpu/bugs.c is kind enough to
+> >  	 * record that in cpufeatures so use them.
+> >  	 */
+> > +	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+> > +		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
 > 
-> Acked-by: Yury Norov <yury.norov@gmail.com>
+> If SPEC_CTRL is set, then IBPB is set, so you can't have AMD_IBPB_RET
+> without AMD_IBPB, but it just looks odd seeing them set with separate
+> checks with no relationship dependency for AMD_IBPB_RET on AMD_IBPB.
+> That's just me, though, not worth a v4 unless others feel the same.
+
+You thinking something like this (at the end, after the dust settles)?
+
+	if (WARN_ON_ONCE(kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB_RET) &&
+			 !kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB)))
+		kvm_cpu_cap_clear(X86_FEATURE_AMD_IBPB_RET);		
 > 
-> If it comes to v2, can you also add some sanity tests for the new API?
 
-I'm making a note to add those sanity tests before sending a v2.
-
-Thanks,
-
-Mathieu
-
+> Thanks,
+> Tom
 > 
->> ---
->> Changes since v0:
->> - Rename "notandnot" to "nor", document equivalence.
->> - Move comment cleanups to a separate patch.
->> - Use __always_inline.
->> ---
->>   include/linux/find.h | 112 +++++++++++++++++++++++++++++++++++++++++++
->>   lib/find_bit.c       |  36 ++++++++++++++
->>   2 files changed, 148 insertions(+)
->>
->> diff --git a/include/linux/find.h b/include/linux/find.h
->> index 8a170aa55634..b1394ba92654 100644
->> --- a/include/linux/find.h
->> +++ b/include/linux/find.h
->> @@ -14,6 +14,8 @@ unsigned long _find_next_and_bit(const unsigned long *addr1, const unsigned long
->>   					unsigned long nbits, unsigned long start);
->>   unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   					unsigned long nbits, unsigned long start);
->> +unsigned long _find_next_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
->> +					unsigned long nbits, unsigned long start);
->>   unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   					unsigned long nbits, unsigned long start);
->>   unsigned long _find_next_zero_bit(const unsigned long *addr, unsigned long nbits,
->> @@ -24,11 +26,17 @@ unsigned long __find_nth_and_bit(const unsigned long *addr1, const unsigned long
->>   				unsigned long size, unsigned long n);
->>   unsigned long __find_nth_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   					unsigned long size, unsigned long n);
->> +unsigned long __find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
->> +					unsigned long size, unsigned long n);
->>   unsigned long __find_nth_and_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   					const unsigned long *addr3, unsigned long size,
->>   					unsigned long n);
->>   extern unsigned long _find_first_and_bit(const unsigned long *addr1,
->>   					 const unsigned long *addr2, unsigned long size);
->> +extern unsigned long _find_first_andnot_bit(const unsigned long *addr1,
->> +					 const unsigned long *addr2, unsigned long size);
->> +extern unsigned long _find_first_nor_bit(const unsigned long *addr1,
->> +					 const unsigned long *addr2, unsigned long size);
->>   unsigned long _find_first_and_and_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   				      const unsigned long *addr3, unsigned long size);
->>   extern unsigned long _find_first_zero_bit(const unsigned long *addr, unsigned long size);
->> @@ -130,6 +138,35 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
->>   }
->>   #endif
->>   
->> +/**
->> + * find_next_nor_bit - find the next bit cleared in both *addr1 and *addr2
->> + * @addr1: The first address to base the search on
->> + * @addr2: The second address to base the search on
->> + * @size: The bitmap size in bits
->> + * @offset: The bitnumber to start searching at
->> + *
->> + * Returns the bit number for the next bit cleared in both *addr1 and *addr2.
->> + * If no such bits are found, returns @size.
->> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
->> + */
->> +static __always_inline
->> +unsigned long find_next_nor_bit(const unsigned long *addr1,
->> +		const unsigned long *addr2, unsigned long size,
->> +		unsigned long offset)
->> +{
->> +	if (small_const_nbits(size)) {
->> +		unsigned long val;
->> +
->> +		if (unlikely(offset >= size))
->> +			return size;
->> +
->> +		val = ~(*addr1 | *addr2) & GENMASK(size - 1, offset);
->> +		return val ? __ffs(val) : size;
->> +	}
->> +
->> +	return _find_next_nor_bit(addr1, addr2, size, offset);
->> +}
->> +
->>   #ifndef find_next_or_bit
->>   /**
->>    * find_next_or_bit - find the next set bit in either memory regions
->> @@ -291,6 +328,33 @@ unsigned long find_nth_andnot_bit(const unsigned long *addr1, const unsigned lon
->>   	return __find_nth_andnot_bit(addr1, addr2, size, n);
->>   }
->>   
->> +/**
->> + * find_nth_nor_bit - find N'th cleared bit in 2 memory regions.
->> + * @addr1: The 1st address to start the search at
->> + * @addr2: The 2nd address to start the search at
->> + * @size: The maximum number of bits to search
->> + * @n: The number of set bit, which position is needed, counting from 0
->> + *
->> + * Returns the bit number of the N'th bit cleared in the two regions.
->> + * If no such, returns @size.
->> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
->> + */
->> +static __always_inline
->> +unsigned long find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
->> +				unsigned long size, unsigned long n)
->> +{
->> +	if (n >= size)
->> +		return size;
->> +
->> +	if (small_const_nbits(size)) {
->> +		unsigned long val = ~(*addr1 | *addr2) & GENMASK(size - 1, 0);
->> +
->> +		return val ? fns(val, n) : size;
->> +	}
->> +
->> +	return __find_nth_nor_bit(addr1, addr2, size, n);
->> +}
->> +
->>   /**
->>    * find_nth_and_andnot_bit - find N'th set bit in 2 memory regions,
->>    *			     excluding those set in 3rd region
->> @@ -346,6 +410,54 @@ unsigned long find_first_and_bit(const unsigned long *addr1,
->>   }
->>   #endif
->>   
->> +/**
->> + * find_first_andnot_bit - find the first set bit in 2 memory regions,
->> + *                         flipping bits in 2nd region.
->> + * @addr1: The first address to base the search on
->> + * @addr2: The second address to base the search on
->> + * @size: The bitmap size in bits
->> + *
->> + * Returns the bit number for the next set bit.
->> + * If no bits are set, returns @size.
->> + */
->> +static __always_inline
->> +unsigned long find_first_andnot_bit(const unsigned long *addr1,
->> +				 const unsigned long *addr2,
->> +				 unsigned long size)
->> +{
->> +	if (small_const_nbits(size)) {
->> +		unsigned long val = *addr1 & (~*addr2) & GENMASK(size - 1, 0);
->> +
->> +		return val ? __ffs(val) : size;
->> +	}
->> +
->> +	return _find_first_andnot_bit(addr1, addr2, size);
->> +}
->> +
->> +/**
->> + * find_first_nor_bit - find the first cleared bit in 2 memory regions
->> + * @addr1: The first address to base the search on
->> + * @addr2: The second address to base the search on
->> + * @size: The bitmap size in bits
->> + *
->> + * Returns the bit number for the next cleared bit.
->> + * If no bits are set, returns @size.
->> + * The bitwise operation nor ~(A | B) is equivalent to (~A & ~B).
->> + */
->> +static __always_inline
->> +unsigned long find_first_nor_bit(const unsigned long *addr1,
->> +				 const unsigned long *addr2,
->> +				 unsigned long size)
->> +{
->> +	if (small_const_nbits(size)) {
->> +		unsigned long val = ~(*addr1 | *addr2) & GENMASK(size - 1, 0);
->> +
->> +		return val ? __ffs(val) : size;
->> +	}
->> +
->> +	return _find_first_nor_bit(addr1, addr2, size);
->> +}
->> +
->>   /**
->>    * find_first_and_and_bit - find the first set bit in 3 memory regions
->>    * @addr1: The first address to base the search on
->> diff --git a/lib/find_bit.c b/lib/find_bit.c
->> index 0836bb3d76c5..8050bc7c7ede 100644
->> --- a/lib/find_bit.c
->> +++ b/lib/find_bit.c
->> @@ -116,6 +116,28 @@ unsigned long _find_first_and_bit(const unsigned long *addr1,
->>   EXPORT_SYMBOL(_find_first_and_bit);
->>   #endif
->>   
->> +/*
->> + * Find the first set bit in two memory regions, flipping bits in 2nd region.
->> + */
->> +unsigned long _find_first_andnot_bit(const unsigned long *addr1,
->> +				  const unsigned long *addr2,
->> +				  unsigned long size)
->> +{
->> +	return FIND_FIRST_BIT(addr1[idx] & ~addr2[idx], /* nop */, size);
->> +}
->> +EXPORT_SYMBOL(_find_first_andnot_bit);
->> +
->> +/*
->> + * Find the first cleared bit in two memory regions.
->> + */
->> +unsigned long _find_first_nor_bit(const unsigned long *addr1,
->> +				  const unsigned long *addr2,
->> +				  unsigned long size)
->> +{
->> +	return FIND_FIRST_BIT(~(addr1[idx] | addr2[idx]), /* nop */, size);
->> +}
->> +EXPORT_SYMBOL(_find_first_nor_bit);
->> +
->>   /*
->>    * Find the first set bit in three memory regions.
->>    */
->> @@ -167,6 +189,13 @@ unsigned long __find_nth_andnot_bit(const unsigned long *addr1, const unsigned l
->>   }
->>   EXPORT_SYMBOL(__find_nth_andnot_bit);
->>   
->> +unsigned long __find_nth_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
->> +				 unsigned long size, unsigned long n)
->> +{
->> +	return FIND_NTH_BIT(~(addr1[idx] | addr2[idx]), size, n);
->> +}
->> +EXPORT_SYMBOL(__find_nth_nor_bit);
->> +
->>   unsigned long __find_nth_and_andnot_bit(const unsigned long *addr1,
->>   					const unsigned long *addr2,
->>   					const unsigned long *addr3,
->> @@ -194,6 +223,13 @@ unsigned long _find_next_andnot_bit(const unsigned long *addr1, const unsigned l
->>   EXPORT_SYMBOL(_find_next_andnot_bit);
->>   #endif
->>   
->> +unsigned long _find_next_nor_bit(const unsigned long *addr1, const unsigned long *addr2,
->> +					unsigned long nbits, unsigned long start)
->> +{
->> +	return FIND_NEXT_BIT(~(addr1[idx] | addr2[idx]), /* nop */, nbits, start);
->> +}
->> +EXPORT_SYMBOL(_find_next_nor_bit);
->> +
->>   #ifndef find_next_or_bit
->>   unsigned long _find_next_or_bit(const unsigned long *addr1, const unsigned long *addr2,
->>   					unsigned long nbits, unsigned long start)
->> -- 
->> 2.39.2
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+> >  	if (boot_cpu_has(X86_FEATURE_IBPB))
+> >  		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
+> >  	if (boot_cpu_has(X86_FEATURE_IBRS))
 
