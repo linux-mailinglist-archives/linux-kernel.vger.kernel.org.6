@@ -1,225 +1,116 @@
-Return-Path: <linux-kernel+bounces-298904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B2595CD02
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:54:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B3795CCDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7DC1F21A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:54:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A42C4B21405
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9AB189BB8;
-	Fri, 23 Aug 2024 12:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D13F186E5A;
+	Fri, 23 Aug 2024 12:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wt2HdV1Y"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZoUL26R"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E1C18951F
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD8718660A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417508; cv=none; b=Ot8qIwMS1QXVJ7sn/IutRG+WL29yD6eHdehwRFhv1RFiE23Ar2t2Jrmkb6hmV6SisSYdZ4hBIU6cLSymksqnemAIh7c9gHvYD99o5e9VtvasvtmqauVIaPLtoPm6xwPhP8Dl2+IZ5XGCIHJcKuC4Ff3VDuxEGw2h4LKtjrTiwuA=
+	t=1724417495; cv=none; b=BpeKA4bU4EdhOIZmKPThoTqTQdbxq4TSUDthXzzQY5vscrhgiCVigxyxa7E7cJMLva/AIYwAcmoFXJ1NChczoh1O0Q1GtfgG7n/inuSmIutAvWvJZhBj65vlYFk5/mtnERJwTkvN+oaya3tF/jq+X/OsFC/hWIfvelsbM88JOz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417508; c=relaxed/simple;
-	bh=RaCHoWfcvN19DBMmkgIRc0NGUjytTpFgVMcU13mcxgo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K7tXybkYED1PRIThzWz2b3SddurR+kSmrfbCsiorjF3k+lHbZg7lsCB2OljGvDfz1zDaXWdA5gMeglOwcnTe8Wp1WksBbO6aa2LLsdl6xaW1Q7h5EjGJ5sFkN+xo0NVGfCfTkYwYw3gGTWi5JQXYEcxMgZLfeu7OoJcBXLGKBxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wt2HdV1Y; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1724417495; c=relaxed/simple;
+	bh=TyzgdhWB7wc4Oocm7h8CUf5+ccWAlJpS6Qze8g7MVCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UK/ydZexvPAgMnYB/v21Dict2TTcydYtaKfSWjk+Ag5uoyCEgvbxEIrEUVnoqgT5Rqq0nKwhmIPtmKUPLz/U5rajmT7dcrIP6ILme9xYNVGDyIQAOSTG9WZCncPw4Ehx9fo6QLezn2dE9/t7BYHCUMjrBnWHwx33hiDBs+hw4w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZoUL26R; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a866902708fso10065466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:51:46 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42812945633so14876295e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724417505; x=1725022305; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/rp37AUE8o1pDdOTGLdrCW8KtmisO6ANjwH8PgBb0ls=;
-        b=wt2HdV1Y+hpHDtGu4AZPY1gaQjH5BA43pu8GrqurKqPNSlmSGOIsL7UA3uNXKqMvy1
-         V3CZ2Pn0K3rZqssB0KftZzRFMWFKPd7VmMuKxDJuqwbyrySnATjgpa0xcLst8zinsR4n
-         eUNyCsX9ezBEKxt7psZ8dyQSFW5uX1InKa80iqqi1s7y7k8xwR1bqHG+OCRxDMJPx5Vu
-         VV2pib7S8T0OargbhFdQopxYtXNlMlXBuzBCyOZjUBucAClgh34ccrLUlQ1zUf5AOLvO
-         mpGzY+v9zoVnyXXTJ5LzikHb3TUT0MIId2ydVNMZcFFVi8R0Qn0C3L1/gqzURz1YQBZo
-         UVUA==
+        d=linaro.org; s=google; t=1724417492; x=1725022292; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wxEehQwCYE19lD5kSpNMOUjLeWoaZ9JR6aNfHSrkYjI=;
+        b=KZoUL26RujwmTqGbIfsLemWF7phJGhDTslGQ3umr6jdd2rNEEEtYfAsvxVZk34pO9Z
+         MKElc6ZiPKwDsGSw2g8UrXgjL6pd8tx6S3Z+HqroQLtRxInxFC+roZpg6giiVO7QWhj/
+         L92RzZDXyTgX+gDzYYaVPCiyM510xGXiShr97QwfPx6ugU1U7ZbjIDjEGBQXghBZiUn2
+         Mv1Yan8wBxP9ewEx3BY6TiayRSp0lC2ZftwR0hbYopKTjL5gaGcmEWalSFkLwSOMsYy3
+         HGhbQRpTiZrwm6lrNvDyEdwTxAwBL+EdeLByeTfwK14/xLETd4JpWTNzqU8qH7L812sn
+         UsZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724417505; x=1725022305;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/rp37AUE8o1pDdOTGLdrCW8KtmisO6ANjwH8PgBb0ls=;
-        b=arcdniyjnotrIUMD+LgqJ1HpkqlYwswlD82Fqon/rX1wCs7TX9EjDRFW3rkDyBIXjo
-         mt8YqkNeiWX57uWac3dZeTtw+KZgbRwlBcP9ZJdqtmqFNusDGUNk46AtNFL7lIra7chu
-         ZgaWuKYk3x3iuW0Gm35XDt4sSqTCDrxrNV05gKguVqfvGWv4XTAJLuMU0AtvywwroWBq
-         l/rKaqZxoDfFj1en6yd5LNhzTDX5O9Go3dGAV/BA0rF52lEfaPsX/3M0yqzjT9874cJW
-         DDqNjhgc5m2sDERQOQmnWOJ10vtvCcAFNyO+xWgQOcIMLHwNGua9KKCGyYSvakx0JZ5Z
-         MuXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVggtrk94oXfH2ApKrnzYcasb1Rh6eiXu88NhpKxFASuWvcQtAN9xk1HrmBGiWB7L6EZ1nLajVdi+4FJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIX2ApPYH2BzD+Yd0RanplT7UYY8AIjMSM71iSJcjgj9/bQvUU
-	UNiIfKGqVR2EIxdYYjv1zcxg5T68pMMXh2WisTrdxIZvAqm8mD8aVrQE1cTPd8I=
-X-Google-Smtp-Source: AGHT+IE1+3Q98ogeUT94jLgiJMspBnSs1Bmg9/MGG8bMaWFikVo5szbklH8yaPLEJlsyUwI0svusGA==
-X-Received: by 2002:a17:906:c355:b0:a86:a694:aaff with SMTP id a640c23a62f3a-a86a694abe2mr75972666b.1.1724417504852;
-        Fri, 23 Aug 2024 05:51:44 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f384bsm255931666b.192.2024.08.23.05.51.43
+        d=1e100.net; s=20230601; t=1724417492; x=1725022292;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxEehQwCYE19lD5kSpNMOUjLeWoaZ9JR6aNfHSrkYjI=;
+        b=ZxIK8kjR/lx67JnPCV67G63vmEbyyJX1N9BiG48/JWOxZsLf1y8ZMTGWYKDbGYjwZ+
+         QJkn7/0EnS3rLEwUGYba4sPNKi9J9V+iAlVYIo2I0oT1h++ymxxjf5R5sbG8HN9KnyM1
+         /R/lJOPWgbL1GAHmiY83227bwDH0E/o/cdUX0mx//uLV3qmOhivJ/Pjhz0n1xfdRWgrA
+         oaITF/2ekdQBQWS+NJhmC5qyvuCOh6rua5wJAn7PTIGNjimiJca5Zg0J0OnE4417wAQ0
+         CD/VZqZx/ZBDFV4LnOAePy9eCbrUnBpyUkhowyDdyv8ZLpDL0k/HehvtF8IkwtI07sWr
+         M2Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0XV0R6mO0eZFMCpzo1rit2MDVKgiKy7K/OgaoQ+NFcdlMdCO1ltR5sBv/8CoW/2ihf8n74xIdl6xPBKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuwSqCB9iwudCXq14TOc3uUJsKjHWcs0gt7JPKVtJHYJGKxOrn
+	gam1MZrckzsIiPAXvsOTq4amc0M15fxccJeTsm8W6oVC19phbITsWPO1yp7S9uE=
+X-Google-Smtp-Source: AGHT+IFhHLlc095ixSKUu6CrmrIUdCI1EJL4zfC+W4OjuIo9Se2eQ/YR+U4xra16yh9krliC8NQqAg==
+X-Received: by 2002:a05:600c:470d:b0:426:6921:e3e5 with SMTP id 5b1f17b1804b1-42acc9fe1e7mr16108185e9.24.1724417491866;
+        Fri, 23 Aug 2024 05:51:31 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm4095492f8f.53.2024.08.23.05.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 05:51:44 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 23 Aug 2024 14:51:14 +0200
-Subject: [PATCH 10/10] pmdomain: renesas: rcar-sysc: Use scoped device node
- handling to simplify error paths
+        Fri, 23 Aug 2024 05:51:31 -0700 (PDT)
+Date: Fri, 23 Aug 2024 15:51:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] HID: hid-goodix: Fix a signedness bug in
+ goodix_hid_get_raw_report()
+Message-ID: <8e6fe9f1-fcd8-4264-b28d-a1ee99b592b8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-cleanup-h-guard-pm-domain-v1-10-8320722eaf39@linaro.org>
-References: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
-In-Reply-To: <20240823-cleanup-h-guard-pm-domain-v1-0-8320722eaf39@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3056;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=RaCHoWfcvN19DBMmkgIRc0NGUjytTpFgVMcU13mcxgo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmyIXNR2zayhDCmXFhzQ1RKmq8aC4JQfASOX82l
- qQyhlx44UOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZsiFzQAKCRDBN2bmhouD
- 1xL8D/9RUFSYlgRZQEabYs+Zlod9oIJejL78n+4Ll7xzEa+aucx3mi/5XlXocpJxNV+gOzHmnL5
- pTAKjf9vr2rrSCFpdxWqcebEDpOfdp3FhZVpBNUc1h/OP5bjr184cjhi7i9TuCDo/iVdB0pUXdN
- M76MCTdDAD/bgYmwRgVMQpXF1J769uZTGjSJmi58B0VRQhOhJgjmrSLchp8/NAEnWPwerPXMCkm
- eB714yX5DLHHI+JfhnayFx/N2/E534xyEO1HvsBvfioJrdNphfVPfe4xI/qOHupvYmd5t+/9Ghd
- in1T0ooZnRBOqqF/8HZO+fb5oZPBETF2hHD6X7fMDmFhHDfW6lReeoDHG+ru1B6TG9NLvU0x98u
- wrOOoAXHWLuo2AT/cJjkItEh9Q4T0t0HZ4GscFMohXEJ+GKyoOgFKiAgIBfVgaeJ9bfTpT6teuW
- zljMa7caswrosPMTvLgRiWDI6NIuUAP1HdpDhMSMerJwDdR3mM18CodSRTqDknlhCH8Tff/UyzE
- YQqB1Shvtr1g7dD8+6Ajdjhu72i65o1lOBEcq/i6nT6QV3efKKqIzTcF1WoXBmdjq5ZQQyxC71v
- yN682xplaXESoBHsCxOVmTmEK5SdClLG2XTLvLhB2ErFuaqOK91wtibYaqRUCEPcNvHLuNxW/fR
- 7csJsV6ahkbU4zA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+GOODIX_HID_PKG_LEN_SIZE defined as sizeof(u16) (type size_t).  If the
+goodix_hid_check_ack_status() function times out and return -EINVAL then,
+because of type promotion, the negative error code is treated as a high
+positive value which is success.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix this by adding an explicit check for negative error codes.
+
+Fixes: 75e16c8ce283 ("HID: hid-goodix: Add Goodix HID-over-SPI driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pmdomain/renesas/rcar-sysc.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+ drivers/hid/hid-goodix-spi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pmdomain/renesas/rcar-sysc.c b/drivers/pmdomain/renesas/rcar-sysc.c
-index b99326917330..da169eed638c 100644
---- a/drivers/pmdomain/renesas/rcar-sysc.c
-+++ b/drivers/pmdomain/renesas/rcar-sysc.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2015-2017 Glider bvba
-  */
+diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
+index 5103bf0aada4..59415f95c675 100644
+--- a/drivers/hid/hid-goodix-spi.c
++++ b/drivers/hid/hid-goodix-spi.c
+@@ -435,7 +435,8 @@ static int goodix_hid_get_raw_report(struct hid_device *hid,
  
-+#include <linux/cleanup.h>
- #include <linux/clk/renesas.h>
- #include <linux/delay.h>
- #include <linux/err.h>
-@@ -348,12 +349,12 @@ static int __init rcar_sysc_pd_init(void)
- 	const struct rcar_sysc_info *info;
- 	const struct of_device_id *match;
- 	struct rcar_pm_domains *domains;
--	struct device_node *np;
- 	void __iomem *base;
- 	unsigned int i;
- 	int error;
+ 	/* Step2: check response data status */
+ 	response_data_len = goodix_hid_check_ack_status(ts);
+-	if (response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
++	if (response_data_len < 0 ||
++	    response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
+ 		return -EINVAL;
  
--	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
-+	struct device_node *np __free(device_node) =
-+		of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
- 	if (!np)
- 		return -ENODEV;
- 
-@@ -362,7 +363,7 @@ static int __init rcar_sysc_pd_init(void)
- 	if (info->init) {
- 		error = info->init();
- 		if (error)
--			goto out_put;
-+			return error;
- 	}
- 
- 	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
-@@ -371,8 +372,7 @@ static int __init rcar_sysc_pd_init(void)
- 	base = of_iomap(np, 0);
- 	if (!base) {
- 		pr_warn("%pOF: Cannot map regs\n", np);
--		error = -ENOMEM;
--		goto out_put;
-+		return -ENOMEM;
- 	}
- 
- 	rcar_sysc_base = base;
-@@ -382,10 +382,8 @@ static int __init rcar_sysc_pd_init(void)
- 	rcar_sysc_extmask_val = info->extmask_val;
- 
- 	domains = kzalloc(sizeof(*domains), GFP_KERNEL);
--	if (!domains) {
--		error = -ENOMEM;
--		goto out_put;
--	}
-+	if (!domains)
-+		return -ENOMEM;
- 
- 	domains->onecell_data.domains = domains->domains;
- 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
-@@ -403,10 +401,8 @@ static int __init rcar_sysc_pd_init(void)
- 
- 		n = strlen(area->name) + 1;
- 		pd = kzalloc(sizeof(*pd) + n, GFP_KERNEL);
--		if (!pd) {
--			error = -ENOMEM;
--			goto out_put;
--		}
-+		if (!pd)
-+			return -ENOMEM;
- 
- 		memcpy(pd->name, area->name, n);
- 		pd->genpd.name = pd->name;
-@@ -417,7 +413,7 @@ static int __init rcar_sysc_pd_init(void)
- 
- 		error = rcar_sysc_pd_setup(pd);
- 		if (error)
--			goto out_put;
-+			return error;
- 
- 		domains->domains[area->isr_bit] = &pd->genpd;
- 
-@@ -429,7 +425,7 @@ static int __init rcar_sysc_pd_init(void)
- 		if (error) {
- 			pr_warn("Failed to add PM subdomain %s to parent %u\n",
- 				area->name, area->parent);
--			goto out_put;
-+			return error;
- 		}
- 	}
- 
-@@ -437,8 +433,6 @@ static int __init rcar_sysc_pd_init(void)
- 	if (!error)
- 		fwnode_dev_initialized(of_fwnode_handle(np), true);
- 
--out_put:
--	of_node_put(np);
- 	return error;
- }
- early_initcall(rcar_sysc_pd_init);
-
+ 	len = min(len, response_data_len - GOODIX_HID_PKG_LEN_SIZE);
 -- 
 2.43.0
 
