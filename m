@@ -1,193 +1,204 @@
-Return-Path: <linux-kernel+bounces-298337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C9895C5F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DE495C5F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AADB1F2385D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:01:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBCA01C2158F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86839139CEC;
-	Fri, 23 Aug 2024 07:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ACB137750;
+	Fri, 23 Aug 2024 07:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="NDs+9ZSx"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dP4TAHYM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D747110953;
-	Fri, 23 Aug 2024 07:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3430E56B7C;
+	Fri, 23 Aug 2024 07:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724396462; cv=none; b=Fld3gaqIk+JdKQE++MBuyJX31mKzJUXEqEGyqZShtzKpxd+FBgN9xBHXl2gzs5BDKbI4TckJx0gT+mjMrKeFMNuC6QwWFgPo6WijRETLJ/PI8hz8+oVexjgXyGInY0wKlj3940mteaO8r3cMIiefQcra92dTArZ5BgpyH15hz/s=
+	t=1724396477; cv=none; b=qyrUq06sp+P8zJb3wuVWtWfni7ioZ/BSwr/bc6BkEzGAIVbN318sEUz3iwbFQKZc3zIaMcKdRlF6YK9sPHDfVsETdrW7JbQ3l+c48ks9CMh+W8rb8wVIWPsCoYYZdeztWU5DEqJT7wOm5b5H3yT2RbXQlOqzCW0EcA7dcTZIaUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724396462; c=relaxed/simple;
-	bh=jGshhhvgJvPItJvLyz9xeVPpG2akmVY+mzhE2S2mbXI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HM0BzLgD8PsnDi7IyzUQDTnqNdZC5PQSEQI6282YA8SXME8AxM0kZ5dmVd0twz1Kqc/7QR2P1jJd3hnZNPmYTG/3QjQ6zN1Y4FAZBP4xpS9ODRg5pYGovwm98nUrV9qcXKO9HCAPYy4biKMf3PihxGppUsRyR+wlXSI60CfhtIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=NDs+9ZSx; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1724396477; c=relaxed/simple;
+	bh=jIY59/KvkT+dsfuMCJZVXhtOVdYXLQPDxcQxzxuHaO4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZHaYOTSk4TWtouvvKF+UunvWdam8HEdSkbQgOOCqbIy75K7cxsZTECl2pqOsVkIFnDhKTwF82xcXWA7n1BYta669e41fxJ3r9ovl1hWTL1nXihZrwMndWzKgCnKTW3yA6CzDfYXsLjwF6vz63LwhkAB7AkaCrFKQ9YwWXt7srWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dP4TAHYM; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724396475; x=1755932475;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jIY59/KvkT+dsfuMCJZVXhtOVdYXLQPDxcQxzxuHaO4=;
+  b=dP4TAHYM2460q/1aZpV0OpGLJ3WOQVz8K3WPr0AYDSwwl4MpgaJW2wH4
+   qKVA6f38eeMpNjXkvROMr1vW4VEwy+hreUC+R9C039T5JATIQxt7WdcvD
+   /uIiR914FZpWBj7OR5DYJdX+hKkeiS0W+5tW5ADwcWUraudd66hNwxOSo
+   Dh6Lk7M+IHQSmxdHQWtG5fQY1SEDG+l9XXb93+Nmr6lFLrH2YeSUKcMhZ
+   xB9b+F28wq3lJ8UQbj3jA+f+hT1lVAtCH0GWVc7AEeAzmKvEDI2yglBFV
+   oj0uw7G0vSrv0WJ4p9zF94ciBgfXtapo+nsvLWWYOTgxuNtxvhfvuwtNS
+   w==;
+X-CSE-ConnectionGUID: uD42LHiJQDG3LoSdflP90w==
+X-CSE-MsgGUID: p48rGT9KTNyfPGWKXEJyNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26717125"
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="26717125"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 00:01:14 -0700
+X-CSE-ConnectionGUID: 2uDO+txQRvWbpX0Lqunr0g==
+X-CSE-MsgGUID: csbLrQdoQEGTg32sf2qXWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="62004863"
+Received: from inlubt0246.iind.intel.com ([10.191.24.87])
+  by orviesa006.jf.intel.com with ESMTP; 23 Aug 2024 00:01:10 -0700
+From: subramanian.mohan@intel.com
+To: gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	giometti@enneenne.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: andriy.shevchenko@linux.intel.com,
+	eddie.dong@intel.com,
+	christopher.s.hall@intel.com,
+	pandith.n@intel.com,
+	thejesh.reddy.t.r@intel.com,
+	david.zage@intel.com,
+	srinivasan.chinnadurai@intel.com,
+	subramanian.mohan@intel.com
+Subject: [PATCH v12 0/3] Add support for Intel PPS Generator
+Date: Fri, 23 Aug 2024 12:31:05 +0530
+Message-Id: <20240823070109.27815-1-subramanian.mohan@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1724396457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FPZmmM60tSAujVzmtKbajvXbMMgpiHTPo/2dvKyDtNI=;
-	b=NDs+9ZSxY/ek6dPLsXqeuOJwsBeoXV7+MBLiCrJILOstP+qpC9oJCnYApU8E9VQTBKQTiA
-	SzzLCqknuhMjQaZOfkGQ7OymI3u66L7WTuHgNAKkBtGF+6DOujeCaz/il9mGWaVfxFs7rd
-	4+mKHEVDbJeWypUJeELQzBCMCLgB5a9OZ77fBuVt9A+5smmmVU0+qDKMe2ABjTFasXzpEN
-	oYUBKaEn2f49AYOvIVXEYRU64f6GeFPpE09zT/vsfq0SYbiv/xgb4maPHljXE+f32M6HBI
-	4xJQo+08F2rxCgrrVe71jq8S9XMc4AHxKFaRKQ6GyN0BODyvntXF9iFChi42FA==
-Date: Fri, 23 Aug 2024 09:00:57 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Jaehoon
- Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
-In-Reply-To: <20240822212418.982927-5-detlev.casanova@collabora.com>
-References: <20240822212418.982927-1-detlev.casanova@collabora.com>
- <20240822212418.982927-5-detlev.casanova@collabora.com>
-Message-ID: <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Detlev,
+From: Subramanian Mohan <subramanian.mohan@intel.com>
 
-Please see a comment below.
+The goal of the PPS (Pulse Per Second) hardware/software is to generate a
+signal from the system on a wire so that some third-party hardware can
+observe that signal and judge how close the system's time is to another
+system or piece of hardware.
 
-On 2024-08-22 23:15, Detlev Casanova wrote:
-> On rk3576 the tunable clocks are inside the controller itself, removing
-> the need for the "ciu-drive" and "ciu-sample" clocks.
-> 
-> That makes it a new type of controller that has its own dt_parse 
-> function.
-> 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
->  1 file changed, 43 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
-> b/drivers/mmc/host/dw_mmc-rockchip.c
-> index 1458cb5fd5c7..7c8ccf5e71bc 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -410,7 +410,7 @@ static int dw_mci_rk3288_execute_tuning(struct
-> dw_mci_slot *slot, u32 opcode)
->  	return ret;
->  }
-> 
-> -static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
-> +static int dw_mci_common_parse_dt(struct dw_mci *host)
->  {
->  	struct device_node *np = host->dev->of_node;
->  	struct dw_mci_rockchip_priv_data *priv;
-> @@ -420,13 +420,29 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci 
-> *host)
->  		return -ENOMEM;
-> 
->  	if (of_property_read_u32(np, "rockchip,desired-num-phases",
-> -					&priv->num_phases))
-> +				 &priv->num_phases))
->  		priv->num_phases = 360;
-> 
->  	if (of_property_read_u32(np, "rockchip,default-sample-phase",
-> -					&priv->default_sample_phase))
-> +				 &priv->default_sample_phase))
->  		priv->default_sample_phase = 0;
-> 
-> +	host->priv = priv;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
-> +{
-> +	struct dw_mci_rockchip_priv_data *priv;
-> +	int err;
-> +
-> +	err = dw_mci_common_parse_dt(host);
-> +	if (err)
-> +		return err;
-> +
-> +	priv = host->priv;
-> +
->  	priv->drv_clk = devm_clk_get(host->dev, "ciu-drive");
->  	if (IS_ERR(priv->drv_clk))
->  		dev_dbg(host->dev, "ciu-drive not available\n");
-> @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci 
-> *host)
->  	if (IS_ERR(priv->sample_clk))
->  		dev_dbg(host->dev, "ciu-sample not available\n");
-> 
-> -	host->priv = priv;
-> -
->  	priv->internal_phase = false;
-> 
->  	return 0;
->  }
-> 
-> +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
-> +{
-> +	struct dw_mci_rockchip_priv_data *priv;
-> +	int err = dw_mci_common_parse_dt(host);
-> +	if (err)
-> +		return err;
-> +
-> +	priv = host->priv;
-> +
-> +	priv->internal_phase = true;
+Existing methods (like parallel ports) require software to flip a bit at
+just the right time to create a PPS signal. Many things can prevent
+software from doing this precisely. This (Timed I/O) method is better
+because software only "arms" the hardware in advance and then depends on
+the hardware to "fire" and flip the signal at just the right time.
 
-Defining priv, assigning it and using it seems rather redundant,
-when all that's needed is simple "host->priv->internal_phase = true"
-assignment instead.
+To generate a PPS signal with this new hardware, the kernel wakes up
+twice a second, once for 1->0 edge and other for the 0->1 edge. It does
+this shortly (~10ms) before the actual change in the signal needs to be
+made. It computes the TSC value at which edge will happen, convert to a
+value hardware understands and program this value to Timed I/O hardware.
+The actual edge transition happens without any further action from the
+kernel.
 
-> +
-> +	return 0;
-> +}
-> +
->  static int dw_mci_rockchip_init(struct dw_mci *host)
->  {
->  	int ret, i;
-> @@ -483,11 +511,21 @@ static const struct dw_mci_drv_data 
-> rk3288_drv_data = {
->  	.init			= dw_mci_rockchip_init,
->  };
-> 
-> +static const struct dw_mci_drv_data rk3576_drv_data = {
-> +	.common_caps		= MMC_CAP_CMD23,
-> +	.set_ios		= dw_mci_rk3288_set_ios,
-> +	.execute_tuning		= dw_mci_rk3288_execute_tuning,
-> +	.parse_dt		= dw_mci_rk3576_parse_dt,
-> +	.init			= dw_mci_rockchip_init,
-> +};
-> +
->  static const struct of_device_id dw_mci_rockchip_match[] = {
->  	{ .compatible = "rockchip,rk2928-dw-mshc",
->  		.data = &rk2928_drv_data },
->  	{ .compatible = "rockchip,rk3288-dw-mshc",
->  		.data = &rk3288_drv_data },
-> +	{ .compatible = "rockchip,rk3576-dw-mshc",
-> +		.data = &rk3576_drv_data },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, dw_mci_rockchip_match);
+The result here is a signal coming out of the system that is roughly
+1,000 times more accurate than the old methods. If the system is heavily
+loaded, the difference in accuracy is larger in old methods.
+
+Application Interface:
+The API to use Timed I/O is very simple. It is enabled and disabled by
+writing a '1' or '0' value to the sysfs enable attribute associated with
+the Timed I/O PPS device. Each Timed I/O pin is represented by a PPS
+device. When enabled, a pulse-per-second (PPS) synchronized with the
+system clock is continuously produced on the Timed I/O pin, otherwise it
+is pulled low.
+
+The Timed I/O signal on the motherboard is enabled in the BIOS setup.
+Intel Advanced Menu -> PCH IO Configuration -> Timed I/O <Enable>
+
+References:
+https://en.wikipedia.org/wiki/Pulse-per-second_signal
+https://drive.google.com/file/d/1vkBRRDuELmY8I3FlfOZaEBp-DxLW6t_V/view
+https://youtu.be/JLUTT-lrDqw
+
+Patch 1 adds the pps(pulse per second) generator tio driver to the pps
+subsystem.
+Patch 2 documentation and usage of the pps tio generator module.
+Patch 3 includes documentation for sysfs interface.
+
+These patches are based on the timers/core branch:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/?h=timers/core
+These changes are dependent on patches that are merged in [1].
+
+Please help to review the changes.
+
+Thanks in advance,
+Subramanian Mohan
+
+Changes from v2:
+ - Split patch 1 to remove the functions in later stages.
+ - Include required headers in pps_gen_tio.
+
+Changes from v3:
+ - Corrections in Documentation.
+ - Introducing non-RFC version of the patch series.
+
+Changes from v4:
+ - Setting id in ice_ptp
+ - Modified conversion logic in convert_base_to_cs.
+ - Included the usage of the APIs in the commit message of 2nd patch.
+
+Changes from v5:
+ - Change nsecs variable to use_nsecs.
+ - Change order of 1&2 patches and modify the commit message.
+ - Add sysfs abi file entry in MAINTAINERS file.
+ - Add check to find if any event is missed and disable hardware
+   accordingly.
+
+Changes from v6:
+ - Split patch 1 into 1&2 patches.
+ - Add check for overflow in convert_ns_to_cs().
+ - Refine commit messages.
+
+Changes from v7:
+ - Split the if condition and return error if current time exceeds
+   expire time.
+ - Update kernel version and month in ABI file.
+
+Changes from v8:
+ - Add function to enable Timed I/O.
+ - Changed the updating of tio->enabled to a centralized place in
+   disable and enable functions.
+
+Changes from v9:
+ - use tio->enabled instead of reading ctrl register.
+ - change error code in enable_store to -ENODEV.
+
+Changes from v10:
+ - Rebased to latest codebase.
+
+Changes from v11:
+ - Rebased to latest codebase.
+
+Subramanian Mohan (3):
+  pps: generators: Add PPS Generator TIO Driver
+  Documentation: driver-api: pps: Add Intel Timed I/O PPS generator
+  ABI: pps: Add ABI documentation for Intel TIO
+
+ .../ABI/testing/sysfs-platform-pps-tio        |   8 +
+ Documentation/driver-api/pps.rst              |  24 ++
+ MAINTAINERS                                   |   1 +
+ drivers/pps/generators/Kconfig                |  16 ++
+ drivers/pps/generators/Makefile               |   1 +
+ drivers/pps/generators/pps_gen_tio.c          | 262 ++++++++++++++++++
+ 6 files changed, 312 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-pps-tio
+ create mode 100644 drivers/pps/generators/pps_gen_tio.c
+
+-- 
+2.35.3
+
 
