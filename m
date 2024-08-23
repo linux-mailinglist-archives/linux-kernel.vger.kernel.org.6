@@ -1,86 +1,111 @@
-Return-Path: <linux-kernel+bounces-298632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD4395C9A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8371295C991
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D50A287D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BAA2861FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477311607AA;
-	Fri, 23 Aug 2024 09:51:37 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154C16DEA9;
+	Fri, 23 Aug 2024 09:48:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4261D14F9F5;
-	Fri, 23 Aug 2024 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1594B152178;
+	Fri, 23 Aug 2024 09:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724406696; cv=none; b=ke5WGvKBtszYNacVe99PAru9w5lQsxVqWQruUL/ZOywYd/3BLFIS2w4ORFECJE8lQww5ewrCkg9HgZVhp+WV2XycvhjQ2jmvzo9wA+RDJmLqwC1Kb+AauY5MakV18TOqyVPBG34Dyu+elJ9FLuLgDQxI8I9BlreR1gOV9WSUsXI=
+	t=1724406536; cv=none; b=b7Z3ZoX5Ld5iNKAV4kciU2lXkuOjwwFH3ojTBXAM75Oen27BYWdjL0/z9X/pmIFXj9PGoNwcBVrjH7pS3n0DU6uAt7wN8Rv1x/8UXR2FbMv4j47kvfttEbHN8c0WXEkmQ9WAjFmRioMJtEDa2SWri3p85XgdfDMbu+dgNaECzFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724406696; c=relaxed/simple;
-	bh=jA23xu3bDLo+bBj64DlSv0HYlodGE5sSYIl7/XT6dcI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ijm1wnXiHT99gTWQeewN+nZsDkVK0aWh1fNJr8B+ce6bxuZOFizMXJ8szikmkLXWakjJgsk/nZS0BjpSkoYEocI4NGmx6OwpDMnkvhujKtq1rtxwTqKTdXVuRwC2T+5P0Ziyg0beggD1tmcntPW0TEi+cxAR2FWfj9yd6Y6lSwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WqwM20dc2z1j70y;
-	Fri, 23 Aug 2024 17:51:26 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id B89DF1A0188;
-	Fri, 23 Aug 2024 17:51:30 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
- 2024 17:51:30 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <mchehab@kernel.org>, <ribalda@chromium.org>, <hverkuil-cisco@xs4all.nl>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] media: siano: Remove unused declarations
-Date: Fri, 23 Aug 2024 17:48:39 +0800
-Message-ID: <20240823094839.3142472-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724406536; c=relaxed/simple;
+	bh=shLl9B9UeieVDAiPc96T6YsYCgNbh9Jph92u4fXeHmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjkVwPt/ZpoBC6st2UEXBO6yUzL7f+4QzEmQHEs9Lui2zIMBv1SBUveZm13Mus4JjMAd0folne2DOSz7XeNf6YUtuXmT3dSRmxUb3rtIJzd1w6V+i7JGb8dD4JOjo/h23S9CD5tSGyLDP4z3vYTzK95XRD3uHVgAV80uxTfk8lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6993C32786;
+	Fri, 23 Aug 2024 09:48:49 +0000 (UTC)
+Date: Fri, 23 Aug 2024 10:48:47 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 27/39] arm64: Add Kconfig for Guarded Control Stack
+ (GCS)
+Message-ID: <Zsha_58Y2nkOC35v@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-27-41b81947ecb5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822-arm64-gcs-v11-27-41b81947ecb5@kernel.org>
 
-There is no caller and implementation in tree, so can remove them.
+On Thu, Aug 22, 2024 at 02:15:30AM +0100, Mark Brown wrote:
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a2f8ff354ca6..772f9ba99fe8 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2137,6 +2137,26 @@ config ARM64_EPAN
+>  	  if the cpu does not implement the feature.
+>  endmenu # "ARMv8.7 architectural features"
+>  
+> +menu "v9.4 architectural features"
+> +
+> +config ARM64_GCS
+> +	bool "Enable support for Guarded Control Stack (GCS)"
+> +	default y
+> +	select ARCH_HAS_USER_SHADOW_STACK
+> +	select ARCH_USES_HIGH_VMA_FLAGS
+> +	help
+> +	  Guarded Control Stack (GCS) provides support for a separate
+> +	  stack with restricted access which contains only return
+> +	  addresses.  This can be used to harden against some attacks
+> +	  by comparing return address used by the program with what is
+> +	  stored in the GCS, and may also be used to efficiently obtain
+> +	  the call stack for applications such as profiling.
+> +
+> +	  The feature is detected at runtime, and will remain disabled
+> +	  if the system does not implement the feature.
+> +
+> +endmenu # "v9.4 architectural features"
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/media/common/siano/smscoreapi.h | 6 ------
- 1 file changed, 6 deletions(-)
+BTW, as Mark R spotted we'd also need to handle uprobes. Since that's
+off in defconfig, I think it can be done separately on top of this
+series. In the meantime, we could make this dependent on !UPROBES.
 
-diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-index 3c15082ce0e3..d945a2d6d624 100644
---- a/drivers/media/common/siano/smscoreapi.h
-+++ b/drivers/media/common/siano/smscoreapi.h
-@@ -1115,12 +1115,6 @@ extern int smsclient_sendrequest(struct smscore_client_t *client,
- extern void smscore_onresponse(struct smscore_device_t *coredev,
- 			       struct smscore_buffer_t *cb);
- 
--extern int smscore_get_common_buffer_size(struct smscore_device_t *coredev);
--extern int smscore_map_common_buffer(struct smscore_device_t *coredev,
--				      struct vm_area_struct *vma);
--extern int smscore_send_fw_file(struct smscore_device_t *coredev,
--				u8 *ufwbuf, int size);
--
- extern
- struct smscore_buffer_t *smscore_getbuffer(struct smscore_device_t *coredev);
- extern void smscore_putbuffer(struct smscore_device_t *coredev,
 -- 
-2.34.1
-
+Catalin
 
