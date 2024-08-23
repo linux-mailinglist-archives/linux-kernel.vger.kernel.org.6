@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-299391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA09D95D3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:02:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0047295D3EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D855B254BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:02:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D3D0B256BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7440518E022;
-	Fri, 23 Aug 2024 17:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF46A18F2C4;
+	Fri, 23 Aug 2024 17:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaUltmNy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAuvaj4O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4518C34C;
-	Fri, 23 Aug 2024 17:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB0818BB97;
+	Fri, 23 Aug 2024 17:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432547; cv=none; b=ErEv1+b7aqL7KofGqIvcY/K4Zzkiim8yYqsflDDB3BZQQL0OIJfGEjDlUbWlaI87AZBeJSBU9QXbVcByW0xUvdOtEHRNLMDO/5rz2C3fRexbB4Jezfj5zBJxOOZL2xY5F29Pfu4Mfs2FzXHQpAImipoKOKFex0HMsGKWgBCemaM=
+	t=1724432553; cv=none; b=uUqEOkQlalENipqC1TIhYw/9Ev8BjVyVHCkggWNLS2B4kUsMHY03JlEh4Z6hIaxDywVtGiEMqYHsPsjcEdfnomFgHnEwOhq0Pc2XThRijSbY6b68fHjBZW2hF5cUx/MoEB8+YfYlOg1CU9Ksp/9kd0mj2uVjfOwHddnK5MxNAIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432547; c=relaxed/simple;
-	bh=9A8wOi/pi4Ety14/8M1Zn6IPWDoyWzhzH6O4HjRfe1o=;
+	s=arc-20240116; t=1724432553; c=relaxed/simple;
+	bh=PAwsiU4bIYX3E0qYsbmM9AuaSPSKSbzpsu5/n9Ejdz0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zi/mS4ZAtzColkZ6FkdeX+ehgrvf9Urk0haIbebq2MnMF2IH2Qp29mW4unzoGWMr8XsW3LqZ9MjrnXR4Ow8XtSoTGi6g8UQaCMHkeqa/zCFgSU6znmdghQnG95VZW0J2Butn4vAPZFHXgi9UBZRageLvg58yRZpek4vGzNzTSTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaUltmNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12380C4AF09;
-	Fri, 23 Aug 2024 17:02:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IOesmWwXZ0/JTg9clASQ2Mp5GUB2czfdXf17HhR7YscTKR8Loiz2wj/R2PEGk6dRpFTyFnZyDMfvoHZ561MQwgFjeb3FevqjSE/be2jY8qtgj5swnf8nlFgP+lpfW0UaQu+RBEhL3+VEAcrZtnDFhCOjsqC43J8JgmtMp718VoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAuvaj4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31F8C4AF0B;
+	Fri, 23 Aug 2024 17:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724432547;
-	bh=9A8wOi/pi4Ety14/8M1Zn6IPWDoyWzhzH6O4HjRfe1o=;
+	s=k20201202; t=1724432551;
+	bh=PAwsiU4bIYX3E0qYsbmM9AuaSPSKSbzpsu5/n9Ejdz0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aaUltmNy3yG/SEp8QEXhyLKHJQG9ShdVwphXIHn+RWckWcu4Br/m+BFEn0S2ZP14z
-	 95xYyeZdJZOqIUhDbTXbkNf4rV+Rq4+FC84cb2qzKc+k90mCVSyFzZIiwTX1nmV0ng
-	 UK6dAfDYEiWUIfCPUISmx0c9wblg6sBewZ53ygxPcJQC1vgUFw06uIuCdAmy0Sb+bc
-	 0a/avHfG2mYL+jzrNPT0F41g/IIp5tTfI4dIyHCeBNAYrBSzYl2dz5DrxzUG/cRZaI
-	 uBnXAJGFveKMn5nwzNKP+0nvpZs6D/MPKJ6Sk8Ci98UuMendbk/5pHCFB6VydYoTw6
-	 Vgq42RhanTSrg==
+	b=lAuvaj4O5YFi+PNVvflM3EUNpqLg9HPhJ2aCnLCVZi+UkyK3bgCaeSAgzU1Gi4Ar4
+	 8UZGRsb1+gvmvM2qjy9jYd8/UWg+u7VWqSbBr+eoqDw9DvnbbmgPfHXKakktuD1Lgr
+	 tIgc+rdSB/62ycS19erazueEwi2xS2tCll8oAPeWrAqMU2hLcnxdmZX8pw2xy+isYZ
+	 zELLrbprZ/tqr9Xc2U2mpKlstKnYX/iWwt5mz1wP32lkwqLaKlJBahPd1LPzR52di6
+	 TRbsCB9eKmGjUCGUWNoE7XIwGKHXVbyGUlttSh9g8O6ZEOeiA1uuWKcMAL80qcItOm
+	 JCC41QF5DCKNQ==
 From: Will Deacon <will@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Yangyu Chen <cyy@cyyself.name>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Douglas Anderson <dianders@chromium.org>
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
+	Yu Zhao <yuzhao@google.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Janne Grunau <j@jannau.net>,
-	Hector Martin <marcan@marcan.st>,
-	Asahi Lina <lina@asahilina.net>,
-	asahi@lists.linux.dev,
+	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Kees Cook <kees@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drivers/perf: apple_m1: add known PMU events
-Date: Fri, 23 Aug 2024 18:02:09 +0100
-Message-Id: <172442476935.2790637.13488582005156730508.b4-ty@kernel.org>
+Subject: Re: [PATCH v3] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
+Date: Fri, 23 Aug 2024 18:02:10 +0100
+Message-Id: <172441009653.1922898.7572192517928205189.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <tencent_C5DA658E64B8D13125210C8D707CD8823F08@qq.com>
-References: <tencent_C5DA658E64B8D13125210C8D707CD8823F08@qq.com>
+In-Reply-To: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
+References: <20240821145353.v3.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,20 +78,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 07 Aug 2024 11:35:18 +0900, Yangyu Chen wrote:
-> This patch adds known PMU events that can be found on /usr/share/kpep in
-> macOS. The m1_pmu_events and m1_pmu_event_affinity are generated from
-> the script [1], which consumes the plist file from Apple. And then added
-> these events to m1_pmu_perf_map and m1_pmu_event_attrs with Apple's
-> documentation [2].
-> 
+On Wed, 21 Aug 2024 14:53:57 -0700, Douglas Anderson wrote:
+> When testing hard lockup handling on my sc7180-trogdor-lazor device
+> with pseudo-NMI enabled, with serial console enabled and with kgdb
+> disabled, I found that the stack crawls printed to the serial console
+> ended up as a jumbled mess. After rebooting, the pstore-based console
+> looked fine though. Also, enabling kgdb to trap the panic made the
+> console look fine and avoided the mess.
 > 
 > [...]
 
-Applied to will (for-next/perf), thanks!
+Applied to arm64 (for-next/misc), thanks!
 
-[1/1] drivers/perf: apple_m1: add known PMU events
-      https://git.kernel.org/will/c/3cce331ee2a4
+[1/1] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
+      https://git.kernel.org/arm64/c/fdfa588124b6
 
 Cheers,
 -- 
