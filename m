@@ -1,156 +1,347 @@
-Return-Path: <linux-kernel+bounces-298906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF77F95CD0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:57:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8409B95CD13
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186151C21818
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9AA91C212C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27F4185B5A;
-	Fri, 23 Aug 2024 12:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3701862BE;
+	Fri, 23 Aug 2024 12:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoI164sR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rO9b5O/b"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F31628DA0;
-	Fri, 23 Aug 2024 12:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29A818028
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724417868; cv=none; b=fdK8ROChd+PNwLcrz8OOjh8EsoN3nF6HWSskzoHNRxRqVJamw5zU32Mn0V84BJ1QfCK5qOTj42tHZGQRdUasW26U7zhGk24LarY9+8Q5Uw2J6A96IjERTmLtlwUxxd4UXl2MIK8bX0H1CitgoFVuviCCIq872nlRtMedpRSRu2Y=
+	t=1724417943; cv=none; b=SjYe8qXxS+I8aEV7uqUHMbk9pnLcT4YgIIFRr+qKAe3ewqk/ecuPDY6Wz/QzU/CW1nvr5N2iSIBH7KuXc68f7HkazdwviL2GhFwv9D071A2W5v2g/gD0N4EA7kSSC2mbHNgzH32uQd8Mcnc9Tf8mqOGrOOjotgh7aAhLQHYGaVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724417868; c=relaxed/simple;
-	bh=OY6bHJnU223oOGs7StLRb/15d3cmv1bT3z4OTLXYa7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhBHge26pLVMF6AfqfHFnYOAnpSn+VHPQOnIdxiS2gaWd3GhjVpN4i/axJQpEtJYQ3HuksuhQnyUwOwezl4H8y6gBEUNdxO2T+mYYouDtMdnVGBHnBMsDIMEwAsDBMgbAoIv6j2tNDsAXOGsUfZNp0w+3Hxkj3rJ0XUvg3wTBBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoI164sR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18ADC32786;
-	Fri, 23 Aug 2024 12:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724417867;
-	bh=OY6bHJnU223oOGs7StLRb/15d3cmv1bT3z4OTLXYa7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OoI164sRioS+ZRkcaa32xMRuXmoD8VikBeqQOHtPE+5ZDIqx571cIOip9lJQsGp0u
-	 HU38wy81WLF1JdoqPmM7bAL/5s4Z9ik1KUN9URWLi7mAP4v2TT2/mCnsbJaMMZFrXe
-	 3WS35laSVr9FYllsjupy1oNtjgM1vU3d9uNeZs2AzmnhZUBAtbxyqmEOpgBWWnjGzD
-	 UWYrdmQjLY4kDRL3ks1Xb2/gMWi1bbGcgRbe/f2gxnIK32oAjoIZKTqs6iy7/gP1zU
-	 8Q4Aa717QW14pTghtY26G2ZIIBsrVZyNkvB0kKdJ1W4HJUaDxI7tbiIBgrqH8o8zkN
-	 2NJX12Ki6DzGg==
-Date: Fri, 23 Aug 2024 13:57:39 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v5] rust: support for shadow call stack sanitizer
-Message-ID: <20240823125739.GA32156@willie-the-truck>
-References: <20240806-shadow-call-stack-v5-1-26dccb829154@google.com>
- <20240820143503.GD28338@willie-the-truck>
- <CAH5fLggN+A2RawC-cpmSUHxYm=xz=1EDpMUv5C803hj37re1qA@mail.gmail.com>
- <20240823122423.GB32110@willie-the-truck>
- <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
+	s=arc-20240116; t=1724417943; c=relaxed/simple;
+	bh=7kNEi/OiZze03OM1wbMpjeZA2NZZGXIuVb2E2KfBN4A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SoyhBNSKlxBpmuX85syNt/mptSYPebgVAtT54UKCEMHrXnbj27zgGkixWxTBj1jywvMHwIqfSV06f0rD8HTOcVX4/FMig9oggk4pL2mJ1w8K/F2JExPZu4H5LnhdUT+bM4TL9N/25uUm+TP7/fZ/GT73CHyXtJFDfBW+9HaARHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rO9b5O/b; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f040733086so17684181fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 05:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724417939; x=1725022739; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qghjeC4G1cLi83JB5WxagT7bfxgoomvA+OfZjEPYThQ=;
+        b=rO9b5O/bW2qmDRD7QxtZE2BLIGcN7/jTP9RMiqupCI/s7CwgMEkeItF3uDYCFbUygJ
+         +XsCzZtB5u+7HRZ6u4c40nSeKMewxB7913xmNThriGZK1uZehKL0qFLgrwDF3r/wlYRL
+         oqPnzsCOYQL3oUlWHCJXE/gutA+75Jo2QCgGVpAjvc4xEJ+BMqPbLPtKNxRhMqp0Dg6v
+         vEzIlJeB23zQP7LXl56MvjMvFCIKQumkL3XxwSoxBfXqLyHLTHqckQj2Kayh/ZbqaEu/
+         bWmTPZnRlKkJMXib1jrt4bgB9gj5gBKUM0bCjojemEbBHk8LXNXIVOEAB97tsD8Vmef4
+         Z9Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724417939; x=1725022739;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qghjeC4G1cLi83JB5WxagT7bfxgoomvA+OfZjEPYThQ=;
+        b=k7C+CRytjPOxSK0I14tVRW4rnBuLto65v18pHUfvVmXk8OxkRzbzcvBOSwsi5W13+J
+         5H42IhqN2ToEhQ7tpcwL2NYNdPsk/7lqVgUi52NbqsxJwsXIMSOxJQz+bMtzclH/OswL
+         kn6/Vv91Z6BBqAr4OXv0dwqNwbOVDA8lvCainGSuzwf97M41Lrnp7G8EDgIO9aHctGeD
+         FHLfxWOsJRSOjn4//iu/OHM92rUC4nJrDN0t4AQBsYtRnPhI4HG8G6QsXZxP6/3jBy2g
+         Vv6IbrNFLH50q9jX1jI8x6RtasvfHnxVr28/0Dqg4zODyeydgG0NEQlFs2uCSUpj5s09
+         spjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzX3pkTSdzgO68xtE8WjGK+yaI5ymllvOgwAG8GXOyDLGtZJc0gjAIfIXTT2KnlTAucFuUbiOo1ujF+k0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLKVxN37zk/pADuIPxic4Y9z8PFtmiGinYA0tCcXDfLk+wCuuy
+	KvyfK4pyVK47DEuK9/UY3Cd3AqDUcXmzm/0attY+L0ASHyIm5U+fTB+cPIwSCCE=
+X-Google-Smtp-Source: AGHT+IFmyJqIIYKvFHFmvTWKdG+lP5pWyv5LUxcyYzdy1j+zF2jNHfzDubXY6GIudLULTmshpFaK5A==
+X-Received: by 2002:a2e:8ec6:0:b0:2f3:cabc:6158 with SMTP id 38308e7fff4ca-2f4f5756f0emr13105291fa.11.1724417938476;
+        Fri, 23 Aug 2024 05:58:58 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a9806sm2086709a12.87.2024.08.23.05.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 05:58:58 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Fri, 23 Aug 2024 13:58:56 +0100
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
+ QUPs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgh6ywHeFSwbnaOu-QYrt_Jytv_y3zb1QbJzK-w4kQ617w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAI+HyGYC/x2MQQqAMAzAviI9W+iq6OZXxINo1aKobCAD2d8dH
+ hNIXgjiVQJ0xQteHg16nRlMWcC0jecqqHNmYOKaLFcYjVgyRDgdOy4aseHW8GwdsSPI2e0l63/
+ ZDyl9ArLTH2IAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev
 
-On Fri, Aug 23, 2024 at 02:38:20PM +0200, Alice Ryhl wrote:
-> On Fri, Aug 23, 2024 at 2:24 PM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Tue, Aug 20, 2024 at 05:13:58PM +0200, Alice Ryhl wrote:
-> > > On Tue, Aug 20, 2024 at 4:35 PM Will Deacon <will@kernel.org> wrote:
-> > > > On Tue, Aug 06, 2024 at 10:01:44AM +0000, Alice Ryhl wrote:
-> > > > > diff --git a/init/Kconfig b/init/Kconfig
-> > > > > index fe76c5d0a72e..d857f6f90885 100644
-> > > > > --- a/init/Kconfig
-> > > > > +++ b/init/Kconfig
-> > > > > @@ -1909,7 +1909,7 @@ config RUST
-> > > > >       depends on !MODVERSIONS
-> > > > >       depends on !GCC_PLUGINS
-> > > > >       depends on !RANDSTRUCT
-> > > > > -     depends on !SHADOW_CALL_STACK
-> > > > > +     depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
-> > > >
-> > > > Sorry, I didn't spot this in v4, but since UNWIND_PATCH_PAC_INTO_SCS is
-> > > > specific to arm64 and the only other architecture selecting
-> > > > ARCH_SUPPORTS_SHADOW_CALL_STACK is riscv, I can't help but feel it would
-> > > > be cleaner to move this logic into the arch code selecting HAVE_RUST.
-> > > >
-> > > > That is, it's up to the architecture to make sure that it has whatever
-> > > > it needs for SCS to work with Rust if it claims to support Rust.
-> > > >
-> > > > What do you think?
-> > >
-> > > The `select RUST if ...` is going to get really complicated if we
-> > > apply that rule in general. Having options here allows us to split
-> > > them across several `depends on` clauses. I'm not sure it will even
-> > > work, I had issues with cyclic Kconfig errors previously. I also don't
-> > > think it's unreasonable for the architecture to say it supports both
-> > > options when it really does support both; they are just mutually
-> > > exclusive. I also think there is value in having all of the options
-> > > that Rust doesn't work with in one place.
-> >
-> > I'm not sure I follow why this will get really complicated. Isn't it as
-> > straightforward as the diff below, or did I miss something?
-> 
-> Hmm. I tried this but I wasn't able to enable Rust with this setup.
-> Even though the deps of RUSTC_SUPPORTS_ARM64 are ok, it doesn't seem
-> to be enabled and I can't find it in menuconfig. I think we need to
-> have a `select RUSTC_SUPPORTS_ARM64` somewhere.
+Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
+need to be parked when switching frequency. A side-effect in parking to a
+lower frequency can be a momentary invalid clock driven on an in-use serial
+peripheral.
 
-Sorry, yes, my diff was a little half-arsed:
+This can cause "junk" to spewed out of a UART as a low-impact example. On
+the x1e80100-crd this serial port junk can be observed on linux-next.
 
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index a2f8ff354ca6..2f5702cb9dac 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -231,7 +231,7 @@ config ARM64
-> >         select HAVE_FUNCTION_ARG_ACCESS_API
-> >         select MMU_GATHER_RCU_TABLE_FREE
-> >         select HAVE_RSEQ
-> > -       select HAVE_RUST if CPU_LITTLE_ENDIAN
-> > +       select HAVE_RUST if RUSTC_SUPPORTS_ARM64
-> >         select HAVE_STACKPROTECTOR
-> >         select HAVE_SYSCALL_TRACEPOINTS
-> >         select HAVE_KPROBES
-> > @@ -265,6 +265,11 @@ config ARM64
-> >         help
-> >           ARM 64-bit (AArch64) Linux support.
-> >
-> > +config RUSTC_SUPPORTS_ARM64
-> > +       bool
+Apply a similar fix to the x1e80100 Global Clock controller to remediate.
 
-This line ^^^ should be 'def_bool y'.
+Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
+Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+I ran into some junk on the x1e80100 serial port and asked around to see if
+someone had already found and fixed.
 
-Will
+Neil pointed me at Stephen's fix for sm8550 which I found is also required
+to fix the same thing x1e80100.
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 48 ++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 6ffb3ddcae086..f17f8a1fcf414 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -670,7 +670,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
+@@ -687,7 +687,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
+@@ -719,7 +719,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
+@@ -736,7 +736,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
+@@ -768,7 +768,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
+@@ -785,7 +785,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+@@ -802,7 +802,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
+@@ -819,7 +819,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
+@@ -836,7 +836,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+@@ -853,7 +853,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+@@ -870,7 +870,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
+@@ -887,7 +887,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+@@ -904,7 +904,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+@@ -921,7 +921,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+@@ -938,7 +938,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
+@@ -955,7 +955,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
+@@ -972,7 +972,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
+@@ -989,7 +989,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
+@@ -1006,7 +1006,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
+@@ -1023,7 +1023,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
+@@ -1040,7 +1040,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
+@@ -1057,7 +1057,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
+@@ -1074,7 +1074,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_8,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_8),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
+@@ -1091,7 +1091,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
+
+---
+base-commit: 826d8eb42d2a7192c2c8e2103a4d07fb6006f409
+change-id: 20240823-x1e80100-clk-fix-62712d890290
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
