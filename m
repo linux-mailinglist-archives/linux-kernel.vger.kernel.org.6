@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-299228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F27E95D1CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B69A95D1CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B591C22433
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47ED12864B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC27188CDA;
-	Fri, 23 Aug 2024 15:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E9A189F20;
+	Fri, 23 Aug 2024 15:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CBHi8NBK"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BD0DVQNQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D83188A31
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 15:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED84E18BBA3;
+	Fri, 23 Aug 2024 15:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427616; cv=none; b=L3uPkcMtZhK0YkCpw9IWnNzx/6QoEd+fBxJNgEQ5svXMFFOFiHehANvh/8oPtB/eWqG3elcUSBYnqipzEVX3tp0kJI5D6A2N9XmxALaZMtPhMC4vB4lGF3+hUWTO8fblS9o1uwHSjqkzxbDWP0dU8kvVzdnYys/DvWwMG3JGjD4=
+	t=1724427635; cv=none; b=MfVunWSm1veekdIbeIZa7l3x6AEWyJ/kOLb0yV79k4/QnqRVs31EzMDs6bi9qmR+JiY57b6Bv+Vo3TLtGxZ3+jWVHTlELK4weYr0/uliADYmRjDIZ0dNBm3ul66i8/6i0pFn3cA/oYnx/7FvyI2O+zN4LZUGJnQyetMBjFUaPcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427616; c=relaxed/simple;
-	bh=GaP3IZrd5RcE9Ge4dIzx32rmwqF5NAyUSCzfoCvnFqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e08cRu+AY/0O6qr6yde/8quWRJMjYECI1ZVWLKmvgY94bamTlL/BUPbVQQStoRcKZGzgv0KmlxJqM5fd/KHnaiauKUJlyHOe3KaGS9n6s1V2C3ktRraOz4r+8twIFE+CRdRBjNg8ZtNYhBnE2strPyAIxjGbOZt/gxISGmeiCN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CBHi8NBK; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20223b5c1c0so20382265ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724427613; x=1725032413; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7PswcGyJCTUDaExiPb+cp181Qy+ul9NVt4xbxRyvgH4=;
-        b=CBHi8NBK50ce1ZSLXcvgXuFRyvK3+rzQXgSny7GMaTBigXH6bgnAbnvH84FKCD55mv
-         3EHyp40zA5RFx+5qXqCPRpgFo0YlORHzAgJuB5QbsdvY+wHkqekT2gstx/ksKOHpUrXt
-         bajZAMYUR6CCtn2I/5musaR3pCM/ZttOsKdWQgfm8msehHm9xZkkWvZ0QAQ5lcMGsmZ+
-         XBEPAa+kFE0tEQg1YJOrpYRHUXIA4NwwFyGrPG5ncaxf0nedAcfWjbvp+8DImEam9ma7
-         DfyQm1/sYphsmSdVZOCC2TgHKJHYbHYnQWbdRDY+tGBIGWAmGMnom9u6lCjCk+qA5NR0
-         7hmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427613; x=1725032413;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7PswcGyJCTUDaExiPb+cp181Qy+ul9NVt4xbxRyvgH4=;
-        b=X2NnAuCiyDI4RWHlEd+WGUghWL/c7ERzs7ZurwO7CvQnpu5czb6nC9f5Wkjvt325Hh
-         x/4Gqymyjc7rBpHcfIrwqSCEvpEpwfFizJxRWPUfZwGbh+Rj866RfIwu3K+9WQdU84k+
-         3xN2CuIShqmYhW/Se6EehSDI+LYDgqd6tylbqb2im4SxzPAVBwfCyYNrOUj4Atszw2iO
-         s9aCnsO8jUxkbwKioQ7/m0PpY+cbHnt/RAWIYBaaZcBBEbhcJpC1voWkmJ3G7EHKC1LE
-         rDXlXMx7Rmc+EQ1HffO6nE0MNmXBBvhIpntc9RmXoOnMEk19GaUYpS3wB98GAMYWbJye
-         z5cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX27Ukhg0hE4lCNF0S1w0Vv2K7c4NulpYzLDkpJN/O404dHEDAEgJUtRtzdbXT0H1HpHItpcW1T22g2e+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKEywNwHVTCNFceIoEAtEdCxFyvM92p99b3HtjBQrwdTDWqqLw
-	LJPrQ9bGT0CkhPJPQaL57Ejqh/nrVjkcTcFt+ZABgXTil7BMZW6mdJ5fbPdkiA==
-X-Google-Smtp-Source: AGHT+IF74dSdz3Lddcc4Y1HpHeUo4j1K1gSy0t0eup/KCqO1Hsm3KR379cw9PEgNYC8BJ6xrSdPAcA==
-X-Received: by 2002:a17:902:e5ce:b0:1fd:67c2:f97f with SMTP id d9443c01a7336-2039e4e7cf1mr23598545ad.28.1724427612976;
-        Fri, 23 Aug 2024 08:40:12 -0700 (PDT)
-Received: from thinkpad ([120.60.50.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038556686asm29835955ad.40.2024.08.23.08.40.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 08:40:12 -0700 (PDT)
-Date: Fri, 23 Aug 2024 21:09:58 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	thara.gopinath@gmail.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, gustavoars@kernel.org,
-	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org,
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com, quic_utiwari@quicinc.com
-Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
-Message-ID: <20240823153958.vk4naz34vgkqzhrb@thinkpad>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-2-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1724427635; c=relaxed/simple;
+	bh=aLi9/+U9UkyqRo2wj4MKMZZy1G9ZHIG2P3x0xO+c+5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=posV3Yp22eb2yQYRSEXUlGJRKWPmOTddUEz2X34l0hLAwcQmBIdwzcaq3VC/Yu5oKLp9xFMFdXelpBom1tdMqC9JLbXCzWj+j67Cu0GJoZy9CHKUnLdQ56rFaFHgoHYgpy5L8P52/vOEocBD2tzD39g5dtneCbjfCJnPJuKj0cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BD0DVQNQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE5DC4AF09;
+	Fri, 23 Aug 2024 15:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724427634;
+	bh=aLi9/+U9UkyqRo2wj4MKMZZy1G9ZHIG2P3x0xO+c+5k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BD0DVQNQOdWGI7ho2gjkVx/ZJFzkeFw6+2FxImPslce+Gu2z6oO+39vgf/oKiIm8v
+	 2YtVm2alVPCVMYBJzT1fdxiwyH4tHMFdbSF43SWM35Vkm/fGD1h1/DWr209tk6evOZ
+	 AUa+aGXUfmNuTg028hjovZiBi9mwVUnQDHAZHPdp9MyXfcCi9WqpKycwTegQR0fR4m
+	 1gd3CScwi/DTU526RuC5rObR+vNA6VvZ+ameg0qQIfN0Qu83Ssl2o8pLLT4uPszGpB
+	 +k2QIZZu8OsIWGWMysiMKGKT1Ns5/jnC7VRaiK9txEOj7oGjFLt39/xFZ1L/d3/VjS
+	 ICXvkaHeqf7sQ==
+From: Mario Limonciello <superm1@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Gary Li <Gary.Li@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v5 0/5] Verify devices transition from D3cold to D0
+Date: Fri, 23 Aug 2024 10:40:18 -0500
+Message-ID: <20240823154023.360234-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240815085725.2740390-2-quic_mdalam@quicinc.com>
 
-On Thu, Aug 15, 2024 at 02:27:10PM +0530, Md Sadre Alam wrote:
-> BAM having pipe locking mechanism. The Lock and Un-Lock bit
-> should be set on CMD descriptor only. Upon encountering a
-> descriptor with Lock bit set, the BAM will lock all other
-> pipes not related to the current pipe group, and keep
-> handling the current pipe only until it sees the Un-Lock
-> set.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
-> 
-> Change in [v2]
-> 
-> * Added initial support for dt-binding
-> 
-> Change in [v1]
-> 
-> * This patch was not included in [v1]
-> 
->  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> index 3ad0d9b1fbc5..91cc2942aa62 100644
-> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> @@ -77,6 +77,12 @@ properties:
->        Indicates that the bam is powered up by a remote processor but must be
->        initialized by the local processor.
->  
-> +  qcom,bam_pipe_lock:
-> +    type: boolean
-> +    description:
-> +      Indicates that the bam pipe needs locking or not based on client driver
-> +      sending the LOCK or UNLOK bit set on command descriptor.
-> +
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-This looks like a pure driver implementation and doesn't belong to the DT at
-all. Why can't you add a logic in the driver to use the lock based on some
-detection mechanism?
+Gary has reported that when a dock is plugged into a system at the same
+time the autosuspend delay has tripped that the USB4 stack malfunctions.
 
-- Mani
+Messages show up like this:
 
->    reg:
->      maxItems: 1
->  
-> @@ -92,6 +98,8 @@ anyOf:
->        - qcom,powered-remotely
->    - required:
->        - qcom,controlled-remotely
-> +  - required:
-> +      - qcom,bam_pipe_lock
->    - required:
->        - clocks
->        - clock-names
-> -- 
-> 2.34.1
-> 
-> 
+```
+thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
+```
+
+Furthermore the USB4 router is non-functional at this point.
+
+Those messages happen because the device is still in D3cold at the time
+that the PCI core handed control back to the USB4 connection manager
+(thunderbolt).
+
+The issue is that it takes time for a device to enter D3cold and do a
+conventional reset, and then more time for it to exit D3cold.
+
+This appears not to be a new problem; previously there were very similar
+reports from Ryzen XHCI controllers.  Quirks were added for those.
+Furthermore; adding extra logging it's apparent that other PCI devices
+in the system can take more than 10ms to recover from D3cold as well.
+
+This series add a wait into pci_power_up() specifically for D3cold exit and
+then drops the quirks that were previously used for the Ryzen XHCI controllers.
+
+Mario Limonciello (5):
+  PCI: Use an enum for reset type in pci_dev_wait()
+  PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in pci_dev_wait()
+  PCI: Verify functions currently in D3cold have entered D0
+  PCI: Allow Ryzen XHCI controllers into D3cold and drop delays
+  PCI: Drop Radeon quirk for Macbook Pro 8.2
+
+ drivers/pci/pci-driver.c    |  2 +-
+ drivers/pci/pci.c           | 70 +++++++++++++++++++++++++++----------
+ drivers/pci/pci.h           | 13 ++++++-
+ drivers/pci/pcie/dpc.c      |  2 +-
+ drivers/pci/quirks.c        | 25 -------------
+ drivers/usb/host/xhci-pci.c | 11 ------
+ 6 files changed, 66 insertions(+), 57 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
