@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-299665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D1695D85A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:15:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5700D95D85B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC451C23032
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1390C285BAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADA91C8234;
-	Fri, 23 Aug 2024 21:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12341C825C;
+	Fri, 23 Aug 2024 21:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rF/sSfTC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqkEdViH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC631C822B;
-	Fri, 23 Aug 2024 21:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D057C14A4C8;
+	Fri, 23 Aug 2024 21:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724447705; cv=none; b=h/2NADEa6MSxcEEa+KoRN1MVT8l/QQhYUFmFsmTgapfsVl4hY+7BqnPsbTSwx+cRkZbUzVVPV6S1kk8wd2jMLTDEwGhP3R4YJh83A7TFh2N3IjUPvG1IOkwpvL5okTy5o9zs/tv67kpMMYS943Pqq7hrYZaADTyLeqfS73FwBrU=
+	t=1724447717; cv=none; b=WC5LmrHa27YLa1TdY648yz42NWXyKey30inlqRi2nG5Y9iNINjbl0i+DZevy99f4vQfMOvaFq+vyb6tsKkogTPLitqOpgjgVXLrEG/VVnooxwDQ5bX349CgFhMS2JkqM9MDMCeSW43YnBKH1RsYkKksZdwW0iiczaFwwml437S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724447705; c=relaxed/simple;
-	bh=mUH0IziPWhJ5X3zmaIyZcbFDpVMgw6WO0zCuL9ImWBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JScFMaTpnk9cZZKac4Bncn5NfsTq+rF0aeDoAG9UyclOiGFBFBLHL30m7lqZSlkasAASnaMJ0qi+puyZLDslCpYjR5oKyUN0axzk2QWtpQ1l8MhucvKDOsaEN++BepsmT3t5z5hRLIBxj0k9ptPRUv/qam2ebEOn8Ltysl1fDJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rF/sSfTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 806CFC32786;
-	Fri, 23 Aug 2024 21:15:04 +0000 (UTC)
+	s=arc-20240116; t=1724447717; c=relaxed/simple;
+	bh=Eu9iIKrUmBF+EtSklwZ4302HDaY6OtItQ7LVMVD6LIM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FO1GdBLWErkblZIvbh/N0Xb+8lq9+a+/Qf1N7SDR2C/YdxJLcnlrPhQMDJVdUrXvRduObm1VKfA1kKUrH7whSFE5wCzn84dRBl9n9MKVhzj1snvzEeq00kzIkSpEkhYjo6uN4HM3Er+vjlGSdw3V4UoMrY9eBR4uQp9TCOU0qTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqkEdViH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D2EC32786;
+	Fri, 23 Aug 2024 21:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724447704;
-	bh=mUH0IziPWhJ5X3zmaIyZcbFDpVMgw6WO0zCuL9ImWBw=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=rF/sSfTCuqogAs3V5A7Baraq2/IELGzXzJaMqXi58FB6xZpuRS/Qdz/Ek7Ybow+/g
-	 79f/OxNIAoAL9etrf5jhmNghhNfd0GMp0KHDsY8homuFt04xThlbt/FuREyGmbBuPx
-	 y0XrK31i8/HRjIx+N1SlYFh2Wh69aRCDDDM2rf2HTvGYVQKx+bOMHjWRBcbU1KKGTN
-	 6qa8z4+0GaU+TPdLa11BMqMt0mfofAPh3HR8270ZJQkBlYJXYiJBSgSSSQPpP/4xcA
-	 qBP1s3kyAVZSRZ7qITpiF4TZ2Nf77HsuD6/q1POrjWDcDd9ocNO7vUCAbCmjFoiI7y
-	 /sV8xf18GJIog==
+	s=k20201202; t=1724447717;
+	bh=Eu9iIKrUmBF+EtSklwZ4302HDaY6OtItQ7LVMVD6LIM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PqkEdViHRN3JOmr8HgG4OdQ2Occ5V8K6tjroC0/GI0g16iglsYQx34Q5F4h4Umhy2
+	 kTNzx3Okkn/Kx258/OrEK2y10HUqbJRdgxVndSDyiVienTsnkYubQpfhJabUjgwn4U
+	 c02VyMMSbrKOahJLshopzXZk9IgFKWgHfC39tlPS7y0qAS5Q0ZFg6ctcwnqRyWliLG
+	 R6KsGtM1riQWLCqQ2qOi9nRyC4MTP/G7YPpFfWgBjKIbhXZVJ+ilAsy2xyKymvQAe4
+	 X3FtMbN20NS9kMbeeioc8ilak8jihCBZCu0ONuA7cgCNfXz6+qDIcFkZ0GtNsrdCU8
+	 Ba0iQeNJCLOxA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2C629CE0D9B; Fri, 23 Aug 2024 14:14:59 -0700 (PDT)
-Date: Fri, 23 Aug 2024 14:14:59 -0700
+	id 273C6CE0D9B; Fri, 23 Aug 2024 14:15:17 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
-	riel@surriel.com
-Subject: [PATCH rcu 0/4] Reduce lock contention during RCU CPU stall warnings
-Message-ID: <415b108b-1046-4027-aa2a-c829b77f39f6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	riel@surriel.com,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 1/4] rcu: Defer printing stall-warning backtrace when holding rcu_node lock
+Date: Fri, 23 Aug 2024 14:15:12 -0700
+Message-Id: <20240823211516.2984627-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <415b108b-1046-4027-aa2a-c829b77f39f6@paulmck-laptop>
+References: <415b108b-1046-4027-aa2a-c829b77f39f6@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+The rcu_dump_cpu_stacks() holds the leaf rcu_node structure's ->lock
+when dumping the stakcks of any CPUs stalling the current grace period.
+This lock is held to prevent confusion that would otherwise occur when
+the stalled CPU reported its quiescent state (and then went on to do
+unrelated things) just as the backtrace NMI was heading towards it.
 
-This patch series reduces lock contention during RCU CPU stall warnings,
-especially on systems having slow consoles.  It does this first by
-deferring printk() output, second by refraining from emitting stack
-backtraces if the grace period should end partway through, and third
-by using a lockless check in order to avoid ever acquiring the lock for
-leaf rcu_node structures not associated with a stalled CPU.  In the case
-where a given rcu_node structure is associated with multiple stalled CPUs,
-the lock is also dropped and reacquired for each stalled CPU.
+This has worked well, but on larger systems has recently been observed
+to cause severe lock contention resulting in CSD-lock stalls and other
+general unhappiness.
 
-While in the area, get rid of a function that is no longer used.
+This commit therefore does printk_deferred_enter() before acquiring
+the lock and printk_deferred_exit() after releasing it, thus deferring
+the overhead of actually outputting the stack trace out of that lock's
+critical section.
 
-1.	Defer printing stall-warning backtrace when holding rcu_node lock.
+Reported-by: Rik van Riel <riel@surriel.com>
+Suggested-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/tree_stall.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-2.	Delete unused rcu_gp_might_be_stalled() function.
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index cf8e5c6ed50ac..2fb40ec4b2aea 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -371,6 +371,7 @@ static void rcu_dump_cpu_stacks(void)
+ 	struct rcu_node *rnp;
+ 
+ 	rcu_for_each_leaf_node(rnp) {
++		printk_deferred_enter();
+ 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 		for_each_leaf_node_possible_cpu(rnp, cpu)
+ 			if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu)) {
+@@ -380,6 +381,7 @@ static void rcu_dump_cpu_stacks(void)
+ 					dump_cpu_task(cpu);
+ 			}
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++		printk_deferred_exit();
+ 	}
+ }
+ 
+-- 
+2.40.1
 
-3.	Stop stall warning from dumping stacks if grace period ends.
-
-4.	Finer-grained grace-period-end checks in rcu_dump_cpu_stacks().
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/include/linux/rcutiny.h |    1 
- b/include/linux/rcutree.h |    1 
- b/kernel/rcu/tree_stall.h |    2 +
- kernel/rcu/tree_stall.h   |   65 +++++++++++++++-------------------------------
- 4 files changed, 24 insertions(+), 45 deletions(-)
 
