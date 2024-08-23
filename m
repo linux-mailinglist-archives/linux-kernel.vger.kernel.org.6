@@ -1,200 +1,113 @@
-Return-Path: <linux-kernel+bounces-298835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B144B95CC09
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB83295CC0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E37DB21579
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:07:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8B51C212A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9641D184550;
-	Fri, 23 Aug 2024 12:07:07 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4571518455E;
+	Fri, 23 Aug 2024 12:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="AlP+oVmv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="szyg5AMw"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6A3183CD9;
-	Fri, 23 Aug 2024 12:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39BD18455C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414827; cv=none; b=ShdNwJVMt8DieQ3rn2vl0lbJOOugzuXNi06ZlHkKN4KtitY686AEvOiO2cUzk+UzozNWIXCx+xJzcOSIcU1cgL3l4A/v8dgMJ+HA2fNZ0CXYMfWX5C9uIYeaTczEAkS455EyGTuEN0Fdje9mP2Lv+MdXu5g9Yq+ETsAtJWe/Q1c=
+	t=1724414838; cv=none; b=nE3W+9azHnDU3NTMQcJdOHzAQTn/v3SyZWBDMMFw8VHgiUF/dAWKePtF/ByLZdNn/OrfRvbl9dSKxRQhGtQACeof+7bcEDvegG5IuN2U33QngRUlnsQcmeRMrHIbJgGnmWbXcupeqfyG+WGH9PPJQurmQZ1XX4iryjGGfDVLYB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414827; c=relaxed/simple;
-	bh=D3yKVFJHRjCo+h2Wmva6B0U7vTuDz3ZLroD2abWNKYA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A8I3VM4jZ/IRGZJ2XoEJebRyPArJ1irT3ucekkWkVs/M6GspwwaUXUQIw5HgwrKhmyjAQSMOR1Vfcfivphh73oByMyYU1zKmS4zPPQcfEmJ2g1DWwwLTk2zaLghcERoQnOzHzIPtlZodEMOujZdmowCB+gdnaqHg6US9a877L0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqzH85xDmz6G9Kd;
-	Fri, 23 Aug 2024 20:03:16 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id CF335140594;
-	Fri, 23 Aug 2024 20:07:01 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
- 2024 13:07:01 +0100
-Date: Fri, 23 Aug 2024 13:07:00 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-CC: <vkoul@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] dma:imx-dma:Use devm_clk_get_enabled() helpers
-Message-ID: <20240823130700.00001d6d@Huawei.com>
-In-Reply-To: <20240823101933.9517-4-liaoyuanhong@vivo.com>
-References: <20240823101933.9517-1-liaoyuanhong@vivo.com>
-	<20240823101933.9517-4-liaoyuanhong@vivo.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724414838; c=relaxed/simple;
+	bh=uSVrhrv6Dc7wuCwjo33hnUT0DxnS5caUjWj4Ol+DrLU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ji3BhjqcKEMwcz4FUPKqssgHocSe7TrXuP6pt/HjpE9TCOnQ6YSxTlZ0hA+HsCjziLNORYSVAFadr+Tj1TWyKXjcIoVXOv9ry2n+4sKZsMhUkEKphs5WlQPDZr0CU3eATYfvk0UyBNOVuTPQKOin6YR1i3A+Gs/ep3PZW41lh/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=AlP+oVmv; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=szyg5AMw reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1724414834; x=1755950834;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ihSUvSsm7Y8t7CNtMvS4+H5qmgcvWj9X9pKNtLPIO64=;
+  b=AlP+oVmvUnovPPNrxkxLFbgcoj2yd88xdMf9bcnl4+u4sV2u0dVzDWjD
+   FBhbFkGMS2fFrhzhEuCtew6pe6wZ5jUb4GDu7A8tBTy8/awvTucF6MPk2
+   mNYMVE8IRvFQLFqXZymgk0M1uMrj0bg06ryL2US6BUOHAYJKLKxN8Y7EZ
+   VcAUGvQSYni250SnmJ9ReKE8Rz8tQp0kmjDwxq5BQA5f2rUSj4HS8IVA2
+   7HiGx6dfXnthclre6CT1KKNJh6ZJfTSHYPRACBUIuOVVOaqkCjutbT8eM
+   WGZo1FL53if83UHTH2a6yqxRIIP97BtnHQWifOvRPSdHXB0uY2Lt/wauc
+   Q==;
+X-CSE-ConnectionGUID: EF7zU0P+TaW+BrQ25TKWGw==
+X-CSE-MsgGUID: 5v9bj1SUTlGwigFBwcZaQQ==
+X-IronPort-AV: E=Sophos;i="6.10,170,1719871200"; 
+   d="scan'208";a="38559731"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 23 Aug 2024 14:07:11 +0200
+X-CheckPoint: {66C87B6F-B-AFDE3C8E-D8665302}
+X-MAIL-CPID: E6B497D7F3DD345CB49F5550C7320772_4
+X-Control-Analysis: str=0001.0A782F1C.66C87B6F.0078,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 046631691A1;
+	Fri, 23 Aug 2024 14:07:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1724414827; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=ihSUvSsm7Y8t7CNtMvS4+H5qmgcvWj9X9pKNtLPIO64=;
+	b=szyg5AMwLtb9vU57/T85+WWVqh4khxM/CqtW/EAImnw54yzWSrFAerHz/gjUUszZPcCOAo
+	n6bIuQuuEWKoSOZB/TeMMLPT5/KPze5/AqrwURuYgoyC+amG/av+rbK4/AaBvrzSbGvVgN
+	gwHwJ+MF5XEikF1QhKbFhhsAuH/IlND/iXz/BwFLj3U1A0eWkmeC2m5fIWNoBsfa2EHU3K
+	PjUzGvUo1JkWfs9HudNQ+q+3MNMt6cZAc1tT6Tn44tREuJuz8I0qzcIB8bLHgIRQoXDLdI
+	UWi9L5jomlPZS66/wIf/LJkgHymqZNQh3qd5yJ/lvHYkcaY7RjtznEaPcCo5iQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: 
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH Resend v2 1/1] MAINTAINERS: Fix 32-bit i.MX platform paths
+Date: Fri, 23 Aug 2024 14:07:04 +0200
+Message-Id: <20240823120705.3672820-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 23 Aug 2024 18:19:30 +0800
-Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
+The original patch was created way before the .dts movement on arch/arm.
+But it was patch merged after the .dts reorganization. Fix the arch/arm
+paths accordingly.
 
-> Use devm_clk_get_enabled() instead of clk functions in imx-dma.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Straight forward case, but nice to combine this with
-use of return dev_err_probe() in the paths where you now have
-direct returns.  Other comments below.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Another try to get these entries fixed.
 
- 
-> ---
->  drivers/dma/imx-dma.c | 38 +++++++++++++-------------------------
->  1 file changed, 13 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/dma/imx-dma.c b/drivers/dma/imx-dma.c
-> index ebf7c115d553..1ef926304d0e 100644
-> --- a/drivers/dma/imx-dma.c
-> +++ b/drivers/dma/imx-dma.c
-> @@ -1039,6 +1039,8 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  	struct imxdma_engine *imxdma;
->  	int ret, i;
->  	int irq, irq_err;
-> +	struct clk *dma_ahb;
-> +	struct clk *dma_ipg;
-	struct clk *dma_ahb, *dma_ipg;
-should be fine.
->  
->  	imxdma = devm_kzalloc(&pdev->dev, sizeof(*imxdma), GFP_KERNEL);
->  	if (!imxdma)
-> @@ -1055,20 +1057,13 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  	if (irq < 0)
->  		return irq;
->  
-> -	imxdma->dma_ipg = devm_clk_get(&pdev->dev, "ipg");
-> -	if (IS_ERR(imxdma->dma_ipg))
-> -		return PTR_ERR(imxdma->dma_ipg);
-> +	dma_ipg = devm_clk_get_enabled(&pdev->dev, "ipg");
-> +	if (IS_ERR(dma_ipg))
-> +		return PTR_ERR(dma_ipg);
->  
-> -	imxdma->dma_ahb = devm_clk_get(&pdev->dev, "ahb");
-> -	if (IS_ERR(imxdma->dma_ahb))
-> -		return PTR_ERR(imxdma->dma_ahb);
-> -
-> -	ret = clk_prepare_enable(imxdma->dma_ipg);
-> -	if (ret)
-> -		return ret;
-> -	ret = clk_prepare_enable(imxdma->dma_ahb);
-> -	if (ret)
-> -		goto disable_dma_ipg_clk;
-> +	dma_ahb = devm_clk_get_enabled(&pdev->dev, "ahb");
-> +	if (IS_ERR(dma_ahb))
-> +		return PTR_ERR(dma_ahb);
->  
->  	/* reset DMA module */
->  	imx_dmav1_writel(imxdma, DCR_DRST, DMA_DCR);
-> @@ -1078,21 +1073,21 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  				       dma_irq_handler, 0, "DMA", imxdma);
->  		if (ret) {
->  			dev_warn(imxdma->dev, "Can't register IRQ for DMA\n");
-> -			goto disable_dma_ahb_clk;
-> +			return ret;
-Odd not to make that a dev_error given driver fails to probe as a result.
-I'd switch to return dev_err_rpobe()
->  		}
->  		imxdma->irq = irq;
->  
->  		irq_err = platform_get_irq(pdev, 1);
->  		if (irq_err < 0) {
->  			ret = irq_err;
-> -			goto disable_dma_ahb_clk;
-> +			return ret;
->  		}
->  
->  		ret = devm_request_irq(&pdev->dev, irq_err,
->  				       imxdma_err_handler, 0, "DMA", imxdma);
->  		if (ret) {
->  			dev_warn(imxdma->dev, "Can't register ERRIRQ for DMA\n");
-> -			goto disable_dma_ahb_clk;
-> +			return ret;
-Here as well.
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  		}
->  		imxdma->irq_err = irq_err;
->  	}
-> @@ -1130,7 +1125,7 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  				dev_warn(imxdma->dev, "Can't register IRQ %d "
->  					 "for DMA channel %d\n",
->  					 irq + i, i);
-> -				goto disable_dma_ahb_clk;
-> +				return ret;
-and here.
-
->  			}
->  
->  			imxdmac->irq = irq + i;
-> @@ -1174,7 +1169,7 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  	ret = dma_async_device_register(&imxdma->dma_device);
->  	if (ret) {
->  		dev_err(&pdev->dev, "unable to register\n");
-> -		goto disable_dma_ahb_clk;
-> +		return ret;
-and finaly here.
-
->  	}
->  
->  	if (pdev->dev.of_node) {
-> @@ -1190,10 +1185,6 @@ static int __init imxdma_probe(struct platform_device *pdev)
->  
->  err_of_dma_controller:
->  	dma_async_device_unregister(&imxdma->dma_device);
-Maybe use a local callback and 
-devm_add_action_or_reset() to get automate handling of this call as well.
-
-> -disable_dma_ahb_clk:
-> -	clk_disable_unprepare(imxdma->dma_ahb);
-> -disable_dma_ipg_clk:
-> -	clk_disable_unprepare(imxdma->dma_ipg);
->  	return ret;
->  }
->  
-> @@ -1226,9 +1217,6 @@ static void imxdma_remove(struct platform_device *pdev)
->  
->  	if (pdev->dev.of_node)
->  		of_dma_controller_free(pdev->dev.of_node);
-The ordering of the two items above here looks suspicious as it doesn't
-reverse order of probably. Maybe worth cleaning that up whilst here.
-
-> -
-> -	clk_disable_unprepare(imxdma->dma_ipg);
-> -	clk_disable_unprepare(imxdma->dma_ahb);
->  }
->  
->  static struct platform_driver imxdma_driver = {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 899ec8cb221bb..89ebaaeda0ea0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23373,9 +23373,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+ L:	linux@ew.tq-group.com
+ S:	Supported
+ W:	https://www.tq-group.com/en/products/tq-embedded/
+-F:	arch/arm/boot/dts/imx*mba*.dts*
+-F:	arch/arm/boot/dts/imx*tqma*.dts*
+-F:	arch/arm/boot/dts/mba*.dtsi
++F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
++F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
++F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+ F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+ F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+ F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+-- 
+2.34.1
 
 
