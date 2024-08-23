@@ -1,247 +1,93 @@
-Return-Path: <linux-kernel+bounces-299537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15B495D602
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:19:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8037A95D614
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1791F2359C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5D61F23F24
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA32B192594;
-	Fri, 23 Aug 2024 19:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rwv38XcE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5C018592E;
-	Fri, 23 Aug 2024 19:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723B419258B;
+	Fri, 23 Aug 2024 19:32:54 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86D112D20D
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440762; cv=none; b=qhr7qU5GQEKDTjckgMUJhgZ/vAXFmc6apvkL+ccUoZgFWBOGUgo+PpdtaLEOiFF0hwQAtVc+9UL37YIHE7GiSwBNS70Bs1x6o6caeOsqv18gOYonMgKnaL27xK6xNj4FhdPo8wWreZcxOsUycR/uIs+ek8CzBjRGR0hGsRgG4ro=
+	t=1724441574; cv=none; b=F+wxXguU/ey+k83xugGt/wiCGDkjfK5mWfOQYX7fEbjm2oks24KRw+YJ4MLjhqI2r16/kkpP7ppI2f2AkGwLRHRRqyQgNHxS48B6LW9KowfoF1iME+xDAiKyl3rw+DdglwiHpBbzveHgHA6k5jlF3lKaJRxJqXtVxGjlLQe5a6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440762; c=relaxed/simple;
-	bh=RbGqazl7YKAeTpEJJ80ong+xPNKwnei0GOQGoLCf5TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IHDqrWLzBzA1Zp1znTIqYyzch/oifXCKbYBAXWwHYz/rfg3l/hbucEGTkG+iusvGQv7IRD1pkIsi27R6vwxiCpxfQu30bADxAY4lGjTROTz5NshC17DT+PZRJCAhXkqn99j+mqpESO5BDHdUX149YA/Jg9KSfEO2GVt3NTU5JjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rwv38XcE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C7DC32786;
-	Fri, 23 Aug 2024 19:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724440761;
-	bh=RbGqazl7YKAeTpEJJ80ong+xPNKwnei0GOQGoLCf5TQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Rwv38XcEbVeSkRTN8TuW94mP+kgGA6MUqWxTQnfxdTfqotynofwEw5/nqKesQY+gB
-	 1wRD4JGTX7HhdcFUbLo0VOH4piINa1Sd10k0SlYLiSns/XuoZjYtrvYO8r3udJ0GeW
-	 5hcM9alwbbAUl1rEElrWbzzA/K6v6XACsYlVcOZV8UtfgD35CtRlc+vjV1tUPxFC/S
-	 es+0qPJKEgXzk7yQzWCCxM0V0pv+cqUqFx/3BFh9Ninrpt2DLPvbLo9lQAOglIPAJC
-	 gZ6DrLDB1Sm0z5ue3PdDMy+CnkFCl7JyDu4RL7inSF0Xz+s3kDe2A6DYSNsdXremxA
-	 55Phphkt9sxyA==
-Date: Fri, 23 Aug 2024 20:19:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- lars@metafoo.de, michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
- parts
-Message-ID: <20240823201913.5bded18f@jic23-huawei>
-In-Reply-To: <20240819064721.91494-8-aardelean@baylibre.com>
-References: <20240819064721.91494-1-aardelean@baylibre.com>
-	<20240819064721.91494-8-aardelean@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724441574; c=relaxed/simple;
+	bh=I676zDKpX5ZaKhUFB+HusC2WSbWJmgxldqHAjOGfPt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyZ8OyTkbWBo8up/8YhsIAZdBfuGkh9X8DBT/VzLQPqsRrCtIYy68MYWSyTebGbiQm4wnTxkshbaBe0V6PI3wvgDD3AWGEnswGqz+Sfm1oFUIlKRDGctECD/ja5Cm/1IPNAyGeAxe2vuxAfwlKs9iRnUgi/FFRS8sCtl3FzOHKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47NJLSlM032341;
+	Fri, 23 Aug 2024 14:21:49 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47NJJp0F032203;
+	Fri, 23 Aug 2024 14:19:51 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 23 Aug 2024 14:19:24 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
+        Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
+Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in kernel mode
+Message-ID: <20240823191924.GK28254@gate.crashing.org>
+References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu> <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de> <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com> <20240822053238.GA2028@lst.de> <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com> <20240823130600.GI28254@gate.crashing.org> <20240823135459.GA28487@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823135459.GA28487@lst.de>
+User-Agent: Mutt/1.4.2.3i
 
-On Mon, 19 Aug 2024 09:47:17 +0300
-Alexandru Ardelean <aardelean@baylibre.com> wrote:
+Hi!
 
-> The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
-> The main difference between AD7606C-16 & AD7606C-18 is the precision in
-> bits (16 vs 18).
-> Because of that, some scales need to be defined for the 18-bit variants, =
-as
-> they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
->=20
-> Because the AD7606C-16,18 also supports bipolar & differential channels,
-> for SW-mode, the default range of 10 V or =C2=B110V should be set at prob=
-e.
-> On reset, the default range (in the registers) is set to value 0x3 which
-> corresponds to '=C2=B110 V single-ended range', regardless of bipolar or
-> differential configuration.
->=20
-> Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
->=20
-> And the AD7606C-18 variant offers 18-bit precision. The unfortunate effect
-> of this 18-bit sample size, is that there is no simple/neat way to get the
-> samples into a 32-bit array without having to do a home-brewed bit-buffer.
-> The ADC must read all samples (from all 8 channels) in order to get the
-> N-th sample (this could be reworked to do up-to-N-th sample for scan-dire=
-ct).
-> There doesn't seem to be any quick-trick to be usable to pad the samples
-> up to at least 24 bits.
-> Even the optional status-header is 8-bits, which would mean 26-bits of da=
-ta
-> per sample.
-> That means that when using a simple SPI controller (which can usually read
-> 8 bit multiples) a simple bit-buffer trick is required.
->=20
-> Datasheet links:
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ad7=
-606c-16.pdf
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ad7=
-606c-18.pdf
->=20
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+On Fri, Aug 23, 2024 at 03:54:59PM +0200, Christoph Hellwig wrote:
+> On Fri, Aug 23, 2024 at 08:06:00AM -0500, Segher Boessenkool wrote:
+> > What does "uncached memory" even mean here?  Literally it would be
+> > I=1 memory (uncachEABLE memory), but more likely you want M=0 memory
+> > here ("non-memory memory", "not well-behaved memory", MMIO often).
+> 
+> Regular kernel memory vmapped with pgprot_noncached().
 
-A few minor things. If we can just start with 18 bit word spi controllers o=
-nly
-maybe that's worth doing to make things simpler.
+So, I=1 (and G=1).  Caching inhibited and guarded.  But M=1 (memory
+coherence required) as with any other real memory :-)
 
-> +static int ad7606c_sw_mode_setup_channels(struct iio_dev *indio_dev,
-> +					  ad7606c_chan_setup_cb_t chan_setup_cb)
-> +{
-> +	unsigned int num_channels =3D indio_dev->num_channels - 1;
-> +	struct ad7606_state *st =3D iio_priv(indio_dev);
-> +	bool chan_configured[AD760X_MAX_CHANNELS];
-=3D {};
-and drop the memset.
+> > If memset() is expected to be used with M=0, you cannot do any serious
+> > optimisations to it at all.  If memset() is expected to be used with I=1
+> > it should use a separate code path for it, probably the caller should
+> > make the distinction.
+> 
+> DMA coherent memory which uses uncached memory for platforms that
+> do not provide hardware dma coherence can end up just about anywhere
+> in the kernel.  We could use special routines for a few places in
+> the DMA subsystem, but there might be plenty of others.
 
-> +	struct device *dev =3D st->dev;
-> +	int ret;
-> +	u32 ch;
-> +
-> +	/* We need to hook this first */
-> +	ret =3D st->bops->sw_mode_config(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->info =3D &ad7606c_info_sw_mode;
-> +
-> +	memset(chan_configured, 0, sizeof(chan_configured));
-> +
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		bool bipolar, differential;
-> +
-> +		ret =3D fwnode_property_read_u32(child, "reg", &ch);
-> +		if (ret)
-> +			continue;
-> +
-> +		if (ch >=3D num_channels) {
-> +			dev_warn(st->dev,
-> +				 "Invalid channel number (ignoring): %d\n", ch);
-> +			continue;
-> +		}
-> +
-> +		bipolar =3D fwnode_property_present(child, "bipolar");
-> +		differential =3D fwnode_property_present(child, "diff-channel");
-> +
-> +		chan_setup_cb(st, ch, bipolar, differential);
-> +		chan_configured[ch] =3D true;
-> +	}
-> +
-> +	/* Apply default configuration to unconfigured (via DT) channels */
-> +	for (ch =3D 0; ch < num_channels; ch++) {
-> +		struct ad7606_chan_scale *cs;
-> +		unsigned int *scale_avail_show;
-> +		int i;
-> +
-> +		if (!chan_configured[ch])
-> +			chan_setup_cb(st, ch, false, false);
-> +
-> +		/* AD7606C supports different scales per channel */
-> +		cs =3D &st->chan_scales[ch];
-> +
-> +		scale_avail_show =3D devm_kcalloc(st->dev, cs->num_scales * 2,
-> +						sizeof(*scale_avail_show),
-> +						GFP_KERNEL);
+Yeah.  It will just be plenty slow, as we see here, that's what the
+warning is for; but it works just fine :-)
 
-Maybe just make it big enough for worst case and stick it in st always?
-How big can it get?
+The memset() code itself could chech for the storage attributes, but
+that is probably more expensive than just assuming the happy case.
+Maybe someone could try it out though!
 
 
-
-> +		if (!scale_avail_show)
-> +			return -ENOMEM;
-> +
-> +		/* Generate a scale_avail list for showing to userspace */
-> +		for (i =3D 0; i < cs->num_scales; i++) {
-> +			scale_avail_show[i * 2] =3D 0;
-> +			scale_avail_show[i * 2 + 1] =3D cs->scale_avail[i];
-> +		}
-> +
-> +		cs->scale_avail_show =3D scale_avail_show;
-> +	}
-> +
-> +	return 0;
-> +}
->
-
-> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-> index dd0075c97c24..73a7b0007bf8 100644
-> --- a/drivers/iio/adc/ad7606_spi.c
-> +++ b/drivers/iio/adc/ad7606_spi.c
-> @@ -45,6 +45,8 @@
-
-> =20
-> +static int ad7606_spi_read_block18to32(struct device *dev,
-> +				       int count, void *buf)
-> +{
-> +	struct spi_device *spi =3D to_spi_device(dev);
-> +	u32 i, bit_buffer, buf_size, bit_buf_size;
-> +	u32 *data =3D buf;
-> +	u8 *bdata =3D buf;
-> +	int j, ret;
-> +
-> +	/**
-Not kernel doc.  /*
-> +	 * With the 18 bit ADC variants (here) is that we can't assume that all
-> +	 * SPI controllers will pad 18-bit sequences into 32-bit arrays,
-> +	 * so we need to do a bit of buffer magic here.
-> +	 * Alternatively, we can have a variant of this function that works
-> +	 * for SPI controllers that can pad 18-bit samples into 32-bit arrays.
-> +	 */
-> +
-> +	/* Write 'count' bytes to the right, to not overwrite samples */
-> +	bdata +=3D count;
-> +
-> +	/* Read 24 bits only, as we'll only get samples of 18 bits each */
-> +	buf_size =3D count * 3;
-> +	ret =3D spi_read(spi, bdata, buf_size);
-> +	if (ret < 0) {
-> +		dev_err(&spi->dev, "SPI read error\n");
-> +		return ret;
-> +	}
-> +
-> +	bit_buffer =3D 0;
-> +	bit_buf_size =3D 0;
-> +	for (j =3D 0, i =3D 0; i < buf_size; i++) {
-> +		u32 sample;
-> +
-> +		bit_buffer =3D (bit_buffer << 8) | bdata[i];
-> +		bit_buf_size +=3D 8;
-> +
-> +		if (bit_buf_size < 18)
-> +			continue;
-> +
-> +		bit_buf_size -=3D 18;
-> +		sample =3D (bit_buffer >> bit_buf_size) & AD7606C_18_SAMPLE_MASK;
-> +		data[j++] =3D sign_extend32(sample, 17);
-> +
-> +		if (j =3D=3D count)
-> +			break;
-> +	}
-> +
-> +	return 0;
-> +}
-
+Segher
 
