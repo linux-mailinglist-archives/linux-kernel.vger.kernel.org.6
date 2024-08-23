@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-298595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F85195C933
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DE295C935
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C1D21C2235F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8521C229F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700E14B095;
-	Fri, 23 Aug 2024 09:28:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78EE14B97A;
+	Fri, 23 Aug 2024 09:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="aYW2EMSP"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6FC14B09C
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD882139D00;
+	Fri, 23 Aug 2024 09:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405284; cv=none; b=QLw52q8XgUxWNP5Hd9626A5TTqOGKCuL0+4DdmJHnO/QcSeJCLTYlOrP8d02/+VapHzxQGuz32H/8W5DVysjjroo1re8dfiC1S9jSnbwWon73kIlXoF4xSqfQ6AId/ihtWp0Jdp90+dsEAOwhbkcmSW1DFDz5DN4ffF0XBcFBtU=
+	t=1724405297; cv=none; b=R3pT+3KJcoP9TGNAvngKbfoHwv+1489u67dZr2BLtzancnLEPn/etQS0jheSwBUhwqqHJwpvFQPGkOVuE7YifHPDglAfkQoUwzU87fGxl8TE+Vg/2eLp+TUfdYJFSmP+opBKd9R/MWpcm2EMfE800OAK/gXXK3CQI0arSVBFMI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405284; c=relaxed/simple;
-	bh=iynXqP56ixtaP4nXJKR31NascYrrHan5Cn00P05H8CY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DUazGFNi4LlHNiLL57IzmZKPehIh0t0mMXVooSLereHh/zCOEOubS8zmjqvTuHaVpf3zT6yLx1ozbzVeYjYT8FwGbKxeRwF1FGYINLnQFzgds91AHHmDbMXpaLO3t2uY9wy1q23QO04nP3ali6+6wK9y7yPV32Z18jZtVjUz+EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso185133039f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 02:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724405282; x=1725010082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KttlhmlTALgfg5PUGPLqtRN0LNsASsNIispna5Tm+vE=;
-        b=p+O6tQBom+PgBWDlLjmlXm7/QS4KVWR1swOUGXLeorpHzcgd+f2Wv1yvUb/9cJlXQT
-         kZdWHiYnHcpeCt1H8MGUcYlUmPrr/NeWw/T5YBSWTTIiuW1DkZFmTZatlNRiPogjkPpU
-         trup2abaOpElhuqBiMBRoxFrnDW75O8QIqZMs1Lmt4C+5HJ3OpjoSkcY+kIiH7Wnr1w5
-         tEieGqQ7KUm4qGvDHyzqVBZEI1I7UqNmGQ/Hjv+5JutDqZpc/K1znKdrHnvDPS2K0iDT
-         mVOHye7EIADmME3ER0TUjdKt1paYVf4WKeV+wnYHSaJkbAu3T3wenjCG4ZkUdNOjz4O/
-         GVyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmO+euQ7IT6uPokHt6T6LiXP6j1VtS19lfkuBvm4HCa/WnoDIIrctaHq/mtamwF3kO/WSUBc5p7+BPSUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKcz+LYJfQtjk3YCAUty5XKqSxVzQV2Oq+pyXJXXaAv5l/XBkQ
-	8bXUNza8+YzXCCn5Jw0dm2F1dlHJbvB5mvHi0O1Nj/X+KKvz6Q1DAnr92sb4y6iIMaQf4cjcw0s
-	2uyKaXLLBXpIyx64dm75cdqzSQm2HthlMZstPaZLd1vVHtEszR8VeiMg=
-X-Google-Smtp-Source: AGHT+IGCLJEvGQ1/lj0IWgTn8+cOmkzRFeXpzvYJW36WjkLV2evLDQkx2eQ6rcO5qHF5wRW6NFcSobol36qqwhPnfKzwOFslEWez
+	s=arc-20240116; t=1724405297; c=relaxed/simple;
+	bh=2xwaPorpSb8MUdi65ck1/iiNBlJySvlqtJ8966nDHG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SCAzTerqj8iHf5e9Kk8VrK3ToGBleVMg1av+kq9qeH5z3y4Magu+OzyS9ypyfDksn2E5ZZlpwiagcySJCR9kc81WabolWBWPc73/tBejlTKlOO6qkyuR4x1SK3P8+Rjxuy8hLddc/vSUeGsSSKEJVIjaBsw/JUv5QAQgO9MNf6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=aYW2EMSP; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=n0iG4z0x1+eAPWBBF6r0sGy0XLMNeiSfA3ky7GwBfBo=; b=aYW2EMSPM1ZarsCG15qwtzWItJ
+	zWYYkm/AbZEOpqFXWbqJ0cwz7YGonkbqKZfdl54cvI7U/h4ts+3pxqHJwhR+LOmLav4zhnvVwP7zl
+	vZZ1Iyt/D1QmWT7ODmKS8gYY6kQBOnlkrZ7OdFzSqgnlOAhwBRX/V9wm9k9FekMZk5kGTIPTT+0xB
+	nJIvOMWmKDKCyonqAQWZ58sF8Kfxy2zywIpVrWDcCdQGE1a48yd/Ncem+clZdEJNRi683p3XeROVu
+	Za/RYzB/bM/scQtoUojdVBURd10+rYgo4tdcKvhr8WLhenFJDeb1e5JQgk3zFDoksg9Pulp2GmXf8
+	FcYH6aYg==;
+Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1shQaZ-0003nt-M1; Fri, 23 Aug 2024 11:28:11 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
+ tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
+ tim.chen@rock-chips.com, elaine.zhang@rock-chips.com,
+ Ye Zhang <ye.zhang@rock-chips.com>
+Subject: Re: [PATCH v2] gpio: rockchip: release reference to device node
+Date: Fri, 23 Aug 2024 11:28:52 +0200
+Message-ID: <4031563.ZaRXLXkqSa@diego>
+In-Reply-To: <20240823034314.62305-3-ye.zhang@rock-chips.com>
+References:
+ <20240823034314.62305-1-ye.zhang@rock-chips.com>
+ <20240823034314.62305-3-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3404:b0:81f:7e75:4040 with SMTP id
- ca18e2360f4ac-827873744a5mr1994739f.3.1724405282584; Fri, 23 Aug 2024
- 02:28:02 -0700 (PDT)
-Date: Fri, 23 Aug 2024 02:28:02 -0700
-In-Reply-To: <1fa0a253-d36f-49ce-bd6f-d712fb1ca0df@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000514e4306205664cb@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING: kmalloc bug in wnd_init
-From: syzbot <syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello,
+Am Freitag, 23. August 2024, 05:43:05 CEST schrieb Ye Zhang:
+> Added a call to of_node_put(pctlnp) in rockchip_gpio_probe to properly
+> release the reference to the device node, improving memory management
+> and preventing potential leaks.
+> 
+> Fixes: 936ee2675eee ("gpio/rockchip: add driver for rockchip gpio")
+> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Reported-by: syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com
-Tested-by: syzbot+c6d94bedd910a8216d25@syzkaller.appspotmail.com
 
-Tested on:
-
-commit:         7529036a fs/ntfs3: Rename ntfs3_setattr into ntfs_seta..
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=164bcd8d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9cfedede3362b1e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=c6d94bedd910a8216d25
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
