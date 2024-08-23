@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-298097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4EC95C220
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B6295C238
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86155284F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B7A6B221EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091471FA3;
-	Fri, 23 Aug 2024 00:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A7AB653;
+	Fri, 23 Aug 2024 00:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1eH4Sa4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Su2uNQZI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEEBEDC;
-	Fri, 23 Aug 2024 00:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3212B72;
+	Fri, 23 Aug 2024 00:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724372057; cv=none; b=mBMBNIlPB7aDvAc67wnwMc4PvLRTVCjQhX8GW0UTYGcG5A1bcObJ+N0VNUn5TUoNHq4YFuYlGe+Nn36hxMNpegSqI5HhnTHSwb1OCi0rwq0/YPTdh00aWBJBhqgJv3pm+KjEVOAJX6NHubMm3RqIBX9ExaL5vKId8v+k606JfFQ=
+	t=1724372293; cv=none; b=nVsxGSN44/WfSfz7sYDp7WVkmdYDS9eCzOHLJ5ExA9rVWd6rKrmgnVcJdacuObdFSK7KpKOffuBoQGmKvhihzfUN/YfXoDNhJl4sOBodYs/Qo7LoF6XtReIfPSZ/UjMNvRsiQxBUi2puLE9Ci8W3mIQmtmqK/wsgjAsAY6AYWeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724372057; c=relaxed/simple;
-	bh=meO8NYG/0DI1pJK9vfEpszXIYCnr9inA4xoCf3jcfXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JhQbwGm75yBvFx+AydimHHyBLETKZv/c1xwlZD+Eu5F/6Rme7mIq5lWprawnmr8MVMXifgz9E4+22KUjvwSJkF/x5rd6eM78olGiCByLWG7zXyGdb2pm357Xrx1o8DzPtYnDW93xoApDR/huAd/Nc6XrcIquwEgNl8jN12rll6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1eH4Sa4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3118C4AF09;
-	Fri, 23 Aug 2024 00:14:16 +0000 (UTC)
+	s=arc-20240116; t=1724372293; c=relaxed/simple;
+	bh=jsws4rS7MzgJKmjyves2GO3uHKbbhJfJ76ZtAXIwBSs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gmcqDskEMsYWUaBMU3iG2ZrcmWpcT4dl0kPLnvrWHZVbP6mD/+bAzzB2zUDbzDThHzIANv+gyBm0ZEdGKx3ELooHhVNaL0+JlVh+/GQw2tdZ+mffSEMMdfMyjhBBF1j7N9ousq0FtlLjMj+iBPDG2xVmlA4JUB0KJzfgWvQMShk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Su2uNQZI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206D5C32782;
+	Fri, 23 Aug 2024 00:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724372056;
-	bh=meO8NYG/0DI1pJK9vfEpszXIYCnr9inA4xoCf3jcfXY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d1eH4Sa4L+UzeLInQKU4pRBhyc+98WZAR36gCuvWkt9NUmTRzfyzvwgjfbwMBYeto
-	 To2mimmiFyMWLLu6okO5gp+hqWza/f1hbG1xsL2lvFlisv82N7chnOnK7n4FXuwlQQ
-	 SITPe9Ahjrdo+8hBTNZDuYX7MixksxdbgPxeXQ4rZ7Kvgbw9ctg0xv55fwFVTulKmc
-	 PyjkieTRtr/2pu7HI8J9iXeIXIq9JuCAB5pD0V1ES58aa/5fChFyoiC6GVBlI4xY5y
-	 5AXJG8RTo+B8eH3Wa/GtAJ3/K/pvMNUcfMdHB9TVCr13Lt3gaT7BvrALXfM1vZ42rg
-	 M497XnzNC9fEg==
-Date: Thu, 22 Aug 2024 17:14:16 -0700
-From: Kees Cook <kees@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] leds: gpio: Set num_leds after allocation
-Message-ID: <202408221713.77EF78D1@keescook>
-References: <20240716212455.work.809-kees@kernel.org>
- <c16715ff-1e47-4a73-8fcb-87462069b5ca@embeddedor.com>
- <20240725102240.GE501857@google.com>
+	s=k20201202; t=1724372293;
+	bh=jsws4rS7MzgJKmjyves2GO3uHKbbhJfJ76ZtAXIwBSs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Su2uNQZInIS/UMi2YYqbVXI4QKcBcd+ZTiJvw5xjyRtEQwbw2XMF+LgUzGb8gJDqq
+	 z5o9ki13qQ6k1cGfCz/Jl9LEuFJowVM7bcBXyAs0mp/4t3fufJyUdouzKwSurqcBNo
+	 aqWk/OkyP02vRpXbt89viI1XuFZZh9DWqBdWle+Qnxq/NbXORkiShtHMOksXhX/mw6
+	 36cuIa9E2b88akE8tKupguG+h8E6O6Tc+KEpHugs4Z4HAK+KMFTkb0GZcszaD1kV8X
+	 mDNR/PLO78MK41xeqNnnpSFUxIkNj4vAMTNUIPd9H4htUPiOUXMowcZN/FdwOcBf4U
+	 2oeDLfmKAze3g==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 22 Aug 2024 17:18:08 -0700
+Subject: [PATCH] x86/cpu_entry_area: Annotate
+ percpu_setup_exception_stacks() as __init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725102240.GE501857@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240822-x86-percpu_setup_exception_stacks-init-v1-1-57c5921b8209@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAD/Vx2YC/x2N0QrCMAwAf2Xk2UCt6xz+ikjZYqZBqKHppDD27
+ 5Y93sPdbWCchQ1u3QaZf2LyTQ3Opw7oPaUXozwbg3e+d6P3WMcBlTPpGo3LqpErsZamRSsTfQw
+ lScELz2GYw+KugaDFNPMi9RjdH/v+B/ebwF94AAAA
+To: Dave Hansen <dave.hansen@linux.intel.com>, 
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1560; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=jsws4rS7MzgJKmjyves2GO3uHKbbhJfJ76ZtAXIwBSs=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGnHr7ro5QZUuR8xXZXd/bPitUH+rsz7s3TF/aZPf3/nq
+ NmeBVYuHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAizZsYGdbKL7m6SI5bNbvF
+ UMfCZFX4vS/adv+PL/787cbs/Udu3RZnZLhxpo3zxMaH3sFPQsS3x3/2tOh6uOpmRv1J91N91RN
+ OrmMHAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Thu, Jul 25, 2024 at 11:22:40AM +0100, Lee Jones wrote:
-> On Tue, 16 Jul 2024, Gustavo A. R. Silva wrote:
-> 
-> > 
-> > 
-> > On 16/07/24 15:24, Kees Cook wrote:
-> > > With the new __counted_by annotation, the "num_leds" variable needs to
-> > > valid for accesses to the "leds" array. This requirement is not met in
-> > > gpio_leds_create(), since "num_leds" starts at "0", so "leds" index "0"
-> > > will not be considered valid (num_leds would need to be "1" to access
-> > > index "0").
-> > > 
-> > > Fix this by setting the allocation size after allocation, and then update
-> > > the final count based on how many were actually added to the array.
-> > > 
-> > > Fixes: 52cd75108a42 ("leds: gpio: Annotate struct gpio_leds_priv with __counted_by")
-> > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > 
-> > Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> > 
-> > Thanks
-> > -- 
-> 
-> Using the signature tag in the middle of an email turns the remainder of
-> the body into a signature block, which is odd to say the least.  By all
-> means sign-off in the middle of a mail, but please refrain from
-> converting the rest of the mail.
+After a recent LLVM change [1] that deduces __cold on functions that
+only call cold code (such as __init functions), there is a section
+mismatch warning from percpu_setup_exception_stacks(), which got moved
+to .text.unlikely. as a result of that optimization:
 
-Ping. Shall I take this via the hardening tree?
+  WARNING: modpost: vmlinux: section mismatch in reference: percpu_setup_exception_stacks+0x3a (section: .text.unlikely.) -> cea_map_percpu_pages (section: .init.text)
 
--Kees
+Drop the inline keyword (which does not guarantee inlining) and replace
+it with __init, as percpu_setup_exception_stacks() is only called from
+__init code, which clears up the warning.
 
+Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ arch/x86/mm/cpu_entry_area.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index e91500a80963..575f863f3c75 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -164,7 +164,7 @@ static void __init percpu_setup_exception_stacks(unsigned int cpu)
+ 	}
+ }
+ #else
+-static inline void percpu_setup_exception_stacks(unsigned int cpu)
++static void __init percpu_setup_exception_stacks(unsigned int cpu)
+ {
+ 	struct cpu_entry_area *cea = get_cpu_entry_area(cpu);
+ 
+
+---
+base-commit: d4245fd4a62931aebd1c5e6b7b6f51b6ef7ad087
+change-id: 20240822-x86-percpu_setup_exception_stacks-init-3eb56b5f075c
+
+Best regards,
 -- 
-Kees Cook
+Nathan Chancellor <nathan@kernel.org>
+
 
