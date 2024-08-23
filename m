@@ -1,162 +1,271 @@
-Return-Path: <linux-kernel+bounces-299128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA62E95D07B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:58:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477FC95D081
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D2A1F237A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B82D7B23A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219A818891D;
-	Fri, 23 Aug 2024 14:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lQ/y7QTe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98791885B8;
+	Fri, 23 Aug 2024 14:58:23 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5D71C680;
-	Fri, 23 Aug 2024 14:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F80C1885AF
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724425101; cv=none; b=NRshCV6hDiSfMh4AVfuV9S/b/WCoemuJHUcHPUGhmTgZr4c+/x42Bo9R41BycQkINqwExf3/sy+xdoBmfSdJ4pfVgEEThTavgNVkJAfia7rfAgGw7wvdKfrM1nSUA7KvXV0sAi01vOqKT1/Ec6tEnQfpdhC5qi1Xr5RZesurWK0=
+	t=1724425103; cv=none; b=em0mOjbetsB03TT/VHzwn9sWE5kbghpalTKrErJ21E4qs5l8ptOaQXiyhiyYgwzuzTR5V3vSycC5QxOfqr5haXxrx88En4TNWbNPA4Ytbtq5NfqL+gxuP0x56oBcuOnl7OIlyvE4sKyBHYsCzXFvtK1yVByTcW/DblUO0WQxtIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724425101; c=relaxed/simple;
-	bh=RIJ5IMLUqYoUq4w2rKXmJ74g66XrLOMkScgxzSKyVKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FgdDyUn6Dia7QCHtF2e1l8tP4gj4AxjGIGnN54/W65sjmg78ZEDJz40mrOEkLt7E6ttTgXLBfU4yyM9TRIEnA+XNifdRmAaRTNl549F0MmuDl8PMKZkTfqCJ9VWnnCJQnXIMZ/eOUFY+Y66ScSmlCIBltnfP1xns8p4zLGj1qB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lQ/y7QTe; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724425100; x=1755961100;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RIJ5IMLUqYoUq4w2rKXmJ74g66XrLOMkScgxzSKyVKg=;
-  b=lQ/y7QTeRM2aZo7/WzqgjR9igD9SajGlBZNL9ZhHSYDqTayVSdWa9hDy
-   Ouhhjoc3eTLsJg7GmIut29fAQlbYYBhuMmYqqqfgo7NA/hunlr54BPRNO
-   ohZFs5gOVQz8Pp6NkIn6zPQe7qeKMHxlVsEj7l4iABUsGV8WXZgMR4WVs
-   tzF3CtJ28l0zC9w6Bkr0foRStqXUkDyrb26aOmyktiGwv7mYIbqLTbKvy
-   FlwaOf0155ebX2YY62g14WEPNFByIOuk/zNx4EJ0QZ0J3NlcoEfo/csSb
-   bFPsFxVkZb23cz2ImIHfHPYw64txQtmsrBof8n+PRbzgtd28B+7d7JsGr
-   g==;
-X-CSE-ConnectionGUID: ZIgzag8TTk2iMCqDpLM41A==
-X-CSE-MsgGUID: lz/StwamS9CheYP8CtXVsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22862811"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="22862811"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:58:19 -0700
-X-CSE-ConnectionGUID: bNjA9O0OSZmslLXYetSkMA==
-X-CSE-MsgGUID: rBapzcb8TcuJ5Q1s3IeObw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="61839719"
-Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.109.176]) ([10.125.109.176])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 07:58:16 -0700
-Message-ID: <9f5b072c-59eb-40c0-a121-1ac06f9c38d7@intel.com>
-Date: Fri, 23 Aug 2024 07:58:15 -0700
+	s=arc-20240116; t=1724425103; c=relaxed/simple;
+	bh=PBYiwrieWuPQf2ZOOL3gVk3SA+VB3sfEoq5rpMTrjok=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G+xgkxntkzupQI+G0g3wn1tCbruAE+xMlwmprheCNGYHTsfr3VBCX9TgEH42RYh6TQyy2CR9EIVIkqw1CgslP75GHaY4pAJhbcXoftGRnnkL9VnCyAKE2LXSxQ0k1/Rckq2On6MM6fG4ZSRIVdErR5vpFS8NHqk7t0LHeX2uIqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2df2e561so24986645ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:58:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724425100; x=1725029900;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0xOiR3drQ5YeZ+G6K4t5gNIPBK6dr94FxT/Xp/o740s=;
+        b=l8MGdRmvGyLagjyB55IPIjY71qaY37HBA6CaQlve+p79eBbtQvgKN5T22UuGslCdqo
+         qkJo8ME7odwSsrSpJeUGh9hCAGJMqdwx2Sao4GvpY3xbigD9bh7zacxM0sMB0KfH5DPU
+         BpON9IFTdbkO1IM7/vbLREuTbqUZJQoLNtFitGgdW3Z9LilJsJKay0nja645iJ0Px7qd
+         FET9ukDrbPHrGPO4uMhhrVGCnO/wYOXJOeXAgmSkYPu5PryyPUKS8clUiJCdBDdSmFUf
+         fvItkkS2mEvLZDN+tdpfb/G2dK/iTzT1K8H1wJjHkmkJqXrfhWIg/xtE/FVqXcp6DFrH
+         bMUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUcJn1uCfl6TTiQmqSfIYAqyJNh3CwSyL2xYRwdIXBWa/r/FQnIAVd0ThRZiuF40Wq1ofu2QnEUGc0SAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsDLj4rHpVdNnP9yVLlgpiQEWXNElEahpMlAAuBeZElapparcj
+	ZcxWhn9pdnSyT8fykCL3wRRqHVChA8s6mIcKiH58oGo1uk4CnNKcAnt1qOK5N+PnNaxPCFbVHcU
+	aOqbgVzjLv1U+quGCU8I2sLV58P2kjMJ7ucWMsIr03X20TNPg8SEkD8s=
+X-Google-Smtp-Source: AGHT+IE9j7K3XbWSRk13r8vW6Yw1F11nuHHQiZPsEdvWNTaF0I41tDkX/HtqT5aq10CdaDO2Tm4R5sxE2c2WONubZ4nBCtc5NEAR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/25] cxl/mem: Expose DCD partition capabilities in
- sysfs
-To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-11-7c9b96cba6d7@intel.com>
- <8649e30c-a43a-4096-a32f-e31bf3e71d90@intel.com>
- <66c7f3d977851_1719d29424@iweiny-mobl.notmuch>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <66c7f3d977851_1719d29424@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:216a:b0:39a:ea7d:2a9a with SMTP id
+ e9e14a558f8ab-39e3ca0d1c2mr1579345ab.6.1724425100690; Fri, 23 Aug 2024
+ 07:58:20 -0700 (PDT)
+Date: Fri, 23 Aug 2024 07:58:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000091994406205b01fe@google.com>
+Subject: [syzbot] [usb?] KASAN: slab-use-after-free Read in raw_queue_event
+From: syzbot <syzbot+62ff4e5cf4fec6052ff2@syzkaller.appspotmail.com>
+To: andreyknvl@gmail.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    c6653f49e4fd Merge tag 'powerpc-6.10-4' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=108a17c1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=62ff4e5cf4fec6052ff2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a56f9eb616fa/disk-c6653f49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2f09515c2f1b/vmlinux-c6653f49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fdc471b5cbac/bzImage-c6653f49.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+62ff4e5cf4fec6052ff2@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in raw_event_queue_add drivers/usb/gadget/legacy/raw_gadget.c:81 [inline]
+BUG: KASAN: slab-use-after-free in raw_queue_event+0x299/0x2e0 drivers/usb/gadget/legacy/raw_gadget.c:239
+Read of size 4 at addr ffff888066f5c978 by task kworker/1:6/5145
+
+CPU: 1 PID: 5145 Comm: kworker/1:6 Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ raw_event_queue_add drivers/usb/gadget/legacy/raw_gadget.c:81 [inline]
+ raw_queue_event+0x299/0x2e0 drivers/usb/gadget/legacy/raw_gadget.c:239
+ gadget_disconnect+0x50/0xb0 drivers/usb/gadget/legacy/raw_gadget.c:387
+ set_link_state+0xc81/0x1200
+ dummy_hub_control+0xb86/0x1b10
+ rh_call_control drivers/usb/core/hcd.c:656 [inline]
+ rh_urb_enqueue drivers/usb/core/hcd.c:821 [inline]
+ usb_hcd_submit_urb+0xffc/0x1e80 drivers/usb/core/hcd.c:1529
+ usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
+ usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
+ usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
+ usb_clear_port_feature drivers/usb/core/hub.c:453 [inline]
+ usb_hub_set_port_power drivers/usb/core/hub.c:891 [inline]
+ hub_port_connect drivers/usb/core/hub.c:5561 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x30f2/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 10173:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ kmalloc_trace_noprof+0x19c/0x2c0 mm/slub.c:4154
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ dev_new drivers/usb/gadget/legacy/raw_gadget.c:192 [inline]
+ raw_open+0x8c/0x4d0 drivers/usb/gadget/legacy/raw_gadget.c:434
+ misc_open+0x313/0x390 drivers/char/misc.c:165
+ chrdev_open+0x5b0/0x630 fs/char_dev.c:414
+ do_dentry_open+0x970/0x1450 fs/open.c:955
+ vfs_open+0x3e/0x330 fs/open.c:1086
+ do_open fs/namei.c:3654 [inline]
+ path_openat+0x2c01/0x35f0 fs/namei.c:3813
+ do_filp_open+0x235/0x490 fs/namei.c:3840
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1413
+ do_sys_open fs/open.c:1428 [inline]
+ __do_sys_openat fs/open.c:1444 [inline]
+ __se_sys_openat fs/open.c:1439 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1439
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 10139:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4438 [inline]
+ kfree+0x149/0x360 mm/slub.c:4559
+ raw_release+0x138/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:473
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:876
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1025
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x360 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888066f5c000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 2424 bytes inside of
+ freed 4096-byte region [ffff888066f5c000, ffff888066f5d000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x66f58
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888015042140 ffffea0000bf8000 dead000000000002
+raw: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888015042140 ffffea0000bf8000 dead000000000002
+head: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea00019bd601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x1d2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 5177, tgid 5174 (syz.0.1), ts 69708451232, free_ts 15196910197
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1473
+ prep_new_page mm/page_alloc.c:1481 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3425
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4683
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2265
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2428
+ new_slab mm/slub.c:2481 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3667
+ __slab_alloc+0x58/0xa0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3990 [inline]
+ __do_kmalloc_node mm/slub.c:4122 [inline]
+ __kmalloc_noprof+0x257/0x400 mm/slub.c:4136
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_number_perm+0x23a/0x880 security/tomoyo/file.c:723
+ security_file_ioctl+0x75/0xb0 security/security.c:2765
+ __do_sys_ioctl fs/ioctl.c:901 [inline]
+ __se_sys_ioctl+0x47/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1093 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2588
+ free_contig_range+0x9e/0x160 mm/page_alloc.c:6642
+ destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x248/0x880 init/main.c:1267
+ do_initcall_level+0x157/0x210 init/main.c:1329
+ do_initcalls+0x3f/0x80 init/main.c:1345
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1578
+ kernel_init+0x1d/0x2b0 init/main.c:1467
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff888066f5c800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888066f5c880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888066f5c900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff888066f5c980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888066f5ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 8/22/24 7:28 PM, Ira Weiny wrote:
-> Dave Jiang wrote:
->>
->>
->> On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
->>> From: Navneet Singh <navneet.singh@intel.com>
->>>
->>> To properly configure CXL regions on Dynamic Capacity Devices (DCD),
->>> user space will need to know the details of the DC partitions available.
->>>
->>> Expose dynamic capacity capabilities through sysfs.
->>>
->>> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
->>> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
->>> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
->>>
->>> ---
->>> Changes:
->>> [iweiny: remove review tags]
->>> [Davidlohr/Fan/Jonathan: omit 'dc' attribute directory if device is not DC]
->>> [Jonathan: update documentation for dc visibility]
->>> [Jonathan: Add a comment to DC region X attributes to ensure visibility checks work]
->>> [iweiny: push sysfs version to 6.12]
->>> ---
->>>  Documentation/ABI/testing/sysfs-bus-cxl | 12 ++++
->>>  drivers/cxl/core/memdev.c               | 97 +++++++++++++++++++++++++++++++++
->>>  2 files changed, 109 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
->>> index 957717264709..6227ae0ab3fc 100644
->>> --- a/Documentation/ABI/testing/sysfs-bus-cxl
->>> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
->>> @@ -54,6 +54,18 @@ Description:
->>>  		identically named field in the Identify Memory Device Output
->>>  		Payload in the CXL-2.0 specification.
->>>  
->>> +What:		/sys/bus/cxl/devices/memX/dc/region_count
->>> +		/sys/bus/cxl/devices/memX/dc/regionY_size
->>
->> Just make it into 2 separate entries?
-> 
-> Do you mean in the docs?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Yes. Here you are combining all the sysfs entries into 1. I'm suggesting unique block per each sysfs entry with their own description. 
-> 
-> Ira
-> 
->>
->> DJ
->>> +Date:		August, 2024
->>> +KernelVersion:	v6.12
->>> +Contact:	linux-cxl@vger.kernel.org
->>> +Description:
->>> +		(RO) Dynamic Capacity (DC) region information.  The dc
->>> +		directory is only visible on devices which support Dynamic
->>> +		Capacity.
->>> +		The region_count is the number of Dynamic Capacity (DC)
->>> +		partitions (regions) supported on the device.
->>> +		regionY_size is the size of each of those partitions.
->>>  
->>>  What:		/sys/bus/cxl/devices/memX/pmem/qos_class
->>>  Date:		May, 2023
-> 
-> [snip]
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
