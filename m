@@ -1,142 +1,97 @@
-Return-Path: <linux-kernel+bounces-299761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E539F95D9C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BE795D9C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BAC286029
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F2A2860C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91451CC142;
-	Fri, 23 Aug 2024 23:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB461C9458;
+	Fri, 23 Aug 2024 23:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wvteV+ib"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbI/Zcmc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4A21CB14E
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B648B18786C;
+	Fri, 23 Aug 2024 23:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724456400; cv=none; b=sM2G6m3avcrko7Ld1o6DzEvMngG9koA1DcK3Mv5hOyBhpGqW0mgBRe7eXZ6RJQmEaRvtNg4kW4rTNpKGI5evLhM8IU6iiPhtRCUGqk93cPxEM51t0mxvU2tDw38w7eMS7mKt/yiicziWvp1tbB64swTiPf/LaNEAYsFo8CLOpgU=
+	t=1724456395; cv=none; b=UYV/JOcuoOFZlikm6p6CCGaQwE0IKPc1f0AT1yIv8uh4KEshjszwgqVzP7oq3wu3y2Y4OLMytkLyvWUYJZ0OV0fMEvGroM72DnHvWT3MAabrAewFeb105FWpTUay1n4joEDsWW7aju9tx9S8HWlAt6i6woKtR82hpx7wwbtlqR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724456400; c=relaxed/simple;
-	bh=k/0uDT+MZl5NLA6HoCCwMzmbAbGFd8xGGeSQPmZdO84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6xHwMr7vCHE6ILRnngPp0M42xGPPq3TuXazo12EwVXt7dzaP5wWhZEmVBmP8m9vJKeO1aCP+8IK84q7Bhkg8VDB7JVl+ueo26RxeWOgjGgA4D7wIROZ3baSd8K1rXTdBJ63nJbxWEJFrcnPDk+9EU8c3kcdLRNW0Ek761C6vM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wvteV+ib; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45029af1408so57501cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724456397; x=1725061197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kNJQW5kWoiyWIS1wEft5yKL6Uj+ZwBIolJSEzZeq2Uc=;
-        b=wvteV+ib65JVSvVjjd+a4IJvh0U3ceBwV+ptO80WaiqIGaIt1EVVzPeLpd1f6TIu4B
-         +ZISif/UkQLrGMvqSRjSUCrhodB5Nyj5W9+5I6ty8C3XE07YHNpcxlXWmyBj2qMHmph6
-         iqLRdLADpxqAylq1avz97O0tiJ0GQ6z7L1Xy7X5a7eatxCfzIfiERNYbokdv5WJLC7HK
-         8wLU5ySoVu6FdMsUx9osRYx09MnthzJIFn+upax6wf0OR2VWtGL+2ct0jz95JRFC3baa
-         haTlb4DlrLnSSxE5u/Fc1H6IkdYNIM+haGnPsW/d6rTaT8k6C5vsYIrJE96MZPSGuwDB
-         7zwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724456397; x=1725061197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kNJQW5kWoiyWIS1wEft5yKL6Uj+ZwBIolJSEzZeq2Uc=;
-        b=cUtGDFSDWHfZ+sXZa6Fik4UxNpkTEsgEOOu3dbh06nDXYOr9r1uYrozd2bvWqlODO2
-         ELY/XcD8NmfATx0LG84/YzwCNMpDYX3WJXZk9fV+E5AgEE/cUzXnxQ3NwqpsQr0iwXF0
-         xKZ6kwLKaHeur4MHQb1FeY1jrSo+amlAZRedeTZuhLjbuzBQE9+3wXTiZA06wygo7Awk
-         tOxi+TM8A22nW3ve/4DzP18iiZJ/9K25NRVcTUNUyH51ABTr9Ps0n8r9KRAHFRDBKMko
-         De94FXkwqVwCdNONVQ+rR8iOsHEJAphy8tCIWI6CaYlTSFOPbx+dScmyBfjWqEJJ4iVo
-         nDQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfE0oRWjQwSWAsGbdFeIy3/7gIycr8J+c0cLc/m9wX2IVWogB3BwMAGNuGtrkYvHaWhUzTOMjulGvHQHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFifYeCaEvejyxONSVKoqzTIWHZmiZY3oHohIwegRi6qK3s2yn
-	1KgeRn4I3U+VVt+e/YtTeEAI4r/tAHZu16K6TaDJ9YE/AZ2Pg5A0JVccTGyK/9Ya3HEDF+L/h6w
-	kiuVHNTwGPvGDs8z4ODX7wU0svq8htYP4Ew4n
-X-Google-Smtp-Source: AGHT+IH1hc8yYuEp7WVu5DgIPV+CZe8iSGviZ+TgZTzQmeBssZ8vt+JQIleeid6x86dKtzRWBWqsrOQrdpWs0XSsvzk=
-X-Received: by 2002:ac8:5f07:0:b0:447:d97f:9765 with SMTP id
- d75a77b69052e-45642044d31mr1174401cf.16.1724456397170; Fri, 23 Aug 2024
- 16:39:57 -0700 (PDT)
+	s=arc-20240116; t=1724456395; c=relaxed/simple;
+	bh=kKWBQ7G/gB0nDLrO048tvpph0/Er6ULD8dku7gWLG48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cMgtzSii2Pp5YxOhMDfN5+XPfRCqDaLndNw5ASjfXLgL+wpkGnk8eDy0TvWbS6nuejsrpTm9gpd9yxw2j8VofkvuLUeHC5RfSuYTVEJCvDhW62q6rqVYo5IJj/XwGu44JVtJsCFZXm4LfUhJWpdaCwQDGLgRnnqlQFH6oV4GPSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbI/Zcmc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44172C4AF0C;
+	Fri, 23 Aug 2024 23:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724456395;
+	bh=kKWBQ7G/gB0nDLrO048tvpph0/Er6ULD8dku7gWLG48=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QbI/ZcmcvCRcz+B/FgOEuHA152qLPLxAjuKBSXTpPgt4/nVwipMbKPsETLLQEoW/f
+	 GAZyWcO8UIDbkFLI+XZmruZnu3sbSHuupnEAY6uHoJ0y/7SZGs9JXpzawveVG7q0HS
+	 WM4B07hpusajvZSJI8w0bNCXupkaJW76SNc4f2woV+H1h9+HLDs/6F+qDvQWq8Wwof
+	 UkkTKckIRWdrMz8iFAVDoJfO+QVNibzFcBh3JOODYcWKq74oT6ez8f+1iFhUvRgM81
+	 /FgAy2lIzL8qbuvjsL+ogle5fOicoJV6ZeCZVJGLizv162blmKtaNHFlAEu+PXF7M5
+	 TsRMGLzXC3s/Q==
+Message-ID: <7c75defd-372b-42cc-897a-eb46e4a8966e@kernel.org>
+Date: Sat, 24 Aug 2024 02:39:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f29f64e29c08427b95e3df30a5770056@honor.com> <ZsXho27uAbQ5rEgS@tiehlicka>
- <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 23 Aug 2024 16:39:44 -0700
-Message-ID: <CAJuCfpE7qsbFPseGzcBp27uNDhwtKLypKiPnqebE5=T8WDTyEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
-To: Barry Song <21cnbao@gmail.com>, Lokesh Gidra <lokeshgidra@google.com>
-Cc: Michal Hocko <mhocko@suse.com>, gaoxu <gaoxu2@honor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shaohua Li <shli@fb.com>, 
-	yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
-	Kalesh Singh <kaleshsingh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: interconnect: qcom: Do not require reg for
+ sc8180x virt NoCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quic_okukatla@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+References: <20240730141016.1142608-1-djakov@kernel.org>
+ <31173e79-4b2d-4027-a4a2-61071206f387@kernel.org>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <31173e79-4b2d-4027-a4a2-61071206f387@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 21, 2024 at 2:47=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Wed, Aug 21, 2024 at 8:46=E2=80=AFPM Michal Hocko <mhocko@suse.com> wr=
-ote:
-> >
-> > On Fri 16-08-24 07:48:01, gaoxu wrote:
-> > > Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazyfr=
-ee_fn:
-> > > 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If it'=
-s
-> > >    moved to the LRU tail, it allows for faster release lazy-free foli=
-o and
-> > >    reduces the impact on file refault.
-> >
-> > This has been discussed when MADV_FREE was introduced. The question was
-> > whether this memory has a lower priority than other inactive memory tha=
-t
-> > has been marked that way longer ago. Also consider several MADV_FREE
-> > users should they be LIFO from the reclaim POV?
->
-> The priority of this memory compared to other inactive memory that has be=
-en
-> marked for a longer time likely depends on the user's expectations - How =
-soon
-> do users expect MADV_FREE to be reclaimed compared with old file folios.
->
-> art guys moved to MADV_FREE from MADV_DONTNEED without any
-> useful performance data and reason in the changelog:
-> https://android-review.googlesource.com/c/platform/art/+/2633132
->
-> Since art is the Android Java heap, it can be quite large. This increases=
- the
-> likelihood of packing the file LRU and reduces the chances of reclaiming
-> anonymous memory, which could result in more file re-faults while helping
-> anonymous folio persist longer in memory.
->
-> I am really curious why art guys have moved to MADV_FREE if we have
-> an approach to reach them.
+On 30.07.24 17:32, Krzysztof Kozlowski wrote:
+> On 30/07/2024 16:10, djakov@kernel.org wrote:
+>> From: Georgi Djakov <djakov@kernel.org>
+>>
+>> The virtual interconnect providers do not have their own IO address space,
+>> but this is not documented in the DT schema and the following warnings are
+>> reported by dtbs_check:
+>>
+>> sc8180x-lenovo-flex-5g.dtb: interconnect-camnoc-virt: 'reg' is a required property
+>> sc8180x-lenovo-flex-5g.dtb: interconnect-mc-virt: 'reg' is a required property
+>> sc8180x-lenovo-flex-5g.dtb: interconnect-qup-virt: 'reg' is a required property
+>> sc8180x-primus.dtb: interconnect-camnoc-virt: 'reg' is a required property
+>> sc8180x-primus.dtb: interconnect-mc-virt: 'reg' is a required property
+>> sc8180x-primus.dtb: interconnect-qup-virt: 'reg' is a required property
+>>
+>> Fix this by adding them to the list of compatibles that do not require
+>> the reg property.
+> 
+> So I guess we are giving up on
+> https://lore.kernel.org/all/20230530162454.51708-4-vkoul@kernel.org/
+> ?
 
-Adding Lokesh.
-Lokesh, could you please comment on the reasoning behind the above
-mentioned change?
+Thanks for the pointer! That approach is fine too, but i was expecting
+a re-send and then later completely forgot about it. I have a slight
+preference towards my patch, because it is more compact, but i can also
+revive Vinod's patch if you think that it would be a better pattern to
+follow in the long term.
 
->
-> >
-> > --
-> > Michal Hocko
-> > SUSE Labs
-> >
->
-> Thanks
-> Barry
+BR,
+Georgi
 
