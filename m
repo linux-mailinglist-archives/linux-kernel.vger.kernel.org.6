@@ -1,103 +1,160 @@
-Return-Path: <linux-kernel+bounces-299439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9889C95D4A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591E895D4A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC4441C21A6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E73AEB22052
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485C4190675;
-	Fri, 23 Aug 2024 17:45:55 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9D6191F8D;
+	Fri, 23 Aug 2024 17:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHPWSEM9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30148746E;
-	Fri, 23 Aug 2024 17:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A292191493;
+	Fri, 23 Aug 2024 17:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724435154; cv=none; b=l9kKGrYSW4TMkFV9caj6rFIDztirMlb+pYfw0PDPWgHyf1yw/2eCtkAxKWhjNW5yT9IJmZZw5ih2Y1Ihf+BPHYKjiR8u7Y2Z7S7G1VSKIUUtiP2GTXeZpwt5kW0swZyOYZSdJwoew6BtROjS+MVwygdbQx4vZE739zrkz1+HMBQ=
+	t=1724435155; cv=none; b=VIWwLscxtrhdh/c8LdSE9ys6bkxZrqCElGi4QFcLEw40czrnJS+/xJXoPIBRz5iV8fa0XKsJ0MxxqRR1Crc+mSpTvKhndLTelTklbw6nhVtiGmwfob8x5slzO9XJ+9zxqZu9i5V36QqrbB0nY98SbDszHne0w+/2dI5++3DKHTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724435154; c=relaxed/simple;
-	bh=GhdIXIa2iFBz0ObCH3R+GDVX+8jNuSe1xiAsWtGQrWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dl4GZQJQMgm8EQss+3GRLz+LgPwKVt6fu+FEE/dWAeSIAAMYGPxKAWA9Q73jF5c2+Mne8X1VKzHDqH4QIsz03/ReC1ZerHhV/mzMT5R/qu43ZjEOffMs0nGhuIXM0MvYHEh8iZvEmvFPM1riA8FAePt+2/RhWShb3nZWNVVd//A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so2838131a12.2;
-        Fri, 23 Aug 2024 10:45:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724435151; x=1725039951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TDVkIQsG7ReEAwuaOoTp5Z2jTqt/qPXpRDuJxygFJmc=;
-        b=f53i34oxiki3Hx2gB2Rhk+e+iz+HA04tLV0MBN8stnErMrix7Nsl6ViQ4kZXPZZVNY
-         g+qitTeQ6yYgegT5KgAUjhCMTf3xjCwupjggaMSO++A4LISiD+SAD9wFfr4wuozlIu6n
-         /Zoi7zJot1kh+A2ZT3lqBPx6+C5ASWJNGTxocs2fqAzN9hq71SK009bExkuj7hjx4iZA
-         4UpwN/nQKnNCnqL2h5Aa7BAc1plfa6mLTzTBl3LCE4i03HFqFBbF9UuR3xQtc/xtbB9S
-         ClD/YYUbBoWJmt9CQRYZdqUE4pdumSO0wgHNPTs+l2cfPMi9Sp/DFvFMVplDUnoUrzv9
-         gemw==
-X-Forwarded-Encrypted: i=1; AJvYcCXE6bxf46OQhBDeuoDd7okssG8Vr1sn/4ynC3MQwhtYXDQUVbg+T3Q6FNvZGZwXpV/9scwyjM6G@vger.kernel.org, AJvYcCXo1FnGjxuIdH18Pd2ZZW2cNow33g2OOBk6TawMHOkGrvgq4SGuBEnw9vpFrQ5SaPyhH9zlBTksBRH5GmJiQGw+@vger.kernel.org, AJvYcCXvF6f6XRcg3hJfiAr+zM+/dgxcYKON717clD6zcUM3t1pCd/MX+T1yHwMqJdAn860U3RIF6TJj92LGVSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvchjuc0pPGcY444gYePCYXVcmoxYbdofW91bi/FA3kzbmKehm
-	w9zU895nWMnXh1QgMkb4deUXxQK1ILldbbX6fBwIPrdQsDQhJVQe
-X-Google-Smtp-Source: AGHT+IH7djN+JVRUeLR9+jisrbq0RFvo8Ky4eTod2kWJoNlKjO407qXZ9Vb23bx9eG2roP6CZ3iCuQ==
-X-Received: by 2002:a05:6402:5187:b0:5a3:3cfd:26f7 with SMTP id 4fb4d7f45d1cf-5c0891abad5mr2275476a12.32.1724435150670;
-        Fri, 23 Aug 2024 10:45:50 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-012.fbsv.net. [2a03:2880:30ff:c::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a91afsm2341200a12.93.2024.08.23.10.45.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 10:45:50 -0700 (PDT)
-Date: Fri, 23 Aug 2024 10:45:47 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: fw@strlen.de, Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	leit@meta.com,
-	"open list:NETFILTER" <netfilter-devel@vger.kernel.org>,
-	"open list:NETFILTER" <coreteam@netfilter.org>,
-	"open list:NETWORKING [IPv4/IPv6]" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH nf-next 1/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <ZsjKy1YBAzh96DBn@gmail.com>
-References: <20240822175537.3626036-1-leitao@debian.org>
- <20240823074444.7de6a99f@kernel.org>
+	s=arc-20240116; t=1724435155; c=relaxed/simple;
+	bh=mr01yUEvX26NmVp0jXUcMup0uPWebEfYc7j3GsM8fjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jDOAupVUdyzbauKUJHpulGD3RrcOJzoSLW44Mm/qSZAPWSD5YZb3QFEPwx5uXoLoUkzzraUgfgBY4dQFKTqb51kWis9pp9gSDht47zqMQ2MO1T1CA0sVwMTk29RcNW+2DO0uWRRZPS29Y0Wshajd2EQPPfPH51avvk2sCwncz0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHPWSEM9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86113C32786;
+	Fri, 23 Aug 2024 17:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724435154;
+	bh=mr01yUEvX26NmVp0jXUcMup0uPWebEfYc7j3GsM8fjs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eHPWSEM9ZihA42Y4ZITQjghgyKSJcIG+f546BaW4ykszsvYxOtxHN3kY+roDFfypS
+	 1Z9tclp0ated/Dhp/CvM2h9Ud1w3QZ0bHZ2CTxLSlxzllhTeLw5uPjmHTGHMKpkj4/
+	 lmXTBuktRhntuUv0huFq2r3cauXx9sAoYuaR7MG4J2Gfb81ZobYpbyP1N+62I+hBEx
+	 5mrnYORL607W41D7saiW13gfbqhH9lxljbJxnnkQOkizrXTjNhjEQPOsvWSUTv6MV/
+	 MhbpPkybGZDDzm0hTA/q1WEp4NF7mpuV2RFgVBiP/sTbhrP6B7qssbGeadwmnRBufj
+	 LJkiPqsE47CKQ==
+Date: Fri, 23 Aug 2024 12:45:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev, Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
+Subject: Re: [PATCH v8 08/17] ACPI: pci_link: Clear the dependencies after
+ probe
+Message-ID: <20240823174552.GA375227@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240823074444.7de6a99f@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZsgtNbBLfP3SygYv@sunil-laptop>
 
-Hello Jakub,
+On Fri, Aug 23, 2024 at 12:03:25PM +0530, Sunil V L wrote:
+> On Thu, Aug 22, 2024 at 04:44:15PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Aug 12, 2024 at 06:29:20AM +0530, Sunil V L wrote:
+> > > RISC-V platforms need to use dependencies between PCI host bridge, Link
+> > > devices and the interrupt controllers to ensure probe order. The
+> > > dependency is like below.
+> > > 
+> > > Interrupt controller <-- Link Device <-- PCI Host bridge.
+> > > 
+> > > If there is no dependency between Link device and PCI Host Bridge,
+> > > then PCI devices may be probed prior to Link devices.  If a PCI
+> > > device is probed before its Link device, we won't be able to find
+> > > its INTx mapping.
+> > 
+> > This seems to explain why we want these dependencies, which is useful,
+> > but *this* patch only removes the dependencies.
+> > 
+> > Maybe this description should be in the patch that *adds* the
+> > dependencies, e.g., "ACPI: RISC-V: Implement function to add implicit
+> > dependencies"?
+> >
+> Okay. Let me move this to the patch you suggested.
 
-On Fri, Aug 23, 2024 at 07:44:44AM -0700, Jakub Kicinski wrote:
-> On Thu, 22 Aug 2024 10:55:35 -0700 Breno Leitao wrote:
-> > This option makes IP_NF_IPTABLES_LEGACY user selectable, giving
-> > users the option to configure iptables without enabling any other
-> > config.
-> 
-> Some tests seem to be missing options entries from their configs after
-> this change: amt.sh, udpgro.sh, udpgro_fwd.sh
+Given my forgetfulness and your pointing out that this *does* add the
+dependencies (by virtue of adding PNP0C0F to the acpi_honor_dep_ids[]
+list), it does make sense here.
 
-I realized that IP6_NF_IPTABLES_LEGACY and CONFIG_IP6_NF_IPTABLES_LEGACY
-were configured in the selftest suite before due to a dependency
-"selecting" them, and they are not anymore.
+> > > So, add the link device's HID to dependency honor list and clear the
+> > > dependency after probe is done so that the dependent devices are
+> > > unblocked to probe.
 
-I will send a v2 which adds them to tools/testing/selftests/net/config
-config file.
+Maybe expanding this to "Add the link devices HID (PNP0C0F) to the
+acpi_honor_dep_ids[] dependency list" would help connect this all
+together?
 
-Thanks
---breno
+> > This still claims this patch adds HID, which I don't think it does.
+> >
+> Please see below.
+>  
+> > > Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> > > Tested-by: BjÃ¶rn TÃ¶pel <bjorn@rivosinc.com>
+> > > ---
+> > >  drivers/acpi/pci_link.c | 2 ++
+> > >  drivers/acpi/scan.c     | 1 +
+> > >  2 files changed, 3 insertions(+)
+> > > 
+> > > diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+> > > index aa1038b8aec4..b727db968f33 100644
+> > > --- a/drivers/acpi/pci_link.c
+> > > +++ b/drivers/acpi/pci_link.c
+> > > @@ -748,6 +748,8 @@ static int acpi_pci_link_add(struct acpi_device *device,
+> > >  	if (result)
+> > >  		kfree(link);
+> > >  
+> > > +	acpi_dev_clear_dependencies(device);
+> > > +
+> > >  	return result < 0 ? result : 1;
+> > >  }
+> > >  
+> > > diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> > > index 28a221f956d7..753539a1f26b 100644
+> > > --- a/drivers/acpi/scan.c
+> > > +++ b/drivers/acpi/scan.c
+> > > @@ -863,6 +863,7 @@ static const char * const acpi_honor_dep_ids[] = {
+> > >  	"INTC10CF", /* IVSC (MTL) driver must be loaded to allow i2c access to camera sensors */
+> > >  	"RSCV0001", /* RISC-V PLIC */
+> > >  	"RSCV0002", /* RISC-V APLIC */
+> > > +	"PNP0C0F",  /* PCI Link Device */
+>
+> This is the change which I meant adding HID to the honor list. Do you
+> recommend to make this change separate patch so that it doesn't confuse
+> with adding a new HID to the probe match table?
+
+Oh, right, sorry.  I remember working this out in the past, but I had
+forgotten.
+
+I think it makes sense in this patch because the add and removal are
+matched when they're in the same patch.
+
+Sorry for the noise!
+
+Bjorn
 
