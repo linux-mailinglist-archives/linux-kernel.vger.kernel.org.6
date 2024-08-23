@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-299050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E0295CF74
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:21:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F70095CF83
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD08E2824A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:21:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AB56B2714A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205DD1A4F39;
-	Fri, 23 Aug 2024 14:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGfNNfXw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826A1A2C1E;
+	Fri, 23 Aug 2024 14:05:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B0E18F2FB;
-	Fri, 23 Aug 2024 14:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D20E1A2866
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724421929; cv=none; b=YOBSRjAu9qqfrKkty4jmpH7s/+wze5x4y28oW1R7/6wzHpFU4yBCT8wk7qdAAgPmw9Ux+F9vKXcoZtG2EFtdT8VjP0kaMJVV9tlYI4WwwseUw+yZpiOL4Qbxr5BtUK57zF4cSQUXDItC236NLivmi4nj2i6d1UT8z86pU8DaIMA=
+	t=1724421917; cv=none; b=mMzyKzMjmk5t/QSVAXkK3Ns/o276/cJ0mbMS919FHUZ28VPjgRHijDXn25VSvI4WGlHcHBT+qrXyw9otYVMxusKIW3GwnhmtAPiDvZPlvBgWcaTYYGGwukR7qRuquG2ZlAtczkA7mzTXPD/RBaWKY3dw6w5VtGbykDD3NTP8KBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724421929; c=relaxed/simple;
-	bh=U8FFllOx3wObE1ADbHZAv4NbTzismmwQxdpoYaVOVyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S1sfPJJfFYOYmDvenTDWc1fN+6+KDSKlX2JPR0P5LYCgD2TiqVYc7c07jkw8Vv/dNUekrRwH0p8P5ziMJcMFli5imArRtnhViw8LInQjnJuWouy4N5jgMZKgCLDu5dFnDtpG5SIbwWL1AmdS9sk174HJiFft0+ZBAiASfmUvIHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGfNNfXw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C1AC4AF09;
-	Fri, 23 Aug 2024 14:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724421928;
-	bh=U8FFllOx3wObE1ADbHZAv4NbTzismmwQxdpoYaVOVyw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dGfNNfXwgDHRgRuGdoydmYMYHzFRNqDAzBZl/0jCtqgu5OEXEr4Xqdd3BCqz4FBM7
-	 1xNFUkT4E8W4QtDkjzyE3pm6oK/7FEavfHKEBsxv6ZfPdm45nMhcJFOh1K+XH7LxUr
-	 RRqVW7elsWnl0RmTgZlh/yAvtVQ7lQcH4qs2lC/1+n5bMD7NA9lGp98DbV6t22m83w
-	 7KLqvxbPbZZXMlj6QfQ8/xexcG7LfUSwRgp7HOeCFOGCaDzMv2h9y0oH0a9psku8ql
-	 A42TXOBgPzqIq+vF4JygTmz6zuppm4Q1o+4nmtmMlTwyY3+li/HKU9Bq6XiULiiqH7
-	 GgXvA+lmcmUow==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>,
-	David Sterba <dsterba@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 9/9] btrfs: update target inode's ctime on unlink
-Date: Fri, 23 Aug 2024 10:04:56 -0400
-Message-ID: <20240823140507.1975524-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823140507.1975524-1-sashal@kernel.org>
-References: <20240823140507.1975524-1-sashal@kernel.org>
+	s=arc-20240116; t=1724421917; c=relaxed/simple;
+	bh=AqkOfvfNc9NvSgAbdMoj8rgdg2S7o/v1UgIhgeSl2/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjPvYdcnBy7oGI41nKoKjmhwkm7B0o4XC1bj8AIBmJZsEHzcEKXMJXGY0eq54OdUGkFD4Ycr34UzRaA79W26gd+uIlr7f16O6nnAOVVwKnnRZFKDdhWgf/4lQGtmyKVs1gWCBu7xxX4Aw2xpa91BQ6iWu0VYmtNmI3VOX9nw7XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1shUuS-0001dh-AO; Fri, 23 Aug 2024 16:05:00 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1shUuQ-002UxU-VB; Fri, 23 Aug 2024 16:04:58 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1shUuQ-001dQP-2U;
+	Fri, 23 Aug 2024 16:04:58 +0200
+Date: Fri, 23 Aug 2024 16:04:58 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, kernel@pengutronix.de,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+	Frank.Li@nxp.com, francesco.dolcini@toradex.com,
+	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/4] i2c: imx: only poll for bus busy in multi master
+ mode
+Message-ID: <ZsiXCqNOs0dHF379@pengutronix.de>
+References: <20240819072052.8722-1-eichest@gmail.com>
+ <20240819072052.8722-2-eichest@gmail.com>
+ <zudo7zjlxqfxipsi2x7e4kyhckvkjreovrdmsfxp3m6clbbgzv@ina4j4qxu24r>
+ <Zsbi2xcxBGE7o9uE@eichest-laptop>
+ <ZscNO2PKNlK3ru_7@pengutronix.de>
+ <2bbddaxyjkxfmlgmq3yqcbzo7dsb2pq5bvdatk2y4ig4iintkt@35btqkdv7sy3>
+ <ZsiTMITWF0Tj3o8Q@eichest-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.165
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZsiTMITWF0Tj3o8Q@eichest-laptop>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+On Fri, Aug 23, 2024 at 03:48:32PM +0200, Stefan Eichenberger wrote:
+> Hi Andi,
+> 
+> On Fri, Aug 23, 2024 at 02:35:54AM +0200, Andi Shyti wrote:
+> > Hi,
+> > 
+> > On Thu, Aug 22, 2024 at 12:04:43PM GMT, Oleksij Rempel wrote:
+> > > On Thu, Aug 22, 2024 at 09:03:55AM +0200, Stefan Eichenberger wrote:
+> > > > Hi Andi,
+> > > > 
+> > > > On Thu, Aug 22, 2024 at 12:21:30AM +0200, Andi Shyti wrote:
+> > > > > Hi Stefan,
+> > > > > 
+> > > > > > @@ -1468,6 +1473,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
+> > > > > >  		goto rpm_disable;
+> > > > > >  	}
+> > > > > >  
+> > > > > > +	i2c_imx->multi_master = of_property_read_bool(pdev->dev.of_node, "multi-master");
+> > > > > > +
+> > > > > 
+> > > > > you might also want to add the multi-master boolean property in
+> > > > > the binding.
+> > > > 
+> > > > We discussed this internally and weren't sure when it was required
+> > > > because e.g. i2c-rcar and i2c-tegra don't have it documented in their
+> > > > bindings. Is it still required if it is part of the dt-schema?
+> > > > https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/i2c/i2c-controller.yaml
+> > > 
+> > > The i2c-imx.yaml has "unevaluatedProperties: false", which fill discard
+> > > every thing not in this yaml
+> > > 
+> > > > If so, I will add it in the next version.
+> > > 
+> > > Yes, please.
+> > 
+> > sorry for the confusion, please don't add it. I had a chat with
+> > Krzysztof and I will quote him: "this is a core property, coming
+> > with dtschema, so they dont need to update bindings".
+> > 
+> > He also sent a cleanup to remove the only binding using it.
+> 
+> No problem, thanks for the clarification. 
+> 
+> Should I still separate the multi-master patch from the rest of the
+> series, even though it doesn't seem to fix the problem Fabio sees? I did
+> some more testing today and the workarounds he found do not solve the
+> problem I see, so they are definitely not the same.
 
-[ Upstream commit 3bc2ac2f8f0b78a13140fc72022771efe0c9b778 ]
+I'll try to review your DMA patches next week.
 
-Unlink changes the link count on the target inode. POSIX mandates that
-the ctime must also change when this occurs.
-
-According to https://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html:
-
-"Upon successful completion, unlink() shall mark for update the last data
- modification and last file status change timestamps of the parent
- directory. Also, if the file's link count is not 0, the last file status
- change timestamp of the file shall be marked for update."
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ add link to the opengroup docs ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 07c6ab4ba0d43..ac68be3290ddd 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4199,6 +4199,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
- 
- 	btrfs_i_size_write(dir, dir->vfs_inode.i_size - name_len * 2);
- 	inode_inc_iversion(&inode->vfs_inode);
-+	inode_set_ctime_current(&inode->vfs_inode);
- 	inode_inc_iversion(&dir->vfs_inode);
- 	inode->vfs_inode.i_ctime = dir->vfs_inode.i_mtime =
- 		dir->vfs_inode.i_ctime = current_time(&inode->vfs_inode);
+Regards,
+Oleksij
 -- 
-2.43.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
