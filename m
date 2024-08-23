@@ -1,130 +1,138 @@
-Return-Path: <linux-kernel+bounces-299532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B910195D5F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB5395D5F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30DE6B224EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3673628539D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D87192588;
-	Fri, 23 Aug 2024 19:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043C91922DB;
+	Fri, 23 Aug 2024 19:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WLEgD+zV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2zboGY1+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ycjea7sJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953AD8488;
-	Fri, 23 Aug 2024 19:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4E913A265
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440538; cv=none; b=WHE+y6FGvaZl9E/40eeCwqzMAGtSyxe66c4p4PGCVzvW5p56LwbxvpdGX0SHI/8gNkl8lHYrzXjR5GE0rPp1vc0o30WkfU2cq/G5zjgn1L/VefP15Cv6O7nGHDKUFbqsYgaU/NpsigoXCIWu2KKCDJg7cjti+9QiY3nbRzZXJ2k=
+	t=1724440594; cv=none; b=g2rt+I3NlXkKKbvmQ5UhBEdnlZI9FyrIQCfQZb45pRfTtPXIGdV4qgXoBiAs99twPAex5e0TLcsDyhst/sJruZgVYpzmyJBoBuHH5pdFSKcBmyRFqhOnIpsoJOA8ch7cT+n9xqWh4vrhsxH+To73gLklqz/9vQEMUdELmT2XI+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440538; c=relaxed/simple;
-	bh=PXkZuUaq2x+pGgvspK0w5ccETV5xXYujuHjG+kAk6Oc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrWrBzCwDXDNuTGeG2xpAD3Mh75iO8G9QAMkAFml2yCrsSYrScwad0QPZn4flUX4D6kjTNsvTKOvQzNUpjRRY4UnvxNF8ZZQ6uuxVHpcAtDIWMbRMJJVD/r+tcvr33kh9s+7/eYxmRuP68ZfVleXhpbXLb79IYzz7Kt9KtKRI2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WLEgD+zV; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724440537; x=1755976537;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PXkZuUaq2x+pGgvspK0w5ccETV5xXYujuHjG+kAk6Oc=;
-  b=WLEgD+zVIJy/jioafasXc81gmUo+Rup96en3HB+b8zdK2L41pkCY+7Va
-   V0491xNHuB/Q00qpb5RonWygbHMJvkBjJcyqU/WSzZQ1R9+BQPW3kLZIt
-   k78VRwAS1FtI/MDariVVHTxdFHNFzopUVsD1z0gHx4T3R5w2PI/FEp2M2
-   CJo/WrWvnKcgd2AxAR6wng2C25ss6TKctTCWWVQ+tHJjEzD4yByzE+4ia
-   qzUUPFvXmyx4EWYM0akihAchvZVyNjdc82s4ds92rVd9TQAogC0OVxkdv
-   aZ+0fMvXrEH88TEvIvwQX30WhjMpDCB4GpcRfI3hwKjAhO9vdZrq6+I9r
-   A==;
-X-CSE-ConnectionGUID: gL8E4xQPRheicRFR6Z6qaw==
-X-CSE-MsgGUID: dYAJu/CEQGOOkQXsF1Ql9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33549611"
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="33549611"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:15:36 -0700
-X-CSE-ConnectionGUID: zz7piIwJSTaL4/cV1w36gA==
-X-CSE-MsgGUID: a1UQ8ZlKQROjWxapnjrwMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="92682297"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:15:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1shZkv-0000000109A-1vqG;
-	Fri, 23 Aug 2024 22:15:29 +0300
-Date: Fri, 23 Aug 2024 22:15:29 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] iio: pressure: bmp280: Remove config error check
- for IIR filter updates
-Message-ID: <Zsjf0bVLZyPqBxru@smile.fi.intel.com>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-4-vassilisamir@gmail.com>
+	s=arc-20240116; t=1724440594; c=relaxed/simple;
+	bh=wLDmGogH1f9s6SYDQKS5kLTfowcNEwIkOYLbGmaKfeA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O9JJjpqL9MoOID5NVcTWbmeZcbnAuq499G5HX2kdEuPGlwAQZfWgEB3ngUu9wP6ZIZcL85m6KKhv4oXZYhR6cYiP5tBedsERwtmdGz7FiI9tE6oMbDA9mevJIkYcJI7jH19/pPPR61h6DuIXnucKuhqJvunhNIoQEsFZ6Ko2MaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2zboGY1+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ycjea7sJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724440591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wGYQJJqy7A0xMYqRC/bMPofGyzCYZPoDiqJJsbHmZlU=;
+	b=2zboGY1+S0sdDCBpJTKYJYEwJc1QA09oCyER5zR119ECtLgFkS1spOeNH1mxmoUCPPtSic
+	zHRvh1Vay2OwKwDRbdQoIh8XzuIcFVg7fFHcYSuseRQU3AsKNmYdJoUKjEyVopBLh3Xl45
+	7w6LFynXXLo33hC76WANAfyCbsX/y5terdYn5hR+WOqEQiJZ3BxsqBiu1E0j9Jw2vK7abD
+	0E6Xyo/2zYPQtHVObgXNHhAlMwZukR7Zo57D6CFy8EOYvhuS9tUay1AqK6P+N2l9qGtq26
+	moQoDkcXOl6lvKZr/pNYfUVksduI4lQ/C6GiR7UPmMqiajThoy0MIuQi9SaWgw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724440591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wGYQJJqy7A0xMYqRC/bMPofGyzCYZPoDiqJJsbHmZlU=;
+	b=ycjea7sJvGHcmMebUM5TOpUMrrIl9G4PTZEU9dU8frY2PsV49dc+mT+c7+TjCc9p8OPqy5
+	ZLLQLAdJ5ws2YNDw==
+To: Jeff Xie <jeff.xie@linux.dev>
+Cc: linux-kernel@vger.kernel.org, xiehuan09@gmail.com, Jeff Xie
+ <jeff.xie@linux.dev>
+Subject: Re: [PATCH] genirq: procfs: Make smp_affinity read-only for
+ interrupts marked with IRQD_AFFINITY_MANAGED flag
+In-Reply-To: <20240820020904.2514189-1-jeff.xie@linux.dev>
+References: <20240820020904.2514189-1-jeff.xie@linux.dev>
+Date: Fri, 23 Aug 2024 21:16:30 +0200
+Message-ID: <875xrrgicx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823181714.64545-4-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Fri, Aug 23, 2024 at 08:17:10PM +0200, Vasileios Amoiridis wrote:
-> When there is a change in the configuration of the BMP3xx device, several
-> steps take place. These steps include:
-> 
-> 1) Update the OSR settings and check if there was an update
-> 2) Update the ODR settings and check if there was an update
-> 3) Update the IIR settings and check if there was an update
-> 4) Check if there was an update with the following procedure:
-> 	a) Set sensor to SLEEP mode and after to NORMAL mode to trigger
-> 	   a new measurement.
-> 	b) Wait the maximum amount possible depending on the OSR settings
-> 	c) Check the configuration error register if there was an error
-> 	   during the configuration of the sensor.
-> 
-> This check is necessary, because there could be a case where the OSR is
-> too high for the requested ODR so either the ODR needs to be slower or the
-> OSR needs to be less. This is something that is checked internally by the
-> sensor when it runs in NORMAL mode.
-> 
-> In the BMP58x devices the previous steps are done internally by the sensor.
-> 
-> The IIR filter settings do not depend on the OSR or ODR settings, and there
-> is no need to run a check in case they change.
+On Tue, Aug 20 2024 at 10:09, Jeff Xie wrote:
+> Currently, due to the interrupt subsystem introduced this commit 9c2555835bb3
+> ("genirq: Introduce IRQD_AFFINITY_MANAGED flag"),
 
-...
+This is not really a proper sentence.
 
-> +	ret = regmap_update_bits(data->regmap, BMP580_REG_DSP_IIR,
-> +				 BMP580_DSP_IIR_PRESS_MASK |
-> +				 BMP580_DSP_IIR_TEMP_MASK, reg_val);
+> an error is reported when a
+> system administrator modifies the smp_affinity for the virtio_blk driver.
+> For example:
+>
+> jeff-labs:/proc/irq/26 # echo 2 > ./smp_affinity
+> -bash: echo: write error: Input/output error
 
-Better to split on logical bounds
+That should obviously return -EPERM for managed interrupts.
 
-	ret = regmap_update_bits(data->regmap, BMP580_REG_DSP_IIR,
-				 BMP580_DSP_IIR_PRESS_MASK | BMP580_DSP_IIR_TEMP_MASK,
-				 reg_val);
+> However, checking the permissions of smp_affinity/smp_affinity_list shows that
+> they are set to rw. System administrators are strongly complaining about this issue.
 
--- 
-With Best Regards,
-Andy Shevchenko
+System administrators complain strongly about a lot of things. Such
+complaints are not necessarily a technical reason to change the code.
 
+A proper reason is to argue, that the kernel already knows at the time
+of interrupt allocation that the affinity cannot be controlled by
+userspace and therefore creating the file with write permissions is
+wrong.
 
+> jeff-labs:/proc/irq/26 # ls -l
+> total 0
+> -r--r--r-- 1 root root 0 Aug 20 01:32 affinity_hint
+> -r--r--r-- 1 root root 0 Aug 20 01:32 effective_affinity
+> -r--r--r-- 1 root root 0 Aug 20 01:32 effective_affinity_list
+> -r--r--r-- 1 root root 0 Aug 20 01:32 node
+> -rw-r--r-- 1 root root 0 Aug 20 01:32 smp_affinity
+> -rw-r--r-- 1 root root 0 Aug 20 01:32 smp_affinity_list
+> -r--r--r-- 1 root root 0 Aug 20 01:32 spurious
+> dr-xr-xr-x 2 root root 0 Aug 20 01:32 virtio3-req.0
+
+We can see that from the code, no?
+
+> Therefore, the permissions of smp_affinity/smp_affinity_list should be changed to read-only.
+
+Should? Tell what the solution is:
+
+Therefore set the file permissions to read-only for such interrupts.
+
+And please format you change log so that it has linebreaks around 75
+characters.
+
+>  
+>  #ifdef CONFIG_SMP
+>  	/* create /proc/irq/<irq>/smp_affinity */
+> -	proc_create_data("smp_affinity", 0644, desc->dir,
+> +	if (unlikely(irqd_affinity_is_managed(&desc->irq_data)))
+
+This unlikely is a pointless exercise as this is not a hotpath
+operation. Also please switch to S_IRUGO / S_IWUSR and simplify the
+whole thing to:
+
+	umode_t umode = S_IRUGO;
+
+	if (!irqd_affinity_is_managed(&desc->irq_data))
+		umode |= S_IWUSR;
+	proc_create_data("smp_affinity", umode, desc->dir, &irq_affinity_proc_ops, irqp);
+
+Thanks,
+
+        tglx
 
