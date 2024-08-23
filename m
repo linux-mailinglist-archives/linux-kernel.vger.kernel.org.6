@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-299387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E6295D3E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4D095D3E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487E01F23FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA80284A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BBC187855;
-	Fri, 23 Aug 2024 17:00:34 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B0418BC24;
+	Fri, 23 Aug 2024 17:01:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB82185926
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 17:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF4A185926;
+	Fri, 23 Aug 2024 17:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724432434; cv=none; b=kgnJzCrTUE4zgWTuWB0qdAp1PccNhqrbQmvopDpB2IPwNYB+WvTlrUlLx7j4R3hGZtpwPqotH5QZ3wicTorjUyBNe/KRA5eKm7TXxH1S7zRuwG+tH5ST1kNSDuZlOd+QsOtoUfilayaTIrZjkyne+YPS/lJJ4XrRQKBncn8ShQ8=
+	t=1724432482; cv=none; b=p1Z/yeYGs7IlZOpS9QbvfBPif5wX6h2sjuQZFhaSr6nUA9gf1UUE2hU2Vd9xSFGLOJUE4EokhVibuPDxpcGk8wYamtIfdVmOxKopi4uz5PDqY0KYXbUj2GHTigpL+JS919UfBDfVqHSG8OVevADQJAxAhGptPQtzSOM37X2e9E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724432434; c=relaxed/simple;
-	bh=MfKQ6H+tqkA+T2IDx/GYF/jlqv4gRrlkmoDifvwI5ew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szP9RV8fLnsgqU1QC+95WIGxifnXrzc1IdP3QvW0XK9Xm8CgvvREP9P8Y8u0Dr2k6eKcY07rIfIDMuefsUx/Tbdlu+DObCdVd1NSx3XI/axMOyK/9ie72e7+2YWT4he4qDxG9OT4wlYSpHD7OSe31riFxm4VY7wNPM1U//hBR34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wr5t62S3Qz9sRr;
-	Fri, 23 Aug 2024 19:00:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id i5E58EHGa9Ba; Fri, 23 Aug 2024 19:00:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wr5t61dk7z9sRk;
-	Fri, 23 Aug 2024 19:00:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2720C8B781;
-	Fri, 23 Aug 2024 19:00:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id gn3olMTCJfO7; Fri, 23 Aug 2024 19:00:30 +0200 (CEST)
-Received: from [192.168.233.10] (PO24418.IDSI0.si.c-s.fr [192.168.233.10])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B6E8C8B763;
-	Fri, 23 Aug 2024 19:00:29 +0200 (CEST)
-Message-ID: <584eebac-d052-4748-8886-ded7c8776f5a@csgroup.eu>
-Date: Fri, 23 Aug 2024 19:00:29 +0200
+	s=arc-20240116; t=1724432482; c=relaxed/simple;
+	bh=AJcv/tPtKfv8hd+nhv6iszcG6/a0Ba1YIilo39XftuE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lL4p3QVHsd86c3SSUwQ5KKCnuGkbYhbytnoVtVQrBg+uNFshoTF9nkBqsrywUnrl3ZSzIk7rvcnj5vDlDjspY2YrRCCiMqxRS8AhGLMjtZGXIaf9rgRazRKQdm5wQgT9FN5EIPZfTjqXwnPTZblQHoEoOvZUnhO/4MFvPeOZJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wr5qT2sswz6K5lm;
+	Sat, 24 Aug 2024 00:58:13 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B0A5140B33;
+	Sat, 24 Aug 2024 01:01:18 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 18:01:17 +0100
+Date: Fri, 23 Aug 2024 18:01:17 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 14/25] cxl/events: Split event msgnum configuration
+ from irq setup
+Message-ID: <20240823180117.00004561@Huawei.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+	<20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: fsl-mc: make fsl_mc_bus_type const
-To: Kunwu Chan <kunwu.chan@linux.dev>, stuyoder@gmail.com,
- laurentiu.tudor@nxp.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, Kunwu Chan <chentao@kylinos.cn>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240823062440.113628-1-kunwu.chan@linux.dev>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240823062440.113628-1-kunwu.chan@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
+On Fri, 16 Aug 2024 09:44:22 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
 
-
-Le 23/08/2024 à 08:24, Kunwu Chan a écrit :
-> [Vous ne recevez pas souvent de courriers de kunwu.chan@linux.dev. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> Dynamic Capacity Devices (DCD) require event interrupts to process
+> memory addition or removal.  BIOS may have control over non-DCD event
+> processing.  DCD interrupt configuration needs to be separate from
+> memory event interrupt configuration.
 > 
-> From: Kunwu Chan <chentao@kylinos.cn>
+> Split cxl_event_config_msgnums() from irq setup in preparation for
+> separate DCD interrupts configuration.
 > 
-> Since commit d492cc2573a0 ("driver core: device.h: make struct
-> bus_type a const *"), the driver core can properly handle constant
-> struct bus_type, move the fsl_mc_bus_type variable to be a constant
-> structure as well, placing it into read-only memory which can not be
-> modified at runtime.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-
-Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu> # for 
-include/linux/fsl/mc.h
-
-> ---
->   drivers/bus/fsl-mc/fsl-mc-bus.c | 2 +-
->   include/linux/fsl/mc.h          | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> index dd68b8191a0a..930d8a3ba722 100644
-> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> @@ -309,7 +309,7 @@ static struct attribute *fsl_mc_bus_attrs[] = {
-> 
->   ATTRIBUTE_GROUPS(fsl_mc_bus);
-> 
-> -struct bus_type fsl_mc_bus_type = {
-> +const struct bus_type fsl_mc_bus_type = {
->          .name = "fsl-mc",
->          .match = fsl_mc_bus_match,
->          .uevent = fsl_mc_bus_uevent,
-> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-> index 083c860fd28e..c90ec889bfc2 100644
-> --- a/include/linux/fsl/mc.h
-> +++ b/include/linux/fsl/mc.h
-> @@ -436,7 +436,7 @@ void fsl_mc_free_irqs(struct fsl_mc_device *mc_dev);
->   struct fsl_mc_device *fsl_mc_get_endpoint(struct fsl_mc_device *mc_dev,
->                                            u16 if_id);
-> 
-> -extern struct bus_type fsl_mc_bus_type;
-> +extern const struct bus_type fsl_mc_bus_type;
-> 
->   extern struct device_type fsl_mc_bus_dprc_type;
->   extern struct device_type fsl_mc_bus_dpni_type;
-> --
-> 2.43.0
-> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
