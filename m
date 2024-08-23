@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-299483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4495095D567
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:43:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71D795D575
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 20:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747271C214E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EA81C209A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62973191F62;
-	Fri, 23 Aug 2024 18:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF1C1922C5;
+	Fri, 23 Aug 2024 18:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uat72JGq"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bP5k4A2f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3964918DF81
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A57139D13;
+	Fri, 23 Aug 2024 18:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724438580; cv=none; b=SEcnf9UboKTG3lHfsF5xkrvHIkuJUMpPaz/0fPT66BrnDACAk4Vw3L/ec+b+TUnLUJyoG9+uH+HUgmIdglKpccoChp6B1RUWwCKaRypwYIsa8BIHsws4b/FjguMGVV4En7KzcpJVW6Xy9It06+0hnJZRvC2hdY8xTCAcW7ZrcLk=
+	t=1724438772; cv=none; b=XUSgAM0xqHMpEDuqlcX8+zsgWX+SgqGW897tkCNkk7mxBgh2QntreEdW+AH9jx+ZfaeSG3uq4ihzMwkJSKlsJ3QSinH9LxkslmP49b4bidmPB5dN8QtB/IjYatSVTc83K93vy7g/yhicZ0VLc5xqvWSGeG920UQ1ejtah7rFTB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724438580; c=relaxed/simple;
-	bh=vDPsqzAoxenIzuwcubdWFxYwhXNsFjnpCK8a2v37uUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QmFCEn58M+1GLq4CN8VDZy24dqmyA4hTuTWFkOwzegPOIY8SntMGLwBcaOG9Diu501y3fs9kivcogVUwsgMIqz2oC0JVTWKh+ppBurJUhFKCAkACMquZO51V4dW5fvlChyb6og5zNomI3GsgJk9eEMKXNOEz/z1DqA/ExXPhOas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uat72JGq; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso2289055276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724438578; x=1725043378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vDPsqzAoxenIzuwcubdWFxYwhXNsFjnpCK8a2v37uUA=;
-        b=Uat72JGqv46cTdWnDSsnkvLy0/FFPFy+L8QFzM/qXkQnlrIiJ+aHxYVk8+q8RINwYo
-         U4HHF2/0kMN6sKQEDVHrW+Z0ElaxJbKw76HLzWgFYfexuB3EbNiQlP7rSU0LC9sGaGV+
-         QRxkOXPXXDbo/izOqNnN19vUTX/Ys5wXKc4Je6NOA5CaVmYIBByK23CcgVpdqBrq3Uw8
-         4TY+7HRgQw5IByyJ7MUU1n8BP2dc19V65qoIfUstKdfbePPD3RImRze9fjy4e9rEaoHa
-         EFJANQNrOsKZMWLCSul3B11Hkoh6Ql17Hvc6K4pvag12H94XjOzKXsIEJRig1N42idSZ
-         AEig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724438578; x=1725043378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vDPsqzAoxenIzuwcubdWFxYwhXNsFjnpCK8a2v37uUA=;
-        b=bXKvhZ8M8mskioyoYoHmmm49q1OxPiGitrl51azSNSmD7YFtN2CcPTWH8rEOPVnuId
-         VM6b8Prc10ciZEH4/cDGw2nrRPu2RxdVgxr9rbDEy1cIar7x/6AbSyXisq9y3DXtdydu
-         pS+mbSTcxqwFUPX6tL1AB9VLhdGPFpyPvSOT9ATXTbtYzUt+WjIgjN+6k0ih0R7L3WHH
-         Ep95NA4HPlIy70n+aDtZeWXjDmO1wuZiY7io72fCgwYbJDNAUgWB9/nMCsTCKHV1aSuS
-         lCvUJSL6w7hehWb1jtaC7pif0ttYRxvVbixKhKAhkvre73FLwa0OHkFc8QNbSsCOc/ed
-         m+yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW08TY25UlMD1xcVdOle8f9E/R1vK2vhRcShnB6CtuSYJG8Oo5J9wU9wzkRtc4P1jD0L03xHCqMemV0g0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwblGYkbb/KJif9JrXbWeRZqvmfRHvFm2nefcR5X+5Xpju4F1kx
-	P8UPMQliSgnHeIEqambmsRabKDem9xfJ06sah2xkmUSf0hwYGPszomvRIvyyvAdgn3eSerWkcOZ
-	20BDYvvE7GKnh7Elny3A57mpWaAc=
-X-Google-Smtp-Source: AGHT+IGP5XOWs22Ob+Od8cQep7S+t0IxbSv28R6vyQfhdmlVTie8ZZ9QOHt1cMUuQWZzMD4Z85T69CYO082JM6cj92s=
-X-Received: by 2002:a05:6902:1501:b0:e13:c854:2a2 with SMTP id
- 3f1490d57ef6-e17a83b28d3mr4049002276.11.1724438577951; Fri, 23 Aug 2024
- 11:42:57 -0700 (PDT)
+	s=arc-20240116; t=1724438772; c=relaxed/simple;
+	bh=KkQEazdwshMVMtx2+tBkBwXewuq+34ODfkBojIyqB4I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cwVbpPiG2VDT9uTvK+sKXKxQlGEV5b+r9VrpTRyYcwrUcwzU4oMY/EiT8ZJgPmBp8N9AhtTyMl/7qda84O/euINue4AEiyQU7BgcvLWMUgEmoHhhB8iijkchfVOZslSU5a4OtSVElIwTVBHtP4gCXLstPGJ2GbGnfO3PzFq1T3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bP5k4A2f; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724438771; x=1755974771;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=KkQEazdwshMVMtx2+tBkBwXewuq+34ODfkBojIyqB4I=;
+  b=bP5k4A2fvsM/e8bSx06NPVrn6pcnz8JC1b2RLvZkUEHnwuRlZJCfv704
+   1nHfD/Tn76iofdO8ht98cEfTuR/becKIs73Vl1P41qBEUX591wu8m3vk8
+   GmvFimpyjPeMbmhIWbtnaDdeiMOFJKTSzuip1iGCzTKzEQumbNyKVH0vb
+   q8UwZSTYmnttux0xLqFgfPZ9tMRwBRHZ9toGnrv08GH7WhXWG37SNG5nP
+   iaC62Ku87r6f9ooFuJnlTSP37Wmpofui/gagpu4w6VoM1ies+dQaxYK7Q
+   CEFTDPpcW95xXuV1oXowJygaLioVPRa6bBO/cDyPkplilTWNfuei62ltd
+   A==;
+X-CSE-ConnectionGUID: LZgDGc+qT7KoLyVCjZReZQ==
+X-CSE-MsgGUID: WpOKB1FmT/Wf6h3REvIeUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="25817557"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="25817557"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 11:46:09 -0700
+X-CSE-ConnectionGUID: 5V8CQ4cISV2FnLnBbgfSoQ==
+X-CSE-MsgGUID: dcuuvPWtR7uXBEn0GIwk/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="92671763"
+Received: from skuppusw-desk2.jf.intel.com ([10.165.154.101])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 11:46:08 -0700
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+	Jithu Joseph <jithu.joseph@intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shankar Ravi V <ravi.v.shankar@intel.com>
+Subject: [PATCH v1] platform/x86/intel/ifs: Fix SBAF title underline length
+Date: Fri, 23 Aug 2024 18:43:37 +0000
+Message-Id: <20240823184337.2923179-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
- <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
- <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
-In-Reply-To: <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Sat, 24 Aug 2024 03:42:47 +0900
-Message-ID: <CAPpoddere2g=kkMzrxuJ1KCG=0Hg1-1v=ppg4dON9wK=pKq2uQ@mail.gmail.com>
-Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
- mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
-To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-2024=E5=B9=B48=E6=9C=8824=E6=97=A5(=E5=9C=9F) 0:07 Piotr Oniszczuk <piotr.o=
-niszczuk@gmail.com>:
->
->
->
-> > Wiadomo=C5=9B=C4=87 napisana przez Matthew Wilcox <willy@infradead.org>=
- w dniu 23.08.2024, o godz. 15:13:
-> >
-> > I wouldn't be surprised if this were dodgy ram.
->
->
-> Well - that was my initial hypothesis.
->
-> in fact i had few of them. Ranked (and ordered) like this:
-> 1. downstream kernel patches
-> 2. hw (ram) issue
-> 3. kernel bug
->
-> So full history was:
-> -build myself archlinux 6.10.2 kernel; upgrade builder OS (only kernel; n=
-othing else)
-> -run normal devel process and (to my surprise) discover interrupted CI/CD=
- builds by kernel oops
-> -downgrade to 6.8.2 and done 4 full builds (full takes 8..9h of constant =
-12c/24/t compile). all good.
-> -prepare vanilla 6.10.6 (to exclude potential downstream (ArchLinux) root=
- causes)
-> -run normal devel process and still discover oops
-> -make sure hw is ok by week of test with 6.8.2 (recompiling for 3 archite=
-ctures on 4 OS (3 in kvm). This was almost 5 full days of 12c/24 compiling.=
- All good
-> -because last steep was all good - decide to go to you :-)
->
-> sure - this is possible that 6.8.2 had luck with my ram and 6.10.6 had no=
- luck=E2=80=A6.but i personally don=E2=80=99t believe this is a case=E2=80=
-=A6.
->
-> btw: we can go with elimination strategy.
-> So what i need to change/disable to be closer to finding root cause?
-> swap?
-> now it is swapfile on system nvme
->
->
+In commit # 0a3e4e94d137 ("platform/x86/intel/ifs: Add SBAF test image
+loading support"), the documentation for "Structural Based Functional
+Test at Field (SBAF)" had an incomplete underline. This resulted in the
+following build warning:
 
-Hello,
+Documentation/arch/x86/ifs:2: drivers/platform/x86/intel/ifs/ifs.h:131: WARNING: Title underline too short.
 
-I=E2=80=99m encountering a similar crash and trace in the issue I posted on=
- Bugzilla:
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219154
+Fix it by extending the dotted lines to match the length of the title.
 
-If this is the same issue caused by virtio_net corrupting memory, you
-should be able to reproduce the crash by sending data to the VM over
-virtio interface while it is actively allocating memory (e.g., using
-iperf3 -s on the VM and running iperf -c from another host).
+Fixes: 0a3e4e94d137 ("platform/x86/intel/ifs: Add SBAF test image loading support")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/lkml/20240820134354.2aec355d@canb.auug.org.au/T/#u
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/platform/x86/intel/ifs/ifs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In my case, as Thorsten suggested, reverting bisected commit
-f9dac92ba908 (virtio_ring: enable premapped mode regardless of
-use_dma_api) along with two related commits in this series resolved
-the issue:
-https://lore.kernel.org/all/7774ac707743ad8ce3afeacbd4bee63ac96dd927.172361=
-7902.git.mst@redhat.com/
+diff --git a/drivers/platform/x86/intel/ifs/ifs.h b/drivers/platform/x86/intel/ifs/ifs.h
+index b261be46bce8..5c3c0dfa1bf8 100644
+--- a/drivers/platform/x86/intel/ifs/ifs.h
++++ b/drivers/platform/x86/intel/ifs/ifs.h
+@@ -129,7 +129,7 @@
+  *
+  *
+  * Structural Based Functional Test at Field (SBAF):
+- * ------------------------------------------------
++ * -------------------------------------------------
+  *
+  * SBAF is a new type of testing that provides comprehensive core test
+  * coverage complementing Scan at Field (SAF) testing. SBAF mimics the
+-- 
+2.25.1
+
 
