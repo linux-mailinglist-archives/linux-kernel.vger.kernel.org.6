@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-299775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3483095D9EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:54:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB2C95D9F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C42283007
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:54:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28172B21FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22081CCB2B;
-	Fri, 23 Aug 2024 23:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6681CC140;
+	Fri, 23 Aug 2024 23:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0osuhRQ7"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qgOKpEwE"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5DA1CC8AE
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C421C9EB3
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 23:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724457274; cv=none; b=NQFk7pS1+GABDuEovTP0WxU9eNO4v2+gm4Eyj87Y7snWf+j7bHz41D1xl+xsXRyZHrZ3+9t4Bz/2acW7H6gT+7dnyVP/Siyet88rqNJG22jVKYy+Iv7Wuu7Pa4qUqUKpY8H43VwxJ4Ik6kVb4nlvFwlxmYM3/ujRFBGK1aVWzIY=
+	t=1724457283; cv=none; b=CcWXeY5rZ5a2OCFGaEdpaN+Mt8wbVzlvllQQ04NZkWThZXEjgDD1296kn/G69K4oE2bzmAi6v1Ca02y3R/oXcDiaVSsrEUBeIdTt/tN8LyFz6I7Az1IQ5hFoGxAUdwvpXfmfF7CF4Vz43sFwgOre+bRYFmnNDu7E8YQqt7OyBO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724457274; c=relaxed/simple;
-	bh=ZsGbrVfo9OkjdxgpqSfk8utdzoF8z3yMoR3uwvLyy2E=;
+	s=arc-20240116; t=1724457283; c=relaxed/simple;
+	bh=xDC27S1v/Kp1xbIPazQWRZn/0njT0kv4lYdFbaNd7T0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Ym0qCGp4MvWofmCJ13bVCmBTcuGSEcWAr5IA6XrafUK2Iz14SW3B9n8G5HhxS91D4vQnAiJpsLmMVjZAqflKk2ShMcvLEheGETVqOUNtnFgDcN3qAbjVHJ36jLKNc9vMyTVP8hRhkZBMN6ivWowoZsWsPTHfQ/JHixh+TPdkyqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0osuhRQ7; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=PDsmZaNJdWRjIAuvxO0IxIGKghQ03stRR5F6Tn9t/kMlVlSOB67lMoDdk2kQIdn4ilRJ34jZV43IO/mImCQtR7SMe91GoFCG/wqkjCN1RRlp/bnEXe4U3K8UENCi1omOSQASLqc1prsb/ej2cjKhLP1DBOAyT7s8xnLR2/3nyac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qgOKpEwE; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d3c976e426so2763093a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:54:32 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2023cadc9a4so22332005ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724457272; x=1725062072; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724457281; x=1725062081; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2v2MHDt4esEOK/DxuPwtgfOFZoYYQTEeuqo4M+jXGM=;
-        b=0osuhRQ7sH7zrk5U3BvtbkFoo1CCbywysNtofdxaYniBe2yX9rKlaUsJ6ox+Hj+wCg
-         e6ylKsFwbl9GQHXF3aA4IiY2PWkBVk0/wUHVDodGtta5kuWMQLTXusk/aGe1zykSHFwm
-         /OkPMpGc/kcVOeJ6lY+coHZ6ZL+bb48AaSFrW1eiHQpdyvdQqlg3LFNt2qV7tg1IcRal
-         +rGkBtpSzst4sJ2cy6unSzCDOTVbtJ06wLPIaTQCDP6nbWnX2c4eCevv8XCoHiXOo6rb
-         Zt/r5oi0N4K37FQ6P3Fqgc2uhdRao3QD9hPqlCrO1jK0aN0nt+lxVrplw6EoxsE5j4Mi
-         IJhA==
+        bh=exn2FrXj636XvpLV2wibQdifpSIPqSIRNFYp2rvI/Q0=;
+        b=qgOKpEwEyJ04aH5ouLN8BdRI3nETE1nPxbcaOskaiNfUBIXmijldfdCfDVML0ggqwP
+         jWQin+qKFfarMNSXnikvmiBhaQ2dWOR7YRAm1+Fgl9j0ppECoHwf8kUtl+m1lISWmcqo
+         BHPq5lAGnaKr6kjTDqeZq2Xe5pTpFFJXpFFVmzMvrXVGk6qsDSf75Gf6gd4x/KpYW8d/
+         dPrdaxwA7pHll9EnBt4AA8gd67N0HOjqaERwaWV8XV5MGYwh1plcLyyfLDyqJ+vDa4v/
+         0nHMf/m8DlV9RDXRETz1/liqZ948y16oAPqkxwnXPc2OJGmJtiUmFzh7Pe8NvhnlM0DP
+         KRww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724457272; x=1725062072;
+        d=1e100.net; s=20230601; t=1724457281; x=1725062081;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2v2MHDt4esEOK/DxuPwtgfOFZoYYQTEeuqo4M+jXGM=;
-        b=WKdJabHCkVRNStYNWC8RuQJfS3yEQwBWvtu5BgNis78w849NAps3lo0b1YUfAXxsLG
-         m6pfAhI30aqFKkFkVeUgVr7Qkk94IkuVEdiz4TAbh3av89GGu0ARmfRJuhP0O2wDycSh
-         N7aNJ8E0TTdxyLZ7bRGuGoHEW0dY7kxn401tdll2/X1CQaQf4KB+9D+QDMNIOeXk+KDo
-         8TU1GUGaY0aWOiTjbcLG4svNnZ4F1ms+Q7jwGDuxEk0gH6yI26cXFsynU2C9hI4OyMjs
-         qAKW9uOpSQA3GDOFlhBaQFvwns4R4CMjucZU+u7ZjgG0ytmtcHH6vzh6CqzAr6SiJGLO
-         hmPg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8DHrxPpZuJ9AGG5uop+XEcP17M5YWzhlIusPt7HfE9NIj1ZujSepLUbo1/bGzT+RFUzAZ/tUo2Q8k/uI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEnSERHUM/UcVgW1TgeVtVR1VgGbuKZ+aUugvkXpbPPyWUBg1G
-	zA3R++fSpjP0hFqCOKqObYaW8II+U0U1T7eu6b9lY+DnMyD+gINx2w7IrpkX8xnhn6BNBLmyxNZ
-	gVg==
-X-Google-Smtp-Source: AGHT+IHm1c1eC7EMuzeGgtY+z7vJ1lrOuEaIgxUAfa1UDufYAd0VdDhBdDFlj2e3bEGajgU0/zU2XZlhzo4=
+        bh=exn2FrXj636XvpLV2wibQdifpSIPqSIRNFYp2rvI/Q0=;
+        b=YT3DFtCykglZRjyo9dK7UVkWpvF763i8LlOovJEorQlYXCUoMYioyhTvTc3y9yd0s3
+         L7IoYQaojScdIA74qnsdsDnCYj4jwgxcmoX5/OEsu0SYyxKNSCCwsFv5uaQKv7x5uzbh
+         l+e43CHqNTDBcffyIUl0B3gqxlkgVIM0jgJf1J5XXCfPeKdyO0dZg27enN23vwuWT50B
+         hequnykMy8GHWD5p5dVHs38xyh98Qfmrnf6qP/BYchAFtm4FDf2ptR6Lxi0SZRSACqzE
+         WhMexv8pY58hTzxAR+6Of8ZPUvJzjxRtRvDFPPG+6hkp6T6ICqEg1x998bDYwxLSQebE
+         G24g==
+X-Gm-Message-State: AOJu0YzE5strOLMm+wBRqh25nDVSB4r/Fp41k5engFf3gm6u19a/7A0A
+	Jt3dXxxCK6hnOvccQSsE8IktKV/+D5tYALaUWKTncaOOt3/dc3rRcEX0pUzPij8V6XeZ4vKXaTP
+	rHw==
+X-Google-Smtp-Source: AGHT+IGdwKYeKcdUrQBxNJcTvvQJ2dUJsfSXJmfmSQCZCEAhf0m0Ac2OofhdEQCmTooo7YcNchI8utr83qI=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:fa86:b0:2d3:ce45:9148 with SMTP id
- 98e67ed59e1d1-2d646d81615mr54476a91.7.1724457271818; Fri, 23 Aug 2024
- 16:54:31 -0700 (PDT)
-Date: Fri, 23 Aug 2024 16:47:53 -0700
-In-Reply-To: <20240802202006.340854-1-seanjc@google.com>
+ (user=seanjc job=sendgmr) by 2002:a17:902:c401:b0:200:ac2c:6796 with SMTP id
+ d9443c01a7336-2039e52c4efmr2488785ad.7.1724457280758; Fri, 23 Aug 2024
+ 16:54:40 -0700 (PDT)
+Date: Fri, 23 Aug 2024 16:47:55 -0700
+In-Reply-To: <20240605231918.2915961-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240802202006.340854-1-seanjc@google.com>
+References: <20240605231918.2915961-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <172443896940.4129936.14195284777076363677.b4-ty@google.com>
-Subject: Re: [PATCH v2] KVM: x86/mmu: Clean up function comments for dirty
- logging APIs
+Message-ID: <172442184664.3955932.5795532731351975524.b4-ty@google.com>
+Subject: Re: [PATCH v8 00/10] x86/cpu: KVM: Clean up PAT and VMX macros
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>
+To: Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Jim Mattson <jmattson@google.com>, Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>, 
+	Zhao Liu <zhao1.liu@intel.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 02 Aug 2024 13:20:06 -0700, Sean Christopherson wrote:
-> Rework the function comment for kvm_arch_mmu_enable_log_dirty_pt_masked()
-> into the body of the function, as it has gotten a bit stale, is harder to
-> read without the code context, and is the last source of warnings for W=1
-> builds in KVM x86 due to using a kernel-doc comment without documenting
-> all parameters.
+On Wed, 05 Jun 2024 16:19:08 -0700, Sean Christopherson wrote:
+> The primary goal of this series is to clean up the VMX MSR macros and their
+> usage in KVM.
 > 
-> Opportunistically subsume the functions comments for
-> kvm_mmu_write_protect_pt_masked() and kvm_mmu_clear_dirty_pt_masked(), as
-> there is no value in regurgitating similar information at a higher level,
-> and capturing the differences between write-protection and PML-based dirty
-> logging is best done in a common location.
+> The first half of the series touches memtype code that (obviously) impacts
+> areas well outside of KVM, in order to address several warts:
+> 
+>   (a) KVM is defining VMX specific macros for the architectural memtypes
+>   (b) the PAT and MTRR code define similar, yet different macros
+>   (c) that the PAT code not only has macros for the types (well, enums),
+>       it also has macros for encoding the entire PAT MSR that can be used
+>       by KVM.
 > 
 > [...]
 
-Applied to kvm-x86 mmu, thanks!
+Applied to kvm-x86 pat_vmx_msrs.  I won't put anything else in this branch, on
+the off chance someone needs to pull in the PAT changes for something else.
 
-[1/1] KVM: x86/mmu: Clean up function comments for dirty logging APIs
-      https://github.com/kvm-x86/linux/commit/acf2923271ef
+[01/10] x86/cpu: KVM: Add common defines for architectural memory types (PAT, MTRRs, etc.)
+        https://github.com/kvm-x86/linux/commit/e7e80b66fb24
+[02/10] x86/cpu: KVM: Move macro to encode PAT value to common header
+        https://github.com/kvm-x86/linux/commit/beb2e446046f
+[03/10] KVM: x86: Stuff vCPU's PAT with default value at RESET, not creation
+        https://github.com/kvm-x86/linux/commit/b6717d35d859
+[04/10] KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to asm/vmx.h
+        https://github.com/kvm-x86/linux/commit/d7bfc9ffd580
+[05/10] KVM: VMX: Track CPU's MSR_IA32_VMX_BASIC as a single 64-bit value
+        https://github.com/kvm-x86/linux/commit/9df398ff7d2a
+[06/10] KVM: nVMX: Use macros and #defines in vmx_restore_vmx_basic()
+        https://github.com/kvm-x86/linux/commit/c97b106fa8aa
+[07/10] KVM: nVMX: Add a helper to encode VMCS info in MSR_IA32_VMX_BASIC
+        https://github.com/kvm-x86/linux/commit/92e648042c23
+[08/10] KVM VMX: Move MSR_IA32_VMX_MISC bit defines to asm/vmx.h
+        https://github.com/kvm-x86/linux/commit/dc1e67f70f6d
+[09/10] KVM: VMX: Open code VMX preemption timer rate mask in its accessor
+        https://github.com/kvm-x86/linux/commit/8f56b14e9fa0
+[10/10] KVM: nVMX: Use macros and #defines in vmx_restore_vmx_misc()
+        https://github.com/kvm-x86/linux/commit/566975f6ecd8
 
 --
 https://github.com/kvm-x86/linux/tree/next
