@@ -1,367 +1,143 @@
-Return-Path: <linux-kernel+bounces-299350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAB495D374
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EFB95D35F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CEF3B21D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11136286291
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369C118BBB8;
-	Fri, 23 Aug 2024 16:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9AA18BC06;
+	Fri, 23 Aug 2024 16:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c/3jv6KZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBd8AxYB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF3F18858B;
-	Fri, 23 Aug 2024 16:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72BF18B49C;
+	Fri, 23 Aug 2024 16:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430678; cv=none; b=sWARN/GOZcA6snbt0Q/8eOqUn9YwlfObr4A/OCcI2BiheEAhkOTk+5JMJp4c9ypf1Z/ISoOzr5Tn/Bk9g+2cCZRKrAPD8i+o9EFNljNqejYV9E2KYvx3AMD9PlXAuGr3PkmXRDrgjlF8LjgTPx566PebAe1kCpKkwGvEO6PudXg=
+	t=1724430500; cv=none; b=WwCFZBzaNu0/l/ypwWGgSAXmSKEJAKoTc6CkFwtnHbcaj8ign28AVPLksnKvQ1uOkr+J+VxaxOdKRSGQ24qHMiEkpGizIdZZ6s1zswvvSzt6TTV5g87xnFxyGhW0QIowgLmlt4HEKeqvpBHkxjPVxjGo9spcn8BGQurLrVdALME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430678; c=relaxed/simple;
-	bh=TtHDT83tvcfqaZqVoGV/9QPUuQm+l0VHLBt7eXQfi6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mo9fkbqVz3aDTkSRnyV9J9ouHiBCnRtf5aeJCYapyOnGZdAISbuFzvWaXRd5QkLH8/NRrfBqliol0C4oivEIkX5JhvlwUl+jXVRxSF3WTCiNXdkWa7D2KDWuTemdJDQnW4byOEP1fTkS88+9AK7izJj6jPRMWVIu05OaY/FpPuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c/3jv6KZ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724430676; x=1755966676;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TtHDT83tvcfqaZqVoGV/9QPUuQm+l0VHLBt7eXQfi6s=;
-  b=c/3jv6KZZV+/32VvCHqwsNtv+mSfJJ3XCK1fqJiU0OxnP65AHYW/+W1x
-   Vmv13tT8hhsvaRA0tCAyOpJ/pKD9WNEYimb2o1PYnuCdLjhXZt/Q2GZLH
-   iXIUmEobDOtPsk8KA1GzFcns0jQQl5TjxXO0OY8hDAIIoXU99pZ6pduTv
-   GnQnCAISqUGPZaKpR3fYb9cxhSoa5BrSxGygn0qO+Ie/4jvdAzxUKx7M9
-   nAyD3hqZycdLLxuuiV6Ko1wgjyvxrReMfnJbNRJ5C51Pw62yqcMR0hPuk
-   ZUWccTYVaUv+UD9RHcqpuQv2DI8ouJ2byE49Pay7R3v4QF7bprTxXwVKk
-   A==;
-X-CSE-ConnectionGUID: lXiQMoSrQsCVML9DVxDYOg==
-X-CSE-MsgGUID: ptJewJCvS3yNkUXGzS0pMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23075898"
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="23075898"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 09:31:15 -0700
-X-CSE-ConnectionGUID: ve+/pSCTRUOb1PWVRrfWLg==
-X-CSE-MsgGUID: nYMDMltQSF2sMjr2dOam8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
-   d="scan'208";a="62005799"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Aug 2024 09:31:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id AB479209; Fri, 23 Aug 2024 19:31:00 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Narasimhan.V@amd.com,
-	Borislav Petkov <bp@alien8.de>,
-	Kim Phillips <kim.phillips@amd.com>
-Subject: [PATCH v1 1/1] i2c: designware: Consolidate PM ops
-Date: Fri, 23 Aug 2024 19:28:16 +0300
-Message-ID: <20240823163057.1175381-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1724430500; c=relaxed/simple;
+	bh=Fu4zYUmJgBcqoo3fJtRKVrGuO9BhONx3Z/G49nzToQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jch7MadAFDVXzrxc8nMmT+/gfWqgIbQW6ljVGaToQHKDRXJDHP9nVrQiPz+w791tCOB50P5RiJO6mz21epoOk6FTJUFd+UVLRHzV9Ite6Oqz4j/RfOp88b1t87OhqFf4dmk9b//LRZJ17Lk8UpQke3U7ODm/1dRKEbTuqXYGnAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBd8AxYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BD0C32786;
+	Fri, 23 Aug 2024 16:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724430500;
+	bh=Fu4zYUmJgBcqoo3fJtRKVrGuO9BhONx3Z/G49nzToQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IBd8AxYBTKrCLUyAyhzpDS8FlukESEFJTv3f2YOWiHpXBcemeHdns75+kq2Dvrf1p
+	 To1HylzD2NqADKx3FRArV6/1ATAA7RwZuIiMAE1daOD9tKwpQZIlc7wCu4cMjz7pz1
+	 wyP85hqqo43AqocmM08Gx96/j1czPwXTdvtbxA33H4Kcd+RwN41hRQS5fEu+M/PZd/
+	 RBjoJH0lc8Y7GnKbZRkoMlXq+TEWncf8NCuBu6olOs26i8b0bIlcVeAnJyZe3vhSOm
+	 B2eZncOpwzMqld7IyoOz1VoWFZWTO0ujW99CwU/1Di+hFECPH4g2VPuDQmPDYlXD6c
+	 H/2VglONz3cgw==
+Date: Fri, 23 Aug 2024 09:28:19 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 01/14] xfs: only allow minlen allocations when near
+ ENOSPC
+Message-ID: <20240823162819.GB865349@frogsfrogsfrogs>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <20240813163638.3751939-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813163638.3751939-2-john.g.garry@oracle.com>
 
-We have the same (*) PM ops in the PCI and plaform drivers.
-Instead, consolidate that PM ops under exported variable and
-deduplicate them.
+On Tue, Aug 13, 2024 at 04:36:25PM +0000, John Garry wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> When we are near ENOSPC and don't have enough free
+> space for an args->maxlen allocation, xfs_alloc_space_available()
+> will trim args->maxlen to equal the available space. However, this
+> function has only checked that there is enough contiguous free space
+> for an aligned args->minlen allocation to succeed. Hence there is no
+> guarantee that an args->maxlen allocation will succeed, nor that the
+> available space will allow for correct alignment of an args->maxlen
+> allocation.
+> 
+> Further, by trimming args->maxlen arbitrarily, it breaks an
+> assumption made in xfs_alloc_fix_len() that if the caller wants
+> aligned allocation, then args->maxlen will be set to an aligned
+> value. It then skips the tail alignment and so we end up with
+> extents that aren't aligned to extent size hint boundaries as we
+> approach ENOSPC.
+> 
+> To avoid this problem, don't reduce args->maxlen by some random,
+> arbitrary amount. If args->maxlen is too large for the available
+> space, reduce the allocation to a minlen allocation as we know we
+> have contiguous free space available for this to succeed and always
+> be correctly aligned.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-*)
-With the subtle ACPI and P-Unit behaviour differences in PCI case.
-But this is not a problem as for ACPI we need to take care of the
-P-Unit semaphore anyway and calling PM ops for PCI makes sense as
-it might provide specific operation regions in ACPI (however there
-are no known devices on market that are using it with PCI enabled I2C).
-Note, the clocks are not in use in the PCI case.
+Looks ok.  I still have some misgivings about going straight to minlen,
+but that's a common tactic elsewhere in the allocator and at worst the
+performance is suboptimal.
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-This is just a split of a single patch from bigger series [1].
-It was made in no functionality change manner, except the PCI case
-described above. But since it touches PM and it was an area where
-regressions were observed I would like to have a formal Tested-by
-from AMD people to make sure we don't break their setup /
-configurations.
+--D
 
-Link: https://lore.kernel.org/linux-i2c/20231207141653.2785124-1-andriy.shevchenko@linux.intel.com/ [1]
-
- drivers/i2c/busses/i2c-designware-common.c  | 62 +++++++++++++++++++++
- drivers/i2c/busses/i2c-designware-core.h    |  3 +
- drivers/i2c/busses/i2c-designware-pcidrv.c  | 44 +--------------
- drivers/i2c/busses/i2c-designware-platdrv.c | 62 ---------------------
- 4 files changed, 67 insertions(+), 104 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index b60c55587e48..fb65fe6d8122 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -21,6 +21,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
-@@ -736,5 +737,66 @@ void i2c_dw_disable(struct dw_i2c_dev *dev)
- }
- EXPORT_SYMBOL_GPL(i2c_dw_disable);
- 
-+static int i2c_dw_prepare(struct device *device)
-+{
-+	/*
-+	 * If the ACPI companion device object is present for this device,
-+	 * it may be accessed during suspend and resume of other devices via
-+	 * I2C operation regions, so tell the PM core and middle layers to
-+	 * avoid skipping system suspend/resume callbacks for it in that case.
-+	 */
-+	return !has_acpi_companion(device);
-+}
-+
-+static int i2c_dw_runtime_suspend(struct device *device)
-+{
-+	struct dw_i2c_dev *dev = dev_get_drvdata(device);
-+
-+	if (dev->shared_with_punit)
-+		return 0;
-+
-+	i2c_dw_disable(dev);
-+	i2c_dw_prepare_clk(dev, false);
-+
-+	return 0;
-+}
-+
-+static int i2c_dw_suspend(struct device *device)
-+{
-+	struct dw_i2c_dev *dev = dev_get_drvdata(device);
-+
-+	i2c_mark_adapter_suspended(&dev->adapter);
-+
-+	return i2c_dw_runtime_suspend(device);
-+}
-+
-+static int i2c_dw_runtime_resume(struct device *device)
-+{
-+	struct dw_i2c_dev *dev = dev_get_drvdata(device);
-+
-+	if (!dev->shared_with_punit)
-+		i2c_dw_prepare_clk(dev, true);
-+
-+	dev->init(dev);
-+
-+	return 0;
-+}
-+
-+static int i2c_dw_resume(struct device *device)
-+{
-+	struct dw_i2c_dev *dev = dev_get_drvdata(device);
-+
-+	i2c_dw_runtime_resume(device);
-+	i2c_mark_adapter_resumed(&dev->adapter);
-+
-+	return 0;
-+}
-+
-+EXPORT_GPL_DEV_PM_OPS(i2c_dw_dev_pm_ops) = {
-+	.prepare = pm_sleep_ptr(i2c_dw_prepare),
-+	LATE_SYSTEM_SLEEP_PM_OPS(i2c_dw_suspend, i2c_dw_resume)
-+	RUNTIME_PM_OPS(i2c_dw_runtime_suspend, i2c_dw_runtime_resume, NULL)
-+};
-+
- MODULE_DESCRIPTION("Synopsys DesignWare I2C bus adapter core");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index 723d599cca93..c6bd6f65a2d3 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -15,6 +15,7 @@
- #include <linux/dev_printk.h>
- #include <linux/errno.h>
- #include <linux/i2c.h>
-+#include <linux/pm.h>
- #include <linux/regmap.h>
- #include <linux/types.h>
- 
-@@ -341,6 +342,8 @@ int i2c_dw_handle_tx_abort(struct dw_i2c_dev *dev);
- int i2c_dw_set_fifo_size(struct dw_i2c_dev *dev);
- u32 i2c_dw_func(struct i2c_adapter *adap);
- 
-+extern const struct dev_pm_ops i2c_dw_dev_pm_ops;
-+
- static inline void __i2c_dw_enable(struct dw_i2c_dev *dev)
- {
- 	dev->status |= STATUS_ACTIVE;
-diff --git a/drivers/i2c/busses/i2c-designware-pcidrv.c b/drivers/i2c/busses/i2c-designware-pcidrv.c
-index dd188ccd961e..04377533f3ae 100644
---- a/drivers/i2c/busses/i2c-designware-pcidrv.c
-+++ b/drivers/i2c/busses/i2c-designware-pcidrv.c
-@@ -19,6 +19,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/power_supply.h>
- #include <linux/sched.h>
-@@ -194,47 +195,6 @@ static struct dw_pci_controller dw_pci_controllers[] = {
- 	},
- };
- 
--static int __maybe_unused i2c_dw_pci_runtime_suspend(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	i2c_dw_disable(i_dev);
--	return 0;
--}
--
--static int __maybe_unused i2c_dw_pci_suspend(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	i2c_mark_adapter_suspended(&i_dev->adapter);
--
--	return i2c_dw_pci_runtime_suspend(dev);
--}
--
--static int __maybe_unused i2c_dw_pci_runtime_resume(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	return i_dev->init(i_dev);
--}
--
--static int __maybe_unused i2c_dw_pci_resume(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--	int ret;
--
--	ret = i2c_dw_pci_runtime_resume(dev);
--
--	i2c_mark_adapter_resumed(&i_dev->adapter);
--
--	return ret;
--}
--
--static const struct dev_pm_ops i2c_dw_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(i2c_dw_pci_suspend, i2c_dw_pci_resume)
--	SET_RUNTIME_PM_OPS(i2c_dw_pci_runtime_suspend, i2c_dw_pci_runtime_resume, NULL)
--};
--
- static const struct property_entry dgpu_properties[] = {
- 	/* USB-C doesn't power the system */
- 	PROPERTY_ENTRY_U8("scope", POWER_SUPPLY_SCOPE_DEVICE),
-@@ -402,7 +362,7 @@ static struct pci_driver dw_i2c_driver = {
- 	.probe		= i2c_dw_pci_probe,
- 	.remove		= i2c_dw_pci_remove,
- 	.driver         = {
--		.pm     = &i2c_dw_pm_ops,
-+		.pm	= pm_ptr(&i2c_dw_dev_pm_ops),
- 	},
- 	.id_table	= i2c_designware_pci_ids,
- };
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index e49c68c6e142..ec2ac5d6f74c 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -29,7 +29,6 @@
- #include <linux/reset.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
--#include <linux/suspend.h>
- #include <linux/units.h>
- 
- #include "i2c-designware-core.h"
-@@ -339,67 +338,6 @@ static void dw_i2c_plat_remove(struct platform_device *pdev)
- 	reset_control_assert(dev->rst);
- }
- 
--static int dw_i2c_plat_prepare(struct device *dev)
--{
--	/*
--	 * If the ACPI companion device object is present for this device, it
--	 * may be accessed during suspend and resume of other devices via I2C
--	 * operation regions, so tell the PM core and middle layers to avoid
--	 * skipping system suspend/resume callbacks for it in that case.
--	 */
--	return !has_acpi_companion(dev);
--}
--
--static int dw_i2c_plat_runtime_suspend(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	if (i_dev->shared_with_punit)
--		return 0;
--
--	i2c_dw_disable(i_dev);
--	i2c_dw_prepare_clk(i_dev, false);
--
--	return 0;
--}
--
--static int dw_i2c_plat_suspend(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	i2c_mark_adapter_suspended(&i_dev->adapter);
--
--	return dw_i2c_plat_runtime_suspend(dev);
--}
--
--static int dw_i2c_plat_runtime_resume(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	if (!i_dev->shared_with_punit)
--		i2c_dw_prepare_clk(i_dev, true);
--
--	i_dev->init(i_dev);
--
--	return 0;
--}
--
--static int dw_i2c_plat_resume(struct device *dev)
--{
--	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
--
--	dw_i2c_plat_runtime_resume(dev);
--	i2c_mark_adapter_resumed(&i_dev->adapter);
--
--	return 0;
--}
--
--static const struct dev_pm_ops dw_i2c_dev_pm_ops = {
--	.prepare = pm_sleep_ptr(dw_i2c_plat_prepare),
--	LATE_SYSTEM_SLEEP_PM_OPS(dw_i2c_plat_suspend, dw_i2c_plat_resume)
--	RUNTIME_PM_OPS(dw_i2c_plat_runtime_suspend, dw_i2c_plat_runtime_resume, NULL)
--};
--
- static const struct of_device_id dw_i2c_of_match[] = {
- 	{ .compatible = "snps,designware-i2c", },
- 	{ .compatible = "mscc,ocelot-i2c", .data = (void *)MODEL_MSCC_OCELOT },
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+> ---
+>  fs/xfs/libxfs/xfs_alloc.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+> index 59326f84f6a5..d559d992c6ef 100644
+> --- a/fs/xfs/libxfs/xfs_alloc.c
+> +++ b/fs/xfs/libxfs/xfs_alloc.c
+> @@ -2524,14 +2524,23 @@ xfs_alloc_space_available(
+>  	if (available < (int)max(args->total, alloc_len))
+>  		return false;
+>  
+> +	if (flags & XFS_ALLOC_FLAG_CHECK)
+> +		return true;
+> +
+>  	/*
+> -	 * Clamp maxlen to the amount of free space available for the actual
+> -	 * extent allocation.
+> +	 * If we can't do a maxlen allocation, then we must reduce the size of
+> +	 * the allocation to match the available free space. We know how big
+> +	 * the largest contiguous free space we can allocate is, so that's our
+> +	 * upper bound. However, we don't exaclty know what alignment/size
+> +	 * constraints have been placed on the allocation, so we can't
+> +	 * arbitrarily select some new max size. Hence make this a minlen
+> +	 * allocation as we know that will definitely succeed and match the
+> +	 * callers alignment constraints.
+>  	 */
+> -	if (available < (int)args->maxlen && !(flags & XFS_ALLOC_FLAG_CHECK)) {
+> -		args->maxlen = available;
+> +	alloc_len = args->maxlen + (args->alignment - 1) + args->minalignslop;
+> +	if (longest < alloc_len) {
+> +		args->maxlen = args->minlen;
+>  		ASSERT(args->maxlen > 0);
+> -		ASSERT(args->maxlen >= args->minlen);
+>  	}
+>  
+>  	return true;
+> -- 
+> 2.31.1
+> 
+> 
 
