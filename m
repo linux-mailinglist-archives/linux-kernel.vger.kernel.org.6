@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-299717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F42695D91C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5F495D91E
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86121F235F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBC81C223E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 22:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7901C870D;
-	Fri, 23 Aug 2024 22:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213FA1C86F6;
+	Fri, 23 Aug 2024 22:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QSxw98S4"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lFyByH30"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E767195;
-	Fri, 23 Aug 2024 22:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87030195;
+	Fri, 23 Aug 2024 22:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724451164; cv=fail; b=eY5Nfp7Y49DbSwxwMZBucE0OKEr+S3tYLOgCh/bHgrBJmd+SeM6Mr8hdTa9xU8QJJ3ynJOLpTcxK8z1WJcTKwtj+jJc/Mb60s0a7UBOHJPpuv1TfWs7J3dk9EP89dppFVrQeDjZxB0erbMSBLUNV+4uYej7XtPn3sJnEt/wiVdM=
+	t=1724451255; cv=fail; b=ktSQUh6Bc8UKDGVxakRr62oG9JaG09sJCrkUf5qlCf90ZKkif36UkuX6q3O0Wp3IVPnFjrrR69+JHpW4BiuMhtbqKR8Ujm0et2btqq9jndRoe7gxdFUdXzWRn6SgGs742F50XT/uS1X4LZ92i6K1/yUGibVC3UFzJqGYKtuoUyc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724451164; c=relaxed/simple;
-	bh=+gs0ajvs1dAdWe98iP2AOuUBYdTIM98fmrm/MXrLzAE=;
+	s=arc-20240116; t=1724451255; c=relaxed/simple;
+	bh=KatU2866C9NDafI6z31zL85E6CFw07ZbKmMHGIvWQuA=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=U2EmC5nqCO0MQR1k9aRq+SrBXTiDI+A/RtuRIiGz4RAW4YpNDGlZU18CLlH2pQLTldp6OB/cxdvtxdp6glK8k81bJuTsAYAOXRJIJskufPbEHEjPHNadRcS1BCW4gfntkQS/FyJkmIy+RL+MR/f7DLOsppgiHFcyEOQlXEBcJok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QSxw98S4; arc=fail smtp.client-ip=40.107.237.67
+	 Content-Type:MIME-Version; b=jb6Ir3NiSoSQyieyGaVgBse7Xm0YlEeTrROAEH29Ypopuwo4bjjSWcci/K+4nYi6QaEUqJwY8Gn6QxYjQIq26JnPAcXYqMJ6Unfw2uZ1dk3j886K9M1fzlHwIgu8q5gyRHrfgWqRN6iKAzRvVEuOEL0063bIVK6GzG/1fu1z7HQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lFyByH30; arc=fail smtp.client-ip=40.107.94.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nbkW3sBhfL3187y36H63dncgb5AXB6u8PT3bXaAX5O3RCv4oiBqi/rN3dAtbZepC80w7R7SfQZx9lodtr6SNNgi4MJZlrh5GDMcLRxXRunBqkH1Sv7UyKanCnr3nHLB+r6kzDEA4+zVPbsGz/OviPXwAqg89R8Xz9gJQLxh/0YojG5ibGOSibeBWCW9dU39g4Suuafnn+ud6tSAu0RpBUcMceJZxCdwUArytxsjCjrYkqv2VB7l8SOIp50Q7muXhgMYwfwrg9sIkRgORHwLGdy827wQdDKWiaS0Fmh+V4ysoJbRihf++5p7zx93Kjz6LxgAECzeeiS+TKFag5OW8DQ==
+ b=R0zBNaXnKPNyzXftLxIEJ7JsnZJYAUv8JB5Yaqw94jE0pFycMdghbiADXWV20dWT8fwg1DL70V3BjjLWS5N7KTZquEYAQARPBOND5YInE3nvGtgrxNFW+acPEfkpNMG31FwdCSyUDLe3AylpPjTP3svYldQrh2aatBtz+kTEV7jkX5o2+r5cT1ZayB8YaB/FDBqEFtJ3lI284WjWM9n/HLvUOPwUMKqWhcWjhGbRu4TzDcwwNpnxWOxSFnxV+VYDVIui0KjKQBOEwDl/8oCEhO4ZxJE4apKOyIUbQBZXndNZS2SyY859/VYUl2WtU+Rrufug0PL76Z5z6pAFMNucwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gp5r77ATFaoae72AgQjGsi88QOtMf8xwi6WvB69PjtU=;
- b=tEislHvb0wGd9djROSs0FkI53LWZOpeqV/Y/MN9G1scmy4mbD8K1xNACAl3To/mcMcHx1O+AiR3Ja7LPOpT6jekpfw98rNSY8J+nDQwBZfuqzscCVBqVqVjk7r39vzFB133pG8TRBugCcRtoCGQefv/BTFpCK/Hb8zxll8iHmgHoomFi7Nf0xHHyW1+todW3oWmD4n25Oyr/lyjcahfotLn7A4OP/gS/Vd4d6HwzQgSqPsB34rFwcO1GEKD6mpY0FqnUJZI03ykpwQox/uhORzyTrKyl0swczuogs2h5/6JFpUwx635S7V7ZoydsQAfZ+Z1CZK3RU27Geh4BRNVEcA==
+ bh=aUO+x0n8ThF7QYm29t02mK+rCrGQXcpJdhrs15h3hdA=;
+ b=vbwW6ZGr+5rbIFjggdDewCOCtraO5EJencnd8OaCxq8GnE17mC96Ec18dZUesZ/Y1CAUZi7OEtbdMDJAjdAkykCoPtslqABMuf2iirCWClx3toN4aahElOUxUX9VIS9rF619YJl4M3UWAPpW8YPQCXElm8TMrqXXo9WybenuruhDJpLj+WjzVePcL+8ToEv/oRbM1+YYbT83qFMDVOloJ0Ynxzqsf945FYX7lYf64oqXOQL6ntRHuM6V7dFv1AWf8Pr1yRokZQwKZNJ/tc3mF9cEj+MHe9orMbVuQXM9lkXQDmFdE+CrbRNonam9AfJ3E8bCCdIeUGfG820zO98r+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gp5r77ATFaoae72AgQjGsi88QOtMf8xwi6WvB69PjtU=;
- b=QSxw98S4nT7yE7j2Z+U/WR41MMMruaHxXgy3IsHWaQWUXiHvmpe3fPei9S5w3Ks3JZZB74BQvtK6aKUrdTsuNIqwgDQQ/7dSDlpkzO8mAiL8h1RhWEmL8snZXut3w2yOGCV6P9iF33KDglxOL5+lFT3PlPYPtILeNfgQ3Vg6A64=
+ bh=aUO+x0n8ThF7QYm29t02mK+rCrGQXcpJdhrs15h3hdA=;
+ b=lFyByH30umXpSleNqnrXJdn2IAtIx7VzgwjppG1uHsa/tgbUauJb6hgC5FqdpF0KIlXEjtthjafFZhxSuAAiiRgojQ4KLx5JF1HpBIDW18XoMG9nIMhK6asvIq8na3qSshKP7D5QzNJSoqRmxmb3T7AhGP7ygcPFdbwbATVJ/7E=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by BY5PR12MB4322.namprd12.prod.outlook.com (2603:10b6:a03:20a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 22:12:38 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
- 22:12:37 +0000
-Message-ID: <59449778-ad4e-69c6-d1dc-73dacb538e02@amd.com>
-Date: Fri, 23 Aug 2024 17:12:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 4/4] KVM: x86: AMD's IBPB is not equivalent to Intel's
- IBPB
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by DS0PR12MB6559.namprd12.prod.outlook.com (2603:10b6:8:d1::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.19; Fri, 23 Aug 2024 22:14:11 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7897.014; Fri, 23 Aug 2024
+ 22:14:11 +0000
+Message-ID: <2e83227f-be2b-7833-0ae5-85be3dd7bdfb@amd.com>
+Date: Fri, 23 Aug 2024 17:14:04 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v6 00/22] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
 Content-Language: en-US
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jim Mattson <jmattson@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Sandipan Das <sandipan.das@amd.com>,
- Kai Huang <kai.huang@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- Venkatesh Srinivas <venkateshs@chromium.org>
-References: <20240823185323.2563194-1-jmattson@google.com>
- <20240823185323.2563194-5-jmattson@google.com>
- <26e72673-350c-a02d-7b77-ebfd42612ae6@amd.com> <Zsj2anWub8v9kwBA@google.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <Zsj2anWub8v9kwBA@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0182.namprd11.prod.outlook.com
- (2603:10b6:806:1bc::7) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
+ corbet@lwn.net, fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1722981659.git.babu.moger@amd.com>
+ <d093c0bc-dfd2-422a-9d23-2bde68dc6f73@intel.com>
+ <3223bd31-2112-0c5e-08d4-7e4942d031ec@amd.com>
+ <0dcb775e-7214-48bd-81eb-22b14d5605d1@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <0dcb775e-7214-48bd-81eb-22b14d5605d1@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CH2PR02CA0028.namprd02.prod.outlook.com
+ (2603:10b6:610:4e::38) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,181 +93,231 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BY5PR12MB4322:EE_
-X-MS-Office365-Filtering-Correlation-Id: 623052b1-9eaa-46f6-95f8-08dcc3c0b2a5
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DS0PR12MB6559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f07fe48-d2f6-42a2-a8b2-08dcc3c0ea1b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SHA3WXkyREFVbkhZb2lTeFpXOEpFaEpHTXNxc2M3dmFicWFFODNkV2J2MklO?=
- =?utf-8?B?U1JpZG5HYWtnT1QwQm1Da2V5MlI0UEUwNXM5eFRZZlVrVE12bTB4MzNjKzNr?=
- =?utf-8?B?UDVYYnpkNCtQaEJHR2R6TWViSWlDVnY5QTVnTThKa1hxK0x5SzJLMUpTZFdM?=
- =?utf-8?B?M05sUXFSRGNTdlZIa1dHMzk0bUYxN2RSQjBJRUIvdTQ3eTRyWG5FdGFCMi85?=
- =?utf-8?B?NHlpUldPbStvS3dKbkx3SnJSakEvLy9JRzF6VG4zTk9pc2tWZU8welZBK2RU?=
- =?utf-8?B?cWJFTGRRcjhGUktmQk8zMFJoTHlIVi9mbCs2L3pyZmJqL3BVNURRcGNhVE9T?=
- =?utf-8?B?M3FTRVVuNFlEMUZVUFdyU0FpZWUwWDd3cEl3citoWDN2UVI0VUhrQm15NnYx?=
- =?utf-8?B?K053OWFqMFkvR1RRT0p2cGtIS29sb3gwejhVOTJSNHovYllzTVF5Sy9FZEFR?=
- =?utf-8?B?RFBXRmc0UzJsZmxVdjhrNk9mVENwMzJFLzRiUWoxWU1EbGRuYUh2UEMzWE9a?=
- =?utf-8?B?aFZ3b1R4ZHdZVEJUVm44a0h4WTN0dS83alJHVVBONVRkSno0bFJvbHNyUFZH?=
- =?utf-8?B?ai9TbnNSd1hyaUNsbFZHODFsaFZDWWZISi9QbUF2RERNVUpRd2QxYzMwNDFo?=
- =?utf-8?B?eHlDaVdRYi82bCtEcGxNNks3cER2blhEWUMzSWlWUUZibks1dFB3K1JBWDBz?=
- =?utf-8?B?QzZwVmlvYTI5b0RUUzVGT2ROUFpSTzNNVkJMOUthWFVGQVFqeFhDMDZKem9S?=
- =?utf-8?B?K1FEMkI5dThTUWZJTWJUampLSGMwQ3N6K3k2ekk4MWRmT3FxMVFrM21LS1JS?=
- =?utf-8?B?dEI4MjBaMTFVbWIvbDM4aWxlc211UWdEZ2NTMDlWT0lFK0lpQ1ZpRVA2bU1u?=
- =?utf-8?B?VjRuRkVydDNLU2NzcXp1OFBDbDhaeEtsN1dldExPSFJDS3hhQ3VuN3gxZHNF?=
- =?utf-8?B?UWZrdm5PU0FHS2luVHVVU24rcTVjb0lzajRYWmVadFByVTE1eGRuKzFDTnlS?=
- =?utf-8?B?Szl2QXBrMUJNbS9PdzB2cFk2YXJWRjlwejhNZmRMNUt6ajh5NEMyZXoxbkJp?=
- =?utf-8?B?MzFHSVdvT3p3VEU0bStWRStxQnBZNVdwdE5pTGhqL3pjZkMxZXBzcnJnWUVR?=
- =?utf-8?B?bG5YL0t1SmlxOGJQM2lobEk5bkdrcEtBcHZrOUlFRHY2ZFpHcHQ5RDdneHhh?=
- =?utf-8?B?NFlmTDY5bGV1cmt6L2ZOSGZpNm9wRDBQTit1QlRKL253YjNLdUlIMndubFVw?=
- =?utf-8?B?MzI0SHdLM1V4RHRhb1F3QW1SdWxZb0RIcXNmRGVxbitaWkwzenhMck13NTVy?=
- =?utf-8?B?R1lFUC94ekRYY0tCTWJ6Mzd5bUtsanBtS0xWNlpXMktNN3BhbVA1NGRqNm5k?=
- =?utf-8?B?TzlRcW9FRTZXUy95dGQzRGhUcDlWd0pPR2JRR3J1eHF3bm0vOHVqVlNoOXdk?=
- =?utf-8?B?YklXb0dXTEYrTU5CTFZ3U1ErL2UwL1I0SElleG5MTzQ5Sks4bWlSbFVzNEhz?=
- =?utf-8?B?OGtTdmtlWTJreXBBQ2lQY0Y3TkZWQWpoN0tWM2trTDNTMzczNFJqWHEyTnRI?=
- =?utf-8?B?RDNHVzcyMmlwSkhKRXVHOTNaa0dneGlKQnhUUmNXZVZZeTEvc2hlRlFTaktU?=
- =?utf-8?B?OGVwTnVSMDlaQ1ZaclpDL2hlVlY2TmVId1lLZGdKeEtFK1l3L0hLVXVTdTF0?=
- =?utf-8?B?RkpIaDN6WUI2TzhOazdockEybmhLSk9idmlhR2VMdUF6TmtmVmxUOXR6SzY3?=
- =?utf-8?Q?NSBllrK4UtRbof+3wr5LINCRMJYkiRo91+s5Uec?=
+	=?utf-8?B?L0k4ckJ1Y0pzdElkUStxblNZdUdKS2pOYW1QQXR0cTI2T1A3Z0ZpMjFXZUM5?=
+ =?utf-8?B?ODZJbDFMSGFIU2Uxbzc2L1drRW54Zko5bzcwenA0ZGJ1R3E3S3daUCtKVHhX?=
+ =?utf-8?B?QnBpdjhaMTJjZDJQT0dMaWt5RWdQYmZiTUNiRFh6NTlyMVZ3K0FJYURjUEll?=
+ =?utf-8?B?UW1KeDQxcCtyeGdzUmNqa05MUmhjNnVvMjd1eEppbWVHcWxGWDR6bmVKSjQr?=
+ =?utf-8?B?Qk5INHZwdklPVDFTbFlaYm5oVzJYN244TDlnZXpya3VYaXJ1OXpweWpOZURQ?=
+ =?utf-8?B?dmxDWWhGQ1cyRnRxZ0NBUjBvbmlQVTRJL3lUekJuSXluWW9sbDBwemwxMnJJ?=
+ =?utf-8?B?Y3F1MkVhRUpWODBXZmFzMkx2Q3pZaFhCS1RYMzhCblNtZlA2UXUzYTdGek9y?=
+ =?utf-8?B?Y0xSeEM4NzBEZEJoVkM3enE1UWkxMVd6RWRFNjBqYXUvZDFVdlFmVWJvV1Fi?=
+ =?utf-8?B?ek5zY2lhK1U3cTZZZjF6V3NtSGdzYnhsT3lDUVpPRXQxd1Z1YmxqZWxhZmZI?=
+ =?utf-8?B?Wjd1ZFRUWm9UWk85UzVkYVorai9qNnJQRy9DU1dRMGJmcFRsL0Q1UDREZE1j?=
+ =?utf-8?B?UURnUWJsaDRyc0lYYVExVHVuZkVTc1B5M3lPd3o5QXlzWmZpU0Y0S2p1ejhr?=
+ =?utf-8?B?clJlejJjR21GQU02UUx6MWFKbEdJV2dvRzZkZGtjV2Q1bStUVHVITkorN2h3?=
+ =?utf-8?B?ZjlpaEUvbFJLWGJKcmdpb0UwR2FkbGxqdXFzY0FIcUZITUxtdHdoQWFNU3cx?=
+ =?utf-8?B?RDViRWxEQ2pMaW9la3FYQ1RLazFsdFJLUEZ2ZmU5blhJTlhNNTgxbURyREFG?=
+ =?utf-8?B?VzhLZk1sVjJRRWx2Z0xoM09kNXBKVWY4WHlyaXlML3VOczUrV2tWbFVxRWtL?=
+ =?utf-8?B?bVV3aTlTK2huYThtSnpLM2FXR2pjczFQZzRhWnJnUnlVek9CaUdXMUxYMEpZ?=
+ =?utf-8?B?UTFXSkMxbHFlSzMxOG5sUEJhQXpYbU9MSFk5Z0xZdVFSVFlwOVlVWGRwenl6?=
+ =?utf-8?B?eGc3Sm9ZYmJYdFkvODZOQ1lIdWFnUmJWTzYyR0ltc0pJTXkyaUVTRmR0VDdB?=
+ =?utf-8?B?QmJqWHMva2JKQ1pZYWtrMGwzbVhIUEMvSTJxd2Ntd3E3eFB1OUwxaWI2MmFr?=
+ =?utf-8?B?MnV2eG5oRVZadnlUYzEyQjFGeFJKa0tDOCtjbGZiUk5aLzNaa0FBanMrVTY5?=
+ =?utf-8?B?Q01oL29RT20xRkZOTU4rc1FsUmF2WENuMDEzRmZSY01IRmt4SW9zWlBEVCt1?=
+ =?utf-8?B?eUVRZXVIOFlrQk1RYUthakdwd2xNMlJuZzBNaUIvR2dCc3k0MWdHUENnN3Zn?=
+ =?utf-8?B?dldwRTZIcGIvR3hBQy9EdmhHeGJNbVdjY05VMXJzbXF1bGtheitZYVdQRnB6?=
+ =?utf-8?B?ajYwZG5sSHVERjVWMjNick9NdVloa2s2SVRKWkhuQ3BjSnM1aDhuL2JiUUV6?=
+ =?utf-8?B?NTVBT1UxMUNuSEkwN2RvckROVXFjbExaZ2NpbVoyWlp2M0UwZ2g2blRYT0xO?=
+ =?utf-8?B?b1c1dW1saDcwaWFQMjc3bmFLcGVIZUU4cG42SVdmQ3hLN1ZLWTRwYXZWWUVz?=
+ =?utf-8?B?MGZ5QXpEK2ErOWRhTm5QZUpoYXZSZHA1M3lGTnZOZVVnUXphVGVGNzZuNWFS?=
+ =?utf-8?B?elpTWU9rTUZUeXVPVzNpM3grY0x1cHZNU2tEMlczdkVhWkd6cFNYeHpxQUVh?=
+ =?utf-8?B?cDZ4c0tnRHZBTmxHVnNEb3dKeGV1Qm82Yk1MVkpoQzFzUWhPSVdCVUNKRTN2?=
+ =?utf-8?B?c1ZTV2Z5ZGhqVHhadjhLU3lYaWhTY3ZoRks1cENEbDI5SCtWWklmOVNISXZ5?=
+ =?utf-8?B?eU5OYi9BRUprVEFNSVlDdz09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?alU2dmlGYXhaMmpHR3FHK3pBTHkzWTFXaGVhMlJMRVg4eTM1Zm04NzMxZS94?=
- =?utf-8?B?R3JqQ0R3NFhlTk55QkNFMG9UdUl4WHpHa28ydEg1MFNGeEJHd3hzWFZSREl6?=
- =?utf-8?B?UzVJTHBFaThReGZlNDAzTDdhKzdlS2gyeFo5blI4aXJRQjk3Y1N3L3FtZHY1?=
- =?utf-8?B?SmpPSDY3L1lIdXlEZFdGZ24yU0t0OXVKREx6V0F5aGdNMmRNKzhkNUh1dTQv?=
- =?utf-8?B?bWZEN3A0Wk9mU2xkZ0p1VFJJWG55YWZlTGorbkhCaXcwZVZkR2hMa1FNT21z?=
- =?utf-8?B?K2orUlRkVGNISXBhTXcxS1YrdDJydFhvKy9BV2lmTmhmUnVJU3BOaW05ajBK?=
- =?utf-8?B?cU1ObW9XVmFJcFZNbjF4ejVqL2V5dldCdlBjbmNUUmZjU1JMaE1hckErT0Vr?=
- =?utf-8?B?OFpXV3IyTENTc3ZMZGFSWXpCWUxXUHFCYnc1MGUraXFtQUc5VGk2VVQvOStR?=
- =?utf-8?B?QnRXZ3Y0WHpVVThVZlh0bXNFQzJkc3ZZL3VNUGJFZ0IzZ2ZRNUpNQ09JT1ZV?=
- =?utf-8?B?T1RiR09JcFpLbHgvemh1UTNROXBYQ3dXQXJpanB1RXF5SkU5S2RGTkdLK1U2?=
- =?utf-8?B?akxQVkxRcWJvdm1ITlowZ0M4TE8zUE4wSU5jSXcxbDdNbXUxYVViWnZhVnFa?=
- =?utf-8?B?cmJ4RXFsQXVpR0p5ZDd5Z05GMVN0TTUrT01WY3RWVkl1d1ZPdGpiMFJ3ZWor?=
- =?utf-8?B?Qk5Rcmw4VE1OZ1FuLzFHaDBaZ1o2L1ZSZ01iaHJqVnl2ZzNKMTFpaHBCaFlF?=
- =?utf-8?B?SkhUamlmck5XWFpWVFI0ZUd5QzRXZUVyNE5ub0lzdXU4QUNjN0xCeEw3MnlL?=
- =?utf-8?B?UFpFb0o3ZkdsRy84R0JScVFic2JockJSM3Bib1pVOGd5eEo2L0ErTktyN0o4?=
- =?utf-8?B?L3lpUUxrZHN3UXdlNFFOTXZ3akhRWGtFVlhmalVoaGx2cTF0cmdqV0tlQkVs?=
- =?utf-8?B?OW1WSHFpL1V6bmVUbGdha1VJbk12MXBoQURVRHBtYWlwelBsN2xreTBlaUdY?=
- =?utf-8?B?Yi91R09qVk9BWTRsSmZsbnhtcEFjdmZSNWNrU0o2R2REYVBSMkhUdm5mamp0?=
- =?utf-8?B?OHFWZ2l3VUV6ZlljR3VFU0tOTUFrdldQMktyNlU2aWlqK2RzenU2cldqSnpL?=
- =?utf-8?B?OWhNQ0Zid3BXSGpINkNycWR0cjlqaHR3U3NrRFdrYlBQbUJMTmtGcHM2RWRq?=
- =?utf-8?B?UnFmdlo2eTBvNGtjWE5EMGJiNmZva2pMK0s2cEhoSW1FU0hmUGZoRC91cEVo?=
- =?utf-8?B?cU9HSm1lSzcycVh1MWxaTjNuUmZrc3hmNHVWR2o0VDJQeVZTQUk3dW50Tjhy?=
- =?utf-8?B?YW5zM2s3ZE0wTThXR0NTU1JPR3JPRUFPQ2VxQUVhRWFuU0o0RmpQMXdPbFpB?=
- =?utf-8?B?WEIrUGQ0YVNpMWpHTld5NUFRS09CL1VqQkh4bE81dmRJLytjQ3gvM3ZGSHhl?=
- =?utf-8?B?ZndUWlBBa0lsYzFEL0dzR1dLZ1BiOXpOZTYzZkQvdEw3RmZLbzI4WS9oVjc2?=
- =?utf-8?B?Lzl4VllZODVEU2F5a3RPOHVaL25RRU8yclJYZFIzbVFkYUY1YjEzU0tVZkZv?=
- =?utf-8?B?YkpIOHp0N2hwYTlHSFd4eEZDVGRjbElLbFEveE5QTi9BZTdMTW16c1JGdUFC?=
- =?utf-8?B?MVh2MlA0Q2xBTWpleDV6UkMzSG4wS251RnRiT1oyekNXY09zQVlPcGxsSnlV?=
- =?utf-8?B?YldtTHUrVlNkaUordFNMRUpsWm0rdGc2K2JQamtkNXpWeDlrTHg1WWZ6Y3ZP?=
- =?utf-8?B?SndmWUJ5T1Y3L1hLQ3lIbnp6NVp5SmxhajZ1dWkxNHdJaDhUemk5R2lUaU5P?=
- =?utf-8?B?MCtySFdiRlhNU1JxVXk1YUhMQVd2TFZGTnp5bFBkNkhPV1RFcDg5dmJyRnI3?=
- =?utf-8?B?SE5LYi80RlFNSVdKa3JHejJXNVEwc1Y1bWtIMTUrOXlRVkRJTWR6TkY2MmdG?=
- =?utf-8?B?c0JzY2IxQXNZc0tHVTMyKzRsclJRZGlyYm0vRmdpT3RUcHpJTnEzWHhYYVhk?=
- =?utf-8?B?TkdGemRBbnQxOHArQ0pmNmRqQnNEZkR0L1hyZUtHMGxtRWZUb1pWQVliMmxK?=
- =?utf-8?B?azBQV3dnWm9kcG1YL3c3MUFST3ZkbDlmVnN1TG9GTGJuSG1VL0R0SnJPRHFE?=
- =?utf-8?Q?Usdac+SSwOqukEED28HMvbaIL?=
+	=?utf-8?B?WnBwcGQ2N3VHcEx3akR0dGR1K3piVktVSzRBMjZPNnJHNUYvbE0rNnJYV2Ri?=
+ =?utf-8?B?SW1TMDVaRGhhOXBxWno5T05Da0ppejR0eXRTTnpWcFl2SGk3MEVtUTEwTjdl?=
+ =?utf-8?B?aHV6dEg3TnlLdkN6cXFTS2ZQOGZhTnpaYUNSeWpZNnBHRkgzTjVmUE45WVI1?=
+ =?utf-8?B?ZmxsZ3pkWUEwVjBUcnRNOTkzZzhVUjhKejh2YjNycUNDLzRMQW55MEZ4Q1J5?=
+ =?utf-8?B?OHBiUDMrWTgyZWkzb2R2azFXaitEV2lYVytvNkE1ZE5ac1M1SlRGT1Nhc0NR?=
+ =?utf-8?B?dmFEV2dXbWhxY3puTm5hV3VIV3grNEZ5cVVsNDJ6SFpQUDUvWGhKa2dSbCtP?=
+ =?utf-8?B?U1llTWRLK1BxdkttNmJXR2F4WnFmS2Y2clRpeXI5cElDdXZCeHB3NGtuTG5J?=
+ =?utf-8?B?ekdUZFBVa2dnb2lIdUh4YXdPYkFuRnZ0VUJ1Um1yRmVGMVdSSVdGRmkrQ0N0?=
+ =?utf-8?B?QWpDZ1dGL1dsK1JIS3JkWTlVU3QyTDZxVkpnMzV0SWs4bzV5cEZZYVlwYmYw?=
+ =?utf-8?B?dHRTeHljYVhYRGNjTUY3TS9qblBTTUgxKzM5ajFqOVdOYWZpRFdBR2xtTDRS?=
+ =?utf-8?B?QmxBb0lXQjFvTVRyL043ZGFlZFhUVDR3Z2ZoOFhVc0pwdUpNWDlMUy9tYTRU?=
+ =?utf-8?B?bkdrcXRiV3ZTOUh1NXZZTnZxL29tRnQzWjFpejlJUFZoUE5jL0JFQW9paEtN?=
+ =?utf-8?B?NkRickZseGdySkNOOFVvL0J4MERrQ2tGUUtHVzFFcjlXOWJIK2JyMXZpTUJP?=
+ =?utf-8?B?Znk5eU03OTZwclpXdkhRd0JlS0dsYUsyM3I2bUp1UEd0KzVPalZEZGlFU1lJ?=
+ =?utf-8?B?TXc3c0E5S245RlZrOStMb0lUQnpWVFJ2L2xYTnhYa1NvM2tJckw1RFZ3ZU9L?=
+ =?utf-8?B?YjBZZjAzYlQwM2ZkV0M4WmtNd3lCQUppdkJYUnZSNXNvM3lVdTkyTmpHenJ0?=
+ =?utf-8?B?cFVLOE5jRWVadk1uQ2ozTlJqMzE4MnpqTy9XbHN6Zlh5cGU5SnVEVUdqSEtv?=
+ =?utf-8?B?WHNKWUNpN09kK1ZyS294WlI4UUJDTUoyeUluNGdpc0xHVVFuZVo0ZVRZaTFl?=
+ =?utf-8?B?SzNIQmpHNks3Tm9tSEpNSWVvK0JUR3hXR2hEVDZXVzNmWHkxZnVjVW5oTkYv?=
+ =?utf-8?B?TTh1cGh5dHE4VjJEYzNZMU9lSVdabC9QbG5uMTFyaWY2clQ0VVNVNGhFNjly?=
+ =?utf-8?B?T2FaR3oxaGhhMDgyR1prblJXVzAxa0xqdmg1UDZPTmdNN2FQRjFRKzIxLzA5?=
+ =?utf-8?B?VmxLVm9wRDl6QlRTbzl4bW1Cd0UwN1JMN09YS0xEZ2hranN4czFCaXJ5Qjdi?=
+ =?utf-8?B?elNMMU1ZdXRXeFRwZXAvd01aN08zYTZrd3AxQTEya3VSUTJWZkdmcE1QS0Jo?=
+ =?utf-8?B?dlNyNVMzZ09FNVN1US80em53NEJ0alppSzlSb3QxT2JHVUtLZzRIZjVEczRQ?=
+ =?utf-8?B?dmwwMnNCSWlwQXNJQk44U0JZMWw2RmdRT3RxWWV5N0hPNW9BS1VJaWFMdS93?=
+ =?utf-8?B?YmpHTXlITlhuaTFReWVlM1dmZnZ6eTczTFYyNTN5L0tJdHZOUDViR2hybEtK?=
+ =?utf-8?B?K0dzTGtNa1NPUjVnTTdGdDA4QnArWHAyb01hRksxYVdZWWRDSjlVQjVYRWIr?=
+ =?utf-8?B?VGlkNkpOUHFvLzl6L04zNW9yTmIvWTRSbVpYYXBxRCs5bndmTlBFSGx2aFlh?=
+ =?utf-8?B?RjFwbnZVVGtZais1VHlDd01CY2lHSXhVOHhHZjMxQjNSVFlKSW9HUTJ1dFNy?=
+ =?utf-8?B?d0hUeEJta210NXBnRjBtNS95elV3cXhSU3ozcHNXSW1KVzhBVmJqTk12Yng2?=
+ =?utf-8?B?U0hZOFJMNjNoZjBWQ25jcE40a2xkYmt4RG1PT1g3NUwxTTZ5UElpNmdmMExP?=
+ =?utf-8?B?QjdVU3p6OWQ4Y2kxK3pGbThBcE1CZ0hSTTY3TTVMc1h0bGQzSDQwbGttb1pY?=
+ =?utf-8?B?N3JXRmxmc2NxOXlyT254VDRWeUxNcUs5eWhLRFEzYi9Tbk9IOHUrWmdRbDJt?=
+ =?utf-8?B?WFV5NjJYSGY2d1NrL2JoSWIvaWZ0REVKZzZSdUdKYzFsdHlpbzV3OURVbEFJ?=
+ =?utf-8?B?U3J3WDUrVkZPUjJpVG9kYkcxRGx0K0V5dkwwQVU1dkgzR3NLQlpNZHRwc2lF?=
+ =?utf-8?Q?Z4D6p02do1fSuTHrTwpT8ovd9?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 623052b1-9eaa-46f6-95f8-08dcc3c0b2a5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f07fe48-d2f6-42a2-a8b2-08dcc3c0ea1b
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 22:12:37.9160
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 22:14:10.9854
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gi3xcoi1jkXFl9YY2V7K9qnbxkokqi549NlIrr2KVs5aXqUIu0AL6mfuOUfkVdjZfZ7xs0sB9ZZKk48dJmYuHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4322
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4PJahqV34rzWEiiDJeZrigLm4aOltVmTF7k5SDBLlc8+XutUO8Q2GbW+sGDI1UVF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6559
 
-On 8/23/24 15:51, Sean Christopherson wrote:
-> On Fri, Aug 23, 2024, Tom Lendacky wrote:
->> On 8/23/24 13:53, Jim Mattson wrote:
->>> From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
->>> enumerates support for indirect branch restricted speculation (IBRS)
->>> and the indirect branch predictor barrier (IBPB)." Further, from [2],
->>> "Software that executed before the IBPB command cannot control the
->>> predicted targets of indirect branches (4) executed after the command
->>> on the same logical processor," where footnote 4 reads, "Note that
->>> indirect branches include near call indirect, near jump indirect and
->>> near return instructions. Because it includes near returns, it follows
->>> that **RSB entries created before an IBPB command cannot control the
->>> predicted targets of returns executed after the command on the same
->>> logical processor.**" [emphasis mine]
->>>
->>> On the other hand, AMD's IBPB "may not prevent return branch
->>> predictions from being specified by pre-IBPB branch targets" [3].
->>>
->>> However, some AMD processors have an "enhanced IBPB" [terminology
->>> mine] which does clear the return address predictor. This feature is
->>> enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
->>>
->>> Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
->>> accordingly.
->>>
->>> [1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
->>> [2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
->>> [3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
->>> [4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
->>>
->>> Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
->>> Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
->>> Signed-off-by: Jim Mattson <jmattson@google.com>
->>> ---
->>>  arch/x86/kvm/cpuid.c | 6 +++++-
->>>  1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->>> index ec7b2ca3b4d3..c8d7d928ffc7 100644
->>> --- a/arch/x86/kvm/cpuid.c
->>> +++ b/arch/x86/kvm/cpuid.c
->>> @@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
->>>  	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
->>>  	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
->>>  
->>> -	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
->>> +	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
->>> +	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
->>> +	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
->>>  		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
->>>  	if (boot_cpu_has(X86_FEATURE_STIBP))
->>>  		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
->>> @@ -759,6 +761,8 @@ void kvm_set_cpu_caps(void)
->>>  	 * arch/x86/kernel/cpu/bugs.c is kind enough to
->>>  	 * record that in cpufeatures so use them.
->>>  	 */
->>> +	if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
->>> +		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
->>
->> If SPEC_CTRL is set, then IBPB is set, so you can't have AMD_IBPB_RET
->> without AMD_IBPB, but it just looks odd seeing them set with separate
->> checks with no relationship dependency for AMD_IBPB_RET on AMD_IBPB.
->> That's just me, though, not worth a v4 unless others feel the same.
+Hi Reinette,
+
+On 8/23/2024 3:29 PM, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> You thinking something like this (at the end, after the dust settles)?
+> On 8/21/24 6:31 PM, Moger, Babu wrote:
+>> Hi Reinette,
+>>
+>> On 8/16/24 16:28, Reinette Chatre wrote:
+>>> Hi Babu,
+>>>
+>>> On 8/6/24 3:00 PM, Babu Moger wrote:
+>>>>
+>>>> Feature adds following interface files:
+>>>>
+>>>> /sys/fs/resctrl/info/L3_MON/mbm_mode: Reports the list of assignable
+>>>> monitoring features supported. The enclosed brackets indicate which
+>>>> feature is enabled.
+>>>
+>>> I've been considering this file as a generic file where all future "MBM
+>>> modes"
+>>> can be captured, while this series treats it as specific to "assignable
+>>> monitoring
+>>> features" (btw, should this be "assignable monitoring modes" to match 
+>>> the
+>>> name?).
+>>> Looking closer at this implementation it does make things easier that
+>>> "mbm_mode" is
+>>> specific to "assignable monitoring features" but when doing so I 
+>>> think it
+>>> should have
+>>> a less generic name to avoid the obstacles we have with the existing
+>>> "mon_features".
+>>> Apologies that this goes back to be close to what you had earlier ... 
+>>> maybe
+>>> "mbm_assign_mode"?
+>>
+>> Lets see:
+>> #cat /sys/fs/resctrl/info/L3_MON/mbm_mode
+>> [mbm_cntr_assign]  <- This already says 'assign'. Isn't that enough?
 > 
-> 	if (WARN_ON_ONCE(kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB_RET) &&
-> 			 !kvm_cpu_cap_has(X86_FEATURE_AMD_IBPB)))
-> 		kvm_cpu_cap_clear(X86_FEATURE_AMD_IBPB_RET);		
+> It will be enough if "mbm_mode" is intended to be used for all current
+> and future MBM modes/features but this series instead dedicates this file
+> to just "assignable monitoring counters" feature. Doing so prevents us
+> from, in the future, expanding this file to, for example, contain
+> a new entry representing a new feature.
+> 
+>>
+>> default            <-  Default mode is not related assignable features.
+> 
+> If not assignable features, what is it related to? "default" being the
+> absence of assignable features still seems related to me.
+> 
+>>
+>> I would think mbm_mode is fine. Let me know.
+> 
+> If this work is reworded that it is intended to support any MBM mode then
+> it is fine, if this work remains to dedicate this file just to assignable
+> features then I think its name should be changed.
 
-I was just thinking more along the lines of:
+Ok. Will change it to "mbm_assign_mode".
 
-	if (boot_cpu_has(X86_FEATURE_IBPB)) {
-		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
-		if (boot_cpu_has(X86_FEATURE_SPEC_CTRL))
-			kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
-	}
-
-Thanks,
-Tom
-
+> 
+> ...
+> 
+>>>>
+>>>>     Flags can be one of the following:
+>>>>
+>>>>          t  MBM total event.
+>>>>          l  MBM local event.
+>>>>          tl Both total and local MBM events.
+>>>>          _  None of the MBM events. Only works with '=' opcode.
+>>>
+>>> Please take care with the implementation that seems to support a 
+>>> variety of
+>>> combinations. If I understand correctly the implementation support flags
+>>> like,
+>>> for example, "tttt", "llll", "ltlt" ... those may not be an issue but 
+>>> of most
+>>> concern is, for example, a pattern like "_lt" that (unexpectedly) 
+>>> appears to
+>>> result in set of total and local.
+>>
+>> Yes. Should we not allow flag combinations with "_"?
+>> I am not very sure about how to go about this.
 >>
 > 
->> Thanks,
->> Tom
+> This topic seems to have moved to patch #22.
+
+Yes. got it.
+> 
+> ...
+> 
+>>>>     # echo "legacy" > /sys/fs/resctrl/info/L3_MON/mbm_mode
+>>>>     # cat /sys/fs/resctrl/info/L3_MON/mbm_mode
+>>>>     mbm_cntr_assign
+>>>>     [legacy]
+>>>>
+>>>> k. Unmount the resctrl
+>>>>     #umount /sys/fs/resctrl/
+>>>> ---
+>>>> v6:
+>>>>    We still need to finalize few interface details on mbm_mode and
+>>>> mbm_control
+>>>>    in case of ABMC and Soft-ABMC. We can continue the discussion with
+>>>> this series.
+>>>
+>>> Could you please list the details that need to be finalized?
 >>
->>>  	if (boot_cpu_has(X86_FEATURE_IBPB))
->>>  		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
->>>  	if (boot_cpu_has(X86_FEATURE_IBRS))
+>> 1. mbm_mode display
+>>     # cat /sys/fs/resctrl/info/L3_MON/mbm_mode
+>>       mbm_cntr_assign
+>>       [legacy]
+>>
+>>      "mbm_cntr_assign"
+>>       Are we sticking with ""mbm_cntr_assign" for ABMC?
+>>       What should we name for soft-ABMC?
+>>
+>> 2. Also we had some concerns about Individual event assignment(ABMC)
+>>     and group assignment(soft-ABMC)?
+>>     Are the flags "t" and 'l' good for both these modes?
+> 
+> If I remember correctly the previous discussion ended with the need for
+> "modes" that indicate to user space what to expect when interacting with 
+> the
+> MBM flags in the "mbm_control" file. The term used by ABMC should 
+> reflect that
+> each MBM flag/event can be set independently, while the term used by 
+> soft-ABMC
+> reflects that setting one flag/event makes the same change to the other
+> MBM flag/event.
+> 
+
+Will add text in the resctrl.rst make it clear about it.
+thanks
+
+-- 
+- Babu Moger
 
