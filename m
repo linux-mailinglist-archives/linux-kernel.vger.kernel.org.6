@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-299527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A8195D5E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:11:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1D295D5E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE66C2841E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B15F81C219BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 19:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEA91922FD;
-	Fri, 23 Aug 2024 19:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A1E19258C;
+	Fri, 23 Aug 2024 19:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ct4zG9vK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jVodPhAl"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0021925A1;
-	Fri, 23 Aug 2024 19:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428E0191F8F
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724440281; cv=none; b=cFf7IEu2I/QIJl811XBkWbJSZP2kYc5RUHzBzCh7V2GeLYEum0UhF/aKLJy6eoGcUzPStbQVYI7nQ4KyWPRDEe2oxQ5NiFtaW2BgCETxRsMe1mBazNDxWHkLHO3tr5qOhnv0wFymUucL8UXDztv95z7jTGYr0vTL3eI+NMNlxqk=
+	t=1724440439; cv=none; b=mVMQHmJBTEY1SbdPQMjeMz04bxf7gQqEySZXd9FqIjxHyZM/elWftpyY9Y7OM+989nAAM/5KSxWp7m1KKuRzhw7SBVONSYV8wlHBjznRhno40Det8dDfATpZVX41V59tJIQVyFN57e9FJzboTTfO4I01w35CQEHwDLT6WGsu/GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724440281; c=relaxed/simple;
-	bh=0xul+mPNDqvXZJx6aYvZntkRM//3GEL2r5uhTzfrWL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KGzEP0ea/766DLIhxyQkZ9LktDWZVGRv/UsaqpehopcEy/dIVXn7uwWfOIE9s49DAqNKq3ne3PokH6G5Cz6lpdAd2Ij3fig6wcO1Gyt9MyNbnT9de4lc8/l5gJMvtA9o+IDGkGSfPRdKQxgZEatkHucg5ZFSzPNYzbBD7TyeTJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ct4zG9vK; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724440280; x=1755976280;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=0xul+mPNDqvXZJx6aYvZntkRM//3GEL2r5uhTzfrWL0=;
-  b=ct4zG9vKuyddSxd2hZae1duHlTWIbO3g+d0cndWS7XQCv3hdu9zGsrbe
-   2RlVp5/JvxvCGY2eykVr6hZG43e/6pinHjZOCwcr5KXtsOqTYtLm96gl3
-   IyqJ1vBU+5BhxPxYi/R0gG4gn+pHjubDoem3JimwJL+3BoJvlvtLg/9Cy
-   HMBktqAfGzpv7NPwiOa2VmcfrPr3tDRWnfkw2JV2uaL9wU0VeblzFuUqy
-   bgVCtfBoS+9+b2uZpebukUEdUorFFCoQ/AudigtdFxAbTc7fgW0b68t0m
-   q8Ar/9b3CzKK8xEsjUuRFC6g2pabLZqmjB70qlUoJHG6JBTA+igECknE/
-   A==;
-X-CSE-ConnectionGUID: BfO/ylP0SsWN4EHyhgScHw==
-X-CSE-MsgGUID: D/iwmg9oRmqmyu533J+F/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26795279"
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="26795279"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 12:11:19 -0700
-X-CSE-ConnectionGUID: C4ySPsprRA2NpXrcAEXuWA==
-X-CSE-MsgGUID: 3UlZOUJJQim8P/a81e66SQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
-   d="scan'208";a="66201999"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 23 Aug 2024 12:11:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 4232F209; Fri, 23 Aug 2024 22:11:15 +0300 (EEST)
-Date: Fri, 23 Aug 2024 22:11:15 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Albrieux <jonathan.albrieux@gmail.com>,
-	Gwendal Grignou <gwendal@chromium.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux@mainlining.org
-Subject: Re: [PATCH v4 1/4] iio: magnetometer: ak8975: Relax failure on
- unknown id
-Message-ID: <Zsje0_gd41N1P0eE@black.fi.intel.com>
-References: <20240819-ak09918-v4-0-f0734d14cfb9@mainlining.org>
- <20240819-ak09918-v4-1-f0734d14cfb9@mainlining.org>
- <20240823193203.7772a6b0@jic23-huawei>
+	s=arc-20240116; t=1724440439; c=relaxed/simple;
+	bh=h6MmzQZ+Q4pIa1u5FgXSfED7FfGxALfn2toMjPtt/mA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SFJJkcQDPmOSTmNEdpD+DG4s4xM6eAPb+b80FPsxFx/rdCEdCR0WBYum/KJGM1hpIGPgngps75DL2yN3TCBaIac7DJYLdNcpovSh957a2JL6arIuZAYFkn3mt0BSZN/+LXV0/kE6ewaDqU+J7dq/5CNEjyKAgRPl/wAXhJWboME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jVodPhAl; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71439227092so2076246b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 12:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724440437; x=1725045237; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3t1dUkJeUSV+3qq06ORSFrmDhowUhY/J12I+j1i5R8M=;
+        b=jVodPhAlR5iQOVcRx2uo3L7MPzA6ddJYki4qJbps94/gahtcuM30ymTUUoex3iP6qD
+         nBpKVSV4KFNIYBU2Rc/VSB01GnVxJmOpcvnwSnaCCQSWf2EsKo+oOWa6xG/CZSpz/XTR
+         GG3ztCdNvmDQPamw+1rfMxPS7Gbi17l+PgBXmVZUISA9yxR1W4keI5sgxMgqKS7vtyxQ
+         0uhZeHP8DlfQxOUqu9ux8FEF8hJm5Ge9JgGOSbJD9B/bUvMEtKHZjnyDq77MqG4cFGYL
+         cQ8nJak+Wi+iEkQVbZvuat8EWWh4fxgJKwGIM4BlVb2DiORGWFMA0aHiP72b2wOEsTBb
+         ypTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724440437; x=1725045237;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3t1dUkJeUSV+3qq06ORSFrmDhowUhY/J12I+j1i5R8M=;
+        b=YVgeKtlcZF4GmF1C57sy3Paa8GC2HhIS2NAHKhyB0uZMQV141APtQDWKz+Q3rMzCc+
+         S01BVPQWNAlwm+q6fDhJSTKLJ/p4RaVbWu9PltpyLWGvfbYJQvRwZ6CqTaRDaUxdhkRe
+         wTc1nwSfmIFCjb13JbYYaSQA9sBzqSQkiBuhlYHsihpWvBhHanGdbZsmcb0NFmwqRKdo
+         CRtIRFAZoRP0ZWi/9DQpHNxu/Ow/9v8szrcKwbmpzj/RGW1iDrKCHlDqjiwt/ZuP4hMv
+         M9BfP7izqXqWrL2x7CSPXFvoTIZfWmD/uClfF2gLPxaL46xtQm2YHU3rPnN6XYN+L1HS
+         4KcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURd4HIwlsoaiIJJdYj7E2IvC9YAKtMVEsWI//xGmziYoaBUsTA7EmXINovo7FOMSzK0AClXuOL7Yc7Yts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJXPYL1yt06Y6CAORei7oD82lCcEz/g3ZqtCE792Q+KcNUsPLM
+	1zYcF81Wc+HeMA9l6oHkfBJNbKgT8NmThawrhgUGE7y+pRY6dPJ2n+tzbePUu6PH9HuniwsJwnz
+	ycw==
+X-Google-Smtp-Source: AGHT+IFa4eVeYlZTkeZeaU1ds/tSY8A2mDkMlBOpXGWUY58qHdlifZGblM42xWXi0Geg7QTcr7Dcw35OvLE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:6013:b0:70d:3548:bb59 with SMTP id
+ d2e1a72fcca58-71445abd3d4mr15310b3a.4.1724440437097; Fri, 23 Aug 2024
+ 12:13:57 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 23 Aug 2024 12:13:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823193203.7772a6b0@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+Message-ID: <20240823191354.4141950-1-seanjc@google.com>
+Subject: [PATCH 0/2] KVM: Coalesced IO cleanup and test
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ilias Stamatis <ilstam@amazon.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Anup Patel <anup@brainfault.org>, 
+	Sean Christopherson <seanjc@google.com>, Paul Durrant <paul@xen.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 23, 2024 at 07:32:03PM +0100, Jonathan Cameron wrote:
-> On Mon, 19 Aug 2024 00:29:39 +0200
-> Barnabás Czémán <barnabas.czeman@mainlining.org> wrote:
+Add a regression test for the bug fixed by commit 92f6d4130497 ("KVM:
+Fix coalesced_mmio_has_room() to avoid premature userspace exit"), and
+then do additional clean up on the offending KVM code.  I wrote the test
+mainly so that I was confident I actually understood Ilias' fix.
 
-...
+This applies on the aforementioned commit, which is sitting in
+kvm-x86/generic.
 
-> > +	/* Let driver to probe on unknown id for support more register
-> Comment style wrong, I'll fix it up.
-> 
-> With that tweak applied to the togreg branch of iio.git
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
-> > +	 * compatible variants.
-> > +	 */
+Fully tested on x86 and arm64, compile tested on RISC-V.
 
-There is another one also wrong.
+Sean Christopherson (2):
+  KVM: selftests: Add a test for coalesced MMIO (and PIO on x86)
+  KVM: Clean up coalesced MMIO ring full check
 
-+	[AK09918] = {
-+		/* ak09918 is register compatible with ak09912 this is for avoid
-+		 * unknown id messages.
-+		 */
+ tools/testing/selftests/kvm/Makefile          |   3 +
+ .../testing/selftests/kvm/coalesced_io_test.c | 202 ++++++++++++++++++
+ .../testing/selftests/kvm/include/kvm_util.h  |  26 +++
+ virt/kvm/coalesced_mmio.c                     |  29 +--
+ 4 files changed, 239 insertions(+), 21 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/coalesced_io_test.c
 
 
+base-commit: 728d17c2cb8cc5f9ac899173d0e9a67fb8887622
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.0.295.g3b9ea8a38a-goog
 
 
