@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-298100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563C495C246
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA5395C24B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB871F23792
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4901F23EEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645ABA46;
-	Fri, 23 Aug 2024 00:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC53D51A;
+	Fri, 23 Aug 2024 00:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrTV72OX"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1PjvAtt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16205171A5;
-	Fri, 23 Aug 2024 00:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E440B66F;
+	Fri, 23 Aug 2024 00:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724372395; cv=none; b=L2ziGFq4PxAcIF9QRv5YwhQ1EVOrjHbWxH1FOrU9zrgf0XOi6VpSy+Di8f2FNYAq694Y0X1H1ZHYsawgVE6xV9kI68riIg44ZIqEtbVpMhguGqSHlCxhCiPwmRWXun+bVOW74tKS1m4dZF0qW9bYdXFwNmaU6KdRimrgHBnvCgo=
+	t=1724372468; cv=none; b=fRofdG64q1lnDfH6MXOR5v6+ZUQeOTpl7XrX2vdw7CTx+4aH0rysIKkdyu7qQJ3gu71MpK0eMCU1vvNRAEIaBTI5RxOB1IEKTzR0XbujuT6ctR2TLy3cBHFCbf1IfjpJF5bgo7u6/lQTXm6XAsK8638q1Q8eyztt8DeaM3G9ENg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724372395; c=relaxed/simple;
-	bh=F2lLLOIZ5MdL4ATGWpjDdNMqu/+FrhRvRhi5CgSEkxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJ0aqlP/XFi4D2rCBE4PUxJsnSxqIAZWI4ycQnYD/WnQa2N6r22fyaS+G8C+qAwtZHqYNDhABD+t3OqK5rlbM6yfp5cHZ1TMMg3yysn8+6Gh0d5CjP+ZCSaMV2YRYt/hTkoOdsJEPYRxrBCLznyYzfmLrLR+N4+iIJApytDPl6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrTV72OX; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7d26c2297eso186765066b.2;
-        Thu, 22 Aug 2024 17:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724372392; x=1724977192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AFn5gD+eI+oFc3WZUBSmujCGXwdn3up3L1zAyTOtMZs=;
-        b=NrTV72OXEK0meH7V5F5mY7EM5Z8VaB8iFu90QMIop7r/5FagPgtpKZVh+ne4Zx2a+3
-         Rd8uFRDyjLjwIKB8degIPq/QkPenctZ6RzHBfOWEjeEzXE3+aFXAqraCVtf78cVM1Hzp
-         K7wHhga3RECrSnU5h0hJDZm/kiMtOCPZticWxP/kwU6Aexllm2EdKXNBb1j7ZIEym//y
-         GzFQe3Uoa+w4OWQBDePxvIge9CN138H25i5vP4QRBvDejmoOoOh3QN1k8tHIwGOE3hlV
-         A6g/GUCAC3nHnC+zYbbmpj7c/afPAMIF5Ltl9f32gydf5/y6aVHRd2JV4J1TNsLPbFu7
-         u0Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724372392; x=1724977192;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AFn5gD+eI+oFc3WZUBSmujCGXwdn3up3L1zAyTOtMZs=;
-        b=IcTyKSfCum01EFlad/pXpC9AGZ+BT89YKarhy+fF6bD0poYfm/5eUfz/rTk8yxYYs0
-         /f5VrAkKQZq3DMRD6LWSdMgezmO9mItuACfrN4eB9fFEc40tjiRgnX76Wo5FnyzUv6QR
-         uk9VvHU3HlzUil8kTNlqhe2b1qZkX08NKmse8eVYo1Xhj0rYZfX28XH1t+IbrEPvtgIq
-         RDPLyEDZwgoT0uVxsGGEolOl8tSFF/gO1PSiMK196dLNowSKCQnLKXiEtV93DQ0aJ9pJ
-         +egIBLt5Ly59hSCg7Yzmw3JdemfoES5zTuYkVauh/RZ+hd3umMLpAkK7dfgVe98Z/Z6F
-         Xpjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWJnQRsfbq+HEkbiuv2Vdfb9b7YVsxv4YQHGNmO5VozpUhArKcMfHOUYEPBmZ3T+6pWFAi7a6PHN0vGndJ@vger.kernel.org, AJvYcCUejGU7prfbA8IboNYAyGs9W/yNyFRptQUdmv/jjHarhJF07Dr0yCxTAPVRyOY6YLSR1msdBPc3Hrh8ByCb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxNeOyhqD0n6mDPU9MlO+tzxjBWLzXy2x6KMwGXkWIBSKjyh/4
-	jS5uZ+zxxmLRLGSPAjNxBOylj9LlObyqQNkVSbKHwEaMYyZsazOO
-X-Google-Smtp-Source: AGHT+IGEdE1pbgGLiaspl7QobJK5Wc6J6u40OI9jibZkTpdAQBLwU1nX+HnLn66He1iLWtKUtIO7IQ==
-X-Received: by 2002:a17:906:fe4b:b0:a7a:bae8:f2a1 with SMTP id a640c23a62f3a-a86a54899f5mr28977066b.42.1724372391803;
-        Thu, 22 Aug 2024 17:19:51 -0700 (PDT)
-Received: from [192.168.1.14] (host-80-104-252-9.retail.telecomitalia.it. [80.104.252.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f6686sm179971366b.221.2024.08.22.17.19.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 17:19:51 -0700 (PDT)
-Message-ID: <27840bd4-aac4-49ca-9c98-60913c352076@gmail.com>
-Date: Fri, 23 Aug 2024 02:19:49 +0200
+	s=arc-20240116; t=1724372468; c=relaxed/simple;
+	bh=ztMGBRwSXyZVCArMNbSo7WIxlHtGw+CbddsI7Azg6hI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WRm8Iyj8OlXXKwF3m0HiL0o+jWLbA+5/wndrD87Kbj6Bl+69jc7f3seQJkeSE7ip9JYcbeSEZRRw76Uu2eu/LzYyIgI5tUmJHrw2hE5nEgD1iB6rzjnlCJXidFt+bSR/CTWhEzBv4WwYQhxATLte1qsYa+JQyK0k2CUSb119+4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1PjvAtt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE12C32782;
+	Fri, 23 Aug 2024 00:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724372468;
+	bh=ztMGBRwSXyZVCArMNbSo7WIxlHtGw+CbddsI7Azg6hI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Q1PjvAtt2Eyezud2yRCDBzOTyyL+OoqeHZH01mpzrAAKKT/M8+va6AHf+2NaD727m
+	 c6+3/3+YX2TaeyPrNBNeaZnoAhd4MCdLORgr3Rx25320u+nlbop4U1NZwAFJeZ+T+y
+	 h4BVQAULwbiBKr0GLE64/3sGwfY9A8S/9z/hGQzWh/CPwEs37NEsVi4J3KIaW6uoPm
+	 wVpPjeGvT1UCEmnNB5S8q7X9WGwhAHun3gMweRqqanRueX9ux2fj/RG/DivCqp9oJe
+	 zIRQEL/ZoIRy6gCEf4Y3xICuzXVOnZvEbFpUgx1+yPeNsUjCLyWpoia8T7lY9HUUNW
+	 0XGWEIwf2DlTg==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: DAMON Beer/Coffee/Tea chat reminder (was: Re: DAMON Beer/Coffee/Tea chat reminder and extending for office hour)
+Date: Thu, 22 Aug 2024 17:21:05 -0700
+Message-Id: <20240823002105.112390-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240519163329.150340-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Sharat Masetty <smasetty@codeaurora.org>
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <20240815-preemption-a750-t-v1-4-7bda26c34037@gmail.com>
- <20240819200837.etzn7oaoamnceigr@hu-akhilpo-hyd.qualcomm.com>
- <14591112-4455-49b4-8b1a-3feffc4d343f@gmail.com>
- <20240822192347.ffezairwoqqolssl@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <20240822192347.ffezairwoqqolssl@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/22/24 9:23 PM, Akhil P Oommen wrote:
-> On Wed, Aug 21, 2024 at 04:34:15PM +0200, Antonino Maniscalco wrote:
->> On 8/19/24 10:08 PM, Akhil P Oommen wrote:
->>> On Thu, Aug 15, 2024 at 08:26:14PM +0200, Antonino Maniscalco wrote:
->>>> This patch implements preemption feature for A6xx targets, this allows
->>>> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
->>>> hardware as such supports multiple levels of preemption granularities,
->>>> ranging from coarse grained(ringbuffer level) to a more fine grained
->>>> such as draw-call level or a bin boundary level preemption. This patch
->>>> enables the basic preemption level, with more fine grained preemption
->>>> support to follow.
->>>>
->>>> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
->>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->>>> ---
->>>
->>> No postamble packets which resets perfcounters? It is necessary. Also, I
->>> think we should disable preemption during profiling like we disable slumber.
->>>
->>> -Akhil.
->>>
->>
->> You mention that we disable slumber during profiling however I wasn't able
->> to find code doing that. Can you please clarify which code you are referring
->> to or a mechanism through which the kernel can know when we are profiling?
->>
+Hello,
+
+On Sun, 19 May 2024 09:33:29 -0700 SeongJae Park <sj@kernel.org> wrote:
+> On Wed, 10 Aug 2022 22:51:02 +0000 SeongJae Park <sj@kernel.org> wrote:
 > 
-> Please check msm_file_private_set_sysprof().
+> > Hello,
+> > 
+> > 
+> > In short, I'd like to start an open, regular, and informal virtual bi-weekly
+> > meeting series for DAMON community.
+> > 
+> > Important links and dates
+> > -------------------------
+> > 
+> > Location: https://meet.google.com/ndx-evoc-gbu
+> > Agenda: https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
 > 
-> -Akhil
+[...]
+> Firstly, I will regularly provide reminder of the series, probably 1-2 days
+> before every instance.
 > 
->> Best regards,
->> -- 
->> Antonino Maniscalco <antomani103@gmail.com>
->>
+> Secondly, I'm extending this series for reservation-based office hour.  That
+> is, I will reserve my time for 30 minutes every two weeks, keep the schedule
+> public, and encourage people to reserve the time for discussion on a special
+> topic for them.  The reservation should be made at least one day before the
+> time slot, and will be first-come first-served basis.  In detail, I will
+> reserve Monday afternoon or Tuesday morning of the group chat scheduled week.
+> Note that this is not necessarily only time slot for such discussion.  You're
+> still encouraged to schedule private meetings on your convenience.
 
-I see, thank you. So as Connor said in the other message we want to 
-distinguish the case of system profiling where we do want preemption and 
-application level profiling where we do not want it. So sysprof is not 
-the condition we want to check for to disable preemption, correct?
+So, yet another reminder.
 
-Best regards,
--- 
-Antonino Maniscalco <antomani103@gmail.com>
+Due to some conflicts, there are some changes to the schedule as following.
+The meetings that originally scheduled for the last week of August have
+rescheduled to first week of September.  The meetings originally scheduled for
+the second week of September has cancelled.
 
+Dedicated-topic discussions
+---------------------------
+
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
+
+- 2024-09-02 (Mon) 18:00 PT (reserved)
+- 2024-09-24 (Tue) 09:30 PT (not yet reserved)
+
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.  Sorry for any inconvenience.
+
+Please note that other time slots are also available based on the discussion.
+
+Any-topic discussions
+---------------------
+
+Next two chat instance for any topic (no reservation is required) are scheduled
+as below:
+
+- 2024-09-03 (Tue) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-09-23 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+
+Shared Calendar
+---------------
+
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+
+
+Thanks,
+SJ
+
+[...]
 
