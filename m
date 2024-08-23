@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-298086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35E195C1DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:04:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D7795C1E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4568C1F2414F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B58F3B24ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D264B662;
-	Fri, 23 Aug 2024 00:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65241BF3F;
+	Fri, 23 Aug 2024 00:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgpGbe4u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpr2tO7i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3538488;
-	Fri, 23 Aug 2024 00:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C00182B9;
+	Fri, 23 Aug 2024 00:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724371449; cv=none; b=G4cb+PyUkpFZ1nB8kzp/OkTU1YhWiS9CK8eUw+HUJUqp3yr1A04byuYitq0XKNGzvQ4KHALVXuvNfeMbqZNTMENnnNdmU1dwtAaSU7nb5RvCRke7sdjmpfN9V+uSJmJofrghd93FENiPi6uOTjYa/UsXOMPe4DQ67zw7uMBV7pY=
+	t=1724371458; cv=none; b=sf0/aOe/r39EUv2L2tABWhiCgXiH3x+VEjiMtrSVl8lHfPlIoZHAQueu0T3iunlX/qlwKftPLnnzrRD9PohXnSKXgxL1BEJKoahupCKAOCfEH8USrE9ZrR8YXdbnYlBwZQVVVgwm/Xee+hlinh+WfQskywHvhyq4FwA+hMdJGdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724371449; c=relaxed/simple;
-	bh=d1RmSg+pZiyUSkvTppKDhWCAqCi7WQkLhQlgan+A8/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aeNJC9xN8+JehjKT6CEJ1ZJymU9Cp/tKDkZvPs1kh1YEgt24Jl0rRWu3MqPd1u/Kfx84pJyOXkaoyIPAUERW/Xl26J0cndsDdajPNSyKSJcCSCpvBwQnTrCVRPOOppdvAAmGhddGzzPf2nZ0qjhGR+h8N9XbXVGZPxNHHsUCJCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgpGbe4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218F5C32782;
-	Fri, 23 Aug 2024 00:04:09 +0000 (UTC)
+	s=arc-20240116; t=1724371458; c=relaxed/simple;
+	bh=2FSe8I9whgAZoIbQlZt5Ga3QttMxSxkF67pTJAIS5+I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jLzy9ZDzZWsWEzmnwKhQkztEh9ycNdFBgqYcwGvdajDbvcpKZ0C3Asy65agsactif0cbqz8Xj5jRly2CMnAeVzJhZC1U9YT6Chj0974rdIOmGnCm+/tlZDXV3/9IeIEmJ1oiMKizwQBZXkQJKEBHUfggUfB7kGBEwDw2y7Pus6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpr2tO7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C140EC32782;
+	Fri, 23 Aug 2024 00:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724371449;
-	bh=d1RmSg+pZiyUSkvTppKDhWCAqCi7WQkLhQlgan+A8/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mgpGbe4uQqi/w4yJc6MgDLLeqX8P77dSmuEvji1/3yZwLxT1WGUZ2MRlBxLdIBulA
-	 UdU+X/wwOYMLl74i+S2lWSlDKLC2nHD8NVvYSy4n8ELYikPW4BqshuRi1tqxlGcnc+
-	 udeVklItjOwkSA4FE9/PMpUfqIN5ZH18yFi3VJn5jM2Ctdi3iTnmaYp38jgS9iXjIy
-	 ZX+vJQG2umAM2u6NThiTc9GhW5TuSO63rzKHBQbNegn20DWNkOuoTns/BB2KcD7Kr0
-	 zW351l7IUdD8SuIDyeJ91zwfEDgzJJx/I3CdncSWlOrc6GobrwO2ybUT0VdmqqXe7/
-	 QJ7XsPO73q5DQ==
-Date: Thu, 22 Aug 2024 17:04:08 -0700
-From: Kees Cook <kees@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
-	linux-sparse@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Petr Pavlu <petr.pavlu@suse.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] string: Check for "nonstring" attribute on strscpy()
- arguments
-Message-ID: <202408221701.62773B4E1@keescook>
-References: <20240805214340.work.339-kees@kernel.org>
- <1724c53c-5a02-4816-a688-cae18db443d2@intel.com>
+	s=k20201202; t=1724371457;
+	bh=2FSe8I9whgAZoIbQlZt5Ga3QttMxSxkF67pTJAIS5+I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qpr2tO7i2UGxSUkyhDoWf60Nyf149hbS8jzTLUFz18EnxVCNQvuuP0XLeFDL//dSl
+	 bSVbgKIVRiXOWISjYSe1ywlEBO7jj13fZ7wTu/79GQ3ciY8LeTg/f3xSCzeVomU1Gr
+	 cR2v8F1LkpDOG2CocTHjrSG8C+4I1DdWUyoeqrjJDBhJ+8evLVxxZlO2TYKF+k76eE
+	 aWaS+yKgI0UNWzhxmZNVH/ELtVYtewxC+GXKOB9h0TkuqnGmoojFkgO2cyrkbknpO5
+	 z1z7Y/1xpB8AAHiy6EWsT10vw25q0ZzgzCLS6J+Sdth5GSlUyCcmrgZnNuhMHqRhZS
+	 RRSimlbFJs54g==
+Date: Fri, 23 Aug 2024 09:04:12 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, Linux Trace
+ Kernel <linux-trace-kernel@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor
+ <nathan@kernel.org>
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-Id: <20240823090412.d63468ab89ba28415d7bc649@kernel.org>
+In-Reply-To: <20240821115000.387de298@gandalf.local.home>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+	<20240819112902.11451fe8@gandalf.local.home>
+	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+	<20240819120244.5657eb2f@gandalf.local.home>
+	<20240820100330.9ee6f3d51f22bb9bab7c4b83@kernel.org>
+	<ZsR0Z6DxSHOI-wNj@J2N7QTR9R3>
+	<CABCJKueKhDVarco4mgNeR0hkAhxDtxBjdpu=QaYVi+TGoiqd2g@mail.gmail.com>
+	<20240821070539.981b42e5f3b939c5ce5e3a71@kernel.org>
+	<ZsYInqSc-WS4UldP@J2N7QTR9R3.cambridge.arm.com>
+	<ZsYKz6ycI8fiQbdh@J2N7QTR9R3.cambridge.arm.com>
+	<20240821115000.387de298@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1724c53c-5a02-4816-a688-cae18db443d2@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 12:29:30PM +0200, Przemek Kitszel wrote:
-> On 8/5/24 23:43, Kees Cook wrote:
-> > GCC already checks for arguments that are marked with the "nonstring"[1]
-> > attribute when used on standard C String API functions (e.g. strcpy). Gain
-> > this compile-time checking also for the kernel's primary string copying
-> > function, strscpy().
-> > 
-> > Note that Clang has neither "nonstring" nor __builtin_has_attribute().
-> > 
-> > Link: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-nonstring-variable-attribute [1]
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> 
-> 
-> 
-> > diff --git a/include/linux/string.h b/include/linux/string.h
-> > index 9edace076ddb..95b3fc308f4f 100644
-> > --- a/include/linux/string.h
-> > +++ b/include/linux/string.h
-> > @@ -76,12 +76,16 @@ ssize_t sized_strscpy(char *, const char *, size_t);
-> >    * known size.
-> >    */
-> >   #define __strscpy0(dst, src, ...)	\
-> > -	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst))
-> > -#define __strscpy1(dst, src, size)	sized_strscpy(dst, src, size)
-> > +	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-> > +				__must_be_cstr(dst) + __must_be_cstr(src))
-> > +#define __strscpy1(dst, src, size)	\
-> > +	sized_strscpy(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-> >   #define __strscpy_pad0(dst, src, ...)	\
-> > -	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst))
-> > -#define __strscpy_pad1(dst, src, size)	sized_strscpy_pad(dst, src, size)
-> > +	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-> > +				    __must_be_cstr(dst) + __must_be_cstr(src))
-> > +#define __strscpy_pad1(dst, src, size)	\
-> > +	sized_strscpy_pad(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
-> 
-> any way to avoid the usual caveat of repeating macro argument?
-> 
-> a variant of BUILD_BUG that is checking argument and otherwise pasting
-> it would nail it, but I didn't pondered how to implement such
+On Wed, 21 Aug 2024 11:50:00 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-The use of __must_be_cstr() shouldn't cause side-effects, so from what I
-can tell this is all okay. And since BUILD_BUG_ON_ZERO() resolves to a
-constant expression, it shouldn't change the processing of the "size"
-argument in the strscpy internals...
+> On Wed, 21 Aug 2024 16:42:07 +0100
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > FWIW, that was in samples/ftrace/ftrace-ops.c, where tracee_relevant() and
+> > tracee_irrelevant() have the barrier():
+> > 
+> > | /*
+> > |  * Marked as noinline to ensure that an out-of-line traceable copy is
+> > |  * generated by the compiler.
+> > |  *
+> > |  * The barrier() ensures the compiler won't elide calls by determining there
+> > |  * are no side-effects.
+> > |  */
+> > | static noinline void tracee_relevant(void)
+> > | {
+> > |         barrier();
+> > | }
+> > 
+> > ... so we already have precedent for that in tracing code.
+> 
+> If adding a barrier() fixes things, then I'm 100% for adding them.
+> 
+> Masami, does this fix it?
+
+Interesting, this fixes the issue!
+And it is great to find how to avoid the LTO removes function like this.
+
+Tested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
+> 
+> -- Steve
+> 
+> diff --git a/kernel/trace/trace_selftest_dynamic.c b/kernel/trace/trace_selftest_dynamic.c
+> index c364cf777e1a..a112433d78ce 100644
+> --- a/kernel/trace/trace_selftest_dynamic.c
+> +++ b/kernel/trace/trace_selftest_dynamic.c
+> @@ -4,12 +4,20 @@
+>  
+>  noinline __noclone int DYN_FTRACE_TEST_NAME(void)
+>  {
+> -	/* used to call mcount */
+> +	/*
+> +	 * Used to test function tracing. Make sure the compiler doesn't
+> +	 * remove it.
+> +	 */
+> +	barrier();
+>  	return 0;
+>  }
+>  
+>  noinline __noclone int DYN_FTRACE_TEST_NAME2(void)
+>  {
+> -	/* used to call mcount */
+> +	/*
+> +	 * Used to test function tracing. Make sure the compiler doesn't
+> +	 * remove it.
+> +	 */
+> +	barrier();
+>  	return 0;
+>  }
+
 
 -- 
-Kees Cook
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
