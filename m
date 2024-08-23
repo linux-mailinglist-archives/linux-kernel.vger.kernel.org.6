@@ -1,152 +1,250 @@
-Return-Path: <linux-kernel+bounces-299659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB85F95D84C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:05:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA4795D84F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 23:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 166FFB21153
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90342282CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 21:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81F91B8EBE;
-	Fri, 23 Aug 2024 21:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941B1C7B64;
+	Fri, 23 Aug 2024 21:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c2LbS+Lj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fXPZVRcS"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YwzsGVYQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Etv/EtDZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83477189B89;
-	Fri, 23 Aug 2024 21:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E56193064;
+	Fri, 23 Aug 2024 21:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724447106; cv=none; b=u0XemVV/nI/0mP+lSFFNyM9x5jK698maZKJRNAn/9aPi1H0sBY1sj+6vcGah2eqrfksgfnT5PNRDAi4lvyCinJF+rJ9XD9DRMgjucsB8XsAsyWkyoM7ItuYr4F1kkx6U3Gnuxb2Ba6gvpfvD58QpH/vOu++cvIIJa3Efhpv2oMs=
+	t=1724447135; cv=none; b=UqySpBUoShlnUaAtlSoblpdldmgscQRc7Bau6b7o1PIJOe7dL6li7JO6CXpy3IkcAfHPJz928kaUgxn091deiHEipTtZqlFtIK7tgB+s/ixfeD2IOoXVpJblrdoTCKI7fsxa0oHzZ3l8gTMG6VsnFHghEhcc5ylfIBJr/xTxoAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724447106; c=relaxed/simple;
-	bh=ox2jYiZ8U+EpeLKvUKiCr26WsEt1LgMU0TnExRBDCls=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=ZL12lZ52krUa9FdT9M0Qs2vy+PUb4ovtyfDcs9Q3zrzuPUkxGrzZDGdRzcvAZWX+rwfRz+GZeF8wAekFwMVVDaFiD90zAc1J1fmIcutNrgcB8csrYef/MqwBkivCVWNJ3Lsi4RkVGq+7qWH+ZTkNTwPjPxNPP/l0uOSxORSZINo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c2LbS+Lj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fXPZVRcS; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1724447135; c=relaxed/simple;
+	bh=VsZQyduwlI0vFv1Db4QIaS1KTScu2zoqyBgsAN/WpRQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FRXCzE/EW6B+ncZ9I6LZ7xPPLXUtz9VzmwCr8IwgH1EvO1+Zkx6YcUDdxss8j3WvoicEZP/NuDb6Rgk/z2ez5zrU18ik4S4XpAeynTIaxsQ4by4rS8+CXlDqMQLSKLeTY+EqI9Qw0/3GkK4brgdXfnZBPU0ppe1KxXKoosmJ1lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YwzsGVYQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Etv/EtDZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 23 Aug 2024 21:05:01 -0000
+From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724447102;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=IgoJXlScJJIs5QPuokDwh1R5rfSuaSkbFTLkMOO2tC4=;
-	b=c2LbS+LjITwPNBkU3wBoPXTvLje8E8dUP2tzMwsi+XISFju/t/heS2UNfmqdQgTiQgPuES
-	xsxcuq1Ymc8z91w2l7bnJdhKWblZPGVDSnnFyMO6jp0kax9yDngPrn3U8uZsaxVm7eqJDV
-	fOmrpWiq4+FKb0nZhSGGQrs2hsoSR2UkG+T3JxbPB+Kj0yn1vS6HlRDskuRL4uQzmrDFor
-	T913pVj6rEJlBBA7KZqvTyHBTlgRuP2juDkyh78N7JbmtqG+YFDUc1DYuVrLoP0HnNfrvC
-	PxzstnNdEWyOUISSciN4TRbmgz9H353d5KLMSGKAyTUQ684c9nGs/+QFkR5mqw==
+	s=2020; t=1724447131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CaUWysiD7XirCK5HuajRc2QEt1BaDWiUbxhTzIekA+0=;
+	b=YwzsGVYQ5XR7NRFLfI/nzcORuNypZpfKRXI4fvQ7uFLG4XB8ht8QJ7UubXKqBhgWq/FMW9
+	c9IBL1HeA4MpBm8SU+uoAXBUiQLOlIMXj+1vB4TVvZeXevMq0MH8dro8AM8RpQUi6b0gud
+	/4DHdiLfStMahn78gc9JpomQI1F5RwCBa1nz9twIlK0IGbkA/gAuRmk5cz198dwJQ/KIbS
+	orMR6waO5r5oijY63LSjk+B6nR+zybuR7fjiVbvGpSQTFQZuKkiu3Ce8xBXpVRRm0ygNe2
+	gwaArWJN5ilmV9jESC203ZLO5Pj7EO9R/kveZZvqElZ7SqiDpKyoMI5M3cKMPA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724447102;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=IgoJXlScJJIs5QPuokDwh1R5rfSuaSkbFTLkMOO2tC4=;
-	b=fXPZVRcSBpjYXq1PkZ30VNYU+Vg3OoULOGWCruBuQB31LRCmN7e9clIXvEXIarih0oFfAl
-	iWlsqrj/SqU9VPDA==
-From: "tip-bot2 for Kees Cook" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/misc] x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Kees Cook <kees@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=2020e; t=1724447131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CaUWysiD7XirCK5HuajRc2QEt1BaDWiUbxhTzIekA+0=;
+	b=Etv/EtDZ4MKLo1zgBOn/jZ4XjhaeeyIfMv4KVDs8i5C1AA011fmqaGilJL6XYVrs7Bl6nV
+	Wdy2Y5lHAvWFeoCA==
+To: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arch@vger.kernel.org, "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Subject: Re: [PATCH v2] Avoid memory barrier in read_seqcount() through load
+ acquire
+In-Reply-To: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
+References: <20240819-seq_optimize-v2-1-9d0da82b022f@gentwo.org>
+Date: Fri, 23 Aug 2024 23:05:30 +0200
+Message-ID: <87ttfbeyqt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172444710177.2215.15316264335505039763.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-The following commit has been merged into the x86/misc branch of tip:
+On Mon, Aug 19 2024 at 11:30, Christoph Lameter via wrote:
+> @@ -293,6 +321,18 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+>   *
+>   * Return: count to be passed to read_seqcount_retry()
+>   */
+> +#ifdef CONFIG_ARCH_HAS_ACQUIRE_RELEASE
+> +#define raw_read_seqcount_begin(s)					\
+> +({									\
+> +	unsigned _seq;							\
+> +									\
+> +	while ((_seq = seqprop_sequence_acquire(s)) & 1)		\
+> +		cpu_relax();						\
+> +									\
+> +	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
+> +	_seq;								\
+> +})
 
-Commit-ID:     d19d638b1e6cf746263ef60b7d0dee0204d8216a
-Gitweb:        https://git.kernel.org/tip/d19d638b1e6cf746263ef60b7d0dee0204d=
-8216a
-Author:        Kees Cook <kees@kernel.org>
-AuthorDate:    Mon, 08 Jul 2024 13:22:06 -07:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Fri, 23 Aug 2024 11:46:51 -07:00
+So this covers only raw_read_seqcount_begin(), but not
+raw_read_seqcount() which has the same smp_rmb() inside.
 
-x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
+This all can be done without the extra copies of the counter
+accessors. Uncompiled patch below.
 
-Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
-the end of the addressed destination (or source) struct member:
+It's a little larger than I initialy wanted to do it, but I had to keep
+the raw READ_ONCE() for __read_seqcount_begin() to not inflict the
+smp_load_acquire() to the only usage site in the dcache code.
 
-In function =E2=80=98fortify_memcpy_chk=E2=80=99,
-    inlined from =E2=80=98syscall_get_arguments=E2=80=99 at ./arch/x86/includ=
-e/asm/syscall.h:85:2,
-    inlined from =E2=80=98populate_seccomp_data=E2=80=99 at kernel/seccomp.c:=
-258:2,
-    inlined from =E2=80=98__seccomp_filter=E2=80=99 at kernel/seccomp.c:1231:=
-3:
-./include/linux/fortify-string.h:580:25: error: call to =E2=80=98__read_overf=
-low2_field=E2=80=99 declared with attribute warning: detected read beyond siz=
-e of field (2nd parameter); maybe use struct_group()? [-Werror=3Dattribute-wa=
-rning]
-  580 |                         __read_overflow2_field(q_size_field, size);
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The acquire conditional in __seqprop_load_sequence() is optimized out by
+the compiler as all of this is macro/__always_inline.
 
-As already done for x86_64 and compat mode, do not use memcpy() to
-extract syscall arguments from struct pt_regs but rather just perform
-direct assignments. Binary output differences are negligible, and actually
-ends up using less stack space:
+Thanks,
 
--       sub    $0x84,%esp
-+       sub    $0x6c,%esp
-
-and less text size:
-
-   text    data     bss     dec     hex filename
-  10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
-  10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
-
-Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gma=
-il.com/
-Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-Signed-off-by: Kees Cook <kees@kernel.org>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-Link: https://lore.kernel.org/all/20240708202202.work.477-kees%40kernel.org
+        tglx
 ---
- arch/x86/include/asm/syscall.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-index 2fc7bc3..7c488ff 100644
---- a/arch/x86/include/asm/syscall.h
-+++ b/arch/x86/include/asm/syscall.h
-@@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struc=
-t *task,
- 					 struct pt_regs *regs,
- 					 unsigned long *args)
- {
--	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
-+	args[0] =3D regs->bx;
-+	args[1] =3D regs->cx;
-+	args[2] =3D regs->dx;
-+	args[3] =3D regs->si;
-+	args[4] =3D regs->di;
-+	args[5] =3D regs->bp;
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -132,6 +132,14 @@ static inline void seqcount_lockdep_read
+ #define seqcount_rwlock_init(s, lock)		seqcount_LOCKNAME_init(s, lock, rwlock)
+ #define seqcount_mutex_init(s, lock)		seqcount_LOCKNAME_init(s, lock, mutex)
+ 
++static __always_inline unsigned __seqprop_load_sequence(const seqcount_t *s, bool acquire)
++{
++	if (acquire && IS_ENABLED(CONFIG_ARCH_HAS_ACQUIRE_RELEASE))
++		return smp_load_acquire(&s->sequence);
++	else
++		return READ_ONCE(s->sequence);
++}
++
+ /*
+  * SEQCOUNT_LOCKNAME()	- Instantiate seqcount_LOCKNAME_t and helpers
+  * seqprop_LOCKNAME_*()	- Property accessors for seqcount_LOCKNAME_t
+@@ -155,9 +163,10 @@ static __always_inline const seqcount_t
+ }									\
+ 									\
+ static __always_inline unsigned						\
+-__seqprop_##lockname##_sequence(const seqcount_##lockname##_t *s)	\
++__seqprop_##lockname##_sequence(const seqcount_##lockname##_t *s,	\
++				bool acquire)				\
+ {									\
+-	unsigned seq = READ_ONCE(s->seqcount.sequence);			\
++	unsigned seq = __seqprop_load_sequence(&s->seqcount, acquire);	\
+ 									\
+ 	if (!IS_ENABLED(CONFIG_PREEMPT_RT))				\
+ 		return seq;						\
+@@ -170,7 +179,7 @@ static __always_inline unsigned						\
+ 		 * Re-read the sequence counter since the (possibly	\
+ 		 * preempted) writer made progress.			\
+ 		 */							\
+-		seq = READ_ONCE(s->seqcount.sequence);			\
++		seq = __seqprop_load_sequence(&s->seqcount, acquire);	\
+ 	}								\
+ 									\
+ 	return seq;							\
+@@ -206,9 +215,9 @@ static inline const seqcount_t *__seqpro
+ 	return s;
  }
-=20
- static inline int syscall_get_arch(struct task_struct *task)
+ 
+-static inline unsigned __seqprop_sequence(const seqcount_t *s)
++static inline unsigned __seqprop_sequence(const seqcount_t *s, bool acquire)
+ {
+-	return READ_ONCE(s->sequence);
++	return __seqprop_load_sequence(s, acquire);
+ }
+ 
+ static inline bool __seqprop_preemptible(const seqcount_t *s)
+@@ -258,29 +267,23 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
+ 
+ #define seqprop_ptr(s)			__seqprop(s, ptr)(s)
+ #define seqprop_const_ptr(s)		__seqprop(s, const_ptr)(s)
+-#define seqprop_sequence(s)		__seqprop(s, sequence)(s)
++#define seqprop_sequence(s, a)		__seqprop(s, sequence)(s, a)
+ #define seqprop_preemptible(s)		__seqprop(s, preemptible)(s)
+ #define seqprop_assert(s)		__seqprop(s, assert)(s)
+ 
+ /**
+- * __read_seqcount_begin() - begin a seqcount_t read section w/o barrier
+- * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
+- *
+- * __read_seqcount_begin is like read_seqcount_begin, but has no smp_rmb()
+- * barrier. Callers should ensure that smp_rmb() or equivalent ordering is
+- * provided before actually loading any of the variables that are to be
+- * protected in this critical section.
+- *
+- * Use carefully, only in critical code, and comment how the barrier is
+- * provided.
++ * read_seqcount_begin_cond_acquire() - begin a seqcount_t read section
++ * @s:	     Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
++ * @acquire: If true, the read of the sequence count uses smp_load_acquire()
++ *	     if the architecure provides and enabled it.
+  *
+  * Return: count to be passed to read_seqcount_retry()
+  */
+-#define __read_seqcount_begin(s)					\
++#define read_seqcount_begin_cond_acquire(s, acquire)			\
+ ({									\
+ 	unsigned __seq;							\
+ 									\
+-	while ((__seq = seqprop_sequence(s)) & 1)			\
++	while ((__seq = seqprop_sequence(s, acquire)) & 1)		\
+ 		cpu_relax();						\
+ 									\
+ 	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
+@@ -288,6 +291,26 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
+ })
+ 
+ /**
++ * __read_seqcount_begin() - begin a seqcount_t read section w/o barrier
++ * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
++ *
++ * __read_seqcount_begin is like read_seqcount_begin, but it neither
++ * provides a smp_rmb() barrier nor does it use smp_load_acquire() on
++ * architectures which provide it.
++ *
++ * Callers should ensure that smp_rmb() or equivalent ordering is provided
++ * before actually loading any of the variables that are to be protected in
++ * this critical section.
++ *
++ * Use carefully, only in critical code, and comment how the barrier is
++ * provided.
++ *
++ * Return: count to be passed to read_seqcount_retry()
++ */
++#define __read_seqcount_begin(s)					\
++	read_seqcount_begin_cond_acquire(s, false)
++
++/**
+  * raw_read_seqcount_begin() - begin a seqcount_t read section w/o lockdep
+  * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
+  *
+@@ -295,9 +318,10 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
+  */
+ #define raw_read_seqcount_begin(s)					\
+ ({									\
+-	unsigned _seq = __read_seqcount_begin(s);			\
++	unsigned _seq = read_seqcount_begin_cond_acquire(s, true);	\
+ 									\
+-	smp_rmb();							\
++	if (!IS_ENABLED(CONFIG_ARCH_HAS_ACQUIRE_RELEASE))		\
++		smp_rmb();						\
+ 	_seq;								\
+ })
+ 
+@@ -326,9 +350,10 @@ SEQCOUNT_LOCKNAME(mutex,        struct m
+  */
+ #define raw_read_seqcount(s)						\
+ ({									\
+-	unsigned __seq = seqprop_sequence(s);				\
++	unsigned __seq = seqprop_sequence(s, true);			\
+ 									\
+-	smp_rmb();							\
++	if (!IS_ENABLED(CONFIG_ARCH_HAS_ACQUIRE_RELEASE))		\
++		smp_rmb();						\
+ 	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);			\
+ 	__seq;								\
+ })
 
