@@ -1,169 +1,244 @@
-Return-Path: <linux-kernel+bounces-298792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E23195CB8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:39:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC5C95CB8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6A81C20EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157391F2481F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490C18756E;
-	Fri, 23 Aug 2024 11:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486ED18787F;
+	Fri, 23 Aug 2024 11:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BWM2MBgP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mnQIgjdc"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990F8156C63
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6857F3F9F9;
+	Fri, 23 Aug 2024 11:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724413148; cv=none; b=hZ0OlMBx4LEMgMuutwhuw5uZfcINWRFS4qeJmDpspfpjgJLWAYLU5NaqCQBDE5cejlXa+yh8rirM5IuFEFLMAEYyqeoQ6bVt8qpzDCiAkKtiXtetNUcXQc2TENz+S4yzbMRJQKfMEI9PEEXScpUuhLi2gwerJZPBdpnHOk1HFkg=
+	t=1724413166; cv=none; b=dDORFwuQUmS9gyRjwhBUT5VnO0iWdm4u+AJp8miE5yWouwzcyL0Raewo4V270bh8vcKHsH3sv3JqDip4K+JJy1Sr3BmpAn1vjVG5lVvHwmVmsnmS+dC1ZCnrU0ULNB9RdMERs0B1mxMVncX6NoCO9ESMC0LQF9UnVqxltWOmRbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724413148; c=relaxed/simple;
-	bh=0gO7wk8u84qxfm1j/HrOKQHBKXoIvdSEvV8z38YCeIo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GvzZpcbcJx5MsDWwvCGh4DbBGvNSDhY7qEMDdssbr0yfmZ+5V5BQ8k9UrcR+ONgxonWoRtuSLQF3Sp/95VEiAvWa8M/QrDs2RSkaTEvwP9ZiI+AaATkxkPj5DL4o7hgHcLS+NQXODbo2xTWh8JKiCdRpVAdYAjsjls18vt1UvLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BWM2MBgP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724413145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lXI92omx/LP0RGPICDJD1y6RS0OrWll0CoYFBSAz+eY=;
-	b=BWM2MBgPIoPAUn8pladH2P5omuyxz0WZkxqERHIjy12VFa7esluz8CnqsRRcMiMo+ReBOA
-	U236myMcgDYADFasIjhs35pYiTOtW5gtrJYVUJEnEntLWjWihJZvFEMjmuq8xChB+WFii+
-	gvMgOpci8gwI7AYtweJz8yPKzYyfki8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-376-G2O_XnD0PCKrvpF55xTDfg-1; Fri, 23 Aug 2024 07:39:04 -0400
-X-MC-Unique: G2O_XnD0PCKrvpF55xTDfg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280a39ecebso15088055e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:39:04 -0700 (PDT)
+	s=arc-20240116; t=1724413166; c=relaxed/simple;
+	bh=sb+hpl867oAfblXBX+bXv7OUlpJXYOebFkKUk5Pr/B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5cO2Y2JMK13itIpqZ8UWZMiN//Hjt9BsrMAf5rTuDKU/fww8CYHB0CT248ogL+FZ0WaYo2Oreh6FzvfjsYap3XAR2PxlOCVvTu1JGF01JY9hZtnAtuRZFXUOaCNJ4mttBxjRuTDJ3q1c94xmSvdu6LAgE7ru9hWZAeN9w6uKPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mnQIgjdc; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso17588251fa.2;
+        Fri, 23 Aug 2024 04:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724413162; x=1725017962; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlruKgWSyuzMsIHMo/qBZLFbjRmtSnM9kjyIrTE/wvg=;
+        b=mnQIgjdcD++PfVAl8S5zDVwiig0hXUVT6yeLLK3BsMuYMfTuUCnkmHCmweWVy29zcf
+         ifvkl0QR+4oOwab369/Obr+cSD8PxSayBicCEaduDw5Cd7aeJMpvvx3py6pePgUI5QZE
+         yfpvvQpy7v3V6SivqZGBtTuRt7K/tOtqmpYUwt8lPF8r2sg66BhFAKCyTjK0LS0n/scL
+         ROH048wgIr72Ijcr48GqSiaF5BQwSv8OSL1HrH2oHEMZMSGwZE6oSJ10FKz1whDiFdRS
+         +9PV+2uvHKXRZ1ynTj6MHH4KAAvmE3p/ZjJPvK2qFA7ryizIbNNHwGVAA5ctbM6uh9Dj
+         JeCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724413143; x=1725017943;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lXI92omx/LP0RGPICDJD1y6RS0OrWll0CoYFBSAz+eY=;
-        b=DR2n+StyQ8JEVOC7W1KQUNTFTBjAsxU4l+z2wxvXn5SiglUw7xS/Sdaqjc9GZSyIPk
-         l1gJr0mUhIrxsOPLBzizQDhocwXbUr2Bqm1WZl1eEkEEvtmQJb8+UU8/vAjPzX3ib5aN
-         brCSR3EX9zf3zkd+j9utD5jqwJKdzDe992hV2p15kDp/eALMhjylaeekTI+sLG78cYbC
-         Dw3edagP4k7O2r1mcjPo3Rj7qhyZEmu4vuvoR1HeN2QVgfleGdqh39v4Xoy0DxMIVZmh
-         RnjrsLDaWYwVlk5NToiRPlVXMD39HC7gmvfxKB6iA4ZHw+st/r9xsqYitB7CPhYIDcRA
-         zUPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5hNGwvpxeSqolpYxJFlWPK4J2poa3V29iZ79hROArAZ3qWbqb1KhbTJZacSAXuVUKkcIwa2Ob70r4RuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySnGVYXxiCD+bNS6HIXGnAE0g6CJc281EMrIvlYWqUWPKb7GxE
-	tdvFejNCOyIpM5hmMNLQB+C9OSrbIctIZgY170WrYm3FQlpolzkyGqGGTIFqZdMvZWhlKqFeyhD
-	UdldqAL2AB0yCiU7S4+Aqd37k4CYsVAhw4UMMLNmnvPeS1yzoL83g/11hyPigLQ==
-X-Received: by 2002:a5d:64c6:0:b0:367:40b6:b90b with SMTP id ffacd0b85a97d-3730525eadcmr3876599f8f.10.1724413143332;
-        Fri, 23 Aug 2024 04:39:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqj5RsrXLKQdXayO4DE4+Jgkh7s/S4sWe1HVsYRlTpK3PNC6xc7Df/zM7hd6O3sj/MGfzd/w==
-X-Received: by 2002:a5d:64c6:0:b0:367:40b6:b90b with SMTP id ffacd0b85a97d-3730525eadcmr3876568f8f.10.1724413142513;
-        Fri, 23 Aug 2024 04:39:02 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71a:e00:d307:70b6:92e9:1425? (p200300cbc71a0e00d30770b692e91425.dip0.t-ipconnect.de. [2003:cb:c71a:e00:d307:70b6:92e9:1425])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c5cbsm3949306f8f.28.2024.08.23.04.39.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 04:39:02 -0700 (PDT)
-Message-ID: <a4fdb1a7-3748-4aa5-bd44-7d56454c3f79@redhat.com>
-Date: Fri, 23 Aug 2024 13:39:00 +0200
+        d=1e100.net; s=20230601; t=1724413162; x=1725017962;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jlruKgWSyuzMsIHMo/qBZLFbjRmtSnM9kjyIrTE/wvg=;
+        b=Dk3sGNvn819QHAVOd2ovhKgmoAwn3laEriOO2u0s/AXEnEujr/PPq1xAn0z1nLMBuC
+         HCZftKMyfY/MQ5dil7RY+fvjx7GUoeF+++IjEzz6Vjej1EflurNzO5ubtZ6CtZfzv+ps
+         pRcsk1i/DdL/LbCdRKwyLmcfI8voDwcLT5Hk1q6g31pMIIxOK5hf07nM9mJKbL8VQJ3N
+         sQdsOmKgsokk+Xo5s+b+p0gGBH1HAziIsH2DQxqdQDhfyz4RHF//6BT9R3q/iV2lbtfB
+         0lRp9F2lK+9LkHkH5Ci4WutS5n/qYpc9z3R3sjxuw4a+SGlM0ocXqiHwiRpChHR28bc+
+         NebQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8GuH4yxxULsjBw9MDsXEWD1Cos3lEZ0sTvoNcC4Hen7u0AAvTOFwgPpoIjfQXDELZonedBt64rA6Ot3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Lr6uzhZQb7SObUBvkDZPMuClzszbj20mYu60+Ew75kajyT5+
+	y4042YRS6GUCIa4bxfJVur/Po+t7iUkK1uggFDUAxnR9Dd+G+dat
+X-Google-Smtp-Source: AGHT+IGFZsbaVFFRPu1XfQgRoVIGdIfcvZRHBov5lLf0J3VMkYh9shDO4B98AiQLhmcrPhVqhMokVg==
+X-Received: by 2002:a2e:bea8:0:b0:2ef:296d:1dd5 with SMTP id 38308e7fff4ca-2f4f4745a34mr18409651fa.0.1724413161623;
+        Fri, 23 Aug 2024 04:39:21 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4047a4ed4sm4527191fa.10.2024.08.23.04.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 04:39:21 -0700 (PDT)
+Date: Fri, 23 Aug 2024 14:39:18 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: ende.tan@starfivetech.com
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	leyfoon.tan@starfivetech.com, minda.chen@starfivetech.com, endeneer@gmail.com
+Subject: Re: [net-next,v2,1/1] net: stmmac: Add dma_wmb() barrier before
+ setting OWN bit in set_rx_owner()
+Message-ID: <hq3rdtfobswczm5aecjezmm5isitquedryhjiw64n4bp2rhqyj@mvhhyanfbmuz>
+References: <20240821060307.46350-1-ende.tan@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm: collect the number of anon large folios
-From: David Hildenbrand <david@redhat.com>
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com,
- ioworker0@gmail.com, kaleshsingh@google.com, kasong@tencent.com,
- linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com,
- yuanshuai@oppo.com, ziy@nvidia.com, usamaarif642@gmail.com
-References: <20240822224015.93186-1-21cnbao@gmail.com>
- <20240822224015.93186-2-21cnbao@gmail.com>
- <7f9e6bf8-ec58-4525-ace6-98ba58de3172@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <7f9e6bf8-ec58-4525-ace6-98ba58de3172@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821060307.46350-1-ende.tan@starfivetech.com>
 
-On 23.08.24 13:31, David Hildenbrand wrote:
-> On 23.08.24 00:40, Barry Song wrote:
->> From: Barry Song <v-songbaohua@oppo.com>
->>
+Hi Tan
+
+On Wed, Aug 21, 2024 at 02:03:07PM +0800, ende.tan@starfivetech.com wrote:
+> From: Tan En De <ende.tan@starfivetech.com>
 > 
-> Nit: "anon large folios" come in two flavors: THP and hugetlb.
+> Currently, some set_rx_owner() callbacks set interrupt-on-completion bit
+> in addition to OWN bit, without inserting a dma_wmb() barrier in
+> between. This might cause missed interrupt if the DMA sees the OWN bit
+> before the interrupt-on-completion bit is set.
 > 
-> I suggest to just call it "anon THP" in the context of both patches
-> subjects/descriptions (sorry, I should have realized that earlier) to
-> make it clearer.
+> Thus, this patch adds dma_wmb() barrier right before setting OWN bit in
+> each of the callbacks. Now that the responsibility of calling dma_wmb()
+> is delegated to the callbacks, let's simplify main driver code by
+> removing dma_wmb() before stmmac_set_rx_owner().
 > 
-> This patch I would call
+> Signed-off-by: Tan En De <ende.tan@starfivetech.com>
+> ---
+> v2:
+> - Avoid introducing a new function just to set the interrupt-on-completion
+>   bit, as it is wasteful to do so.
+> - Delegate the responsibility of calling dma_wmb() from main driver code
+>   to set_rx_owner() callbacks (i.e. let callbacks to manage the low-level
+>   ordering/barrier rather than cluttering up the main driver code).
+> v1:
+> - https://patchwork.kernel.org/project/netdevbpf/patch/20240814092438.3129-1-ende.tan@starfivetech.com/
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c   | 5 ++++-
+>  drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c | 5 +++--
+>  drivers/net/ethernet/stmicro/stmmac/enh_desc.c       | 1 +
+>  drivers/net/ethernet/stmicro/stmmac/norm_desc.c      | 1 +
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c    | 2 --
+>  5 files changed, 9 insertions(+), 5 deletions(-)
 > 
-> "mm: count the number of anonymous THPs per size"
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> index 1c5802e0d7f4..95aea6ad485b 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+> @@ -186,10 +186,13 @@ static void dwmac4_set_tx_owner(struct dma_desc *p)
+>  
+>  static void dwmac4_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+>  {
 
-Oh, and in the cover letter subject you did it right. Just be consistent 
-:) (I don't care if we call it THP or mTHP here, whatever floats your boat)
+> -	p->des3 |= cpu_to_le32(RDES3_OWN | RDES3_BUFFER1_VALID_ADDR);
+> +	p->des3 |= cpu_to_le32(RDES3_BUFFER1_VALID_ADDR);
+>  
+>  	if (!disable_rx_ic)
+>  		p->des3 |= cpu_to_le32(RDES3_INT_ON_COMPLETION_EN);
+> +
+> +	dma_wmb();
+> +	p->des3 |= cpu_to_le32(RDES3_OWN);
+>  }
+>  
+>  static int dwmac4_get_tx_ls(struct dma_desc *p)
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> index fc82862a612c..d76ae833c840 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+> @@ -56,10 +56,11 @@ static void dwxgmac2_set_tx_owner(struct dma_desc *p)
+>  
+>  static void dwxgmac2_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+>  {
+> -	p->des3 |= cpu_to_le32(XGMAC_RDES3_OWN);
+> -
+>  	if (!disable_rx_ic)
+>  		p->des3 |= cpu_to_le32(XGMAC_RDES3_IOC);
+> +
+> +	dma_wmb();
+> +	p->des3 |= cpu_to_le32(XGMAC_RDES3_OWN);
 
--- 
-Cheers,
+I am not against moving the barrier here but really I don't see a firm
+reason of why you can't collect the flags in a local variable and
+then flush it out to the DES3 field.
 
-David / dhildenb
+Getting back to your discussion with Andrew:
+https://lore.kernel.org/netdev/06297829-0bf7-4a06-baaf-e32c39888947@lunn.ch/
+you said:
 
+> I didn't use local variable because I worry about CPU out-of-order execution. 
+> For example,
+> ```
+> local_var = (INT_ON_COMPLETION | OWN)
+> des3 |= local_var
+> ```
+> CPU optimization might result in this
+> ```
+> des3 |= INT_ON_COMPLETION
+> des3 |= OWN
+> ```
+> or worst, out of order like this
+> ```
+> des3 |= OWN
+> des3 |= INT_ON_COMPLETION
+> ```
+
+Why do you think the CPU would split up the pre-initialized local
+variable write into the two-staged write?
+
+Anyway Andrew is right about the descriptors memory nature. It's a
+coherent memory to which the access is expensive and should be
+minimized as much as possible.
+
+-Serge(y)
+
+>  }
+>  
+>  static int dwxgmac2_get_tx_ls(struct dma_desc *p)
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+> index 937b7a0466fc..9219fe69ea44 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+> @@ -289,6 +289,7 @@ static void enh_desc_set_tx_owner(struct dma_desc *p)
+>  
+>  static void enh_desc_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+>  {
+> +	dma_wmb();
+>  	p->des0 |= cpu_to_le32(RDES0_OWN);
+>  }
+>  
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
+> index 68a7cfcb1d8f..d0b703a3346f 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
+> @@ -155,6 +155,7 @@ static void ndesc_set_tx_owner(struct dma_desc *p)
+>  
+>  static void ndesc_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+>  {
+> +	dma_wmb();
+>  	p->des0 |= cpu_to_le32(RDES0_OWN);
+>  }
+>  
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index d9fca8d1227c..859a2c4c9e5c 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4848,7 +4848,6 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
+>  		if (!priv->use_riwt)
+>  			use_rx_wd = false;
+>  
+> -		dma_wmb();
+>  		stmmac_set_rx_owner(priv, p, use_rx_wd);
+>  
+>  		entry = STMMAC_GET_ENTRY(entry, priv->dma_conf.dma_rx_size);
+> @@ -5205,7 +5204,6 @@ static bool stmmac_rx_refill_zc(struct stmmac_priv *priv, u32 queue, u32 budget)
+>  		if (!priv->use_riwt)
+>  			use_rx_wd = false;
+>  
+> -		dma_wmb();
+>  		stmmac_set_rx_owner(priv, rx_desc, use_rx_wd);
+>  
+>  		entry = STMMAC_GET_ENTRY(entry, priv->dma_conf.dma_rx_size);
+> -- 
+> 2.34.1
+> 
+> 
 
