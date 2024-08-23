@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-299204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C25895D17A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D295D17E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 17:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7C9280FE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73295B25580
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB40188A1A;
-	Fri, 23 Aug 2024 15:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C06918859D;
+	Fri, 23 Aug 2024 15:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVoYCTqx"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZEo05le5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B280D189501;
-	Fri, 23 Aug 2024 15:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CFB187FFD;
+	Fri, 23 Aug 2024 15:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427246; cv=none; b=RT+6AvLHbWM2/JwNlnFgFd2p4eQ+chNuO82w/PC7I9xDU/ErvI9fnSittzcIA8tN81NBCudQJG8scqjiHSmnbQaNihHY9sgVMkczpGYFFlf09S7ljqmG4+AwecVW6sToXJeMiLxE4STr/TOWsqalFiPYJgRAghI5CPIgSKhEj+A=
+	t=1724427230; cv=none; b=Wo0mHf4GJZ6SIQhnGTJpVlC3ugVNO5fGJXCkxKDihYYTTBblDKClm+qdee2nun8MPTSWKEyfcavs5Mq8frYmFuXJOWezArhJZgihavgw50PpWmVgsHSXEHuwyauke+suH5T2aNBaFo9uI8ziZgr4ggKbPY9k9kJkdEvarz1dB4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427246; c=relaxed/simple;
-	bh=4Ef2CyBtX8os7pcd6r06D78uQ8gDmdfCBjZSLKkrypo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YEHuhOWax+BjpNP2z/DwoUpO2VicfCcNcA1QzloLeAIOb/buCbqH5md0Ie6CZTC31fAi3HfQfBv6CAZxT0K3JIRKZVsqW3V1XtOTkr0mhrqo8FE5G69k0WiipT6+ABcYhVqfBUxS1cIYMMavucb7nZ8WwtTadyjAyy9tX2jz5i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVoYCTqx; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6bf705959f1so17515106d6.1;
-        Fri, 23 Aug 2024 08:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724427243; x=1725032043; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9etiYnnRxwRg/QPMQ3FRSnJ0KuDh4l5wr2lhwy9ymKs=;
-        b=KVoYCTqxkjm4jRQkyvwmeHhpok7ZnLm6pPZt7vSU2GO9WQjO1YgeJ//Fcu5F9yb4wR
-         NL0V6Qm7J4Kbw8YG2w7Fcox8QNWJ7oeVADJUt/Ngc6JszB0KKLA/roKQiNaGRtPA5m6L
-         irJ+0pqjX8rYyve3RoFm8djoWHwHhUANhRLt98JghOu8UvJUxv5ox4NLiRY1L4k6D/1O
-         Je6E08S5AhiCQK/O42EM8W3bdHaSwtIWeapZeZiR+CilJT1RsTOqf56uQsZjME8QsOpl
-         LHf+L+50CuEZ8xwmWCpxSaPxoyVRofENJo92iX/SmS8weQs36tFrwq/o9yKO2L8kmFql
-         zJcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427243; x=1725032043;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9etiYnnRxwRg/QPMQ3FRSnJ0KuDh4l5wr2lhwy9ymKs=;
-        b=TFhMLcMvpn+6UZVD9OOSKrJ9pRwWCMk2wEOq79ZzT2e+f/asYnTTDHRJJtBnHQhqAu
-         m6FvJVkH41w/AzvXVGdYyoTOC7z9YwfHof4510YKAiDNyZS3Aef0qBcYpGfucTmBGlKn
-         kwZNqXsCQEZlurT+WzjwIpLZm5XmH/8/cFat4QdykIqfylHwr/Fi3NF+VEx9KroNG6Jf
-         LRQXmOmAYhpV7x24W3Aq6XZR7ZXWAi8DYmCRKGGNr4P+hflznyXfXNvPoo8lhMA5EDxw
-         Ifdsw/T8Vnuc2GoIkWpAJpzBbMRZISs8L23I2WoYrdsn+KBZCcAIPFz0Nwt53lp2s10T
-         /drA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9+Z5GlyuBIaZ3PzX5UsCIBWS9Fw1Yj5/7o/rVZwC8HImBkKaxMTKGo05sGNBeVH7FfIt9P4vixgzG@vger.kernel.org, AJvYcCX/cLBVX747M7MAQFJldykVKXYM7EY9BgHYylEnua530xWj7Lo6MegFuW4lMHR36dpL6NBVZN4ZJNQ8aUtF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlh8VFyYWG66NuW1V+i2R6W1q9KMjD+cKVMfK3yFgUiDta0zGO
-	fZNkYKfY3zKWy3cgtJIZZPioSYdLddhQvTeg23/XEhhyOplFgtgk88TgX3MaW5niQmlNy8c8pC+
-	y0byGGQ5YTn/BwL5teineMHV39Ew=
-X-Google-Smtp-Source: AGHT+IGmPoJR9aOXkv5AveTf99brHiAcZWHZzVAF/gpt3nMAbhQG0K50J7cjARmS1sgy7EUnsEkjnlECrKcssQQQ7qI=
-X-Received: by 2002:a05:6214:4904:b0:6bf:6b6e:95b3 with SMTP id
- 6a1803df08f44-6c16d4449aamr49758376d6.1.1724427243349; Fri, 23 Aug 2024
- 08:34:03 -0700 (PDT)
+	s=arc-20240116; t=1724427230; c=relaxed/simple;
+	bh=3BbBDobsZnzKQsmNrxzJR5bd1l54D7ceI2SoF0It+SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=knvKVX4elX9dCY1zdN+/5pIYrRV6pHFbS+MMGK2M542SPuzvrjelbXXUVMZKaHWwmWKn7BjvXAvRVdpoVNPoSJm3cwuoTanycLjl0wp46E/4Q8DCmNZBJO0dToFLC7iLShcDEn/lzrHm7kcPCM012NkYlaBLXFDEh+uNVtwLIDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZEo05le5; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724427229; x=1755963229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3BbBDobsZnzKQsmNrxzJR5bd1l54D7ceI2SoF0It+SM=;
+  b=ZEo05le5OwxeKHBKIt5PFOKcpBtl/3gl5ODIrdOegIPh0zPhBG6x6ANf
+   /fiFogWmqtjIC4QlHgfdnxW3QYb7WtT+c/oZgYJ2/u4JyJLV2vj9R6BcI
+   HH2hNwkb3hp8Y1cJQThSjSsziNIawyDO70i8tpZ+W6Pu/UdKtNz77NZfO
+   LhwPi4qJwnHbLk4HJyId6O0lSY8D6Vhe+bDzr9zJq3G2AepcDamrYvTdh
+   2OnkbDMQOcU7eiOp5VnkoeV1RNCXfWgK3yfT2Pr/Va887AYtuS1WPhirY
+   wY1eT4eBTyuCGSrhVdfkLYrCffnOrwUQgiTQRhZ0xuS3MysIiKXzfwhZ4
+   Q==;
+X-CSE-ConnectionGUID: KPFCnwMzRI+IkiCD0CSYmw==
+X-CSE-MsgGUID: nGzo63FVQj2Mvq49OaUpRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23081594"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="23081594"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 08:33:48 -0700
+X-CSE-ConnectionGUID: x5FJ2yfcRb6Znr+8tyXYKQ==
+X-CSE-MsgGUID: mEJxqwWvRIGGgDB+fUosKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61847840"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 23 Aug 2024 08:33:46 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id D8E55209; Fri, 23 Aug 2024 18:33:44 +0300 (EEST)
+Date: Fri, 23 Aug 2024 18:33:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Rong Qianfeng <rongqianfeng@vivo.com>
+Cc: biju.das.jz@bp.renesas.com,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v3 3/4] i2c: jz4780: Use devm_clk_get_enabled() helpers
+Message-ID: <Zsir2Lo5TM8YKKrY@black.fi.intel.com>
+References: <20240823035116.21590-1-rongqianfeng@vivo.com>
+ <20240823035116.21590-4-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822170440.265055-1-robertcnelson@gmail.com>
- <20240822170440.265055-2-robertcnelson@gmail.com> <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
-In-Reply-To: <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
-From: Robert Nelson <robertcnelson@gmail.com>
-Date: Fri, 23 Aug 2024 10:33:37 -0500
-Message-ID: <CAOCHtYhK36QyKOmQhY+Q31rB23ASoxUXTX+0R1tzK-ZhvvWSLA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
-To: Roger Quadros <rogerq@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>, Jai Luthra <j-luthra@ti.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Jared McArthur <j-mcarthur@ti.com>, 
-	Jason Kridner <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>, 
-	Drew Fustini <drew@beagleboard.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823035116.21590-4-rongqianfeng@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> > +
-> > +&cpsw3g {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&rgmii1_pins_default>, <&gbe_pmx_obsclk>;
->
-> Why do you need OBSCLK for Ethernet MAC?
-> The OBSCLK is connected to the Ethernet PHY via C406 which is not even populated.
-> It seems that the PHY is clocked by a crystal oscillator X5 so doesn't really
-> need OBSCLK in the stock configuration?
+On Fri, Aug 23, 2024 at 11:51:15AM +0800, Rong Qianfeng wrote:
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+> 
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
+> 
+> While at it, no more special handling needed here, remove the goto
+> label "err:".
 
-Ah crap, I'll take a look at this... I bet it's left over from the
-first pcb, (all my first rev pcb's are now locked up so i don't use
-them anymore)..  Seeed/BeagleBoard was playing it safe and designing
-in both options.. Once the internal clocks were verified newer
-revisions removed the external clock.
+...
 
-Yeah, I'm pretty sure final production boards removed every external
-clock option.
+>  	ret = of_property_read_u32(pdev->dev.of_node, "clock-frequency",
+>  				   &clk_freq);
 
-Thanks!
+(side note: this driver should use i2c_timings and respective I2C core
+APIs instead of this)
+
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "clock-frequency not specified in DT\n");
+> -		goto err;
+> +		return ret;
+
+While at it,
+
+		return dev_err_probe(...);
+
+>  	}
+
+>  	i2c->speed = clk_freq / 1000;
+
+(side note: this should be HZ_PER_KHZ from units.h)
+
+>  	if (i2c->speed == 0) {
+>  		ret = -EINVAL;
+>  		dev_err(&pdev->dev, "clock-frequency minimum is 1000\n");
+> -		goto err;
+> +		return ret;
+
+		return dev_err_probe(...);
+
+>  	}
+
+...
+
+>  	ret = platform_get_irq(pdev, 0);
+>  	if (ret < 0)
+> -		goto err;
+> +		return ret;
+>  	i2c->irq = ret;
+
+I would add a blank line here.
+
+>  	ret = devm_request_irq(&pdev->dev, i2c->irq, jz4780_i2c_irq, 0,
+>  			       dev_name(&pdev->dev), i2c);
+>  	if (ret)
+> -		goto err;
+> +		return ret;
+
 
 -- 
-Robert Nelson
-https://rcn-ee.com/
+With Best Regards,
+Andy Shevchenko
+
+
 
