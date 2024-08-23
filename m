@@ -1,83 +1,176 @@
-Return-Path: <linux-kernel+bounces-298819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D259F95CBDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6FB95CBD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839511F213A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF78284B27
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB6188595;
-	Fri, 23 Aug 2024 11:59:07 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51615181B88;
+	Fri, 23 Aug 2024 11:58:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED16188001;
-	Fri, 23 Aug 2024 11:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C65469D;
+	Fri, 23 Aug 2024 11:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414346; cv=none; b=MdfDdkBV1SeOlMGEevS6taPUW9byDtgAhcQs43rsM77383c9SwwXitn7dloRAjCt/N9gLXJY3MSEEqnRoPlrBIYwnMv+wQTVLp0+RZtLagUqKTJJyhMIyvvDsQ5081ibEWliKKw5gDxXCm4wx4Yvc7nJZgfWo+ZeBBZtH7u3JLM=
+	t=1724414306; cv=none; b=eY0xHHzoyOsLt7yvGKHReLS3lz23w8X8KtWaNZ0W2HoPh0arvL7MY9eUt2Fw7cSmaN72hmsSLkSuIgZ5/M/mQiC06LkPJj0G3HEe/8uvYyoWbwlFqo00Uzj0icVHugSBZgjgs//+ORaesqsK8JZ7+Mp94OXgqWElCPQ4I/0u+B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414346; c=relaxed/simple;
-	bh=J6uKXwEWLbE5yHpPJ8L1Zbn5ZceS6YRpK7tmfGN4JP4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k2duQT5aCn8A5Zq2gL9gs4q0M5ULPd1GRWVLAs3HKQUwjtbyOMuAIlQcg/+Bhkk8jaPgQVsiK14PTjznBQu53EvRWy7C4N0eN+2/vNUUGW1k4C3LMwyV6M6cPdxTBgFGiXkA7KRYMrgSesQTeQKCwcl9umr9+yl9ggiMTgWnu78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+	s=arc-20240116; t=1724414306; c=relaxed/simple;
+	bh=9GIYemtz5qiYNCnX3D/zATMXs/6JTh+JyVpzxZFb7w0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sJ+J932V3TJz9ZdgWnVQvYy95yA60NEK9nMk/jtu9AJz5PZmWNuQCnRy4ws7GCOBSzZlOIFo4jpTBx+/6e/sO+cJPUy5PxGvQv9woXtHIFjwByz1vg/NznHWFueqGTgc3GXKMojhdD5dbcTimRoEcnQo+g2/UpVNeWSBSBjbDCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wqz8Q5xRXzpTNf;
-	Fri, 23 Aug 2024 19:57:26 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 51AA5140390;
-	Fri, 23 Aug 2024 19:59:01 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
- 2024 19:59:00 +0800
-From: yangyun <yangyun50@huawei.com>
-To: <miklos@szeredi.hu>
-CC: <josef@toxicpanda.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangyun50@huawei.com>,
-	<lixiaokeng@huawei.com>
-Subject: Re:[PATCH 1/2] fuse: replace fuse_queue_forget with fuse_force_forget if error
-Date: Fri, 23 Aug 2024 19:58:13 +0800
-Message-ID: <20240823115813.4138001-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <CAJfpegviwk5F+39Vz2D4UjLaGpsFZ-26WeDwetjL=hWV4T6S7A@mail.gmail.com>
-References: <CAJfpegviwk5F+39Vz2D4UjLaGpsFZ-26WeDwetjL=hWV4T6S7A@mail.gmail.com>
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wqz5t164tz6DBWm;
+	Fri, 23 Aug 2024 19:55:14 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id F2E0E140A70;
+	Fri, 23 Aug 2024 19:58:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 12:58:22 +0100
+Date: Fri, 23 Aug 2024 12:58:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+CC: <vkoul@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] dma:at_hdmac:Use devm_clk_get_enabled() helpers
+Message-ID: <20240823125821.000032c2@Huawei.com>
+In-Reply-To: <20240823101933.9517-2-liaoyuanhong@vivo.com>
+References: <20240823101933.9517-1-liaoyuanhong@vivo.com>
+	<20240823101933.9517-2-liaoyuanhong@vivo.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, Aug 22, 2024 at 05:26:01PM +0200, Miklos Szeredi wrote:
-> On Sat, 27 Jul 2024 at 12:06, yangyun <yangyun50@huawei.com> wrote:
-> > Since forget is not necessarily synchronous (In my opinion, the pre-this patch use of
-> > synchronous 'fuse_force_forget' is an error case and also not necessarily synchronous),
-> > what about just changing the 'fuse_force_forget' to be asynchronous?
-> 
-> Even less impact would be to move the allocation inside
-> fuse_force_forget (make it GFP_NOFAIL) and still use the
-> fuse_queue_forget() function to send the forget as e.g. virtiofs
-> handles them differently from regular requests.
+On Fri, 23 Aug 2024 18:19:28 +0800
+Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
 
-fuse_force_forget uses the fuse_simple_request with args.force=true and it does not need allocation outside originally, so it is strange for what you said "move the allocation inside fuse_force_forge".
+> Use devm_clk_get_enabled() instead of clk functions in at_hdmac.
 
-I think what you mean is moving the allocation inside fuse_queue_forget, not fuse_force_forget. This can make sense.
+Doesn't this stop the clock being turned of in suspend?
 
-Thanks for your advice. I will update this patch.
+Or is there some magic handling that which I'm not aware of?
+
 
 > 
-> Thanks,
-> Miklos
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> ---
+>  drivers/dma/at_hdmac.c | 22 +++++-----------------
+>  1 file changed, 5 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+> index 40052d1bd0b5..b1e10541cb12 100644
+> --- a/drivers/dma/at_hdmac.c
+> +++ b/drivers/dma/at_hdmac.c
+> @@ -337,7 +337,6 @@ static inline u8 convert_buswidth(enum dma_slave_buswidth addr_width)
+>   * struct at_dma - internal representation of an Atmel HDMA Controller
+>   * @dma_device: dmaengine dma_device object members
+>   * @regs: memory mapped register base
+> - * @clk: dma controller clock
+>   * @save_imr: interrupt mask register that is saved on suspend/resume cycle
+>   * @all_chan_mask: all channels availlable in a mask
+>   * @lli_pool: hw lli table
+> @@ -347,7 +346,6 @@ static inline u8 convert_buswidth(enum dma_slave_buswidth addr_width)
+>  struct at_dma {
+>  	struct dma_device	dma_device;
+>  	void __iomem		*regs;
+> -	struct clk		*clk;
+>  	u32			save_imr;
+>  
+>  	u8			all_chan_mask;
+> @@ -1942,6 +1940,7 @@ static int __init at_dma_probe(struct platform_device *pdev)
+>  	int			err;
+>  	int			i;
+>  	const struct at_dma_platform_data *plat_dat;
+> +	struct clk	*clk;
+>  
+>  	/* setup platform data for each SoC */
+>  	dma_cap_set(DMA_MEMCPY, at91sam9rl_config.cap_mask);
+> @@ -1975,20 +1974,16 @@ static int __init at_dma_probe(struct platform_device *pdev)
+>  	atdma->dma_device.cap_mask = plat_dat->cap_mask;
+>  	atdma->all_chan_mask = (1 << plat_dat->nr_channels) - 1;
+>  
+> -	atdma->clk = devm_clk_get(&pdev->dev, "dma_clk");
+> -	if (IS_ERR(atdma->clk))
+> -		return PTR_ERR(atdma->clk);
+> -
+> -	err = clk_prepare_enable(atdma->clk);
+> -	if (err)
+> -		return err;
+> +	clk = devm_clk_get_enabled(&pdev->dev, "dma_clk");
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+>  
+>  	/* force dma off, just in case */
+>  	at_dma_off(atdma);
+>  
+>  	err = request_irq(irq, at_dma_interrupt, 0, "at_hdmac", atdma);
+>  	if (err)
+> -		goto err_irq;
+> +		return err;
+>  
+>  	platform_set_drvdata(pdev, atdma);
+>  
+> @@ -2105,8 +2100,6 @@ static int __init at_dma_probe(struct platform_device *pdev)
+>  	dma_pool_destroy(atdma->lli_pool);
+>  err_desc_pool_create:
+>  	free_irq(platform_get_irq(pdev, 0), atdma);
+> -err_irq:
+> -	clk_disable_unprepare(atdma->clk);
+>  	return err;
+>  }
+>  
+> @@ -2130,8 +2123,6 @@ static void at_dma_remove(struct platform_device *pdev)
+>  		atc_disable_chan_irq(atdma, chan->chan_id);
+>  		list_del(&chan->device_node);
+>  	}
+> -
+> -	clk_disable_unprepare(atdma->clk);
+>  }
+>  
+>  static void at_dma_shutdown(struct platform_device *pdev)
+> @@ -2139,7 +2130,6 @@ static void at_dma_shutdown(struct platform_device *pdev)
+>  	struct at_dma	*atdma = platform_get_drvdata(pdev);
+>  
+>  	at_dma_off(platform_get_drvdata(pdev));
+> -	clk_disable_unprepare(atdma->clk);
+>  }
+>  
+>  static int at_dma_prepare(struct device *dev)
+> @@ -2194,7 +2184,6 @@ static int at_dma_suspend_noirq(struct device *dev)
+>  
+>  	/* disable DMA controller */
+>  	at_dma_off(atdma);
+> -	clk_disable_unprepare(atdma->clk);
+>  	return 0;
+>  }
+>  
+> @@ -2223,7 +2212,6 @@ static int at_dma_resume_noirq(struct device *dev)
+>  	struct dma_chan *chan, *_chan;
+>  
+>  	/* bring back DMA controller */
+> -	clk_prepare_enable(atdma->clk);
+>  	dma_writel(atdma, EN, AT_DMA_ENABLE);
+>  
+>  	/* clear any pending interrupt */
+
 
