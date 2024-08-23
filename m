@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-298101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA5395C24B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:21:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B2295C261
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 02:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4901F23EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E20283862
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 00:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC53D51A;
-	Fri, 23 Aug 2024 00:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA88111A1;
+	Fri, 23 Aug 2024 00:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1PjvAtt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp0Ug81o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E440B66F;
-	Fri, 23 Aug 2024 00:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B9EBA46;
+	Fri, 23 Aug 2024 00:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724372468; cv=none; b=fRofdG64q1lnDfH6MXOR5v6+ZUQeOTpl7XrX2vdw7CTx+4aH0rysIKkdyu7qQJ3gu71MpK0eMCU1vvNRAEIaBTI5RxOB1IEKTzR0XbujuT6ctR2TLy3cBHFCbf1IfjpJF5bgo7u6/lQTXm6XAsK8638q1Q8eyztt8DeaM3G9ENg=
+	t=1724372643; cv=none; b=KqKVHUhAFAXTPFVxzT+Asz2EAw0rOuBsnyWjK09gUZIKtnnlmoClTNaX9tgMe1adoAUjtR6+FwCE2DJqcDAwaJkfsCzsZv2g062gZyUQTzkA0KPJrPOeTCvB84B0Mhys9FZOU7R4YPpuqaecMM2NiCPijIVnyv699lNEyRSe1UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724372468; c=relaxed/simple;
-	bh=ztMGBRwSXyZVCArMNbSo7WIxlHtGw+CbddsI7Azg6hI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WRm8Iyj8OlXXKwF3m0HiL0o+jWLbA+5/wndrD87Kbj6Bl+69jc7f3seQJkeSE7ip9JYcbeSEZRRw76Uu2eu/LzYyIgI5tUmJHrw2hE5nEgD1iB6rzjnlCJXidFt+bSR/CTWhEzBv4WwYQhxATLte1qsYa+JQyK0k2CUSb119+4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1PjvAtt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE12C32782;
-	Fri, 23 Aug 2024 00:21:07 +0000 (UTC)
+	s=arc-20240116; t=1724372643; c=relaxed/simple;
+	bh=Lfa+jEqCITXRWgdOmQ2JKwJx+fGjGw9EOWy2Nx4XtAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qww9r8vFr1KuMqgeYcYtANcGnjxhJafSn4q4mxaHEk+VMTXKKsXbLR4B6nm3kZVAzBMgKYkjLofti1En7jvk6AmiolC2FlwZx5KInOPCSYY7hbIsfZN0Ptc7+XacC+POgW1ilEfC4XUboUdaVzQDdI+1i+zd5Q0N/lTbKpLGsdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp0Ug81o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EB7C32782;
+	Fri, 23 Aug 2024 00:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724372468;
-	bh=ztMGBRwSXyZVCArMNbSo7WIxlHtGw+CbddsI7Azg6hI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q1PjvAtt2Eyezud2yRCDBzOTyyL+OoqeHZH01mpzrAAKKT/M8+va6AHf+2NaD727m
-	 c6+3/3+YX2TaeyPrNBNeaZnoAhd4MCdLORgr3Rx25320u+nlbop4U1NZwAFJeZ+T+y
-	 h4BVQAULwbiBKr0GLE64/3sGwfY9A8S/9z/hGQzWh/CPwEs37NEsVi4J3KIaW6uoPm
-	 wVpPjeGvT1UCEmnNB5S8q7X9WGwhAHun3gMweRqqanRueX9ux2fj/RG/DivCqp9oJe
-	 zIRQEL/ZoIRy6gCEf4Y3xICuzXVOnZvEbFpUgx1+yPeNsUjCLyWpoia8T7lY9HUUNW
-	 0XGWEIwf2DlTg==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: DAMON Beer/Coffee/Tea chat reminder (was: Re: DAMON Beer/Coffee/Tea chat reminder and extending for office hour)
-Date: Thu, 22 Aug 2024 17:21:05 -0700
-Message-Id: <20240823002105.112390-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240519163329.150340-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1724372642;
+	bh=Lfa+jEqCITXRWgdOmQ2JKwJx+fGjGw9EOWy2Nx4XtAs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mp0Ug81olGx7mmEtbFl9yK+S1CFx5NRHHTFNy0ZYG7SgpUN2boOQS3kR9XujUbTMF
+	 dAProY9V/ZsjM4qYW8HngPrxInFmiQpvR+gmrYRwRsV3+TC7+mGQcbZizR6pQUHC08
+	 aHt4ANmEbGdylCT/u3gwYLMTjXas7TOz7MYa/6Rr53BWM8Xsqc8LIQMKx5F1ja0EED
+	 pb+vBezbOhBAgy3RIq//Wj93VWLaZvjcMrWV9Jvq1lA4JactWrue4RJIrSNM3v97t7
+	 Gp4BvveeARn+Tlqo67B1mhP3+tgD2rzIFX5wQz6GuPnYvG5BPSFa86s5JdsMwCyCOZ
+	 URDGbm1eUEQAQ==
+Date: Thu, 22 Aug 2024 17:24:01 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <u.kleine-koenig@pengutronix.de>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] net: ftgmac100: Get link speed and duplex for NC-SI
+Message-ID: <20240822172401.43fe8dd2@kernel.org>
+In-Reply-To: <20240822031945.3102130-1-jacky_chou@aspeedtech.com>
+References: <20240822031945.3102130-1-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 22 Aug 2024 11:19:45 +0800 Jacky Chou wrote:
+> The ethtool of this driver uses the phy API of ethtool
+> to get the link information from PHY driver.
+> Because the NC-SI is forced on 100Mbps and full duplex,
+> the driver connects a fixed-link phy driver for NC-SI.
 
-On Sun, 19 May 2024 09:33:29 -0700 SeongJae Park <sj@kernel.org> wrote:
-> On Wed, 10 Aug 2022 22:51:02 +0000 SeongJae Park <sj@kernel.org> wrote:
+replace: the driver connects -> connect
+
+> The ethtool will get the link information from the
+> fixed-link phy driver.
+
+Hm. I defer to the PHY experts on the merits.
+
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+> v2:
+>   - use static for struct fixed_phy_status ncsi_phy_status
+>   - Stop phy device at net_device stop when using NC-SI.
+>   - Start phy device at net_device start when using NC-SI.
+> ---
+>  drivers/net/ethernet/faraday/ftgmac100.c | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
 > 
-> > Hello,
-> > 
-> > 
-> > In short, I'd like to start an open, regular, and informal virtual bi-weekly
-> > meeting series for DAMON community.
-> > 
-> > Important links and dates
-> > -------------------------
-> > 
-> > Location: https://meet.google.com/ndx-evoc-gbu
-> > Agenda: https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-> 
-[...]
-> Firstly, I will regularly provide reminder of the series, probably 1-2 days
-> before every instance.
-> 
-> Secondly, I'm extending this series for reservation-based office hour.  That
-> is, I will reserve my time for 30 minutes every two weeks, keep the schedule
-> public, and encourage people to reserve the time for discussion on a special
-> topic for them.  The reservation should be made at least one day before the
-> time slot, and will be first-come first-served basis.  In detail, I will
-> reserve Monday afternoon or Tuesday morning of the group chat scheduled week.
-> Note that this is not necessarily only time slot for such discussion.  You're
-> still encouraged to schedule private meetings on your convenience.
+> diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
+> index fddfd1dd5070..93862b027be0 100644
+> --- a/drivers/net/ethernet/faraday/ftgmac100.c
+> +++ b/drivers/net/ethernet/faraday/ftgmac100.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/of_net.h>
+>  #include <net/ip.h>
+>  #include <net/ncsi.h>
+> +#include <linux/phy_fixed.h>
 
-So, yet another reminder.
+Keep the headers sorted, put the new one after of_net.h
 
-Due to some conflicts, there are some changes to the schedule as following.
-The meetings that originally scheduled for the last week of August have
-rescheduled to first week of September.  The meetings originally scheduled for
-the second week of September has cancelled.
+>  #include "ftgmac100.h"
+>  
 
-Dedicated-topic discussions
----------------------------
+> @@ -1794,6 +1805,7 @@ static int ftgmac100_probe(struct platform_device *pdev)
+>  	struct net_device *netdev;
+>  	struct ftgmac100 *priv;
+>  	struct device_node *np;
+> +	struct phy_device *phydev;
 
-Next three time slots that I reserved in advance for possible future dedicated
-topic discussions are as below.
+keep the variable declarations sorted longest to shortest if possible
 
-- 2024-09-02 (Mon) 18:00 PT (reserved)
-- 2024-09-24 (Tue) 09:30 PT (not yet reserved)
+>  	int err = 0;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -1879,6 +1891,14 @@ static int ftgmac100_probe(struct platform_device *pdev)
+>  			err = -EINVAL;
+>  			goto err_phy_connect;
+>  		}
+> +
+> +		phydev = fixed_phy_register(PHY_POLL, &ncsi_phy_status, NULL);
+> +		err = phy_connect_direct(netdev, phydev, ftgmac100_adjust_link,
+> +					 PHY_INTERFACE_MODE_MII);
+> +		if (err) {
+> +			dev_err(&pdev->dev, "Connecting PHY failed\n");
+> +			goto err_phy_connect;
+> +		}
 
-Please reach out to me (sj@kernel.org or whatever) to reserve the
-not-yet-reserved time slots for your topics.  The reservation is made in a
-First-Come First-Served way, and I will send a Google Meet link to
-reservation-confirmed attendees.  Sorry for any inconvenience.
-
-Please note that other time slots are also available based on the discussion.
-
-Any-topic discussions
----------------------
-
-Next two chat instance for any topic (no reservation is required) are scheduled
-as below:
-
-- 2024-09-03 (Tue) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
-- 2024-09-23 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
-
-Shared Calendar
----------------
-
-You can get the schedule via this shared Google Calendar:
-https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
-
-You can also get the past and upcoming schedules via
-https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-
-
-Thanks,
-SJ
-
-[...]
+Very suspicious that you register it but you never unregister it.
+Are you sure the error path and .remove don't need to be changed?
+-- 
+pw-bot: cr
 
