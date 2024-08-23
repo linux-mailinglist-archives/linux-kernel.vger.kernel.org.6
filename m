@@ -1,114 +1,85 @@
-Return-Path: <linux-kernel+bounces-298605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7790395C94F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C418595C951
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DA0286003
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8084D285FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1494C14C584;
-	Fri, 23 Aug 2024 09:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B440514C581;
+	Fri, 23 Aug 2024 09:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MIObJiob"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ijDn3QUy"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4E13A86C;
-	Fri, 23 Aug 2024 09:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BAE13A86C
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724405637; cv=none; b=BLt/OZllwYY1+gHA4ioD7DTXPK1dPGYF8e+wJuBQu1O1ZFaooIdE06dki7w3gYMmwW5pZ3U8bHnCJEiC/drhdcuo0dFoK7LjWvWkg0h9K630640GjGmz2pahwfE9ovL3g6hMWG2jGcAdts4yiHUuzObz9QdNVP0tOKccAK/qD98=
+	t=1724405714; cv=none; b=HcO/yiVjfkXsYuviMfHtL9ifw/Gmz9/jzc4PDhhbohAxwiIO+fSQ/ZV/s45jPipcIP3UN1QB6HEpd0Ikr99SU7RNlRH19gFPzguJ4ILX/RQYFKIbUCQpwJNco4vm977n61fPE3a+cE6STQ2gKd0lUX+asC95DsgKRDTEX56eaLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724405637; c=relaxed/simple;
-	bh=94Oj+6Hrgb9H/+EtnwJQvyp/Aoq0Ek+bMHAQYtZ3rNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YpcKVSAODsysnrIHPnoairFru4PH57Br7l5HcH4yMJRf1vZWI8+YlU30rhg1gMdZrCyFuP4+/YAIcb0QaC9sreBokyDujau55IAUMx5d+QUSrsBhEnr2vwzhz0uejvDwMc8YjVn/BbC9c8X0L4lptZO9aooX+Rp4o31l1HslJWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MIObJiob; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VSF0ofpqVbXipZjEn2ptobw3B3A2X9stUgfiIscvRIA=; b=MIObJiobwizHAH4f2xl+A2u+a8
-	J+AB8MybckpNLriEASHgl19CpzbLeJDJ/sNbbvxT0f7AxAZvto7rgfG6XMZFIiT8X6qm3hDO+1pHx
-	0gX1jcWYT6RmjkGqS6ELqqmJqQ99JkuDes2StMr/E791bFH86B4SIwzDl+lmhTFYzZx9PrKRo8XYc
-	wgVJo/+5bWQHbKz4WgdQJ+A8RTXU75QuTFFWiBC9HLKgJw0oP3aD06ecgmQaFEODEgk44lCscrXaq
-	OP0cD1euUqu1GrsgnFr/bhGtFgV5L4mnmUzDKGwZ3x1guNrMyx1XhEGvKMP5hZ1MWsxbE+234zYcD
-	C7D95/Lg==;
-Received: from i5e861933.versanet.de ([94.134.25.51] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1shQg5-0003r5-2j; Fri, 23 Aug 2024 11:33:53 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- mika.westerberg@linux.intel.com, andriy.shevchenko@linux.intel.com,
- tao.huang@rock-chips.com, finley.xiao@rock-chips.com,
- tim.chen@rock-chips.com, elaine.zhang@rock-chips.com,
- Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v2] gpio: rockchip: resolve overflow issues
-Date: Fri, 23 Aug 2024 11:34:34 +0200
-Message-ID: <2735393.uZKlY2gecq@diego>
-In-Reply-To: <20240823034314.62305-4-ye.zhang@rock-chips.com>
-References:
- <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-4-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1724405714; c=relaxed/simple;
+	bh=hxszrgTfu5DNhhdPZSdbfApdD3WFlV5mkaDhlcVV7ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMLKWtbCSb+vgAdg3Mv6mE6xr3sNLGlC7rMub95HmgJhXIcCDUF0ZGYRF634RQ7lAPPpkrbmn8dnATBaoAdT+0TwMsXrVvG02s16b7POfZ91Jxpi357o65GLa0mCJclgiPZTVaWBNSkG5PN/G1gk/uB+mfqpMl4b9H6rT6yFi0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ijDn3QUy; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 629E040007;
+	Fri, 23 Aug 2024 09:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724405703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hxszrgTfu5DNhhdPZSdbfApdD3WFlV5mkaDhlcVV7ww=;
+	b=ijDn3QUy55N0MEtS815dDTilIs7DaSEADkeOC3jOjoYnF0SoBqpeVURSJ605Aub4C1lf/f
+	zwYWLkDilxj/kQwRD1+xf29EdMQVcB0CJZLBSSN5kGXkKGpVdT80/y6mS2N5AiMlivGLSv
+	q37IMDSFiWyuZWx+HN2rhd2xj8tKystOTz0HmhXt+o3z5HYokggi24awKo2IZGKI7h9X2y
+	g9+sE84+u1KlkJQUjcqPHa+WkcmbwI4bpIAUNObN5Ku30iSc54KHWPuMrY/fcartQqP2V7
+	hRnzfyiT1CrRHGpSYouJyESM1rHUh9jZhoYPSwtVbkEccQV5GaQzPGJb8y4gxw==
+Date: Fri, 23 Aug 2024 11:34:58 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Regression on Macchiatobin from the irqchip driver
+Message-ID: <20240823113458.7540bf0a@fedora-3.home>
+In-Reply-To: <87frqvh9wz.ffs@tglx>
+References: <20240821165034.1af97bad@fedora-3.home>
+	<87frqvh9wz.ffs@tglx>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Am Freitag, 23. August 2024, 05:43:06 CEST schrieb Ye Zhang:
-> Prevent overflow issues when performing debounce-related calculations.
+Hello Thomas,
 
-Please add some more explanation here.
-I.e. something about previous max_debounce calculation does overflow
-the type of max_debounce
+On Fri, 23 Aug 2024 11:21:16 +0200
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Thanks
-Heiko
+> It obviously is the proper solution check after use is pretty pointless
+> as you demonstrated. Care to send a proper patch?
 
-> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-> ---
->  drivers/gpio/gpio-rockchip.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 5f60162baaeb..bf22b103b6a2 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -209,11 +209,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
->  		freq = clk_get_rate(bank->db_clk);
->  		if (!freq)
->  			return -EINVAL;
-> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
-> +		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
-> +		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
->  		if (debounce > max_debounce)
->  			return -EINVAL;
->  
-> -		div = debounce * freq;
-> +		div = (u64)debounce * freq;
->  		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
->  	} else {
->  		div_debounce_support = false;
-> 
+Sure :)
 
+Thanks,
 
-
-
+Maxime
 
