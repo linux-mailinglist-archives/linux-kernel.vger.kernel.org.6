@@ -1,82 +1,56 @@
-Return-Path: <linux-kernel+bounces-298284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7905A95C528
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:08:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056CB95C532
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE8F284237
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C232844EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F7D6A022;
-	Fri, 23 Aug 2024 06:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41ED6F30C;
+	Fri, 23 Aug 2024 06:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VHFURTGY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yyF0oWmb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F36238F86
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB06F8493;
+	Fri, 23 Aug 2024 06:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724393307; cv=none; b=LNVWqiOWoPrjCJNZPWX/FDEh4526xKFskqRrZQGm0cHszWKFWKtE6sflMcJvCDRoioA+aaH2KqDVAgFSswEnzPmY+DvuMhDcyJKgw7LsxzhiZhObfDuPMVmeIJWtIkyTJtQrTgtJtdQECUhb6cnfVvp2SI8LvMpMq/tlNzok1Ec=
+	t=1724393509; cv=none; b=D4Tj/WiVFGp3U8Ve/0aHPtieHAblXLdnA8TEBkoJd5LGIQxF9yP1rjfeDHJ9nUzzbtlb+h3QMjZKFu/FgvI3fPsvQwLh3V2Jknx9hchYRHYj9gCupKc11ujRg9j2046muNfN5RkzOrtLvHRasFHQBV529onZrvEqGzADd0QD35c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724393307; c=relaxed/simple;
-	bh=dPhXr+hD6ZN29T/5TkYTIUWMPmZrAWv6QTFR9OkTgys=;
+	s=arc-20240116; t=1724393509; c=relaxed/simple;
+	bh=rZRxZusxBHotNQZhqeg8CxgvISn6IPndzeerII7HRnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dRRi6QerFG7whciMfq79YxBAC5UZfrHaIiCJOjwgMFRoO1wCehJ4+Ct4ERwcdvVZFJuI5FlFp0fljbr6SuqE09HY7rw8db+JbvNIEUqGz4tWP1TZUy/Qse1rOjwhLGfIER1tV8jJr/wQq6T2kFZNGQJiU9Ox9g3PcGTK4lEfCVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VHFURTGY; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724393305; x=1755929305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dPhXr+hD6ZN29T/5TkYTIUWMPmZrAWv6QTFR9OkTgys=;
-  b=VHFURTGYV/GCR3zvw5/LPQN5YFZ8uabKUhWoF7i6xvfT9JmO80Co7LWV
-   8y/dLJ8pCJYuxaxTKIV6GxOBrHJ7/rEn3M+vmClxT/3PjPcCe+Yw9ffS9
-   2Q6KEoKK4iIj4hYpx7KM+9I7GFo0xif1wqDRFYPb/PDfG2bPSVFPEbeQb
-   ZNLJ1HGb/9TgoD/G2pSGjlWiRrTPfLiHAvt5dSjCQ4xTAPf+fCSWDqyPZ
-   1m86E8CaSKTWg98OCdCrSeGnRT/jdC494ePGsAWzXpcE5VGTs0PADmJPs
-   Uu4t6ZknyFE9NChuzZI4QYP8joA+NZHvtuU81HhlXzoupLKzHoygJBnsz
-   g==;
-X-CSE-ConnectionGUID: f2lZzahwQYCy08Ggt3TCrA==
-X-CSE-MsgGUID: waPLI5MsR5eTQpWrrDm3eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="23026901"
-X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
-   d="scan'208";a="23026901"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 23:08:24 -0700
-X-CSE-ConnectionGUID: Xn7VaqTCRMyvOPOkPH4kjA==
-X-CSE-MsgGUID: ZxI+t+V6TJONCXA7lriBJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
-   d="scan'208";a="66521740"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 22 Aug 2024 23:08:20 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shNT7-000DXO-0o;
-	Fri, 23 Aug 2024 06:08:17 +0000
-Date: Fri, 23 Aug 2024 14:08:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, harry.wentland@amd.com,
-	sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com, christian.koenig@amd.com,
-	Xinhui.Pan@amd.com, airlied@gmail.com, daniel@ffwll.ch,
-	nicholas.kazlauskas@amd.com, Charlene.Liu@amd.com,
-	chiahsuan.chung@amd.com, hamza.mahfooz@amd.com,
-	sungjoon.kim@amd.com, syed.hassan@amd.com, roman.li@amd.com,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ruanjinjie@huawei.com
-Subject: Re: [PATCH -next v2 RESEND] drm/amd/display: Remove unused
- dcn35_fpga_funcs
-Message-ID: <202408231338.Egp42Fkn-lkp@intel.com>
-References: <20240822015819.3356282-1-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zcn9CDrRq8O0Uup1HbiIIqdVbplPEwLRAuTehxxdVQRWDgx+fAs41VNQLuY4465X3e70vsJ6RiqJqyU+AAwpc/J9gBgzx7nfWWOF+nCc1+o8hx29F+HgMHjwrGbHffeyKUWgor8z3+vPlVpNqqSF7M5GgpDPm7Rm8riItNJ4H94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yyF0oWmb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CCAC32786;
+	Fri, 23 Aug 2024 06:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724393508;
+	bh=rZRxZusxBHotNQZhqeg8CxgvISn6IPndzeerII7HRnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yyF0oWmbAfs0WsC0hJUQEocgguWd1sQWMv5hKpZ5WGqUE2kR9E+hnvMopNfC7UgEt
+	 OqO6XD+MMLlKABq9qKRPWk1sjrE57i3unYEwxy3L/BBPmQdXH+NeDSrNMg+Ti/6uq4
+	 JFkuH8afvVYD8KMm2CseQiriM6w+vjLul30ST7pQ=
+Date: Fri, 23 Aug 2024 14:11:45 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] driver core: Fix an uninitialized variable is used by
+ __device_attach()
+Message-ID: <2024082349-democrat-cough-bf77@gregkh>
+References: <20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com>
+ <ZsfRqT9d6Qp_Pva5@google.com>
+ <04c58410-13c8-4e50-a009-5715af0cded3@icloud.com>
+ <2024082318-labored-blunderer-a897@gregkh>
+ <Zsfk-9lf1sRMgBqE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,119 +59,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822015819.3356282-1-ruanjinjie@huawei.com>
+In-Reply-To: <Zsfk-9lf1sRMgBqE@google.com>
 
-Hi Jinjie,
+On Thu, Aug 22, 2024 at 06:25:15PM -0700, Dmitry Torokhov wrote:
+> On Fri, Aug 23, 2024 at 09:14:12AM +0800, Greg Kroah-Hartman wrote:
+> > On Fri, Aug 23, 2024 at 08:46:12AM +0800, Zijun Hu wrote:
+> > > On 2024/8/23 08:02, Dmitry Torokhov wrote:
+> > > > Hi,
+> > > > 
+> > > > On Fri, Aug 23, 2024 at 07:46:09AM +0800, Zijun Hu wrote:
+> > > >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> > > >>
+> > > >> An uninitialized variable @data.have_async may be used as analyzed
+> > > >> by the following inline comments:
+> > > >>
+> > > >> static int __device_attach(struct device *dev, bool allow_async)
+> > > >> {
+> > > >> 	// if @allow_async is true.
+> > > >>
+> > > >> 	...
+> > > >> 	struct device_attach_data data = {
+> > > >> 		.dev = dev,
+> > > >> 		.check_async = allow_async,
+> > > >> 		.want_async = false,
+> > > >> 	};
+> > > >> 	// @data.have_async is not initialized.
+> > > > 
+> > > > No, in the presence of a structure initializer fields not explicitly
+> > > > initialized will be set to 0 by the compiler.
+> > > > 
+> > > really?
+> > > do all C compilers have such behavior ?
+> > 
+> > Oh wait, if this were static, then yes, it would all be set to 0, sorry,
+> > I misread this.
+> > 
+> > This is on the stack so it needs to be zeroed out explicitly.  We should
+> > set the whole thing to 0 and then set only the fields we want to
+> > override to ensure it's all correct.
+> 
+> No we do not. ISO/IEC 9899:201x 6.7.9 Initialization:
+> 
+> "21 If there are fewer initializers in a brace-enclosed list than there
+> are elements or members of an aggregate, or fewer characters in a string
+> literal used to initialize an array of known size than there are
+> elements in the array, the remainder of the aggregate shall be
+> initialized implicitly the same as objects that have static storage
+> duration."
+> 
+> That is why you can 0-initialize a structure by doing:
+> 
+> 	struct s s1 = { 0 };
+> 
+> or even
+> 
+> 	struct s s1 = { };
 
-kernel test robot noticed the following build errors:
+{sigh}  I always get this wrong, also there's the question "are holes
+in the structure also set to 0" which as you can see from the above
+spec, should also be true.  But numerous places in the kernel explicitly
+use memset() to "make sure" of that.
 
-[auto build test ERROR on next-20240821]
+thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/drm-amd-display-Remove-unused-dcn35_fpga_funcs/20240822-095139
-base:   next-20240821
-patch link:    https://lore.kernel.org/r/20240822015819.3356282-1-ruanjinjie%40huawei.com
-patch subject: [PATCH -next v2 RESEND] drm/amd/display: Remove unused dcn35_fpga_funcs
-config: i386-randconfig-006-20240823 (https://download.01.org/0day-ci/archive/20240823/202408231338.Egp42Fkn-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240823/202408231338.Egp42Fkn-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408231338.Egp42Fkn-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:989:13: error: 'dcn35_update_clocks_fpga' defined but not used [-Werror=unused-function]
-     989 | static void dcn35_update_clocks_fpga(struct clk_mgr *clk_mgr,
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:982:13: error: 'dcn35_init_clocks_fpga' defined but not used [-Werror=unused-function]
-     982 | static void dcn35_init_clocks_fpga(struct clk_mgr *clk_mgr)
-         |             ^~~~~~~~~~~~~~~~~~~~~~
-   cc1: all warnings being treated as errors
-
-
-vim +/dcn35_update_clocks_fpga +989 drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-
-93a66cef607cfe Sung Joon Kim 2023-08-18   981  
-8774029f76b980 Qingqing Zhuo 2023-08-02  @982  static void dcn35_init_clocks_fpga(struct clk_mgr *clk_mgr)
-8774029f76b980 Qingqing Zhuo 2023-08-02   983  {
-f2a905b01c6dcc Eric Yang     2024-01-16   984  	init_clk_states(clk_mgr);
-8774029f76b980 Qingqing Zhuo 2023-08-02   985  
-8774029f76b980 Qingqing Zhuo 2023-08-02   986  /* TODO: Implement the functions and remove the ifndef guard */
-8774029f76b980 Qingqing Zhuo 2023-08-02   987  }
-8774029f76b980 Qingqing Zhuo 2023-08-02   988  
-8774029f76b980 Qingqing Zhuo 2023-08-02  @989  static void dcn35_update_clocks_fpga(struct clk_mgr *clk_mgr,
-8774029f76b980 Qingqing Zhuo 2023-08-02   990  		struct dc_state *context,
-8774029f76b980 Qingqing Zhuo 2023-08-02   991  		bool safe_to_lower)
-8774029f76b980 Qingqing Zhuo 2023-08-02   992  {
-8774029f76b980 Qingqing Zhuo 2023-08-02   993  	struct clk_mgr_internal *clk_mgr_int = TO_CLK_MGR_INTERNAL(clk_mgr);
-8774029f76b980 Qingqing Zhuo 2023-08-02   994  	struct dc_clocks *new_clocks = &context->bw_ctx.bw.dcn.clk;
-8774029f76b980 Qingqing Zhuo 2023-08-02   995  	int fclk_adj = new_clocks->fclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02   996  
-8774029f76b980 Qingqing Zhuo 2023-08-02   997  	/* TODO: remove this after correctly set by DML */
-8774029f76b980 Qingqing Zhuo 2023-08-02   998  	new_clocks->dcfclk_khz = 400000;
-8774029f76b980 Qingqing Zhuo 2023-08-02   999  	new_clocks->socclk_khz = 400000;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1000  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1001  	/* Min fclk = 1.2GHz since all the extra scemi logic seems to run off of it */
-8774029f76b980 Qingqing Zhuo 2023-08-02  1002  	//int fclk_adj = new_clocks->fclk_khz > 1200000 ? new_clocks->fclk_khz : 1200000;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1003  	new_clocks->fclk_khz = 4320000;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1004  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1005  	if (should_set_clock(safe_to_lower, new_clocks->phyclk_khz, clk_mgr->clks.phyclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1006  		clk_mgr->clks.phyclk_khz = new_clocks->phyclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1007  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1008  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1009  	if (should_set_clock(safe_to_lower, new_clocks->dcfclk_khz, clk_mgr->clks.dcfclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1010  		clk_mgr->clks.dcfclk_khz = new_clocks->dcfclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1011  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1012  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1013  	if (should_set_clock(safe_to_lower,
-8774029f76b980 Qingqing Zhuo 2023-08-02  1014  			new_clocks->dcfclk_deep_sleep_khz, clk_mgr->clks.dcfclk_deep_sleep_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1015  		clk_mgr->clks.dcfclk_deep_sleep_khz = new_clocks->dcfclk_deep_sleep_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1016  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1017  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1018  	if (should_set_clock(safe_to_lower, new_clocks->socclk_khz, clk_mgr->clks.socclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1019  		clk_mgr->clks.socclk_khz = new_clocks->socclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1020  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1021  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1022  	if (should_set_clock(safe_to_lower, new_clocks->dramclk_khz, clk_mgr->clks.dramclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1023  		clk_mgr->clks.dramclk_khz = new_clocks->dramclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1024  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1025  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1026  	if (should_set_clock(safe_to_lower, new_clocks->dppclk_khz, clk_mgr->clks.dppclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1027  		clk_mgr->clks.dppclk_khz = new_clocks->dppclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1028  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1029  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1030  	if (should_set_clock(safe_to_lower, fclk_adj, clk_mgr->clks.fclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1031  		clk_mgr->clks.fclk_khz = fclk_adj;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1032  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1033  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1034  	if (should_set_clock(safe_to_lower, new_clocks->dispclk_khz, clk_mgr->clks.dispclk_khz)) {
-8774029f76b980 Qingqing Zhuo 2023-08-02  1035  		clk_mgr->clks.dispclk_khz = new_clocks->dispclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1036  	}
-8774029f76b980 Qingqing Zhuo 2023-08-02  1037  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1038  	/* Both fclk and ref_dppclk run on the same scemi clock.
-8774029f76b980 Qingqing Zhuo 2023-08-02  1039  	 * So take the higher value since the DPP DTO is typically programmed
-8774029f76b980 Qingqing Zhuo 2023-08-02  1040  	 * such that max dppclk is 1:1 with ref_dppclk.
-8774029f76b980 Qingqing Zhuo 2023-08-02  1041  	 */
-8774029f76b980 Qingqing Zhuo 2023-08-02  1042  	if (clk_mgr->clks.fclk_khz > clk_mgr->clks.dppclk_khz)
-8774029f76b980 Qingqing Zhuo 2023-08-02  1043  		clk_mgr->clks.dppclk_khz = clk_mgr->clks.fclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1044  	if (clk_mgr->clks.dppclk_khz > clk_mgr->clks.fclk_khz)
-8774029f76b980 Qingqing Zhuo 2023-08-02  1045  		clk_mgr->clks.fclk_khz = clk_mgr->clks.dppclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1046  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1047  	// Both fclk and ref_dppclk run on the same scemi clock.
-8774029f76b980 Qingqing Zhuo 2023-08-02  1048  	clk_mgr_int->dccg->ref_dppclk = clk_mgr->clks.fclk_khz;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1049  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1050  	/* TODO: set dtbclk in correct place */
-8774029f76b980 Qingqing Zhuo 2023-08-02  1051  	clk_mgr->clks.dtbclk_en = true;
-8774029f76b980 Qingqing Zhuo 2023-08-02  1052  	dm_set_dcn_clocks(clk_mgr->ctx, &clk_mgr->clks);
-8774029f76b980 Qingqing Zhuo 2023-08-02  1053  	dcn35_update_clocks_update_dpp_dto(clk_mgr_int, context, safe_to_lower);
-8774029f76b980 Qingqing Zhuo 2023-08-02  1054  
-8774029f76b980 Qingqing Zhuo 2023-08-02  1055  	dcn35_update_clocks_update_dtb_dto(clk_mgr_int, context, clk_mgr->clks.ref_dtbclk_khz);
-8774029f76b980 Qingqing Zhuo 2023-08-02  1056  }
-8774029f76b980 Qingqing Zhuo 2023-08-02  1057  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+greg k-h
 
