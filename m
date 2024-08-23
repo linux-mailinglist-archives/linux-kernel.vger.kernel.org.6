@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-298208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B09F95C3D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:45:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0C695C3B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 05:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E04BE1F23DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170241F2386C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 03:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423D53FBB2;
-	Fri, 23 Aug 2024 03:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065293611E;
+	Fri, 23 Aug 2024 03:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aQYmE+WA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cIZtxTiQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD9F358A7;
-	Fri, 23 Aug 2024 03:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2877923AB;
+	Fri, 23 Aug 2024 03:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724384701; cv=none; b=UWCOS45FnfDuhqLjfw45vOdVIKs6qdSFhiZCJB04qBvzviiqC/zwNvPWVgH6NQh3v4Jc0YVJ3kzeE2aiiVz69u1zvmSUzYn7Uy7doQAAcqtSHCSj7ENmtYvea2yocaqhAn1royIN8nWITzDdD7L4aa16DnIDq+w2Q/wz8h/Fe6U=
+	t=1724383444; cv=none; b=BcaIidizOBwZ4y+wouKQhD7IEeLX0ukt0TAJZ4OT4PuckwwuIPvfFY93gRqWJfSVfIqKJE9UnkBtpd24FaNr1mAwOq6NwEVGWmKuWFrCW5JU5vs8OLYsik01pD+lSQl+VYWoU77jjcZwwU1LpIbFvAyyFhZ7EXXig2qkqOqRjss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724384701; c=relaxed/simple;
-	bh=f5j4T1zuHheYIty0ZNULjnN6/85Piw7KvBoRvCArUZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ruf4kgdiufkPm17jqA8zZsmlQJb4W2Ks+UjNMLjbcYDw+nEOQ13bhe0vMM07tQXP1yQIcYtaNT8yJYXaP5ay0yM4wJBTbzvWKMsKvSn5lQvocn+RPhyXarQzJ8ED/g3mJ9GkFvuRaXIdgDLy7p7q/N2zEfM5Eo0rcIBN3H6e620=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aQYmE+WA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=ZbA8n42t9CxgvDRYbiYT3EuJtPojyJkvzzVRT34YIOU=; b=aQYmE+WAdd9zb1jKBNBjEhfgxh
-	oRbg+2UEkSplfYsg4HxKJ2/wf/H6T4psyWAKp3g3xyMIpujiEt+i40noBQGT7PhtMk4LBwILs5lz8
-	zC9GkcK60Tctj7N8RNVYsM4OJpVBxYv4ap5c11KIXp0jh37C/qm4r83JDzr4wKca/Z+nhMI9IVV18
-	Wr2f/PsAmoBgd1HPEwAq/CfweC/6OfMeDL5FLTv0tdE+eTufzWpgd+4vMHkiuzcw7hF/zhFKZrk4c
-	WtRDn8towIYd4JH66apPgMVCTzAgo1Acyf3fY9aMd1jmO6krEGgibwCxplqqhpNbx8rLWO3tYgjR8
-	2SKh3/Bw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1shLEQ-0000000F4wX-3U2r;
-	Fri, 23 Aug 2024 03:44:58 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: masahiroy@kernel.org,
-	kdevops@lists.linux.dev
-Cc: mcgrof@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC] kconfig: add optional selective yaml output support
-Date: Thu, 22 Aug 2024 20:44:55 -0700
-Message-ID: <20240823034455.3593819-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1724383444; c=relaxed/simple;
+	bh=RsEApdiPqJlHPsVajV6sVlIGA5tz0Zwr6RoXOpzyLQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B83kl8PKQaKRRyhqojvKB9LeEYD1G1pYOMArhiWqdu4Md7d3/oDVfiu+bniYCbBhY6hCdpPN1a0TD+yPpO9Xgskp9cY7V+aKi5rPJ17CbBXAyawyCPVH5IPlaMbLmInDyi4rvFfYbCYWtjP4APamn/6OitQo0jOXy1TwNT1bOPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cIZtxTiQ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724383443; x=1755919443;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RsEApdiPqJlHPsVajV6sVlIGA5tz0Zwr6RoXOpzyLQk=;
+  b=cIZtxTiQ6o7jOBoQbzxcLb14TXpNZszgJp5mDRKcOnu4rJ0VU5i/7wHf
+   ZjHrzxaF+Ons245CzKK87jJU58aJsAWljyh19J+ppwqC4GtawVCnUntEO
+   7DHB8S6YuspWamqW42u3AA9BojrtPpvhYfiaZnb2XUue41RELil7Xp7gg
+   Ph+Ftjc9XDBtV5blQcHZpJBe2Vq/QjnKsFU2lbVvZP8eEKnmkNUnfbqyA
+   DvyDklAuc4PH59HAVDt7BqOmWwCcXX2De4HRqwQUFmuax1Pnc8xvOGSX/
+   x5fG4UG+iaWvAg5gTjWL2pEv2Cvf3+GR+DpmVMOF6ypYgfC5welte3eat
+   w==;
+X-CSE-ConnectionGUID: uKA/XZC1RBK4O/lWp39VmQ==
+X-CSE-MsgGUID: M9j8wdomRMu5PYoqElXkdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22699436"
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="22699436"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 20:24:02 -0700
+X-CSE-ConnectionGUID: 6l9fRQHcS5a5bB/bY8SjSg==
+X-CSE-MsgGUID: HH/WKrTgRGeto4DxpWuMwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,169,1719903600"; 
+   d="scan'208";a="62391739"
+Received: from jraag-nuc8i7beh.iind.intel.com ([10.145.169.79])
+  by orviesa008.jf.intel.com with ESMTP; 22 Aug 2024 20:23:55 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	linux@roeck-us.net,
+	andi.shyti@linux.intel.com,
+	andriy.shevchenko@linux.intel.com
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com,
+	badal.nilawar@intel.com,
+	riana.tauro@intel.com,
+	ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v7] drm/i915/hwmon: expose fan speed
+Date: Fri, 23 Aug 2024 09:15:48 +0530
+Message-Id: <20240823034548.2670032-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,411 +87,233 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-kconfig is used outside of Linux, and one of the uses of Kconfig is to
-also allow kconfig to be used for automation on kdevops by leveraging
-a smaller subset of variables for yaml run time for ansible runs.
-There is no need to clutter a full yaml file with every single config
-we have as we do in the kernel, and so this lets users decide if they
-want all or just a few select key symbols as part of the yaml output.
+Add hwmon support for fan1_input attribute, which will expose fan speed
+in RPM. With this in place we can monitor fan speed using lm-sensors tool.
 
-What this will do is save us the pain of doing the selective transformation
-we currently do and let's us only annotate what we need for runtime with
-ansible.
+$ sensors
+i915-pci-0300
+Adapter: PCI adapter
+in0:         653.00 mV
+fan1:        3833 RPM
+power1:           N/A  (max =  43.00 W)
+energy1:      32.02 kJ
 
-You can test with the Linux kernel config (that's not what we use):
+v2: Handle overflow, add mutex protection and ABI documentation
+    Aesthetic adjustments (Riana)
+v3: Change rotations data type, ABI date and version
+v4: Fix wakeref leak
+    Drop switch case and simplify hwm_fan_xx() (Andi)
+v5: Rework time calculation, aesthetic adjustments (Andy)
+v6: Drop redundant overflow logic (Andy)
+    Split fan_input_read() into dedicated helper (Badal)
+v7: Fix undefined reference to __udivdi3 for i386 (Andy)
 
-export KCONFIG_YAMLCFG=".yaml"
-export KCONFIG_YAMLCFG_ALL="y"
-rm -f .config .yaml
-make defconfig
-head -10 .yaml
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+Reviewed-by: Riana Tauro <riana.tauro@intel.com>
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 ---
-cc_version_text: "gcc (Debian 13.3.0-1) 13.3.0"
-cc_is_gcc: True
-gcc_version: 130300
-clang_version: 0
-as_is_gnu: True
-as_version: 24250
-ld_is_bfd: True
-ld_version: 24250
-lld_version: 0
+ .../ABI/testing/sysfs-driver-intel-i915-hwmon |  8 ++
+ drivers/gpu/drm/i915/gt/intel_gt_regs.h       |  2 +
+ drivers/gpu/drm/i915/i915_hwmon.c             | 88 +++++++++++++++++++
+ 3 files changed, 98 insertions(+)
 
-You can also use the selective mechanism "output yaml" on any symbol,
-so that we only output those. This also paves the way to let us later
-use kconfig for direct json transformations directly from the same
-kconfig logic.
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
-
-Long ago, I envisioned we could do this so to simplify the addition of
-new workflows and remove all the stupid Makefile transformations we have
-in kdevops today to generate extra_vars.yaml.
-
-Feedback welcome.
-
-I completley understand if this is not desirable upstream. However
-kdevops does aim to track kconfig upstream using a git sub tree already,
-it follows linux-next, and so getting support upstream is easier rather
-than going with a branch for our git subtree.
-
-The only puzzle I have is why when we use the selective method, we end
-up with tons of empty lines.. Any ideas? Example of how one can use this
-this on random symbols in case it is not clear, with the selective
-method:
-
-If we use this for example:
-
-  diff --git a/fs/efivarfs/Kconfig b/fs/efivarfs/Kconfig
-  index edec8a19c894..2faf651725dc 100644
-  --- a/fs/efivarfs/Kconfig
-  +++ b/fs/efivarfs/Kconfig
-  @@ -3,6 +3,7 @@ config EFIVAR_FS
-   	tristate "EFI Variable filesystem"
-   	depends on EFI
-   	default m
-  +	output yaml
-   	help
-   	  efivarfs is a replacement filesystem for the old EFI
-   	  variable support via sysfs, as it doesn't suffer from the
-
-In this case we'd end up with just:
-
-export KCONFIG_YAMLCFG=".yaml"
-unset KCONFIG_YAMLCFG_ALL
-rm -f .config .yaml
-make defconfig
-cat .yaml | cat -s
----
-
-efivar_fs: m
-
-Thoughts?
-
- scripts/kconfig/confdata.c | 152 ++++++++++++++++++++++++++++++++++++-
- scripts/kconfig/expr.h     |   1 +
- scripts/kconfig/lexer.l    |   2 +
- scripts/kconfig/parser.y   |  11 +++
- 4 files changed, 163 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index 76193ce5a792..78d188320040 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -233,6 +233,20 @@ static const char *conf_get_rustccfg_name(void)
- 	return name ? name : "include/generated/rustc_cfg";
- }
+diff --git a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+index 92fe7c5c5ac1..be4141a7522f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
++++ b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+@@ -75,3 +75,11 @@ Description:	RO. Energy input of device or gt in microjoules.
+ 		for the gt.
  
-+static bool conf_yaml_enable_all(void)
-+{
-+	char *name = getenv("KCONFIG_YAMLCFG_ALL");
+ 		Only supported for particular Intel i915 graphics platforms.
 +
-+	return name ? true: false;
-+}
++What:		/sys/bus/pci/drivers/i915/.../hwmon/hwmon<i>/fan1_input
++Date:		November 2024
++KernelVersion:	6.12
++Contact:	intel-gfx@lists.freedesktop.org
++Description:	RO. Fan speed of device in RPM.
 +
-+static const char *conf_get_yaml_config_name(void)
-+{
-+	char *name = getenv("KCONFIG_YAMLCFG");
-+
-+	return name ? name : NULL;
-+}
-+
- static int conf_set_sym_val(struct symbol *sym, int def, int def_flags, char *p)
- {
- 	char *p2;
-@@ -623,9 +637,103 @@ static void __print_symbol(FILE *fp, struct symbol *sym, enum output_n output_n,
- 	free(escaped);
- }
++		Only supported for particular Intel i915 graphics platforms.
+diff --git a/drivers/gpu/drm/i915/gt/intel_gt_regs.h b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+index e42b3a5d4e63..57a3c83d3655 100644
+--- a/drivers/gpu/drm/i915/gt/intel_gt_regs.h
++++ b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+@@ -1553,6 +1553,8 @@
+ #define VLV_RENDER_C0_COUNT			_MMIO(0x138118)
+ #define VLV_MEDIA_C0_COUNT			_MMIO(0x13811c)
  
--static void print_symbol_for_dotconfig(FILE *fp, struct symbol *sym)
-+static char *conf_name_to_yaml(struct symbol *sym)
-+{
-+	const char *name = sym->name;
-+	size_t len = strlen(name);
-+	size_t i, j = 0;
-+	char *yaml_name = (char *) malloc(len + 1);
++#define PCU_PWM_FAN_SPEED			_MMIO(0x138140)
 +
-+	if (!yaml_name)
-+		return NULL;
-+
-+	for (i = 0; i < len; i++) {
-+		if (name[i] == '_')
-+			yaml_name[j++] = '_';
-+		else
-+			yaml_name[j++] = tolower(name[i]);
-+	}
-+
-+	yaml_name[j] = '\0';
-+
-+    return yaml_name;
-+}
-+
-+static char *conf_value_to_yaml(struct symbol *sym, const char *val)
-+{
-+	char *yaml_value = NULL;
-+
-+	switch (sym->type) {
-+	case S_INT:
-+		yaml_value = strdup(val);
-+		break;
-+	case S_HEX:
-+            asprintf(&yaml_value, "0x%s", val);
-+            break;
-+        case S_STRING:
-+	    /* Wrap strings in quotes */
-+            asprintf(&yaml_value, "\"%s\"", val);
-+            break;
-+        case S_BOOLEAN:
-+        case S_TRISTATE:
-+		if (strcmp(val, "y") == 0)
-+			yaml_value = strdup("True");
-+		else if (strcmp(val, "n") == 0)
-+			yaml_value = strdup("False");
-+		else
-+			yaml_value = strdup(val); /* m in tristate */
-+		break;
-+        default:
-+		/* In case type is unknown */
-+		yaml_value = strdup(val);
-+		break;
-+	}
-+
-+	return yaml_value;
-+}
-+
-+static void __print_yaml_symbol(FILE *fp, struct symbol *sym,
-+				enum output_n output_n,
-+				bool escape_string)
-+{
-+	const char *val;
-+	char *yaml_config = NULL;
-+	char *yaml_config_value = NULL;
-+
-+	if (!fp || sym->type == S_UNKNOWN)
-+		return;
-+	if (!conf_yaml_enable_all() && !(sym->flags & SYMBOL_YAML))
-+		return;
-+
-+	val = sym_get_string_value(sym);
-+
-+	yaml_config = conf_name_to_yaml(sym);
-+	if (!yaml_config)
-+		return;
-+
-+	yaml_config_value = conf_value_to_yaml(sym, val);
-+	if (!yaml_config_value) {
-+		free(yaml_config);
-+		return;
-+	}
-+
-+	if ((sym->type == S_BOOLEAN || sym->type == S_TRISTATE) &&
-+	    output_n != OUTPUT_N && *val == 'n') {
-+		if (output_n == OUTPUT_N_AS_UNSET && conf_yaml_enable_all())
-+			fprintf(fp, "# %s: False\n", yaml_config);
-+		return;
-+	}
-+
-+	fprintf(fp, "%s: %s\n", yaml_config, yaml_config_value);
-+
-+	free(yaml_config);
-+	free(yaml_config_value);
-+}
-+
-+static void print_symbol_for_dotconfig(FILE *fp, FILE *yaml, struct symbol *sym)
- {
- 	__print_symbol(fp, sym, OUTPUT_N_AS_UNSET, true);
-+	__print_yaml_symbol(yaml, sym, OUTPUT_N_AS_UNSET, true);
- }
+ #define GEN12_RPSTAT1				_MMIO(0x1381b4)
+ #define   GEN12_VOLTAGE_MASK			REG_GENMASK(10, 0)
+ #define   GEN12_CAGF_MASK			REG_GENMASK(19, 11)
+diff --git a/drivers/gpu/drm/i915/i915_hwmon.c b/drivers/gpu/drm/i915/i915_hwmon.c
+index 49db3e09826c..17d30f6b84b0 100644
+--- a/drivers/gpu/drm/i915/i915_hwmon.c
++++ b/drivers/gpu/drm/i915/i915_hwmon.c
+@@ -5,6 +5,7 @@
  
- static void print_symbol_for_autoconf(FILE *fp, struct symbol *sym)
-@@ -748,11 +856,24 @@ int conf_write_defconfig(const char *filename)
- 	struct symbol *sym;
- 	struct menu *menu;
- 	FILE *out;
-+	FILE *yaml_out = NULL;
-+	const char *yaml_config = NULL;
-+
-+	yaml_config = conf_get_yaml_config_name();
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
++#include <linux/jiffies.h>
+ #include <linux/types.h>
  
- 	out = fopen(filename, "w");
- 	if (!out)
- 		return 1;
- 
-+	if (yaml_config) {
-+		yaml_out = fopen(yaml_config, "w");
-+		if (!yaml_out) {
-+			fclose(out);
-+			return 1;
-+		}
-+		fprintf(yaml_out, "---\n");
-+	}
-+
- 	sym_clear_all_valid();
- 
- 	menu_for_each_entry(menu) {
-@@ -783,21 +904,25 @@ int conf_write_defconfig(const char *filename)
- 			if (sym == ds && sym_get_tristate_value(sym) == yes)
- 				continue;
- 		}
--		print_symbol_for_dotconfig(out, sym);
-+		print_symbol_for_dotconfig(out, yaml_out, sym);
- 	}
- 	fclose(out);
-+	if (yaml_out)
-+		fclose(yaml_out);
- 	return 0;
- }
- 
- int conf_write(const char *name)
- {
- 	FILE *out;
-+	FILE *yaml_out = NULL;
- 	struct symbol *sym;
- 	struct menu *menu;
- 	const char *str;
- 	char tmpname[PATH_MAX + 1], oldname[PATH_MAX + 1];
- 	char *env;
- 	bool need_newline = false;
-+	const char *yaml_config;
- 
- 	if (!name)
- 		name = conf_get_configname();
-@@ -815,18 +940,33 @@ int conf_write(const char *name)
- 	if (make_parent_dir(name))
- 		return -1;
- 
-+	yaml_config = conf_get_yaml_config_name();
-+
- 	env = getenv("KCONFIG_OVERWRITECONFIG");
- 	if (env && *env) {
- 		*tmpname = 0;
- 		out = fopen(name, "w");
-+		if (yaml_config)
-+			yaml_out = fopen(yaml_config, "w");
- 	} else {
- 		snprintf(tmpname, sizeof(tmpname), "%s.%d.tmp",
- 			 name, (int)getpid());
- 		out = fopen(tmpname, "w");
-+		if (yaml_config)
-+			yaml_out = fopen(yaml_config, "w");
- 	}
- 	if (!out)
- 		return 1;
- 
-+	if (yaml_config) {
-+		if (!yaml_out) {
-+			fclose(out);
-+			return 1;
-+		}
-+		fprintf(yaml_out, "---\n");
-+	}
-+
-+
- 	conf_write_heading(out, &comment_style_pound);
- 
- 	if (!conf_get_changed())
-@@ -852,9 +992,11 @@ int conf_write(const char *name)
- 			if (need_newline) {
- 				fprintf(out, "\n");
- 				need_newline = false;
-+				if (yaml_config)
-+					fprintf(yaml_out, "\n");
- 			}
- 			sym->flags |= SYMBOL_WRITTEN;
--			print_symbol_for_dotconfig(out, sym);
-+			print_symbol_for_dotconfig(out, yaml_out, sym);
- 		}
- 
- next:
-@@ -879,6 +1021,8 @@ int conf_write(const char *name)
- 		}
- 	}
- 	fclose(out);
-+	if (yaml_out)
-+		fclose(yaml_out);
- 
- 	for_all_symbols(sym)
- 		sym->flags &= ~SYMBOL_WRITTEN;
-@@ -898,6 +1042,8 @@ int conf_write(const char *name)
- 	}
- 
- 	conf_message("configuration written to %s", name);
-+	if (yaml_config)
-+		conf_message("yaml configuration written to %s", yaml_config);
- 
- 	conf_set_changed(false);
- 
-diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
-index 2bc96cd28253..88e8a2a06f67 100644
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -132,6 +132,7 @@ struct symbol {
- #define SYMBOL_CHECK      0x0008  /* used during dependency checking */
- #define SYMBOL_VALID      0x0080  /* set when symbol.curr is calculated */
- #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFIG) */
-+#define SYMBOL_YAML       0x0400  /* write symbol to file (KCONFIG_YAMLCFG) */
- #define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to .config */
- #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
- #define SYMBOL_WARNED     0x8000  /* warning has been issued */
-diff --git a/scripts/kconfig/lexer.l b/scripts/kconfig/lexer.l
-index 8dd597c4710d..190937070fb1 100644
---- a/scripts/kconfig/lexer.l
-+++ b/scripts/kconfig/lexer.l
-@@ -120,6 +120,7 @@ n	[A-Za-z0-9_-]
- "menuconfig"		return T_MENUCONFIG;
- "modules"		return T_MODULES;
- "on"			return T_ON;
-+"output"		return T_OUTPUT;
- "prompt"		return T_PROMPT;
- "range"			return T_RANGE;
- "select"		return T_SELECT;
-@@ -127,6 +128,7 @@ n	[A-Za-z0-9_-]
- "string"		return T_STRING;
- "tristate"		return T_TRISTATE;
- "visible"		return T_VISIBLE;
-+"yaml"			return T_YAML;
- "||"			return T_OR;
- "&&"			return T_AND;
- "="			return T_EQUAL;
-diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
-index 61900feb4254..f298f052dddc 100644
---- a/scripts/kconfig/parser.y
-+++ b/scripts/kconfig/parser.y
-@@ -69,6 +69,7 @@ struct menu *current_menu, *current_entry, *current_choice;
- %token T_MODULES
- %token T_ON
- %token T_OPEN_PAREN
-+%token T_OUTPUT
- %token T_PLUS_EQUAL
- %token T_PROMPT
- %token T_RANGE
-@@ -77,6 +78,7 @@ struct menu *current_menu, *current_entry, *current_choice;
- %token T_STRING
- %token T_TRISTATE
- %token T_VISIBLE
-+%token T_YAML
- %token T_EOL
- %token <string> T_ASSIGN_VAL
- 
-@@ -234,6 +236,15 @@ config_option: T_MODULES T_EOL
- 	modules_sym = current_entry->sym;
+ #include "i915_drv.h"
+@@ -36,6 +37,7 @@ struct hwm_reg {
+ 	i915_reg_t pkg_rapl_limit;
+ 	i915_reg_t energy_status_all;
+ 	i915_reg_t energy_status_tile;
++	i915_reg_t fan_speed;
  };
  
-+/* When we want to output symbols as part of an additional output formats */
-+
-+config_option: T_OUTPUT T_YAML T_EOL
-+{
-+	printd(DEBUG_PARSE, "%s will be part of the yaml output file %s:%d:\n",
-+	       current_entry->sym->name, cur_filename, cur_lineno);
-+	current_entry->sym->flags |= SYMBOL_YAML;
+ struct hwm_energy_info {
+@@ -43,11 +45,17 @@ struct hwm_energy_info {
+ 	long accum_energy;			/* Accumulated energy for energy1_input */
+ };
+ 
++struct hwm_fan_info {
++	u32 reg_val_prev;
++	u64 time_prev;
 +};
 +
- /* choice entry */
+ struct hwm_drvdata {
+ 	struct i915_hwmon *hwmon;
+ 	struct intel_uncore *uncore;
+ 	struct device *hwmon_dev;
+ 	struct hwm_energy_info ei;		/*  Energy info for energy1_input */
++	struct hwm_fan_info fi;			/*  Fan info for fan1_input */
+ 	char name[12];
+ 	int gt_n;
+ 	bool reset_in_progress;
+@@ -276,6 +284,7 @@ static const struct hwmon_channel_info * const hwm_info[] = {
+ 	HWMON_CHANNEL_INFO(power, HWMON_P_MAX | HWMON_P_RATED_MAX | HWMON_P_CRIT),
+ 	HWMON_CHANNEL_INFO(energy, HWMON_E_INPUT),
+ 	HWMON_CHANNEL_INFO(curr, HWMON_C_CRIT),
++	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
+ 	NULL
+ };
  
- choice: T_CHOICE T_EOL
+@@ -613,6 +622,69 @@ hwm_curr_write(struct hwm_drvdata *ddat, u32 attr, long val)
+ 	}
+ }
+ 
++static umode_t
++hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++
++	if (attr == hwmon_fan_input && i915_mmio_reg_valid(hwmon->rg.fan_speed))
++		return 0444;
++
++	return 0;
++}
++
++static int
++hwm_fan_input_read(struct hwm_drvdata *ddat, long *val)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++	struct hwm_fan_info *fi = &ddat->fi;
++	u64 rotations, time_now, time;
++	intel_wakeref_t wakeref;
++	u32 reg_val;
++	int ret = 0;
++
++	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
++	mutex_lock(&hwmon->hwmon_lock);
++
++	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
++	time_now = get_jiffies_64();
++
++	/*
++	 * HW register value is accumulated count of pulses from
++	 * PWM fan with the scale of 2 pulses per rotation.
++	 */
++	rotations = (reg_val - fi->reg_val_prev) / 2;
++
++	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
++	if (unlikely(!time)) {
++		ret = -EAGAIN;
++		goto exit;
++	}
++
++	/*
++	 * Calculate fan speed in RPM by time averaging two subsequent
++	 * readings in minutes.
++	 * RPM = number of rotations * msecs per minute / time in msecs
++	 */
++	*val = DIV_ROUND_UP_ULL(rotations * (MSEC_PER_SEC * 60), time);
++
++	fi->reg_val_prev = reg_val;
++	fi->time_prev = time_now;
++exit:
++	mutex_unlock(&hwmon->hwmon_lock);
++	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
++	return ret;
++}
++
++static int
++hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
++{
++	if (attr == hwmon_fan_input)
++		return hwm_fan_input_read(ddat, val);
++
++	return -EOPNOTSUPP;
++}
++
+ static umode_t
+ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 	       u32 attr, int channel)
+@@ -628,6 +700,8 @@ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 		return hwm_energy_is_visible(ddat, attr);
+ 	case hwmon_curr:
+ 		return hwm_curr_is_visible(ddat, attr);
++	case hwmon_fan:
++		return hwm_fan_is_visible(ddat, attr);
+ 	default:
+ 		return 0;
+ 	}
+@@ -648,6 +722,8 @@ hwm_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+ 		return hwm_energy_read(ddat, attr, val);
+ 	case hwmon_curr:
+ 		return hwm_curr_read(ddat, attr, val);
++	case hwmon_fan:
++		return hwm_fan_read(ddat, attr, val);
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -739,12 +815,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		hwmon->rg.pkg_rapl_limit = PCU_PACKAGE_RAPL_LIMIT;
+ 		hwmon->rg.energy_status_all = PCU_PACKAGE_ENERGY_STATUS;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = PCU_PWM_FAN_SPEED;
+ 	} else {
+ 		hwmon->rg.pkg_power_sku_unit = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_power_sku = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_rapl_limit = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_all = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = INVALID_MMIO_REG;
+ 	}
+ 
+ 	with_intel_runtime_pm(uncore->rpm, wakeref) {
+@@ -755,6 +833,16 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		if (i915_mmio_reg_valid(hwmon->rg.pkg_power_sku_unit))
+ 			val_sku_unit = intel_uncore_read(uncore,
+ 							 hwmon->rg.pkg_power_sku_unit);
++
++		/*
++		 * Store the initial fan register value, so that we can use it for
++		 * initial fan speed calculation.
++		 */
++		if (i915_mmio_reg_valid(hwmon->rg.fan_speed)) {
++			ddat->fi.reg_val_prev = intel_uncore_read(uncore,
++								  hwmon->rg.fan_speed);
++			ddat->fi.time_prev = get_jiffies_64();
++		}
+ 	}
+ 
+ 	hwmon->scl_shift_power = REG_FIELD_GET(PKG_PWR_UNIT, val_sku_unit);
 -- 
-2.43.0
+2.34.1
 
 
