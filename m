@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-298286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E77E95C535
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:13:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABF195C536
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C68F1C2187A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 654B8282B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 06:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0BE757F3;
-	Fri, 23 Aug 2024 06:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB5155C3E;
+	Fri, 23 Aug 2024 06:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2cg4pVeJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VruIH0DG"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A555C3E;
-	Fri, 23 Aug 2024 06:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB50E6A022
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 06:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724393575; cv=none; b=SVHekzoHjXOseAEkFBovaqeCc9GsyEnZ7aDYZ+sCFTr9hvE8oUSyf+X/aCRZEAwzz7AXooJysy6FLQ/Y8O9zSIK819CsN/7lnMJDgP/YJdh2y46IPKAfkBWzOAd2uHWbqqJ3+aSXUASOAPjgjF/OSoN0gDJHk5CHIoGZ701AG0A=
+	t=1724393599; cv=none; b=nU6Gbh+SERTHFx6gVM6SHcQ+p7Qlh/h6hwwLH4bW//XDBTMtChCUiQ+8PSRNRGPHbH/A9yQJxiPpDXoVVDtTHwWG2Oi5/z8o5fGVBgGA0Q9Znwu3J9kJm1Wvu24KReyjfQxVSNWmDS7EP1l0y0penILkt31x7pPRfo2LNKPKw9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724393575; c=relaxed/simple;
-	bh=VuaMXq/ic8X2m9kV83mf6YFYaszIuxekeGJm8Pfrrqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8wYm/TplyQcHaOZ/hFC5CeC8gB18imQ0wv59Juxykcjjufj01tqZ1vbLpRDBO4hGPPCjIuxcEz0b125va5sEaQEBns8+M/4u+tsK/+DG5msPWCo0qWqIOhOaXq9PdR2uW3JPcr9odojUPomL4FXk2PfaImz+XDRqCswnCD2rNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2cg4pVeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED127C32786;
-	Fri, 23 Aug 2024 06:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724393574;
-	bh=VuaMXq/ic8X2m9kV83mf6YFYaszIuxekeGJm8Pfrrqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2cg4pVeJFoWhnJgcePmo6lZ4QBf+Lldz1O2gqcR/cj3fMPRDY1/5S+lSIdzQoJtx3
-	 liKnuqDEGtLZZVcWJrNXb4M6jpnSXRiNfXo2zpbMigL6yzFNkrUPrSmEbyKRfzi/op
-	 kuCgxH38zblAdnNsML67kVhuBCYId0ei/JDy9xO8=
-Date: Fri, 23 Aug 2024 14:12:51 +0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-Message-ID: <2024082313-throttle-snuggle-6238@gregkh>
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
- <20240818035818.GA1929@sol.localdomain>
- <20240819-staudamm-rederei-cb7092f54e76@brauner>
- <93296f30-1a3c-44b6-91d1-61408e1d9270@leemhuis.info>
+	s=arc-20240116; t=1724393599; c=relaxed/simple;
+	bh=VUMwXIMSyIeTBZlzaPoBJKVKFDfRDDHp4ZTbcK6E7D0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IH6EPQ20mTn4QQDf7veehKVHkswyT+3jMEwj/6oIWR3fUrePcy638Q2oI88g7kPOyLMaend+s7v1A4GjmLJeUgPif8wmurInJgRWNt/9CXU/Vz5zQ0PA1IqrLX9lRgZ6+OQRk4XFR809/vBtaBECggto76ozN9axGpM0dCUu1sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VruIH0DG; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724393587; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=l9vVfdqNR2maj7WJKOY1sDy7gPIzSYM4Hjrqvr3z5nc=;
+	b=VruIH0DGPo5q2NSd50cocj/uodlyZXw44pgxGoolIfBH5WOXslUa1OVKlf2/QlRBUHL46vgZuSt4wK5BhbZgo/rFwxv5n+NPt6khjaxp0zwfSKU1ZUNRxUIIDIUJJX6vR03+sjnotcjS+fLXvXju/btwZGCoGK+rPb8HRU9hoc0=
+Received: from 30.221.129.19(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDSR2PV_1724393586)
+          by smtp.aliyun-inc.com;
+          Fri, 23 Aug 2024 14:13:07 +0800
+Message-ID: <ae1eb591-ba89-4290-8c17-4cc7816ce666@linux.alibaba.com>
+Date: Fri, 23 Aug 2024 14:13:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93296f30-1a3c-44b6-91d1-61408e1d9270@leemhuis.info>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: fix null-ptr-deref when journal load failed.
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: ocfs2-devel@lists.linux.dev, jlbec@evilplan.org, mark@fasheh.com,
+ syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240819131120.746077-1-sunjunchao2870@gmail.com>
+ <26da607a-530d-4dc1-9040-bf56b406b98f@linux.alibaba.com>
+ <CAHB1NaiJJmf838FwSGM8UZX6ebQn8L2hhFxNAcdmRDfBo1VUyg@mail.gmail.com>
+ <eb9f35a7-e3ab-47cf-a043-c03f11c21c97@linux.alibaba.com>
+ <e7acce1eb19af9798f0c64bdba5fe75688f37c2c.camel@gmail.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <e7acce1eb19af9798f0c64bdba5fe75688f37c2c.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 07:23:12AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 19.08.24 10:41, Christian Brauner wrote:
-> > On Sat, Aug 17, 2024 at 08:58:18PM GMT, Eric Biggers wrote:
-> >> On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
-> >>> It's currently possible to create pidfds for kthreads but it is unclear
-> >>> what that is supposed to mean. Until we have use-cases for it and we
-> >>> figured out what behavior we want block the creation of pidfds for
-> >>> kthreads.
-> >>>
-> >>> Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
-> >>> Cc: stable@vger.kernel.org
-> >>> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> >>> ---
-> >>>  kernel/fork.c | 25 ++++++++++++++++++++++---
-> >>>  1 file changed, 22 insertions(+), 3 deletions(-)
-> >>
-> >> Unfortunately this commit broke systemd-shutdown's ability to kill processes,
-> >> which makes some filesystems no longer get unmounted at shutdown.
-> >>
-> >> It looks like systemd-shutdown relies on being able to create a pidfd for any
-> >> process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
-> >> fatal error and stops looking for more processes...
-> > 
-> > Thanks for the report!
-> > I talked to Daan De Meyer who made that change and he said that this
-> > must a systemd version that hasn't gotten his fixes yet. In any case, if
-> > this causes regression then I'll revert it right now. See the appended
-> > revert.
+
+
+On 8/23/24 10:22 AM, Julian Sun wrote:
+> On Fri, 2024-08-23 at 09:59 +0800, Joseph Qi wrote:
+>>
+>>
+>> On 8/20/24 11:19 PM, Julian Sun wrote:
+>>> Joseph Qi <joseph.qi@linux.alibaba.com> 于2024年8月20日周二 21:03写道：
+>>>>
+>>>>
+>>>>
+>>>> On 8/19/24 9:11 PM, Julian Sun wrote:
+>>>>> During the mounting process, if the jbd2_journal_load()
+>>>>> call fails, it will internally invoke journal_reset()
+>>>>> ->journal_fail_superblock(), which sets journal->j_sb_buffer
+>>>>
+>>>>
+>>>>> This description is not right.
+>>>>> journal_reset() fails because of too short journal, then lead
+>>>>> to
+>>>>> jbd2_journal_load() fails with NULL j_sb_buffer.
+>>> yeah. That's exactly what I described.
+>>>>
+>>>>> to NULL. Subsequently, ocfs2_journal_shutdown() calls
+>>>>> jbd2_journal_flush()->jbd2_cleanup_journal_tail()->
+>>>>> __jbd2_update_log_tail()->jbd2_journal_update_sb_log_tail()
+>>>>> ->lock_buffer(journal->j_sb_buffer), resulting in a
+>>>>> null-pointer dereference error.
+>>>>>
+>>>>> To resolve this issue, a new state OCFS2_JOURNAL_INITED
+>>>>> has been introduced to replace the previous functionality
+>>>>> of OCFS2_JOURNAL_LOADED, the original OCFS2_JOURNAL_LOADED
+>>>>> is only set when ocfs2_journal_load() is successful.
+>>>>
+>>>>
+>>>>> Or set OCFS2_JOURNAL_LOADED only after JBD2_LOADED?
+>>> I don't think this is correct. We first call ocfs2_journal_init(),
+>>> which allocates some resources, before calling jbd2_journal_load().
+>>> If
+>>> ocfs2_journal_init() succeeds but jbd2_journal_load() fails, this
+>>> solution may lead to a resource leak.
+>>> If there is anything important I'm missing, please let me know,
+>>> thanks.
+>>>
+>>
+>> Okay, seems except iput(inode) and kfree(journal), we may have to do
+>> the
+>> following cleanup:
+>> 1) ocfs2_inode_unlock(journal->j_inode);
+>> 2) brelse(journal->j_bh);
+>> 3) OCFS2_I(inode)->ip_open_count--
+>> 4) jbd2_journal_destroy()
+>> ...
+>>
+>> So it seems that introducing a new state will be more clear.
+>>
+>>>>> The jbd2_journal_flush() function is allowed to be called
+>>>>> only when this flag is set. The logic here is that if the
+>>>>> journal has even not been successfully loaded, there is
+>>>>> no need to flush the journal.
+>>>>>
+>>>>> Link:
+>>>>> https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
+>>>>> Reported-by:
+>>>>> syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
+>>>>> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+>>>>> ---
+>>>>>  fs/ocfs2/journal.c | 9 ++++++---
+>>>>>  fs/ocfs2/journal.h | 1 +
+>>>>>  2 files changed, 7 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+>>>>> index 530fba34f6d3..6f837296048f 100644
+>>>>> --- a/fs/ocfs2/journal.c
+>>>>> +++ b/fs/ocfs2/journal.c
+>>>>> @@ -968,7 +968,7 @@ int ocfs2_journal_init(struct ocfs2_super
+>>>>> *osb, int *dirty)
+>>>>>
+>>>>>       ocfs2_set_journal_params(osb);
+>>>>>
+>>>>> -     journal->j_state = OCFS2_JOURNAL_LOADED;
+>>>>> +     journal->j_state = OCFS2_JOURNAL_INITED;
+>>>>>
+>>>>>       status = 0;
+>>>>>  done:
+>>>>> @@ -1039,6 +1039,7 @@ void ocfs2_journal_shutdown(struct
+>>>>> ocfs2_super *osb)
+>>>>>       int status = 0;
+>>>>>       struct inode *inode = NULL;
+>>>>>       int num_running_trans = 0;
+>>>>> +     enum ocfs2_journal_state state;
+>>>>>
+>>>>>       BUG_ON(!osb);
+>>>>>
+>>>>> @@ -1047,8 +1048,9 @@ void ocfs2_journal_shutdown(struct
+>>>>> ocfs2_super *osb)
+>>>>>               goto done;
+>>>>>
+>>>>>       inode = journal->j_inode;
+>>>>> +     state = journal->j_state;
+>>>>>
+>>>>> -     if (journal->j_state != OCFS2_JOURNAL_LOADED)
+>>>>> +     if (state != OCFS2_JOURNAL_INITED)
+>>
+>> This is not right.
+>> What if journal has already been loaded?
+> Hi, Joseph
 > 
-> Greg, Sasha, JFYI in case you are not already aware of it: I by
-> chance[1] noticed that the patch Christian plans to revert is still in
-> the 6.10-queue. You might want to drop it (or apply the revert as well,
-> which is in -next, but not yet in mainline afaics).
+> Thanks for your review and comments.
+> 
+> I'm not sure if I fully understand what you mean. 
+> Because the functionality of OCFS2_JOURNAL_INITED is completely
+> equivalent to the original OCFS2_JOURNAL_LOADED, so do you mean that
+> there might be an issue with the original OCFS2_JOURNAL_LOADED? If so,
+> I will dig it into and try to fix.
+> But in any case, that should be a separate patch.
+> 
+> If there is any misunderstanding, please let me know, thanks.
 
-I was hoping it would get into Linus's tree "soon" so I could take the
-revert too.  As it's in -next, I'll grab it from there when I get a
-chance.
+Now you separate original OCFS2_JOURNAL_LOADED into OCFS2_JOURNAL_INITED
+and OCFS2_JOURNAL_LOADED. And ocfs2_journal_shutdown() will be called
+after OCFS2_JOURNAL_LOADED is set, e.g. normal umount, or error happens
+after ocfs2_check_volume(). You changes break the this logic.
 
-thanks,
+BTW, cc linux-kernel as well.
 
-greg k-h
+Thanks,
+Joseph
 
