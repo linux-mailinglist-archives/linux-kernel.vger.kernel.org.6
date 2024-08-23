@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-298962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C5A95CE51
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F24E95CE54
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92FE1F2505B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF0ED283538
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543BB188591;
-	Fri, 23 Aug 2024 13:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AF114C584;
+	Fri, 23 Aug 2024 13:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2XJh4Hp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmBJaGQD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CC81DFE8;
-	Fri, 23 Aug 2024 13:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFD9188005;
+	Fri, 23 Aug 2024 13:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724420870; cv=none; b=c6s73HY9UsqMXm9/CatlZqLHovfbwfqysOyh5P+FMSa2W+vN06/hYvV3DN3XwCJQ/2XthxAhaObLcNbTbzGxJWVZA1XXRQBWPQ/a14h0vAf4KkZgAMBNlxYMRNuuw3tfaM4cU9lCfWNAcZ1/pfLqLqMibH/1M71Zus6mk0gi/IE=
+	t=1724420891; cv=none; b=Wc3hVrKJoJ3tsxMmoQvhDrO4HBHXKkoWa8wqibVtEDUKlEiim9DtsG++QhSN+mgH3PucrrEdj68YlRiCzoLR/VN97V2c40OwnIDlE6jlRPZ7kTyLIs2wbrfU6/KkDvIRbOplXcS8JU94qF+MoI/PJFkTHSlHQ8WTG2eV54uDFZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724420870; c=relaxed/simple;
-	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MZ9GUQGU2n4FnYtDQ+ceU8PprOnsHAC5xYicXXWIq9ElVdkvAP6QnAuICldZGVIUGpCpin4dhJTmBXc58N6kaZPci8fTv6Aurh0UUxGcGwWZBs6ONWnc3mIymy+B8vPqRkHWiC3g6s9EzbzelH9HllaR2Ys4ZTZ8l4eCSoay8lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G2XJh4Hp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13697C32786;
-	Fri, 23 Aug 2024 13:47:45 +0000 (UTC)
+	s=arc-20240116; t=1724420891; c=relaxed/simple;
+	bh=crE7eg+oJ5Pe8wnaFLMXkKVXJtV0r+sYAkypoHKXQQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9hsjdp3nP99KTyv+QdHodJ9VNNUokIHPjEh+/+LJ8T4mBBqaPS/k1eIflTHpiE+6XnwX6IaSzleM+tc1h4lvb12rZa8tAvbfSB65BoVeB4XerLROweatoZp/uQb8FY/N+WcQM+FWp//LnxR4yojK7ixM41Ny/ZEkXc508KMnyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmBJaGQD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BC10C32786;
+	Fri, 23 Aug 2024 13:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724420870;
-	bh=bXC2LfSkMhE/9jDJneZMl800SDYiBayRvK7YQTFG5M4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G2XJh4HpqiQf/s3AFYsVLG2QaL45QMJuGIL/P5ZUh/yiqXyDPpwzJAMpB6Dy+e1LZ
-	 NSebxt64/XEO6Ns+/7cnWG9M7Lv/M1aHdzmoai0C7JJ+3kzSLzAb+h7Znji+LfefTi
-	 s1eJIO+eWW3EjRxQyuI8Lex0gEXoQQ7FzbyAhLg9bhkZRGq9873oRPhyR76j19IRoI
-	 e7cpj2gfHw9fh3I5JE4S/ATI1ldDARSh1afF8psjoD/M+c17abe2zAkUjsHQ+EJO1b
-	 CnbwaKCcCIrgua+XiBoYq/ZZA47dNFOgd+/AnjISNj++RzckXYHmQkK7PAqXn/QLyr
-	 WwaKDe3GKWNXA==
-Message-ID: <2a8c20ce-0c90-4e59-ab77-7c71de21e502@kernel.org>
-Date: Fri, 23 Aug 2024 15:47:43 +0200
+	s=k20201202; t=1724420890;
+	bh=crE7eg+oJ5Pe8wnaFLMXkKVXJtV0r+sYAkypoHKXQQs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mmBJaGQDWHLlGdpQZMDaff8qyvhbkiSg+EuK0SbPKT9MogonlWUVC0B8T8MnQstuL
+	 S9O58ljRSuLBo+ZRDTtuJZ1kDhjRIKDedLUlxtqhM/OOBM6eePLQer3nWaquUpctyT
+	 Z6f8w7zsiik/mxl5fPMx56/8WQ6t82I5PTuZs0Qx5Ru4x1ORo2aGHi0hJSFz3wb4v8
+	 HOFu+sBKRAj8A1oPLz/8SLDbQKe1b4TmPlB2wwNEHDT17Ud1J1Re0zW1ng9G3maclo
+	 XQt9DUwuqetzIiSQ11fmIf5aCrhhV1oIWdsbznUdfXUjAnSAbgpJC1yYL46LD0ktfS
+	 OknAdF1loMgtg==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-268eec6c7c1so1377167fac.3;
+        Fri, 23 Aug 2024 06:48:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU75usVkK2ZVG6dzfNtz1Uy8UciF0v0RTbDwR/7NS1xvcLAspOgJpS8uRfelz+lkKSzHAp1qxppVi+4jxgFAes=@vger.kernel.org, AJvYcCXtU0N6fBVo3zCWHd7mU5Zx7g5JAaO3l5dlflKfFkMGLesA36STz0GHrhS4Lxp+hzA6B2kqk6F5jiY=@vger.kernel.org, AJvYcCXykyacmKWETq8/7A/ysU+wsrv1K00IcrAebz0wBvSr5Va5801xXV1vywI7bZPOIhrIPMcSAI1vlfvV4Lcx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6zmB/5HIgQKCloS+jeN1s4RD2Z1jzH233VZU6qd8DnTwMQ0gu
+	zswv73rQ+yGOgJqk2BSoWWSEB2iQ5907CYaptjp/7KT0o/BnEdcjadszoom0RLpTuOD5IZcJMpZ
+	FMtRGfkp8wSaXWMmIuoLQYhfw7yI=
+X-Google-Smtp-Source: AGHT+IEu0D6hq/lsydItFebNJCZhwrDgT2WK9OU/y6HJagCTafzNVTShJ7evITYTte9QASr5sdkqrNoQe0hO8UPYNzk=
+X-Received: by 2002:a05:6871:706:b0:268:a074:39cf with SMTP id
+ 586e51a60fabf-273e641fa92mr2479445fac.8.1724420889823; Fri, 23 Aug 2024
+ 06:48:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: document hexagon based
- WCSS secure PIL
-To: Gokul Sriram P <quic_gokulsri@quicinc.com>,
-	q@krzk-bin.smtp.subspace.kernel.org
-Cc: andersson@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_viswanat@quicinc.com,
- quic_mmanikan@quicinc.com, quic_varada@quicinc.com, quic_srichara@quicinc.com
-References: <20240820085517.435566-1-quic_gokulsri@quicinc.com>
- <20240820085517.435566-2-quic_gokulsri@quicinc.com>
- <ticwyyycqlk2uqpiqckoqqnapqatw74s6f6tjqmmyt2d6siqqt@xxe2qdtr4c2c>
- <2b6b43b3-c99b-4aac-b1fb-24f6e5e562ce@quicinc.com>
- <7b8f488a-deac-4089-be7a-c0d76afca0fa@kernel.org>
- <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <982ca02e-a0b0-4dac-9294-ae2c2fb3463f@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <fa719c6a-8d3b-4cca-9b43-bcd477ff6655@stanley.mountain>
+In-Reply-To: <fa719c6a-8d3b-4cca-9b43-bcd477ff6655@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 Aug 2024 15:47:57 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iti+wbiKBPKMpJ_nDRLCW5ZyKsjZJ6OSbVB_ih3RCwBQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iti+wbiKBPKMpJ_nDRLCW5ZyKsjZJ6OSbVB_ih3RCwBQ@mail.gmail.com>
+Subject: Re: [PATCH next] powercap: intel_rapl: Change an error pointer to NULL
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/08/2024 11:47, Gokul Sriram P wrote:
-> 
-> On 8/22/2024 5:00 PM, Krzysztof Kozlowski wrote:
->>> IM_SLEEP_CLK - Internal Module sleep clock needed for Q6 reset.
->>>
->>> SLEEP is not an acronym here.
->> Then probably you mean "Internal sleep", although "internal" is also
->> confusing. Devices do not receive as input something which is internal
->> to them.
->>
->>>>> +
->>>>> +  clock-names:
->>>>> +    items:
->>>>> +      - const: im_sleep
->>>> sleep? Are there different sleep clocks here?
->>> We have different branches of sleep clk each enabled separately.
->>>
->>> im_sleep is one of those branches that q6 uses.
->> So this device misses other branches? Then provide them. Otherwise it is
->> just "sleep".
-> 
-> ok, I shall keep it as simply "sleep" and move on? Other branches of 
-> sleep clk are irrelevant to remoteproc.
+On Fri, Aug 23, 2024 at 2:51=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The rapl_find_package_domain_cpuslocked() function is supposed to
+> return NULL on error.  This new error patch returns ERR_PTR(-EINVAL) but
+> none of the callers check for that so it would lead to an Oops.
+>
+> Fixes: 26096aed255f ("powercap/intel_rapl: Fix the energy-pkg event for A=
+MD CPUs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/powercap/intel_rapl_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/inte=
+l_rapl_common.c
+> index d110c5da5cfe..2881687d7900 100644
+> --- a/drivers/powercap/intel_rapl_common.c
+> +++ b/drivers/powercap/intel_rapl_common.c
+> @@ -2157,7 +2157,7 @@ struct rapl_package *rapl_find_package_domain_cpusl=
+ocked(int id, struct rapl_if_
+>                       topology_physical_package_id(id) : topology_logical=
+_die_id(id);
+>                 if (uid < 0) {
+>                         pr_err("topology_logical_(package/die)_id() retur=
+ned a negative value");
+> -                       return ERR_PTR(-EINVAL);
+> +                       return NULL;
+>                 }
+>         }
+>         else
+> --
 
-Then it is "sleep". The name here describes the clock input in this
-device, not the clock in other places.
-
-Best regards,
-Krzysztof
-
+Applied, thank you!
 
