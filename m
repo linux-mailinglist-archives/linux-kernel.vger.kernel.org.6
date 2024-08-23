@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-298810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBBC95CBC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20AB95CB1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496E61F2345B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF26B286459
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCDB18754D;
-	Fri, 23 Aug 2024 11:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD208181337;
+	Fri, 23 Aug 2024 11:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XZ5NWY1N"
-Received: from mail-m1973184.qiye.163.com (mail-m1973184.qiye.163.com [220.197.31.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dThpBYkL"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D504315382E;
-	Fri, 23 Aug 2024 11:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71026381BD
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 11:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724414078; cv=none; b=HLZuz1koCFATsT7Cw7NisGI+xtGlxSLz+2suvV2WN1lA6BS9FXEvMw9RLjfdSWfMXfm70x41RZUc8rNG13Et4VtagUsoXDrMM24mLrUk6RmMCuJB0O2PTUCBxKobetw5XkQapH9fFEfyeenT4ehltR94hSOoAv+ZJGOCArlh5HQ=
+	t=1724410882; cv=none; b=KfVu0fsHhWSQoX6SM4NVVOT0grX6lRSMjK0Y9IhekcZsOKvGAHLuD/TtteE/yPP329llYqhP0VBr8rR3h9r0aXm39VHRoBSQkkVw+SQ/HUDioVHPSS3K64eKxD2epm37TTHVG0Zi1lKpnmULO8DIU7Nfz6z+eP8lqFp8xHizV+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724414078; c=relaxed/simple;
-	bh=xhhjgR4b3ryvNw4XR755idnVzCGr444FojZgMD43hl4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nPil1jXlaKzi8FxkeWK9sAPGprruVVFzfSocQccWwUm1b3qwRKIGp3LE+GjyyLZYCVA1Znu6sVr7Zy/jxsKxG5lqf5km0QHoTRARvqkCg15hBvYiIxP49YNsrgtq6bS9r+W50s7GVNhHldynd6+SNe4i3rIf7/rGVnPiyKgMcOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XZ5NWY1N; arc=none smtp.client-ip=220.197.31.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=XZ5NWY1NksoUqasmCIPKLAaYvmbpjTYCxXe4ZmXyCSVl5hQylYW3+3gGwzEHYcI3ztXrj/X24KuLn7iGI6ak/1PoEJEHTG0Lh/ef/V+DQmMG2Sx1V3f09xgXXvl9dokdO61m2sSR4XZB2GCeYuHLTAn/ndDw5BkIAb8wiwNvV8s=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=slXIvyEC5u+xJtYhVdeMPrVz7yrxqYPEwoc8/W9zJUM=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 5C013460143;
-	Fri, 23 Aug 2024 18:59:40 +0800 (CST)
-Message-ID: <f2194489-c637-4034-9077-951f74d621a5@rock-chips.com>
-Date: Fri, 23 Aug 2024 18:59:40 +0800
+	s=arc-20240116; t=1724410882; c=relaxed/simple;
+	bh=jCGcYJC3DcdlK/VJvH61PlRhurr+EMpSesr1zeYyMyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hLUQo62+7Dax3DtIYilPwHS1kILMckwDVpOGZt38PGLExVsO46nPQvuNRKmS7GWx6xaMhmcBmXDXph/DGOSm1evMZQlOJ/eU2iAoZNIZUG5L16wdFP6xuEzHf4b/SJA06UA6/OxbO09tQf1YsYsc7Wb6XR/i06IzUsFfypR9MIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dThpBYkL; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1171e57a0dso2327084276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 04:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724410879; x=1725015679; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Etw9lAfOptH5bhz4rHuyZG/BeS9l3H1TyR0g0f0YHgo=;
+        b=dThpBYkLrk15e3uITe6scEzGmQwLja/lXQOY6fECwjIzqgHPeP7+6aLPxkLQhYDcJG
+         uflbgPnchpShL8hrmkdc+9DrIwpong3FX6fn4u9vPPFKRA7+YyLkFrSROssJO4zj6W8+
+         zIqcsaD+L/VEHLSp2SPPmQUYNosnYQuEFBrXREutHfHXv14nnR1qjV2+cpGNxXHu0kwU
+         P1f/V2AQ6ntvgcTMcDWlsLQhL8RRxPdmXPtylBOcc2BlqeLK8G9UY74nTdZXtFYiYpYq
+         maHiLoq6AI1KlCKnQRY77p/BwYHKf1Osu9iatm+DtRzWDhxIOhdKZODRk+ycF3rBceJO
+         WRoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724410879; x=1725015679;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Etw9lAfOptH5bhz4rHuyZG/BeS9l3H1TyR0g0f0YHgo=;
+        b=RMvpnEIjSzDOpQdPo1n1BkavoDDRlwRJlt/vBL89HD7rJ20MluaDWUz3MT4nk0eN/2
+         4Wzfetu2rUkC71kN5jcheYDvz23NxdUQXOdC0aJ6QXj6YJOofhT16v+19b/E1BcKVMcL
+         t6FcvZ5vfiUa+f5kfhRdoFNgTj8yzHkXLO61NITAvPFWqhh2ZxnrBGv3HPtqqhuQFfkN
+         O1VzlcsL5nPg/G4CqywxTrn2/wHgaM2AgSx//cKeaORsXcZqYoZHvdWC3L+0SpqswrTG
+         +i981IlTM3kOHQ1gEJzVBj6wmrlAHiGh2vjob49O8srnTR/nmsJRMrytLZ3fhs4uchil
+         OQJw==
+X-Gm-Message-State: AOJu0YzbL7dFIgkZqVmPjzCReTQBEv8HRQzILfBZEgLv6i5Nl6+nAMgb
+	PpTbTZnh9nZl8TUfVGcStKiaBRKf8qOF3yDse9QG8nT4fbCS5JJJYwhs9GVK/GtxqbBnD8VfHW8
+	3d3ZcarcBWeZT5ucmul0OHl8ExMy1HCoD4LX90A==
+X-Google-Smtp-Source: AGHT+IGuTAUXYGuoFczcZ9F/O/HV4ODtqiVstn6XEgheiBsiZuK98u0eN9pDPYlFkhTi88W5GaiKyT/7b2gDM+Hwqys=
+X-Received: by 2002:a25:6608:0:b0:e16:7070:97e6 with SMTP id
+ 3f1490d57ef6-e17764c6e59mr5879394276.9.1724410877637; Fri, 23 Aug 2024
+ 04:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
- andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com,
- finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
- elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v2] gpio: rockchip: resolve overflow issues
-To: Ye Zhang <ye.zhang@rock-chips.com>, linus.walleij@linaro.org,
- brgl@bgdev.pl, heiko@sntech.de, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240823034314.62305-1-ye.zhang@rock-chips.com>
- <20240823034314.62305-4-ye.zhang@rock-chips.com>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20240823034314.62305-4-ye.zhang@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU1DGlZIGh9DQh9NTk5KSEpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a917ee45e3203aekunm5c013460143
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MUk6EQw4OTIwHiJWCQsQEk0p
-	DCgaFC5VSlVKTElPT0pLTENKTUhJVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhLTkI3Bg++
+References: <CGME20240823071040epcas1p1309967537fb6286a9e67a38e598ce104@epcas1p1.samsung.com>
+ <20240823071025.15410-1-sh8267.baek@samsung.com>
+In-Reply-To: <20240823071025.15410-1-sh8267.baek@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 23 Aug 2024 13:00:40 +0200
+Message-ID: <CAPDyKFpSf8GZppkqJCs1r990QXDJMHWHAbVXS2XoffCLQdgSug@mail.gmail.com>
+Subject: Re: [PATCH] mmc : fix for check cqe halt.
+To: Seunghwan Baek <sh8267.baek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	ritesh.list@gmail.com, grant.jung@samsung.com, jt77.jang@samsung.com, 
+	junwoo80.lee@samsung.com, dh0421.hwang@samsung.com, jangsub.yi@samsung.com, 
+	sh043.lee@samsung.com, cw9316.lee@samsung.com, wkon.kim@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 
-在 2024/8/23 11:43, Ye Zhang 写道:
-> Prevent overflow issues when performing debounce-related calculations.
-> 
-> Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+On Fri, 23 Aug 2024 at 09:10, Seunghwan Baek <sh8267.baek@samsung.com> wrote:
+>
+> To check if mmc cqe is in halt state, need to check
+> set/clear of CQHCI_HALT bit. At this time, we need to
+> check with &, not &&. Therefore, code to check whether
+> cqe is in halt state is modified to cqhci_halted,
+> which has already been implemented.
+>
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+
+Hi Seunghwan,
+
+Please re-post to include some additional and needed maintainers.
+./scripts/get_maintainer.pl drivers/mmc/host/cqhci-core.c should give
+you the needed information.
+
+Kind regards
+Uffe
+
 > ---
->   drivers/gpio/gpio-rockchip.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 5f60162baaeb..bf22b103b6a2 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -209,11 +209,12 @@ static int rockchip_gpio_set_debounce(struct gpio_chip *gc,
->   		freq = clk_get_rate(bank->db_clk);
->   		if (!freq)
->   			return -EINVAL;
-> -		max_debounce = (GENMASK(23, 0) + 1) * 2 * 1000000 / freq;
-> +		div = (u64)(GENMASK(23, 0) + 1) * 2 * 1000000;
-> +		max_debounce = DIV_ROUND_CLOSEST_ULL(div, freq);
-
-can't max_debounce = DIV_ROUND_CLOSEST_ULL((GENMASK(23, 0) + 1) * 2 *
-1000000, freq) work?
-
->   		if (debounce > max_debounce)
->   			return -EINVAL;
->   
-> -		div = debounce * freq;
-> +		div = (u64)debounce * freq;
->   		div_reg = DIV_ROUND_CLOSEST_ULL(div, 2 * USEC_PER_SEC) - 1;
->   	} else {
->   		div_debounce_support = false;
+>  drivers/mmc/host/cqhci-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index c14d7251d0bb..3d5bcb92c78e 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -282,7 +282,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>
+>         cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+>
+> -       if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
+> +       if (cqhci_halted(cq_host))
+>                 cqhci_writel(cq_host, 0, CQHCI_CTL);
+>
+>         mmc->cqe_on = true;
+> @@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>                 cqhci_writel(cq_host, 0, CQHCI_CTL);
+>                 mmc->cqe_on = true;
+>                 pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -               if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
+> +               if (cqhci_halted(cq_host)) {
+>                         pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>                                mmc_hostname(mmc));
+>                 }
+> --
+> 2.17.1
+>
 
