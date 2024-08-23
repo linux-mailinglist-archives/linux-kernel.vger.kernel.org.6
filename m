@@ -1,134 +1,194 @@
-Return-Path: <linux-kernel+bounces-298379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0B495C679
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:24:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EBC95C675
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 09:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9F9B2289D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B1F1F23555
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 07:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2727113C9D4;
-	Fri, 23 Aug 2024 07:23:51 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DFD13BC2F;
+	Fri, 23 Aug 2024 07:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ImVFoA92"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7810613A88A;
-	Fri, 23 Aug 2024 07:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F7913AA2A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397830; cv=none; b=GgI0JROYev7oAyvSm7yfKR1OJqP7iiNSjYlKnMPTgC4FGw0TX7P5TL2DU0scSraChxGlpuSN9lLuZpr2zppDv9+hEKkATNAqpH378TouBKWcFqsu2juvFbDvHDAu1g6fgI2058dxLid+3FcfhwpHzD4HHz3b2S4YK/pqAGVYQ3c=
+	t=1724397829; cv=none; b=k5RA9H3hdMSdyMs9FRdIfA1Q+DbI+u4ir1KmjfiyaRsaauhxwTzkx0rjd+bo+nYLlP1o52BvDHzo2cvpQnGQFp4UDZR6HGeLRY95NuedDciPM5t+0zTOZJKT9bM8eqDEU580glLscKGQCkJ3QRyxh7wNgiAgtFJR3qiw+EQlb8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397830; c=relaxed/simple;
-	bh=TZ8pa3FlE5L+xPFRN/W9Z5wq6Lhu8mNg1Qmwnmdbf90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zh+gPIsA0hbyoJl+2Di84njE8fsX43eTwPuADRm3WOvbaUECNMCsk/ZoeRhz9gWQYbyl75p0J4cb8A7nPM4MBQ2xhxW+zcRFGElvzLtYhPFhpZdLvNptZ74RH2HM8YyiCXBZBjzvyssmH2YiIV14xuUCq/xWHR/kZYxJpnMW+RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e16582cb9f9so1297809276.0;
-        Fri, 23 Aug 2024 00:23:48 -0700 (PDT)
+	s=arc-20240116; t=1724397829; c=relaxed/simple;
+	bh=iHS7rbkShMfUPZAmnOlThc8ibOAJHNhxRONLIiuqN58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kar9T+qgf/b8FpEyiekprvCzCwmzo8Sn0jodrzrkOtjsmF8uduhc6OKEPxhe6cW2DOcyp+FAk3ex1rUpjVAHFOm1QwldceWCNP8E9yQdTiyHsxFn7hRVwaeZ302K/7jtHo8Uz2FgsrNSAz2wK/Jg9cgeTZpJ/8XFNCu58S6eA6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ImVFoA92; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7142448aaf9so1195150b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 00:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724397827; x=1725002627; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v5ElHlHRIu5slLIV+mCF9JmI6Y4XWgj6Cd25Jej8q74=;
+        b=ImVFoA92UV7EnvWgPwjqfgKN4wepkAlm5LIwHeugg4xcYzebSHenKmF8kVC6LyVqOZ
+         DQN3iIi+Vw1KdBNszlAUeP4jDCqXEZn9ndyFHyPJeygxKJmzWqeZTgYa25hPODsdP8AG
+         jzR5exz0hBUE/YRWzKONVSWRj3Mo2REiQ3Witi5mZ5fNqkse24FDLLrgLk4z9Bqqbzku
+         sJHvK2SQGdCwxOoZuSzgIPjGVcZ6QNQKqHwYSPM6srEqxDhG7pCdKOdLHiG7V7DG8IHG
+         sPGDZHi0jECaXZBlL70hgXJZEZiAOy4ON66JNBdGQUftzMdxx5JBNER3MWyiQuu4oPX2
+         8Gag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724397826; x=1725002626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b6LuKNaeSfLw79fqt8g2TueEBKyy/sG3LeW1oOKYYb8=;
-        b=AGDVp6VbJHwOtbq7VqJM5OM8jQP3Iq2TxF+mV1jvFMGPOrX53c4DFGhLyOQAjq5QpN
-         WxZ8zNka+fTd7tfiFJlgoI9Rs6Z8Da0R0yQm5YdAVyTt5bd/HWNeAUVI1GZj1fNsWpNX
-         2Gp5HWEh4YR8EtKJ/qRJ2+1o0EWxS+Aw/y8yRyRGQhjnzOcXRcat2iV75FtIMMEJkp9V
-         2gkSd7jt8k2EtgpngqiTsdTdo0EgcCgXpWXcBVXyzzLKOSdP5AnJceOGlUAiYa8eL1oh
-         Ow8mEUQwAL/KpFlT1fNLqjZbM+TJ3da6EwtyXrfg4Gb3kfeOXs3tmYrGA7BflvOzEVta
-         a7yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQoJ2U9udYqDwm6hkFk8nDIv7cMfJjEGm6LbV8PokuDSQnLZAZBsSQQhTuJ7MK2/EfrEhIpS37XJhx@vger.kernel.org, AJvYcCXhcYkZicYElfi8fX60LqGBfJsdUEAcOIsVikPvQbonkMARPcyiMsdo0AqNj2lavbkOsaO7BZJ1tPAJCNW6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxXgQZfxND/Av2aWVtKJb4HFIYtxKlKd3allAxmFdMoV/QM1F1
-	7lkTDkwIR1C6IUqWkcHW6Y6EVZYFprbq2+Vqni2CrqPtyZZO3DoCDaAg5nUz
-X-Google-Smtp-Source: AGHT+IEncNMW/TzrY3HsDtbqA5DUzfV4XJ8JIUDKhai+60RIveGzUxW7t+FNQf6TdlAL3y49C+yEXg==
-X-Received: by 2002:a05:6902:2013:b0:e17:5746:15d with SMTP id 3f1490d57ef6-e17a7a708f2mr1163678276.25.1724397826196;
+        d=1e100.net; s=20230601; t=1724397827; x=1725002627;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5ElHlHRIu5slLIV+mCF9JmI6Y4XWgj6Cd25Jej8q74=;
+        b=owim91CXXm3lTwfYZcKBxze78d8uq/+ArhCQ1/lwvfiV+iRsVOj31rwoBNqW67WD9u
+         K00brC3cpjdDk6o9qgtIyIj8V5FfOBHT3z5sY7GGeWqmkYRmeMKNj5sFixrHR/OJqey0
+         Yni2ZnBhtr2I6FHISNhyhNah74pRIkd52sgc0kmuTGHftpf2MGPhEuefEd9ZACmyb/ji
+         ftYq5BNuxiCF9kOKMCtjJAiUofpg6bT3tlgUZbKZKg9Z4QvgYEoKlrMVSfhp9KsqDRnp
+         dJ4eoaqKd6e4VHtI4NdEWPEH199yCNGkausUaSWb540nrLgobEACNHdseKw68Xuj3wSS
+         dEag==
+X-Forwarded-Encrypted: i=1; AJvYcCX8tS1+nvUhNRRCAUm9wMIHxK08hVjKe7refYEWZ2lbxO26SvNj07CeCoUHWkJRt2iXQG/7275kK8IOVc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUXTdhoTUZDeUYq8DCmHgmu4Ptk08QsC+vboM9ecmPtb7bUeoJ
+	ygGiERVmOdHYPJhRWcDMdBgjAUwtGFujHwEZeC4FujfVrDD+w+ZwsjV03NqYkw==
+X-Google-Smtp-Source: AGHT+IFci5MVjwKGKSuKLPiYMi40vitXCDqOaX7wyqWrXkZSVfN3mDYsFqyHTQR/+iLqpPsiZXbVXg==
+X-Received: by 2002:a05:6a00:2fce:b0:70e:ce95:b87 with SMTP id d2e1a72fcca58-7143162f704mr9396156b3a.0.1724397826876;
         Fri, 23 Aug 2024 00:23:46 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4b3972sm583188276.30.2024.08.23.00.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 00:23:45 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6aab656687cso13698917b3.1;
-        Fri, 23 Aug 2024 00:23:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+vNihjb+Nm1EX5YjAdnCG77vZvZSmxVuTuHoFWOLQ9aQiNxSyZ0cNvSIyKlv/mu4D9HCLGczx4vvF@vger.kernel.org, AJvYcCX6hOdpSfS4Z7N//shfQFeBLasAoXuGvDuQ1qw3rHDXL3qeLI5gpp1N4m9DWZvb8V48egw+Xi+LnuqReIuS@vger.kernel.org
-X-Received: by 2002:a05:690c:6f10:b0:651:4b29:403c with SMTP id
- 00721157ae682-6c30317233dmr52554827b3.2.1724397825549; Fri, 23 Aug 2024
- 00:23:45 -0700 (PDT)
+Received: from thinkpad ([120.60.60.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-714342e03a3sm2510295b3a.140.2024.08.23.00.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 00:23:46 -0700 (PDT)
+Date: Fri, 23 Aug 2024 12:53:40 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jingoo Han <jingoohan1@gmail.com>, andersson@kernel.org,
+	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 4/8] PCI: Change the parent to correctly represent
+ pcie hierarchy
+Message-ID: <20240823072340.qcd6afkgwssr4muw@thinkpad>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822230104.707812-1-andy.shevchenko@gmail.com>
-In-Reply-To: <20240822230104.707812-1-andy.shevchenko@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Aug 2024 09:23:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
-Message-ID: <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: renesas: rzg2l: Replace
- of_node_to_fwnode() with more suitable API
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
-	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
 
-Hi Andy,
+On Sat, Aug 03, 2024 at 08:52:50AM +0530, Krishna chaitanya chundru wrote:
+> Currently the pwrctl driver is child of pci-pci bridge driver,
+> this will cause issue when suspend resume is introduced in the pwr
+> control driver. If the supply is removed to the endpoint in the
+> power control driver then the config space access by the
+> pci-pci bridge driver can cause issues like Timeouts.
+> 
+> For this reason change the parent to controller from pci-pci bridge.
+> 
 
-On Fri, Aug 23, 2024 at 1:01=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> of_node_to_fwnode() is a IRQ domain specific implementation of
-> of_fwnode_handle(). Replace the former with more suitable API.
->
-> Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Also, what if the PCIe controller driver tries to access the device? Like for
+sending PME_Turn_Off etc... during suspend? I think you should also make sure
+that the suspend callback of the pwrctl driver has to happen _after_ the
+controller driver.
 
-Thanks for your patch!
+Still the parent-child hierarchy is not going to change, but only the devlink
+part.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/of_irq.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/seq_file.h>
->  #include <linux/spinlock.h>
->
-> @@ -2624,7 +2625,7 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl=
- *pctrl)
->
->         girq =3D &chip->irq;
->         gpio_irq_chip_set_chip(girq, &rzg2l_gpio_irqchip);
-> -       girq->fwnode =3D of_node_to_fwnode(np);
-> +       girq->fwnode =3D dev_fwnode(pctrl->dev);
+- Mani
 
-While this looks correct, the new call goes through many more hoops, and
-is not a simple inline function.
+> Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/bus.c         | 3 ++-
+>  drivers/pci/pwrctl/core.c | 9 ++++++++-
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 55c853686051..15b42f0f588f 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -328,6 +328,7 @@ void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
+>   */
+>  void pci_bus_add_device(struct pci_dev *dev)
+>  {
+> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>  	struct device_node *dn = dev->dev.of_node;
+>  	int retval;
+>  
+> @@ -352,7 +353,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>  
+>  	if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
+>  		retval = of_platform_populate(dev_of_node(&dev->dev), NULL, NULL,
+> -					      &dev->dev);
+> +					      host->dev.parent);
+>  		if (retval)
+>  			pci_err(dev, "failed to populate child OF nodes (%d)\n",
+>  				retval);
+> diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
+> index feca26ad2f6a..4f2ffa0b0a5f 100644
+> --- a/drivers/pci/pwrctl/core.c
+> +++ b/drivers/pci/pwrctl/core.c
+> @@ -11,6 +11,8 @@
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+>  
+> +#include "../pci.h"
+> +
+>  static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
+>  			     void *data)
+>  {
+> @@ -64,18 +66,23 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
+>   */
+>  int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
+>  {
+> +	struct pci_bus *bus;
+>  	int ret;
+>  
+>  	if (!pwrctl->dev)
+>  		return -ENODEV;
+>  
+> +	bus = pci_find_bus(of_get_pci_domain_nr(pwrctl->dev->parent->of_node), 0);
+> +	if (!bus)
+> +		return -ENODEV;
+> +
+>  	pwrctl->nb.notifier_call = pci_pwrctl_notify;
+>  	ret = bus_register_notifier(&pci_bus_type, &pwrctl->nb);
+>  	if (ret)
+>  		return ret;
+>  
+>  	pci_lock_rescan_remove();
+> -	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
+> +	pci_rescan_bus(bus);
+>  	pci_unlock_rescan_remove();
+>  
+>  	return 0;
+> 
+> -- 
+> 2.34.1
+> 
 
-Perhaps just &np->fwnode? ;-)
-
->         girq->parent_domain =3D parent_domain;
->         girq->child_to_parent_hwirq =3D rzg2l_gpio_child_to_parent_hwirq;
->         girq->populate_parent_alloc_arg =3D rzg2l_gpio_populate_parent_fw=
-spec;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+மணிவண்ணன் சதாசிவம்
 
