@@ -1,182 +1,112 @@
-Return-Path: <linux-kernel+bounces-298922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89C595CD6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:12:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1057595CD9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 15:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6F828492A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:12:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77CBCB22E83
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D36D188A35;
-	Fri, 23 Aug 2024 13:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kedIkQi+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02F9188905;
-	Fri, 23 Aug 2024 13:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA9D186612;
+	Fri, 23 Aug 2024 13:19:37 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B81218562A
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 13:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724418611; cv=none; b=krxQU39q6LDN2CpyvSrUAkOi3/Dj/wf/Ys6awfDlV3zM4OEf28+DaEMJIm7xLdo8UX4VW+tg00GboK2OykldE/Jv3hxx/CttaOE2GLUxqhJ/ISESWe5F/r5uiM7Ktul6w6zO0SV80HnufCuhCt6AP2xuSyqr//UdzfDbdQol06c=
+	t=1724419177; cv=none; b=BxYgIxlTbmu/Kb0lhbV9CI75WKRVkVdA4gIsjWezAv0lg7A/qcFtfFVTZ5j+GokgzbPkqmGW+5BzELrRIq9epTToS9kcdkxQyzXyPpqD09YHFTWjDBKAq5m113Dx7CtxZNR9/EbqZOOmld9MDKpVE8hAozGXKgBvfYnvSxPQ6to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724418611; c=relaxed/simple;
-	bh=wznO/uHzp07GwjLCy/T67HdeBwaNbaL4D0O7BIfErvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cUEnvFOL19sFocPjIN3sH0t4S2XVWXB0Zo4uqXutw2ndW9BOHUZ9YBxRW/jvYqUymkx3eTNN7M8ar+SpX3gK/ONySSudgH4iZ14ipu/X4lNTp224QhljDqk6aig/YtZGJkgOJSlfxhPwjtWxs2c89vGpoAQCRBwPcis5GDuv6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kedIkQi+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47N8vtdX005375;
-	Fri, 23 Aug 2024 13:10:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=vGA4guXkyUMpC
-	/+TGE5IkXahUomFPrZKZRJG1zd//I0=; b=kedIkQi+aLzcYcDnTmFfp3KBntySC
-	ufuOSQyIUSvf3t5HKt3uZb+6lmqIfjKyFeRgTJMVmxhm+9L+1Xl4k2EMliEqP4LT
-	EmM5tbUqPdyYOPA0Y8EmhkgJkYefrg1ZxjW2lpu+wjOetA6zIlelyhEz/Ck/S9uU
-	Z2AH1lfHSQmlWVE0qGPMkjEr/jyXeR8DOEsUEZO4J+Qz0NMxgp7jGsv+Xx4+S1cT
-	smZYRb80ytSc4twkks4Pa6OawBaqIvbXYWqQ8SExCT+7PkGpIUwFGDuoWsjnrTgu
-	zE/NmTxXmO/xEgyJAmnbv6w9R4Q2hFsWMviuc6kSL1ZCmywppN5Yjoa8g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb650ff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 13:10:06 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47NDA5Tk016651;
-	Fri, 23 Aug 2024 13:10:06 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mb650f7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 13:10:05 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47ND0T9J017684;
-	Fri, 23 Aug 2024 13:10:04 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138w3hkyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 13:10:04 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47ND9xPx25362926
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Aug 2024 13:10:01 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8357E2004B;
-	Fri, 23 Aug 2024 13:09:59 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B31420040;
-	Fri, 23 Aug 2024 13:09:59 +0000 (GMT)
-Received: from a46lp38.lnxne.boe (unknown [9.152.108.100])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Aug 2024 13:09:59 +0000 (GMT)
-From: Hariharan Mari <hari55@linux.ibm.com>
-To: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
-        frankja@linux.ibm.com, borntraeger@linux.ibm.com,
-        imbrenda@linux.ibm.com, david@redhat.com, pbonzini@redhat.com,
-        schlameuss@linux.ibm.com
-Subject: [PATCH v3 5/5] KVM: s390: selftests: Add regression tests for PLO subfunctions
-Date: Fri, 23 Aug 2024 15:05:08 +0200
-Message-ID: <20240823130947.38323-6-hari55@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240823130947.38323-1-hari55@linux.ibm.com>
-References: <20240823130947.38323-1-hari55@linux.ibm.com>
+	s=arc-20240116; t=1724419177; c=relaxed/simple;
+	bh=3pyEt5xSZgBPIyzAzfpZidqgbBCrQQaze8p85zvwYgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlNYpUq+wYs/VZffd4yIXCkFeTwDWf+BtL7dmxUVkDPASwUrOAvsn/2SLXMrOTmAUOjakk55dT9uif1vAtC70yc3jwbbVszBN8CL8ENeoA5OKqTg0rcmsWrYtTwuXkOyPHefDv/kfPU3Y2vaTklvy1YIHffWQ6IKCa9XeVBe+sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47ND83oS013063;
+	Fri, 23 Aug 2024 08:08:24 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47ND6LFc013001;
+	Fri, 23 Aug 2024 08:06:21 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 23 Aug 2024 08:06:00 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Christian Lamparter <christian.lamparter@isd.uni-stuttgart.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Stan Johnson <userm57@yahoo.com>, Finn Thain <fthain@linux-m68k.org>
+Subject: Re: [PATCH v2] powerpc: warn on emulation of dcbz instruction in kernel mode
+Message-ID: <20240823130600.GI28254@gate.crashing.org>
+References: <2e3acfe63d289c6fba366e16973c9ab8369e8b75.1631803922.git.christophe.leroy@csgroup.eu> <17fa6450-6613-4c34-804b-e47246e7b39c@isd.uni-stuttgart.de> <9dbf73fe-a459-4956-8dbc-e919d9728f5e@cs-soprasteria.com> <20240822053238.GA2028@lst.de> <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: FeLCjR6ocRS4a9W_tisGtJhn8EXGdMZu
-X-Proofpoint-GUID: JVcfZFOhSEqQuL-7LwW7iDrUVRkXKu4K
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_10,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408230095
+In-Reply-To: <e6acf664-5ebd-4273-9330-cbec283ede23@cs-soprasteria.com>
+User-Agent: Mutt/1.4.2.3i
 
-Extend the existing regression test framework for s390x CPU subfunctions
-to include tests for the Perform Locked Operation (PLO) subfunction
-functions.
+Hi!
 
-PLO was introduced in the very first 64-bit machine generation.
-Hence it is assumed PLO is always installed in the Z Arch.
-The test procedure follows the established pattern.
+On Thu, Aug 22, 2024 at 06:39:33AM +0000, LEROY Christophe wrote:
+> Le 22/08/2024 à 07:32, Christoph Hellwig a écrit :
+> > On Thu, Aug 22, 2024 at 05:25:10AM +0000, LEROY Christophe wrote:
+> >>> and this results in a call to dma_direct_allocation(), which has one
+> >>> innocent looking memset():
+> >>
+> >>
+> >> memset() can't be used on non-cached memory, memset_io() has to be used
+> >> instead.
+> > 
+> > No, we use memset on uncached memory all the time.  Note that uncached
+> > memory != __iomem memory, for which you DO have to use memset_io.
+> > 
+> 
+> Then we have a subject here.
+> 
+> powerpc has a magic instruction 'dcbz' which clears a full cacheline in 
+> one go. It is far more efficient than a loop to store zeros, and since 
+> 2015 memset(0) has been implemented with that instruction (commit 
+> 5b2a32e80634 ("powerpc/32: memset(0): use cacheable_memzero"))
+> 
+> But that instruction generates an alignment exception when used on 
+> non-cached memory (whether it is RAM or not doesn't matter).
 
-Suggested-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
----
- .../kvm/s390x/cpumodel_subfuncs_test.c        | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+What does "uncached memory" even mean here?  Literally it would be
+I=1 memory (uncachEABLE memory), but more likely you want M=0 memory
+here ("non-memory memory", "not well-behaved memory", MMIO often).
 
-diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-index fe45fb131583..222ba1cc3cac 100644
---- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-+++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-@@ -19,6 +19,8 @@
- 
- #include "kvm_util.h"
- 
-+#define PLO_FUNCTION_MAX 256
-+
- /* Query available CPU subfunctions */
- struct kvm_s390_vm_cpu_subfunc cpu_subfunc;
- 
-@@ -33,6 +35,31 @@ static void get_cpu_machine_subfuntions(struct kvm_vm *vm,
- 	TEST_ASSERT(!r, "Get cpu subfunctions failed r=%d errno=%d", r, errno);
- }
- 
-+static inline int plo_test_bit(unsigned char nr)
-+{
-+	unsigned long function = nr | 0x100;
-+	int cc;
-+
-+	asm volatile("	lgr	0,%[function]\n"
-+			/* Parameter registers are ignored for "test bit" */
-+			"	plo	0,0,0,0(0)\n"
-+			"	ipm	%0\n"
-+			"	srl	%0,28\n"
-+			: "=d" (cc)
-+			: [function] "d" (function)
-+			: "cc", "0");
-+	return cc == 0;
-+}
-+
-+/* Testing Perform Locked Operation (PLO) CPU subfunction's ASM block */
-+static void test_plo_asm_block(u8 (*query)[32])
-+{
-+	for (int i = 0; i < PLO_FUNCTION_MAX; ++i) {
-+		if (plo_test_bit(i))
-+			(*query)[i >> 3] |= 0x80 >> (i & 7);
-+	}
-+}
-+
- /* Testing Crypto Compute Message Authentication Code (KMAC) CPU subfunction's ASM block */
- static void test_kmac_asm_block(u8 (*query)[16])
- {
-@@ -196,6 +223,11 @@ struct testdef {
- 	testfunc_t test;
- 	int facility_bit;
- } testlist[] = {
-+	/*
-+	 * PLO was introduced in the very first 64-bit machine generation.
-+	 * Hence it is assumed PLO is always installed in Z Arch.
-+	 */
-+	{ "PLO", cpu_subfunc.plo, sizeof(cpu_subfunc.plo), test_plo_asm_block, 1 },
- 	/* MSA - Facility bit 17 */
- 	{ "KMAC", cpu_subfunc.kmac, sizeof(cpu_subfunc.kmac), test_kmac_asm_block, 17 },
- 	{ "KMC", cpu_subfunc.kmc, sizeof(cpu_subfunc.kmc), test_kmc_asm_block, 17 },
--- 
-2.45.2
+M=0 memory shouldn't ever have memset done on it, that is insane.  And
+I=1 memory should not have the same optimised routines used, since
+those only make things slower still.
 
+> It is then 
+> emulated by the kernel but it of course leads to a serious performance 
+> degradation, hence the warning added by commit cbe654c77961 ("powerpc: 
+> warn on emulation of dcbz instruction in kernel mode"). Until now it 
+> helped identify and fix use of memset() on IO memory.
+> 
+> But if memset() is expected to be used with non-cached RAM, then I don't 
+> know what to do. Any suggestion ?
+
+If memset() is expected to be used with M=0, you cannot do any serious
+optimisations to it at all.  If memset() is expected to be used with I=1
+it should use a separate code path for it, probably the caller should
+make the distinction.
+
+
+Segher
 
