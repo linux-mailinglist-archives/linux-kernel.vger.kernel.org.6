@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-298502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1B595C829
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:33:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DC595C82B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 10:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BFB280F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6211C214BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 08:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15DD145B0D;
-	Fri, 23 Aug 2024 08:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0U9E0bY"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263EA143C7B;
+	Fri, 23 Aug 2024 08:33:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FD13D8A0;
-	Fri, 23 Aug 2024 08:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2A036AEC
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 08:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401975; cv=none; b=oNQfDdwgurGFZY0HINo04zM74tTNkRQnX7qUKV46DJZDh0BbCb0FE5DzDf4tS/DhDqFslV9Gi+hwkoQrfPffAUNUdMiMlmZKSqhgwDDAonMbyUS/bI4emhT3OngUatA90YtEurTtRSgGQt+6KpiAifL3+9cULqLB73Bg/K0RJyo=
+	t=1724402031; cv=none; b=nPgwjZg+xzulIPs/Ee3JFuWcKRR1UbAnuIi4/6m5IIj/E+C5yXvjS+oD8uHYzzqz7Hrx4dXpf67PZgTXrnnbhu431aUn6nAG87HeG4hP8734wGQ2PxuJFcs4xCZTDmA7CrgDxM2qRr88aoTrEQpEl36qM5xVlQALWui2tSuxDpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401975; c=relaxed/simple;
-	bh=NV8JjnDoRrxNVYgq/FNfOB/FO+JK04wojIRoTm2lX5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YR17uLZcP8N37RlgA8g/bKG8atiqumxvFWmIpL7nvP3OPYD+SNscfPRJgVo8fvUHuQGBgCy+dCrJL3iSE1smZAxJwQGvccQwUwmnbMlR3dULNlfZfihGEtyyvpy9gJiQr/1gbYaye6QOQXa8B53DfVt97ZGWcD5EUHnuu+6fP9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0U9E0bY; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5b22f97b7so1700430eaf.2;
-        Fri, 23 Aug 2024 01:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724401973; x=1725006773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yp4pKPaH9PczaTr8JGBibTa2Z0QRF52/s5tchcuFGOI=;
-        b=C0U9E0bYFAYT4WWhxso7ZK0VOaSBh3cO0KjWcR9mkXpn8Bwt+8n3TSA8U6U3zxYi4K
-         7rITDdCg4hQQDMWe9ZLGQ59IXp5eMP02zVT4c+kOtA328Ax8ZkWSBm83+QldwSV8DeG7
-         bUQM4UlGX88QPmZ6WMxYYahX6SkrTVxXwQRLC7LvqDQ7ZdkjGOPNprIniT3iqhuR7ArN
-         jO5ppjJ7mZn2ydwB4lKC/rvjmQ2KKZTVy1iWXi8TlH8PNjkvs1ZYW+30SMDwPb1JkBGB
-         CVW+Qb5vvYS1mziGJyEc4sUlQbFG/Cs6kqDZoPM59thZS756DIeG6wZE+Lz3AAO8lnzp
-         wzaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724401973; x=1725006773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yp4pKPaH9PczaTr8JGBibTa2Z0QRF52/s5tchcuFGOI=;
-        b=iFjjkjkGXkTqIHdGvyU7YBcFBnj4UVmftvkGuVHsw00WyvDmkkz+hqVBb6siNyNrcd
-         tQ78MfIqlUPLrVEwnadCCYR8o+vu0QtnzOfyTjf08JGeALpkEaJESdvb9VJta3tK6usC
-         Q96ttN94jELRGsjEVdQEBuOZDleRgukGO0jbQz0afF2sWXhVLU/qeg9rYuWZT3Uovn7T
-         hR9zmtuBimDWzzr7WtNmbBdE/lMaNgPlYfHN+tTgcxhFV/lhHZ1VOW08ZeT73FviqEJx
-         RGVOs3xc+hL0LEHVoIAsRWTRAJR4XdCnvpCvntuvrdY8ihX2iAaiWlyW7//434Kjzg7U
-         9R0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7F4jsRSdadxhzc9HIIJu7Y87fwGqy5q/nl7ACqmceKLe1/39VkjhJ6t8oAkBxQGiqZsKPp5Z9LB9Dy5Oz@vger.kernel.org, AJvYcCVSbE81i4OMkPlAWmBod8n8ttX+GGclcMD9Bh2klapzJpgef2UPL0Vh6JxhQZ8DEpYasB9mbvoUyJO9@vger.kernel.org, AJvYcCVseVnVP+PFEwVLKLo8fMYnnR2+Gdhy26Js1TSxT7qCpd1G+L4gknWvdInu7KHBqzCLbJxWbVqYXtFBYbs=@vger.kernel.org, AJvYcCXywFmnvJ/2UcNa3i+fNce8OUE4lF/Z0xIBXZicD8/pxMKS4ssCKljxFEWVYZx++suJPGkZdgi0RqOSgehWd5RWHL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA+sb2XhCy56+Ta2vNXXef4phcGrAsG5/LaTUI96gINsNhdoG2
-	k/KGvFWVFNCwu+tXKWpIDYJLSZgZJad81l+KLH51Bzmv6rVsOt/d
-X-Google-Smtp-Source: AGHT+IEsGrMIBnE5i9swqXq/Apvogdiy73ZTSN5iJnCeHN2vFAylF26K8eA1Sr+N3GDp+gdG1bTwQg==
-X-Received: by 2002:a05:6358:52c1:b0:1ac:cdba:8c87 with SMTP id e5c5f4694b2df-1b5c3a4e88bmr144912155d.10.1724401972541;
-        Fri, 23 Aug 2024 01:32:52 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acabbf3sm2265501a12.29.2024.08.23.01.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 01:32:52 -0700 (PDT)
-Date: Fri, 23 Aug 2024 01:32:49 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
- acquire mutex
-Message-ID: <ZshJMRCe4LvpYNmZ@google.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
- <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
- <Zsd-aVM6504L_hqi@google.com>
- <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
+	s=arc-20240116; t=1724402031; c=relaxed/simple;
+	bh=IrByBlXZIbr5E4dZ52UqOkc2uwoNEPohFcklm+VoinQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ESFIOaVb2HObzRbslQUkwHiHtvGdlxTZHdXTswvTCU8auWfl4aTLT9k9BFFoCpjKU3t6SrGO9OlJrJcx8+0U3LlqusWu9gvhS7Dbu0vuyzUvRUH4NPlu/ldi0ytF5awCM/+c2LOhnb+DIH4hqPcICUDT1mBafUnj8eOxjQhYCnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WqtY6297Nz6FGd5;
+	Fri, 23 Aug 2024 16:30:02 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id CF26A14065B;
+	Fri, 23 Aug 2024 16:33:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 23 Aug
+ 2024 09:33:46 +0100
+Date: Fri, 23 Aug 2024 09:33:45 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Huisong Li <lihuisong@huawei.com>
+CC: <xuwei5@hisilicon.com>, <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>,
+	<wanghuiqiang@huawei.com>, <liuyonglong@huawei.com>
+Subject: Re: [PATCH v2 2/6] soc: hisilicon: kunpeng_hccs: Return failure on
+ having not die or port information
+Message-ID: <20240823093345.000024f2@Huawei.com>
+In-Reply-To: <20240823031059.32579-3-lihuisong@huawei.com>
+References: <20240718071134.31155-1-lihuisong@huawei.com>
+	<20240823031059.32579-1-lihuisong@huawei.com>
+	<20240823031059.32579-3-lihuisong@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Aug 23, 2024 at 08:06:17AM +0200, Krzysztof Kozlowski wrote:
-> On 22/08/2024 20:07, Dmitry Torokhov wrote:
-> > On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
-> >> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
-> >>> Guard notation is more compact and ensures that the mutex will be
-> >>> released when control leaves the function.
-> >>>
-> >>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>> ---
-> >>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
-> >>>  1 file changed, 2 insertions(+), 6 deletions(-)
-> >>>
-> >>
-> >> You need to include cleanup.h (unless some other patch already did it
-> >> and I missed it?)
-> > 
-> > Guard for mutexes defined in mutex.h which is pulled in indirectly, and
-> 
-> guard() is not in mutex.h and in general we are including headers for
-> the things directly used in the unit.
+On Fri, 23 Aug 2024 11:10:55 +0800
+Huisong Li <lihuisong@huawei.com> wrote:
 
-Oh, but it is:
+> Driver is unavailable if all die number or all port number obtained from
+> firmware are zero. So return failure in this case.
 
-https://elixir.bootlin.com/linux/v6.10/source/include/linux/mutex.h#L196
-
-DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+Perhaps should include a little info on whether there are firmware's out
+there that do this or not?  I.e. Fix, or hardening?
 
 > 
-> > cleanup.h is included there.
-> > 
-> > If we want to list all the headers that we need instead of relying on
-> 
-> Fixing existing code is another thing. I only propose to add new code
-> with the header.
-> 
-> I don't have strong opinion anyway, so:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+Otherwise, this lgtm.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Thanks!
+> ---
+>  drivers/soc/hisilicon/kunpeng_hccs.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+> index c4a57328f22a..6e88f597f267 100644
+> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+> @@ -451,6 +451,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>  	struct device *dev = hdev->dev;
+>  	struct hccs_chip_info *chip;
+>  	struct hccs_die_info *die;
+> +	bool has_die_info = false;
+>  	u8 i, j;
+>  	int ret;
+>  
+> @@ -459,6 +460,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>  		if (!chip->die_num)
+>  			continue;
+>  
+> +		has_die_info = true;
+>  		chip->dies = devm_kzalloc(hdev->dev,
+>  				chip->die_num * sizeof(struct hccs_die_info),
+>  				GFP_KERNEL);
+> @@ -480,7 +482,7 @@ static int hccs_query_all_die_info_on_platform(struct hccs_dev *hdev)
+>  		}
+>  	}
+>  
+> -	return 0;
+> +	return has_die_info ? 0 : -EINVAL;
+>  }
+>  
+>  static int hccs_get_bd_info(struct hccs_dev *hdev, u8 opcode,
+> @@ -601,6 +603,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>  	struct device *dev = hdev->dev;
+>  	struct hccs_chip_info *chip;
+>  	struct hccs_die_info *die;
+> +	bool has_port_info = false;
+>  	u8 i, j;
+>  	int ret;
+>  
+> @@ -611,6 +614,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>  			if (!die->port_num)
+>  				continue;
+>  
+> +			has_port_info = true;
+>  			die->ports = devm_kzalloc(dev,
+>  				die->port_num * sizeof(struct hccs_port_info),
+>  				GFP_KERNEL);
+> @@ -629,7 +633,7 @@ static int hccs_query_all_port_info_on_platform(struct hccs_dev *hdev)
+>  		}
+>  	}
+>  
+> -	return 0;
+> +	return has_port_info ? 0 : -EINVAL;
+>  }
+>  
+>  static int hccs_get_hw_info(struct hccs_dev *hdev)
 
--- 
-Dmitry
 
