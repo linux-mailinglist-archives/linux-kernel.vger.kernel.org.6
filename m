@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-298784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-298775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F33B95CB78
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17A795CB6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 13:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAD71F25E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992B3283C48
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 11:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1FE1891A3;
-	Fri, 23 Aug 2024 11:33:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C7188A24;
-	Fri, 23 Aug 2024 11:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE0C18757A;
+	Fri, 23 Aug 2024 11:33:22 +0000 (UTC)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62550469D;
+	Fri, 23 Aug 2024 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724412831; cv=none; b=XzpoT9qh3G8HskqTkTupz8da+aXj88stfjn/P0fYQStnvRZxVtuqBEGBAgScuC75V1eQ315+dYQjoP3QJM3EqECW6CCCvXhhMLnvNIr8Yi/opHv5Z1ClrLAPgCuJx8I6TQrr8/0GTnnrD1Mq58QHLG6RbZapWQRT9zpJ2kQsIDQ=
+	t=1724412802; cv=none; b=V4wa0ECjdIexNXCfGo0IJ9Vs/h9r/0RFzcM7dIHEtcLqwXGLP7pm9u4SCnRcUhACOg60nuPMHX9i96iLlz09YAAiY5jZCwHlrRxSghuF5PknFYbifcATOAv8tKSihzhU1zKCMV+gPgu6LSlx+0BY161y8FDUD0SSfEWqL7eloP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724412831; c=relaxed/simple;
-	bh=cMHzfQ9hXRH0a2cw3aKhfnQcf1GD+TH3ZUYtvgpZyXE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YN8y1V8Ju9q0GOWg8hTmY+VxerVhRnmKQQyyU2XbsW5AYpBuNwvF5Yd0kLk9p6cH6BSZuTgF+xm8EgcFijVDJ6C8BrYsNJN5xmUVQi/uc7sBi80hTGB0uio/zRV6G+1Vy90gifdaK+SDLDzEmeRXsWzDLm/X/DalP2uuG06jd/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C0D5FEC;
-	Fri, 23 Aug 2024 04:34:15 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B5E7D3F58B;
-	Fri, 23 Aug 2024 04:33:46 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	coresight@lists.linaro.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v6 8/8] perf arm-spe: Support multiple events in arm_spe_evsel_is_auxtrace()
-Date: Fri, 23 Aug 2024 12:33:06 +0100
-Message-Id: <20240823113306.2310957-9-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240823113306.2310957-1-leo.yan@arm.com>
-References: <20240823113306.2310957-1-leo.yan@arm.com>
+	s=arc-20240116; t=1724412802; c=relaxed/simple;
+	bh=MYWc08SH5BecBkhgukAeB7AhxRAa8T75qBYSHugkffk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TCOrXsp9BtNLD5KEBIe+k9iSnLNp/4cSmWlzSvcQ+QNr4koEYTYZKr/ptcwXJ4jsxwiIW6MAuqc8LxKfATBByk1Hom8Glh+4nCpJh5+u1SeShsNtms44yG1BseEDl37JuiVELTIOmcmLwwlVXqvDa4JqYpMENvT+aJAPyxX3+v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso1810295276.1;
+        Fri, 23 Aug 2024 04:33:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724412799; x=1725017599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LMEH/Ww3lGUsG6S84gzaZZHFTkxZjOmIG5r+YsgcND4=;
+        b=CABLwoeBiAEhrSsmgWzxWs8uwawnz/z3X1RXbVZgQsY7qd3rwmHrMYSc6AgyYDe4/r
+         eB8HDrHJiLiXcUKj9qfpipe8bg95MSCLuNNasceRi1ch9/bf9jYj9xitqXjZAf7/XBpb
+         W61hCVwMckFS15NZOn/8lG6byxPOT5GVidjQ8u3nf/SxkKpK4tm42U5LUSsFzLjBZrkT
+         tTrceHN76rDKoLYadBznX6AfdZZOKrLcfupaKc/f43D3drkjgoPQr1Uq1fTYXiQjD0ru
+         EhWfAkvIkxN9g1Z025SW100syd7ZNLHmNsec7/ouauL1C+IcGIj2CRrvjtQhQye9/i+B
+         +mVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/obGXmEMuj4fI5jsqN7KheN1PWYmMjRykI/ZBbPhQjdZnY3LkTmTDmZu8+t0MogWnd3A9ZKN4J68f@vger.kernel.org, AJvYcCUtrh3Z6XGg2F7imVVKG58xvCppLxM2+Tr7nbmnBhWObkEEC9YJq27EC2oSQALDf685oa2KPqNDWwSB@vger.kernel.org, AJvYcCVYjlIy3S/v6SWG9VdXaJVjSaKgHxmCmNNKgtw9lJ0SEtOzVuSBV/bkmsXIJ0JTN/jp+YRZ2rb+srGkayTD1F5IF1M=@vger.kernel.org, AJvYcCW4wQGeq/QA+CvDenKJSrwOvY+B2nQhAgKs8L1o5qac28cTkBtXLXagZsJm3M+AsqIjc+qkrNvVh/CdfQZA@vger.kernel.org, AJvYcCWuTLOy0UwJXCs+ANqwBL16CLZ6CNFNa6zjWnpVViZb3gPIUgLCnv3ZKp+LDDGIIhmPOwJZJrIwSxqD1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQIX2AuKxWo4nVhsT/721s44ULwpBDplrv47dR5bMcvboIGd86
+	Ddqyl8wKKbwn17hNEaC9lDoWdS16xqGJtuEuvgrD1ZkA21SB1E1NqlAXbZza
+X-Google-Smtp-Source: AGHT+IEnZxUkU1g7JsD5zCnGFlJC5Gwv34A5kNnddRdT9jR6pu8gQlX3tvTFffTaYjpIbUZT1CgGgQ==
+X-Received: by 2002:a05:6902:2409:b0:e0b:d6ff:45a8 with SMTP id 3f1490d57ef6-e17a83d6786mr2049715276.20.1724412799126;
+        Fri, 23 Aug 2024 04:33:19 -0700 (PDT)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4b42ccsm621392276.31.2024.08.23.04.33.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 04:33:19 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-69483a97848so18964377b3.2;
+        Fri, 23 Aug 2024 04:33:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6IujzqH1IT581S0u59uh5xQ2hK1r8+BnDI3CEMTuSngCXlywV3cNIxe+H6J5D/A+c/zjAOP3kmS3NQA==@vger.kernel.org, AJvYcCUovwZVtITfDADWGPiKDD1mAlQ/jspEbMdidbVxY6rM2W2+xz9kEeFSRIZ548LeLWO2uoW8TOAToQjqPT4FU2kbw+M=@vger.kernel.org, AJvYcCWcJAZBNYV+3KyFZi2C+1mW5abvKuJ+LrhMvdvmbhT7xXD3jgSQL+qjK+3erX2Ie8Gb+j5hLeb165ng@vger.kernel.org, AJvYcCWcP/bbrGYYDxaU5tqmxHTHAFNNCgRZ5Clbt7UUK5gnUbGi6fynwVo8HTYpsFJKUxx4pX2XDF1q3hwz@vger.kernel.org, AJvYcCWj4UAdkaW6OHjqk4/qWet9p8CxPl+PFMQ1CLdVM2ZkL+0tZSBj1cPDjstguQ7kPi9feFFgmi0HNn0915Ul@vger.kernel.org
+X-Received: by 2002:a05:690c:2845:b0:6c1:699f:cf8 with SMTP id
+ 00721157ae682-6c625e27412mr19164117b3.14.1724412798745; Fri, 23 Aug 2024
+ 04:33:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240818173014.122073-1-krzysztof.kozlowski@linaro.org> <20240818173014.122073-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240818173014.122073-3-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Aug 2024 13:33:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXT2r8mTOye5S4JKZbXcBmavwrP96oe5aVnORm8UUqONA@mail.gmail.com>
+Message-ID: <CAMuHMdXT2r8mTOye5S4JKZbXcBmavwrP96oe5aVnORm8UUqONA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] dt-bindings: clock: renesas,cpg-clocks: add top-level constraints
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Magnus Damm <magnus.damm@gmail.com>, patches@opensource.cirrus.com, 
+	Elaine Zhang <zhangqing@rock-chips.com>, 
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 'pmu_type' field is an unique value and cannot support multiple PMU
-events.
+On Sun, Aug 18, 2024 at 7:30=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clocks and clock-output-names.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The arm_spe_evsel_is_auxtrace() function changes to compare PMU name to
-decide if it is a Arm SPE event. This leads to the 'pmu_type' field is
-no longer used, remove it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.12.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/arm-spe.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 138ffc71b32d..27724711e763 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -11,6 +11,7 @@
- #include <linux/bitops.h>
- #include <linux/kernel.h>
- #include <linux/log2.h>
-+#include <linux/string.h>
- #include <linux/types.h>
- #include <linux/zalloc.h>
- #include <stdlib.h>
-@@ -45,7 +46,6 @@ struct arm_spe {
- 	u32				auxtrace_type;
- 	struct perf_session		*session;
- 	struct machine			*machine;
--	u32				pmu_type;
- 	u64				midr;
- 
- 	struct perf_tsc_conversion	tc;
-@@ -1053,12 +1053,10 @@ static void arm_spe_free(struct perf_session *session)
- 	free(spe);
- }
- 
--static bool arm_spe_evsel_is_auxtrace(struct perf_session *session,
-+static bool arm_spe_evsel_is_auxtrace(struct perf_session *session __maybe_unused,
- 				      struct evsel *evsel)
- {
--	struct arm_spe *spe = container_of(session->auxtrace, struct arm_spe, auxtrace);
--
--	return evsel->core.attr.type == spe->pmu_type;
-+	return strstarts(evsel->name, "arm_spe");
- }
- 
- static const char * const arm_spe_info_fmts[] = {
-@@ -1099,7 +1097,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
- 	int err;
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (evsel->core.attr.type == spe->pmu_type) {
-+		if (arm_spe_evsel_is_auxtrace(session, evsel)) {
- 			found = true;
- 			break;
- 		}
-@@ -1284,7 +1282,6 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
- 	spe->session = session;
- 	spe->machine = &session->machines.host; /* No kvm support */
- 	spe->auxtrace_type = auxtrace_info->type;
--	spe->pmu_type = auxtrace_info->priv[ARM_SPE_PMU_TYPE];
- 	spe->midr = midr;
- 
- 	spe->timeless_decoding = arm_spe__is_timeless_decoding(spe);
--- 
-2.34.1
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
