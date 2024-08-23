@@ -1,323 +1,214 @@
-Return-Path: <linux-kernel+bounces-299101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E7C95D019
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:37:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B37995D025
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA3D1C20DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50ED0B2D1AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 14:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E5A188A24;
-	Fri, 23 Aug 2024 14:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A9A189529;
+	Fri, 23 Aug 2024 14:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G2ZmqA3j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DsqwgGk/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G2ZmqA3j";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DsqwgGk/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MxRsSXME"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588C118893E;
-	Fri, 23 Aug 2024 14:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFA118893E
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 14:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724423381; cv=none; b=XRBbN32uFZBlssJzUiiOdU+XMX6CJ3kPJfuUl1lYiVW7ABpQw4Hfzwh9WONHAP73woiN3qmooNwiq/58DkcqCqf62SDQGy1MdmxI0cEcfWqcpQ9aQNoK+RXWk3mLp34XKMuYN2CQ0ntDgoIBYh+UbIoP/YsIzG31I2U5UHeSdEc=
+	t=1724423391; cv=none; b=jmWXuojv/TrO7SLUN5sEMpqnldeYdMtFg5aT6AEcx7BkQo4218CPFr0vBqRa+fCPG8t8DpKdj1dNnfv36qH02oOSAHB2yyhljpJqHUL0L0rlI4tPMTGoDN15VTLZF1yxiUWu7KkYhYI4MnKl8Fd935VIMxeICX2ShpCKUuK2vFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724423381; c=relaxed/simple;
-	bh=lp10Mqw6LXG/DjpZXEPfNmKQcCCj50TX0zJgtwnyKNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUoyL1yOdOCFbnCsMOQW1gqJ7WqZ6T9o3WDNoLAuCbVDg91QWBh1oqGKN+2YsYBSH24MKcZRmYFtALj++xwv9vicZbtN75fyFWm0KqTcOvNlWThb5cIOroHtLOYzQsF6W8O1Eop5Bx6rPssk9Edp2aw1J5gg7AWCN89uODAQ+Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G2ZmqA3j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DsqwgGk/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G2ZmqA3j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DsqwgGk/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 67D412032B;
-	Fri, 23 Aug 2024 14:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724423377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
-	b=G2ZmqA3jupyUI0AEdPJVcxxkwSMAD7CNDtl4KzQplpZ0QJkA2FpIjuNwBUmYsrboUu9bgG
-	Vdz1BVDAeUa07NBunxrekClO/HRLvW1HkiKxypD64ckyeWunoVmmxJ/p9EZXPNPM+nUu8g
-	t7FwVzuyBkMRdGTYB0iZ2W/5qFq6mK8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724423377;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
-	b=DsqwgGk/OpeATe6KFZOanOZ4G+INUhYuOyybxzmRTm6n/rB+2hsYPMvJ6Q2ACLT5vfsX2v
-	GTJAXdeBxMiVeIBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724423377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
-	b=G2ZmqA3jupyUI0AEdPJVcxxkwSMAD7CNDtl4KzQplpZ0QJkA2FpIjuNwBUmYsrboUu9bgG
-	Vdz1BVDAeUa07NBunxrekClO/HRLvW1HkiKxypD64ckyeWunoVmmxJ/p9EZXPNPM+nUu8g
-	t7FwVzuyBkMRdGTYB0iZ2W/5qFq6mK8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724423377;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eR+Ulun1hXojDzAHAkNNJtbRl8AgUv4JNDHaEMqhYOo=;
-	b=DsqwgGk/OpeATe6KFZOanOZ4G+INUhYuOyybxzmRTm6n/rB+2hsYPMvJ6Q2ACLT5vfsX2v
-	GTJAXdeBxMiVeIBg==
-Date: Fri, 23 Aug 2024 16:29:36 +0200
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	linux-modules@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-	Lucas De Marchi <lucas.de.marchi@gmail.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jiri Slaby <jslaby@suse.com>, Jan Engelhardt <jengelh@inai.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] kmod /usr support
-Message-ID: <20240823142936.GK26466@kitsune.suse.cz>
-References: <e3yow7ih6af2hxzkmjay2oan3jypmo4hda64vxvpfco66ajcew@i3zewn4nbklf>
- <cover.1699618135.git.msuchanek@suse.de>
- <xbgto5tttcah4mrtyjih72ubod3qb375ww6e2fd4pi342rg4eg@wipwd57q43cc>
- <CAK7LNARYK-xjBS8puEM9xFtmjBNW6KJ2Qd6f7diZkdEEbUgVHA@mail.gmail.com>
- <5gx6vt4tzgk4zvboxrrahexr4ja6zm6fisjshdvnlfihsysqzb@quhp42ydtvh2>
- <20240822083600.GF26466@kitsune.suse.cz>
- <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
+	s=arc-20240116; t=1724423391; c=relaxed/simple;
+	bh=SH9B0BL7uLt6tcnM1VBpTcnkgyiGTIFb0iTtXovs0F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZCktQHB0nwK9M4qJd2h9yhbPqdtyAJWn7xp/sHe0RtTbs36A4NV3J9QCuuhNZmbvvgf4OHFeObqSilUoEs7sXuqYcd3OpuaHzzYizPdqi8XKZsFSdpVrAxupMSl+KcbPOy0yk8tdJdrgW3ZTG+3SQG/vhethlglgf90evHPHcRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MxRsSXME; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso19494021fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 07:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724423387; x=1725028187; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DIB0c+jAUWDPXd2QD2p4fPNNQNtlM220AtDEZkMw744=;
+        b=MxRsSXMEerqIt434qycs5BT04tKTYPphTapugcJypdWcrtzGunz2EUYQAUe2rLPBTy
+         Y8q7Oce1vfUbjQNTTjFCRbTJ/W/icvV/FeQtrYYIzV33wA28WPCpK51XzlsABCXLuyF0
+         EPYg28bBOJZOgjS3EO6pWJNFyGtVG4t8hrdZuDlB9JzELDiANgEPH7SBM47s4/IRHc0R
+         +2AYGL+kC0MReC0dxaUgklw/IrzZxYEPP47Aew8/poEFsO45JAQTq/dH2R0FShCnHCuZ
+         TBYgPNmEbIv02cXDD+LJfFZDmx/Uy6xJusubJL7S5MgvPacg6pSOu6kIj45ZXVv0kOH0
+         Mxag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724423387; x=1725028187;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIB0c+jAUWDPXd2QD2p4fPNNQNtlM220AtDEZkMw744=;
+        b=f4QYGR5QBJAmghpGw1FJ3cqra2MuHR8ch66I4d3WwoJ9wYPXt+v3DLazcen1xiR2Rq
+         Zns81yAak6o5QAlDiDcAcJI3CqDtxjmxi1fmtTs7Zt1pAj4zYsjhueBYnz12jE0ogc5l
+         XzBy9pjf8l92n0VxZhIJuk5xS5ajy91d0pIS4485xAe9Tc8tX3PBM2D+cY4uTRJyae4P
+         ipp4VAJbYkKclIvIJRH30VmPUaElq2NCyxuFr31muN+DXL5/sNl0OpX5oGBZocos7uXz
+         jY7EeA/8w4NynTL3yX87iWtxRPZO9i8ZWw2WfXTosOF9MhSTPkZk2dwoJB7YuZ72qDRQ
+         12rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+X7/bEjs1AZcUo5pBtYaxwo/I49uJiBklZPt+YuyF6x7rnb1NRVRM3Qn6eZwpay4SA/oBmSbicmEznYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoDYRwVQBTi268SmjRyS2WxuV+8qiMxDhY5KNcL6hhy0TolFAf
+	FAt2L9etHUmlGwt3RzNz3g5D8JCI9xVwPkFvwv3LxkhIN+MSGxCxUKLIdM8L3Ob2MdEFrpN40mo
+	q
+X-Google-Smtp-Source: AGHT+IHYpZtJVH6Prfq+WLMWjdpDo7o54QqLVKRGeNhWCbFAyaehg6FYfiCh8d9nmrlXwYyq9Ve76g==
+X-Received: by 2002:a2e:b555:0:b0:2ef:24a0:c176 with SMTP id 38308e7fff4ca-2f4f4916fd1mr18707381fa.28.1724423386214;
+        Fri, 23 Aug 2024 07:29:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c438fsm2147233a12.61.2024.08.23.07.29.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 07:29:45 -0700 (PDT)
+Message-ID: <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
+Date: Fri, 23 Aug 2024 17:29:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNASEdXPiP0_i5=1uLW-W0kZ9LiMt9r5aq0Gu5nK2yP5wDA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[intel.com,vger.kernel.org,suse.com,gmail.com,inai.de,kernel.org,google.com,fjasle.eu];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:email]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: get, prepare, enable a clock not in DT?
+Content-Language: en-US
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+ <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
+ <20240820-grandpa-down-fec4231f971c@thorsis.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240820-grandpa-down-fec4231f971c@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 10:03:05PM +0900, Masahiro Yamada wrote:
-> On Thu, Aug 22, 2024 at 5:36 PM Michal Suchánek <msuchanek@suse.de> wrote:
-> >
-> > Hello,
-> >
-> > On Thu, Aug 22, 2024 at 01:05:11AM -0500, Lucas De Marchi wrote:
-> > > On Tue, Dec 19, 2023 at 05:37:31PM GMT, Masahiro Yamada wrote:
-> > > > On Thu, Dec 7, 2023 at 3:37 AM Lucas De Marchi <lucas.demarchi@intel.com> wrote:
-> > > > >
-> > > > > On Fri, Nov 10, 2023 at 01:13:53PM +0100, Michal Suchanek wrote:
-> > > > > >Hello,
-> > > > > >
-> > > > > >This is resend of the last patch in the series that adds prefix support
-> > > > > >to kernel module location together with additional patch for validating
-> > > > > >the user supplied input to options that are interpreted as directories.
-> > > > > >
-> > > > > >Thanks
-> > > > >
-> > > > > applied, thanks
-> > > > >
-> > > > > Lucas De Marchi
-> > > >
-> > > >
-> > > >
-> > > > If I understood this correctly, MODULE_DIRECTORY is determined
-> > > > by "configure --with-module-directory=...", and there is no
-> > > > way to change it after that.
-> > > >
-> > > >
-> > > > If so, how to work with cross-building?
-> > > >
-> > > > Cross-building is typical when building embedded Linux systems.
-> > >
-> > > I was thinking the `pkg-config --variable=module_directory`
-> > > from the target would be sufficient, but...
-> > >
-> > > >
-> > > >
-> > > > Consider this scenario:
-> > > >
-> > > > - Your build machine adopts
-> > > >    MODULE_DIRECTORY=/usr/lib/modules
-> > > > - The target embedded system adopts
-> > > >    MODULE_DIRECTORY=/lib/modules
-> > > >
-> > > > (or vice a versa)
-> > > > depmod is used also for cross-building because
-> > > > it is executed as a part of "make module_install".
-> > > >
-> > > >
-> > > > The counterpart patch set for Kbuild provides
-> > > > KERNEL_MODULE_DIRECTORY, which only changes
-> > > > the destination directory to which *.ko are copied.
-> > > >
-> > > > You cannot change the directory where the
-> > > > depmod searches for modules, as it is fixed
-> > > > at the compile-time of kmod.
-> > > >
-> > > >
-> > > >
-> > > >
-> > > > In this case, what we can do is to build another
-> > > > instance of kmod configured for the target system,
-> > >
-> > > the target system may not even have depmod actually, so using just the
-> > > host one seems more appropriate. But target should have the kmod.pc for
-> > > the pkg-config call to work.
-> > >
-> > > > and use it for modules_install:
-> > > >
-> > > > 1. In the kmod source directory
-> > > >    ./configure --with=module-directory=/lib/modules
-> > > >    make
-> > > >
-> > > > 2. make modules_install INSTALL_MOD_PATH=<staging-dir>
-> > > >     KERNEL_MODULE_DIRECTORY=/lib/modules
-> > > >     DEPMOD=<new-depmod-you-has-just-built>
-> > > >
-> > > >
-> > > >
-> > > > If you use OpenEmbedded etc., this is what you do
-> > > > because host tools are built from sources.
-> > > >
-> > > > But, should it be required all the time?
-> > > > Even when the target embedded system uses
-> > > > busybox-based modprobe instead of kmod?
-> > >
-> > > no, I don't think we can rely on depmod from the target.
-> > >
-> > > >
-> > > >
-> > > >
-> > > > depmod provides --basedir option, which changes
-> > > > the prefix part, but there is no way to override
-> > > > the stem part, MODULE_DIRECTRY.
-> > > >
-> > > > In the review of the counter patch set,
-> > > > I am suggesting an option to override MODULE_DIRECTRY
-> > > > (let's say --moduledir) at least for depmod.
-> > >
-> > > ok
-> > >
-> > > >
-> > > > (Perhaps modinfo too, as it also supports --basedir)
-> > > >
-> > > >
-> > > >
-> > > > Then, we can change scripts/depmod.sh so that
-> > > > Kbuild can propagate KERNEL_MODULE_DIRECTORY
-> > > > to depmod.
-> > > >
-> > > >
-> > > > if  <depmod supports --moduledir>; then
-> > > >    set -- "$@"  --moduledir "${KERNEL_MODULE_DIRECTORY}"
-> > > > fi
-> > > >
-> > > >
-> > > >
-> > > > Does it make sense?
-> >
-> > It does not make sense for the common case: building kernel for the host
-> > system.
-> >
-> > Then overriding the directory is wrong, and using what kmod was compiled
-> > with is needed to get correct module directory layout.
+
+
+On 20.08.2024 15:17, Alexander Dahl wrote:
+> Hello Claudiu,
 > 
+> Am Tue, Aug 20, 2024 at 02:54:59PM +0300 schrieb claudiu beznea:
+>> Hi, Alexander,
+>>
+>> On 16.08.2024 17:34, Alexander Dahl wrote:
+>>> Hello everyone,
+>>>
+>>> while further investigating timeout issues with the at91 otpc
+>>> controller on sam9x60 [1] I came to the conclusion the main RC
+>>> oscillator on that SoC must be enabled for that driver to work.
+>>
+>> Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
+>> Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
 > 
-> NACK.
+> It can feed the main clock and you're right from Clock Generator POV.
+> However it is not completely undocumented.  Section "23.4 Product
+> Dependencies" of the SAM9X60 datasheet (DS60001579G) says:
 > 
-> scripts/Makefile.modinst and depmod must agree about
-> the install destination.
+>     "The OTPC is clocked through the Power Management Controller (PMC).
+>     The user must power on the main RC oscillator and enable the
+>     peripheral clock of the OTPC prior to reading or writing the OTP
+>     memory."
 > 
-> Both must refer to the same ${KERNEL_MODULE_DIRECTORY}.
-
-Nack to what, exactly?
-
-And what needs to agree here, exactly?
-
-If the kmod was compiled with a non-default kernel module directory then
-for depmod and scripts/Makefile.modinst to agree the kernel makefile
-should extract the directory it was compile with from kmod kmod, and
-that is the change that was not merged.
-
-Overriding the directory with an option only for the kernel build will
-make modules_install install the modules in the wrong directory.
-
-Of course, the user is free to move them elsewhere afterwards but I
-would say they should not need to do that.
-
-Then there is the possibility that the build is for a different target
-system, and the host kmod and scripts/Makefile.modinst agreeing is not
-enough.
-
-Then either a 'cross' kmod can be built, and this will again work so
-long as both path and pkgconfig path point to this modified kmod.
-
-Or kmod can grow an option to set the kernel module directory
-dynamically. However, setting it to the current hardcoded value will
-again break the case when building for the current system with
-non-default kernel module directory location.
-
-Unless both is done - that is the default is read from kmod, user is
-provided with an option to override the default, and whatever ends up
-being used by scripts/Makefile.modinst is then passed back to depmod.
-
-Or do you envision some other solution?
-
-Thanks
-
-Michal
-
-> > Or it would make sense if both was done:
-> >
-> > Default KERNEL_MODULE_DIRECTORY to what kmod was compiled with, and
-> > then pass the actual value to depmod so that depmod uses the compiled-in
-> > value by default, and the user-provided value when
-> > KERNEL_MODULE_DIRECTORY was overridden by the user.
-> >
-> > Thanks
-> >
-> > Michal
+> Apparently this also applies to reading, at least according to my
+> tests on sam9x60-curiosity.
 > 
+> btw, the last public release of the atmel-software-package, source for
+> the sam-ba applets, also enables that clock, although the reasoning
+> was for writing. [1]
 > 
+>> Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
+>> control for OTCP on the PMC side.
+>>
+>> [1]
+>> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
 > 
-> -- 
-> Best Regards
-> Masahiro Yamada
+> You're right from the datasheet POV.  Not sure if the datasheet is
+> right here?  It's not complete in some register contents anyway, maybe
+> some things are kept confidential, and OTPC is part of that?
+> 
+> Maybe someone can confirm my findings on sam9x60-curiosity, e.g.
+> after I sent a patch series with what I consider fixes for this topic?
+> 
+>>> (Verified that by poking single bits in registers through devmem
+>>> already.)
+>>>
+>>> Fortunately the necessary clk is already registered from the SoC code
+>>> in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
+>>> summary:
+>>>
+>>>     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
+>>>                                      enable  prepare  protect                                duty  hardware                            connection
+>>>        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+>>>     ---------------------------------------------------------------------------------------------------------------------------------------------
+>>>      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
+>>>
+>>> That clock has no parent and is not found anywhere in devicetree, nor
+>>> is it handled by the two clock-producers on that platform, so
+>>> from within mchp_otpc_probe() I just tried this:
+>>>
+>>>     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
+>>
+>>>
+>>> However that returns with -ENOENT, so I assume I can not reference the
+>>> clock just by name?  Same result with this:
+>>>
+>>>     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
+>>>
+>>> How do I get a pointer to that clk then to enable it?  Docs [3] where
+>>
+>> To expose it though DT you may want to save its hw object to one array
+>> entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
+> 
+> Great to see I came to the same conclusion.  I have a proof-of-concept
+> working meanwhile, will send a patch series later this week I guess.
+> 
+> Thanks for your support.
+> 
+>> Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
+>> simple trials.
+> 
+> Don't think that is necessary anymore. :-)
+> 
+> By chance: I don't have a sama7g5 based board at hand for testing.
+> The datasheet says the same as for sam9x60.
+> Does the nvmem_microchip_otpc driver actually work without timeout on
+> sama7g5?
+
+Yes! This should be because system bus is clocked from MCK0 (as mentioned
+in peripheral identifiers table) which is enabled by bootloader.
+
+Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
+thermal calibration packets:
+https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
+
+> 
+> Greets
+> Alex
+> 
+>>
+>> Thank you,
+>> Claudiu Beznea
+>>
+>>> not as useful as I hoped for, neither was clk.h header docs. :-/
+>>>
+>>> From what I understood from header docs reading 'device for clock
+>>> "consumer"' I must pass the device from which I call that clk_get() as
+>>> first parameter, so this would be the otpc device then, right?  What's
+>>> that second parameter clock consumer id then?  Are these terms
+>>> explained somewhere?
+>>>
+>>> Greets
+>>> Alex
+>>>
+>>> [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
+>>> [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
+>>> [3] https://kernel.org/doc/html/latest/driver-api/clk.html
+>>>
+>>
 
