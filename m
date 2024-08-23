@@ -1,123 +1,230 @@
-Return-Path: <linux-kernel+bounces-299365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B3395D3A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4388095D3A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 18:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88EF1F23273
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78BAB284A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2024 16:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57E187855;
-	Fri, 23 Aug 2024 16:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBAD18BC14;
+	Fri, 23 Aug 2024 16:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eNdMcp5X"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u79x3eCk"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBC7187FFC
-	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F118BC09
+	for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 16:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724431173; cv=none; b=mVjPzr5lLV/mRY9q3patmWtyfV+JDVZ06nLs6XiDXjmZW22ImNAG7CRgzdt/4IhB4z2w4/h+nJyEWXV/Su1uXvNQASYl2MaV1GCqeQdWxg8xq8z0/GUZ2yov4YM1P7kkOAyNZorUgZ1vQ/mlepG/KcRLBredUGGrOuh+F5SwMXM=
+	t=1724431185; cv=none; b=msKs2x0RJ9uFwrNJiHH89/7DvQeVCU22bp5co/IVqw9g5ypumyvfGbW0oxUDpp+nxZ4DAbpqFMZglVKy7m0B0jQb/CeWDRkikCuwI8wLntr2RoN62MW+oEg7EAxp/nHtd1iLYVLam+U/eZFg0GSRgHTQI2PsUOjPCY9cN6hz6q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724431173; c=relaxed/simple;
-	bh=x/iVjaRhtMiCgFAqQDyRPeczrMr0AZDLCf0AQSu67z4=;
+	s=arc-20240116; t=1724431185; c=relaxed/simple;
+	bh=KaCmjrABe49GNzvbAm6OT6hfcDxVLHDDU0KNQEzpicA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/Gk8bB6t5vOlnCYyn07jHIj0hPcbw4xXKpU7QVh83k4o26pe2IZxICABPDpIwak0E8f8SEH9fLFaitFKPq585dwOurxPXTblxsJcyVY7gaQZU3MUsq6Rtu8RLI2yvhYsqcNoX2mZFe3RuWr2rn6u8LiVhWQRWSWfuT/UlGpdA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eNdMcp5X; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-273c8514254so1612112fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:39:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=Myn4FmtMFbg4VNsrwSClaOX3GgtO+KNY8peD/0UqlocVN6oA4FwHl7X3C886vXnVjh0CWZUVzsZARqIZvcx2JwIUY1qB4/FVPNo00giy94y6ru6T1n9A2AEjhuie9kQiA2EhqHBiYEmyj1WI/l6XSbBBofM2Fo89qVzki3LUGM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u79x3eCk; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4518d9fa2f4so3131cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724431168; x=1725035968; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724431182; x=1725035982; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C2dFEu4a4aZPz4t5jV1whaeQIxhf8Zys0zAb0G/bCQQ=;
-        b=eNdMcp5X/x/1D/KefzRIM27WbqnE0aMFI0m4kQ9JS/zcl80e4o2fJHnTSsCzFHcDoK
-         VrGHLrO0RPNsDIPzG2mm/4t08dkBSS6WccUglfGlDaqiDIB+nFChIeZHtEBrS8/gIl9T
-         nRAUgvtc0EVLjVw2APKOSLp9HUYrHYoUEbkGc=
+        bh=OWCZVGAlZgiRQ76TnTfciwWkaeUiO7Q9jJrOr7a++YM=;
+        b=u79x3eCkyXKVdsaq0hmfcH0OSrNOOoZTgqkgJvsIDp8ph/gw7eALwHaGrpBNKBAh4/
+         WKoVEZ7wuWt9L5yyms44SVPrK96/fxCYlw2qBQ3OKNKHUhOzjEL6+tLTYN9XK+u0NwuI
+         i4wu5XMVc5c+Dmp6KEhMrSDGx8hZz8ag11JiEYC7+ZczNPOpCa7QFVvTtTCpGkeA34DE
+         88kB60+2qHHH/qaMOLmO+ZrjQkgsWlmxHJzU0zCJusLI+b58eSzHDjFG8+z7qjefVs+n
+         uNrMNNb19Tmg9RifouIzylqHgKkW6xDWZFJmqaa4/zMqZ6/cu68Cqe45TvHPW6G4a2vp
+         eMkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724431168; x=1725035968;
+        d=1e100.net; s=20230601; t=1724431182; x=1725035982;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C2dFEu4a4aZPz4t5jV1whaeQIxhf8Zys0zAb0G/bCQQ=;
-        b=hlnXDG+O5KaQ8uldzss3AbpOtTo7XBp3Bl0hix/mW8ahllA32P25swoi/9ZjQHtQ2q
-         8SUVN1B1OjgII1jEg0d9Ju+2lRuOqeoukYDU/Mnax+j9ZPOmVp/J8w74x7UmnIjj1UNl
-         /ljtrCbB3E9fYtwCLeiOuy+EiIwdDwB7pRljGc6uk3nZ8L9CX200C6ulJEghOndWN2Oy
-         CtZnx7dQNYuncj473Nbpst9Z50VDHScG1oo72mhp/o4359D8c4DT1dzTcOFjRokY/m3t
-         Hm2bwL2/8EmkMqSXGRZmR9pV+4Ob7xmyWr4SBJVQXziMrWKNYGUWSTENWI0ptROpA3Vs
-         tigw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3sMqEiNsQoCCAJ21ok+1zGpccSu+WcuMJlG5BPHwcz0IWGnOyeORlh0Xc1+8SvgZfYFLDCLwu7dwHkoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWCNj8PL1cnuPQbL1Vsi7fTusPKBFu3SZW/E2wfseB2T+aVBxQ
-	gTflCZTSRbeQC52+u0XQLRceHPUUy2tnX/IN9tbpns+q8ruusMPZEEVQKa7laGC0lXnBqoLQEyY
-	=
-X-Google-Smtp-Source: AGHT+IGmqw3bg6aIXGjokpWULQms1xFAPgOn6uZmZCBdgqyVOd/wART66wqg0C492e09ljg6XgKhZA==
-X-Received: by 2002:a05:6870:568c:b0:268:952b:d2a4 with SMTP id 586e51a60fabf-273e66a04e7mr3137209fac.32.1724431167807;
-        Fri, 23 Aug 2024 09:39:27 -0700 (PDT)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-273ce996b37sm960820fac.3.2024.08.23.09.39.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 09:39:26 -0700 (PDT)
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7093d565310so2103069a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 09:39:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQCiW2Fzo6JUwt3J5pgjsHStGyI6e/fDjUwfJ0+EVMRQNEHWnzu8S0RwayHjR3TBUgRApjP7UhYEE7H4o=@vger.kernel.org
-X-Received: by 2002:a05:6830:2706:b0:70a:9909:ff2 with SMTP id
- 46e09a7af769-70e0e9a9b0dmr2464035a34.0.1724431166278; Fri, 23 Aug 2024
- 09:39:26 -0700 (PDT)
+        bh=OWCZVGAlZgiRQ76TnTfciwWkaeUiO7Q9jJrOr7a++YM=;
+        b=KuryF1I+0GRdZoa2VkCt3EGU2s3EvLPpsh7HTdbs76uoQ4HRAAY2Fl4D7LcE+qa3TE
+         fdEZcBezNVEmqyUhifbQ7hSqUwcn2lnI6QPkDIqvMBugdnJ4fxgNUpTqML26ddPaOkxN
+         rhdlbkDLLleLPUkJ9FJDagH0hVb0lPIC3LTrRoGe01/c3filtm7KQCrbdRJNiRAGCYmV
+         GyrP3WKt7Yq/v22bxlRc11cR991nACTxlLWl+4sztLD8nY6uoCA/dz6X3i5/Rx3mlSuu
+         OE7WXtZbLM9m51zcVkLuPIH4RcAqZjgACe3eZi+2ayOo3r7O4/LAzLbSu83cROOTuoNm
+         zHUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6+bMVSddUpD7XC0NpA/rT5K+AJjfOL0wL6bH5b8zX7Yg3ksgvDEs8I2fGnV/iSzq3djAWndGdrdITU9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGqakh/yWfO5p1k1fAdr8qtWXVhoCqI2WJHLHy5OxYae2YNqO5
+	NQpcorozcTK4Ri18Bl4guoStbc1UZuOhpAA1MXFUu8xk8eXVor5qjU//YGYuzzFrYSVel7foV2w
+	8QCYfU5LfzYrG6A2OQaEEqvOe719nwRpPpS4v
+X-Google-Smtp-Source: AGHT+IFoUZAQeCvqN+NjxXRErz71IIQZhTN00AkX1g1s0tHX14bey0qIKs+NzKWVaf59WcugpqvHyCzlUGndZY5N0uE=
+X-Received: by 2002:ac8:5a8a:0:b0:44f:e12e:3015 with SMTP id
+ d75a77b69052e-45509ebc0demr3093081cf.25.1724431181755; Fri, 23 Aug 2024
+ 09:39:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-drm-panel-edp-add-boe-ne140wum-n6g-v1-1-7bdd3c003514@linaro.org>
-In-Reply-To: <20240823-drm-panel-edp-add-boe-ne140wum-n6g-v1-1-7bdd3c003514@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 23 Aug 2024 09:39:10 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VZ=RQ8iK2qfa+BWJsJ_EGFP697qOsN-bAXFeeyhAM-Jg@mail.gmail.com>
-Message-ID: <CAD=FV=VZ=RQ8iK2qfa+BWJsJ_EGFP697qOsN-bAXFeeyhAM-Jg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel-edp: add BOE NE140WUM-N6G panel entry
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+References: <d6f46ea8-0f09-4942-6818-a58005c8a0c1@linux.dev> <20240823062002.21165-1-hao.ge@linux.dev>
+In-Reply-To: <20240823062002.21165-1-hao.ge@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 23 Aug 2024 09:39:30 -0700
+Message-ID: <CAJuCfpH9BB0axRGphPWUdhamyhnhiK8MOQYLa55W7RmnBPASjA@mail.gmail.com>
+Subject: Re: [PATCH] codetag: debug: mark codetags for poisoned page as empty
+To: Hao Ge <hao.ge@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, kent.overstreet@linux.dev, 
+	linmiaohe@huawei.com, nao.horiguchi@gmail.com, pasha.tatashin@soleen.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hao Ge <gehao@kylinos.cn>, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Abel,
+On Thu, Aug 22, 2024 at 11:21=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
+>
+> From: Hao Ge <gehao@kylinos.cn>
+>
+> The PG_hwpoison page will be caught and isolated on the entrance to
+> the free buddy page pool.
+>
+> But for poisoned pages which software injected errors,
+> we can reclaim it through unpoison_memory.
+>
+> So mark codetags for it as empty,just like when a page
+> is first added to the buddy system.
+>
+> It was detected by [1] and the following WARN occurred:
 
-On Fri, Aug 23, 2024 at 5:16=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
+Hi Hao,
+Thanks for fixing this. I find this description a bit unclear. How
+about something like this:
+
+When PG_hwpoison pages are freed, they are treated differently in
+free_pages_prepare() and instead of being released they are isolated.
+Page allocation tag counters are decremented at this point since the
+page is considered not in use. Later on when such pages are released
+by unpoison_memory(), the allocation tag counters will be decremented
+again and the following warning gets reported:
+
 >
-> Add an eDP panel entry for BOE NE140WUM-N6G.
+> [  113.930443][ T3282] ------------[ cut here ]------------
+> [  113.931105][ T3282] alloc_tag was not set
+> [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc=
+_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
+> [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfil=
+ter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtab=
+le_nat ebtable_broute ip6table_nat ip6table_man4
+> [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loa=
+ded Tainted: G        W          6.11.0-rc4-dirty #18
+> [  113.943003][ T3282] Tainted: [W]=3DWARN
+> [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unkn=
+own 2/2/2022
+> [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -S=
+SBS BTYPE=3D--)
+> [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
+> [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
+> [  113.946706][ T3282] sp : ffff800087093a10
+> [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: f=
+fff80008249f0a0
+> [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0=
+000000000000000
+> [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0=
+000000000000000
+> [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: f=
+fffffffffffffff
+> [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: f=
+fff800081746210
+> [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5=
+b5d353031313339
+> [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 0=
+0000000ffffffd0
+> [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c=
+0000000ffff7fff
+> [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0=
+000000000000001
+> [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0=
+000000000000000
+> [  113.957962][ T3282] Call trace:
+> [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
+> [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
+> [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
+> [  113.960096][ T3282]  __folio_put+0xd4/0x120
+> [  113.960614][ T3282]  folio_put+0x24/0x50
+> [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
+> [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
+> [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
+> [  113.963183][ T3282]  simple_attr_write+0x38/0x48
+> [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
+> [  113.964330][ T3282]  full_proxy_write+0x68/0x98
+> [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
+> [  113.965372][ T3282]  ksys_write+0x78/0x100
+> [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
+> [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
+> [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
+> [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
+> [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
+> [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
+> [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
+> [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
 >
-> Due to lack of documentation, use the delay_200_500_e80 timings like
-> some other BOE entries for now.
+> Link [1]: https://github.com/linux-test-project/ltp/blob/master/testcases=
+/kernel/syscalls/madvise/madvise11.c
+
+To fix this, clear the page tag reference after the page got isolated
+and accounted for.
+
 >
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Fixes: a8fc28dad6d5 ("alloc_tag: introduce clear_page_tag_ref() helper fu=
+nction")
+
+This would be more appropriate:
+Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages
+as empty")
+
+> Cc: stable@vger.kernel.org # v6.10
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 > ---
->  drivers/gpu/drm/panel/panel-edp.c | 1 +
->  1 file changed, 1 insertion(+)
+>  mm/page_alloc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index c565de8f48e9..7ccd2157d092 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1054,6 +1054,14 @@ __always_inline bool free_pages_prepare(struct pag=
+e *page,
+>                 reset_page_owner(page, order);
+>                 page_table_check_free(page, order);
+>                 pgalloc_tag_sub(page, 1 << order);
+> +
+> +               /*
+> +                * For poisoned pages which software injected errors,
 
-This looks fine to me:
+Not sure what you mean by "which software injected errors". Maybe it's
+a typo and should be "with software injected errors"?
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> +                * we can reclaim it through unpoison_memory.
+> +                * so mark codetags for it as empty,
+> +                * just like when a page is first added to the buddy syst=
+em.
+> +                */
 
-I started getting in the habit of requesting that people include the
-raw EDID of panels in the commit message when adding them. Any way you
-could post a v2 with that info? I just imagine this might be useful
-someday if we ever have another instance of the type of issue Hsin-Yi
-had to fix in commit ca3c7819499e ("drm/panel-edp: Fix AUO 0x405c
-panel naming and add a variant").
+I think you can simply say here that:
+/*
+ * The page is isolated and accounted for. Mark the codetag as empty to avo=
+id
+ * accounting error when the page is freed by unpoison_memory().
+ */
 
--Doug
+> +               clear_page_tag_ref(page);
+>                 return false;
+>         }
+>
+> --
+> 2.25.1
+>
 
