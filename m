@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-299914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B38E95DC1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D1995DC24
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88ADB1C216BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2331F256AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3C617C9B5;
-	Sat, 24 Aug 2024 05:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9F415380B;
+	Sat, 24 Aug 2024 05:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByBIcNRK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1oi78JfT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36A917B51D;
-	Sat, 24 Aug 2024 05:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B2918858E;
+	Sat, 24 Aug 2024 05:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724478674; cv=none; b=YUhQtgEUlH5YqeeGmFBFDJbDeJsa+OcooXOzaQtToBGdmbyxdALuZZ2j17B2ZvptYQV68qY8Eo/ZjWyhRiBvUutRSt0xb8CqSjM+1GYawcNEENHZgcBwjFYgKwlvhBJaRTxhYDlsGf8UbZioflSLOaijCyy4jQMHOsP8WrQoa/M=
+	t=1724478691; cv=none; b=EHGmKhaylOb/D5goHUUWBMt1KAAZzmobR1qEcpoqWcCoDxNe/VxrZEBVvEXt/xwG33ALCqn+KuxdTa19ta4eOrLL9iIGMFKt7SaPzkd9E52qo3pbW8dZfp6RQyCImlQ7P2J2wHrpXjb9IXYnkRTyuHqQmG8azrtNZaGIXSsuYS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724478674; c=relaxed/simple;
-	bh=rRtkFYuVY9i9DtMdTHLPYCWG2ssElqwmzvgesJlrxkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QHZGCi2u9oE6V6lj0SjU2z5fzkbr4298m58BZt7g6c5yxaPnM5pY9sO9qe8z68QNhl9MgL6YiuYnbzLE5eyeUlPlhhjpEmT218JC+iC6F9tF5tWbdIJMAZ7AilUT7SdLrL61NSRHOHk45ArrgPxexPWupEBCsjX+TqYl/v/n/BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByBIcNRK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-201f2b7fe0dso25808355ad.1;
-        Fri, 23 Aug 2024 22:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724478672; x=1725083472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Az8mzLSvgpvxTnIRjRc4nRA5yr1Q3pk0TUweK6xj7q0=;
-        b=ByBIcNRKhNr6Xfylx/dkVamicltFLf0Bbl6DkgfwQpCIU8poasSAvXF2vcYTAbX3He
-         vxfqXdJeE9Tsl+WS6zYmI4BQRj7ZxTA9fVVsK+0Cy+Q3F/hdUIAvYwCGg/+xEKosVMVz
-         6nU6IdAv0JZos/2bWKaKcs+ES44FGBPzr262ZbSkmc8dYedgxrduGXweuU9yYS/InTBB
-         QYJGBoIcx2uRIsV3jgaGuJetUE+vLUup0KeQ6bfnMhtKrzLrY/bqWlxedDiBl4Li4aH3
-         TEcd1vpIFTtRVSDGGTbSvyvHS7Mz3eUceKgXRMracL3WxwEjgAfyMGoso6HQTAgXsH54
-         voxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724478672; x=1725083472;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Az8mzLSvgpvxTnIRjRc4nRA5yr1Q3pk0TUweK6xj7q0=;
-        b=Pe9Kr/+0omRrNVaLrvVdHfeoBxd3aGk0PLS5BaRfTOroLgA591avYe0FdL+7DSXGSe
-         uifS1PyelFH7FUQSm8Y3l6hj5d8/DqEIjnyH1XBcwPpkhPgt6U3sUbQHw5QeMEbuQG29
-         ZbIpuOp8N68fGUJJFMjN0dzZoCRYfsK2vH5UmpgeHMhixffGvNNPkyjxguadjH/EAQqI
-         DwoSmfDiNb4kKcRLQr11BwJekrnFtq5ACvGxuJAXlQIOMIYieKDmh2BB47PeWfW/vgnD
-         6omE1AMqfx3AItafFYQMlYUcMLHFyEJh4vhTswwKPOhkyPXuqiTr7f9Pg6RvCVZNaTBn
-         aEiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwyKm5Bjlymj/HbHhSOiMxKJcRAA7qqLL/7t4BLkWVwc5OdqE03plg3EOViHKSx70c77F4VsGwOs1F8Q==@vger.kernel.org, AJvYcCWtHwvtYLDwcOEZTImXV4H9U+uteiigz7x7+0A3WHPbkZLarq0W1au5F8Yl+q1plV/H5HvX423UOyS6H4Em@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6+D2QSnFxQURdO/9pDKERi8uXvsF/8jcmGGFHlKg3SBkOZPX9
-	MAln6XaJ5fnJqVApVUEnnHAzTfk97oeAcdSoqBdiPlquoKC4Nt4X
-X-Google-Smtp-Source: AGHT+IHGuMlO1L1aYaMH5Lp/IpwQcR0p5c5VDWGk5IHdjMfD57mIFjYRu7HHLx2T2bcAjODyi8+r5w==
-X-Received: by 2002:a17:902:d4cf:b0:202:23f1:ebfa with SMTP id d9443c01a7336-2039e4f3ae3mr51042145ad.52.1724478671799;
-        Fri, 23 Aug 2024 22:51:11 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:75c:5a5a:d7dc:18f6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20395ef904dsm23398615ad.31.2024.08.23.22.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 22:51:11 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	linux-input@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 18/18] Input: zforce_ts - switch to using asynchronous probing
-Date: Fri, 23 Aug 2024 22:50:42 -0700
-Message-ID: <20240824055047.1706392-19-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240824055047.1706392-1-dmitry.torokhov@gmail.com>
-References: <20240824055047.1706392-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1724478691; c=relaxed/simple;
+	bh=kisJaeF07B2iNDo4UN5LUpiQ8jfnmvdcW7qK5PAWhAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XHHYK46i8muRiZKwfQRTet758lIm7LDUozk2Xw2AP1osi5xPFxT6sQJvqYFt0Tb82sApCLhU4FbkIc68unafKne915LoVtYO1Z09Sqaluk7f2AMfEWKR0SJcXXO19h7ESqFRKc/wM/eM98kze2dVbmfoDHJu/H2CkZpEoIb/wjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1oi78JfT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B92EC32781;
+	Sat, 24 Aug 2024 05:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724478691;
+	bh=kisJaeF07B2iNDo4UN5LUpiQ8jfnmvdcW7qK5PAWhAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1oi78JfTt43Ynvw9yzOMZgpFOjEYrk7CZBHNV7YAvIjd5IMgFsikvJousUTS5g1QP
+	 PNdVTPoR+oe1WlwHVcK2n9RXsSJklWIrqW1a4gn1YRFmG/bZbue4aA2XeqbsYMBY69
+	 4h6VnKLMnqwgWWdhS0o/fYjczuB6kDYIE4x8+u2w=
+Date: Sat, 24 Aug 2024 07:51:27 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	William Hubbs <w.d.hubbs@gmail.com>,
+	Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"speakup@linux-speakup.org" <speakup@linux-speakup.org>,
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	Finn Behrens <me@kloenk.dev>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	"gost.dev@samsung.com" <gost.dev@samsung.com>,
+	Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
+Message-ID: <2024082413-florist-perpetual-526b@gregkh>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
+ <2024080753-debug-roulette-8cb1@gregkh>
+ <3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
+ <2024080758-dedicator-smoky-44be@gregkh>
+ <20240823223736.mosqrdcwqanvdpmd@AALNPWDAGOMEZ1.aal.scsc.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823223736.mosqrdcwqanvdpmd@AALNPWDAGOMEZ1.aal.scsc.local>
 
-The driver waits for the device to boot, which can be a lengthy
-process. Switch it to asynchronous probing to allow more devices
-to be probed simultaneously.
+On Sat, Aug 24, 2024 at 12:37:36AM +0200, Daniel Gomez wrote:
+> On Wed, Aug 07, 2024 at 04:19:42PM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
+> > > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
+> > > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
+> > > > > This patch set allows for building the Linux kernel for arm64 in macOS with
+> > > > > LLVM.
+> > > > 
+> > > > Is this a requirement somewhere that this must work?  It seems like an
+> > > > odd request, what workflows require cross-operating-system builds like
+> > > > this?
+> > > 
+> > > This isn't a requirement, but it would, for example, support workflows for QEMU
+> > > users and developers on macOS. They could build/compile the kernel natively and
+> > > use it to launch QEMU instances, simplifying their process.
+> > 
+> > But that's not a real workload of anyone?  How often does this ever come
+> > up?  Who is going to maintain this cross-build functionality over time?
+> 
+> The delta is becoming very small thanks to the latest patches from Masahiro.
+> Earlier this week (next-20240820) [1] I rebased the work with all the feedback
+> and the patch series has been reduced to 7.
+> 
+> For the maintenance part, I suggest keeping a CI to build and boot the lastest
+> linux-next tag available. I can set this up here [2] and take the responsability
+> for maintaining that. But I would be convenient to add documentation for it in
+> the LLVM section and mark this as 'experimental'. If that's okay, I will prepare
+> a v2 with this.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/touchscreen/zforce_ts.c | 1 +
- 1 file changed, 1 insertion(+)
+Let's see what v2 looks like and go from there.
 
-diff --git a/drivers/input/touchscreen/zforce_ts.c b/drivers/input/touchscreen/zforce_ts.c
-index 5df4f9e8fb2e..4b8c4ebfff96 100644
---- a/drivers/input/touchscreen/zforce_ts.c
-+++ b/drivers/input/touchscreen/zforce_ts.c
-@@ -850,6 +850,7 @@ static struct i2c_driver zforce_driver = {
- 		.name	= "zforce-ts",
- 		.pm	= pm_sleep_ptr(&zforce_pm_ops),
- 		.of_match_table	= of_match_ptr(zforce_dt_idtable),
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.probe		= zforce_probe,
- 	.id_table	= zforce_idtable,
--- 
-2.46.0.295.g3b9ea8a38a-goog
+thanks,
 
+greg k-h
 
