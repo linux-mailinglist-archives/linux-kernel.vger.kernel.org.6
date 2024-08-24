@@ -1,78 +1,114 @@
-Return-Path: <linux-kernel+bounces-299837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050F495DAA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF6195DAAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B567A283625
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E301F228A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4558A2AE68;
-	Sat, 24 Aug 2024 02:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5884E28E0F;
+	Sat, 24 Aug 2024 02:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZu+564Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ngJKiQrL"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C2428683;
-	Sat, 24 Aug 2024 02:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD93918651
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 02:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724466407; cv=none; b=Uo5tIgwXyJEOH3IbEHvCVzHmCAQDp6fWL16bczXzni134mXZTADLLLy25JOlZ69NIxl+KK87g9ZAa6zzo9ONeerjgZiBF7Ryf5wMrHQdWg9a044PxqWt9ljj7KRJweTcJJ8ZkHlDXnisS5TcaMO5+Ne+gNawMndnJ7JMqko5AH8=
+	t=1724466806; cv=none; b=GoGj/C3NeQRjTiH35vVWZclmAwsW51HsZWy7azJCdSe8Lv+9JaPMXBmOqSL7I6cwLminLDWaU2RRhzhTT2I+BTezrRtgUSlvnNpjX+5IuH/+oEP69+SRcyhWcIMHuIdw3v9limMH8aW7V4zfOBUd21F+VisrT0ZIBZMZRz558a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724466407; c=relaxed/simple;
-	bh=KnwCacuCVW/RLuv5iqzNWLhBKOElg/QYXiY63cbGBe0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HvvaQumvsIgs2PCn6fN5RcFO/tXU+1BHbJFcYBAlh/9UOCQ1aC5tr0lpKV6U13KxZ1VBRc8QHAwLMSHxDkE1rdGYPOLxbYvFjX7N8arE8/XzjpkogCFgEl2gLZRpZd/g50zVeV7Wt5nRgc+xZ1Zgbi9CKvLkQMmxGqF1ZzFqGu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZu+564Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE38C32786;
-	Sat, 24 Aug 2024 02:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724466407;
-	bh=KnwCacuCVW/RLuv5iqzNWLhBKOElg/QYXiY63cbGBe0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=QZu+564YSMIDilf/rPsRwP9HdVXJ6H7920NB6tc+A6axLC84UUHvF5pNRvmVy94Fg
-	 tnvA1NXcpygXW50kidmfWjIu0wa3nhKloY2TxkAwS5hJa0xb1k6d7q6D3XGaoLvpYU
-	 TG3jSN4uCBW9hF5/2XI0YCdSD3C3tfrAPEt/itHKR5+3hecfuXABgiCur7zNojrEMx
-	 dv06tPnoqriEI8GFA332dAVRguVgrOGQ+PxZneznNozhbl0ih5y+GQgP3HOhUJm81i
-	 mD37vvEYa+RMR5ebIVIvl4CYfWpoXMPr2IjEIdv1HcfKa1GrE5M+sEAWMgyqtZGr2D
-	 n9ZodagyE5uBg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D3839EF647;
-	Sat, 24 Aug 2024 02:26:48 +0000 (UTC)
-Subject: Re: [GIT PULL] MIPS fixes for V6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZsjdfYhJ2F/JIsFT@alpha.franken.de>
-References: <ZsjdfYhJ2F/JIsFT@alpha.franken.de>
-X-PR-Tracked-List-Id: <linux-mips.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZsjdfYhJ2F/JIsFT@alpha.franken.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.11_1
-X-PR-Tracked-Commit-Id: 50f2b98dc83de7809a5c5bf0ccf9af2e75c37c13
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5bd6cf00740765c47b5684e2d75ac90d3371659a
-Message-Id: <172446640703.3135457.3325292441600019008.pr-tracker-bot@kernel.org>
-Date: Sat, 24 Aug 2024 02:26:47 +0000
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: torvalds@linux-foundation.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1724466806; c=relaxed/simple;
+	bh=+Rv+ki5E94G3a8rFm/xzNadQieXqf59b4HON3+8muCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWnjnZ072Ok+wnnaZkN0dZ8ErmtD7e30/micTUArVBfUeyTn2+Kpe0nsqT03MB343/KTboruzXD9z9FqQ1Sc8FiQniR7ln2cytKXGv/YZv9+JFIWS5aW9S1hsQ5VEVEgBRF0Sp+pk8SmcQAKyP/t6F/xhdCQv7HFCVvgnJGRErY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ngJKiQrL; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 23 Aug 2024 22:33:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724466802;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M47ROraySwb9cntg/4YOKpNxKjrfEeCjyDjuacBGW2g=;
+	b=ngJKiQrLfaDqq/lmNEg3RyJLfyRG1c3uNGBS5xYCtFAf5ahIBiHNFKq3kVh098Y0LBpjbX
+	e1TA8hStapR+OEu/WTF+YlIQaVuA/Bbp7uhKyTJq6Pi6694I8m3oW/B3hBSxhAvo3eHVvQ
+	cPgBPeVXyKcz8+HfOumdQH8lyZ490Dk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+Message-ID: <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
+References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+ <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+ <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
+ <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Fri, 23 Aug 2024 21:05:33 +0200:
+On Sat, Aug 24, 2024 at 10:25:02AM GMT, Linus Torvalds wrote:
+> On Sat, 24 Aug 2024 at 10:14, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > On Sat, Aug 24, 2024 at 09:23:00AM GMT, Linus Torvalds wrote:
+> > > On Sat, 24 Aug 2024 at 02:54, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > >
+> > > > Hi Linus, big one this time...
+> > >
+> > > Yeah, no, enough is enough. The last pull was already big.
+> > >
+> > > This is too big, it touches non-bcachefs stuff, and it's not even
+> > > remotely some kind of regression.
+> > >
+> > > At some point "fix something" just turns into development, and this is
+> > > that point.
+> > >
+> > > Nobody sane uses bcachefs and expects it to be stable, so every single
+> > > user is an experimental site.
+> >
+> > Eh?
+> >
+> > Universal consensus has been that bcachefs is _definitely_ more
+> > trustworthy than brtfs,
+> 
+> I'll believe that when there are major distros that use it and you
+> have lots of varied use.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.11_1
+Oh, I'm waiting for that hammer to drop too.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5bd6cf00740765c47b5684e2d75ac90d3371659a
+But: all the data we've got so far is that it really is shaping up to be
+that solid, there's clearly been big upticks in users as it went
+upstream, as distros have been rolling it out, and the uptick in bug
+reports hasn't been there.
 
-Thank you!
+> But it doesn't even change the issue: you aren't fixing a regression,
+> you are doing new development to fix some old probl;em, and now you
+> are literally editing non-bcachefs files too.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+What is to be gained by holding back fixes, if we've got every reason to
+believe that the fixes are solid?
+
+And yes, these _are_ solid, the rhashtable stuff was done months ago
+(minus the deadlock fix, that's more recent), and the rcu_pending stuff
+was mostly done months ago as well, and _heavily_ tested (including
+using it as replacement backend for kvfree_rcu, which is the eventual
+goal there).
+
+And the genradix code is code that I also wrote and maintain, and those
+are simple patches.
 
