@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-299827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1F895DA75
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA1495DA78
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6155F1F229EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447712843A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D9714290;
-	Sat, 24 Aug 2024 02:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OAIFGqyf"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7280E182D2;
+	Sat, 24 Aug 2024 02:04:09 +0000 (UTC)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D198F6C
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 02:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0038F6C;
+	Sat, 24 Aug 2024 02:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724464964; cv=none; b=CHAO5T/oABO3Qf4KsIKBjTZmjPvg9cyg8EAwDtz+f7crzCjWDluh93aad/1ebucRqCnrnkBLxKYHdRMFfS46Kyh4pk2LcUToS6ZyrHyjpoSBHiV+wFEamiSn2rLPLm711MHa2OZDpmbngS1gsgOS4Y4R6+MUJYDEH9GnJVTPUeo=
+	t=1724465049; cv=none; b=TEos2uEk5SAdaVMl4EkL58vr2i7DZjc+CvwbFsvpQQjmA1B+hSR3Rj6dyYCSunqHsf2BHjI3opGns4h/WkKbF3CgwO3AQy79/J4XTbNpRXOlvaPfEjcmCYHpJkteiOiqzIaEwf96EGIHTFTSyB3dZt9a3ddQEaAQTQbcnwC1fIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724464964; c=relaxed/simple;
-	bh=PvxEnZaFii/sPRVmM5l16yEI1y18EcLbXmugTXFTBi4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=opKyQe6Xw6ngFbApZNYfXIXF33Z/wqnfZiLgbbqdh2XjH+XdbEz1B8CF7+W2YnaNkR+C01fFm2o1ze/UyvqteKevwZqLUidfljKUcQIIIpwUJTSYYD9JVVP97zfxqicbzq7wzz43n5NAxmLNeoTU3E47drEvOS5n/A+PximXM/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OAIFGqyf; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533488ffaebso2863431e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724464960; x=1725069760; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ym980CqYxCsLXdz14ErVB+ivOLKtukT0tUKXVKCXag=;
-        b=OAIFGqyfxnVCFKl+BQXAJlIpyu3PF5R3RB4gsf2TRCpuq6xO/KAg4//rQ3VCLx3Ij0
-         mZfYPIvdd/0+yjCsvNEiiwVuZynA+U4F31H4m8RIoYAlTpgVuCmXtwHj4B7UTNfG0a3C
-         b2FSY9PEgPXwyns/95IezhwmMzrIq7qSX9eTk=
+	s=arc-20240116; t=1724465049; c=relaxed/simple;
+	bh=hQUNzjSY7i3l4ldL5C3hNfqZ/vaZV6AK/8n/d+E3nsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fVpUc9J1dzOMCn4A1EWLUg3vTMKm7TVw5H28/xhiL3UcTCs034P4JXi093+LJTr+N/mNGuu593v26B/IQXjHj4EuXU/P+xoqTqwuMM+FaGs1galfIjo9awdTWefkmRYqAMJqR2mM7LNPgfOGVdg8DIR+CnvW4jdvaWebALmyVog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71456acebe8so212933b3a.3;
+        Fri, 23 Aug 2024 19:04:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724464960; x=1725069760;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ym980CqYxCsLXdz14ErVB+ivOLKtukT0tUKXVKCXag=;
-        b=syDKNuiBX9JX9DOFYX93QLl3iBMoXE6QPcgw+rYIFxHWbl0LwwXdW2zhhkGAF89GJn
-         BaPLKCWD2l/Jyerk4oA/xEx0AEkXK3TrJpZSkwhQGBSh8nZX67Fpsvmu35UwzTo0U6cO
-         ZxMLVhAJIeJFymvE2KrD8Ricu43wnnLKefd9deDC2NxWzRz2bm318PUaOXKtKhVhImN1
-         g1AFJ1b7errt4jKX1KP3ibtlcMEJz27eOpOivFbfFf3BjUa2TTgVRCbU2disO+3MUBWk
-         mDoMnYls447mlTIRCv29QT3bP+gT+wBn8bq8UDJnNRav9FGnneCm/+tTVLxjgQpii4Bz
-         ET8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlT+xTTLuu70ptG7NcZ2/LmcfADYoIjh+euafdXvYkXO8JDO3z+Q1PxESDGiZgMJyaLRt37Br/KD6N2bU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrCldRBnDMXz+OUlChIS/YPuXD1gNFgYM6mrjp7cI3cqTOJ9/q
-	NfTeLleXvM3bCxHmGrN//gNw80tfsE6bVJNYWMUJ222XHnGu+ucOwVvdDA529jRYs7Pqptz3aSx
-	lFclD2A==
-X-Google-Smtp-Source: AGHT+IF5vcpJdjcSTVRF5sRlMqs5uWjwQYj/FvYI82caqYPavXKuPMFzhNGUL/kQpocQ5Bcr+K5BRA==
-X-Received: by 2002:a05:6512:eaa:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-534387be220mr2405838e87.49.1724464959704;
-        Fri, 23 Aug 2024 19:02:39 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea295d6sm706735e87.10.2024.08.23.19.02.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2024 19:02:38 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f3f25a1713so27742381fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 19:02:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVH2xNYMgLZWcTRo5ZhNIXgG8wuZZWWzO9NJJ6mZ+ZAYAijzOUemcs5fg+1CYmnbPvsZacu477RDNGdvSw=@vger.kernel.org
-X-Received: by 2002:a05:651c:32c:b0:2ec:500c:b2e0 with SMTP id
- 38308e7fff4ca-2f4f4901deamr21932221fa.22.1724464958055; Fri, 23 Aug 2024
- 19:02:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724465046; x=1725069846;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1m+RyyeVq2vKKoA8+4isEUsNBf+vWhzfSvt6LSdw9/k=;
+        b=HSgmx+SZTBd4FFdLXAIhMwndSLYTvug/S5T7XZN5A++XqvGD9s78gDUPwZ+Zi8bfpn
+         OdTiqVaz6IX9lZc+9bE9WI3ern3h+5NekQAJoaSOWI/thVSsg7LBXMB4bjgYlFO4dMWl
+         ne/uPPpoNStsqxVrWNUcQfB2LuySvaDZ8AZaeJ1VgumBkeUXyABP8nf+DnG47KiNFcLL
+         gdpOlGtWNLdlStvkwTKi1vWcRnaPIskUk8PtzTwXXJpjFEQbkdgLa0XGOT9kM7YToRug
+         54UuBOB9bBRWtdz/oDnNn7nLeswX8o2uRu9pI+la10oCSbvK7StTyxR4ZSrHKslptpnl
+         SVlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU74MvjrhFfOFm+anFHtkLzogG2PRJZ5ytYVMvU55my3AUyI1BmUfFCZR9pqg/Bj1AG4zk=@vger.kernel.org, AJvYcCUZ5u8LXP3Aihg0WWCKF4pwaSjaw9Bv1sM96VRQEDQKAmBSfTyNWiZ5RFxz8BVd6ogHG7jxFiC9@vger.kernel.org, AJvYcCXOZSnWISKJXIx0GVPT1WOwafgJXcmL+PMJvQJTEA3E4MaZrUJJs2kmU4xi+ENThkWjtsp9dn7PvT7dPvA2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQMFrYFmSc7fVjjJS+rwLaty2d8sbbBKWqCkieWIi9aiipadDD
+	NLSIBOuBDBT4Be3hFhmdkX74nj5zFFzBUKZJqdYDq0gsUqOgqmIE79oMW3Y=
+X-Google-Smtp-Source: AGHT+IHIZyeBM3Hl85jWwMdJX+SUb22b92N+zGjq37DFSit0JMCfEm3aWfiRw4k5sOQm4Tu/80NwxQ==
+X-Received: by 2002:a05:6a00:124c:b0:706:61d5:2792 with SMTP id d2e1a72fcca58-7144579d85amr5466242b3a.8.1724465046198;
+        Fri, 23 Aug 2024 19:04:06 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdcf7dsm3351501a12.50.2024.08.23.19.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 19:04:05 -0700 (PDT)
+Date: Fri, 23 Aug 2024 19:04:04 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Tze-nan Wu =?utf-8?B?KOWQs+a+pOWNlyk=?= <Tze-nan.Wu@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"kuniyu@amazon.com" <kuniyu@amazon.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"ast@kernel.org" <ast@kernel.org>,
+	Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>,
+	wsd_upstream <wsd_upstream@mediatek.com>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"song@kernel.org" <song@kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	Yanghui Li =?utf-8?B?KOadjumYs+i+iSk=?= <Yanghui.Li@mediatek.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"haoluo@google.com" <haoluo@google.com>
+Subject: Re: [PATCH net v4] bpf, net: Check cgroup_bpf_enabled() only once in
+ do_sock_getsockopt()
+Message-ID: <Zsk_lGsZBBqbesqS@mini-arch>
+References: <20240821093016.2533-1-Tze-nan.Wu@mediatek.com>
+ <CAADnVQLLN9hbQ8FQnX_uWFAVBd7L9HhsQpQymLOmB-dHFR4VRw@mail.gmail.com>
+ <3a7864f69b8c1d45a3fe8cda1b1e7a7c85ac9aee.camel@mediatek.com>
+ <49d74e2c74e0e1786b976c0b12cb1cdd680c5f58.camel@mediatek.com>
+ <CAADnVQLvbMRvCg2disV+_AR-154BwRpeB8Zg_8YpO=7gzL=Trg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
- <Zsj7afivXqOL1FXG@bombadil.infradead.org> <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
- <CAG48ez2_Gs=fuG5vwML-gCzvZcVDJJy=Tr8p+ANxW4h2dKBAjQ@mail.gmail.com>
-In-Reply-To: <CAG48ez2_Gs=fuG5vwML-gCzvZcVDJJy=Tr8p+ANxW4h2dKBAjQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 24 Aug 2024 10:02:21 +0800
-X-Gmail-Original-Message-ID: <CAHk-=wh2rRLv5hu4BaJ_8JGRrX+UiOA6x4mPtUHp12oNhnWJWA@mail.gmail.com>
-Message-ID: <CAHk-=wh2rRLv5hu4BaJ_8JGRrX+UiOA6x4mPtUHp12oNhnWJWA@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-To: Jann Horn <jannh@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLvbMRvCg2disV+_AR-154BwRpeB8Zg_8YpO=7gzL=Trg@mail.gmail.com>
 
-On Sat, 24 Aug 2024 at 09:49, Jann Horn <jannh@google.com> wrote:
->
-> One other difference between the semantics we need here and
-> LOOKUP_BENEATH is that we need to allow *symlinks* that contain ".."
-> components or absolute paths; just the original path string must not
-> contain them.
+On 08/22, Alexei Starovoitov wrote:
+> On Thu, Aug 22, 2024 at 12:02 AM Tze-nan Wu (吳澤南)
+> <Tze-nan.Wu@mediatek.com> wrote:
+> >
+> >
+> > BTW, If this should be handled in kernel, modification shown below
+> > could fix the issue without breaking the "static_branch" usage in both
+> > macros:
+> >
+> >
+> > +++ /include/linux/bpf-cgroup.h:
+> >     -#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)
+> >     +#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, compat)
+> >      ({
+> >             int __ret = 0;
+> >             if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))
+> >                 copy_from_sockptr(&__ret, optlen, sizeof(int));
+> >      +      else
+> >      +          *compat = true;
+> >             __ret;
+> >      })
+> >
+> >     #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname,
+> > optval, optlen, max_optlen, retval)
+> >      ({
+> >          int __ret = retval;
+> >     -    if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT) &&
+> >     -        cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))
+> >     +    if (cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))
+> >              if (!(sock)->sk_prot->bpf_bypass_getsockopt ||
+> >                ...
+> >
+> >   +++ /net/socket.c:
+> >     int do_sock_getsockopt(struct socket *sock, bool compat, int level,
+> >      {
+> >         ...
+> >         ...
+> >     +     /* The meaning of `compat` variable could be changed here
+> >     +      * to indicate if cgroup_bpf_enabled(CGROUP_SOCK_OPS) is
+> > false.
+> >     +      */
+> >         if (!compat)
+> >     -       max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
+> >     +       max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen,
+> > &compat);
+> 
+> This is better, but it's still quite a hack. Let's not override it.
+> We can have another bool, but the question:
+> do we really need BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN  ?
+> copy_from_sockptr(&__ret, optlen, sizeof(int));
+> should be fast enough to do it unconditionally.
+> What are we saving here?
+> 
+> Stan ?
 
-Yup, fair enough - a LOOKUP_NO_DOTDOT (or LOOKUP_NORMALIZED) flag
-would only affect the top-most nameidata level. Which makes it
-different from some of the other nameidata flags.
-
-Not really fundamentally harder, but different - it would involve
-having to also check nd->depth during the walk.
-
-> (For what it's worth, I think I have seen many copies of this kind of
-> string-based checking for ".." components in various pieces of
-> userspace code. I don't think I've seen many places in the kernel that
-> would benefit from that.)
-
-Yeah, the kernel usually has trusted sources for the (relatively few)
-pathnames it follows. The firmware case is probably fairly unusual,
-with other sources of kernel path walking tend to be paths that have
-been set by the administrator (eg the "fw_path" part that is set by a
-module parameter).
-
-I was indeed thinking of user level possibly finding this useful,
-having seen a lot of "clean up pathname" code myself (git being one
-example).
-
-                 Linus
+Agreed, most likely nobody would notice :-)
 
