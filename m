@@ -1,51 +1,78 @@
-Return-Path: <linux-kernel+bounces-300025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69A595DDB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357E295DDB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A4828354D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:02:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E7E282EE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCB516DEB3;
-	Sat, 24 Aug 2024 12:02:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51741714A4;
+	Sat, 24 Aug 2024 12:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBP1AqNT"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBEA15D5D9
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 12:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA7C15DBB3;
+	Sat, 24 Aug 2024 12:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724500960; cv=none; b=vDEG2yvMcpz45OvwJnW6WElxGz6R8PmbOpSCmSfVJP3s0wxmR/v47by/gHuFdPRXFk9DG0wCGeNd7X2UqERFIPvvHvtmcURbWUChcPj6ZpbjTtnFAjsvfUv/jZtoyNnxnS0hXEH4ZEO46aCBEfhUx7fU+YHWJyf+RcUAheOyT6k=
+	t=1724501214; cv=none; b=BPWBYSkPkO/NbLre9SXIQhhfTZZ5tF4SG7FJN5hTG2knyDwKYevjc118WHQGPXE4ENXwLqLwEMMSMmaiKYc7asQSGr2SJtkenfAMMRGaswr4tXV3GNGh4nJJPGSop6M8t310oe8zpuOyicHH/DXGBEFz9Zdq2s7ms7CGCwPUG/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724500960; c=relaxed/simple;
-	bh=3ycEFoz3T0igV+AStkE3emIiu6ZyB8fjH4O8x1QcQWE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oJpnpKigSDEld1XCuw0Ripc1vM5hnmu+2VIFd5ijISbM0PieJv5AYKsr6IWsIjoBE4BHAHBwAWR3wkZt/iR8I1rUhl45OMjvy39uoE72R+2dDssa4CKs0UBxHVqkZ8Z/zmGa9RKRcX9TGq1oAFeOSaMrxPNb5KxMtYDn/BpKWdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WrbB31WGkzpStT;
-	Sat, 24 Aug 2024 20:00:59 +0800 (CST)
-Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
-	by mail.maildlp.com (Postfix) with ESMTPS id 36A961800F2;
-	Sat, 24 Aug 2024 20:02:35 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Sat, 24 Aug 2024 20:02:34 +0800
-From: Gaosheng Cui <cuigaosheng1@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<cuigaosheng1@huawei.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] x86/mtrr: Remove obsoleted declaration for mtrr_bp_restore
-Date: Sat, 24 Aug 2024 20:02:34 +0800
-Message-ID: <20240824120234.2516830-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724501214; c=relaxed/simple;
+	bh=r43VCUvNDaKp0y3o7Z5fkEs8MRH/MaVYeIrhoY2jENk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTEOIIPQlp3g8oB+Uuel7B+AMrIWvZijG6wPTBo5s1dzZhn5ginWZAM2DjnWk+RYX0NOXv+7/imkiNotBYmA9E10i4i9VhzEhw+YtXPP/cO6BPmFo7H93Lb2brfNIUggOaeLWqVHy4wo3YxSGKsp1rGJ1uzRFYYRXy+LEytCgoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBP1AqNT; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202376301e6so21739625ad.0;
+        Sat, 24 Aug 2024 05:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724501212; x=1725106012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YZd6D/gFTHMIgmRUEna4QDfgeX78q/R9BSaRxcnB8c8=;
+        b=DBP1AqNTFzvb9BIDn++AXO1JJ3qc8FpPvVIJSpyu24NN0kQmPqPUNIcX1mhKzP9NIY
+         rdvbM13uMQqV8614myrYUAC4/ExU43XXa5j3lTY6djHeTVPAGB9IdhV3BlULgcd6Sbq3
+         nHbUJNCrW2JaB8bZtzEIchZZRNfe4v0rYOabj5TGUKz3EYlEbMd/CooTNS9kC5Vy87R3
+         fn/fjHZnI9um2l3ZIdH0omajnwtuAAL0w7KvLcNFK1QAdIScnlD8s/8V2NNXNJsdc2Z7
+         uvUYQSdBdVsd5jxcJoG8trq45f6kxzczizH44Ra0OwKCeEH00E6HAvb8PZvcvZvej1y6
+         eLFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724501212; x=1725106012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YZd6D/gFTHMIgmRUEna4QDfgeX78q/R9BSaRxcnB8c8=;
+        b=tRWOpF329YqaAfkEomV2Beawt+qpu2I4jxCNrfWkjlL3+C1uSP2WfOrNi718epXAcs
+         ThWcuXEaHBuiNzyHfCRcjQKSGaIm9c0MHI/1mNszPCAVRhP+hsT3bb5mbS2fPEZ8mFJY
+         mkcCS8DZUET3nsABJLFT5sjxORp72R9cH3IIwsipbgr+NPoz/Ea8uFVWH6MStxhgOQt/
+         F1ZaUli/ewSt3wyggn+s/ZhMHTEz4jFNUGxCr8FZ2v96+sErd6ZLZAkacymV4PXzaOW5
+         JhadTcUyXvL37/hmlK7o+SvPkTtrkgwN2jXnpmK2qeZb+toLMW8B4AZeRLO4PFFjW4Hr
+         w9DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfc2sJZkAOJ/GFeEgGZKxcEhwYGNWZL0cHf6G95gsbjGYUz5r6aa3Yxv46NNK8Fo2hpj7m/f9SCl30hXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWaxgjXOVIRrBbHFE6qQzJHnBJrZNgGm7CX99U3LVCqWCBqaup
+	gaYI8wNmKoBjA1UsA+jgcNqXJRNDHXP0vVg+wpsn4uplpBikPlip+qsxSi1W
+X-Google-Smtp-Source: AGHT+IEx+fG3jTLsFmXS8a048Fd0T0EMydUzhcKE0pjdvYbFGPBjrpuySvH9TifwArk6pA50odZmtA==
+X-Received: by 2002:a17:902:d488:b0:203:a152:7448 with SMTP id d9443c01a7336-203a1527638mr40103375ad.4.1724501211806;
+        Sat, 24 Aug 2024 05:06:51 -0700 (PDT)
+Received: from tranquility.wa.lan (7hw977nsj3rng0spcmqd.ip6.superloop.au. [2401:d002:e05:b402:51d4:ab24:2f89:d277])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038558089csm41680765ad.87.2024.08.24.05.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 05:06:51 -0700 (PDT)
+From: James Ye <jye836@gmail.com>
+To: jbaron@akamai.com
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James Ye <jye836@gmail.com>
+Subject: [PATCH] EDAC/ie31200: Add Kaby Lake-S dual-core host bridge ID
+Date: Sat, 24 Aug 2024 22:06:22 +1000
+Message-ID: <20240824120622.46226-1-jye836@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,40 +80,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200011.china.huawei.com (7.221.188.251)
 
-The mtrr_bp_restore() have been removed since
-commit 0b9a6a8bedbf ("x86/mtrr: Add a stop_machine() handler calling
-only cache_cpu_init()"), and now it is useless, so remove it.
+Add device ID for dual-core Kaby Lake-S processors e.g. i3-7100.
 
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Signed-off-by: James Ye <jye836@gmail.com>
 ---
- arch/x86/include/asm/mtrr.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/edac/ie31200_edac.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
-index 090d658a85a6..4218248083d9 100644
---- a/arch/x86/include/asm/mtrr.h
-+++ b/arch/x86/include/asm/mtrr.h
-@@ -69,7 +69,6 @@ extern int mtrr_add_page(unsigned long base, unsigned long size,
- 			 unsigned int type, bool increment);
- extern int mtrr_del(int reg, unsigned long base, unsigned long size);
- extern int mtrr_del_page(int reg, unsigned long base, unsigned long size);
--extern void mtrr_bp_restore(void);
- extern int mtrr_trim_uncached_memory(unsigned long end_pfn);
- extern int amd_special_default_mtrr(void);
- void mtrr_disable(void);
-@@ -117,7 +116,6 @@ static inline int mtrr_trim_uncached_memory(unsigned long end_pfn)
- 	return 0;
- }
- #define mtrr_bp_init() do {} while (0)
--#define mtrr_bp_restore() do {} while (0)
- #define mtrr_disable() do {} while (0)
- #define mtrr_enable() do {} while (0)
- #define mtrr_generic_set_state() do {} while (0)
+diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
+index 9ef13570f2e5..4fc16922dc1a 100644
+--- a/drivers/edac/ie31200_edac.c
++++ b/drivers/edac/ie31200_edac.c
+@@ -19,7 +19,8 @@
+  * 0c04: Xeon E3-1200 v3/4th Gen Core Processor DRAM Controller
+  * 0c08: Xeon E3-1200 v3 Processor DRAM Controller
+  * 1918: Xeon E3-1200 v5 Skylake Host Bridge/DRAM Registers
+- * 5918: Xeon E3-1200 Xeon E3-1200 v6/7th Gen Core Processor Host Bridge/DRAM Registers
++ * 590f: Xeon E3-1200 v6/7th Gen Core Processor Host Bridge/DRAM Registers
++ * 5918: Xeon E3-1200 v6/7th Gen Core Processor Host Bridge/DRAM Registers
+  * 190f: 6th Gen Core Dual-Core Processor Host Bridge/DRAM Registers
+  * 191f: 6th Gen Core Quad-Core Processor Host Bridge/DRAM Registers
+  * 3e..: 8th/9th Gen Core Processor Host Bridge/DRAM Registers
+@@ -67,7 +68,8 @@
+ #define PCI_DEVICE_ID_INTEL_IE31200_HB_8  0x190F
+ #define PCI_DEVICE_ID_INTEL_IE31200_HB_9  0x1918
+ #define PCI_DEVICE_ID_INTEL_IE31200_HB_10 0x191F
+-#define PCI_DEVICE_ID_INTEL_IE31200_HB_11 0x5918
++#define PCI_DEVICE_ID_INTEL_IE31200_HB_11 0x590f
++#define PCI_DEVICE_ID_INTEL_IE31200_HB_12 0x5918
+ 
+ /* Coffee Lake-S */
+ #define PCI_DEVICE_ID_INTEL_IE31200_HB_CFL_MASK 0x3e00
+@@ -88,6 +90,7 @@
+ 	 ((did) == PCI_DEVICE_ID_INTEL_IE31200_HB_9) ||                        \
+ 	 ((did) == PCI_DEVICE_ID_INTEL_IE31200_HB_10) ||                       \
+ 	 ((did) == PCI_DEVICE_ID_INTEL_IE31200_HB_11) ||                       \
++	 ((did) == PCI_DEVICE_ID_INTEL_IE31200_HB_12) ||                       \
+ 	 (((did) & PCI_DEVICE_ID_INTEL_IE31200_HB_CFL_MASK) ==                 \
+ 	  PCI_DEVICE_ID_INTEL_IE31200_HB_CFL_MASK))
+ 
+@@ -587,6 +590,7 @@ static const struct pci_device_id ie31200_pci_tbl[] = {
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_9),      PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_10),     PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_11),     PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
++	{ PCI_VEND_DEV(INTEL, IE31200_HB_12),     PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_CFL_1),  PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_CFL_2),  PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
+ 	{ PCI_VEND_DEV(INTEL, IE31200_HB_CFL_3),  PCI_ANY_ID, PCI_ANY_ID, 0, 0, IE31200 },
 -- 
-2.25.1
+2.46.0
 
 
