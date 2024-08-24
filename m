@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-299939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3E295DC92
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:41:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2EB95DC94
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E675E1C21577
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:41:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B8F7B21A4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6ED1547DB;
-	Sat, 24 Aug 2024 07:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEozrN+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389171547CC;
+	Sat, 24 Aug 2024 07:43:41 +0000 (UTC)
+Received: from mail115-63.sinamail.sina.com.cn (mail115-63.sinamail.sina.com.cn [218.30.115.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFD12A8D0;
-	Sat, 24 Aug 2024 07:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BD71DA5E
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 07:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.63
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724485297; cv=none; b=Nn+sqy9uzTDhMPl+qyeSMpHbWgrP1bjIVQycekIOuaseOAO7Gz8PzQq0CAw7TiR15OMkQOLMFdvNfbDlMztYYSmey7Jw1hwr2MTEpdE/OPGyBRH3oq5bCfZCjgPET05ra/DKWYypKhpZI0MDWwGx8P6FrFB8dcTSPlknee4Rk1Y=
+	t=1724485420; cv=none; b=dKZGulLYgk7tCcAmRrCkp4BkpBjMKUgI0K8nEpyCX2cBYy3QIh7qY6OV00jnzJ9c5LNNljKtOBWiM5OhGobl8yvWWXTWhTcW0GaZdTHgkRKwU0/09DAmSPW2An/Dyy55JwwYsS7mJZQl5gQLz1L+uaHg+31xr4+UDBa7AdcpFSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724485297; c=relaxed/simple;
-	bh=JNtDTLRPWbUWlktgWt2RLotoG9epS3wgRIvQl9U403I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCmuQ9cSobGmNKAJElrkk7zCBkB0CRLeO41r+R9OGpe3wwVjAQX5CyzEPtwXIt+N/R/CJQyE88pFWGjGGkfq29gLd2KMHSjQdqqpwwuWZAdOKtwo6o1/Kn4hE67JBoLpuojWYZjdOqAf63at/AtcMxGibeELX11SMiF+3qQYyvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEozrN+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7108CC32781;
-	Sat, 24 Aug 2024 07:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724485297;
-	bh=JNtDTLRPWbUWlktgWt2RLotoG9epS3wgRIvQl9U403I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GEozrN+swKfbQd9V13KWDTt1jTqIoCqg0zxQ3AY8mZWxo/bjGSmxuim+IZ3QfJwHA
-	 U1Y4vQragJs/Y9FsuHbfn9jkHee/EdxMT31o/STSaUmeJsolOzqAN1kg4wUZPukuOn
-	 o9Mq32vfJEqNB9cGUBE5JwzNHbwXQX0gZJ7LDVsBvSRvKbsszepWIaAaxXT2boXIlE
-	 p80XtExauloCp5Rurs1rVQWT5Yqsi4mAhByZ59kIuG9pSnqNUY+lYkMsB9F+fIsIhS
-	 BGKDkCdJmBB4nNQzZldyTTUlbG1Uf7GKTwYQ3PpZQPJhifP52YlW07o2ZmZJBanp5b
-	 YmPCuzRkoPs0A==
-Date: Sat, 24 Aug 2024 09:41:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Robert Nelson <robertcnelson@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
-	Jared McArthur <j-mcarthur@ti.com>, Jason Kridner <jkridner@beagleboard.org>, 
-	Deepak Khatri <lorforlinux@beagleboard.org>, Drew Fustini <drew@beagleboard.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: ti: Add BeagleY-AI
-Message-ID: <jtsazkcsnxtzuvb3tkqwjpiitv45bbzuoxzvtqlso3ftedjans@ahqewuj2z7ak>
-References: <20240822170440.265055-1-robertcnelson@gmail.com>
+	s=arc-20240116; t=1724485420; c=relaxed/simple;
+	bh=zASjSV6Nkl5RL+yRI0kI6F8olqzuBSPiXnCxf8gHgiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J1z5MWWG4XChNTW2cZ5A0c4KZLNIQqvnR2si2bmy2xjQDV0JdO6KQQfp4/QAV2wkMIcK+iRcOkSGrO1R5ZAPIrU7vyC7UJSU3Ts54viHgzqwqbINrB4Qm40BfA5QJ3IV+KiaUpKTqZUmLOUSx5p39WO7si0Om1GjNSFvstE4VS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.5])
+	by sina.com (10.185.250.22) with ESMTP
+	id 66C98F1200005279; Sat, 24 Aug 2024 15:43:21 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5482087602703
+X-SMAIL-UIID: 3D07A5BD4D19486E95E74C6B6096762D-20240824-154321-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_close (2)
+Date: Sat, 24 Aug 2024 15:43:05 +0800
+Message-Id: <20240824074305.1131-1-hdanton@sina.com>
+In-Reply-To: <0000000000001187a706204582bb@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822170440.265055-1-robertcnelson@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 12:04:39PM -0500, Robert Nelson wrote:
-> This board is based on ti,j722s family using the am67a variation.
+On Thu, 22 Aug 2024 06:19:27 -0700
+> syzbot found the following issue on:
 > 
-> https://beagley-ai.org/
-> https://openbeagle.org/beagley-ai/beagley-ai
-> 
-> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+> HEAD commit:    d785ed945de6 net: wwan: t7xx: PCIe reset rescan
+> git tree:       net-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12378c33980000
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+#syz test net-next  d785ed945de6
 
-Best regards,
-Krzysztof
-
+--- x/net/core/sock_map.c
++++ y/net/core/sock_map.c
+@@ -209,7 +209,7 @@ static struct sk_psock *sock_map_psock_g
+ 	rcu_read_lock();
+ 	psock = sk_psock(sk);
+ 	if (psock) {
+-		if (sk->sk_prot->close != sock_map_close) {
++		if (sk->sk_prot->close == sock_map_close) {
+ 			psock = ERR_PTR(-EBUSY);
+ 			goto out;
+ 		}
+--
 
