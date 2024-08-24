@@ -1,198 +1,127 @@
-Return-Path: <linux-kernel+bounces-300028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2143495DDC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1BE95DDCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B3B1C2109A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0341C1C21161
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4461714C8;
-	Sat, 24 Aug 2024 12:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aERqwiBh"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135016E886;
+	Sat, 24 Aug 2024 12:16:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3409B154C1E;
-	Sat, 24 Aug 2024 12:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91038154BFF
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 12:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724501349; cv=none; b=tLdKqBSLbm8mcb9Dx6RDg9/43VfPCQREhRXNZtssK59xA6H8MK3ZB6tAK63t5DwjTR/ofHwGiBjUFU7r6okmQXfb6vpnjr5FfvlUVBV9IWut6myN9S3S8xnlN5gGRmNQW90R2vmt1Ip5hxAigM3VhvtWtCAB/0glM/ohLbNp5Os=
+	t=1724501765; cv=none; b=P6Q5pRyPyrjXMikxfKg8aPinv6tReW7IUVJndlaloWsjqYp13FG5D/ZqQk+mAxcUaTxZzCQskt5BWn7SWWkyxc+cVRbGdEIKtc1oz+u/l9ACfG9lpIm2A9pfajTVMnjMwyNPy70Hz078okCGoB7D7Hg0FStBLh+1epsNo24mnvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724501349; c=relaxed/simple;
-	bh=/+jktZuYwzkTWpBIChCl+LRWbwotDiMea9Zn1vVSPA4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqelzvLZOFjfXmB8bp96epQmYIa88HwQHRjuZT9swpe4klPzEIh7EIBzfwa5AS8fRam13WHcxr1O+JfAdcXIN/U8BHRBHVvdop7BEp/X5tDJ+aNHSUWocwRVbIVQAw72O+ixorRP+U11wMBcpoWlQSftesWf6R31Yq8IGcPXpVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aERqwiBh; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8677ae5a35so309688866b.0;
-        Sat, 24 Aug 2024 05:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724501347; x=1725106147; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I18kqHK6RFkvR01e7jiU1ZtohyiwGdNcF6JR8v8pW7o=;
-        b=aERqwiBh6gLa0JPUrqhC9202IiW78C0pNuiuGGhMHeIvnozzj6ySiAlzUolvncEUx3
-         6Ka+zG7hEzpovlQj+5NUoZwYH+Lxvztt3UT0RO9oz0XRfgzUxGvN0EbZEK2JTcvDEV8t
-         o/B1EMrxX/f1YuaVGCWkvg5tjkX1iw+0j0ANKSJhHN1m6ptFH8NBqZNPhrquFOymo8FP
-         v70d4Q4sRUjhNHFSdtVCD38H73fEHywXxQCL+uZbhmb6tr2GJIB8JOAUhJdEmfxbiOhp
-         jMnaNT9Hj/qEEfWAb82MSUVKMORO0HjS/3sL8Zjma2LUb4hp2r0h8tZNaIlU3e2LXPN2
-         OviA==
+	s=arc-20240116; t=1724501765; c=relaxed/simple;
+	bh=CGwX9ZyW/Tldx86jxXVzGqsqzxV+3C4zz2wDmv5b9n0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HJqimoke3bQtfs6FZ307PqoM7kg1u1pKUWh4cBRHOGJYeQVfDs8Q3J5MAiKgbVKQU775zt3E2cl2QgfI7CrbbpE9zyf7SwgoBDiInPZn0WE87MP965rTQn1kL8fPmS1DbMnmojB2BRWDnJwcgDkJsFAXF3s7kR48wx3198u0XL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8c780fe7so285409839f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 05:16:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724501347; x=1725106147;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I18kqHK6RFkvR01e7jiU1ZtohyiwGdNcF6JR8v8pW7o=;
-        b=o1TRIiDfv/zvYMtPLbYUCOygMvQg0eQGBsMbN1xaNeNrN4PyFB/pK7bbZU3nDp6H+q
-         bmBd3od+UvOJEzyt/H2uFXdwkucslD8AvygyCDejGEvjLJL+FrK2aiF7SHav64K9FtQ8
-         FUCbtJoLuTgoeslmkbswvrXjoO30TbBtkdjZ4D5cSFzgE5i0BBTalY7uYNIq9eGlMwyV
-         8pmir/r5QvSDxnqm4ejPaNDyut7upYMPHw9YRJjP5Ts8vkZWkJPONnc29nV5jPYb23NI
-         PlRCbRcm8rKV3ONKVkORPzV0wh/MhT7g/rqdpkIL922S4gfQtEMHm9siU/WgVxiQRwlG
-         CqMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvE2GHm1NET4S3Ltbv55wrkVKlewURQZ2QwzS0HnjnI076g5q1WUX5djpBX7s43fOlrT3yBpp9nZML@vger.kernel.org, AJvYcCVcGm5NYU5XvTYJQJaeUXti0UcyV8hp041JvPTqv456iUVI3Vilfu1n99dEFEHwm5mtY60FRAbG07HX@vger.kernel.org, AJvYcCVi0tRc/bL+a+zmMKTBMzqCrrwJ0faZXD/l0X96pCsB+crXtejEUX9uLV+w56KdK46B3iwBELxFZ8wtEeSo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydh+X88DP0l7mOUqVTs79a1JWpx9jOv+43+ulOGlOtwj3zAXVU
-	WN9FUkb9ny0Lp1Sp1Wwj+9hN89PDF3nCKZGAqRVU8sfiwnkluSfV
-X-Google-Smtp-Source: AGHT+IF4AINRMvHDCHXiXVmcO42Se6Af9rT2yUSC6qYkv9jUdkPDbqLTBODHes5o23ICSTd5tjloWA==
-X-Received: by 2002:a17:907:6d1b:b0:a86:99e9:ffa1 with SMTP id a640c23a62f3a-a86a54cca07mr354027966b.64.1724501346032;
-        Sat, 24 Aug 2024 05:09:06 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:9aa7:6f8c:e4ad:5d20])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4360c0sm392299966b.108.2024.08.24.05.09.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 05:09:05 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sat, 24 Aug 2024 14:09:03 +0200
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>,
-	"jic23@kernel.org" <jic23@kernel.org>,
-	"lars@metafoo.de" <lars@metafoo.de>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"ang.iglesiasg@gmail.com" <ang.iglesiasg@gmail.com>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
-	"semen.protsenko@linaro.org" <semen.protsenko@linaro.org>,
-	"579lpy@gmail.com" <579lpy@gmail.com>,
-	"ak@it-klinger.de" <ak@it-klinger.de>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 5/7] dt-bindings: iio: pressure: bmp085: Add
- interrupts for BMP3xx and BMP5xx devices
-Message-ID: <20240824120903.GI9644@vamoiridPC>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-6-vassilisamir@gmail.com>
- <TY3PR01MB1134611B456FEFAE4E4791CBB86882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <20240824113128.GE9644@vamoiridPC>
- <TY3PR01MB11346D61FB9088AE3C5BCE2B686892@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1724501761; x=1725106561;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7GggwJk7a2Gq/yaC4R+wWXvb15PdcynScIpzqYvhJA=;
+        b=iJmZylEjX9Vqjdcd7UBXDciYBUvk2KoLFDrw36FvADcx5oAdBexjX3mBDiTGWVXAYE
+         OA7YEIpnduBw7397tR+kjekzyIMS2+x0P6z168BWtVArDmGVAN+q5aVct2pzEpcrMh/+
+         anG0VupXcOhlGVIKVdazmnwEhHhJHXCPqSAArHuh8EGpLtMuYsFCBMN2iv4R3SpEdXEn
+         DOhuGJ9aBjH329D7Cq85m3O3McYw36C4i9HwHe9/Hss+5YFDmjGPBRcrOmv7OJ3uSMSN
+         MXw5/CZeKSgpkUytCfDv9GXR7Cg7dmcEuGUNS6nErfP/vcGHFPSipRR5iiFeb6AVsWLu
+         GmUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU91tQuo9n/qN1ZznbkdbED4d6UiBHHmN1aoa997Fce1YTFs477efAmaUAVowrxPzJxSGmjrgc7eIChdBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgGa28nz7vZrcMJom9YOgMP8iRIS5T/MlshO7sD5UXkj0+AVoH
+	mchUPG5LCN2uBO6LzioC23LCFvWiLBwLmg9wu+PKw1M085m6PuVEqcEC/YHZo6kXrjMWSEDMxB7
+	DkQZ2OJRnsibhi1zO3fX4e3eZemwSEesFWipApc62EaR+ETun9Kht4ww=
+X-Google-Smtp-Source: AGHT+IHPHwgGXQxi3ltHtr4MCBBx/p4JUoQM9ekgwf6bq8CBG9MBv5F6VJPAC5VKcy6jk0/6NE+g3lkZSDJQmAKgctBOd+flQi7B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346D61FB9088AE3C5BCE2B686892@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+X-Received: by 2002:a05:6602:148a:b0:822:45d1:5d82 with SMTP id
+ ca18e2360f4ac-82787134e39mr21432639f.0.1724501761648; Sat, 24 Aug 2024
+ 05:16:01 -0700 (PDT)
+Date: Sat, 24 Aug 2024 05:16:01 -0700
+In-Reply-To: <20240824115705.1267-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eafa8106206cda75@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_close (2)
+From: syzbot <syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 24, 2024 at 11:41:26AM +0000, Biju Das wrote:
-> Hi Vasileios Amoiridis,
-> 
-> > -----Original Message-----
-> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > Sent: Saturday, August 24, 2024 12:31 PM
-> > Subject: Re: [PATCH v3 5/7] dt-bindings: iio: pressure: bmp085: Add interrupts for BMP3xx and BMP5xx
-> > devices
-> > 
-> > On Fri, Aug 23, 2024 at 06:51:55PM +0000, Biju Das wrote:
-> > > Hi Vasileios Amoiridis,
-> > >
-> > > Thanks for the patch.
-> > >
-> > > > -----Original Message-----
-> > > > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > > > Sent: Friday, August 23, 2024 7:17 PM
-> > > > Subject: [PATCH v3 5/7] dt-bindings: iio: pressure: bmp085: Add
-> > > > interrupts for BMP3xx and BMP5xx devices
-> > > >
-> > > > Add interrupt options for BMP3xx and BMP5xx devices as well.
-> > > >
-> > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/iio/pressure/bmp085.yaml | 7
-> > > > ++++++-
-> > > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > > > b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > > > index 6fda887ee9d4..eb1e1ab3dd18 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > > > @@ -48,9 +48,14 @@ properties:
-> > > >
-> > > >    interrupts:
-> > > >      description:
-> > > > -      interrupt mapping for IRQ (BMP085 only)
-> > > > +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx,
-> > > > + BMP5xx
-> > >
-> > > Since you have updated the description. It is better to enforce the
-> > > same in conditional schema?? So that dt binding check throws error if
-> > > interrupt used in bmp{180,280 and bme280}.
-> > >
-> > > Cheers,
-> > > Biju
-> > >
-> > 
-> > Hi Biju,
-> > 
-> > Thanks for the feedback! It is true that it would be good to throw an error in case the IRQ is used in
-> > a not supported sensor. If you could point me to an example of another sensor implementing it, it
-> > would be even more helpful, but I am sure I will find something :)
-> 
-> As Krzysztof Kozlowski mentioned it depends upon driver(s/w) or device(H/W).
-> 
-> if it is driver(s/w), then you don't need conditional check as bindings describes
-> hardware.
-> 
-> There are plenty of examples for allOf:if:then: 
-> 
-> Cheers,
-> Biju
-> 
+Hello,
 
-Hi Biju,
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in sock_map_link
 
-Indeed, I checked Krzysztof's mail later. I will implement it like this
-since it is a device(H/W) issue.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6104 at net/core/sock_map.c:206 sock_map_init_proto net/core/sock_map.c:206 [inline]
+WARNING: CPU: 0 PID: 6104 at net/core/sock_map.c:206 sock_map_link+0xd6e/0xe40 net/core/sock_map.c:311
+Modules linked in:
+CPU: 0 UID: 0 PID: 6104 Comm: syz.0.15 Not tainted 6.11.0-rc3-syzkaller-00508-gd785ed945de6-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:sock_map_init_proto net/core/sock_map.c:206 [inline]
+RIP: 0010:sock_map_link+0xd6e/0xe40 net/core/sock_map.c:311
+Code: ff ff e9 65 f9 ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 34 f3 ff ff 48 89 df e8 4d 90 5a f8 e9 27 f3 ff ff e8 23 4b f3 f7 90 <0f> 0b 90 e9 d9 fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c a0 f6
+RSP: 0018:ffffc90002d57a60 EFLAGS: 00010293
+RAX: ffffffff89a03e4d RBX: ffffffff95312d30 RCX: ffff88802034da00
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88807dbfda08
+RBP: ffffc90002d57b60 R08: ffff88807dbfda0f R09: 1ffff1100fb7fb41
+R10: dffffc0000000000 R11: ffffed100fb7fb42 R12: ffff88802b274000
+R13: 1ffff920005aaf58 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f4ea726e6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000440 CR3: 00000000791a4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ sock_hash_update_common+0xd1/0xa30 net/core/sock_map.c:1014
+ sock_map_update_elem_sys+0x5a4/0x910 net/core/sock_map.c:598
+ map_update_elem+0x53a/0x6f0 kernel/bpf/syscall.c:1654
+ __sys_bpf+0x76f/0x810 kernel/bpf/syscall.c:5698
+ __do_sys_bpf kernel/bpf/syscall.c:5817 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5815 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5815
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4ea6579e79
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4ea726e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007f4ea6715f80 RCX: 00007f4ea6579e79
+RDX: 0000000000000020 RSI: 0000000020000180 RDI: 0000000000000002
+RBP: 00007f4ea65e7916 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f4ea6715f80 R15: 00007ffcfb2f8928
+ </TASK>
 
-Cheers,
-Vasilis
 
-> > 
-> > Cheers,
-> > Vasilis
-> > 
-> > > >      maxItems: 1
-> > > >
-> > > > +  drive-open-drain:
-> > > > +    description:
-> > > > +      set if the interrupt pin should be configured as open drain.
-> > > > +      If not set, defaults to push-pull configuration.
-> > > > +
-> > > >  required:
-> > > >    - compatible
-> > > >    - vddd-supply
-> > > > --
-> > > > 2.25.1
-> > >
+Tested on:
+
+commit:         d785ed94 net: wwan: t7xx: PCIe reset rescan
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=148d382b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8dbe3133b840c470da0e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11f06d5b980000
+
 
