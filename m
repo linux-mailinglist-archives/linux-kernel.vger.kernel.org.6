@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-299985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF7695DD3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9676295DD40
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034F7283686
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525452836B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F14A15573A;
-	Sat, 24 Aug 2024 09:52:40 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09B015573B;
+	Sat, 24 Aug 2024 09:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="5CKi7v7e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DdO+oGL2"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F3514EC59;
-	Sat, 24 Aug 2024 09:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85014EC59;
+	Sat, 24 Aug 2024 09:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724493159; cv=none; b=r+2P8MN5dlopd8QT0zd5iMKhSi6nHu9Nx9uwAhrhODnqsh6BJYoTzSyAJdZ9ewLacmz8fekbO35d9GONMj0/BjErnc4yYemgEPpkYoIfAEE/ZCSQn2EGcDs8BAdM17IG11wbOdsNxAkt0dMa6TPLu4Msq08roXie9SCOcwAWZyo=
+	t=1724493168; cv=none; b=mtNEl1ybVrpQ6G03MuoqBagDUlbts4fvu6rMO0TSba/74mVsPDlmJ9NuvizU76pNx8mK24Sc30sMOABeN78XRgmdVgIHWoQcTvBiIBPjyTxXjfP4xZt+qVzkiC9i85r9/7cmzGzlgf/bLS0PT0kHhpb6/ZgnnA2smVeWz8+N4v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724493159; c=relaxed/simple;
-	bh=RTpooz/5aJS3MXT8lVp2Drz9Z2k7ybJho9NK0JW3SAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uPEcQM81gT7OIiaZ7dAcQ2bmwCgMv69tjcMBgk+6m848A+XY3mR1SogcZ8AO8vFT8n+I5y9RofWrSr19Gj6RDPhfJuAK8xFEGRuaf8TfWWW5f6PKEKhMn47wb+mWCQVPPp77ksJvGyoXw1QSAeFeevvk6EVMrAIWIpkuLCL9qmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WrXKk5fg9z1j78w;
-	Sat, 24 Aug 2024 17:52:26 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id B56181401F2;
-	Sat, 24 Aug 2024 17:52:32 +0800 (CST)
-Received: from [10.67.110.89] (10.67.110.89) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
- 2024 17:52:32 +0800
-Message-ID: <c0aa1e66-8e85-6aa0-e933-d5b6e3a2e3e7@huawei.com>
-Date: Sat, 24 Aug 2024 17:52:05 +0800
+	s=arc-20240116; t=1724493168; c=relaxed/simple;
+	bh=lH+AZmFBMSxbaY7E/WSy35ajqxoT4915UmQQKp/g1ck=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=S/fJLNPWSmCkHUaky/u4lllfp2w6A4pRiYF7ElwV1DGA4SnGfHWHfT9uIhggfjv/CDB6Lug9TW5HKnHGiQBTUsmnRnQDJC73+p+5C0MCbmLVE383rZFpApxftqNxA6Fo25z34iHcdg+Rv08Inp86+laxVXDIVmyvKMWNGHob9og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=5CKi7v7e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DdO+oGL2; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id C6237115208B;
+	Sat, 24 Aug 2024 05:52:45 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Sat, 24 Aug 2024 05:52:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1724493165;
+	 x=1724579565; bh=lH+AZmFBMSxbaY7E/WSy35ajqxoT4915UmQQKp/g1ck=; b=
+	5CKi7v7eybOhaomKbbzXugtBswr/MWv9csonYK9j9CI97FdRH9I6tfbHakPfknfn
+	OooXSnooZmVIV/F/Zv8jLx8p0nLH+YDByp6AUnyJQCuQlwgxvvNtglV4jfrh5f/E
+	1bAw1lafsKSj3kBc9a7Bt4nrYfYaK5yhBz1mSAasgN5DQ+snyVIURIEOaSLiOIUQ
+	ACUi8iK1ErexgqkQjpGUDpU4uj1I365q57xW05UUgUfTSbglbw+9J3eXxCGD4dDA
+	CHXOCm1FNJfyVAB734pJQLJqczqadlwP1LOHlw2HX4L9H/yqR6NazzzAzq4Vho8G
+	Wx5H0on9j6N7ydqEe8m8rA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724493165; x=
+	1724579565; bh=lH+AZmFBMSxbaY7E/WSy35ajqxoT4915UmQQKp/g1ck=; b=D
+	dO+oGL2yzQ4IDDSDo/nKrrjyI4jKN5QNvDqigHw9d3wJXZcItZ7+1TZelYrkG9WC
+	8NEEevvI4myuZ8Anz44olgXMFG2xTPTLARFH0zB9vOON9Fw+1rJUubzxJg7oOjAG
+	w5B7bKGs/oYs7bORe54ashjjWqIFQN6so9WhtIykOa8fwbNEbnhzlgbusuFMSllZ
+	SQsEvCegqB9huQZnl24ej81Cu1V0YTODYRtE8/Faet1yi9abI/XkMcFUse7K0M5i
+	0jlrQ2h0DlMt2nSBgu3SWkJbUzmaKQkTR87hP+07uItXOYZXLh/IZ93b6ij5kGjX
+	PLrjdyPn/VfTiLNGKOBNw==
+X-ME-Sender: <xms:ba3JZodPNb-622dhZaDSdWN8MQDcNCXzz-v8xU-Eq1EBOextHrF_SA>
+    <xme:ba3JZqNCkPnTy3mgXwrNden2Xup__MI91A9VxFS28Q4hfbnGrpeOt8hSBE7c3gUxy
+    viq_a_inIVbs8A2Ncs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvgedgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
+    pegstghmqdhkvghrnhgvlhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrd
+    gtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutgho
+    mhdrtghomhdprhgtphhtthhopehfrghntggvrhdrlhgrnhgtvghrsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehprghulhgsuhhrthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglh
+    igsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhsse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ba3JZpgp750SS50fl8d2q_4a0P--Xv-O_0kL99DjanJXiqXKN_rQxA>
+    <xmx:ba3JZt-xNou0N_wHS8nms-XjPjqkJnFBONgqQKHcYhs334SOYrk6Bw>
+    <xmx:ba3JZkva7wF1zYnEi2Aso2kaQ-XhYkHNI3qXyuLmFOz6dJ7BZuTNuA>
+    <xmx:ba3JZkHwSRlhWJPmhbB1uXii8yPK_BWNCITFk66uakEEV0-2sW8MzQ>
+    <xmx:ba3JZiComwim-YrTzqYHD80nfdEYDjYaCGEgEIUCgqlNVLtt7ZXE0npt>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 300C51C20064; Sat, 24 Aug 2024 05:52:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: CVE-2022-48921: sched/fair: Fix fault in reweight_entity
-To: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cve-announce@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>, "Chenhui (Judy)"
-	<judy.chenhui@huawei.com>
-References: <2024082218-CVE-2022-48921-5016@gregkh>
-From: Xia Fukun <xiafukun@huawei.com>
-In-Reply-To: <2024082218-CVE-2022-48921-5016@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+Date: Sat, 24 Aug 2024 10:52:24 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "paulburton@kernel.org" <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <802e542a-234e-456e-87e6-391375068fc7@app.fastmail.com>
+In-Reply-To: <87y14nf2u2.ffs@tglx>
+References: <20240810-b4-mips-ipi-improvements-v3-0-1224fd7c4096@flygoat.com>
+ <20240810-b4-mips-ipi-improvements-v3-9-1224fd7c4096@flygoat.com>
+ <87y14nf2u2.ffs@tglx>
+Subject: Re: [PATCH v3 09/10] irqchip: irq-mips-cpu: Rework software IRQ handling flow
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-On 2024/8/22 11:31, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> sched/fair: Fix fault in reweight_entity
-> 
-> Syzbot found a GPF in reweight_entity. This has been bisected to
-> commit 4ef0c5c6b5ba ("kernel/sched: Fix sched_fork() access an invalid
-> sched_task_group")
-> 
-> There is a race between sched_post_fork() and setpriority(PRIO_PGRP)
-> within a thread group that causes a null-ptr-deref in
-> reweight_entity() in CFS. The scenario is that the main process spawns
-> number of new threads, which then call setpriority(PRIO_PGRP, 0, -20),
-> wait, and exit.  For each of the new threads the copy_process() gets
-> invoked, which adds the new task_struct and calls sched_post_fork()
-> for it.
-> 
-> 
-> The Linux kernel CVE team has assigned CVE-2022-48921 to this issue.
-> 
 
-Commit 13765de8148f ("sched/fair: Fix fault in reweight_entity")
-is reverted by commit b1e8206582f9 ("sched: Fix yet more sched_fork()
-races"). Since commit 13765de8148f only fixes a single instance
-of this problem, not the whole class.
+=E5=9C=A82024=E5=B9=B48=E6=9C=8823=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
+=8D=888:37=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
+> On Sat, Aug 10 2024 at 13:39, Jiaxun Yang wrote:
+>
+> Please fix the subsystem prefix.
+>
 
-I think the CVE-2022-48921 needs to adjust the corresponding commit
-to commit b1e8206582f9 ("sched: Fix yet more sched_fork() races").
+Sorry, what do you ment by subsystem prefix?
+
+Thanks
+- Jiaxun
+
+--=20
+- Jiaxun
 
