@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-299808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5108D95DA44
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC32795DA46
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCD5284FC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0052C1C220E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E584A05;
-	Sat, 24 Aug 2024 00:54:26 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1532E4A0F;
+	Sat, 24 Aug 2024 00:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ej+wyhS+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF25EC4;
-	Sat, 24 Aug 2024 00:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EEC23D2;
+	Sat, 24 Aug 2024 00:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724460866; cv=none; b=BNSy9ejgxmpk/ajpbdWN+bCRUTdp60UwdVqb0PBzAxnSX/0/R35rm1P2f33gZdS8+/YtWWvveRhTtFZqS7C7ubdZWKRL6PLNqmTgnfsnQsQaPlE7slxjCIv3KxrA5nSIGvCtzmo0o9SjTNUjM+mkc8xrA/x8DuCRIN6ooq77UaU=
+	t=1724461093; cv=none; b=MiNShfKSZJCJIz4HzEXM2/3a+BwWGBZF9/IJSm7XKEO0ibGNbaP98qw7u2bL1IM2MN7X6XrjncnijuiyPAM+QcpD52TDZzkX1Rpepb64J4hGu6xq1/XryENv/BXD0+TIfZQKj7SvqZ5xXIt8bk1cFGJb/uJe8dgRthAljC4Q1N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724460866; c=relaxed/simple;
-	bh=0HqDaAa5GWkuH29k/CERXUkKuxnEFROcuM1UzPhqV+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T/OzDkfGKxyBw7whG13sjTPtGNvFBGNz7vedZZ1cVlM7Fi6ZXnSfW7bmQiGx2dFB9ElfCHjlMG8mUpo5F05s2EQ8cz/A7HUqS1UR+rSkIw1xQqpCUqwRU2naj5X+qz5XdM7KJO/B8CVdBIXAA3LbaTOumRwO+xmbmPmvtEHJXCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WrJNd6DF2z4f3jjk;
-	Sat, 24 Aug 2024 08:54:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F3DC1A058E;
-	Sat, 24 Aug 2024 08:54:19 +0800 (CST)
-Received: from [10.174.179.155] (unknown [10.174.179.155])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4U6L8lm4t4qCg--.47415S3;
-	Sat, 24 Aug 2024 08:54:19 +0800 (CST)
-Message-ID: <ca5e64ca-ac6e-3d58-297a-d99c9f57d38e@huaweicloud.com>
-Date: Sat, 24 Aug 2024 08:54:18 +0800
+	s=arc-20240116; t=1724461093; c=relaxed/simple;
+	bh=wLpRyS6Ez4NZGfYJdL3ji6PyWJDWj5wQhQaWUUUhD68=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WshknsGewbb+iZJB5BcBihbrQMUrYruJ+IG/wCCU/6qNIkE3VokMOzyPuSBlY08oCczCOJLkKW+koJusUaYa5aEaSgfwlefIzrB0Ts/7r306TQsQRIh7DBw9TB8EV8hjHgk35HxoMxi8KkVfvDrFzMmUnhS8uGscqwnsEDpcTCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ej+wyhS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B147BC32786;
+	Sat, 24 Aug 2024 00:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724461092;
+	bh=wLpRyS6Ez4NZGfYJdL3ji6PyWJDWj5wQhQaWUUUhD68=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ej+wyhS+SS3omS9kOjf2VJDnIUTAKgH6PJoY/HP8+X8DJovX5obaPLPwUB+5kEWs9
+	 UcNcr/jSP1+nbXBxMp1tw7IHcM2HszDwV4tKmRUkkwqa7qycfmJawngDV1Q4HBp0MD
+	 97wC/eZi5ok49F49pTePte6N/WSXi6tFUJ43FxojNxJ2jU7GEZIiCkAP8iLExptIq9
+	 D2Qtq4zMkGhSPaopLn6+qn27Mq6ajjN877KdXQZMCDXgb25vnes6GMPUZwo5ZuVgxc
+	 K1Nv0W1XhIgUyyDx+YGPG5ducZqVHA+9wzn6+lpFPMFBZgqbLSZlJKrHQ2wjpmZst6
+	 yxTpSSit+eq1g==
+Date: Fri, 23 Aug 2024 14:58:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [GIT PULL] cgroup: Fixes for v6.11-rc4
+Message-ID: <ZskwI2nciPwdwNeA@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
- Thunderbird/104.0
-Subject: Re: [PATCH 2/4] nfsd: fix some spelling errors in comments
-To: Jeff Layton <jlayton@kernel.org>, Li Lingfeng <lilingfeng3@huawei.com>,
- trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com, neilb@suse.de,
- kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-References: <20240823070049.3499625-1-lilingfeng3@huawei.com>
- <20240823070049.3499625-3-lilingfeng3@huawei.com>
- <f27ca56a2b7de7ebb97a4170222047da56eb8eb7.camel@kernel.org>
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-In-Reply-To: <f27ca56a2b7de7ebb97a4170222047da56eb8eb7.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHL4U6L8lm4t4qCg--.47415S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZryxJrWkKr4fKry7uF4kJFb_yoW8Xr17pF
-	WrJas5GF48Xw4UGF4a9an7Gw1avw4kKr1UGrnaq3yavF90gr1fWFyqkr1rXr45KrWfuw4q
-	gFsxKF9xZws8uFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-在 2024/8/23 20:07, Jeff Layton 写道:
-> On Fri, 2024-08-23 at 15:00 +0800, Li Lingfeng wrote:
->> Fix spelling errors in comments of nfsd4_release_lockowner and
->> nfs4_set_delegation.
->>
->> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
->> ---
->>   fs/nfsd/nfs4state.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
->> index a20c2c9d7d45..66a0c76850f3 100644
->> --- a/fs/nfsd/nfs4state.c
->> +++ b/fs/nfsd/nfs4state.c
->> @@ -5856,7 +5856,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
->>   
->>   	/*
->>   	 * Now that the deleg is set, check again to ensure that nothing
->> -	 * raced in and changed the mode while we weren't lookng.
->> +	 * raced in and changed the mode while we weren't looking.
->>   	 */
->>   	status = nfsd4_verify_setuid_write(open, fp->fi_deleg_file);
->>   	if (status)
->> @@ -8335,7 +8335,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner)
->>    * @cstate: NFSv4 COMPOUND state
->>    * @u: RELEASE_LOCKOWNER arguments
->>    *
->> - * Check if theree are any locks still held and if not - free the lockowner
->> + * Check if there are any locks still held and if not - free the lockowner
-> This is probably better grammatically:
->
->      Check if there are any locks still held and if not, free the lockowner
-Thanks for your advice, it does look better.
->>    * and any lock state that is owned.
->>    *
->>    * Return values:
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.11-rc4-fixes
+
+for you to fetch changes up to ff0ce721ec213499ec5a532041fb3a1db2dc5ecb:
+
+  cgroup/cpuset: Eliminate unncessary sched domains rebuilds in hotplug (2024-08-05 10:54:25 -1000)
+
+----------------------------------------------------------------
+cgroup: Fixes for v6.11-rc4
+
+Three patches addressing cpuset corner cases.
+
+----------------------------------------------------------------
+Chen Ridong (1):
+      cgroup/cpuset: fix panic caused by partcmd_update
+
+Waiman Long (2):
+      cgroup/cpuset: Clear effective_xcpus on cpus_allowed clearing only if cpus.exclusive not set
+      cgroup/cpuset: Eliminate unncessary sched domains rebuilds in hotplug
+
+ kernel/cgroup/cpuset.c | 38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
