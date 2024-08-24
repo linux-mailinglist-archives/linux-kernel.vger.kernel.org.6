@@ -1,144 +1,99 @@
-Return-Path: <linux-kernel+bounces-300022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467BF95DDA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC2095DDAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF29C1F22393
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750D51F22332
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE161714C0;
-	Sat, 24 Aug 2024 11:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B+7SrpCJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C58A1714A4;
+	Sat, 24 Aug 2024 11:57:32 +0000 (UTC)
+Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F037E15C15E
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 11:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87401547E0
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 11:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724500629; cv=none; b=jHa9qtNTaoDbLGSijRP0LzISGIFCb8Y3ykl/t3/5I17XFQarYRZ0yZdbMoGVIR4EZMfLCvtU02hDHl+pZWoOFZRgP9bULooRdRuhE6pRJUhbOzQWSWI4r7QM4k+q8/9pHbgD/4BwdXy6svsHcI7JC8IFAoU8JjhP+CxjUwnGUOQ=
+	t=1724500652; cv=none; b=fc0eOrBYcHGed9nruNNuDavVWN2jhN7eqGeF2/eiFTRBPpYFp7kTGRNVd72kWocNGmqoexSL82nvqNV/fPkGgaCe5iryWqwqcyItvvYOqwEzM5sfcL5+ddMwQhTHEZHNMV4x1DvktXoWjRzbpqRT1opKbjs/fqIYws33hGoRqk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724500629; c=relaxed/simple;
-	bh=IMUjvNv1A8WNE3OqnOHhUAD1EEtgyW1G59Xb24cgceQ=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=Zah6eot4C7yRfixqNdJDT0khP/8tSmE6cxu04GcBZ5LwWDtK/3lD2u921/TI7U/dwk4I1AEI/C/hrxZ+6fuZjTh1yB/oWRFC92N32kmgd5+Q/pwzbhirsPDDxXzbcQQ8xx11W6fl6CNxCgIzoTeAM+CQC6G/pOKNdKkYtkk0yn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B+7SrpCJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724500626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7MlSZRgX4NtPTJfbL1OG/C/fCyXDm1yZsFhC7WYkkOo=;
-	b=B+7SrpCJxW224ypUImabsEthnxFxtSigE8CTnRmw5bnha0VufvzOCd4QX8VODEDO7S/8vQ
-	QwhF8v8xpHr26gLOecbYdZ7qNL8G6UF9mk8ZvwkEZT0s1wl02xw7Q/OnaI4Ln4rI8VgmZD
-	0tZfjXyjxCMK4FqLdaU/qAaTUmEZvug=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-dsco4DIKOqS_7UEUarFQjQ-1; Sat,
- 24 Aug 2024 07:57:03 -0400
-X-MC-Unique: dsco4DIKOqS_7UEUarFQjQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A55D61955F43;
-	Sat, 24 Aug 2024 11:56:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4C96919560AA;
-	Sat, 24 Aug 2024 11:56:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240823200819.532106-1-dhowells@redhat.com>
-References: <20240823200819.532106-1-dhowells@redhat.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Steve French <sfrench@samba.org>,
-    Pankaj Raghav <p.raghav@samsung.com>,
-    Paulo Alcantara <pc@manguebit.com>, Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH 10/9] netfs: Fix interaction of streaming writes with zero-point tracker
+	s=arc-20240116; t=1724500652; c=relaxed/simple;
+	bh=yFc8ZTwH9bDo5a9CHzIWQZ5taQz7Ws1ODdCrZGBcVrA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LpV2PW6Aa2243sSzWXv24iXKAgpHDTSqwgO/pKrBF728DVA94Dllf5LROUXqveyZ1xdgLhEkTa9mjfnGWte64SeDfk1COPtHjtdiPzlk4UJehh3IEiX+78YR9MgWh4NXr2Nuf0fUTVP5iV6PZh4QdHoagg+qzkkbiGT/Fglee2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.5])
+	by sina.com (10.185.250.22) with ESMTP
+	id 66C9CA9B000056CF; Sat, 24 Aug 2024 19:57:17 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3403197602803
+X-SMAIL-UIID: E77C233EDA874F0B97C18D0BD5A5A6FA-20240824-195717-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_close (2)
+Date: Sat, 24 Aug 2024 19:57:05 +0800
+Message-Id: <20240824115705.1267-1-hdanton@sina.com>
+In-Reply-To: <0000000000001187a706204582bb@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <563285.1724500613.1@warthog.procyon.org.uk>
-Date: Sat, 24 Aug 2024 12:56:53 +0100
-Message-ID: <563286.1724500613@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
 
-    
-When a folio that is marked for streaming write (dirty, but not uptodate,
-with partial content specified in the private data) is written back, the
-folio is effectively switched to the blank state upon completion of the
-write.  This means that if we want to read it in future, we need to reread
-the whole folio.
+On Thu, 22 Aug 2024 06:19:27 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d785ed945de6 net: wwan: t7xx: PCIe reset rescan
+> git tree:       net-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12378c33980000
 
-However, if the folio is above the zero_point position, when it is read
-back, it will just be cleared and the read skipped, leading to apparent
-local corruption.
+#syz test net-next  d785ed945de6
 
-Fix this by increasing the zero_point to the end of the dirty data in the
-folio when clearing the folio state after writeback.  This is analogous to
-the folio having ->release_folio() called upon it.
-
-This was causing the config.log generated by configuring a cpython tree on
-a cifs share to get corrupted because the scripts involved were appending
-text to the file in small pieces.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/write_collect.c |    7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 426cf87aaf2e..ae7a2043f670 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -33,6 +33,7 @@
- int netfs_folio_written_back(struct folio *folio)
+--- x/net/core/sock_map.c
++++ y/net/core/sock_map.c
+@@ -178,8 +178,10 @@ static void sock_map_del_link(struct soc
+ 		if (verdict_stop)
+ 			sk_psock_stop_verdict(sk, psock);
+ 
+-		if (psock->psock_update_sk_prot)
++		if (psock->psock_update_sk_prot) {
+ 			psock->psock_update_sk_prot(sk, psock, false);
++			WARN_ON_ONCE(sk->sk_prot->close == sock_map_close);
++		}
+ 		write_unlock_bh(&sk->sk_callback_lock);
+ 	}
+ }
+@@ -196,10 +198,13 @@ static void sock_map_unref(struct sock *
+ 
+ static int sock_map_init_proto(struct sock *sk, struct sk_psock *psock)
  {
- 	enum netfs_folio_trace why = netfs_folio_trace_clear;
-+	struct netfs_inode *ictx = netfs_inode(folio->mapping->host);
- 	struct netfs_folio *finfo;
- 	struct netfs_group *group = NULL;
- 	int gcount = 0;
-@@ -41,6 +42,12 @@ int netfs_folio_written_back(struct folio *folio)
- 		/* Streaming writes cannot be redirtied whilst under writeback,
- 		 * so discard the streaming record.
- 		 */
-+		unsigned long long fend;
-+
-+		fend = folio_pos(folio) + finfo->dirty_offset + finfo->dirty_len;
-+		if (fend > ictx->zero_point)
-+			ictx->zero_point = fend;
-+
- 		folio_detach_private(folio);
- 		group = finfo->netfs_group;
- 		gcount++;
-
++	int rc;
+ 	if (!sk->sk_prot->psock_update_sk_prot)
+ 		return -EINVAL;
+ 	psock->psock_update_sk_prot = sk->sk_prot->psock_update_sk_prot;
+-	return sk->sk_prot->psock_update_sk_prot(sk, psock, false);
++	rc = sk->sk_prot->psock_update_sk_prot(sk, psock, false);
++	WARN_ON_ONCE(sk->sk_prot->close == sock_map_close);
++	return rc;
+ }
+ 
+ static struct sk_psock *sock_map_psock_get_checked(struct sock *sk)
+--
 
