@@ -1,86 +1,104 @@
-Return-Path: <linux-kernel+bounces-299922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F18795DC46
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:32:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CDB95DC49
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8EFB2275C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4A11F23B7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A076154425;
-	Sat, 24 Aug 2024 06:31:48 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3169B15380B;
+	Sat, 24 Aug 2024 06:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FvkssMyK"
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902093A8E4;
-	Sat, 24 Aug 2024 06:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA471514EF
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 06:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724481107; cv=none; b=FO/8UTtBlOFfvUPbcXX3W8pY/TdZ1F4eXyerq4FQfaNey+lvn9jUkGy7T+VQfvfVCfx04srmOStU1MoMWKuRF4QDhHzi5lBAcfHvwtEj+XZ4U7BFZ0DwcZLdTzWp0rNrg+SjdfdMY0hbF/6+0UE2i+ZkWkwDVQqEcrcJQLOD2IU=
+	t=1724481317; cv=none; b=gw2SEb3Vs577zRcr205GpACsSIwbfX0swjGyVYjSRtYGjfQ6ik/8Lb4YskBwDk6lA13IXT/ZYFGCGDxEAD6oSD6oIr09J86jCqjqB3bOk5bM9J2iJ2NeUkrdkNH7Fac/qMu4Lde7a4hz9qG9pUcs5P6Rr6sZUfKw4Cc0m/Wy5XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724481107; c=relaxed/simple;
-	bh=2EdA9dYifcGgOE8+tCMyipwrc6qwM59V02r/mYYtTB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFjbI54gXFDexyO+4/9nTyyx5hdjZ0NvoJKBtoK00QL561r8wgmiAegAVB9+xqvXtQ719NJuePmQ6xJ1BiwgAbM9nH6Wj5tRP4VHwPzspGx/26SmAAg9vsdM4zPWrw5fgHH3Elj96HZ5wFzLQbX1eY4d0pq416YFKr5BRxr1qSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79BEC32781;
-	Sat, 24 Aug 2024 06:31:31 +0000 (UTC)
-Date: Sat, 24 Aug 2024 08:31:28 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, Chukun Pan <amadeus@jmu.edu.cn>, 
-	Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>, 
-	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>, 
-	Michael Riesch <michael.riesch@wolfvision.net>, Jimmy Hon <honyuenkwun@gmail.com>, 
-	Alexey Charkov <alchark@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
-	Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v2 04/12] dt-bindings: iio: adc: Add
- rockchip,rk3576-saradc string
-Message-ID: <wegeyglbv5xufuvpmf2ye2bu6w5ob753h4hfimxw3ozt2vnfoh@fgvdblizg5hc>
-References: <20240823150057.56141-1-detlev.casanova@collabora.com>
- <20240823150057.56141-5-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1724481317; c=relaxed/simple;
+	bh=TMgOLqfm30b86e4ts78f85wexaylim5TyQN7MaiIe6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pdGhC5UQd7TU+UNyimzAlM8S+0o6JCV95yZcuvG88l2ym0X62vaPVA6VzcbdOPqEgYPSAEYw/u06FAZzRv8Aoysn69o+hmz9CdBF1pLCh5FeMZgYKmqzClW/62QhFUNda6+/vGR6QgvyqDP4lR1lavLEMBxT9m+sAapC9v/bakE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FvkssMyK; arc=none smtp.client-ip=193.252.23.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id hkMasExHFZ40ahkMasoNh6; Sat, 24 Aug 2024 08:35:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724481306;
+	bh=IQiQE8ZAQ9sR54pSRg1laMkFOYw/GV3RVSf0chmw70Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=FvkssMyKKbtvTjFBaVy3HTS8GkfFynWH7jhyv0nUCxq4+Cy8a9bkg+bnysYnxnuC+
+	 0czd8gSL3fy1ukfiyFgvVTixm7V2dEbapg0Egi2/WeP3o+yYZozDZlIeCDuwZ94RS3
+	 qBFYCG58IarylkSwnP5Z6eReAtzDW6NQ1GUKvbsj7ehe0jfyberviSh+WqhUV2EPdF
+	 MZYzGlOBTQw1+sq8nFKJfCqtrfZGVoKBvbKc6LVMH253McVgnjKEPvUkjxCTCsOvTb
+	 zV9fu4DpW8hNBF3brwKK5QjLCV/y9dEu6E4sEkivkSara13O9dprMRpwbJmBm/brB1
+	 aEXRTXlIhlrBQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 24 Aug 2024 08:35:06 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <77e4dd0b-2c82-4f00-92a3-069526a5f795@wanadoo.fr>
+Date: Sat, 24 Aug 2024 08:35:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240823150057.56141-5-detlev.casanova@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8192e: Replace strcpy with strscpy in
+ rtl819x_translate_scan
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+ gregkh@linuxfoundation.org, tdavies@darkphysics.net,
+ philipp.g.hortmann@gmail.com, garyrookard@fastmail.org,
+ linux-staging@lists.linux.dev, skhan@linuxfoundation.org,
+ rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org,
+ linux-kernel@vger.kernel.org
+References: <20240820184216.45390-1-abhishektamboli9@gmail.com>
+ <2348e646-e1da-4deb-ab55-c438a42e25b3@wanadoo.fr>
+ <510b12b8-91d5-43ce-a191-9ee0a6c91460@stanley.mountain>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <510b12b8-91d5-43ce-a191-9ee0a6c91460@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 10:52:31AM -0400, Detlev Casanova wrote:
-> Add rockchip,rk3576-saradc compatible string.
-> The saradc on RK3576 is compatible with the one on RK3588, so they are
-> used together in an arm of the oneOf.
+Le 21/08/2024 à 20:23, Dan Carpenter a écrit :
+> On Tue, Aug 20, 2024 at 09:38:22PM +0200, Christophe JAILLET wrote:
+>>     - if a "mode" matches, do we need to iterate the whole rtllib_modes
+>> array? (have a look at wireless_mode)
+>>
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+> Can only one mode be set at a time?
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> 
 
-Why do you keep sending the same patch which was already applied?
+Hmm, apparently several can be set (see [1])
 
-Best regards,
-Krzysztof
+Base on a few lines below, it looks that WIRELESS_MODE_N_24G is 
+exclusive from the other ones.
 
+So the 6 char array seems to be sized either for "N-24G", either for a 
+concatenation of a few other modes that won't exceed the size of the buffer.
+
+CJ
+
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/staging/rtl8192e/rtllib_rx.c#L2200
 
