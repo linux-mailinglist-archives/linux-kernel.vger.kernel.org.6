@@ -1,108 +1,156 @@
-Return-Path: <linux-kernel+bounces-299823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB3F95DA6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:36:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48EC95DA69
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38C628316A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:36:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FE3CB22FA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AA279FE;
-	Sat, 24 Aug 2024 01:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF0E8BEE;
+	Sat, 24 Aug 2024 01:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BqUr0MOR"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1EpOyes"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62979C0
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3651B4A0F
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724463412; cv=none; b=cH8IEtlNP1m8fEeJUPL+bRETZVmc12g2Om6651SkInxX+Psd85IVms7JbwdF4tj0kBHYsC25PAWrJ9JT5K0n3FcWyPbb2oZvUx8z2+3H+H1a4FRNYDkd8CEGRpLwu9u6C/smafWSXXMXjLhMPmNxkQMaNoPdoxV1eOkA7HWr6Kc=
+	t=1724463300; cv=none; b=AlxREYCnZmBCqOTFwIujxDOd0ZFvEguiq0bHVhrJ/zi2TbO+xxDp8QOByepnA63HzPH60qv26/kVmrw37jCc/tY9I2XKDNmBCiPGLiIH323kBselgaDQcC5lL9xpH8iuXhgQjpmzhKSZD5q9MUmdQoTpUfk4wkrkwTtFf9xMB4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724463412; c=relaxed/simple;
-	bh=CLeTk6zu5zwG6uOLpWjvkjRR9qq7XJ1dbaG8bO4HbQc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=DEiEiYUYgPPe9UPKqC+rOVFBHKy5k67ejSdIvF/EP0RtWP1kSjS6B6SyYM9yjTroNlXMSK9zuFfRV/97S8Nl6sdP2Zx5D+9xlnN3dTGSb7Un+MN9Xn+s6AENWy8y3HUMpQsuSjAPuVdZ+9HwJCRPROQQd0utyX4TKRHh3l1Z9Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BqUr0MOR; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724463104; bh=TIPYW9qmUIPgznmK90J1yU9u2VOYbreOfofhUKZddDs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BqUr0MORZ6dz+YNV6wr8TP5wcIcCwUPOE+Z/GXiQyncIAMsGpuRyor74/NYnNWFCA
-	 lgDdS8o0yBFPfgy+i+8pg0KpmjWiBJFfnPUQf26qoEe/CtDLu/8R6phshjpnPLkkYg
-	 Jb4JXq+ocfMTyffGyb/+hNZy3IUYtn4V2HU3zXU0=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 65619CF3; Sat, 24 Aug 2024 09:25:22 +0800
-X-QQ-mid: xmsmtpt1724462722thau1kgja
-Message-ID: <tencent_21361896E437004A0E753576A367A03C1F09@qq.com>
-X-QQ-XMAILINFO: Mrv6PNPZjcp6CHs+D1s83S2Yll23Z262UQqmINKV1rboOfkdKLh35h8yUNOCIC
-	 LwFiSOlEwDAZkKpdvOmLDEnKdz3qLDADKEKPO94krRnaQbOzQoJwLdy2Ey6ueSDe9cTm+nB8zwU5
-	 fu2Y5ivVgxTjvuP7w1mx5ZxZpCkjHX0pj5JO0lt+h+0CPh6OIUVZUgeOepziqGG9M/8uunVsc+OP
-	 80bfG/fW7YViMP3xPDnBvHhYyP3Q/CNLCXfiwHDwf2EeZIr3OVP18MzOeh3dgd94Fxn5yu/7a/K1
-	 N7jvOc09FYJCIg4NANl4F8v7yS3VkSEynUy8Bm3EqjnHlAhjKEAdHZQ7sTJGgV6QBCJ4ORjNVfzC
-	 U7c7t6EiDcuWkLCn51A48loPrNn/gW4kaaGmMqhV7saZdb53RJbP5oKTtWwRvlm9+9b3JOvM4S0p
-	 abSk43Ongd3Y4ba8n3OKtgU1P12F4Dt84e6CQsGlPOCspGvB1a2r4z/HkxF7cEY9Eq3H4Y8ETJW2
-	 bAP5FgtcojB3f9+RjmRnKAoSxvtD1hU3TZfh/MxdGO70g3Bv86Dl09FhtSJbVrwYY+k6WlvD02U1
-	 O39Dbw+0GmysLGqTzvX9QhbMqp5UxWDV7mCvPwXCycVqfYk/drejsaKduwLX4W0jws4/tlJ4ZeFu
-	 m0ykGOu6ooQyRSt4r89tLLJR0S3pBQLc2uTMr84XblU1LLRMgd3I7TprtZTRkpUDmCnqPPzL/WXB
-	 uZ+RS0JLAO8sSH5vwxMyxGOzLNzwWGvgGo6DkZ7y9EVJu+cnk/nq1SsT/LtyibsmYo6Gd90dtAIF
-	 hbpFQrYPieYvQCEsF5T4dmTg6t7nvWvEe5+7AJtD5xICst4ZD3c9CoA83uMo5eoPsTX7Iv2GyZ6m
-	 Cie1uT0M62c/dhoxNh8c7n6gpneXTWNKnhulzGS/+vUrKhA9l210sNb2Z6Glg3jZ9ObOyNm9XKDO
-	 5evqVLpjlLLYNspskmPcAMojvxeNEg
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: dave.kleikamp@oracle.com
-Cc: eadavis@qq.com,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzbot+dca05492eff41f604890@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] jfs: check if leafidx greater than num leaves per dmap tree
-Date: Sat, 24 Aug 2024 09:25:23 +0800
-X-OQ-MSGID: <20240824012522.1186031-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <386ef374-25f2-4a10-bd15-0913137f1c9f@oracle.com>
-References: <386ef374-25f2-4a10-bd15-0913137f1c9f@oracle.com>
+	s=arc-20240116; t=1724463300; c=relaxed/simple;
+	bh=Hw7jnvfa3Q1O1QIXd8Gkh/Elt396GJ7HVFb4Dj8GDzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BYrSKzS/Qv1XiwLGXMI+/JKZiqjtKRMn+Vn+Oh5Nj/zwmjTXNrNqIku1b5cuPbbizHICX4sQYgV7oP4Q6f/V9F+xKAYpsMhLslttszWao1Do9UCIrZjKYrsmGEgrZS4zSCwEz4AL20Gv51y9HVqOmEWM7VFfKRIgWYcF8UO+tZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O1EpOyes; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5334b61b6c2so1093e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724463297; x=1725068097; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JcP2XHdhpQoR+8wXNb3t5tqZe5jimGDfuP+Dc4X+WBM=;
+        b=O1EpOyesM03o9AE9QAeBU7QwQc4h97F/sic2vVxy1RPd60NLdcbPWA0EPs5fy+S7Vl
+         9bqgk7EbKZhZrDQM2lrdtuoaGzWSWDwjx4oUlVAOKxE2vHGaSo8hq6n4ULlAGj7oJtw0
+         c/7H76IzXIZaPa7faAPINQAEJY4VgGvnytOnITOTGMhlySSfJSyhyHvsoyxzCHw8Wix5
+         X5M0tOrin2QE3L19ORPpwghV+47boKrTF/cPAziN6YkmA0KiiL7oCvRtsAgoL4yEfncB
+         /Xb7dQbxFjBOaR/XnoS9L6eiJP27qvy+EuUEzE1Wl+SX+6M+VS/ds66y/3DsPGec47mA
+         ufxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724463297; x=1725068097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JcP2XHdhpQoR+8wXNb3t5tqZe5jimGDfuP+Dc4X+WBM=;
+        b=tFzl1ZiTc3GBVON+pcvWeBeX5sl1ITRKCntl4K6iNGXDBQr7GouGKZYriNJZ8SZZ14
+         2h0yaehtpVNmYtdMzIHfPN7FSsNGuLJkMHO4xMxNpL7hBr3xrrV8Pm4vPmqZDQOIIihu
+         DrStsPMXJoZxYi6EXFYBT1sGOPG5mVZLPqT9FrHyF5F7LfzIas75nRHL6uSqQ4mFRh9K
+         TRqf43ZQBcostVFwUXxviRTr+llkGwdaNSXk+i2UAneWNh5U1Bw+jUJmP6AcS17MQHif
+         UqTxWSbuN/FE/xD5fHHmNsdD86x9IL2GUl1bBfFlN2kA7C7MlgFpnybd4SDgYHyYTEFm
+         rYcA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ugXNbbme2gjJ7eI+jBIx2oGjYXxoOB7/aqDZVphY1apQfsRWJAFC3sM17q27LWF+4uBT0YFTjbhldIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPPiQgZsCztjbNwFcUxirhmr/54p/zj5r+m7iq6eZv4DJntXhD
+	N27epJZLpSmn7dzXimPSd6ZBATnJ+sjG3VlHWzSA4dBxoEGnGuluv/XlZrLoLMlIQBC+WukVUHQ
+	2JorvIA379DHeO6y3HA4ugv7rQZp5g6UuYVQz
+X-Google-Smtp-Source: AGHT+IHURFxnbYbSnrLHwqXFAW8a7r4AgAH2k8U6BVLvMWbntozxXieb/Lp3SJFLl8PP7sKnwg98qPonU/lz/wgjMlI=
+X-Received: by 2002:a05:6512:238a:b0:530:baaa:ee10 with SMTP id
+ 2adb3069b0e04-53440bcd289mr34644e87.3.1724463296675; Fri, 23 Aug 2024
+ 18:34:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240823-firmware-traversal-v2-1-880082882709@google.com> <Zskp364_oYM4T8BQ@pollux>
+In-Reply-To: <Zskp364_oYM4T8BQ@pollux>
+From: Jann Horn <jannh@google.com>
+Date: Sat, 24 Aug 2024 03:34:20 +0200
+Message-ID: <CAG48ez3A=NZ9GqkQv9U6871ciNc+Yy=AvPfm3UgeXfMyh=0+oQ@mail.gmail.com>
+Subject: Re: [PATCH v2] firmware_loader: Block path traversal
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot report a out of bounds in dbSplit, it because dmt_leafidx greater
-than num leaves per dmap tree, add a checking for dmt_leafidx in dbFindLeaf.
+On Sat, Aug 24, 2024 at 2:31=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+> On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
+> > Fix it by rejecting any firmware names containing ".." path components.
+[...]
+> > +/*
+> > + * Reject firmware file names with ".." path components.
+> > + * There are drivers that construct firmware file names from device-su=
+pplied
+> > + * strings, and we don't want some device to be able to tell us "I wou=
+ld like to
+> > + * be sent my firmware from ../../../etc/shadow, please".
+> > + *
+> > + * Search for ".." surrounded by either '/' or start/end of string.
+> > + *
+> > + * This intentionally only looks at the firmware name, not at the firm=
+ware base
+> > + * directory or at symlink contents.
+> > + */
+> > +static bool name_contains_dotdot(const char *name)
+> > +{
+> > +     size_t name_len =3D strlen(name);
+> > +     size_t i;
+> > +
+> > +     if (name_len < 2)
+> > +             return false;
+> > +     for (i =3D 0; i < name_len - 1; i++) {
+> > +             /* do we see a ".." sequence? */
+> > +             if (name[i] !=3D '.' || name[i+1] !=3D '.')
+> > +                     continue;
+> > +
+> > +             /* is it a path component? */
+> > +             if ((i =3D=3D 0 || name[i-1] =3D=3D '/') &&
+> > +                 (i =3D=3D name_len - 2 || name[i+2] =3D=3D '/'))
+> > +                     return true;
+> > +     }
+> > +     return false;
+> > +}
+>
+> Why do you open code it, instead of using strstr() and strncmp() like you=
+ did
+> in v1? I think your approach from v1 read way better.
 
-Reported-and-tested-by: syzbot+dca05492eff41f604890@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=dca05492eff41f604890
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V2 -> V3: Exclude control page
+The code in v1 was kinda sloppy - it was probably good enough for this
+check, but not good enough to put in a function called
+name_contains_dotdot() that is documented to exactly search for any
+".." components.
 
- fs/jfs/jfs_dmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+Basically, the precise regex we have to search for is something like
+/(^|/)\.\.($|/)/
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index cb3cda1390ad..516bac758053 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -2976,6 +2976,8 @@ static int dbFindLeaf(dmtree_t *tp, int l2nb, int *leafidx, bool is_ctl)
- 		 */
- 		assert(n < 4);
- 	}
-+	if (!is_ctl && le32_to_cpu(tp->dmt_leafidx) >= LPERDMAP)
-+		return -ENOSPC;
- 
- 	/* set the return to the leftmost leaf describing sufficient
- 	 * free space.
--- 
-2.43.0
+To implement that by searching for substrings like in v1, we'd have to
+search for each possible combination of the capture groups in the
+regex, which gives the following four (pow(2,2)) patterns:
 
+<start>..<end>
+<start>../
+/..<end>
+/../
+
+So written like in v1, that'd look something like:
+
+if (strcmp(name, "..") =3D=3D 0 || strncmp(name, "../", 3) =3D=3D 0 ||
+strstr(name, "/../") !=3D NULL || (name_len >=3D 3 &&
+strcmp(name+name_len-3, "/..") =3D=3D 0)))
+  return true;
+
+Compared to that, I prefer the code I wrote in v2, since it is less
+repetitive. But if you want, I can change it to the expression I wrote
+just now.
 
