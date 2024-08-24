@@ -1,259 +1,131 @@
-Return-Path: <linux-kernel+bounces-300193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BFE95E014
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 23:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 996FC95E00F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 23:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C701C20F70
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB9C1C20A9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7721146D60;
-	Sat, 24 Aug 2024 21:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68E013DDC6;
+	Sat, 24 Aug 2024 21:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="levxh8ep"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLUxzlZA"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572F343AB4
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 21:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3552C43AB4;
+	Sat, 24 Aug 2024 21:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724536437; cv=none; b=FcmzoSOKlatkrFfdR75o7MkvslYHhgWeUGtEJ6ZfNSvvVQZXi2XXUL/Xt9EYNwHY/7CWIi7TPibF3c1vD6zQE1VnAG7OcQiOTL5P77naB3u389Kxj5DTepgC6rWVW+ozt0BNNP12IANEYT9fU052SNhQ8ia/uTLsrb5bFb6Ygnc=
+	t=1724536332; cv=none; b=kXA9Xc4xNCj1VKPyH47wuTZc58r8poQbq2MoTsSFqQJzqFznTpepK09qnKDFggQgnZGQGxmz/erdNd0cka2ambucd/v6gkjxkxyKcyNvJk8bBxuBA1MqANvOaBIeZBE3YwAXX0Mf3MLCWpRLG/CLwkA7URUuHut3SK+Kmmd126g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724536437; c=relaxed/simple;
-	bh=4LE4weMPdvXTJ/F/GivsUGU6I9k2XgURasdip2WVhAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=imyNTDzvmDB3VqBxPLC2izHmrMc89pCweCJWbQTEP51NsE2t2TNiIjSQxEnw/pxYIqVLSjeviezRkcXf9iwC60O1M5iR3yuwXZ0y5YEwK+5itknb2n06TqbjRZsE25iDJId4ZwU3LTg+6ASwS8LneY4ugTiPT5C04nr72my8ptU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=levxh8ep; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1da036d35so204077985a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:53:56 -0700 (PDT)
+	s=arc-20240116; t=1724536332; c=relaxed/simple;
+	bh=rvDzF29UIGiwwwtsliOTp1lOdDgtKPnDQ3FxxCtih8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QP6lhqRe5B4aig99ZgIqFv7+HdbR4yWLOYGmG47LjUxlXdgYXFdk0tMtsTrsuHRZpSbmltFNrV+yfUemBwJJgjA/gxiEcLaPqNOFZ7u2FxQZ9Hh/oyPcnZOcbnt7imrvT2CmdJUTuiD36Z2iphqfiZsKG7hQG3Q7RFTGLVgn2KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLUxzlZA; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-533488ffaf7so4302776e87.0;
+        Sat, 24 Aug 2024 14:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724536435; x=1725141235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d1GlhmphObW3OjUIsMA5Qnel/65FH+T2FY1x3SipER0=;
-        b=levxh8epjVNIgj2lEUO6HDzZci/cNFHDo69DafB0bwD+5zxUuTAnucHsXIZAVQvOIu
-         KlPihLZwsY8/f+NmybQ3SntID1VrkAFtAhjE6IQ3EYpHoBTbwrNi9f3nfiZNhzWtsMOC
-         RvBUknN9IbAtoDl1UdsAHYZg3uUWdfT4yIMuJ+PvWy92GBdS0MJ1jTqMtXouLrFXcyIv
-         bSMxFJD19H/TyDGYsMQ9cZird8WQMMsN95hiKxOZDeAwv31XLWSh3z2/A5dYLN8BZRnz
-         hl504SVxA3pFluZ9gocJQ7tFuGdqfYXdTX0b6x5nFm2D95g5TDSOLSfmTj7YgvHksTbg
-         YPnw==
+        d=gmail.com; s=20230601; t=1724536327; x=1725141127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LvkMonHnwTvwh84VPYufq+0UgxpaA0cAQiMXUhpE8AU=;
+        b=SLUxzlZAHxswD+Wy1KA1j4xRpjb9TwAc3tFUl3DpJuRjVbd7oTl2Ms7cF4rJFyxGSZ
+         uIha/XkfYmquGlksJj53mHjlIjQwlBiVp9ZdBWel3ihIYqjZAYzX3tIKyfjSZkYHCHUv
+         U2U+w1Z2eGggQo+QCc8zOTiT3agaArrhDmo9Q7+UilAaNcbRHVrTBNMewm/ZTuzHaEwC
+         rMxpF7k+XoAb6tDZPI2eDccJ8+eBadyObVfudR6xhwMS8SAZOYUZMx38j5n3/as94dy0
+         KoGbEIoQ/k6NWjbm6Cr4jEjwR0krPkXHdgeQQsnu85fpb76UHx9GqeHDd3+0ioe7oIAu
+         8J1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724536435; x=1725141235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1GlhmphObW3OjUIsMA5Qnel/65FH+T2FY1x3SipER0=;
-        b=jBtS2toFcIB5MVwReQveiNWGtZSqaVHXfXI8o31gITGsNhws4O4uKXNaM2DmX3IpAZ
-         0ugAla9HDjAsrZnk0DP5QkTrareibqpcX18jdkogFYKjAT1bQ7lyurF2/QAENClnla4Y
-         WVtimHXxnGu5rIvtB6vJ7LzFRK2/twUYFUBmP/1hRtLUMa3KVjHiEsImcDlu74GlJ/5x
-         d9rAZF93m/a374eSsiVpwgwolZkv3pFxYh/xN6eg5aoAK7oqygprNBIOVuUuZRQw/WVF
-         XjnT/h+mHRDj6f3OgEhZajV4wHn/Jkb0EUHMGXQ4JX+cutaSXh/osTK105aLHWGAdzO3
-         QTZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUK7nmdT8VZdJPYBAYHSFJf12KCv5w5QPjxeu8JWfEbp2GBp3IXZ12XdtFpW6hYw6+r+pyQkF3V4GKjC6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzonsOl3i+t58nZhZ3QaMdeDEVYmF9EWlXfMpKiijwnvGss2U06
-	7+/RxWRvvnKz4vatJhyupKKss5v/dJs/63dfvCJ42xpKxKGRSP80TIP4MF5z+kc=
-X-Google-Smtp-Source: AGHT+IHl7mXUqr22WDIfj59oMMaH8EONkuQCwT2Yi54wD7zzm8BL2/KhPpfu4v/+XNpcrHVp/xPArQ==
-X-Received: by 2002:a05:620a:31a0:b0:79f:10f:23fd with SMTP id af79cd13be357-7a6896f90c9mr611524185a.23.1724536435004;
-        Sat, 24 Aug 2024 14:53:55 -0700 (PDT)
-Received: from devbig254.ash8.facebook.com (fwdproxy-ash-114.fbsv.net. [2a03:2880:20ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3bb19esm307937385a.74.2024.08.24.14.53.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 14:53:54 -0700 (PDT)
-From: Maksym Kutsevol <max@kutsevol.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Breno Leitao <leitao@debian.org>,
-	Maksym Kutsevol <max@kutsevol.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-Date: Sat, 24 Aug 2024 14:50:24 -0700
-Message-ID: <20240824215130.2134153-2-max@kutsevol.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240824215130.2134153-1-max@kutsevol.com>
-References: <20240824215130.2134153-1-max@kutsevol.com>
+        d=1e100.net; s=20230601; t=1724536327; x=1725141127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LvkMonHnwTvwh84VPYufq+0UgxpaA0cAQiMXUhpE8AU=;
+        b=Hlwuymw3QekA3ajeqDPoGd/L8KD2ruXYP9Ypu4gRm6EqWpSwY+Mjgn7nzmh9kKNlCC
+         bb1DYieDXt+ggmhNLe90DVIMh4R0Fa/Ikqm7lq1tjs9ndLTg3d2jZKB6RtHPTvlqpkTN
+         Qu0KZmkgKpFTvYQaz15pF97+Av2JBfkmOxKJFEbWs93UqAaF9WNtsXHFyWJPKR6RTHWT
+         5C0dPBvCG6Me+4hcwnCr3e8svv+z51EC2cbP/UkFZ459EKS4LrmWHRL9jedo+RqpduKo
+         jWaKtULkrV2k9u787z+UXPTb9XMFHWGrHLjVpmr32oR9RxpblVPmThqDXmCzEJsbZyMt
+         cIlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSEpmk1zO6+8mnq52uXBbP1b2rw0PEtIviSI/aiklsydmPmUis7NGB21S24RjyLherGRgiHlsYowYZpOM=@vger.kernel.org, AJvYcCXAKmFIenjp9nvS6eSJjPjzu7NEfW52j0wctDjlaVc8vOVWLugAQgQW54/yjJFHwydXF9ciev7cSHCDtPXI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn/VuB0nnzHPpf2espavuQ4RT1QH10mQukNZ2W+nNknVrIiVLD
+	nR6M7mZ7cFrxbDQnTTrnnryLjfbdejqGtO8kkpxBMvn3g9lhpCrC7YikvNKa1V5aOhy7VQuhd1z
+	o8bD9vcAzloxQVA71sA1GIPpOPksQGw==
+X-Google-Smtp-Source: AGHT+IEQ3zFvRBUWFq1f84htGmI0rZ9jbXCzr4fcjF3L5HRehu2nOoc479xO44GOCbT8NTn5xN1TjkdMTyZ37FpCv+Q=
+X-Received: by 2002:a05:6512:1193:b0:52c:e0e1:9ae3 with SMTP id
+ 2adb3069b0e04-534387bdff7mr4770603e87.57.1724536326970; Sat, 24 Aug 2024
+ 14:52:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240804033309.890181-1-masahiroy@kernel.org> <20240806-macho-uber-chipmunk-5ffd3e@lindesnes>
+In-Reply-To: <20240806-macho-uber-chipmunk-5ffd3e@lindesnes>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Sat, 24 Aug 2024 23:51:30 +0200
+Message-ID: <CA+icZUXvrnX=z45F+w+S02hzSs4PWRcjX+0FcMW4XnEC8rPE7A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: modinst: remove the multithread option from zstd compression
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Terrell <terrelln@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enhance observability of netconsole. UDP sends can fail. Start tracking at
-least two failure possibilities: ENOMEM and NET_XMIT_DROP for every target.
-Stats are exposed via an additional attribute in CONFIGFS.
+On Tue, Aug 6, 2024 at 1:02=E2=80=AFPM Nicolas Schier <nicolas@fjasle.eu> w=
+rote:
+>
+> On Sun, Aug 04, 2024 at 12:33:07PM +0900, Masahiro Yamada wrote:
+> > Parallel execution is supported by GNU Make:
+> >
+> >   $ make -j<N> modules_install
+> >
+> > It is questionable to enable multithreading within each zstd process
+> > by default.
+> >
+> > If you still want to do it, you can use the environment variable:
+> >
+> >   $ ZSTD_NBTHREADS=3D<N> make modules_install
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  scripts/Makefile.modinst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+> > index 0afd75472679..04f5229efa6b 100644
+> > --- a/scripts/Makefile.modinst
+> > +++ b/scripts/Makefile.modinst
+> > @@ -146,7 +146,7 @@ quiet_cmd_gzip =3D GZIP    $@
+> >  quiet_cmd_xz =3D XZ      $@
+> >        cmd_xz =3D $(XZ) --check=3Dcrc32 --lzma2=3Ddict=3D1MiB -f $<
+> >  quiet_cmd_zstd =3D ZSTD    $@
+> > -      cmd_zstd =3D $(ZSTD) -T0 --rm -f -q $<
+> > +      cmd_zstd =3D $(ZSTD) --rm -f -q $<
+> >
+> >  $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+> >       $(call cmd,gzip)
+> > --
+> > 2.43.0
+> >
+>
+> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+>
 
-The exposed statistics allows easier debugging of cases when netconsole
-messages were not seen by receivers, eliminating the guesswork if the
-sender thinks that messages in question were sent out.
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # Linux v6.11-rc4+ on x86-64
 
-Stats are not reset on enable/disable/change remote ip/etc, they
-belong to the netcons target itself.
-
-Signed-off-by: Maksym Kutsevol <max@kutsevol.com>
----
- Documentation/networking/netconsole.rst |  1 +
- drivers/net/netconsole.c                | 54 +++++++++++++++++++++++--
- 2 files changed, 52 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
-index d55c2a22ec7a..733d4a93878e 100644
---- a/Documentation/networking/netconsole.rst
-+++ b/Documentation/networking/netconsole.rst
-@@ -135,6 +135,7 @@ The interface exposes these parameters of a netconsole target to userspace:
- 	remote_ip	Remote agent's IP address		(read-write)
- 	local_mac	Local interface's MAC address		(read-only)
- 	remote_mac	Remote agent's MAC address		(read-write)
-+	stats		Send error stats			(read-only)
- 	==============  =================================       ============
- 
- The "enabled" attribute is also used to control whether the parameters of
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 9c09293b5258..45c07ec7842d 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -82,6 +82,13 @@ static DEFINE_SPINLOCK(target_list_lock);
-  */
- static struct console netconsole_ext;
- 
-+#ifdef CONFIG_NETCONSOLE_DYNAMIC
-+struct netconsole_target_stats  {
-+	size_t xmit_drop_count;
-+	size_t enomem_count;
-+};
-+#endif
-+
- /**
-  * struct netconsole_target - Represents a configured netconsole target.
-  * @list:	Links this target into the target_list.
-@@ -89,6 +96,7 @@ static struct console netconsole_ext;
-  * @userdata_group:	Links to the userdata configfs hierarchy
-  * @userdata_complete:	Cached, formatted string of append
-  * @userdata_length:	String length of userdata_complete
-+ * @stats:	UDP send stats for the target. Used for debugging.
-  * @enabled:	On / off knob to enable / disable target.
-  *		Visible from userspace (read-write).
-  *		We maintain a strict 1:1 correspondence between this and
-@@ -115,6 +123,7 @@ struct netconsole_target {
- 	struct config_group	userdata_group;
- 	char userdata_complete[MAX_USERDATA_ENTRY_LENGTH * MAX_USERDATA_ITEMS];
- 	size_t			userdata_length;
-+	struct netconsole_target_stats stats;
- #endif
- 	bool			enabled;
- 	bool			extended;
-@@ -227,6 +236,7 @@ static struct netconsole_target *alloc_and_init(void)
-  *				|	remote_ip
-  *				|	local_mac
-  *				|	remote_mac
-+ *				|	stats
-  *				|	userdata/
-  *				|		<key>/
-  *				|			value
-@@ -323,6 +333,14 @@ static ssize_t remote_mac_show(struct config_item *item, char *buf)
- 	return sysfs_emit(buf, "%pM\n", to_target(item)->np.remote_mac);
- }
- 
-+static ssize_t stats_show(struct config_item *item, char *buf)
-+{
-+	struct netconsole_target *nt = to_target(item);
-+
-+	return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
-+		nt->stats.xmit_drop_count, nt->stats.enomem_count);
-+}
-+
- /*
-  * This one is special -- targets created through the configfs interface
-  * are not enabled (and the corresponding netpoll activated) by default.
-@@ -795,6 +813,7 @@ CONFIGFS_ATTR(, remote_ip);
- CONFIGFS_ATTR_RO(, local_mac);
- CONFIGFS_ATTR(, remote_mac);
- CONFIGFS_ATTR(, release);
-+CONFIGFS_ATTR_RO(, stats);
- 
- static struct configfs_attribute *netconsole_target_attrs[] = {
- 	&attr_enabled,
-@@ -807,6 +826,7 @@ static struct configfs_attribute *netconsole_target_attrs[] = {
- 	&attr_remote_ip,
- 	&attr_local_mac,
- 	&attr_remote_mac,
-+	&attr_stats,
- 	NULL,
- };
- 
-@@ -1015,6 +1035,25 @@ static struct notifier_block netconsole_netdev_notifier = {
- 	.notifier_call  = netconsole_netdev_event,
- };
- 
-+/**
-+ * count_udp_send_stats - Classify netpoll_send_udp result and count errors.
-+ * @nt: target that was sent to
-+ * @result: result of netpoll_send_udp
-+ *
-+ * Takes the result of netpoll_send_udp and classifies the type of error that
-+ * occurred. Increments statistics in nt->stats accordingly.
-+ */
-+static void count_udp_send_stats(struct netconsole_target *nt, int result)
-+{
-+#ifdef CONFIG_NETCONSOLE_DYNAMIC
-+	if (result == NET_XMIT_DROP) {
-+		nt->stats.xmit_drop_count++;
-+	} else if (result == -ENOMEM) {
-+		nt->stats.enomem_count++;
-+	};
-+#endif
-+}
-+
- /**
-  * send_ext_msg_udp - send extended log message to target
-  * @nt: target to send message to
-@@ -1063,7 +1102,9 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
- 					     "%s", userdata);
- 
- 		msg_ready = buf;
--		netpoll_send_udp(&nt->np, msg_ready, msg_len);
-+		count_udp_send_stats(nt, netpoll_send_udp(&nt->np,
-+							  msg_ready,
-+							  msg_len));
- 		return;
- 	}
- 
-@@ -1126,7 +1167,11 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
- 			this_offset += this_chunk;
- 		}
- 
--		netpoll_send_udp(&nt->np, buf, this_header + this_offset);
-+		count_udp_send_stats(nt,
-+				     netpoll_send_udp(&nt->np,
-+						      buf,
-+						      this_header + this_offset)
-+		);
- 		offset += this_offset;
- 	}
- }
-@@ -1172,7 +1217,10 @@ static void write_msg(struct console *con, const char *msg, unsigned int len)
- 			tmp = msg;
- 			for (left = len; left;) {
- 				frag = min(left, MAX_PRINT_CHUNK);
--				netpoll_send_udp(&nt->np, tmp, frag);
-+				int send_result = netpoll_send_udp(&nt->np,
-+								   tmp,
-+								   frag);
-+				count_udp_send_stats(nt, send_result);
- 				tmp += frag;
- 				left -= frag;
- 			}
--- 
-2.43.5
-
+-Sedat-
 
