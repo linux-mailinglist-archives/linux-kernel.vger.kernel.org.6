@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-299952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC7195DCD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F65495DCD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA5681C213E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:01:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A747D1C21E2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42E154C07;
-	Sat, 24 Aug 2024 08:01:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418F815445B;
+	Sat, 24 Aug 2024 08:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="v4V3aD2T"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D471552E1
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D671717C64
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724486465; cv=none; b=K1nFFHCxwX5KZmW9g6m6cRpQmPAl2mbBmMdInjARZxvnRr7TxB55E9pzYyp81Dwfap3a6W3uOIXk/Q1vBaUKyNuVcB++f4yRSv3au8SwbRh5BYiySwTXSVQ9Vw5oP5HAy4E+f/hNkJGo1gmdEMZ8rUX3MnKKbjHtXxNyVtSdR6Y=
+	t=1724486566; cv=none; b=aoRBsPk3j3ClSmZ7pJ+pSSc8BlHqeyDlJH30l5I0FJxIE7fEHtIb1FNvk9cZ1hwmO2Ew/0nslci/DDmybUDSm+Qbnjclok+Sq3BPVF8aQkH1x/ZCpDsMNfUiCf20E3gJQb+OCd9YLqYYr6FPAS1qK+l4hPY+UiVIxdZqZPEVAhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724486465; c=relaxed/simple;
-	bh=gZ+2WX00SgZ6EGkC1usb6IePxgW+iL4uerRvDpRRAio=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QSCaCFvrTV8A8lu0L8i6EUBm9GoRJjx9oP5eO+L9nDjzog8QueZxnhJPYnCO7iRVwcJS0jBMprpe1sEoz58ZOM9ZF8SG2buDMH2i7+lqs8fVESWPt9DvixerM4PhGFRAvLAO+ghj2vmCk5O1vPkfRu37dzFrgu3rZFsTyXpmfSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d2c44422eso26788875ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:01:03 -0700 (PDT)
+	s=arc-20240116; t=1724486566; c=relaxed/simple;
+	bh=Zs5zEuUT/wpDbHNErBoN1MTM30qdodhjvny4v69h7uY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G0HspEeYZzF5X8mqQG1U6+ovaWY/q7r1BnWrfRl3JgUeGvyv9g5VnUz6urgUtZ21qVcfpK6QUtadIx9y3FRElRH6am6mURQmL1t6Yw2nLyCVhK5f8SwCErpFSA4dYy48eqirNJRPckl9D6UjBlZQd1cRbKrzM5ApoURv94d++8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=v4V3aD2T; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so20598605e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724486563; x=1725091363; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iWSyLwIKFg5VyESF9UUyLnBM3UXt9KpCOL2rqjBUsiU=;
+        b=v4V3aD2T3Pqq3poBVS9qEZ18ueNEn/PIHCZF/nugr/dRg4Nb0izTzkc40YJf32IR2U
+         WvNwBPLpAkFusmPJ04E2Esd4havfs7mYtEyHowMyMsScNimyWI3awV64ApZjbLmyw6JS
+         tnNpzr0UTiopGoaHLfSbt2zLXcD40g/a2HnO1JM9f5XR7IOxJcz6pfY5lBd9nBUoTHsZ
+         txcuiXpzjBmRu365LwuSKK1BmII3UBzAplU0Aq+hWGFKzO4nq7Am3Meq94vgVlnO4VDQ
+         y3GtmzgBNhqeieXnrxDVmW49hxCW+PhnthEyM1C9y98cV3uA6oYB+tWls518sQj/rVeU
+         FLVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724486463; x=1725091263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPPKCjFCmCCK85GWM5J7abDWESriW3NFe5L8Cd7jDgU=;
-        b=bYsn0pHwLe+M1/J+vUKrKzBiqqkqieZTvJgl5OOQB+2WSacsLOxodL97nSD5sKt3ae
-         Ha9ctGCSdy8Qcj9kWc7GJSXmxs1dnq9R1ffuwtik57TxVMptV7dcdYT0pcoqNoG4bgDw
-         SQ3ryWUFyZO6tQ9T2xy8j5jHEQfppuHG9eYVWLrFe++6HLsNuHoEHXmFFSykyZDbGcMC
-         SCoymCs44/cxj4gbdYPEXd4nOdNBlXGuxz6Yj04YhoArq4E2OezaS72KIhdAu97usj3g
-         wEcslH5ebk+1KLKKhSSnJlm6LIzN+vDFEsrn/cMBXzgwmPQDaoaawSgKkgIeAjjgxJJV
-         bTHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqaNMYgMytMCDssPAB1QOiDoK6Dcas21J5RjHNb8F6dF1Qef7B+kPuo5qoothXyl5Dsl7U+xS0h7XppLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9YsSV4OQGcjkt7dkiVit11cnx6DQO2Mbi5LBuWf6e4zbdg55z
-	iVvG66+ml7anYuEgc0BB7I+0EBxgzl7qzMe+dZlb2GGxU2k/DBzO8yaq1rAGENabMEGeGupNd7w
-	ooqF8lAGDfUkepDgmgsR5PEoUBGYw/gKtgfaA7xyMyWZ/ZnxreMwSgbQ=
-X-Google-Smtp-Source: AGHT+IEezMfNBafGzoTvMkqo3XDwBO433X7xrCGq85UkOYhtyXQf5hwl3rJCmu6rvcW270QATkotNuM4F7zO9vF7Hkr98YaKRfE0
+        d=1e100.net; s=20230601; t=1724486563; x=1725091363;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iWSyLwIKFg5VyESF9UUyLnBM3UXt9KpCOL2rqjBUsiU=;
+        b=lJhALtmOlzFPt//tVxHr6wgsMFZ0IwhoWJtvgK0E1OUcjq6aou7KSPnBlw9SKhTsJH
+         bONkRJ+kWIEeih43XMq36jrKzmXSo2ncxX5m+rcjUKab/cQZn/t/6jziUqSfITZ9OtAX
+         zwle0Oehe5FyWr/3QGfI+fbgzUCFiUwc0biFyI9MmXZZ7tKA9hQP5aYs9KOqACEX8UID
+         g0a5TC9+YvGsPYSdIF3RxmkkD7Uug5UhrUZnpJd9UdoAWE3VG76+iQuS5oTWCDrWQapx
+         aNJtZbkWGyneSgFw90UCMNsc3A8ayzv8gkR8TEAEzrfmYNYmM7ltwaBlTEZvlYtqTPI/
+         rgCQ==
+X-Gm-Message-State: AOJu0YzlOKTBBl85G3P088fqpS7TnOGkJKqINUIJMPZWhkHgViJoQWM3
+	/C2Qwn+X1bjzq3hrhP7GUpInsorIR7HiwpFANewgFdysguc1jS9/QtyeTZLbhnU=
+X-Google-Smtp-Source: AGHT+IHBItaTBibgncUhmXVrgDs4cMae+YQxCRPKgXSB+v/+rRgykfcscverhueiXFcqDFLhxIx2AQ==
+X-Received: by 2002:a5d:528f:0:b0:371:9360:c4a8 with SMTP id ffacd0b85a97d-37311858595mr2758576f8f.6.1724486562452;
+        Sat, 24 Aug 2024 01:02:42 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:191f:3b0b:a64d:436d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff5dbsm5919454f8f.86.2024.08.24.01.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 01:02:42 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] Revert "memory: ti-aemif: don't needlessly iterate over child nodes"
+Date: Sat, 24 Aug 2024 10:02:35 +0200
+Message-ID: <20240824080235.56472-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c546:0:b0:39d:4d70:7782 with SMTP id
- e9e14a558f8ab-39e3c9f3985mr2666135ab.4.1724486462954; Sat, 24 Aug 2024
- 01:01:02 -0700 (PDT)
-Date: Sat, 24 Aug 2024 01:01:02 -0700
-In-Reply-To: <20240824074305.1131-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b6eaa0620694b6d@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_close (2)
-From: syzbot <syzbot+8dbe3133b840c470da0e@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in sock_map_close
+This reverts commit 23a641d5c2bce4c723fff9118a5d865ee6b9d05a.
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6123 at net/core/sock_map.c:1699 sock_map_close+0x399/0x3d0 net/core/sock_map.c:1699
-Modules linked in:
-CPU: 1 UID: 0 PID: 6123 Comm: syz.0.15 Not tainted 6.11.0-rc3-syzkaller-00508-gd785ed945de6-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:sock_map_close+0x399/0x3d0 net/core/sock_map.c:1699
-Code: 48 89 df e8 e9 a3 5a f8 4c 8b 23 eb 05 e8 8f 5e f3 f7 e8 ba ea ff ff 4c 89 ef e8 82 e1 da ff e9 47 ff ff ff e8 78 5e f3 f7 90 <0f> 0b 90 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
-RSP: 0018:ffffc900022cfcb0 EFLAGS: 00010293
-RAX: ffffffff89a02af8 RBX: ffffffff95312d30 RCX: ffff88802118bc00
-RDX: 0000000000000000 RSI: ffffffff8c0ad560 RDI: ffffffff8c606900
-RBP: 0000000000000000 R08: ffffffff937328e7 R09: 1ffffffff26e651c
-R10: dffffc0000000000 R11: fffffbfff26e651d R12: ffffffff89a02760
-R13: ffff88801fb47000 R14: dffffc0000000000 R15: ffffffff89a02791
-FS:  0000555563a01500(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000440 CR3: 0000000071e98000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inet_release+0x17d/0x200 net/ipv4/af_inet.c:437
- __sock_release net/socket.c:659 [inline]
- sock_close+0xbc/0x240 net/socket.c:1421
- __fput+0x24a/0x8a0 fs/file_table.c:422
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa027579e79
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee3912848 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 000000000001ccb3 RCX: 00007fa027579e79
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007ffee3912918 R08: 0000000000000001 R09: 00007ffee3912b2f
-R10: 00007fa027400000 R11: 0000000000000246 R12: 0000000000000032
-R13: 00007ffee3912940 R14: 00007ffee3912960 R15: ffffffffffffffff
- </TASK>
+The first-level children of the aemif node are not the device nodes (ones
+containing the 'compatible' property) but the chip-select nodes which
+instead have their own children.
 
+of_platform_populate() will skip such nodes so we must indeed iterate
+over the direct children of the aemif node. The problem here is that we
+never call of_platform_depopulate() as it takes the root device as
+argument. We only have an unpopulated chip-select nodes so we will leak
+these devices if any of the calls to of_platform_populate() fails.
 
-Tested on:
+I don't have a batter idea right now but my patch was not correct so we
+need to revert it. While at it: at least use the scoped variant of the
+OF node iterator. Down the line, we should find a better solution to fix
+this potential resource leak in error path.
 
-commit:         d785ed94 net: wwan: t7xx: PCIe reset rescan
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=150ee38d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=8dbe3133b840c470da0e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17be300b980000
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/memory/ti-aemif.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index 3b546eddf5fe9..d54dc3cfff73c 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -379,9 +379,11 @@ static int aemif_probe(struct platform_device *pdev)
+ 	 * child will be probed after the AEMIF timing parameters are set.
+ 	 */
+ 	if (np) {
+-		ret = devm_of_platform_populate(dev);
+-		if (ret)
+-			return ret;
++		for_each_available_child_of_node_scoped(np, child_np) {
++			ret = of_platform_populate(child_np, NULL, NULL, dev);
++			if (ret < 0)
++				return ret;
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+2.43.0
 
 
