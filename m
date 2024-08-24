@@ -1,168 +1,163 @@
-Return-Path: <linux-kernel+bounces-300128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E940095DF20
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FA395DF21
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5861BB21221
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E661C20E01
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EA73FBB3;
-	Sat, 24 Aug 2024 16:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1194E3FB3B;
+	Sat, 24 Aug 2024 16:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/PRsv9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBfyNLeh"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158661EA80;
-	Sat, 24 Aug 2024 16:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0D6558BC
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 16:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724518765; cv=none; b=kiRPJ0iXUodAdAhSf2jGlK14EHo6z+z7HsSyfOtQofYtmsANdIW0dK9GsoxbJo/LUdUvhu0EOYN2zUhBNyf57/qnD52g2wrveAphqiLUijkATSrRyppAYQQQi2bjZ/0D7nErw4PzWGrzo5a1M06UbD04mwdUavLvggPGA8+X9ys=
+	t=1724518798; cv=none; b=GdNphH7kcR+jwBAyGfxJSY/bzz2tGfByHo5bwlXerYW83vlRkASIdh/VaeFx0dAp0+xgsbafR9eIC7FoXC8QBJVE2SbF9cxJYLYA3fEV90gbJ3tW12s/J1RpTMXo8trpmkHNO5bhrt4k9ehALyLismof/hXhqe/CqSj0DtjC+5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724518765; c=relaxed/simple;
-	bh=jwegCDTZVCjQdaGUg6fJJD3nD5S+19kGsP4tzr5MXLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJa9OkfBn5LJwmXVERwikVwEdYAdG3K+131/bYxrM+tW527xUorH9Tz2dm7YdnUrKcYc3LcF3yNTor0346niI9PFrKAH2JcmBWJm74x4D2SqirVmoSbRubL+6wB+A3s90Fs0OrbRY4beu74tN5q78o+dLUz5yxTncH9cHInMX4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/PRsv9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F55C4AF09;
-	Sat, 24 Aug 2024 16:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724518763;
-	bh=jwegCDTZVCjQdaGUg6fJJD3nD5S+19kGsP4tzr5MXLI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m/PRsv9nS0g+/jm1ufn3ixFeryfg9TWem1D2QmZRWFZcd4jMHiKAI44MMWNd7La4y
-	 xQLq3Zc0ZOU0nfgTef1jRs4kbkQehlMCeLKBZ2zH2AZPL4wWhzgHjChcNg0aPwJEqm
-	 /41Zxkv+aIgZXGT8J3hQ6T9/sQSA1eBl1t5peulUdRC5eRArk1plxn64Ejisn5vfEF
-	 Wa6G789GQRZnYN//Ap8Oc9UmtXNokZYpXgbJ/r7XM2Bp0SbvCrv4YHE7wB8D4Y9NCn
-	 /gBKM6xGTzCVm8BIer+oo1cBq3Z++0etKveuVv0hdOLGit2W8wG2jgfIiiVBNIIhrZ
-	 /FkVGTP00D0zg==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f401c20b56so26283591fa.0;
-        Sat, 24 Aug 2024 09:59:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYl0AXEAXBAACIiVdjHbi8vOsFpwtGL3Meu0pu1ENXX021vdM7JtunFVrBz7oXtaVc6DZpFeXQPCKfs1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL8fI1w+0tuUs6HJCubEy6/jHf65jANwW2pYdX+KwhHtW0xAxe
-	wMn0A23fZqSlABdEjn7a3o6IXseD0qQWvFNUo+TRkgufXJPDbE55RiO0wBBtSI8jQQWPxxRSuuV
-	gZk635LvuKu+bpexwx/9c/ne8EHk=
-X-Google-Smtp-Source: AGHT+IEDaLkR5ToCrthU5GKtqg0fh2wrcBAuTEUsj1XtQmVbRHm96LfawKtwLb37GnUxRyYr7eMjZwu/qph+UojRNPU=
-X-Received: by 2002:a05:6512:3e1a:b0:533:4322:d03e with SMTP id
- 2adb3069b0e04-5334cbaf0c2mr3482836e87.25.1724518762122; Sat, 24 Aug 2024
- 09:59:22 -0700 (PDT)
+	s=arc-20240116; t=1724518798; c=relaxed/simple;
+	bh=lXeQCgFqCwc9junnPX+UHRGX8JYyp8g9h937WdAwc4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M6MJl/3MAN0CMUOE8cizbwJeW0D8cZGNpvia/Ny+Au7Gk//fJkU6287U0kXVjADrl5haZkedT5f+c8vljaBF51ytBvzXUsoS7vWyTXopH6/XYqNg7Ne1jzVURXL7nxoXQqJt5Nnc7UlcRX0KCc/QhtlyPK7a+OXnUdSviQUyF5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBfyNLeh; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2021a99af5eso27393045ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724518796; x=1725123596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuHiveji2iGcXAoGZFjQjnvmuv4HXmCovzfcy4zrYNw=;
+        b=fBfyNLehaakrXLrZ79ia/iBjazaNg2RE2UazklB+iCHf/a3KeR3+9Nvu76WuPWnnSV
+         SK0YIRCYE0Z58YdHX9XzX4kAXwXGQAhMaO0YGO7OQ/so3e155XwZNOOEF+fORrHQCuWS
+         617QjFu9RTMO2gtY2pLiuon8HXMu8u7AU2czx8bOUoHoaEkXT1z7z31Ic9WYhs1ygIvn
+         9FcMyH6fYO6NbMUEXEPEqiykfBcOX3XmEpNzzo03I6u4LrR50eV8EomPgGKEvkBwIuTx
+         Wgkm2Fxsc8wRo6ZkDhaO51EwRzHDTGjGU9IDl50F6wmaJIz86rUdeXxNfD8RtN5fuRB1
+         ZwVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724518796; x=1725123596;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FuHiveji2iGcXAoGZFjQjnvmuv4HXmCovzfcy4zrYNw=;
+        b=lqA8fFraj+WibTMtUleULIF0kXLdnhG5gGZ0i/N5tUZnU9WoNRPMkSFTpeB5G3GBw4
+         BEsrMcffTPvhR1Hx+XbFchrb2EqiOcbgPKbqm9mraLaHaFo9pRV+DnNYOapbUlz/RCiX
+         k2TfB7UOcp1IqsbGBHB36rI1fRBIrJ9vTyuMLkbKCRgaja/PbDRXooaYbai2IrWE8ifo
+         Y3qAcouCLFQ0NcLq3ybMJmZ+ssWe/7GiP4ww4YuClJIGJId/rLJLa0DVvmlJTVoGZCjA
+         w3/mhs45mWW2yChEQb5trFVXWZ66oN118aV6SGSK9PRq2jjEmfnsplH9tw4uN76kZgyq
+         IwyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWN4EInGIgYFSeILA2eY3lIll/987Ju8G8LmO2jZmgV0XKN+6AizGVSzef7w95Z0Zdq3YNj4x90JkV/2ZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6iUcy/KHE56cWkZoJEpMIoYMyUq+hQP7YGyw8i+uReJM2xwpX
+	4NSKQxIquXFWAmd0iLLnSy69fO7bvCuiW7l7yhKUBvWkH8WhZPh2
+X-Google-Smtp-Source: AGHT+IHvJPCSZ1L4NU2yIrRUj8XWrmqpuqmf6ZlTkB+V89y0EIDEkUyMOsWqefDwmDw/BaSZMb8nBA==
+X-Received: by 2002:a17:903:22cd:b0:1fb:1b16:eb7b with SMTP id d9443c01a7336-2039e469e8amr70973515ad.16.1724518795941;
+        Sat, 24 Aug 2024 09:59:55 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.233.87])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385bdc663sm44275575ad.273.2024.08.24.09.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 09:59:55 -0700 (PDT)
+Date: Sat, 24 Aug 2024 22:29:49 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: tdavies@darkphysics.net, philipp.g.hortmann@gmail.com,
+	garyrookard@fastmail.org, linux-staging@lists.linux.dev,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	dan.carpenter@linaro.org, christophe.jaillet@wanadoo.fr,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: rtl8192e: Replace strcpy with strcat in
+ rtl819x_translate_scan
+Message-ID: <ZsoRhYeQb4A1yepl@embed-PC.myguest.virtualbox.org>
+References: <20240823153411.74142-1-abhishektamboli9@gmail.com>
+ <2024082430-unlatch-antennae-0ea7@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org> <7186b180-6b1f-4b64-9bab-78068822024b@t-8ch.de>
-In-Reply-To: <7186b180-6b1f-4b64-9bab-78068822024b@t-8ch.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 25 Aug 2024 01:58:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ46gagVdjYSYGCkFNfdHYnr-qCUfbDq-cUtHWvCGfmnA@mail.gmail.com>
-Message-ID: <CAK7LNAQ46gagVdjYSYGCkFNfdHYnr-qCUfbDq-cUtHWvCGfmnA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external modules
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Ben Hutchings <ben@decadent.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024082430-unlatch-antennae-0ea7@gregkh>
 
-On Sat, Aug 24, 2024 at 9:27=E2=80=AFPM Thomas Wei=C3=9Fschuh <thomas@t-8ch=
-.de> wrote:
->
-> Hi Masahiro,
->
-> On 2024-07-27 16:42:03+0000, Masahiro Yamada wrote:
-> > Exclude directories and files unnecessary for building external modules=
-:
-> >
-> >  - include/config/  (except include/config/auto.conf)
-> >  - scripts/atomic/
-> >  - scripts/dtc/
-> >  - scripts/kconfig/
-> >  - scripts/mod/mk_elfconfig
-> >  - scripts/package/
-> >  - scripts/unifdef
-> >  - .config
-> >  - *.o
-> >  - .*.cmd
-> >
-> > Avoid copying files twice for the following directories:
-> >
-> >  - include/generated/
-> >  - arch/*/include/generated/
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+On Sat, Aug 24, 2024 at 01:45:00PM +0800, Greg KH wrote:
+> On Fri, Aug 23, 2024 at 09:04:11PM +0530, Abhishek Tamboli wrote:
+> > Replace strcpy() with strcat() in rtl819x_translate_scan()
+> > Also Fix proto_name[] buffer size issue to accommodate all
+> > network modes.
+> 
+> When you say "also" in a changelog text, that's a huge hint that this
+> should probably be split up into multiple changes.  Please do that here.
+Sure, I'll do it.
+> More comments below.
+> 
+> > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
 > > ---
-> >
-> >  scripts/package/install-extmod-build | 20 +++++++++++++++-----
-> >  1 file changed, 15 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/scripts/package/install-extmod-build b/scripts/package/ins=
-tall-extmod-build
-> > index 8cc9e13403ae..cc335945dfbc 100755
-> > --- a/scripts/package/install-extmod-build
-> > +++ b/scripts/package/install-extmod-build
-> > @@ -9,15 +9,22 @@ is_enabled() {
-> >       grep -q "^$1=3Dy" include/config/auto.conf
-> >  }
-> >
-> > +find_in_scripts() {
-> > +     find scripts \
-> > +             \( -name atomic -o -name dtc -o -name kconfig -o -name pa=
-ckage \) -prune -o \
-> > +             ! -name unifdef -a ! -name mk_elfconfig -a \( -type f -o =
--type l \) -print
-> > +}
-> > +
-> >  mkdir -p "${destdir}"
-> >
-> >  (
-> >       cd "${srctree}"
-> >       echo Makefile
-> >       find "arch/${SRCARCH}" -maxdepth 1 -name 'Makefile*'
-> > -     find include scripts -type f -o -type l
-> > +     find "arch/${SRCARCH}" -name generated -prune -o -name include -t=
-ype d -print
-> >       find "arch/${SRCARCH}" -name Kbuild.platforms -o -name Platform
-> > -     find "arch/${SRCARCH}" -name include -type d
-> > +     find include \( -name config -o -name generated \) -prune -o \( -=
-type f -o -type l \) -print
-> > +     find_in_scripts
-> >  ) | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${destdir}"
-> >
+> > Changes in v2:
+> > - Revert the use of strscpy and replaced it with strcat.
+> > - Remove the 'pname' and replace it's usage with direct
+> > operations on 'proto_name' buffer.
+> > 
+> >  drivers/staging/rtl8192e/rtllib_wx.c | 13 ++++++-------
+> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
+> > index fbd4ec824084..ec0c4c5bade7 100644
+> > --- a/drivers/staging/rtl8192e/rtllib_wx.c
+> > +++ b/drivers/staging/rtl8192e/rtllib_wx.c
+> > @@ -23,14 +23,14 @@ static const char * const rtllib_modes[] = {
+> >  };
+> > 
+> >  #define MAX_CUSTOM_LEN 64
+> > +#define MAX_PROTO_NAME_LEN 10
+> 
+> Where did this "10" come from?  What sets this limit?  Why not 100?
+> 1000?  2?  You get the idea :)
+> 
+yes, I got it.
+> >  static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
+> >  					   char *start, char *stop,
+> >  					   struct rtllib_network *network,
+> >  					   struct iw_request_info *info)
 > >  {
-> > @@ -25,12 +32,15 @@ mkdir -p "${destdir}"
-> >               echo tools/objtool/objtool
-> >       fi
-> >
-> > -     find "arch/${SRCARCH}/include" Module.symvers include scripts -ty=
-pe f
-> > +     echo Module.symvers
-> > +     echo "arch/${SRCARCH}/include/generated"
-> > +     echo include/config/auto.conf
-> > +     echo include/generated
-> > +     find_in_scripts
->
-> This now excludes include/config/kernel.release which is used to set
-> KERNELRELEASE, which is commonly used by Makefiles.
-> See Documentation/kbuild/modules.txt, other users also seem not unlikely.
->
-> IMO this specific file should be added back.
+> >  	char custom[MAX_CUSTOM_LEN];
+> > -	char proto_name[6];
+> > -	char *pname = proto_name;
+> > +	char proto_name[MAX_PROTO_NAME_LEN];
+> >  	char *p;
+> >  	struct iw_event iwe;
+> >  	int i, j;
+> > @@ -59,13 +59,12 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
+> >  	}
+> >  	/* Add the protocol name */
+> >  	iwe.cmd = SIOCGIWNAME;
+> > +	/* Initialise proto_name as an empty string*/
+> > +	memset(proto_name, '\0', sizeof(proto_name));
+> >  	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
+> > -		if (network->mode & BIT(i)) {
+> > -			strcpy(pname, rtllib_modes[i]);
+> > -			pname += strlen(rtllib_modes[i]);
+> > +		if (network->mode & BIT(i))
+> > +			strcat(proto_name, rtllib_modes[i]);
+> >  		}
+> > -	}
+> 
+> I think the } placement is now incorrect, right?  Did you run checkpatch
+> on this change?
+Yes, I do run the checkpatch on this change and didn't get any warnings
+or errors.
 
+Thanks, for the feedback. I'll do the changes.
 
-Agree.
-
-I fixed it up locally. Thanks for the report.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Regards,
+Abhishek
 
