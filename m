@@ -1,138 +1,178 @@
-Return-Path: <linux-kernel+bounces-300187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E5F95DFF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 22:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F61995DFFE
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 23:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5D81C210AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1687F1C209C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A7E82498;
-	Sat, 24 Aug 2024 20:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EF280C02;
+	Sat, 24 Aug 2024 21:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="fR6UW6h8"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="KGa9cyYE";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="VvfsJHZH"
+Received: from mx2.ucr.edu (mx2.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA09C7404B;
-	Sat, 24 Aug 2024 20:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C0D48CCC
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 21:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724529961; cv=none; b=qZy6NDV8Sx/pRqiL5KqUIg9gwUqJc4tfHuUfhhbdGsR1B3i4lxAl4lFjSHxS1H58QL3/gFkGwuDH6Jn8rge1NsmA0qJMJZnccsk/boNflu6d6NwEOnmKaj6CHwn4mNRUX2uP05MaDf3cYPzMZhpPeD9/QFlB1OQpUAmGzhrt/fU=
+	t=1724533578; cv=none; b=PLPlLGWq4U3uQsV5aZu8U96J4YejhYx7Y9/j/Ryf6UTwGX00Xo6wz0OkjF+zJblR/o5vToH/xBWC0Bi3Q9+JGJ/D2VgUv9wi03Ze/FEM4xp3FaNJNkGrnRjE24RNc8XgCakayrnnqE+I1cKgla23g6tLx2A+bCaWgpT4MUH6zzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724529961; c=relaxed/simple;
-	bh=lMTeCQzH6kMmHX/l9Jn3JQcO/hHSZcBoRk4fs+/yiD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aDj6jfqDAOREqDdoZvChW0332suyzy0indJF/0EC6uWkJT39xbuGG+X9S8mys3QqkUA40mPSGCjvXxkrtpGwUvQcCR6Wy67qiGxrg34aQ1HtKItdO4lGo4NP+mPT3ZOgFmUqH/13tu24akXL5fGwA1Kr4ArcIUA8wkN7L1VUhJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=fR6UW6h8; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id B2CB31F36F1;
-	Sat, 24 Aug 2024 22:05:57 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1724529958; bh=6q+DC9qEi4FRPHzOR4JhQ0nGEEP7YVA8G4HC6P+cUdg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fR6UW6h84uQyCzzVZNSO0UWSzM5bGYLmY1G76UqvJUBOJXPzsISmYl/OWFY5HBXxV
-	 MDkPHxv+1rabIGBdc8lw/KrqFnp/+ThasVMTP9xmaTAKfphiA5FYFaRYqZryLtfndw
-	 4ovWnUZkv06IGKawoXxwJNia+R34Y4769D8oG3m/FOI55O0qbXjSJ/h67h7etOWn0M
-	 v31Al/bNYDgPvfI/md3dxAMfx+MVdGYmt+hR7GQqe/Md97Rrv4aCWfr0lt57YdbqhO
-	 RQdS3uf6P9OlV1AQFLcx67uZ9cQi+2nqE3iwduF6NypvU0JZ6jalCuhtKb0gsuCq6t
-	 ah3J7uG9R0cog==
-Date: Sat, 24 Aug 2024 22:05:56 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kbusch@kernel.org" <kbusch@kernel.org>, "axboe@kernel.dk"
- <axboe@kernel.dk>, "sagi@grimberg.me" <sagi@grimberg.me>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
- <martin.petersen@oracle.com>, "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
- <wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
- "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
-Subject: Re: [RFC 0/7] Introduce swiotlb throttling
-Message-ID: <20240824220556.0e2587d5@meshulam.tesarici.cz>
-In-Reply-To: <SN6PR02MB415758F12C59E6CA67227DCFD4882@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
-	<20240823084458.4394b401@meshulam.tesarici.cz>
-	<SN6PR02MB415758F12C59E6CA67227DCFD4882@SN6PR02MB4157.namprd02.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1724533578; c=relaxed/simple;
+	bh=TA/Cz65zRxAjAfq7MjkUo5qbaN77MjBbibjMgDttlrE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=oB24/pBYzOIQ36ChWOr3FIoahb9wt1AhB2q/01wbAZABBpogfWTlNZHRabEixG+ekMPcA4WA711tbYBQdIe9s9pgOAV6HscEgvIRu8+GiItvcXoXOx/MNKX1984lgav9BQ8TsKVNvmQ3mFdEQCIVHjtfaf55P3pXgNXDpcmkVyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=KGa9cyYE; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=VvfsJHZH; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724533576; x=1756069576;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=TA/Cz65zRxAjAfq7MjkUo5qbaN77MjBbibjMgDttlrE=;
+  b=KGa9cyYEjWncg0HPrsKilV8Zuu7q5PWXcbmLwDdLvTkzydeM+XWrccZ3
+   amVOfHZ8YzD0XK1slg5KQwVlqC/ntyNnBK/aH6pmVxqMSogpt7zCwYgq8
+   YUH9GwfHlKO/baT/BEXcOH869RNSiYsm2eWzeBR/O7jS/CJbrXoQ/AWYj
+   5k2Gw3ZAyRInWupI8kC5J9fD2S++GIX+hWhvVQEtZ2XN0Dn/g47wrA7t7
+   I9sRVfqJ3imYJYWy2teYx61ZuVHzgASM6wxvxCTpdxVAElHKIqExWfvro
+   Wvdp26jHBG3My3Sbkl5W5fQ6hMuvLUzX7PPQsGpFjR9KQ6YipZyoWdFxJ
+   g==;
+X-CSE-ConnectionGUID: fnkT1nduTcmnLoTZGT38Ng==
+X-CSE-MsgGUID: tiXjENrEQWivuZBh2sc4hw==
+Received: from mail-io1-f70.google.com ([209.85.166.70])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 14:05:08 -0700
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81fb21a0e41so354236139f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:05:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724533507; x=1725138307; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=It2SBHCkREFPrVbJXjBwm2w6igz9uIpTeTCDbfBbJro=;
+        b=VvfsJHZH+FxQyjMD7HX2xkE09ykn1w0rPoKdIUVavFSFW66xG4zUk6D+Hq4/wJ34X+
+         qOBPyGyLf/0oksFtTdmrdYZRPpiRahG9DSs0Q2xxNfLVdsO67AhzM9RyNFG2tJekdu0R
+         TKOKIg+7cOyMJWlbCu4gFHlV/IMmv2vZevyGw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724533507; x=1725138307;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=It2SBHCkREFPrVbJXjBwm2w6igz9uIpTeTCDbfBbJro=;
+        b=lzRCLjZPrFouzvD/pmmTrmzW6XxJy4I3ZZgjIBa3ZiQOTBoSwPKRZFYIWRrMSR8OGk
+         uGsZwSYG44YKiiSzy8r6g+g6r1GuEW4WFcEbsdJVAzh1ZJctwgWBnnXsuRpaNG1hJiwf
+         JxmSB2TNvXcJNRviUsFGJSUkm2BM4PYxphXwMRW4ys1X1QeOkAraeCVMYFmz92SzG84B
+         Ey3EVgCv4ClWXtRCHRJcojXNcXBo1QlZiK3hbrkxORvhQvSteoRF0EMG+IxpgnvpP+5n
+         1a6jpu6+eDYiYKVo9vEk7LABpr6sd+ROFR7/Pgfa5RQaTRwH6qdKgk1rMnIjKw65pynM
+         Wkew==
+X-Forwarded-Encrypted: i=1; AJvYcCW5TWC8xNJX5qUZwAXIckN2Ed+HXkKi4J5YkdCaGhhrSmfqDs8QqRkkGD00CzPYxXXsKKLR2RDI3SRAl3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2KWVjWlGWvTCXLJTW1K9YmcyciFcP8MSLKotmpoIs1AKTxPTb
+	2jkmeXhiJsuWTxZv7Fm2ouMu7VUJBdAtbA4sV8jsxcxCDEbQJ0rXPLlKxZi5/tBmBf64dc0/RZm
+	091ozn3E1DP5NGN5heAoOuQdCbnwNSGX4U8dmEmtXJoCF+4beEVJQmb3zLgz9UI6Y6zpdbKNRc5
+	GhX83OswSFiPG4A4xr/UQTACSizDpMZcNiV2epqg==
+X-Received: by 2002:a05:6602:3429:b0:805:3d47:19d6 with SMTP id ca18e2360f4ac-8278731d742mr749430139f.6.1724533507534;
+        Sat, 24 Aug 2024 14:05:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh1WytsX9vb6S0Fq6cbm62QwZOTitShDAke3V40ewupwNIw/kzd6cj6GxoWxvouZTrOyU8jo4Rvx1bJ/EnDTQ=
+X-Received: by 2002:a05:6602:3429:b0:805:3d47:19d6 with SMTP id
+ ca18e2360f4ac-8278731d742mr749428939f.6.1724533507230; Sat, 24 Aug 2024
+ 14:05:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Sat, 24 Aug 2024 14:04:55 -0700
+Message-ID: <CANikGpcUOLC06-Mfq296LeXxudpO6732vWM58-Zfv14GqoJE7w@mail.gmail.com>
+Subject: BUG: INFO: task hung in gsm_cleanup_mux
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 23 Aug 2024 20:40:16 +0000
-Michael Kelley <mhklinux@outlook.com> wrote:
+Hello,
+We found the following issue using syzkaller on Linux v6.10.
 
-> From: Petr Tesa=C5=99=C3=ADk <petr@tesarici.cz> Sent: Thursday, August 22=
-, 2024 11:45 PM
->[...]
-> > > Discussion
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > * Since swiotlb isn't visible to device drivers, I've specifically
-> > > named the DMA attribute as MAY_BLOCK instead of MAY_THROTTLE or
-> > > something swiotlb specific. While this patch set consumes MAY_BLOCK
-> > > only on the DMA direct path to do throttling in the swiotlb code,
-> > > there might be other uses in the future outside of CoCo VMs, or
-> > > perhaps on the IOMMU path. =20
-> >=20
-> > I once introduced a similar flag and called it MAY_SLEEP. I chose
-> > MAY_SLEEP, because there is already a might_sleep() annotation, but I
-> > don't have a strong opinion unless your semantics is supposed to be
-> > different from might_sleep(). If it is, then I strongly prefer
-> > MAY_BLOCK to prevent confusing the two. =20
->=20
-> My intent is that the semantics are the same as might_sleep(). I
-> vacillated between MAY_SLEEP and MAY_BLOCK. The kernel seems
-> to treat "sleep" and "block" as equivalent, because blk-mq has
-> the BLK_MQ_F_BLOCKING flag, and SCSI has the=20
-> queuecommand_may_block flag that is translated to
-> BLK_MQ_F_BLOCKING. So I settled on MAY_BLOCK, but as you
-> point out, that's inconsistent with might_sleep(). Either way will
-> be inconsistent somewhere, and I don't have a preference.
+In function `gsm_cleanup_mux`,  the kernel hangs when waiting for
+`dlci->state` to become `DLCI_CLOSED`. It seems that
+`gsm_dlci_begin_close` failed to close the dlci.
 
-Fair enough. Let's stay with MAY_BLOCK then, so you don't have to
-change it everywhere.
+The full report including the Syzkaller reproducer:
+https://gist.github.com/TomAPU/38bb00292b33d52a6dd2d1b629247146
 
->[...]
-> > > Open Topics
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > 1. swiotlb allocations from Xen and the IOMMU code don't make use
-> > > of throttling. This could be added if beneficial.
-> > >
-> > > 2. The throttling values are currently exposed and adjustable in
-> > > /sys/kernel/debug/swiotlb. Should any of this be moved so it is
-> > > visible even without CONFIG_DEBUG_FS? =20
-> >=20
-> > Yes. It should be possible to control the thresholds through
-> > sysctl. =20
->=20
-> Good point.  I was thinking about creating /sys/kernel/swiotlb, but
-> sysctl is better.
+The brief report is below:
 
-That still leaves the question where it should go.
+INFO: task syz.1.466:13387 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.466       state:D stack:27400 pid:13387 tgid:13304
+ppid:8048   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ gsm_cleanup_mux+0x344/0x930 drivers/tty/n_gsm.c:3136
+ gsm_config drivers/tty/n_gsm.c:3408 [inline]
+ gsmld_ioctl+0x13c4/0x2540 drivers/tty/n_gsm.c:3839
+ tty_ioctl+0x98f/0xdb0 drivers/tty/tty_io.c:2812
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7fafaef809b9
+RSP: 002b:00007fafafe0a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fafaf146130 RCX: 00007fafaef809b9
+RDX: 0000000020000100 RSI: 00000000404c4701 RDI: 0000000000000004
+RBP: 00007fafaeff4f70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fafaf146130 R15: 00007ffd1b6e06a8
+ </TASK>
 
-Under /proc/sys/kernel? Or should we make a /proc/sys/kernel/dma
-subdirectory to make room for more dma-related controls?
-
-Petr T
+Showing all locks held in the system:
+1 lock held by khungtaskd/25:
+ #0: ffffffff8db32fe0 (rcu_read_lock){....}-{1:2}, at:
+rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8db32fe0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock
+include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8db32fe0 (rcu_read_lock){....}-{1:2}, at:
+debug_show_all_locks+0x54/0x2d0 kernel/locking/lockdep.c:6614
+1 lock held by systemd-journal/4495:
+1 lock held by systemd-udevd/4507:
+1 lock held by in:imklog/7662:
+2 locks held by agetty/7949:
+ #0: ffff88802e7850a0 (&tty->ldisc_sem){++++}-{0:0}, at:
+tty_ldisc_ref_wait+0x21/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900040dc2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at:
+n_tty_read+0x712/0x1e80 drivers/tty/n_tty.c:2211
+2 locks held by syz-executor/8032:
+2 locks held by syz.1.466/13387:
+ #0: ffff8880285170a0 (&tty->ldisc_sem){++++}-{0:0}, at:
+tty_ldisc_ref_wait+0x21/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffff8880193520b0 (&gsm->mutex){+.+.}-{3:3}, at:
+gsm_cleanup_mux+0xb7/0x930 drivers/tty/n_gsm.c:3130
+1 lock held by syz.1.796/18097:
+2 locks held by syz-executor/18310:
+1 lock held by systemd-sysctl/18525:
+1 lock held by syz.0.834/18561:
+ #0: ffff888020337398 (&mm->mmap_lock){++++}-{3:3}, at:
+mmap_read_lock_killable+0x18/0x60 include/linux/mmap_lock.h:153
+2 locks held by syz.0.834/18562:
+ #0: ffff888020337398 (&mm->mmap_lock){++++}-{3:3}, at:
+mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ #0: ffff888020337398 (&mm->mmap_lock){++++}-{3:3}, at:
+vm_mmap_pgoff+0x173/0x3a0 mm/util.c:571
+ #1: ffffffff8db383f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at:
+exp_funnel_lock kernel/rcu/tree_exp.h:291 [inline]
+ #1: ffffffff8db383f8 (rcu_state.exp_mutex){+.+.}-{3:3}, at:
+synchronize_rcu_expedited+0x37c/0x810 kernel/rcu/tree_exp.h:939
 
