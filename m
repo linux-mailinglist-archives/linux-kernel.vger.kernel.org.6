@@ -1,353 +1,193 @@
-Return-Path: <linux-kernel+bounces-300172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4428595DFD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:35:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAC995DFD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933AEB219CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C34D1C20D7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E17DA9C;
-	Sat, 24 Aug 2024 19:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C9A7DA93;
+	Sat, 24 Aug 2024 19:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="0dtm/Kvf"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0zQdDHoc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7TlPAbU8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I0svpBRY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qtNs9NHY"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18572768E1
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDC1AD2F;
+	Sat, 24 Aug 2024 19:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724528129; cv=none; b=YK/Ovp73qMWCUYb5/C9Bz+BkL8zgsulgc7ieE0T9Qg5B3L5hQJZYJLEa0d/w3bxZhPeEhJlUpHPwHAbxoOyThWNFGXOORSCecWCwzCRgFRGTo7EGMqxSa8llMcZ96ob24LT2NiLEXEWW3x0pT2IheG/VRVZUA5g0OFsTwVkAAU0=
+	t=1724528322; cv=none; b=rEQSgtRYaqsM2hgR32LsVWUBMI8Z1tEVMww5VCqfgQyT1tLewk1yl7Ua4GwhiFtuqh3jvd9IMEKJVce59JM0attHtUIlQ4v/EL+HZd1lcCNZ6meBk7KylMhjy3TbPRXVIE0LqbVwgE7zbPoeXmL5RovauAnxOz/wGqE4deZWlVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724528129; c=relaxed/simple;
-	bh=bytNnuowzmtyhvFR4SOrAtgSwC0Npg1muBqZ82NtqaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eToI8HkAejTCmEk44fqEJKMhgPrn//os8ZwghnfWIBrsIoM8SLfQYqGzRnaaMQAk7Be4tvBCyGCauLe2PCDmKqgcw2xKusziMAgWybsyyIxm4yocLsyH+YhPZqvL9SjJC8l0gB1r5T/C9uC6I81rVs3r3m2aKHRhIVR+T0MBbiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=0dtm/Kvf; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53345604960so3168702e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 12:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1724528125; x=1725132925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rqUQEx0JW9sRldU4OvC73NB0gIVSnxsis8NsIR8izBY=;
-        b=0dtm/KvfHtwatHw3jl6TB605gCEkbHbsYzf/jvwq+JSzQGaU7RPPQZE52HNRgfDhZe
-         G4yMCeOLznZj/SGesCWeryjjD1rR2509TRguT3/kBfu9XP+aZzELBQC4DoI/jBnMMwZH
-         9zcUK+J0gFLGCjkHYgj4RCubZzK+PcCOY78XQUz2ofv3LWSadb1VxrYYtuX7szUgfrwM
-         wYtJphnH2mgXWjKFpJ95vAGnMbsmjoSBF1gG1n1aqwkTmnClymw2DeeimFHI76Xbr6ba
-         T2XW1ntpk8s3rVBbyN5GwgXTQPt3txvo/UVScV8jHoKp+ys1UVKObU4mYBjWW2YV9vWm
-         KmXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724528125; x=1725132925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rqUQEx0JW9sRldU4OvC73NB0gIVSnxsis8NsIR8izBY=;
-        b=CCobLUiLR4RFR4vfO/V/iirHyoex2dnFa7Ocm5XyL6NWXcOs1PlkvIjZ/B4dbR6eVF
-         LUF/WXfXolebmYi61bFPfHYTrORY9FL+k/+J/vaRHW0+m7dOeJE97H/aASY4vEV0Chvy
-         dxG8PjhcRDf7zOIMKncj4IUxbufZtwC0lHENU+ahq870lenm4UhuBQDmxs9RDei2SH/X
-         ZYLoI7v8JlTGmvg4Ffch8Y7HhWPWzxa+5JCi7qHvLxuRkvgVBBxvg2rCMqENWtwWHnQs
-         316zVLnyqQ0GwjRwthHcfsjtLwwh6qJYopq3btC1g3kXOFT3oPuS7kP5JxHMGkuSoND+
-         OzyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYAJKdj6jm4Nd5W1fVR/NCnD2vixphydZIzShPB+7MbQo0kjOcNYEtZ9BykUHqncwroUN93H+AcTpwWV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsi/pu1SJFRRVBcrozB3XzqbgfFTTQS2C3FVBLmI2EwUEaHSmO
-	rsLpg5IZlk50OgI1EsVu8ean3wfkMFcaAFLdyjM9nkcOtpXnbWiSrEiZyVSgj8QK4nSHAadinLZ
-	zUJkBy/VECXPm2LrgJy8kJqXiMPV5ezFhtJgk0w==
-X-Google-Smtp-Source: AGHT+IGPd8NNVY8iNQlItVputHqv0A9NBxIa2qpJxJ9QIyvsMaWXLridmTyEMYCVXko8QGT/5mpgBtUGbv8rSnzMtM4=
-X-Received: by 2002:a05:6512:3195:b0:52e:9f17:841a with SMTP id
- 2adb3069b0e04-534387558bdmr3980885e87.6.1724528124835; Sat, 24 Aug 2024
- 12:35:24 -0700 (PDT)
+	s=arc-20240116; t=1724528322; c=relaxed/simple;
+	bh=qGu9Fxwa2fRM/5SEKZgAf9Alfc/Oj2nFzVIGapXFERA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iiLA9ksN7/9eVxE8Pf7+QedeASkPii5MT9jRs3lLT333Q0g1UpENYoXN7LyEtOH8QmvjaLacce+PU6KCe0W4gLQHo+VdK8Yz08orDv0YTj11ejVjLnZfnYUx7KSmq5IwegEzTlNL5vobcDYIAyrVf7udOv/VL/40PtY23q2qOPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0zQdDHoc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7TlPAbU8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I0svpBRY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qtNs9NHY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D0AC4219D3;
+	Sat, 24 Aug 2024 19:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724528318;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QNExPYtYa7tchxVnplv7yYS46Nlfpr/VrPmEFZrymvU=;
+	b=0zQdDHocPd/gg1yx/LhN7QjUAPnf7wgRAJ7xES/UuHFc3YWkHu6x/TXU5zI6XPjepeEWsA
+	DxsJLpV11+1ybbj+ZhC5BgAKyc5Mb511P0l/HdET8cmuWfmboKwne1TTCuBvqnNcbIVEus
+	vtglPhoC7fQemMD6+a67tvFolbmC3FM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724528318;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QNExPYtYa7tchxVnplv7yYS46Nlfpr/VrPmEFZrymvU=;
+	b=7TlPAbU8iwIGkLBr5TqxQzVXdj8duI3dnjqI14DF/icNePeo5lO5wdKzFmV6iM9EH9Qi7f
+	4VQ5OSxuD5T4k0DQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724528316;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QNExPYtYa7tchxVnplv7yYS46Nlfpr/VrPmEFZrymvU=;
+	b=I0svpBRYMcj/273st4zNI747GYy11khXqhKy8Bm4nDQeUxe2gi/lw7QrXKC06dzEeG0eU5
+	rnVR6c8wj9cxKnCjSPvjeKb53iEhbSQgFkuy+qcbEQeGVJ/7dYyquPrk8OA4VfTQohfUdk
+	8LQs7OjGlR3vdCZelYJQaSQGGVwABEY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724528316;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QNExPYtYa7tchxVnplv7yYS46Nlfpr/VrPmEFZrymvU=;
+	b=qtNs9NHYg51ggQ0plsAQVMGdLzcwC/1uOKiumtGcViTo5eY21GuqzQ1rtBUXJESfztPQEm
+	SsUwFXFvoTAbF9Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC36C139DE;
+	Sat, 24 Aug 2024 19:38:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kGqKKbw2ymY3NAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Sat, 24 Aug 2024 19:38:36 +0000
+Date: Sat, 24 Aug 2024 21:38:35 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Josef Bacik <josef@toxicpanda.com>,
+	syzkaller <syzkaller@googlegroups.com>,
+	syzbot <syzbot+dfb6eff2a68b42d557d3@syzkaller.appspotmail.com>,
+	clm@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (6)
+Message-ID: <20240824193835.GN25962@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <0000000000008f55e4062036c827@google.com>
+ <20240821201338.GA2109582@perftesting>
+ <CACT4Y+aSV8ZptNaLqVg+QgOyDn+tJ1WUyBxQ-9hk7joqbmT6GA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
- <20240807-macos-build-support-v1-1-4cd1ded85694@samsung.com>
- <CAK7LNARmy=N+6O87BJGZbodssDw21sHgMf36TXdcxD4=5A_OBA@mail.gmail.com> <CABj0suC1atc=iPX4uOL5FYkzYBRtZC1J3Lhruo7hejd-fe9Yuw@mail.gmail.com>
-In-Reply-To: <CABj0suC1atc=iPX4uOL5FYkzYBRtZC1J3Lhruo7hejd-fe9Yuw@mail.gmail.com>
-From: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
-Date: Sat, 24 Aug 2024 21:34:58 +0200
-Message-ID: <CABj0suDu1XPi7mPdqQWm2J3=XbTMHKGbz85ixM=gMr5VRkU78g@mail.gmail.com>
-Subject: Re: [PATCH 01/12] scripts: subarch.include: fix SUBARCH on MacOS hosts
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
-	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, gost.dev@samsung.com, 
-	Nick Desaulniers <nick.desaulniers@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+aSV8ZptNaLqVg+QgOyDn+tJ1WUyBxQ-9hk7joqbmT6GA@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -2.50
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dfb6eff2a68b42d557d3];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,btrfs.readthedocs.io:url];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Sat, Aug 24, 2024 at 12:14=E2=80=AFAM Daniel Gomez (Samsung)
-<d+samsung@kruces.com> wrote:
->
-> On Fri, Aug 23, 2024 at 6:13=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
+On Thu, Aug 22, 2024 at 02:05:01PM +0200, Dmitry Vyukov wrote:
+> > > BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
 > >
-> > On Wed, Aug 7, 2024 at 8:10=E2=80=AFAM Daniel Gomez via B4 Relay
-> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
-> > >
-> > > From: Nick Desaulniers <nick.desaulniers@gmail.com>
-> > >
-> > > When building the Linux kernel on an aarch64 MacOS based host, if we =
-don't
-> > > specify a value for ARCH when invoking make, we default to arm and th=
-us
-> > > multi_v7_defconfig rather than the expected arm64 and arm64's defconf=
-ig.
-> > >
-> > > This is because subarch.include invokes `uname -m` which on MacOS hos=
-ts
-> > > evaluates to `arm64` but on Linux hosts evaluates to `aarch64`,
-> > >
-> > > This allows us to build ARCH=3Darm64 natively on MacOS (as in ARCH ne=
-ed
-> > > not be specified on an aarch64-based system).
-> > >
-> > > Utilize a negative lookahead regular expression to avoid matching arm=
-64.
+> > Can we disable syzbot issues for this specific error?  Btrfs uses lockdep
+> > annotations for our tree locks, so we _easily_ cross this threshold on the
+> > default configuration.  Our CI config requires the following settings to get
+> > lockdep to work longer than two or three tests
 > >
+> > CONFIG_LOCKDEP_BITS=20
+> > CONFIG_LOCKDEP_CHAINS_BITS=20
+> > CONFIG_LOCKDEP_STACK_TRACE_BITS=19
+> > CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
+> > CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
 > >
-> > Does sed support "negative lookahead regular expression"?
->
-> I think they removed support for PCRE. I've found this:
->
-> commit 261c7f145d015d9acb79dc650d27e4a23b839c23
-> Author: Assaf Gordon <assafgordon@gmail.com>
-> Date:   Tue Aug 21 14:25:57 2018 -0600
->
->     maint: remove REG_PERL code
->
->     Perl-regexp syntax (PCRE) in GNU Sed is shelved indefinitely.
->     See https://bugs.gnu.org/22801 , https://bugs.gnu.org/22647 .
->     Remove all (unused) REG_PERL related code.
->
->     * sed/sed.c, sed/sed.h, sed/regexp.c, sed/compile.c: Remove REG_PERL =
-code.
->
-> git tag --contains 261c7f145d015d9acb79dc650d27e4a23b839c23
-> v4.6
-> v4.7
-> v4.8
-> v4.9
->
-> And my sed version is (Debian):
->
-> sed --version
-> sed (GNU sed) 4.9
-> Packaged by Debian
-> Copyright (C) 2022 Free Software Foundation, Inc.
-> License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.=
-html>.
-> This is free software: you are free to change and redistribute it.
-> There is NO WARRANTY, to the extent permitted by law.
->
-> Written by Jay Fenlason, Tom Lord, Ken Pizzini,
-> Paolo Bonzini, Jim Meyering, and Assaf Gordon.
->
-> This sed program was built with SELinux support.
-> SELinux is disabled on this system.
->
-> GNU sed home page: <https://www.gnu.org/software/sed/>.
-> General help using GNU software: <https://www.gnu.org/gethelp/>.
-> E-mail bug reports to: <bug-sed@gnu.org>.
->
-> sed version (Homebrew):
-> sed --version
-> sed (GNU sed) 4.9
-> Copyright (C) 2022 Free Software Foundation, Inc.
-> License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.=
-html>.
-> This is free software: you are free to change and redistribute it.
-> There is NO WARRANTY, to the extent permitted by law.
->
-> Written by Jay Fenlason, Tom Lord, Ken Pizzini,
-> Paolo Bonzini, Jim Meyering, and Assaf Gordon.
->
-> This sed program was built without SELinux support.
->
-> GNU sed home page: <https://www.gnu.org/software/sed/>.
-> General help using GNU software: <https://www.gnu.org/gethelp/>.
-> E-mail bug reports to: <bug-sed@gnu.org>.
->
-> >
-> > >
-> > > Add a separate expression to support for armv.* as per error reported=
- by
-> > > Nicolas Schier [1].
-> > >
-> > > [1] https://lore.kernel.org/all/Y3MRvtwdjIwMHvRo@bergen.fjasle.eu/#t
-> > >
-> > > Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
-> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > > ---
-> > >  scripts/subarch.include | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/scripts/subarch.include b/scripts/subarch.include
-> > > index 4bd327d0ae42..5d84ad8c0dee 100644
-> > > --- a/scripts/subarch.include
-> > > +++ b/scripts/subarch.include
-> > > @@ -6,7 +6,8 @@
-> > >
-> > >  SUBARCH :=3D $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ =
-\
-> > >                                   -e s/sun4u/sparc64/ \
-> > > -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
-> > > +                                 -e s/armv.*/arm/ \
-> > > +                                 -e s/arm\(?:\(?!64\).*\)/arm/ -e s/=
-sa110/arm/ \
-> >
-> >
-> > s/arm\(?:\(?!64\).*\)/arm/
-> >
-> > In sed, this expression does not seem to match anything.
->
-> You are correct. I've removed the expression and saw no difference.
-> See below with my test case:
-> >
-> > (or please give me some matching examples if I miss something)
->
-> cat Makefile
-> MACHINE ?=3D "aarch64"
-> SUBARCH0 :=3D $(shell echo $(MACHINE) | sed \
->                                   -e s/arm.*/arm/ \
->                                   -e s/aarch64.*/arm64/)
->
-> SUBARCH1 :=3D $(shell echo $(MACHINE) | sed \
->                                   -e s/armv.*/arm/ \
->                                   -e s/aarch64.*/arm64/)
->
-> SUBARCH2 :=3D $(shell echo $(MACHINE) | sed \
->                                   -e /^arm64$/!s/arm.*/arm/ \
->                                   -e s/aarch64.*/arm64/)
->
-> test:
->         @echo "MACHINE=3D$(MACHINE)"
->         @echo "SUBARCH0=3D$(SUBARCH0)"
->         @echo "SUBARCH1=3D$(SUBARCH1)"
->         @echo "SUBARCH2=3D$(SUBARCH2)"
->         @echo "---"
->
-> SUBARCH0 represents the current upstream expressions for arm/arm64.
-> SUBARCH1 is my proposal in case we need to cover only armv* for 32-bit
-> arm (I think that is incomplete?) and SUBARCH2 is Nicolas' proposal
-> (which I can't make it work in the test Makefile).
+> > but there's no way to require that in our config (nor do I think we should
+> > really be able to tbqh).  It makes more sense for syzbot to just ignore this
+> > particular error as it's not actually a bug.  Thanks,
+> 
+> Hi Josef,
+> 
+> We could bump these values, the last 3 are already this or higher on syzbot.
+> Do you know if increasing CONFIG_LOCKDEP_BITS and
+> CONFIG_LOCKDEP_CHAINS_BITS significantly increases memory usage?
+> 
+> Ignoring random bugs on unknown heuristics is really not scalable.
 
-To make Nicolas's expression work in Makefile I just need to pass 2 $ like =
-this:
+This is not a random bug. The warning has been reported many times, it
+does not point to a specific problem in code that uses lockdep but
+rather some defficiency in the lockdep mechanism itself.
 
-diff -u Makefile.old Makefile
---- Makefile.old  2024-08-24 21:25:28.525267566 +0200
-+++ Makefile    2024-08-24 21:28:32.640477991 +0200
-@@ -8,7 +8,7 @@
-                                  -e s/aarch64.*/arm64/)
+> Consider: there are hundreds of kernel subsystems, if each of them
+> declares a random subset of bugs as not bugs.
 
- SUBARCH2 :=3D $(shell echo $(MACHINE) | sed \
--                                 -e /^arm64$/!s/arm.*/arm/ \
-+                                 -e /^arm64$$/!s/arm.*/arm/ \
-                                  -e s/aarch64.*/arm64/)
+"If each of them", no this won't happen. Or, if you add this one and
+reject the others you'll still make people happy.
 
- test:
+> What's the maintenance
+> story here? And it's not syzbot specific, any automated and manual
+> testing will have the same problem.
 
-And all test cases passed. So, I will include this change for v2.
+Yes this does not avoid reports but at least it won't be a syzbot report
+that somebody thinks is worth time. Everybody else will be told "ignore"
+or poitned to documentation or the report ignored completely
+(https://btrfs.readthedocs.io/en/latest/dev/Development-notes.html#bug-max-lockdep-chain-hlocks-too-low).
 
->
-> Running the above Makefile, I get:
->
-> make test MACHINE=3Darmv4 && make test MACHINE=3Darm7 && make test
-> MACHINE=3Darmhf && make test MACHINE=3Daarch64 && make test MACHINE=3Darm=
-64
-> MACHINE=3Darmv4
-> SUBARCH0=3Darm
-> SUBARCH1=3Darm
-> SUBARCH2=3Darmv4
-> ---
-> MACHINE=3Darm7
-> SUBARCH0=3Darm
-> SUBARCH1=3Darm7
-> SUBARCH2=3Darm7
-> ---
-> MACHINE=3Darmhf
-> SUBARCH0=3Darm
-> SUBARCH1=3Darmhf
-> SUBARCH2=3Darmhf
-> ---
-> MACHINE=3Daarch64
-> SUBARCH0=3Darm64
-> SUBARCH1=3Darm64
-> SUBARCH2=3Darm64
-> ---
-> MACHINE=3Darm64
-> SUBARCH0=3Darm
-> SUBARCH1=3Darm64
-> SUBARCH2=3Darm64
-> ---
-> >
-> >
-> >
-> >
-> >
-> > Nocolas already provided correct code:
-> >
-> > > [1] https://lore.kernel.org/all/Y3MRvtwdjIwMHvRo@bergen.fjasle.eu/#t
->
-> I think it is even more simple if we just make this change:
->
-> -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
-> +                                 -e s/armv.*/arm/ \
->
-> Does armv.* cover all arm32 machines? I see armhf, arm7, arm8 and
-> armv*, is it correct?
->
-> And thanks for checking!
->
-> >
-> >
-> >
-> >
-> >
-> >
-> > >                                   -e s/s390x/s390/ \
-> > >                                   -e s/ppc.*/powerpc/ -e s/mips.*/mip=
-s/ \
-> > >                                   -e s/sh[234].*/sh/ -e s/aarch64.*/a=
-rm64/ \
-> > >
-> > > --
-> > > Git-146)
-> > >
-> > >
-> >
-> >
-> > --
-> > Best Regards
-> >
-> >
-> > Masahiro Yamada
+> The only scalable way to mark false reports is to not produce them.
+
+In an ideal case yes. So far we have only the workaround with increasing
+the config value (which makes sense on a distro config), otherwise I
+remembet locking guys to suggest some fix but I can't find it now in the
+numerous reports.
 
