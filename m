@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-299895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F39795DBF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:45:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424BD95DBFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C871C21D04
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DD8283F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BD614F102;
-	Sat, 24 Aug 2024 05:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9E414D708;
+	Sat, 24 Aug 2024 05:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iIf+byh4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msTWxG5u"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABFB14F132;
-	Sat, 24 Aug 2024 05:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDF2F9F8;
+	Sat, 24 Aug 2024 05:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724478304; cv=none; b=mw/QLKx0tzIc5Rw0EDGlAPfdB8vlCWIy1/PVhmURkOw5s7Z6mruebmlf4uTFx1dYvb6wrt0xIRxpw8QLzasJ72yx0YQ6ovCNfhykpSlFJ7mDGGY4mMFb1FtiRniEkasfhPXU04O4XAJg+4JYsLoQ+I7NcdlhTMLu/bPu17KhcCs=
+	t=1724478659; cv=none; b=uE5XuPKLG6JQKnVYF7jRn78IgFs9JBA7a9O+eJ3VZiemmLi81XfPklJLYlesGq6UMLDYzkP8LoeXxLW2ZXGqydduV3g1TV5dnGPHlFxqXYXoH242VBppSklN2celvEeWIL098lcuP4tL2oam0HiwXLok9esQn7oBu/Gpumx5joY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724478304; c=relaxed/simple;
-	bh=17296TZIkNThf8+jO89AL+ryDKa+Dvu6bh33utavEpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFoM4U/PrCVZgJ4677yimWSrc3nkGOJI6q1W1ONe3JKH1daWgspTK3nYt63yWVnOo/Gx3p+XIPvtTyBx+fUlM/cBLADV9prmKFySrzUABh+BljV0iinKci+UG9CIvXQez+66+nAcx7+lppfMz4RnsKOFaPR+D37gtan1TdEWZEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iIf+byh4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CA2C32781;
-	Sat, 24 Aug 2024 05:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724478304;
-	bh=17296TZIkNThf8+jO89AL+ryDKa+Dvu6bh33utavEpE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iIf+byh4C/FEh6AyXTjbsFjiXdOtcg6N34CYO3DtejP0WrkAPMTJfbT+2LlhRQ5sy
-	 fpW7V75/w5smkSqv6LdxdlA5VOU1xVLwwFYgW+nY1jYCkE8NV8fQGWgSSLIhy61d9u
-	 0MgmnJwFcRF51a/9KK97ARSJgGFfIRr/0RDHoFlM=
-Date: Sat, 24 Aug 2024 13:45:00 +0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: tdavies@darkphysics.net, philipp.g.hortmann@gmail.com,
-	garyrookard@fastmail.org, linux-staging@lists.linux.dev,
-	skhan@linuxfoundation.org, rbmarliere@gmail.com,
-	dan.carpenter@linaro.org, christophe.jaillet@wanadoo.fr,
-	linux-kernel-mentees@lists.linuxfoundation.org,
+	s=arc-20240116; t=1724478659; c=relaxed/simple;
+	bh=RBq0t+Oeul0RDjqrhv39ztLuMJby2GYYzrTIRLqH60o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fBMAnQo4pGHfTI7m1dAuN/pd0L0aaDmrfsLihZQTY4N6gtHEwlHeLOuDPHtWNUVZsPP0f4HyPTZ6apjBjHsi6582yJyudryy/N5Y6ujb+bM3fM6yI58gYal9PQDq0s0cBeC8wtG76YosGegN3jHI6lfQhLz6/ci5kSb27/ZS3X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msTWxG5u; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7141e20e31cso2274618b3a.3;
+        Fri, 23 Aug 2024 22:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724478657; x=1725083457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXcPecOjtqx+Zc8jZ/8Wsl3BuGgS41zdgecv9rZMsU4=;
+        b=msTWxG5upMoI9F+FKbGMaEN5L9RKs/Pe4ibyyokT5iCT8OhpMZYkFHt3ARoOJtbVKF
+         r52NIVov1aBHwD1nR8twO6MXnUXcTJI4NjDIke1FSRPYKmMXL4lBAOGzDQBnibw1vOvh
+         sWhaeST9PE64+DEDjGOkk9+mNrev8qfgk2spWMkghyMeZo2Ao1MkJMm965n1be7peahS
+         MgD08Cb6ebtCTrk3k25TmiXnnpEWtwpaJHHDjpMF/9A2cCs6s2cSasKMiB1ANTxM9rMa
+         RD8NRirUqEZ8OUnV/1hb/0Uqv7120dUzfXObvIKKgvNPKTHx8Ri4q0IlcsSde8iTDY+T
+         NzQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724478657; x=1725083457;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wXcPecOjtqx+Zc8jZ/8Wsl3BuGgS41zdgecv9rZMsU4=;
+        b=AxzWcOuIC49l3n3GH/p1y0Yqe0PofKWDZao1ga0p9IO0nEsm966pnw9E4Nl8A4vcU8
+         w9cUEGUed9fKyjBm1ac6jbVKh7wLaoonQcCcIq+ho9nrHPlk+DPrGjOVms20D9OWF+2t
+         qYin7tZ9kdVBzEa4xAFb0DHVNSbsX519TBIIh6la01aX+gxC1+QR+YWb9DN41G0Y9I3j
+         n7bgJZf9qw3/jNL75vcZL8sYyngaak0yv4gYAPKgqmttBRv4AOmJApzuwxyEt95VOuWQ
+         VvbtNuWIoLac8sDET2jOg7E4Md+8tyXBo2VWkB9ivbJXX9aOAQR3dELsZ51HcHOHaQBj
+         6xQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgVU8V2ZQtobOdbWnK6I3YQXt8vpEJJoPgqZYKjaR5RuB48ksZsLI8CU2BBeqMmPjDwoJTwMr7qDAKIbqX@vger.kernel.org, AJvYcCWfOpafD8vAFEksHRP21H3Vdo4Lfwwq6Lmkw3MuG2Hd/wQJjf/bXwQW7oO2lISytEfxJAYy7wptx4K9Mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzNpY6/OsvSTQRcFDzBpoGvKnc4WURs6iCrCvs/1YXMXQ/yoof
+	w3KEQATyupzgWEzs2M2muCAdgR/2WGoRPXw7cbrEGOMriEAefp78XJFfoA==
+X-Google-Smtp-Source: AGHT+IG2ePa91HvAP/VUsg/eGJAfvJ3MCbUdHHmHZveRIl2wUEmkUsDXJfjHAcoF9DLLPe6tBBzxdg==
+X-Received: by 2002:a05:6a21:6b0b:b0:1c4:d4b2:ffe5 with SMTP id adf61e73a8af0-1cc8a084937mr4737413637.54.1724478656850;
+        Fri, 23 Aug 2024 22:50:56 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:75c:5a5a:d7dc:18f6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20395ef904dsm23398615ad.31.2024.08.23.22.50.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 22:50:56 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	linux-input@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8192e: Replace strcpy with strcat in
- rtl819x_translate_scan
-Message-ID: <2024082430-unlatch-antennae-0ea7@gregkh>
-References: <20240823153411.74142-1-abhishektamboli9@gmail.com>
+Subject: [PATCH 00/18] zforse_ts: assorted cleanups
+Date: Fri, 23 Aug 2024 22:50:24 -0700
+Message-ID: <20240824055047.1706392-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823153411.74142-1-abhishektamboli9@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 09:04:11PM +0530, Abhishek Tamboli wrote:
-> Replace strcpy() with strcat() in rtl819x_translate_scan()
-> Also Fix proto_name[] buffer size issue to accommodate all
-> network modes.
+Hi,
 
-When you say "also" in a changelog text, that's a huge hint that this
-should probably be split up into multiple changes.  Please do that here.
+This is a set of somewhat random cleanups for the zforce_ts driver. 
 
-More comments below.
+Heiko, Andreas, if you still have access to the hardware it would be
+great if you could give it a spin.
 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
-> Changes in v2:
-> - Revert the use of strscpy and replaced it with strcat.
-> - Remove the 'pname' and replace it's usage with direct
-> operations on 'proto_name' buffer.
-> 
->  drivers/staging/rtl8192e/rtllib_wx.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192e/rtllib_wx.c
-> index fbd4ec824084..ec0c4c5bade7 100644
-> --- a/drivers/staging/rtl8192e/rtllib_wx.c
-> +++ b/drivers/staging/rtl8192e/rtllib_wx.c
-> @@ -23,14 +23,14 @@ static const char * const rtllib_modes[] = {
->  };
-> 
->  #define MAX_CUSTOM_LEN 64
-> +#define MAX_PROTO_NAME_LEN 10
+Thanks!
 
-Where did this "10" come from?  What sets this limit?  Why not 100?
-1000?  2?  You get the idea :)
+Dmitry Torokhov (17):
+  Input: zforce_ts - simplify reporting of slot state
+  Input: zforce_ts - remove support for platfrom data
+  Input: zforce_ts - do not explicitly set EV_SYN, etc bits
+  Input: zforce_ts - handle errors from input_mt_init_sots()
+  Input: zforce_ts - remove unneeded locking
+  Input: zforce_ts - ensure that pm_stay_awake() and pm_relax() are balanced
+  Input: zforce_ts - use guard notation when acquiring mutexes
+  Input: zforce_ts - switch to using get_unaligned_le16
+  Input: zforce_ts - make parsing of contacts less confusing
+  Input: zforce_ts - do not ignore errors when acquiring regulator
+  Input: zforce_ts - use dev_err_probe() where appropriate
+  Input: zforce_ts - make zforce_idtable constant
+  Input: zforce_ts - stop treating VDD regulator as optional
+  Input: zforce_ts - switch to using devm_regulator_get_enable()
+  Input: zforce_ts - do not hardcode interrupt level
+  Input: zforce_ts - remove assert/deassert wrappers
+  Input: zforce_ts - switch to using asynchronous probing
 
+Sudip Mukherjee (1):
+  Input: zforce_ts - use devm_add_action_or_reset()
 
->  static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
->  					   char *start, char *stop,
->  					   struct rtllib_network *network,
->  					   struct iw_request_info *info)
->  {
->  	char custom[MAX_CUSTOM_LEN];
-> -	char proto_name[6];
-> -	char *pname = proto_name;
-> +	char proto_name[MAX_PROTO_NAME_LEN];
->  	char *p;
->  	struct iw_event iwe;
->  	int i, j;
-> @@ -59,13 +59,12 @@ static inline char *rtl819x_translate_scan(struct rtllib_device *ieee,
->  	}
->  	/* Add the protocol name */
->  	iwe.cmd = SIOCGIWNAME;
-> +	/* Initialise proto_name as an empty string*/
-> +	memset(proto_name, '\0', sizeof(proto_name));
->  	for (i = 0; i < ARRAY_SIZE(rtllib_modes); i++) {
-> -		if (network->mode & BIT(i)) {
-> -			strcpy(pname, rtllib_modes[i]);
-> -			pname += strlen(rtllib_modes[i]);
-> +		if (network->mode & BIT(i))
-> +			strcat(proto_name, rtllib_modes[i]);
->  		}
-> -	}
+ drivers/input/touchscreen/zforce_ts.c   | 474 ++++++++++--------------
+ include/linux/platform_data/zforce_ts.h |  15 -
+ 2 files changed, 192 insertions(+), 297 deletions(-)
+ delete mode 100644 include/linux/platform_data/zforce_ts.h
 
-I think the } placement is now incorrect, right?  Did you run checkpatch
-on this change?
+-- 
+Dmitry
 
-thanks,
-
-greg k-h
 
