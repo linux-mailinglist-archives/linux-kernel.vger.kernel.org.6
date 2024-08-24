@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-300127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15BE95DF1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:57:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E940095DF20
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554DD282977
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:57:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5861BB21221
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F514776E;
-	Sat, 24 Aug 2024 16:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EA73FBB3;
+	Sat, 24 Aug 2024 16:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="faEd3C6x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/PRsv9n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E70D39AEB;
-	Sat, 24 Aug 2024 16:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158661EA80;
+	Sat, 24 Aug 2024 16:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724518648; cv=none; b=lA+YreZAXi5gQyaqxkZV4aHTSkqvBOfXLqMEAaIDQfmLfm4Upwx7GK2R+dZzmodWFkBnVJQhOg24HiJiBoVxbAUWTZ4C2n2tC4piig2QSVEDg6C0P02BZPGRLOjRptLYkSk5TE79c9/iHEI6XV0t5Rn30yxKNcNs7ZxTLKJp+pk=
+	t=1724518765; cv=none; b=kiRPJ0iXUodAdAhSf2jGlK14EHo6z+z7HsSyfOtQofYtmsANdIW0dK9GsoxbJo/LUdUvhu0EOYN2zUhBNyf57/qnD52g2wrveAphqiLUijkATSrRyppAYQQQi2bjZ/0D7nErw4PzWGrzo5a1M06UbD04mwdUavLvggPGA8+X9ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724518648; c=relaxed/simple;
-	bh=fZXoHykcvD1A1JFjEQWQzA8RfT1FLb1kSJXWvNQuTSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URcmqhs+AB+ONlFJRHKSzN9h+BmEOsionUFpenj+Zn5SUArIGAT/QKiMLNg07QS2HaMnrCx9qQU2Vf12Lhvdw23d7XYD1QRuL31Xt+P7XOJIOwD3oG186mN2AKBggJ3RserJW8Kmf4THSQQqfi4ZMb97BskSolIgYaGuJHGFWeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=faEd3C6x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19277C32781;
-	Sat, 24 Aug 2024 16:57:23 +0000 (UTC)
+	s=arc-20240116; t=1724518765; c=relaxed/simple;
+	bh=jwegCDTZVCjQdaGUg6fJJD3nD5S+19kGsP4tzr5MXLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJa9OkfBn5LJwmXVERwikVwEdYAdG3K+131/bYxrM+tW527xUorH9Tz2dm7YdnUrKcYc3LcF3yNTor0346niI9PFrKAH2JcmBWJm74x4D2SqirVmoSbRubL+6wB+A3s90Fs0OrbRY4beu74tN5q78o+dLUz5yxTncH9cHInMX4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/PRsv9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76F55C4AF09;
+	Sat, 24 Aug 2024 16:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724518647;
-	bh=fZXoHykcvD1A1JFjEQWQzA8RfT1FLb1kSJXWvNQuTSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=faEd3C6xk3bB7/IzcZTbthHs2go8i2t8IzxJbgykL8HKT7I1Cj30ifR1rdfbF45+g
-	 Xrurn92tq4+O3tvZGh9+E4N0SrITO6hNo608f24CAFL2w8+s94I8EdvfcxDsdNm8ot
-	 Bc5vacQ6lB2cE3mOXSvTGaWOePNyc9V7Gs8iGC/tAhkST47dOsItJHz9kjoc8BG/Yy
-	 VUSaNfMcaRuhZ3nlshNWMHCIOXpRyhl2UXGJkot63db3C/KSql0sul34SXMPELXrGD
-	 ZtYuV+N+tGWTtEN4m+cl1l7WLqR2SQU6vsDP1Gdw87/lejwxOS2ufAqkEj17XIqnR3
-	 5JGiL0AHsoPgw==
-Date: Sat, 24 Aug 2024 18:57:20 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yuan Yao <yuan.yao@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>,
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
-	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
-Subject: Re: [PATCH v4 6/6] x86/tdx: Implement movs for MMIO
-Message-ID: <ZsoQ8GCWTHgY3H_e@example.org>
-References: <cover.1723807851.git.legion@kernel.org>
- <cover.1724248680.git.legion@kernel.org>
- <9320e721e609e55a020d3eb98f48fc856371c561.1724248680.git.legion@kernel.org>
- <tcngnuglju2mnpfa4o2hw3fpwdkk4ryso5dq2zjfi2wn4yr5yd@2iij74o7ugaf>
+	s=k20201202; t=1724518763;
+	bh=jwegCDTZVCjQdaGUg6fJJD3nD5S+19kGsP4tzr5MXLI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m/PRsv9nS0g+/jm1ufn3ixFeryfg9TWem1D2QmZRWFZcd4jMHiKAI44MMWNd7La4y
+	 xQLq3Zc0ZOU0nfgTef1jRs4kbkQehlMCeLKBZ2zH2AZPL4wWhzgHjChcNg0aPwJEqm
+	 /41Zxkv+aIgZXGT8J3hQ6T9/sQSA1eBl1t5peulUdRC5eRArk1plxn64Ejisn5vfEF
+	 Wa6G789GQRZnYN//Ap8Oc9UmtXNokZYpXgbJ/r7XM2Bp0SbvCrv4YHE7wB8D4Y9NCn
+	 /gBKM6xGTzCVm8BIer+oo1cBq3Z++0etKveuVv0hdOLGit2W8wG2jgfIiiVBNIIhrZ
+	 /FkVGTP00D0zg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f401c20b56so26283591fa.0;
+        Sat, 24 Aug 2024 09:59:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYl0AXEAXBAACIiVdjHbi8vOsFpwtGL3Meu0pu1ENXX021vdM7JtunFVrBz7oXtaVc6DZpFeXQPCKfs1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL8fI1w+0tuUs6HJCubEy6/jHf65jANwW2pYdX+KwhHtW0xAxe
+	wMn0A23fZqSlABdEjn7a3o6IXseD0qQWvFNUo+TRkgufXJPDbE55RiO0wBBtSI8jQQWPxxRSuuV
+	gZk635LvuKu+bpexwx/9c/ne8EHk=
+X-Google-Smtp-Source: AGHT+IEDaLkR5ToCrthU5GKtqg0fh2wrcBAuTEUsj1XtQmVbRHm96LfawKtwLb37GnUxRyYr7eMjZwu/qph+UojRNPU=
+X-Received: by 2002:a05:6512:3e1a:b0:533:4322:d03e with SMTP id
+ 2adb3069b0e04-5334cbaf0c2mr3482836e87.25.1724518762122; Sat, 24 Aug 2024
+ 09:59:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tcngnuglju2mnpfa4o2hw3fpwdkk4ryso5dq2zjfi2wn4yr5yd@2iij74o7ugaf>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-4-masahiroy@kernel.org> <7186b180-6b1f-4b64-9bab-78068822024b@t-8ch.de>
+In-Reply-To: <7186b180-6b1f-4b64-9bab-78068822024b@t-8ch.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 25 Aug 2024 01:58:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ46gagVdjYSYGCkFNfdHYnr-qCUfbDq-cUtHWvCGfmnA@mail.gmail.com>
+Message-ID: <CAK7LNAQ46gagVdjYSYGCkFNfdHYnr-qCUfbDq-cUtHWvCGfmnA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] kbuild: slim down package for building external modules
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 11:28:14AM +0300, Kirill A. Shutemov wrote:
-> On Wed, Aug 21, 2024 at 04:24:38PM +0200, Alexey Gladkov wrote:
-> > From: "Alexey Gladkov (Intel)" <legion@kernel.org>
-> > 
-> 
-> Please capitalize MOVS in the subject.
-> 
-> > Add emulation of the MOVS instruction on MMIO regions. MOVS emulation
-> > consists of dividing it into a series of read and write operations,
-> > which in turn will be validated separately.
-> 
-> Commit message is pretty sparse. I think we need to elaborate on the
-> similarities and differences with SEV implementation. Locking context
-> difference is important.
+On Sat, Aug 24, 2024 at 9:27=E2=80=AFPM Thomas Wei=C3=9Fschuh <thomas@t-8ch=
+.de> wrote:
+>
+> Hi Masahiro,
+>
+> On 2024-07-27 16:42:03+0000, Masahiro Yamada wrote:
+> > Exclude directories and files unnecessary for building external modules=
+:
+> >
+> >  - include/config/  (except include/config/auto.conf)
+> >  - scripts/atomic/
+> >  - scripts/dtc/
+> >  - scripts/kconfig/
+> >  - scripts/mod/mk_elfconfig
+> >  - scripts/package/
+> >  - scripts/unifdef
+> >  - .config
+> >  - *.o
+> >  - .*.cmd
+> >
+> > Avoid copying files twice for the following directories:
+> >
+> >  - include/generated/
+> >  - arch/*/include/generated/
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  scripts/package/install-extmod-build | 20 +++++++++++++++-----
+> >  1 file changed, 15 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/scripts/package/install-extmod-build b/scripts/package/ins=
+tall-extmod-build
+> > index 8cc9e13403ae..cc335945dfbc 100755
+> > --- a/scripts/package/install-extmod-build
+> > +++ b/scripts/package/install-extmod-build
+> > @@ -9,15 +9,22 @@ is_enabled() {
+> >       grep -q "^$1=3Dy" include/config/auto.conf
+> >  }
+> >
+> > +find_in_scripts() {
+> > +     find scripts \
+> > +             \( -name atomic -o -name dtc -o -name kconfig -o -name pa=
+ckage \) -prune -o \
+> > +             ! -name unifdef -a ! -name mk_elfconfig -a \( -type f -o =
+-type l \) -print
+> > +}
+> > +
+> >  mkdir -p "${destdir}"
+> >
+> >  (
+> >       cd "${srctree}"
+> >       echo Makefile
+> >       find "arch/${SRCARCH}" -maxdepth 1 -name 'Makefile*'
+> > -     find include scripts -type f -o -type l
+> > +     find "arch/${SRCARCH}" -name generated -prune -o -name include -t=
+ype d -print
+> >       find "arch/${SRCARCH}" -name Kbuild.platforms -o -name Platform
+> > -     find "arch/${SRCARCH}" -name include -type d
+> > +     find include \( -name config -o -name generated \) -prune -o \( -=
+type f -o -type l \) -print
+> > +     find_in_scripts
+> >  ) | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${destdir}"
+> >
+> >  {
+> > @@ -25,12 +32,15 @@ mkdir -p "${destdir}"
+> >               echo tools/objtool/objtool
+> >       fi
+> >
+> > -     find "arch/${SRCARCH}/include" Module.symvers include scripts -ty=
+pe f
+> > +     echo Module.symvers
+> > +     echo "arch/${SRCARCH}/include/generated"
+> > +     echo include/config/auto.conf
+> > +     echo include/generated
+> > +     find_in_scripts
+>
+> This now excludes include/config/kernel.release which is used to set
+> KERNELRELEASE, which is commonly used by Makefiles.
+> See Documentation/kbuild/modules.txt, other users also seem not unlikely.
+>
+> IMO this specific file should be added back.
+
 
 Agree.
 
-> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> > index a75a07f4931f..45136b1b02cc 100644
-> > --- a/arch/x86/include/asm/processor.h
-> > +++ b/arch/x86/include/asm/processor.h
-> > @@ -503,6 +503,10 @@ struct thread_struct {
-> >  	struct thread_shstk	shstk;
-> >  #endif
-> >  
-> > +#ifdef CONFIG_INTEL_TDX_GUEST
-> > +	unsigned long		mmio_emul;
-> > +#endif
-> > +
-> >  	/* Floating point and extended processor state */
-> >  	struct fpu		fpu;
-> >  	/*
-> 
-> Hm. Do we need to track exact target address in the thread struct?
-> Wouldn't be single bit be enough to allow MMIO to userspace address from a
-> kernel regs->ip?
+I fixed it up locally. Thanks for the report.
 
-The flag will identify that a nested exception happened, but it will not
-be clear which address cause it.
 
-Perhaps you are right and this approach is unnecessarily paranoid. 
 
-> There is space for the flag next to iopl_warn.
 
-Yes, I can use just a flag to identify a nested exception.
-
--- 
-Rgrds, legion
-
+--=20
+Best Regards
+Masahiro Yamada
 
