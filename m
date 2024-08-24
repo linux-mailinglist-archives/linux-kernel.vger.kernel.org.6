@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-299937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A14D95DC8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1397295DC90
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8C51F23C9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D841F22F6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACD21547CE;
-	Sat, 24 Aug 2024 07:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12D61547DB;
+	Sat, 24 Aug 2024 07:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwXI2gRf"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow0/mIbV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60C1527A7;
-	Sat, 24 Aug 2024 07:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280332A8D0;
+	Sat, 24 Aug 2024 07:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724484825; cv=none; b=dpJ0D60BlpuVkfEogv4qpV3ec1jmvHXqm4mfiZccbUuuhGWBaRkg9MOaoIobXAOsl3vu2P29ngBzU8skh4phwFX49La6B7qvG7/PO5peWDyNnetKjeJZEwwy8N9vCq5m2OM12zwthKCx6OSruppzYEbHSNDzhK60zh4KI3Bc9Ws=
+	t=1724485235; cv=none; b=Y2ZnN9YB5xPU4u5ihuS7ygl1LWiNEi+e1xKiI7piO+OKuaGO3IJgdq5bVQt1oZPznwTckQwA2UV+EEo963qr4WN0mrEv3i3gEeg8aCC7FNqjKDiFaz3q5NRjlaZo6QdDl5kZyQi/M837KW4/TJIhvN8avhFo4HDzneRulpJ/PYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724484825; c=relaxed/simple;
-	bh=EcYyVNOicmYEOAbzRdp5bWeN40hV/0zddQMp+f+6Pp0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=vDymIG2Rb9eg3TTpC/OWkOT//sLv5fZTFjDqmm9PJcVx/tkROLGdpD9BuVHqckqJrqpFblWn8mmFabKF84qJ2on+bxhDohJDnsjjJyW09VkB3jMB1VbQMFgrDLLXaw7wHNQqDHyBnIMYJ8kv2FeGVOOxUem0VmaILy+M4AqSxII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwXI2gRf; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7142a93ea9cso2084250b3a.3;
-        Sat, 24 Aug 2024 00:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724484823; x=1725089623; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=roY7ejJDsm7RbtW8+wK6NY3B77JXn1SsTq2WjfTzyc0=;
-        b=BwXI2gRfJRfvna9ig2Zlef+JUsTxPONoXhqY7cBKJCqZqFRTra51Gq6ivPXDfC5XWr
-         BbFj2JikQz9+1RO1UZKyODNduecbwZcvQj2ZLE85Ei7czjGE3Tm3bTQK4Rq+rLABCAAb
-         5TB0SyynvTURadyNfVhWs8CiWKxc+jKZ+MeNueIp7pg4zIu30t79h/wQlKSZKF4P7PC0
-         q4N6g9LZylEp4KMNjZvR/OJ3hhnr9KT4u1YNw1qaQjvY9AUH2Ddx1nkWMez/VgEbTJv1
-         B73sL2ZEYwRL3o+CkPCJ5nWw8HkUjKbcM2AGKpeh33Xz1jNg7zjgWcHlskajSKAU/aVQ
-         cFig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724484823; x=1725089623;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=roY7ejJDsm7RbtW8+wK6NY3B77JXn1SsTq2WjfTzyc0=;
-        b=sP0/IqY2qw7iBittGDSrKmhGuCSnpkQ4GpeTuCRNLEd+enoM/3VsWy/EZcvtB2hD/h
-         Q1Ch0dqilk1AwuQ2thELk3eKfE2S4oAkVsZoWh1iPlS84feQYRLm53s3WF8fnzl/KJB7
-         uO5GCxGQpSjmYxuy1cgc8gZlkuM4SLzrNRltDXpV/GvbYrnhbVmzs1rtNF2KUNrzLu11
-         JOAFinaqFxPAl/0vjPjWMU75PnQJQAh16a74Q+QLorFRreL4x9PfzRXfar/EF0unOGld
-         uEfj7goHc+2gx+olgSU4OgyjjsQs7wru7SkSLpPl3j7t9M51ko5Ygve6leBcLLg1R2VT
-         RdiA==
-X-Forwarded-Encrypted: i=1; AJvYcCULtlHfE4tB33MurF9NC3hcCbHYKQWjrl2KGCRYqCrrpA5kokrgPViqibhxMFNMn93QGonDABxhQ6qP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/G5FvA5l4heMLgQODMK9MySeCjSdo4ZHpHbFDN8pN/hiA4mN
-	f+g4883V5EVA/t4UNgh4cunvM3uL+XPuu4YpYceFvCWuFOcSvUo4xsFDhyZMV1/YxLwIa99JTWW
-	H1jxv+9C6mzKybqToXtrYS0sUQ3rajA4F
-X-Google-Smtp-Source: AGHT+IGcSTpz30UDcYZDmmZXLCLJsqhJQOXCrdTdv96nQxMY3XHrgti9kb/xZTgYicbcgSf1NQPdZM0lDfphuhQyIx8=
-X-Received: by 2002:a05:6a20:cf90:b0:1c6:fb2a:4696 with SMTP id
- adf61e73a8af0-1cc89d6bac4mr5243457637.19.1724484823302; Sat, 24 Aug 2024
- 00:33:43 -0700 (PDT)
+	s=arc-20240116; t=1724485235; c=relaxed/simple;
+	bh=22ZAzPhYXKZpVa+MEwszxLycHG8Neigr1NSe5KhIpik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QyLECRrg1W3Qr8emZGBye45nBK4i98YKvf70dx35VgwkmtAwtfhkKxcPrNOMhP1V2wt9gmZdL3YBnId0YVMnZq6MB9+iwIjl1WwqQvBjWBglFOQb17YqEn1Fy16qyssW5SSCJwTzwoOGCrMROacVzWFpGabVFHY4Lj0lioBSAf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow0/mIbV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE79C32781;
+	Sat, 24 Aug 2024 07:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724485234;
+	bh=22ZAzPhYXKZpVa+MEwszxLycHG8Neigr1NSe5KhIpik=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ow0/mIbVrcH8xWM0unb74nQDqtU7rhcrk4iYEEuy9pkGJowN6JVBivZV6zKv5XKl3
+	 33Fyq3TCIQUZQ7juH/htM0Qn3JL7cgbImXV8K2f+Bjn0KqgqrogxmWfXfYlrnoYfVZ
+	 +cvRymRTrpuyAi7RdJHG7gnevtpo0CCHOWx4VFfNi2ipw/8s8nut4a9QN95ivWXayJ
+	 zt0Hg3jYe0ZXmpDZt4w28C2w32Xya+8zX0jSgZ22JHbzcTh8MHNRsmvNHYgN2bTjQy
+	 kYLF+CT5ourCoHlswRRhaUZpYhrNPM2W0z7+1hzzgykVfKzdv1uGXcwZe6d2zPcAXr
+	 GZchvf0DqH3Hg==
+Message-ID: <761f18d4-9274-4983-a128-94efb96e1c59@kernel.org>
+Date: Sat, 24 Aug 2024 09:40:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
-In-Reply-To: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
-From: Vincent Legoll <vincent.legoll@gmail.com>
-Date: Sat, 24 Aug 2024 07:33:31 +0000
-Message-ID: <CAEwRq=on1DUHwjkBxNzS7UfRrpQT=k2C943ZrjK7NJDHxijZkA@mail.gmail.com>
-Subject: Fwd: [RFC} arm architecture board/feature deprecation timeline
-To: Linux Kernel ML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH] arm64: dts: sunxi: nanopi-neo-plus2: Add pio
+ regulators
+To: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I screwed up the first message, HTML email from gmail.
-So I hope this time it will be good.
+On 24/08/2024 09:09, Kryštof Černý wrote:
+> The board does not have a dedicated regulator for pio and r_pio,
+> but this fixes the kernel warning about dummy regulators being used.
+> Tested on the actual board.
+> 
 
-FYI: I replaced the various ARM MLs with linux-mips, and
-removed the personal addresses, because they already
-received the screw-up.
+Judging by commit msg these are not correct regulators. Please do not
+add incorrect hardware description to silence some warnings coming from
+OS. Either you need proper (correct) hardware description or fix the
+problem other way, assuming there is anything to fix in the first place.
 
-Hello,
+Best regards,
+Krzysztof
 
-> == Kernel features ==
-> [...]
-> === Highmem ===
->
-> Most Arm machines are fine without highmem support and can
-> use something like CONFIG_VMSPLIT_2GB to address up to 2GB
-> of physical memory. Machines larger than only popped up
-> around the time of the Cortex-A15 in 2012 and for the most
-> part got replaced by 64-bit chips within a short time.
-> In addition, there are also a handful of Cortex-A9 and
-> Marvell CPU based machines that have either more than 2GB
-> of RAM or a very sparse memory map that requires highmem
-> support.
->
-> Linus Walleij has done some work towards being able to use
-> up to 4GB of RAM with LPAE (Cortex-A7/A15 and later)
-> machines, which I think still needs to be finished before
-> we can remove support for highmem.
->
-> === Sparsemem ===
->
-> There is a new discussion about removing support for
-> traditional sparsemem support, see
-> https://lwn.net/Articles/974517/.
->
-> This also relates to machines that currently need highmem
-> support in order to use all of their RAM even if the
-> total size would fit into the lowmem area, e.g. on
-> Renesas R-Car SoCs. In theory it should  be possible to
-> move the indirection layer from __page_to_pfn() to
-> __pfn_to_phys() and support discontiguous lowmem
-> that way, but I don't think anyone is working on that,
-> and I don't know if that addresses the concerns with
-> today's sparsemem implementation.
-
-It looks like the highmem feature is deemed for removal.
-
-I am investigating the loss of some available RAM on a GnuBee PC1 board.
-
-An highmem-enabled kernel can access a 64MB chunk of RAM that a
-no-highmem can't. The board has 512 MB.
-
-That's more than 10% on a RAM-poor NAS-oriented board, probably worth
-the hassle to get it back.
-
-I built & flashed a current OpenWRT snapshot, without any modifications,
-wich gave the following output:
-
-dmesg-owrt-6.6.45-custom-nomodifs: Linux version 6.6.45
-(builder@buildhost) (mipsel-openwrt-linux-musl-gcc (OpenWrt GCC 13.3.0
-r27140-ccc06f6716) 13.3.0, GNU ld (GNU Binutils) 2.42) #0 SMP Tue Aug
-13 10:22:33 2024
-dmesg-owrt-6.6.45-custom-nomodifs: Early memory node ranges
-dmesg-owrt-6.6.45-custom-nomodifs:   node   0: [mem
-0x0000000000000000-0x000000001bffffff]
-dmesg-owrt-6.6.45-custom-nomodifs:   node   0: [mem
-0x0000000020000000-0x0000000023ffffff]
-dmesg-owrt-6.6.45-custom-nomodifs: Initmem setup node 0 [mem
-0x0000000000000000-0x0000000023ffffff]
-dmesg-owrt-6.6.45-custom-nomodifs: On node 0, zone Normal: 16384 pages
-in unavailable ranges
-dmesg-owrt-6.6.45-custom-nomodifs: Memory: 441424K/458752K available
-(8180K kernel code, 636K rwdata, 1756K rodata, 1256K init, 227K bss,
-17328K reserved, 0K cma-reserved)
-
-And then after adding CONFIG_HIGHMEM=y
-
-dmesg-owrt-6.6.45-custom-highmem: Linux version 6.6.45
-(builder@buildhost) (mipsel-openwrt-linux-musl-gcc (OpenWrt GCC 13.3.0
-r27140-ccc06f6716) 13.3.0, GNU ld (GNU Binutils) 2.42) #0 SMP Tue Aug
-13 10:22:33 2024
-dmesg-owrt-6.6.45-custom-highmem:   HighMem  [mem
-0x0000000020000000-0x0000000023ffffff]
-dmesg-owrt-6.6.45-custom-highmem: Early memory node ranges
-dmesg-owrt-6.6.45-custom-highmem:   node   0: [mem
-0x0000000000000000-0x000000001bffffff]
-dmesg-owrt-6.6.45-custom-highmem:   node   0: [mem
-0x0000000020000000-0x0000000023ffffff]
-dmesg-owrt-6.6.45-custom-highmem: Initmem setup node 0 [mem
-0x0000000000000000-0x0000000023ffffff]
-dmesg-owrt-6.6.45-custom-highmem: On node 0, zone HighMem: 16384 pages
-in unavailable ranges
-dmesg-owrt-6.6.45-custom-highmem: Memory: 506352K/524288K available
-(8187K kernel code, 637K rwdata, 1756K rodata, 1248K init, 251K bss,
-17936K reserved, 0K cma-reserved, 65536K highmem)
-
-The lost RAM is back usable.
-
-Is there an alternative to CONFIG_HIGHMEM to use that RAM chunk ?
-
-Thanks
-
--- 
-Vincent Legoll
 
