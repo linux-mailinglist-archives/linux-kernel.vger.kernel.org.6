@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-300041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A477195DE08
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:19:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B35595DE0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4CFE1C21096
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27362832C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D833179965;
-	Sat, 24 Aug 2024 13:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15DE176AD8;
+	Sat, 24 Aug 2024 13:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JFbQxXJ1"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmJxSlKk"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30B01714D9
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 13:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD4C4A07;
+	Sat, 24 Aug 2024 13:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724505551; cv=none; b=V5jmgyJy1VruGoQZWw7U2bIWSxIMF9DC80B/OxgB8erPThJ7OAhEfoBvvuswg5A94+UGqw1a+/QzDLcONqH53L0YXEiN1UOKT12GPEI6s7Nh022uribO3dw55/91vcgri4sujUoxnKea0kjB+ujwq1zhDEb5C5C+lg5E7f5p/vc=
+	t=1724505989; cv=none; b=hoJs70lxT4QH2oROiRuF+q8aCNDmd00XXbP1yU0EvLI0nGQ6IdxB9Ib7vz4oRX98Z9akKG0NEcRN4C2Ho9vg5f1RmkirrxGuoe2qC3mvna/W5LnYOsT1hwzBdeSIcctWnv6n8ZtkvgAwESVxpPFaJJCOUYZIfWW46wZisaSHIEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724505551; c=relaxed/simple;
-	bh=5GAWK8GXBZ43Qd9YCfwm6fB0G6hv+fMqaGGUOLfk8w0=;
+	s=arc-20240116; t=1724505989; c=relaxed/simple;
+	bh=+jc/Vc038MHhpyQ8+IxcxqzIq5COI3FuiKc4IC9F6uU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A0kEi03o2eXP8/AvU9cgf/rI0+m8YUkokVRoPzFqk0XBYLmrv36GqDBJzT2LwX70RgI4GHxxYzFjlX5o+xCLqRIWeuaI5fFOn5to54+sXWDX/yZUHdXZUSaVXdJV7qLaI3rspGovifmTrfwVTereO+JQi1arUUfpCIhKPTRQ3as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JFbQxXJ1; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334b7c9bb2so559399e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 06:19:08 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=WFiqJnMS0JjbjZcYfXSsg/MPy/Xs4SK+n+duyk+o0JRlPiY3kuTi/nr/gHuPrVkRXy5uq8YgCeP2ScgIgJjxiX8X3Nt7z7SUYfBZ0IWXpbZstQ/xxlinkDUu8qQJTYbAO4sa/pCl30XXicLMs/0tnMsIvVuWP4BVubRqwVIgdII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QmJxSlKk; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3718b5e9c4fso1428877f8f.0;
+        Sat, 24 Aug 2024 06:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724505547; x=1725110347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1724505986; x=1725110786; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KlcwWdXlvkbWcgPP22YAHa16AeHVn67ihK+bfFfAGEM=;
-        b=JFbQxXJ1OGJ47H+/Bf+q4ZQeA877VPxWpyFGvkmG71JmFgrlvt/satx+5NE0jSbDQl
-         l5eYrDZr6IqAMD4DawP48Zv4kNtIoZr20iETqKsz57o9k0d6gxqr7pT2Uw49Rd6U1Kqi
-         se9jIbIdYWjETZ92x7tm9j+Vx/mlruV9Z7/yx8vbYW1EeXlGzxaZATV4TuYrTZYZrzDD
-         8ofeaBli9bgq++IVwXyZC7yYW2qVLK73wPgJN/VCYj5r1fnDsDyHw3Z7vodXEVYS9tmx
-         d45B+nGxkV7y9IgggdyP4fuCnc8m4hENFtwmfYvYbl8yQaSb/ETOhu+W+DBZKXBwAKcZ
-         mTMg==
+        bh=114707c9TBN2Gihi0FV0kqjlbdnW0JCr+A5nsEfjtVU=;
+        b=QmJxSlKkihY7Uq7TySUEEU7wPxJPQMijSVW66hMP0WlWbvVNafZLSOPHicBg3G8cRF
+         nK6dQVs4fErZzSmNX6Z8FySo4XSmfs3G1q+YKYhDR1CPHEKPSW0ogfsuCBBzJJHj4M9V
+         E/0LNwQHnwQKdzerl3KOz9lYuc1COeChHxHD3y4LhngQNmf6YEGhQchjAyHwslvwz1C3
+         aWf7m5Vfo1azP+el+tqClGZPpMEmgmGSRBeK2h/PIS5+vRu1D/Pyry7zzPtqeefsE+mZ
+         Z20cK6Zfg6+1iDm/CgPk1B3L4we76h2VnLcgjLpIJt3LbogXfs8DmFJ2tgcJpvuGZof/
+         6oYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724505547; x=1725110347;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724505986; x=1725110786;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KlcwWdXlvkbWcgPP22YAHa16AeHVn67ihK+bfFfAGEM=;
-        b=WGv/e8g51hrqBlZ4X5978TMYcKNRUtGYPuOJKkDoLq0SynfQ8eapE7vB3oVP22x65C
-         WdmIiCNkxFpe8zfqB3ac1rm7JEyqPMdqYqZdIkXkAQj+CxNf4poCCc1HGODppRyBt0fH
-         tMenyMlCg+JX1+jKhBhSvOJNl4m6/tV8HKgyIj8dYZAA4kwtSWIh66FjqaJC6+HFcW+g
-         a1ql/6OwLs6tF35ZLKewPtrm6wpKsQLNQxIHgGrdwrz6iXyYEfQICmBChmbebCKy9Ef6
-         JGj5fGExZq7P/nNcjvEZTi50PHoucQTK03M788vGEK0bR8T1sUOzay/iCC7cAKFrGD8L
-         nEPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWfK/rI/ivt3NLgNw7aau9hx7318c2fo9Ju3ov8tTUr68rrxUZwWxRK1Gyfq/AjHX1uhFxdyINlZ38rSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4a4X4Ib/GgM7ak8l1ZAR+/3AInddET934KrR/foUFw7YRwCY5
-	+hWYag3luiesQgDMPpqqUfmAv0Y2vsyEuNUaWWh9VKhqRv5XFVxkLg4Pk3SneuY=
-X-Google-Smtp-Source: AGHT+IFBIwC0BGxRq38k2uQbp83gwHSHw197HqkHuRG00CoY+zDTa9VpKFRblNc7X1DFXpEpeVOTsA==
-X-Received: by 2002:a2e:a813:0:b0:2ef:2b1f:180b with SMTP id 38308e7fff4ca-2f4f4990338mr19253951fa.8.1724505546640;
-        Sat, 24 Aug 2024 06:19:06 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f40484c31dsm7430811fa.90.2024.08.24.06.19.05
+        bh=114707c9TBN2Gihi0FV0kqjlbdnW0JCr+A5nsEfjtVU=;
+        b=qTU1dgFwrRx8vdriAlBpKVfILLg9i6G/YSQ32mhcGM8TkAt41nIFx92wP9GOEWQ5tU
+         oAaBeacWltxnacLKSHf9rs/8K1hY0pU47jKxDO0fCi+pGACWMy/jqeGJXWpX26L2vT9j
+         UyI68FTJE2do8WIr8WBjKM2o9GjzkKdcyVBUUV0JDd60vAfEjfhJ1ZZIszDjycZgFBfV
+         BJoMBFe1DDmYIY69wXx9TtTBX5rpOCG9L5NpzX75ei4JE+dJccIt7iQLXCN0d4l42LaV
+         gm8NWb+m1tpHg3eK3e/gkojQ8hqoWsQS7zah2mNPsntvFoB3c2mVstHdLZH/qwLtIywQ
+         s2/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIYFWejIMJfGrBE95CgZeOkJu817yuHv0+6bOKzZ/KwRg23ynMdOfIwTHf8S5hmlH0Tm0/10Sh9LyhIFfe@vger.kernel.org, AJvYcCUJbdlb8Gp2zv6tTgO64Z6lVzAXmB9HfZj8+0V5EYj6dROIgbOuvsZoVLgAB8bI8spgUuRDoSHz@vger.kernel.org, AJvYcCXi4F0CgLxScRj6pmFyVVk5Zyz884S99guHxlvx9oOwOgX1JTcGTjoGsz+7rUc/txjHRmoKoPjEtVOm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcnN3HO8zd5WVoQxBpuEJsdyzYIvmntzCOPwIMhjyAfmyf2wPe
+	U0n5LhB6dNGW61GwB64vJoSUKDu4sEGE303W55x+xzkXG+v+Jodw
+X-Google-Smtp-Source: AGHT+IE97apoWLf+5ctckXkuIwyLEMMq8DzL8/wLznw24XrTkTZaFOgnINabsJwGyILMQnQ7VupSOQ==
+X-Received: by 2002:a5d:6905:0:b0:373:b44:675 with SMTP id ffacd0b85a97d-3731189b12amr3706013f8f.20.1724505985477;
+        Sat, 24 Aug 2024 06:26:25 -0700 (PDT)
+Received: from [192.168.0.10] ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac514e269sm95104245e9.2.2024.08.24.06.26.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Aug 2024 06:19:06 -0700 (PDT)
-Message-ID: <5a91ea63-2229-4c21-8caa-ca0912b1b8da@linaro.org>
-Date: Sat, 24 Aug 2024 16:19:05 +0300
+        Sat, 24 Aug 2024 06:26:24 -0700 (PDT)
+Message-ID: <f11001d4-fac1-490d-988c-01c6b4b588db@gmail.com>
+Date: Sat, 24 Aug 2024 16:26:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,179 +75,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] media: qcom: camss: Add CSID Gen3 support for
- sm8550
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8186-corsola: Disable DPI display
+ interface
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-13-quic_depengs@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240812144131.369378-13-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Stephen Boyd <swboyd@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
+ stable@vger.kernel.org
+References: <20240821042836.2631815-1-wenst@chromium.org>
+ <00aaa8ff-1344-48dd-b0cb-5e8f4518ff6b@notapiano>
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Content-Language: en-US, tr, en-GB
+In-Reply-To: <00aaa8ff-1344-48dd-b0cb-5e8f4518ff6b@notapiano>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 8/12/24 17:41, Depeng Shao wrote:
-> The CSID in sm8550 is gen3, it has new register offset and new
-> functionality. The buf done irq,register update and reset are
-> moved to CSID gen3.
+Hi,
+
+On 2024-08-22 18:25 +03:00, Nícolas F. R. A. Prado wrote:
+> On Wed, Aug 21, 2024 at 12:28:34PM +0800, Chen-Yu Tsai wrote:
+>> The DPI display interface feeds the external display pipeline. However
+>> the pipeline representation is currently incomplete. Efforts are still
+>> under way to come up with a way to represent the "creative" repurposing
+>> of the DP bridge chip's internal output mux, which is meant to support
+>> USB type-C orientation changes, to output to one of two type-C ports.
+>>
+>> Until that is finalized, the external display can't be fully described,
+>> and thus won't work. Even worse, the half complete graph potentially
+>> confuses the OS, breaking the internal display as well.
+>>
+>> Disable the external display interface across the whole Corsola family
+>> until the DP / USB Type-C muxing graph binding is ready.
+>>
+>> Reported-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+>> Closes: https://lore.kernel.org/linux-mediatek/38a703a9-6efb-456a-a248-1dd3687e526d@gmail.com/
+>> Fixes: 8855d01fb81f ("arm64: dts: mediatek: Add MT8186 Krabby platform based Tentacruel / Tentacool")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > 
-> The sm8550 also has a new block is named as CSID top, CSID can
-> connect to VFE or SFE(Sensor Front End), the connection is controlled
-> by CSID top.
+> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 > 
-> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> ---
->   drivers/media/platform/qcom/camss/Makefile    |   1 +
->   .../platform/qcom/camss/camss-csid-gen3.c     | 339 ++++++++++++++++++
->   .../platform/qcom/camss/camss-csid-gen3.h     |  26 ++
->   .../media/platform/qcom/camss/camss-csid.c    |  46 ++-
->   .../media/platform/qcom/camss/camss-csid.h    |  10 +
->   drivers/media/platform/qcom/camss/camss.c     |  91 +++++
->   drivers/media/platform/qcom/camss/camss.h     |   2 +
->   7 files changed, 503 insertions(+), 12 deletions(-)
->   create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.c
->   create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.h
-> 
-> diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
-> index e636968a1126..c336e4c1a399 100644
-> --- a/drivers/media/platform/qcom/camss/Makefile
-> +++ b/drivers/media/platform/qcom/camss/Makefile
-> @@ -7,6 +7,7 @@ qcom-camss-objs += \
->   		camss-csid-4-1.o \
->   		camss-csid-4-7.o \
->   		camss-csid-gen2.o \
-> +		camss-csid-gen3.o \
->   		camss-csiphy-2ph-1-0.o \
->   		camss-csiphy-3ph-1-0.o \
->   		camss-csiphy.o \
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> new file mode 100644
-> index 000000000000..d96bc126f0a9
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
-> @@ -0,0 +1,339 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * camss-csid-gen3.c
-> + *
-> + * Qualcomm MSM Camera Subsystem - CSID (CSI Decoder) Module
-> + *
-> + * Copyright (c) 2024 Qualcomm Technologies, Inc.
-> + */
-> +#include <linux/completion.h>
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +
-> +#include "camss.h"
-> +#include "camss-csid.h"
-> +#include "camss-csid-gen3.h"
-> +
-> +#define CSID_TOP_IO_PATH_CFG0(csid)	(0x4 * (csid))
-> +#define		OUTPUT_IFE_EN			0x100
-> +#define		INTERNAL_CSID			1
-> +
-> +#define CSID_RST_CFG			0xC
-> +#define		RST_MODE			0
-> +#define		RST_LOCATION			4
-> +
-> +#define CSID_RST_CMD			0x10
-> +#define		SELECT_HW_RST			0
-> +#define		SELECT_SW_RST			1
-> +#define		SELECT_IRQ_RST			2
-> +
-> +#define CSID_CSI2_RX_IRQ_STATUS		0x9C
-> +#define CSID_CSI2_RX_IRQ_MASK		0xA0
-> +#define CSID_CSI2_RX_IRQ_CLEAR		0xA4
-> +#define CSID_CSI2_RX_IRQ_SET		0xA8
-> +
-> +#define CSID_CSI2_RDIN_IRQ_STATUS(rdi)	(0xEC + 0x10 * (rdi))
-> +
-> +#define CSID_CSI2_RDIN_IRQ_CLEAR(rdi)	(0xF4 + 0x10 * (rdi))
-> +#define CSID_CSI2_RDIN_IRQ_SET(rdi)	(0xF8 + 0x10 * (rdi))
-> +
-> +#define CSID_TOP_IRQ_STATUS		0x7C
+> Would be good to have Alper verify that with this change the internal display
+> works again in their specific setup, although this change seems reasonable to me
+> either way.
 
-The list of macros shall be sorted by register offset value.
+Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-> +#define		 TOP_IRQ_STATUS_RESET_DONE	0
-> +
-> +#define CSID_TOP_IRQ_MASK		0x80
-> +#define CSID_TOP_IRQ_CLEAR		0x84
-> +#define CSID_TOP_IRQ_SET		0x88
-> +
-> +#define CSID_IRQ_CMD			0x14
-> +#define		IRQ_CMD_CLEAR			0
-> +#define		IRQ_CMD_SET			4
-> +
-> +#define CSID_REG_UPDATE_CMD		0x18
-> +
-> +#define CSID_BUF_DONE_IRQ_STATUS	0x8C
-> +#define		BUF_DONE_IRQ_STATUS_RDI_OFFSET	(csid_is_lite(csid) ? 1 : 14)
-> +#define CSID_BUF_DONE_IRQ_MASK		0x90
-> +#define CSID_BUF_DONE_IRQ_CLEAR		0x94
-> +#define CSID_BUF_DONE_IRQ_SET		0x98
-> +
-> +#define	CSI2_RX_CFG0_PHY_SEL_BASE_IDX	1
-> +
-> +#define CSID_CSI2_RX_CFG0		0x200
-> +#define		CSI2_RX_CFG0_NUM_ACTIVE_LANES	0
-> +#define		CSI2_RX_CFG0_DL0_INPUT_SEL	4
-> +#define		CSI2_RX_CFG0_PHY_NUM_SEL	20
-> +
-> +#define CSID_CSI2_RX_CFG1		0x204
-> +#define		CSI2_RX_CFG1_ECC_CORRECTION_EN	0
-> +#define		CSI2_RX_CFG1_VC_MODE		2
-> +
-> +#define CSID_RDI_CFG0(rdi)		(0x500 + 0x100 * (rdi))
-> +#define		RDI_CFG0_TIMESTAMP_EN		6
-> +#define		RDI_CFG0_TIMESTAMP_STB_SEL	8
-> +#define		RDI_CFG0_DECODE_FORMAT		12
-> +#define		RDI_CFG0_DT			16
-> +#define		RDI_CFG0_VC			22
-> +#define		RDI_CFG0_DT_ID			27
-> +#define		RDI_CFG0_EN			31
-> +
-> +#define CSID_RDI_CFG1(rdi)		(0x510 + 0x100 * (rdi))
-> +#define		RDI_CFG1_DROP_H_EN		5
-> +#define		RDI_CFG1_DROP_V_EN		6
-> +#define		RDI_CFG1_CROP_H_EN		7
-> +#define		RDI_CFG1_CROP_V_EN		8
-> +#define		RDI_CFG1_PIX_STORE		10
-> +#define		RDI_CFG1_PACKING_FORMAT		15
-> +
-> +#define CSID_RDI_CTRL(rdi)		(0x504 + 0x100 * (rdi))
+Fixes that linked issue I had with internal display on my magneton. And
+apparently I don't even need a custom kernel for it, I managed to get
+the display working on Debian's v6.11-rc4 build with this dts change
+(and `softdep mediatek-drm pre: mtk-iommu mt6358-regulator` iirc).
 
-Sorted by register offset please.
-
-> +#define		RDI_CTRL_START_CMD		0
-> +
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PATTERN(rdi)	(0x548 + 0x100 * (rdi))
-> +#define CSID_RDI_IRQ_SUBSAMPLE_PERIOD(rdi)	(0x54C + 0x100 * (rdi))
-> +
-> +static inline int reg_update_rdi(struct csid_device *csid, int n)
-> +{
-> +	return BIT(n + 4) + BIT(20 + n);
-
-Taking as unshifted bit BIT(4) is RUP and BIT(20) is AUP, add
-corresponding macros for them, then
-
-return (... | ...) << n;
-
-> +}
-> +#define REG_UPDATE_RDI			reg_update_rdi
-> +
-
---
-Best wishes,
-Vladimir
+Thanks!
 
