@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-300125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAC195DF15
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D4195DF12
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6767A1F21E52
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB4AB21C8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92117D35B;
-	Sat, 24 Aug 2024 16:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB3C17BECD;
+	Sat, 24 Aug 2024 16:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TL7Ic8nc"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6YJn7IN"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDA02BAE5;
-	Sat, 24 Aug 2024 16:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EB22BAE5;
+	Sat, 24 Aug 2024 16:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724517879; cv=none; b=i0Mm7WYPXvf/GUvSNiEW5keypEg70miRYw7eWuOl1S3NJ356IdLp5tFddU0niJESEOwhF+HHRrsD+ciHaUszzTudAlOUSo+XRQ0EpPOSy5Z0ASrJGXJbG4hp2ISOL3OyZ5D7NioY/SbAfJATcnjh09XkWBoWN3vlF8wBB0MMiNI=
+	t=1724517874; cv=none; b=WSAhbJtGOKYhqrwecD+DrmLNG9oN+Hu33UYWJDJ1qKq42KMz8srlN4ZTOHayHNyrnvpVyGhIvYE2ePYQAbwv0v/KXdxkDEThMu1CF5HX0hOzEMe644/XcFWTO8n7eRWW8XUyw6UzWvG9uOQjyrQnNeszyXOnrGpymlFgrncronI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724517879; c=relaxed/simple;
-	bh=5VckT6C4lSjjpO3URAl6WTLJOhszXgeGfBoagM2Mtus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BCouxsxcXFx4p4QR4vjz+JoTbHpL63JUUL8uZoaXpgq5BvDPIdQYypeXhYfbpFhSCB+vAYYjzMzHpCc/yYoM5WDFCUMs3Bn5YaEIoGjpvQK7JbOFrt2J1M/nrvv/maYvA3vu3Am5/tJ3SWqom2Alz8LJS2MCSxX5QJVi2zc7Nyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TL7Ic8nc; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1724517874; c=relaxed/simple;
+	bh=/9gX2XCk9FTMVcv7iiH7Odb5+BLxHlWeobR8KB9NnJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTeB2Yk+g787Js6qsy4TTMFMHvZpija5gO3fjOThHMGrsOtVTQ0rGydt8cj1xVyxo0O8KnQXBcbr5iRwguSpeidcujne4OnmO062gS0riqCbmJnYnpUqIUB+QGibFINMjYbF+aE3PYe+gi/7EbjZFG9/zYubHXmYZp0RSFxmlTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6YJn7IN; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d445c87788so542105a91.2;
-        Sat, 24 Aug 2024 09:44:38 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-202146e93f6so30626765ad.3;
+        Sat, 24 Aug 2024 09:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724517877; x=1725122677; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5VckT6C4lSjjpO3URAl6WTLJOhszXgeGfBoagM2Mtus=;
-        b=TL7Ic8nc60QnJOIKki9uhMUBFaTdLR1rSqTFU5I3JZEM9z67BmAPAcNMDRFDAwPoHs
-         RhrVS/8mKXVCrQ+Z9IQ9wnUk7Xad/XIe/dIfKwIlp4R4dUXkSHpASjwLiD01LUmQXIOe
-         oDIF58oQpMl+riS48V3emQtaSY6A/Ky9vXe6XWKt6ww0P50m7UJ6JHHdG9NN0INvxEnG
-         Lz/XQ9mCi1xlpgy5Gn9tAWs2bjUeN/bRZr9V2UJMvFaSbiEiWInC/+Kk+DDeXSUlKhl5
-         bDhOm5SwmvmmUrJtXVn8OSzKV46MvZh/ne5SKo0zXxNFESvjEWnIBfkSlnMWbx4wXC6V
-         GgKg==
+        d=gmail.com; s=20230601; t=1724517872; x=1725122672; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rMJqxsXbKdshmWc6Vt4OVDWOFw/ne4JO6chf1aTJxRg=;
+        b=B6YJn7IN4UviFCnyISi5iPjuoFMKZ+XnRFFMeH/D/Lf3eNkM3tU7T3d2G5K0UeIzcf
+         CXf/2Dqdo2c9CHqImVcuasFdu0j6t4porda5YZEFn/zDZfmuvWaCKYu8SJzlUAmRnxpQ
+         Bp3anFm1ACysSXyy+SbJgqQFwteX/O47NUhol7cEHvH3K+6MgEIMV7D5Nj62jjr1BgBh
+         YcZ0lHWqIo6SWQyGy4uXUD4xFQyTwxp+HAukC1LFWSSth8hAry2eO9Tkj7Mj6UIqzURs
+         zZ13KXoUTuZzjvseifOZZKdGjV1y30BIWiKcJ0wQHE+qBgDTwtEMFEGjMPF2rH1nO7HT
+         4Afg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724517877; x=1725122677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724517872; x=1725122672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5VckT6C4lSjjpO3URAl6WTLJOhszXgeGfBoagM2Mtus=;
-        b=w+A4BGwzo1mHuH06m5kKrQjNDTtEd8tNHfpAULu6EF5i2VfRrCw1sdM1Q4o/PD9XWD
-         +V+9t3b+41S2TH3KTF8OJpPzklhj/uOK34UIQtjxqoj6/5ifkvLnrfG74PgwksE72t9o
-         8GCF6W6D/1hibr3WVdx98xdkNMgX7bkHRBq/YNfd6kOAID4B77T+mIuRLGpzUPIsPkdi
-         gEvPMaHHSY4qdJF1EkNE+a1I9CnyNmG7NudOM14qhw6ktiKa/SZrMDyUO7woEcimFbIf
-         GWS6E5r8ewFmWBOfaHOdHz3JzBr6hY3hR3ktGtuKK+vfrtklcMF20CEDx75LASb1qgN6
-         5nPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbp/a11Lt6z6pBIkDeMFuKCmVexztDBXgB2iVH+ySwdWvRi9FjKYf+kGn3sUWJIiFmIF8bRlAYzS6T2IUQ@vger.kernel.org, AJvYcCWMPr7SL65ywSAKjlIQLKN5cLobQB5s9H8F7y0PgmCXiLIYzS1KRtafjy8FaTZDJVKuRD0oDUY2NcMeJd4NAA==@vger.kernel.org, AJvYcCXAd9FsuzHY7qEYY9+56Mm0P3aOlcQbuUmwyUep+NYTQyOp43SMhq4ufZH0LWtTbGzoVb0iAmngEJVmAN62i49lhxc3@vger.kernel.org, AJvYcCXoI2sKgvBLvDlY4AduQ5rlxLLh2bb/TGOGmH1ZH4GopU63Vum2yJ1SrB+AlL/6bKFZHDuVtHAWEGTRjp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9pS6jJ9++57gSX4IGKdwDpHb5TwtmcuU5V3LjeSkw9I+alKLY
-	C87s/lRcYzZH0ygli+aZ0f1AuzmK1i1u3c9hCilGeMfH6zak4lSqt5M2J7+DTD0y1J3UPD7OLSz
-	2QeS5I4byjVzdjyeP9Of70GOIYk0=
-X-Google-Smtp-Source: AGHT+IEl7BAFxfHi+EpkQ9x8ZnTnRaIB9YCOcUQ4mLNHiby9rEr662m+9/mPWrhYU+1Uom3efmCrMPDR6ERV54CtnQg=
-X-Received: by 2002:a17:90b:1b12:b0:2c4:cd15:3e4b with SMTP id
- 98e67ed59e1d1-2d646d73d60mr3927811a91.4.1724517877442; Sat, 24 Aug 2024
- 09:44:37 -0700 (PDT)
+        bh=rMJqxsXbKdshmWc6Vt4OVDWOFw/ne4JO6chf1aTJxRg=;
+        b=G74BI+VIE+wIeEAE07hb3GRa+mRg6oMRSHcPZ1k8yFVt+KQK4R9lIkDva6Cx/cyxX0
+         v3FwtwE1zzEAm44vsYIhnCOrj0JzCMPajG9Ae2FvXgZykfceGcq6MZ09KnZUCjIgiYgF
+         1z60Hg0toYoipxHU/tRPQK2HGm5aw6eMxdM4osJM0O0Hdx1lX473PSmrGMuKi0x9VEIw
+         WbqDxQifFtGL8XRrgTb1zkfikbpjP/TxExig/bsZBysBU2AwsE6c53Ozb10Rjmh+4Llr
+         foOG0EXefG7HjK+8iWscXWg77KlE1yx5vaio9PNPFt9oqq2QetV8ETFUbsM/MPIGFJ12
+         jZUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiraKJSLhtWa0HT9HbY59HIhdEN4ZOtltkM9PQT6lm9Yt0rqa5FjxespA7nLxHlriAOvhbATlL3T/u@vger.kernel.org, AJvYcCUmhP1RsolNeiSLQzvHnKJrSolKX70nIPTB2I9RuzUbPlXYLHJ6P+5xvskpTYU0aRWl0ji59zIY5kSM@vger.kernel.org, AJvYcCVJQBnivTBV3ZD9grOo24bSxF+N9PAwpM76y4addetLp0cXs4Vm1zdZBFAzf/KCwInpT/ZT2T5ewwVLVfub@vger.kernel.org, AJvYcCViu72jdGZPuojBX6rFQqwBSV2FWHHosTQUeseFNpOleaSHQAj/w2tOoe80cmxgp409FYhKJ5Ej0Nc8@vger.kernel.org, AJvYcCWGcP9jJRfxydDzh8Aj8/zI78eil+sOAyKazNfpe4BT/sLjoBrb7WAIOiga5Eb2zyIBg1tZjq/6x8k9@vger.kernel.org, AJvYcCXBcbgME9M+HE2wup/xF7HVG53cOqE2bhw+XWKzLfP29mqJ5Eje27Arl+N45QLQO7fAxbccKKRQpK99@vger.kernel.org, AJvYcCXzwTjFb5sszF0td5EDIHKKM2l9LO+Me/HVEqMiRk/gV1v/cfoGZIjUBbUuAFK1ycvoRS4Txm7WXH4I9wy9dyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsJHuFCHP1TRRoPdBgMMmwDhM5ov95yYuD85eM+6meae8Dhjqq
+	Q+79wKL8nuCgi67dJeROvYRQ7EzFiFU2tcdd35K3UqtAu8w2cRxE
+X-Google-Smtp-Source: AGHT+IHcYVQoDXdmHH2kSyn3hjnKQGyb2SXXwv2a+G7g13SX+ywaROxz6n48bYMEHtMXrfqxmEat4A==
+X-Received: by 2002:a17:902:e750:b0:202:401f:ec6c with SMTP id d9443c01a7336-2039e4f1d23mr66486985ad.48.1724517872012;
+        Sat, 24 Aug 2024 09:44:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385bdc5e0sm44114565ad.271.2024.08.24.09.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 09:44:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 24 Aug 2024 09:44:29 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>, Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+	Ondrej Jirman <megi@xff.cz>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Jimmy Hon <honyuenkwun@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Elon Zhang <zhangzj@rock-chips.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Liang Chen <cl@rock-chips.com>, Jisheng Zhang <jszhang@kernel.org>,
+	Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH v2 09/12] dt-bindings: watchdog: Add rockchip,rk3576-wdt
+ compatible
+Message-ID: <612a447c-8a74-48c1-8470-280dddca8d19@roeck-us.net>
+References: <20240823150057.56141-1-detlev.casanova@collabora.com>
+ <20240823150057.56141-10-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821040700.1919317-1-kris.van.hees@oracle.com>
- <20240822181942.2626536-1-kris.van.hees@oracle.com> <20240822181942.2626536-3-kris.van.hees@oracle.com>
- <20240823165329.GA3911831@google.com> <ZsjBfjAuC5t/2Cex@oracle.com> <CABCJKucamgTpEhU5E=dL3tNc84yzwzFh7uNW-arhN-qDm-3nMw@mail.gmail.com>
-In-Reply-To: <CABCJKucamgTpEhU5E=dL3tNc84yzwzFh7uNW-arhN-qDm-3nMw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 24 Aug 2024 18:44:24 +0200
-Message-ID: <CANiq72=PNDOYo8kwscy0Sup6g3qfffFsSJMssJh_jGb3D4JzcA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/4] kbuild: generate offset range data for builtin modules
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, 
-	Elena Zannoni <elena.zannoni@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823150057.56141-10-detlev.casanova@collabora.com>
 
-On Fri, Aug 23, 2024 at 7:24=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> I assume they wanted to avoid conflicts between Rust-specific
-> environment variables and existing Kbuild variables. Note that
-> KBUILD_MODFILE is also double quoted for the C preprocessor, which
-> isn't needed for Rust. Miguel, do you remember if there's another
-> reason for the different variable name?
+On Fri, Aug 23, 2024 at 10:52:36AM -0400, Detlev Casanova wrote:
+> It is compatible with the other rockchip SoCs.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-No, I don't recall another reason -- I think you are right, they did
-not carry (exactly) the same contents, and thus the different name.
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-So I think it can be merged/changed into something else if needed.
-
-Cheers,
-Miguel
+> ---
+>  Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> index c7aab0418a320..b5a3dc3770706 100644
+> --- a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> @@ -29,6 +29,7 @@ properties:
+>                - rockchip,rk3368-wdt
+>                - rockchip,rk3399-wdt
+>                - rockchip,rk3568-wdt
+> +              - rockchip,rk3576-wdt
+>                - rockchip,rk3588-wdt
+>                - rockchip,rv1108-wdt
+>            - const: snps,dw-wdt
+> -- 
+> 2.46.0
+> 
 
