@@ -1,209 +1,242 @@
-Return-Path: <linux-kernel+bounces-300090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8117095DEB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F042795DEB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18D41C20E1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149A21C20F2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314CC17ADFA;
-	Sat, 24 Aug 2024 15:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D960176AC7;
+	Sat, 24 Aug 2024 15:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmXwxZ1t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="upDXeNmc"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F54A947;
-	Sat, 24 Aug 2024 15:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D619475
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 15:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724513220; cv=none; b=TAUv07vXZr5LhkzNhcIdoTXdwc+JODvRCzYO2XOwt8PA6LKj7fCT5AWbmFGkfMiFbjGsfAuDtc6r8M3AiAe1uLDkW68vuA+WMF/3AQQ42h9PrnYiCjlQ653PVdCb2d1925S1hvxg5ACnPitRaY8EJtVBThEwsaV11dvH5UggoWk=
+	t=1724513652; cv=none; b=fAtaqHuFw7WxwSkT0ywhMHfFKiEUGbrtXvjPqDZY9XV1smh0LfPQfe2I/vp/8TX9Kg2+aBii3h0H+qV8S0UdWh/DYNHzIc1tD7d14lBq93AdwrLLHKJPpZKcPBHRyi0kQlqePrdlP+tYyvIpxeXlNq5zWFgH3OgX2wmuo4Ae/w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724513220; c=relaxed/simple;
-	bh=/7RBWmt07TynXOXjabugPf6NrYOOzehpjOsJq7QhVTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pa6OZIe6QtHYEGxJjyfBa9f3tJisCSAoTQF6Afk//CtHXhsOdzq4D5/qMYjsxFLPJWeYvOFLjL/0mvcuETqgozHBhxoH4vDaF4IIJvvbqMZ9oI2YnmJE5+I9xq5QYUXdSMGHOBrCEjgXTUJtEnHZCD8l6OfFgRsSNr9ArDLFwfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmXwxZ1t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6726C32781;
-	Sat, 24 Aug 2024 15:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724513217;
-	bh=/7RBWmt07TynXOXjabugPf6NrYOOzehpjOsJq7QhVTQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=mmXwxZ1tvZ4fkdLIGYxPOwA5ihHLCS0UJgJnOWzJYJc5EjXpSB09bEf1LjtobabDg
-	 YuW49ohUJw9Ah/YtN59zpxfDRAM4Q1USl/HyPA6QkH8RM/UW2OLKNMr0JmM8D5OxMd
-	 du9HXc9PH8bPQlHU47tOj3rdwrRe9RLUX4uerXKhHW0KDNnsVGlcayGLbyFNKhrgzb
-	 ykW33JmEoHOq10eU17bbsowse+mAM/tcsCm5WYK7rXN/4umVPLSodLpm8PizO3hS+R
-	 Px/OnMZ9/ah+aL2B0A6w8yCOYOFp0R/xAOR1/jGWBwbDRVA+qD7UuCujI7z9cEb6bV
-	 ZGQq00w44uSmQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 798CACE1078; Sat, 24 Aug 2024 08:26:57 -0700 (PDT)
-Date: Sat, 24 Aug 2024 08:26:57 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <1a1009b9-615f-44fc-8ef6-da3bbc773012@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
- <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
- <a122efbe-fd81-471d-89b7-e9257bf3ce49@paulmck-laptop>
- <20240824065434.GA26474@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1724513652; c=relaxed/simple;
+	bh=LpGFte/bJLu2fp5DnAjNFeoNKKu0Fz8JF3hNncqrBDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=agMXnyMkTfAhLR4vkIqAPe5wlA2LN7r7LadHkollAW4Jq5roTC9Mk6HwJ+eSoHAU18uYPFeA672ygp/S6SU93jWDLa8Fx3rkhtXUAAH1Wt/37xazdg1sKnzqInp1A7/kMwAZDRMhoXHySC+Cli2Ay+VxXbgCpl4CpfVgooSFx/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=upDXeNmc; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7143185edf2so2450559b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:34:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724513648; x=1725118448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSXIKoihoddogN25WBIjDUpnPHwkybMIhSvoiXgO/zQ=;
+        b=upDXeNmcAwsj4EcxqaTctkfU6TlgzdWZGiGQRQPP5uIf28wmlR7C11FaaIGOocKM0e
+         fOiSDUjV+cBnIf1F0UxSftmUQ9r/IE+2OkmRiYnFS9rnxwutY2GCiMVVZCKL+ICsMMgr
+         bOnGrmWj20ZQ9kd8VblO4nd+c6ifvMQb8pP2TRqPr0b2pshEuU9nI0zZ8wnKz8Fs5qaG
+         0KMKQ7SrPLXThH1tL/OcgsNRc00t/ZLEv3zZrRAPTWEY4yQJbXZMZn944nKb/caF/I5w
+         nu5Sb7PAmgb68fawAsBP7j+UiTcJauBAdLDq1uWWn/WPxX01/1HU+Ur50RhKzChatLdo
+         J72A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724513648; x=1725118448;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSXIKoihoddogN25WBIjDUpnPHwkybMIhSvoiXgO/zQ=;
+        b=CKeJvuhxwqZMcLPheKwGNEil0kajB4ax0E2FFaceh1w2w5zifbZUlOdQNc3cFjYoOq
+         vRn01bRIenzd3BAjduTxrlWp2zNpdoEfyUsAmQd7+k6mEpCyAxbWmMkar2PyDP58QdXZ
+         wtJDYeEjyUzjf/RcfymT/c6+YAfCiHQdQitK9/FsiKwClq/y/Wev8xWOMN/06Veq0q8h
+         9u1ky6EXFhey1WyeDpIkeTuJGBV8fM/LVZok4/DRDGU3ZeX3Gg0xjkobNlHkEsRPkNqH
+         5GuUfTN5WVY/Hogto7dkJ0w8TLEAI0zHF+UP18eWjDb/NEIB/hY5qwAXpnGjszfF9PfK
+         iiGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHnASGBL+nCDUOK5sFuwcfZZaX44SvI1zLHpVYdSpj7WF4BISiWUQxf2Dja2DUcoGM+aCmRRRtLsNhjkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyesonbNvvtGtE1qQedB18k+EvQgVbg/MdZpyM9Mvsgch+Q/UaU
+	doAH/fTIvFNq7hl2ssp3UsZqgBgWnvAH21WHD5Ks5cA/omFVRkeLuQcsM7T0aEc=
+X-Google-Smtp-Source: AGHT+IHikL7Sn4gbj154Bj3xA/2dv1RdXHysRWdUOFi6m4aHuzN4r5j/Vkh9on6X0yprxPvSzenQGg==
+X-Received: by 2002:a05:6a00:3d54:b0:70d:34aa:6d57 with SMTP id d2e1a72fcca58-71445cbd264mr6932475b3a.4.1724513647459;
+        Sat, 24 Aug 2024 08:34:07 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143432eda2sm4630200b3a.187.2024.08.24.08.34.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 08:34:06 -0700 (PDT)
+Message-ID: <0524d3fa-c70e-45a5-96e1-317431f6ce8d@kernel.dk>
+Date: Sat, 24 Aug 2024 09:34:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824065434.GA26474@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+To: Christian Loehle <christian.loehle@arm.com>, linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, tglx@linutronix.de,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20240819154259.215504-1-axboe@kernel.dk>
+ <c8cd6339-c168-4409-8cc4-e85e7ad92914@arm.com>
+ <9a0f2192-b897-4952-b4ea-7fe229f33001@kernel.dk>
+ <5dd66e38-2b00-4b89-8b8c-cc25ad39dcb8@arm.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <5dd66e38-2b00-4b89-8b8c-cc25ad39dcb8@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 24, 2024 at 08:54:34AM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 23, 2024 at 02:51:03PM -0700, Paul E. McKenney wrote:
+On 8/21/24 9:57 AM, Christian Loehle wrote:
+> On 8/21/24 16:04, Jens Axboe wrote:
+>> On 8/21/24 8:54 AM, Christian Loehle wrote:
+>>> On 8/19/24 16:39, Jens Axboe wrote:
+>>>> Hi,
+>>>>
+>>>> This is v6 of the patchset where the current in_iowait state is split
+>>>> into two parts:
+>>>>
+>>>> 1) The "task is sleeping waiting on IO", and would like cpufreq goodness
+>>>>    in terms of sleep and wakeup latencies.
+>>>> 2) The above, and also accounted as such in the iowait stats.
+>>>>
+>>>> The current ->in_iowait covers both, this series splits it into two types
+>>>> of state so that each can be controlled seperately.
+>>>
+>>> Hi Jens,
+>>> I wanted to give a brief update on where I think we're at in terms
+>>> of iowait behavior regarding cpuidle and cpufreq.
+>>> I'm still working on getting both removed, given the discussions had
+>>> on the list [0] and at OSPM [1] this seems realistic and the best way
+>>> forward IMO.
+>>> That would then naturally make this series and the iowait workaround in
+>>> io_uring/io_uring.c unnecessary.
+>>>
+>>> 1. For cpuidle:
+>>> Main issue with relying on nr_iowaiters is that there is no guarantee
+>>> whatsoever that these tasks will wakeup where they went to sleep so if
+>>> we can achieve the same throughput without nr_iowaiters it shouldn't
+>>> be relevant.
+>>> I spent quite some time in fixing teo [2], because untangling nr_iowaiters
+>>> from menu seems hard, essentially nobody has worked on menu seriously for
+>>> a while now. Thus the plan here is to replace menu by teo eventually.
+>>> For your io_uring workloads I see throughput on par for teo (doesn't rely
+>>> on iowait) and menu.
+>>>
+>>> # echo teo > /sys/devices/system/cpu/cpuidle/current_governor
+>>> #  ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1 
+>>> submitter=0, tid=206, file=/dev/nvme0n1, node=-1
+>>> polled=0, fixedbufs=1/0, register_files=1, buffered=0, QD=1
+>>> Engine=preadv2
+>>> IOPS=22500, BW=87MiB/s, IOS/call=0/0
+>>> IOPS=21916, BW=85MiB/s, IOS/call=1/0
+>>> IOPS=21774, BW=85MiB/s, IOS/call=1/0
+>>> IOPS=22467, BW=87MiB/s, IOS/call=1/0
+>>> Exiting on timeout
+>>> Maximum IOPS=22500
+>>> # echo menu > /sys/devices/system/cpu/cpuidle/current_governor
+>>> [  178.754571] cpuidle: using governor menu
+>>> #  ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1 
+>>> submitter=0, tid=209, file=/dev/nvme0n1, node=-1
+>>> polled=0, fixedbufs=1/0, register_files=1, buffered=0, QD=1
+>>> Engine=preadv2
+>>> IOPS=21452, BW=83MiB/s, IOS/call=0/0
+>>> IOPS=21778, BW=85MiB/s, IOS/call=1/0
+>>> IOPS=21120, BW=82MiB/s, IOS/call=1/0
+>>> IOPS=20903, BW=81MiB/s, IOS/call=1/0
+>>> Exiting on timeout
+>>> Maximum IOPS=21778
+>>>
+>>> Please do give it a try for yourself as well!
+>>>
+>>> 2. For cpufreq:
+>>> Main issue for IO-bound workloads with iowait boosting is we're punishing
+>>> the 'good' workloads (that don't have iowait sleeps in their throughput-critical
+>>> part, which is already bad because of the scheduling overhead induced) by
+>>> making them energy-inefficient to make synthetic benchmarks happy.
+>>> A study of more realistic workloads show that they don't suffer from a problem
+>>> of building up utilization, not util_est anyway, so they don't actually benefit
+>>> from a cpufreq boost.
+>>> This leads me to the conclusion that cpufreq iowait boosting can be scrapped
+>>> altogether if we accept some degradation of benchmarks like
+>>> ./io_uring -r 5 -X0 -d 1 -s 1 -c 1 -p 0 -S 1 -R 0 /dev/nvme0n1
+>>> or
+>>> fio --name=fio --rw=randread --bs=4k --runtime=5 --time_based --filename=/dev/nvme0n1 --iodepth=1 --numjobs=1
+>>> (non-io_uring) for that matter.
+>>
+>> The original iowait addition came because a big regression was seen
+>> compared to not setting iowait, it was around 20% iirc. That's big, and
+>> not in the realm of "some degradation" that will be acceptable. And that
+>> will largely depend on the system being used. On some systems, it'll be
+>> less, and on some it'll be more.
 > 
-> > > > Does the below help any? That's more or less what it was before Valentin
-> > > > asked me why it was weird like that :-)
-> > > > 
-> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > > index 6be618110885..5757dd50b02f 100644
-> > > > --- a/kernel/sched/fair.c
-> > > > +++ b/kernel/sched/fair.c
-> > > > @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
-> > > >  	 * and we cannot use DEQUEUE_DELAYED.
-> > > >  	 */
-> > > >  	if (p->se.sched_delayed) {
-> > > > -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
-> > > >  		p->se.sched_delayed = 0;
-> > > >  		p->se.rel_deadline = 0;
-> > > >  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> > > 
-> > > Removing that line from 2e0199df252a still gets me the complaint about
-> > > __SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
-> > > that this commit:
-> > > 
-> > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> > > 
-> > > Need to be placed before 2e0199df252a.  Of course, when I try it, I
-> > > get conflicts.  So I took just this hunk:
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-> > > index 97fb2d4920898..6c5f5424614d4 100644
-> > > --- a/kernel/sched/features.h
-> > > +++ b/kernel/sched/features.h
-> > > @@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
-> > >   */
-> > >  SCHED_FEAT(CACHE_HOT_BUDDY, true)
-> > >  
-> > > +/*
-> > > + * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
-> > > + */
-> > > +SCHED_FEAT(DELAY_ZERO, true)
-> > > +
-> > >  /*
-> > >   * Allow wakeup-time preemption of the current task:
-> > >   */
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > That makes the build error go away.  Maybe even legitimately?
+> We are also talking about power regressions of 1000% easily FWIW for
+> e.g. fio --name=fio --rw=randread --bs=4k --runtime=10 --time_based
+> --filename=/dev/nvme0n1 --iodepth=32 --numjobs=nr_cpus
+> --ioengine=io_uring (without any throughput gain).
+
+Oh I believe it, for some embeded or low power cpus. And it is on our
+list, to make this selectable. Ideally what I think should happen is
+that the application gives you a hint on how long it expects to sleep,
+and we'll pass that on and let the lower layers decide what's the most
+appropriate state to enter. The current iowait usage isn't very pretty
+(in io_uring or otherwise, it's too coarse of a hint), but it's what we
+have/had, and we needed it to solve a problem that would otherwise be a
+regression on a much more common setup than really lower power devices.
+
+>>> For io_uring where the expected case is probably not single-threaded
+>>> sync IO (or iodepth=1) the cpufreq iowait boost is just hurting
+>>> use-cases by pushing it to less efficient frequencies that might not
+>>> be needed.
+>>
+>> People do all sorts of things, and sync (or low queue depth) IO is
+>> certainly one of the use cases. In fact that's where the above report
+>> came from, on the postgres aio side.
 > 
-> Yep.
+> I have looked at that and (on the platforms I've tested) that was indeed
+> from cpuidle FWIW. Moving away from menu did remedy this with the
+> mainlined teo fixes.
 > 
-> > > Just to pick on the easy one, I took a look at the complaint about
-> > > cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
-> > > being undefined.  This variable was added here:
-> > > 
-> > > 781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
-> > > 
-> > > And its first use was added here:
-> > > 
-> > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> > > 
-> > > Which matches my experience.
-> > > 
-> > > So left to myself, I would run on these commits with the above hunk:
-> > > 
-> > > 54a58a7877916 sched/fair: Implement DELAY_ZERO
-> > > 152e11f6df293 sched/fair: Implement delayed dequeue
-> > > e1459a50ba318 sched: Teach dequeue_task() about special task states
-> > > a1c446611e31c sched,freezer: Mark TASK_FROZEN special
-> > > 781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
-> > > f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
-> > > 2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-> > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-> > > 
-> > > And where needed, remove the unused cfs_rq local variable.
-> > > 
-> > > Would that likely work?
+>>> I know you want your problem (io_uring showing up as 100% busy even
+>>> though it's just sleeping) to be solved like yesterday and my opinion
+>>> on a future timeline might not be enough to convince you of much. I
+>>> wanted to share it anyway. I don't see an issue with the actual code
+>>> you're proposing, but it does feel like a step in the wrong direction
+>>> to me.
+>>
+>> As mentioned in my original reply, I view this as entirely orthogonal,
+>> and while I appreciate your efforts in this area, I'm a little tired of
+>> this being brought up as a gatekeeping metric when it's not there.
 > 
-> Sounds about right.
+> I can understand you being tired of me bringing this up, but I'm not
+> gatekeeping this series, not intentionally anyway.
+
+Well it does feel like that, because this orthogonal (imho) development
+is being brought up as a means to not needing to do this. Not just this
+posting, but past ones too. Meanwhile, I'd like this problem solved, and
+this just adds noise to it as far as I'm concerned. It would be a lot
+better to split those two discussions up.
+
+>> If we can eliminate iowait for boosting down the line, then I'm all for
+>> it. But this has now been pending for > 6 months and I don't think it's
+>> far to keep stringing this along on a future promise. This isn't a lot
+>> of code and it solves the issue for now, if the code will get removed
+>> down the line as not needed, then that's certainly fine. For now, we
+>> need it.
 > 
-> > > 
-> > > In the meantime, SIGFOOD!
-> > 
-> > Hearing no objections...
-> 
-> Yeah, sorry, I'm on holidays with the kids and not glued to the screen
-> as per usual :-)
+> I'm fine with carrying a revert of the series along my patchset.
 
-No worries, and have a great holiday!!!
+OK that's fine, and let's hope we end up in a place down the line that's
+a lot better than the iowait on/off we have now, with guesswork based on
+past behavior (iow, mostly wrong) on the other end on how long the we
+expect to sleep. I'd certainly be all for that, I just don't want future
+promises to stop fixing a real issue we have now. If this series goes
+away down the line because we don't need it, I surely won't cry over it!
 
-> > Given two patches each of which might or might not need to be applied to a
-> > given commit, I chose to rebase as follows:
-> > 
-> > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-> > 8aed87410a695 EXP sched/fair: Provide DELAY_ZERO definition
-> > 	I took this from 54a58a7877916 sched/fair: Implement DELAY_ZERO.
-> > 49575c0087bc0 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-> > 14c3207fd2456 sched/fair: Prepare pick_next_task() for delayed dequeue
-> > be567af45dd04 sched/fair: Implement ENQUEUE_DELAYED
-> > 	I dropped the unused cfs_rq local variable from requeue_delayed_entity()
-> > ed28f7b3ac3f4 sched,freezer: Mark TASK_FROZEN special
-> > 48d541847b4a6 sched: Teach dequeue_task() about special task states
-> > ef3b9c5d038dc sched/fair: Implement delayed dequeue
-> > 	--- First bad commit with dequeue_rt_stack() failures.
-> > 876c99c058219 sched/fair: Implement DELAY_ZERO
-> > 	I added the cfs_rq local variable to requeue_delayed_entity()
-> > 
-> > This is on -rcu branch peterz.2024.08.23b.
-> > 
-> > I ran 50*TREE05 in a bisection, which converged on be567af45dd04, but only
-> > one run of the 50 had a complaint, and that was in enqueue_dl_entry(),
-> 
-> Hmm, I have one other report about that. Hasn't made much sense yet --
-> then again, as per the above mentioned reason, I'm not able to put real
-> time in atm.
+-- 
+Jens Axboe
 
-I ran 1000*TREE03 on that same commit, no failures.  Just started
-5000*TREE03, and will let you know what happens.  This will likely take
-better part of a day to complete.
-
-> > not the dequeue_rt_stack() that I have been chasing.  I ran three
-> > additional 50*TREE05 runs on its predecessor (14c3207fd2456) with no
-> > failures.  I then ran 50*TREE03 on each of ed28f7b3ac3f4, 48d541847b4a6,
-> > and ef3b9c5d038dc.  Only this last ("ef3b9c5d038dc sched/fair: Implement
-> > delayed dequeue") had failure, and they were all the dequeue_rt_stack()
-> > failures I am chasing.  One of the runs also hung.
-> 
-> I'm a little confused now though; this is with the dequeue removed from
-> switched_from_fair() ?
-
-Ah!!!  I thought that change was for the build issue, which I will
-admit puzzled me a bit.
-
-> Looking at your tree, 49575c0087bc0 still has that dequeue. Does the
-> dequeue_rt_stack() issue go away with that line removed?
-
-I will try it and let you know.  Thank you for reminding me!
-
-							Thanx, Paul
 
