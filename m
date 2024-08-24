@@ -1,57 +1,51 @@
-Return-Path: <linux-kernel+bounces-299804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF8C95DA3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:31:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD9495DA3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62A51F23441
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:31:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756B9284AE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2085C2C80;
-	Sat, 24 Aug 2024 00:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB50257D;
+	Sat, 24 Aug 2024 00:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuZlOqm+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJiBFL9J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51995161;
-	Sat, 24 Aug 2024 00:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6FD161
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 00:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724459493; cv=none; b=b5v43yKI1PikKmis3T2LlBWvvX38GcsUfB6DX6fDD6Ak4W0YxX3sUfveA8vh9ixarsGQM3LVYxpoMjaNHDaVE/LuL/zlXzTIiF1NLcYM/3XMkGb0MfNR1ZKjWoBpDFEMhEuU4VursEtcBwODCdEqb7Ps4n7nEUrQH/QctevN+jw=
+	t=1724460297; cv=none; b=mJxRDyvuZt0ZA7SCzvrGT4UvwWs3Bwr78qtkXRQdqTHK3ZFZzR+ktxb30dYQ9xJ9pMLn4Dyyg1tIc90qlllkwAbT6Rl+a2RGLuFUKmDRGsUSM0WXfypm1YpdFwKUMZAQN/dJgLE9c/7iv3IeOvTqDg2CWazCR8LFZJJGU+pTgZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724459493; c=relaxed/simple;
-	bh=M8M6JKbFYQJixFrU+1nEsjWDvBaW6/wRHoFZF2YoaRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qeI1aFAyfaWoj+Oxh3DLvjLl5tvlATJi3r1TOK3bSehLVQ9cO/zlDXOW2PlijsLbe+zdlY8erDiiv5cgQkSogGFAibZKv67q1ZgKIgNhr/oX8a/kWImNGfYDqjCiMAdZHDuB3VP+gBcgCujqwdf/rDpLRrZ+CKS8qOAJV0S3Axw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuZlOqm+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A2DAC32786;
-	Sat, 24 Aug 2024 00:31:30 +0000 (UTC)
+	s=arc-20240116; t=1724460297; c=relaxed/simple;
+	bh=HHEjcaYJKwK2DJBCvLb41BHJFBYqPtFELEzoih4Ng2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bCZDU4V0UzPWfrL2mdPF6syzTjZVrl/LtPg7/p3yEdX/QP0J12ST+s9J8JsWFJgO8Us3xYfvkVb81S3IkJqXWF86gcn0BujAOlR58vhw1mvDlNYpUtmw4qe+GQVAI/US0qFI/pxaa6K2whwQGgGummCr2yWI0VAY0stzi9E2fds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJiBFL9J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923B5C32786;
+	Sat, 24 Aug 2024 00:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724459492;
-	bh=M8M6JKbFYQJixFrU+1nEsjWDvBaW6/wRHoFZF2YoaRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UuZlOqm+mfxnvFYsN1XZ//LN5lrwmKDSZ3hCjedw6CSZndSspdMpdzZmwYrMBBcfP
-	 G6uKMh6tQs7VAMbeGW2lpEUcFiIdz0rAVepCdAilTQ7sjW/YgPHHj4tq6y5+dpFnQT
-	 9BkqMgEV1PJSmlCRRXwzXyTAMqZFaRIxMMUs+I0LHQIsD6WG72Mw0ITMyXYUkuMJ3n
-	 UaCT/tDsDUns+mwS13nR2kSlebNqT6SVCtuQzZ4czZ7fbLPmdhH8xYcqDXZ6GdaL4c
-	 Y6k5MtKyyxq34pqYaYm8B+aUC5a24MRODlWobw+EF+IsJaAFZoVKVnvJjhWknQSOkq
-	 ge2FzKD3zfTcQ==
-Date: Sat, 24 Aug 2024 02:31:27 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-Message-ID: <Zskp364_oYM4T8BQ@pollux>
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+	s=k20201202; t=1724460296;
+	bh=HHEjcaYJKwK2DJBCvLb41BHJFBYqPtFELEzoih4Ng2M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QJiBFL9JpfD6tSf//s4VNTTx0bHJTbmOhQBJrCbt+rDJGmNd0iW20sKqLNksuk8nP
+	 PAKGSuscHZWY81rIAXZgiiM9NrF/AOTmcMOD36agbddTp0FOomuqT6RbjQ6W7LP4fw
+	 8h59rSgTKJujj3flNQ/T/TWmCJRB/wU+yBrKDYay7n/qX2XiXwxQQoGdofXfct7r0P
+	 AvyGOqH30O327vPZhkRvFcsshmQWt0gmODTkjgL3IKoCY7XQYCXQr5yOqfK7teuv+J
+	 8I50YmUIXyD1RoWIw8Oxrt1SA8cJOtkGlfxsh55kg120i9teDZawY/tJuSwhJ9tKdd
+	 qlvDspvmpCscw==
+Date: Fri, 23 Aug 2024 14:44:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [GIT PULL] workqueue fixes for v6.11-rc4
+Message-ID: <ZsktB3D_K-80uc35@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,131 +54,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823-firmware-traversal-v2-1-880082882709@google.com>
 
-On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
-> Most firmware names are hardcoded strings, or are constructed from fairly
-> constrained format strings where the dynamic parts are just some hex
-> numbers or such.
-> 
-> However, there are a couple codepaths in the kernel where firmware file
-> names contain string components that are passed through from a device or
-> semi-privileged userspace; the ones I could find (not counting interfaces
-> that require root privileges) are:
-> 
->  - lpfc_sli4_request_firmware_update() seems to construct the firmware
->    filename from "ModelName", a string that was previously parsed out of
->    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
->  - nfp_net_fw_find() seems to construct a firmware filename from a model
->    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
->    think parses some descriptor that was read from the device.
->    (But this case likely isn't exploitable because the format string looks
->    like "netronome/nic_%s", and there shouldn't be any *folders* starting
->    with "netronome/nic_". The previous case was different because there,
->    the "%s" is *at the start* of the format string.)
->  - module_flash_fw_schedule() is reachable from the
->    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
->    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
->    enough to pass the privilege check), and takes a userspace-provided
->    firmware name.
->    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
->    network namespace that a special kind of ethernet device is mapped into,
->    so I think this is not a viable attack path in practice.)
-> 
-> Fix it by rejecting any firmware names containing ".." path components.
-> 
-> For what it's worth, I went looking and haven't found any USB device
-> drivers that use the firmware loader dangerously.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> Changes in v2:
-> - describe fix in commit message (dakr)
-> - write check more clearly and with comment in separate helper (dakr)
-> - document new restriction in comment above request_firmware() (dakr)
-> - warn when new restriction is triggered
-> - Link to v1: https://lore.kernel.org/r/20240820-firmware-traversal-v1-1-8699ffaa9276@google.com
-> ---
->  drivers/base/firmware_loader/main.c | 41 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> index a03ee4b11134..dd47ce9a761f 100644
-> --- a/drivers/base/firmware_loader/main.c
-> +++ b/drivers/base/firmware_loader/main.c
-> @@ -849,6 +849,37 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name,
->  {}
->  #endif
->  
-> +/*
-> + * Reject firmware file names with ".." path components.
-> + * There are drivers that construct firmware file names from device-supplied
-> + * strings, and we don't want some device to be able to tell us "I would like to
-> + * be sent my firmware from ../../../etc/shadow, please".
-> + *
-> + * Search for ".." surrounded by either '/' or start/end of string.
-> + *
-> + * This intentionally only looks at the firmware name, not at the firmware base
-> + * directory or at symlink contents.
-> + */
-> +static bool name_contains_dotdot(const char *name)
-> +{
-> +	size_t name_len = strlen(name);
-> +	size_t i;
-> +
-> +	if (name_len < 2)
-> +		return false;
-> +	for (i = 0; i < name_len - 1; i++) {
-> +		/* do we see a ".." sequence? */
-> +		if (name[i] != '.' || name[i+1] != '.')
-> +			continue;
-> +
-> +		/* is it a path component? */
-> +		if ((i == 0 || name[i-1] == '/') &&
-> +		    (i == name_len - 2 || name[i+2] == '/'))
-> +			return true;
-> +	}
-> +	return false;
-> +}
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Why do you open code it, instead of using strstr() and strncmp() like you did
-in v1? I think your approach from v1 read way better.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-> +
->  /* called from request_firmware() and request_firmware_work_func() */
->  static int
->  _request_firmware(const struct firmware **firmware_p, const char *name,
-> @@ -869,6 +900,14 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->  		goto out;
->  	}
->  
-> +	if (name_contains_dotdot(name)) {
-> +		dev_warn(device,
-> +			 "Firmware load for '%s' refused, path contains '..' component",
-> +			 name);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
->  	ret = _request_firmware_prepare(&fw, name, device, buf, size,
->  					offset, opt_flags);
->  	if (ret <= 0) /* error or already assigned */
-> @@ -946,6 +985,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->   *      @name will be used as $FIRMWARE in the uevent environment and
->   *      should be distinctive enough not to be confused with any other
->   *      firmware image for this or any other device.
-> + *	It must not contain any ".." path components - "foo/bar..bin" is
-> + *	allowed, but "foo/../bar.bin" is not.
->   *
->   *	Caller must hold the reference count of @device.
->   *
-> 
-> ---
-> base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-> change-id: 20240820-firmware-traversal-6df8501b0fe4
-> -- 
-> Jann Horn <jannh@google.com>
-> 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.11-rc4-fixes
+
+for you to fetch changes up to c4c8f369b6a6d21ce27286de1501137771e01dc3:
+
+  workqueue: Correct declaration of cpu_pwq in struct workqueue_struct (2024-08-05 18:34:02 -1000)
+
+----------------------------------------------------------------
+workqueue: Fixes for v6.11-rc4
+
+Nothing too interesting. One patch to remove spurious warning and others to
+address static checker warnings.
+
+----------------------------------------------------------------
+Lai Jiangshan (1):
+      workqueue: Remove incorrect "WARN_ON_ONCE(!list_empty(&worker->entry));" from dying worker
+
+Nikita Shubin (1):
+      workqueue: doc: Fix function name, remove markers
+
+Tejun Heo (1):
+      workqueue: Fix spruious data race in __flush_work()
+
+Uros Bizjak (1):
+      workqueue: Correct declaration of cpu_pwq in struct workqueue_struct
+
+Will Deacon (1):
+      workqueue: Fix UBSAN 'subtraction overflow' error in shift_and_mask()
+
+ Documentation/core-api/workqueue.rst |  2 +-
+ kernel/workqueue.c                   | 50 +++++++++++++++++++-----------------
+ 2 files changed, 28 insertions(+), 24 deletions(-)
 
