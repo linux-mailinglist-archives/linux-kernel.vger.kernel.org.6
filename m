@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-300046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5152E95DE1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B2295DE22
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5B84B21E4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121241F221FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED73176AC3;
-	Sat, 24 Aug 2024 13:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TepTd2Io"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64CC176FB0;
+	Sat, 24 Aug 2024 13:42:37 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746541BDDB;
-	Sat, 24 Aug 2024 13:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB7F111AD;
+	Sat, 24 Aug 2024 13:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724506540; cv=none; b=fzqnsD2/kc9GuEu46R/jbX9aSOfqU7sHPnkEACoP+7LwT0+za9/g9AAeCN0GrykIOvvu97m91QM8YsKu9IRR1kS2V138cBdWQlogBJ3uXdlnyu3PJ4dN56wowhgddK6khg4QAsDIPG9MfY2UaIdayyCzdYFi+0YktQpX67X7xUs=
+	t=1724506957; cv=none; b=gL0Xu9c27vRgCMxmiA//DpCtSc9KCUrEwjuhquzt8KDgrZkBB+qsscQv9PTxeVrV2dUziDi1zsp2cQ3TUwVuwvDkdYKZAJLxIQSdfkUpAe0dHoe77Vmghuj8xTB9T7eUn4jMo71nBFnaEGAh8FDEDcbz34iaAT8hnKXYY0S4H1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724506540; c=relaxed/simple;
-	bh=K/ysHGSh2tpJMGU0zcN1LbvUjYwlWxuw99THfl478WQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=msGBSUjcWEz+VDFTMdZbv1LBiaux4oDlBf1FKnl64E2GJkeMdOqmQiRRJEuvMWh8eNZWGzPYkPeFOSsZLEHCEnbuHPnVL9Sz9TXvRgxidgIHsyaVs1jGJ9pclNfml+8wSzf12MQy+hNi5PgeZVnIEj5krtWwHxvLXsRR4dGN1b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TepTd2Io; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-534366c1aa2so2009423e87.1;
-        Sat, 24 Aug 2024 06:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724506536; x=1725111336; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=loqmru87kWNBUwgs1DTG9KZigit4FCc1OkbpRIzXkKo=;
-        b=TepTd2Ioun/GRCaA2HP5BCYojx/gbqwkKzRMomoaeyVCBm4DS5NXv55ZiwKcJgQCIA
-         0XUK+SbQ15f/PgT8B3YJHDX5c5zK2enX55rxmp7H9rReN5rQ6Xfdyfh73d4/mtrL8L8V
-         rHMoJTwcTBttCB74X/8+nI+J+bfjjbqHXOON6abdZopEgvOB8VX5gq3wtCKlmrrBe4dN
-         J6+cJm+9JH2RtMq7JPHUsDMWQG+uaLIGB8g18P/bZtdPLbryAlSe1TCbtc1CZLD7vbPh
-         z8dL1AZnvrML1urmJiFYPNM7vylnawF01MA2H5RVof/aehpQUopwJOExBPKzs8gGI1Vf
-         OQXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724506536; x=1725111336;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=loqmru87kWNBUwgs1DTG9KZigit4FCc1OkbpRIzXkKo=;
-        b=XFcfHDU6KTALpCJZIwHOuc9tklUjIvHmiXOyiZyl14BFAKmeIoag61Be5fMhZbbbD4
-         wI2CUxYueM2BpJQqHzaQuvfdCuNDe0Xueqh5Z6Ca15t3Saoar9pX81ZchCyKnqV4+B8B
-         5W8anzT16Z9zplK8omM7kl4zA1DrD1D+MztzMKDfHWux9LjYwCxvARlewCpvmmo84krr
-         dn7w0iFtbDb4mg5IeqN9wdDyeach3wrinM0XPzHjeNC1wsZuyu+nd1/Q2gTcB2qxR+hX
-         ci/WaqIf7NOyl/kkqeTAHoG7kwElqWuhmN2H+VyGQp93IixX8MIanSiTWzFoL9Hi6rXt
-         7b7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDeRORNw5G9aciF2rPhQ2kZ/4WdjSw4QCg2fVKdJpMpSSTjw+b9VbZygziYA3WrukH5KMnEd/aho8f@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlOCCuTDJOIkcCr2e/XDm+U1cmqlX0GPuMu9dB44ZmHIYkRKsK
-	gVrW/nXg8metqRmRYa0adPF7qxuB9Ka2z7/8jRucjeAuqklY35JVTNsQ2AjQp/9xbqBLyPkG0mx
-	GQcbI3/o2z/yM9elHKTgT0YcgPFsbrw==
-X-Google-Smtp-Source: AGHT+IFsJFvJKiSYg5+HQTRFRMt8EpNAVNRT1cXUCMCnQ6ElfGri7YUdpNRCdpj9IH7SB08a7En0SqqJVfkzshY1eOA=
-X-Received: by 2002:a05:6512:3d24:b0:52c:e3ad:3fbf with SMTP id
- 2adb3069b0e04-5343885f866mr3083774e87.42.1724506536013; Sat, 24 Aug 2024
- 06:35:36 -0700 (PDT)
+	s=arc-20240116; t=1724506957; c=relaxed/simple;
+	bh=bw9ORmxsQ6caup9Mnh9BhSq+xVQNAWDa7nOcdY/pe3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=V+VZg6ddiDtMEUGMQCgKuxZA8S7y0eSHraBuOuVRRkSOACZLjooNxo7hqITu76bI3jdfFy/rzPL3zO/jAWNuoLkBHWR1qN0w7GNYEXTHFF2I7mC2zhrvNu63ZuwfwGVgXsX1mImXf6pwzIjGOQaknA96SFUrQ+iVYEJOmq97Sy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1shqtQ-0071uy-0i;
+	Sat, 24 Aug 2024 21:42:10 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 Aug 2024 21:42:09 +0800
+Date: Sat, 24 Aug 2024 21:42:09 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: VanGiang Nguyen <vangiang.nguyen@rohde-schwarz.com>
+Cc: steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] padata: use integer wrap around to prevent deadlock on
+ seq_nr overflow
+Message-ID: <ZsnjMWrFP0IYJmaa@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 24 Aug 2024 08:35:23 -0500
-Message-ID: <CAH2r5mt24xmXoKUiqHhGzEqXxwusQQQ9iQk0up6xzMbP9xfrKQ@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a16995232eda4d39812f4bd94d9fb846@rohde-schwarz.com>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
 
-Please pull the following changes since commit
-b311c1b497e51a628aa89e7cb954481e5f9dced2:
+VanGiang Nguyen <vangiang.nguyen@rohde-schwarz.com> wrote:
+> When submitting more than 2^32 padata objects to padata_do_serial, the
+> current sorting implementation incorrectly sorts padata objects with
+> overflowed seq_nr, causing them to be placed before existing objects in
+> the reorder list. This leads to a deadlock in the serialization process
+> as padata_find_next cannot match padata->seq_nr and pd->processed
+> because the padata instance with overflowed seq_nr will be selected
+> next.
+> 
+> To fix this, we use an unsigned integer wrap around to correctly sort
+> padata objects in scenarios with integer overflow.
+> 
+> Co-developed-by: Christian Gafert <christian.gafert@rohde-schwarz.com>
+> Signed-off-by: Christian Gafert <christian.gafert@rohde-schwarz.com>
+> Co-developed-by: Max Ferger <max.ferger@rohde-schwarz.com>
+> Signed-off-by: Max Ferger <max.ferger@rohde-schwarz.com>
+> Signed-off-by: Van Giang Nguyen <vangiang.nguyen@rohde-schwarz.com>
+> ---
+> kernel/padata.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  Merge tag '6.11-rc4-server-fixes' of git://git.samba.org/ksmbd
-(2024-08-20 19:03:07 -0700)
-
-are available in the Git repository at:
-
-  git://git.samba.org/ksmbd.git tags/6.11-rc5-server-fixes
-
-for you to fetch changes up to 2b7e0573a49064d9c94c114b4471327cd96ae39c:
-
-  smb/server: update misguided comment of smb2_allocate_rsp_buf()
-(2024-08-22 09:52:00 -0500)
-
-----------------------------------------------------------------
-Five ksmbd server fixes
-- query directory flex array fix
-- fix potential null ptr reference in open
-- fix error message in some open cases
-- two minor cleanup
-----------------------------------------------------------------
-ChenXiaoSong (4):
-      smb/server: fix return value of smb2_open()
-      smb/server: fix potential null-ptr-deref of lease_ctx_info in smb2_open()
-      smb/server: remove useless assignment of 'file_present' in smb2_open()
-      smb/server: update misguided comment of smb2_allocate_rsp_buf()
-
-Namjae Jeon (1):
-      ksmbd: the buffer of smb2 query dir response has at least 1 byte
-
- fs/smb/server/oplock.c  |  2 +-
- fs/smb/server/smb2pdu.c | 18 +++++++++---------
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
---
-Thanks,
-
-Steve
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
