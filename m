@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-300097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F7D95DEC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:53:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C2895DECA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E42B218B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC2A1C20F89
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB4F1547C0;
-	Sat, 24 Aug 2024 15:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B551714C6;
+	Sat, 24 Aug 2024 15:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UeP8VMU1"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="d+Mrv06h"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C26A947
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 15:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DC536124
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 15:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724514816; cv=none; b=ZAiYDAmIhhP1rcF78VRvJbczsxK6lkY92mK6NteYye6JIidh1X2ipS1epoxBsjcS9MogdNpYV/epB90u2zUUcANLqnCjJscWTkF8Z1YNK0T7N1jKrauRgp3yLcQ249waYRQ1e60uWpi4bFbyuNLCIzstiREO8fGSlxZuK9U7SYc=
+	t=1724514838; cv=none; b=LvWM/cc8wEGJ9DkFwiiFy67hi68kRyX+ZbwzYGUYozt53kdbRLCC1JibdXJfHPEnG/GY/UVhp+mA2WWTHLRgnpZleEJlgcZvRI+cctqOqZY/Vf2j5ews5BOpE3P8u2EY0gOS4elc8zEG1zM2StFnJs+OUWPquFbE5Z4CpfVeBbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724514816; c=relaxed/simple;
-	bh=Hgk4/oHKtU0z6EdJ+JUgoxdStaDrEfvcEdgsgJBagY4=;
+	s=arc-20240116; t=1724514838; c=relaxed/simple;
+	bh=eZwCHFaK83Pk8cBPTmY04gzAYrkyw0p4RSuC221SbE4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLTmitxIMT9muQ8E+n9ygTaTg3WYB0CAb/bURsl7uMC9wNAMY+QbOgoJTMMPFS8UmyIPJBQ1oCyG98l/uvYSbJTtDY995U6e123pUroEc9Doq8lA4MTNXBnxRBedP8v7SIuw87H/PZQcgbdbKMMeJVXWOqGv3PjL6WP2PJQw0ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UeP8VMU1; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:Content-Type; b=izzNAvh3gVXLO5PRERLE714Np17IyAbSN6VPBquoynu1soYBGevrizaluJhf9qBsTDmps4kl2Q4VWMgSsqoENSTZAXKUtbHM1wpzzsX+gUsw2k23vIrrh5Zk8IzYdkbSf+TKRo/LbiZw/8tt49A2SsjFvG4JXs8XZaDrM/cSh7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=d+Mrv06h; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bf0261f162so3665202a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:53:34 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5befd2f35bfso3633472a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724514813; x=1725119613; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1724514835; x=1725119635; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mLkI2aUTuni9NFuB5OOLVo8J+M0TP1LBFtceUNfr7a8=;
-        b=UeP8VMU1/0BQq5PEzXhc8wMAC87ToMUt8jumiGryvdFLVyKENJHJW4WyOwxV0dpdAK
-         fdCLXmyktgxmkg9gdxRMBgFpcnWYCDnXDvo0hZqMpBqrNe/V2Z3wYtPRVI08BKSnrfwH
-         QsEfA/2LEMLWpQB1e6QKuM928K2WARv6ybONfIVzI8MqHZ68OybRUxAiTQXbTZoQJc2W
-         5SoJiqFNkpfN8y7jtBcj+Adw/ZtZLKobLfSCW7Rk1jCcjy9kkxGdAKD+PrfLs144q7+t
-         ResursGQHSC5TZoD7fsfMTIjuX62DCdql3cqgEw2Pzwtna1oCCpkv54iBzFFZsjmYocc
-         TOaw==
+        bh=rI8zyZMDPlp0E+TRP5vsDLFEWRVi3w2uJfICD8aPjx4=;
+        b=d+Mrv06h2v0mPYrP/a77u7/89fNuhe3eSi2E8ZupA8S1+bH8GFSEBNXoX8o86Sbu8e
+         DhNe8rWmFl0NAxrPg1A3ZfZQZp1BmVlAX2CzNjxp5M7DlLcnB4Soz/j+wBBxCApnV4mp
+         OYpCvpYJjLwrecbDcW9DkCi11QgxNm/mjmswQrsvQKr3BvfpQQVkNKNAp/hgedH+E2li
+         8FqbUyG6VjUWbdf6IICPd2Mi8XXAubkJr1FjM3XOR0Rs6+nWvHY5pt+cArraYm3GW4l7
+         NuHNAaKc9+9iY+R+thxEaB2QvMibCrkmZVOj/B7lX+d/o1YNlQjsN83m9AEQ7/vXSCxy
+         F4CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724514813; x=1725119613;
+        d=1e100.net; s=20230601; t=1724514835; x=1725119635;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLkI2aUTuni9NFuB5OOLVo8J+M0TP1LBFtceUNfr7a8=;
-        b=FVXayN1AV+U1bcXBlh91PsXIbK1irNxio9Rw5uooCOoIaJiRFlNeEYn3LQJkM40USK
-         jRpmKiFjGqA5yyBPeDDPp5rQ41R4OM9uFsRaLLjJNM3LOI5zHC+9j51vkRCKUz5TZkhr
-         0TeFiPTE0A22ljU+dAsRwTh8CC/pWXowiCKaYTVQwc8AicxEZ1jeLuzfH4Cq02IkQkXU
-         M7rJSjcBaVBCZxCDtA6jTjQVFM9ET55sYHyj/yXbW9DCNA4gdDvcx4tZo5G+YnMH4Qw6
-         3LLzefHN5aqipRBYv0JUfvsYxkI2DuXSiLx93Tv0GOMLD0VCY0i2VTJ6TEC6NqUiyhSB
-         svqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaeFn5SCooPNxZdSMgA86Ex0jviW5n3np7/CiXebvAbtNjGaKIxwEhnUZY/Nv0m9fDsmTVqGoG4F3pTbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR8L5QvkoY+uYgvCtz1S6101OOrmgHpxg/itLYzCo2tMgWRsuh
-	796krH2xAZXwJ4tOxO89OuV2jdLNSAu8rOoO43QoadNpp7YVLytYHhEKWT6AIp8=
-X-Google-Smtp-Source: AGHT+IGDaXHidgJHARyBVubzO2NqL+q6YUKRQZn6433SWaj5ajYCUpE1q0Y1qN+NTxESjaN4CpGx2g==
-X-Received: by 2002:a05:6402:90b:b0:5be:bcdf:4110 with SMTP id 4fb4d7f45d1cf-5c08910fb32mr4066408a12.0.1724514812785;
-        Sat, 24 Aug 2024 08:53:32 -0700 (PDT)
+        bh=rI8zyZMDPlp0E+TRP5vsDLFEWRVi3w2uJfICD8aPjx4=;
+        b=MGxuivIW73i3Sum6QA+lG7qBMccixSk8BoOPKtpgfJaAGmdMY0+YrP0NJ+G+kLHzbh
+         IZLNMQWmq0Zk8L2csOAaODkS22K7Fn+hiaGrGnvfJJprxOCTOBQcZwS36MYSicfoDKd3
+         dPeNm6vXbTzeLP2JUAgwQ6oJ5OD0juVgoa6iYBNHQGQ1UtFPbb/sFWK5TgOG2wrDa73q
+         0B5s1baeDN5FKYFi5HD//6P1ljNl3G71EwpRvVyLz53nHoLHOTAmBOJYlkfPgfAKgQbe
+         FGP9DvjcO+B9knVGGjFkVOeNbYtKs9mXP7VsZ6ElOgVhqPKkpMGmewfetPOriAfCNtW8
+         1D9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaPqp5R26dofw+xwaEaE6sDeTn6Q16VmwcQtCCP0z2RcPauJwtBU+ezKzJUOzhvkaKajTmRTg19Fr3j+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweckAi62i+JReAqsRULT6wpA8L2Qwv0AE2b2gRnETU2H4uVnDm
+	j7Ak/CAW9emnbY76aqhNp4DOKwTKgeCsfvX8xeo6ohfNroyotx0g7btAHHfDrqc=
+X-Google-Smtp-Source: AGHT+IHdVieXWL+We0P8P43fQh9DqWzftDnSlHUVujJnh/eOwXF2Q+eAaQN4jLT7LE8PsKKCcpm6zQ==
+X-Received: by 2002:a05:6402:13d0:b0:5c0:8ff7:e672 with SMTP id 4fb4d7f45d1cf-5c08ff7e789mr2433515a12.22.1724514835180;
+        Sat, 24 Aug 2024 08:53:55 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.94])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ca4d2sm3434336a12.36.2024.08.24.08.53.31
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ca4d2sm3434336a12.36.2024.08.24.08.53.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Aug 2024 08:53:32 -0700 (PDT)
-Message-ID: <25dcd6bb-5586-4b32-9a12-7e82126cc876@tuxon.dev>
-Date: Sat, 24 Aug 2024 18:53:31 +0300
+        Sat, 24 Aug 2024 08:53:54 -0700 (PDT)
+Message-ID: <6a234b6b-ac4c-4fa8-8809-df56327f7b9c@tuxon.dev>
+Date: Sat, 24 Aug 2024 18:53:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,8 +75,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 11/12] nvmem: microchip-otpc: Enable main RC oscillator
- clock
+Subject: Re: [PATCH v1 04/12] nvmem: microchip-otpc: Add SAM9X60 support
 Content-Language: en-US
 To: Alexander Dahl <ada@thorsis.com>
 Cc: Christian Melki <christian.melki@t2data.com>,
@@ -85,75 +84,35 @@ Cc: Christian Melki <christian.melki@t2data.com>,
  <linux-arm-kernel@lists.infradead.org>,
  open list <linux-kernel@vger.kernel.org>
 References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-12-ada@thorsis.com>
+ <20240821105943.230281-5-ada@thorsis.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240821105943.230281-12-ada@thorsis.com>
+In-Reply-To: <20240821105943.230281-5-ada@thorsis.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 21.08.2024 13:59, Alexander Dahl wrote:
-> Without enabling that clock, initializing the packet list leads to a
-> read timeout on the first packet.
-> 
-> According to SAM9X60 datasheet (DS60001579G) section "23.4 Product
-> Dependencies" the clock must be enabled for reading and writing.
-> 
-> Tested on sam9x60-curiosity board.
+> Register layout is almost identical to sama7g5 OTPC.
+
+Can you please mention some major differences?
+
 > 
 > Signed-off-by: Alexander Dahl <ada@thorsis.com>
 > ---
->  drivers/nvmem/microchip-otpc.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  drivers/nvmem/microchip-otpc.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-> index a80535c3d162..047ca5ac6407 100644
+> index bd3383eabdf6..b8ed7412dbca 100644
 > --- a/drivers/nvmem/microchip-otpc.c
 > +++ b/drivers/nvmem/microchip-otpc.c
-> @@ -8,6 +8,7 @@
->   */
+> @@ -271,6 +271,7 @@ static int mchp_otpc_probe(struct platform_device *pdev)
 >  
->  #include <linux/bitfield.h>
-> +#include <linux/clk.h>
->  #include <linux/dev_printk.h>
->  #include <linux/iopoll.h>
->  #include <linux/module.h>
-> @@ -54,6 +55,7 @@
->  struct mchp_otpc {
->  	void __iomem *base;
->  	struct device *dev;
-> +	struct clk *clk;
->  	struct list_head packets;
->  	u32 npackets;
+>  static const struct of_device_id __maybe_unused mchp_otpc_ids[] = {
+>  	{ .compatible = "microchip,sama7g5-otpc", },
+> +	{ .compatible = "microchip,sam9x60-otpc", },
+>  	{ },
 >  };
-> @@ -272,6 +274,15 @@ static int mchp_otpc_probe(struct platform_device *pdev)
->  	if (IS_ERR(otpc->base))
->  		return PTR_ERR(otpc->base);
->  
-> +	// NOTE: Maybe make this optional, especially if sama7g5 testing
-
-Looking though DS, on SAMA7G5 the clock here should be MCK0. I think it
-should be added for SAMA7G5, too, with a fixes tag.
-
-> +	// shows the clock is not required there?
-
-Use C style comments /* comment */
-
-> +	otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
-
-Maybe name it "bus-clk", "bus" or something otpc specific.
-
-> +	if (IS_ERR(otpc->clk)) {
-> +		dev_err(&pdev->dev, "Error (%ld) getting clock!\n",
-> +			PTR_ERR(otpc->clk));
-> +		return PTR_ERR(otpc->clk);
-
-return dev_err_probe().
-
-> +	}
-> +
->  	reg = readl_relaxed(otpc->base + MCHP_OTPC_WPSR);
->  	if (reg)
->  		dev_warn(&pdev->dev,
+>  MODULE_DEVICE_TABLE(of, mchp_otpc_ids);
 
