@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-299882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB5E95DBD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E6995DBD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E9B1F236E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F6B1C21ACB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84045154456;
-	Sat, 24 Aug 2024 05:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023721547F9;
+	Sat, 24 Aug 2024 05:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RLdUEpqv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zje9nRA+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7D5152196;
-	Sat, 24 Aug 2024 05:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E7A152196;
+	Sat, 24 Aug 2024 05:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724476689; cv=none; b=D7oGd1xK3Q55wHol5XMwxVc/8hdFAitgGWvSfAyCLzUn9RhS9BIDKagyM65IE69H7xO7J1pnTPqO6/deGwcc6p6QDQvyz0lMiTDafbKFF2RWDauU/W6b7+xQZfqgJWx1tJICuAk5a0UU7cOTaMBplSLHeHXLGC2H4NgT2oyJDCo=
+	t=1724476693; cv=none; b=nU/epvylougpfoX5f4pdVtTqG2lm/xpFGFpnCVb9mAXZ5abkf8fUH79fPtm+qWfm04DRswMIIDzmkuFeMu/lqWbYxT5qTakzgDxbLU6Wudniaw7AJnKz/AXnhdAWtxyz0pwt/GJn9XPeBEJx0p+JHyyXMeJ9xNODSZ0eFUAOISQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724476689; c=relaxed/simple;
-	bh=tbL42V7xA89gdaoQidKlBjowYiUCMvR8ALjXWE5YhkU=;
+	s=arc-20240116; t=1724476693; c=relaxed/simple;
+	bh=azPg7rrtfxJn5Mhi1MmD/CDZDJGEeCp638yWW7tRaf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTdLoHMNqnNXdWqPPza6UCOruO0p8FVYGklitTT2V/AoYjfziDtq4wzKSR2CQGvPsDwZD7Cwwchimg+tMLtaaIkKWwbQdnoNUGpd1IUn2E/iTZamxFip9BuKv9luRnCvDPmNj6teL29VEu2FwzsUN7cLCRXwX5+0Mxot8y8+58Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RLdUEpqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8ABC32781;
-	Sat, 24 Aug 2024 05:18:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTqHbJ8AGjDQqPJNBIbV+c18BaoBhe+1ZE2FlFSD2jEEAwhzBRioXVH9Efn0NOzRsUmkIyBbq1T3c9hcHghyo9HTOLaGIrbD5iTiHz4HlosVtNR9y3p7RZkLEZFxQ5wp8vLBoHVv9SuNqaLU4Hso6hh7LUsW+rYk0e9tO8hICbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zje9nRA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3152DC32781;
+	Sat, 24 Aug 2024 05:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724476689;
-	bh=tbL42V7xA89gdaoQidKlBjowYiUCMvR8ALjXWE5YhkU=;
+	s=korg; t=1724476692;
+	bh=azPg7rrtfxJn5Mhi1MmD/CDZDJGEeCp638yWW7tRaf4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RLdUEpqv7Kr/6oelFfLOU/fDluRcUft0DZ3+6Y8zyEjCzjlQ8ECT6WwIEI6k2yTv6
-	 QvkQCs+xvaPaDh1q17t3t/gcQ04Z1C/N9H1i5UgzZH170PkLfPEnbzBBp7vu6NgE26
-	 UJtUW3l8uxLpyBEYLQoDnZr9zWwhDXi7ZwTJbGXE=
-Date: Sat, 24 Aug 2024 10:26:09 +0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexander Aring <aahringo@redhat.com>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org,
-	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com,
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, rafael@kernel.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	lucien.xin@gmail.com
-Subject: Re: [RFC dlm/next 08/12] kobject: add kset_type_create_and_add()
- helper
-Message-ID: <2024082459-neatly-screen-9d29@gregkh>
-References: <20240814143414.1877505-1-aahringo@redhat.com>
- <20240814143414.1877505-9-aahringo@redhat.com>
+	b=zje9nRA+qdlW8ECI+FULVvsuN/c2Wfp/QJuZlwyu18jF2yvlQjLmjrPx3x6cuUKSc
+	 yUEzDUAVF1DJ4ClvAyKhvnFwFfEKLKtI+JtVvnNl36+dPL470VGD/fE/lMS3Xh59q4
+	 /UMe5EP1jGLIxDqWZimmPW0SvbwKGob2X4nSUgaE=
+Date: Sat, 24 Aug 2024 11:08:53 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>
+Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
+Message-ID: <2024082443-mulch-junkie-1f9a@gregkh>
+References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
+ <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240814143414.1877505-9-aahringo@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
 
-On Wed, Aug 14, 2024 at 10:34:10AM -0400, Alexander Aring wrote:
-> Currently there exists the kset_create_and_add() helper that does not
-> allow to have a different ktype for the created kset kobject. To allow
-> a different ktype this patch will introduce the function
-> kset_type_create_and_add() that allows to set a different ktype instead
-> of using the global default kset_ktype variable.
+On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
+> In the similar way, ignore 0 error code (AKA "success") in
+> dev_err_probe(). This helps to simplify a code such as
 > 
-> In my example I need to separate the created kobject inside the kset by
-> net-namespaces. This patch allows me to do that by providing a user
-> defined kobj_type structure that implements the necessary namespace
-> functionality.
+>   if (ret < 0)
+>     return dev_err_probe(int3472->dev, ret, err_msg);
 > 
-> Signed-off-by: Alexander Aring <aahringo@redhat.com>
+>   return ret;
+> 
+> to
+> 
+>   return dev_err_probe(int3472->dev, ret, err_msg);
+> 
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
