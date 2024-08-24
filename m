@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-300137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505AC95DF41
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:44:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B39E95DF3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC991F21D47
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC701C20FDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6771D4F8A0;
-	Sat, 24 Aug 2024 17:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC97256455;
+	Sat, 24 Aug 2024 17:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kB9Kqcrb"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTzxkUqM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98B652F70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2989B4F8A0;
 	Sat, 24 Aug 2024 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724521429; cv=none; b=rtvQBSEavhf0ikPw7xXQNSV5DscqZUBzsDk0KDwVU6oYAAqUQJ9GshxwBjGlss236DTqDpBCqzOncDt0qEq9gw9Fa3FuvBX/K27IRdNbOwO/eYHG8BgGTOdDCO56TRjnu3CEyTLNn+8Yz3Sa9PzsXVeWN7BLFmNUx2+Djpu5Qj4=
+	t=1724521427; cv=none; b=h2RxwIU+NYerraQzBx3OeA17rCmWhRwh+tPL3Mc3ioMeszGSDxjfjItdDOrA9PajgbOt+DmB90I5hPxhvGQMVWlTR4eCuUbM/nJ7X/nVaPDvFVGmAzFlsn4tq+CYmFskEF7l+QLDKhmO76u/rrsU+LQTlzRyOYMsTFsfF4N31E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724521429; c=relaxed/simple;
-	bh=bMZKFkv+aFda24g4rrkG8sDs67ykIpVj05RBn/gBGSc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+dS0Ko5OaFs0PPAaJVsd2zduA5YY4D1/VeEnR1HYBJu0V9Emnhjlg6KwOS4LIhyO7L1o2LF6luDbyiKNiN01uzcLEjHuxExpmATWSdsdwpvm3KI1HIH7uMz6Ll12Qju6BCzo/5qm/aSnAokYFYRhoFofBLqQqFXeYNrKqZCZW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kB9Kqcrb; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OHhbUd103967;
-	Sat, 24 Aug 2024 12:43:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724521417;
-	bh=Gp/NUbYXSsoQpGp1zfrN2LKF0Gk+QIV6vZXm7AxRW/k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=kB9KqcrbvFyNVxsdRp9Wq6VoARY2i6nUYfsi/GsNfZd/H2gdvkPMwQLQFb53+S/gk
-	 jRwm6kCqXynEzA7bvBeUmttnBH2p21MRKoDF032iLbTM1aAnFDJB3mCEQ0MpxEDFA9
-	 cjhCondd/fgFgBhyoTk2ni1x8XDgiscB2slnkkbI=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OHhbEH040417
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 24 Aug 2024 12:43:37 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
- Aug 2024 12:43:37 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 24 Aug 2024 12:43:37 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OHhbnA029666;
-	Sat, 24 Aug 2024 12:43:37 -0500
-Date: Sat, 24 Aug 2024 12:43:37 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Bhavya Kapoor <b-kapoor@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <jm@ti.com>, <vigneshr@ti.com>
-Subject: Re: [RESEND PATCH] arm64: dts: ti: k3-j722s-evm: Add support for
- multiple CAN instances
-Message-ID: <20240824174337.lixnpedg24qaroxs@headed>
-References: <20240808082030.2812216-1-b-kapoor@ti.com>
+	s=arc-20240116; t=1724521427; c=relaxed/simple;
+	bh=3jN+tm6TRIeXJQ6l99NSaIsAt6ky6FvajSCWbwlyKyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZQ32CqOeyETYrxdmPJUZ/7+fp1zfaTBXpY+nHhWQZR5Bxrhre7/mfI95SIUsMug8VKIrXW1zUpNnY4r5xgo6HzWJI6/EI8vTtnm5bT9OLYizjv76joJ4H3Kh0BXRK+/F/Lsfi7vZNPfXmIEYNKfcy2dMjezcKE4SPT2vr4UtBOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTzxkUqM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A35BC32781;
+	Sat, 24 Aug 2024 17:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724521426;
+	bh=3jN+tm6TRIeXJQ6l99NSaIsAt6ky6FvajSCWbwlyKyw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BTzxkUqM34F1jFTGs+EPepSd2f5bf5OvXP/TxXSH8r7jJJ7fEfgNaIR0iy/7U0Oea
+	 +HzbEfgHwgc7hdec+mlNDV1mDS6BptKK5/zHIZo1S1vcle8yKSYQgcbFHape9XNMY7
+	 Zt//cpyZECrZhOSpCBkhXfaydfdPkff1qsx8vBXRmyu2XcQDEHt+kXk4M+Sbt5z9xI
+	 Ro9DaHZTIh6pGy2NSrVGUXXcrzkcW3uuDoWt+QmVbZpDfgNLJFoiXfFxzCVy/0V4zp
+	 QuoT4D53qNfsIg3c1FeVurLpkijuSJu44sDR9OTM6ynVTwstnOaqoA9Eb2/UQVZa/+
+	 NVpSL+StvVGrw==
+Date: Sat, 24 Aug 2024 10:43:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, David Ahern
+ <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn
+ <andrew@lunn.ch>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ <nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 2/6] netdev_features: remove unused
+ __UNUSED_NETIF_F_1
+Message-ID: <20240824104345.196d6564@kernel.org>
+In-Reply-To: <6c72dbc6-98a1-4682-97ca-e2f76c81a178@intel.com>
+References: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
+	<20240821150700.1760518-3-aleksander.lobakin@intel.com>
+	<CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
+	<fc659137-c6f0-42bf-8af3-56f4f0deae1b@intel.com>
+	<CANn89i+qJa8FSwdxkK76NSz2Wi4OxP56edFmJ14Zok8BpYQFjQ@mail.gmail.com>
+	<d080d3a6-3fdd-4edc-ae66-a576243ab3f0@intel.com>
+	<20240822163129.0982128f@kernel.org>
+	<6c72dbc6-98a1-4682-97ca-e2f76c81a178@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240808082030.2812216-1-b-kapoor@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 13:50-20240808, Bhavya Kapoor wrote:
-> CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
-> brought on the evm through headers J5, J8 and J10 respectively. Thus,
-> add their respective transceiver's 0, 1 and 2 dt nodes as well as
-> add the required pinmux to add support for these CAN instances.
+On Fri, 23 Aug 2024 14:34:13 +0200 Alexander Lobakin wrote:
+> > On one hand it may be good to make any potential breakage obvious,
+> > on the other we could avoid regressions if we stick to reserving 
+> > the bits, and reusing them, but the bits we don't delete could remain
+> > at their current position?  
 > 
-> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
-> Reviewed-by: Judith Mendez <jm@ti.com>
-[...]
+> Hmm, sounds fine. IOW just rename all the bits I remove to
+> __UNUSED_NETIF_F_xx?
 
-> +&main_mcan0 {
-> +	status = "okay";
-
-NAK: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
-
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&main_mcan0_pins_default>;
-> +	phys = <&transceiver2>;
-> +};
-> +
-> +&mcu_gpio0 {
-> +	status = "okay";
-> +};
-> -- 
-> 2.34.1
-> 
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Yup!
 
