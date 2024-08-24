@@ -1,111 +1,286 @@
-Return-Path: <linux-kernel+bounces-299950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCAE95DCCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:58:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA33C95DCD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788191C21CC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7B80B22B13
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C99155320;
-	Sat, 24 Aug 2024 07:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F074B154C12;
+	Sat, 24 Aug 2024 07:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H132KVz3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3kf4DsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B12E154BFC;
-	Sat, 24 Aug 2024 07:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C46376E9;
+	Sat, 24 Aug 2024 07:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724486299; cv=none; b=aPHdWO+5ppoUPOWFYcnJfb14X2ZNg/TmlnO1/qGX1NkNl6y3Tjs/URXKVWufVpi4Q5citdu1giIDdNYUmYQgbpMfHbeZ/HAogPx54mcjpEq1Vw8bEwyoaJEuOrDd3cYJaAd/dGMOERLHR5s0eeyvQGbcJpVIkrPNxkR2Ee8JeF8=
+	t=1724486392; cv=none; b=CnftqOKGVMvfqKEcVkVlNS5rv5nPLQL3VnD3n4niythxyNYHE0BtgfcC8AT74lQv3BXVDhl1vrwXDoat2b0/F0cjp2h37o3rb/DlesLrPeIBkuwng5no6l9YB05RO6blgR9VRjsABp9zMzcBThSndmHjDiXuZrWMbv+CSnLQrkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724486299; c=relaxed/simple;
-	bh=+MuJabAXZNXC3PzKmb+ctuTHQcVD5uw07JOm0cukiHM=;
+	s=arc-20240116; t=1724486392; c=relaxed/simple;
+	bh=s1cX48c4dGqS99HJ/A0oVBXL2PLUWSeKDKTkEcyvka4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWySvhytFi2+aDwpTVnYgDYPKOCxc+f/qtu6Oi3l3B2485PhAEfytvZyCAfWeqKLOw+XPhgbQs1o5rZxIlVnMYPatwOdtZ/o3bc+GIkwKvuypocesqojWEiKObFJ71IJNVjb+qBS/qUpbhh0qX7rxNNTsslrd0m+QwYaoItzw1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H132KVz3; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724486297; x=1756022297;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+MuJabAXZNXC3PzKmb+ctuTHQcVD5uw07JOm0cukiHM=;
-  b=H132KVz304XJPf6ReChbID2w1YHRPvxytq0WbDqu4uhidZZSlva4Y4LE
-   pZHl3AGTuAOiweWSGhZDA8IwlbzEoHnXnbMCKukZ/q+5k+rMv9h4gy7Gg
-   lrqNpj8eCrMpC8dgLkyHv94gHXIDAlxwso32cgk3S50h615I0K86g9G+X
-   XmZ+8gxO+63cIdmweFZi0vKY6B783NQbpEeCRiefFnAOryPtfqs9e+VOq
-   tOFi5hsQh2mndrvZc3hgde+agJNmsp977DN6vvWI/rA4Ptt1uBBfTnLlN
-   s4+sWi9vLViQhAOyXzNqIWOYRX9YsZ/Oa0iCAQG3P43fJn22Am1fVQk6v
-   A==;
-X-CSE-ConnectionGUID: vT64KyRhQaW9P0Xy6FbYoQ==
-X-CSE-MsgGUID: atC8vKnuQf2trx1B+MFIWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="23126429"
-X-IronPort-AV: E=Sophos;i="6.10,172,1719903600"; 
-   d="scan'208";a="23126429"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 00:58:17 -0700
-X-CSE-ConnectionGUID: xNO1WY6SQfimIDbJMyQklA==
-X-CSE-MsgGUID: Re7yuOLNQLu2fGkmVM310w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,172,1719903600"; 
-   d="scan'208";a="99531438"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 00:58:12 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id AF4D411F95D;
-	Sat, 24 Aug 2024 10:58:07 +0300 (EEST)
-Date: Sat, 24 Aug 2024 07:58:07 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux.dev, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	"Michael S . Tsirkin " <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-media@vger.kernel.org,
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] dma-mapping: clear mark DMA ops as an architecture
- feature
-Message-ID: <ZsmSj6ZBZqBtjALU@kekkonen.localdomain>
-References: <20240824035817.1163502-1-hch@lst.de>
- <20240824035817.1163502-2-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ww7AsqHAKdK1VPr5kwv4oEFIHeAG9WQp8LMpLbttcs/z12B2yE5IbYWuHsN6mnCis1LU+QkOXW3yLvxTP5gCvMODIMX8P2ZBrZJr0SyEhggaaESyHBvVnWUd1UfBk1VygvYecPaJ/FGGcVttifSmDgI31ni1PAkgzvpOGxvVLX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3kf4DsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29949C32781;
+	Sat, 24 Aug 2024 07:59:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724486391;
+	bh=s1cX48c4dGqS99HJ/A0oVBXL2PLUWSeKDKTkEcyvka4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r3kf4DsWIA5PuvL2zvKI9VfFRzJ/LFvd/5Us+xJzPbRRGhhAFcPQbd9Uxi4p2x0R3
+	 3YlMGT3fChqEHdWURhPEdkEWd9GXFU7mK/apEQkFCydM4VW/Bi5nKNZc0aFwMgSesQ
+	 TrHFvRyuaxFiCu8agoMq3dYUxL2f4WyJRol6ylhlpI/cV14ETYj5aVoGXIXcrsrmw7
+	 oXp6Ni9EJlNcD+E3+u5VwnarTZWriqGpPCQs698XdAX2ZU69V3PGnXxGW9mj8JOPSY
+	 E/1ZANTJoMRe1cKwgY6O4vixNp01Xr4bqZebh6OExLVm9ySlktPnxEV/83H7yRIxLd
+	 akXJxaGWEMmdg==
+Date: Sat, 24 Aug 2024 09:59:44 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	heiko@sntech.de, alexandre.belloni@bootlin.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 8/8] ARM: dts: rockchip: Add Relfor Saib board
+Message-ID: <3qczmjehmxro534jqmophdx3tkbfb6nkdv4jq35cwttqpfcbkx@6zwvtvdmrcbg>
+References: <20240823153528.3863993-1-karthikeyan@linumiz.com>
+ <20240823153528.3863993-9-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240824035817.1163502-2-hch@lst.de>
+In-Reply-To: <20240823153528.3863993-9-karthikeyan@linumiz.com>
 
-Hi Christoph,
-
-On Sat, Aug 24, 2024 at 05:57:58AM +0200, Christoph Hellwig wrote:
-> DMA ops are a helper for architectures and not for drivers to override
-> the DMA implementation.  Unfortunately driver authors keep ignoring
-> this.  Make this more clear by renaming the symbol to ARCH_DMA_OPS,
-> have the three drivers overriding it depend on that.  They should
-> probably also be marked broken, but we can give them a bit of a grace
-> period for that.
+On Fri, Aug 23, 2024 at 09:05:28PM +0530, Karthikeyan Krishnasamy wrote:
+> Saib is an consumer electronics board from Relfor
+> consists of 1GB RAM, 4GB eMMC.
+> Other peripherals:
+>  - Bluetooth 4.2
+>  - WiFi 5G/2.5G
+>  - IR transmitter/receiver
+>  - RTC rv3028
+>  - User leds
+>  - Switch
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Add support for it.
+> 
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+> ---
+>  arch/arm/boot/dts/rockchip/Makefile           |   1 +
+>  .../boot/dts/rockchip/rv1109-relfor-saib.dts  | 439 ++++++++++++++++++
+>  2 files changed, 440 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts
+> 
+> diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
+> index ab4cd9aab722..716f5540e438 100644
+> --- a/arch/arm/boot/dts/rockchip/Makefile
+> +++ b/arch/arm/boot/dts/rockchip/Makefile
+> @@ -2,6 +2,7 @@
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+>  	rv1108-elgin-r1.dtb \
+>  	rv1108-evb.dtb \
+> +	rv1109-relfor-saib.dtb \
+>  	rv1109-sonoff-ihost.dtb \
+>  	rv1126-edgeble-neu2-io.dtb \
+>  	rv1126-sonoff-ihost.dtb \
+> diff --git a/arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts b/arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts
+> new file mode 100644
+> index 000000000000..7d7292bad779
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/rockchip/rv1109-relfor-saib.dts
+> @@ -0,0 +1,439 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2024 Relfor Labs Pvt. Ltd.
+> + */
+> +
+> +
+> +/dts-v1/;
+> +#include "rv1109.dtsi"
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	model = "Rockchip RV1109 Relfor Saib Board";
+> +	compatible = "relfor,saib", "rockchip,rv1109";
+> +
+> +	vcc5v0_sys: vcc5v0-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc5v0_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +	};
+> +
+> +	/* Power sequence 1 */
+> +	vcc_0v8: vcc-0v8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_0v8";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <800000>;
+> +		startup-delay-us = <150>;
+> +		regulator-max-microvolt = <800000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	/* Power sequence 2 */
+> +	vdd_npu_vepu: vdd-npu-vepu {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm1 0 5000 1>;
+> +		regulator-name = "vdd_npu_vepu";
+> +		regulator-min-microvolt = <650000>;
+> +		regulator-max-microvolt = <950000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-settling-time-up-us = <18000>;
+> +		pwm-supply = <&vcc3v3_sys>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +		status = "okay";
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com> # for IPU6
+Where is it being disabled?
 
-We'll address this for IPU6 but I can't give a timeline for that right now.
+> +	};
+> +
+> +	vdd_arm: vdd-arm {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm0 0 5000 1>;
+> +		regulator-name = "vdd_arm";
+> +		regulator-min-microvolt = <720000>;
+> +		regulator-max-microvolt = <1000000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-settling-time-up-us = <18000>;
+> +		pwm-supply = <&vcc3v3_sys>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +		status = "okay";
 
--- 
-Kind regards,
+? same question
 
-Sakari Ailus
+> +	};
+> +
+> +	/* Power sequence 3 */
+> +	vcc_1v8: vcc-1v8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_1v8";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		startup-delay-us = <51000>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	/* Power sequence 4 */
+> +	vcc_1v2_ddr: vcc-1v2-ddr {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_1v2_ddr";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		startup-delay-us = <75000>;
+> +		regulator-min-microvolt = <1200000>;
+> +		regulator-max-microvolt = <1200000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	/* Power sequence 5 */
+> +	vcc3v3_sys: vcc3v3-sys {
+> +		status = "okay";
+
+Huh? Drop
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc3v3_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		startup-delay-us = <75000>;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	/* LDO 2.5V */
+> +	vcc_2v5_ddr: vcc-2v5-ddr {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_2v5_ddr";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <2500000>;
+> +		regulator-max-microvolt = <2500000>;
+> +		vin-supply = <&vcc3v3_sys>;
+> +	};
+> +
+> +	/* Power IR transmitter */
+> +	vcc1v8_ir: vcc1v8-ir {
+> +		status = "okay";
+
+Drop
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc1v8_ir";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	sdio_pwrseq: pwrseq-sdio {
+> +		compatible = "mmc-pwrseq-simple";
+> +		clocks = <&rtc0>;
+> +		clock-names = "ext_clock";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wifi_enable_h>;
+> +		reset-gpios = <&gpio1 RK_PD0 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	ir_receiver: ir-receiver {
+> +		compatible = "gpio-ir-receiver";
+> +		gpios = <&gpio3  RK_PB4 GPIO_ACTIVE_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ir_rx>;
+> +		status = "okay";
+
+Where is it disabled?
+
+> +	};
+> +
+> +	ir_transmitter: ir-transmitter {
+> +		compatible = "pwm-ir-tx";
+> +		pwms = <&pwm11 0 10000000 1>;
+> +		status = "okay";
+
+Do you see the pattern here? Some NEW nodes have status=okay, some not.
+It does not make much sense, right?
+
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		button {
+> +			gpios = <&gpio2 RK_PA7 GPIO_ACTIVE_HIGH>;
+> +			status = "okay";
+
+Drop... this applies everywhere.
+
+> +			linux,code = <KEY_DATA>;
+> +			label = "GPIO User Switch";
+> +			linux,input-type = <1>;
+> +		};
+
+Best regards,
+Krzysztof
+
 
