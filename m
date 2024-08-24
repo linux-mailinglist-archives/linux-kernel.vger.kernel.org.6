@@ -1,184 +1,112 @@
-Return-Path: <linux-kernel+bounces-299871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C6A95DB70
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:20:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3928E95DB7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E84B2489E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9101C227EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DD83CF5E;
-	Sat, 24 Aug 2024 04:20:36 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5E3D967;
+	Sat, 24 Aug 2024 04:28:11 +0000 (UTC)
+Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB2C182B4;
-	Sat, 24 Aug 2024 04:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154ED1E4B2;
+	Sat, 24 Aug 2024 04:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724473235; cv=none; b=UefDZt9IQxPB1HqoATiCqkCbKn8F6XAOpMb4HSR6IdBdxgcZq+C806TcEiKYwFI8ob6lDwthmDsOLLMvJstGsLi2Zich6Ut/99keOYC5dm6fN6ofxEtnyZJc7ZTRK3T29bSme76TCqGzV9oT/buU04JTBPgdaNveXcYoIX5QJGU=
+	t=1724473690; cv=none; b=kwuc58i6wPWdDp8cGMG1lCFwutq1lMFHvfGpWXmk5/i2Kvr3fj3onfMqEqslYk8bR+i/EmTNhU443rFKnVtpJsNJNyfyYCxWjDceR+ZXRPekVaZ7lpIqPltps3LC3MLsJAjGdVjRCz0JWKDHY2lJuILsQpaZaNOij1mHa0GLS7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724473235; c=relaxed/simple;
-	bh=+TYfZQw6LeoLTkTwEtsL60r2b1nBCnIkZZlV2NskKyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tqBmvvVRKxl2sFjiDAZU/Us3QlG+El9XZ9H58gGOEW5ERCUI6+fQpZopHePezsYvNVsAmzlDl6wyIdCg83fODifasLh8RV47cznw4NStsRymWK3ITmmpaxZirvOHJt8RsztPE7Ob5MZlqJiSJ07VYDXhgo9W2AcQogEbAaA4Rtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WrNsC0DQrz20m9c;
-	Sat, 24 Aug 2024 12:15:43 +0800 (CST)
-Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD07814022D;
-	Sat, 24 Aug 2024 12:20:27 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.174) by dggpeml100021.china.huawei.com
- (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 24 Aug
- 2024 12:20:27 +0800
-Message-ID: <0dbb903b-7d13-494f-bba4-962820d561b6@huawei.com>
-Date: Sat, 24 Aug 2024 12:20:26 +0800
+	s=arc-20240116; t=1724473690; c=relaxed/simple;
+	bh=Hi71OaJteC/N9IfhmdoVU8bV7ZIddzlMy5w19qoPLcI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XLiAQR+SwR1UKMNpWrwRPJH+LE1CY3QCixlYTiJd6Bwn8G8dmI6+BU+Rw//FvwIYV64QgD5cpwEVkgJv0l+mTvMwWzb/1gyNW3/vxWeSOzjSDJeo+t770wa/v2ZjPcnynUpJGQ59qXIGgldBMFGXJY94JAeVLKMxhk9ma0GtP+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
+Received: from mail.carlthompson.net (mail.home [10.35.20.252])
+	(Authenticated sender: cet@carlthompson.net)
+	by smtp.carlthompson.net (Postfix) with ESMTPSA id 5869C100EB1D4;
+	Fri, 23 Aug 2024 21:22:55 -0700 (PDT)
+Date: Fri, 23 Aug 2024 21:22:55 -0700 (PDT)
+From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-ID: <1816164937.417.1724473375169@mail.carlthompson.net>
+In-Reply-To: <ihakmznu2sei3wfx2kep3znt7ott5bkvdyip7gux35gplmnptp@3u26kssfae3z>
+References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+ <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+ <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
+ <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
+ <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
+ <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
+ <CAHk-=wghvQQyWKg50XL1LRxc+mg25mSTypGNrRsX3ptm+aKF3w@mail.gmail.com>
+ <ihakmznu2sei3wfx2kep3znt7ott5bkvdyip7gux35gplmnptp@3u26kssfae3z>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: No need to continue when the number of entries is 1
-To: Theodore Ts'o <tytso@mit.edu>
-CC: Edward Adam Davis <eadavis@qq.com>,
-	<syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com>,
-	<adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-References: <00000000000075a135061c0480d0@google.com>
- <tencent_BE7AEE6C7C2D216CB8949CE8E6EE7ECC2C0A@qq.com>
- <172433877725.370733.2330809797744892142.b4-ty@mit.edu>
- <6ba9afc8-fa95-478c-8ed2-a4ad10b3c520@huawei.com>
- <20240823160518.GA424729@mit.edu>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20240823160518.GA424729@mit.edu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml100021.china.huawei.com (7.185.36.148)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev53
+X-Originating-Client: open-xchange-appsuite
 
-On 2024/8/24 0:05, Theodore Ts'o wrote:
-> On Fri, Aug 23, 2024 at 10:22:19AM +0800, Baokun Li wrote:
->> I think this patch is wrong and it will hide the real problem.
->>
->> The maximum length of a filename is 255 and the minimum block size is 1024,
->> so it is always guaranteed that the number of entries is greater than or
->> equal to 2 when do_split() is called.
->>
->> The problem reported by syzbot was actually caused by a missing check in
->> make_indexed_dir(). The issue has been fixed:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=50ea741def58
->>
->> So unless ext4_dx_add_entry() and make_indexed_dir(), or some other function
->> has a bug, 'split == 0' will not occur.
->>
->> If we want to defend against future changes that introduce bugs, I think
->> it's better to add a WARN_ON_ONCE to make sure that the problem isn't hidden
->> and that it doesn't trigger serious bugs like out-of-bounds access.
-> I agree that given your patch (50ea741def58: "ext4: check dot and
-> dotdot of dx_root before making dir indexed") split should never be
-> zero.  (Although there are two ways this could happen --- either count
-> could be 0, or count == max).  But this patch isn't wrong per se
-> because in the case where split == 0, we do want to prevent the
-> out-of-bounds memory access bug.
+Kent, I'm not a kernel developer I'm just a user that is impressed with bcachefs, uses it on his personal systems, and eagerly waits for new features. I am one of the users who's been using bcachefs for years and has never lost any data using it.
+
+However I am going to be blunt: as someone who designs and builds Linux-based storage servers (well, I used to) as part of their job I would never, ever consider using bcachefs professionally as it is now and the way it appears to be developed currently. It is simply too much changed too fast without any separation between what is currently stable and working for customers and new development. Your work is excellent but **process** is equally and sometimes even more important. Some of the other hats I've worn professionally include as a lead C/C++ developer and as a product release manager so I've learned from very painful experience that large projects absolutely **must** have strict rules for process. I'm sure you realize that. Linus is not being a jerk about this. Just a couple of months ago Linus had to tell you the exact same thing he's telling you again here. And that wasn't the first time. Is your plan to just continue to break the rules and do whatever the heck you want until
+  Linus stops bothering you? I don't think that's a good plan.
 
 
-Agreed, it is correct to avoid serious problems by judging the split,
-
-I was thinking that it is wrong to report no error or hint when split == 0.
-
-> That being said; adding a WARN_ON_ONCE(split == 0) might be a good
-> idea, although I'd probably also print more debugging information so
-> we can take a look at the file system and understand what might have
-> happened.  Maybe something like this?
->
-> 	if (WARN_ON_ONCE(split == 0)) {
-> 	   	/* should never happen, but... */
-> 		ext4_error_inode_block(dir, (*bh)->b_blocknr, 0,
-> 				"bad indexed directory? hash=%08x:%08x "
-> 				"count=%d move=%u", hinfo->hash, hinfo->minor_hash,
-> 				count, move);
-> 		brelse(*bh);
-> 		brelse(bh2);
-> 		*bh = 0;
-> 		return ERR_PTR(-EFSCORRUPTED);
-> 	}
->
-> I haven't checked to make sure all of the error code paths / error
-> handling right, but something like this might be useful for debugging
-> purposes --- if the file system developer could get access to the file
-> system moment the error is logged.  If the data center automation
-> causes the file system to get fsck'ed or reformatted right away (which
-> is the only scalable thing to do if there are millions of file systems
-> in production :-), something like this is probably not going to help
-> all that much.  Still, it certainly wouldn't hurt.
-
-Totally agree! These printouts are very useful for debugging.
-
-The modification above looks good. I tested it and it works fine.
-
-But I think we could reuse the error handling code like this:
+Since I'm already being blunt I'm going to be even more blunt: you have a serious problem working with others. In the past and in this thread I've read where you seem to imply that other kernel developers are gatekeeping and resist some of your ideas because you've created something that (in your opinion) is already better in some ways than some of things they've created. But from where I'm sitting the problems you've experienced are 90% because of **you**. You're an adult and you need to understand that about yourself so you can do something about it.
 
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index e6769b97a970..0187910108c4 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1997,6 +1997,15 @@ static struct ext4_dir_entry_2 *do_split(handle_t 
-*handle, struct inode *dir,
-         else
-                 split = count/2;
+I get that I've way overstepped my bounds here. If the kernel developers wish to ban me from the kernel lists I understand.
 
-+       if (WARN_ON_ONCE(split == 0)) {
-+               /* should never happen, but... */
-+               ext4_error_inode_block(dir, (*bh)->b_blocknr, 0,
-+                               "bad indexed directory? hash=%08x:%08x 
-count=%d move=%u",
-+                               hinfo->hash, hinfo->minor_hash, count, 
-move);
-+               err = -EFSCORRUPTED;
-+               goto out;
-+       }
-+
-         hash2 = map[split].hash;
-         continued = hash2 == map[split - 1].hash;
-         dxtrace(printk(KERN_INFO "Split block %lu at %x, %i/%i\n",
-@@ -2040,10 +2049,11 @@ static struct ext4_dir_entry_2 
-*do_split(handle_t *handle, struct inode *dir,
-         return de;
-
-  journal_error:
-+       ext4_std_error(dir->i_sb, err);
-+out:
-         brelse(*bh);
-         brelse(bh2);
-         *bh = NULL;
--       ext4_std_error(dir->i_sb, err);
-         return ERR_PTR(err);
-  }
-
->
-> If someone does think this would be helpful for them, I wouldn't
-> object to adding a patch something like this.
->
-> Cheers,
->
-> 						- Ted
->
-I think it's very helpful.
-
-Thank you very much for your detailed explanation!
+Carl
 
 
-Cheers,
-Baokun
+> On 2024-08-23 7:59 PM PDT Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+>  
+> On Sat, Aug 24, 2024 at 10:40:33AM GMT, Linus Torvalds wrote:
+> > On Sat, 24 Aug 2024 at 10:35, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > >
+> > > What is to be gained by having release rules and a stable development
+> > > environment? I wonder.
+> > 
+> > But seriously - thinking that "I changed a thousand lines, there's no
+> > way that introduces new bugs" is the kind of thinking that I DO NOT
+> > WANT TO HEAR from a maintainer.
+> > 
+> > What planet ARE you from? Stop being obtuse.
+> 
+> Heh.
+> 
+> No, I can't write 1000 lines of bug free code (I think when I was
+> younger I pulled it off a few times...).
+> 
+> But I do have really good automated testing (I put everything through
+> lockdep, kasan, ubsan, and other variants now), and a bunch of testers
+> willing to run my git branches on their crazy (and huge) filesystems.
+> 
+> And enough experience to know when code is likely to be solid and when I
+> should hold back on it.
+> 
+> Are you seeing a ton of crazy last minute fixes for regressions in my
+> pull requests? No, there's a few fixes for recent regressions here and
+> there, but nothing that would cause major regrets. The worst in terms of
+> needing last minute fixes was the member info btree bitmap stuff, and
+> the superblock downgrade section... but those we did legitimately need.
 
