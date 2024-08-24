@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-299821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E62B95DA67
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:34:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE3495DA6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F004DB230A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4189B213A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7092E125DB;
-	Sat, 24 Aug 2024 01:33:41 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DBCAD5E;
+	Sat, 24 Aug 2024 01:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Oumkcoom"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB679FE;
-	Sat, 24 Aug 2024 01:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D598DB65C
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724463221; cv=none; b=iEAqA7I5O6/0v/l4biTEaiTvlFtAjOUecvPd/v0RCITyH+/5UUnwiAv8BRiThe2fyUU4m3VCD+Ms1rxOhx8A5aQ25SGCXuZcUQB+roP38Fq6lxCvYlYV9xzHYn/JVJuNX0H6LsRtHzaXSvU30rSv7yGPG6KpvIfOlmOn7OeEekE=
+	t=1724464142; cv=none; b=mkQViD3YXK+kpGDRJ/LXUbRVvpaL6G/w/QfrAtDwBddiFS2c0Kjhsg5Cm4YPXXDVtvNfwQGZpOK3Gduq0iAITH40bYHB39DhxKRYAh9e2hYI6JU8d6fTwWYLECYlgjAMZeyPi3qLAW1FeoW+RFHVDazytn2P8iBZCZMwGDdy4OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724463221; c=relaxed/simple;
-	bh=9Z/fi0ACiI6Q33KnOMIK0VGK0TkARxagMAFzs5ttqgY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OywdJRMvnEM+FyEPcLbygzTPC195BadbrzqUZeqCX/WPcbBV/7kytQ1MNdvs4g6Yvi0oMtuqIG0ouZolVAKq/BG3KWMU6swmMTxUBTWk6bPWadNS/rKTF933tPkGhTFx2H0+DshlCqqROIw3o9uRGApA1AnUUXdb5LPGRf5hKok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WrKG264Hfz2CnL7;
-	Sat, 24 Aug 2024 09:33:30 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7FE981401F2;
-	Sat, 24 Aug 2024 09:33:36 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
- 2024 09:33:35 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
-	<jlayton@kernel.org>, <neilb@suse.de>, <kolga@netapp.com>,
-	<Dai.Ngo@oracle.com>, <tom@talpey.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>
-Subject: [PATCH v2 2/2] nfsd: fix some spelling errors in comments
-Date: Sat, 24 Aug 2024 09:43:36 +0800
-Message-ID: <20240824014336.537937-3-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240824014336.537937-1-lilingfeng3@huawei.com>
-References: <20240824014336.537937-1-lilingfeng3@huawei.com>
+	s=arc-20240116; t=1724464142; c=relaxed/simple;
+	bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FDyisTZTzDZ0Dsvd0a/dJl2IiEAIJi9Dca9bxxquNFYJoLigcKyp5rOZPZ0zcCA0NGpCXHlVWS3TCaVuONBvEp/kshe00VvGxifIxCzCPocbTstfkBQMTUE8oxsEFsH7W68umH2TfTCXStz3pKeE0lehp9+WnFaFVSxiQ5rRpDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Oumkcoom; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so5610a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724464139; x=1725068939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
+        b=OumkcoomiEpzsKooYlJACCxqjOe7RTkO2Dme1Nv5yFPZYXN14T+OaPajGz20yLrUKA
+         Gs6X5HkNwj6v5MT3guZr1uzu1xyIQJOKCDIFtPeYth34yJBbLBGkwFZqUW6B72yRGj9v
+         bgoP/yvIAIjp060pbIZzmddKldtj/4xEVqTkTR9g8laW/hohi0eY2OzRgdONDZ+hfbku
+         iKOXudwYdOhXNvrUzQKvfBuGhvoFzJdbKgbVXLOVy60FpOKgaboghboz0mwO3mzezDwf
+         pc1EbzSwIalTHGludxGPrb51+BIRifRGVjYE1iYAl1RwRmlrP0CF9QYAhObi29bqLsO8
+         5xrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724464139; x=1725068939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
+        b=qJP8NwfXWNuUZO53IofY9OYWiELZw1qYB1Od9A1lWVdbVuYm0qty2gtVbhVR9vLbvh
+         0blcpuv+lIlvFe30LADNeL/tOhiOPExNPLoq2M/xPEWdoGw8fvvM+zuhAvE1Ej9m+K4Q
+         ADG142tC6H720Ql5EHkHdAeXWbi1sqKIAqiqmdjQMh/d80/hlmQ7PphhXQI6z1ig58wa
+         opg/k9f1q2WJcNEEphc81baNqdvgr2AyEpB01Q2J84fKAbDVjxwUVu1yf845VwX5opQj
+         a+Dc5eftWeFngd0z11SAyjBdz8Fy7DwiuQNhyLkNgEk3FI702qATTHtaWPoxyuOqWN2+
+         V3GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEoAJrkDXuZernAZGUFRnWHrJI8gd8l+ZHkmc9HMeYny2tSz1UuxJQkmMBqa5y+VYqCYI+2JS/+rkjN3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE1icls40WBndz7DC1OwuXCGa9pdD4SRFpUrCe734yQOxwdB0s
+	xcY5EygqyWugSuW2p8CekZHeFwtpPW8KhBgqNzcfwrt1iJCJfF2o7VZGdcB0SQD98bKoEI420yi
+	T840mGCbEr+lqW8WSX+UEyOPVwR0+g8ZALhtd
+X-Google-Smtp-Source: AGHT+IGOnvh2cOGlHPWfto0H8IC8jTWy/ckDMq/UZEt6MAleNbTXNTFl+VQ3YOTHqjevKaA6xuICKeWZ5Uh8oy7OqEQ=
+X-Received: by 2002:a05:6402:35cc:b0:5be:c28a:97cf with SMTP id
+ 4fb4d7f45d1cf-5c097d5128dmr32582a12.5.1724464138575; Fri, 23 Aug 2024
+ 18:48:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+ <Zsj7afivXqOL1FXG@bombadil.infradead.org> <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
+In-Reply-To: <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Sat, 24 Aug 2024 03:48:21 +0200
+Message-ID: <CAG48ez2_Gs=fuG5vwML-gCzvZcVDJJy=Tr8p+ANxW4h2dKBAjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] firmware_loader: Block path traversal
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix spelling errors in comments of nfsd4_release_lockowner and
-nfs4_set_delegation.
+On Sat, Aug 24, 2024 at 3:14=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sat, Aug 24, 2024 at 5:13=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.o=
+rg> wrote:
+> >
+> > I'm all for this, however a strong rejection outright for the first
+> > kernel release is bound to end up with some angry user with some oddbal=
+l
+> > driver that had this for whatever stupid reason.
+>
+> I can't actually see a reason why a firmware file would have a ".."
+> component in it, so I think the immediate rejection is fine -
+> particularly since it has a warning printout, so you see what happened
+> and why.
+>
+> I do wonder if we should just have a LOOKUP_NO_DOTDOT flag, and just use =
+that.
+>
+> [ Christian - the issue is the firmware loading path not wanting to
+> have ".." in the pathname so that you can't load outside the normal
+> firmware tree. We could also use LOOKUP_BENEATH, except
+> kernel_read_file_from_path_initns() just takes one long path rather
+> than "here's the base, and here's the path". ]
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfsd/nfs4state.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+One other difference between the semantics we need here and
+LOOKUP_BENEATH is that we need to allow *symlinks* that contain ".."
+components or absolute paths; just the original path string must not
+contain them. If root decides to put symlinks to other places on the
+disk into /lib/firmware, I think that's reasonable, and it's root's
+decision to make, and we shouldn't break that. (And as an example, on
+my Debian machine, I see that /lib/firmware/regulatory.db is a symlink
+to /etc/alternatives/regulatory.db, which in turn is a symlink to
+/lib/firmware/regulatory.db-debian. I also see a bunch of symlinks in
+subdirectories of /lib/firmware with ".." in the link destinations,
+though those don't escape from /lib/firmware.)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index a20c2c9d7d45..9046e39b0e5c 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -5856,7 +5856,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
- 
- 	/*
- 	 * Now that the deleg is set, check again to ensure that nothing
--	 * raced in and changed the mode while we weren't lookng.
-+	 * raced in and changed the mode while we weren't looking.
- 	 */
- 	status = nfsd4_verify_setuid_write(open, fp->fi_deleg_file);
- 	if (status)
-@@ -8335,7 +8335,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner)
-  * @cstate: NFSv4 COMPOUND state
-  * @u: RELEASE_LOCKOWNER arguments
-  *
-- * Check if theree are any locks still held and if not - free the lockowner
-+ * Check if there are any locks still held and if not, free the lockowner
-  * and any lock state that is owned.
-  *
-  * Return values:
--- 
-2.31.1
+So if we do this with a lookup flag, it'd have to be something that
+only takes effect when nd->depth is 0, or something vaguely along
+those lines? IDK how exactly that part of the path walking code works.
 
+> There might be other people who want LOOKUP_NO_DOTDOT for similar
+> reasons. In fact, some people might want an even stronger "normalized
+> path" validation, where empty components or just "." is invalid, just
+> because that makes pathnames ambiguous.
+
+(For what it's worth, I think I have seen many copies of this kind of
+string-based checking for ".." components in various pieces of
+userspace code. I don't think I've seen many places in the kernel that
+would benefit from that.)
 
