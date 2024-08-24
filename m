@@ -1,135 +1,111 @@
-Return-Path: <linux-kernel+bounces-300135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B9C95DF3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505AC95DF41
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F08B216BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC991F21D47
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490EB6F2E6;
-	Sat, 24 Aug 2024 17:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6771D4F8A0;
+	Sat, 24 Aug 2024 17:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5/fjCIC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kB9Kqcrb"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4AA39AEB;
-	Sat, 24 Aug 2024 17:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98B652F70;
+	Sat, 24 Aug 2024 17:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724521078; cv=none; b=Kc+ChygKDYy6D8aUk2rHelOusLslQT1eE1SVEZ8FlWmd6XtStGO1/1uJWQWG4i/Zp3eSD+MIn/8z42DsETYenSQwg+wXG6J+/IDcDYtmgD7DA/0LLx4oqqDbI7WGSRT+u0FoU8Mfx2n8hDmb6mGvl4+vlNxWnbqcmgnLvgEqngw=
+	t=1724521429; cv=none; b=rtvQBSEavhf0ikPw7xXQNSV5DscqZUBzsDk0KDwVU6oYAAqUQJ9GshxwBjGlss236DTqDpBCqzOncDt0qEq9gw9Fa3FuvBX/K27IRdNbOwO/eYHG8BgGTOdDCO56TRjnu3CEyTLNn+8Yz3Sa9PzsXVeWN7BLFmNUx2+Djpu5Qj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724521078; c=relaxed/simple;
-	bh=ziytpaA+ne4kHZ6KdqHkQiK5JWCNoE4lmpIjTaiXqjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRbKGfP/3ufDDQRVTzndiqo9HKoTK/+QLRg/hov0ShS/T6kancOcN2BH/RcwHzdWtZnu7xhGg9UFcVCubTqLhNLxn2wwikHv06Id0Bq1s4NQ/QRGP7cJ+jG/bjBka9jGYIeCoAPOib6AazcfPoD9Yc0I3ODvbqhFr2fw1vicfOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5/fjCIC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C22F2C32781;
-	Sat, 24 Aug 2024 17:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724521078;
-	bh=ziytpaA+ne4kHZ6KdqHkQiK5JWCNoE4lmpIjTaiXqjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k5/fjCIC+aZExRL+7y9ZDFmgMKRBeR8ShnmAzT+NRqI7tTgvb2QoJH+uRR/zysg6c
-	 eN1f3cptFff3MSF9OXBPhVJFwWUXi9dUBZo2EZtXT6k3UtNnvsf4XY7oQQ9NBi7DFk
-	 ZRFVl35/pYUQlSHZZk4K6jWjVtPV2P3hjBlfE+OulQvkFQPPSA0ilwtmSNYvfyoA+b
-	 cKxiI0H3hXOHOn0TwWRv86UgnB6thkdvQGXbnrIbUsOqQ+fXrJJxWkxppb2PCxYbtc
-	 lcFSciOHx9wLyKNz4kAMA0Nf+4RSAJwVYumWfSXST1ACEyqwv31kYK3QDGrx4HFA+c
-	 2V+XPe5SxUDVQ==
-Date: Sat, 24 Aug 2024 10:37:56 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH nf-next v2 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <20240824103756.4fb39abc@kernel.org>
-In-Reply-To: <20240823174855.3052334-1-leitao@debian.org>
-References: <20240823174855.3052334-1-leitao@debian.org>
+	s=arc-20240116; t=1724521429; c=relaxed/simple;
+	bh=bMZKFkv+aFda24g4rrkG8sDs67ykIpVj05RBn/gBGSc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+dS0Ko5OaFs0PPAaJVsd2zduA5YY4D1/VeEnR1HYBJu0V9Emnhjlg6KwOS4LIhyO7L1o2LF6luDbyiKNiN01uzcLEjHuxExpmATWSdsdwpvm3KI1HIH7uMz6Ll12Qju6BCzo/5qm/aSnAokYFYRhoFofBLqQqFXeYNrKqZCZW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kB9Kqcrb; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OHhbUd103967;
+	Sat, 24 Aug 2024 12:43:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724521417;
+	bh=Gp/NUbYXSsoQpGp1zfrN2LKF0Gk+QIV6vZXm7AxRW/k=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=kB9KqcrbvFyNVxsdRp9Wq6VoARY2i6nUYfsi/GsNfZd/H2gdvkPMwQLQFb53+S/gk
+	 jRwm6kCqXynEzA7bvBeUmttnBH2p21MRKoDF032iLbTM1aAnFDJB3mCEQ0MpxEDFA9
+	 cjhCondd/fgFgBhyoTk2ni1x8XDgiscB2slnkkbI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OHhbEH040417
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 24 Aug 2024 12:43:37 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
+ Aug 2024 12:43:37 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 24 Aug 2024 12:43:37 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OHhbnA029666;
+	Sat, 24 Aug 2024 12:43:37 -0500
+Date: Sat, 24 Aug 2024 12:43:37 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Bhavya Kapoor <b-kapoor@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <jm@ti.com>, <vigneshr@ti.com>
+Subject: Re: [RESEND PATCH] arm64: dts: ti: k3-j722s-evm: Add support for
+ multiple CAN instances
+Message-ID: <20240824174337.lixnpedg24qaroxs@headed>
+References: <20240808082030.2812216-1-b-kapoor@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240808082030.2812216-1-b-kapoor@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, 23 Aug 2024 10:48:51 -0700 Breno Leitao wrote:
-> These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
-> Kconfigs user selectable, avoiding creating an extra dependency by
-> enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+On 13:50-20240808, Bhavya Kapoor wrote:
+> CAN instances 0 and 1 in the mcu domain and 0 in the main domain are
+> brought on the evm through headers J5, J8 and J10 respectively. Thus,
+> add their respective transceiver's 0, 1 and 2 dt nodes as well as
+> add the required pinmux to add support for these CAN instances.
+> 
+> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+> Reviewed-by: Judith Mendez <jm@ti.com>
+[...]
 
-Resulting config in CI still differs quite a bit:
+> +&main_mcan0 {
+> +	status = "okay";
 
---- config.1	2024-08-23 14:19:10.000000000 -0700
-+++ config	2024-08-24 05:18:52.000000000 -0700
-@@ -1246,7 +1246,7 @@ CONFIG_NETFILTER_XT_MARK=m
- CONFIG_NETFILTER_XT_TARGET_CONNSECMARK=m
- # CONFIG_NETFILTER_XT_TARGET_CT is not set
- # CONFIG_NETFILTER_XT_TARGET_DSCP is not set
--CONFIG_NETFILTER_XT_TARGET_HL=m
-+# CONFIG_NETFILTER_XT_TARGET_HL is not set
- # CONFIG_NETFILTER_XT_TARGET_HMARK is not set
- # CONFIG_NETFILTER_XT_TARGET_IDLETIMER is not set
- # CONFIG_NETFILTER_XT_TARGET_LED is not set
-@@ -1333,22 +1333,21 @@ CONFIG_NF_TABLES_IPV4=y
- # CONFIG_NF_DUP_IPV4 is not set
- CONFIG_NF_LOG_ARP=m
- CONFIG_NF_LOG_IPV4=m
--CONFIG_NF_REJECT_IPV4=y
-+CONFIG_NF_REJECT_IPV4=m
- CONFIG_IP_NF_IPTABLES=m
- # CONFIG_IP_NF_MATCH_AH is not set
- # CONFIG_IP_NF_MATCH_ECN is not set
- CONFIG_IP_NF_MATCH_RPFILTER=m
- # CONFIG_IP_NF_MATCH_TTL is not set
--CONFIG_IP_NF_FILTER=m
--CONFIG_IP_NF_TARGET_REJECT=m
-+# CONFIG_IP_NF_FILTER is not set
-+# CONFIG_IP_NF_TARGET_REJECT is not set
- # CONFIG_IP_NF_TARGET_SYNPROXY is not set
- CONFIG_IP_NF_NAT=m
--CONFIG_IP_NF_TARGET_MASQUERADE=m
-+# CONFIG_IP_NF_TARGET_MASQUERADE is not set
- # CONFIG_IP_NF_TARGET_NETMAP is not set
- # CONFIG_IP_NF_TARGET_REDIRECT is not set
--CONFIG_IP_NF_MANGLE=m
-+# CONFIG_IP_NF_MANGLE is not set
- # CONFIG_IP_NF_TARGET_ECN is not set
--CONFIG_IP_NF_TARGET_TTL=m
- CONFIG_IP_NF_RAW=m
- # CONFIG_IP_NF_ARPFILTER is not set
- # end of IP: Netfilter Configuration
-@@ -1363,7 +1362,7 @@ CONFIG_NF_TABLES_IPV6=y
- # CONFIG_NFT_DUP_IPV6 is not set
- # CONFIG_NFT_FIB_IPV6 is not set
- # CONFIG_NF_DUP_IPV6 is not set
--CONFIG_NF_REJECT_IPV6=y
-+CONFIG_NF_REJECT_IPV6=m
- CONFIG_NF_LOG_IPV6=m
- CONFIG_IP6_NF_IPTABLES=m
- # CONFIG_IP6_NF_MATCH_AH is not set
-@@ -1376,11 +1375,10 @@ CONFIG_IP6_NF_MATCH_IPV6HEADER=m
- CONFIG_IP6_NF_MATCH_RPFILTER=m
- # CONFIG_IP6_NF_MATCH_RT is not set
- # CONFIG_IP6_NF_MATCH_SRH is not set
--# CONFIG_IP6_NF_TARGET_HL is not set
--CONFIG_IP6_NF_FILTER=m
--CONFIG_IP6_NF_TARGET_REJECT=m
-+# CONFIG_IP6_NF_FILTER is not set
-+# CONFIG_IP6_NF_TARGET_REJECT is not set
- # CONFIG_IP6_NF_TARGET_SYNPROXY is not set
--CONFIG_IP6_NF_MANGLE=m
-+# CONFIG_IP6_NF_MANGLE is not set
- CONFIG_IP6_NF_RAW=m
- CONFIG_IP6_NF_NAT=m
- # CONFIG_IP6_NF_TARGET_MASQUERADE is not set
+NAK: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mcan0_pins_default>;
+> +	phys = <&transceiver2>;
+> +};
+> +
+> +&mcu_gpio0 {
+> +	status = "okay";
+> +};
+> -- 
+> 2.34.1
+> 
+
 -- 
-pw-bot: cr
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
