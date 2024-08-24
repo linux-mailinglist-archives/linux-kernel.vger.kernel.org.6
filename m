@@ -1,159 +1,353 @@
-Return-Path: <linux-kernel+bounces-300170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3027795DFCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:29:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4428595DFD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4BEE1F2195A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:29:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933AEB219CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1F57DA92;
-	Sat, 24 Aug 2024 19:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E17DA9C;
+	Sat, 24 Aug 2024 19:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b8rdUA6u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="0dtm/Kvf"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308247DA69;
-	Sat, 24 Aug 2024 19:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18572768E1
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724527757; cv=none; b=G3jTKLuiUfm/CyrM0uecBt3Cqa9Q9l/BVUczhL3L084iHPPMBKkgN7P2yg1cwk4pBDSugQIsyYIeHNXedFbuHevL86NjjZiPc7HFd39+CxXkiFiu7lzelM0Tizr+DfgN6iQNpEAx+AVWNWEQ0u44dl6LcMdsZpVLTsi3Dq1V2Yg=
+	t=1724528129; cv=none; b=YK/Ovp73qMWCUYb5/C9Bz+BkL8zgsulgc7ieE0T9Qg5B3L5hQJZYJLEa0d/w3bxZhPeEhJlUpHPwHAbxoOyThWNFGXOORSCecWCwzCRgFRGTo7EGMqxSa8llMcZ96ob24LT2NiLEXEWW3x0pT2IheG/VRVZUA5g0OFsTwVkAAU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724527757; c=relaxed/simple;
-	bh=wkjLLTLnzEblp1VXgf5+X03nvbMbt03oHfFqeASWXcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3WTwqLx0wGoUEv7eug6gPhZpetsQUgqR55D+S40zPgJro6az+ctm+UWYLDHSIDesikslkopZFdp17MZPc/dJ4zbevhUW6p43eG/+MH4Z3u16PSoQlfk1x8wVkmltEZVSfTB2yAhQwtfKGXk3jFrEO7kksAYqUKtJOA5p1v9KEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b8rdUA6u; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724527756; x=1756063756;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wkjLLTLnzEblp1VXgf5+X03nvbMbt03oHfFqeASWXcQ=;
-  b=b8rdUA6utsvKTJmzh9SYeC7G3ShJ2IIsaaKDDQazAr9CokNV2XA+jBMk
-   jfpgXIOQ9+txN4IOQwhA2n7FkRKqlGLdib0ychRoDuxNnqQZFDdsGIA5h
-   N1z5kYhyaXDagcsO9EIBGU09f9CqjH+edIheRrvwVq33AMkJIc0XAjObj
-   hmajf24qNST7W28d/N4Het9L/d2Mbd26P7FdNlcGGTlpKxH123cFCZzLN
-   8NZsA1IPdt5GtRAYY6St/P7G9Q9k3WZnuPs2vdrsvMBRJcloatQcYSW9T
-   2kreTZ4GH+wQy3Toh6gHdDA2mudrB9m5O4ikxuSboB/k2a20TFfIntRo/
-   g==;
-X-CSE-ConnectionGUID: OCvGni+CRKGlyIgSBjfwHg==
-X-CSE-MsgGUID: AncFXq6YRzmL7EP3e7ZWKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="48378983"
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="48378983"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 12:29:15 -0700
-X-CSE-ConnectionGUID: ljXF93uEQnCIkZwv3gjFxw==
-X-CSE-MsgGUID: bPhL2I5pTwCywKMtrXZ/AQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="61809782"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 24 Aug 2024 12:29:13 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shwRj-000Ehr-0l;
-	Sat, 24 Aug 2024 19:29:11 +0000
-Date: Sun, 25 Aug 2024 03:28:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yang Ruibin <11162571@vivo.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] drivers:testing:Handle possible memory leaks
-Message-ID: <202408250314.w7DgoEPI-lkp@intel.com>
-References: <20240822032108.1223332-1-11162571@vivo.com>
+	s=arc-20240116; t=1724528129; c=relaxed/simple;
+	bh=bytNnuowzmtyhvFR4SOrAtgSwC0Npg1muBqZ82NtqaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eToI8HkAejTCmEk44fqEJKMhgPrn//os8ZwghnfWIBrsIoM8SLfQYqGzRnaaMQAk7Be4tvBCyGCauLe2PCDmKqgcw2xKusziMAgWybsyyIxm4yocLsyH+YhPZqvL9SjJC8l0gB1r5T/C9uC6I81rVs3r3m2aKHRhIVR+T0MBbiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=0dtm/Kvf; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53345604960so3168702e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 12:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1724528125; x=1725132925; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rqUQEx0JW9sRldU4OvC73NB0gIVSnxsis8NsIR8izBY=;
+        b=0dtm/KvfHtwatHw3jl6TB605gCEkbHbsYzf/jvwq+JSzQGaU7RPPQZE52HNRgfDhZe
+         G4yMCeOLznZj/SGesCWeryjjD1rR2509TRguT3/kBfu9XP+aZzELBQC4DoI/jBnMMwZH
+         9zcUK+J0gFLGCjkHYgj4RCubZzK+PcCOY78XQUz2ofv3LWSadb1VxrYYtuX7szUgfrwM
+         wYtJphnH2mgXWjKFpJ95vAGnMbsmjoSBF1gG1n1aqwkTmnClymw2DeeimFHI76Xbr6ba
+         T2XW1ntpk8s3rVBbyN5GwgXTQPt3txvo/UVScV8jHoKp+ys1UVKObU4mYBjWW2YV9vWm
+         KmXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724528125; x=1725132925;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rqUQEx0JW9sRldU4OvC73NB0gIVSnxsis8NsIR8izBY=;
+        b=CCobLUiLR4RFR4vfO/V/iirHyoex2dnFa7Ocm5XyL6NWXcOs1PlkvIjZ/B4dbR6eVF
+         LUF/WXfXolebmYi61bFPfHYTrORY9FL+k/+J/vaRHW0+m7dOeJE97H/aASY4vEV0Chvy
+         dxG8PjhcRDf7zOIMKncj4IUxbufZtwC0lHENU+ahq870lenm4UhuBQDmxs9RDei2SH/X
+         ZYLoI7v8JlTGmvg4Ffch8Y7HhWPWzxa+5JCi7qHvLxuRkvgVBBxvg2rCMqENWtwWHnQs
+         316zVLnyqQ0GwjRwthHcfsjtLwwh6qJYopq3btC1g3kXOFT3oPuS7kP5JxHMGkuSoND+
+         OzyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYAJKdj6jm4Nd5W1fVR/NCnD2vixphydZIzShPB+7MbQo0kjOcNYEtZ9BykUHqncwroUN93H+AcTpwWV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsi/pu1SJFRRVBcrozB3XzqbgfFTTQS2C3FVBLmI2EwUEaHSmO
+	rsLpg5IZlk50OgI1EsVu8ean3wfkMFcaAFLdyjM9nkcOtpXnbWiSrEiZyVSgj8QK4nSHAadinLZ
+	zUJkBy/VECXPm2LrgJy8kJqXiMPV5ezFhtJgk0w==
+X-Google-Smtp-Source: AGHT+IGPd8NNVY8iNQlItVputHqv0A9NBxIa2qpJxJ9QIyvsMaWXLridmTyEMYCVXko8QGT/5mpgBtUGbv8rSnzMtM4=
+X-Received: by 2002:a05:6512:3195:b0:52e:9f17:841a with SMTP id
+ 2adb3069b0e04-534387558bdmr3980885e87.6.1724528124835; Sat, 24 Aug 2024
+ 12:35:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822032108.1223332-1-11162571@vivo.com>
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+ <20240807-macos-build-support-v1-1-4cd1ded85694@samsung.com>
+ <CAK7LNARmy=N+6O87BJGZbodssDw21sHgMf36TXdcxD4=5A_OBA@mail.gmail.com> <CABj0suC1atc=iPX4uOL5FYkzYBRtZC1J3Lhruo7hejd-fe9Yuw@mail.gmail.com>
+In-Reply-To: <CABj0suC1atc=iPX4uOL5FYkzYBRtZC1J3Lhruo7hejd-fe9Yuw@mail.gmail.com>
+From: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>
+Date: Sat, 24 Aug 2024 21:34:58 +0200
+Message-ID: <CABj0suDu1XPi7mPdqQWm2J3=XbTMHKGbz85ixM=gMr5VRkU78g@mail.gmail.com>
+Subject: Re: [PATCH 01/12] scripts: subarch.include: fix SUBARCH on MacOS hosts
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: da.gomez@samsung.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, speakup@linux-speakup.org, 
+	selinux@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, gost.dev@samsung.com, 
+	Nick Desaulniers <nick.desaulniers@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yang,
+On Sat, Aug 24, 2024 at 12:14=E2=80=AFAM Daniel Gomez (Samsung)
+<d+samsung@kruces.com> wrote:
+>
+> On Fri, Aug 23, 2024 at 6:13=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
+.org> wrote:
+> >
+> > On Wed, Aug 7, 2024 at 8:10=E2=80=AFAM Daniel Gomez via B4 Relay
+> > <devnull+da.gomez.samsung.com@kernel.org> wrote:
+> > >
+> > > From: Nick Desaulniers <nick.desaulniers@gmail.com>
+> > >
+> > > When building the Linux kernel on an aarch64 MacOS based host, if we =
+don't
+> > > specify a value for ARCH when invoking make, we default to arm and th=
+us
+> > > multi_v7_defconfig rather than the expected arm64 and arm64's defconf=
+ig.
+> > >
+> > > This is because subarch.include invokes `uname -m` which on MacOS hos=
+ts
+> > > evaluates to `arm64` but on Linux hosts evaluates to `aarch64`,
+> > >
+> > > This allows us to build ARCH=3Darm64 natively on MacOS (as in ARCH ne=
+ed
+> > > not be specified on an aarch64-based system).
+> > >
+> > > Utilize a negative lookahead regular expression to avoid matching arm=
+64.
+> >
+> >
+> > Does sed support "negative lookahead regular expression"?
+>
+> I think they removed support for PCRE. I've found this:
+>
+> commit 261c7f145d015d9acb79dc650d27e4a23b839c23
+> Author: Assaf Gordon <assafgordon@gmail.com>
+> Date:   Tue Aug 21 14:25:57 2018 -0600
+>
+>     maint: remove REG_PERL code
+>
+>     Perl-regexp syntax (PCRE) in GNU Sed is shelved indefinitely.
+>     See https://bugs.gnu.org/22801 , https://bugs.gnu.org/22647 .
+>     Remove all (unused) REG_PERL related code.
+>
+>     * sed/sed.c, sed/sed.h, sed/regexp.c, sed/compile.c: Remove REG_PERL =
+code.
+>
+> git tag --contains 261c7f145d015d9acb79dc650d27e4a23b839c23
+> v4.6
+> v4.7
+> v4.8
+> v4.9
+>
+> And my sed version is (Debian):
+>
+> sed --version
+> sed (GNU sed) 4.9
+> Packaged by Debian
+> Copyright (C) 2022 Free Software Foundation, Inc.
+> License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.=
+html>.
+> This is free software: you are free to change and redistribute it.
+> There is NO WARRANTY, to the extent permitted by law.
+>
+> Written by Jay Fenlason, Tom Lord, Ken Pizzini,
+> Paolo Bonzini, Jim Meyering, and Assaf Gordon.
+>
+> This sed program was built with SELinux support.
+> SELinux is disabled on this system.
+>
+> GNU sed home page: <https://www.gnu.org/software/sed/>.
+> General help using GNU software: <https://www.gnu.org/gethelp/>.
+> E-mail bug reports to: <bug-sed@gnu.org>.
+>
+> sed version (Homebrew):
+> sed --version
+> sed (GNU sed) 4.9
+> Copyright (C) 2022 Free Software Foundation, Inc.
+> License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.=
+html>.
+> This is free software: you are free to change and redistribute it.
+> There is NO WARRANTY, to the extent permitted by law.
+>
+> Written by Jay Fenlason, Tom Lord, Ken Pizzini,
+> Paolo Bonzini, Jim Meyering, and Assaf Gordon.
+>
+> This sed program was built without SELinux support.
+>
+> GNU sed home page: <https://www.gnu.org/software/sed/>.
+> General help using GNU software: <https://www.gnu.org/gethelp/>.
+> E-mail bug reports to: <bug-sed@gnu.org>.
+>
+> >
+> > >
+> > > Add a separate expression to support for armv.* as per error reported=
+ by
+> > > Nicolas Schier [1].
+> > >
+> > > [1] https://lore.kernel.org/all/Y3MRvtwdjIwMHvRo@bergen.fjasle.eu/#t
+> > >
+> > > Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+> > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> > > ---
+> > >  scripts/subarch.include | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/scripts/subarch.include b/scripts/subarch.include
+> > > index 4bd327d0ae42..5d84ad8c0dee 100644
+> > > --- a/scripts/subarch.include
+> > > +++ b/scripts/subarch.include
+> > > @@ -6,7 +6,8 @@
+> > >
+> > >  SUBARCH :=3D $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ =
+\
+> > >                                   -e s/sun4u/sparc64/ \
+> > > -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
+> > > +                                 -e s/armv.*/arm/ \
+> > > +                                 -e s/arm\(?:\(?!64\).*\)/arm/ -e s/=
+sa110/arm/ \
+> >
+> >
+> > s/arm\(?:\(?!64\).*\)/arm/
+> >
+> > In sed, this expression does not seem to match anything.
+>
+> You are correct. I've removed the expression and saw no difference.
+> See below with my test case:
+> >
+> > (or please give me some matching examples if I miss something)
+>
+> cat Makefile
+> MACHINE ?=3D "aarch64"
+> SUBARCH0 :=3D $(shell echo $(MACHINE) | sed \
+>                                   -e s/arm.*/arm/ \
+>                                   -e s/aarch64.*/arm64/)
+>
+> SUBARCH1 :=3D $(shell echo $(MACHINE) | sed \
+>                                   -e s/armv.*/arm/ \
+>                                   -e s/aarch64.*/arm64/)
+>
+> SUBARCH2 :=3D $(shell echo $(MACHINE) | sed \
+>                                   -e /^arm64$/!s/arm.*/arm/ \
+>                                   -e s/aarch64.*/arm64/)
+>
+> test:
+>         @echo "MACHINE=3D$(MACHINE)"
+>         @echo "SUBARCH0=3D$(SUBARCH0)"
+>         @echo "SUBARCH1=3D$(SUBARCH1)"
+>         @echo "SUBARCH2=3D$(SUBARCH2)"
+>         @echo "---"
+>
+> SUBARCH0 represents the current upstream expressions for arm/arm64.
+> SUBARCH1 is my proposal in case we need to cover only armv* for 32-bit
+> arm (I think that is incomplete?) and SUBARCH2 is Nicolas' proposal
+> (which I can't make it work in the test Makefile).
 
-kernel test robot noticed the following build warnings:
+To make Nicolas's expression work in Makefile I just need to pass 2 $ like =
+this:
 
-[auto build test WARNING on next-20240821]
-[cannot apply to rafael-pm/thermal v6.11-rc4 v6.11-rc3 v6.11-rc2 linus/master v6.11-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff -u Makefile.old Makefile
+--- Makefile.old  2024-08-24 21:25:28.525267566 +0200
++++ Makefile    2024-08-24 21:28:32.640477991 +0200
+@@ -8,7 +8,7 @@
+                                  -e s/aarch64.*/arm64/)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yang-Ruibin/drivers-testing-Handle-possible-memory-leaks/20240822-112305
-base:   next-20240821
-patch link:    https://lore.kernel.org/r/20240822032108.1223332-1-11162571%40vivo.com
-patch subject: [PATCH v1] drivers:testing:Handle possible memory leaks
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20240825/202408250314.w7DgoEPI-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240825/202408250314.w7DgoEPI-lkp@intel.com/reproduce)
+ SUBARCH2 :=3D $(shell echo $(MACHINE) | sed \
+-                                 -e /^arm64$/!s/arm.*/arm/ \
++                                 -e /^arm64$$/!s/arm.*/arm/ \
+                                  -e s/aarch64.*/arm64/)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408250314.w7DgoEPI-lkp@intel.com/
+ test:
 
-All warnings (new ones prefixed by >>):
+And all test cases passed. So, I will include this change for v2.
 
-   drivers/thermal/testing/command.c: In function 'tt_command_process':
->> drivers/thermal/testing/command.c:153:9: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-     153 |         if (copy_from_user(buf, user_buf, count))
-         |         ^~
-   drivers/thermal/testing/command.c:155:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
-     155 |                 return -EFAULT;
-         |                 ^~~~~~
-
-
-vim +/if +153 drivers/thermal/testing/command.c
-
-7801e360656c57 Rafael J. Wysocki 2024-08-02  141  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  142  static ssize_t tt_command_process(struct dentry *dentry, const char __user *user_buf,
-7801e360656c57 Rafael J. Wysocki 2024-08-02  143  				  size_t count)
-7801e360656c57 Rafael J. Wysocki 2024-08-02  144  {
-7801e360656c57 Rafael J. Wysocki 2024-08-02  145  	char *buf __free(kfree);
-7801e360656c57 Rafael J. Wysocki 2024-08-02  146  	char *arg;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  147  	int i;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  148  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  149  	buf = kmalloc(count + 1, GFP_KERNEL);
-7801e360656c57 Rafael J. Wysocki 2024-08-02  150  	if (!buf)
-7801e360656c57 Rafael J. Wysocki 2024-08-02  151  		return -ENOMEM;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  152  
-7801e360656c57 Rafael J. Wysocki 2024-08-02 @153  	if (copy_from_user(buf, user_buf, count))
-98706c6ade7c2e Yang Ruibin       2024-08-22  154  		kfree(buf);
-7801e360656c57 Rafael J. Wysocki 2024-08-02  155  		return -EFAULT;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  156  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  157  	buf[count] = '\0';
-7801e360656c57 Rafael J. Wysocki 2024-08-02  158  	strim(buf);
-7801e360656c57 Rafael J. Wysocki 2024-08-02  159  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  160  	arg = strstr(buf, ":");
-7801e360656c57 Rafael J. Wysocki 2024-08-02  161  	if (arg) {
-7801e360656c57 Rafael J. Wysocki 2024-08-02  162  		*arg = '\0';
-7801e360656c57 Rafael J. Wysocki 2024-08-02  163  		arg++;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  164  	}
-7801e360656c57 Rafael J. Wysocki 2024-08-02  165  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  166  	for (i = 0; i < ARRAY_SIZE(tt_command_strings); i++) {
-7801e360656c57 Rafael J. Wysocki 2024-08-02  167  		if (!strcmp(buf, tt_command_strings[i]))
-7801e360656c57 Rafael J. Wysocki 2024-08-02  168  			return tt_command_exec(i, arg);
-7801e360656c57 Rafael J. Wysocki 2024-08-02  169  	}
-7801e360656c57 Rafael J. Wysocki 2024-08-02  170  
-7801e360656c57 Rafael J. Wysocki 2024-08-02  171  	return -EINVAL;
-7801e360656c57 Rafael J. Wysocki 2024-08-02  172  }
-7801e360656c57 Rafael J. Wysocki 2024-08-02  173  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Running the above Makefile, I get:
+>
+> make test MACHINE=3Darmv4 && make test MACHINE=3Darm7 && make test
+> MACHINE=3Darmhf && make test MACHINE=3Daarch64 && make test MACHINE=3Darm=
+64
+> MACHINE=3Darmv4
+> SUBARCH0=3Darm
+> SUBARCH1=3Darm
+> SUBARCH2=3Darmv4
+> ---
+> MACHINE=3Darm7
+> SUBARCH0=3Darm
+> SUBARCH1=3Darm7
+> SUBARCH2=3Darm7
+> ---
+> MACHINE=3Darmhf
+> SUBARCH0=3Darm
+> SUBARCH1=3Darmhf
+> SUBARCH2=3Darmhf
+> ---
+> MACHINE=3Daarch64
+> SUBARCH0=3Darm64
+> SUBARCH1=3Darm64
+> SUBARCH2=3Darm64
+> ---
+> MACHINE=3Darm64
+> SUBARCH0=3Darm
+> SUBARCH1=3Darm64
+> SUBARCH2=3Darm64
+> ---
+> >
+> >
+> >
+> >
+> >
+> > Nocolas already provided correct code:
+> >
+> > > [1] https://lore.kernel.org/all/Y3MRvtwdjIwMHvRo@bergen.fjasle.eu/#t
+>
+> I think it is even more simple if we just make this change:
+>
+> -                                 -e s/arm.*/arm/ -e s/sa110/arm/ \
+> +                                 -e s/armv.*/arm/ \
+>
+> Does armv.* cover all arm32 machines? I see armhf, arm7, arm8 and
+> armv*, is it correct?
+>
+> And thanks for checking!
+>
+> >
+> >
+> >
+> >
+> >
+> >
+> > >                                   -e s/s390x/s390/ \
+> > >                                   -e s/ppc.*/powerpc/ -e s/mips.*/mip=
+s/ \
+> > >                                   -e s/sh[234].*/sh/ -e s/aarch64.*/a=
+rm64/ \
+> > >
+> > > --
+> > > Git-146)
+> > >
+> > >
+> >
+> >
+> > --
+> > Best Regards
+> >
+> >
+> > Masahiro Yamada
 
