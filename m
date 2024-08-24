@@ -1,137 +1,195 @@
-Return-Path: <linux-kernel+bounces-299954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBD995DCDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:03:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78F895DD37
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9839E1F2545F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:03:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70242B211CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5644B155324;
-	Sat, 24 Aug 2024 08:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED9115573B;
+	Sat, 24 Aug 2024 09:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XrxHxbwd"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QzusaWgV"
+Received: from mail-m2423.xmail.ntesmail.com (mail-m2423.xmail.ntesmail.com [45.195.24.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559717C64;
-	Sat, 24 Aug 2024 08:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63008155733;
+	Sat, 24 Aug 2024 09:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724486601; cv=none; b=mliGkhdBIUI1GzASeK1etW2LOZ5NZsWDHGWczro6gKERiN81W8tAmGTZgjSqmqpHpuew5nOFOV7P4re6EhxZyDo1P5ywJy6mgqKShmoTkmSku9KeKwh/2rqOKxr7DQ3HpKQx9CNdKnSbhsVADCDCmsoc11x1kB1isGdmysPFfdQ=
+	t=1724492603; cv=none; b=pTFaasMWvx41PNiV8j+VQt9eziVNw3RuAI/FQ7Ve4w3SQoO4WyxcrhdLyMxIQT5Zg8RRAdvfaVq7+vb5B1/kgrrcXYdTbB/Fw0VAktvwXJR+mZZz6eQdVUFkteaEYXhUXjYT3gyA4vndtc0rRin8MIA8Q8w14lzYCx5AhTP5lAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724486601; c=relaxed/simple;
-	bh=Oonr6zAF6H9aEQKo/F4fPRZWoC89oZI3itd6rXfNKy8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dbo6vVQOJWPAX2nQBHsbuSGF3mSIrsrr1hDm2t/KeGxg/t93QgtVYoVfr4RSCiaECFW2KuCimiqPQt1Ti4elTuC01Z/n5C98ftsm7VdRrZw12w309S1roq0xBuub0USlvAXKtAZmm4+YzR8clXEWclpA34NUaK+Y54gPWNOr3DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XrxHxbwd; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47O834rj007492;
-	Sat, 24 Aug 2024 03:03:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724486584;
-	bh=JjIU+fG3i8/0ImnUk4UN7EPAzC6Ypf67afrlG+gIa8k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=XrxHxbwdCKCphGT9RLb2r3JYIA71L59IGC0TgvyFhe0e8g2QT4WWHXYsGs9DOG45v
-	 xowY/FcG1XotawIWCz8EaeqBU9ztrkSjaALnkx9zWNT4T1zlZRxdLj7Fdl2V4f6QN3
-	 oSXe2j+BcbgiBhenW+E1hACrV5g9q2NQhiI0YRig=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47O834VC055259
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 24 Aug 2024 03:03:04 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
- Aug 2024 03:03:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 24 Aug 2024 03:03:03 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47O832rQ022960;
-	Sat, 24 Aug 2024 03:03:03 -0500
-Date: Sat, 24 Aug 2024 13:33:02 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <vigneshr@ti.com>, <kishon@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>
-CC: <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>, <u-kumar1@ti.com>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: Re: [PATCH] PCI: dra7xx: Fix threaded IRQ handler registration
-Message-ID: <d4789281-7eb3-4cde-aa1f-35f979484575@ti.com>
-References: <20240824072135.9691-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1724492603; c=relaxed/simple;
+	bh=5WsuRaYhcJxW661ZUm1cuAs4/wNqZ7oeWqcZoBhK6LY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DSoiDmnW7g+L/XlwqnFvbl89dt84JZRgS4L9N/hAWFk/Nwm6wfll94bmv83thfcjoAijuNeB7CS30tgcEGdoM8J73KCK50Nn1t8xframQVhvskhCnULLqUtEqMw6t+0UBBgnrMsAVUX10CBV9qvygFLoDOEMKrMq+BF/mpaG8q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QzusaWgV; arc=none smtp.client-ip=45.195.24.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=QzusaWgVKwByJzeA+FxoHAcnXi9KfjG+bPYLbU5uN6xsAOo35r5rZ0MiT40y0x5RdUuWhasYy4nZzsluIeRARUXZ+5+aDu+03wZDf/rnXN5W/RxQbuQRhFfvhqdk9nuZjeKQ7fLJ6nMfspakNwnVMp8oqSuGU5F4LYDotYmVW2E=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=nd5VIf5W6pvlmFIxeaG4uBeEYTx1cRTIUzJ8Ujk2LXs=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id A7F0F6E0898;
+	Sat, 24 Aug 2024 12:57:04 +0800 (CST)
+From: Jon Lin <jon.lin@rock-chips.com>
+To: briannorris@chromium.org,
+	broonie@kernel.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	heiko@sntech.de,
+	jon.lin@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH] spi: rockchip: Avoid redundant clock disable in pm operation
+Date: Sat, 24 Aug 2024 12:57:02 +0800
+Message-Id: <20240824045702.3952922-1-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240824072135.9691-1-s-vadapalli@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhhLHVZLHUJDGR9MQ0JJTx9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9182bec15609d5kunma7f0f6e0898
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NAw6FQw4CzI6KBojOS4*FilK
+	OA5PCi5VSlVKTElPT0xOT0lOTkNIVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
+	QVlOQ1VJSVVMVUpKT1lXWQgBWUFPTElDNwY+
 
-On Sat, Aug 24, 2024 at 12:51:35PM +0530, Siddharth Vadapalli wrote:
+Fix WARN_ON:
+[   22.869352][ T1885] clk_spi0 already unprepared
+[   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
+[   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
+[   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
+[   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
+[   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
+[   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
+[   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
 
-Kindly ignore this patch. Sorry for the noise. I was debugging an issue
-and this patch fixed it. But the cause of the issue is probably a race
-condition.
+Fixes:  ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+---
 
-Regards,
-Siddharth.
+ drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 31 deletions(-)
 
-> Commit da87d35a6e51 ("PCI: dra7xx: Use threaded IRQ handler for
-> "dra7xx-pcie-main" IRQ") switched from devm_request_irq() to
-> devm_request_threaded_irq(). In this process, the "handler" and the
-> "thread_fn" parameters were erroneously interchanged, with "NULL" being
-> passed as the "handler" and "dra7xx_pcie_irq_handler()" being registered
-> as the function to be called in a threaded interrupt context.
-> 
-> Fix this by interchanging the "handler" and "thread_fn" parameters.
-> While at it, correct the indentation.
-> 
-> Fixes: da87d35a6e51 ("PCI: dra7xx: Use threaded IRQ handler for "dra7xx-pcie-main" IRQ")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Udit Kumar <u-kumar1@ti.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
-> 
-> Hello,
-> 
-> This patch is based on commit
-> d2bafcf224f3 Merge tag 'cgroup-for-6.11-rc4-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup
-> of Mainline Linux.
-> 
-> Regards,
-> Siddharth.
-> 
->  drivers/pci/controller/dwc/pci-dra7xx.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index 4fe3b0cb72ec..4c64ac27af40 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -849,8 +849,9 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
->  	}
->  	dra7xx->mode = mode;
->  
-> -	ret = devm_request_threaded_irq(dev, irq, NULL, dra7xx_pcie_irq_handler,
-> -			       IRQF_SHARED, "dra7xx-pcie-main", dra7xx);
-> +	ret = devm_request_threaded_irq(dev, irq, dra7xx_pcie_irq_handler, NULL,
-> +					IRQF_SHARED, "dra7xx-pcie-main",
-> +					dra7xx);
->  	if (ret) {
->  		dev_err(dev, "failed to request irq\n");
->  		goto err_gpio;
-> -- 
-> 2.40.1
-> 
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index e1ecd96c7858..043a7739c330 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -940,33 +940,24 @@ static void rockchip_spi_remove(struct platform_device *pdev)
+ 	spi_controller_put(ctlr);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int rockchip_spi_suspend(struct device *dev)
++#ifdef CONFIG_PM
++static int rockchip_spi_runtime_suspend(struct device *dev)
+ {
+-	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+ 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	ret = spi_controller_suspend(ctlr);
+-	if (ret < 0)
+-		return ret;
+-
+ 	clk_disable_unprepare(rs->spiclk);
+ 	clk_disable_unprepare(rs->apb_pclk);
+ 
+-	pinctrl_pm_select_sleep_state(dev);
+-
+ 	return 0;
+ }
+ 
+-static int rockchip_spi_resume(struct device *dev)
++static int rockchip_spi_runtime_resume(struct device *dev)
+ {
+ 	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+ 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	pinctrl_pm_select_default_state(dev);
+-
+ 	ret = clk_prepare_enable(rs->apb_pclk);
+ 	if (ret < 0)
+ 		return ret;
+@@ -975,41 +966,45 @@ static int rockchip_spi_resume(struct device *dev)
+ 	if (ret < 0)
+ 		clk_disable_unprepare(rs->apb_pclk);
+ 
+-	ret = spi_controller_resume(ctlr);
+-	if (ret < 0) {
+-		clk_disable_unprepare(rs->spiclk);
+-		clk_disable_unprepare(rs->apb_pclk);
+-	}
+-
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_SLEEP */
++#endif /* CONFIG_PM */
+ 
+-#ifdef CONFIG_PM
+-static int rockchip_spi_runtime_suspend(struct device *dev)
++#ifdef CONFIG_PM_SLEEP
++static int rockchip_spi_suspend(struct device *dev)
+ {
++	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+-	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	clk_disable_unprepare(rs->spiclk);
+-	clk_disable_unprepare(rs->apb_pclk);
++	ret = spi_controller_suspend(ctlr);
++	if (ret < 0)
++		return ret;
++
++	/* Avoid redundant clock disable */
++	if (!pm_runtime_status_suspended(dev))
++		rockchip_spi_runtime_suspend(dev);
++
++	pinctrl_pm_select_sleep_state(dev);
+ 
+ 	return 0;
+ }
+ 
+-static int rockchip_spi_runtime_resume(struct device *dev)
++static int rockchip_spi_resume(struct device *dev)
+ {
+ 	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+-	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	ret = clk_prepare_enable(rs->apb_pclk);
+-	if (ret < 0)
+-		return ret;
++	pinctrl_pm_select_default_state(dev);
+ 
+-	ret = clk_prepare_enable(rs->spiclk);
++	if (!pm_runtime_status_suspended(dev)) {
++		ret = rockchip_spi_runtime_resume(dev);
++		if (ret < 0)
++			return ret;
++	}
++
++	ret = spi_controller_resume(ctlr);
+ 	if (ret < 0)
+-		clk_disable_unprepare(rs->apb_pclk);
++		rockchip_spi_runtime_suspend(dev);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
+
 
