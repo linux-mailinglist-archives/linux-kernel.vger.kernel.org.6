@@ -1,107 +1,404 @@
-Return-Path: <linux-kernel+bounces-299994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B9795DD5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:14:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4817795DD60
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAD55B21D3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4DAB283341
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC3A1714AA;
-	Sat, 24 Aug 2024 10:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E393915688E;
+	Sat, 24 Aug 2024 10:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgI0wbJ4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+1DW4jd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4006E16BE17;
-	Sat, 24 Aug 2024 10:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F00A5F;
+	Sat, 24 Aug 2024 10:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724494415; cv=none; b=FPrm5db/Md/jkMP91gfEJvpjtx7namxvBLUHRhAsbwlnOcV3c70Rd/MPsfnkM7/TjB1MkXrlBjPGB+vta3MkAvd3Z/2Hjhn14aaL5sGrtmISh3hwS5ZyUye50oUXKSThFtKzSsjhKB4XzOhklmIz+xG8S9YzY8BZFGSfd5C5Ym8=
+	t=1724495343; cv=none; b=ZbUf2XTSeqBF/fgg7aOsCWfOWv8ffl0WKsOF29MFz4sV1/pCBFdWZrngMuXEBIy62JPNPSv+cu9GBPeHcUmqAELtH9t3NPBQcW8WdEg8q2IB9ZHXn4Fok+nZqT9GmvzGh5m+wF+qwEOdolcqS7avBwpF+aKgheOjiM21p7ZiK8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724494415; c=relaxed/simple;
-	bh=wbbTWTMOAUc/1HYInY9BhuXOIB1ltFFcuxx4S0QXILI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EJgODepYpbBJaKkqoQpqi4IxoQiwJIrDnaqBVUkoLMMexK+B/J9n8AJlPZfq67yrKya3TyZdRaXAJ3VV795VqZGeAp3Vfrcs0H0GDnBT6Xwl2JwGU9mqyFzQc7hr1mTrQwyJpgjzV90sUPu6fs/IIL71HUolheu95sKuFj53WY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgI0wbJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F8BC32781;
-	Sat, 24 Aug 2024 10:13:31 +0000 (UTC)
+	s=arc-20240116; t=1724495343; c=relaxed/simple;
+	bh=Ir8a/p3Eh/1DATQxjlROpyZ6wXcEi93r41qDbI6jZro=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P4664nE4o3oRoc2ePJhwy27sCFyGGSzQXNk3HVi0Bm+jEB/8dDDnnkEvpr2h4/rgLYKChLAQv6lx/KwGBpfsekQ2Cw5/Orm61fFvahi4CoZ2BTfte4zNmd0Gz5uz4xfzuaWc6O83qGZpZKNQHpBFed04cRX4x4epczTej1IRwOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+1DW4jd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF593C32781;
+	Sat, 24 Aug 2024 10:28:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724494415;
-	bh=wbbTWTMOAUc/1HYInY9BhuXOIB1ltFFcuxx4S0QXILI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=BgI0wbJ4x8Fbw9Ham1dvuiSkMfbNMkf/gDhim9JSCAEbIAWNAZjXiIHxahDBiwQka
-	 XvzJaqi2z52ZYgT3VPTmU0jK3uIcq96PI18NKtjKa97EjgRNkSfMprX3vljhVqTQI/
-	 NKXcO4Oohr6nmiXWpFKZ90JtRagAa5XKhXE4fXDyuXwPeMIzNsc1txTji2fveA0lbe
-	 z2ELLlkjoHFYq2lX2c6q79BKt4vNl+5RU39n0cDLin1U17zgg3YnRdX8gpMbjI6H+D
-	 SoJGW0KQN5taAkWyAbP1b+mBx9L+pGMn8y2HuFsJEhb1r2PDOPi62fGTJRgFRL5u/U
-	 4f7w3m9W5O9Uw==
-From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, Sameer Pujar <spujar@nvidia.com>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- thierry.reding@gmail.com, jonathanh@nvidia.com, mkumard@nvidia.com, 
- rituc@nvidia.com, jbrunet@baylibre.com, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, robelin@nvidia.com
-In-Reply-To: <20240823144342.4123814-1-spujar@nvidia.com>
-References: <20240823144342.4123814-1-spujar@nvidia.com>
-Subject: Re: [PATCH 0/2] Fixes for Tegra audio
-Message-Id: <172449441067.846858.2296683917418072165.b4-ty@kernel.org>
-Date: Sat, 24 Aug 2024 11:13:30 +0100
+	s=k20201202; t=1724495342;
+	bh=Ir8a/p3Eh/1DATQxjlROpyZ6wXcEi93r41qDbI6jZro=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F+1DW4jdXz4wjj7iBP6onTooGz7/6axBV5tyyLOWQavR1Ku7sBj1Z5taLxsx/qltx
+	 mwphItsKcfWcZ6Q+ObD+renS6vd9YFZWjIBrWf+RhomIVdh3Q1gQFp4vc5M0Tdv4xA
+	 XIPurZL0wlOqhbBTjUC37QFPTCjEOlJ/1EBrjwjyJvYqONKw8zkK+kHeqJsZ8eJ+p+
+	 Md+7Y/x78gzv00/k+bB8AB/l+CJCu3ELosKGMLONOAhvpNG9S4XU19RQYdMNvW+y+2
+	 9BfSo1YPNXW7RcR4ln2VP4Bxjgpk41U5SmE7x4pHnhAsYVu6nYtu6VmCM1DFd0X18w
+	 Ywd5hJ0lZHSGg==
+Date: Sat, 24 Aug 2024 11:28:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ liweilei@awinic.com, kangjiajun@awinic.com
+Subject: Re: [PATCH V8 2/2] iio: proximity: aw96103: Add support for
+ aw96103/aw96105 proximity sensor
+Message-ID: <20240824112847.16ea6521@jic23-huawei>
+In-Reply-To: <20240823094947.3511730-3-wangshuaijie@awinic.com>
+References: <20240823094947.3511730-1-wangshuaijie@awinic.com>
+	<20240823094947.3511730-3-wangshuaijie@awinic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
 
-On Fri, 23 Aug 2024 14:43:40 +0000, Sameer Pujar wrote:
-> This is a small series which fixes two bugs which were discovered
-> on NVIDIA Jetson AGX Orin platform.
+On Fri, 23 Aug 2024 09:49:46 +0000
+wangshuaijie@awinic.com wrote:
+
+> From: shuaijie wang <wangshuaijie@awinic.com>
 > 
-> The first patch in the series fixes a KASAN UAF bug discovered
-> during suspend/resume testing. This is a core DAPM fix.
+> AW96103 is a low power consumption capacitive touch and proximity controller.
+> Each channel can be independently config as sensor input, shield output.
 > 
-> The second patch fixes CBB error and this is Tegra in AHUB driver.
-> This error happens when Tegra audio drivers were built as part of
-> kernel image.
+> Channel Information:
+>   aw96103: 3-channel
+>   aw96105: 5-channel
 > 
-> [...]
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
 
-Applied to
+Hi shuaijie wang,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+This is coming together nicely now so we are down to the fine details
+in this review.
 
-Thanks!
+Some comments may be a bit brief. I'm trying to finish this before train
+enters a tunnel under London :)
 
-[1/2] ASoC: dapm: Fix UAF for snd_soc_pcm_runtime object
-      commit: b4a90b543d9f62d3ac34ec1ab97fc5334b048565
-[2/2] ASoC: tegra: Fix CBB error during probe()
-      commit: 6781b962d97bc52715a8db8cc17278cc3c23ebe8
+> diff --git a/drivers/iio/proximity/aw96103.c b/drivers/iio/proximity/aw96103.c
+> new file mode 100644
+> index 000000000000..c9514712c307
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> +static int aw96103_write_hysteresis(struct aw96103 *aw96103,
+> +				    const struct iio_chan_spec *chan, int val)
+> +{
+> +	unsigned int reg, reg_val;
+> +
+> +	reg = AW96103_REG_PROXCTRL_CH(chan->channel);
+> +	reg_val = FIELD_PREP(AW96103_THHYST_MASK, val);
+> +
+> +	return regmap_update_bits(aw96103->regmap, reg,
+> +				  AW96103_THHYST_MASK, reg_val);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I'd put reg and regval directly inline in the call.
+The local variables aren't adding much.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Same for other related calls. Better to make the association
+super obvious by not having the intermediate variables.
 
-Thanks,
-Mark
+
+> +}
+> +
+> +static int aw96103_read_hysteresis(struct aw96103 *aw96103,
+> +				   const struct iio_chan_spec *chan, int *val)
+> +{
+> +	unsigned int reg, reg_val;
+> +	int ret;
+> +
+> +	reg = AW96103_REG_PROXCTRL_CH(chan->channel);
+Put that inline in the regmap_call.
+	ret = regmap_read(aw96103->regmap,
+			  AW96013-REG_PROXCTRL_CH(chan->channel), &reg_val);
+or similar
+> +	ret = regmap_read(aw96103->regmap, reg, &reg_val);
+> +	if (ret)
+> +		return ret;
+> +	*val = FIELD_GET(AW96103_THHYST_MASK, reg_val);
+> +
+> +	return IIO_VAL_INT;
+> +}
+
+
+> +static int aw96103_bin_valid_loaded(struct aw96103 *aw96103,
+> +				    struct aw_bin *aw_bin_data_s)
+> +{
+> +	unsigned int start_addr = aw_bin_data_s->valid_data_addr;
+> +	u32 i, reg_data;
+> +	u16 reg_addr;
+> +	int ret;
+> +
+> +	for (i = 0; i < aw_bin_data_s->valid_data_len;
+> +	     i += 6, start_addr += 6) {
+> +		reg_addr = *(u16 *)(aw_bin_data_s->data + start_addr);
+> +		reg_data = *(u32 *)(aw_bin_data_s->data + start_addr + 2);
+This is going to be unaligned.  May cause problems for some ancient platforms.
+Also I'm going to guess the endianness of the fw file is fixed.
+As such, probably
+	get_unaligned_le16() and get_unaligned_le32()
+are appropriate?
+
+Just guessing you aren't testing on a big endian platform!
+
+> +		if ((reg_addr == AW96103_REG_EEDA0) ||
+> +		    (reg_addr == AW96103_REG_EEDA1))
+> +			continue;
+> +		if (reg_addr == AW96103_REG_IRQEN) {
+> +			aw96103->hostirqen = reg_data;
+> +			continue;
+> +		}
+> +		if (reg_addr == AW96103_REG_SCANCTRL0)
+> +			aw96103->chan_en = FIELD_GET(AW96103_CHAN_EN_MASK,
+> +						     reg_data);
+blank line here.
+
+> +		ret = regmap_write(aw96103->regmap, reg_addr, reg_data);
+> +		if (ret < 0)
+> +			return ret;
+> +
+no blank line here.
+> +	}
+but add one here.
+
+> +	ret = aw96103_reg_version_comp(aw96103, aw_bin_data_s);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return aw96103_channel_scan_start(aw96103);
+> +}
+
+
+> +static void aw96103_irq_handle(struct iio_dev *indio_dev)
+
+As below, squash this into the callsite as there is little
+else done there.
+
+> +{
+> +	struct aw96103 *aw96103 = iio_priv(indio_dev);
+> +	u32 curr_status_val;
+> +	u32 curr_status;
+
+Combine same type of variable on one line (if none of them or all of them
+are initialised)
+
+> +	unsigned char i;
+
+For an iterator just use int. The compiler can choose to do cleverer things
+with the storage if it likes.
+
+> +	int ret;
+> +
+> +	ret = regmap_read(aw96103->regmap, AW96103_REG_STAT0, &curr_status_val);
+> +	if (ret)
+> +		return;
+> +
+> +	/*
+> +	 * Iteratively analyze the interrupt status of different channels,
+> +	 * with each channel having 4 interrupt states.
+> +	 */
+> +	for (i = 0; i < aw96103->max_channels; i++) {
+> +		if (!aw96103->channels_arr[i].used)
+> +			continue;
+> +
+> +		curr_status = (((curr_status_val >> (24 + i)) & 0x1)) |
+> +			      (((curr_status_val >> (16 + i)) & 0x1) << 1) |
+> +			      (((curr_status_val >> (8 + i)) & 0x1) << 2) |
+> +			      (((curr_status_val >> i) & 0x1) << 3);
+> +		if (aw96103->channels_arr[i].old_irq_status == curr_status)
+> +			continue;
+> +
+> +		switch (curr_status) {
+> +		case FAR:
+> +			iio_push_event(indio_dev,
+> +				       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, i,
+> +							    IIO_EV_TYPE_THRESH,
+> +							    IIO_EV_DIR_RISING),
+> +				       iio_get_time_ns(indio_dev));
+> +			break;
+> +		case TRIGGER_TH0:
+> +		case TRIGGER_TH1:
+> +		case TRIGGER_TH2:
+> +		case TRIGGER_TH3:
+> +			iio_push_event(indio_dev,
+> +				       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, i,
+> +							    IIO_EV_TYPE_THRESH,
+> +							    IIO_EV_DIR_FALLING),
+> +				       iio_get_time_ns(indio_dev));
+> +			break;
+> +		default:
+> +			return;
+> +		}
+> +		aw96103->channels_arr[i].old_irq_status = curr_status;
+> +	}
+> +}
+> +
+> +static irqreturn_t aw96103_irq(int irq, void *data)
+> +{
+> +	struct iio_dev *indio_dev = data;
+> +	struct aw96103 *aw96103 = iio_priv(indio_dev);
+> +	unsigned int irq_status;
+> +	int ret;
+> +
+> +	ret = regmap_read(aw96103->regmap, AW96103_REG_IRQSRC, &irq_status);
+> +	if (ret)
+> +		return IRQ_HANDLED;
+> +
+> +	aw96103_irq_handle(indio_dev);
+
+Separating out the details of the irq handle from this function doesn't
+seem to add much. I'd pull the code in this function down here.
+
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+> +
+> +static int aw96103_wait_chip_init(struct aw96103 *aw96103)
+> +{
+> +	unsigned int cnt = 20;
+> +	u32 reg_data;
+> +	int ret;
+> +
+> +	while (cnt--) {
+> +		/*
+> +		 * The device should generate an initialization completion
+> +		 * interrupt within 20ms.
+> +		 */
+> +		ret = regmap_read(aw96103->regmap, AW96103_REG_IRQSRC,
+> +				  &reg_data);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (FIELD_GET(AW96103_INITOVERIRQ_MASK, reg_data))
+> +			return 0;
+> +		mdelay(1);
+
+fsleep(1000); seems more appropriate here.  I don't think it
+matters if it sleeps for a while before trying again.
+
+> +	}
+> +
+> +	return -EINVAL;
+-ETIMEDOUT probably more appropriate
+> +}
+> +
+> +static int aw96103_read_chipid(struct aw96103 *aw96103)
+> +{
+> +	unsigned char cnt = 0;
+> +	u32 reg_val = 0;
+> +	int ret;
+> +
+> +	while (cnt < 3) {
+> +		/*
+> +		 * This retry mechanism and the subsequent delay are just
+> +		 * attempts to read the chip ID as much as possible,
+> +		 * preventing occasional communication failures from causing
+> +		 * the chip ID read to fail.
+> +		 */
+> +		ret = regmap_read(aw96103->regmap, AW96103_REG_CHIPID,
+> +				  &reg_val);
+> +		if (ret < 0) {
+> +			cnt++;
+> +			usleep_range(2000, 3000);
+
+For these sorts of cases we have fsleep(2000);
+Keeps the amount of 'slack' allowed in the sleeping standard across
+drivers and avoids need for reviewers to think about appropriate ranges
+for the different sleep functions.
+
+It's not yet used in drivers as I think it's relatively new.
+I got reminded of this by Andy's review of another series.
+
+
+> +			continue;
+> +		}
+> +		break;
+> +	}
+> +	if (cnt == 3)
+> +		return -ETIMEDOUT;
+> +
+> +	if (FIELD_GET(AW96103_CHIPID_MASK, reg_val) != AW96103_CHIP_ID)
+> +		dev_info(aw96103->dev,
+> +			 "unexpected chipid, id=0x%08X\n", reg_val);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aw96103_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct iio_dev *aw_iio_dev;
+> +	struct aw96103 *aw96103;
+> +	int ret;
+> +
+> +	aw_iio_dev = devm_iio_device_alloc(&i2c->dev, sizeof(*aw96103));
+
+Better to stick to more common naming of indio_dev, or iio_dev
+This threw me a bit further down.
+
+> +	if (!aw_iio_dev)
+> +		return -ENOMEM;
+> +
+> +	aw96103 = iio_priv(aw_iio_dev);
+> +	aw96103->dev = &i2c->dev;
+> +	aw96103->chip_info = i2c_get_match_data(i2c);
+> +	aw96103->max_channels = aw96103->chip_info->num_channels;
+> +
+> +	aw96103->regmap = devm_regmap_init_i2c(i2c, &aw96103_regmap_confg);
+> +	if (IS_ERR(aw96103->regmap))
+> +		return PTR_ERR(aw96103->regmap);
+> +
+> +	ret = devm_regulator_get_enable(aw96103->dev, "vcc");
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = aw96103_read_chipid(aw96103);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aw96103_sw_reset(aw96103);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aw96103_wait_chip_init(aw96103);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = request_firmware_nowait(THIS_MODULE, true, "aw96103_0.bin",
+> +				      aw96103->dev, GFP_KERNEL, aw96103,
+> +				      aw96103_cfg_update);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = aw96103_interrupt_init(aw_iio_dev, i2c);
+> +	if (ret)
+> +		return ret;
+
+Trivial: blank line here to separate the previous block from
+the next one.
+
+> +	aw_iio_dev->modes = INDIO_DIRECT_MODE;
+> +	aw_iio_dev->num_channels = aw96103->chip_info->num_channels;
+> +	aw_iio_dev->channels = aw96103->chip_info->channels;
+> +	aw_iio_dev->info = &iio_info;
+> +	aw_iio_dev->name = aw96103->chip_info->name;
+> +	aw_iio_dev->dev.parent = aw96103->dev;
+
+No need to do this. The devm_iio_device_alloc() call did it for you
+already.
+
+> +
+> +	return devm_iio_device_register(aw96103->dev, aw_iio_dev);
+> +}
 
 
