@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-300062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052D995DE4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:13:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164BC95DE43
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5A21F2245E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D811F223A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5686F176AD7;
-	Sat, 24 Aug 2024 14:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC2E157480;
+	Sat, 24 Aug 2024 14:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSGnLKAX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d50MFR94"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772FA186A;
-	Sat, 24 Aug 2024 14:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4775684;
+	Sat, 24 Aug 2024 14:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724508792; cv=none; b=RNiPCYaDCJYzmma3ylxOyymnW5vUOgcoF1yRwdweq6voOJxp8jVHAV1qb3Rwy9RmqwfBEYkYSR0A85E4q8dzxOYqRBPtosr+zNzhAS8gemagAMiieKQkOlGLjQuBPbJiWxR2nmfHv8z4GWkFYb9hy+tGXypmxkVGzaDh1S0zWtY=
+	t=1724508699; cv=none; b=TOu1JNTafHvb2sLbgsXmP7SQA7DVqqXCa1ix2i8lzWXIbi40DK4tYY2kJFhaLaH4qtYIWs48FdXH8FQlB1zkauMCqUmWTsTyQrP8H5z9oUbUGrf5uvT/+biPdZ2dD1K2+jRsnfvb7u0YmoqGMAPh9+4w1DJJQ2+1oaiVeCbphKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724508792; c=relaxed/simple;
-	bh=1RROgoMoiIURZrgBI0u+sQOi22mVdm5uhe2i5PEaJ7Q=;
+	s=arc-20240116; t=1724508699; c=relaxed/simple;
+	bh=el5g8EjgI7ujTT5IDKB2mejP4XX43NJSqTyNLGJwfUE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cpUhtYmy0EtfIXIVOOPpeNQpvpLG9ECsf0a8eI25Ckxg2XhYseB7e1Om0fs2TISNGbmh5A7e5JNZB79Mdne7XoTKuXvdfLRrOYaAC3sq8Y0ryiL4g5Bl6oZlJJ1SHKCX702vIol854Y5lqXg9TCi3oB86RxHChrDUk+EtBKVG6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSGnLKAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A59C32781;
-	Sat, 24 Aug 2024 14:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724508792;
-	bh=1RROgoMoiIURZrgBI0u+sQOi22mVdm5uhe2i5PEaJ7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TSGnLKAXbEucvWAQfLpYFzmykp5QeFdt9IGLO+QBd3M9TQsdDcpmVFe8sIb1ZSi0l
-	 +xUKZvMbaYbGjtogaGv09XTXzAuo3HtUW2ICNSKj9fMMR27DBbK2E1mYlZ8J2gyerm
-	 /1PL8xB02z5ButNd1qgVUbpCElWMbZ1P1wArc2W84/S5cKlHRjHUEhfBiwOjHiEORA
-	 DrUX7VJMPECqiLrCo6LNitskmpC6nLf+zytSgeFiVmlaE/DoS2qzaGEi+wgkLOLxVK
-	 IaO8KNkckCOjIhYKAqG+j4ZySWSAQ7nLPL5KSegXJ7SMcBj+z2/inWTDbW9aFUtA0+
-	 eYCtNddeZ/ciw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>,
-	Steve French <sfrench@samba.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/9] netfs, cifs: Combined repost of fixes for truncation, DIO read and read-retry
-Date: Sat, 24 Aug 2024 16:09:51 +0200
-Message-ID: <20240824-ohrwurm-kernaufgabe-6253ce9cb620@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823200819.532106-1-dhowells@redhat.com>
-References: <20240823200819.532106-1-dhowells@redhat.com>
+	 MIME-Version; b=NrR2l3k6MSQdorHIkHtzR2LO8z3SY/jI8pbgBiNlquc7qucIDtfLCPVtLAKkzKrKvZ6s2TahM6+G0UP2pogKy4Xb+T5w9i2j4ZNT/8XOrIQWw2YjXz+Gdx+mvNcr18BHwcfIzEyxTK2zvZCbhEDe1NfYX+CyWICB9Rlrv9b8BGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d50MFR94; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3718cd91185so1464824f8f.2;
+        Sat, 24 Aug 2024 07:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724508696; x=1725113496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yOfgtpLj5kVyrTGG8p96eBlXRzfkS1PEwfIicl9tXtk=;
+        b=d50MFR94l4ABEUmfCEAmtg2hKgkCZ7XcaPYBEg9egkE9LcZtaISa/ZcbiKNSxuume/
+         4ZhdOIztBFOyR5zzLfXJ+HgfNmf4Z7z/tIYKIlXg0AM3pMXa0GkCy3M1V2HwPQmAd3US
+         m0kHdRV0b9gNYcYrCe7c8RR+jOQSXoUEsmgg8dU0QQbPWqcuhOoZ/4b1kW5LbqCKgKlG
+         uOcRoB2sXOcJfgGvNYYRBRveQ5++dNHFi48zt7U5Vb9v1AMGnesQXiTqDayoPHIe7uXS
+         8s/pKL2F5l7ENGvRT/yyoUuPTdG7tZYkv3dDaGVMmg3IVCRwjGRBatehqswcaAp5+Z9j
+         xFOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724508696; x=1725113496;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yOfgtpLj5kVyrTGG8p96eBlXRzfkS1PEwfIicl9tXtk=;
+        b=skqAbAa99m5XIelxUyPTe97Wuppnm93/dFnhlVi6+YeSh3GKG+3UKW4IQjknnhnqx4
+         1ssXhvYnXo6YO3U9C015Mp/u++MziCxQJPYmgsfN1aZDczyCHhwSkGoD3U3CPSzCb6MI
+         ZOWAoVsXTlCuJJftovSJ6UIO9ipAN9yOQ5FoyHd8QIDllvhTpikptxwQRgEo+2O1JC5j
+         vBl1xW7yt6UKGAbIlvIfCW5LUGRyUEGrCW8vt7ukNZ9/EJZxK6iJ/4A7VXD6nheHP5I1
+         mSeMDQwWmVMyJvhNREXU3T5bP/+E3W8Ev02BYtKDub3r0vTjwNuERdzkWxBEiKMJKc/8
+         e4Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVumNdcOyMFRBmK+J/6XnXYgDBStqlQvCDcDKX1FVxdH8HM80X5tKGSUSRbNyycIV3A6fCKXPveuyox02vW@vger.kernel.org, AJvYcCW1H6NuUDgC3sUIGSKmhvqoOKJ3sthJPAXqycb48KBXm6RJ7HHsarMlDHInXInOQHLvDzmNLQLk0vI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWRo8J4h6c4xG+sbBKrfbDW+qgvG0EmmGKgTecnuj60lM/ceB
+	fp683ECGFIjqwh1nfzNswWhYRgtMTDO6fuJjqDbTDFJTYT4/x7xw
+X-Google-Smtp-Source: AGHT+IElju49k+3n9zGWNBvysJnitIKsLiUPcCK2PVsYtpYFs19K+eLFgU1+uigXLerGm3G2V5YR4w==
+X-Received: by 2002:adf:f40e:0:b0:36c:ff0c:36d3 with SMTP id ffacd0b85a97d-3731186839dmr4291474f8f.29.1724508695481;
+        Sat, 24 Aug 2024 07:11:35 -0700 (PDT)
+Received: from localhost.localdomain ([151.95.114.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821ab05sm6591427f8f.98.2024.08.24.07.11.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 07:11:35 -0700 (PDT)
+From: Denis Benato <benato.denis96@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jagath Jog J <jagathjog1996@gmail.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Jonathan LoBue <jlobue10@gmail.com>,
+	Denis Benato <benato.denis96@gmail.com>
+Subject: [PATCH v3 0/1] iio: bmi323: have the peripheral consume less power
+Date: Sat, 24 Aug 2024 16:11:21 +0200
+Message-ID: <20240824141122.334620-1-benato.denis96@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240823192921.7df291f8@jic23-huawei>
+References: <20240823192921.7df291f8@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1823; i=brauner@kernel.org; h=from:subject:message-id; bh=1RROgoMoiIURZrgBI0u+sQOi22mVdm5uhe2i5PEaJ7Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdfJVffXKaT/8Pjqu3GVvfLH2vu2VCaW5K1dO7uq5zj 7TqHFq0s6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiD5IZGRo7T3+Ld/D4IPp9 k8KLx7tbnO8x+ez5wfR20v6496lRfS4M/11XbSi+/6B3pnG0bXW1kq909nHuDUFrV6Rdv7zltM8 eB24A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 21:08:08 +0100, David Howells wrote:
-> Firstly, there are some fixes for truncation, netfslib and afs that I
-> discovered whilst trying Pankaj Raghav's minimum folio order patchset:
-> 
->  (1) Fix truncate to make it honour AS_RELEASE_ALWAYS in a couple of places
->      that got missed.
-> 
->  (2) Fix duplicated editing of a partially invalidated folio in afs's
->      post-setattr edit phase.
-> 
-> [...]
+The bmi323 chip is part of handhelds PCs that are run on battery.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+One of said PC is well-known for its short battery life, even in s2idle:
+help mitigate that by putting the device in its lowest-consumption
+state while the peripheral is unused.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Have runtime-pm suspend callback save used configuration registers
+and runtime-pm resume callback restore saved registers to restore
+the previous state.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Changelog:
+- V2: patch 1:
+	+ change patch commit message
+	+ drop removal callbacks and use devm_add_action_or_reset
+	+ split bmi323_init in two functions
+	+ separate regs to save and relative value
+	+ drop unhelpful consts ptr modifiers
+	+ add a comment to explain why BMI323_FIFO_CTRL_REG is
+	  being used in runtime resume
+- V3: patch 1:
+  + drop a struct array and replace with an array of
+    unsigned int: u8 was too small and it would have resulted
+    in overflow of register addresses
+  + use single-line comments where possible
+  + drop useless comments
+  + remove intermediate variables
+  + remove blank lines
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Previous patches obsoleted:
+https://lore.kernel.org/all/20240811161202.19818-1-benato.denis96@gmail.com
+https://lore.kernel.org/all/20240818150923.20387-1-benato.denis96@gmail.com
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+Signed-off-by: Denis Benato <benato.denis96@gmail.com>
 
-[1/9] mm: Fix missing folio invalidation calls during truncation
-      https://git.kernel.org/vfs/vfs/c/0aa2e1b2fb7a
-[2/9] afs: Fix post-setattr file edit to do truncation correctly
-      https://git.kernel.org/vfs/vfs/c/a74ee0e878e2
-[3/9] netfs: Fix netfs_release_folio() to say no if folio dirty
-      https://git.kernel.org/vfs/vfs/c/7dfc8f0c6144
-[4/9] netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
-      https://git.kernel.org/vfs/vfs/c/cce6bfa6ca0e
-[5/9] netfs: Fix missing iterator reset on retry of short read
-      https://git.kernel.org/vfs/vfs/c/950b03d0f664
-[10/10] netfs: Fix interaction of streaming writes with zero-point tracker
-        https://git.kernel.org/vfs/vfs/c/e00e99ba6c6b
+Denis Benato (1):
+  iio: bmi323: peripheral in lowest power state on suspend
+
+ drivers/iio/imu/bmi323/bmi323_core.c | 155 ++++++++++++++++++++++++++-
+ 1 file changed, 153 insertions(+), 2 deletions(-)
+
+-- 
+2.46.0
+
 
