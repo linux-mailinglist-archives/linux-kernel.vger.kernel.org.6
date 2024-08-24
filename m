@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-299816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBE795DA53
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:14:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A279895DA57
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2091F233C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F251F231E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B20B79C0;
-	Sat, 24 Aug 2024 01:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976C28BEC;
+	Sat, 24 Aug 2024 01:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B4jcbAUV"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KDtEMk6n"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE837A47
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2086223D2
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724462084; cv=none; b=Q781hcYE9oxOuC0kQCq5tW/YknrHc/ecqvr/Yiupa7n1i+UIXAqFdKRpy/mA6GvH25Z7iWX6X6wtnXHNAA4J6w76vaCnTijAJbZEnBIznPwySg06YgKVogMOs4CI8rl+QKwF7EUu2XVMTOSo0a0w96wYUs+6h36Q0O6DNhebbVQ=
+	t=1724462602; cv=none; b=rT6SsaHlecqUaKXtR0BBIIpHKw/QLZ0B6nQsU3+bzMldqhQAepYJQbB/0MIR0aQ2IBsji+4fn2jzXg6bi1Yys+XP4DU8A1jBmGilGNtzXclpUbj1A2dvsNQ81tCEX5QEHbWmqbrMPXi58/qVpIIwoAVhZDq9rJq+XaKYk3NzBGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724462084; c=relaxed/simple;
-	bh=3ltXvU/EqVjBNZCATDE9AKbK4I9cB4dTLRGwGvtGknE=;
+	s=arc-20240116; t=1724462602; c=relaxed/simple;
+	bh=pFBmn1b8HGmxiNAzjHuI1t8iCFvWlQvq1ax4yTVhtWc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ucGxzncva24spR7Zdcz5DVusOZf2op6CvQGdbx9iCd0Rr1MIIsol0nOp3+ulLfB3B1Wi6o6My/GBin4ZpjSt2nqWMSyiJ6yd0XFU3EhvaLXcMQT2Uu1yAY240NlE+lpMX7RfuAfsc7w+Hb66pZNaiQsoTsoxw2yiosVfPbt2KQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B4jcbAUV; arc=none smtp.client-ip=209.85.128.176
+	 To:Cc:Content-Type; b=SCmH31xjGkgsFAyqI5gjburJEx3Ifg65wWCGwNHR7qLqi0hLsEPU1r5j8r42b2fPsILgD0B+u147OycniKg30wPd4YXAtoxDo7YOVlVuC28YbYTuUk0t1OqQvdYBu/T7E862wbyTv/HmiiFSQXUXmprFHwNOEEqj0nW9nvXQLCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KDtEMk6n; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6b99988b6ceso27541357b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:14:42 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a86a37208b2so175425466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724462082; x=1725066882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z4D2X7/K+4SYrs0mfjAke0PQKQjsGDVZHDjzzxg00m4=;
-        b=B4jcbAUVWFfZHxTHIUUHMAxvEaDDPPOgExqNi5B698v+ryd5iKCKd0c3bXQvWJ4z9s
-         ZvCXPRt8QWuaJ6WFii4mejJ8VduNq/Xg24IQJCDOJGVmVTxDcOef9aAsycmM3dmwtQ7v
-         w4qNgi8pTGD4n7JtzEKriAJbC4r0L4KRZEijA=
+        d=linux-foundation.org; s=google; t=1724462599; x=1725067399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hS0PlIghB31D9UEMBMHujKkEVm4tXs1uqCiHkuDkoqU=;
+        b=KDtEMk6nuI2F12uxqL2oxrKKtfpPaoT5FBEU6JIi99X+0H5aisnt2AYeFAgqiU5okV
+         ASgMgLDDoRY9gUWzwRru0rCrTmRan0oq10Kj/kl2T9f/5JXlWccyfZwMvc4sLHxEuC1W
+         vHnHM0INEQX4y9oLxyGy37u8OC7HRN1pqr7AE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724462082; x=1725066882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z4D2X7/K+4SYrs0mfjAke0PQKQjsGDVZHDjzzxg00m4=;
-        b=DzRKflecJ+wJFYfz2ur6SB87KfxBzUIbmLgctrJswayRtnB1t0ra8g/TTOAlnumSb+
-         NbkgQEMRJBUHyq4F6Z5LYRJjVWyDKJHQMl9KBgzZX5CUVmiG0pchlF5oxseF689zdKBM
-         s/u2ePzKSEVw/4pXOC1Cy1IIqJhv/75ZimSk3x1W3GFby/DBpdsX4e3NvnFqzyWIuB/q
-         kbHsZVkvaRwIiKGmT6VFlckRGL4uZNsUFApC63aZ+ttk7qBmvcYVQsDHPJo+K2/kKa/G
-         4rqk7gAkhHFmStVnhhZVTGMZWWUZuB4512Pfy+lCKjLZKBQ+G6f/nAuEzaOiw5VLTawA
-         RaDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsejoFPeWNrXRV6uxariV5qxRNHPfVaS66xn1OXcj78CtSGl1mph7o3a3yInSpDj7kUjz9H1WDzkfMPHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybAYwJBOKpwAUIp6df00ruDDCvCnjv7+J22KosGumqESFkM8X6
-	4NmwxqnNE7ll6dVr09OjtU6I7NytIDNltD79FnKbr6ut9Lvm5V28cQA75nHn3XMKylTGRkQLd/t
-	WSXpIJYGEr/eemzHp5Oh03RB68sD4MTtkOzLkhA==
-X-Google-Smtp-Source: AGHT+IE6ZW88HoHP1Dw+5Mhydbv6PiMgNhRVRsbt3kx9tUZB91yn8vzE8b+B7f4QD6IHh4f2iU6uScsmlcLPUekzXvY=
-X-Received: by 2002:a05:690c:6609:b0:6b3:8248:34c with SMTP id
- 00721157ae682-6c6249dd2femr48331147b3.4.1724462081895; Fri, 23 Aug 2024
- 18:14:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724462599; x=1725067399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hS0PlIghB31D9UEMBMHujKkEVm4tXs1uqCiHkuDkoqU=;
+        b=jwsSobph+TD8cv5lRrOcI0cerS4rzH2O07BLcAusDtUcwk9cY+X9Rgvnz72VhsV6AP
+         QxoOPF1oM7171OGX1pkJzxQh6Qrk7Y+F7yO+nBAOIfuZ638gNFKxh/IMH/bSvidufj0d
+         gnDRzM31CWCsebrqEPyXY8kfF/WNMXHEHtOd/R59NwIkRdKCspLCKe3K41kIGPTmDGIQ
+         f9KiFLdY3W/JVKhhjx8A7p4EgJOPbbaowh8mQk803h4g1zZNSKlpPKJXP3yoSY9yJSVI
+         8u3EzNB3mpY1uO63k83JIIjYMzwXzivgMDxAg7wNPwG2TxY0+thbztHEVlmGhZQZsDB3
+         2Z5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGIYQVsiPIcJ1rmTldHeTaIDHCWIKT1t6B/Y51G1sHPYbSnxF0g4BEl8A6atze8CAFU4xeDwEO0PGDMAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQedMWb4Ju8RRyhRTnobSpDA2O3P9p+ncSPktlN2b0LdencuWC
+	A39m2bbsWPvN2g8roO9+GWqfIBBaJt9K6/h5mN0rCvlzucmEK6y7Uu+yxKeNVR6gZwnv2iEYTUj
+	Me0akXA==
+X-Google-Smtp-Source: AGHT+IFn6H9qCJCQENji5kyI3mGfryYS1LW0/SGAqRhXGkY8gnMz3xxbiNJEADEFiI0GfUO/e106VQ==
+X-Received: by 2002:a17:907:e251:b0:a7a:8378:625c with SMTP id a640c23a62f3a-a86a52de6aemr293871266b.36.1724462598884;
+        Fri, 23 Aug 2024 18:23:18 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f222b23sm336881066b.19.2024.08.23.18.23.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 18:23:17 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so3533237a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:23:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVf5Bk1cV87l1k5mcANC5AncnQ1MvXdCamm0q/fOL7xxpBVpylqX14sWYM5o1gN+venYVmc/s1Ic+/S/uQ=@vger.kernel.org
+X-Received: by 2002:a05:6402:430c:b0:58b:585b:42a2 with SMTP id
+ 4fb4d7f45d1cf-5c0891a92a6mr2273293a12.38.1724462597330; Fri, 23 Aug 2024
+ 18:23:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com> <Zsj7afivXqOL1FXG@bombadil.infradead.org>
-In-Reply-To: <Zsj7afivXqOL1FXG@bombadil.infradead.org>
+References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+In-Reply-To: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 24 Aug 2024 09:14:30 +0800
-Message-ID: <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-To: Luis Chamberlain <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Russ Weight <russ.weight@linux.dev>, 
-	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Sat, 24 Aug 2024 09:23:00 +0800
+X-Gmail-Original-Message-ID: <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+Message-ID: <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 24, 2024 at 5:13=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
+On Sat, 24 Aug 2024 at 02:54, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> I'm all for this, however a strong rejection outright for the first
-> kernel release is bound to end up with some angry user with some oddball
-> driver that had this for whatever stupid reason.
+> Hi Linus, big one this time...
 
-I can't actually see a reason why a firmware file would have a ".."
-component in it, so I think the immediate rejection is fine -
-particularly since it has a warning printout, so you see what happened
-and why.
+Yeah, no, enough is enough. The last pull was already big.
 
-I do wonder if we should just have a LOOKUP_NO_DOTDOT flag, and just use th=
-at.
+This is too big, it touches non-bcachefs stuff, and it's not even
+remotely some kind of regression.
 
-[ Christian - the issue is the firmware loading path not wanting to
-have ".." in the pathname so that you can't load outside the normal
-firmware tree. We could also use LOOKUP_BENEATH, except
-kernel_read_file_from_path_initns() just takes one long path rather
-than "here's the base, and here's the path". ]
+At some point "fix something" just turns into development, and this is
+that point.
 
-There might be other people who want LOOKUP_NO_DOTDOT for similar
-reasons. In fact, some people might want an even stronger "normalized
-path" validation, where empty components or just "." is invalid, just
-because that makes pathnames ambiguous.
+Nobody sane uses bcachefs and expects it to be stable, so every single
+user is an experimental site.
 
-              Linus
+The bcachefs patches have become these kinds of "lots of development
+during the release cycles rather than before it", to the point where
+I'm starting to regret merging bcachefs.
+
+If bcachefs can't work sanely within the normal upstream kernel
+release schedule, maybe it shouldn't *be* in the normal upstream
+kernel.
+
+This is getting beyond ridiculous.
+
+               Linus
 
