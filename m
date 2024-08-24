@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-299825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE3495DA6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:49:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851F795DA72
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4189B213A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC52E1C21739
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DBCAD5E;
-	Sat, 24 Aug 2024 01:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B45DF5C;
+	Sat, 24 Aug 2024 01:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Oumkcoom"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g3qumbqB"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D598DB65C
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D33FB644;
+	Sat, 24 Aug 2024 01:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724464142; cv=none; b=mkQViD3YXK+kpGDRJ/LXUbRVvpaL6G/w/QfrAtDwBddiFS2c0Kjhsg5Cm4YPXXDVtvNfwQGZpOK3Gduq0iAITH40bYHB39DhxKRYAh9e2hYI6JU8d6fTwWYLECYlgjAMZeyPi3qLAW1FeoW+RFHVDazytn2P8iBZCZMwGDdy4OE=
+	t=1724464695; cv=none; b=Kab2CSTTPY3nsLYXHU6tmRCBx3MZFYLgLNCqUF19KQc5KOMsR2DQiI1yGo+xMp11bUo8OFz86W1HEQ5qcKqdV4Zwg93NcHevAm0PCfAPBjxEUIL8IiAoJ49t5f6V6m/z3Os/QmpYQPK3EzvZSo2WLITAHBvhtZclXfi1rP85CmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724464142; c=relaxed/simple;
-	bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FDyisTZTzDZ0Dsvd0a/dJl2IiEAIJi9Dca9bxxquNFYJoLigcKyp5rOZPZ0zcCA0NGpCXHlVWS3TCaVuONBvEp/kshe00VvGxifIxCzCPocbTstfkBQMTUE8oxsEFsH7W68umH2TfTCXStz3pKeE0lehp9+WnFaFVSxiQ5rRpDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Oumkcoom; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so5610a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724464139; x=1725068939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
-        b=OumkcoomiEpzsKooYlJACCxqjOe7RTkO2Dme1Nv5yFPZYXN14T+OaPajGz20yLrUKA
-         Gs6X5HkNwj6v5MT3guZr1uzu1xyIQJOKCDIFtPeYth34yJBbLBGkwFZqUW6B72yRGj9v
-         bgoP/yvIAIjp060pbIZzmddKldtj/4xEVqTkTR9g8laW/hohi0eY2OzRgdONDZ+hfbku
-         iKOXudwYdOhXNvrUzQKvfBuGhvoFzJdbKgbVXLOVy60FpOKgaboghboz0mwO3mzezDwf
-         pc1EbzSwIalTHGludxGPrb51+BIRifRGVjYE1iYAl1RwRmlrP0CF9QYAhObi29bqLsO8
-         5xrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724464139; x=1725068939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=++4ijqEI0KFv+WTBtjdocH3xWj6QjeKa/zamPky6pAk=;
-        b=qJP8NwfXWNuUZO53IofY9OYWiELZw1qYB1Od9A1lWVdbVuYm0qty2gtVbhVR9vLbvh
-         0blcpuv+lIlvFe30LADNeL/tOhiOPExNPLoq2M/xPEWdoGw8fvvM+zuhAvE1Ej9m+K4Q
-         ADG142tC6H720Ql5EHkHdAeXWbi1sqKIAqiqmdjQMh/d80/hlmQ7PphhXQI6z1ig58wa
-         opg/k9f1q2WJcNEEphc81baNqdvgr2AyEpB01Q2J84fKAbDVjxwUVu1yf845VwX5opQj
-         a+Dc5eftWeFngd0z11SAyjBdz8Fy7DwiuQNhyLkNgEk3FI702qATTHtaWPoxyuOqWN2+
-         V3GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEoAJrkDXuZernAZGUFRnWHrJI8gd8l+ZHkmc9HMeYny2tSz1UuxJQkmMBqa5y+VYqCYI+2JS/+rkjN3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE1icls40WBndz7DC1OwuXCGa9pdD4SRFpUrCe734yQOxwdB0s
-	xcY5EygqyWugSuW2p8CekZHeFwtpPW8KhBgqNzcfwrt1iJCJfF2o7VZGdcB0SQD98bKoEI420yi
-	T840mGCbEr+lqW8WSX+UEyOPVwR0+g8ZALhtd
-X-Google-Smtp-Source: AGHT+IGOnvh2cOGlHPWfto0H8IC8jTWy/ckDMq/UZEt6MAleNbTXNTFl+VQ3YOTHqjevKaA6xuICKeWZ5Uh8oy7OqEQ=
-X-Received: by 2002:a05:6402:35cc:b0:5be:c28a:97cf with SMTP id
- 4fb4d7f45d1cf-5c097d5128dmr32582a12.5.1724464138575; Fri, 23 Aug 2024
- 18:48:58 -0700 (PDT)
+	s=arc-20240116; t=1724464695; c=relaxed/simple;
+	bh=GINWLrrg2nx3Vivl4ATkC8nbh6bCMwwHWBKvUXlUXWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDo7HmmG0HbeusSTB1N3xK7GChQ+kQijzKmRL8dD1f+d16GV75xQqGC6oZgDV/WuUWy+dxCHh7vm5Mil5ZxUSYxUSF1R3Fk92/BUz8+y2l5yzDevFrhvJ96VDU0TX4MBSbLCgEWuQDYbBpFVPonLjwCJwuicBGwUYo8iLe6benM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g3qumbqB; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D5D011C0003;
+	Sat, 24 Aug 2024 01:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724464690;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lnixKGZ9j8jXTXWeAPNxltVu25XKBOwXu4ouyQ+656A=;
+	b=g3qumbqB+AysT8EzAW1bLfb8GrBd6ArIkZi3UnJWiVFuNyKqDu114L0+Q6iGeP9Msij8IW
+	MvNmt+IMliivrJWlT86VRHJC6XRXWYzyyzf4FcXB33CeEuQauiyGN0uvR1epCxSk7qnJ7S
+	b7DoynDLdTiT3Rd0Ews8KW+6dhzE/3AAkAl6NDQS9FKEueblSsYVNfF7lB1pbc8Ar/qq9z
+	8pjBcXhB6SEayNsz7c0rq9yjQInKCrFh3+uxwygCLpyXrhBfXL/RhMzrwSYqG4GfX5iVM3
+	lAhj819UHAFn/pL7b1LjhU6oECJnCJ/rlB4C/DECt7Lo603feOFaspMZ1inh/w==
+Date: Sat, 24 Aug 2024 03:58:09 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 5/8] Documentation: bindings: rtc: add clock-cells
+ property
+Message-ID: <202408240158092f696ac7@mail.local>
+References: <20240823153528.3863993-1-karthikeyan@linumiz.com>
+ <20240823153528.3863993-6-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
- <Zsj7afivXqOL1FXG@bombadil.infradead.org> <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
-In-Reply-To: <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Sat, 24 Aug 2024 03:48:21 +0200
-Message-ID: <CAG48ez2_Gs=fuG5vwML-gCzvZcVDJJy=Tr8p+ANxW4h2dKBAjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823153528.3863993-6-karthikeyan@linumiz.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Sat, Aug 24, 2024 at 3:14=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, Aug 24, 2024 at 5:13=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.o=
-rg> wrote:
-> >
-> > I'm all for this, however a strong rejection outright for the first
-> > kernel release is bound to end up with some angry user with some oddbal=
-l
-> > driver that had this for whatever stupid reason.
->
-> I can't actually see a reason why a firmware file would have a ".."
-> component in it, so I think the immediate rejection is fine -
-> particularly since it has a warning printout, so you see what happened
-> and why.
->
-> I do wonder if we should just have a LOOKUP_NO_DOTDOT flag, and just use =
-that.
->
-> [ Christian - the issue is the firmware loading path not wanting to
-> have ".." in the pathname so that you can't load outside the normal
-> firmware tree. We could also use LOOKUP_BENEATH, except
-> kernel_read_file_from_path_initns() just takes one long path rather
-> than "here's the base, and here's the path". ]
+Hello,
 
-One other difference between the semantics we need here and
-LOOKUP_BENEATH is that we need to allow *symlinks* that contain ".."
-components or absolute paths; just the original path string must not
-contain them. If root decides to put symlinks to other places on the
-disk into /lib/firmware, I think that's reasonable, and it's root's
-decision to make, and we shouldn't break that. (And as an example, on
-my Debian machine, I see that /lib/firmware/regulatory.db is a symlink
-to /etc/alternatives/regulatory.db, which in turn is a symlink to
-/lib/firmware/regulatory.db-debian. I also see a bunch of symlinks in
-subdirectories of /lib/firmware with ".." in the link destinations,
-though those don't escape from /lib/firmware.)
+the subject needs to start with:
 
-So if we do this with a lookup flag, it'd have to be something that
-only takes effect when nd->depth is 0, or something vaguely along
-those lines? IDK how exactly that part of the path walking code works.
+dt-bindings: rtc: microcrystal,rv3028:
 
-> There might be other people who want LOOKUP_NO_DOTDOT for similar
-> reasons. In fact, some people might want an even stronger "normalized
-> path" validation, where empty components or just "." is invalid, just
-> because that makes pathnames ambiguous.
+On 23/08/2024 21:05:25+0530, Karthikeyan Krishnasamy wrote:
+> consume clkout from rv3028 rtc which is able to provide
+> different clock frequency upon configuration
+> 
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+> ---
+>  Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> index 5ade5dfad048..cda8ad7c1203 100644
+> --- a/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/microcrystal,rv3028.yaml
+> @@ -22,6 +22,9 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>  
+> +  "#clock-cells":
+> +    const: 0
+> +
+>    trickle-resistor-ohms:
+>      enum:
+>        - 3000
+> -- 
+> 2.39.2
+> 
 
-(For what it's worth, I think I have seen many copies of this kind of
-string-based checking for ".." components in various pieces of
-userspace code. I don't think I've seen many places in the kernel that
-would benefit from that.)
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
