@@ -1,201 +1,128 @@
-Return-Path: <linux-kernel+bounces-300110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7D995DEF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE7E95DEF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7AE1C20EA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7F21C20DAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B68D15574A;
-	Sat, 24 Aug 2024 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26F717A932;
+	Sat, 24 Aug 2024 16:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NGbmB1AU"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQkTiIup"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9992BAE5
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 16:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A7729422;
+	Sat, 24 Aug 2024 16:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724516269; cv=none; b=b2VEY2gF1OEz+N05KBXuC2eRFQRdeciQDKbGB9aapuT6Ra0bsk0UGxBmT+GAnl0LhWdir60yokQNF+XFcTalQixjC9pHN0nw835+hJvxWVGMpbGz9LlQrx6y6BtTENmTHoDuKomhOywS0gJYJgCxN+yZiLP21UYaZRHacdnuQ3E=
+	t=1724516445; cv=none; b=t58FvluxJ8IV3uQBO2uQGF5t6wAC8ueTqFWOXAp2E7IudBrYHuT/9AndSdyQAQQSl8qSe7SAYPp4eDWcH3bbD66zlCVMNEa9sgQoQbVt+Kouf8CCZYt4+6aRny+/G0rBDhCJ81siH0BYjM+O+2U/Uu50cXpUiOvrjZ9O53Rh1ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724516269; c=relaxed/simple;
-	bh=0TRUzX7NRSHjcFUZ99/pBlP0WkhXQfwWMr5tIux8OGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=beX5QLcvzDEw+By9bHs9vpTCZGrZCs9QiPb2U0s7N+Y0ybEnsAInYD8/mb3Cu9ytCPyVGCWfZ/b0yKa4Lp247fA3wfCik+u19m93CooamFccsvbxjrf9corcZpHLr000nts4hF/MIiC3YeXEG5nCKq0HrOjSuUVaNRmfEjDDwtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NGbmB1AU; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f4f505118fso18070601fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724516266; x=1725121066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tLewfIc0V1606kS8OnVX5wewyAHhmWACUF+UrTlyhhY=;
-        b=NGbmB1AUY3IvLYhvJLM41WQG/hJOsOBtv9RAf2/Sh26ahYggI7GPSmgCFAjgoMvlWU
-         N4j2u6ji27fiThh7wL1SRMJoryDz50BRiJfyecMdtQCqw7ZHxYoe9LkxVsnwQZF0nDVP
-         jRbvclNRK3bna3ywOhvceqLpIL3s5bU9/t7m1qnTzP8wEbClesns9jZgmmhxy+0v/Jug
-         shT0TDJjO5503qZ8kV8ZjmehBbT/Fky0kBgqNsm6TwnUyEY8STeyWwJ9cdAsxgmnMOFe
-         WFTeJ39CXW2wrps4EmksW1wJELgPZrj9KMHSHxCSmEpE2NMcQjI0PhorLIP4Gb2WRtje
-         w5Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724516266; x=1725121066;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tLewfIc0V1606kS8OnVX5wewyAHhmWACUF+UrTlyhhY=;
-        b=S+57VRQbLpZVwAvexjlI0iioCj+yZ7B8bW2PIn6LbNZp5wgN3F2xmR5WxdOAevsUY4
-         N4XRmUt1Q1rsfvmt1vsRZC9CeRQyoiSiylyyDlpeHlHVPA7Z5RIv1oLw/S/Dgnv/boFf
-         64MRWsQxW+gMdhxJURNtB6kvnZRjELtHFfsPOWIxHHBET+AZ44Q2qHGC91IgMVcff7k+
-         qhRqL4Fv4CVTUQVp80gLGQRxZjwtktv2F+RMpkwAXEUmgo71CyrsqVw4edE4NPa9J6j0
-         QwkK1/Iz6McHb9QNunigWJGKpHNh7CAstkDFpvBN71zSEYzKqJ36HSMTym46hVVzDUXL
-         vidA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpRlXVvZ1hG78yqfJ1rAdA8Uy6f8ordoj07il+rPV/5lQhPYfWQ2sJSlPs+7eUwviHphlq5aJcqGUuBZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsM/Jo+ljUklYr90c7lU918ylxv1fArd8twHZhIQCZ5pPUoXl
-	kr4ZJjLYKJh9YS7yEYR3TGg4ZyOLZGI4QEU5Dgl3Vx4UMofTEQw8c9oeRDDz4j2c4t4oZQ0PnbW
-	P
-X-Google-Smtp-Source: AGHT+IG1B8GIfumzhHnj7hWtGm9Ri19lD7phgp+y6ayI6ebhTTQom/sBEbyQQqKIe7quJGIBo5VwAg==
-X-Received: by 2002:a05:651c:1548:b0:2ef:268a:a194 with SMTP id 38308e7fff4ca-2f4f48d6dedmr44127171fa.9.1724516265407;
-        Sat, 24 Aug 2024 09:17:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.94])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a4c43e7sm3499608a12.70.2024.08.24.09.17.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Aug 2024 09:17:44 -0700 (PDT)
-Message-ID: <717bd06f-3eba-4825-a53f-b2f9aa1c81c8@tuxon.dev>
-Date: Sat, 24 Aug 2024 19:17:43 +0300
+	s=arc-20240116; t=1724516445; c=relaxed/simple;
+	bh=4rNI7CjGB+bnr4YbBzsADFxzkV0n2pJVKnmY1DUCoX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=X/b07ZxlI3zt9jlcXuAxcJzX6pLkzglXpN5u8G9ybjsbbjPqNVb8xlNJ5nJv8SjgfhUkbHPQ+8gxmx75K9lJGBzVY+Bvbwr99kvMNr0JAHCTT/fAP+fY5uJCW4X6HYlG6Ge6OJx5u7Q1O0wvfKcVRDjb3SVs4LzhF619DqW1ec0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQkTiIup; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430E5C32781;
+	Sat, 24 Aug 2024 16:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724516444;
+	bh=4rNI7CjGB+bnr4YbBzsADFxzkV0n2pJVKnmY1DUCoX4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GQkTiIupJPchZZootglVD2UK/QSNanVaEIqCHfjcuHYBIch8WDBZJKvxq6zjkh7PO
+	 vx9ygHGVOMWl/k8Anvf9rCZlvke0zbJDTtWZtOEKkv4vwAWnciC9Mvw0tbdMSokgbT
+	 d1OGeDfy54m/3bfVYvu+SppuytFD21Bzo/Kd0AP/3iPLZy89PMjEbxXbmJstfSWMfS
+	 GMiRFqalQUuFha1MqzxEYyTZzOHeTAydNfgsao/y35O/JmDObOE4FRB8YvLPHWSIsy
+	 TjgiJ5JBWloaFqpknbYunxW+pUv+S8maIfWKEYsZlPM1olEHaxTgDLozx4ObaGqasz
+	 +XanfGedfSL6g==
+Date: Sat, 24 Aug 2024 11:20:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rajat Jain <rajatja@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	iommu@lists.linux.dev, Lukas Wunner <lukas@wunner.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] PCI: Detect and trust built-in Thunderbolt chips
+Message-ID: <20240824162042.GA411509@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 00/12] Microchip OTPC driver on SAM9X60 exposing UIDxR
- as additional nvmem device
-Content-Language: en-US
-To: Alexander Dahl <ada@thorsis.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Christian Melki <christian.melki@t2data.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240821105943.230281-1-ada@thorsis.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240821105943.230281-1-ada@thorsis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824042635.GM1532424@black.fi.intel.com>
 
-Hi, Alexander,
+On Sat, Aug 24, 2024 at 07:26:35AM +0300, Mika Westerberg wrote:
+> On Fri, Aug 23, 2024 at 04:12:54PM -0500, Bjorn Helgaas wrote:
+> > On Fri, Aug 23, 2024 at 04:53:16PM +0000, Esther Shimanovich wrote:
+> > > Some computers with CPUs that lack Thunderbolt features use discrete
+> > > Thunderbolt chips to add Thunderbolt functionality. These Thunderbolt
+> > > chips are located within the chassis; between the root port labeled
+> > > ExternalFacingPort and the USB-C port.
+> > 
+> > Is this a firmware defect?  I asked this before, and I interpret your
+> > answer of "ExternalFacingPort is not 100% accurate all of the time" as
+> > "yes, this is a firmware defect."  That should be part of the commit
+> > log and code comments.
+> > 
+> > We (of course) have to work around firmware defects, but workarounds
+> > need to be labeled as such instead of masquerading as generic code.
+> > 
+> > > These Thunderbolt PCIe devices should be labeled as fixed and trusted,
+> > > as they are built into the computer. Otherwise, security policies that
+> > > rely on those flags may have unintended results, such as preventing
+> > > USB-C ports from enumerating.
+> > > 
+> > > Detect the above scenario through the process of elimination.
+> > > 
+> > > 1) Integrated Thunderbolt host controllers already have Thunderbolt
+> > >    implemented, so anything outside their external facing root port is
+> > >    removable and untrusted.
+> > > 
+> > >    Detect them using the following properties:
+> > > 
+> > >      - Most integrated host controllers have the usb4-host-interface
+> > >        ACPI property, as described here:
+> > > Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
+> > > 
+> > >      - Integrated Thunderbolt PCIe root ports before Alder Lake do not
+> > >        have the usb4-host-interface ACPI property. Identify those with
+> > >        their PCI IDs instead.
+> > > 
+> > > 2) If a root port does not have integrated Thunderbolt capabilities, but
+> > >    has the ExternalFacingPort ACPI property, that means the manufacturer
+> > >    has opted to use a discrete Thunderbolt host controller that is
+> > >    built into the computer.
+> > 
+> > Unconvincing.  If a Root Port has an external connector, is it
+> > impossible to plug in a Thunderbolt device to that connector?  I
+> > assume the wires from a Root Port could be traces on a PCB to a
+> > soldered-down Thunderbolt controller, OR could be wires to a connector
+> > where a Thunderbolt controller could be plugged in.  How could we tell
+> > the difference?
+> 
+> You are talking about soldered down controller vs. add-in card (e.g PCIe
+> slot)? We don't really distinguish those.
 
-On 21.08.2024 13:59, Alexander Dahl wrote:
-> Hei hei,
-> 
-> on a custom sam9x60 based board we want to access a unique ID of the
-> SoC.  Microchip sam-ba has a command 'readuniqueid' which returns the
-> content of the OTPC Product UID x Register in that case.
-> 
-> (On different boards with a SAMA5D2 we use the Serial Number x Register
-> exposed through the atmel soc driver.  Those registers are not present
-> in the SAM9X60 series, but only for SAMA5D2/SAMA5D4 AFAIK.)
+That's kind of my point.  We're depending on the platform using
+ExternalFacingPort to tell us whether there's an external connector,
+and in this case it sounds like the platform is lying to us.
 
-Not sure if you are talking about Chip ID, Chip ID extension registers.
-These are available also on SAM9X60.
+What about PCI_EXP_FLAGS_SLOT?  If a discrete Thunderbolt controller
+is built into the platform, maybe there would be no reason for the
+Root Port to set Slot Implemented and provide the Slot Capabilities/
+Control/Status registers.
 
-> 
-> There is a driver for the OTPC of the SAMA7G5 and after comparing
-> register layouts it seems that one is almost identical to the one used
-> by SAM9X60.  Currently that driver has no support for the UIDx
-> registers, but I suppose it would be the right place to implement it,
-> because the registers are within the OTPC register address offsets.
-> 
-> The patch series starts with fixups for the current driver.  It then
-> adds the necessary pieces to DT and driver to work on SAM9X60 in
-> general.  Later support for enabling the main RC oscillator is added,
-> which is required on SAM9X60 for the OTPC to work.  The last patch adds
-> an additional nvmem device for the UIDx registers.
-> 
-> This v1 of the series was _not_ tested on SAMA7G5, because I don't have
-> such a board for testing.  Actually I don't know if the main_rc_osc
-> clock is required on SAMA7G5 too, and if yes how to handle that with
-> regard to the different clock ids.  If someone could test on SAMA7G5
-> and/or help me sorting out the core clock id things, that would be
-> highly appreciated.
-
-Please add Nicolas in the loop on the next revisions of this series as this
-should also be tested on SAMA7G5. I don't have a SAMA7G5 with OTP memory
-populated.
-
-> 
-> Also I assume some more devicetree and/or sysfs documentation is
-> necessary.  If someone could point me what's exactly required, this
-> would be very helpful for me.  You see I expect at least another version
-> v2 of the series. ;-)
-> 
-> Maybe some files having that "sama7g5" should be renamed, because that
-> DT binding is used for more SoCs now and deserves a more generic name?
-
-Not needed, adding your compatible there is enough.
-
-> Thinking of these for example:
-> 
-> - Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> - include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
-> 
-> Are there other SoCs than SAMA7G5 and SAM9X60 using the same OTPC?
-> 
-> Last question: Should the UID be added to the device entropy pool with
-> add_device_randomness() as done in the SAMA5D2 sfr driver?
-> 
-> I sent an RFC patch on this topic earlier this year, you'll find the
-> link below as a reference to the discussion.  The patch itself was
-> trivial and not meant for applying as is anyways, so I decided to not
-> write a full changelog from RFC to v1.
-> 
-> Last not least, special thanks to Christian Melki on IRC, who wrote and
-> tested parts of this, and was very kind and helpful in discussing the
-> topic several times in the past months.
-> 
-> Christian, if you feel there's credit missing, just point me where to
-> add Co-developed-by and I'll happily do that for v2.
-> 
-> Greets
-> Alex
-> 
-> (series based on v6.11-rc4)
-> 
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Link: https://lore.kernel.org/all/20240412140802.1571935-2-ada@thorsis.com/
-> 
-> Alexander Dahl (12):
->   nvmem: microchip-otpc: Avoid writing a write-only register
->   nvmem: microchip-otpc: Fix swapped 'sleep' and 'timeout' parameters
->   dt-bindings: nvmem: microchip-otpc: Add compatible for SAM9X60
->   nvmem: microchip-otpc: Add SAM9X60 support
->   ARM: dts: microchip: sam9x60: Add OTPC node
->   ARM: dts: microchip: sam9x60_curiosity: Enable OTP Controller
->   nvmem: microchip-otpc: Add missing register definitions
->   nvmem: microchip-otpc: Add warnings for bad OTPC conditions on probe
->   clk: at91: sam9x60: Allow enabling main_rc_osc through DT
->   ARM: dts: microchip: sam9x60: Add clock properties to OTPC
->   nvmem: microchip-otpc: Enable main RC oscillator clock
->   nvmem: microchip-otpc: Expose UID registers as 2nd nvmem device
-> 
->  .../nvmem/microchip,sama7g5-otpc.yaml         |  1 +
->  .../dts/microchip/at91-sam9x60_curiosity.dts  |  4 +
->  arch/arm/boot/dts/microchip/sam9x60.dtsi      | 10 +++
->  drivers/clk/at91/sam9x60.c                    |  3 +-
->  drivers/nvmem/microchip-otpc.c                | 86 ++++++++++++++++++-
->  include/dt-bindings/clock/at91.h              |  1 +
->  6 files changed, 100 insertions(+), 5 deletions(-)
-> 
-> 
-> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+Bjorn
 
