@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-300000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F107195DD6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A77495DD6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78C4E1F224EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D760E1F2255A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753E9155757;
-	Sat, 24 Aug 2024 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB26155A47;
+	Sat, 24 Aug 2024 10:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEwD9w2Y"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X09lHOmy"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CAA28DB3
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451EF28DB3;
+	Sat, 24 Aug 2024 10:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724496640; cv=none; b=jf1gM6fM80XHonPuhcrTMcU6Kua8BTZJcm+EDitU+ESDhSyNj23cnot8BfCl4CgM8mKSu7xzYGESxAamIcsxhtBE80wkNI6kWkR0BEhDMZ0uHv/iDv2OUSxJVcZ9nfTJ4WJYWRDIqhXVOVM3ulfG6s7LLpUvjO50GoPGWgEEhhI=
+	t=1724497073; cv=none; b=LZR7vNWDzEm6J+nQaTo4QRKiXnjQBSqrKXz2G6YyaHslDwjHJcsjPA11Jl47GjQ3jGcOY7HYtqSVmqi3FyicdEXRq5QlMceT8fG7mk6gl+MJ3/f+Q9e9HOZw4OaWx0lNz07+WZO3Vj6LybxQa1Zit+RCjOGTveOiwqMdg88abGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724496640; c=relaxed/simple;
-	bh=MyT6pHbI74MEsYBsc27CNATHZS7slYAB1sweCEtW72c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bRByOh2KcWAzZeqYSlT0sm6FabR6vihcuysacTILBj0w29+0Wx0PiLFh5GNZyfghhOdahdmdiJHgHKojW5uhBojEveBZ67KM9ibSOKGqc5W3MMisilOT3awNy4g2XJDxuxI4qLkehxA+TBaa1GPNIc+zYINb+U40MTMdK1Cygx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEwD9w2Y; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f3f68dd44bso32565991fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 03:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724496637; x=1725101437; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MyT6pHbI74MEsYBsc27CNATHZS7slYAB1sweCEtW72c=;
-        b=DEwD9w2Y9yfbtcjB9rDCH4j4DBRyQmmRCUF3crhZRcipUUloRlKMMZlp2X9JKPHPyZ
-         GRCkW+V9PqSEnTR1i8fAbV00TmrrkZ8h+/WyFrW71deHQWtVWXOBnZVVmIx28R9ow947
-         XzC4bTeU7JiZHfBXFBs7mtOAUuK8jiFlh4tq1Jc2IX29fJssEh5xdgx1xucKQfO+/z3S
-         yQb+vMclVfWDVKi6npUEIEz7iteMogIIAo7UP5Dez8w99bRUusXWKtjAs3SWOHWapmNv
-         aamloxGJkg9QKEV8pYZVk+VtqY9aFF1DUVaCaEnRYxdvXDlCWNeOf2/nptV4GlEZ7rL6
-         DPBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724496637; x=1725101437;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MyT6pHbI74MEsYBsc27CNATHZS7slYAB1sweCEtW72c=;
-        b=tARhW+Z51DstoqYB5LPpu7KK0iMRYsE6ksEOTdHHsfpZeC86HmbckA7nsbwNZCpCmp
-         cNe8auvxabOCaPgid6uZpMVunLYd4khDY1Eq9z8hpfvzlcG0cOvYsZ7ys4wcL+onmcad
-         sjsrokJGcscNJXwcV4xKMlx1a+7xGBf/58ORLHWxSaW/PAyJegpRhMCLQox+VzjToFMO
-         j8BYEMMj7Z/MG0XGtacFkNLkt9LdwOY+s99VGnSpMtku0961nzV4nlN8VV8VPXf+9MFA
-         wuX1a7P2QYf1NTDETspCWnzftAke+rfVTyi4rqZNmZl0ZaMKEYECyYHVhIbKYk3rxXYi
-         GGxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwjZ6jdFy9N8FxxP2wQOjNgynE0AfsQwSswxv839JL+2xpUf3Q2ZbT+azxU0GMqoqxIed151fyYouojXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVKqMjouGO2VFq26Xu2kanlzoHNJoZAPEyNLSUZ0sf9dWCZLcA
-	IFmvvHhu5I7tnf56pNWeYwjTTRuF6jmVYHgieoly2wKArFrRjJE9
-X-Google-Smtp-Source: AGHT+IH7z27af9e+erBfe62AtTcmU6xp64p/FyaP8ui7mikZRWAtcmsm6CH+WS21XHaf83asK1oWEw==
-X-Received: by 2002:a2e:7c08:0:b0:2f3:f1cf:5313 with SMTP id 38308e7fff4ca-2f4f490f115mr28736991fa.24.1724496636817;
-        Sat, 24 Aug 2024 03:50:36 -0700 (PDT)
-Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f40487fc23sm7101391fa.122.2024.08.24.03.50.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 24 Aug 2024 03:50:36 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1724497073; c=relaxed/simple;
+	bh=GvyeIaqlCViPSu4G7Yjb6DEBoW8e9jkV+vxyRNx7q9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=shGeAvlapDPMvPvIjimjXJd5k5/hsF6hj9EYOR6Alr/HyzcMPMwMfRgvc/AJPRxw/H7HFso0wKU2zxi282smrQ1hXpM0+AUiE2h7ZTgfqFx2ByxJzPrRxZaorACIDnXeFqtN5XmyWhAuOOHpVhZZp8yyvo1NRFchancxNyWEeC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X09lHOmy; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47OAQQJI019628;
+	Sat, 24 Aug 2024 10:57:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
+	 bh=NydodP8b0MtlSEiJ6OeLyqrfE2YhmL+n+eZvOzbzOp4=; b=X09lHOmyeqCQ
+	2ohzErOSflrz/fBn3cTZ2yrlomSKeie25NH+1M4rf4zv2Us5p0RglUn1vmHtELcV
+	MBV+xRCrBZu/NasBAyGKL8FFSrVSGKsnxqSDwliFcD5fVqnmatQR/+i6nIL9IZGN
+	RUCW3upOjiunW4o7Scr2n/KpJbZhbX2PmwwGR1DWKk//Vl1PJwimsaUgWA2EYZK0
+	v/mzKik9GRz/1izMa4R9xaf7XLzL/6DGviMju4VQzNdSTS9eKGanD3xMQ4Q9OnbZ
+	jQPuLKvO1Y7/i/nHr4emmkywPxAOBmmlHluZLzZAF1RVNZJdL88B1+xdboJyfoMz
+	7knv9naQqw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 417drjg1nv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 10:57:48 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47O6jdT9030060;
+	Sat, 24 Aug 2024 10:57:47 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138dmwxn7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 10:57:47 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47OAvfEj55378256
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 24 Aug 2024 10:57:43 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81A1220049;
+	Sat, 24 Aug 2024 10:57:41 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2FB6320040;
+	Sat, 24 Aug 2024 10:57:41 +0000 (GMT)
+Received: from localhost (unknown [9.171.53.155])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 24 Aug 2024 10:57:41 +0000 (GMT)
+Date: Sat, 24 Aug 2024 12:57:39 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [GIT PULL] s390 updates for 6.11-rc5
+Message-ID: <your-ad-here.call-01724497059-ext-7858@work.hours>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nmh-8M7ptsOtYHv5aMnHDLDkQDmpseJx
+X-Proofpoint-GUID: nmh-8M7ptsOtYHv5aMnHDLDkQDmpseJx
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
- mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <CAKEwX=MZo4qTED6gtQYSGxgY6CBJYREhgbhTOqvsjhnFt7YwdA@mail.gmail.com>
-Date: Sat, 24 Aug 2024 12:50:24 +0200
-Cc: Matthew Wilcox <willy@infradead.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Yosry Ahmed <yosryahmed@google.com>,
- Linux-MM <linux-mm@kvack.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <ED949A5F-1CBC-48DA-9377-48B2B2ADF9EF@gmail.com>
-References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
- <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
- <ZsiLElTykamcYZ6J@casper.infradead.org>
- <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
- <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
- <9793DBCA-13F4-4B47-AD57-12A62F7DD8DD@gmail.com>
- <CAKEwX=MZo4qTED6gtQYSGxgY6CBJYREhgbhTOqvsjhnFt7YwdA@mail.gmail.com>
-To: Nhat Pham <nphamcs@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-24_09,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ clxscore=1011 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408240062
 
+Hello Linus,
 
+please pull s390 fixes for 6.11-rc5.
 
-> Wiadomo=C5=9B=C4=87 napisana przez Nhat Pham <nphamcs@gmail.com> w =
-dniu 23.08.2024, o godz. 20:06:
->=20
-> Could you do:
->=20
-> grep . /sys/module/zswap/parameters/*
+Thank you,
+Vasily
 
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
 
-Here it is:
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
 
-/sys/module/zswap/parameters/accept_threshold_percent:90
-/sys/module/zswap/parameters/compressor:lz4
-/sys/module/zswap/parameters/enabled:Y
-/sys/module/zswap/parameters/max_pool_percent:20
-/sys/module/zswap/parameters/non_same_filled_pages_enabled:Y
-/sys/module/zswap/parameters/same_filled_pages_enabled:Y
-/sys/module/zswap/parameters/shrinker_enabled:N
-/sys/module/zswap/parameters/zpool:z3fold
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-4
 
+for you to fetch changes up to 1642285e511c2a40b14e87a41aa8feace6123036:
+
+  s390/boot: Fix KASLR base offset off by __START_KERNEL bytes (2024-08-22 19:24:13 +0200)
+
+----------------------------------------------------------------
+s390 updates for 6.11-rc5
+
+- Fix KASLR base offset to account for symbol offsets in the vmlinux
+  ELF file, preventing tool breakages like the drgn debugger
+
+- Fix potential memory corruption of physmem_info during kernel physical
+  address randomization
+
+- Fix potential memory corruption due to overlap between the relocated
+  lowcore and identity mapping by correctly reserving lowcore memory
+
+- Fix performance regression and avoid randomizing identity mapping base
+  by default
+
+- Fix unnecessary delay of AP bus binding complete uevent to prevent
+  startup lag in KVM guests using AP
+
+----------------------------------------------------------------
+Alexander Gordeev (4):
+      s390/mm: Prevent lowcore vs identity mapping overlap
+      s390/mm: Pin identity mapping base to zero
+      s390/boot: Avoid possible physmem_info segment corruption
+      s390/boot: Fix KASLR base offset off by __START_KERNEL bytes
+
+Harald Freudenberger (1):
+      s390/ap: Refine AP bus bindings complete processing
+
+ arch/s390/Kconfig              | 13 ++++++++++
+ arch/s390/boot/startup.c       | 58 +++++++++++++++++++++++-------------------
+ arch/s390/boot/vmem.c          | 14 ++++++++--
+ arch/s390/boot/vmlinux.lds.S   |  7 ++++-
+ arch/s390/include/asm/page.h   |  3 ++-
+ arch/s390/kernel/setup.c       | 19 +++++++++++++-
+ arch/s390/kernel/vmlinux.lds.S |  2 +-
+ arch/s390/tools/relocs.c       |  2 +-
+ drivers/s390/crypto/ap_bus.c   |  7 ++++-
+ 9 files changed, 91 insertions(+), 34 deletions(-)
 
