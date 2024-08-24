@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-299965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D8895DD16
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:08:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA9495DD18
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FC91F228FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 444A8B22586
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DA3153BE8;
-	Sat, 24 Aug 2024 09:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9407315573A;
+	Sat, 24 Aug 2024 09:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xlcc4S2e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="vBvAfaAI"
+Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FBD558B7
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0E5A5F
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724490483; cv=none; b=lQMHTm5Z62wde3PLTQ7whHuma0MUKzKXMGfPeWLdWpb960CCE8A/OLJ8bg0Y4AgQhthAD6f8R+Mm87z4j5cqsWp1jnH7W1llRcjRlEy3WEmgNUnUyHCZCxVzWDohGMp5l3+MrfE6CYiaKIUDUYGCqT4zmJZNzGnsHCY8ByewonE=
+	t=1724490495; cv=none; b=PnhE6wiCA5xtrU6hutrIKO2m2M/z50BjVS+YNybtI7kXTr202IHwLXAAeSNmEE9Z4I4FhJvYl3Zm3DJMdYg8ShgdMTZtfXgvaOYpUR0pbVnwJgbwhogNVE49oZNb2i3nvLHaVSypwcgxvvPT8r2eSMTgWSDV6OZNhFwmp2C3Raw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724490483; c=relaxed/simple;
-	bh=nO+dgJIkmDAO58yDF+knscpZ/1cT6CKUm6iGHn3zE3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SMNPDm3aJho3FFzD03fXqO66+xAoFKJa49aiiOwz9bK9jgART//DEgAbebhI30tepX9KgRKBa8/fNSCTS9JWu6V7HpEtjtz+jKT8BY1HmfR/u0nrINAptVv5Ux/I0+S0v5OTwEA3raa1jDXEHneDrFvprAtrzRPl0X0YYjPNnj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xlcc4S2e; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724490481; x=1756026481;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nO+dgJIkmDAO58yDF+knscpZ/1cT6CKUm6iGHn3zE3g=;
-  b=Xlcc4S2e7vmB7ImCaDFmSXHyYJ/qYLEeCBo1J7On1pzNOHTCt8yfQ4AP
-   rdNNN3asbMu1zsDDRMBPP5NSJ4sgXIp2dQKPx9XnZUDm6XyNJ+Hurv/WM
-   c9JIHB1e3GNGc3fxF4hyQ+J5tF9AdImr3pXl448/XLOzSydTQ/7qgGx4C
-   Zrr/bnRqygHW4WQRBGOGzFBfjx0umTzfup2twRSmnufn1L33Pfam1+kI9
-   08PHRXhE2upG08VyTp5CIy74RkGI4L7HiL8KS4X78qNrhSp53jbysSH80
-   D/eC7STRUoGbFIf4gvFUpWLFxEswh07KJXhQZWAWsnOaB/9pGdqy3hIMe
-   A==;
-X-CSE-ConnectionGUID: 9FQbNOuRRYuryYXyQAGVAQ==
-X-CSE-MsgGUID: KPYwN/+AR1aYQU/okG6O0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="34386163"
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="34386163"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 02:08:00 -0700
-X-CSE-ConnectionGUID: fyz6BjuqRwuDczMo8cSlJQ==
-X-CSE-MsgGUID: FpDID5CSTjyp2sJvTsF1sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="66975750"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 24 Aug 2024 02:07:59 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shmkW-000ENf-30;
-	Sat, 24 Aug 2024 09:07:56 +0000
-Date: Sat, 24 Aug 2024 17:07:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Wei Liu <wei.liu@kernel.org>,
-	Michael Kelley <mikelley@microsoft.com>
-Subject: error: ran out of registers during register allocation
-Message-ID: <202408241749.UqczF06l-lkp@intel.com>
+	s=arc-20240116; t=1724490495; c=relaxed/simple;
+	bh=iDueYySTOYDf76dyKY+O2COXWFiJlDQMv8fu9IizmiA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rq8VrL2SNO4h1egZCX/CA0uG2zeNAo/tNJu3FMy9HEyHLmu6xuftzrDZcyVpvtVTXVo6iOCHUyEqXjRz+CVGO6UxTvuFuA9MYXcmnsIRGwCqQcse/7SCgj/r9qPmBPau4q+RH8ZI3JU5zfoJXDiYaIT9eqNez6VEtSxCReCPQoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=vBvAfaAI; arc=none smtp.client-ip=17.58.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724490494;
+	bh=TzP6fFPiDxclLlxPva2OtcKn8MvNbhGsPMaB51w3/kI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To;
+	b=vBvAfaAIxGN1pnq2mQUXe0qKdUAMkx8vitOmUqcntV6DVfCcAOcHMAUUz9aOkdee5
+	 fd9dNPRUOObQGLfTBG10GXeMGM68e1krza+hcWstHfvzFrmxgcuQGp4Cy/hBuCJVkS
+	 eO+WSmaxJnA7oClqX+XPf0YYT9vr0OObqisDBSkmn9P+I6Zkr0ditji9OxhZphuLdp
+	 BaoLq8Q+u5iwX11fdQVCvMX1KtNVmhvFyGbpFto/yL8tzvzDV3fVNKQMMlruLeMSiw
+	 XBqoA8VKztglPeuGFPywOQOm1bxwOarGfZ/uPM6YOs7dM7jUB+rR2gHPv0nLtIc00c
+	 IVe8Z1vMwYrMw==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id B17D92010334;
+	Sat, 24 Aug 2024 09:08:07 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH v3 0/3] driver core: Prevent device_find_child() from
+ modifying caller's match data
+Date: Sat, 24 Aug 2024 17:07:42 +0800
+Message-Id: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN6iyWYC/33NTQ6CMBQE4KuQrq2hLT+FlfcwhsBrK29hiy02G
+ sLdLaw0MS5nkvlmIUF71IG02UK8jhjQ2RTEISMw9vaqKaqUCc95kUvGKDgb5k4Z6Cavp95rKoz
+ hAqqykbokaZd6g8/dPF9SHjHMzr/2i8i29p8WGc2pqmqAglWDUOJ0fyCghSO4G9m8yD+N8pfBk
+ yFF2st6kMY038a6rm+3ZjIw+AAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>, 
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ linux-cxl@vger.kernel.org, netdev@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-GUID: X7M2T8oCoMcwW3v59-FhLlvTphq15KTt
+X-Proofpoint-ORIG-GUID: X7M2T8oCoMcwW3v59-FhLlvTphq15KTt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-24_08,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408240053
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d2bafcf224f3911b183113b2fcb536c9e90684a3
-commit: f83705a51275ed29117d46e1d68e8b16dcb40507 Driver: VMBus: Add Devicetree support
-date:   1 year, 4 months ago
-config: i386-buildonly-randconfig-004-20240824 (https://download.01.org/0day-ci/archive/20240824/202408241749.UqczF06l-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240824/202408241749.UqczF06l-lkp@intel.com/reproduce)
+This patch series is to prepare for constifying the following driver API:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408241749.UqczF06l-lkp@intel.com/
+struct device *device_find_child(struct device *dev, void *data,
+		int (*match)(struct device *dev, void *data));
+to
+struct device *device_find_child(struct device *dev, const void *data,
+		int (*match)(struct device *dev, const void *data));
 
-All errors (new ones prefixed by >>):
+How to constify the API ?
+There are total 30 usages of the API in kernel tree:
 
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
-   2 errors generated.
---
->> error: ran out of registers during register allocation
-   1 error generated.
---
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
->> error: ran out of registers during register allocation
-   5 errors generated.
+For 2/30 usages, the API's match function (*match)() will modify
+caller's match data @*data, and this patch series will clean up them.
 
+For remaining 28/30, the following patch series will simply change its
+relevant parameter type to const void *.
+https://lore.kernel.org/all/20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com/
+
+Why to constify the API ?
+
+(1) It normally does not make sense, also does not need to, for
+such device finding operation to modify caller's match data which
+is mainly used for comparison.
+
+(2) It will make the API's match function and match data parameter
+have the same type as all other APIs (bus|class|driver)_find_device().
+
+(3) It will give driver author hints about choice between this API and
+the following one:
+int device_for_each_child(struct device *dev, void *data,
+		int (*fn)(struct device *dev, void *data));
+ 
+
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v3:
+- Git rebase
+- Correct commit message for the driver core patch
+- Use changes suggested by Ira Weiny cxl/region
+- Drop firewire core patch
+- Make qcom/emac follow cxl/region solution suggested by Greg
+- Link to v2: https://lore.kernel.org/r/20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com
+
+Changes in v2:
+- Give up introducing the API constify_device_find_child_helper()
+- Correct commit message and inline comments
+- Implement a driver specific and equivalent one instead of device_find_child()
+- Link to v1: https://lore.kernel.org/r/20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com
+
+---
+Zijun Hu (3):
+      driver core: Make parameter check consistent for API cluster device_(for_each|find)_child()
+      cxl/region: Find free cxl decoder by device_for_each_child()
+      net: qcom/emac: Prevent device_find_child() from modifying caller's match data
+
+ drivers/base/core.c                             |  6 ++---
+ drivers/cxl/core/region.c                       | 30 ++++++++++++++++++++-----
+ drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 22 +++++++++++++-----
+ 3 files changed, 44 insertions(+), 14 deletions(-)
+---
+base-commit: 888f67e621dda5c2804a696524e28d0ca4cf0a80
+change-id: 20240811-const_dfc_prepare-3ff23c6598e5
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Zijun Hu <quic_zijuhu@quicinc.com>
+
 
