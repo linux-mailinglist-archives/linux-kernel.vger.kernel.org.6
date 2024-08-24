@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-300176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C807E95DFDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40B995DFD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8514D281917
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CBC2817D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173813AD11;
-	Sat, 24 Aug 2024 19:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AF87DA84;
+	Sat, 24 Aug 2024 19:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P+ryaxOH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="klBdvThk"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D715680
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E445680;
+	Sat, 24 Aug 2024 19:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724529019; cv=none; b=O12GafYjJwchBeYq4BsNB7xQCosQr6xrlvy/zm/QhqNc0n/CPj+LSP5k02vD/GHVAmdIPoWyWEAf3GOgBzCp/a3/gDzCmlXrkPMnwL435692bP5QeKEei5Un3oSW87AlJ6F9Obrf5Y9vmoD2IUYxgp5Y5RSFr9NDkZCXtiPZzzQ=
+	t=1724529011; cv=none; b=GjJbdHFlyCiSjPbVtYSFGFgQTFPeURxmusRxH0tZshdS8zaqcznvkmM6esl5BSA3InK1uA4syaiN/t2CJ2nkRqrOYSdIzOTn1xJOYI4xrQX86qRqFwnHEM0VzDYvGuLVSSyFJpvhtlgzT2Vt00sF/SI5ojbtvX8rPklkcApiTlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724529019; c=relaxed/simple;
-	bh=lkz4q2nAUp0hzF2vbhFCLTAI60VEsTQcBBYmlITOKs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KcmoLFFdvDWUsbK2191OURDOzXhdZxVevdEPDfyWt4D0itLiqRNLhg2wv05DxWvci8UeHj1nTro7rexBHSUhFEzX93PyoXOuyGvXKalLH/1nZbHg8jTMiJ+gm1UUMOArc89UzA1KB8xMWLfw/bzFL8eQ4Ug5vd0gF2BT6OO2YBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P+ryaxOH; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724529018; x=1756065018;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lkz4q2nAUp0hzF2vbhFCLTAI60VEsTQcBBYmlITOKs4=;
-  b=P+ryaxOHu3ev7nA1yLeOTRE67Ng4YoY+nQn0TZ24nAvHon14kLP78loT
-   rKzT12ie8EoRt0IsSEK9cik5bulI5ht/gm7v5NwpqD6td5UTBKAmhWrSt
-   DQ0ZSiYoKwBAgwlozYRA3r1534El5aA4sp2T1E7bgw4j/NkqvXH32oS7F
-   MUyxTzMVe3DY5nX77bh7JHoWkisZtiI3TVWCXaH866pWm5I69NihZnTh5
-   RizUWPb6qkZz0I8icVO73ayTIlXFxy3He+4yOViA6BSzCKqav0uOrDJc7
-   kkx/EiaseIp8t+MzO+whj/qc6iwaHdD9TKY+UZMMApxydH2c+zhfUEKaG
-   w==;
-X-CSE-ConnectionGUID: gSXiUQelQ3GNVULc6onRUQ==
-X-CSE-MsgGUID: /kYqqOoRSbuwQAraQuxKyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="40452568"
-X-IronPort-AV: E=Sophos;i="6.10,174,1719903600"; 
-   d="scan'208";a="40452568"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 12:50:17 -0700
-X-CSE-ConnectionGUID: g5WW6mdZQlWtQcyMf8X/1w==
-X-CSE-MsgGUID: RxnkIbn8Ssu47lyXV6KBsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,174,1719903600"; 
-   d="scan'208";a="61802901"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 24 Aug 2024 12:50:14 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shwm3-000EiV-22;
-	Sat, 24 Aug 2024 19:50:11 +0000
-Date: Sun, 25 Aug 2024 03:49:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, chaitanya.dhere@amd.com,
-	jun.lei@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
-	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-	daniel@ffwll.ch, alex.hung@amd.com, aurabindo.pillai@amd.com,
-	colin.i.king@gmail.com, dillon.varone@amd.com,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ruanjinjie@huawei.com
-Subject: Re: [PATCH -next 5/5] drm/amd/display: Make dcn35_fpga_funcs static
-Message-ID: <202408250235.XZ6zToZY-lkp@intel.com>
-References: <20240821064040.2292969-6-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724529011; c=relaxed/simple;
+	bh=Zgr/I6oAK/0OXMdTguWex9m/XdbX4Kq2w8aNmeSJTSs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+wXJtD3q1t+p5yTe78u3MVF5CpztB9oHxKyLrlPbVHD3Xr7Y/cIcQuZmkUhHaPeoOU6sIU8m0ztCtjWj/fWzJBj4Q7H7mFcodvP1unXczNyhrd8FLjMeGZnYbmxHdXdQUBZHNcNBZ7k5+b/yIEavkLjBKXX6BBIW3UD7OI44nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=klBdvThk; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OJo2nr059766;
+	Sat, 24 Aug 2024 14:50:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724529002;
+	bh=ltY4sVhDF/U5ZBZUycDa5E/1qdCXSqchlLKOBekzano=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=klBdvThkTs9TnONAjkuZqKF2tQWL9DuZmgDVLkZSpZvtpZtdzj73lK+knvzjODkQZ
+	 Qf1amotz58p1T+8z6oWn2vmvgZK6v27uBSmPX31ulc07dYLolRs4KEDZyMAWnU++bO
+	 KXblVIOXhAgk7qf9/xeMIGaz5U/FQsSTvJPO7Scg=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OJo1sj022792
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 24 Aug 2024 14:50:02 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
+ Aug 2024 14:50:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 24 Aug 2024 14:50:01 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OJo1sY128337;
+	Sat, 24 Aug 2024 14:50:01 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-evm: Use 4 lanes for PCIe0 on EVM
+Date: Sat, 24 Aug 2024 14:49:58 -0500
+Message-ID: <172452898744.505151.13187313393399728928.b4-ty@ti.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240720110455.3043327-1-s-vadapalli@ti.com>
+References: <20240720110455.3043327-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821064040.2292969-6-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Jinjie,
+Hi Siddharth Vadapalli,
 
-kernel test robot noticed the following build warnings:
+On Sat, 20 Jul 2024 16:34:55 +0530, Siddharth Vadapalli wrote:
+> The PCIe0 instance of the PCIe controller on J784S4 SoC supports up to 4
+> lanes. Additionally, all 4 lanes of PCIe0 can be utilized on J784S4-EVM
+> via SERDES1. Since SERDES1 is not being used by any peripheral apart
+> from PCIe0, use all 4 lanes of SERDES1 for PCIe0.
+> 
+> 
 
-[auto build test WARNING on next-20240821]
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/drm-amd-display-Make-core_dcn4_g6_temp_read_blackout_table-static/20240821-143421
-base:   next-20240821
-patch link:    https://lore.kernel.org/r/20240821064040.2292969-6-ruanjinjie%40huawei.com
-patch subject: [PATCH -next 5/5] drm/amd/display: Make dcn35_fpga_funcs static
-config: i386-randconfig-003-20240824 (https://download.01.org/0day-ci/archive/20240825/202408250235.XZ6zToZY-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240825/202408250235.XZ6zToZY-lkp@intel.com/reproduce)
+[1/1] arm64: dts: ti: k3-j784s4-evm: Use 4 lanes for PCIe0 on EVM
+      commit: ba7b9e8408ab866aa0b3c88e406b8934782402d7
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408250235.XZ6zToZY-lkp@intel.com/
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-All warnings (new ones prefixed by >>):
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
->> drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:1071:29: warning: 'dcn35_fpga_funcs' defined but not used [-Wunused-variable]
-    1071 | static struct clk_mgr_funcs dcn35_fpga_funcs = {
-         |                             ^~~~~~~~~~~~~~~~
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-vim +/dcn35_fpga_funcs +1071 drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-
-  1070	
-> 1071	static struct clk_mgr_funcs dcn35_fpga_funcs = {
-  1072		.get_dp_ref_clk_frequency = dce12_get_dp_ref_freq_khz,
-  1073		.update_clocks = dcn35_update_clocks_fpga,
-  1074		.init_clocks = dcn35_init_clocks_fpga,
-  1075		.get_dtb_ref_clk_frequency = dcn31_get_dtb_ref_freq_khz,
-  1076	};
-  1077	
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
