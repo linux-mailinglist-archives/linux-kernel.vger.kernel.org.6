@@ -1,227 +1,185 @@
-Return-Path: <linux-kernel+bounces-300189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E5295E002
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 23:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD1995E006
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 23:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2D01F21B0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744561F219BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94A980603;
-	Sat, 24 Aug 2024 21:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCD113D525;
+	Sat, 24 Aug 2024 21:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liEh2keE"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="HUIuhIN5"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FC67DA76
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 21:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFCF7E107
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 21:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724533969; cv=none; b=j6t4GBNOhyti6OT4nKxjqp7kjx3Y2f0WDJV1gjEtn8EJw4qgD+CHH0PXofKII1nh3mDVI7NIRbCWjluoAcnFC6E8PmsdzFWLv/giVgYHJ2sMECkPPEW/sTtBhwZFMyH8o4GJG0XaN7o7l0O1ixLsHsezjMRUfCSZJdbgY3A8i2c=
+	t=1724534634; cv=none; b=uis7gPVui4/r7djRnh4FgTMFc5xkxnHqE5all7KWAS+vTnIg4377rez9sny2w8B0Mv1PYoHgmTW3+ZP5jDMqf0H0u/MLtRVP+JCNPUVJDZrH2p2WPk2GtguZ9SuW8Y9wRTf6AxCniwN94a2XdqH8t1vvxClWRXuZ3Shaf1BTsJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724533969; c=relaxed/simple;
-	bh=uDOl+vO9up4iiGA7FIV0nyAhQro4ErjFIQJ+ss6KQfk=;
+	s=arc-20240116; t=1724534634; c=relaxed/simple;
+	bh=wr2wQo5KphEVul+LT19DjVzQDnhc+9gcfmV/iZtPUc4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=kv9TbDp++8jgmxh8wdDao+jmSwbSrtml0hoVBHvxggP0DaUJlqqKeVIjb1lpVd50kt+mh9cTxGz2TlBXVLX+E7UFfSU/HfSmYiW3eViYHPDZTNhHfV+RUs6ySOhkHahFiBFn/ODAgTuUiksbXh0mQBWjBymjmaD7BNOxVde25JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liEh2keE; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf6beda038so17287076d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:12:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=Hx5y8UFTXLmo+9nsgYmiHMH4cyCuPbvR3460Ay4j2tLYUgCTU2D9d+1YeNr48MTL2mg66xcz6tSbTPG8yjNm25pdlBCXKPEhF8BYDgOyjc90AAD16w7YdkPdKuzXpYCT4L/VV7yShj1hkZSytM5Um4c0opnRfZRYcy71GqfhTpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=HUIuhIN5; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6c0e22218d0so34066117b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:23:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724533966; x=1725138766; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=umich.edu; s=google-2016-06-03; t=1724534631; x=1725139431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CW+oTcHtdhOrYpDlaxzg5hOna1stESaCQpN5etmet0M=;
-        b=liEh2keEbWP3QhayW7JaVWvJseM9ksTFG36EUiDrshQdQHoq7aF72oOLbBm2i/WV9g
-         Es/HeUUvWi6Dnt6jyqFKoy5T8LHQJlkkQMy7CJnfn+M4Wf4GW4DTMq1q4OGSPFEALPaF
-         R5o5pIRHAkvvxh7eR/49sApeZSNbgHmWmqaZIohD3h6QNCO9V+H3nSJ1O3u8fMl8BznR
-         V85JuYukqsDd7piYQH3cM7jyhWfI36MJCHOjezzVYYdTF5vl6gAKNG3eXlTpgpSD3mDt
-         7gQaijrmS8aZuwa7nOZx2y+jSsjQI1uGGMYt72bzAKxTVQ8+fIYcLqJM1+TJOlAsn6li
-         zoyw==
+        bh=UZpJ0AOJ+7UfacrtyOhzZPyuAKMCYDAPDE/XRFNLE6w=;
+        b=HUIuhIN5LL4DDPrmeOmB4Sa5qoGa84BW6iFBnq5EH+MOprNY0NEdd/cLt53kRlYntb
+         SGc5/rhQmeumDKvQH9CE6JlWRn2m4Q2TK6Gt2RaqZbLCliT5DemOoMuTOuj7lsQm0vt/
+         TJdYD0ZNjhSTtcU21OcQKqKgbMHgLlKCHEnkERRtUsGiZ2EWs5VUAaoheCoh9uGw4/RK
+         nzjadycJ9tGmNFKePyxem7pVtObmdXQSImCrF6/ouV9Tw+5rUgmcgAl2HPMur/R0U2+d
+         nGvuLWY+cTeQlA9MAazYQ9rPljs/ShCCCoWkn0Qrk/xl+2BeTNHXe7sb8P1QX0myqM98
+         Dycw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724533966; x=1725138766;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1724534631; x=1725139431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CW+oTcHtdhOrYpDlaxzg5hOna1stESaCQpN5etmet0M=;
-        b=sPAoFfz1Ni/gF96OGrWeuSEiaQcrd9DxZ9f4ZEC8QGR8pE6Wqcg2A+KAB1tcyH0KO8
-         WQf4ru12tuhngYf/Y4oJl3Rq/QYmrLfnKw9tK7O+d/QQfX+4qVNXYNJr19tUSIEqnxtV
-         lRYs92Es01FusUCqkhD2hR0t4gzT34I/aGp/EPHeOg4PxZrpMl08mPfV51aTE/Gnjbq2
-         JKYbpucRxQbJHbk4E4OuliZc9KP7WZLGU0gPN2Oq2cJVjTf1wGQtqSQAhMIAXkDXvJy2
-         gevKdDext+X4hMJzYBu+kfWlf30mLPFc7CKtGStzi6NCHxa08WT7Z1p2bwAZ0G+rs5lE
-         m8zg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8yCgK6ODs9tzO3CLz1QGz3TL+G4RH/yashjcpTjFtykk6iasj22EEo4R8MccvJGkgsSDatKOHocFrLwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzcrO0jKAAeErw9Xsw41QzQswhYv4Noq4wYh9MySn6bGYn+/gr
-	gjA9gRXQR+3049FOeP9a6UY2hyjV1991banJXZZwQmAqZGe850t2IjHn7HGMBjhQOrLcngiAYMs
-	cqg3TXoW49+B9yQmB0alrmCna2tc=
-X-Google-Smtp-Source: AGHT+IEkJnk7rxvUDwmnjsxIVaIihkKiLZa/LqnZZoYebecyAUFl7ic/g/6xyKromkayJnX1wjUy1QQCrJbsURep7Xg=
-X-Received: by 2002:a05:6214:418c:b0:6c1:6b5c:4a09 with SMTP id
- 6a1803df08f44-6c16dc85988mr69222616d6.31.1724533965722; Sat, 24 Aug 2024
- 14:12:45 -0700 (PDT)
+        bh=UZpJ0AOJ+7UfacrtyOhzZPyuAKMCYDAPDE/XRFNLE6w=;
+        b=p83JQuO6cl2VRblMCOeCF2XeBMJHh+ZizeYoI6HLSpK4V3vmOp4GOABzVPmzJeUGOr
+         rMYm/BvA+ah3cVVIet1+8MOaTMtX5CaSnuK3zkMjEqkjiMX7Usg14IfQhzUY8nda8HgP
+         TRCisiySc9QSUZEtNq1t3hT4wYJzRWHVi9nFvYTUzDM3R3uDdAisvmdG7ud4VyHTiiFP
+         xYgRneee7taLwiTmAqXIvvjzTNvRdspZwQ0dv34RVws/89OWKDFAoDUjaEhfMgUrn4xi
+         qKute+Dk4Hl9stgt/NjFDZEmVhHdQfzlqmSSoW4EDcH2p/7iot6vdGVHOSqAL4/ZlHjT
+         9KMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVna+eb+c+JlQWMq/aU8rGH0rX6ae5cVBcFm2XbiGd5JjdA4uTKwZkT8yVImWGPhPTGWv2eLuVGorrjfFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd07rB8Fix2vLLPwo/PQfrQRu0pkf1tYK1Lskn/LFEhOL+XV1/
+	WXuHMuceox/A26bYB71CJepgjMe0vhxm13vPNZKxOPeYU6q3lpuAMJDGoP258iL7TtLWk3quc8P
+	mtsM5nMsv/kzBqcCrYv0Qpsbti3CIffKO8bvpLw==
+X-Google-Smtp-Source: AGHT+IHPFk8rIY007r1frs+UxSooLPtvtsc4X/SxiDYqZWSyAqPLS1X9VDQpN4STqYDh1h2tsL7cOkJJ6Yky9M3atYw=
+X-Received: by 2002:a05:690c:398:b0:6c8:1e30:513f with SMTP id
+ 00721157ae682-6c81e3054e1mr41362477b3.23.1724534631045; Sat, 24 Aug 2024
+ 14:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
-In-Reply-To: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Sun, 25 Aug 2024 02:12:34 +0500
-Message-ID: <CABXGCsNztS8MLteq5=fcddwuQ1TCzeOM8TdVtpJ3crK=sV5PTQ@mail.gmail.com>
-Subject: Re: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching
- some RenPy games causes computer hang
-To: Leo Li <sunpeng.li@amd.com>, Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com, 
-	pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
+References: <20240819133345.3438739-1-nmi@metaspace.dk> <CALNs47sqt==o+hM5M1b0vTayKH177naybg_KurcirXszYAa22A@mail.gmail.com>
+ <c5af692e-56e7-427f-81d5-8b887478aff1@proton.me>
+In-Reply-To: <c5af692e-56e7-427f-81d5-8b887478aff1@proton.me>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sat, 24 Aug 2024 16:23:40 -0500
+Message-ID: <CALNs47tLRa4uVU8t8w6=oi+sMPxEVdw5GQdLwpatc-kEREQg6A@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add `module_params` macro
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Andreas Hindborg <nmi@metaspace.dk>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 11:05=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
+On Sat, Aug 24, 2024 at 8:16=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+> > We shouldn't enable `const_mut_refs`. It is indeed close to
+> > stabilization, but it is still kind of churny right now and we don't
+> > want to enable the sharp edges everywhere.
+> >
+> > If the change from `static mut` to `UnsafeCell` that I mentioned above
+> > happens, `addr_of_mut!` turns into a `.get().cast::<...>()` takes the
+> > place of `addr_of_mut!` and doesn't require this feature (and also
+> > isn't unsafe).
 >
-> Hi,
-> After commit 1b04dcca4fb1, launching some RenPy games causes computer han=
-g.
-> After the hang, even Alt + sysrq + REISUB can't reboot the computer!
-> And no trace in the kernel log!
-> For demonstration, I'm going to use the game "Find the Orange Narwhal"
-> because it is free and has 100% reproducivity for this issue.
-> You can find it in the Steam Store:
-> https://store.steampowered.com/app/2946010/Find_the_Orange_Narwhal/
-> I uploaded demonstration video to youtube: https://youtu.be/yVW6rImRpXw
->
-> Unfortunately, I can't check the revert commit 1541d63c5fe2 because of
-> conflicts.
->
-> mikhail@primary-ws ~/p/g/linux (master)> git reset v6.11-rc1 --hard
-> HEAD is now at 8400291e289e Linux 6.11-rc1
->
-> mikhail@primary-ws ~/p/g/linux (master)> git revert -n 1b04dcca4fb1
-> Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> CONFLICT (content): Merge conflict in
-> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-> Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-> Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> CONFLICT (content): Merge conflict in
-> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> error: could not revert 1b04dcca4fb1... drm/amd/display: Introduce
-> overlay cursor mode
-> hint: after resolving the conflicts, mark the corrected paths
-> hint: with 'git add <paths>' or 'git rm <paths>'
-> hint: Disable this message with "git config advice.mergeConflict false"
->
-> commit 1b04dcca4fb10dd3834893a60de74edd99f2bfaf
-> Author: Leo Li <sunpeng.li@amd.com>
-> Date:   Thu Jan 18 16:29:49 2024 -0500
->
->     drm/amd/display: Introduce overlay cursor mode
->
->     [Why]
->
->     DCN is the display hardware for amdgpu. DRM planes are backed by DCN
->     hardware pipes, which carry pixel data from one end (memory), to the
->     other (output encoder).
->
->     Each DCN pipe has the ability to blend in a cursor early on in the
->     pipeline. In other words, there are no dedicated cursor planes in DCN=
-,
->     which makes cursor behavior somewhat unintuitive for compositors.
->
->     For example, if the cursor is in RGB format, but the top-most DRM pla=
-ne
->     is in YUV format, DCN will not be able to blend them. Because of this=
-,
->     amdgpu_dm rejects all configurations where a cursor needs to be enabl=
-ed
->     on top of a YUV formatted plane.
->
->     From a compositor's perspective, when computing an allocation for
->     hardware plane offloading, this cursor-on-yuv configuration result in=
- an
->     atomic test failure. Since the failure reason is not obvious at all,
->     compositors will likely fall back to full rendering, which is not ide=
-al.
->
->     Instead, amdgpu_dm can try to accommodate the cursor-on-yuv
->     configuration by opportunistically reserving a separate DCN pipe just
->     for the cursor. We can refer to this as "overlay cursor mode". It is
->     contrasted with "native cursor mode", where the native DCN per-pipe
->     cursor is used.
->
->     [How]
->
->     On each crtc, compute whether the cursor plane should be enabled in
->     overlay mode. If it is, mark the CRTC as requesting overlay cursor mo=
-de.
->
->     Overlay cursor should be enabled whenever there exists a underlying
->     plane that has YUV format, or is scaled differently than the cursor. =
-It
->     should also be enabled if there is no underlying plane, or if underly=
-ing
->     planes do not cover the entire CRTC.
->
->     During DC validation, attempt to enable a separate DCN pipe for the
->     cursor if it's in overlay mode. If that fails, or if no overlay mode =
-is
->     requested, then fallback to native mode.
->
->     v2:
->     * Update commit message for when overlay cursor should be enabled
->     * Also consider scale and no-underlying-plane case (cursor on crtc bg=
-)
->     * Consider all underlying planes when determinig overlay/native, not
->       just the plane immediately beneath the cursor, as it may not cover =
-the
->       entire CRTC.
->     * Fix typo s/decending/descending/
->     * Force native cursor on pre-DCN hardware
->
->     Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->     Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
->     Signed-off-by: Leo Li <sunpeng.li@amd.com>
->     Acked-by: Harry Wentland <harry.wentland@amd.com>
->     Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
->     Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c       | 490
-> +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------=
---------------------------
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h       |   7 +++
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c  |   1 +
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c |  13 ++++-
->  4 files changed, 389 insertions(+), 122 deletions(-)
->
->
-> My hardware specs are: https://linux-hardware.org/?probe=3D61bd7390a9
->
-> Leo, can you look into it, please?
->
+> I think this is a good idea. There might only be a problem with not
+> being `Sync` though... So probably need to use `SyncUnsafeCell` instead.
 
-Hi,
-Is anyone trying to look into it?
-I continue to reproduce this issue on fresh kernel builds 6.11-rc4+.
-In addition to the RenPy engine, the problem also reproduces on games
-from Ubisoft, such as Far Cry 4.
-A very important note that I missed in the first message.
-To reproduce the problem, you need to enable scaling in Gnome for
-HiDPI monitors.
-I am using 4K resolution with 200% of fractional scaling.
+Ah whoops, yeah that is what I meant.
 
---=20
-Best Regards,
-Mike Gavrilov.
+> > If you prefer not to make that change, I think
+> > `addr_of!(...).cast_mut()` might be the best solution.
+>
+> Won't that be resulting in the wrong provenance? I.e. the pointer won't
+> be allowed to write to that location?
+>
+> I just checked with miri, it doesn't complain (even with
+> `strict-provenance`), so I guess it's fine? It feels rather wrong to me
+> to allow writing through a pointer obtained via `addr_of!`.
+
+I think that `static mut` gets the interior mutability rules that
+`UnsafeCell` has, that *const and *mut become interchangeable. Quick
+demo for the `UnsafeCell` at [1]. We would probably have to ask opsem
+to clarify.
+
+Coincidentally I had been talking to Ralf about this very pattern
+before seeing this, at [2].
+
+> > Other thought: would a wrapper type make more sense here? Something lik=
+e this:
+> >
+> > ```
+> > /* implementation */
+> > struct ModParam<T>(UnsafeCell<T>);
+> > [...]
+> > module! {
+> >     // ...
+> >     // instantiated as:
+> >     // `static MY_PARAM: ModParam<i64> =3D ModParam::new(1);`
+>
+> We used to do this, but it lead to problems: normally the parameter has
+> a lower case name, since that's the convention in the kernel. [...]
+
+To me it seemed logical to keep the uppercase names here since it
+matches the convention for what they are (statics), and the macro
+could lowercase it for the bits exposed to the kernel. But I
+absolutely get the consistency argument here.
+
+> [...] But then
+> pattern matching prioritises the static instead of introducing it as a
+> local parameter:
+>
+>     let MY_PARAM =3D ...;
+>
+> would fail, since you can't match MY_PARAM.
+>
+> This is also the reason why they live in their own module.
+
+I'm not sure I follow the example here. It looks like it is shadowing
+a static's name as a local, why would you want that? Or if you meant
+the other way around `let SomePat(...) =3D MY_PARAM`, wouldn't it just
+be `let SomePat(...) =3D MY_PARAM.get()`? (Sorry if I missed some
+context here).
+
+> But you can still do the modification of creating `ModParam` and using
+> that as the type of the static.
+
+Do you mean an expansion like this?
+
+    // module_parameters is kind of a long name
+    mod mod_params {
+        #[allow(non_upper_case_globals)]
+       static my_param: ModParam<i32> =3D ModParam::new(...);
+    }
+
+I don't mind that, even if the name is a bit weird by rust conventions.
+
+(For what it's worth, I used this wrapper type pattern for a plugin
+project that does shared variables in a similar way. I have been quite
+happy with it.)
+
+- Trevor
+
+[1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D20=
+21&gist=3D43664620f50384b7a3d5bf74ce7c3e39
+[2]: https://rust-lang.zulipchat.com/#narrow/stream/146212-t-compiler.2Fcon=
+st-eval/topic/More.20accidental.20stabilization
 
