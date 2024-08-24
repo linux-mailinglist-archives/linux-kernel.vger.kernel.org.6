@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-299970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBEB95DD20
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:09:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349B895DD1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92801C2151E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5BCC2823C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0401714B9;
-	Sat, 24 Aug 2024 09:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225E558B7;
+	Sat, 24 Aug 2024 09:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="AUaQ7HoJ"
-Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8uD5bhW"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D44155C93
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C9C153BD7;
+	Sat, 24 Aug 2024 09:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724490518; cv=none; b=VlSnltRQV2mjfN6HCmkbMGygGwUuGcCJkBiQvkyhKJkY/I5WU7Pmxj1eHF5aJRd4yL5NBcFQF6Lcp9h8y6tOUfcaubiuEfSM1nZG6raEFdhugq5Rm0ll3cyNay20SOzHducUwwTkgT/oKNtwgGnjIH4ZyG66e3U7VzNpBV5vk3A=
+	t=1724490516; cv=none; b=uG76O8sZxXYnVOiLA/uXjlRr5IqxYXAJBDZVxiV/nK5ORK/7dczmSoyiXMfg4ywtCkKlqV5b8/eIp4ZNQ0g67ug+JeEUhUcDf9Rmpa61CET7I/q6jkPGYNc7M6DW//l+OWfVwggPXlLTHUOPklv9d67je+AdJD5bl0wzzGbaKE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724490518; c=relaxed/simple;
-	bh=6N7PqK9xBFI6iYPFqZ/0q8L0Dbt2mFTNu//UuPHTsR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lBxxjqfxmpStjSHXIsinRlLOUS/WEQPP4zpdf54+eaNh3VPOZRk16rKy5g6kcURPSa1vK/HTjsctpT9KtG69qqMhR8aOtCO3dsWCWivklZlx98Dj1ZObPnr7jJbTtn5fYqgWNYr63oMX64cu8MrGjWZ3HwOIYdmpScWPUw4qMww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=AUaQ7HoJ; arc=none smtp.client-ip=17.58.6.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724490515;
-	bh=3ltOxJ7yzq2fygEXUJTTlGgiDR87fnykZ2qH+ljFSB8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=AUaQ7HoJzdlsPS2x/9JZmg7KYdTDwfM2gYrICytEtesPk6ykj6HCgUsTFitc4mPhV
-	 fCajqTSLbR/yUnbW7mwFm8sdS1UiI40v/PT1Qh13dtHdA+NZf/VBxUjmvfXWZN31YT
-	 tQ42o5a6HZmUEr0GqBbAyKZO4cN3HHNk2dVw4yUef9zRxNHlPaWtSEAAUoK6i9ptx4
-	 8yiGJr4jLvPZaDCZUIPO9oh0dh6zmTaopIVWFmU0OgC+2GmncpLluEfry/zvEBscVF
-	 2giCaXz5mPQQxOrOOpGU9H9erIc512+OEsPVJ0Zevu5L4HSX+aCJf71Gayvc167SxB
-	 JhmsjyqKJxJww==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id A7D1720102FF;
-	Sat, 24 Aug 2024 09:08:28 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Sat, 24 Aug 2024 17:07:45 +0800
-Subject: [PATCH v3 3/3] net: qcom/emac: Prevent device_find_child() from
- modifying caller's match data
+	s=arc-20240116; t=1724490516; c=relaxed/simple;
+	bh=dnrq3nAfAIjKHv4vgKKORz9Eu/PVTF68C2/MjqjoGgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efyUt6i172Sgq+MFfJvMOEmjw77wo82g1prulqIjWv+yyo3PsicU4o7Ic6N2PDDIA5gF7wou8/ZwO6PkmzmC2rUnv2b5bSoVySewv9Rc0nR/+u+ZGFxUG/cLWrfbdHTSjNveeIy1oDoCtFb54A5MOyhLnefSMtzbdzCoBXKcbYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8uD5bhW; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3f25a1713so29878741fa.2;
+        Sat, 24 Aug 2024 02:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724490513; x=1725095313; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SzqC+bM7GYWxxOd8UV7RP5k+Z1ytl+o41N4B5Ixt0pU=;
+        b=S8uD5bhWqUwEyAxxwxung88BKXvs5qmpZeCSfsABH/GeT/lYXgLJArnyL9ry8nvqmF
+         tD4wWHBytbhdNskuBEMw1Y2+jP/Uz6vRt1ok82P0pj97eqvBC7RCvtaja49UWOt6q33c
+         ByBvJSvbvJAyW5fXAMY+kzl8mEXSTWESHeZ/WW/2GZxw24s31Zgjy1xUwCNW+3s3qAen
+         +64apPFwsyFhlyf7E88JebhSXaBf2G4metoBZ3F6tCFXWyUg6gn+d8+kryWh6T954xIh
+         UqeZpxckalEbJLhnI6RrjRtMFzwFW0woC4cfCWxp5u91E2zuerDmTe0b77SgGRDv2lUZ
+         BM7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724490513; x=1725095313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SzqC+bM7GYWxxOd8UV7RP5k+Z1ytl+o41N4B5Ixt0pU=;
+        b=BEQE3sBUXVdjTp5hkvTfk/DdIpupOxl+ScK0UWxHpfKxxgPScLMtGotqraXaGjNPgr
+         tFworpwukQchFRPw1fd2+KlNH0/P0KjiEkes7+SkdRAPHhm0UsWgbZKMnjI7ZuYU1o+a
+         bvxXC5g3wvDLEjOEu6+hqIISKjKtgBJp6du7WWT35YK4s6C+fTB9adK2Ef16bzsIJpnj
+         02GH1XGtTi5wVk5YW3EsE527wjerfkEU5IzjDp87aXvhFEhbQbb+P6xJB3wiLVTLZiWY
+         B9SgpQgDBouDWFYKPb/OJ3qCrVyNekAQHAabXPlHvD0fKKrDkMq3yGfgBonJo3HID8eC
+         S1Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXF0D8V5mgRytXX7ma8HlFDmUCs/5a1iP3nHj5DgNB2MuzE5hap/Bn0CHkLrLdQiY2wwk5idvhvTjiXEBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuOH8lCXLy69NRajYJtOwtG02TfnVHFJo5uP0EpG3UqiN+bxen
+	Icgw7fy608rMlWgjldEZ9OpQh4FGvnNiu4byvDnjjxIgznLXaKvjEA2Fyg4Qhto=
+X-Google-Smtp-Source: AGHT+IExt61YW91dFLoRQK40P3IQvtOL+Im+C3TkCYSJOahFeS8y6zD09KodCzTpbndKpy1DrbtyrA==
+X-Received: by 2002:a05:6512:1390:b0:533:c9d:a01b with SMTP id 2adb3069b0e04-5343878403emr3348395e87.29.1724490512566;
+        Sat, 24 Aug 2024 02:08:32 -0700 (PDT)
+Received: from [192.168.0.241] (85-193-33-51.rib.o2.cz. [85.193.33.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47d1easm372626066b.160.2024.08.24.02.08.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 02:08:32 -0700 (PDT)
+Message-ID: <51f28d92-f670-47de-8e2d-53cbecfac081@gmail.com>
+Date: Sat, 24 Aug 2024 11:08:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240824-const_dfc_prepare-v3-3-32127ea32bba@quicinc.com>
-References: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
-In-Reply-To: <20240824-const_dfc_prepare-v3-0-32127ea32bba@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>, 
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- linux-cxl@vger.kernel.org, netdev@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: V18wEW-gUmWrD26jVLEKnIiwehUGNeQt
-X-Proofpoint-ORIG-GUID: V18wEW-gUmWrD26jVLEKnIiwehUGNeQt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-24_08,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- mlxscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408240053
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH] arm64: dts: sunxi: nanopi-neo-plus2: Add pio
+ regulators
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+ <761f18d4-9274-4983-a128-94efb96e1c59@kernel.org>
+Content-Language: en-US, cs
+From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+In-Reply-To: <761f18d4-9274-4983-a128-94efb96e1c59@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+I am sorry if the message is wrong, this is my first patch ever sent to 
+the Linux kernel. I have checked the schematic of the board and it 
+shares the same power line with mmc0, so I assumed I can use the same 
+regulator. Thanks for your feedback and I would be glad for your further 
+response.
 
-To prepare for constifying the following old driver core API:
-
-struct device *device_find_child(struct device *dev, void *data,
-		int (*match)(struct device *dev, void *data));
-to new:
-struct device *device_find_child(struct device *dev, const void *data,
-		int (*match)(struct device *dev, const void *data));
-
-The new API does not allow its match function (*match)() to modify
-caller's match data @*data, but emac_sgmii_acpi_match() as the old
-API's match function indeed modifies relevant match data, so it is not
-suitable for the new API any more, solved by using device_for_each_child()
-to implement relevant functions.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-index e4bc18009d08..29392c63d115 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-@@ -293,6 +293,11 @@ static struct sgmii_ops qdf2400_ops = {
- };
- #endif
- 
-+struct emac_match_data {
-+	struct sgmii_ops **sgmii_ops;
-+	struct device *target_device;
-+};
-+
- static int emac_sgmii_acpi_match(struct device *dev, void *data)
- {
- #ifdef CONFIG_ACPI
-@@ -303,7 +308,7 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
- 		{}
- 	};
- 	const struct acpi_device_id *id = acpi_match_device(match_table, dev);
--	struct sgmii_ops **ops = data;
-+	struct emac_match_data *match_data = data;
- 
- 	if (id) {
- 		acpi_handle handle = ACPI_HANDLE(dev);
-@@ -324,10 +329,12 @@ static int emac_sgmii_acpi_match(struct device *dev, void *data)
- 
- 		switch (hrv) {
- 		case 1:
--			*ops = &qdf2432_ops;
-+			*match_data->sgmii_ops = &qdf2432_ops;
-+			match_data->target_device = get_device(dev);
- 			return 1;
- 		case 2:
--			*ops = &qdf2400_ops;
-+			*match_data->sgmii_ops = &qdf2400_ops;
-+			match_data->target_device = get_device(dev);
- 			return 1;
- 		}
- 	}
-@@ -356,10 +363,15 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
- 	int ret;
- 
- 	if (has_acpi_companion(&pdev->dev)) {
-+		struct emac_match_data match_data = {
-+			.sgmii_ops = &phy->sgmii_ops,
-+			.target_device = NULL,
-+		};
- 		struct device *dev;
- 
--		dev = device_find_child(&pdev->dev, &phy->sgmii_ops,
--					emac_sgmii_acpi_match);
-+		device_for_each_child(&pdev->dev, &match_data, emac_sgmii_acpi_match);
-+		/* Need to put_device(@dev) after use */
-+		dev = match_data.target_device;
- 
- 		if (!dev) {
- 			dev_warn(&pdev->dev, "cannot find internal phy node\n");
-
--- 
-2.34.1
-
+Dne 24. 08. 24 v 9:40 Krzysztof Kozlowski napsal(a):
+> On 24/08/2024 09:09, Kryštof Černý wrote:
+>> The board does not have a dedicated regulator for pio and r_pio,
+>> but this fixes the kernel warning about dummy regulators being used.
+>> Tested on the actual board.
+>>
+> Judging by commit msg these are not correct regulators. Please do not
+> add incorrect hardware description to silence some warnings coming from
+> OS. Either you need proper (correct) hardware description or fix the
+> problem other way, assuming there is anything to fix in the first place.
+>
+> Best regards,
+> Krzysztof
+>
 
