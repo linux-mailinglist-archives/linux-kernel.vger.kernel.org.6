@@ -1,93 +1,164 @@
-Return-Path: <linux-kernel+bounces-299853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5381A95DACC
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:11:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817FE95DACF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102471F227C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E885284362
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3F329CFB;
-	Sat, 24 Aug 2024 03:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1C628366;
+	Sat, 24 Aug 2024 03:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F8XDiF/6"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TQbhW3As"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C775418651
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 03:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCDCF4ED;
+	Sat, 24 Aug 2024 03:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724469054; cv=none; b=X1Q5ZS66aRdlKlI/nqIUTc4OuUkyq8x1YEqbxQBvJKeArhBXEUudawxxS5J8tDqwgcN20yzpUeuRyuvQaoxhlVqKUoC/K4Vf8Zp3WlYR0UHiljX5CWlE9iiFSGdnp0tKtwnycE+SDOwshb43Zz4L4r7qsmewbTIoH+TLhbFFiuI=
+	t=1724469426; cv=none; b=FCsqWm5f7zoJeCSOHnIta8LAcourcYl1HomkpH/GVbCNuvfEque05sP+QE7MIgUldvJqSBKIaR4OeSTxf6RWYd1LPVg1b+NMRA1yEJ39rSY+EIKLjt0+eHXCsmX2U1e2xuXalURoRPFEgHHetS7kZGes6SCTFd5VS2gzIDDyrmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724469054; c=relaxed/simple;
-	bh=g4X3Hb4vfdtWyWtPp5CWavlSwSPr8PtlG5+nqb5GJCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLcEOHlGa8nnKj6cFYE0SB+gKh/AC5tz6TVsXI2b8tDiv68+ec0iW+6cC4da6KdZyeT/Fpkgi86tjXjH4x2uwRD73uopjDM7S6Dup/8ZELhwUQKhkXGS49tFaEOI5I6bpNIfrtvLcM3cp2Bi9WbHY66H1kpsqs1qap7O3upzquI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F8XDiF/6; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 23 Aug 2024 23:10:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724469050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qsKf7xaMGjFVrdl2D6G/nv0LFUdX9aXChE7927Dm9XM=;
-	b=F8XDiF/6rgSvMsBJrp4dU/GBW4H1GLfCvn2LwUPjD/2IdYjh0H2XGDfhnqbJmYzFtrChDx
-	Zkev2OpCEBqHoe97IbFlIQ5eov034nFIBEB50vgspShPm4gAQFnVule/6rs3nBUUWaBmea
-	MjhPntMGkKbnn7/Yu1cpUlgagK1o1Rw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
+	s=arc-20240116; t=1724469426; c=relaxed/simple;
+	bh=XqCuNkN0iplxmZFCtAOdB9AeVq5ae06WJkVCMF6ycCA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKxz7KtD38jMwaWkpCJ4qyB2Ao/CxsQsyk0ec0l9crnnid50FAjGJVFw67Bl/VJeQpsg03eIpeeDKu3YGm2DqWRsh5OcrG9FQ5F+DsT+LHTU/4ChHG1a2+dZdzwyXduJXulPqtbNTEaOTVMmocp6GJwkD0OqwmJT77wJ4SYd9+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TQbhW3As; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47O0uQM3030540;
+	Sat, 24 Aug 2024 03:16:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=4KV2yw4+s8OJQsXhq42Ia8qa
+	KQGeheYfo3pPiyjlX48=; b=TQbhW3AsLy/lQYLgws2Yu/Lmgnpyp8kGelr+Bbkx
+	3gP//Q6Y2NQs/DYmDkp9ThvO0AIRt+hemfUejYQwsN53OfJNSTrb8qCbkoDHh0KY
+	dIpV4M5UwFE6eJOTmQaQW00VGrrxKBy+UTigv9lHYXkZ5Ff3Un9rWc7tzYsKmTN/
+	8rFeoASIVwLEXAw4kIHJOipZCE/rqO9OqCu+jrmW9r9F0Gy3tsyvNBdNoTWgkI94
+	NhU5pgJSepJnGqSCMzY4t4qcLmM6n8q8pGynq4YI94VxwtuN10/d0gYMsNPgSzle
+	hcoAE+4HGUjokH6dXvW9LBO78NkeJw2q8XK7FFl873rNiA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4174vn85p6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 03:16:52 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47O3GoYe012507
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 03:16:50 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 23 Aug 2024 20:16:50 -0700
+Date: Fri, 23 Aug 2024 20:16:49 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
-Message-ID: <bczhy3gwlps24w3jwhpztzuvno7uk7vjjk5ouponvar5qzs3ye@5fckvo2xa5cz>
-References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
- <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
- <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
- <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
- <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
- <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
- <wdxl2l4h2k3ady73fb4wiyzhmfoszeelmr2vs5h36xz3nl665s@n4qzgzsdekrg>
- <CAHk-=wjwn-YAJpSNo57+BB10fZjsG6OYuoL0XToaYwyz4fi1MA@mail.gmail.com>
+CC: Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH] arm64: Allow packing uncompressed images into distro
+ packages
+Message-ID: <ZslQoWbaHqus/KRe@hu-bjorande-lv.qualcomm.com>
+References: <20240819-uncompressed-distro-packages-v1-1-c8accc8bc9ea@quicinc.com>
+ <20240823105853.GC31866@willie-the-truck>
+ <ZskWfKIZkThKpj9m@hu-bjorande-lv.qualcomm.com>
+ <CAHk-=wjpXFOMq03cVq9XA+33QGALRzWV4mCND6dYpwAnXRqnmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjwn-YAJpSNo57+BB10fZjsG6OYuoL0XToaYwyz4fi1MA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAHk-=wjpXFOMq03cVq9XA+33QGALRzWV4mCND6dYpwAnXRqnmA@mail.gmail.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ob24KJa48-WVkNkBRG-2e_yZ6QlBFEHw
+X-Proofpoint-GUID: ob24KJa48-WVkNkBRG-2e_yZ6QlBFEHw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-24_02,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ impostorscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 spamscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408240017
 
-On Sat, Aug 24, 2024 at 10:57:55AM GMT, Linus Torvalds wrote:
-> On Sat, 24 Aug 2024 at 10:48, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Sat, Aug 24, 2024 at 10:22:54AM +0800, Linus Torvalds wrote:
+> On Sat, 24 Aug 2024 at 07:08, Bjorn Andersson <quic_bjorande@quicinc.com> wrote:
 > >
-> > Sure, which is why I'm not sending you anything here that isn't a fix
-> > for a real issue.
+> > But the change also made it possible to install "vmlinuz.efi", by
+> > setting both options to =y. Was this intentional?
 > 
-> Kent, bugs happen.
+> Absolutely. My arm64 config in fact has EFI_ZBOOT enabled.
+> 
 
-I _know_.
+Per CONFIG_EFI_ZBOOT help text, the ZBOOT is a compressed image wrapped
+in an EFI container. Add to this that both GRUB and Android Boot Loader
+happily loads the compressed Image (i.e. Image.gz).
 
-Look, filesystem development is as high stakes as it gets. Normal kernel
-development, you fuck up - you crash the machine, you lose some work,
-you reboot, people are annoyed but generally it's ok.
+So, in my mind there's: uncompressed Image, compressed Image.gz, and
+compressed Image.gz packaged in an EFI application to uncompress itself.
 
-In filesystem land, you can corrupt data and not find out about it until
-weeks later, or _worse_. I've got stories to give people literal
-nightmares. Hell, that stuff has fueled my own nightmares for years. You
-know how much grey my beard has now?
+But your change makes more sense than you just wanting the Image.gz,
+which puzzled me...
 
-Which is why I have spent many years of my life building a codebase and
-development process where I can work productively where I can not just
-catch but recover from pretty much any fuckup imaginable.
+> IOW, the intent of that CONFIG_COMPRESSED_INSTALL was simply to make
+> "make install" do the same thing that "make zinstall" used to do.
+> 
 
-Because peace of mind is priceless...
+I was convinced that make zinstall do install the Image.gz, looking at
+the Makefiles I am however not able to see how.
+
+> I in fact initially limited the whole COMPRESSED_INSTALL question to
+> be *only* for when EFI_ZBOOT is enabled (because that was my
+> situation), and privately asked Will if maybe non-EFI people want it.
+> So the patch originally had
+> 
+> +       depends on EFI && EFI_ZBOOT
+> 
+> and I asked Will
+> 
+>   Comments? Do the non-EFI_ZBOOT cases also perhaps want this (ie
+>   "Image.gz" as opposed to "vmlinuz.efi")?
+> 
+>   I intentionally tried to make it as limited as possible, but maybe the
+>   non-EFI people would want this too?
+> 
+
+Just to clarify this point, I only have EFI systems.
+
+> and he thought that it would be better to just make this compressed
+> install question be independent of anything else, and literally just
+> boil down to "do you want 'make install' to do the same thing as 'make
+> zinstall' does?"
+> 
+> I have *no* idea about what the actual package manager case wants, though.
+> 
+
+I looked at, and tried, Arch Linux, Debian, and Fedora. The package
+managers effectively unpacks the files, invokes mkinitcpio and feeds the
+result to the bootloader. So if you have a bootloader (like
+systemd-boot) that doesn't decompress the Image it's asked to load, then
+what's being put into the package needs to be uncompressed.
+
+This is why I would like the option to enter the packaging steps with
+KBUILD_IMAGE=Image...
+
+
+I think it would make more sense to have CONFIG_COMPRESSED_INSTALL
+represent Image.gz vs Image (compressed vs uncompressed). And if you ask
+for an EFI-wrapped Image (ZBOOT) we compress and install that for you
+regardless of CONFIG_COMPRESSED_INSTALL.
+
+Regards,
+Bjorn
 
