@@ -1,218 +1,134 @@
-Return-Path: <linux-kernel+bounces-300102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E817695DED1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E9595DED5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF5AB2173E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE241F21B08
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C93417A90F;
-	Sat, 24 Aug 2024 15:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A15C17C9B7;
+	Sat, 24 Aug 2024 15:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bwmI/kw2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dTRy9MLF"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93166A947;
-	Sat, 24 Aug 2024 15:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE9017BECE
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 15:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724515010; cv=none; b=M+9rfWnzf5pMGrsgA7Bc+MTDisYo48tMRFnGpQ2l4+vE6Dho8UwejZg1LwkKJpXg5Z8SZSYQmkJxE4Xk0Bsp/St95CMkxWSAZEKXZrLw61h6eo3Ii14J7mGMW938BZc4q49hFFhvhNFNdmsTaRurE1e/uTIBG3clWwjEQUE88cQ=
+	t=1724515014; cv=none; b=qD687O6Otc64MImXA5hAdjy1FCm2w4qARWmYVzqSgdOHf/KZ5jif4Ui7YKTRo8eUfprJjavDTVB40JUybRWN96CaPqcm+8/LW9E1ErYGb5y5qFdnUCVt1c6Ktt/v+VxZrnBr5Qmv5aX8qxvx9pLSSGxPI8GZoxCvFv4LvtHgqHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724515010; c=relaxed/simple;
-	bh=slnmtVMXbiaUkc4Pa9xnMT1NtDC+jHhXJfw11g+AkWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBRDnvwzkN70YXImRB7rIRgxTPxfpTm24GWpcA3k4u2uGuYFin73tSh6GrmBcFgqS65TrQ5tNX6NNdIyhfVipr6via34OCKlxbA0+mwNEkjNnhWWIgxLebBwYok4i+4ruFwUfkHYurNSlE33o1l2W5car7bMTwNpbOgPTGC+BHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bwmI/kw2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EBECF6DE;
-	Sat, 24 Aug 2024 17:55:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724514942;
-	bh=slnmtVMXbiaUkc4Pa9xnMT1NtDC+jHhXJfw11g+AkWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bwmI/kw2T1Jalrt3Wh6mBMqPKXzRpkbYm11TOzcP6tzrHIVRJ4HiWxmWis3xqAdEh
-	 fX/yD4UCy8NHFAY4CcH/Zd9ZrOISDmtao6nmEVUR+momnx8TGSBYZD+virQrPzXuu5
-	 ylQE1o051xt4+OFPhbMIRVSO44AYxcgZH1fuQ0Vw=
-Date: Sat, 24 Aug 2024 18:56:43 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Biju Das <biju.das.au@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 1/2] media: mt9p031: Extend match support for OF tables
-Message-ID: <20240824155643.GB3006@pendragon.ideasonboard.com>
-References: <20230910160126.70122-1-biju.das.jz@bp.renesas.com>
- <20230910160126.70122-2-biju.das.jz@bp.renesas.com>
- <tlaikk73c5gc6y3bk6evuwtlizletaws7tuc5nk36hz2adkydp@duv2tjpqnios>
- <OS0PR01MB59226056EAA42B93D123CFB586F2A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <spi52a754wa4ghwvfa6hkoqiz5rws27jlrdfnintx7dfm5ccqv@cngal3bh6eje>
- <20240823155503.GR26098@pendragon.ideasonboard.com>
- <20240824155518.GA3006@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1724515014; c=relaxed/simple;
+	bh=B22/WAPQ9uWlHrZZAHVyDH47YhpH6uxmQNEGo/bmIMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=abwwljyhNyIIKvIiT5ye/+My2yoHh7rW6gx5D0IKkKIhRgBffnj79WtAJLDDhX2EBSo/887omOvTgctkvAAbEISj/aOrr4tzqZiUzVWrx5WtcD1pPEKc2hr7o96N5SF74vbYNqVhuTY1vV2NRQQmhVMB9/VDnflRoWJQ4v48QAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dTRy9MLF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8692bbec79so377762366b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724515012; x=1725119812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8hSfdydbqZUTZ7JI+cx9KZbtF0P3cGZyyCR8zsO5f1o=;
+        b=dTRy9MLFiMj7QxMH/tyUHP/qrHay+86Bv3R9BZ3zf2y+FxXhyF6Bh8iCHZdEjmRxQD
+         sCTKQpBhZpkF6g1hjtmpkiqaXXS4tcavPvOTQnxfxpb8hhU6JyW+uJjALrUfnSdxgseS
+         WO3Jcd5utoCNmcqYLQLrE3wCKEDRih25xIy7XQkwHBchFi6bCa0K9J410UDquUKRDx/M
+         pf6NMLLs4LlChNBdp6c4q/m0Tk0MzmA4Pcom4VWW50ORfwxVRyxyoTJ/K8I63WCklit9
+         CQtQH/sfuTOKfmHuQJ9wwpG3LcBYMSlWG/I6dJpiTZwWlrO7GwlcRPjLuRl18JGuLqwj
+         VkWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724515012; x=1725119812;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hSfdydbqZUTZ7JI+cx9KZbtF0P3cGZyyCR8zsO5f1o=;
+        b=bZj4nHgXyUbgl1+UayPBYsSdD9/oejFXLUX322WSusuWG6D730kXcMmcnW8Kz7F8tf
+         LmqdHGLcNL1fxcZRg0iuRWERaQLcG2yq7exknhRwIv9yVWtzKcUFZnHLIYDnz7mmAt6X
+         a6YPcl73KiqdxRVukYPzRD/C3Y0NBRSKtqk5vRJugVAIngjc2xQEXCt6S0aC1SeND8sN
+         z3p/sViLUVh9BOAhyZInijVU/ki2LFnBVpADWZBNa+eFmDljzXmvn1+j1lQYsu4pXY2q
+         9ieRjaT3soQapFimH54+5p3k+PptPnJEswUn8f/vJ2fH0/GjhVP0RoGdura071lbMv41
+         ntZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+5VnpcbOh3KQw81U5JP8W/xB4Dh/+SyFJJpdvKnaDa481jKlk0iZnMYRwq/ToPoQrCgVCvem2f6O2ETs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6rlZPikmwtMxJugdgUOA5f76ugqame/xmMDqLlmwGff1bDmNw
+	D52+rQ2pbJ+4aLUluJ4aaQkBUlr4mfWfkxYyJi4BxuKZet3ShaRueYQN0q2sxJM=
+X-Google-Smtp-Source: AGHT+IEAST2c2vWGhyRRV2/uRPC69LKI8UJf2fJxN8h2IgHheHynSfmAfsIdHth+yhNwjz+rpgnUHQ==
+X-Received: by 2002:a17:907:f791:b0:a86:6fa8:c6a3 with SMTP id a640c23a62f3a-a86a52c616bmr387903366b.39.1724515011548;
+        Sat, 24 Aug 2024 08:56:51 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.94])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f439dsm413622566b.202.2024.08.24.08.56.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 08:56:51 -0700 (PDT)
+Message-ID: <1468f33b-e7ab-4c9f-9328-8fba75a41939@tuxon.dev>
+Date: Sat, 24 Aug 2024 18:56:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240824155518.GA3006@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 05/12] ARM: dts: microchip: sam9x60: Add OTPC node
+Content-Language: en-US
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Christian Melki <christian.melki@t2data.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <20240821105943.230281-6-ada@thorsis.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240821105943.230281-6-ada@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 24, 2024 at 06:55:19PM +0300, Laurent Pinchart wrote:
-> On Fri, Aug 23, 2024 at 06:55:04PM +0300, Laurent Pinchart wrote:
-> > Hello,
-> > 
-> > On Mon, Sep 11, 2023 at 11:25:03AM +0200, Jacopo Mondi wrote:
-> > > On Mon, Sep 11, 2023 at 09:14:35AM +0000, Biju Das wrote:
-> > > > > Subject: Re: [PATCH 1/2] media: mt9p031: Extend match support for OF tables
-> > > > >
-> > > > > Hi Biju
-> > > > >
-> > > > > On Sun, Sep 10, 2023 at 05:01:25PM +0100, Biju Das wrote:
-> > > > > > The driver has an OF match table, still, it uses an ID lookup table
-> > > > > > for retrieving match data. Currently, the driver is working on the
-> > > > > > assumption that an I2C device registered via OF will always match a
-> > > > > > legacy I2C device ID. The correct approach is to have an OF device ID
-> > > > > > table using i2c_get_match_data() if the devices are registered via OF/ID.
-> > > > > >
-> > > > > > Unify the OF/ID table by using MEDIA_BUS_FMT as match data for both
-> > > > > > these tables and replace the ID lookup table for the match data by
-> > > > > > i2c_get_match_data() and simplifly probe() and mt9p031_init_cfg()
-> > > > > >
-> > > > > > Drop mt9p031_init_cfg as there is no user.
-> > > > > >
 
-I'll drop this sentence when applying.
 
-> > > > > > While at it, remove the trailing comma in the terminator entry for the
-> > > > > > OF table making code robust against (theoretical) misrebases or other
-> > > > > > similar things where the new entry goes _after_ the termination
-> > > > > > without the compiler noticing.
-> > > > > >
-> > > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > > ---
-> > > > > >  drivers/media/i2c/mt9p031.c | 33 +++++++++++----------------------
-> > > > > >  1 file changed, 11 insertions(+), 22 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> > > > > > index 348f1e1098fb..540cb519915c 100644
-> > > > > > --- a/drivers/media/i2c/mt9p031.c
-> > > > > > +++ b/drivers/media/i2c/mt9p031.c
-> > > > > > @@ -112,11 +112,6 @@
-> > > > > >  #define MT9P031_TEST_PATTERN_RED			0xa2
-> > > > > >  #define MT9P031_TEST_PATTERN_BLUE			0xa3
-> > > > > >
-> > > > > > -enum mt9p031_model {
-> > > > > > -	MT9P031_MODEL_COLOR,
-> > > > > > -	MT9P031_MODEL_MONOCHROME,
-> > > > > > -};
-> > > > > > -
-> > > > > >  struct mt9p031 {
-> > > > > >  	struct v4l2_subdev subdev;
-> > > > > >  	struct media_pad pad;
-> > > > > > @@ -129,7 +124,7 @@ struct mt9p031 {
-> > > > > >  	struct clk *clk;
-> > > > > >  	struct regulator_bulk_data regulators[3];
-> > > > > >
-> > > > > > -	enum mt9p031_model model;
-> > > > > > +	u32 code;
-> > > > > >  	struct aptina_pll pll;
-> > > > > >  	unsigned int clk_div;
-> > > > > >  	bool use_pll;
-> > > > > > @@ -714,12 +709,7 @@ static int mt9p031_init_cfg(struct v4l2_subdev *subdev,
-> > > > > >  	crop->height = MT9P031_WINDOW_HEIGHT_DEF;
-> > > > > >
-> > > > > >  	format = __mt9p031_get_pad_format(mt9p031, sd_state, 0, which);
-> > > > > > -
-> > > > > > -	if (mt9p031->model == MT9P031_MODEL_MONOCHROME)
-> > > > > > -		format->code = MEDIA_BUS_FMT_Y12_1X12;
-> > > > > > -	else
-> > > > > > -		format->code = MEDIA_BUS_FMT_SGRBG12_1X12;
-> > > > > > -
-> > > > > > +	format->code = mt9p031->code;
-> > > > > >  	format->width = MT9P031_WINDOW_WIDTH_DEF;
-> > > > > >  	format->height = MT9P031_WINDOW_HEIGHT_DEF;
-> > > > > >  	format->field = V4L2_FIELD_NONE;
-> > > > > > @@ -1104,7 +1094,6 @@ mt9p031_get_pdata(struct i2c_client *client)
-> > > > > >
-> > > > > >  static int mt9p031_probe(struct i2c_client *client)  {
-> > > > > > -	const struct i2c_device_id *did = i2c_client_get_device_id(client);
-> > > > > >  	struct mt9p031_platform_data *pdata = mt9p031_get_pdata(client);
-> > > > > >  	struct i2c_adapter *adapter = client->adapter;
-> > > > > >  	struct mt9p031 *mt9p031;
-> > > > > > @@ -1129,7 +1118,7 @@ static int mt9p031_probe(struct i2c_client *client)
-> > > > > >  	mt9p031->pdata = pdata;
-> > > > > >  	mt9p031->output_control	= MT9P031_OUTPUT_CONTROL_DEF;
-> > > > > >  	mt9p031->mode2 = MT9P031_READ_MODE_2_ROW_BLC;
-> > > > > > -	mt9p031->model = did->driver_data;
-> > > > > > +	mt9p031->code = (uintptr_t)i2c_get_match_data(client);
-> > > > > >
-> > > > > >  	mt9p031->regulators[0].supply = "vdd";
-> > > > > >  	mt9p031->regulators[1].supply = "vdd_io";
-> > > > > > @@ -1226,19 +1215,19 @@ static void mt9p031_remove(struct i2c_client *client)
-> > > > > >  }
-> > > > > >
-> > > > > >  static const struct i2c_device_id mt9p031_id[] = {
-> > > > > > -	{ "mt9p006", MT9P031_MODEL_COLOR },
-> > > > > > -	{ "mt9p031", MT9P031_MODEL_COLOR },
-> > > > > > -	{ "mt9p031m", MT9P031_MODEL_MONOCHROME },
-> > > > > > -	{ }
-> > > > > > +	{ "mt9p006", MEDIA_BUS_FMT_SGRBG12_1X12 },
-> > > > > > +	{ "mt9p031", MEDIA_BUS_FMT_SGRBG12_1X12 },
-> > > > > > +	{ "mt9p031m", MEDIA_BUS_FMT_Y12_1X12 },
-> > > > > > +	{ /* sentinel */ }
-> > > > > >  };
-> > > > > >  MODULE_DEVICE_TABLE(i2c, mt9p031_id);
-> > > > > >
-> > > > > >  #if IS_ENABLED(CONFIG_OF)
-> > > > > >  static const struct of_device_id mt9p031_of_match[] = {
-> > > > > > -	{ .compatible = "aptina,mt9p006", },
-> > > > > > -	{ .compatible = "aptina,mt9p031", },
-> > > > > > -	{ .compatible = "aptina,mt9p031m", },
-> > > > > > -	{ /* sentinel */ },
-> > > > > > +	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> > > > > > +	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> > > > > > +	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
-> > > > > > +	{ /* sentinel */ }
-> > > > >
-> > > > > I know it might sound not necessary, but isn't it better to wrap the
-> > > > > format in some sort of per-model structure. It would avoid a few type
-> > > > > casts too. Up to you though
-> > > >
-> > > > The problem with structure is, it will have one
-> > > > variable entry. I got some feedback related to similar
-> > > > patches not to add a single variable to structure
-> > > > and use the value directly instead.
-> > > 
-> > > Ok then, a matter of preferences I think. Up to you, really.
-> > 
-> > My preference actually goes for a structure too.
-> > 
-> > Given how long it took me to review this, I'll send a v2 of the series
-> > myself.
+On 21.08.2024 13:59, Alexander Dahl wrote:
+> See datasheet (DS60001579G) sections "7. Memories" and "23. OTP Memory
+> Controller (OTPC)" for reference.
+
+Please detail here what the patch does and why it is necessary. Sending the
+reader to some DS chapters w/o any additional information may be worthless.
+
 > 
-> Actually it will be simpler to apply this series first and add changes
-> on top.
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+>  arch/arm/boot/dts/microchip/sam9x60.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> > > > > >  };
-> > > > > >  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
-> > > > > >  #endif
-
--- 
-Regards,
-
-Laurent Pinchart
+> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> index 291540e5d81e..2159a6817f44 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> @@ -14,6 +14,7 @@
+>  #include <dt-bindings/clock/at91.h>
+>  #include <dt-bindings/mfd/at91-usart.h>
+>  #include <dt-bindings/mfd/atmel-flexcom.h>
+> +#include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
+>  
+>  / {
+>  	#address-cells = <1>;
+> @@ -156,6 +157,13 @@ sdmmc1: sdio-host@90000000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		otpc: efuse@eff00000 {
+> +			compatible = "microchip,sam9x60-otpc", "syscon";
+> +			reg = <0xeff00000 0xec>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +		};
+> +
+>  		apb {
+>  			compatible = "simple-bus";
+>  			#address-cells = <1>;
 
