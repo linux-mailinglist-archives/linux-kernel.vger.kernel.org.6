@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-300197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA5F95E039
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 00:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5D795E041
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 00:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5E42827A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 22:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE94C1F21E75
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 22:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B298513C8F9;
-	Sat, 24 Aug 2024 22:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q+w72naO"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B7528E0F
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 22:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823313C677;
+	Sat, 24 Aug 2024 22:27:24 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4013A1DB
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 22:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724537380; cv=none; b=iT/N8Zj6QReRThwU6biW/OOvQde4dyCw1iI7zlvEklYraD5zfURzpH7XTj6YOvjlpffgV1UE3u4OE78PD2K78G6mmjyqMHC/4fvj8OFduz5WD+kKekrC2S/Z+gOwb7+ZUC83EoEj8+qyC1NIa2j0Elk5zJsSj5R/eJxz7JNnzcY=
+	t=1724538443; cv=none; b=Z6pc9+OhCq6Fp362AEHGfiU0skHf/irMM16QCcjpltvzfz8h6oMUEAlrHInzKCejiNMge9/fvKQ1AHc+41fw9M+Ca5eYkLseOPvrfzh15AmlSCj1OTShYVX8qi+dWazPuIkMAzwoJCujREsZ+KkV+EfvUJmV18lIKQJpeaLMJMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724537380; c=relaxed/simple;
-	bh=pIcevnO8B44FsuqKKXXFtVUHkV+t9Z97x8VWphHOD0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jK7L+pez4iUP5JXNhRJEejdMA5ldy7B3s3nCVz9KvWd877he0ECf4OXuJCrFYmaGPKbx/gJYppZJ+TvWSF3KWjPDu+4NklqcEaYg6IqOOA4+1dyZJ6oUc+6IMF5FXyVG+iu50IAwe/o880dy+ZiAYFIAni5TfJQzxJRqIM2tWgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q+w72naO; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724537375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZYovX4csJvM7w3dzoxHiFd6ZyRCtREp257gHhjUTEZg=;
-	b=Q+w72naOteY+bfrTFTW0NWYimHGKzb+RDhLDfJZ/Wc0BO+4Tt4jXDsAMkKi9g/ENZ6a1Vt
-	eJN0Xjw2mSJ+9lDqZwJmp//lODO0rTcs2W4QX679g5ia5V8M7pPKgjJQG3B3/2EGjEmZap
-	i25jHYjxJzBXeeQbMGWy8thCLJuVCDQ=
-From: Jose Fernandez <jose.fernandez@linux.dev>
-To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Christian Heusel <christian@heusel.eu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Jose Fernandez <jose.fernandez@linux.dev>,
-	Peter Jung <ptr1337@cachyos.org>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] kbuild: add debug package to pacman PKGBUILD
-Date: Sat, 24 Aug 2024 16:07:56 -0600
-Message-ID: <20240824220756.73091-1-jose.fernandez@linux.dev>
+	s=arc-20240116; t=1724538443; c=relaxed/simple;
+	bh=iv/lNNOEab19um3DFuHm0/su5FdPyA+yQpxGNpGqdKg=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=SMTtB6TgF2dyTLoNI+of0FMZUiIYaDCZ5W199vfk9DsQi+jhOn1e26zxMvqB5DOLG9otkIgiDT4BeMTq8x11BV/W6Sgt/ENkbJufQVck7v+MAG+CqAecoDIv82INpiX04yvB6eLqWfdK1kTBEMIPVn6Q6JJgBVFZmxrvVJs8Evk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 3D03692009C; Sun, 25 Aug 2024 00:17:10 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 2E2C692009B;
+	Sat, 24 Aug 2024 23:17:10 +0100 (BST)
+Date: Sat, 24 Aug 2024 23:17:10 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org
+cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+    Isaku Yamahata <isaku.yamahata@intel.com>, 
+    Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/EISA: Use memremap() to probe for the EISA BIOS
+ signature
+Message-ID: <alpine.DEB.2.21.2408242025210.30766@angie.orcam.me.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
 
-Add a new debug package to the PKGBUILD for the pacman-pkg target. The
-debug package includes the non-stripped vmlinux file with debug symbols
-for kernel debugging and profiling. The file is installed at
-/usr/src/debug/${pkgbase}, with a symbolic link at
-/usr/lib/modules/$(uname -r)/build/vmlinux. The debug package is built
-by default.
+Area at the 0x0FFFD9 physical location in the PC memory space is regular 
+memory, traditionally ROM BIOS and more recently a copy of BIOS code and 
+data in RAM, write-protected.
 
-Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+Use memremap() then to get access to it rather than ioremap(), avoiding 
+issues in virtualization scenarios and complementing changes such as 
+commit f7750a795687 ("x86, mpparse, x86/acpi, x86/PCI, x86/dmi, SFI: Use 
+memremap() for RAM mappings") or commit 5997efb96756 ("x86/boot: Use 
+memremap() to map the MPF and MPC data").
+
+Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Closes: https://lore.kernel.org/r/20240822095122.736522-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
 ---
-v2->v3:
-- Remove unnecessary mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-- Use the new _prologue() function [1]
-- Add symbolic link to /usr/lib/modules/$(uname -r)/build/vmlinux
-- Remove the dependency on the headers package
-v1->v2:
-- Use the new PACMAN_EXTRAPACKAGES [2] variable to allow users to disable the
-debug package if desired, instead of always including it.
+Hi,
 
-[1] https://lore.kernel.org/lkml/20240816141844.1217356-1-masahiroy@kernel.org/
-[2] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
+ It's not clear to me if pieces added with commit 6a92b11169a6 ("x86/EISA: 
+Don't probe EISA bus for Xen PV guests") are still needed with this change 
+in place; it's not my area of experience and the submitter of said commit 
+clearly didn't realise this is really an access to regular memory rather 
+than MMIO.  If they are not needed, they can be discarded with a follow-up 
+change.
 
- scripts/package/PKGBUILD | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ I have verified this change with my plain EISA i486 box, and just to be 
+sure with a debug patch to report that `EISA_bus' (hardly used nowadays) 
+has indeed been set.  Please apply.
 
-diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-index 839cd5e634d2..f83493838cf9 100644
---- a/scripts/package/PKGBUILD
-+++ b/scripts/package/PKGBUILD
-@@ -5,7 +5,7 @@
- pkgbase=${PACMAN_PKGBASE:-linux-upstream}
- pkgname=("${pkgbase}")
+  Maciej
+---
+ arch/x86/kernel/eisa.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+linux-x86-eisa-bus-probe-memremap.diff
+Index: linux-macro/arch/x86/kernel/eisa.c
+===================================================================
+--- linux-macro.orig/arch/x86/kernel/eisa.c
++++ linux-macro/arch/x86/kernel/eisa.c
+@@ -11,15 +11,15 @@
  
--_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
-+_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers debug}
- for pkg in $_extrapackages; do
- 	pkgname+=("${pkgbase}-${pkg}")
- done
-@@ -111,6 +111,19 @@ _package-api-headers() {
- 	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+ static __init int eisa_bus_probe(void)
+ {
+-	void __iomem *p;
++	void *p;
+ 
+ 	if ((xen_pv_domain() && !xen_initial_domain()) || cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+ 		return 0;
+ 
+-	p = ioremap(0x0FFFD9, 4);
++	p = memremap(0x0FFFD9, 4, MEMREMAP_WB);
+ 	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
+ 		EISA_bus = 1;
+-	iounmap(p);
++	memunmap(p);
+ 	return 0;
  }
- 
-+_package-debug(){
-+	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
-+
-+	local debugdir="${pkgdir}/usr/src/debug/${pkgbase}"
-+	local builddir="${pkgdir}/usr/${MODLIB}/build"
-+
-+	_prologue
-+
-+	install -Dt "${debugdir}" -m644 vmlinux
-+	mkdir -p "${builddir}"
-+	ln -sr "${debugdir}/vmlinux" "${builddir}/vmlinux"
-+}
-+
- for _p in "${pkgname[@]}"; do
- 	eval "package_$_p() {
- 		$(declare -f "_package${_p#$pkgbase}")
-
-base-commit: df829331cf5cccb2a1fdd7560eabfcec49f9b990
--- 
-2.46.0
-
+ subsys_initcall(eisa_bus_probe);
 
