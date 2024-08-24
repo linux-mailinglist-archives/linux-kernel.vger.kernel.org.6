@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-300174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419B395DFD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:48:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C807E95DFDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64FCB2194E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8514D281917
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2B073477;
-	Sat, 24 Aug 2024 19:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173813AD11;
+	Sat, 24 Aug 2024 19:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="QUy+ZKmy"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P+ryaxOH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855E4B669;
-	Sat, 24 Aug 2024 19:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724528885; cv=pass; b=N40bxynHhMq6ZVzrZwe/qUN7oh5H2Ss0dXNlxZdsvtdfI1E+jfatqA6BL+YVik05QJGzpSQYdBlJ3wCfvxR6VzSkLgR4IYT+/drg4w0w9VWVzAy55ZSp0gAbUkbkfNg2mAyhs3EIc0VXMujy6U1B9hTqyXHIOaHur6QZb1YKKes=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724528885; c=relaxed/simple;
-	bh=bOkpbfgfSj3qeUT/h8Mgu+vfuZecCK8Ya0ifgmoikLI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bKVLI282E0F2T5lWNjhpJXGPMMnedKEpXEitwYRDK69a3CUDxEfcs383THtx9kj3BYTvlVxdTwg3vdwsJR12ouJnJDnMSBEXfxhmVtu1BWGmcwb2YyDY2mS2Q326CDZ/K5r+x5wS5mHA5zPH7w1V1B0ZBHUTedUoL/YWj6so0lk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=QUy+ZKmy; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724528847; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ikylJpY+oSH2VYCO7wbK6Q9LefQuA2nYPoBxKYGTSEj8ui1OI0nqi9tLfEGkfc42GhkISqwmmxSTvCRuUtrl4j95rHzVx/TvyRnFhZuZF4GLiYe6qEex5lcUHDBIUUyV+//X3WQJ5JeEq4MgLIBnCK84FtZO19C9W3CJ0e8di98=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724528847; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bOkpbfgfSj3qeUT/h8Mgu+vfuZecCK8Ya0ifgmoikLI=; 
-	b=ehAw0SXf5mdzmm3+4IkHT1hNsiyvsCbav7nmU5l30jHKNTRXJbiJsFe2H2FzJU1QumBAPtVANzuylT+UToYqR0jN8PnS80Xo6P/n+rFqS22Q3Wyi3exPEkgd+ca9Tqw8iDwLk4Xe1rSnrxbBLzr710OLR+b5q1kZufs77hfzpZs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724528847;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=bOkpbfgfSj3qeUT/h8Mgu+vfuZecCK8Ya0ifgmoikLI=;
-	b=QUy+ZKmyo2983l9HZk/FVBzgXgKs3GxCjo8pjHW8wBOS6ve0Lyl3NOqWHlj/7Kvf
-	JZZv7qm5BboRxnXcJwPki6uv+N6ehdbyIvXq1wlHYMb5nmvDFdx++NdaBLhw0koFpTU
-	AQPPIC4It1DrylfGWq3duUh/Trs8xwm3Ep1zrnTQ=
-Received: by mx.zohomail.com with SMTPS id 1724528845223809.8339247569138;
-	Sat, 24 Aug 2024 12:47:25 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D715680
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724529019; cv=none; b=O12GafYjJwchBeYq4BsNB7xQCosQr6xrlvy/zm/QhqNc0n/CPj+LSP5k02vD/GHVAmdIPoWyWEAf3GOgBzCp/a3/gDzCmlXrkPMnwL435692bP5QeKEei5Un3oSW87AlJ6F9Obrf5Y9vmoD2IUYxgp5Y5RSFr9NDkZCXtiPZzzQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724529019; c=relaxed/simple;
+	bh=lkz4q2nAUp0hzF2vbhFCLTAI60VEsTQcBBYmlITOKs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KcmoLFFdvDWUsbK2191OURDOzXhdZxVevdEPDfyWt4D0itLiqRNLhg2wv05DxWvci8UeHj1nTro7rexBHSUhFEzX93PyoXOuyGvXKalLH/1nZbHg8jTMiJ+gm1UUMOArc89UzA1KB8xMWLfw/bzFL8eQ4Ug5vd0gF2BT6OO2YBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P+ryaxOH; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724529018; x=1756065018;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lkz4q2nAUp0hzF2vbhFCLTAI60VEsTQcBBYmlITOKs4=;
+  b=P+ryaxOHu3ev7nA1yLeOTRE67Ng4YoY+nQn0TZ24nAvHon14kLP78loT
+   rKzT12ie8EoRt0IsSEK9cik5bulI5ht/gm7v5NwpqD6td5UTBKAmhWrSt
+   DQ0ZSiYoKwBAgwlozYRA3r1534El5aA4sp2T1E7bgw4j/NkqvXH32oS7F
+   MUyxTzMVe3DY5nX77bh7JHoWkisZtiI3TVWCXaH866pWm5I69NihZnTh5
+   RizUWPb6qkZz0I8icVO73ayTIlXFxy3He+4yOViA6BSzCKqav0uOrDJc7
+   kkx/EiaseIp8t+MzO+whj/qc6iwaHdD9TKY+UZMMApxydH2c+zhfUEKaG
+   w==;
+X-CSE-ConnectionGUID: gSXiUQelQ3GNVULc6onRUQ==
+X-CSE-MsgGUID: /kYqqOoRSbuwQAraQuxKyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="40452568"
+X-IronPort-AV: E=Sophos;i="6.10,174,1719903600"; 
+   d="scan'208";a="40452568"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 12:50:17 -0700
+X-CSE-ConnectionGUID: g5WW6mdZQlWtQcyMf8X/1w==
+X-CSE-MsgGUID: RxnkIbn8Ssu47lyXV6KBsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,174,1719903600"; 
+   d="scan'208";a="61802901"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 24 Aug 2024 12:50:14 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1shwm3-000EiV-22;
+	Sat, 24 Aug 2024 19:50:11 +0000
+Date: Sun, 25 Aug 2024 03:49:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, chaitanya.dhere@amd.com,
+	jun.lei@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+	daniel@ffwll.ch, alex.hung@amd.com, aurabindo.pillai@amd.com,
+	colin.i.king@gmail.com, dillon.varone@amd.com,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ruanjinjie@huawei.com
+Subject: Re: [PATCH -next 5/5] drm/amd/display: Make dcn35_fpga_funcs static
+Message-ID: <202408250235.XZ6zToZY-lkp@intel.com>
+References: <20240821064040.2292969-6-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 07/10] rust: add `io::Io` base type
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240618234025.15036-8-dakr@redhat.com>
-Date: Sat, 24 Aug 2024 16:47:07 -0300
-Cc: Greg KH <gregkh@linuxfoundation.org>,
- rafael@kernel.org,
- bhelgaas@google.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- David Airlie <airlied@gmail.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>,
- Asahi Lina <lina@asahilina.net>,
- Philipp Stanner <pstanner@redhat.com>,
- ajanulgu@redhat.com,
- Lyude Paul <lyude@redhat.com>,
- Rob Herring <robh@kernel.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CF9E76A0-C62A-4A73-973A-8FB1CB8CF8ED@collabora.com>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-8-dakr@redhat.com>
-To: Danilo Krummrich <dakr@redhat.com>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821064040.2292969-6-ruanjinjie@huawei.com>
 
-Hi Danilo,
+Hi Jinjie,
 
-=46rom a Rust API point of view, this looks good to me.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+[auto build test WARNING on next-20240821]
 
-Cheers,
+url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/drm-amd-display-Make-core_dcn4_g6_temp_read_blackout_table-static/20240821-143421
+base:   next-20240821
+patch link:    https://lore.kernel.org/r/20240821064040.2292969-6-ruanjinjie%40huawei.com
+patch subject: [PATCH -next 5/5] drm/amd/display: Make dcn35_fpga_funcs static
+config: i386-randconfig-003-20240824 (https://download.01.org/0day-ci/archive/20240825/202408250235.XZ6zToZY-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240825/202408250235.XZ6zToZY-lkp@intel.com/reproduce)
 
-=E2=80=94 Daniel=
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408250235.XZ6zToZY-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c:1071:29: warning: 'dcn35_fpga_funcs' defined but not used [-Wunused-variable]
+    1071 | static struct clk_mgr_funcs dcn35_fpga_funcs = {
+         |                             ^~~~~~~~~~~~~~~~
+
+
+vim +/dcn35_fpga_funcs +1071 drivers/gpu/drm/amd/amdgpu/../display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
+
+  1070	
+> 1071	static struct clk_mgr_funcs dcn35_fpga_funcs = {
+  1072		.get_dp_ref_clk_frequency = dce12_get_dp_ref_freq_khz,
+  1073		.update_clocks = dcn35_update_clocks_fpga,
+  1074		.init_clocks = dcn35_init_clocks_fpga,
+  1075		.get_dtb_ref_clk_frequency = dcn31_get_dtb_ref_freq_khz,
+  1076	};
+  1077	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
