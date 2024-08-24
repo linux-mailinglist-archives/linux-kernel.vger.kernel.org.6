@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-300030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E487395DDCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8AC95DDD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1331F212F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:33:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8ED11F22368
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3F114E2F5;
-	Sat, 24 Aug 2024 12:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="Hf7eyqrb"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD97715B0FE;
+	Sat, 24 Aug 2024 12:34:53 +0000 (UTC)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8763463B9;
-	Sat, 24 Aug 2024 12:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B84CEAD2;
+	Sat, 24 Aug 2024 12:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724502825; cv=none; b=qG13byE9KM27h4eqROKeTE3SzqZ+CIoV2NRoyWHmYuBIXUqh29pbuLD0Aong4xYYor08Blmm2r/U5QWq2q0RAQD+USWC1nwM7iPBh6czwRLHyPL7Rx2HYzJN3ANr2hPSBLPW+/BDnJLPaLJynCS45Yni2q/lGZjU+NcgLgYpat0=
+	t=1724502893; cv=none; b=temQ1qTwvUtrhdncvBsfcAZ0olKBjbwxF1ovFSdx0zbiwEBegqz9ionJ01QXz8+UdS74OpPCQiWRuDxsuL7TQOs20RZvWTtsnda9ax1mqWflwsu8Z/XIFT8V4UfmFpTWjPIk0ZY7LDKD1B1TF3yFT5nZjwJbh4AN+IJIfnZAMyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724502825; c=relaxed/simple;
-	bh=kLMQKD6AlTLCvz2M0eF3JeZm2EiHAr4BO41+tVt+JpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vew8Rsvsgnyy+dN7VXWEP16p50OXECTnwJml4Ki7v0O1eq0EFh/mY91YqmdAopIeyH9MikPOevqVT1GidjZj1E6Jy6XCie7GqRs43WDz4m8ChQf5MyOkQcCjRYB0S15Or9yDF0au7TZRWfTcf/kj2K7BBShnWHDaJDwpRtqU0YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=Hf7eyqrb; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1724502433; bh=kLMQKD6AlTLCvz2M0eF3JeZm2EiHAr4BO41+tVt+JpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hf7eyqrbDJNO9naH9LQDSaxpNoFo+fKisKefIB9a6dpuVZ5eZ2BIWZJM64VoGcPdQ
-	 ecZmtuTh8trrXWk6zn9d+m2rObJl0kTtGbntkRdCevjRc6AmgfWnXMU7rxatPdg/AT
-	 Ga7OQjO/BCtXM4fS5zkozddPi8haFUB3zQOYpGi0=
-Date: Sat, 24 Aug 2024 14:27:12 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-Message-ID: <7186b180-6b1f-4b64-9bab-78068822024b@t-8ch.de>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
+	s=arc-20240116; t=1724502893; c=relaxed/simple;
+	bh=QwXiEAjwEXoAE6zGlVy7wCnl4gDD0wbHdryjStKwejE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jXnGrAr8OamkBtJLHTQxL/V34J/gV0Xozpc7kSR7LpBuIg8l4LUZfqc9dxrqEy9iXDyYtNkaLkUrPQccFBN9HpCuAz4LHnBvWw+WnbxOb7bjx9VZT93w030I1DIbYWr50MkqqiiE99FKWPIJgkhW2ci3LDk/lMx83X/BuglPeaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f3f25a1713so31101121fa.2;
+        Sat, 24 Aug 2024 05:34:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724502888; x=1725107688;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QwXiEAjwEXoAE6zGlVy7wCnl4gDD0wbHdryjStKwejE=;
+        b=EdMOxVkwOwDdZJtbaCuVdT8VJX/FkKxAcMLlEAhxUfLD+f6L6TsdhXZ13eHH0ok1j/
+         3VnV89SEkSpt2nn4gfOnbTjXavSXYPq/Xo+sjn/NVfpwfzTq8UHGdNtDkDZnjYWzWTzS
+         0fUolT1EZiZ8Ev6nPNBUOPKHOlLIO9iOopBv2wh1U2hLtwpgdabn619JcuOmvw6sVS41
+         4rhnMZ9yjaxw56rquNv0XPPNFu4eG+bhKyVARqjQv1AjFk7Zt2THDjiLvDXHyhOnkxaS
+         aNrcSc8fe7skD85+WoGzG3Ut5OzxGNosi2wJXE9fw/ZEp/aK+j0wmUTsuyCuAY9qJn7m
+         zcoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHTB4PE1bv52D65A2pL57i5OOzLZYX9WPUao0mBlQv5We1B6dhzZ86xla9ct93uYAd7jquJLuTdBEVFzfX@vger.kernel.org, AJvYcCVl6lmlUGKkLVG3/AAJMaGuTZW55LsBgn4r6VznssiR8NX4u4H9+2l1S5E2TgF0lO7PGtpBEDEvGmGs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNwNGBkbm3CSVa3DndMHpmjQKJq8bDL6GjpVuF8IH/OBSuVkPP
+	NRF8xLWVPk3ip3unRUQUKLbADyoBTShRe4oE7baFjssmoqeju+6G23pPe0L8
+X-Google-Smtp-Source: AGHT+IEL59n43hKVxd71HEFoe31D4O3Zu3KEPOXyNUERPWI5keSe6ZmfSohPP7QCiINhp3DMHDgtJw==
+X-Received: by 2002:a05:6512:b85:b0:52e:f367:709b with SMTP id 2adb3069b0e04-534387bb201mr3337946e87.42.1724502887137;
+        Sat, 24 Aug 2024 05:34:47 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d938sm845913e87.199.2024.08.24.05.34.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 05:34:46 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso30877271fa.1;
+        Sat, 24 Aug 2024 05:34:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV0d1hicd/GKBxIShNHlrcmAnodz4/Gx2o3eovxMVx/4CN5/ljtGeKZxZNJ9Rvq47KVz4yJ7qf0mHU9@vger.kernel.org, AJvYcCV3o40zWXr5UE5awaaTpBT18DjcaBnhtIX05Df1XByuBjKSztW9xBsAQ+oLgENCILZIZF4Pjhxeqyd1Wj1N@vger.kernel.org
+X-Received: by 2002:a2e:4a12:0:b0:2f3:df8f:bfaa with SMTP id
+ 38308e7fff4ca-2f4f4927f82mr28693001fa.36.1724502885863; Sat, 24 Aug 2024
+ 05:34:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727074526.1771247-4-masahiroy@kernel.org>
+References: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+ <761f18d4-9274-4983-a128-94efb96e1c59@kernel.org> <51f28d92-f670-47de-8e2d-53cbecfac081@gmail.com>
+In-Reply-To: <51f28d92-f670-47de-8e2d-53cbecfac081@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 24 Aug 2024 20:34:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65M6Zz7=TfRwF0urbELNaaazMZYsd3dtHYzwdJvzoho3A@mail.gmail.com>
+Message-ID: <CAGb2v65M6Zz7=TfRwF0urbELNaaazMZYsd3dtHYzwdJvzoho3A@mail.gmail.com>
+Subject: Re: [PATCH PATCH] arm64: dts: sunxi: nanopi-neo-plus2: Add pio regulators
+To: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Masahiro,
+Hi,
 
-On 2024-07-27 16:42:03+0000, Masahiro Yamada wrote:
-> Exclude directories and files unnecessary for building external modules:
-> 
->  - include/config/  (except include/config/auto.conf)
->  - scripts/atomic/
->  - scripts/dtc/
->  - scripts/kconfig/
->  - scripts/mod/mk_elfconfig
->  - scripts/package/
->  - scripts/unifdef
->  - .config
->  - *.o
->  - .*.cmd
-> 
-> Avoid copying files twice for the following directories:
-> 
->  - include/generated/
->  - arch/*/include/generated/
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/package/install-extmod-build | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-> index 8cc9e13403ae..cc335945dfbc 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -9,15 +9,22 @@ is_enabled() {
->  	grep -q "^$1=y" include/config/auto.conf
->  }
->  
-> +find_in_scripts() {
-> +	find scripts \
-> +		\( -name atomic -o -name dtc -o -name kconfig -o -name package \) -prune -o \
-> +		! -name unifdef -a ! -name mk_elfconfig -a \( -type f -o -type l \) -print
-> +}
-> +
->  mkdir -p "${destdir}"
->  
->  (
->  	cd "${srctree}"
->  	echo Makefile
->  	find "arch/${SRCARCH}" -maxdepth 1 -name 'Makefile*'
-> -	find include scripts -type f -o -type l
-> +	find "arch/${SRCARCH}" -name generated -prune -o -name include -type d -print
->  	find "arch/${SRCARCH}" -name Kbuild.platforms -o -name Platform
-> -	find "arch/${SRCARCH}" -name include -type d
-> +	find include \( -name config -o -name generated \) -prune -o \( -type f -o -type l \) -print
-> +	find_in_scripts
->  ) | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${destdir}"
->  
->  {
-> @@ -25,12 +32,15 @@ mkdir -p "${destdir}"
->  		echo tools/objtool/objtool
->  	fi
->  
-> -	find "arch/${SRCARCH}/include" Module.symvers include scripts -type f
-> +	echo Module.symvers
-> +	echo "arch/${SRCARCH}/include/generated"
-> +	echo include/config/auto.conf
-> +	echo include/generated
-> +	find_in_scripts
+On Sat, Aug 24, 2024 at 5:08=E2=80=AFPM Kry=C5=A1tof =C4=8Cern=C3=BD <cleve=
+rline1mc@gmail.com> wrote:
+>
+> I am sorry if the message is wrong, this is my first patch ever sent to
+> the Linux kernel. I have checked the schematic of the board and it
+> shares the same power line with mmc0, so I assumed I can use the same
+> regulator. Thanks for your feedback and I would be glad for your further
+> response.
 
-This now excludes include/config/kernel.release which is used to set
-KERNELRELEASE, which is commonly used by Makefiles.
-See Documentation/kbuild/modules.txt, other users also seem not unlikely.
+So some of the pin groups do have dedicated supplies, and should thus be
+described, but not all of them. The schematic only shows dedicated
+supplies for PD and PG pingroups. So just add those. PD supply is from
+2.5V ethernet PHY I/O regulator supply, so you would need to add that
+as well.
 
-IMO this specific file should be added back.
+The datasheet also mentions a separate supply pin for PC pingroup, but
+it is not shown in the schematic. I would just omit that.
+
+And as Krzysztof mentioned, device tree changes should be to model
+the hardware, not to work around some operating system warning. At
+least most of the time that is. So your commit message should also
+be about fixing the description or providing more detail, and not
+about the operating system.
 
 
-Thanks,
-Thomas
+ChenYu
+
+> Dne 24. 08. 24 v 9:40 Krzysztof Kozlowski napsal(a):
+> > On 24/08/2024 09:09, Kry=C5=A1tof =C4=8Cern=C3=BD wrote:
+> >> The board does not have a dedicated regulator for pio and r_pio,
+> >> but this fixes the kernel warning about dummy regulators being used.
+> >> Tested on the actual board.
+> >>
+> > Judging by commit msg these are not correct regulators. Please do not
+> > add incorrect hardware description to silence some warnings coming from
+> > OS. Either you need proper (correct) hardware description or fix the
+> > problem other way, assuming there is anything to fix in the first place=
+.
+> >
+> > Best regards,
+> > Krzysztof
+> >
 
