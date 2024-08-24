@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-299961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE4795DD00
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:42:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF4495DD06
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C661C20E46
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E504B1C20FF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED771547F9;
-	Sat, 24 Aug 2024 08:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75392154BE4;
+	Sat, 24 Aug 2024 08:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="t0uzRBhS"
-Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiV3wd9I"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425585680
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A662414E2DF
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724488959; cv=none; b=d/4a9GknyTnqvwiCYKvhrHzgfXaDfR3ytLsma8x2FH5M1vAaUOZjq5P8Ay+i9QxCB7olyWldNpEObMSUUIs3l8a72eHXHprGgSh0gezvtXrl0DnexKRQ+NpZBqcgefBVAwYsf8dZw/Ua4XPlzq3yFMVbullhvxHRv1Ai1Z+ciYA=
+	t=1724489090; cv=none; b=EjHVhGskU3ZJooNL1FcswCREzoEXSnNgAeMLsTsmX+3IUMSMmBvZOPMMB8DbtJLApklDotxBCFA+8/Vsvr6ndrm36+O+NteaO/YfiRhsvfByBPeaa0WU2n2aXue5lMV8OsRXgVIJ/jqB5RDguiVNMKaCrB5Y6MmhHBkBoivwJtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724488959; c=relaxed/simple;
-	bh=1d/d5jpNn5iJkdUmpbPGkSAi4rH97F2ON5wEz3cE3uk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=QtBGfn6ikoaq12CYq1+f/K883Ejmn5aK2mtXq/iUjyOHDOFBwxufh2Hfs9FSOGpuZI7X2GL6pZv4qNF2bc2Ou/excrstpZ+aipU1gWcmwhOnQmhS8RlP/9ygZ4ZsGBLBIYcqvdt0zECiMWvpqKKxMmoIZpy2r+I156cyR4uliLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=t0uzRBhS; arc=none smtp.client-ip=203.205.221.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1724488648;
-	bh=GqD0dNxYsVmHoVqh3BS7VvlvMYcVSpaC9khgDuoOsGg=;
-	h=From:To:Cc:Subject:Date;
-	b=t0uzRBhSPZd660vaFFI2PttAtOO25IVr39cIAyi4m9//KZyoPVm+Qt1Hpji7r5zcz
-	 wBE9QkoXTDCwKq45BeoLzfXJBve+2HhqdYDLYafL37rUs2wLCQNfl4aTBL1K2Rte5N
-	 GHotGvvTjuS2aTw/ex3dT6B7gHYfJ9CVtj/t0uH0=
-Received: from localhost.localdomain ([171.223.167.119])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 95686C80; Sat, 24 Aug 2024 16:37:22 +0800
-X-QQ-mid: xmsmtpt1724488642tmx3cgwo5
-Message-ID: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
-X-QQ-XMAILINFO: NDThSsAYNNx43f7PwJDTyJAaaaPPoFZF1BPpvq4KmCDoYwRd0ysexA/H4TXjO3
-	 JSFhoPEL8uHwLVxrtMp71/IORyBcIw/cfBeFOwgg5aDP2/3MHcVSVsxJ7tLFutShhntY2pSzffHa
-	 N9CsNnj5WICzAhP3jtJJqVZPmOMTy+Zrgmqhl8Jd6UpI0yyMG8KLgHNwlWcrvVzFDYjPWf8UW0rn
-	 CDAiLL+BT6LyI6V8UdYbVKrLiass9RfclDYuwNQLLo3m8rMO70h4vI5G/mRbEeX9Av/cwZdGGqg6
-	 MYB5X/blUQTjOMhA80PoMVEanaGcRVlWvzomJ19J7AOr6hFZ7466XM541kodTHuYjfJAiKSPCH1N
-	 TrcyVyhpiEHzGyAohCKlENzYBg6vZB3KjYB5RJG8UIiVndyBN2Z3+d306eBF9SYsOiHHJoPioxxv
-	 aHXRkwU1dNbk4oxvpCdJ7fvGQWsdWT/hDsJ87wiIr2VrulnLMs0Ehhtha48rDa0gzPgzJvDB1LA4
-	 x2n+tPx9kLa1EALKdcxd/tXomIfhoAxSMysR7No2bdVK1zwK/6qGkiQ/1CjTRTWf4QZ3awXq32f0
-	 5UyI7ecwosRU/JzL923Pn3EL9njjNOqO/ORb27f/uUjYZhZUoa3u4fSIh6fuSJ0CcWPFOzD2mhaP
-	 tSni5TEiFL0Q1mES1/o9dz699tC4IdB3Z7HHXc9dvHenpPL6aS05KCSAmZPqaMIjOhs6rDWqF5j6
-	 yfdHzB7b7ju/Y+ZKgPBntqECesxuEvW3g9JA+Lf5kzE+ek5Gkl9SsOa2LxRDVk8jdlbiOH1MAV8l
-	 n746jlkrxVTKyQ67BBK521zrrf1DIDTEF1DjK3gafW4V97YttWfC5kjeaWfo7XnA3Cwl52twrv3e
-	 6yQ7S6Ji4BegBr37Rrg7ksusEiTZulH/QwcDpC4QQFFcxAhXTsmncT9nTpCaOwc25tEIN1OWjZi3
-	 C1l+px0rmKV4riU5koLKtCIZ++FTFEpThap3ZiDurjRm8MhwHr0axXTShr2MzvFx+0rdUZhe5Y+h
-	 Psbuw0nFa2ulKTxd2GSUkGr0XNhJuzuvEYZSqBP1/HpABuHP6kVMhP5gkNU9E=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: renjun wang <renjunw0@foxmail.com>
-To: maarten.lankhorst@linux.intel.com,
+	s=arc-20240116; t=1724489090; c=relaxed/simple;
+	bh=Bz7GVkba7mrCQDdgbs6+SdxqIfyMsM6yGHjGqzPxhNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d2wzjo7q5/ZaBlw9l0lfHdL46L9urm/ZDtO4PnQGqbWlvkYrO/mKOvfJu7MOdGB4VQjoCmrI6Uf/zYFs4LvbZlWCrsi6Td0c9BZCfCKtxNoHuzFJX9VChqEKNAwShcc32eeUuM6Lx642CLSTdkHAuZ0V32cTqYTWyb7irjTpb/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiV3wd9I; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fec34f94abso26796375ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724489088; x=1725093888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ea59/NJ4sxZqForIi8n94Fy8ov9rbljCGadYX6EXWzY=;
+        b=LiV3wd9IqGOp93gly7kRqcjI8BPoMkuS0bGQg8qYgqKQD014ozWWWSoKV5TpL6KB5l
+         e4jhjHDrBv9KxnqPzyuhtZ1Cvgy/3cooYXAm1EOnPDpVrZbOJI9CuBRCKaYfOQEcTPob
+         i6OEtzPFElXssWNfq3cRx8LsV7lKWYkyaRcOLTz85xkgBtcjJkS/ne4UzaIcINCTuKXK
+         Cgn5Wf9vkiLsJG+VD9VH1vQ65iyiljj4997VDtllXZbYNzp4fOHSjjV8QzVrq7Z28uzp
+         l2/HMYCCobVksyTkSrY3AzMKdtivfu8/HA8V69SXyM7QhAmM7EWy6zFoStHgDMdPdev+
+         hSSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724489088; x=1725093888;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ea59/NJ4sxZqForIi8n94Fy8ov9rbljCGadYX6EXWzY=;
+        b=mHaCBP1PwPD8b6pbR2bwb2ZgdaoKUH9eRox9HNQQqIR1b+XGJdSQMQXs1d9OwMWWtX
+         qdICW1df4b4O4pUXA5Unfq6r6YrWKpvA9Z/nKaeCcxtlm6Tho6qjE7mBrBLKmxxmo7bu
+         31NOFoQTtXeLqKdakGRrKeen/QpOtcUOBnNU3eubD0hVUZZTNX0JX2c4qAZg99QOj5PO
+         +x9zjIXZXggzCqo4Rdg6D4Ci3948EKn9WxluFMd/j6t7BlxnLxWEEUwQDKiqId8rQ1JJ
+         yzUu2MzuMU5A0vtHSOhbesMUGcLXL/8QQesSl9YDZw+jCJvybRYCyznakLKANEK77+O7
+         yM4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVheMb7QNpjZhIvw8od1qYTsJNQVLdxvrB486kZSq1f0FafHPPNhP8YeUBVavg4dfXKyeRUuWVQEkls7hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlPUzWbyeoZ3C59iWC1vViPFBZ1Vd7U7LVMt+LwakVuAnrSgyz
+	d/i0bEKHbY2b49oTLZGHJffbc/fpXakRroa1IaDEpSDRlP1c7Y6o
+X-Google-Smtp-Source: AGHT+IEgG8FfbWrTWA3i05sUaaBKDGlVXXP+zEPYnQ1unrBKdvziEseAvODDEz2EzipSa/0BZRD0oQ==
+X-Received: by 2002:a17:902:d4cf:b0:202:23f1:ebfa with SMTP id d9443c01a7336-2039e4f3ae3mr53676945ad.52.1724489087801;
+        Sat, 24 Aug 2024 01:44:47 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([14.96.13.220])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560e3e8sm38611575ad.219.2024.08.24.01.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 01:44:47 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
 	tzimmermann@suse.de,
 	airlied@gmail.com,
 	daniel@ffwll.ch
-Cc: jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	lyude@redhat.com,
-	imre.deak@intel.com,
-	Wayne.Lin@amd.com,
-	ville.syrjala@linux.intel.com,
-	vidya.srinivas@intel.com,
-	renjunw0@foxmail.com,
-	jouni.hogander@intel.com,
-	andi.shyti@linux.intel.com,
-	janusz.krzysztofik@linux.intel.com,
+Cc: quic_jesszhan@quicinc.com,
+	dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org
-Subject: [PATCH] drm: Fix kerneldoc for "Returns" section
-Date: Sat, 24 Aug 2024 16:36:34 +0800
-X-OQ-MSGID: <20240824083634.27111-1-renjunw0@foxmail.com>
-X-Mailer: git-send-email 2.39.2
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH] drm/panel: novatek-nt35950: transition to mipi_dsi wrapped functions
+Date: Sat, 24 Aug 2024 14:14:22 +0530
+Message-ID: <20240824084422.202946-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,314 +88,391 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The blank line between title "Returns:" and detail description is not
-allowed, otherwise the title will goes under the description block in
-generated .html file after running `make htmldocs`.
+Changes the novatek-nt35950 panel to use multi style functions for
+improved error handling.
 
-There are a few examples for current kerneldoc:
-https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_crtc_commit_wait
-https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_atomic_get_crtc_state
-https://www.kernel.org/doc/html/latest/gpu/i915.html#c.i915_vma_pin_fence
-
-Signed-off-by: renjun wang <renjunw0@foxmail.com>
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- drivers/gpu/drm/display/drm_dp_mst_topology.c | 4 ----
- drivers/gpu/drm/drm_atomic.c                  | 6 ------
- drivers/gpu/drm/drm_atomic_helper.c           | 2 --
- drivers/gpu/drm/drm_file.c                    | 7 -------
- drivers/gpu/drm/drm_gem.c                     | 7 ++-----
- drivers/gpu/drm/drm_modes.c                   | 1 -
- drivers/gpu/drm/drm_rect.c                    | 1 -
- drivers/gpu/drm/drm_vblank.c                  | 2 --
- drivers/gpu/drm/i915/gem/i915_gem_object.h    | 1 -
- drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c  | 1 -
- drivers/gpu/drm/i915/i915_vma.h               | 1 -
- 11 files changed, 2 insertions(+), 31 deletions(-)
+ drivers/gpu/drm/panel/panel-novatek-nt35950.c | 214 ++++++------------
+ 1 file changed, 70 insertions(+), 144 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-index fc2ceae61db2..e68d23997d53 100644
---- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-@@ -5569,7 +5569,6 @@ EXPORT_SYMBOL(drm_dp_mst_atomic_check_mgr);
-  * drm_dp_atomic_release_time_slots()
-  *
-  * Returns:
+diff --git a/drivers/gpu/drm/panel/panel-novatek-nt35950.c b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
+index 028fdac293f7..fa4db7a3bc25 100644
+--- a/drivers/gpu/drm/panel/panel-novatek-nt35950.c
++++ b/drivers/gpu/drm/panel/panel-novatek-nt35950.c
+@@ -100,106 +100,89 @@ static void nt35950_reset(struct nt35950 *nt)
+ 
+ /*
+  * nt35950_set_cmd2_page - Select manufacturer control (CMD2) page
++ * @dsi_ctx: context for mipi_dsi functions
+  * @nt:   Main driver structure
+  * @page: Page number (0-7)
 - *
-  * 0 if the new state is valid, negative error code otherwise.
+- * Return: Number of transferred bytes or negative number on error
   */
- int drm_dp_mst_atomic_check(struct drm_atomic_state *state)
-@@ -5606,7 +5605,6 @@ EXPORT_SYMBOL(drm_dp_mst_topology_state_funcs);
-  * topology object.
-  *
-  * RETURNS:
+-static int nt35950_set_cmd2_page(struct nt35950 *nt, u8 page)
++static void nt35950_set_cmd2_page(struct mipi_dsi_multi_context *dsi_ctx,
++				  struct nt35950 *nt, u8 page)
+ {
+ 	const u8 mauc_cmd2_page[] = { MCS_CMD_MAUCCTR, 0x55, 0xaa, 0x52,
+ 				      0x08, page };
+-	int ret;
+ 
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], mauc_cmd2_page,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, mauc_cmd2_page,
+ 					ARRAY_SIZE(mauc_cmd2_page));
+-	if (ret < 0)
+-		return ret;
++	if (dsi_ctx->accum_err)
++		return;
+ 
+ 	nt->last_page = page;
+-	return 0;
+ }
+ 
+ /*
+  * nt35950_set_data_compression - Set data compression mode
++ * @dsi_ctx: context for mipi_dsi functions
+  * @nt:        Main driver structure
+  * @comp_mode: Compression mode
 - *
-  * The MST topology state or error pointer.
+- * Return: Number of transferred bytes or negative number on error
   */
- struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
-@@ -5626,7 +5624,6 @@ EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
-  * topology object.
-  *
-  * Returns:
+-static int nt35950_set_data_compression(struct nt35950 *nt, u8 comp_mode)
++static void nt35950_set_data_compression(struct mipi_dsi_multi_context *dsi_ctx,
++					 struct nt35950 *nt, u8 comp_mode)
+ {
+ 	u8 cmd_data_compression[] = { MCS_PARAM_DATA_COMPRESSION, comp_mode };
+ 	u8 cmd_vesa_dsc_on[] = { MCS_PARAM_VESA_DSC_ON, !!comp_mode };
+ 	u8 cmd_vesa_dsc_setting[] = { MCS_PARAM_VESA_DSC_SETTING, 0x03 };
+ 	u8 last_page = nt->last_page;
+-	int ret;
+ 
+ 	/* Set CMD2 Page 0 if we're not there yet */
+-	if (last_page != 0) {
+-		ret = nt35950_set_cmd2_page(nt, 0);
+-		if (ret < 0)
+-			return ret;
+-	}
++	if (last_page != 0)
++		nt35950_set_cmd2_page(dsi_ctx, nt, 0);
+ 
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_data_compression,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_data_compression,
+ 					ARRAY_SIZE(cmd_data_compression));
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_on,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_on,
+ 					ARRAY_SIZE(cmd_vesa_dsc_on));
+-	if (ret < 0)
+-		return ret;
+ 
+ 	/* Set the vesa dsc setting on Page 4 */
+-	ret = nt35950_set_cmd2_page(nt, 4);
+-	if (ret < 0)
+-		return ret;
++	nt35950_set_cmd2_page(dsi_ctx, nt, 4);
+ 
+ 	/* Display Stream Compression setting, always 0x03 */
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_vesa_dsc_setting,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_vesa_dsc_setting,
+ 					ARRAY_SIZE(cmd_vesa_dsc_setting));
+-	if (ret < 0)
+-		return ret;
+ 
+ 	/* Get back to the previously set page */
+-	return nt35950_set_cmd2_page(nt, last_page);
++	nt35950_set_cmd2_page(dsi_ctx, nt, last_page);
+ }
+ 
+ /*
+  * nt35950_set_scaler - Enable/disable resolution upscaling
+- * @nt:        Main driver structure
++ * @dsi_ctx: context for mipi_dsi functions
+  * @scale_up:  Scale up function control
 - *
-  * The old MST topology state, or NULL if there's no topology state for this MST mgr
-  * in the global atomic state
+- * Return: Number of transferred bytes or negative number on error
   */
-@@ -5651,7 +5648,6 @@ EXPORT_SYMBOL(drm_atomic_get_old_mst_topology_state);
-  * topology object.
-  *
-  * Returns:
+-static int nt35950_set_scaler(struct nt35950 *nt, u8 scale_up)
++static void nt35950_set_scaler(struct mipi_dsi_multi_context *dsi_ctx,
++			       u8 scale_up)
+ {
+ 	u8 cmd_scaler[] = { MCS_PARAM_SCALER_FUNCTION, scale_up };
+ 
+-	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
+-					 ARRAY_SIZE(cmd_scaler));
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
++					ARRAY_SIZE(cmd_scaler));
+ }
+ 
+ /*
+  * nt35950_set_scale_mode - Resolution upscaling mode
+- * @nt:   Main driver structure
++ * @dsi_ctx: context for mipi_dsi functions
+  * @mode: Scaler mode (MCS_DATA_COMPRESSION_*)
 - *
-  * The new MST topology state, or NULL if there's no topology state for this MST mgr
-  * in the global atomic state
+- * Return: Number of transferred bytes or negative number on error
   */
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 6e516c39a372..0fc99da93afe 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -63,7 +63,6 @@ EXPORT_SYMBOL(__drm_crtc_commit_free);
-  * hardware and flipped to.
+-static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
++static void nt35950_set_scale_mode(struct mipi_dsi_multi_context *dsi_ctx,
++				   u8 mode)
+ {
+ 	u8 cmd_scaler[] = { MCS_PARAM_SCALEUP_MODE, mode };
+ 
+-	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_scaler,
+-					 ARRAY_SIZE(cmd_scaler));
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_scaler,
++					ARRAY_SIZE(cmd_scaler));
+ }
+ 
+ /*
+  * nt35950_inject_black_image - Display a completely black image
+- * @nt:   Main driver structure
++ * @dsi_ctx: context for mipi_dsi functions
   *
-  * Returns:
+  * After IC setup, the attached panel may show random data
+  * due to driveric behavior changes (resolution, compression,
+@@ -208,43 +191,34 @@ static int nt35950_set_scale_mode(struct nt35950 *nt, u8 mode)
+  * the display.
+  * It makes sense to push a black image before sending the sleep-out
+  * and display-on commands.
 - *
-  * 0 on success, a negative error code otherwise.
+- * Return: Number of transferred bytes or negative number on error
   */
- int drm_crtc_commit_wait(struct drm_crtc_commit *commit)
-@@ -337,7 +336,6 @@ EXPORT_SYMBOL(__drm_atomic_state_free);
-  * not created by userspace through an IOCTL call.
-  *
-  * Returns:
+-static int nt35950_inject_black_image(struct nt35950 *nt)
++static void nt35950_inject_black_image(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+ 	const u8 cmd0_black_img[] = { 0x6f, 0x01 };
+ 	const u8 cmd1_black_img[] = { 0xf3, 0x10 };
+ 	u8 cmd_test[] = { 0xff, 0xaa, 0x55, 0xa5, 0x80 };
+-	int ret;
+ 
+ 	/* Enable test command */
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
+-	if (ret < 0)
+-		return ret;
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
+ 
+ 	/* Send a black image */
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd0_black_img,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd0_black_img,
+ 					ARRAY_SIZE(cmd0_black_img));
+-	if (ret < 0)
+-		return ret;
+-	ret = mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd1_black_img,
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd1_black_img,
+ 					ARRAY_SIZE(cmd1_black_img));
+-	if (ret < 0)
+-		return ret;
+ 
+ 	/* Disable test command */
+ 	cmd_test[ARRAY_SIZE(cmd_test) - 1] = 0x00;
+-	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_test, ARRAY_SIZE(cmd_test));
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_test, ARRAY_SIZE(cmd_test));
+ }
+ 
+ /*
+  * nt35950_set_dispout - Set Display Output register parameters
+  * @nt:    Main driver structure
 - *
-  * Either the allocated state or the error code encoded into the pointer. When
-  * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
-  * entire atomic sequence must be restarted. All other errors are fatal.
-@@ -518,7 +516,6 @@ static int drm_atomic_connector_check(struct drm_connector *connector,
-  * is consistent.
-  *
-  * Returns:
-- *
-  * Either the allocated state or the error code encoded into the pointer. When
-  * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
-  * entire atomic sequence must be restarted. All other errors are fatal.
-@@ -828,7 +825,6 @@ EXPORT_SYMBOL(drm_atomic_private_obj_fini);
-  * object lock to make sure that the state is consistent.
-  *
-  * RETURNS:
-- *
-  * Either the allocated state or the error code encoded into a pointer.
+- * Return: Number of transferred bytes or negative number on error
++ * @dsi_ctx: context for mipi_dsi functions
   */
- struct drm_private_state *
-@@ -1061,7 +1057,6 @@ EXPORT_SYMBOL(drm_atomic_get_new_crtc_for_encoder);
-  * make sure that the state is consistent.
-  *
-  * Returns:
-- *
-  * Either the allocated state or the error code encoded into the pointer. When
-  * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
-  * entire atomic sequence must be restarted. All other errors are fatal.
-@@ -1169,7 +1164,6 @@ static void drm_atomic_connector_print_state(struct drm_printer *p,
-  * state is consistent.
-  *
-  * Returns:
-- *
-  * Either the allocated state or the error code encoded into the pointer. When
-  * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
-  * entire atomic sequence must be restarted.
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index fb97b51b38f1..43cdf39019a4 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2266,7 +2266,6 @@ crtc_or_fake_commit(struct drm_atomic_state *state, struct drm_crtc *crtc)
-  * automatically.
-  *
-  * Returns:
-- *
-  * 0 on success. -EBUSY when userspace schedules nonblocking commits too fast,
-  * -ENOMEM on allocation failures and -EINTR when a signal is pending.
-  */
-@@ -3009,7 +3008,6 @@ EXPORT_SYMBOL(drm_atomic_helper_cleanup_planes);
-  * don't pass the right state structures to the callbacks.
-  *
-  * Returns:
-- *
-  * Returns 0 on success. Can return -ERESTARTSYS when @stall is true and the
-  * waiting for the previous commits has been interrupted.
-  */
-diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-index 714e42b05108..7beed6902208 100644
---- a/drivers/gpu/drm/drm_file.c
-+++ b/drivers/gpu/drm/drm_file.c
-@@ -355,7 +355,6 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
-  * resources for it. It also calls the &drm_driver.open driver callback.
-  *
-  * RETURNS:
-- *
-  * 0 on success or negative errno value on failure.
-  */
- int drm_open(struct inode *inode, struct file *filp)
-@@ -417,7 +416,6 @@ void drm_lastclose(struct drm_device * dev)
-  * DRM device also proceeds to call the &drm_driver.lastclose driver callback.
-  *
-  * RETURNS:
-- *
-  * Always succeeds and returns 0.
-  */
- int drm_release(struct inode *inode, struct file *filp)
-@@ -489,7 +487,6 @@ void drm_file_update_pid(struct drm_file *filp)
-  * call the &drm_driver.lastclose driver callback.
-  *
-  * RETURNS:
-- *
-  * Always succeeds and returns 0.
-  */
- int drm_release_noglobal(struct inode *inode, struct file *filp)
-@@ -532,7 +529,6 @@ EXPORT_SYMBOL(drm_release_noglobal);
-  * safety.
-  *
-  * RETURNS:
-- *
-  * Number of bytes read (always aligned to full events, and can be 0) or a
-  * negative error code on failure.
-  */
-@@ -618,7 +614,6 @@ EXPORT_SYMBOL(drm_read);
-  * See also drm_read().
-  *
-  * RETURNS:
-- *
-  * Mask of POLL flags indicating the current status of the file.
-  */
- __poll_t drm_poll(struct file *filp, struct poll_table_struct *wait)
-@@ -656,7 +651,6 @@ EXPORT_SYMBOL(drm_poll);
-  * already hold &drm_device.event_lock.
-  *
-  * RETURNS:
-- *
-  * 0 on success or a negative error code on failure.
-  */
- int drm_event_reserve_init_locked(struct drm_device *dev,
-@@ -698,7 +692,6 @@ EXPORT_SYMBOL(drm_event_reserve_init_locked);
-  * drm_event_reserve_init_locked() instead.
-  *
-  * RETURNS:
-- *
-  * 0 on success or a negative error code on failure.
-  */
- int drm_event_reserve_init(struct drm_device *dev,
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index d4bbc5d109c8..149b8e25da5b 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -689,7 +689,6 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
-  * For a single handle lookup, use drm_gem_object_lookup().
-  *
-  * Returns:
-- *
-  * @objs filled in with GEM object pointers. Returned GEM objects need to be
-  * released with drm_gem_object_put(). -ENOENT is returned on a lookup
-  * failure. 0 is returned on success.
-@@ -737,12 +736,11 @@ EXPORT_SYMBOL(drm_gem_objects_lookup);
-  * @filp: DRM file private date
-  * @handle: userspace handle
-  *
-- * Returns:
-+ * If looking up an array of handles, use drm_gem_objects_lookup().
-  *
-+ * Returns:
-  * A reference to the object named by the handle if such exists on @filp, NULL
-  * otherwise.
-- *
-- * If looking up an array of handles, use drm_gem_objects_lookup().
-  */
- struct drm_gem_object *
- drm_gem_object_lookup(struct drm_file *filp, u32 handle)
-@@ -763,7 +761,6 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
-  * @timeout: timeout value in jiffies or zero to return immediately
-  *
-  * Returns:
-- *
-  * Returns -ERESTARTSYS if interrupted, 0 if the wait timed out, or
-  * greater than 0 on success.
-  */
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index 1a0890083aee..6ba167a33461 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -539,7 +539,6 @@ static int fill_analog_mode(struct drm_device *dev,
-  * to reach those resolutions.
-  *
-  * Returns:
-- *
-  * A pointer to the mode, allocated with drm_mode_create(). Returns NULL
-  * on error.
-  */
-diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
-index 85c79a38c13a..492acce0516f 100644
---- a/drivers/gpu/drm/drm_rect.c
-+++ b/drivers/gpu/drm/drm_rect.c
-@@ -85,7 +85,6 @@ static u32 clip_scaled(int src, int dst, int *clip)
-  * factors from @src to @dst.
-  *
-  * RETURNS:
-- *
-  * %true if rectangle @dst is still visible after being clipped,
-  * %false otherwise.
-  */
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index cc3571e25a9a..6428b7975dd6 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -686,7 +686,6 @@ EXPORT_SYMBOL(drm_calc_timestamping_constants);
-  * drm_atomic_helper_calc_timestamping_constants().
-  *
-  * Returns:
-- *
-  * Returns true on success, and false on failure, i.e. when no accurate
-  * timestamp could be acquired.
-  */
-@@ -831,7 +830,6 @@ EXPORT_SYMBOL(drm_crtc_vblank_helper_get_vblank_timestamp_internal);
-  * drm_atomic_helper_calc_timestamping_constants().
-  *
-  * Returns:
-- *
-  * Returns true on success, and false on failure, i.e. when no accurate
-  * timestamp could be acquired.
-  */
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-index 5d7446a48ae7..3dc61cbd2e11 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-@@ -89,7 +89,6 @@ __i915_gem_object_unset_pages(struct drm_i915_gem_object *obj);
-  * @handle: userspace handle
-  *
-  * Returns:
-- *
-  * A pointer to the object named by the handle if such exists on @filp, NULL
-  * otherwise. This object is only valid whilst under the RCU read lock, and
-  * note carefully the object may be in the process of being destroyed.
-diff --git a/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c b/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-index 93bc1cc1ee7e..0ffba50981e3 100644
---- a/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-+++ b/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-@@ -418,7 +418,6 @@ int __i915_vma_pin_fence(struct i915_vma *vma)
-  * For an untiled surface, this removes any existing fence.
-  *
-  * Returns:
-- *
-  * 0 on success, negative error code on failure.
-  */
- int i915_vma_pin_fence(struct i915_vma *vma)
-diff --git a/drivers/gpu/drm/i915/i915_vma.h b/drivers/gpu/drm/i915/i915_vma.h
-index e356dfb883d3..6a6be8048aa8 100644
---- a/drivers/gpu/drm/i915/i915_vma.h
-+++ b/drivers/gpu/drm/i915/i915_vma.h
-@@ -389,7 +389,6 @@ void i915_vma_unpin_iomap(struct i915_vma *vma);
-  * i915_vma_unpin_fence().
-  *
-  * Returns:
-- *
-  * True if the vma has a fence, false otherwise.
-  */
- int __must_check i915_vma_pin_fence(struct i915_vma *vma);
+-static int nt35950_set_dispout(struct nt35950 *nt)
++static void nt35950_set_dispout(struct mipi_dsi_multi_context *dsi_ctx,
++				struct nt35950 *nt)
+ {
+ 	u8 cmd_dispout[] = { MCS_PARAM_DISP_OUTPUT_CTRL, 0x00 };
+ 	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
+@@ -254,8 +228,8 @@ static int nt35950_set_dispout(struct nt35950 *nt)
+ 	if (mode_data[nt->cur_mode].enable_sram)
+ 		cmd_dispout[1] |= MCS_DISP_OUT_SRAM_EN;
+ 
+-	return mipi_dsi_dcs_write_buffer(nt->dsi[0], cmd_dispout,
+-					 ARRAY_SIZE(cmd_dispout));
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, cmd_dispout,
++					ARRAY_SIZE(cmd_dispout));
+ }
+ 
+ static int nt35950_get_current_mode(struct nt35950 *nt)
+@@ -284,109 +258,68 @@ static int nt35950_on(struct nt35950 *nt)
+ {
+ 	const struct nt35950_panel_mode *mode_data = nt->desc->mode_data;
+ 	struct mipi_dsi_device *dsi = nt->dsi[0];
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+ 	nt->cur_mode = nt35950_get_current_mode(nt);
+ 	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
+ 	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
+ 
+-	ret = nt35950_set_cmd2_page(nt, 0);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = nt35950_set_data_compression(nt, mode_data[nt->cur_mode].compression);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = nt35950_set_scale_mode(nt, mode_data[nt->cur_mode].scaler_mode);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = nt35950_set_scaler(nt, mode_data[nt->cur_mode].scaler_on);
+-	if (ret < 0)
+-		return ret;
++	nt35950_set_cmd2_page(&dsi_ctx, nt, 0);
++	nt35950_set_data_compression(&dsi_ctx, nt, mode_data[nt->cur_mode].compression);
++	nt35950_set_scale_mode(&dsi_ctx, mode_data[nt->cur_mode].scaler_mode);
++	nt35950_set_scaler(&dsi_ctx, mode_data[nt->cur_mode].scaler_on);
++	nt35950_set_dispout(&dsi_ctx, nt);
+ 
+-	ret = nt35950_set_dispout(nt);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set tear on: %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
++	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0);
+ 
+ 	/* CMD2 Page 1 */
+-	ret = nt35950_set_cmd2_page(nt, 1);
+-	if (ret < 0)
+-		return ret;
++	nt35950_set_cmd2_page(&dsi_ctx, nt, 1);
+ 
+ 	/* Unknown command */
+-	mipi_dsi_dcs_write_seq(dsi, 0xd4, 0x88, 0x88);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x88, 0x88);
+ 
+ 	/* CMD2 Page 7 */
+-	ret = nt35950_set_cmd2_page(nt, 7);
+-	if (ret < 0)
+-		return ret;
++	nt35950_set_cmd2_page(&dsi_ctx, nt, 7);
+ 
+ 	/* Enable SubPixel Rendering */
+-	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_EN, 0x01);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_EN, 0x01);
+ 
+ 	/* SPR Mode: YYG Rainbow-RGB */
+-	mipi_dsi_dcs_write_seq(dsi, MCS_PARAM_SPR_MODE, MCS_SPR_MODE_YYG_RAINBOW_RGB);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MCS_PARAM_SPR_MODE,
++				     MCS_SPR_MODE_YYG_RAINBOW_RGB);
+ 
+ 	/* CMD3 */
+-	ret = nt35950_inject_black_image(nt);
+-	if (ret < 0)
+-		return ret;
++	nt35950_inject_black_image(&dsi_ctx);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0)
+-		return ret;
+-	msleep(120);
+-
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0)
+-		return ret;
+-	msleep(120);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
+ 
+ 	nt->dsi[0]->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 	nt->dsi[1]->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int nt35950_off(struct nt35950 *nt)
+ {
+-	struct device *dev = &nt->dsi[0]->dev;
+-	int ret;
++	struct mipi_dsi_device *dsi = nt->dsi[0];
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mipi_dsi_dcs_set_display_off(nt->dsi[0]);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display off: %d\n", ret);
+-		goto set_lpm;
+-	}
+-	usleep_range(10000, 11000);
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_usleep_range(&dsi_ctx, 10000, 11000);
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(nt->dsi[0]);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
+-		goto set_lpm;
+-	}
+-	msleep(150);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 150);
+ 
+-set_lpm:
+-	nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
+-	nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
++	if (dsi_ctx.accum_err) {
++		nt->dsi[0]->mode_flags |= MIPI_DSI_MODE_LPM;
++		nt->dsi[1]->mode_flags |= MIPI_DSI_MODE_LPM;
++	}
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
+@@ -427,7 +360,6 @@ static int nt35950_sharp_init_vregs(struct nt35950 *nt, struct device *dev)
+ static int nt35950_prepare(struct drm_panel *panel)
+ {
+ 	struct nt35950 *nt = to_nt35950(panel);
+-	struct device *dev = &nt->dsi[0]->dev;
+ 	int ret;
+ 
+ 	ret = regulator_enable(nt->vregs[0].consumer);
+@@ -452,10 +384,8 @@ static int nt35950_prepare(struct drm_panel *panel)
+ 	nt35950_reset(nt);
+ 
+ 	ret = nt35950_on(nt);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++	if (ret < 0)
+ 		goto end;
+-	}
+ 
+ end:
+ 	if (ret < 0) {
+@@ -469,12 +399,8 @@ static int nt35950_prepare(struct drm_panel *panel)
+ static int nt35950_unprepare(struct drm_panel *panel)
+ {
+ 	struct nt35950 *nt = to_nt35950(panel);
+-	struct device *dev = &nt->dsi[0]->dev;
+-	int ret;
+ 
+-	ret = nt35950_off(nt);
+-	if (ret < 0)
+-		dev_err(dev, "Failed to deinitialize panel: %d\n", ret);
++	nt35950_off(nt);
+ 
+ 	gpiod_set_value_cansleep(nt->reset_gpio, 0);
+ 	regulator_bulk_disable(ARRAY_SIZE(nt->vregs), nt->vregs);
 -- 
-2.39.2
+2.46.0
 
 
