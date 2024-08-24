@@ -1,81 +1,60 @@
-Return-Path: <linux-kernel+bounces-300089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEA595DEAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8117095DEB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02BBB21E0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A18D41C20E1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F7417BEC0;
-	Sat, 24 Aug 2024 15:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314CC17ADFA;
+	Sat, 24 Aug 2024 15:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="azsTXq+P"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmXwxZ1t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464DA94A
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 15:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F54A947;
+	Sat, 24 Aug 2024 15:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724512865; cv=none; b=oJyZ5+jRe0ok5DfwCOhs1DbfRU4PyKw3q+4hYcNVh9kIztMFexvkkb9xcu8OYUtzL2kVmK7m5D4ZtDP28E+DQeQ+laoOsXxOkzJ5Giar8uBJgl/8vXpS87hgdLIDobDozTnSm2O7YysuhxwE4EeEWJr9qu6Aagwrkj2xqeCkA5k=
+	t=1724513220; cv=none; b=TAUv07vXZr5LhkzNhcIdoTXdwc+JODvRCzYO2XOwt8PA6LKj7fCT5AWbmFGkfMiFbjGsfAuDtc6r8M3AiAe1uLDkW68vuA+WMF/3AQQ42h9PrnYiCjlQ653PVdCb2d1925S1hvxg5ACnPitRaY8EJtVBThEwsaV11dvH5UggoWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724512865; c=relaxed/simple;
-	bh=b0xGI+p9gcd/yQoiWwhTGLwLxo5Oe/8tkN1WCnxaiMo=;
+	s=arc-20240116; t=1724513220; c=relaxed/simple;
+	bh=/7RBWmt07TynXOXjabugPf6NrYOOzehpjOsJq7QhVTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4vZaYWIqos+SP0BbYcrye4Np9sFfKX5Fpp9gRcc1wZGqmJuKGT2XEYWxhxTn5GxIYT6K77+uxHMV3wALpo+QQhwbAvvIC0rTc/YP6HCQCEqNf/WSTxiTSqaffIaLGFmCU7VqZTbDmZWFL863w35zy7G6idB04Ou3jBaZUN8HQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=azsTXq+P; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1dd2004e1so195176985a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:21:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724512862; x=1725117662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iFD/HdZvKaQemZyniW7+rQ360L3m9+rOVbHWSYB5I1E=;
-        b=azsTXq+PLKP8FBVIRVpSLj+lydrLv5AEAxkQZjwe1RM6taNspObAcumrmVdQc6EBUF
-         B8mMaSEGhzbUJzALVj9PwwK8v7JA3rS/uV1CSAiBXDgLBXgHg2vEZlsZthJ2yrCCJKfG
-         0DGuNwARdVapiT+ccG4gCVW21YrbzEocaFNAhHrWte8hMpw3Vvd3p5fGgL3YeMoVgJV2
-         NAJWn+TY4gcpjmHKAp+jV/wZQ1dbWGW3PDcyT9kfBxyCioiw0b+L2146OO7YZIytS6uT
-         kVZ4oWiJ+pBUSroz8YsYypwokyGP8/LdNxoiEXAdTZASqaDXyVujkpbpGOaTGrIx389l
-         dhKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724512862; x=1725117662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iFD/HdZvKaQemZyniW7+rQ360L3m9+rOVbHWSYB5I1E=;
-        b=vt689kYahHBfbnKsp9e+FQVe8rlKwPd5MRHewscgmTd0av0uifgFj+r2ar0aHZjrg6
-         aq3dztxeBTc7LZ4hI8wk5d9fkoWRnkykC5XibbWH87YCj+XpB/rvoS/KfhEmk2gjMHjL
-         WR6++E9rRnyAUdJWTKY1FpFWzWglOU4GfBWH89Hzfjr3/mjG2U/0XJBB07WDp5fumqlu
-         yKebpbNwpvJjHSwsbPYoilJRYN2LLE08hMSkoay/qw8YNTDdbC6f76Gh3Gtm3ztd3fSb
-         SsjPyh9gqMsBecbqEVVc2GBU6dknNWHxSpBaOCmRu4smq0l5w3sEwKegssk4CYI7GSgy
-         nIrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNjHjYqEHuIBdin9/sRgqnnqctmESjKhVrHlHbwVFitStQHMihQe7kvUUwnqF3A4JbyMMzevAsfJMGfq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsxytiFgHfhtu2d8HHAAGHIl93I4yGHJ2Tts84uH8QbQ3itscG
-	6Yg1DBuFCcS7GHIKKUY0kr0L+Mi6gd81HownkwGh/3hmwlt1xZ0fmeSJmQsfdw==
-X-Google-Smtp-Source: AGHT+IGdt+kqNYPY4hj9CKwN8EktiVIBKnBk8Jy2GFyma/+wYt1JorA8B82+CvYXNoEH5nk/bOOlAA==
-X-Received: by 2002:a05:620a:24d0:b0:79e:ff1a:2359 with SMTP id af79cd13be357-7a6896e3e5amr812084585a.14.1724512861875;
-        Sat, 24 Aug 2024 08:21:01 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::546])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fbdafsm285372585a.119.2024.08.24.08.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 08:21:01 -0700 (PDT)
-Date: Sat, 24 Aug 2024 11:20:58 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Oliver Neukum <oneukum@suse.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] usb-storage: Constify struct usb_device_id and
- us_unusual_dev
-Message-ID: <59fe0f83-168c-4f23-b2bf-504649f29d75@rowland.harvard.edu>
-References: <b1b75a2a64b1f6cfad2a611f71393f281178fd3f.1724507157.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pa6OZIe6QtHYEGxJjyfBa9f3tJisCSAoTQF6Afk//CtHXhsOdzq4D5/qMYjsxFLPJWeYvOFLjL/0mvcuETqgozHBhxoH4vDaF4IIJvvbqMZ9oI2YnmJE5+I9xq5QYUXdSMGHOBrCEjgXTUJtEnHZCD8l6OfFgRsSNr9ArDLFwfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmXwxZ1t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6726C32781;
+	Sat, 24 Aug 2024 15:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724513217;
+	bh=/7RBWmt07TynXOXjabugPf6NrYOOzehpjOsJq7QhVTQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=mmXwxZ1tvZ4fkdLIGYxPOwA5ihHLCS0UJgJnOWzJYJc5EjXpSB09bEf1LjtobabDg
+	 YuW49ohUJw9Ah/YtN59zpxfDRAM4Q1USl/HyPA6QkH8RM/UW2OLKNMr0JmM8D5OxMd
+	 du9HXc9PH8bPQlHU47tOj3rdwrRe9RLUX4uerXKhHW0KDNnsVGlcayGLbyFNKhrgzb
+	 ykW33JmEoHOq10eU17bbsowse+mAM/tcsCm5WYK7rXN/4umVPLSodLpm8PizO3hS+R
+	 Px/OnMZ9/ah+aL2B0A6w8yCOYOFp0R/xAOR1/jGWBwbDRVA+qD7UuCujI7z9cEb6bV
+	 ZGQq00w44uSmQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 798CACE1078; Sat, 24 Aug 2024 08:26:57 -0700 (PDT)
+Date: Sat, 24 Aug 2024 08:26:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: vschneid@redhat.com, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <1a1009b9-615f-44fc-8ef6-da3bbc773012@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+ <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
+ <a122efbe-fd81-471d-89b7-e9257bf3ce49@paulmck-laptop>
+ <20240824065434.GA26474@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +63,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b1b75a2a64b1f6cfad2a611f71393f281178fd3f.1724507157.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240824065434.GA26474@noisy.programming.kicks-ass.net>
 
-On Sat, Aug 24, 2024 at 03:47:07PM +0200, 'Christophe JAILLET' via USB Mass Storage on Linux wrote:
-> 'struct usb_device_id' and 'struct us_unusual_dev' are not modified in
-> these drivers.
+On Sat, Aug 24, 2024 at 08:54:34AM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 23, 2024 at 02:51:03PM -0700, Paul E. McKenney wrote:
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers (which is the case for struct us_unusual_dev).
+> > > > Does the below help any? That's more or less what it was before Valentin
+> > > > asked me why it was weird like that :-)
+> > > > 
+> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > > index 6be618110885..5757dd50b02f 100644
+> > > > --- a/kernel/sched/fair.c
+> > > > +++ b/kernel/sched/fair.c
+> > > > @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
+> > > >  	 * and we cannot use DEQUEUE_DELAYED.
+> > > >  	 */
+> > > >  	if (p->se.sched_delayed) {
+> > > > -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
+> > > >  		p->se.sched_delayed = 0;
+> > > >  		p->se.rel_deadline = 0;
+> > > >  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
+> > > 
+> > > Removing that line from 2e0199df252a still gets me the complaint about
+> > > __SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
+> > > that this commit:
+> > > 
+> > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
+> > > 
+> > > Need to be placed before 2e0199df252a.  Of course, when I try it, I
+> > > get conflicts.  So I took just this hunk:
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+> > > index 97fb2d4920898..6c5f5424614d4 100644
+> > > --- a/kernel/sched/features.h
+> > > +++ b/kernel/sched/features.h
+> > > @@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
+> > >   */
+> > >  SCHED_FEAT(CACHE_HOT_BUDDY, true)
+> > >  
+> > > +/*
+> > > + * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
+> > > + */
+> > > +SCHED_FEAT(DELAY_ZERO, true)
+> > > +
+> > >  /*
+> > >   * Allow wakeup-time preemption of the current task:
+> > >   */
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > That makes the build error go away.  Maybe even legitimately?
 > 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   25249	   4261	    896	  30406	   76c6	drivers/usb/storage/alauda.o
->    3969	    672	    360	   5001	   1389	drivers/usb/storage/cypress_atacb.o
+> Yep.
 > 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   25461	   4041	    896	  30398	   76be	drivers/usb/storage/alauda.o
->    4225	    400	    360	   4985	   1379	drivers/usb/storage/cypress_atacb.o
+> > > Just to pick on the easy one, I took a look at the complaint about
+> > > cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
+> > > being undefined.  This variable was added here:
+> > > 
+> > > 781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
+> > > 
+> > > And its first use was added here:
+> > > 
+> > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
+> > > 
+> > > Which matches my experience.
+> > > 
+> > > So left to myself, I would run on these commits with the above hunk:
+> > > 
+> > > 54a58a7877916 sched/fair: Implement DELAY_ZERO
+> > > 152e11f6df293 sched/fair: Implement delayed dequeue
+> > > e1459a50ba318 sched: Teach dequeue_task() about special task states
+> > > a1c446611e31c sched,freezer: Mark TASK_FROZEN special
+> > > 781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
+> > > f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
+> > > 2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+> > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
+> > > 
+> > > And where needed, remove the unused cfs_rq local variable.
+> > > 
+> > > Would that likely work?
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
+> Sounds about right.
 > 
-> I hope that a single patch for all drivers in drivers/usb/storage/ is fine.
-> ---
->  drivers/usb/storage/alauda.c        | 4 ++--
->  drivers/usb/storage/cypress_atacb.c | 4 ++--
->  drivers/usb/storage/datafab.c       | 4 ++--
->  drivers/usb/storage/ene_ub6250.c    | 4 ++--
->  drivers/usb/storage/freecom.c       | 4 ++--
->  drivers/usb/storage/isd200.c        | 4 ++--
->  drivers/usb/storage/jumpshot.c      | 4 ++--
->  drivers/usb/storage/karma.c         | 4 ++--
->  drivers/usb/storage/onetouch.c      | 4 ++--
->  drivers/usb/storage/sddr09.c        | 4 ++--
->  drivers/usb/storage/sddr55.c        | 4 ++--
->  drivers/usb/storage/shuttle_usbat.c | 4 ++--
->  drivers/usb/storage/uas.c           | 2 +-
->  13 files changed, 25 insertions(+), 25 deletions(-)
+> > > 
+> > > In the meantime, SIGFOOD!
+> > 
+> > Hearing no objections...
+> 
+> Yeah, sorry, I'm on holidays with the kids and not glued to the screen
+> as per usual :-)
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+No worries, and have a great holiday!!!
+
+> > Given two patches each of which might or might not need to be applied to a
+> > given commit, I chose to rebase as follows:
+> > 
+> > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
+> > 8aed87410a695 EXP sched/fair: Provide DELAY_ZERO definition
+> > 	I took this from 54a58a7877916 sched/fair: Implement DELAY_ZERO.
+> > 49575c0087bc0 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+> > 14c3207fd2456 sched/fair: Prepare pick_next_task() for delayed dequeue
+> > be567af45dd04 sched/fair: Implement ENQUEUE_DELAYED
+> > 	I dropped the unused cfs_rq local variable from requeue_delayed_entity()
+> > ed28f7b3ac3f4 sched,freezer: Mark TASK_FROZEN special
+> > 48d541847b4a6 sched: Teach dequeue_task() about special task states
+> > ef3b9c5d038dc sched/fair: Implement delayed dequeue
+> > 	--- First bad commit with dequeue_rt_stack() failures.
+> > 876c99c058219 sched/fair: Implement DELAY_ZERO
+> > 	I added the cfs_rq local variable to requeue_delayed_entity()
+> > 
+> > This is on -rcu branch peterz.2024.08.23b.
+> > 
+> > I ran 50*TREE05 in a bisection, which converged on be567af45dd04, but only
+> > one run of the 50 had a complaint, and that was in enqueue_dl_entry(),
+> 
+> Hmm, I have one other report about that. Hasn't made much sense yet --
+> then again, as per the above mentioned reason, I'm not able to put real
+> time in atm.
+
+I ran 1000*TREE03 on that same commit, no failures.  Just started
+5000*TREE03, and will let you know what happens.  This will likely take
+better part of a day to complete.
+
+> > not the dequeue_rt_stack() that I have been chasing.  I ran three
+> > additional 50*TREE05 runs on its predecessor (14c3207fd2456) with no
+> > failures.  I then ran 50*TREE03 on each of ed28f7b3ac3f4, 48d541847b4a6,
+> > and ef3b9c5d038dc.  Only this last ("ef3b9c5d038dc sched/fair: Implement
+> > delayed dequeue") had failure, and they were all the dequeue_rt_stack()
+> > failures I am chasing.  One of the runs also hung.
+> 
+> I'm a little confused now though; this is with the dequeue removed from
+> switched_from_fair() ?
+
+Ah!!!  I thought that change was for the build issue, which I will
+admit puzzled me a bit.
+
+> Looking at your tree, 49575c0087bc0 still has that dequeue. Does the
+> dequeue_rt_stack() issue go away with that line removed?
+
+I will try it and let you know.  Thank you for reminding me!
+
+							Thanx, Paul
 
