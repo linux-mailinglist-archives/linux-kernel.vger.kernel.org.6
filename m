@@ -1,130 +1,208 @@
-Return-Path: <linux-kernel+bounces-299799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA10095DA30
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8358F95DA31
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9B81C219BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D091C21EFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A167FA47;
-	Sat, 24 Aug 2024 00:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AA529A1;
+	Sat, 24 Aug 2024 00:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SulSZrph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWlxwaOM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2317161;
-	Sat, 24 Aug 2024 00:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083F923A0
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 00:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724458493; cv=none; b=uuTMEvIrwRJxxxLV2Ae1NMc0+dsdA5FIwpuuEVzSMjwWuYGAKs69SiSXiEyGn7Po7FvCzwVhIU9kTKPTRNpJC7I1GNMurtsKVDlEXJGKPRALVpjVEVg2VaZwCBPTSihGb86M5Yip7XDzE6jTO9xbHbviUxtww/wOrxd0W1Mm3L4=
+	t=1724458526; cv=none; b=RALbAOvLv4nTZ7tl90AsJ8VioWCA1qutmxazzFmPLi7bf0l6JRut6UpWVex9xFySqXLvtg6LrWhYQwcmsDgfQeDYprZgaVswXK0cxcKa8Zw0vKBpyliiN/8Ltgmy8aFlT4l/Cgs31Lguckxfa4Q2/n7X/u7okr582rW+NaJPIJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724458493; c=relaxed/simple;
-	bh=xOPjGge/Ya7kLxZ4Tct5scvKiHZs0n9DIsbK5p39oqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atr2thr+UxJixqaACsgbLQbMYsFj98P3sKd3GpCAncl6IftHYGjuD1xZ9rcm4Ggffxbj16LvDuvo5Im+WKwgMY0plSJTozsV03B/MyNvGcpfO2c8iJLAZh3M5zmhzZIEmp/IxfwjVuS4+BWJNjFVPSFdV4ER9BqBGLDQfhj+C0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SulSZrph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFE9C32786;
-	Sat, 24 Aug 2024 00:14:50 +0000 (UTC)
+	s=arc-20240116; t=1724458526; c=relaxed/simple;
+	bh=0ysFmC192SkHIJjk2TNUy2pwoFkiA9pwOdZMjj9oUrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OZhHWgYMXWqEyX29ifuPHp7vcjCI4RExlpIBTFZgbmpL5j+45Kwdk56LRKIlxjXAV1jz9c7Jd7z/uk//xv+qEw0lGjbwcDf0hzNmPiIvDaZ3Rz21/914YEASD6uov3ld1k2Ev2hm2wBc/1fvYG5b1H3AgoSqE7F7UxWytzhFc1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWlxwaOM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129B6C32786;
+	Sat, 24 Aug 2024 00:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724458492;
-	bh=xOPjGge/Ya7kLxZ4Tct5scvKiHZs0n9DIsbK5p39oqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SulSZrphM7hp/usEKgKXExL/nn3uf3Yb6EpIKshkS358NK95Rb4l2Dx8oD/11uhmx
-	 4BxKwC2MygDwDvJhj2rL9rqNnwAnV7AN1iJSaNd0rCIDKVN1VTnpXVJobL+CEE/yGi
-	 lQDpyrNZQuhRVS2nDle6laZaoPq+yK6Nk9pZzoZOG/YrazdVMgGqRdyg07Uk48TPQ8
-	 Ekj9sSwZl45dvd4+v274vYp0qOagAPRXJRGb2469Yzl/b/yU+helktfmkc4wnBhrSb
-	 u3vmgQatM0Skr2MfN0eqIqTV6TttiRje5NZYS2dgYoRLKPIgfGkY3FrWj7pmexisjx
-	 ZYksrdHZPfGHg==
-Date: Sat, 24 Aug 2024 02:14:47 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] firmware_loader: Block path traversal
-Message-ID: <Zskl9-0VKnixHA9X@pollux>
-References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
- <Zsj7afivXqOL1FXG@bombadil.infradead.org>
+	s=k20201202; t=1724458525;
+	bh=0ysFmC192SkHIJjk2TNUy2pwoFkiA9pwOdZMjj9oUrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aWlxwaOME97BZ7btvmNBWtUyk3CEr9u8KT3Ml7LMJ6P/cA1capcVbLfqsw9erL53L
+	 SD2Vs3UJBPymNQlGA4e2tkzM3jToh3+kEO3kOzjgYp4W/xf3jo0cx6/Pj8Rf9PLkRw
+	 XEhTaL0GQR+mflI9GquNE411QyvboNeFGTPjEDgk+9qFR1X1K+k16MIrFp/Gv05Ej/
+	 t3/Q5Vtr17qMri7H9Ez7DGp+xkUGf8AtejD5pO5FZITKD/1cFLBNkGjSLzc2BhZDTd
+	 mCjqKd9LVOLO4mEO5ogj7j5uq7rPGj8lyp52rClVj7PO0RM0gnDUjrxGLv820JHYlh
+	 qhmcLxkIpF4mg==
+Date: Sat, 24 Aug 2024 02:15:10 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v8 13/13] acpi/ghes: check if the BIOS pointers for HEST
+ are correct
+Message-ID: <20240824021510.71451b57@sal.lan>
+In-Reply-To: <20240819160733.464ccebf@imammedo.users.ipa.redhat.com>
+References: <cover.1723793768.git.mchehab+huawei@kernel.org>
+	<52e6058feba318d01f54da6dca427b40ea5c9435.1723793768.git.mchehab+huawei@kernel.org>
+	<20240819160733.464ccebf@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zsj7afivXqOL1FXG@bombadil.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 02:13:13PM -0700, Luis Chamberlain wrote:
-> On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
-> > Most firmware names are hardcoded strings, or are constructed from fairly
-> > constrained format strings where the dynamic parts are just some hex
-> > numbers or such.
-> > 
-> > However, there are a couple codepaths in the kernel where firmware file
-> > names contain string components that are passed through from a device or
-> > semi-privileged userspace; the ones I could find (not counting interfaces
-> > that require root privileges) are:
-> > 
-> >  - lpfc_sli4_request_firmware_update() seems to construct the firmware
-> >    filename from "ModelName", a string that was previously parsed out of
-> >    some descriptor ("Vital Product Data") in lpfc_fill_vpd()
-> >  - nfp_net_fw_find() seems to construct a firmware filename from a model
-> >    name coming from nfp_hwinfo_lookup(pf->hwinfo, "nffw.partno"), which I
-> >    think parses some descriptor that was read from the device.
-> >    (But this case likely isn't exploitable because the format string looks
-> >    like "netronome/nic_%s", and there shouldn't be any *folders* starting
-> >    with "netronome/nic_". The previous case was different because there,
-> >    the "%s" is *at the start* of the format string.)
-> >  - module_flash_fw_schedule() is reachable from the
-> >    ETHTOOL_MSG_MODULE_FW_FLASH_ACT netlink command, which is marked as
-> >    GENL_UNS_ADMIN_PERM (meaning CAP_NET_ADMIN inside a user namespace is
-> >    enough to pass the privilege check), and takes a userspace-provided
-> >    firmware name.
-> >    (But I think to reach this case, you need to have CAP_NET_ADMIN over a
-> >    network namespace that a special kind of ethernet device is mapped into,
-> >    so I think this is not a viable attack path in practice.)
-> > 
-> > Fix it by rejecting any firmware names containing ".." path components.
-> > 
-> > For what it's worth, I went looking and haven't found any USB device
-> > drivers that use the firmware loader dangerously.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: abb139e75c2c ("firmware: teach the kernel to load firmware files directly from the filesystem")
-> > Signed-off-by: Jann Horn <jannh@google.com>
+Em Mon, 19 Aug 2024 16:07:33 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
+
+> > +    err_source_struct = le64_to_cpu(ags->hest_addr_le) +
+> > +                        source * HEST_GHES_V2_TABLE_SIZE;  
 > 
-> I'm all for this, however a strong rejection outright for the first
-> kernel release is bound to end up with some angry user with some oddball
-> driver that had this for whatever stupid reason. Without a semantic
-> patch assessment to do this (I think its possible with coccinelle) I'd
-
-I don't think we can fully validate it, there are lots of cases, where path
-names are passed through large call stacks, concatenated with other strings,
-selected from arrays, etc.
-
-So, if we want to be extra careful, we should indeed just warn for now.
-
-> suggest for now we leave the warning in place for one kernel release,
-> and for the one after we enforce this.
-
-I'd expect it to take a bit longer until someone recognizes when drivers for
-embedded stuff hit this, but that's probably fine, hopefully some vendor
-discovers it before it goes to end users. :)
-
+> there is no guaranties that HEST table will contain only GHESv2 sources,
+> and once such is added this place becomes broken.
 > 
-> Linus might feel differently over it, and may want it right away. I'll
-> let him chime in.
+> we need to iterate over HEST taking that into account
+> and find only ghesv2 structure with source id of interest.
 > 
->   Luis
+> This function (and acpi_ghes_record_errors() as well) taking source_id
+> as input should be able to lookup pointers from HEST in guest RAM,
+> very crude idea could look something like this:
 > 
+> typedef struct hest_source_type2len{
+>    uint16_t type
+>    int len
+> } hest_structure_type2len
+> 
+> hest_structure_type2len supported_hest_sources[] = {
+>     /* Table 18-344 Generic Hardware Error Source version 2 (GHESv2) Structure */
+>     {.type = 10, .len = 92},
+> }
+
+Sounds interesting, but IMO it should be done only when other types besides
+ghes would be added, as:
+
+1. Right now, the file is acpi/ghes.c. Adding non-type 10 HEST structures
+   there would be a little weird. It should likely be renamed to acpi/hest.c
+   when such time comes.
+
+2. ACPI 6.5 has made clear that the above will only work up to type 11,
+   as, from type 12 and above, the length will be added to the error
+   struct, according with:
+
+   https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#error-source-structure-header-type-12-onward
+
+3. some types have variable size. Starting from the beginning, type 0, as
+   defined at:
+   https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#hardware-errors-and-error-sources
+
+   has:
+
+   size = 40 + 24 * Number of Hardware banks
+
+   So, a simple table like the above with fixed sizes won't work.
+
+   The code would need instead a switch if types are <= 11.
+
+   Adding proper support for all already defined 12 types sounds lots of 
+   work, as the code would need to calculate the size depending on the
+   size, and we don't really initialize the HEST table with other types
+   but GHES.
+
+Ok, we could still do something like this pseudo-code to get the
+error source offset:
+
+	#define ACPI_HEST_TYPE_GHESV2	11
+
+	err_struct_offset = 0;
+	for (i = 0; i < source_id_count; i++) {
+		/* NOTE: Other types may have different sizes */
+		assert(ghes[i].type == ACPI_HEST_TYPE_GHESV2);
+		if (ghes[i].source_id == source_id)
+			break;
+		err_struct_offset += HEST_GHES_V2_TABLE_SIZE;
+	}
+	assert (i < source_id_count);
+
+---
+
+That's said, maybe this will just add unwanted complexity, as QEMU
+is already setting those offsets via bios_linker_loader_add_pointer().
+
+So, an alternative for that is to merge the code on patch 13 with the one
+on patch 5, dropping the math calcus there and relying that QEMU will
+always handle properly bios links.
+
+See, the logic which constructs GHESv2 source IDs do this to create
+the links between HEST ACPI table and etc/hardware_errors:
+
+with:
+
+Per-source ID logic at build_ghes_v2():
+
+    address_offset = table_data->len;
+    /* Error Status Address */
+    build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
+                     4 /* QWord access */, 0);
+    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
+                                   address_offset + GAS_ADDR_OFFSET,
+                                   sizeof(uint64_t),
+                                   ACPI_HW_ERROR_FW_CFG_FILE,
+                                   source_id * sizeof(uint64_t));
+...
+    /*
+     * Read Ack Register
+     * ACPI 6.1: 18.3.2.8 Generic Hardware Error Source
+     * version 2 (GHESv2 - Type 10)
+     */
+    address_offset = table_data->len;
+    build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
+                     4 /* QWord access */, 0);
+    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
+                                   address_offset + GAS_ADDR_OFFSET,
+                                   sizeof(uint64_t),
+                                   ACPI_HW_ERROR_FW_CFG_FILE,
+                                   (ACPI_HEST_SRC_ID_COUNT + source_id) *
+                                   sizeof(uint64_t));
+
+HEST table creation logic inside build_ghes_error_table():
+
+    for (i = 0; i < ACPI_HEST_SRC_ID_COUNT; i++) {
+        /*
+         * Tell firmware to patch error_block_address entries to point to
+         * corresponding "Generic Error Status Block"
+         */
+        bios_linker_loader_add_pointer(linker,
+            ACPI_HW_ERROR_FW_CFG_FILE, sizeof(uint64_t) * i,
+            sizeof(uint64_t), ACPI_HW_ERROR_FW_CFG_FILE,
+            error_status_block_offset + i * ACPI_GHES_MAX_RAW_DATA_LENGTH);
+    }
+
+Using those, the location of the CPER and ack addresses is easy and won't
+require any math:
+
+	/* GHESv2 CPER offset */
+	cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
+                                 sizeof(error_block_addr));
+	cpu_physical_memory_read(error_block_addr, &cper_addr,
+                                 sizeof(error_block_addr));
+
+	/* GHESv2 ack offset */
+	cpu_physical_memory_read(hest_read_ack_start_addr, &read_ack_start_addr,
+			         sizeof(read_ack_start_addr));
+
+
+Regards,
+Mauro
 
