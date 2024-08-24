@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-300118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FB295DEFE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:34:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540E695DF01
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA25282D8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4731C20D9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F7218756A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7A188905;
 	Sat, 24 Aug 2024 16:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPBg2AIH"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntWpqYEf"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D87185B7E;
-	Sat, 24 Aug 2024 16:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DDE1865FF;
+	Sat, 24 Aug 2024 16:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724517214; cv=none; b=tQCmZ4kDcMeAtsQ8rJzJXGkEBtzCIdUbm6VhB2vY3LijTHFWpdc/ZDFZ5aPQwBWkqv+zecLrQ2vPR2hz5Z8YuAnwvYNBFIAqbjolIGrIgRzpyLd1bvkQRZ3/QxaoGWNPwxdT0Kpa6GNPR+1qvt8EHinnWysJPB7wL9IxZSUdpSg=
+	t=1724517215; cv=none; b=ZTp/+s5LQsQrdYmei5yjoq69W3qRa3FitxaqTrG52DJlYZ/LXie57xPYGThnr/yi/UM7rL2eEpu6EquKXs8F3nSrogk49RRyIm+KISRhGobg0aKJb4eojc46y8VsuM6nsra1Ayfq3jNcJ9+WWNtU1o/bZZUvzFXQH+eoi/hmnfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724517214; c=relaxed/simple;
-	bh=kOaFaDR+DhlmRt4+1xw22YBHxgGeGE1RqeYgr19yVnc=;
+	s=arc-20240116; t=1724517215; c=relaxed/simple;
+	bh=gcLi01rczSi1pkKRDBQ6xxxxrZMo7LjOc717hx9S8po=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZfRO9GbzJG+lMnNBmdLxgdD5qV4Etr9IZ7fHmIkyYzOtMSGOk7B0QsFsvV7fLL0ezLJ8fSXMhp2JqEmFoZJCmTtE6TofRsqnBPjf00xd2a0kxvIq5x549e/xLnWXD08DbAl/Iy6rmTR7GjdH9EyJhBq5FSyhlJDBWytvNUKEBWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPBg2AIH; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=kaTwMUlmuU+mVBiv7PxCd9WVMEBbhXFSxnEj/luOZ0nxa0Wfo/SLM5C5/3SSk3VSmmNDk4oKxl/A/52+EZOFkcubO9qZYEIM1NfIPQ6IbOonwdIh/kgP1/WYVKYg+obDagAbJI710qi7iE+mfPDFrPkeN1NngxZsbcvBzZPDx/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntWpqYEf; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3dacaccfaso2038098a91.0;
-        Sat, 24 Aug 2024 09:33:32 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d427fb7c92so2182801a91.1;
+        Sat, 24 Aug 2024 09:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724517212; x=1725122012; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724517213; x=1725122013; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iMBnSHxXkm746u32J0TUWktc3i+DQ1/O7EpofHyk9PU=;
-        b=fPBg2AIHzuwsLzbrlzZFWjf32GV8lYWVsHP4L0lv2O2kV6mNqK/BOMg71QwHsSzy8/
-         O6BoB/5qCmzq87ynhap38zdhl6tGUgtkrcCNohz2ElBDAC7PTL8B5a2/IWPnAVmk8YG1
-         jC1HBTkEFwzU1qN+uxNJ7M2JrQqjnEysSiPE92H/uZmCTQrE9QW5ye+uy6TSwBRlJWTE
-         dDIwVg4HHXV8DczsDL1j5tRHHf/sLIZtq5uITWYI7aqYSiIVMrnuHAKCr3834G0YH85p
-         hDMmmZVL7/qVccuh2Zk6kgOwlmXuVgtxqybgipo5B6Tb5NxCho3GRyfeUlPeSnVqefNC
-         icTQ==
+        bh=vEYfaiWN5qgCnRZpAGUw8130UenZvpr/yXa584v7XJA=;
+        b=ntWpqYEfH/QCikOET5sK15c+VuOde29wE4XOxHb2qXk1wYxdPSHT70ow/tQAGqcdzK
+         JWdrV61TPq9TbrysDKzm0IEyrm05Zv41JbNPvUlCG5BUjOLj0klPmgYsZebpXRMLDzI7
+         svS2g+TyuZQDtxDLwWV5QqkDk1FcLxbKdL3I1LMfRuXGjwgjGPHCt+CTXGOxHPn/x4Uy
+         rCprL+Y+kQbWHd5My/v/Mn/DklapTUf1CwIV5ZfYJ3wgrOWI7KUkPqZlUeCtnwpIDXV9
+         djzvxvTU0DOauATKL6rSLBQx0Wzue3cgeWjrJNnEXnYm3TWjKkQm1yiUOyLmEWT4ZeeS
+         YWbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724517212; x=1725122012;
+        d=1e100.net; s=20230601; t=1724517213; x=1725122013;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iMBnSHxXkm746u32J0TUWktc3i+DQ1/O7EpofHyk9PU=;
-        b=Ue+J50Kv/CTfbD+LrzmhIQO6K9xpZOr3hzs+3fwBmt5Y9UTfullX6eMsfby82gPL5S
-         x5Ar8v9/Ns7oAoR77ia+ZlOZm12O+Iu8hTM8W6Dl1nWyRjshkgjiU+Z2k24z2k3a6Dtd
-         v5L0jTcN9/L35827wwqPEQIolZBy1pWsQlNpxxMJiuG/9FHRvM/rRHtgacYqwPNyH8ix
-         qs5yc3XfmWDYo1CY6k7Ds2kYGHw04EVWN+ZKuWtvyEAYfhOOJVAHYDXXK9Q2SOZPoYxi
-         5qS06zDAbCZZqfrdepMpvpqD49T5EmGq2uVjmP2QcS38zBt2naP4BZUE0yvSro5YOXKQ
-         kNXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTU/lTm3AAuNlP3kDt7Ac3SGXy/XihnrowJ5y69P40wkMCJbvYrUxvqG6HaJM4WpjigTXwmEeqt80nfA8=@vger.kernel.org, AJvYcCWhej27VDSyay+ezCwAd88Du4/47E3w07pD6ILYNalGOqxz9Z2UcCAepVqVBPXF8zpmQVytdwGyDwKiKADqGAR7+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx80SFwPf3c2mE4ERjQZJ6Hpl6mwObuHeySn1es46GPwbSGJ+08
-	t3b0FhWG3//v7TfMIgu7LNsE2vutiwzFaOfl+uLSvUAuU7j/AOCY
-X-Google-Smtp-Source: AGHT+IFNmWvjqJh7TIaO12e+QxSBbkf82H0IIQr6osSp4N6WTXUZJ0tyEQgxkJtQnMq3GGlJXOm5hg==
-X-Received: by 2002:a17:90b:438f:b0:2c9:64fb:1c7e with SMTP id 98e67ed59e1d1-2d646bbb1ccmr5728528a91.14.1724517211971;
-        Sat, 24 Aug 2024 09:33:31 -0700 (PDT)
+        bh=vEYfaiWN5qgCnRZpAGUw8130UenZvpr/yXa584v7XJA=;
+        b=YCrgPAYv5z26+V7CIgo1zZYipgCbTZL2y9sBF3YyY6bP6EZnSXCYNNIOIVt7F123JX
+         pO2Hm6jJm9fkaDR2IcaxAysAah+2bgvkDzi480hGvsrbgvL/pMrCIaXf/t5XFfd6H9li
+         EWNT9RSzD8NH5si8wIhXvFdOmWM228J5gtLyD4+PM/QGoc8Vkk4acoGtI6EMp4idnfQ0
+         BTIthDb05p8kZpd2LYut5b1xvfA87z2AUWXyBv+7TQprx+HqYl/vu1N0qblmO6vunnhq
+         6XMlKB+x9Nf/iysZDkE7j5JxCwX0ZVtoyNPEDyZjSXMlc7DHCIhkNKf3epgoM5NyCqOI
+         DHuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZsOA3w2BEDPeTccOwL0J0Jxgvizf2eW7OGCiGSBIL/e7pmLHq/ObdxXKLBSs7aZwKxO/WzJmL1hBr7SiqkXP0ng==@vger.kernel.org, AJvYcCV7sjsVfBXWn7N2WPewjQGGH80WABBMaDbVxyENtiLpjTfAUXQUNXFsrn6bOUc3vTaX7U+RP7Je/9B1bok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Pe3NvDrdHQxulQRy6k57hNFLa1HmsbeyWdiVnip7wL/rKBcD
+	UmnEmbAZT6ln+EOsK3xezd+NppULVBZ3oG0CoEu6CE9EgyDzgF57
+X-Google-Smtp-Source: AGHT+IH9SmN+mw3f0MoP2XjW8DrH+FyJXhlhjjKJkEVNz2e6/WEj35Le79bQCWCPaPpxUV5PXhdSSA==
+X-Received: by 2002:a17:90a:c713:b0:2c8:ea7b:8891 with SMTP id 98e67ed59e1d1-2d646d26884mr5566573a91.29.1724517212985;
+        Sat, 24 Aug 2024 09:33:32 -0700 (PDT)
 Received: from localhost.localdomain (104-58-203-241.lightspeed.sntcca.sbcglobal.net. [104.58.203.241])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613941ee7sm6376216a91.24.2024.08.24.09.33.31
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613941ee7sm6376216a91.24.2024.08.24.09.33.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 09:33:31 -0700 (PDT)
+        Sat, 24 Aug 2024 09:33:32 -0700 (PDT)
 From: Howard Chu <howardchu95@gmail.com>
 To: acme@kernel.org
 Cc: adrian.hunter@intel.com,
@@ -74,11 +74,10 @@ Cc: adrian.hunter@intel.com,
 	kan.liang@linux.intel.com,
 	namhyung@kernel.org,
 	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v3 7/8] perf trace: Add --force-btf for debugging
-Date: Sun, 25 Aug 2024 00:33:21 +0800
-Message-ID: <20240824163322.60796-8-howardchu95@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 8/8] perf trace: Add general tests for augmented syscalls
+Date: Sun, 25 Aug 2024 00:33:22 +0800
+Message-ID: <20240824163322.60796-9-howardchu95@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240824163322.60796-1-howardchu95@gmail.com>
 References: <20240824163322.60796-1-howardchu95@gmail.com>
@@ -90,49 +89,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If --force-btf is enabled, prefer btf_dump general pretty printer to
-perf trace's customized pretty printers.
+In this test, augmentation for:
 
-Mostly for debug purposes.
+* string
+* buffer
+* struct
+
+Is tested.
+
+Please use this command:
+
+perf test "perf trace general tests"
 
 Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Suggested-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-trace.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/tests/shell/trace_btf_general.sh | 67 +++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 470d74e3f875..115f8dffb272 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -205,6 +205,7 @@ struct trace {
- 	bool			show_string_prefix;
- 	bool			force;
- 	bool			vfs_getname;
-+	bool			force_btf;
- 	int			trace_pgfaults;
- 	char			*perfconfig_events;
- 	struct {
-@@ -2349,7 +2350,9 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 
- 			default_scnprintf = sc->arg_fmt[arg.idx].scnprintf;
- 
--			if (default_scnprintf == NULL || default_scnprintf == SCA_PTR) {
-+			if (trace->force_btf ||
-+			    (default_scnprintf == NULL ||
-+			     (default_scnprintf == SCA_PTR && strstr(field->type, "struct")))) {
- 				btf_printed = trace__btf_scnprintf(trace, &arg, bf + printed,
- 								   size - printed, val, field->type);
- 				if (btf_printed) {
-@@ -5153,6 +5156,8 @@ int cmd_trace(int argc, const char **argv)
- 	OPT_INTEGER('D', "delay", &trace.opts.target.initial_delay,
- 		     "ms to wait before starting measurement after program "
- 		     "start"),
-+	OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump general pretty printer"
-+		       "to customized ones"),
- 	OPTS_EVSWITCH(&trace.evswitch),
- 	OPT_END()
- 	};
+diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
+new file mode 100755
+index 000000000000..0b4ea8462390
+--- /dev/null
++++ b/tools/perf/tests/shell/trace_btf_general.sh
+@@ -0,0 +1,67 @@
++#!/bin/sh
++# perf trace general tests
++# SPDX-License-Identifier: GPL-2.0
++
++err=0
++set -e
++
++. "$(dirname $0)"/lib/probe.sh
++skip_if_no_perf_trace || exit 2
++
++file1=$(mktemp /tmp/file1_XXXXX)
++file2=$(echo $file1 | sed 's/file1/file2/g')
++
++buffer="this is a buffer for testing"
++
++trap cleanup EXIT TERM INT HUP
++
++trace_test_string() {
++  echo "Testing perf trace's string augmentation"
++  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E "renameat[2]*.*oldname: \"${file1}\".*newname: \"${file2}\".*"
++  then
++    echo "String augmentation test failed"
++    err=1
++  fi
++}
++
++trace_test_buffer() {
++  echo "Testing perf trace's buffer augmentation"
++  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E ".*write.*buf: ${buffer}.*"
++  then
++    echo "Buffer augmentation test failed"
++    err=1
++  fi
++}
++
++trace_test_struct_btf() {
++  echo "Testing perf trace's struct augmentation"
++  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E ".*clock_nanosleep\(rqtp: \{1,\}, rmtp: \{1,\}\).* = 0"
++  then
++    echo "BTF struct augmentation test failed"
++    err=1
++  fi
++}
++
++cleanup() {
++	rm -rf ${file1} ${file2}
++}
++
++trap_cleanup() {
++	echo "Unexpected signal in ${FUNCNAME[1]}"
++	cleanup
++	exit 1
++}
++
++trace_test_string
++
++if [ $err = 0 ]; then
++  trace_test_buffer
++fi
++
++if [ $err = 0 ]; then
++  trace_test_struct_btf
++fi
++
++cleanup
++
++exit $err
 -- 
 2.45.2
 
