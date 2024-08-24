@@ -1,195 +1,113 @@
-Return-Path: <linux-kernel+bounces-299892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AE995DBEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5265795DBF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998241C21784
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:23:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CCC2833A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCC514B092;
-	Sat, 24 Aug 2024 05:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3649714E2E8;
+	Sat, 24 Aug 2024 05:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KFdvO7Js"
-Received: from mail-m1013.netease.com (mail-m1013.netease.com [154.81.10.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUGhkOjc"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AA7DF71;
-	Sat, 24 Aug 2024 05:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DE441C6C;
+	Sat, 24 Aug 2024 05:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724477016; cv=none; b=Dic0Yq77ngSFy3eMYt8GZl1108iQAeCdfISKdm9/ijM991abcV/Aq9SA1dNDlV4taA248TATVxEUSyIgRVcoZL/0t4Jt3RkSSe7SrY1bzZ/taKJmuK6QK5BwIa421Jxr4oV+GbqGTjd2hDwg/wlLEs8IEjr48ywIA/M7sFyHua0=
+	t=1724477017; cv=none; b=hRNFojGGIC6+cJ/zUWv7I1JPNPI3XS65Zy+Th2f/ruPGHZwrvrDq2rOzfgwoNR82tU4Rf9ADRpLmsj13tBEfAUXa+4USISQBV/K0eVT5md5B+p9ZObYlTd2yr9ufjXUxswLA8a0gq1m/m+xy/KiYnzeH4YKhaDUtn21Vqj+yxSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724477016; c=relaxed/simple;
-	bh=5WsuRaYhcJxW661ZUm1cuAs4/wNqZ7oeWqcZoBhK6LY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ClB17glQkkevSGMN6LhsYRoYoVLZbEA+VJi8voMZ5pXIBMZAgFmRh1TXkvm/d4OVdxffD9W3HweYH3sCE1Prm+e5j8ofltY7wKKize7x2pWD7C8zfPcw/kDqBBktjHSYCQVKUNlFo98DfCHT0Jc+4hFNKDs+pn2GNCTcUETAjA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KFdvO7Js; arc=none smtp.client-ip=154.81.10.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=KFdvO7JscHuM/NTAAGVKObPjlLINFAnduAYtJLeB9c6tYIjoNrnFYJFXjLSxBCG400goR1rVJuD32o8LedATmKds7ONUrzKlcK/2qVNQZ4zc65cO4Basm004NSOKJpi2kbvBNGW0L5zwT04GW8a4YpwX4DVE32J9M9B6w8pWsZQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=nd5VIf5W6pvlmFIxeaG4uBeEYTx1cRTIUzJ8Ujk2LXs=;
-	h=date:mime-version:subject:message-id:from;
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id DA5DD6E085D;
-	Sat, 24 Aug 2024 13:14:54 +0800 (CST)
-From: Jon Lin <jon.lin@rock-chips.com>
-To: briannorris@chromium.org,
-	broonie@kernel.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de,
-	jon.lin@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: [PATCH] spi: rockchip: Avoid redundant clock disable in pm operation
-Date: Sat, 24 Aug 2024 13:14:52 +0800
-Message-Id: <20240824051452.3954878-1-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724477017; c=relaxed/simple;
+	bh=/iYod15BRbi6l20I0aW5glHzbzXso99DfI4MzxPHrf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dt4oNTQHrsME5kNMV850Z01N789+PXHshvfjxJUTmfFbJM9bcDM6S0INusWtgJ60H0IYtp6dbhlr5GsRwRlCQEMsLLuO0oatACMYScGedo07dtTrtLuofTM+ym3Zxza0b3jcv49wxaxX3HP0EHTYfYkJefcM3XkQoWPE2J7ae48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUGhkOjc; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e16582cb9f9so2056836276.0;
+        Fri, 23 Aug 2024 22:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724477015; x=1725081815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sLk4f/ulSVBDj99KtdLT0XBurrxo6Qn61/1DzALA2nY=;
+        b=BUGhkOjcWKj2zyTNns/I05cbybBfz9ScbYXSiKoTlbK9EHYY1IzjY/pXMZKjUoeRME
+         IAQC12NKkaUEpvV87q057mB7bKCDQAsSvVV134gb3sznbDIwg+EZbAZaeBxdcz6L+yrm
+         oyE3s81bBNQCwK2om65gKHSH5Pe7Ol5aE82hjxqCsoh5SxJUQGMiHLKw6UpuIunF6pus
+         2zKzM6WKEdGWPNHOUwzjKZQrfrgb8dCeSBOKpq1b4MSnc4r+/UPqGDPDdxMiOuyN9yPk
+         OeLIBWdF/DdPCbkEyNi76NkxxyV+scJLLj6kL8aJgDEQAubAiw/UWPOzBbAsBaKPPeCt
+         gv9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724477015; x=1725081815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sLk4f/ulSVBDj99KtdLT0XBurrxo6Qn61/1DzALA2nY=;
+        b=UZ9/NkSE9n8bQyRjJf0VV1gtDh+XeWSohqHPl004IEAVhoesmPhQyduALCCMFcISGd
+         D1ck2h1eqqeSZeyk5zCnpSGIchOJFMFkv+hxr7deFUCIp2tuI/3vdMkos8y8yD+0ZrXr
+         L/ew2zDR2UjuAbGF4d80OYXubIYhiwnmtxtKmycVNdgYprXRBkZGim2ptQRmhloJCNN9
+         SLlxFx8tCdzND6SEKFqZTumtamIWOEZrcHrdchWmqhII53YCNFbDbI25AjMtJysdpNK6
+         EXQ+NoYoO1oD3qCEt+G/RZdIQQb/FW1cRGnz0xhKUmquTMnGs4Ekp2aI9td61rKecfBj
+         fd4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXouI+F8OPMvws/YqCPfmwtelX1dCOFiZEW7cHY45V4FLDVArfZaE7Nm+TOYVsPlaZ8Un4wI6uNkyFN6Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDc5s/irnp8mDUGNTFE/WJnPGGdD7o+goFK11eIJdaq7GSxIuR
+	/OCvgar+KYBq0qjLIXU55rmUPOFr3SMqX6R1J7uO2Zy3X72na5gpPm79ZuSeM0pPjsjivncAaoO
+	MBqAVF+TthC0Gf1u3CeoIeqiurRI=
+X-Google-Smtp-Source: AGHT+IGm2eHnf1MlAoNMUkPz07UQTB9AmCRxv5oxUNi3LVRTuTYuST3fAZMkDbsCU2/ZXvEYCAXdi+OOID8C0PReLvk=
+X-Received: by 2002:a25:8441:0:b0:e0b:de84:9764 with SMTP id
+ 3f1490d57ef6-e177652086amr8441652276.14.1724477015017; Fri, 23 Aug 2024
+ 22:23:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhlOGlZIS0lPGE9LSUsaSElWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9182cf15d509d5kunmda5dd6e085d
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PTo6Hjo4OTIrKBoVOQoBVh4O
-	NzIaCkpVSlVKTElPT0xNT0JOTE9PVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
-	QVlOQ1VJSVVMVUpKT1lXWQgBWUFPTElDNwY+
+References: <20240823200433.7542-1-rosenp@gmail.com> <ZslmB8RZo7z-uZQl@pengutronix.de>
+In-Reply-To: <ZslmB8RZo7z-uZQl@pengutronix.de>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Fri, 23 Aug 2024 22:23:24 -0700
+Message-ID: <CAKxU2N-Et8J8QkikD8j9GE05Gfp_utfgyuqiX5Hmh8R-OP5kqQ@mail.gmail.com>
+Subject: Re: [PATCHv2 net-next] net: ag71xx: add missing reset_control_put
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix WARN_ON:
-[   22.869352][ T1885] clk_spi0 already unprepared
-[   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
-[   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
-[   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
-[   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
-[   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
-[   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
-[   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
-
-Fixes:  ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
----
-
- drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index e1ecd96c7858..043a7739c330 100644
---- a/drivers/spi/spi-rockchip.c
-+++ b/drivers/spi/spi-rockchip.c
-@@ -940,33 +940,24 @@ static void rockchip_spi_remove(struct platform_device *pdev)
- 	spi_controller_put(ctlr);
- }
- 
--#ifdef CONFIG_PM_SLEEP
--static int rockchip_spi_suspend(struct device *dev)
-+#ifdef CONFIG_PM
-+static int rockchip_spi_runtime_suspend(struct device *dev)
- {
--	int ret;
- 	struct spi_controller *ctlr = dev_get_drvdata(dev);
- 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
- 
--	ret = spi_controller_suspend(ctlr);
--	if (ret < 0)
--		return ret;
--
- 	clk_disable_unprepare(rs->spiclk);
- 	clk_disable_unprepare(rs->apb_pclk);
- 
--	pinctrl_pm_select_sleep_state(dev);
--
- 	return 0;
- }
- 
--static int rockchip_spi_resume(struct device *dev)
-+static int rockchip_spi_runtime_resume(struct device *dev)
- {
- 	int ret;
- 	struct spi_controller *ctlr = dev_get_drvdata(dev);
- 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
- 
--	pinctrl_pm_select_default_state(dev);
--
- 	ret = clk_prepare_enable(rs->apb_pclk);
- 	if (ret < 0)
- 		return ret;
-@@ -975,41 +966,45 @@ static int rockchip_spi_resume(struct device *dev)
- 	if (ret < 0)
- 		clk_disable_unprepare(rs->apb_pclk);
- 
--	ret = spi_controller_resume(ctlr);
--	if (ret < 0) {
--		clk_disable_unprepare(rs->spiclk);
--		clk_disable_unprepare(rs->apb_pclk);
--	}
--
- 	return 0;
- }
--#endif /* CONFIG_PM_SLEEP */
-+#endif /* CONFIG_PM */
- 
--#ifdef CONFIG_PM
--static int rockchip_spi_runtime_suspend(struct device *dev)
-+#ifdef CONFIG_PM_SLEEP
-+static int rockchip_spi_suspend(struct device *dev)
- {
-+	int ret;
- 	struct spi_controller *ctlr = dev_get_drvdata(dev);
--	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
- 
--	clk_disable_unprepare(rs->spiclk);
--	clk_disable_unprepare(rs->apb_pclk);
-+	ret = spi_controller_suspend(ctlr);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Avoid redundant clock disable */
-+	if (!pm_runtime_status_suspended(dev))
-+		rockchip_spi_runtime_suspend(dev);
-+
-+	pinctrl_pm_select_sleep_state(dev);
- 
- 	return 0;
- }
- 
--static int rockchip_spi_runtime_resume(struct device *dev)
-+static int rockchip_spi_resume(struct device *dev)
- {
- 	int ret;
- 	struct spi_controller *ctlr = dev_get_drvdata(dev);
--	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
- 
--	ret = clk_prepare_enable(rs->apb_pclk);
--	if (ret < 0)
--		return ret;
-+	pinctrl_pm_select_default_state(dev);
- 
--	ret = clk_prepare_enable(rs->spiclk);
-+	if (!pm_runtime_status_suspended(dev)) {
-+		ret = rockchip_spi_runtime_resume(dev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	ret = spi_controller_resume(ctlr);
- 	if (ret < 0)
--		clk_disable_unprepare(rs->apb_pclk);
-+		rockchip_spi_runtime_suspend(dev);
- 
- 	return 0;
- }
--- 
-2.34.1
-
+On Fri, Aug 23, 2024 at 9:48=E2=80=AFPM Oleksij Rempel <o.rempel@pengutroni=
+x.de> wrote:
+>
+> Hi Rosen,
+>
+> On Fri, Aug 23, 2024 at 01:04:18PM -0700, Rosen Penev wrote:
+> > The original downstream driver used devm instead of of. The latter
+> > requires reset_control_put to be called in all return paths.
+>
+> At the moment of upstreaming this code, the original driver used
+> of_reset_control_get_exclusive() and was fixed by f92bbdcc93 ("ath79:
+> ag71xx-mdio: get reset control using devm api")
+>
+> Why not port the original fix?
+On further review, this looks safe to do. Will submit tomorrow.
+>
+> Regards,
+> Oleksij
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
+|
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
 
