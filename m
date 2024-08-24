@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-299949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2F595DCC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCAE95DCCD
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FF61C21AF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788191C21CC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DA1154C05;
-	Sat, 24 Aug 2024 07:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C99155320;
+	Sat, 24 Aug 2024 07:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFBdFSbK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H132KVz3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7671C148;
-	Sat, 24 Aug 2024 07:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B12E154BFC;
+	Sat, 24 Aug 2024 07:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724486263; cv=none; b=koS0vyilPhLXqir/+CcOZfH1V5FKfqoGAU5tCJr0IIrlkZ0qMdI6IHLFTS3z4Uqc0T2XL5fQCRiFIFMynwInlDiwZnhsk6bcXieNpSuC+3c/XYOLfN16+ooFmuR1A5LcaG09jC39F+D0RvMLUNPDdjMsbWwUa3ujWOEuntn7Q1c=
+	t=1724486299; cv=none; b=aPHdWO+5ppoUPOWFYcnJfb14X2ZNg/TmlnO1/qGX1NkNl6y3Tjs/URXKVWufVpi4Q5citdu1giIDdNYUmYQgbpMfHbeZ/HAogPx54mcjpEq1Vw8bEwyoaJEuOrDd3cYJaAd/dGMOERLHR5s0eeyvQGbcJpVIkrPNxkR2Ee8JeF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724486263; c=relaxed/simple;
-	bh=veqewg/dYFtLgmqnBLnDkm0LLpJEGT8ujx8IQXvI/Gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qc6JnDiO54Z/jWztdWf7n3yJBtVA1ozHB/L/4rqmZpWRAzOuMLWb+wmLaSOOJyVelsFa15aLc8nN/VCbSNxJmFItBISenYbSiH68x86xRsqHpdGPbDsmW+9JMINAOlekv2byf+TqfI80nwJUM5QP+CC/xfoibhWvFSoHhKfSBm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFBdFSbK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB65DC4AF09;
-	Sat, 24 Aug 2024 07:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724486262;
-	bh=veqewg/dYFtLgmqnBLnDkm0LLpJEGT8ujx8IQXvI/Gg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SFBdFSbKq2L/TWsU/7sOejHXvQQsVvGiCybcnxIOUYgkOoll9EQ//o9cv0rkoi/eR
-	 Yi+N8AVbTHFh5tAuLn9f5xCPnNZDL4GyXGghI+T3pYb1qO0eOfXRtJMnp6andg3oYY
-	 zK6A/2cVzjF59+GOC2TDUBbnbso/NWeoR7LIsZnQRYKt5MU/6yXOKCd2fAnOcZ+azy
-	 BM6wqeQXSkOWtekjJNQ/AhSATo0DFXglaResL6n5MnISIEZMa9Xo4+oWxSxla2joB4
-	 rtNtcJMyhKgCz8niRyRm4vNDpTBGnJACVBUN2CKKC1zn44Zs9QNH6fVkXI2G81eOQm
-	 rvxpzL6SZHqDw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-534366c1aa2so1852211e87.1;
-        Sat, 24 Aug 2024 00:57:42 -0700 (PDT)
-X-Gm-Message-State: AOJu0YyWMlqXmjJSXqQo4Z4NV5KehgeyCBz52Ddiz7Gyga7yj3NqoxiT
-	83NtKTLaQ9p0aTdpPWk5Kx2OUBVXQH/eyKbvjd1/5FmwoUrpJ/nZT7cWmDfrYnODfYV5bKwTr9u
-	aCEs6EtZimSYJOK7vul+X7YL5/vI=
-X-Google-Smtp-Source: AGHT+IHDMyWtpZNup4NTIkXwo3o2kIvdxJBx4oqBZqw8KlVry+nitbbc5QSRERc+b7kH1N2mjhMFmxOza6bQZqFvq78=
-X-Received: by 2002:a05:6512:6cf:b0:52c:e0fb:92c0 with SMTP id
- 2adb3069b0e04-5343883abdfmr2937704e87.34.1724486261207; Sat, 24 Aug 2024
- 00:57:41 -0700 (PDT)
+	s=arc-20240116; t=1724486299; c=relaxed/simple;
+	bh=+MuJabAXZNXC3PzKmb+ctuTHQcVD5uw07JOm0cukiHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWySvhytFi2+aDwpTVnYgDYPKOCxc+f/qtu6Oi3l3B2485PhAEfytvZyCAfWeqKLOw+XPhgbQs1o5rZxIlVnMYPatwOdtZ/o3bc+GIkwKvuypocesqojWEiKObFJ71IJNVjb+qBS/qUpbhh0qX7rxNNTsslrd0m+QwYaoItzw1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H132KVz3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724486297; x=1756022297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+MuJabAXZNXC3PzKmb+ctuTHQcVD5uw07JOm0cukiHM=;
+  b=H132KVz304XJPf6ReChbID2w1YHRPvxytq0WbDqu4uhidZZSlva4Y4LE
+   pZHl3AGTuAOiweWSGhZDA8IwlbzEoHnXnbMCKukZ/q+5k+rMv9h4gy7Gg
+   lrqNpj8eCrMpC8dgLkyHv94gHXIDAlxwso32cgk3S50h615I0K86g9G+X
+   XmZ+8gxO+63cIdmweFZi0vKY6B783NQbpEeCRiefFnAOryPtfqs9e+VOq
+   tOFi5hsQh2mndrvZc3hgde+agJNmsp977DN6vvWI/rA4Ptt1uBBfTnLlN
+   s4+sWi9vLViQhAOyXzNqIWOYRX9YsZ/Oa0iCAQG3P43fJn22Am1fVQk6v
+   A==;
+X-CSE-ConnectionGUID: vT64KyRhQaW9P0Xy6FbYoQ==
+X-CSE-MsgGUID: atC8vKnuQf2trx1B+MFIWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="23126429"
+X-IronPort-AV: E=Sophos;i="6.10,172,1719903600"; 
+   d="scan'208";a="23126429"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 00:58:17 -0700
+X-CSE-ConnectionGUID: xNO1WY6SQfimIDbJMyQklA==
+X-CSE-MsgGUID: Re7yuOLNQLu2fGkmVM310w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,172,1719903600"; 
+   d="scan'208";a="99531438"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 00:58:12 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id AF4D411F95D;
+	Sat, 24 Aug 2024 10:58:07 +0300 (EEST)
+Date: Sat, 24 Aug 2024 07:58:07 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux.dev, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	"Michael S . Tsirkin " <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-media@vger.kernel.org,
+	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] dma-mapping: clear mark DMA ops as an architecture
+ feature
+Message-ID: <ZsmSj6ZBZqBtjALU@kekkonen.localdomain>
+References: <20240824035817.1163502-1-hch@lst.de>
+ <20240824035817.1163502-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812124858.2107328-1-masahiroy@kernel.org> <20240812124858.2107328-2-masahiroy@kernel.org>
-In-Reply-To: <20240812124858.2107328-2-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 24 Aug 2024 16:57:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASdNoxqdOdGZ_=tNMjh+4Du5Z3Y4EAi1rYPnuccG_1gUA@mail.gmail.com>
-Message-ID: <CAK7LNASdNoxqdOdGZ_=tNMjh+4Du5Z3Y4EAi1rYPnuccG_1gUA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] modpost: replace the use of NOFAIL() with xmalloc() etc.
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824035817.1163502-2-hch@lst.de>
 
-On Mon, Aug 12, 2024 at 9:49=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> I think x*alloc() functions are cleaner.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+Hi Christoph,
 
+On Sat, Aug 24, 2024 at 05:57:58AM +0200, Christoph Hellwig wrote:
+> DMA ops are a helper for architectures and not for drivers to override
+> the DMA implementation.  Unfortunately driver authors keep ignoring
+> this.  Make this more clear by renaming the symbol to ARCH_DMA_OPS,
+> have the three drivers overriding it depend on that.  They should
+> probably also be marked broken, but we can give them a bit of a grace
+> period for that.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-I removed do_nofail() as well.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com> # for IPU6
 
+We'll address this for IPU6 but I can't give a timeline for that right now.
 
+-- 
+Kind regards,
 
-
-
---=20
-Best Regards
-Masahiro Yamada
+Sakari Ailus
 
