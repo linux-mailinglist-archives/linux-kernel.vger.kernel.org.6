@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-299971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BAC95DD22
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:18:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4A695DD26
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 11:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588521C21114
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C05282D2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531121547CA;
-	Sat, 24 Aug 2024 09:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tdn3QvY5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937EF15573F;
+	Sat, 24 Aug 2024 09:26:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EA88BEC
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBE914290;
+	Sat, 24 Aug 2024 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724491082; cv=none; b=fHUITWuS94yPM3ni3ye/feTZH28OIeJkgvppFbwmFKYF6hzxM2P2xXgFpy+S1OoCpQpZGaRscnX/7Ut2MW3Y1aJKEK7plLFe7fmET4ttLCUmj5Thm2y3U2S5uVXGUXPCQnoaVBvH7aHj7TfT60bcaqBcYD2sR+3QsiX9Ndn91+I=
+	t=1724491610; cv=none; b=BHvn5r90tpLUh8jVXXaTZF+R5krAS+vEpURjCOpkgIODp69ayGw6d2zIwuU9/mcu6ZoRYFl3AApDzk8UH1WCmpVkypUAkEf9wneQ5dea5zFwDqDDksJ497hGhbtq2hYgMsbVzkTh54Ziib7DkXavTzQPqr9dUe3Q+NDmlMxqjFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724491082; c=relaxed/simple;
-	bh=PKPzkeZDuXfyPKNJkXHR2U9tmGs/Eu1jXijfXhI2Fu8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=SQCkLNjRvmHI7nSyn+UzZM1rndzQYmIDD4pO8VeJJMG7Vs/GLDgW379rJcqRl/T1yrmFsBcd23jBra//XeTjLkjMnx4/D5z2ujmN2/isqJQsVqHF+N2Pq7mqroiAU6dg2DEE1RKuW4hvhe3hMG9NPWfZ7l12kuf82kHkb0oE7sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tdn3QvY5; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724491081; x=1756027081;
-  h=date:from:to:cc:subject:message-id;
-  bh=PKPzkeZDuXfyPKNJkXHR2U9tmGs/Eu1jXijfXhI2Fu8=;
-  b=Tdn3QvY5xh5L4J4Pxlf/by8U5ZyxZIZZLgwJkjPca4xkXuaDlvyrJU33
-   I4Pj03KEd9SG7RZ269IohdOKvfz0iJjZvP5PYb7Lbz7yqYfwqO+FkY+II
-   1bCyj3ANzkB/pqZjhyKUBgwjHv/XzKIIQq1WMBvj5HboVtwkChZicfKEB
-   VQUoDh2YQBBVZFkezYSW08nEhdOU/t38ypDPOLAZKAoQf6EZcs+xDVLAP
-   lTLX6cN1FrJFKV9qqAUCpX+5rbUQtdcWTSCeOEClTeQNt3UxIzif6CwrS
-   zMNgRpe4XyvvCIg+2DGJ24OSSK/kY9jXQIkSFDZkvO8nsFMCpStTKsX+9
-   w==;
-X-CSE-ConnectionGUID: NvtKYmepRvqxwc+Vbj1q2g==
-X-CSE-MsgGUID: JHmKe34IT4KUVPmZgd+J4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="34386609"
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="34386609"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2024 02:18:00 -0700
-X-CSE-ConnectionGUID: GdEFGCPGRXC2EJx1qQPH5g==
-X-CSE-MsgGUID: LF1xSQkPRhaEZCDpWJcKwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,173,1719903600"; 
-   d="scan'208";a="66977065"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 24 Aug 2024 02:17:59 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1shmuC-000ENn-38;
-	Sat, 24 Aug 2024 09:17:56 +0000
-Date: Sat, 24 Aug 2024 17:17:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/misc] BUILD SUCCESS
- d19d638b1e6cf746263ef60b7d0dee0204d8216a
-Message-ID: <202408241716.Mg6EpG8l-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1724491610; c=relaxed/simple;
+	bh=twc8I6wUXDHEln3CbTyIlvMUPnH4vHWVKr67ANsU5BY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qeowFQbPLb0amsPo2PyileVLt/pZCf3HymFmoi0z42eRP8P2oMlveXIe0X/V1rGaVHpUzKc8HpOOJbR22XV7Fk3hhdK3D0iZLnWyYJ38hEPKv8Btb3JusrTyX4ZhaAVSienihRR/e7PtJi9P7tbKQVZXN8MpZ9KuDwuRG6A3fFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WrWlb04cxzyR4h;
+	Sat, 24 Aug 2024 17:26:19 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id D8DC9140118;
+	Sat, 24 Aug 2024 17:26:44 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
+ 2024 17:26:44 +0800
+From: yangyun <yangyun50@huawei.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: <josef@toxicpanda.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lixiaokeng@huawei.com>
+Subject: [PATCH v2 0/2] fuse: add no forget support
+Date: Sat, 24 Aug 2024 17:25:51 +0800
+Message-ID: <20240824092553.730338-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git x86/misc
-branch HEAD: d19d638b1e6cf746263ef60b7d0dee0204d8216a  x86/syscall: Avoid memcpy() for ia32 syscall_get_arguments()
+FUSE_FORGET requests are not used in some cases (e.g., juicefs) but have 
+an impact on the system. So add no forget support.
 
-elapsed time: 837m
+---
 
-configs tested: 45
-configs skipped: 157
+v1: 
+https://lore.kernel.org/linux-fsdevel/20240726083752.302301-1-yangyun50@huawei.com/
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Changes from v1->v2:
+- Still use fuse_queue_forget in patch 1 (Miklos)
+- Simplify function name in patch 2 (Josef)
 
-tested configs:
-alpha                            allyesconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm64                            allmodconfig   gcc-13.2.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240824   clang-18
-i386         buildonly-randconfig-002-20240824   clang-18
-i386         buildonly-randconfig-003-20240824   clang-18
-i386         buildonly-randconfig-004-20240824   clang-18
-i386         buildonly-randconfig-005-20240824   clang-18
-i386         buildonly-randconfig-006-20240824   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240824   clang-18
-i386                  randconfig-002-20240824   clang-18
-i386                  randconfig-003-20240824   clang-18
-i386                  randconfig-004-20240824   clang-18
-i386                  randconfig-005-20240824   clang-18
-i386                  randconfig-006-20240824   clang-18
-i386                  randconfig-011-20240824   clang-18
-i386                  randconfig-012-20240824   clang-18
-i386                  randconfig-013-20240824   clang-18
-i386                  randconfig-014-20240824   clang-18
-i386                  randconfig-015-20240824   clang-18
-i386                  randconfig-016-20240824   clang-18
-openrisc                            defconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                             allyesconfig   clang-20
-s390                                defconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-um                               allmodconfig   gcc-13.3.0
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                          rhel-8.3-rust   clang-18
+yangyun (2):
+  fuse: move fuse_forget_link allocation inside fuse_queue_forget()
+  fuse: add support for no forget requests
+
+ fs/fuse/dev.c             | 14 +++++++--
+ fs/fuse/dir.c             | 63 +++++++++------------------------------
+ fs/fuse/fuse_i.h          | 34 ++++++++++++++-------
+ fs/fuse/inode.c           | 43 ++++++--------------------
+ fs/fuse/readdir.c         | 37 +++++------------------
+ include/uapi/linux/fuse.h |  3 ++
+ 6 files changed, 70 insertions(+), 124 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.33.0
+
 
