@@ -1,257 +1,179 @@
-Return-Path: <linux-kernel+bounces-300164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5F195DFB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:50:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD0995DFB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995E41C20CCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8C11F21CE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B57DA68;
-	Sat, 24 Aug 2024 18:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F174879B87;
+	Sat, 24 Aug 2024 18:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oaPBxPAH"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="E7DUiLuL"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98D23CF5E
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 18:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11525AD5B
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 18:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724525413; cv=none; b=ZNo7vKk6P73U3YFpavUry2NjNUKV8usHG128fHnQi8qouvC1Dqk8jJdpggdM4j11AYHxX6mFl6tgKjL4qRMSrjZ0H+6jUqIUFfnmRPUuxGIpLeeiW5ZgIAnS0A2W6qdZQjO/hx4CyWTqE4SRauWOgjJdHx/N43+fPLCP++2BLFw=
+	t=1724525597; cv=none; b=Yh1W0xRGAs3a+GHyonWp2vZFf+kPaw+MDGKN4Tp0tabv+olqR+/vmiQ8embzmsLtCnlFK7tkWcAyjfniRNDBWYFJBs8tSQbJ2zVWtgVZ7K3gMrCzEicMnbS+9Qifj7X8Bk8AAXrrzQp2UChNprNdyQ8ODdABrTupCN5smxwNcys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724525413; c=relaxed/simple;
-	bh=1eYdz/zau3RYXJaXno1Awf7NlV98Zrj5ocM0zAexwEM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csDVMtc4+DroWAUEUqd7sA75L8VoVGEi080KPHpzQ2CgNRkS/7NaU5HgwTjlzPysepI3wszXfo00MSS9eHlkqKp2PssEEVqEKMGO5KikKnZsQR+O43ZEsgeDXQn277p7fZNOdtHDS0Hpck7RhqMatMPkuSi/tBnmbZ2QRjMpWlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oaPBxPAH; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OInoe7017964;
-	Sat, 24 Aug 2024 13:49:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724525390;
-	bh=cTXwDdH5fYMans6AL7WAaQCqOrfwUgTk5ue5mciCuB8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=oaPBxPAHBTQs5YHBvtyPZkI51brtncAdx1gbOdoUJPeX9gF5Aux1/tgXuqeV3+pVB
-	 UiNQvy+tQ9YdYVOwr9sqyxQveuSsRe3kaftjv1H9KYwBkPNck6sFkrMjqbg1nxoy8X
-	 0EljoV8twax77k79IG+RozjzY1dCexuJHuleul74=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OInoC2023438
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 24 Aug 2024 13:49:50 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
- Aug 2024 13:49:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 24 Aug 2024 13:49:50 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OInosZ088292;
-	Sat, 24 Aug 2024 13:49:50 -0500
-Date: Sat, 24 Aug 2024 13:49:50 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Kousik Sanagavarapu <five231003@gmail.com>
-CC: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Julia Lawall
-	<julia.lawall@inria.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Javier
- Carrasco <javier.carrasco.cruz@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/4] soc: ti: pruss: factor out memories setup
-Message-ID: <20240824184950.gzsgdawt2ujjt6ky@subgroup>
-References: <20240707055341.3656-1-five231003@gmail.com>
- <20240707055341.3656-2-five231003@gmail.com>
+	s=arc-20240116; t=1724525597; c=relaxed/simple;
+	bh=LQ5Lv/ZUni9z3KJh+yRAjo9nSvnqmiWd9fdb3N/kVSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rPYLBeJs/AyenmUSazlVLmW5PRJtuCtkC+xlErXVWxT4RcHWbPT76VYxLrRHQoTboPtv+SUV19O0ADvpI3jRmkobM5zRVQwdxt3GGbwPNuow4FLDClEKZuxvzWAM0nhkaV+0qr8v0tPp5cZYJj8kW3vh3LD8otSyncB2fWY2/TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=E7DUiLuL; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1724525593;
+	bh=LQ5Lv/ZUni9z3KJh+yRAjo9nSvnqmiWd9fdb3N/kVSM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=E7DUiLuLH+EUfCk7xXO3gjl4oUqDJEG+GlbBkH1jYGnlTscOOludXr7bY/jKYV/tw
+	 3sezUkBvbwI/4kx2IFSWC+4CwtqLiZSbiRy3DXVAIrrT/LWj82GZnwBO+jgncGBtRC
+	 Io6xCdt/nf9PhvWu8viRWwWJ7rrCMI3fKE80Ud2Q=
+Date: Sat, 24 Aug 2024 20:53:12 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Willy Tarreau <w@1wt.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] nolibc for 6.12-rc1
+Message-ID: <3b9df0a1-7400-4c91-846d-b9e28982a7c3@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240707055341.3656-2-five231003@gmail.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-On 10:44-20240707, Kousik Sanagavarapu wrote:
-> Factor out memories setup code from probe() into a new function
-> pruss_of_setup_memories().  This sets the stage for introducing auto
-> cleanup of the device node (done in the subsequent patch), since the
-> clean up depends on the scope of the pointer and factoring out
-> code into a seperate function obviously limits the scope of the various
-typo s/seperate/separate - use --codespell with checkpatch to catch :)
+Hi Shuah,
 
-A follow on patch has the same problem as well.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-> variables used in that function.
-> 
-> Apart from the above, this change also has the advantage of making the
-> code look more neat.
-> 
-> While at it, use dev_err_probe() instead of plain dev_err() as this new
-> function is called by the probe().
-> 
-> Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
-> ---
->  drivers/soc/ti/pruss.c | 111 ++++++++++++++++++++++-------------------
->  1 file changed, 61 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-> index 24a42e0b645c..a3c55a291b0b 100644
-> --- a/drivers/soc/ti/pruss.c
-> +++ b/drivers/soc/ti/pruss.c
-> @@ -415,6 +415,63 @@ static int pruss_clk_init(struct pruss *pruss, struct device_node *cfg_node)
->  	return ret;
->  }
->  
-> +static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
-> +{
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct device_node *child;
-> +	const struct pruss_private_data *data = of_device_get_match_data(dev);
-> +	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
-> +	int i;
-> +
-> +	child = of_get_child_by_name(np, "memories");
-> +	if (!child)
-> +		return dev_err_probe(dev, -ENODEV,
-> +				     "%pOF is missing its 'memories' node\n",
-> +				     child);
-> +
-> +	for (i = 0; i < PRUSS_MEM_MAX; i++) {
-> +		struct resource res;
-> +		int index;
-> +
-> +		/*
-> +		 * On AM437x one of two PRUSS units don't contain Shared RAM,
-> +		 * skip it
-> +		 */
-> +		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
-> +			continue;
-> +
-> +		index = of_property_match_string(child, "reg-names",
-> +						 mem_names[i]);
-> +		if (index < 0) {
-> +			of_node_put(child);
-> +			return index;
-> +		}
-> +
-> +		if (of_address_to_resource(child, index, &res)) {
-> +			of_node_put(child);
-> +			return -EINVAL;
-> +		}
-> +
-> +		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
-> +							resource_size(&res));
-> +		if (!pruss->mem_regions[i].va) {
-> +			of_node_put(child);
-> +			return dev_err_probe(dev, -ENOMEM,
-> +					     "failed to parse and map memory resource %d %s\n",
-> +					     i, mem_names[i]);
-> +		}
-> +		pruss->mem_regions[i].pa = res.start;
-> +		pruss->mem_regions[i].size = resource_size(&res);
-> +
-> +		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-> +			mem_names[i], &pruss->mem_regions[i].pa,
-> +			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
-> +	}
-> +	of_node_put(child);
-> +
-> +	return 0;
-> +}
-> +
->  static struct regmap_config regmap_conf = {
->  	.reg_bits = 32,
->  	.val_bits = 32,
-> @@ -471,15 +528,8 @@ static int pruss_cfg_of_init(struct device *dev, struct pruss *pruss)
->  static int pruss_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *np = dev_of_node(dev);
-> -	struct device_node *child;
->  	struct pruss *pruss;
-> -	struct resource res;
-> -	int ret, i, index;
-> -	const struct pruss_private_data *data;
-> -	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
-> -
-> -	data = of_device_get_match_data(&pdev->dev);
-> +	int ret;
->  
->  	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
->  	if (ret) {
-> @@ -494,48 +544,9 @@ static int pruss_probe(struct platform_device *pdev)
->  	pruss->dev = dev;
->  	mutex_init(&pruss->lock);
->  
-> -	child = of_get_child_by_name(np, "memories");
-> -	if (!child) {
-> -		dev_err(dev, "%pOF is missing its 'memories' node\n", child);
-> -		return -ENODEV;
-> -	}
-> -
-> -	for (i = 0; i < PRUSS_MEM_MAX; i++) {
-> -		/*
-> -		 * On AM437x one of two PRUSS units don't contain Shared RAM,
-> -		 * skip it
-> -		 */
-> -		if (data && data->has_no_sharedram && i == PRUSS_MEM_SHRD_RAM2)
-> -			continue;
-> -
-> -		index = of_property_match_string(child, "reg-names",
-> -						 mem_names[i]);
-> -		if (index < 0) {
-> -			of_node_put(child);
-> -			return index;
-> -		}
-> -
-> -		if (of_address_to_resource(child, index, &res)) {
-> -			of_node_put(child);
-> -			return -EINVAL;
-> -		}
-> -
-> -		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
-> -							resource_size(&res));
-> -		if (!pruss->mem_regions[i].va) {
-> -			dev_err(dev, "failed to parse and map memory resource %d %s\n",
-> -				i, mem_names[i]);
-> -			of_node_put(child);
-> -			return -ENOMEM;
-> -		}
-> -		pruss->mem_regions[i].pa = res.start;
-> -		pruss->mem_regions[i].size = resource_size(&res);
-> -
-> -		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-> -			mem_names[i], &pruss->mem_regions[i].pa,
-> -			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
-> -	}
-> -	of_node_put(child);
-> +	ret = pruss_of_setup_memories(dev, pruss);
-> +	if (ret < 0)
-> +		goto rpm_put;
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-Why? We have not called pm_runtime_enable at this point.
+are available in the Git repository at:
 
->  
->  	platform_set_drvdata(pdev, pruss);
->  
-> -- 
-> 2.45.2.561.g66ac6e4bcd
-> 
+  https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git nolibc-20240824-for-6.12-1
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+for you to fetch changes up to 25fb329a23c78d59a055a7b1329d18f30a2be92d:
+
+  tools/nolibc: x86_64: use local label in memcpy/memmove (2024-08-16 17:23:13 +0200)
+
+----------------------------------------------------------------
+nolibc changes for 6.12
+
+Highlights
+----------
+
+* Clang support (including LTO)
+
+Other Changes
+-------------
+
+* stdbool.h support
+* argc/argv/envp arguments for constructors
+* Small #include ordering fix
+
+----------------------------------------------------------------
+Thomas Weißschuh (21):
+      tools/nolibc: include arch.h from string.h
+      tools/nolibc: add stdbool.h header
+      tools/nolibc: pass argc, argv and envp to constructors
+      tools/nolibc: arm: use clang-compatible asm syntax
+      tools/nolibc: mips: load current function to $t9
+      tools/nolibc: powerpc: limit stack-protector workaround to GCC
+      tools/nolibc: compiler: introduce __nolibc_has_attribute()
+      tools/nolibc: move entrypoint specifics to compiler.h
+      tools/nolibc: compiler: use attribute((naked)) if available
+      selftests/nolibc: report failure if no testcase passed
+      selftests/nolibc: avoid passing NULL to printf("%s")
+      selftests/nolibc: determine $(srctree) first
+      selftests/nolibc: add support for LLVM= parameter
+      selftests/nolibc: add cc-option compatible with clang cross builds
+      selftests/nolibc: run-tests.sh: avoid overwriting CFLAGS_EXTRA
+      selftests/nolibc: don't use libgcc when building with clang
+      selftests/nolibc: use correct clang target for s390/systemz
+      selftests/nolibc: run-tests.sh: allow building through LLVM
+      tools/nolibc: crt: mark _start_c() as used
+      tools/nolibc: stackprotector: mark implicitly used symbols as used
+      tools/nolibc: x86_64: use local label in memcpy/memmove
+
+ tools/include/nolibc/Makefile                |  1 +
+ tools/include/nolibc/arch-aarch64.h          |  4 +--
+ tools/include/nolibc/arch-arm.h              |  8 +++---
+ tools/include/nolibc/arch-i386.h             |  4 +--
+ tools/include/nolibc/arch-loongarch.h        |  4 +--
+ tools/include/nolibc/arch-mips.h             |  8 ++++--
+ tools/include/nolibc/arch-powerpc.h          |  6 ++--
+ tools/include/nolibc/arch-riscv.h            |  4 +--
+ tools/include/nolibc/arch-s390.h             |  4 +--
+ tools/include/nolibc/arch-x86_64.h           |  8 +++---
+ tools/include/nolibc/compiler.h              | 24 +++++++++++-----
+ tools/include/nolibc/crt.h                   | 25 +++++++++--------
+ tools/include/nolibc/nolibc.h                |  3 +-
+ tools/include/nolibc/stackprotector.h        |  4 +--
+ tools/include/nolibc/stdbool.h               | 16 +++++++++++
+ tools/include/nolibc/string.h                |  1 +
+ tools/testing/selftests/nolibc/Makefile      | 41 +++++++++++++++++++---------
+ tools/testing/selftests/nolibc/nolibc-test.c |  9 +++---
+ tools/testing/selftests/nolibc/run-tests.sh  | 16 ++++++++---
+ 19 files changed, 123 insertions(+), 67 deletions(-)
+ create mode 100644 tools/include/nolibc/stdbool.h
+
+Test results
+------------
+
+tools/testing/selftests/nolibc$ ./run-tests.sh           
+i386:          195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+x86_64:        195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+arm64:         195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+arm:           195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+mips32le:      195 test(s): 194 passed,   1 skipped,   0 failed => status: warning
+mips32be:      195 test(s): 194 passed,   1 skipped,   0 failed => status: warning
+ppc:           195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+ppc64:         195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+ppc64le:       195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+riscv:         195 test(s): 195 passed,   0 skipped,   0 failed => status: success
+s390:          195 test(s): 194 passed,   1 skipped,   0 failed => status: warning
+loongarch:     195 test(s): 194 passed,   1 skipped,   0 failed => status: warning
+
+tools/testing/selftests/nolibc$ ./run-tests.sh -m user
+i386:          195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+x86_64:        195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+arm64:         195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+arm:           195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+mips32le:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+mips32be:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+ppc:           195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+ppc64:         195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+ppc64le:       195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+riscv:         195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+s390:          195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+loongarch:     195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+
+tools/testing/selftests/nolibc$ ./run-tests.sh -m user -l
+i386:          195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+x86_64:        195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+arm64:         195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+arm:           195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
+mips32le:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+mips32be:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+ppc:           195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+ppc64:         195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+ppc64le:       195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+riscv:         195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+s390:          195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+loongarch:     195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
+
+
+Thomas
 
