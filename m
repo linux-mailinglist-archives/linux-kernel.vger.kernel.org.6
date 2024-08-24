@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-300042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B35595DE0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83A795DE12
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 15:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27362832C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A741C20F0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 13:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15DE176AD8;
-	Sat, 24 Aug 2024 13:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8168E176FB4;
+	Sat, 24 Aug 2024 13:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmJxSlKk"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WTHWipLw"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD4C4A07;
-	Sat, 24 Aug 2024 13:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3311714B2;
+	Sat, 24 Aug 2024 13:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724505989; cv=none; b=hoJs70lxT4QH2oROiRuF+q8aCNDmd00XXbP1yU0EvLI0nGQ6IdxB9Ib7vz4oRX98Z9akKG0NEcRN4C2Ho9vg5f1RmkirrxGuoe2qC3mvna/W5LnYOsT1hwzBdeSIcctWnv6n8ZtkvgAwESVxpPFaJJCOUYZIfWW46wZisaSHIEc=
+	t=1724506041; cv=none; b=b8IPqCj12LRNCqhDT//4o3Nl4wh6zehArfCLvAVLzsspw+aAZwHqYYYKrhM3+d9lsfgVx2nD9VOu49/PIUJ02akCwyKhS6WNqgLEvS2oIyXlMWnElcG/ICMVameMbfFsWBpmTRch/bbc4nsCiOOV4LeYjTwSiAS98Nsqdrmr0to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724505989; c=relaxed/simple;
-	bh=+jc/Vc038MHhpyQ8+IxcxqzIq5COI3FuiKc4IC9F6uU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFiqJnMS0JjbjZcYfXSsg/MPy/Xs4SK+n+duyk+o0JRlPiY3kuTi/nr/gHuPrVkRXy5uq8YgCeP2ScgIgJjxiX8X3Nt7z7SUYfBZ0IWXpbZstQ/xxlinkDUu8qQJTYbAO4sa/pCl30XXicLMs/0tnMsIvVuWP4BVubRqwVIgdII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QmJxSlKk; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3718b5e9c4fso1428877f8f.0;
-        Sat, 24 Aug 2024 06:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724505986; x=1725110786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=114707c9TBN2Gihi0FV0kqjlbdnW0JCr+A5nsEfjtVU=;
-        b=QmJxSlKkihY7Uq7TySUEEU7wPxJPQMijSVW66hMP0WlWbvVNafZLSOPHicBg3G8cRF
-         nK6dQVs4fErZzSmNX6Z8FySo4XSmfs3G1q+YKYhDR1CPHEKPSW0ogfsuCBBzJJHj4M9V
-         E/0LNwQHnwQKdzerl3KOz9lYuc1COeChHxHD3y4LhngQNmf6YEGhQchjAyHwslvwz1C3
-         aWf7m5Vfo1azP+el+tqClGZPpMEmgmGSRBeK2h/PIS5+vRu1D/Pyry7zzPtqeefsE+mZ
-         Z20cK6Zfg6+1iDm/CgPk1B3L4we76h2VnLcgjLpIJt3LbogXfs8DmFJ2tgcJpvuGZof/
-         6oYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724505986; x=1725110786;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=114707c9TBN2Gihi0FV0kqjlbdnW0JCr+A5nsEfjtVU=;
-        b=qTU1dgFwrRx8vdriAlBpKVfILLg9i6G/YSQ32mhcGM8TkAt41nIFx92wP9GOEWQ5tU
-         oAaBeacWltxnacLKSHf9rs/8K1hY0pU47jKxDO0fCi+pGACWMy/jqeGJXWpX26L2vT9j
-         UyI68FTJE2do8WIr8WBjKM2o9GjzkKdcyVBUUV0JDd60vAfEjfhJ1ZZIszDjycZgFBfV
-         BJoMBFe1DDmYIY69wXx9TtTBX5rpOCG9L5NpzX75ei4JE+dJccIt7iQLXCN0d4l42LaV
-         gm8NWb+m1tpHg3eK3e/gkojQ8hqoWsQS7zah2mNPsntvFoB3c2mVstHdLZH/qwLtIywQ
-         s2/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIYFWejIMJfGrBE95CgZeOkJu817yuHv0+6bOKzZ/KwRg23ynMdOfIwTHf8S5hmlH0Tm0/10Sh9LyhIFfe@vger.kernel.org, AJvYcCUJbdlb8Gp2zv6tTgO64Z6lVzAXmB9HfZj8+0V5EYj6dROIgbOuvsZoVLgAB8bI8spgUuRDoSHz@vger.kernel.org, AJvYcCXi4F0CgLxScRj6pmFyVVk5Zyz884S99guHxlvx9oOwOgX1JTcGTjoGsz+7rUc/txjHRmoKoPjEtVOm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcnN3HO8zd5WVoQxBpuEJsdyzYIvmntzCOPwIMhjyAfmyf2wPe
-	U0n5LhB6dNGW61GwB64vJoSUKDu4sEGE303W55x+xzkXG+v+Jodw
-X-Google-Smtp-Source: AGHT+IE97apoWLf+5ctckXkuIwyLEMMq8DzL8/wLznw24XrTkTZaFOgnINabsJwGyILMQnQ7VupSOQ==
-X-Received: by 2002:a5d:6905:0:b0:373:b44:675 with SMTP id ffacd0b85a97d-3731189b12amr3706013f8f.20.1724505985477;
-        Sat, 24 Aug 2024 06:26:25 -0700 (PDT)
-Received: from [192.168.0.10] ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac514e269sm95104245e9.2.2024.08.24.06.26.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Aug 2024 06:26:24 -0700 (PDT)
-Message-ID: <f11001d4-fac1-490d-988c-01c6b4b588db@gmail.com>
-Date: Sat, 24 Aug 2024 16:26:22 +0300
+	s=arc-20240116; t=1724506041; c=relaxed/simple;
+	bh=kMO69p16kqJrjrEcKmdv3cBmB0rk3eV+MoscgcvZdac=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D0k8cBVSR326GBgdEuyMJqI++u9oy7lAVWiMlWbPkBRh5ZUYFWLTtoOsCFmkEaYh1grF4p2/KEMfK2vJwYn9/wi7K5+yAqwAsDn+CUrsE0XIBS6nfhLWEhjRmAjikvLmgRXaMqCDA7h0zAuLdsKqRwzcyWtjeHkbggyWzwpwFio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WTHWipLw; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724506032; x=1724765232;
+	bh=RqdsCkI6mejjg55TgKGNTjgt+43oDMZ//60n7i61RCM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=WTHWipLwGdY4IB2mU3lKtW8IJb2/uw5U6Q5kU8dPRTITq9ZFhWheiGrd9IqPHTs6N
+	 3e18ZwRwK1qCU/fMnKFhtsseUf8rxpjRgE8ptT1ouTKn/IABmx0csU5fOun6zlhns4
+	 vUBKKbKYI08SPkdYgn4TZXAUPId9YOyi8Xf3X1H5c2kvVPYFEdt0RlOAnpI54T8918
+	 k4p6Kfd1VJQz7A4t1RgLrHhtoB1UZvgxGhbQjMCPr6F0DLsVTc8GCE32STykcYWkSH
+	 vw2B3tTdKIX38DQfn2BMPrSCVZ1ZryW26939SSz7wIHC5TOwMnk2fzAODUvL1dsJ2S
+	 /7aZAwmkitdNw==
+Date: Sat, 24 Aug 2024 13:27:07 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
+Message-ID: <ec80d964-2062-4556-a11b-ba764e1f58f7@proton.me>
+In-Reply-To: <2024082356-stowing-endowment-555b@gregkh>
+References: <20240815173903.4172139-37-samitolvanen@google.com> <CABCJKudAF0=29js8SDcYY5r6kM7RBveTrZH9RyECNGqkcqy=nw@mail.gmail.com> <CAGSQo01kCUd64nB7C7Ssy1N=UBpOP3bORsRDcHJ1k2CqkbKsfQ@mail.gmail.com> <c6c1e84a-40f3-41a5-a732-f1cf06521691@proton.me> <2024082229-elevation-emporium-8118@gregkh> <bc2e02d7-d4a7-4f0f-852c-e26ad6a8688f@proton.me> <2024082257-refrain-subsector-b6c4@gregkh> <77e8e20c-8ca1-4df7-a4d7-ed77454f1754@proton.me> <2024082356-stowing-endowment-555b@gregkh>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9e377948a7d048ed45f8d84a815c87b14110d385
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8186-corsola: Disable DPI display
- interface
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Stephen Boyd <swboyd@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
- stable@vger.kernel.org
-References: <20240821042836.2631815-1-wenst@chromium.org>
- <00aaa8ff-1344-48dd-b0cb-5e8f4518ff6b@notapiano>
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Content-Language: en-US, tr, en-GB
-In-Reply-To: <00aaa8ff-1344-48dd-b0cb-5e8f4518ff6b@notapiano>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 2024-08-22 18:25 +03:00, Nícolas F. R. A. Prado wrote:
-> On Wed, Aug 21, 2024 at 12:28:34PM +0800, Chen-Yu Tsai wrote:
->> The DPI display interface feeds the external display pipeline. However
->> the pipeline representation is currently incomplete. Efforts are still
->> under way to come up with a way to represent the "creative" repurposing
->> of the DP bridge chip's internal output mux, which is meant to support
->> USB type-C orientation changes, to output to one of two type-C ports.
+On 23.08.24 01:53, Greg Kroah-Hartman wrote:
+> On Thu, Aug 22, 2024 at 12:00:15PM +0000, Benno Lossin wrote:
+>>> Here's one example in the android tree where 4 64bit fields are reserve=
+d
+>>> for future abi changes:
+>>> =09https://android.googlesource.com/kernel/common/+/refs/heads/android1=
+2-5.10/include/linux/fs.h#421
+>>>
+>>> And here's a different place where a field is being used with many
+>>> remaining for future use:
+>>> =09https://android.googlesource.com/kernel/common/+/refs/heads/android1=
+2-5.10/include/linux/sched.h#1379
+>>>
+>>> And also, we want/need lots of other space reservation at times, look a=
+t
+>>> how "Others" can get access to reserved areas in structures that need t=
+o
+>>> be done in an abi-safe way:
+>>> =09https://android.googlesource.com/kernel/common/+/refs/heads/android1=
+2-5.10/include/linux/sched.h#1375
 >>
->> Until that is finalized, the external display can't be fully described,
->> and thus won't work. Even worse, the half complete graph potentially
->> confuses the OS, breaking the internal display as well.
+>> Let me correct myself, it's only possible to replace one `KAbiReserved`
+>> by one new field. You can have as many fields of type `KAbiReserved` as
+>> you want. The thing that you can't do is replace a single `KAbiReserved`
+>> field by multiple (well you can, but then you have to change the sites
+>> that use it).
+>=20
+> That's odd/foolish, why would that be the case?  Isn't that exactly what
+> a union is for?  How are you going to know ahead of time what size types
+> to save space for?
+
+That's what I interpreted from the links you provided above, there are
+multiple invocations of `ANDROID_KABI_RESERVE` and I figured they each
+can be used to insert a new field. Or can you replace each one by as
+many fields as you want, as long as the size is still fine?
+
+> All we really want to do here is "pad out this structure by X bytes" and
+> then later "take X bytes to represent this variable" at a later point in
+> time.
+>=20
+> Surely rust can do that, right?  :)
+
+Not with all the other things that you need. I feel like this discussion
+is dragging a bit on, so we will just ask the Rust folks if they have
+any suggestions and if they don't we will ask for a solution. We can
+then get back to this when that's done.
+It's not like we need this immediately.
+
+>>> All of this also needs to be possible in any structures that are
+>>> exported by rust code if vendors want to have a way to track and ensure
+>>> that abis do not change over time, just like they can today in C code.
 >>
->> Disable the external display interface across the whole Corsola family
->> until the DP / USB Type-C muxing graph binding is ready.
->>
->> Reported-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
->> Closes: https://lore.kernel.org/linux-mediatek/38a703a9-6efb-456a-a248-1dd3687e526d@gmail.com/
->> Fixes: 8855d01fb81f ("arm64: dts: mediatek: Add MT8186 Krabby platform based Tentacruel / Tentacool")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> Would be good to have Alper verify that with this change the internal display
-> works again in their specific setup, although this change seems reasonable to me
-> either way.
+>> All of those structs need to be `repr(C)`, otherwise they don't
+>> have a stable layout to begin with.
+>=20
+> Do we have any way to enforce at build time that exports from rust code
+> are in this format to ensure that this will work properly going forward?
+> I guess someone is going to have to write the first api in rust that
+> actually gets used before we worry about this...
 
-Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+I don't know if we already have a way, but we will need one if people
+start writing kabi in Rust.
 
-Fixes that linked issue I had with internal display on my magneton. And
-apparently I don't even need a custom kernel for it, I managed to get
-the display working on Debian's v6.11-rc4 build with this dts change
-(and `softdep mediatek-drm pre: mtk-iommu mt6358-regulator` iirc).
+---
+Cheers,
+Benno
 
-Thanks!
 
