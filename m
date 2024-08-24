@@ -1,208 +1,225 @@
-Return-Path: <linux-kernel+bounces-299800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8358F95DA31
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1004295DA37
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D091C21EFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318CA1C21890
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 00:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AA529A1;
-	Sat, 24 Aug 2024 00:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946472CA5;
+	Sat, 24 Aug 2024 00:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWlxwaOM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDYN8CSY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083F923A0
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 00:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AE1195;
+	Sat, 24 Aug 2024 00:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724458526; cv=none; b=RALbAOvLv4nTZ7tl90AsJ8VioWCA1qutmxazzFmPLi7bf0l6JRut6UpWVex9xFySqXLvtg6LrWhYQwcmsDgfQeDYprZgaVswXK0cxcKa8Zw0vKBpyliiN/8Ltgmy8aFlT4l/Cgs31Lguckxfa4Q2/n7X/u7okr582rW+NaJPIJU=
+	t=1724458666; cv=none; b=ZHUyFv0aVY2DgaI6mfJHdZ3kjU6beMoYnos+cr0/hynO9nFwgi9Psh50A3oZH6VQedXt70vZb8gw1JS9op8IBa22Fv4CWxW9PSLG+bA+P20jqcvspF64KZZoOYYsyuqZyT/qE9xIajkv1OdVN1k6drciAoN+hMoGJnThCwuK6hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724458526; c=relaxed/simple;
-	bh=0ysFmC192SkHIJjk2TNUy2pwoFkiA9pwOdZMjj9oUrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OZhHWgYMXWqEyX29ifuPHp7vcjCI4RExlpIBTFZgbmpL5j+45Kwdk56LRKIlxjXAV1jz9c7Jd7z/uk//xv+qEw0lGjbwcDf0hzNmPiIvDaZ3Rz21/914YEASD6uov3ld1k2Ev2hm2wBc/1fvYG5b1H3AgoSqE7F7UxWytzhFc1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWlxwaOM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129B6C32786;
-	Sat, 24 Aug 2024 00:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724458525;
-	bh=0ysFmC192SkHIJjk2TNUy2pwoFkiA9pwOdZMjj9oUrY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aWlxwaOME97BZ7btvmNBWtUyk3CEr9u8KT3Ml7LMJ6P/cA1capcVbLfqsw9erL53L
-	 SD2Vs3UJBPymNQlGA4e2tkzM3jToh3+kEO3kOzjgYp4W/xf3jo0cx6/Pj8Rf9PLkRw
-	 XEhTaL0GQR+mflI9GquNE411QyvboNeFGTPjEDgk+9qFR1X1K+k16MIrFp/Gv05Ej/
-	 t3/Q5Vtr17qMri7H9Ez7DGp+xkUGf8AtejD5pO5FZITKD/1cFLBNkGjSLzc2BhZDTd
-	 mCjqKd9LVOLO4mEO5ogj7j5uq7rPGj8lyp52rClVj7PO0RM0gnDUjrxGLv820JHYlh
-	 qhmcLxkIpF4mg==
-Date: Sat, 24 Aug 2024 02:15:10 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v8 13/13] acpi/ghes: check if the BIOS pointers for HEST
- are correct
-Message-ID: <20240824021510.71451b57@sal.lan>
-In-Reply-To: <20240819160733.464ccebf@imammedo.users.ipa.redhat.com>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<52e6058feba318d01f54da6dca427b40ea5c9435.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819160733.464ccebf@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724458666; c=relaxed/simple;
+	bh=wljoqGsA0TkAmF4SO4AeWOB8Rba0g9hk5wE0vU3p57Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmCNJvHv+rBejnpGrx5U5silzVJYVnZcgDIElXaRkfqgByjJPrwdBwKVLGz+lq9pKsVXqHXninTxBu8yQcubWt3P1yTHXBoHzsQogrV6GQULSdMY0NV77kjrMtNB1aW1fh/LfzHFQyoDi6VHAJARZH9UrOR4v8R12fsgjBLOMhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDYN8CSY; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724458665; x=1755994665;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wljoqGsA0TkAmF4SO4AeWOB8Rba0g9hk5wE0vU3p57Q=;
+  b=lDYN8CSYFnnqC5DzUh/oDXvhuvaQFI7a+B6LVSECynZz5pBnOs0+onwC
+   47Jm3WzvlFHbN9a2k/CocWOmCKjECvdWwVx9v2LYzUjlVtcaoTsNZ2Tz6
+   WW0PeI+McDSVXEwon7LDdGlllzOnAWU7j6Pnp3toWcPVohvGOe0+lVFaA
+   puTw2nbh8OlnSfvi+0Ey9dWpOMf7heNS+louMHF6HGLpeKVjta6xtGxyF
+   7oy7FhVmkUKz6jSVJmp8Z9TNcYs4vDks6JgZbKfJsNfMxOlYmvKLuQaEL
+   Sifdy5prpON35iXjqovJakkoFajizR/MExdx/A0WvW8a8DV51cwcAE5Em
+   Q==;
+X-CSE-ConnectionGUID: 9AachcCeQIa92mfMnoS7uw==
+X-CSE-MsgGUID: hJ0v65llSc2Sy/UC5DmHAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="33574154"
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="33574154"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 17:17:44 -0700
+X-CSE-ConnectionGUID: vp96dOqhTYKR2q1SNV/1bQ==
+X-CSE-MsgGUID: E8vsjnpvQe2h08pJXqsk9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,171,1719903600"; 
+   d="scan'208";a="99466060"
+Received: from yjiang5-mobl.amr.corp.intel.com (HELO localhost) ([10.124.1.48])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 17:17:42 -0700
+Date: Fri, 23 Aug 2024 17:17:42 -0700
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org,
+	lenb@kernel.org, kirill.shutemov@linux.intel.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 6/7] x86/hyperv: Reserve real mode when ACPI wakeup
+ mailbox is available
+Message-ID: <20240824001742.GA424@yjiang5-mobl.amr.corp.intel.com>
+References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
+ <20240806221237.1634126-7-yunhong.jiang@linux.intel.com>
+ <87a5ho2q6x.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5ho2q6x.ffs@tglx>
 
-Em Mon, 19 Aug 2024 16:07:33 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> > +    err_source_struct = le64_to_cpu(ags->hest_addr_le) +
-> > +                        source * HEST_GHES_V2_TABLE_SIZE;  
+On Wed, Aug 07, 2024 at 07:33:26PM +0200, Thomas Gleixner wrote:
+> On Tue, Aug 06 2024 at 15:12, Yunhong Jiang wrote:
+> > +static void __init hv_reserve_real_mode(void)
+> > +{
+> > +	phys_addr_t mem;
+> > +	size_t size = real_mode_size_needed();
+> > +
+> > +	/*
+> > +	 * We only need the memory to be <4GB since the 64-bit trampoline goes
+> > +	 * down to 32-bit mode.
+> > +	 */
+> > +	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, SZ_4G);
+> > +	if (!mem)
+> > +		panic("No sub-4G memory is available for the trampoline\n");
+> > +	set_real_mode_mem(mem);
+> > +}
 > 
-> there is no guaranties that HEST table will contain only GHESv2 sources,
-> and once such is added this place becomes broken.
+> We really don't need another copy of reserve_real_mode(). See uncompiled
+> patch below. It does not panic when the allocation fails, but why do you
+> want to panic in that case? If it's not there then the system boots with
+> a single CPU, so what.
+
+I created a separated patch on my v2 patch set with "Originally-by:" tag
+following suggestion at
+https://lore.kernel.org/lkml/20240711081317.GD4587@noisy.programming.kicks-ass.net/
+
+Please let me know if that's not the appropriate solution.
+ 
 > 
-> we need to iterate over HEST taking that into account
-> and find only ghesv2 structure with source id of interest.
+> >  void __init hv_vtl_init_platform(void)
+> >  {
+> >  	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
+> >  
+> >  	if (wakeup_mailbox_addr) {
+> >  		x86_platform.hyper.is_private_mmio = hv_is_private_mmio_tdx;
+> > +		x86_platform.realmode_reserve = hv_reserve_real_mode;
+> >  	} else {
+> >  		x86_platform.realmode_reserve = x86_init_noop;
+> >  		x86_platform.realmode_init = x86_init_noop;
+> > @@ -259,7 +276,8 @@ int __init hv_vtl_early_init(void)
+> >  		panic("XSAVE has to be disabled as it is not supported by this module.\n"
+> >  			  "Please add 'noxsave' to the kernel command line.\n");
+> >  
+> > -	real_mode_header = &hv_vtl_real_mode_header;
+> > +	if (!wakeup_mailbox_addr)
+> > +		real_mode_header = &hv_vtl_real_mode_header;
 > 
-> This function (and acpi_ghes_record_errors() as well) taking source_id
-> as input should be able to lookup pointers from HEST in guest RAM,
-> very crude idea could look something like this:
+> Why is that not suffient to be done in hv_vtl_init_platform() inside the
+> condition which clears x86_platform.realmode_reserve/init?
 > 
-> typedef struct hest_source_type2len{
->    uint16_t type
->    int len
-> } hest_structure_type2len
+> x86_platform.realmode_init() is invoked from an early initcall while
+> hv_vtl_init_platform() is called during early boot.
+
+I created a separated patch for this change on my v2 patch set, since it's a
+a separated logic change. I added a Suggested-by: tag to the patch, hope it's
+ok.
+
+Thanks
+--jyh
+
 > 
-> hest_structure_type2len supported_hest_sources[] = {
->     /* Table 18-344 Generic Hardware Error Source version 2 (GHESv2) Structure */
->     {.type = 10, .len = 92},
-> }
-
-Sounds interesting, but IMO it should be done only when other types besides
-ghes would be added, as:
-
-1. Right now, the file is acpi/ghes.c. Adding non-type 10 HEST structures
-   there would be a little weird. It should likely be renamed to acpi/hest.c
-   when such time comes.
-
-2. ACPI 6.5 has made clear that the above will only work up to type 11,
-   as, from type 12 and above, the length will be added to the error
-   struct, according with:
-
-   https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#error-source-structure-header-type-12-onward
-
-3. some types have variable size. Starting from the beginning, type 0, as
-   defined at:
-   https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#hardware-errors-and-error-sources
-
-   has:
-
-   size = 40 + 24 * Number of Hardware banks
-
-   So, a simple table like the above with fixed sizes won't work.
-
-   The code would need instead a switch if types are <= 11.
-
-   Adding proper support for all already defined 12 types sounds lots of 
-   work, as the code would need to calculate the size depending on the
-   size, and we don't really initialize the HEST table with other types
-   but GHES.
-
-Ok, we could still do something like this pseudo-code to get the
-error source offset:
-
-	#define ACPI_HEST_TYPE_GHESV2	11
-
-	err_struct_offset = 0;
-	for (i = 0; i < source_id_count; i++) {
-		/* NOTE: Other types may have different sizes */
-		assert(ghes[i].type == ACPI_HEST_TYPE_GHESV2);
-		if (ghes[i].source_id == source_id)
-			break;
-		err_struct_offset += HEST_GHES_V2_TABLE_SIZE;
-	}
-	assert (i < source_id_count);
-
----
-
-That's said, maybe this will just add unwanted complexity, as QEMU
-is already setting those offsets via bios_linker_loader_add_pointer().
-
-So, an alternative for that is to merge the code on patch 13 with the one
-on patch 5, dropping the math calcus there and relying that QEMU will
-always handle properly bios links.
-
-See, the logic which constructs GHESv2 source IDs do this to create
-the links between HEST ACPI table and etc/hardware_errors:
-
-with:
-
-Per-source ID logic at build_ghes_v2():
-
-    address_offset = table_data->len;
-    /* Error Status Address */
-    build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
-                     4 /* QWord access */, 0);
-    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-                                   address_offset + GAS_ADDR_OFFSET,
-                                   sizeof(uint64_t),
-                                   ACPI_HW_ERROR_FW_CFG_FILE,
-                                   source_id * sizeof(uint64_t));
-...
-    /*
-     * Read Ack Register
-     * ACPI 6.1: 18.3.2.8 Generic Hardware Error Source
-     * version 2 (GHESv2 - Type 10)
-     */
-    address_offset = table_data->len;
-    build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
-                     4 /* QWord access */, 0);
-    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-                                   address_offset + GAS_ADDR_OFFSET,
-                                   sizeof(uint64_t),
-                                   ACPI_HW_ERROR_FW_CFG_FILE,
-                                   (ACPI_HEST_SRC_ID_COUNT + source_id) *
-                                   sizeof(uint64_t));
-
-HEST table creation logic inside build_ghes_error_table():
-
-    for (i = 0; i < ACPI_HEST_SRC_ID_COUNT; i++) {
-        /*
-         * Tell firmware to patch error_block_address entries to point to
-         * corresponding "Generic Error Status Block"
-         */
-        bios_linker_loader_add_pointer(linker,
-            ACPI_HW_ERROR_FW_CFG_FILE, sizeof(uint64_t) * i,
-            sizeof(uint64_t), ACPI_HW_ERROR_FW_CFG_FILE,
-            error_status_block_offset + i * ACPI_GHES_MAX_RAW_DATA_LENGTH);
-    }
-
-Using those, the location of the CPER and ack addresses is easy and won't
-require any math:
-
-	/* GHESv2 CPER offset */
-	cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-                                 sizeof(error_block_addr));
-	cpu_physical_memory_read(error_block_addr, &cper_addr,
-                                 sizeof(error_block_addr));
-
-	/* GHESv2 ack offset */
-	cpu_physical_memory_read(hest_read_ack_start_addr, &read_ack_start_addr,
-			         sizeof(read_ack_start_addr));
-
-
-Regards,
-Mauro
+> Thanks,
+> 
+>         tglx
+> ---
+> --- a/arch/x86/include/asm/x86_init.h
+> +++ b/arch/x86/include/asm/x86_init.h
+> @@ -31,12 +31,18 @@ struct x86_init_mpparse {
+>   *				platform
+>   * @memory_setup:		platform specific memory setup
+>   * @dmi_setup:			platform specific DMI setup
+> + * @realmode_limit:		platform specific address limit for the realmode trampoline
+> + *				(default 1M)
+> + * @reserve_bios:		platform specific address limit for reserving the BIOS area
+> + *				(default 1M)
+>   */
+>  struct x86_init_resources {
+>  	void (*probe_roms)(void);
+>  	void (*reserve_resources)(void);
+>  	char *(*memory_setup)(void);
+>  	void (*dmi_setup)(void);
+> +	unsigned long realmode_limit;
+> +	unsigned long reserve_bios;
+>  };
+>  
+>  /**
+> --- a/arch/x86/kernel/x86_init.c
+> +++ b/arch/x86/kernel/x86_init.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/ioport.h>
+>  #include <linux/export.h>
+>  #include <linux/pci.h>
+> +#include <linux/sizes.h>
+>  
+>  #include <asm/acpi.h>
+>  #include <asm/bios_ebda.h>
+> @@ -68,6 +69,8 @@ struct x86_init_ops x86_init __initdata
+>  		.reserve_resources	= reserve_standard_io_resources,
+>  		.memory_setup		= e820__memory_setup_default,
+>  		.dmi_setup		= dmi_setup,
+> +		.realmode_limit		= SZ_1M,
+> +		.reserve_bios		= SZ_1M,
+>  	},
+>  
+>  	.mpparse = {
+> --- a/arch/x86/realmode/init.c
+> +++ b/arch/x86/realmode/init.c
+> @@ -45,7 +45,7 @@ void load_trampoline_pgtable(void)
+>  
+>  void __init reserve_real_mode(void)
+>  {
+> -	phys_addr_t mem;
+> +	phys_addr_t mem, limit = x86_init.resources.realmode_limit;
+>  	size_t size = real_mode_size_needed();
+>  
+>  	if (!size)
+> @@ -54,17 +54,15 @@ void __init reserve_real_mode(void)
+>  	WARN_ON(slab_is_available());
+>  
+>  	/* Has to be under 1M so we can execute real-mode AP code. */
+> -	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, 1<<20);
+> +	mem = memblock_phys_alloc_range(size, PAGE_SIZE, 0, limit);
+>  	if (!mem)
+> -		pr_info("No sub-1M memory is available for the trampoline\n");
+> +		pr_info("No memory below %lluM for the real-mode trampoline\n", limit >> 20);
+>  	else
+>  		set_real_mode_mem(mem);
+>  
+> -	/*
+> -	 * Unconditionally reserve the entire first 1M, see comment in
+> -	 * setup_arch().
+> -	 */
+> -	memblock_reserve(0, SZ_1M);
+> +	/* Reserve the entire first 1M, if enabled. See comment in setup_arch(). */
+> +	if (x86_init.resources.reserve_bios)
+> +		memblock_reserve(0, x86_init.resources.reserve_bios);
+>  }
+>  
+>  static void __init sme_sev_setup_real_mode(struct trampoline_header *th)
 
