@@ -1,65 +1,89 @@
-Return-Path: <linux-kernel+bounces-299812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD2295DA4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:02:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348DD95DA4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 03:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFE5285248
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:02:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557F4B20D6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 01:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFDD6FC3;
-	Sat, 24 Aug 2024 01:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E105680;
+	Sat, 24 Aug 2024 01:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ppXTsg3u"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciW51yjG"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850C2B644
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8B9A35
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 01:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724461328; cv=none; b=HRW8CJLGBn6iju447BIEgxg2xGf8wv4aonyAtK13xYlRttoDlRsVPTXyfrJlyg23YfsZZJkfaUBRevewhIUO6/VjC8+PyGGx67BZYxBQgH1SckpYQ0r25zCtjQfYpfvdq5bu/0q2utnfSNLpDwEPbXUnFjEwLcvmAluTEEuWSzc=
+	t=1724461501; cv=none; b=cJvelKdpr9ol0/iyOoAFyIYzl7bgjuHXwvb5puMEhl4Iuuj2zYqBC/S7cjqp9DWjeqKtG5OJuHvhFQ2j30PN2ZiEfEpTVqjBzi/iM6EO9v2WvKbvypJ6XIQFxyB3lk5DpqnBVzRbTpYXvgO+4jw4XxI2kfdDSf5RcoZmjlT1gak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724461328; c=relaxed/simple;
-	bh=4zpodBSrNzAnVUnjBrp32XwT62vScfoQv3qIeibPkHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YZsJ39rtsBJyDveS5gMx1FBPu3MDrqBWuFAKjXA2DJbOU6ckw22kq4k0xW0B5SqdXa7X+iO1zjTufZOhPqboVHyiaVnMVpc4M1XmcQUwyftlwjS50/0dWPG2r+VVwbzZ4UY1WJr+qhK/bsfvldEbbVfwJR/a19GapAS5dgYgaCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ppXTsg3u; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724461324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IdmQ24b94RdpMyCBQcOJAS4hG/aT8izdm4+zDJSbsVk=;
-	b=ppXTsg3uulZ98MlT47olN013yCs3uRMV1PF616oQDPMWz8q/TebfIsoJbYcc2zaB7qZRxx
-	nGY84tJYogENAU3CzE2/OlM6rDWu+b7E/AzIGegRMRuBvC0IQ5Vlj4OnOcDQMCY7kDuqVI
-	kCm+V/t6jedHrr1SOJwFTf2TxIoHbFo=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Rientjes <rientjes@google.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1724461501; c=relaxed/simple;
+	bh=N/Jfo1ktSSXGBtOWv7j57sZggT2zbeOR35V2b8egs+0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LJl4RIonNmgLUQVbQBu5VZS88xOE4qHBhgyQacvKWhH4Al/Z4lHGZgYfVpMau0z5n5aSLNKtQ67MFXXX5g4FjOXIZ69W8/A0GDyzCIkq1wEn0N8KmDOXrc/DvEr30Yo3DNAl2gkC1737x45uiK+hLFRL5jXprxFPx9IuRNlPwzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ciW51yjG; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71433096e89so2313279b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2024 18:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724461499; x=1725066299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbNUgmTNsphXqIZa0CCmomGeojpScQXjjjGa2MU00Jg=;
+        b=ciW51yjGI/7DMyuXPnX40zzPIgoXnmS5zwuUrdtxf8zV/YDneJ/HPi3x1l5IP+Y80G
+         Qr5UJECfD77uvMJj/2iccU4SpcWEZLFxbMhcRIf6Ikd52XSU6AI//39NmCQHGgntmQmw
+         rWnHUTR4Y6mbq+X3YIFLQmNwdXqYZwWZu5Wi18jnV7Jhz9Ql5yJd5mJqkrzyBN3I4Qn8
+         +Z0zvGdFv7XXaI5tZj1df5O7gVDxeCfARlbEmGy6pDXOOBCxVXYGAdnMdJK9lINuazrk
+         rKbP7ZJhgM6CD7Vgv4neIX1QbSY9g4oT9lzMXS5nREDwJ3K45duIXqKTkcM0RwP1Mp/m
+         4pRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724461499; x=1725066299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CbNUgmTNsphXqIZa0CCmomGeojpScQXjjjGa2MU00Jg=;
+        b=eoHdSyKyPeyxbaGRci51r+6+gCXdkFGlDGxuCyYR9Q5lJgFqvOnDA6o/Fqn17TA0GU
+         eWHGJ/cknFfmvgdS9sJtwCIskLULeTP+Wl41/36hLizL6SXCPxeH2qmt9TMAjbq+NMIw
+         c4YLvsaJ4WI70zDDpnEln0Uz5qQFoOHaoqeivfMII4a7sfa8BlnLsfqa7P5jLfnXaNb8
+         AEp5FfBbdmCE0bCXAp7N8KfSqf51TXnu6/ZvOR03tVa+lbhaA2VO9PfdSpVi1fJvBTno
+         /Q97tWtGqmlIN8BqVtF4Hu6T62ZEL/iqlWEf1UwXnjYadZ/pbdQ0M7PA7fvqrCbZBxNE
+         uf8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUM8b170Oc5bw/Rk4bjTYr7eXYirIpkyg7Ywgo18Jsf8lRJJvF4wZY+D/4kguPMQYO/dpBXqjO/5QBlpeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1zrCBdjKv3FjotYsAjhaxZKC11EnouGSyoAGC0BCyf5BSBKCI
+	qFcY1aTY3c/bc5fl2s4uem4roHVZykgxysl0LbCzr4Rmt/bAodH5
+X-Google-Smtp-Source: AGHT+IGwYJLyI4gzSGzBG2ITxnEBF2Cfa1lvUw4QO7iTlXPUTRZI+8eG3ODanOgUKyeEyGyKsw45lA==
+X-Received: by 2002:a05:6a00:b41:b0:70b:1d77:730a with SMTP id d2e1a72fcca58-714458c8b91mr4491863b3a.28.1724461498983;
+        Fri, 23 Aug 2024 18:04:58 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:8d8:dd4b:c921:b282])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad56c9fsm3274064a12.64.2024.08.23.18.04.53
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 23 Aug 2024 18:04:58 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	ioworker0@gmail.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
 	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	cgroups@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [RFC PATCH] memcg: add charging of already allocated slab objects
-Date: Fri, 23 Aug 2024 18:01:39 -0700
-Message-ID: <20240824010139.1293051-1-shakeel.butt@linux.dev>
+	ryan.roberts@arm.com,
+	usamaarif642@gmail.com,
+	v-songbaohua@oppo.com,
+	yuanshuai@oppo.com,
+	ziy@nvidia.com
+Subject: [PATCH v4 0/2] mm: count the number of anonymous THPs per size
+Date: Sat, 24 Aug 2024 13:04:39 +1200
+Message-Id: <20240824010441.21308-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,122 +91,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-At the moment, the slab objects are charged to the memcg at the
-allocation time. However there are cases where slab objects are
-allocated at the time where the right target memcg to charge it to is
-not known. One such case is the network sockets for the incoming
-connection which are allocated in the softirq context.
+From: Barry Song <v-songbaohua@oppo.com>
 
-Couple hundred thousand connections are very normal on large loaded
-server and almost all of those sockets underlying those connections get
-allocated in the softirq context and thus not charged to any memcg.
-However later at the accept() time we know the right target memcg to
-charge. Let's add new API to charge already allocated objects, so we can
-have better accounting of the memory usage.
+Knowing the number of transparent anon THPs in the system is crucial
+for performance analysis. It helps in understanding the ratio and
+distribution of THPs versus small folios throughout the system.
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
+Additionally, partial unmapping by userspace can lead to significant waste
+of THPs over time and increase memory reclamation pressure. We need this
+information for comprehensive system tuning.
 
-This is RFC to get early comments and I still have to measure the
-performance impact of this charging. Particularly I am planning to test
-neper's tcp_crr with this patch.
+-v4:
+ * collect David's acked-by, thanks!
+ * refine subjects, changelogs and docs according to David's comment,
+   thanks very much!
 
- include/linux/slab.h            |  1 +
- mm/slub.c                       | 39 +++++++++++++++++++++++++++++++++
- net/ipv4/inet_connection_sock.c |  1 +
- 3 files changed, 41 insertions(+)
+-v3:
+ https://lore.kernel.org/linux-mm/20240822224015.93186-1-21cnbao@gmail.com/
+ * collect David's acked-by, thanks!
+ * rename nr_split_deferred to meaningful name - nr_anon_partially_mapped,
+   per David. Ryan, I assume you will like it after you come back :-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 512e7c844b7f..a8b09b0ca066 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -547,6 +547,7 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
- 			    gfp_t gfpflags) __assume_slab_alignment __malloc;
- #define kmem_cache_alloc_lru(...)	alloc_hooks(kmem_cache_alloc_lru_noprof(__VA_ARGS__))
- 
-+bool kmem_cache_post_charge(void *objp, gfp_t gfpflags);
- void kmem_cache_free(struct kmem_cache *s, void *objp);
- 
- kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
-diff --git a/mm/slub.c b/mm/slub.c
-index b6b947596e26..574122ad89b8 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2189,6 +2189,16 @@ void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
- 
- 	__memcg_slab_free_hook(s, slab, p, objects, obj_exts);
- }
-+
-+static __fastpath_inline
-+bool memcg_slab_post_charge(struct kmem_cache *s, void *p, gfp_t flags)
-+{
-+	if (likely(!memcg_kmem_online()))
-+		return true;
-+
-+	return __memcg_slab_post_alloc_hook(s, NULL, flags, 1, &p);
-+}
-+
- #else /* CONFIG_MEMCG */
- static inline bool memcg_slab_post_alloc_hook(struct kmem_cache *s,
- 					      struct list_lru *lru,
-@@ -2202,6 +2212,13 @@ static inline void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
- 					void **p, int objects)
- {
- }
-+
-+static inline bool memcg_slab_post_charge(struct kmem_cache *s,
-+					  void *p,
-+					  gfp_t flags)
-+{
-+	return true;
-+}
- #endif /* CONFIG_MEMCG */
- 
- #ifdef CONFIG_SLUB_RCU_DEBUG
-@@ -4110,6 +4127,28 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
- }
- EXPORT_SYMBOL(kmem_cache_alloc_lru_noprof);
- 
-+bool kmem_cache_post_charge(void *objp, gfp_t gfpflags)
-+{
-+	struct folio *folio;
-+	struct slab *slab;
-+	struct kmem_cache *s;
-+
-+	folio = virt_to_folio(objp);
-+	if (unlikely(!folio_test_slab(folio)))
-+		return false;
-+
-+	slab = folio_slab(folio);
-+	s = slab->slab_cache;
-+
-+	/* Ignore KMALLOC_NORMAL cache */
-+	if (s->flags & SLAB_KMALLOC &&
-+	    !(s->flags & (SLAB_CACHE_DMA|SLAB_ACCOUNT|SLAB_RECLAIM_ACCOUNT)))
-+		return true;
-+
-+	return memcg_slab_post_charge(s, objp, gfpflags);
-+}
-+EXPORT_SYMBOL(kmem_cache_post_charge);
-+
- /**
-  * kmem_cache_alloc_node - Allocate an object on the specified node
-  * @s: The cache to allocate from.
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-index 64d07b842e73..f707bb76e24d 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -733,6 +733,7 @@ struct sock *inet_csk_accept(struct sock *sk, struct proto_accept_arg *arg)
- 		if (amt)
- 			mem_cgroup_charge_skmem(newsk->sk_memcg, amt,
- 						GFP_KERNEL | __GFP_NOFAIL);
-+		kmem_cache_post_charge(newsk, GFP_KERNEL | __GFP_NOFAIL);
- 
- 		release_sock(newsk);
- 	}
+-v2:
+ https://lore.kernel.org/linux-mm/20240811224940.39876-1-21cnbao@gmail.com/
+ * don't rely on rmap to implement - 1, uses folio_free, split etc.
+   Thanks for David's comment;
+ * rename sys counters and refine doc. Thanks for Ryan's comment;
+
+-v1:
+ https://lore.kernel.org/all/20240808010457.228753-1-21cnbao@gmail.com/
+
+Barry Song (2):
+  mm: count the number of anonymous THPs per size
+  mm: count the number of partially mapped anonymous THPs per size
+
+ Documentation/admin-guide/mm/transhuge.rst | 12 ++++++++++++
+ include/linux/huge_mm.h                    | 16 ++++++++++++++--
+ mm/huge_memory.c                           | 19 ++++++++++++++++---
+ mm/migrate.c                               |  4 ++++
+ mm/page_alloc.c                            |  5 ++++-
+ mm/rmap.c                                  |  1 +
+ 6 files changed, 51 insertions(+), 6 deletions(-)
+
 -- 
-2.43.5
+2.39.3 (Apple Git-146)
 
 
