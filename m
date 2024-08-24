@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-300179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB2195DFE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:51:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6BE95DFE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0FB1F21B07
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:51:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29066B210E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAC980C04;
-	Sat, 24 Aug 2024 19:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0507DA9E;
+	Sat, 24 Aug 2024 19:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YuHlPrUD"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jKmowXyT"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E13F7DA6A;
-	Sat, 24 Aug 2024 19:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12C656742;
+	Sat, 24 Aug 2024 19:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724529100; cv=none; b=f2XTZOncaYQq9QtEgcQRgdnNFDBHC+ORrMkRDN7Vey3Wj5JW/H1cIApDPUXQmxDiZ9X2bMxRpNJ3lGz40I2BtYuSxC75qqFUe7Z6iMhgj/GL5acvzvImj/uwuzgtHFpzUK7Nl9lAGiYDl9qRL75gFxUTpcGW1BCw180q3Mwtegc=
+	t=1724529144; cv=none; b=VTEGNGoHEMnJbXNcv07A1bjN3T/6v6Ow0cmL1Fulw3PmZLpEzt8upx5JwXivl7sfZzEU8I75GAZnez6nFiyywVUFG0y0wa+oxsHAZz5+iWU6zNJ8wAnWa8cUAcUW3jpRqyrNJE5Y3WQYRDcq4irb2Qe50JFdfVmnNlb3YHVKRcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724529100; c=relaxed/simple;
-	bh=m+Ot5vptpQn5L00EhLbJ2uUhHSBIwzy47mzLKD40+V4=;
+	s=arc-20240116; t=1724529144; c=relaxed/simple;
+	bh=II6+M+1Z6xVwso7xyUzlyy26IMOzNBCDlaJj8IrQdP8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L/8oNv9Y7+UJmkylDJVvjyrj8Fjqe9kQmhlkSgxyR/hffmIymq/T/L9ERsD0MChXQp1ST1R9DTciUowGB10iTXm/MTSAENL42jlHgXstvI3PdZCh83StPT21SvuxOmMHOuDnF80UdhwSwhgdh5trmXNgGo/7jRbD1f8zbcpv214=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YuHlPrUD; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=HoAUrge4/aYbmlIIwxYoL4Hqj6cunB9qZzdaWzHD/FVkRAVVUCn9pBbOawK+WZS1w8EOQ/UH5zaDVp8N260UFrPucxioE3Qife2GCUU4vkcte4qRvr+5GMHSpzySMblH2DK7jVWd7gJ3sZLHkU/HwV8RQKf9x2aVFAO4dj0ZSa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jKmowXyT; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OJpWRN123741;
-	Sat, 24 Aug 2024 14:51:32 -0500
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47OJqDXD089040;
+	Sat, 24 Aug 2024 14:52:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724529092;
-	bh=1EiJhjJc157YYbfuh4R/Yh5wirvBQkUywNvyGqYkqCw=;
+	s=ti-com-17Q1; t=1724529133;
+	bh=5AsaQQ9/E20/m8K0pGac7XbkUvwnHnpw6m9g4vxTsrc=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YuHlPrUDZuuEJycLLYk/PCqY+UnJX8FZbRLunJQr8/RRKbyoD6KXMcxMvH7Ose0I+
-	 cA6KTe9YhrP1oA/cgnFk+H8DZSemBZoefB5V+lLYapJwGTBufD6rqk+HccaQCbLZ1n
-	 A7NiaaDWetkfRVJ9R4ekxWupou3OpPUXcltTkAkw=
+	b=jKmowXyT4237osiuE7dVhWV83+PnGsezCVMibYotfwXaIGdJ8AiDOUbyaGniPZgSg
+	 3flE6Zn4LsoTwUpxTKH/h3MdjoMqdc8aAZ+K+7fxEelnfCqQYACGrNW5vYhKQ1Ad1r
+	 TzXldFoISd36qE/0Wu2TQZPH6QnOz4/LWJessGeU=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OJpWAG023819
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47OJqDxb024084
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 24 Aug 2024 14:51:32 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
+	Sat, 24 Aug 2024 14:52:13 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 24
- Aug 2024 14:51:32 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 14:52:13 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 24 Aug 2024 14:51:32 -0500
+ Frontend Transport; Sat, 24 Aug 2024 14:52:13 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OJpWAg006224;
-	Sat, 24 Aug 2024 14:51:32 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47OJqDU0006728;
+	Sat, 24 Aug 2024 14:52:13 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Jared McArthur
-	<j-mcarthur@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+To: <linux-arm-kernel@lists.infradead.org>,
+        "A. Zini"
+	<alessandro.zini@siemens.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
         Tero
- Kristo <kristo@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH 0/2] arm64: dts: ti: k3-am62p/j722s: Add gpio-reserved-ranges for main_gpio1
-Date: Sat, 24 Aug 2024 14:51:29 -0500
-Message-ID: <172452907138.505399.8126802532403947878.b4-ty@ti.com>
+ Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62: enable cpu freq throttling on thermal alert
+Date: Sat, 24 Aug 2024 14:52:11 -0500
+Message-ID: <172452909600.505477.9105244268555185595.b4-ty@ti.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240809162828.1945821-1-j-mcarthur@ti.com>
-References: <20240809162828.1945821-1-j-mcarthur@ti.com>
+In-Reply-To: <20240814214328.14155-1-alessandro.zini@siemens.com>
+References: <20240814214328.14155-1-alessandro.zini@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +83,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Jared McArthur,
+Hi A. Zini,
 
-On Fri, 09 Aug 2024 11:28:26 -0500, Jared McArthur wrote:
-> The current main_gpio1 gpio controllers for the am62p and
-> j722s have holes that are not obvious to a user. Add the
-> gpio-reserved-ranges property to the davinci-gpio properties list and
-> add gpio-reserved-ranges to the am62p and j722s device trees. Prevents
-> users from trying to access gpios that don't exist.
+On Wed, 14 Aug 2024 23:43:28 +0200, A. Zini wrote:
+> Enable throttling down the cpu frequency when an alert temperature
+> threshold (lower than the critical threshold) is reached.
 > 
-> The holes are taken from the am62p datasheet [1] (Table 5-24) and
-> am67x datasheet [2] (Table 5-27).
 > 
-> [...]
 
-I have applied the following to branch ti-k3-dts-next on [1].
+I have applied the following to branch ti-k3-dts-next on [1] with minor
+capitilization fixups.
 Thank you!
 
-[1/2] arm64: dts: ti: k3-am62p: Add gpio-reserved-ranges for main_gpio1
-      commit: 235b5b08ea3cb2743309d7d27b85d34387ee4b54
-[2/2] arm64: dts: ti: k3-j722s: Add gpio-reserved-ranges for main_gpio1
-      commit: 67d820656fd87581e9ea8b27e42fbcdd0202b3b5
+[1/1] arm64: dts: ti: k3-am62: enable cpu freq throttling on thermal alert
+      commit: 10e7bfd8114c207acd3858086f07061e447dd04f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
