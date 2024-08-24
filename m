@@ -1,187 +1,204 @@
-Return-Path: <linux-kernel+bounces-300121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540E695DF01
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:34:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16DA95DF04
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4731C20D9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697AA282F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A7A188905;
-	Sat, 24 Aug 2024 16:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4AF17BECA;
+	Sat, 24 Aug 2024 16:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntWpqYEf"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EQ2bRgcU"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DDE1865FF;
-	Sat, 24 Aug 2024 16:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1141417BEA4
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 16:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724517215; cv=none; b=ZTp/+s5LQsQrdYmei5yjoq69W3qRa3FitxaqTrG52DJlYZ/LXie57xPYGThnr/yi/UM7rL2eEpu6EquKXs8F3nSrogk49RRyIm+KISRhGobg0aKJb4eojc46y8VsuM6nsra1Ayfq3jNcJ9+WWNtU1o/bZZUvzFXQH+eoi/hmnfk=
+	t=1724517261; cv=none; b=M/BVCKG+W6v5NuC76/XGqv4D1cmJ61VLoIHGLknTZK1aHRhLRlnJN43S6KMDCxVAvimMn3SPuL4rtdYWPrMGOIy0QQdih8SSOaZTGO7AMR87s3ywPXzPErjZSlbeAXqcDs5lAERjcUKkA+FlnDK8gbewaTUyZIwK1C2tI1xUVOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724517215; c=relaxed/simple;
-	bh=gcLi01rczSi1pkKRDBQ6xxxxrZMo7LjOc717hx9S8po=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kaTwMUlmuU+mVBiv7PxCd9WVMEBbhXFSxnEj/luOZ0nxa0Wfo/SLM5C5/3SSk3VSmmNDk4oKxl/A/52+EZOFkcubO9qZYEIM1NfIPQ6IbOonwdIh/kgP1/WYVKYg+obDagAbJI710qi7iE+mfPDFrPkeN1NngxZsbcvBzZPDx/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntWpqYEf; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d427fb7c92so2182801a91.1;
-        Sat, 24 Aug 2024 09:33:33 -0700 (PDT)
+	s=arc-20240116; t=1724517261; c=relaxed/simple;
+	bh=VcVQOc1gJJE9inqoroUckPQ6d4aDsf9mjtCNHnj3dxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLkXDya/I/8Q5EFD8mSZ1/CLZU4cB2/K/YNH7C988UFqhkUEuUANnIJD35KGniVS9lnZPxCLfaHV5opt0TWeB11sOv8pAFUB1hxzV8ekMGGZNvwrVj8Nsp9gY4kl5dGKcR/WLkfcPw9yqepbsn66bCM9s19C4nAmvhzD1DWUSkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EQ2bRgcU; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2d3bc043e81so2423414a91.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 09:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724517213; x=1725122013; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vEYfaiWN5qgCnRZpAGUw8130UenZvpr/yXa584v7XJA=;
-        b=ntWpqYEfH/QCikOET5sK15c+VuOde29wE4XOxHb2qXk1wYxdPSHT70ow/tQAGqcdzK
-         JWdrV61TPq9TbrysDKzm0IEyrm05Zv41JbNPvUlCG5BUjOLj0klPmgYsZebpXRMLDzI7
-         svS2g+TyuZQDtxDLwWV5QqkDk1FcLxbKdL3I1LMfRuXGjwgjGPHCt+CTXGOxHPn/x4Uy
-         rCprL+Y+kQbWHd5My/v/Mn/DklapTUf1CwIV5ZfYJ3wgrOWI7KUkPqZlUeCtnwpIDXV9
-         djzvxvTU0DOauATKL6rSLBQx0Wzue3cgeWjrJNnEXnYm3TWjKkQm1yiUOyLmEWT4ZeeS
-         YWbw==
+        d=linaro.org; s=google; t=1724517259; x=1725122059; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XUKd8TW71RsWpnd0GbWn6h2v6e8v27iVaD09f+k/+78=;
+        b=EQ2bRgcUQzN+s0iNO0NXCtL2LaSoQITFW1wnKXnTRSJU3zqv5HOFCo5SahXRAbrPjp
+         Im4rla9DUqWFnKl4qi70PKnnPc8prwn3tshR1GrUmb2nU+Y0WtUkoDgqrlinSfh2O3JY
+         KjtspVQxkDYTpZqCrFWfNwESbwmpCrmOl2GgobmyqaAAINXexR+f9q0R979gIBTrO7M0
+         zNvvYfwREnbFDpjhbNuGtIEz6j0FJm/3tRR4RtHY3op5F2P+x+jf4aWBF3SbheVeC4+h
+         P7uzdqiUgjgmszDdyZI21VjxW+Sr6R8j4I859HoQzhFvBvb9+R5F23Aud0BMZyzDeCN+
+         xvCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724517213; x=1725122013;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vEYfaiWN5qgCnRZpAGUw8130UenZvpr/yXa584v7XJA=;
-        b=YCrgPAYv5z26+V7CIgo1zZYipgCbTZL2y9sBF3YyY6bP6EZnSXCYNNIOIVt7F123JX
-         pO2Hm6jJm9fkaDR2IcaxAysAah+2bgvkDzi480hGvsrbgvL/pMrCIaXf/t5XFfd6H9li
-         EWNT9RSzD8NH5si8wIhXvFdOmWM228J5gtLyD4+PM/QGoc8Vkk4acoGtI6EMp4idnfQ0
-         BTIthDb05p8kZpd2LYut5b1xvfA87z2AUWXyBv+7TQprx+HqYl/vu1N0qblmO6vunnhq
-         6XMlKB+x9Nf/iysZDkE7j5JxCwX0ZVtoyNPEDyZjSXMlc7DHCIhkNKf3epgoM5NyCqOI
-         DHuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZsOA3w2BEDPeTccOwL0J0Jxgvizf2eW7OGCiGSBIL/e7pmLHq/ObdxXKLBSs7aZwKxO/WzJmL1hBr7SiqkXP0ng==@vger.kernel.org, AJvYcCV7sjsVfBXWn7N2WPewjQGGH80WABBMaDbVxyENtiLpjTfAUXQUNXFsrn6bOUc3vTaX7U+RP7Je/9B1bok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Pe3NvDrdHQxulQRy6k57hNFLa1HmsbeyWdiVnip7wL/rKBcD
-	UmnEmbAZT6ln+EOsK3xezd+NppULVBZ3oG0CoEu6CE9EgyDzgF57
-X-Google-Smtp-Source: AGHT+IH9SmN+mw3f0MoP2XjW8DrH+FyJXhlhjjKJkEVNz2e6/WEj35Le79bQCWCPaPpxUV5PXhdSSA==
-X-Received: by 2002:a17:90a:c713:b0:2c8:ea7b:8891 with SMTP id 98e67ed59e1d1-2d646d26884mr5566573a91.29.1724517212985;
-        Sat, 24 Aug 2024 09:33:32 -0700 (PDT)
-Received: from localhost.localdomain (104-58-203-241.lightspeed.sntcca.sbcglobal.net. [104.58.203.241])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613941ee7sm6376216a91.24.2024.08.24.09.33.32
+        d=1e100.net; s=20230601; t=1724517259; x=1725122059;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUKd8TW71RsWpnd0GbWn6h2v6e8v27iVaD09f+k/+78=;
+        b=Y6o7PXOjkn8lk0CdBTweygjnE5t+I1fkbeLXcwbhmeIzGE6b9sFkKKwUvaMC3a1suz
+         HdwICOnKYPESXRDy2Lo3E08fQUUsi4Nn17lvbIoL5sFRSYXPtvbukQrag67xPClPLGkM
+         S9rDDfRi8ZQbX/xxRpgLM/YEY/b3G3EbR2m/BiMhHxTu/hBqpQt4IZcJaYDfFtc1c3Ft
+         oxPZsL1KfPjCoATR3Usc6/4SyvJepWWSNiDdW6lUdkxQvyqL96fFnIWKlr70K0kVF7Wg
+         CQnJWUbBA2eRgKXI88ImdgcNTC5tqbXmVsjXPGjfktODPlWaviMHhiyJEyM4YsBE3Ys6
+         VyTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZWUPrKJT6RLsMS4NueQVR3CEg7/YUIKc0EWUQedNihTC4VGiPLyNeOx/mtmQmx1t1BY2A8uobAsAoCX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/HBpZB0cEiAe8fxnTUztuhzMhEnuLfYSNnY80304+Op659xcC
+	6o8rE/Ts+isrfRKMSxevDwth0V4dlCtscttzzC22VUg8ZPmYk3edp8/GdChxrg==
+X-Google-Smtp-Source: AGHT+IHJSoWVuCArmfalBXWeHEhioLVFHCv4Tn6JcUEk+XfUQRJGTJvfmdGFUDGcBr8uZO6FwgOSdQ==
+X-Received: by 2002:a17:90a:c694:b0:2d3:b60c:45e7 with SMTP id 98e67ed59e1d1-2d646d1db91mr6172384a91.32.1724517259333;
+        Sat, 24 Aug 2024 09:34:19 -0700 (PDT)
+Received: from thinkpad ([220.158.156.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb9049b0sm8660325a91.17.2024.08.24.09.34.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 09:33:32 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
+        Sat, 24 Aug 2024 09:34:18 -0700 (PDT)
+Date: Sat, 24 Aug 2024 22:04:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/8] perf trace: Add general tests for augmented syscalls
-Date: Sun, 25 Aug 2024 00:33:22 +0800
-Message-ID: <20240824163322.60796-9-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240824163322.60796-1-howardchu95@gmail.com>
-References: <20240824163322.60796-1-howardchu95@gmail.com>
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240824163414.osqnxii2imbo62he@thinkpad>
+References: <20240824021946.s5jbzvysjxl5dcvt@thinkpad>
+ <20240824161234.GA411277@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240824161234.GA411277@bhelgaas>
 
-In this test, augmentation for:
+On Sat, Aug 24, 2024 at 11:12:34AM -0500, Bjorn Helgaas wrote:
+> On Sat, Aug 24, 2024 at 07:49:46AM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Aug 23, 2024 at 05:04:36PM -0500, Bjorn Helgaas wrote:
+> > > On Fri, Aug 23, 2024 at 10:11:33AM +0530, Manivannan Sadhasivam wrote:
+> > > > On Thu, Aug 22, 2024 at 12:31:33PM -0500, Bjorn Helgaas wrote:
+> > > > > On Thu, Aug 22, 2024 at 09:10:25PM +0530, Manivannan Sadhasivam wrote:
+> > > > > > On Thu, Aug 22, 2024 at 10:16:58AM -0500, Bjorn Helgaas wrote:
+> > > > > > > On Thu, Aug 22, 2024 at 12:18:23PM +0530, Manivannan Sadhasivam wrote:
+> > > > > > > > On Wed, Aug 21, 2024 at 05:56:18PM -0500, Bjorn Helgaas wrote:
+> > > > > > > > ...
+> > > > > > > 
+> > > > > > > > > Although I do have the question of what happens if the RC deasserts
+> > > > > > > > > PERST# before qcom-ep is loaded.  We probably don't execute
+> > > > > > > > > qcom_pcie_perst_deassert() in that case, so how does the init happen?
+> > > > > > > > 
+> > > > > > > > PERST# is a level trigger signal. So even if the host has asserted
+> > > > > > > > it before EP booted, the level will stay low and ep will detect it
+> > > > > > > > while booting.
+> > > > > > > 
+> > > > > > > The PERST# signal itself is definitely level oriented.
+> > > > > > > 
+> > > > > > > I'm still skeptical about the *interrupt* from the PCIe controller
+> > > > > > > being level-triggered, as I mentioned here:
+> > > > > > > https://lore.kernel.org/r/20240815224735.GA57931@bhelgaas
+> > > > > > 
+> > > > > > Sorry, that comment got buried into my inbox. So didn't get a chance
+> > > > > > to respond.
+> > > > > > 
+> > > > > > > tegra194 is also dwc-based and has a similar PERST# interrupt but
+> > > > > > > it's edge-triggered (tegra_pcie_ep_pex_rst_irq()), which I think
+> > > > > > > is a cleaner implementation.  Then you don't have to remember the
+> > > > > > > current state, switch between high and low trigger, worry about
+> > > > > > > races and missing a pulse, etc.
+> > > > > > 
+> > > > > > I did try to mimic what tegra194 did when I wrote the qcom-ep
+> > > > > > driver, but it didn't work. If we use the level triggered interrupt
+> > > > > > as edge, the interrupt will be missed if we do not listen at the
+> > > > > > right time (when PERST# goes from high to low and vice versa).
+> > > > > > 
+> > > > > > I don't know how tegra194 interrupt controller is wired up, but IIUC
+> > > > > > they will need to boot the endpoint first and then host to catch the
+> > > > > > PERST# interrupt.  Otherwise, the endpoint will never see the
+> > > > > > interrupt until host toggles it again.
+> > > > > 
+> > > > > Having to control the boot ordering of endpoint and host is definitely
+> > > > > problematic.
+> > > > > 
+> > > > > What is the nature of the crash when we try to enable the PHY when
+> > > > > Refclk is not available?  The endpoint has no control over when the
+> > > > > host asserts/deasserts PERST#.  If PERST# happens to be asserted while
+> > > > > the endpoint is enabling the PHY, and this causes some kind of crash
+> > > > > that the endpoint driver can't easily recover from, that's a serious
+> > > > > robustness problem.
+> > > > 
+> > > > The whole endpoint SoC crashes if the refclk is not available during
+> > > > phy_power_on() as the PHY driver tries to access some register on Dmitry's
+> > > > platform (I did not see this crash on SM8450 SoC though).
+> 
+> I don't think the nature of this crash has been explained, so I don't
+> know whether it's a recoverable situation or not.
+> 
 
-* string
-* buffer
-* struct
+I will add this info in the commit message.
 
-Is tested.
+> > > > If we keep the enable_resources() during probe() then the race
+> > > > condition you observed above could apply. So removing that from
+> > > > probe() will also make the race condition go away,
+> > > 
+> > > Example:
+> > > 
+> > >   1) host deasserts PERST#
+> > >   2) qcom-ep handles PERST# IRQ
+> > >   3) qcom_pcie_ep_perst_irq_thread() calls qcom_pcie_perst_deassert()
+> > >   4) host asserts PERST#, Refclk no longer valid
+> > >   5) qcom_pcie_perst_deassert() calls qcom_pcie_enable_resources()
+> > >   6) qcom_pcie_enable_resources() enables PHY
+> > > 
+> > > I don't see what prevents the PERST# assertion at 4.  It sounds like
+> > > the endpoint SoC crashes at 6.
+> > 
+> > IDK why host would quickly assert the PERST# after deasserting
+> > during probe() unless someone intentionally does that from host
+> > side.
+> 
+> I think the host is allowed to assert PERST# at any arbitrary time, so
+> an endpoint should be able to handle it no matter when it happens.
+> 
+> > If that happens then there is a possibility of the endpoint SoC
+> > crash, but I'm not sure how we can avoid that.
+> > 
+> > But what this patch fixes is a crash occuring in a sane scenario:
+> > 
+> > 1) Endpoint boots first (no refclk from host)
+> > 2) Probe() calls qcom_pcie_enable_resources() --> Crash
+> 
+> I agree with this, although I think it's more of a band-aid than a
+> complete solution.  I don't have access to any SoC or PCIe controller
+> docs, so maybe this is a hardware design problem and this is the best
+> we can do.
+> 
 
-Please use this command:
+I agree. But AFAIK there is no way endpoint can avoid this crash unless it
+generates its own clock. I did some investigation on the SRIS support and able
+to get it work in my local branch.
 
-perf test "perf trace general tests"
+I will try to upstream that feature for the currerntly supported Qcom SoCs in
+endpoint mode. But Qcom told me that non-SRIS mode is also required by some
+customers, so unfortunately we cannot make it as the default operating mode.
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Suggested-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/trace_btf_general.sh | 67 +++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+- Mani
 
-diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
-new file mode 100755
-index 000000000000..0b4ea8462390
---- /dev/null
-+++ b/tools/perf/tests/shell/trace_btf_general.sh
-@@ -0,0 +1,67 @@
-+#!/bin/sh
-+# perf trace general tests
-+# SPDX-License-Identifier: GPL-2.0
-+
-+err=0
-+set -e
-+
-+. "$(dirname $0)"/lib/probe.sh
-+skip_if_no_perf_trace || exit 2
-+
-+file1=$(mktemp /tmp/file1_XXXXX)
-+file2=$(echo $file1 | sed 's/file1/file2/g')
-+
-+buffer="this is a buffer for testing"
-+
-+trap cleanup EXIT TERM INT HUP
-+
-+trace_test_string() {
-+  echo "Testing perf trace's string augmentation"
-+  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E "renameat[2]*.*oldname: \"${file1}\".*newname: \"${file2}\".*"
-+  then
-+    echo "String augmentation test failed"
-+    err=1
-+  fi
-+}
-+
-+trace_test_buffer() {
-+  echo "Testing perf trace's buffer augmentation"
-+  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E ".*write.*buf: ${buffer}.*"
-+  then
-+    echo "Buffer augmentation test failed"
-+    err=1
-+  fi
-+}
-+
-+trace_test_struct_btf() {
-+  echo "Testing perf trace's struct augmentation"
-+  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E ".*clock_nanosleep\(rqtp: \{1,\}, rmtp: \{1,\}\).* = 0"
-+  then
-+    echo "BTF struct augmentation test failed"
-+    err=1
-+  fi
-+}
-+
-+cleanup() {
-+	rm -rf ${file1} ${file2}
-+}
-+
-+trap_cleanup() {
-+	echo "Unexpected signal in ${FUNCNAME[1]}"
-+	cleanup
-+	exit 1
-+}
-+
-+trace_test_string
-+
-+if [ $err = 0 ]; then
-+  trace_test_buffer
-+fi
-+
-+if [ $err = 0 ]; then
-+  trace_test_struct_btf
-+fi
-+
-+cleanup
-+
-+exit $err
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
