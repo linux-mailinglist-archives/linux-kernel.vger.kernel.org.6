@@ -1,228 +1,113 @@
-Return-Path: <linux-kernel+bounces-300130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AFD95DF23
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D9A95DF26
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739D71F21958
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E481A1F21CD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 17:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F444C6F;
-	Sat, 24 Aug 2024 17:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1293047A66;
+	Sat, 24 Aug 2024 17:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/8Ua3Kt"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZbgGzLCU"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B30880B;
-	Sat, 24 Aug 2024 17:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B49364BA
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724518938; cv=none; b=OqxqT6lVNzTBj/hMNuQLQNBImNkesqZM/Fz3clRjeLgeWGGg2UlBmApNbzYbkyPJzSa3uOlI7fInysEf3o70u8g/UKJrrTfdjlCHoS5D6BvsD3bDJLwtnZhCx4WqufwzCRnbbvlgU+HT2glqxq1UpuY5dupI7J1WnlqRAl0hDEA=
+	t=1724519130; cv=none; b=Lr/VfNeSlSC/kXcqxcAyMZ8ow+wJhehXv7s1l53Fqzyfg4YKsTgC1ZlavncaqaY8SZDAJ2iHp088nTeUY8jHTv0D5rWsBuhQr1znAG6NKi/NFBsyGbg7TVot+tEapxAjtZ4pI1+cQZmQTY5tc3k0ig5ryCMYEuNo2UeffPRh6cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724518938; c=relaxed/simple;
-	bh=O6YtsrmcV9LjmB/0jvkq9TIOrLUCeCkBeZk7gfPmi1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIDEr05AhOVRDYAOao9sFJm5+V0tx0KOaSoVzA9a2g9oCCvER7DYIODCZhAEfSg1jUWy+sAJaC6+I4K3t3Ggaq7Sqo4TsVnx9VSKC8POAMeNjZ1ZcSvl/m0JfVTrW6MH2Rr+toNamK39YvqnrbJi6LkqjAeraPxdu83VnyOveYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/8Ua3Kt; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71423273c62so2227121b3a.0;
-        Sat, 24 Aug 2024 10:02:17 -0700 (PDT)
+	s=arc-20240116; t=1724519130; c=relaxed/simple;
+	bh=YZb3KQcDwKbRfBpA1jL8YOTnhsu2wLksJptIPtsdgs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cQbd1dTegle2kA66coIpOErmeo4qN87F04+rFRLrNfwGmuLDXbi7wmmh6wJ1IAVBIGkpw/NOAkTm+gNFKwjgt5CTUKZ6A9p8jTs7xwI3Sy06cRULQRbXVBVNc8XMjf8fFmi5jEJ3U82hxpry9rUCX5xknyu2aquutan48vsHiCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZbgGzLCU; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bf0261f162so3703829a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 10:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724518937; x=1725123737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fKGkZIK8/SQfJAkw54UvP8vTb+4IEIpgWYhwn5J9iD0=;
-        b=j/8Ua3Ktv5o3bw7xQ1mGj/EDj7qssmEiOsYwwtnjO9wAOVAhZqBYWttQRLe6sxHRaO
-         UMOV+Mzec6DxaWL8rrIbV9RIvS6Akx1ZTLz/LzH343nL0eYhGvFyz8492jWB5UjdrPnT
-         KB/jZm9V9atrLle0cvU2Fd8MbXg8j9CPHiWXYl26tz0sJml4+jA8j1XcKqXqySvjdIMl
-         BEtl0Xz+vaTk52+aFkytPbU2TGeV+Hxsj+wxrZc7YWyuJUzOYb5msCNWXL71yZH00LP7
-         zfrHdrjbHMHbqGRCoDqi85zmpdsVX0nAo5oPMOx9gUg/mR+3iOeTiLE7ny39ywxx62Bx
-         0vyw==
+        d=linaro.org; s=google; t=1724519127; x=1725123927; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1wqIXwilhWQe12ivt8ypdTnldhiR6eZgAaKOzl3oFk=;
+        b=ZbgGzLCU8NeN1kyPzEfZytA/xl6HaCYC6XtXQdS89SSfavtANmLmWN9q/H8Q1s+xyj
+         ZNOTBZZknjRbAjkX3XROvIuzLxxUaXaCZ1tpBQldyjM4vA1Dm1+k2xvwkiiG3h1V9VTQ
+         8puTMyY1YDu7Lpw5HE7PZHdLesG55ApEmHWTCb8HSAfEOtv0MpQ3Q5TMgJ0+KA0lAXrL
+         k2FfYM+S1pa5cVeZyZZ4T9YKLXpLE49thy/d9eMQdDts7KGJE2h/g2rna75gVzut8v5M
+         7ylGX4TUhp7xt9BP4by0Zn7hfo4e2gontjVu143Ex/JR/XgReUBT4tdVVsrPITnZr0ek
+         dS8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724518937; x=1725123737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fKGkZIK8/SQfJAkw54UvP8vTb+4IEIpgWYhwn5J9iD0=;
-        b=rgPqoomQ5Tyfpk6MZI/QQ9eCGXO91G8yJo5d6+V7OQW+Jqe2GNayk80Z7WKvoj89Eu
-         RjeVSUDg8lL4xf0zkwujrzF8RMg+K328+pu44oJQnBaoABmbRvEF67zOkJYdNmT/5D2k
-         irYkPXvLHCgJwsjgkdLoPRoqKANt6xSXafai5afdJFatHwbikltiV3NayoUd92haO7Q0
-         4bPJNVvoO1ex+04F1eMTFacN/FLl2d4Jx6+CjVsfW6TC4hc4AgC0CVAyXPq9f0fWPe/D
-         uPJoh+fC3N9AtS6JbD1F0yNpgYtrqfel2WzzuO+Vi1h6rJ8L2WPLg7heu+TRjKJ2w33N
-         otqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUimVrfpvlUKldA8esgXIhSJKXgTtniYRZIP4HJ9HrXA1DxEUcqATLIST4NrwR9v4LtwS0qkm7VQc@vger.kernel.org, AJvYcCVdd7z7ZiTj4jssUOHuuhudXdo3XLrVpd1dyubU4+ghsEch5uOTH72kzQPJxovxIi0lilJRpMabhkh+Ki0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCRhjx6LdK2OVz9DU+MF3StgTqvzPfhqRR5xAHCRXrQhycVoCd
-	cMCLd6sMca6WjaZgAfevNGA7WPC9uGlZ9b9YZ5XMKpQL0q3EYsfz
-X-Google-Smtp-Source: AGHT+IFNYqvo4YQ30dvxGyOotrvXcHIBWWeRuP1xnxTzOazp7HfQAjmpaLQ5fHI5e6aLNbzsGhkHLw==
-X-Received: by 2002:a05:6a20:d49a:b0:1cc:9ff8:e76c with SMTP id adf61e73a8af0-1cc9ff8eb58mr1252206637.52.1724518936385;
-        Sat, 24 Aug 2024 10:02:16 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad55283sm5066256a12.74.2024.08.24.10.02.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 10:02:15 -0700 (PDT)
-Date: Sun, 25 Aug 2024 01:02:11 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Jon Lin <jon.lin@rock-chips.com>
-Cc: briannorris@chromium.org, broonie@kernel.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm
- operation
-Message-ID: <ZsoSEw9pTalRJBJS@visitorckw-System-Product-Name>
-References: <20240824045702.3952922-1-jon.lin@rock-chips.com>
+        d=1e100.net; s=20230601; t=1724519127; x=1725123927;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1wqIXwilhWQe12ivt8ypdTnldhiR6eZgAaKOzl3oFk=;
+        b=cU8B6MqOEsOnCVlkv3NtKY5jHFfbAKcI0wl7is1TlSeS3jAGTWC2j0tba8bm8N29u8
+         9LoZCgVBuI7Nk+QVDZlR8hhH3DSntYLOhM7Mpg+HCPjMAku1MV3rBXToI39pBMVfM1lh
+         l5h8PF+Nk3sRLRxH2jN7WLS1cFg6nLdi5QvlhrAAUrOZ9wbfupFbqqehfd0dAcuScV3s
+         6Q7tSyDFFTPXMP0xbREyXFiNOqdXe7kVT8UOu+LZ77zPXsESsWPqzRzL2YQ0yDv3YVgE
+         DHRuejk/4ZUCd1mCjEC1KW5QQoeWnSl8X1GdgiSyUsMKEjvPOaBrcMZ/wEdGKPC8PScp
+         W9Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz9ElcygMrmX2oo3Taw5dn/AcZA8d+bj05xRZzdI2KTwPFfkJNbd0QoASp8OF2Ffe33qo80DXp4HswUfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRk5MDZuwzaj79oi4NxlKHAffkTc7biwuNB1NF1oQquJWEnB2p
+	J1uRGo070lgwY1YMaq4wAXdPUoDXd1bD1HX9LSxi3gp/N1ijA/bFZVA6KlDceIg=
+X-Google-Smtp-Source: AGHT+IHt3Su7ap3ryr5NK4u0osd07i4VrChxnechoJXjiVeQ4wUl6du3KIaeBLPXMzicWs8zA0kISA==
+X-Received: by 2002:a17:907:d15:b0:a77:cb8b:7a2d with SMTP id a640c23a62f3a-a86a54d1920mr377553966b.49.1724519126872;
+        Sat, 24 Aug 2024 10:05:26 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f43661dsm423115966b.100.2024.08.24.10.05.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 10:05:26 -0700 (PDT)
+Message-ID: <26b7fd84-34cc-485e-83eb-21daf99020ee@linaro.org>
+Date: Sat, 24 Aug 2024 18:05:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240824045702.3952922-1-jon.lin@rock-chips.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 00/13] media: qcom: camss: Add sm8550 support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240709160656.31146-1-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jon,
 
-On Sat, Aug 24, 2024 at 12:57:02PM +0800, Jon Lin wrote:
-> Fix WARN_ON:
-> [   22.869352][ T1885] clk_spi0 already unprepared
-> [   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
-> [   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
-> [   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
-> [   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
-> [   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
-> [   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
-> [   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
-> 
-> Fixes:  ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
+>    media: qcom: camss: Add CSID Gen3 support for SM8550
+>    media: qcom: camss: Add support for VFE hardware version Titan 780
 
-Thanks for the patch. However, the fixes tag should include the 12
-characters of SHA-1 ID. the corrected Fixes tag should be:
+Before your post your next version of this series, please make the patch 
+submission titles consistent.
 
-Fixes: e882575efc77 ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
+e.g.
 
-Regards,
-Kuan-Wei
+Add CSID 780 support
+Add VFE 780 support
 
-> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
-> ---
-> 
->  drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
->  1 file changed, 26 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-> index e1ecd96c7858..043a7739c330 100644
-> --- a/drivers/spi/spi-rockchip.c
-> +++ b/drivers/spi/spi-rockchip.c
-> @@ -940,33 +940,24 @@ static void rockchip_spi_remove(struct platform_device *pdev)
->  	spi_controller_put(ctlr);
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static int rockchip_spi_suspend(struct device *dev)
-> +#ifdef CONFIG_PM
-> +static int rockchip_spi_runtime_suspend(struct device *dev)
->  {
-> -	int ret;
->  	struct spi_controller *ctlr = dev_get_drvdata(dev);
->  	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->  
-> -	ret = spi_controller_suspend(ctlr);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	clk_disable_unprepare(rs->spiclk);
->  	clk_disable_unprepare(rs->apb_pclk);
->  
-> -	pinctrl_pm_select_sleep_state(dev);
-> -
->  	return 0;
->  }
->  
-> -static int rockchip_spi_resume(struct device *dev)
-> +static int rockchip_spi_runtime_resume(struct device *dev)
->  {
->  	int ret;
->  	struct spi_controller *ctlr = dev_get_drvdata(dev);
->  	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->  
-> -	pinctrl_pm_select_default_state(dev);
-> -
->  	ret = clk_prepare_enable(rs->apb_pclk);
->  	if (ret < 0)
->  		return ret;
-> @@ -975,41 +966,45 @@ static int rockchip_spi_resume(struct device *dev)
->  	if (ret < 0)
->  		clk_disable_unprepare(rs->apb_pclk);
->  
-> -	ret = spi_controller_resume(ctlr);
-> -	if (ret < 0) {
-> -		clk_disable_unprepare(rs->spiclk);
-> -		clk_disable_unprepare(rs->apb_pclk);
-> -	}
-> -
->  	return 0;
->  }
-> -#endif /* CONFIG_PM_SLEEP */
-> +#endif /* CONFIG_PM */
->  
-> -#ifdef CONFIG_PM
-> -static int rockchip_spi_runtime_suspend(struct device *dev)
-> +#ifdef CONFIG_PM_SLEEP
-> +static int rockchip_spi_suspend(struct device *dev)
->  {
-> +	int ret;
->  	struct spi_controller *ctlr = dev_get_drvdata(dev);
-> -	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->  
-> -	clk_disable_unprepare(rs->spiclk);
-> -	clk_disable_unprepare(rs->apb_pclk);
-> +	ret = spi_controller_suspend(ctlr);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Avoid redundant clock disable */
-> +	if (!pm_runtime_status_suspended(dev))
-> +		rockchip_spi_runtime_suspend(dev);
-> +
-> +	pinctrl_pm_select_sleep_state(dev);
->  
->  	return 0;
->  }
->  
-> -static int rockchip_spi_runtime_resume(struct device *dev)
-> +static int rockchip_spi_resume(struct device *dev)
->  {
->  	int ret;
->  	struct spi_controller *ctlr = dev_get_drvdata(dev);
-> -	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
->  
-> -	ret = clk_prepare_enable(rs->apb_pclk);
-> -	if (ret < 0)
-> -		return ret;
-> +	pinctrl_pm_select_default_state(dev);
->  
-> -	ret = clk_prepare_enable(rs->spiclk);
-> +	if (!pm_runtime_status_suspended(dev)) {
-> +		ret = rockchip_spi_runtime_resume(dev);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	ret = spi_controller_resume(ctlr);
->  	if (ret < 0)
-> -		clk_disable_unprepare(rs->apb_pclk);
-> +		rockchip_spi_runtime_suspend(dev);
->  
->  	return 0;
->  }
-> -- 
-> 2.34.1
-> 
-> 
+Mixing SoC versions "sm8550" and/or including "Titan" - what's that a 
+reader might ask - should be avoided.
+
+No harm in including "Titan" but if you do, include it in both patches 
+and explain that Titan is the codename of the camera block in your SoC.
+
+---
+bod
+
 
