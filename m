@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-300063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409EF95DE51
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E33195DE54
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C655BB2109D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA0E282F23
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12950176AA9;
-	Sat, 24 Aug 2024 14:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B7E176AC1;
+	Sat, 24 Aug 2024 14:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="a3CXnEL7"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOhWRufE"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9691D545
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A8B224FA;
+	Sat, 24 Aug 2024 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724508943; cv=none; b=ajztPmp2QmKwQyfX4Zj1XcEbTr/6s1bHEXxiys8mFvOg/SaKzDc+4wrjUWQaZeUy/GyAFGaAymqYhM7yAgb5lmHH7f2kJmDiJCrZm9VWLLU6t0mf3m6IPnZvZj/UADk46K/34+a9nrH7VenWMLujaKzy6/5edHR6HjEGwqmYOw4=
+	t=1724509487; cv=none; b=MDjhYKOZR5+Cml7JSNhypW6of/obMS4aYEsAyjckslzjvh8i6PKz9kIKxut5TmgG32Q9N5Oq6P/i08EB2ZBBKKMi1kO7zliHC0oHuv31jj7C66AaaOcnN9PGTPE2AoNowznetFUR0WmDAIJnZ/w3skhWY3iWPYLAccvmiO2wxzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724508943; c=relaxed/simple;
-	bh=ylyyc5upqH2H63Bat8/KTYVk99gT+edO+ULoJdpozlg=;
+	s=arc-20240116; t=1724509487; c=relaxed/simple;
+	bh=Pzlpm1U5Hh/l25Nd14ZVktI3g3nu2blzLBRseCLtI9k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENvSARMA5RrHNiMllNWs8FtQbEzEN6KaK9DX/hjcit7J4xfAUbhkRrUN1PKH3WTzRXREQ7RDuyPptBCcoeVa/JloT/ykKw2KjkcqNM2KgqQna1foBf/OPgC2IOqfFt9DfMbiaidJyVDY7sB1QkuRCxTO0Ww3/r+SQtzR9ev8V3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=a3CXnEL7; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a83562f9be9so288241766b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 07:15:39 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=E6/HPRC1aJaGqEwEYlFUByzcVMHfQRWQAqUqU/Sv1vLI3PFGW8H4Dr1YzobOu2xNUCzDoFpRyStmmK1vFivnzO+wTh9sV+r2I1u9nitYRsCsQWGwcPrQCKSJzGPiJzZhD1Cg5g27YxXW1wZt5Fn0bQTGWbb898OhRnCNnC7fEvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOhWRufE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37186c2278bso2047378f8f.1;
+        Sat, 24 Aug 2024 07:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724508938; x=1725113738; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1724509484; x=1725114284; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UfsvyUgRM9vDT3+qEMPlkf4NcRqOaBZ3rc+Db/x0GR8=;
-        b=a3CXnEL7RJ2Pc5HfkuxtzMyxGuFEaqRl3Ztc+BA6TLiHb6qh72FmngmhH+waib0lJK
-         GcwaJDv6Lfh8Y2WF2BU9iPkdLqjdKn4AUC2ewjJmkEAwoTrvdfrYNpXMNRKSl2onT9dN
-         RwnAme8Pc3ToAWYeal5DyFBOP9hXziw1pzQdL2W6J5NBMBhAjGy2mVeDcJ9igKMj9qK9
-         L7kV9CkWicSLexUBUL6aEx5XLaI39/DppUx3LNz24+6jBaX6OQ2+X+X+i0FQzTalphpk
-         KscZEcKk3aPbLekBW6sT3HZxVkQzVvkAkdf4vtG3dKI+R4HjNJlnK9ypX8a0qwEihU+m
-         6x/A==
+        bh=lIhY95YBiA5IEBvFsoRskljHwYpqZBhPcTrq+7ZZ12o=;
+        b=IOhWRufE/svDC0oLR8LTq/Hm9RnrsS75/Dt1GevQZYnjChZ2lL4uguYsGOOba3c58T
+         Ae5YjrKxnqeSmz9JRd71paZPQAitmWAInkv7j1dxnWVjtjxFgjDCSGoOYNs+1v+EUufQ
+         h1JAaAxjDuGOX3mFokm/0j4bdm1FkavRAF8J72VwJIRlgVwaLSfjUj9SIk5LSAoAIRXv
+         RAU5OIijsrGR/4p7oNUlFgqBRlitQEe1ymWMexZludtpzKXUTxtrQxCelO6rqkWrGv7t
+         fiHN89IdoIUD4jCP5i6bbXNYSFwNanqOO/g2a/pSEqfWoUrMr8HAaBZ63sIxEzzVJcXm
+         RGMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724508938; x=1725113738;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724509484; x=1725114284;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfsvyUgRM9vDT3+qEMPlkf4NcRqOaBZ3rc+Db/x0GR8=;
-        b=f9mpSpY7WB8g01xBgL8Pc4+IgkAjDmVpTU/y8Sb8q/r9EjWk0qQJSd28Ddn6D6PH1A
-         7XUZBc8GOOIJHmEjEX76v79TmiD0dgdRRL/+HRq7YurxcV1koqx8WSwMiS81ykA5NHFt
-         aOLUJo0TrpDAipT+zCouzg0DtE5zS5p+zeg9qey/L7arG+4fUuXq3RKxezjJW0GZIGy9
-         hLWJkEE+5zFvkwsaHhbiwBxiJNZRcCUsHxuzOWdEij6Q5rQ2uceNbkNQ2tswo8dl0hsw
-         87q9H/CoCbhsimX4XXYLXOntnHQpNLG3QcFG9LLAQH6Y1GBzIzIt16VHTVFZN+/LWSyu
-         IaKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTSV57RwuBxa2ujAIFtmjI/S6cQEmlJW970xK5aqjR2BSV4p0HBkIDKsru/NKUfZxIJPFWlW/tJI0fQGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw1bgpv3kOAQi8oygPNgrS5gHNh74WtGY/axwPZapdIr4/y2Zm
-	ztP5HJM2KzNueLxRlhOjemGKNM+M8YzWXjW+ExCSg2coz2TDEX88R69Oc6flriM=
-X-Google-Smtp-Source: AGHT+IGDP/v0cG7L2RbBg8rsiuhnZQtctkJOokkQMWP1zT1B3q1fVN7UF/HlJDGt+p7Jv2G/uMdoGg==
-X-Received: by 2002:a17:907:3da0:b0:a86:817e:d27b with SMTP id a640c23a62f3a-a86a54b05f3mr386595566b.43.1724508937735;
-        Sat, 24 Aug 2024 07:15:37 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f3a20sm403725266b.195.2024.08.24.07.15.36
+        bh=lIhY95YBiA5IEBvFsoRskljHwYpqZBhPcTrq+7ZZ12o=;
+        b=ORN9LIQrZqjMl5UaC2fxP6pxGzKLTV7BLVT5JAymRPGWy5hWxiHmaR19j+PrBjUqyA
+         DsoAcd1tc+m3VzeANDuCvF2hcOLWU3W64u48i1ZfpowhgmXC29bf1k8nDWfSXKxwcX8a
+         6AqHlz9hgNO1BWJUlVxsLhf2PQDY3ILfzYphJf7YbMzDpGW/evuJTwaQdQykHLkFJnIR
+         zq4IY98ZuRK7riscIikVvqZvp1+xrhnsuNkMHQdJuv3Jwi7w1/Cxpto3ryuncbfxnoip
+         wbYH0ov87jrzJovpnYphB0j8krCmQGFrzhhWHKRBk/0kt/d1ZoqE1FSo91pNwuHge/FV
+         xIpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd3HoTCL98D1JormqB8RhykIVEg7jjMvp1xjIro/FvwSnzZAGpXUNQjepyaZZCmqVl5h3jbwGIc/eB@vger.kernel.org, AJvYcCWBZcvwyq/1/x77xI7eeM5y6k7+nJpAr9GJWto3oNKnlSbDOolkDXa4Csn2VynVRtOzPqtYuN8ZL4eK16KZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHJ7EV6HEl+SXWUKKdwum8Toh0eBvH6nZqqr9cRIREcddfYnWj
+	tqOj03jbLhw4s/YaXPzafrn/72DYYPeV9BIv4lMv0IxY3t8ctaSD
+X-Google-Smtp-Source: AGHT+IEF8eS5Jk/Zs8iIWVZRQw3hbxWOnuvXeJ7gHzY3H6qlkumhIhgHfYfIoRkLx4ce9M/FKKp5/Q==
+X-Received: by 2002:a05:6000:1b0f:b0:366:dee6:a9ea with SMTP id ffacd0b85a97d-373052dbfedmr5680683f8f.26.1724509483381;
+        Sat, 24 Aug 2024 07:24:43 -0700 (PDT)
+Received: from [192.168.0.241] (85-193-33-51.rib.o2.cz. [85.193.33.51])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c465sm6676244f8f.32.2024.08.24.07.24.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Aug 2024 07:15:37 -0700 (PDT)
-Message-ID: <ca140cf2-1773-4f5b-babe-3e11d579e71e@tuxon.dev>
-Date: Sat, 24 Aug 2024 17:15:35 +0300
+        Sat, 24 Aug 2024 07:24:42 -0700 (PDT)
+Message-ID: <aa33692c-4cae-4c41-959d-f2ecd56334b7@gmail.com>
+Date: Sat, 24 Aug 2024 16:24:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,44 +75,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Add input voltage suppliers for PMIC MCP16502
+Subject: Re: [PATCH PATCH] arm64: dts: sunxi: nanopi-neo-plus2: Add pio
  regulators
-Content-Language: en-US
-To: Andrei Simion <andrei.simion@microchip.com>, broonie@kernel.org,
- lgirdwood@gmail.com, nicolas.ferre@microchip.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, robh@kernel.org, alexandre.belloni@bootlin.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240812135231.43744-1-andrei.simion@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240812135231.43744-1-andrei.simion@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: wens@csie.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+ <761f18d4-9274-4983-a128-94efb96e1c59@kernel.org>
+ <51f28d92-f670-47de-8e2d-53cbecfac081@gmail.com>
+ <CAGb2v65M6Zz7=TfRwF0urbELNaaazMZYsd3dtHYzwdJvzoho3A@mail.gmail.com>
+Content-Language: en-US, cs
+From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+In-Reply-To: <CAGb2v65M6Zz7=TfRwF0urbELNaaazMZYsd3dtHYzwdJvzoho3A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Yes, you are right with vcc-pd, I misunderstood it, thank you. Let me 
+explain and ask about the rest:
+VDD_SYS_3.3V = reg_vcc3v3
+Groups PA, PE, PF are powered from vcc-io, according to Allwinner H5 
+datasheet, Vcc-io is connected to VDD_SYS_3.3V, just like mmc0. Should 
+those be set or omitted?
+vcc-pc (ball G15), which is labeled as vcc_io2 (probably wrong), which 
+is also connected to VDD_SYS_3.3V.
+vcc-pd (ball J15) is bonded to VDD_PHY_2.5V, which is always on and made 
+from VDD_SYS_3.3V, so I should make a new fixed regulator of name 
+"reg_gmac_2v5"? Mainline eth driver does not implement this pin, so it 
+would be used only for the pio.
+vcc-pg (ball H7) is also VDD_SYS_3.3V.
+While PL is supplied from vcc-rtc (vcc_rtc, ball K6), it is connected 
+directly to the VDD_SYS_3.3V too, should this be the same regulator or a 
+new one or omitted too?
+Do you agree with my findings? I hope they are 100% now. If so, I will 
+try to make V2 with a new fixed regulator of 2.5V for the PD.
 
+Many thanks for your replies, I will do better next time.
 
-On 12.08.2024 16:52, Andrei Simion wrote:
-> In this series of patches, support for the *-supply property [1]  is added
-> (correlated with supply_name [2]) from the core regulator.
-> Link [1]: https://github.com/torvalds/linux/blob/master/drivers/regulator/core.c#L471
-> Link [2]: https://github.com/torvalds/linux/blob/master/drivers/regulator/core.c#L2064
-> 
-
-[ ... ]
-
-> 
-> Andrei Simion (7):
-
-[ ... ]
-
->   ARM: dts: microchip: at91-sama7g5ek: Add reg_5v to supply PMIC nodes
->   ARM: dts: microchip: at91-sama7g54_curiosity: Add reg_5v to supply
->     PMIC nodes
->   ARM: dts: microchip: at91-sama5d2_icp: Add reg_5v to supply PMIC nodes
->   ARM: dts: microchip: at91-sama5d27_wlsom1: Add reg_5v to supply PMIC
->     nodes
->   ARM: dts: microchip: sama5d29_curiosity: Add reg_5v to supply PMIC
->     nodes
-
-Applied to at91-dt, thanks!
+Dne 24. 08. 24 v 14:34 Chen-Yu Tsai napsal(a):
+> Hi,
+>
+> On Sat, Aug 24, 2024 at 5:08 PM Kryštof Černý <cleverline1mc@gmail.com> wrote:
+>> I am sorry if the message is wrong, this is my first patch ever sent to
+>> the Linux kernel. I have checked the schematic of the board and it
+>> shares the same power line with mmc0, so I assumed I can use the same
+>> regulator. Thanks for your feedback and I would be glad for your further
+>> response.
+> So some of the pin groups do have dedicated supplies, and should thus be
+> described, but not all of them. The schematic only shows dedicated
+> supplies for PD and PG pingroups. So just add those. PD supply is from
+> 2.5V ethernet PHY I/O regulator supply, so you would need to add that
+> as well.
+>
+> The datasheet also mentions a separate supply pin for PC pingroup, but
+> it is not shown in the schematic. I would just omit that.
+>
+> And as Krzysztof mentioned, device tree changes should be to model
+> the hardware, not to work around some operating system warning. At
+> least most of the time that is. So your commit message should also
+> be about fixing the description or providing more detail, and not
+> about the operating system.
+>
+>
+> ChenYu
+>
+>> Dne 24. 08. 24 v 9:40 Krzysztof Kozlowski napsal(a):
+>>> On 24/08/2024 09:09, Kryštof Černý wrote:
+>>>> The board does not have a dedicated regulator for pio and r_pio,
+>>>> but this fixes the kernel warning about dummy regulators being used.
+>>>> Tested on the actual board.
+>>>>
+>>> Judging by commit msg these are not correct regulators. Please do not
+>>> add incorrect hardware description to silence some warnings coming from
+>>> OS. Either you need proper (correct) hardware description or fix the
+>>> problem other way, assuming there is anything to fix in the first place.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
 
