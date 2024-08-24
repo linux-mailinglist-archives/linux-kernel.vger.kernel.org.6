@@ -1,88 +1,54 @@
-Return-Path: <linux-kernel+bounces-300075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563C595DE78
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C0B95DE79
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 16:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87B7F1C21268
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904C5282AA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 14:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2466717A90F;
-	Sat, 24 Aug 2024 14:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4D717A59D;
+	Sat, 24 Aug 2024 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6cmhD1Y"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AGesuvpa"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA9E1799B;
-	Sat, 24 Aug 2024 14:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751C21714C0
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 14:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724510326; cv=none; b=VMw+W7yVWm3fJd4JVdmI7PApNrWdoSza11Qm0iu4ZdaDTN75K1I5bYTRtT8a8l1j8yInLbFR2dBBP1voha84KVNjiF8OgOdsb2m8oVoqqp2+0vgfxb6JZVUiUT8osQEmVlGW038M00REpv590phqE0jXrH0e+aGsBqqfBt3NaxM=
+	t=1724510367; cv=none; b=WpARoMnioQDDoumwZBJflSHiW/iOzT83Wl3M8f+GsCFx76wtxCZ4Ic92szYl9LJV5d9jSFlrz+4xc0ngIRCQLOuhYKrf8nVEIfiitqhjukMfomQjwLyWmP0RvIJNFAJVY2ABh/6A5pDnCMyyyaiJg42LGqFgKgEdxw9qQzE851A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724510326; c=relaxed/simple;
-	bh=3VlX5AIbTArku8zzjD1w6iIfmrY7QFk40tFR/LZEaVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NTPjHNEhm70NLLF144Oc7DHmsB7DJsNR/GRnags/Ggl1DLO7BdDjboks/TIVAZjIitIxdrOL2YZzV3a9iPVdB6Gom0dU60ZJXJyDF6i74D8fAcK5x47j29oua2/OZIyUyKPBdy52nOaZiY1ylAcVl3qeC54QgN8dkg7cApeING4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6cmhD1Y; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b0c5b1adfaso27774397b3.0;
-        Sat, 24 Aug 2024 07:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724510324; x=1725115124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mqf/4XeJ+EZsRXY5NtNf2SH60OkcPdbLs/5YIVTLI2o=;
-        b=X6cmhD1YxNO4Fr7hALYfflbz5/DAO+86Y5MmBWQRpOitOzLsJaXpqDUPmq6pjECTNS
-         wFWICfHyKY5Xvhf3h06b8nLin7aO95dQyndoWM8aErfTtxC5rTZid/3W2EGP47DYheGa
-         Wow5lOCuWnUXzEkrpru0O+hBObxw2uYgMRvZ4IbE4nt+LdLkrnj7m3GNs9u79XymFHAf
-         yT6g9E5Vvl8TsiXUeCwFqu3ZuxhKtsDWEf1j+EG/fWEk+1urpV078PSTChB4ajAji3rB
-         eNpotFiho/BgiHIlSR5Xkw7yc433FBONkDrupTUea4+fIhax6ezwzWNsTYOm0M3cgTtq
-         EwSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724510324; x=1725115124;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mqf/4XeJ+EZsRXY5NtNf2SH60OkcPdbLs/5YIVTLI2o=;
-        b=h7rTIexRUX4zY/qXU+fil4u41mISe+mCfk2jrb8oEyPJ9qeHt9TMzUeSMkzCFyGYUP
-         CzPYPEUzeo8cx5gH8etEakCwHkxXK7XFPB10C8j1pV30EsutCfk7bn6qCll8zBMYKDhQ
-         whMLQ7UjvPA9diBLcM2yHUmp3wTvIDVq2iKW47itMYdkiBankjs7WzES3v5JIpTL2wcX
-         BEUqcU3JBcxaoynDyrziewmmiOAqEEV/XPl0rszw13vwnGh4cLZaMqIA9H5MpfgwLxpk
-         X2wl9c/G8yuU+0+NdoTnZnB5bP4tGy+37qjVDvMKUMVwmBYTAlm5cOkdbeuawv2SVXJR
-         TkQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu4w4h7Hv5fGNh5WSjwPEewTN/kuhs7xRFbQR8aP4h7yjpuVLiIrARsnXyoerrU8DIp+YTrQ6zh4UYWVU=@vger.kernel.org, AJvYcCVircfARk3DAPbwoiVfM2Uf/TEmDL6R2WVTAkZu1IUcSIY5BsvaeuTmv5ycPW+ADlzQRnaQAT1pdFUyf8bFQx8w@vger.kernel.org, AJvYcCW2En67YTf/e/Ls1CRqwtVUb/1IjQZM9wdOPoFYZl9bElBsnJfPW7+ePb6P0V7pt6n9+yztBYUA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+oj7woFIP2CPd/TiStlpq4N/FmKG+WBN8Gh0i9SowKfAFjZm
-	bSCfp/as1+FGailjUe/gBsoUSfh/3ModQCq+w8uImpdW2xFfTav5
-X-Google-Smtp-Source: AGHT+IFblOQE/QFqOJo8brKLahprxljEnCHnixrEx5DVHm0F5cQXDAz9kvkm1cLvPkjDlcpaultLOQ==
-X-Received: by 2002:a05:690c:3246:b0:6b5:71b2:13da with SMTP id 00721157ae682-6c62915ad9emr51652677b3.32.1724510323975;
-        Sat, 24 Aug 2024 07:38:43 -0700 (PDT)
-Received: from localhost ([2600:1700:6165:1c10:7f22:cda9:4042:3473])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39a753434sm8767067b3.41.2024.08.24.07.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 07:38:43 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: david.hunter.linux@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	javier.carrasco.cruz@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org
-Subject: [PATCH 1/1 V2] Selftests: net: Set executable bit for shell script
-Date: Sat, 24 Aug 2024 10:38:37 -0400
-Message-ID: <20240824143837.228874-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240823190828.214443-1-david.hunter.linux@gmail.com>
-References: <20240823190828.214443-1-david.hunter.linux@gmail.com>
+	s=arc-20240116; t=1724510367; c=relaxed/simple;
+	bh=2vG3XvcAJAy/RaIv82c5b6/x/5jevV6hzqeOTNSfal8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E6XETE0LeqBBcqlbmZr2/02FcQenm/8H/c9dzBwZABS2f6zazj/V9uRbVXpZBmqeu1K1Zkt7Z8UkdJt3L1T9uAqSJz5+4pfEMvX8klp6/G5OX6sCjPjo0xm5JU4R1hDZmu/6v6iy3KJT30bC3l/8MHmVH0dEAZNmfChX2dJoEx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AGesuvpa; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724510362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RM30oiM0MdLfvWeDuCVOBBk7mwRBCtry7f5KQtp1Hm4=;
+	b=AGesuvpaN0VygvtS1qARv0CNYDoHHZQZXaRUPwWtWxGNF02T1pprOG/WTx1Jk0/PvYXMQK
+	aXL7VacI7gjErRufkC/CjqSW67OT+pJslqpNUPyIDWQYjUXQoD4k+RUp9lIbjTtqXcMEGH
+	jNYPijzi/JjrvZgq8mIv0/nUlBBKuhc=
+From: Wen Yang <wen.yang@linux.dev>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Dave Young <dyoung@redhat.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwspinlock: improve locking safety by using raw_spinlock_t
+Date: Sat, 24 Aug 2024 22:38:47 +0800
+Message-Id: <20240824143847.5307-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,24 +56,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Turn on the execution bit for the shell script file. The test is skipped
-when downloaded from the linux_mainline source files.
+Both __hwspin_trylock and __hwspin_unlock use hwlock->lock, and require
+running in atomic context, with a special annotation:
+function will never sleep.
+However, this requirement is not fulfilled on PREEMPT_RT.
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+To address it, use raw_spinlock_t instead of spin_lock_t.
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-V1 --> V2 
-	- Split the patch into two separate patches (one for each issue)
-	- Included subject prefixes
----
- tools/testing/selftests/net/test_ingress_egress_chaining.sh | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- mode change 100644 => 100755 tools/testing/selftests/net/test_ingress_egress_chaining.sh
+ drivers/hwspinlock/hwspinlock_core.c     | 20 ++++++++++----------
+ drivers/hwspinlock/hwspinlock_internal.h |  2 +-
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/tools/testing/selftests/net/test_ingress_egress_chaining.sh b/tools/testing/selftests/net/test_ingress_egress_chaining.sh
-old mode 100644
-new mode 100755
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index 6505261e6068..76e5a6c645b1 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -111,17 +111,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 	 */
+ 	switch (mode) {
+ 	case HWLOCK_IRQSTATE:
+-		ret = spin_trylock_irqsave(&hwlock->lock, *flags);
++		ret = raw_spin_trylock_irqsave(&hwlock->lock, *flags);
+ 		break;
+ 	case HWLOCK_IRQ:
+-		ret = spin_trylock_irq(&hwlock->lock);
++		ret = raw_spin_trylock_irq(&hwlock->lock);
+ 		break;
+ 	case HWLOCK_RAW:
+ 	case HWLOCK_IN_ATOMIC:
+ 		ret = 1;
+ 		break;
+ 	default:
+-		ret = spin_trylock(&hwlock->lock);
++		ret = raw_spin_trylock(&hwlock->lock);
+ 		break;
+ 	}
+ 
+@@ -136,17 +136,17 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 	if (!ret) {
+ 		switch (mode) {
+ 		case HWLOCK_IRQSTATE:
+-			spin_unlock_irqrestore(&hwlock->lock, *flags);
++			raw_spin_unlock_irqrestore(&hwlock->lock, *flags);
+ 			break;
+ 		case HWLOCK_IRQ:
+-			spin_unlock_irq(&hwlock->lock);
++			raw_spin_unlock_irq(&hwlock->lock);
+ 			break;
+ 		case HWLOCK_RAW:
+ 		case HWLOCK_IN_ATOMIC:
+ 			/* Nothing to do */
+ 			break;
+ 		default:
+-			spin_unlock(&hwlock->lock);
++			raw_spin_unlock(&hwlock->lock);
+ 			break;
+ 		}
+ 
+@@ -289,17 +289,17 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+ 	/* Undo the spin_trylock{_irq, _irqsave} called while locking */
+ 	switch (mode) {
+ 	case HWLOCK_IRQSTATE:
+-		spin_unlock_irqrestore(&hwlock->lock, *flags);
++		raw_spin_unlock_irqrestore(&hwlock->lock, *flags);
+ 		break;
+ 	case HWLOCK_IRQ:
+-		spin_unlock_irq(&hwlock->lock);
++		raw_spin_unlock_irq(&hwlock->lock);
+ 		break;
+ 	case HWLOCK_RAW:
+ 	case HWLOCK_IN_ATOMIC:
+ 		/* Nothing to do */
+ 		break;
+ 	default:
+-		spin_unlock(&hwlock->lock);
++		raw_spin_unlock(&hwlock->lock);
+ 		break;
+ 	}
+ }
+@@ -535,7 +535,7 @@ int hwspin_lock_register(struct hwspinlock_device *bank, struct device *dev,
+ 	for (i = 0; i < num_locks; i++) {
+ 		hwlock = &bank->lock[i];
+ 
+-		spin_lock_init(&hwlock->lock);
++		raw_spin_lock_init(&hwlock->lock);
+ 		hwlock->bank = bank;
+ 
+ 		ret = hwspin_lock_register_single(hwlock, base_id + i);
+diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
+index f298fc0ee5ad..9fbd66e8a82f 100644
+--- a/drivers/hwspinlock/hwspinlock_internal.h
++++ b/drivers/hwspinlock/hwspinlock_internal.h
+@@ -42,7 +42,7 @@ struct hwspinlock_ops {
+  */
+ struct hwspinlock {
+ 	struct hwspinlock_device *bank;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	void *priv;
+ };
+ 
 -- 
-2.43.0
+2.25.1
 
 
