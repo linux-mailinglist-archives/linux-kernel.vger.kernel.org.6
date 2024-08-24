@@ -1,204 +1,140 @@
-Return-Path: <linux-kernel+bounces-299929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2034D95DC5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F71695DC5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E4EB22E12
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F601C215D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD711547CE;
-	Sat, 24 Aug 2024 07:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87855154435;
+	Sat, 24 Aug 2024 07:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k9Rlwo7l"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icGTbV/3"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149A88494;
-	Sat, 24 Aug 2024 07:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426FA15350D;
+	Sat, 24 Aug 2024 07:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724483292; cv=none; b=b1bL9DtAlo+T2rtFUps38ZxeYzHMWbtyqzvhCFzPIDOah25LgHyWu2nBTDBl+AjYc2WtB56TdeG/lJLJBlz8KcLVrD0KM4Csx/M2ixsc2ZvgNYpRQJ7o7dZH+3V9Rnwu/Wxoj7FRsxbCUwKTIgQ71KyZPjuHDx2FmBnXNp7SzO8=
+	t=1724483374; cv=none; b=svRbf7dk55OABzio3BMDtJT0bcmpmt7nFxlL/bBajO0IzJ3xXoL3Jm1yO2UhSW5pi+cJXsMVVOMNHdC+ONUo7JchXUvNuxw53EsA7aLCHWuRngFPUFfjLfUwPo7QZPkUBbagPhN/YUqYariK+Bwu0zRMrLx0BgY38O3nE8sDAL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724483292; c=relaxed/simple;
-	bh=DkoCS6yzaMAif70tnwMbbb5l+NK99ZHVQqPoEi1OgQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XfxgPA3H80QmLytMhcG7QI8wdMlim/1f0n+Et+X6VpPSTBCDflKgEf4iGiW5LfQRYtgS93/dBiDjjQyoLkbEfNrf/KMkYUdziw51l3490QWmB9l6KLbf9RM4x6J6mg82WzYXywiGt34nW7Sq33r4I2j90ivxIPYRgI/Z0WVdNqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k9Rlwo7l; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47O5FmQc001748;
-	Sat, 24 Aug 2024 07:07:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2rd+L72/2CFrt8wYuXBoN8XYWopoHzR/WLqI5qrlNsk=; b=k9Rlwo7lGl8jE2en
-	TAhANfkR4jcWwEMzCuTPgzDAqukVXy9HA1W8B+AnAwwCBNlvzzhA733/DgJMVak8
-	TN6CXqdUWP4rMbH5PSKXwCMZZdnIiovB21rB03aJHjhUIz8z16e2P26CcsE2R8wl
-	SHqNIebZpl/xSAfHduKB0tylaSPKd/B569c81+e6BdwyTrXKy1BGougogqgglxBS
-	FvVvdkdyNAa3tYJsuXmiMopzWeNNphPYQsdPYxHjL+o+Z/oxGzInIwuvvoYfdTLb
-	8c2P6QxfPAfpT7FbllzcFANXSMcUvjc6l29p72t6N+jsHJ1qiIHuRmSwVTj2e3IN
-	QYrjsw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417973g3da-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 24 Aug 2024 07:07:51 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47O77nxS029417
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 24 Aug 2024 07:07:49 GMT
-Received: from [10.216.42.154] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 24 Aug
- 2024 00:07:42 -0700
-Message-ID: <5ca16fae-0c28-808b-6b19-c4627c404b96@quicinc.com>
-Date: Sat, 24 Aug 2024 12:37:39 +0530
+	s=arc-20240116; t=1724483374; c=relaxed/simple;
+	bh=oW829Qj1Acj1xLhwGdFiHwNZ5GC5viGfHLykdWuf2UY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A3DNwhoEJYAbRXxa5DrFox3A+1gdJDd3i2e5MdKOdpf1SgeKJBU8f4l+eiQmGT7TUmIRn0JnK7u1TRoJ0DFYkQxuij9eV3RGM0fFeJ7FYOQiS4PxuaBEgQW/m89DPYvfFksXj6AgKuYHupjOSdsOrqpM5zIeCfNDJ6wgy6GrV6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icGTbV/3; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8692bbec79so349379366b.3;
+        Sat, 24 Aug 2024 00:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724483371; x=1725088171; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfjDR/1rSB9keE+iHqPgfwEHIVsDSqAHRyufwZuzetI=;
+        b=icGTbV/3izIjC3B3uD3pGtvSZL+aiK04JFrxLLvln0His2ygRzNSXI37q2wHE8F5wH
+         4kdBrKSm9UQyu85JALE/3ieX2CRbwWlEyPv+AOH/yDpqlsG1tWz2w87WmmCn8IHSVX2n
+         VBihrDS/jJWOnlpOXrvwA5k2DeMj+5L1cVReC+mObZFc3Oub8Q6uHe1q1k2FFaTwgziJ
+         0CK+NmjWV22ohT2az540AXDoAVvduH0ftSlfqoW9r3f31WDSko89aaqKhCkeqCvMuva8
+         qwQfCyS71XHRRrfoTtJMpZl4JTjhp7z/fDG7E1LRt5xktDAkKE/lDDHZEgtJd0gJn2OE
+         Cuqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724483371; x=1725088171;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfjDR/1rSB9keE+iHqPgfwEHIVsDSqAHRyufwZuzetI=;
+        b=KURsfC2mCFauAJsubha0kjqYPHHGcCYPKuhyqjmTtAh8VvlHvjjcyBkl6ngxxp8X4v
+         /cQAzWjEmMsmIamq/vO/sZ1e/hKA6GsIUj7cFVrLAA5WeEgBy4KV0Q2W440mo00TFYAZ
+         RRAiisY8jG7l0I7BnkKWUVtFvRQYGshULc2vAH5OQcKXlDL7rDHBHv5i4VBVXe717xX4
+         wBwM9uFOIwHM4J3r9PU8qi+kdgu3mFRfWiFm0uJENfh1VJz/K2wblWeVsT7Gg/prxJTK
+         50iO004dCR+sst50f39qa3EI1UEhEtVdXKPfpfI7MNIRMZ4pgWTTIrWCW2evyp4BLQj2
+         6mfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkSjuA/ZVnlKw6V4vy2yTB81FQ4SY8MyMcKYAeGVHIbbjmQuL+YoOHsySfYBBD3cy0OiUHNZfom9vqpnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRhryZg4T1iO3UQWCTTlQHeLC1Gl1L0cs2iq4OBGVUT6Ii315x
+	hACFn0tQ7ab+wva4CzsfI1mhRlWzNaqMMTFkHPfDKxAmWB4pkX6vvEj4jyNdRY4=
+X-Google-Smtp-Source: AGHT+IGXpjiUM9XnUIP8+efruOHQLPcgeCdaJd02WdJcnnVH0P5w/ib5uHRsIa/UiP82Qoz8QJxsKw==
+X-Received: by 2002:a17:907:e249:b0:a86:9487:f1d2 with SMTP id a640c23a62f3a-a86a52c65d0mr278144766b.40.1724483370607;
+        Sat, 24 Aug 2024 00:09:30 -0700 (PDT)
+Received: from cleve-worktop. (85-193-33-51.rib.o2.cz. [85.193.33.51])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a868f437997sm360192266b.106.2024.08.24.00.09.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 00:09:30 -0700 (PDT)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Date: Sat, 24 Aug 2024 09:09:05 +0200
+Subject: [PATCH PATCH] arm64: dts: sunxi: nanopi-neo-plus2: Add pio
+ regulators
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <gustavoars@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_utiwari@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-2-quic_mdalam@quicinc.com>
- <0a2b884b-bd28-428e-be12-8fef4fdfd278@kernel.org>
- <c8b7c2f0-9de1-1787-2f1b-2aa0102f347c@quicinc.com>
- <c2292ef2-e93e-4ca3-bcd3-542bd27526ad@kernel.org>
- <6365b444-f552-4b13-c73b-00ba04ec1e62@quicinc.com>
- <bf49738a-6979-41f2-a8d3-e36ac634102f@kernel.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <bf49738a-6979-41f2-a8d3-e36ac634102f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pX9xES634WyhaSI0WWqNGLokt-n0FxfM
-X-Proofpoint-GUID: pX9xES634WyhaSI0WWqNGLokt-n0FxfM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-24_05,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 malwarescore=0 bulkscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408240039
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240824-b4-fix-nanopineoplus2-pio-regs-v1-1-7c5f7da445af@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABCHyWYC/x2N0QqDMAwAf0XybMC1Kbj9yvCh2qiBkZaGyUD89
+ xUfD467E4yrsMGrO6HyISZZGzz6DpY96sYoqTG4wdEwOsKZcJUfatRcRDmXz9ccFslYeTOcA3k
+ f0hifTNAipXLT78F7uq4/Hv8LZnAAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724483370; l=1230;
+ i=cleverline1mc@gmail.com; s=20240824; h=from:subject:message-id;
+ bh=oW829Qj1Acj1xLhwGdFiHwNZ5GC5viGfHLykdWuf2UY=;
+ b=r2KcuKbi/bWODmEtaXS/TN+uKOeiAFQiRRt1HI6i/CAL58u7++m/huOwFodBeYWEiRXZvC8aJ
+ 5D0VzG/NMN5ArYwQRD/EiRm+7Za/J4Iyylpj3wh80rOACXGT1d6kcdn
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=CQifx5FUgTQKAoj5VCYrwYHi235AkXQ5yT1P6gkaBxM=
 
+The board does not have a dedicated regulator for pio and r_pio,
+but this fixes the kernel warning about dummy regulators being used.
+Tested on the actual board.
 
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On 8/23/2024 2:37 PM, Krzysztof Kozlowski wrote:
-> On 22/08/2024 13:45, Md Sadre Alam wrote:
->>
->>
->> On 8/22/2024 11:57 AM, Krzysztof Kozlowski wrote:
->>> On 21/08/2024 18:34, Md Sadre Alam wrote:
->>>>
->>>>
->>>> On 8/17/2024 2:38 PM, Krzysztof Kozlowski wrote:
->>>>> On 15/08/2024 10:57, Md Sadre Alam wrote:
->>>>>> BAM having pipe locking mechanism. The Lock and Un-Lock bit
->>>>>> should be set on CMD descriptor only. Upon encountering a
->>>>>> descriptor with Lock bit set, the BAM will lock all other
->>>>>> pipes not related to the current pipe group, and keep
->>>>>> handling the current pipe only until it sees the Un-Lock
->>>>>> set.
->>>>>
->>>>> Please wrap commit message according to Linux coding style / submission
->>>>> process (neither too early nor over the limit):
->>>>> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
->>>>      Ok , will update in next patch.
->>>>>
->>>>>>
->>>>>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>>>>> ---
->>>>>>
->>>>>> Change in [v2]
->>>>>>
->>>>>> * Added initial support for dt-binding
->>>>>>
->>>>>> Change in [v1]
->>>>>>
->>>>>> * This patch was not included in [v1]
->>>>>>
->>>>>>     Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
->>>>>>     1 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>>>>> index 3ad0d9b1fbc5..91cc2942aa62 100644
->>>>>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
->>>>>> @@ -77,6 +77,12 @@ properties:
->>>>>>           Indicates that the bam is powered up by a remote processor but must be
->>>>>>           initialized by the local processor.
->>>>>>     
->>>>>> +  qcom,bam_pipe_lock:
->>>>>
->>>>> Please follow DTS coding style.
->>>>      Ok
->>>>>
->>>>>> +    type: boolean
->>>>>> +    description:
->>>>>> +      Indicates that the bam pipe needs locking or not based on client driver
->>>>>> +      sending the LOCK or UNLOK bit set on command descriptor.
->>>>>
->>>>> You described the desired Linux feature or behavior, not the actual
->>>>> hardware. The bindings are about the latter, so instead you need to
->>>>> rephrase the property and its description to match actual hardware
->>>>> capabilities/features/configuration etc.
->>>>      Ok, will update in next patch.
->>>>>
->>>>>> +
->>>>>>       reg:
->>>>>>         maxItems: 1
->>>>>>     
->>>>>> @@ -92,6 +98,8 @@ anyOf:
->>>>>>           - qcom,powered-remotely
->>>>>>       - required:
->>>>>>           - qcom,controlled-remotely
->>>>>> +  - required:
->>>>>> +      - qcom,bam_pipe_lock
->>>>>
->>>>> Why is it here? What do you want to achieve?
->>>>      This property added to achieve locking/unlocking
->>>>      of BAM pipe groups for mutual exclusion of resources
->>>>      that can be used across multiple EE's
->>>
->>> This explains me nothing. I am questioning the anyOf block. Why this is
->>> the fourth method of controlling BAM? Anyway, if it is, then explain
->>> this in commit msg.
->>     This is the BAM property for locking/unlocking the BAM pipes.That's
->>     why I kept in anyOf block.
-> 
-> You keep repeating the same. It's like poking me with the same comment
-> till I agree. I am done with this.
-> 
-> NAK. Provide proper rationale.
-   Sorry, I misunderstood your review comment. Now as Mani suggested will
-   keep this implementation in driver itself. Will drop the binding patch
-   in next revision.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+index b69032c44557..2841c9a8aa50 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
+@@ -146,6 +146,18 @@ &ohci3 {
+ 	status = "okay";
+ };
+ 
++&pio {
++	vcc-pa-supply = <&reg_vcc3v3>;
++	vcc-pc-supply = <&reg_vcc3v3>;
++	vcc-pd-supply = <&reg_vcc3v3>;
++	vcc-pf-supply = <&reg_vcc3v3>;
++	vcc-pg-supply = <&reg_vcc3v3>;
++};
++
++&r_pio {
++	vcc-pl-supply = <&reg_vcc3v3>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pa_pins>;
+
+---
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+change-id: 20240824-b4-fix-nanopineoplus2-pio-regs-b54335d8a9e4
+
+Best regards,
+-- 
+Kryštof Černý <cleverline1mc@gmail.com>
+
 
