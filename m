@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-299928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AA495DC56
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:55:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E2895DC62
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2201F23433
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB611C21C2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D74153824;
-	Sat, 24 Aug 2024 06:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9D843147;
+	Sat, 24 Aug 2024 07:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sDclFOai"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IYxl7xYi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498BDC148
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 06:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DE1153824;
+	Sat, 24 Aug 2024 07:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724482541; cv=none; b=fcs+jegidtT7tSj196mi7ZgAEkgR1LJsho0S6mjdummeG6HZelxpqE5tm45cBPHYK0KFijrZe6A3oE64FWvSh6euhZngfluAx9s9cQeX2psPlK1CE9mjwmb+UQK54Vy+lYGSiGlbAmisAyeXUJD68vzdpZSlghSkYL3VZcmbAIY=
+	t=1724483430; cv=none; b=Ip+AYvCRjoKPLnokCZqra8yzmtujNQRWQiO55QMPienO+NKSIxZB8r6lTS9lveG1stayn5qY29QQo0JUGaIMEoIB57d64co7V5GU4tRItA3AGkrd9lqRejd4hrqF5n98vhQXXH5Qp6EAcZCAhICuVzdCEXfL7cXU3EW0c9j4FHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724482541; c=relaxed/simple;
-	bh=4kmF9szrxHMI+EnHh3a9bMYw9yVfO568Y2IZkHiaM9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sej1XD5xnwBJlhxhIIViaf6I+cWUmiwzfxdWorC1QSqccJjG6WewOATwJyqPASRXrJ7QOci/Ylz74vNTIdudVxwCgvV5ymymSGwb3mP6bSYjPjS0/mjBswjiJL3qlU54JjZ439+sUjo/0OGqudG7wgNS4YdI2WhH1VjQgyq+f0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sDclFOai; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id hkgHsOgpszHoQhkgHsZAr4; Sat, 24 Aug 2024 08:55:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724482530;
-	bh=j/Oekpz9cgS3OyVH/t3YcO9F5N2XM6vT8hNtOU5iRWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sDclFOaiKfUaGQ4/6QOImEZjH8zLpfzXd9JerxXCIylp/Ecg7oiSQnQXesw4BGS7V
-	 /DrxQkM+XVheTbKe+Y9NRjQm/AlZkQt74TK2oAHIIDLDjKS26n/I6Pt8DZ3i9o7RkA
-	 j3LLJLZYU1uqWzBlj22Vz9ZimUgTYwDrB1iaRGLyNuVQbT9oMitf9hA0mBAg/mNfVt
-	 noZFth2hNP50ZeW6R1ZWsUO2/MlC3T8sUwZSuc2nLeLMrA3YuQBwK8KRInGk3LYBl5
-	 LbDWZViVaIOabJhwup0x26xioJmuWQRI4j0FO7aYoqVJ2ozSWkW/pagd4jIH8mZ0pV
-	 ZAwdfSnMxJECQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 24 Aug 2024 08:55:30 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <70a3d71d-b0f9-48b8-bb00-497cd17da764@wanadoo.fr>
-Date: Sat, 24 Aug 2024 08:55:25 +0200
+	s=arc-20240116; t=1724483430; c=relaxed/simple;
+	bh=UMSSgFtE9sSYCRl7FqDQxvs8kkccAFFNVpy/6zc6pq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qvLUYjaeKGHZbynOgSrVo47QD1DxOAQffaZGd/1GeYEpf+tg/1ryWwrnFWbEBWMZeJ33SBzK75SclsHx/oXD7baOOrVk+yOXqF2IztqcN+8/lcVS9xoRsFMdcB6T86rFynKKkQULzEF8kCVWeOFWLkSLugYlvn4nGGrasR0yrXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IYxl7xYi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47O5S3sA023727;
+	Sat, 24 Aug 2024 07:05:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ak1bjo5v/J0lhnYtiB4yxlYX1xBnGK1uJl/2njt9Dn4=; b=IYxl7xYiJCXgkflT
+	R2d2uDaG/EIKr4hQCBiCsdb8pOxHz81A7ktgxSvY3jeotypDcpgPvs0wRgJh8KPj
+	leC13oK/4iC1zeovvBwfmFut1yI01apa1qVqaS3uvMRrgigosUFhPLshc4nsqFRm
+	2shBJory1gY5/PA1EKyFT0WuuCEtPDkma9suMKFM2j1bUOs0qVnghTnDCH7d+tmj
+	srPA/rezRTRGlrbDQQC+TgYPg47OtRFFEz5EoJT260+jHAgGgBIw8q394vS7QGbq
+	xu9P7BccrFM0TPncSSpi89sxWXMgiIqxJ7uN4eRUD4q+f4x/Xmgag5mJuufPqUUM
+	dnAaWw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417980r36h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 07:05:14 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47O75Dfp025819
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 24 Aug 2024 07:05:13 GMT
+Received: from [10.216.42.154] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 24 Aug
+ 2024 00:05:06 -0700
+Message-ID: <51653ef6-07f3-5419-e85b-b3e26958173f@quicinc.com>
+Date: Sat, 24 Aug 2024 12:34:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v8 1/2] mm: store zero pages to be swapped out in a
- bitmap
-To: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, david@redhat.com,
- ying.huang@intel.com, hughd@google.com, willy@infradead.org,
- yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Andi Kleen <ak@linux.intel.com>
-References: <20240823190545.979059-1-usamaarif642@gmail.com>
- <20240823190545.979059-2-usamaarif642@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240823190545.979059-2-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <thara.gopinath@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <gustavoars@kernel.org>, <u.kleine-koenig@pengutronix.de>,
+        <kees@kernel.org>, <agross@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>, <quic_utiwari@quicinc.com>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <20240815085725.2740390-2-quic_mdalam@quicinc.com>
+ <20240823153958.vk4naz34vgkqzhrb@thinkpad>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20240823153958.vk4naz34vgkqzhrb@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fgyA9iH7KNSk9YsPjZ7AZdROO68WMbCg
+X-Proofpoint-ORIG-GUID: fgyA9iH7KNSk9YsPjZ7AZdROO68WMbCg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-24_05,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408240039
 
-Le 23/08/2024 à 21:04, Usama Arif a écrit :
-> Approximately 10-20% of pages to be swapped out are zero pages [1].
-> Rather than reading/writing these pages to flash resulting
-> in increased I/O and flash wear, a bitmap can be used to mark these
-> pages as zero at write time, and the pages can be filled at
-> read time if the bit corresponding to the page is set.
-> With this patch, NVMe writes in Meta server fleet decreased
-> by almost 10% with conventional swap setup (zswap disabled).
+
+
+On 8/23/2024 9:09 PM, Manivannan Sadhasivam wrote:
+> On Thu, Aug 15, 2024 at 02:27:10PM +0530, Md Sadre Alam wrote:
+>> BAM having pipe locking mechanism. The Lock and Un-Lock bit
+>> should be set on CMD descriptor only. Upon encountering a
+>> descriptor with Lock bit set, the BAM will lock all other
+>> pipes not related to the current pipe group, and keep
+>> handling the current pipe only until it sees the Un-Lock
+>> set.
+>>
+>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> ---
+>>
+>> Change in [v2]
+>>
+>> * Added initial support for dt-binding
+>>
+>> Change in [v1]
+>>
+>> * This patch was not included in [v1]
+>>
+>>   Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> index 3ad0d9b1fbc5..91cc2942aa62 100644
+>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> @@ -77,6 +77,12 @@ properties:
+>>         Indicates that the bam is powered up by a remote processor but must be
+>>         initialized by the local processor.
+>>   
+>> +  qcom,bam_pipe_lock:
+>> +    type: boolean
+>> +    description:
+>> +      Indicates that the bam pipe needs locking or not based on client driver
+>> +      sending the LOCK or UNLOK bit set on command descriptor.
+>> +
 > 
-> [1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+> This looks like a pure driver implementation and doesn't belong to the DT at
+> all. Why can't you add a logic in the driver to use the lock based on some
+> detection mechanism?
+   Sure , will use BAM_SW_VERSION register for detection mechanism, since this
+   support only for bam version above 1.4.0.
 > 
-
-...
-
-> @@ -3428,6 +3444,17 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
->   		goto bad_swap_unlock_inode;
->   	}
->   
-> +	/*
-> +	 * Use kvmalloc_array instead of bitmap_zalloc as the allocation order might
-> +	 * be above MAX_PAGE_ORDER incase of a large swap file.
-> +	 */
-> +	zeromap = kvmalloc_array(BITS_TO_LONGS(maxpages), sizeof(long),
-> +				    GFP_KERNEL | __GFP_ZERO);
-
-Nitpick: kvcalloc() maybe, to be slightly less verbose?
-
-> +	if (!zeromap) {
-> +		error = -ENOMEM;
-> +		goto bad_swap_unlock_inode;
-> +	}
-> +
->   	if (si->bdev && bdev_stable_writes(si->bdev))
->   		si->flags |= SWP_STABLE_WRITES;
->   
-
-...
-
-CJ
-
+> - Mani
+> 
+>>     reg:
+>>       maxItems: 1
+>>   
+>> @@ -92,6 +98,8 @@ anyOf:
+>>         - qcom,powered-remotely
+>>     - required:
+>>         - qcom,controlled-remotely
+>> +  - required:
+>> +      - qcom,bam_pipe_lock
+>>     - required:
+>>         - clocks
+>>         - clock-names
+>> -- 
+>> 2.34.1
+>>
+>>
+> 
 
