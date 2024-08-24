@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-300157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F011C95DFA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:35:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AC895DFAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0AB282146
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAAF3282196
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 18:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F18C7DA82;
-	Sat, 24 Aug 2024 18:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD601757F8;
+	Sat, 24 Aug 2024 18:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="OrmVmDLp"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYhFA6/v"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E3D53365;
-	Sat, 24 Aug 2024 18:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B6D40849;
+	Sat, 24 Aug 2024 18:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724524479; cv=none; b=MnYFHvQuBgJdyotu8mWjFWTnD2oJtbFHhEiiHHJdjpaD2QPK3zzXwFkRwwMle8lOy+F7dXIzcExyN55jpnhbgH+GGrxqLpKDHR3+H7IpibSNBxZ4VJB2beCT1HxV/IhFEIWMTkedtpLFngOn+w407PJo78HdijQkfCq8yuGsNgQ=
+	t=1724524546; cv=none; b=EFY2/SfbQEUFRiU8SX6CR7bTaYUVCGR0CGFN8vV7AcR0dfSCyj7mTy/9gmPnQerSsWRa/Qhpsjzjdsn2Fa8ooy1OO54ganExpftqSsl8s2Orfw8cWbKrjFf/zNxzNTYcJVLS7FOYEH9tdb+o6C0wkuhkAMA5USV+BIWuFo8Sn1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724524479; c=relaxed/simple;
-	bh=mTw6jyeW6NnH6hMUo80Xkpk+kXmEzTn3WVnf7UD8fF4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jvTR4f7XXmNlpzqMEVXPNKpithhoLcjXkiMgp0VDQ5tju0XHKNvJiYX/HvLf5Jda0yzHWKiaW31k2lnYV7iNpSxWdVYw6hwTd9DUZCVLVKRAXmqMlKWIB4R8CYOBz3S3JsRrgRBFW/DnoF6vzMRA9A7/WNaHLVIAYc/KRhIV0pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=OrmVmDLp; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1724524474;
-	bh=mTw6jyeW6NnH6hMUo80Xkpk+kXmEzTn3WVnf7UD8fF4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OrmVmDLpNXYym67YQoExHgkOG4kFLVCsIQDj3j23GxFLUXDDOBypKfwOD+k8ORcGB
-	 1BrUOnaFTylWc7yl5pRgP8PkOT/uH0kYW4Ozvpt8H3EXDqVMiAYPInKpeS+uS8gljL
-	 aWLQprfNAX6l8kIfgre+3V1bzpuerkGZ1YWUnWDU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 24 Aug 2024 20:33:57 +0200
-Subject: [PATCH v6 4/4] drm: panel-backlight-quirks: Add Framework 13
- glossy and 2.8k panels
+	s=arc-20240116; t=1724524546; c=relaxed/simple;
+	bh=o/G9uX8ZzFaGDP70JdewsO9SVUO4yfPh85HVv/owmrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzumOFX7GEA6bYvruO4DjlHQCVkCW43AonsFSYKD+45XSAEGfJ42Aid5oETv7H4+gk/n+F3RrdMbDFdd+1o+gMn3tJPVAWdFG2QKxmY0k4qabs8NDv1HwgSxsmboVX6e90bh3HCyxHNtZL89O47HJvMBmwYlZ4WSzbfGlPPNDSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYhFA6/v; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428243f928fso32795555e9.0;
+        Sat, 24 Aug 2024 11:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724524543; x=1725129343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+QxWKMmBLZbhDpE3FhoqFTvA4vPQhbIutQFryBliiNI=;
+        b=RYhFA6/vaqfhYIL2ImK1sSuGSaJ0EK+T9RGqTyk7fCAR+ouBd80bn34JTa82LuobkP
+         VTlU61enGyOYly2QG+9C5fgUbUiCAF8+wCT+lPvMHKBtwOf59Et34dqyx2Xt0OBVjUlv
+         fIEB8izUB7sfWwHXTIbxSJA9OCOZ1FWw+sybQ7XeEViHp+6ZONS1hrGNwTHg4BbvY8nL
+         EuSg6kBb1aeEwpjZ+HnnTpsE3CTdRqj/Lsy1yjXBzSPqRmTP3QwR1roVIm9x85YD8Cr8
+         jEslW15INzzwYWn9yKHLt2OT/CLLTLilQUGWsNRE3s2DrkBK4PjzbYdbl7wLchNOFT+J
+         ghAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724524543; x=1725129343;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+QxWKMmBLZbhDpE3FhoqFTvA4vPQhbIutQFryBliiNI=;
+        b=NpfqJUNFhp9yuf4UxjH6/Csd9HpEsOQX6LvHTWh6tbC/w8toqgQ1IousTtOKKOTQNA
+         89G5g8epwyMAwsL1AxhHkndvwKHk/V/ZP0wpOk3vvEFbzONyeoAGlPyKsY3Yt3bG0fNv
+         HIt2N3ZTfkuSV5G8o/JYDuDYQ5WS1+nROo4nxaEWKhzqMVbTFQEikpcFG2Mj1nUcLWxC
+         S6vE2yc3iBijJpzqM5oWVAJEr0lhH9kc/NZax+sQlWagfVw5L4TAWpS1hZysGAkMKzkW
+         LRqLOiabMpUuPP2IYmcVcz6vRN8LXZ/ga+oG1SiU1ZNPPpb9aGbjo0OHfmRdsoeUXHMm
+         gYtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK3X+J9wKVpUQeAwV6DoYMKqb7fXHgTz9svoPsae1gm5FnXOymMvKxgo4vDFaF42IkRBAHZ3vXj0pFM38=@vger.kernel.org, AJvYcCWiHBwBm2P74KQxYjuIwQfXJEeZkyWgVN/FlL9VoyW2IaU3ZVaRfX27rCnIpdETf3CAJKV6VtTVFSgFPaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxaMGrl/5Bh4XM1i1j3VVVhOxFTY40a/h1jQAmY296Cs4+QbD6
+	9HnxDzjI1qhVHs0GdXLtvozpK5lsbg0BR8+uqdT12Uq/iAmYTSv5
+X-Google-Smtp-Source: AGHT+IH7GPpOsCXpYAmsJZfXhp1LKgdhpp/TafszS9a4tHrhwNcnFVvNFDqM/gmMqBa9JTSAT0avHg==
+X-Received: by 2002:a05:600c:154e:b0:428:e820:37b6 with SMTP id 5b1f17b1804b1-42acd5e689emr46671215e9.31.1724524542625;
+        Sat, 24 Aug 2024 11:35:42 -0700 (PDT)
+Received: from hendrik-laptop.borghorst.space.borghorst.space (p200300ed771342104eaf2a6a78487f8e.dip0.t-ipconnect.de. [2003:ed:7713:4210:4eaf:2a6a:7848:7f8e])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42ac5159450sm101058845e9.17.2024.08.24.11.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 11:35:42 -0700 (PDT)
+From: Hendrik Borghorst <hendrikborghorst@gmail.com>
+To: 
+Cc: Hendrik Borghorst <hendrikborghorst@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Athaariq Ardhiansyah <foss@athaariq.my.id>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] alsa: support HP Pavilion Aero 13-bg0xxx Mute LED
+Date: Sat, 24 Aug 2024 20:34:38 +0200
+Message-ID: <20240824183445.6610-1-hendrikborghorst@gmail.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240824-amdgpu-min-backlight-quirk-v6-4-1ed776a17fb3@weissschuh.net>
-References: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
-In-Reply-To: <20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net>
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
- linux-doc@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724524474; l=1440;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=4PWZVYaIj9BWwhnUS2qlUz6H6bPcZd/2WgBOxYO5hgw=;
- b=uZISDVhsribEXW2iPNZoaYmx2fpVMDA+fMTjEw3Yb35y9ywEsVBwTCpxr008kXxwlG9Bt+J/W
- OIUcCoJ52nnCqIZmmD7viOm+HGusVawMmcXmJenCPTrA1X6QMX4yUvO
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-From: "Dustin L. Howett" <dustin@howett.net>
+This patch adds the HP Pavilion Aero 13 (13-bg0xxx) (year 2024) to list of
+quirks for keyboard LED mute indication.
 
-I have tested these panels on the Framework Laptop 13 AMD with firmware
-revision 3.05 (latest at time of submission).
+The laptop has two LEDs (one for speaker and one for mic mute). The
+pre-existing quirk ALC245_FIXUP_HP_X360_MUTE_LEDS chains both the quirk for
+mic and speaker mute.
 
-Signed-off-by: Dustin L. Howett <dustin@howett.net>
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Tested on 6.11.0-rc4 with the aforementioned laptop.
+
+Signed-off-by: Hendrik Borghorst <hendrikborghorst@gmail.com>
 ---
- drivers/gpu/drm/drm_panel_backlight_quirks.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-index f2aefff618dd..c477d98ade2b 100644
---- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-@@ -25,6 +25,22 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
- 		.ident.name = "NE135FBM-N41",
- 		.min_brightness = 0,
- 	},
-+	/* 13 inch glossy panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x095f),
-+		.ident.name = "NE135FBM-N41",
-+		.min_brightness = 0,
-+	},
-+	/* 13 inch 2.8k panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0cb4),
-+		.ident.name = "NE135A1M-NY1",
-+		.min_brightness = 0,
-+	},
- };
- 
- static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel_min_backlight_quirk *quirk,
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d022a25635f9..a45062c9ed6d 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10217,6 +10217,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8902, "HP OMEN 16", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x890e, "HP 255 G8 Notebook PC", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x8919, "HP Pavilion Aero Laptop 13-be0xxx", ALC287_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8cbd, "HP Pavilion Aero Laptop 13-bg0xxx", ALC245_FIXUP_HP_X360_MUTE_LEDS),
+ 	SND_PCI_QUIRK(0x103c, 0x896d, "HP ZBook Firefly 16 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x896e, "HP EliteBook x360 830 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8971, "HP EliteBook 830 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
 -- 
-2.46.0
+2.44.2
 
 
