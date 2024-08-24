@@ -1,80 +1,110 @@
-Return-Path: <linux-kernel+bounces-299883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E6995DBD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:19:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A2C95DBDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F6B1C21ACB
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A97B28299B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023721547F9;
-	Sat, 24 Aug 2024 05:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7228154C12;
+	Sat, 24 Aug 2024 05:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zje9nRA+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="emMUxo2a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E7A152196;
-	Sat, 24 Aug 2024 05:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187D5154C00;
+	Sat, 24 Aug 2024 05:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724476693; cv=none; b=nU/epvylougpfoX5f4pdVtTqG2lm/xpFGFpnCVb9mAXZ5abkf8fUH79fPtm+qWfm04DRswMIIDzmkuFeMu/lqWbYxT5qTakzgDxbLU6Wudniaw7AJnKz/AXnhdAWtxyz0pwt/GJn9XPeBEJx0p+JHyyXMeJ9xNODSZ0eFUAOISQ=
+	t=1724476696; cv=none; b=ui6b1UbLC9WhBJsDXssR6RYLNP57LXWcvu1ai3hnTbwaHmrorlAOmyDh3ma7VM1BMsE2zMrpE7szRdYlynuelW794oN35FLYTiS46EGp1x84rX+a1Nwlhfu4zqz5/0BPIQqLLuCyCEixf/Jl272bjLwD8gpat3NlcYeiaakeyXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724476693; c=relaxed/simple;
-	bh=azPg7rrtfxJn5Mhi1MmD/CDZDJGEeCp638yWW7tRaf4=;
+	s=arc-20240116; t=1724476696; c=relaxed/simple;
+	bh=ZdYoc4ipxEVvYqYdFzrfotSN1ZfZFBlIBachiqmnKK0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTqHbJ8AGjDQqPJNBIbV+c18BaoBhe+1ZE2FlFSD2jEEAwhzBRioXVH9Efn0NOzRsUmkIyBbq1T3c9hcHghyo9HTOLaGIrbD5iTiHz4HlosVtNR9y3p7RZkLEZFxQ5wp8vLBoHVv9SuNqaLU4Hso6hh7LUsW+rYk0e9tO8hICbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zje9nRA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3152DC32781;
-	Sat, 24 Aug 2024 05:18:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nlr9gNJ8Dd1K6ucrZmL9vBGW35B4bR6EdkpC184oeZPr+B+JjVSqAUfVYhkW8NPp3sII6t3ndCnuH9G0pzIp/468M1bLrysAYIkB6HlKrJ/5BW8LkDQR4eXQw2WtTVdmxV/t9NQ5maHC0CabvsODYaj8pFq3Io8KnEKzLeIYAgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=emMUxo2a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90172C4AF09;
+	Sat, 24 Aug 2024 05:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724476692;
-	bh=azPg7rrtfxJn5Mhi1MmD/CDZDJGEeCp638yWW7tRaf4=;
+	s=korg; t=1724476696;
+	bh=ZdYoc4ipxEVvYqYdFzrfotSN1ZfZFBlIBachiqmnKK0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zje9nRA+qdlW8ECI+FULVvsuN/c2Wfp/QJuZlwyu18jF2yvlQjLmjrPx3x6cuUKSc
-	 yUEzDUAVF1DJ4ClvAyKhvnFwFfEKLKtI+JtVvnNl36+dPL470VGD/fE/lMS3Xh59q4
-	 /UMe5EP1jGLIxDqWZimmPW0SvbwKGob2X4nSUgaE=
-Date: Sat, 24 Aug 2024 11:08:53 +0800
+	b=emMUxo2a+QfrpKBKncBeQHugPqwqToxr0JaQM6b5KiQERsm53UGKVBwV03doYCXt0
+	 av326kZoY9F52gsJMD5WXSoU4oM4T4+kAOvHbe9dGxNNslURPiFBxv5RZ2c2lw6foj
+	 BSoxzkx0T2bD5SBDUPV00m2OVgf+fgeJh5xiBhfs=
+Date: Sat, 24 Aug 2024 11:09:13 +0800
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v2 1/4] driver core: Ignore 0 in dev_err_probe()
-Message-ID: <2024082443-mulch-junkie-1f9a@gregkh>
-References: <20240822130722.1261891-1-andriy.shevchenko@linux.intel.com>
- <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Saurabh Sengar <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH 1/2] uio_hv_generic: Fix kernel NULL pointer dereference
+ in hv_uio_rescind
+Message-ID: <2024082403-aloof-yo-yo-4cf1@gregkh>
+References: <20240822110912.13735-1-namjain@linux.microsoft.com>
+ <20240822110912.13735-2-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240822130722.1261891-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240822110912.13735-2-namjain@linux.microsoft.com>
 
-On Thu, Aug 22, 2024 at 04:05:38PM +0300, Andy Shevchenko wrote:
-> In the similar way, ignore 0 error code (AKA "success") in
-> dev_err_probe(). This helps to simplify a code such as
+On Thu, Aug 22, 2024 at 04:39:11PM +0530, Naman Jain wrote:
+> From: Saurabh Sengar <ssengar@linux.microsoft.com>
 > 
->   if (ret < 0)
->     return dev_err_probe(int3472->dev, ret, err_msg);
+> For primary VMBus channels primary_channel pointer is always NULL. This
+> pointer is valid only for the secondry channels.
 > 
->   return ret;
+> Fix NULL pointer dereference by retrieving the device_obj from the parent
+> in the absence of a valid primary_channel pointer.
 > 
-> to
+> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/uio/uio_hv_generic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->   return dev_err_probe(int3472->dev, ret, err_msg);
-> 
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
