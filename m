@@ -1,83 +1,195 @@
-Return-Path: <linux-kernel+bounces-299876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473ED95DBC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FE695DBC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCDE1C21781
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2ABB1C217A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A23314A4C5;
-	Sat, 24 Aug 2024 05:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99E314A611;
+	Sat, 24 Aug 2024 05:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Pa/imFBV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="N8DzXe5P"
+Received: from mail-m2414.xmail.ntesmail.com (mail-m2414.xmail.ntesmail.com [45.195.24.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B54B4C69
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 05:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ED14C69;
+	Sat, 24 Aug 2024 05:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724476010; cv=none; b=pFG4m5vDktAZF4QHbkpkgfcaw00MH9Js0WpxGKzavp7YkqOAtsQoaUQk34b66cY7nQspN7KkJEuqkL1beDOkTRTz4VtNzMgdsK60DTVRG44SCqpjYuK2dFfXXsPO4wCc3sfgw+EcByCEuHKRfTQTukcFDHfPkgWUFOyKIZ2HWNE=
+	t=1724476076; cv=none; b=rUxnQybfG/HVqdySCukokKkWClBxma+V0VWZPWxDV8grO9YHgOwvA+YT0qy5xErHJz8AGuwemdQzB9+uZjamaX4J2JRMBVhbXHh6N/Er2QVgOWgChKAjYX+zftJ1MLfHUdUPaNrqqt9TUDLJhIy3VczKkicCmX/WMpD2yYuYO9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724476010; c=relaxed/simple;
-	bh=kRWFF7F7UOmGwHsnPPfHcZiz0xTpgYj4in7SPYOK5rE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=R9vQi1jYGuvZVpRXA5vSvVBk26ZfuiEIE6WYFuf8yOroC4zI6UW5WW5tDkKMVbiZYC0DPYXRw2vO5zwsjmk2CjMrP5KCczuT3R0nGChWtjSbenUsF0eHvrKZw6ziISrDPFdFCtq9R7zB9ehJTB22h91gKox5IHaWSW5YaL7DMtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Pa/imFBV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA46C32781;
-	Sat, 24 Aug 2024 05:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1724476009;
-	bh=kRWFF7F7UOmGwHsnPPfHcZiz0xTpgYj4in7SPYOK5rE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Pa/imFBVI1dRJuLEbCRg5jLgkW+r2i61IHu1dx04D0wwx0S+szwL62nEl0kQoHlnZ
-	 tMaMvnMExIKr56XQ4kTFiYoajFBQVU2fjk6j8nAFvUYG4UrQdHqc1MslmmASvKIIXJ
-	 HHrR00BcommdOhWGCh3ysBnr7+GBr61Ap3yheiWQ=
-Date: Fri, 23 Aug 2024 22:06:48 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, david@redhat.com,
- ying.huang@intel.com, hughd@google.com, willy@infradead.org,
- yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [RESEND v8 0/2] mm: store zero pages to be swapped out in a
- bitmap
-Message-Id: <20240823220648.081970f3fc9fb49f925f15be@linux-foundation.org>
-In-Reply-To: <20240823190545.979059-1-usamaarif642@gmail.com>
-References: <20240823190545.979059-1-usamaarif642@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724476076; c=relaxed/simple;
+	bh=5WsuRaYhcJxW661ZUm1cuAs4/wNqZ7oeWqcZoBhK6LY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iripFa3EFdlUQ0weVttDtWxcHHEZBuMQ4rn8YOon1/kWvwlfM/lyRo2kCGiRQ8+Lbn8ogRYyX+DXDWCpUE6W9qxfgUwk8tWcxLzRkRv+dYpzMb36ZZWOA1sPIdj2Sjfnt/mwOasEhtIaA3nWZSXoCJkaiiFQm3sqjwSK2yrqJ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=N8DzXe5P; arc=none smtp.client-ip=45.195.24.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=N8DzXe5P0Okv7ixnQYUnMFVOz1xT/rUNuLQF+4ldvVkgdHtzVRPzMdEkpxEDiAbMUAx5wxbGDVqtf1RQx9kZbI6ZvFVfKbLdYsXMJVLKikEA1FHBxxHTP9bCjnwQknETsb1/3Gr6qcC/DuEKDcn0NVHQvFMs/mtQtz4f1qtr8Qk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=nd5VIf5W6pvlmFIxeaG4uBeEYTx1cRTIUzJ8Ujk2LXs=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 2E4B46E08A2;
+	Sat, 24 Aug 2024 13:07:21 +0800 (CST)
+From: Jon Lin <jon.lin@rock-chips.com>
+To: briannorris@chromium.org,
+	broonie@kernel.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	heiko@sntech.de,
+	jon.lin@rock-chips.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: [PATCH] spi: rockchip: Avoid redundant clock disable in pm operation
+Date: Sat, 24 Aug 2024 13:07:15 +0800
+Message-Id: <20240824050715.3954528-1-jon.lin@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk8eSlZDQ0hPHhkfSh1IGE5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9182c8297f09d5kunm2e4b46e08a2
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBA6GTo6KDI6EhozExZLNw44
+	AQkaCglVSlVKTElPT0xNS09JS0pJVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
+	QVlOQ1VJSVVMVUpKT1lXWQgBWUFPTElDNwY+
 
-On Fri, 23 Aug 2024 20:04:38 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+Fix WARN_ON:
+[   22.869352][ T1885] clk_spi0 already unprepared
+[   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
+[   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
+[   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
+[   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
+[   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
+[   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
+[   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
 
-> Resending it, as the CC had "Huang, Ying" in one of the initial patches,
-> and it was rejected by git send-email because of the "," in name.
-> 
-> The original series [1] was almost merged, but was dropped
-> due to a last minute bug [2]. Resending this with the fix for it,
-> by handling zeromap in the same way as swap_map and cluster_info in
-> enable_swap_info, holding swapon_mutex and si->lock, hence avoiding
-> a race condition between swapon and any point where the lock is held. 
-> This is the safest way.
-> 
-> The series had already been reviewed and acked by all maintainers.
-> 
-> Hoping that this attempt goes better than the initial one :)
+Fixes:  ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
+Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+---
 
-Yup ;)
+ drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 31 deletions(-)
 
-We're missing the [0/n] words here.  I pasted the text from the v1
-series.  Please check that it remains the truth, the whole truth and
-nothing but the truth.
+diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+index e1ecd96c7858..043a7739c330 100644
+--- a/drivers/spi/spi-rockchip.c
++++ b/drivers/spi/spi-rockchip.c
+@@ -940,33 +940,24 @@ static void rockchip_spi_remove(struct platform_device *pdev)
+ 	spi_controller_put(ctlr);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static int rockchip_spi_suspend(struct device *dev)
++#ifdef CONFIG_PM
++static int rockchip_spi_runtime_suspend(struct device *dev)
+ {
+-	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+ 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	ret = spi_controller_suspend(ctlr);
+-	if (ret < 0)
+-		return ret;
+-
+ 	clk_disable_unprepare(rs->spiclk);
+ 	clk_disable_unprepare(rs->apb_pclk);
+ 
+-	pinctrl_pm_select_sleep_state(dev);
+-
+ 	return 0;
+ }
+ 
+-static int rockchip_spi_resume(struct device *dev)
++static int rockchip_spi_runtime_resume(struct device *dev)
+ {
+ 	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+ 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	pinctrl_pm_select_default_state(dev);
+-
+ 	ret = clk_prepare_enable(rs->apb_pclk);
+ 	if (ret < 0)
+ 		return ret;
+@@ -975,41 +966,45 @@ static int rockchip_spi_resume(struct device *dev)
+ 	if (ret < 0)
+ 		clk_disable_unprepare(rs->apb_pclk);
+ 
+-	ret = spi_controller_resume(ctlr);
+-	if (ret < 0) {
+-		clk_disable_unprepare(rs->spiclk);
+-		clk_disable_unprepare(rs->apb_pclk);
+-	}
+-
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_SLEEP */
++#endif /* CONFIG_PM */
+ 
+-#ifdef CONFIG_PM
+-static int rockchip_spi_runtime_suspend(struct device *dev)
++#ifdef CONFIG_PM_SLEEP
++static int rockchip_spi_suspend(struct device *dev)
+ {
++	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+-	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	clk_disable_unprepare(rs->spiclk);
+-	clk_disable_unprepare(rs->apb_pclk);
++	ret = spi_controller_suspend(ctlr);
++	if (ret < 0)
++		return ret;
++
++	/* Avoid redundant clock disable */
++	if (!pm_runtime_status_suspended(dev))
++		rockchip_spi_runtime_suspend(dev);
++
++	pinctrl_pm_select_sleep_state(dev);
+ 
+ 	return 0;
+ }
+ 
+-static int rockchip_spi_runtime_resume(struct device *dev)
++static int rockchip_spi_resume(struct device *dev)
+ {
+ 	int ret;
+ 	struct spi_controller *ctlr = dev_get_drvdata(dev);
+-	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+ 
+-	ret = clk_prepare_enable(rs->apb_pclk);
+-	if (ret < 0)
+-		return ret;
++	pinctrl_pm_select_default_state(dev);
+ 
+-	ret = clk_prepare_enable(rs->spiclk);
++	if (!pm_runtime_status_suspended(dev)) {
++		ret = rockchip_spi_runtime_resume(dev);
++		if (ret < 0)
++			return ret;
++	}
++
++	ret = spi_controller_resume(ctlr);
+ 	if (ret < 0)
+-		clk_disable_unprepare(rs->apb_pclk);
++		rockchip_spi_runtime_suspend(dev);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
+
 
