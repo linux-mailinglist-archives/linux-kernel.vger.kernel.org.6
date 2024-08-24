@@ -1,94 +1,102 @@
-Return-Path: <linux-kernel+bounces-299991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC7195DD53
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:06:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A6095DD57
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 12:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A7BB21528
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6A22B215CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96946155A52;
-	Sat, 24 Aug 2024 10:06:39 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F1315688E;
+	Sat, 24 Aug 2024 10:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfqVsmxL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493CC8488;
-	Sat, 24 Aug 2024 10:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9250B28DB3;
+	Sat, 24 Aug 2024 10:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724493999; cv=none; b=ccQHIj2W6McMxu8UwwJxIvERpkaeNuZkaAaIb4s2MuDCuZ7LNhJckZA/9VSigHJuhVXLSkEFfTEBvjvzqCyLkDzTkfeiez9WolOEdNxHpED4R06Xr+cqq8EK4SeijYsQQZ+Cig3DprtN2CjR5w05Uy1bcF7LQuC9HMy71jiZvg0=
+	t=1724494408; cv=none; b=Dsy1AmYv+raSCWTCDHCWZ7pDVOxOlrkG0xIoNhk1K0ZBnFOUQw8GiovMty3GpHgr4jnyVtaG+g8YbjLhp89X7RdP8eD8nfY2iIhdBb7/CWjqtQ1QX4TmlF1CHsg8Bqlr8M0fkKubBodmLAl1aev/2Ldv1f+Y38dePwkVZlbi6KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724493999; c=relaxed/simple;
-	bh=RCov97JT1kt1nd/F/eN30neXS9WFhiNc4AJ3r3+s8go=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uun04jvG0R/SpQbtHSk/H++vB8agwIA+WTlY7KlCptOoHBGchNM7s41vlPJiF7H5dpGmFp1D4peJMFM9sNnoYlDiLGVDEmITEGaWushz33t/TN8fKyIrlkREeydz/UG9WdPXsvrrYYZCfQD/Lrg1iJyYQdFtQkt6ESrpNBxCNhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WrXZH06xLz1HH4q;
-	Sat, 24 Aug 2024 18:03:19 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 589C31A0188;
-	Sat, 24 Aug 2024 18:06:34 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
- 2024 18:06:33 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] PCI: Remove two unused declarations
-Date: Sat, 24 Aug 2024 18:03:31 +0800
-Message-ID: <20240824100331.586036-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724494408; c=relaxed/simple;
+	bh=EJUbwoQj1+sKr5nSRq40MUt8payr3CejPTrHebf5UWs=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=n4vifoCrLef1fhtuxf2fUzcb6rKBqp0IZFX6Re6dnSdsX5IaBGH6fV93V6xOFpkhnOt5db43+S6N2PH2xMUFEGXXOB5BzynrPNV706AQj0eXibM60tB7DhS0FPqMQxbzWgqkJfDEZ7j8u3uCzif+Dy4q28Qf8HkHBGbLBoF7dcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfqVsmxL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAB6C32781;
+	Sat, 24 Aug 2024 10:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724494408;
+	bh=EJUbwoQj1+sKr5nSRq40MUt8payr3CejPTrHebf5UWs=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=YfqVsmxL21XxsmVv7Y6UKGavJUmwKu0lPqZzEdZkhnsmi+d2Vqdh6p18PHdnoToyF
+	 D0QW5H/AjrM5ScUnwz9RCdDaS1+5Vig5mG6Fc/bkZc5WJPSx04gv7WUsmaTy5F7g0P
+	 0wrTRz3DVfMsQmQvxIGLRD/803hMZmbdOiJDdpVuodFYuw9FEGBp/mCLOddw6JOSEK
+	 bSyR7c+kUyN4CIjFXXBaLN0VqAmdXR+wAPnjFpGysL5nnCINSME7YChSLzqHI1hUEV
+	 y6WwB3ANemGVho+Z85lDtIRcjoj+0jd0OaNv4FBan/1vgErd/4gw+ZsM3kSfEKUkHK
+	 yqy1Jjy4IESsw==
+From: Mark Brown <broonie@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+In-Reply-To: <20240823-dapm-graph-v1-0-989a47308c4c@bootlin.com>
+References: <20240823-dapm-graph-v1-0-989a47308c4c@bootlin.com>
+Subject: Re: [PATCH RESEND 0/3] ASoC: dapm-graph: add component on/off and
+ route names to graph
+Message-Id: <172449440543.846858.4694040837255078540.b4-ty@kernel.org>
+Date: Sat, 24 Aug 2024 11:13:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Commit b67ea76172d4 ("PCI / ACPI / PM: Platform support for PCI PME
-wake-up") declared but never implemented __pci_pme_wakeup().
-Commit fd00faa375fb ("PCI/VPD: Embed struct pci_vpd in struct pci_dev")
-removed pci_vpd_release() but leave declaration.
+On Fri, 23 Aug 2024 09:45:58 +0200, Luca Ceresoli wrote:
+> This small series adds some improvements to dapm-graph in order to produce
+> a more correct and informative graph.
+> 
+> 
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
-v2: Add pci_vpd_release() history
----
- drivers/pci/pci.h | 2 --
- 1 file changed, 2 deletions(-)
+Applied to
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 0e9b1c7b94a5..4c284c55a0c5 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -124,7 +124,6 @@ void pcie_clear_device_status(struct pci_dev *dev);
- void pcie_clear_root_pme_status(struct pci_dev *dev);
- bool pci_check_pme_status(struct pci_dev *dev);
- void pci_pme_wakeup_bus(struct pci_bus *bus);
--int __pci_pme_wakeup(struct pci_dev *dev, void *ign);
- void pci_pme_restore(struct pci_dev *dev);
- bool pci_dev_need_resume(struct pci_dev *dev);
- void pci_dev_adjust_pme(struct pci_dev *dev);
-@@ -169,7 +168,6 @@ static inline bool pcie_downstream_port(const struct pci_dev *dev)
- }
- 
- void pci_vpd_init(struct pci_dev *dev);
--void pci_vpd_release(struct pci_dev *dev);
- extern const struct attribute_group pci_dev_vpd_attr_group;
- 
- /* PCI Virtual Channel */
--- 
-2.34.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/3] ASoC: dapm-graph: remove the "ROOT" cluster
+      commit: 5a98c2e5399b125231ebb4594fee5fddfb7db9fd
+[2/3] ASoC: dapm-graph: visualize component On/Off bias level
+      commit: 64a1e3ddab1ebaa590101b0d7d7fa5d3144da1e8
+[3/3] ASoC: dapm-graph: show path name for non-static routes
+      commit: a14b278a47dd4b263799214c5ae0da6506ed7692
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
