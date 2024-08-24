@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-300168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197CE95DFC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C405E95DFCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE991C20D74
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E890C1F21A37
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE00B13AA2E;
-	Sat, 24 Aug 2024 19:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F250768E1;
+	Sat, 24 Aug 2024 19:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2ZeEYbP"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmamWSUb"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EAC61FFC;
-	Sat, 24 Aug 2024 19:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7082AE97
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724526775; cv=none; b=N2t4j0n8H7mxtSIv/PazsbqhRcFLwIw6SK93u6bieXCe1bQpxW2Hdudht7QZQwqVP6Zl/fZ9kwRvB1SkSU788oLoV5yaDrHDQINXc7fQCuStY1yKU7UrGsU96w4oLxIVgTAlwR+MBfdSncymU7Y6EvXhTLj1FtCPHCfZM33We3g=
+	t=1724528009; cv=none; b=ef8WT9vpgg7BrjIzvA2hgwz2rwMqFwiNdtCFKrZ+ZKF3x19rkFO+7+U5EY2y3xbpgaVKKYF7e+mmUb+gBbE/wGeMI4LZlMnUhPfzq5WQm73QLGaNDGk7AD/Le+7BV9ECbqQKPRtjT7+5w5GUGZN8W7JiQ2UadjZFOWWWcNrtMU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724526775; c=relaxed/simple;
-	bh=dRsDBERBKXGQmlNxsmOYsnycmpuJFUc5IIm+FZN1U5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eeTmHHawug+j57fGQhfjdRdls5HRxQh2LotXFD2KfnKNY4Cai6AA377wVevE2WyjSMZD37bfg9+mgfBQOQv6L3HN6PMc7IjCQwdtTecMZiROCyeuguCrEN7eKC6UE8iFTU3R1l1STlA6N8gFU2mRhLdXsAHaKlL6zJ6Vjyv4Bgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2ZeEYbP; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1724528009; c=relaxed/simple;
+	bh=UrsrTfkR5KwMJIV9SUPInKX/BgKuG0SUpUsdaykmmtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ny0RX8AjW8Ij6wyuA/4FL0kkLZVpW1AcmpgnzonERrL9W6ONcoQhhFtdkB63umK6n95as8BufAogrezoVHHZ7kXyY20KaBHkebY/OAjFgiAYev3w2gNMxfnzjB41tsjq4wqWuVF8uXeEZndxREbO7XjMZIt4dyHoafpKKkIHWRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmamWSUb; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3718cd91185so1552600f8f.2;
-        Sat, 24 Aug 2024 12:12:53 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so24010515e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 12:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724526771; x=1725131571; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vxw92cxeIEiHhs9EMgxgq3pO39LFJ0Vnsb2d9XSPFpU=;
-        b=U2ZeEYbP5QsmUn61qTqEkBRfGcvO9rITHaVaoP+oQ3JBWfzc6XCDEnxz4FPgX9QGiQ
-         uWbxRUbsX3CdNaOSBKxVaGSo3T+Oc3Z/SLeZJx5sC6MAzaFQO4fbPuEmJFQhrniuGtm+
-         aW/WiBg4ws/gX8RJhTxx4q8GOALjX+XHOrO+ILCj7C9wcUBM4T3a6giJbDHvhn7Zo7Me
-         P5rr13LhVN2Kwx5KjuV/jzvDV+1AxsMRvbbG84kuAd7owdh87fSP6N+fGHKMVmf3btuZ
-         /vffp0NlIf5RTtnW81gHrA2rVzVvZNFuv5ZzgozTaWfQaFEkWv6b3kYcBJlmzuhc8xaO
-         wHVA==
+        d=gmail.com; s=20230601; t=1724528006; x=1725132806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jXWVbBm2YGflm2QAsnwv8TFXxPetn70j5XC6l6mW/uI=;
+        b=HmamWSUbV6p+J/SysqPG+SCaHhuOD6ek11TI2r4TB3xHTpU4qFI78qTPLyEF7kgikm
+         8R1dZUKeb80AQOccycn8Wn8WkvVjcRCzPSzbgc2+hceM4sPnFrhbK67HfjA/dHGnr8el
+         6/QcW5etS4MgtEd/t9nwM941yr0s7IGBBV9OqT2Ggv/lryBAtmbxoszJHn7IUvpiGCeb
+         3fz6zU8hXVYOxV+ZWm8ZcTHVVGY13/XFIwJxKyDoEmp/56dLI/9xOqzk3Q9LnmRcHQlK
+         SgSlakfe9KoVLO3lG1kiD2OZZdu0fh30Hgplsg9UiECaRF8MRFluwlZ+xrcqldzBPo+w
+         UwLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724526771; x=1725131571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vxw92cxeIEiHhs9EMgxgq3pO39LFJ0Vnsb2d9XSPFpU=;
-        b=w0A20t6dj7qx4c+wWm1/5ucA5iD6hI2csuLoLGemseYJgNm4d0n6RRqhdUO0jCgjVG
-         EUnK8XjhzCAz5TxJHW50m8qsK1g/d8F8TzYuX6s47Keg62NQWw1p3FOvgLsSTb7D+DV3
-         a/FKAPpcR+oMNlMqtjUMte74x5ZZTivY3fSx98ORdUECZeWHNFS16q4S5Bk/4s1BEnyX
-         O+xSODTGucnJnfi3itI0bHUt6RlFUeUAR/xaAoVfcoU94ci/w9OROHr7yqpVPEUJVsiU
-         4uUN0nlG4oLfYYpH9eXO4LSv6VFI98Sz3rJ3hsv0hz0F+LBrUk3BbRyxV8qbMSNf8qrT
-         1uHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXF2J4j9cR2FufAKBrGjE1doPrLF7ymG1/zAzkCi7o9nAOuRgOy4OKQPM1LFVjV/FQXJ5HbAIWB7KKW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeQeE75X8plW4rydQilWGCl59omfLmLt0ruKdMzedaogdi/SkA
-	vEmfE/sjbsjnwNV8l1ySmLACTpg3E+08nKZqilFN7rK6ndsUypjpqsBKN41fSHQ=
-X-Google-Smtp-Source: AGHT+IF9Li3MJwjnTCQZvRS3VVn7nuqBi4T5p7Mo+MHjDsuw5dg8olBZhngWv1qKDBfikGef2aL15A==
-X-Received: by 2002:a5d:5273:0:b0:371:a70d:107e with SMTP id ffacd0b85a97d-37311843365mr3676162f8f.6.1724526770689;
-        Sat, 24 Aug 2024 12:12:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724528006; x=1725132806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jXWVbBm2YGflm2QAsnwv8TFXxPetn70j5XC6l6mW/uI=;
+        b=W/P82E1ym0UIt/uRUxuaaEq2W7Cozk51bfJsxmQIb8oN58BcmG/vpA+wMVMADEsGX3
+         H/I/6RrCSLWFwg48SQrASAdfBdVqLnVUiUgTG6Zls0El3WoN4pSPE1o7clLBDZB7F5Cl
+         AgnVMl/t8u2utvAOTlBpHYcXJi7wFjZf4uq8qPerMIr7FM05WiaBqg2ew/YpR8+TWPHS
+         3KKz3fJJdBMHUURFC6TE9PtY+Zubc80r+YSoqFcWdVlbfivB0bitwC75aU73DlZ+kBiL
+         X2wLMpws1ZBB0pgCEiH7HQifKdskjatgJZac034ClVbpoGhx/qBzG8kOmBaug6RpkzVY
+         o4Eg==
+X-Gm-Message-State: AOJu0YyrTQ1GFXSazT03WFVbunfEm6w3flZHHBGCycaaQxY8FP8FcI7b
+	0L9Ik13M1ETHeXDn+7JSYDkc/106ZLDFUfZ43mw17EjnGvC5FkdfHhw/BneK+z4=
+X-Google-Smtp-Source: AGHT+IHDhrwrtvMjHgyDaao+xJsyjyyNVaarUe1ry0M+ESCuF1DnDIuJz2el8LQOfiYNFl+u1otDJw==
+X-Received: by 2002:a05:6000:18e:b0:366:f041:935d with SMTP id ffacd0b85a97d-373118ef46bmr3668768f8f.60.1724528005278;
+        Sat, 24 Aug 2024 12:33:25 -0700 (PDT)
 Received: from localhost.localdomain ([156.197.22.60])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c520sm7109793f8f.39.2024.08.24.12.12.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308157c55sm7155197f8f.46.2024.08.24.12.33.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 12:12:50 -0700 (PDT)
+        Sat, 24 Aug 2024 12:33:24 -0700 (PDT)
 From: Ahmed Ehab <bottaawesome633@gmail.com>
 To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	linux-ext4@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: [PATCH v6 2/2] locking/lockdep: Test no new string literal is created in lockdep_set_subclass()
-Date: Sun, 25 Aug 2024 01:10:31 +0300
-Message-ID: <20240824221031.7751-2-bottaawesome633@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] Refactor switch_mm_cid() to avoid unnecessary checks
+Date: Sun, 25 Aug 2024 01:31:32 +0300
+Message-ID: <20240824223132.11925-1-bottaawesome633@gmail.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240824221031.7751-1-bottaawesome633@gmail.com>
-References: <20240824221031.7751-1-bottaawesome633@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,65 +87,175 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a test case to ensure that no new name string literal will be
-created in lockdep_set_subclass(), otherwise a warning will be triggered
-in look_up_lock_class(). Add this to catch the problem in the future. 
+The issue is that we are checking if we are switching from {kerel,user}
+to {kernel, user} multiple times unnecessarily.
+
+To fix this, refactor switch_mm_cid() and break it into multiple methods
+to hand the cases of switching from {kernel,user} to {kernel, user}.
+Hence, we avoid any redundant checks.
 
 Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
 ---
-v5->v6:
-- Changed the subject and changelog to be in imperative format
+ kernel/sched/core.c  | 15 +++++---
+ kernel/sched/sched.h | 86 ++++++++++++++++++++++++++------------------
+ 2 files changed, 62 insertions(+), 39 deletions(-)
 
- lib/locking-selftest.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 6f6a5fc85b42..2b4650bdf833 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -2710,6 +2710,32 @@ static void local_lock_3B(void)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f3951e4a55e5..abfa73f9c845 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5155,9 +5155,15 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 		enter_lazy_tlb(prev->active_mm, next);
  
+ 		next->active_mm = prev->active_mm;
+-		if (prev->mm)                           // from user
++		if (prev->mm) {                           // from user
+ 			mmgrab_lazy_tlb(prev->active_mm);
++			switch_mm_cid_from_user_to_kernel(rq, prev, next);
++		}
+ 		else
++			/*
++			 * kernel -> kernel transition does not change rq->curr->mm
++			 * state. It stays NULL.
++			 */
+ 			prev->active_mm = NULL;
+ 	} else {                                        // to user
+ 		membarrier_switch_mm(rq, prev->active_mm, next->mm);
+@@ -5176,12 +5182,11 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 			/* will mmdrop_lazy_tlb() in finish_task_switch(). */
+ 			rq->prev_mm = prev->active_mm;
+ 			prev->active_mm = NULL;
+-		}
++			switch_mm_cid_from_kernel_to_user(rq, prev, next);
++		} else
++			switch_mm_cid_from_user_to_user(rq, prev, next);
+ 	}
+ 
+-	/* switch_mm_cid() requires the memory barriers above. */
+-	switch_mm_cid(rq, prev, next);
+-
+ 	prepare_lock_switch(rq, next, rf);
+ 
+ 	/* Here we just switch the register state and the stack. */
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4c36cc680361..27fa050b81f5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -5,6 +5,7 @@
+ #ifndef _KERNEL_SCHED_SCHED_H
+ #define _KERNEL_SCHED_SCHED_H
+ 
++#include "asm-generic/barrier.h"
+ #include <linux/sched/affinity.h>
+ #include <linux/sched/autogroup.h>
+ #include <linux/sched/cpufreq.h>
+@@ -3515,8 +3516,8 @@ static inline int mm_cid_get(struct rq *rq, struct mm_struct *mm)
  }
  
-+static void lock_class_subclass_X1(void)
-+{
-+	const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
-+	const char *name_after_setting_subclass;
-+
-+	lockdep_set_subclass(&rwsem_X1, 1);
-+	name_after_setting_subclass = rwsem_X1.dep_map.name;
-+	DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
-+}
-+
-+/*
-+ * after setting the subclass the lockdep_map.name changes
-+ * if we initialize a new string literal for the subclass
-+ * we will have a new name pointer
-+ */
-+static void class_subclass_X1_name_test(void)
-+{
-+	printk("  --------------------------------------------------------------------------\n");
-+	printk("  | class and subclass name test|\n");
-+	printk("  ---------------------\n");
-+
-+	print_testname("lock class and subclass same name");
-+	dotest(lock_class_subclass_X1, SUCCESS, LOCKTYPE_RWSEM);
-+	pr_cont("\n");
-+}
-+
- static void local_lock_tests(void)
+ static inline void switch_mm_cid(struct rq *rq,
+-				 struct task_struct *prev,
+-				 struct task_struct *next)
++		struct task_struct *prev,
++		struct task_struct *next)
  {
- 	printk("  --------------------------------------------------------------------------\n");
-@@ -2920,6 +2946,8 @@ void locking_selftest(void)
- 	dotest(hardirq_deadlock_softirq_not_deadlock, FAILURE, LOCKTYPE_SPECIAL);
- 	pr_cont("\n");
+ 	/*
+ 	 * Provide a memory barrier between rq->curr store and load of
+@@ -3524,38 +3525,6 @@ static inline void switch_mm_cid(struct rq *rq,
+ 	 *
+ 	 * Should be adapted if context_switch() is modified.
+ 	 */
+-	if (!next->mm) {                                // to kernel
+-		/*
+-		 * user -> kernel transition does not guarantee a barrier, but
+-		 * we can use the fact that it performs an atomic operation in
+-		 * mmgrab().
+-		 */
+-		if (prev->mm)                           // from user
+-			smp_mb__after_mmgrab();
+-		/*
+-		 * kernel -> kernel transition does not change rq->curr->mm
+-		 * state. It stays NULL.
+-		 */
+-	} else {                                        // to user
+-		/*
+-		 * kernel -> user transition does not provide a barrier
+-		 * between rq->curr store and load of {prev,next}->mm->pcpu_cid[cpu].
+-		 * Provide it here.
+-		 */
+-		if (!prev->mm) {                        // from kernel
+-			smp_mb();
+-		} else {				// from user
+-			/*
+-			 * user->user transition relies on an implicit
+-			 * memory barrier in switch_mm() when
+-			 * current->mm changes. If the architecture
+-			 * switch_mm() does not have an implicit memory
+-			 * barrier, it is emitted here.  If current->mm
+-			 * is unchanged, no barrier is needed.
+-			 */
+-			smp_mb__after_switch_mm();
+-		}
+-	}
+ 	if (prev->mm_cid_active) {
+ 		mm_cid_snapshot_time(rq, prev->mm);
+ 		mm_cid_put_lazy(prev);
+@@ -3565,6 +3534,55 @@ static inline void switch_mm_cid(struct rq *rq,
+ 		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next->mm);
+ }
  
-+	class_subclass_X1_name_test();
++static inline void switch_mm_cid_from_user_to_kernel(struct rq *rq,
++		struct task_struct *prev,
++		struct task_struct *next)
 +
- 	if (unexpected_testcase_failures) {
- 		printk("-----------------------------------------------------------------\n");
- 		debug_locks = 0;
++{
++	/**
++	 * user -> kernel transition does not guarantee a barrier, but
++	 * we can use the fact that it performs an atomic operation in
++	 * mmgrab().
++	 */
++	smp_mb__after_mmgrab();
++	switch_mm_cid(rq, prev, next);
++
++}
++
++static inline void switch_mm_cid_from_kernel_to_user(struct rq *rq,
++		struct task_struct *prev,
++		struct task_struct *next)
++
++{
++	/*
++	 * kernel -> user transition does not provide a barrier
++	 * between rq->curr store and load of {prev,next}->mm->pcpu_cid[cpu].
++	 * Provide it here.
++	 */
++	smp_mb();
++	switch_mm_cid(rq, prev, next);
++
++}
++
++
++static inline void switch_mm_cid_from_user_to_user(struct rq *rq,
++		struct task_struct *prev,
++		struct task_struct *next)
++
++{
++	/*
++	 * user->user transition relies on an implicit
++	 * memory barrier in switch_mm() when
++	 * current->mm changes. If the architecture
++	 * switch_mm() does not have an implicit memory
++	 * barrier, it is emitted here.  If current->mm
++	 * is unchanged, no barrier is needed.
++	 */
++	smp_mb__after_switch_mm();
++	switch_mm_cid(rq, prev, next);
++
++}
++
+ #else /* !CONFIG_SCHED_MM_CID: */
+ static inline void switch_mm_cid(struct rq *rq, struct task_struct *prev, struct task_struct *next) { }
+ static inline void sched_mm_cid_migrate_from(struct task_struct *t) { }
 -- 
-2.45.2
+2.46.0
 
 
