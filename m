@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-299957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D3B95DCE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:16:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFE395DCFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08C81C21ED2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:16:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA734B22693
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5325155330;
-	Sat, 24 Aug 2024 08:16:25 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410B11547DB;
+	Sat, 24 Aug 2024 08:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="UYtmiSWh"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C641179BD;
-	Sat, 24 Aug 2024 08:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D7B5680
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724487385; cv=none; b=ICqCANXD1z/dowhtaF9UFnAaM9umJzKHuwABnpUpLiJ4brCfUFW73hV+U2U2jkfXIrJztkZGnxp3kQSPt4ausI+2uzz4rp+ga75y/T9K4qIOwlAZD1G/OqFbt7NIsVJ9o421g7SHOEfpE+mLqQ0oAgJbFelISYiuK5YL/ACkZLE=
+	t=1724488787; cv=none; b=oeu2pdRKsVIpEDVDW3z17vc84wPm+yuY5u7iG8t0OFSfgShHQebxGAQP5gRl5I/2xGtVNGguPFpet5EsfodQK+ExT1GDIRBHZKx1bPvRu79NHcen89/P9jqHDC9j9aJIQAtVJ6Lt0BHfgFoKGqzxBiRcy2I0T+AwYG2SpNzNFb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724487385; c=relaxed/simple;
-	bh=tPuCwHyIKcY3Z4wwkH2t8Pvr1gWq8xRTEmWqoLqXl88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GphJcCz3Q6Uzfy9OaZ1fZuTLnwFnuXWX0l6O5dgzBt8mGU0bwyd97rb1NuD8Lq0Df+ncsmFdQa2U4PHK1jWJvP72OHviXUQT1r0Cv4WoWatJybHqsAmvZFyM4+istFHMg2ZlBsH6UYwkNEmx+muLVYdme6hSTE05ksHTVg2YeC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 4F46A227A87; Sat, 24 Aug 2024 10:16:18 +0200 (CEST)
-Date: Sat, 24 Aug 2024 10:16:18 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: mhklinux@outlook.com
-Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, robin.murphy@arm.com, hch@lst.de,
-	m.szyprowski@samsung.com, petr@tesarici.cz, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [RFC 0/7] Introduce swiotlb throttling
-Message-ID: <20240824081618.GB8527@lst.de>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
+	s=arc-20240116; t=1724488787; c=relaxed/simple;
+	bh=vMKObzkUEEoqMKU8RXSyMlhpNcH5CxpRElgvx4nGK/Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=u3s2e6jEP03x2bZwY4FvlM3RCLTOg27XhHP6N3mGYsMerivA3uMxmaFf3A3jPdvLlRF+gbxtLmLJFhN9MXHFRWwC4dkWYVFzgOv3nPqsONSJYPa4sDEzzcXeKyi8NWNzh764NSCd3nHBDuB1u4EzaeQ0bGzsHv3Wz/FQKQtQtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=UYtmiSWh; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1724488479;
+	bh=Nr5CwV8SDFTHEbQ4fOfilDtU2d/P9Nj2M/Pw6Z9L6I4=;
+	h=From:To:Cc:Subject:Date;
+	b=UYtmiSWh9J3SHK4OOVHyE22m2o8uTaj7pUzju5za0DbWbCEoNGRmYDtwCpik2096o
+	 jDcb2sE4iISt/Y700UscnzSJlo0dAwR1Uud+uw16qR0C4efY5oedGgWgal7qXPg9I0
+	 q8d0X7hsf7PgW/SrpKKv/tErXfWiSJ4G6FAgFo/M=
+Received: from localhost.localdomain ([171.223.167.119])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 541056CC; Sat, 24 Aug 2024 16:21:01 +0800
+X-QQ-mid: xmsmtpt1724487661t6xau541p
+Message-ID: <tencent_6EF2603DCCFAD6A8265F8AAD9D6D5BCB9309@qq.com>
+X-QQ-XMAILINFO: MDbayGdXPuoeW02xbhina/QJPzUrVbZYEy0kN2bsN7d6y24gh4666/EdO6aIh6
+	 UgwBC14RD5+UupUY+zdWlpYq23z+y0mvb8mzP16HKEViSrzCvv20RGf59V4+YNkHX5Zoa4EY91TL
+	 h5vPBXASMTItgda6Iy3Xr2PjHcLaIOVDiihgCOuWn/TBbAboXJR0Fu7Ocf3SGeCJaA8cAG0qa2ep
+	 EgAhLyHCKeBkNjkGPrbLlqtgRb84qbIDnzv94r97G4UvoAjvxdoQkEu/fe6ehfE6kpWo1puVX6le
+	 Mo9/8uAJgbnIzWIOaY2tL0F6CTF89lmwRQPdpbB7hZEy9mjg7jHkKaUa5KLaDZ4WZfYe5yoIdyFM
+	 5OIW3VHvd+ycNbZdHMzTCaCApbs3BHgMOgCgORnbz6aUckKut7MEf9AV2GyJw1Z7juL89NsVZEZH
+	 PDdFUe8+zX9LN05voOfjavOuqN87HPHwm93csQ5GR3PYCNmg7VC5n0jrvYaaf0AE/rW2X2+Nfmkw
+	 hMeOB3tsaC7oO7Ghpl9O1ecx1QjVtJWOrdTd2Hopnlbgfn1IR+/7/6RojGQjKOWRHy+zWgPyARxP
+	 bmYHhm0KBQHdGIRV6vQ3dqzyFF4YJN9julMWlILRUkMaVTZEVK0jD42Wrz7vMf/0aYNiQa1gkDN2
+	 F5vGQSwyXQ7WMVG/mM7S6I1YpTi/0NwEthI+BzxjGN5nfSm6b8NXuRN2+BPgm5gncY/iMDpyxoG5
+	 5ky66007Pu2wOxLKUnX6IrfByjL5eiIQ/Nsx0uB5qSTMc8KGiQVCI+TGsBX1UxHFzuVywrr4OPKZ
+	 uQNwPz2Y5zNiuj+sRjvDeCaHlDzwQ9D3bsA1FMkgeu+pUsyVR5pZaK/0D3oRYcr9psbRpO9ckzK0
+	 LpZyp8RziWuhpT8mUweeONVzeZ9XwrRpq8buGgMI/pPJVUTUp25A/BfYhIzZJMGpHg4+hrjMdTn2
+	 PTss6a7WBA2w8KwB4OmxWlElUDUF4IEFsGi/Bo2m0+TThxpGIGBzRTREydwDV2psT3ECeJ08E5D2
+	 YxE/MvRFmwkExMXgiT7zX/CwRnQ5j5uoWkA+DOyeblUcIfJtKvC1yhV9hLYf57GUvmdF+WyMyfS/
+	 5bZI23pIzmJhb6tv8=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: renjun wang <renjunw0@foxmail.com>
+To: maarten.lankhorst@linux.intel.com
+Cc: mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	renjun wang <renjunw0@foxmail.com>
+Subject: [PATCH] drm/atomic: fix kerneldoc for fake_commit field
+Date: Sat, 24 Aug 2024 16:20:14 +0800
+X-OQ-MSGID: <20240824082014.26004-1-renjunw0@foxmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822183718.1234-1-mhklinux@outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22, 2024 at 11:37:11AM -0700, mhkelley58@gmail.com wrote:
-> Because it's not possible to detect at runtime whether a DMA map call
-> is made in a context that can block, the calls in key device drivers
-> must be updated with a MAY_BLOCK attribute, if appropriate. When this
-> attribute is set and swiotlb memory usage is above a threshold, the
-> swiotlb allocation code can serialize swiotlb memory usage to help
-> ensure that it is not exhausted.
+According to the context, the function description for fake_commit
+should be "prevent the atomic states from being freed too early"
 
-One thing I've been doing for a while but haven't gotten to due to
-my lack of semantic patching skills is that we really want to split
-the few flags useful for dma_map* from DMA_ATTR_* which largely
-only applies to dma_alloc.
+Signed-off-by: renjun wang <renjunw0@foxmail.com>
+---
+ include/drm/drm_atomic.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Only DMA_ATTR_WEAK_ORDERING (if we can't just kill it entirely)
-and for now DMA_ATTR_NO_WARN is used for both.
-
-DMA_ATTR_SKIP_CPU_SYNC and your new SLEEP/BLOCK attribute is only
-useful for mapping, and the rest is for allocation only.
-
-So I'd love to move to a DMA_MAP_* namespace for the mapping flags
-before adding more on potentially widely used ones.
-
-With a little grace period we can then also phase out DMA_ATTR_NO_WARN
-for allocations, as the gfp_t can control that much better.
-
-> In general, storage device drivers can take advantage of the MAY_BLOCK
-> option, while network device drivers cannot. The Linux block layer
-> already allows storage requests to block when the BLK_MQ_F_BLOCKING
-> flag is present on the request queue.
-
-Note that this also in general involves changes to the block drivers
-to set that flag, which is a bit annoying, but I guess there is not
-easy way around it without paying the price for the BLK_MQ_F_BLOCKING
-overhead everywhere.
+diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+index 4d7f4c5f2001..31ca88deb10d 100644
+--- a/include/drm/drm_atomic.h
++++ b/include/drm/drm_atomic.h
+@@ -460,7 +460,7 @@ struct drm_atomic_state {
+ 	 *
+ 	 * Used for signaling unbound planes/connectors.
+ 	 * When a connector or plane is not bound to any CRTC, it's still important
+-	 * to preserve linearity to prevent the atomic states from being freed to early.
++	 * to preserve linearity to prevent the atomic states from being freed too early.
+ 	 *
+ 	 * This commit (if set) is not bound to any CRTC, but will be completed when
+ 	 * drm_atomic_helper_commit_hw_done() is called.
+-- 
+2.39.2
 
 
