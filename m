@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-299921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 109B995DC3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F18795DC46
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31B6EB22875
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:30:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8EFB2275C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 06:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B9015383B;
-	Sat, 24 Aug 2024 06:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cr64kY9q"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A076154425;
+	Sat, 24 Aug 2024 06:31:48 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1125F3A8E4;
-	Sat, 24 Aug 2024 06:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902093A8E4;
+	Sat, 24 Aug 2024 06:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724481033; cv=none; b=maYNKXaPyPSoC+plChn/lsUBQy+jtaZRuO4o0E+vzCU4y6i4ne6Tc5NYM6pyocVMeFun3Bvml41Htlj3Ml6YIrROp/AUj2DnwWkPE7fUIJjQ3ATANmxoZK6DQxC7TSAq/EeXUaTqEYQHRIRKjV6Dw04fzq2zZx04cZRE8t+P2ms=
+	t=1724481107; cv=none; b=FO/8UTtBlOFfvUPbcXX3W8pY/TdZ1F4eXyerq4FQfaNey+lvn9jUkGy7T+VQfvfVCfx04srmOStU1MoMWKuRF4QDhHzi5lBAcfHvwtEj+XZ4U7BFZ0DwcZLdTzWp0rNrg+SjdfdMY0hbF/6+0UE2i+ZkWkwDVQqEcrcJQLOD2IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724481033; c=relaxed/simple;
-	bh=8ZW0C1G6c5DfMKglNLllIKATSj5OZh1hs2/PFlDai9w=;
+	s=arc-20240116; t=1724481107; c=relaxed/simple;
+	bh=2EdA9dYifcGgOE8+tCMyipwrc6qwM59V02r/mYYtTB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7n1Vl+519W8matnbQxNrXecN5odiXvK7WL6OrJyuDKhRIK+8hIiDkyeqVlJnbUx8kS8PuDS3VsG1XHsQQYX656bY08A76T1FxG4Q47vH1y0GUbOVobPt6vqfqJP+8TZAc+Ms81iRFC9ECFX9vTNgOeFK1nGv/OX1JN/wDbIro4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cr64kY9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7037C32781;
-	Sat, 24 Aug 2024 06:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724481032;
-	bh=8ZW0C1G6c5DfMKglNLllIKATSj5OZh1hs2/PFlDai9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cr64kY9qomjZQwnaUs3S9tL8cnadlk4bWZdZ3p4xzqRTfzr1gWkH9F2gBgd4bchUk
-	 N0KiCn15ghXPcTQIdFJcgcFVv0vELid6xHMoUNuopdiNbUSCGCzGAbqUkCXf/sjBDJ
-	 y3VCNa8SaYLmx68RIw7SknV603mFxFdG9FeiuViLvja/1XKnMkti/C+mqaMX05l5fK
-	 TOc79q9MfQ41qbfzMDOmD5KarV2lyqC/wLhwxjzdkB8XptCW9g/x1QyM+leg+ghsU9
-	 RgzAbPWgmmrpZOUrI0MrlIkpEQvGgChK33NG56O8+CVcJ4SaYzEuWr2+AQ9ajwvllD
-	 Ej2rUnU0N4DeA==
-Date: Sat, 24 Aug 2024 08:30:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com, 
-	marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bsp-development.geo@leica-geosystems.com, customers.leicageo@pengutronix.de
-Subject: Re: [PATCH next 1/2] dt-bindings: net: bluetooth: nxp: support
- multiple init baudrates
-Message-ID: <6he2msn6oj74isl4l3b2ivegfh6sf5rvqo6cqpcmoqrnvonka4@kesvvmd45l7i>
-References: <20240823124239.2263107-1-catalin.popescu@leica-geosystems.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFjbI54gXFDexyO+4/9nTyyx5hdjZ0NvoJKBtoK00QL561r8wgmiAegAVB9+xqvXtQ719NJuePmQ6xJ1BiwgAbM9nH6Wj5tRP4VHwPzspGx/26SmAAg9vsdM4zPWrw5fgHH3Elj96HZ5wFzLQbX1eY4d0pq416YFKr5BRxr1qSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79BEC32781;
+	Sat, 24 Aug 2024 06:31:31 +0000 (UTC)
+Date: Sat, 24 Aug 2024 08:31:28 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, Chukun Pan <amadeus@jmu.edu.cn>, 
+	Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>, 
+	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>, 
+	Michael Riesch <michael.riesch@wolfvision.net>, Jimmy Hon <honyuenkwun@gmail.com>, 
+	Alexey Charkov <alchark@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
+	Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v2 04/12] dt-bindings: iio: adc: Add
+ rockchip,rk3576-saradc string
+Message-ID: <wegeyglbv5xufuvpmf2ye2bu6w5ob753h4hfimxw3ozt2vnfoh@fgvdblizg5hc>
+References: <20240823150057.56141-1-detlev.casanova@collabora.com>
+ <20240823150057.56141-5-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,42 +66,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240823124239.2263107-1-catalin.popescu@leica-geosystems.com>
+In-Reply-To: <20240823150057.56141-5-detlev.casanova@collabora.com>
 
-On Fri, Aug 23, 2024 at 02:42:38PM +0200, Catalin Popescu wrote:
-> Make "fw-init-baudrate" a list of baudrates in order to support chips
-> using different baudrates assuming that we could not detect the
-> supported baudrate otherwise.
+On Fri, Aug 23, 2024 at 10:52:31AM -0400, Detlev Casanova wrote:
+> Add rockchip,rk3576-saradc compatible string.
+> The saradc on RK3576 is compatible with the one on RK3588, so they are
+> used together in an arm of the oneOf.
 > 
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  .../devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml  | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> index 37a65badb448..42e3713927de 100644
-> --- a/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> +++ b/Documentation/devicetree/bindings/net/bluetooth/nxp,88w8987-bt.yaml
-> @@ -25,11 +25,12 @@ properties:
->  
->    fw-init-baudrate:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> +    maxItems: 8
->      default: 115200
->      description:
-> -      Chip baudrate after FW is downloaded and initialized.
-> -      This property depends on the module vendor's
-> -      configuration.
-> +      List of chip baudrates after FW is downloaded and initialized.
-> +      The driver goes through the list until it founds a working baudrate.
-> +      This property depends on the module vendor's configuration.
->  
 
-You need to test your patch... and update the example and explain why
-changing from 1 to 8 items (so ABI break) is okay or needed.
-
-But even without updating the example, you would see errors when testing
-DTS, so this was never tested. :/
+Why do you keep sending the same patch which was already applied?
 
 Best regards,
 Krzysztof
