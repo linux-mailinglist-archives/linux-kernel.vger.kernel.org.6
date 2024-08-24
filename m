@@ -1,76 +1,51 @@
-Return-Path: <linux-kernel+bounces-299960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFE395DCFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC7C95DCEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 10:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA734B22693
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7D11F22ED5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 08:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410B11547DB;
-	Sat, 24 Aug 2024 08:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="UYtmiSWh"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD501552FC;
+	Sat, 24 Aug 2024 08:31:09 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D7B5680
-	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 08:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5E55680;
+	Sat, 24 Aug 2024 08:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724488787; cv=none; b=oeu2pdRKsVIpEDVDW3z17vc84wPm+yuY5u7iG8t0OFSfgShHQebxGAQP5gRl5I/2xGtVNGguPFpet5EsfodQK+ExT1GDIRBHZKx1bPvRu79NHcen89/P9jqHDC9j9aJIQAtVJ6Lt0BHfgFoKGqzxBiRcy2I0T+AwYG2SpNzNFb8=
+	t=1724488269; cv=none; b=p4Tx1JZL31oxwjSG5TV+PcTM2xy3Fee3qi6pv5ryorHw8Q10bc6fCm+tWYnnaXVUXpmGrxsn+5yMDvkFhHYrjnAwEYIOq0OsJTFr5CaFGv9hnlpjEN+AY2JqOR2XscspoeVcgSumGCm1huUjVl9IJBWpfn38PVt+BApH1bF5WLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724488787; c=relaxed/simple;
-	bh=vMKObzkUEEoqMKU8RXSyMlhpNcH5CxpRElgvx4nGK/Y=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=u3s2e6jEP03x2bZwY4FvlM3RCLTOg27XhHP6N3mGYsMerivA3uMxmaFf3A3jPdvLlRF+gbxtLmLJFhN9MXHFRWwC4dkWYVFzgOv3nPqsONSJYPa4sDEzzcXeKyi8NWNzh764NSCd3nHBDuB1u4EzaeQ0bGzsHv3Wz/FQKQtQtVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=UYtmiSWh; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1724488479;
-	bh=Nr5CwV8SDFTHEbQ4fOfilDtU2d/P9Nj2M/Pw6Z9L6I4=;
-	h=From:To:Cc:Subject:Date;
-	b=UYtmiSWh9J3SHK4OOVHyE22m2o8uTaj7pUzju5za0DbWbCEoNGRmYDtwCpik2096o
-	 jDcb2sE4iISt/Y700UscnzSJlo0dAwR1Uud+uw16qR0C4efY5oedGgWgal7qXPg9I0
-	 q8d0X7hsf7PgW/SrpKKv/tErXfWiSJ4G6FAgFo/M=
-Received: from localhost.localdomain ([171.223.167.119])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 541056CC; Sat, 24 Aug 2024 16:21:01 +0800
-X-QQ-mid: xmsmtpt1724487661t6xau541p
-Message-ID: <tencent_6EF2603DCCFAD6A8265F8AAD9D6D5BCB9309@qq.com>
-X-QQ-XMAILINFO: MDbayGdXPuoeW02xbhina/QJPzUrVbZYEy0kN2bsN7d6y24gh4666/EdO6aIh6
-	 UgwBC14RD5+UupUY+zdWlpYq23z+y0mvb8mzP16HKEViSrzCvv20RGf59V4+YNkHX5Zoa4EY91TL
-	 h5vPBXASMTItgda6Iy3Xr2PjHcLaIOVDiihgCOuWn/TBbAboXJR0Fu7Ocf3SGeCJaA8cAG0qa2ep
-	 EgAhLyHCKeBkNjkGPrbLlqtgRb84qbIDnzv94r97G4UvoAjvxdoQkEu/fe6ehfE6kpWo1puVX6le
-	 Mo9/8uAJgbnIzWIOaY2tL0F6CTF89lmwRQPdpbB7hZEy9mjg7jHkKaUa5KLaDZ4WZfYe5yoIdyFM
-	 5OIW3VHvd+ycNbZdHMzTCaCApbs3BHgMOgCgORnbz6aUckKut7MEf9AV2GyJw1Z7juL89NsVZEZH
-	 PDdFUe8+zX9LN05voOfjavOuqN87HPHwm93csQ5GR3PYCNmg7VC5n0jrvYaaf0AE/rW2X2+Nfmkw
-	 hMeOB3tsaC7oO7Ghpl9O1ecx1QjVtJWOrdTd2Hopnlbgfn1IR+/7/6RojGQjKOWRHy+zWgPyARxP
-	 bmYHhm0KBQHdGIRV6vQ3dqzyFF4YJN9julMWlILRUkMaVTZEVK0jD42Wrz7vMf/0aYNiQa1gkDN2
-	 F5vGQSwyXQ7WMVG/mM7S6I1YpTi/0NwEthI+BzxjGN5nfSm6b8NXuRN2+BPgm5gncY/iMDpyxoG5
-	 5ky66007Pu2wOxLKUnX6IrfByjL5eiIQ/Nsx0uB5qSTMc8KGiQVCI+TGsBX1UxHFzuVywrr4OPKZ
-	 uQNwPz2Y5zNiuj+sRjvDeCaHlDzwQ9D3bsA1FMkgeu+pUsyVR5pZaK/0D3oRYcr9psbRpO9ckzK0
-	 LpZyp8RziWuhpT8mUweeONVzeZ9XwrRpq8buGgMI/pPJVUTUp25A/BfYhIzZJMGpHg4+hrjMdTn2
-	 PTss6a7WBA2w8KwB4OmxWlElUDUF4IEFsGi/Bo2m0+TThxpGIGBzRTREydwDV2psT3ECeJ08E5D2
-	 YxE/MvRFmwkExMXgiT7zX/CwRnQ5j5uoWkA+DOyeblUcIfJtKvC1yhV9hLYf57GUvmdF+WyMyfS/
-	 5bZI23pIzmJhb6tv8=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: renjun wang <renjunw0@foxmail.com>
-To: maarten.lankhorst@linux.intel.com
-Cc: mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	renjun wang <renjunw0@foxmail.com>
-Subject: [PATCH] drm/atomic: fix kerneldoc for fake_commit field
-Date: Sat, 24 Aug 2024 16:20:14 +0800
-X-OQ-MSGID: <20240824082014.26004-1-renjunw0@foxmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724488269; c=relaxed/simple;
+	bh=LrqFDkUmIvFFNaapSpHMCwzY7Fe3ubWkf37HbR3qqrM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YLAIl1PzAK7mFPmXMS6/7oCzq0vhQCa5jR2Qa57UxpOtBm8OhOa+o3z2hqp2CzHzqBf0Yf/NoXxGN9UagFcFdtIWgRGB9PqNiaGQro4SQJJ+ILlUSOBnrxXTy3230esvNQmCIA4s7I9LP4HaEkrt1xyQ22sP0k38tjpDP9EHw7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WrVVv3GLbz13RfZ;
+	Sat, 24 Aug 2024 16:30:15 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3D7181800D2;
+	Sat, 24 Aug 2024 16:30:58 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
+ 2024 16:30:57 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <sgoutham@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <yuehaibing@huawei.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] net: thunderx: Remove unused declarations
+Date: Sat, 24 Aug 2024 16:27:54 +0800
+Message-ID: <20240824082754.3637963-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,29 +53,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-According to the context, the function description for fake_commit
-should be "prevent the atomic states from being freed too early"
+Commit 4863dea3fab0 ("net: Adding support for Cavium ThunderX network
+controller") declared nicvf_qset_reg_{write,read}() but never implemented.
 
-Signed-off-by: renjun wang <renjunw0@foxmail.com>
+Commit 4863dea3fab0 ("net: Adding support for Cavium ThunderX network
+controller") declared bgx_add_dmac_addr() but no implementation.
+
+After commit 5fc7cf179449 ("net: thunderx: Cleanup PHY probing code.")
+octeon_mdiobus_force_mod_depencency() is not used any more.
+
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- include/drm/drm_atomic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/thunder/nicvf_queues.h | 2 --
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.h  | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-index 4d7f4c5f2001..31ca88deb10d 100644
---- a/include/drm/drm_atomic.h
-+++ b/include/drm/drm_atomic.h
-@@ -460,7 +460,7 @@ struct drm_atomic_state {
- 	 *
- 	 * Used for signaling unbound planes/connectors.
- 	 * When a connector or plane is not bound to any CRTC, it's still important
--	 * to preserve linearity to prevent the atomic states from being freed to early.
-+	 * to preserve linearity to prevent the atomic states from being freed too early.
- 	 *
- 	 * This commit (if set) is not bound to any CRTC, but will be completed when
- 	 * drm_atomic_helper_commit_hw_done() is called.
+diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_queues.h b/drivers/net/ethernet/cavium/thunder/nicvf_queues.h
+index 8453defc296c..b7531041c56d 100644
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.h
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.h
+@@ -359,8 +359,6 @@ int nicvf_is_intr_enabled(struct nicvf *nic, int int_type, int q_idx);
+ /* Register access APIs */
+ void nicvf_reg_write(struct nicvf *nic, u64 offset, u64 val);
+ u64  nicvf_reg_read(struct nicvf *nic, u64 offset);
+-void nicvf_qset_reg_write(struct nicvf *nic, u64 offset, u64 val);
+-u64 nicvf_qset_reg_read(struct nicvf *nic, u64 offset);
+ void nicvf_queue_reg_write(struct nicvf *nic, u64 offset,
+ 			   u64 qidx, u64 val);
+ u64  nicvf_queue_reg_read(struct nicvf *nic,
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
+index cdea49392185..84f16ababaee 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
+@@ -219,9 +219,7 @@
+ void bgx_set_dmac_cam_filter(int node, int bgx_idx, int lmacid, u64 mac, u8 vf);
+ void bgx_reset_xcast_mode(int node, int bgx_idx, int lmacid, u8 vf);
+ void bgx_set_xcast_mode(int node, int bgx_idx, int lmacid, u8 mode);
+-void octeon_mdiobus_force_mod_depencency(void);
+ void bgx_lmac_rx_tx_enable(int node, int bgx_idx, int lmacid, bool enable);
+-void bgx_add_dmac_addr(u64 dmac, int node, int bgx_idx, int lmac);
+ unsigned bgx_get_map(int node);
+ int bgx_get_lmac_count(int node, int bgx);
+ const u8 *bgx_get_lmac_mac(int node, int bgx_idx, int lmacid);
 -- 
-2.39.2
+2.34.1
 
 
