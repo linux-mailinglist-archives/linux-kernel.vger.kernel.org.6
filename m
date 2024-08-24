@@ -1,161 +1,85 @@
-Return-Path: <linux-kernel+bounces-299828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA1495DA78
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:04:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3296795DAA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 04:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447712843A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E375028459B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 02:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7280E182D2;
-	Sat, 24 Aug 2024 02:04:09 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55ED62AF12;
+	Sat, 24 Aug 2024 02:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="IGR28dm2"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0038F6C;
-	Sat, 24 Aug 2024 02:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B4A2AE68
+	for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 02:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724465049; cv=none; b=TEos2uEk5SAdaVMl4EkL58vr2i7DZjc+CvwbFsvpQQjmA1B+hSR3Rj6dyYCSunqHsf2BHjI3opGns4h/WkKbF3CgwO3AQy79/J4XTbNpRXOlvaPfEjcmCYHpJkteiOiqzIaEwf96EGIHTFTSyB3dZt9a3ddQEaAQTQbcnwC1fIU=
+	t=1724466568; cv=none; b=BUUW3kQ32JhTV8FSz4hHKG+SgMRbuPu/lsnAaHJYhlidLGhBNrjxHFDJBl/6hkQ19L0/dgPXf9q6zwsYVOOUMLjzB4kt7B8xR2bFHA/hzn8X5B8yXHrcBgpYfWCteL6JfTkuosZEQdkyZwY+63RU7BBxolxDh6Kj9ips1QSfxdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724465049; c=relaxed/simple;
-	bh=hQUNzjSY7i3l4ldL5C3hNfqZ/vaZV6AK/8n/d+E3nsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fVpUc9J1dzOMCn4A1EWLUg3vTMKm7TVw5H28/xhiL3UcTCs034P4JXi093+LJTr+N/mNGuu593v26B/IQXjHj4EuXU/P+xoqTqwuMM+FaGs1galfIjo9awdTWefkmRYqAMJqR2mM7LNPgfOGVdg8DIR+CnvW4jdvaWebALmyVog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71456acebe8so212933b3a.3;
-        Fri, 23 Aug 2024 19:04:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724465046; x=1725069846;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1m+RyyeVq2vKKoA8+4isEUsNBf+vWhzfSvt6LSdw9/k=;
-        b=HSgmx+SZTBd4FFdLXAIhMwndSLYTvug/S5T7XZN5A++XqvGD9s78gDUPwZ+Zi8bfpn
-         OdTiqVaz6IX9lZc+9bE9WI3ern3h+5NekQAJoaSOWI/thVSsg7LBXMB4bjgYlFO4dMWl
-         ne/uPPpoNStsqxVrWNUcQfB2LuySvaDZ8AZaeJ1VgumBkeUXyABP8nf+DnG47KiNFcLL
-         gdpOlGtWNLdlStvkwTKi1vWcRnaPIskUk8PtzTwXXJpjFEQbkdgLa0XGOT9kM7YToRug
-         54UuBOB9bBRWtdz/oDnNn7nLeswX8o2uRu9pI+la10oCSbvK7StTyxR4ZSrHKslptpnl
-         SVlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU74MvjrhFfOFm+anFHtkLzogG2PRJZ5ytYVMvU55my3AUyI1BmUfFCZR9pqg/Bj1AG4zk=@vger.kernel.org, AJvYcCUZ5u8LXP3Aihg0WWCKF4pwaSjaw9Bv1sM96VRQEDQKAmBSfTyNWiZ5RFxz8BVd6ogHG7jxFiC9@vger.kernel.org, AJvYcCXOZSnWISKJXIx0GVPT1WOwafgJXcmL+PMJvQJTEA3E4MaZrUJJs2kmU4xi+ENThkWjtsp9dn7PvT7dPvA2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQMFrYFmSc7fVjjJS+rwLaty2d8sbbBKWqCkieWIi9aiipadDD
-	NLSIBOuBDBT4Be3hFhmdkX74nj5zFFzBUKZJqdYDq0gsUqOgqmIE79oMW3Y=
-X-Google-Smtp-Source: AGHT+IHIZyeBM3Hl85jWwMdJX+SUb22b92N+zGjq37DFSit0JMCfEm3aWfiRw4k5sOQm4Tu/80NwxQ==
-X-Received: by 2002:a05:6a00:124c:b0:706:61d5:2792 with SMTP id d2e1a72fcca58-7144579d85amr5466242b3a.8.1724465046198;
-        Fri, 23 Aug 2024 19:04:06 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdcf7dsm3351501a12.50.2024.08.23.19.04.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 19:04:05 -0700 (PDT)
-Date: Fri, 23 Aug 2024 19:04:04 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Tze-nan Wu =?utf-8?B?KOWQs+a+pOWNlyk=?= <Tze-nan.Wu@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"kuniyu@amazon.com" <kuniyu@amazon.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>,
-	wsd_upstream <wsd_upstream@mediatek.com>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"song@kernel.org" <song@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	Yanghui Li =?utf-8?B?KOadjumYs+i+iSk=?= <Yanghui.Li@mediatek.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"haoluo@google.com" <haoluo@google.com>
-Subject: Re: [PATCH net v4] bpf, net: Check cgroup_bpf_enabled() only once in
- do_sock_getsockopt()
-Message-ID: <Zsk_lGsZBBqbesqS@mini-arch>
-References: <20240821093016.2533-1-Tze-nan.Wu@mediatek.com>
- <CAADnVQLLN9hbQ8FQnX_uWFAVBd7L9HhsQpQymLOmB-dHFR4VRw@mail.gmail.com>
- <3a7864f69b8c1d45a3fe8cda1b1e7a7c85ac9aee.camel@mediatek.com>
- <49d74e2c74e0e1786b976c0b12cb1cdd680c5f58.camel@mediatek.com>
- <CAADnVQLvbMRvCg2disV+_AR-154BwRpeB8Zg_8YpO=7gzL=Trg@mail.gmail.com>
+	s=arc-20240116; t=1724466568; c=relaxed/simple;
+	bh=ZdptpvZunaw0PLSDFJJ841ADB7LgdVYYNI/QYfzS23o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PGsz/QpMMdnN2vysqMnKllZmTHk9RtJkQo1coSJlsaf5dhitYRIfqaTtVHcDUlaUxkg33wfBO+P/C8CawHMuJmFufEK6H0QaPoZBDeiOIqWazmBTITOhwQc+UrooSf+GYQ7kd5/ZKAiw7IHr80DYHsBqJMCKBQ7/3BmRau5TGQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=IGR28dm2; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1724464663;
+	bh=ZdptpvZunaw0PLSDFJJ841ADB7LgdVYYNI/QYfzS23o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=IGR28dm2CK4RA6XwL4MgMGSZTe1cEs1GDTn8cgKqaxGGZ+SpUE0S9afg+1TDwgzrG
+	 23mm7f4ggwaNLAoKKl0uA3F3c6DbPOYBhHTgDS/rtPHt47p3f+WCqavMT5Q9I2Po2s
+	 P52vHjW1YahXrTaGGRnifE5bDWYlXMQOLTlYesKQ=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 7812240355; Fri, 23 Aug 2024 18:57:43 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 76A234022C;
+	Fri, 23 Aug 2024 18:57:43 -0700 (PDT)
+Date: Fri, 23 Aug 2024 18:57:43 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+    aou@eecs.berkeley.edu, dennis@kernel.org, tj@kernel.org, 
+    samitolvanen@google.com, guoren@kernel.org, debug@rivosinc.com, 
+    charlie@rivosinc.com, cleger@rivosinc.com, puranjay@kernel.org, 
+    antonb@tenstorrent.com, namcaov@gmail.com, andy.chiu@sifive.com, 
+    ajones@ventanamicro.com, samuel.holland@sifive.com, haxel@fzi.de, 
+    yang.zhang@hexintek.com, conor.dooley@microchip.com, evan@rivosinc.com, 
+    yang.lee@linux.alibaba.com, tglx@linutronix.de, haibo1.xu@intel.com, 
+    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH RFC] riscv: use gp to save percpu offset
+In-Reply-To: <20240824004920.35877-1-cuiyunhui@bytedance.com>
+Message-ID: <e06a3bd9-6378-2d4b-b06d-cc2d58776eca@gentwo.org>
+References: <20240824004920.35877-1-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLvbMRvCg2disV+_AR-154BwRpeB8Zg_8YpO=7gzL=Trg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On 08/22, Alexei Starovoitov wrote:
-> On Thu, Aug 22, 2024 at 12:02 AM Tze-nan Wu (吳澤南)
-> <Tze-nan.Wu@mediatek.com> wrote:
-> >
-> >
-> > BTW, If this should be handled in kernel, modification shown below
-> > could fix the issue without breaking the "static_branch" usage in both
-> > macros:
-> >
-> >
-> > +++ /include/linux/bpf-cgroup.h:
-> >     -#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen)
-> >     +#define BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen, compat)
-> >      ({
-> >             int __ret = 0;
-> >             if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT))
-> >                 copy_from_sockptr(&__ret, optlen, sizeof(int));
-> >      +      else
-> >      +          *compat = true;
-> >             __ret;
-> >      })
-> >
-> >     #define BPF_CGROUP_RUN_PROG_GETSOCKOPT(sock, level, optname,
-> > optval, optlen, max_optlen, retval)
-> >      ({
-> >          int __ret = retval;
-> >     -    if (cgroup_bpf_enabled(CGROUP_GETSOCKOPT) &&
-> >     -        cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))
-> >     +    if (cgroup_bpf_sock_enabled(sock, CGROUP_GETSOCKOPT))
-> >              if (!(sock)->sk_prot->bpf_bypass_getsockopt ||
-> >                ...
-> >
-> >   +++ /net/socket.c:
-> >     int do_sock_getsockopt(struct socket *sock, bool compat, int level,
-> >      {
-> >         ...
-> >         ...
-> >     +     /* The meaning of `compat` variable could be changed here
-> >     +      * to indicate if cgroup_bpf_enabled(CGROUP_SOCK_OPS) is
-> > false.
-> >     +      */
-> >         if (!compat)
-> >     -       max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-> >     +       max_optlen = BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen,
-> > &compat);
-> 
-> This is better, but it's still quite a hack. Let's not override it.
-> We can have another bool, but the question:
-> do we really need BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN  ?
-> copy_from_sockptr(&__ret, optlen, sizeof(int));
-> should be fast enough to do it unconditionally.
-> What are we saving here?
-> 
-> Stan ?
+On Sat, 24 Aug 2024, Yunhui Cui wrote:
 
-Agreed, most likely nobody would notice :-)
+> Compared to directly fetching the per-CPU offset from memory (or cache),
+> using the global pointer (gp) to store the per-CPU offset can save one
+> memory access.
+
+Yes! That is a step in the right direction.
+
+Is there something like gp relative addressing so that we can do loads
+and stores relative to gp as well?
+
+Are there atomics that can do read modify write relative to GP? That would
+get  you to comparable per cpu efficiency to x86. x86 can do relative
+addressing and RMV in one instruction which allows one to drop the preempt
+enable/disable since one instruction cannot be interrupted.
 
