@@ -1,75 +1,88 @@
-Return-Path: <linux-kernel+bounces-299948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD1D95DCC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2F595DCC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 09:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6378D1C218C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FF61C21AF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D1154C07;
-	Sat, 24 Aug 2024 07:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DA1154C05;
+	Sat, 24 Aug 2024 07:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5e2rFMN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFBdFSbK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B0333062;
-	Sat, 24 Aug 2024 07:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7671C148;
+	Sat, 24 Aug 2024 07:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724486168; cv=none; b=uS/hXtA51QWklboJMwj/9wz5M5hLNbc7l/o1o5BVOC8aBA4cl/Jt3K+Kzl79/YF32XWxWCyF2zc54DB9H8MQ+qou3FM6C9TvEWP+BdCbWqgo5PxwLe2GH1PBCShZdAZSLLn8ICr6AHdDk3BOy4uG+yD2np+0vRGLVsol3+oRUiA=
+	t=1724486263; cv=none; b=koS0vyilPhLXqir/+CcOZfH1V5FKfqoGAU5tCJr0IIrlkZ0qMdI6IHLFTS3z4Uqc0T2XL5fQCRiFIFMynwInlDiwZnhsk6bcXieNpSuC+3c/XYOLfN16+ooFmuR1A5LcaG09jC39F+D0RvMLUNPDdjMsbWwUa3ujWOEuntn7Q1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724486168; c=relaxed/simple;
-	bh=bV9OEO6chy7K/WMqIASROgCq4ojSKouRshMyUDHdfRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8sLbfh0pfJhvC5GND5Qxwni0BMkRehkVHgmxaxPmSpmAMHtNUlHv5S07ARKD11jJXx3o89zhGG1qegzozv9j1+y41CkLfeubqVuhJDs98oaqo/VNygjzzej+wHTANbyW1kvK0jwFvpD7rxFI63udrqmF63ezGF/XZAi0o76PZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5e2rFMN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D41FC32781;
-	Sat, 24 Aug 2024 07:56:04 +0000 (UTC)
+	s=arc-20240116; t=1724486263; c=relaxed/simple;
+	bh=veqewg/dYFtLgmqnBLnDkm0LLpJEGT8ujx8IQXvI/Gg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qc6JnDiO54Z/jWztdWf7n3yJBtVA1ozHB/L/4rqmZpWRAzOuMLWb+wmLaSOOJyVelsFa15aLc8nN/VCbSNxJmFItBISenYbSiH68x86xRsqHpdGPbDsmW+9JMINAOlekv2byf+TqfI80nwJUM5QP+CC/xfoibhWvFSoHhKfSBm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFBdFSbK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB65DC4AF09;
+	Sat, 24 Aug 2024 07:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724486167;
-	bh=bV9OEO6chy7K/WMqIASROgCq4ojSKouRshMyUDHdfRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l5e2rFMNQc/640x4rHg/pi28Jabg/QZl0BEyjixq1tXMmA40I0bzLBa6PEoQmGy4Z
-	 EvE6C8KzkHfQDAeA5l+rDUHOwpGkiCabXzsZbMrkbECeNDzXRX0+b8MLsyBUs9PPnK
-	 ZGqiCL2bYuIuwwfnOKBF855uRWlIIJXhC/c4CK4hZAYfIChyJ+F6TqkltmCR9EncDK
-	 2v+/+3Z6FcLPdE9+/AWB93QfY3mXOGebzwRcehATVGLPF1KTJJ89zV0h1EHQfoZvXC
-	 3Wbq44kOMQ5UOTYTOpiuBzNVTlxGQC5Z7Rm+EsPl4YCDmp67jI5Y/zaFlFCQCWyARG
-	 yeqFZztE5redA==
-Date: Sat, 24 Aug 2024 09:56:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: robh@kernel.org, saravanak@google.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] of/platform: Simplify with scoped for each OF child
-Message-ID: <q6oqvxc4hdmnfcjlrmrbhd4d6cvt3vvi7rxmwslazadrpadlbk@4mdmxsqoijwk>
-References: <20240822073417.3582286-1-ruanjinjie@huawei.com>
+	s=k20201202; t=1724486262;
+	bh=veqewg/dYFtLgmqnBLnDkm0LLpJEGT8ujx8IQXvI/Gg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SFBdFSbKq2L/TWsU/7sOejHXvQQsVvGiCybcnxIOUYgkOoll9EQ//o9cv0rkoi/eR
+	 Yi+N8AVbTHFh5tAuLn9f5xCPnNZDL4GyXGghI+T3pYb1qO0eOfXRtJMnp6andg3oYY
+	 zK6A/2cVzjF59+GOC2TDUBbnbso/NWeoR7LIsZnQRYKt5MU/6yXOKCd2fAnOcZ+azy
+	 BM6wqeQXSkOWtekjJNQ/AhSATo0DFXglaResL6n5MnISIEZMa9Xo4+oWxSxla2joB4
+	 rtNtcJMyhKgCz8niRyRm4vNDpTBGnJACVBUN2CKKC1zn44Zs9QNH6fVkXI2G81eOQm
+	 rvxpzL6SZHqDw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-534366c1aa2so1852211e87.1;
+        Sat, 24 Aug 2024 00:57:42 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyWMlqXmjJSXqQo4Z4NV5KehgeyCBz52Ddiz7Gyga7yj3NqoxiT
+	83NtKTLaQ9p0aTdpPWk5Kx2OUBVXQH/eyKbvjd1/5FmwoUrpJ/nZT7cWmDfrYnODfYV5bKwTr9u
+	aCEs6EtZimSYJOK7vul+X7YL5/vI=
+X-Google-Smtp-Source: AGHT+IHDMyWtpZNup4NTIkXwo3o2kIvdxJBx4oqBZqw8KlVry+nitbbc5QSRERc+b7kH1N2mjhMFmxOza6bQZqFvq78=
+X-Received: by 2002:a05:6512:6cf:b0:52c:e0fb:92c0 with SMTP id
+ 2adb3069b0e04-5343883abdfmr2937704e87.34.1724486261207; Sat, 24 Aug 2024
+ 00:57:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822073417.3582286-1-ruanjinjie@huawei.com>
+References: <20240812124858.2107328-1-masahiroy@kernel.org> <20240812124858.2107328-2-masahiroy@kernel.org>
+In-Reply-To: <20240812124858.2107328-2-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 24 Aug 2024 16:57:04 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASdNoxqdOdGZ_=tNMjh+4Du5Z3Y4EAi1rYPnuccG_1gUA@mail.gmail.com>
+Message-ID: <CAK7LNASdNoxqdOdGZ_=tNMjh+4Du5Z3Y4EAi1rYPnuccG_1gUA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] modpost: replace the use of NOFAIL() with xmalloc() etc.
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 03:34:17PM +0800, Jinjie Ruan wrote:
-> Use scoped for_each_child_of_node_scoped() when iterating over device
-> nodes to make code a bit simpler.
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/of/platform.c | 14 ++++----------
+On Mon, Aug 12, 2024 at 9:49=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> I think x*alloc() functions are cleaner.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-There are like 3 or 4 patches for OF from you. Send them as ONE
-PATCHSET, not one after another.
 
-Best regards,
-Krzysztof
+I removed do_nofail() as well.
 
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
