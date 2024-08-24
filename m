@@ -1,61 +1,70 @@
-Return-Path: <linux-kernel+bounces-299887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-299888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AB495DBE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:20:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06E895DBE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 07:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 612372821A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B391F241C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 05:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D0156F42;
-	Sat, 24 Aug 2024 05:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CDB14EC51;
+	Sat, 24 Aug 2024 05:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tEzT3y3r"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FmnOhMzs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5FF156C63;
-	Sat, 24 Aug 2024 05:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881FC156993;
+	Sat, 24 Aug 2024 05:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724476709; cv=none; b=ukyH6r/hqtF0Le0DoFVqbWQa5uK2a7xkXxgRYCMzmsL7Uy+EM7FFOqN4SSbZTKQIZE5usFlBdFbZJ/59otSVxr8xsCa8xOUW150rs3aTrF9UW23T/A6xnVrxXajHqx6Ljqs9+rbA/TAgk5zmc36XITYLIjd5rnX6GFq3ny/2eaI=
+	t=1724476712; cv=none; b=XiOYJH9P9Wlu+CyVUVHxskqY0FJQPCrL6jFklU3o3oDNIbY2HUu/8WmDh+LbzyK5pu72SCxXmC2XjuRRC9SXBFu4eZLjITJNKLx+Ix6/oifTNUBTuYyKADv+1+/8Jo+7PM3CXPn2nNz64foKMlJ71dJgAKWbdGkK5hDUBpJj9Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724476709; c=relaxed/simple;
-	bh=g4EMx2RE+RHxp7QbzUJInN+TXL/ZyIDsFo+GFa8RueE=;
+	s=arc-20240116; t=1724476712; c=relaxed/simple;
+	bh=vaVUY3x1E+AltHmP85LtP0QxxKM//TMlRo0EhRETOTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9NCBJPPjkGwgkuo+iU/9tPqLogMnxjbGcP3k71QN1xg8xhakcgYYDpuaISeVxh+lPrfk9B8uQXAg596xOErV3Far5ha5h93ekSfrJWj3g3v9TGjHylQrOsL9TXG2zkg5ELplc+xpwolCVaUnj8iLm2uBOf83brNDBwFw8eHLNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tEzT3y3r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF64C4AF11;
-	Sat, 24 Aug 2024 05:18:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6g23gj7nv8w9lTkioVXkmC3gK/LMo8+zyg8B8ksx9ykqYGhNx/7rMbg6kdFn3wjubk3Fn6SMCDG/egi4VtmZVGQv3tIkD3B0Thjtukl7ON2Z6sbOvrhu6MvMSXa5JSG4SHojNx0Evv0qjrJYjcOHxbl7GDBpORuMgZknXjlbIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FmnOhMzs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBB78C32781;
+	Sat, 24 Aug 2024 05:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724476709;
-	bh=g4EMx2RE+RHxp7QbzUJInN+TXL/ZyIDsFo+GFa8RueE=;
+	s=korg; t=1724476712;
+	bh=vaVUY3x1E+AltHmP85LtP0QxxKM//TMlRo0EhRETOTQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tEzT3y3rA5pcNXrPB9WaU4GC2axnnSNaaM19k4xOqVkH4hoBDgR74xjEuVTfTzQO+
-	 3xi+dshn+YiINI+PYVhAZpl0A5vqgD9eB++ep+PCkRKAx0jOmYm/B4RA1UMFxkUNOM
-	 FUFYXTfLwglgzwxdwiwXjUMeWoXJSi+k/6Y4p4SQ=
-Date: Sat, 24 Aug 2024 11:13:29 +0800
+	b=FmnOhMzsIWi5qna6yeiwCxebFimDjitRfM8CBuwHM7gb0mWRGGHEfDISFTDDTScsG
+	 0SqwyRgdBUC+C37zUAxwGakUPIR0xccyhLQBbaXaAMynDUabnToBTx6JeIsZyA7bbG
+	 g+hRXmpP+D3OkewCfhYvDFAtNv7egCPPChRPzea0=
+Date: Sat, 24 Aug 2024 11:21:03 +0800
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-	Shyam Saini <shyamsaini@linux.microsoft.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jerome Forissier <jerome.forissier@linaro.org>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>, Manuel Traut <manut@mecka.net>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: Re: [PATCH v9 0/4] Replay Protected Memory Block (RPMB) subsystem
-Message-ID: <2024082414-doily-camisole-b5c7@gregkh>
-References: <20240814153558.708365-1-jens.wiklander@linaro.org>
- <CAPDyKFqBuQ8uUdeThRaJtd2CYNWMmpLCEDxfO+znhwjPamH+Gg@mail.gmail.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Timur Tabi <timur@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2 1/4] driver core: Make parameter check consistent for
+ API cluster device_(for_each|find)_child()
+Message-ID: <2024082435-finite-handrail-a4bb@gregkh>
+References: <20240815-const_dfc_prepare-v2-0-8316b87b8ff9@quicinc.com>
+ <20240815-const_dfc_prepare-v2-1-8316b87b8ff9@quicinc.com>
+ <66c491c32091d_2ddc24294e8@iweiny-mobl.notmuch>
+ <2b9fc661-e061-4699-861b-39af8bf84359@icloud.com>
+ <66c4a4e15302b_2f02452943@iweiny-mobl.notmuch>
+ <e30eac3b-4244-460d-ab0b-baaa659999fe@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,35 +73,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFqBuQ8uUdeThRaJtd2CYNWMmpLCEDxfO+znhwjPamH+Gg@mail.gmail.com>
+In-Reply-To: <e30eac3b-4244-460d-ab0b-baaa659999fe@icloud.com>
 
-On Wed, Aug 21, 2024 at 11:23:03PM +0200, Ulf Hansson wrote:
-> On Wed, 14 Aug 2024 at 17:36, Jens Wiklander <jens.wiklander@linaro.org> wrote:
-> >
-> > Hi,
-> >
-> > This patch set is getting ready to be queued for the next merge window. The
-> > issues reported by Mikka in the v7 patch set has been resolved, the issues
-> > turned out to be outside of the v7 patch set relating to configuration in
-> > the secure world. I'm planning a pull request to arm-soc, but before that
-> > I'd rather have acks or at least an OK for:
-> > - "rpmb: add Replay Protected Memory Block (RPMB) subsystem" by Greg
-> > - "mmc: block: register RPMB partition with the RPMB subsystem" by Ulf
-> >
-> > Arnd, please let me know if anything else is missing.
+On Wed, Aug 21, 2024 at 10:44:27PM +0800, Zijun Hu wrote:
+> On 2024/8/20 22:14, Ira Weiny wrote:
+> > Zijun Hu wrote:
+> >> On 2024/8/20 20:53, Ira Weiny wrote:
+> >>> Zijun Hu wrote:
+> >>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>>>
+> >>>> The following API cluster takes the same type parameter list, but do not
+> >>>> have consistent parameter check as shown below.
+> >>>>
+> >>>> device_for_each_child(struct device *parent, ...)  // check (!parent->p)
+> >>>> device_for_each_child_reverse(struct device *parent, ...) // same as above
+> >>>> device_find_child(struct device *parent, ...)      // check (!parent)
+> >>>>
+> >>>
+> >>> Seems reasonable.
+> >>>
+> >>> What about device_find_child_by_name()?
+> >>>
+> >>
+> >> Plan to simplify this API implementation by * atomic * API
+> >> device_find_child() as following:
+> >>
+> >> https://lore.kernel.org/all/20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com
+> >> struct device *device_find_child_by_name(struct device *parent,
+> >>  					 const char *name)
+> >> {
+> >> 	return device_find_child(parent, name, device_match_name);
+> >> }
+> > 
+> > Ok.  Thanks.
+> > 
+> >>
+> >>>> Fixed by using consistent check (!parent || !parent->p) for the cluster.
+> >>>>
+> >>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>>> ---
+> >>>>  drivers/base/core.c | 6 +++---
+> >>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> >>>> index 1688e76cb64b..b1dd8c5590dc 100644
+> >>>> --- a/drivers/base/core.c
+> >>>> +++ b/drivers/base/core.c
+> >>>> @@ -4004,7 +4004,7 @@ int device_for_each_child(struct device *parent, void *data,
+> >>>>  	struct device *child;
+> >>>>  	int error = 0;
+> >>>>  
+> >>>> -	if (!parent->p)
+> >>>> +	if (!parent || !parent->p)
+> >>>>  		return 0;
+> >>>>  
+> >>>>  	klist_iter_init(&parent->p->klist_children, &i);
+> >>>> @@ -4034,7 +4034,7 @@ int device_for_each_child_reverse(struct device *parent, void *data,
+> >>>>  	struct device *child;
+> >>>>  	int error = 0;
+> >>>>  
+> >>>> -	if (!parent->p)
+> >>>> +	if (!parent || !parent->p)
+> >>>>  		return 0;
+> >>>>  
+> >>>>  	klist_iter_init(&parent->p->klist_children, &i);
+> >>>> @@ -4068,7 +4068,7 @@ struct device *device_find_child(struct device *parent, void *data,
+> >>>>  	struct klist_iter i;
+> >>>>  	struct device *child;
+> >>>>  
+> >>>> -	if (!parent)
+> >>>> +	if (!parent || !parent->p)
+> >>>
+> >>> Perhaps this was just a typo which should have been.
+> >>>
+> >>> 	if (!parent->p)
+> >>> ?
+> >>>
+> >> maybe, but the following device_find_child_by_name() also use (!parent).
+> >>
+> >>> I think there is an expectation that none of these are called with a NULL
+> >>> parent.
+> >>>
+> >>
+> >> this patch aim is to make these atomic APIs have consistent checks as
+> >> far as possible, that will make other patches within this series more
+> >> acceptable.
+> >>
+> >> i combine two checks to (!parent || !parent->p) since i did not know
+> >> which is better.
+> > 
+> > I'm not entirely clear either.  But checking the member p makes more sense
+> > to me than the parent parameter.  I would expect that iterating the
+> > children of a device must be done only when the parent device is not NULL.
+> > 
+> > parent->p is more subtle.  I'm unclear why the API would need to allow
+> > that to run without error.
+> > 
+> i prefer (!parent || !parent->p) with below reasons:
 > 
-> Greg, Jens,
-> 
-> To help out with the merging strategy, I don't mind queuing this whole
-> series via my mmc tree. It would also be nice to let it cook in
-> linux-next for while, via my next branch.
-> 
->  From my point of view this looks good to me now, but please let me
-> know if you prefer a different route or if you have any further
-> comments.
+> 1)
+> original API authors have such concern that either (!parent) or
+> (!parent->p) maybe happen since they are checked, all their concerns
+> can be covered by (!parent || !parent->p).
 
-No objection from me, please take it through your tree, makes it simpler
-for me :)
+Wait, a device's parent can NOT be NULL except for some special cases
+when it is being created.
+
+And the ->p check is for internal stuff, meaning it has been initialized
+and registered properly, again, these functions should never be called
+for a device that this has not happened on.  So if they are, crashing is
+fine as this should never have gotten through a development cycle.
+
+The ->p checks were added way after the initial driver core was created,
+as evolution of moving things out of struct device to prevent drivers
+from touching those fields.  They were added add-hoc where needed and
+probably not everywhere as you are finding out.
+
+By adding these "robust" checks, we are making it harder for new code to
+be written at the expense of doing checks that we "know" are never
+going to happen in normal operation.  It's a trade off.  Only add them
+when you KNOW they will be needed please.
+
+thanks,
 
 greg k-h
 
