@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-300186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F6F95DFF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 22:03:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F7895DFC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 21:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8241C21051
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 20:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0A32829B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2024 19:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EAE12C49B;
-	Sat, 24 Aug 2024 20:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6047DA8F;
+	Sat, 24 Aug 2024 19:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QF+tEEhc"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6TbKhWp"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD1A4DA13;
-	Sat, 24 Aug 2024 20:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B681B7DA61;
+	Sat, 24 Aug 2024 19:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724529773; cv=none; b=ThulHKg5wYbcr5RBD9LKEXqUpKn/2ipxZjMA7BuuiTax4gbbdoKTI8PgV3/N4vn5NGON6qdly7vrSYr2ngctOkS3qVJ0BMei+dgf7d23EHTrw8MkeBcO9OoXCxUL9cAt3Rd+j+7+CAwtF0mKncMNxbhinUzdzulyYXQkcQnNdDI=
+	t=1724526773; cv=none; b=kWRWrFwalN0kwEYLhrV3e3dQXw7dWK5+Hy52X/CfvhKeprWO89Uv0tsFi0sB8qbJGdxacJPiafgxBDnfszZbA9kLEPMhDOd33zgDFxeXYSCxeryoa3lUY9j66sKP+hKdrJIHkyRCCE12Hvbnebpa+Dst0HV2PBq8bJz9luYCiMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724529773; c=relaxed/simple;
-	bh=Yb/aknxzkcGFnXnDyaQeJAkhv5g+rQ9iebHa9Pr/TvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=epNT6KD4JO3R3Z4vjipFuJmTEVStDIa4NSgtkr8wnqnvGBEqI/Ex6Fniq0UF1X95/TSdSx9hkDRsZm7nwiVBP8x/THsqU6x0W5W8HLjUo3XDLieqxYQO5BlhtcDdYmmZOvHL5U3zoMcFR8MD7o456ppfULITIrV2Ji4CbuaCjGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QF+tEEhc; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1724526773; c=relaxed/simple;
+	bh=pnaGJYOZGck1ER1jWc1dvxcWSL8te3arYl6CgL95lrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cGny5MHEbCbkurFsk7D5lb5pgz7rxGsrgCeN6RCGSrs5lb/qoeo/Ccos1hsb4e5Nx/hmkasOEgGHEmqyZqhrFG43WbeMjdumcYhjSJLsg429Abv86f2k+O2XU4ZBjGDdrmh7DT1NdMN0KeKsNKlAxkuBFbHIB4pMMuBbD/DfbEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6TbKhWp; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2020ac89cabso28074285ad.1;
-        Sat, 24 Aug 2024 13:02:52 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso25202855e9.0;
+        Sat, 24 Aug 2024 12:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724529772; x=1725134572; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724526770; x=1725131570; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wWaSNIYv0/Qncj1N0nTJpdHfaRe5YgQOIToIzG2hUto=;
-        b=QF+tEEhcc9rD6CazX8nnmCJfd+gqd2aJfGD5foWeIHUMkKIdiwW9LoS+vyEHOfKjn0
-         Fa94JigMWL9yzmaWzjt8aCP57o8EIdVXIogwlqWV4DzsuWlID3j9a4I19F7Y1IOPT3xw
-         p+x6sbul/QyHWokGypQSzBGy2x8sLXL+w2FLklCmmf0YuJz+Gn9a5RoibL3CG15jr0fs
-         dOG4Vg9BYZjC7p9MDJYajKvKrGnVDullYmUfpOm6wXtBrOKBnoHDjgGl5UlVecgvftYx
-         bQKikQwRUk0UPqupVo66Zk5r3laxApC1FN4ojqT1Is/xjSmpSTUQcVEy1MPaqi13wJrG
-         k17w==
+        bh=uRqSVSBy7WVzrRyXzMTngEmfTDtpwenXKbG7hH0Uup8=;
+        b=G6TbKhWp5tfCeafR9InzSm0Cr+GmDlCfnSK2T6XmYkqzYNTFLWhgwV5dVQOz5Db9sW
+         bhQve4v8XDVTr+pyV4qEgDhu31S/LXl9EXGI3vNkdANtFHRKy7s9CNHyHFmJn1nBy048
+         GR8xfzrNnzsdtOGtSXmtpk4HNqH9X8B9FW4iJgrrcIJhrHAZ8ODGhQ6H17cOQpDCwxvj
+         YTBaByxEFjKsbqhbquTxbJcPsx5+LGQmWeFL8KkyhQEszlU0wWDICnZHdUpl5817/Znc
+         3Pi4oAqY1lxtg7C6F60sWAvMp7AkAmWTtnMt+GIXIcdgIkODdD0hjOKJFEu+X7ig98st
+         z40g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724529772; x=1725134572;
+        d=1e100.net; s=20230601; t=1724526770; x=1725131570;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wWaSNIYv0/Qncj1N0nTJpdHfaRe5YgQOIToIzG2hUto=;
-        b=VUrstOoO4XwBU+ykyLuMxLbmEOvo0jbIGYnHpoTxqOnk5pSDA5wknkZkvYQNWYx8Yr
-         5SVDD5ubPBBevxSk9IXEvVnbjCRodcpQY8+4XEb7kasRRD5/i1ziH2/rbmba15PkYoeN
-         Ga/FF2/FYRfeeRDroxbAPfNKjWmAOqWkXErmAcTSEqbkYDvCFYd4AYZVbbH4PL1527jp
-         5JSp3W9ua6lep1XGYMHochRC3zzmJDPRMvKiegIajzQ3zckEYDCfnWNDpuC/OcqYCTG7
-         UH/ZRFodt8+ct7l1EOPbLbN2IcvrrCNb19libyX1AqO+e/RBn4YEY5ioB0hvPtASkS4f
-         Tfvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPdgkHI8s+3niKHHBw/zjL1gaMLlHdIOgJ2jfY08cz23Qh7erSL3/eSD4Bh7Lovpdr8yKpvo84lAttATs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuerYrN86oq96XGNrGab9aI20GekHlV1tdpjX5qNaxEYTXslgr
-	ErDPvzSLeAlRLveivl3F8sMFF6MM16g16fv47UEcLogtkt0lAGgl/H3jFUUW
-X-Google-Smtp-Source: AGHT+IFp0nyVMbNrRs7eXAdwgv6nXc1XniAli0ua1DZo6JgdeQKE7Be5TeoI91MyfLvLxHvwQR40pA==
-X-Received: by 2002:a05:6a20:9c93:b0:1c8:fdc7:8813 with SMTP id adf61e73a8af0-1cc89dbac1bmr6966305637.23.1724529771496;
-        Sat, 24 Aug 2024 13:02:51 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385567912sm45633665ad.33.2024.08.24.13.02.50
+        bh=uRqSVSBy7WVzrRyXzMTngEmfTDtpwenXKbG7hH0Uup8=;
+        b=GH0xpDC64I46aDoLwo4PSpVpY40PZEfTvXBQAuO9heVjjfZFm7UtNIJywSJLTPWo6j
+         KeB2QsqDNBF+42r86ODo/kht+7qBNmyWI9YBfufF3sW7ft/8JV/qzbtv2Ut+QJCGJgCU
+         5CMHeKpP4vsyeZzyOT2kgcVddKfOvmO/vTUfkPe36TPpxNMdtnxg6nmXuYvc876Px/4S
+         /10+foX4AoF28ojAf9a//gHPMsO2FK5jiZMlHOmDukRatU4vVjbFcnk3hETuWYepznwm
+         JkkJbvM30tw7hbtinWFb3FZJuQksQnGdYb0oia4XA1cHY/MbogU3cEjWHbwr6us9GPYf
+         u/rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV/9fY0O1GiAiFKyKwsOZhr68HtkGajm3QOj19l3cPZwMDDuNIB3VizJ5bF2bgXHpgck9Km3c/d3mn@vger.kernel.org, AJvYcCVxnTBZu7tellYMtvR3SBgUBF2ZVVoW13/1Vh5oLUnheCqEGPpW3IY8Z5Oz8nTnX+l64gUqemKY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs0PRUDYgnmu1SXHviOFqB5h1paO/yk+vcjHzBGNyKaLYB1kn+
+	kmJr2oJEkdagC6YIc9fi+8shSfwN7FIzHQ6rVMtosSwzwrOwu/YB09VGjeUI/i4=
+X-Google-Smtp-Source: AGHT+IEOcWJXK+IUeq9aebQdW8nPQy00HtJM4j9sdFCYGF6fyDggXTCyaAy5A/yB1LwAbqhRDy0WVw==
+X-Received: by 2002:adf:f5c3:0:b0:371:8c1f:6692 with SMTP id ffacd0b85a97d-373118e979amr3784385f8f.52.1724526769323;
+        Sat, 24 Aug 2024 12:12:49 -0700 (PDT)
+Received: from localhost.localdomain ([156.197.22.60])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c520sm7109793f8f.39.2024.08.24.12.12.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 13:02:51 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: [PATCH net-next] net: ag71xx: support probe defferal for getting MAC address
-Date: Sat, 24 Aug 2024 13:02:37 -0700
-Message-ID: <20240824200249.137209-1-rosenp@gmail.com>
+        Sat, 24 Aug 2024 12:12:48 -0700 (PDT)
+From: Ahmed Ehab <bottaawesome633@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	linux-ext4@vger.kernel.org,
+	syzkaller@googlegroups.com,
+	syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v5 1/2] locking/lockdep: Avoid creating new name string literals in lockdep_set_subclass()
+Date: Sun, 25 Aug 2024 01:10:30 +0300
+Message-ID: <20240824221031.7751-1-bottaawesome633@gmail.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,33 +87,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, of_get_ethdev_address() return is checked for any return error
-code which means that trying to get the MAC from NVMEM cells that is backed
-by MTD will fail if it was not probed before ag71xx.
+Syzbot reports a problem that a warning will be triggered while
+searching a lock class in look_up_lock_class().
 
-So, lets check the return error code for EPROBE_DEFER and defer the ag71xx
-probe in that case until the underlying NVMEM device is live.
+The cause of the issue is that a new name is created and used by
+lockdep_set_subclass() instead of using the existing one. This results
+in two lock classes with the same key but different name pointers and a
+WARN_ONCE() is triggered because of that in look_up_lock_class().
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+To fix this, change lockdep_set_subclass() to use the existing name
+instead of a new one. Hence, no new name will be created by
+lockdep_set_subclass(). Hence, the warning is avoided.
+
+Reported-by: <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
+Fixes: de8f5e4f2dc1f ("lockdep: Introduce wait-type checks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
 ---
- drivers/net/ethernet/atheros/ag71xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+v4->v5:
+    - Changed the subject
+    - Changed the changelog to be more detailed
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index d81aa0ccd572..5ef76f3d3f1a 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1897,6 +1897,8 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	ag->stop_desc->next = (u32)ag->stop_desc_dma;
+ include/linux/lockdep.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 08b0d1d9d78b..df8fa5929de7 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -173,7 +173,7 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
+ 			      (lock)->dep_map.lock_type)
  
- 	err = of_get_ethdev_address(np, ndev);
-+	if (err == -EPROBE_DEFER)
-+		return err;
- 	if (err) {
- 		netif_err(ag, probe, ndev, "invalid MAC address, using random address\n");
- 		eth_hw_addr_random(ndev);
+ #define lockdep_set_subclass(lock, sub)					\
+-	lockdep_init_map_type(&(lock)->dep_map, #lock, (lock)->dep_map.key, sub,\
++	lockdep_init_map_type(&(lock)->dep_map, (lock)->dep_map.name, (lock)->dep_map.key, sub,\
+ 			      (lock)->dep_map.wait_type_inner,		\
+ 			      (lock)->dep_map.wait_type_outer,		\
+ 			      (lock)->dep_map.lock_type)
 -- 
-2.46.0
-
+2.45.2
 
