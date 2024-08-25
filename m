@@ -1,174 +1,216 @@
-Return-Path: <linux-kernel+bounces-300217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EC195E0B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0541395E0BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B2A1C20CC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754591F21A59
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9644A3E;
-	Sun, 25 Aug 2024 02:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B138489;
+	Sun, 25 Aug 2024 02:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="Lzq3gXCR";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="QCNsS7zE"
-Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkZrhNhp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4E2370
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 02:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01E7370;
+	Sun, 25 Aug 2024 02:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724551707; cv=none; b=ZHfCfIw9lH/+ce+gPZ803WkNc+7nhBuSDBafwVvNMYHfW5q4msawRnpHZ+gezAENG+qj6vOMM+RH0bUeuKLrwZScUhPSA+5XLuJwS3fK05d1PFOFEjOlphAkoX2sCWKJ4hEUaD9BnmwpKYyPjrwiyApitPars4/NME+Ntd49GjE=
+	t=1724551822; cv=none; b=Zzqf3Pq8Dqx+8sZt56cEASJh2r4flbl1Czq6NZs/y7hp48tBUK/1sP3ZS+txKGjHB4j3mFcNdyoCuXyKPd0B+Jo9/dG70z9Qo7HQ1EybL3oDxkFuYIMNU9ekm2N/IiLPg5oZWCrKbVXKxFQd5DU/vPGQJPT5U5ZVmZkR6eeylZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724551707; c=relaxed/simple;
-	bh=P2XMtVAMRX2Cm+rBdQ892VJRFjWBWuv5Iq3DS4OisMw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=i02Lpr2/1fu6IBL9xVslm21b3p+CQXQaLEMEGPUOofv0qvp8PkLi8vJFaSGLy//FSBPkl35InMmNKeVZdjM3AtKNJ8b5Vj1AoP6+ee4Se5IuRInf3JxsvGqw8E5a7siCP3wJZsquJ0H+mYFZfLyYxU+YPOaL3LFm0IWxkG31rRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=Lzq3gXCR; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=QCNsS7zE; arc=none smtp.client-ip=169.235.156.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724551706; x=1756087706;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=P2XMtVAMRX2Cm+rBdQ892VJRFjWBWuv5Iq3DS4OisMw=;
-  b=Lzq3gXCRteZXZ7nuPLuHj8FzDgp93mCr/xfyQ+qAz6EpQyekBbkeYn2b
-   oyhsqhN4rg4JZ6KYI2LVvWx00z2ZinvXw7PzvETdWls90GcVSJXMr6PcP
-   ZOnu1kFNl2j03GUhDghO5rZKXXKsVhmSIGnBf1cSnSmqByT0aU4NINvl5
-   Af9DoFZVSRLR4qtFbALPyKXuFx+FqzKsMMGOo6HRnOs9I1i5roo57dMoL
-   RHITibsaCLK3GJ/u29pOO8myaOP6bpqkktzzzqpocLW11e8jPFU5KU1JA
-   ojpMrYJfKy2SUeUIEGkL2Faf5HeHRjqEcHCRwY/H42yYtZKC8qI6jgap0
-   w==;
-X-CSE-ConnectionGUID: auKwXbXEQH2FdQzwqNf31g==
-X-CSE-MsgGUID: mEw0FNmhStqulX027rz0pQ==
-Received: from mail-io1-f69.google.com ([209.85.166.69])
-  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 19:08:24 -0700
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-824c925d120so317982439f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724551703; x=1725156503; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+tOT2BwNYoEYn2Q+HTw71mqzlg3wQSgfwGy0SB5UxVc=;
-        b=QCNsS7zENuSw5tXdn1Eq1losxT2UEuOugCvZCGWtsrgksZGXF1i/ARJdTf5XIzkRae
-         JgMzdxl90GUk2tGNeMIU1sQRslWMa0pUpPVguYdeYbG1yqmY6VpWGjH+Cjqlu4AEw3x8
-         +/eXPTFzZ7vo7k5Rwos8y4TaFmmCe7qxuhSG8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724551703; x=1725156503;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+tOT2BwNYoEYn2Q+HTw71mqzlg3wQSgfwGy0SB5UxVc=;
-        b=dGQhslAOmAgO5KTJt9JASGUMH2LGt9ETWsuGdNjrT75P8YnJw7nyqxZ678xX6NnL2l
-         At05hPo6v9AASfIXoe/JEDzYLz9+5pFMNweomvrbBS8PiknT7JdiB8OgCopoiJVvDscW
-         xA8JSG1dbMwH/q6KqNSuyJsG0nZmRkPanCQ12RPg/+qvKTrxWiika5JcvIF8vQtyW4Nm
-         TpS9AvSeLebSF2lKx2+QxoSepGfbzttxMFOPRz1hLPiJiruU69PUnTs+9+nO/MvHCuK2
-         eFjfHDNpeYu3Iykntw2UJOa97ShHmV/ofoimivrfB/nHRm/aQzDdJj2nW4m62CsQKRvJ
-         byCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCId6fNPeRO4d720yFq3ccLE5qIi/Y+kP8b6jHcw2+4AXDtHLwOptlgKBxDVNYgbAmdHRzxIJcJfcaa2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ek2eARBiGJDpBkHOEIKYwhGeVks8KnxZ0mScHiX0Bw7Lr5YZ
-	E4l3D0qPsuvYM+PSB84enZFohjR5VUG5S4fAHrMSySHXe1UE+dyaok6fAHiPwdGK+aniqUGDqdW
-	pvB11t1xbNs6boSnpyc9FRbrbZ7AOd3sceuLg87DYuzgCdsjwGmZFDh4Mvxmwe9H2w0zLezR/WI
-	sWB4aR5V74KvuNk9Xeny04zEChogLKtO3TMuYuYQ==
-X-Received: by 2002:a05:6602:6b88:b0:803:83c0:6422 with SMTP id ca18e2360f4ac-8278813bc2dmr593945939f.9.1724551702713;
-        Sat, 24 Aug 2024 19:08:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWmpfh5KtpHLGQDvCyMewsJ+mUdjEK9WbspRmK3nU6vzN7QM7yx3ZHO0OB1o7WKI4f4nDA+KFgpp7h24+IKT8=
-X-Received: by 2002:a05:6602:6b88:b0:803:83c0:6422 with SMTP id
- ca18e2360f4ac-8278813bc2dmr593943939f.9.1724551702342; Sat, 24 Aug 2024
- 19:08:22 -0700 (PDT)
+	s=arc-20240116; t=1724551822; c=relaxed/simple;
+	bh=+9ixZycKsKF0/SLEyMWTyfqxSHtOUsiNNnGzKxUX460=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XB8QCPmzmFxFR9ZksbhEwa5pjVR8jNWJIPQPNCIE/oo9baMXb7MBURW9sqV+tqvFGRciL5CGkIYrZvexH244i+QpABgvfIhBnbWTetrbdCzgQNbqEztv88fgRtQ7pYZKXzut/0aw5R0BuemTJFZaYHV3qOa/4ycjI0AEKDzmAks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkZrhNhp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 843A7C32781;
+	Sun, 25 Aug 2024 02:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724551821;
+	bh=+9ixZycKsKF0/SLEyMWTyfqxSHtOUsiNNnGzKxUX460=;
+	h=Date:From:To:Subject:Reply-To:References:In-Reply-To:From;
+	b=TkZrhNhpMHEVgt+BfHoJAWbuRO3w3h3u9qmu8vwSRIOzIKTu5dHdssPO+p0UzSDZZ
+	 hSIhif9sCNtQ3+M3bzZVkp3hwJqwKlTlCFz4S51Pnx6+SrbXU9134JLvysmyBJce0i
+	 unOhaF96Y1VKNbimPBGOyQ/ugvIddFhudn8azBHFbInrUTkfMgIYQHilsoyvALmekZ
+	 rBsPcYlQCTqzdKsJ4zn+1i+36MuwMm9gOed953omyhrLViJz3KFLTSOXFd5Ad/IKvH
+	 YOc8w2uRbREIYW1HaFJfOwupb7iLM0Q6RtcujkqaZVFBW4kuLyGSBkjh1EIJ6sAuEb
+	 8GRbtjYhKDXjA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2C9DDCE0D9B; Sat, 24 Aug 2024 19:10:21 -0700 (PDT)
+Date: Sat, 24 Aug 2024 19:10:21 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
+	linux-next@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <5a90aec0-9959-4bac-a479-d9c3c4dedd69@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
+ <20240823074705.GB12053@noisy.programming.kicks-ass.net>
+ <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
+ <a122efbe-fd81-471d-89b7-e9257bf3ce49@paulmck-laptop>
+ <20240824065434.GA26474@noisy.programming.kicks-ass.net>
+ <1a1009b9-615f-44fc-8ef6-da3bbc773012@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Juefei Pu <juefei.pu@email.ucr.edu>
-Date: Sat, 24 Aug 2024 19:08:10 -0700
-Message-ID: <CANikGpcmGe1PLZjM6t8H6=P93aXg-jdaPFPUtkzLOXaKOprHmA@mail.gmail.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in wake_up_bit
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a1009b9-615f-44fc-8ef6-da3bbc773012@paulmck-laptop>
 
-Hello,
-We found the following issue using syzkaller on Linux v6.10.
-In `__wake_up_common`, when executing `ret = curr->func(curr, mode,
-wake_flags, key);`, a NULL pointer dereference happened. According to
-the report, the RIP is 0x0, it seems that the function pointer is used
-without checking its value.
+On Sat, Aug 24, 2024 at 08:26:57AM -0700, Paul E. McKenney wrote:
+> On Sat, Aug 24, 2024 at 08:54:34AM +0200, Peter Zijlstra wrote:
+> > On Fri, Aug 23, 2024 at 02:51:03PM -0700, Paul E. McKenney wrote:
+> > 
+> > > > > Does the below help any? That's more or less what it was before Valentin
+> > > > > asked me why it was weird like that :-)
+> > > > > 
+> > > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > > > index 6be618110885..5757dd50b02f 100644
+> > > > > --- a/kernel/sched/fair.c
+> > > > > +++ b/kernel/sched/fair.c
+> > > > > @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
+> > > > >  	 * and we cannot use DEQUEUE_DELAYED.
+> > > > >  	 */
+> > > > >  	if (p->se.sched_delayed) {
+> > > > > -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
+> > > > >  		p->se.sched_delayed = 0;
+> > > > >  		p->se.rel_deadline = 0;
+> > > > >  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
+> > > > 
+> > > > Removing that line from 2e0199df252a still gets me the complaint about
+> > > > __SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
+> > > > that this commit:
+> > > > 
+> > > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
+> > > > 
+> > > > Need to be placed before 2e0199df252a.  Of course, when I try it, I
+> > > > get conflicts.  So I took just this hunk:
+> > > > 
+> > > > ------------------------------------------------------------------------
+> > > > 
+> > > > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+> > > > index 97fb2d4920898..6c5f5424614d4 100644
+> > > > --- a/kernel/sched/features.h
+> > > > +++ b/kernel/sched/features.h
+> > > > @@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
+> > > >   */
+> > > >  SCHED_FEAT(CACHE_HOT_BUDDY, true)
+> > > >  
+> > > > +/*
+> > > > + * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
+> > > > + */
+> > > > +SCHED_FEAT(DELAY_ZERO, true)
+> > > > +
+> > > >  /*
+> > > >   * Allow wakeup-time preemption of the current task:
+> > > >   */
+> > > > 
+> > > > ------------------------------------------------------------------------
+> > > > 
+> > > > That makes the build error go away.  Maybe even legitimately?
+> > 
+> > Yep.
+> > 
+> > > > Just to pick on the easy one, I took a look at the complaint about
+> > > > cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
+> > > > being undefined.  This variable was added here:
+> > > > 
+> > > > 781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
+> > > > 
+> > > > And its first use was added here:
+> > > > 
+> > > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
+> > > > 
+> > > > Which matches my experience.
+> > > > 
+> > > > So left to myself, I would run on these commits with the above hunk:
+> > > > 
+> > > > 54a58a7877916 sched/fair: Implement DELAY_ZERO
+> > > > 152e11f6df293 sched/fair: Implement delayed dequeue
+> > > > e1459a50ba318 sched: Teach dequeue_task() about special task states
+> > > > a1c446611e31c sched,freezer: Mark TASK_FROZEN special
+> > > > 781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
+> > > > f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
+> > > > 2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+> > > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
+> > > > 
+> > > > And where needed, remove the unused cfs_rq local variable.
+> > > > 
+> > > > Would that likely work?
+> > 
+> > Sounds about right.
+> > 
+> > > > 
+> > > > In the meantime, SIGFOOD!
+> > > 
+> > > Hearing no objections...
+> > 
+> > Yeah, sorry, I'm on holidays with the kids and not glued to the screen
+> > as per usual :-)
+> 
+> No worries, and have a great holiday!!!
+> 
+> > > Given two patches each of which might or might not need to be applied to a
+> > > given commit, I chose to rebase as follows:
+> > > 
+> > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
+> > > 8aed87410a695 EXP sched/fair: Provide DELAY_ZERO definition
+> > > 	I took this from 54a58a7877916 sched/fair: Implement DELAY_ZERO.
+> > > 49575c0087bc0 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
+> > > 14c3207fd2456 sched/fair: Prepare pick_next_task() for delayed dequeue
+> > > be567af45dd04 sched/fair: Implement ENQUEUE_DELAYED
+> > > 	I dropped the unused cfs_rq local variable from requeue_delayed_entity()
+> > > ed28f7b3ac3f4 sched,freezer: Mark TASK_FROZEN special
+> > > 48d541847b4a6 sched: Teach dequeue_task() about special task states
+> > > ef3b9c5d038dc sched/fair: Implement delayed dequeue
+> > > 	--- First bad commit with dequeue_rt_stack() failures.
+> > > 876c99c058219 sched/fair: Implement DELAY_ZERO
+> > > 	I added the cfs_rq local variable to requeue_delayed_entity()
+> > > 
+> > > This is on -rcu branch peterz.2024.08.23b.
+> > > 
+> > > I ran 50*TREE05 in a bisection, which converged on be567af45dd04, but only
+> > > one run of the 50 had a complaint, and that was in enqueue_dl_entry(),
+> > 
+> > Hmm, I have one other report about that. Hasn't made much sense yet --
+> > then again, as per the above mentioned reason, I'm not able to put real
+> > time in atm.
+> 
+> I ran 1000*TREE03 on that same commit, no failures.  Just started
+> 5000*TREE03, and will let you know what happens.  This will likely take
+> better part of a day to complete.
+> 
+> > > not the dequeue_rt_stack() that I have been chasing.  I ran three
+> > > additional 50*TREE05 runs on its predecessor (14c3207fd2456) with no
+> > > failures.  I then ran 50*TREE03 on each of ed28f7b3ac3f4, 48d541847b4a6,
+> > > and ef3b9c5d038dc.  Only this last ("ef3b9c5d038dc sched/fair: Implement
+> > > delayed dequeue") had failure, and they were all the dequeue_rt_stack()
+> > > failures I am chasing.  One of the runs also hung.
+> > 
+> > I'm a little confused now though; this is with the dequeue removed from
+> > switched_from_fair() ?
+> 
+> Ah!!!  I thought that change was for the build issue, which I will
+> admit puzzled me a bit.
+> 
+> > Looking at your tree, 49575c0087bc0 still has that dequeue. Does the
+> > dequeue_rt_stack() issue go away with that line removed?
+> 
+> I will try it and let you know.  Thank you for reminding me!
 
-Unfortunately, the syzkaller failed to generate a reproducer.
-But at least we have the report:
+Preliminary results show that removing the dequeue from that commit or
+just from next-20240823 at the very least greatly reduces the probability
+of the problem occurring.  I am doing an overnight run with that dequeue
+removed from next-20240823 and will let you know how it goes.
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 0 P4D 0
-Oops: Oops: 0010 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 1 Comm: systemd Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000003fc38 EFLAGS: 00010046
-RAX: 1ffff920013daf09 RBX: 0000000000000000 RCX: ffffc9000003fce0
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffffc90009ed7838
-RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000007f64
-R10: dffffc0000000000 R11: 0000000000000000 R12: ffffc90009ed7848
-R13: 0000000000000000 R14: ffffc90009ed7838 R15: ffffffff8d80e360
-FS:  00007ff4720ac900(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000001532c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __wake_up_common kernel/sched/wait.c:89 [inline]
- __wake_up_common_lock+0x134/0x1e0 kernel/sched/wait.c:106
- __wake_up kernel/sched/wait.c:127 [inline]
- __wake_up_bit kernel/sched/wait_bit.c:126 [inline]
- wake_up_bit+0x18c/0x1f0 kernel/sched/wait_bit.c:149
- evict+0x487/0x630 fs/inode.c:678
- __dentry_kill+0x1fb/0x610 fs/dcache.c:607
- dput+0x197/0x2b0 fs/dcache.c:849
- __fput+0x5f0/0x8a0 fs/file_table.c:430
- __do_sys_close fs/open.c:1563 [inline]
- __se_sys_close+0x15b/0x1e0 fs/open.c:1548
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x7ff472517c6b
-Code: 0f 05 48 3d 00 f0 ff ff 77 45 c3 0f 1f 40 00 48 83 ec 18 89 7c
-24 0c e8 a3 4d f9 ff 8b 7c 24 0c 41 89 c0 b8 03 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 35 44 89 c7 89 44 24 0c e8 e1 4d f9 ff 8b 44
-RSP: 002b:00007ffd335674a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00007ff4720ac6c8 RCX: 00007ff472517c6b
-RDX: 00007ff4725fabe0 RSI: 0000000000000000 RDI: 0000000000000019
-RBP: 0000000000000019 R08: 0000000000000000 R09: 000055e07191c838
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 00007ffd33567560 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc9000003fc38 EFLAGS: 00010046
-RAX: 1ffff920013daf09 RBX: 0000000000000000 RCX: ffffc9000003fce0
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffffc90009ed7838
-RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000007f64
-R10: dffffc0000000000 R11: 0000000000000000 R12: ffffc90009ed7848
-R13: 0000000000000000 R14: ffffc90009ed7838 R15: ffffffff8d80e360
-FS:  00007ff4720ac900(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 000000001532c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+							Thanx, Paul
 
