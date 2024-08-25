@@ -1,117 +1,175 @@
-Return-Path: <linux-kernel+bounces-300521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D0795E4B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:31:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A17395E4B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F131C20AAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AF61C20A2A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A63516C69F;
-	Sun, 25 Aug 2024 18:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491716C453;
+	Sun, 25 Aug 2024 18:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ln3bzkiZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RRxZsR9Q"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1998374076
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F9F1448C5
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724610683; cv=none; b=QMe5ebnxuzaGRAMYJ6Q3yef5xMRYMuUvwxDkffIJz4mziXzUf3a+7nbQPOK1mvmYpgb0vUsr3gANBKw79xiiDQxgc8cDTgf5AVgtB2KetTRy3NPVGjIw/Cm8bOhfzMkLFGbAOanyeM8bXmjU+ygmaAC51A4R2zvi4CUvUacmgn8=
+	t=1724611406; cv=none; b=SgAHGYIHNJbHCP0Ax83r0Y1j/pqFe60OcEoNdp0TrlgYpmpJ8+cOen7dftah8CA5UpDRKptX7EiRs3+scOGApYs1v5fCD/EigrsHyDHPwHfXyumCCLmsTQJ29IpRNTAamajcrOeBDRQdiRgad66Zh+gGENoe09dK1B/wXvxgKf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724610683; c=relaxed/simple;
-	bh=0mfH3d3fWKDRTMp6AgLA8pqVSbXOcj6PsmBXH3W5tUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i66jPkfPRiynSWEBdQN5OcvneP6gQCYXcnxPaTRGIv3StZ87fr0fbzpyq0//xo3P9Kl7rcde+bbszlUOrprOjP2mVeMdFdHyH12s+PEh1WYkO/pzDWI+mqWMP/mghc2Tpb8JBOGWt8qkrcgnK2pOhhnP5////u9/dQ8Aw30DZoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ln3bzkiZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42802ddfaa6so4111605e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 11:31:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724610680; x=1725215480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5oZsSpqBtpVnxWWek+saFNNQcQXhk4VKnzKr/UGi3k=;
-        b=ln3bzkiZWrP48+LIQRaA+K+nYtZfAZUoXjE4Q/NVXCstI4CVW1RP3W27vFKUhSblJm
-         QlAukDNhO7ZIc1VNtxn+LGwqs44g265E2oBtizAhv13LOE74WTSWeyGS7tggHdG76DUA
-         IetR3X0yTxiVFyobQbtDYJ8l0U0qMDjlNonwvx8QPc29T5FBvaIqLzlSqOAi55Xra+SE
-         eaVpicsny/ZQNZQpHP7RtjEoIIkMSNCnrBKbAdDKhHOvGNTdTIZwYdaZBqpgFb27dZa2
-         D0XuzxYNmzxPuDeEteObpmmpJKRsWIl0UtphksCiXsxaZK8FqBpuNmJliTNPv/XgQja1
-         GU3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724610680; x=1725215480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r5oZsSpqBtpVnxWWek+saFNNQcQXhk4VKnzKr/UGi3k=;
-        b=t6EDla1yryNRHwF191GsrT6eh6ODxkYhWpjJC0oXQsU6F3HJIr0z37vtMpJpaK/OZ7
-         C+G0UJnEgsGf4X9ewzS1OiyWvqXRTYpNAjb4stDgzNL8hgFHlt+18aG4dqHT1NFanhfI
-         /G1vyufUk5XthSD1zRE6cqiHSFkKy9W8FOpjciCKjgIpFwJIL2c3a/rndvG2ED9/uS7Q
-         NwURDzwjQfggJMh6aPpX6YV2qKC4XykGQ6GWmncXlAGQXieje49Rsdz7MoAWhbcyGb/H
-         XJCAl7PQAATsk49FNRn24laqGJGYulGGhUTdO+gn4vcDLsgxJt5lpg1jHSPMdbY/bh9L
-         AT3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWS8gCbmPCHgEXG6hsRlfy75lEIKY6n1HJ8PQRrKeXVDQaXxhpNkf327LNyoysZX08C6gV6lZ4brdGiP/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA8xFjK6c0vQiX0TiF9SzC+gJkheDqO8mI3GLnvvkF5Y6GDbvb
-	SYiniz0I/ElKg98ScHPHvkFMWTrkl2nYN/thvKrYtTntI94ihIJytKOiwZ1G/1c=
-X-Google-Smtp-Source: AGHT+IExUeevkTIQSWB4GNDROugF9P/4Ht1vXHY2Hj6A+8kgBoxqFRUstIlxcvyBnYWjZpE2OjAmHg==
-X-Received: by 2002:a5d:5f8b:0:b0:36d:1d66:554f with SMTP id ffacd0b85a97d-3731185d6camr3061819f8f.3.1724610680074;
-        Sun, 25 Aug 2024 11:31:20 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821ab05sm8937319f8f.98.2024.08.25.11.31.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 11:31:19 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] pmdomain: rockchip: Simplify dropping OF node reference
-Date: Sun, 25 Aug 2024 20:31:16 +0200
-Message-ID: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724611406; c=relaxed/simple;
+	bh=bD2/x+0opolo4shekMlLc3lwxnFeu+TOE1RPC+j2CMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sJnDa9RgMYynjJ67v76YfA2/cqkormcZ8Z1nGCievM5cMBNEi52tItW4kNT+HorRi7V/d4FVkXe8l02T39zh1odncTDstb0ufuIyPlFLugTLV5BYdbN/eKeLqLj0dC3HCEsnehsQSSo5XbIVSXRBBR/95HzpeZ6izv+p6qtu7zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RRxZsR9Q; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 25 Aug 2024 14:43:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724611401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IWZF8cgdRpy8POz9dmk7qaJyxeNkE/0T2W0ZlBhFHv8=;
+	b=RRxZsR9QT2uGHB23JCPzneeO4RdqKEiTOCwtZpk5NSV13+8XaKKEw+eJ8NEx76j2gGL+fL
+	m5dniHb+DNF7cdJKqY2K/+TGXZVMGfWFanqPAdGdfS52TpdktDfVSL3PzWgZMA5S8/vTD7
+	9sczD6Fi+en5RQLhJVTIF8l9ZaAgb8k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kees@kernel.org, gustavoars@kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: Annotate bch_replicas_entry_{v0,v1} with
+ __counted_by()
+Message-ID: <cqyrlfpjprkwdteljmtcnl3z2etzitvodrlv7v57tuizvklpcx@gg7dbstowwd6>
+References: <20240825133601.24036-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240825133601.24036-2-thorsten.blum@toblux.com>
+X-Migadu-Flow: FLOW_OUT
 
-Drop OF node reference immediately after using it in
-syscon_node_to_regmap(), which is both simpler and typical/expected
-code pattern.
+On Sun, Aug 25, 2024 at 03:36:02PM GMT, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array members
+> devs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+> 
+> Increment nr_devs before adding a new device to the devs array and
+> adjust the array indexes accordingly.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pmdomain/rockchip/pm-domains.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The nr_devs changes are pretty gross - please add a helper for that
 
-diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-index 64b4d7120d83..5ee7efbd2ef8 100644
---- a/drivers/pmdomain/rockchip/pm-domains.c
-+++ b/drivers/pmdomain/rockchip/pm-domains.c
-@@ -716,12 +716,11 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 				goto err_unprepare_clocks;
- 			}
- 			pd->qos_regmap[j] = syscon_node_to_regmap(qos_node);
-+			of_node_put(qos_node);
- 			if (IS_ERR(pd->qos_regmap[j])) {
- 				error = -ENODEV;
--				of_node_put(qos_node);
- 				goto err_unprepare_clocks;
- 			}
--			of_node_put(qos_node);
- 		}
- 	}
- 
--- 
-2.43.0
-
+> 
+> In bch2_journal_read(), explicitly set nr_devs to 0.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  fs/bcachefs/buckets.c         | 3 ++-
+>  fs/bcachefs/journal_io.c      | 3 ++-
+>  fs/bcachefs/replicas.c        | 6 +++---
+>  fs/bcachefs/replicas_format.h | 4 ++--
+>  4 files changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
+> index be2bbd248631..1e6badf9ddd2 100644
+> --- a/fs/bcachefs/buckets.c
+> +++ b/fs/bcachefs/buckets.c
+> @@ -740,7 +740,8 @@ static int __trigger_extent(struct btree_trans *trans,
+>  				return ret;
+>  		} else if (!p.has_ec) {
+>  			replicas_sectors       += disk_sectors;
+> -			acc_replicas_key.replicas.devs[acc_replicas_key.replicas.nr_devs++] = p.ptr.dev;
+> +			acc_replicas_key.replicas.nr_devs++;
+> +			acc_replicas_key.replicas.devs[acc_replicas_key.replicas.nr_devs - 1] = p.ptr.dev;
+>  		} else {
+>  			ret = bch2_trigger_stripe_ptr(trans, k, p, data_type, disk_sectors, flags);
+>  			if (ret)
+> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
+> index 7664b68e6a15..d1bd883c2c55 100644
+> --- a/fs/bcachefs/journal_io.c
+> +++ b/fs/bcachefs/journal_io.c
+> @@ -1353,6 +1353,7 @@ int bch2_journal_read(struct bch_fs *c,
+>  	genradix_for_each(&c->journal_entries, radix_iter, _i) {
+>  		struct bch_replicas_padded replicas = {
+>  			.e.data_type = BCH_DATA_journal,
+> +			.e.nr_devs = 0,
+>  			.e.nr_required = 1,
+>  		};
+>  
+> @@ -1379,7 +1380,7 @@ int bch2_journal_read(struct bch_fs *c,
+>  			goto err;
+>  
+>  		darray_for_each(i->ptrs, ptr)
+> -			replicas.e.devs[replicas.e.nr_devs++] = ptr->dev;
+> +			replicas.e.devs[++replicas.e.nr_devs - 1] = ptr->dev;
+>  
+>  		bch2_replicas_entry_sort(&replicas.e);
+>  
+> diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
+> index 1223b710755d..90d9b7d761bc 100644
+> --- a/fs/bcachefs/replicas.c
+> +++ b/fs/bcachefs/replicas.c
+> @@ -122,7 +122,7 @@ static void extent_to_replicas(struct bkey_s_c k,
+>  			continue;
+>  
+>  		if (!p.has_ec)
+> -			r->devs[r->nr_devs++] = p.ptr.dev;
+> +			r->devs[++r->nr_devs - 1] = p.ptr.dev;
+>  		else
+>  			r->nr_required = 0;
+>  	}
+> @@ -139,7 +139,7 @@ static void stripe_to_replicas(struct bkey_s_c k,
+>  	for (ptr = s.v->ptrs;
+>  	     ptr < s.v->ptrs + s.v->nr_blocks;
+>  	     ptr++)
+> -		r->devs[r->nr_devs++] = ptr->dev;
+> +		r->devs[++r->nr_devs - 1] = ptr->dev;
+>  }
+>  
+>  void bch2_bkey_to_replicas(struct bch_replicas_entry_v1 *e,
+> @@ -180,7 +180,7 @@ void bch2_devlist_to_replicas(struct bch_replicas_entry_v1 *e,
+>  	e->nr_required	= 1;
+>  
+>  	darray_for_each(devs, i)
+> -		e->devs[e->nr_devs++] = *i;
+> +		e->devs[++e->nr_devs - 1] = *i;
+>  
+>  	bch2_replicas_entry_sort(e);
+>  }
+> diff --git a/fs/bcachefs/replicas_format.h b/fs/bcachefs/replicas_format.h
+> index b97208195d06..d2e080d0ecb7 100644
+> --- a/fs/bcachefs/replicas_format.h
+> +++ b/fs/bcachefs/replicas_format.h
+> @@ -5,7 +5,7 @@
+>  struct bch_replicas_entry_v0 {
+>  	__u8			data_type;
+>  	__u8			nr_devs;
+> -	__u8			devs[];
+> +	__u8			devs[] __counted_by(nr_devs);
+>  } __packed;
+>  
+>  struct bch_sb_field_replicas_v0 {
+> @@ -17,7 +17,7 @@ struct bch_replicas_entry_v1 {
+>  	__u8			data_type;
+>  	__u8			nr_devs;
+>  	__u8			nr_required;
+> -	__u8			devs[];
+> +	__u8			devs[] __counted_by(nr_devs);
+>  } __packed;
+>  
+>  struct bch_sb_field_replicas {
+> -- 
+> 2.46.0
+> 
 
