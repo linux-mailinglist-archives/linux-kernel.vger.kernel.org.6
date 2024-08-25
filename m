@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-300321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE24195E255
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:10:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CCE95E259
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBEC1C215A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:10:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 841F6B21306
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A29359155;
-	Sun, 25 Aug 2024 07:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF16CDCC;
+	Sun, 25 Aug 2024 07:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9vyTaN8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rCQdQiKq"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E67710E6;
-	Sun, 25 Aug 2024 07:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AEA54BD8;
+	Sun, 25 Aug 2024 07:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724569806; cv=none; b=MjMX5WS7OEYqdKT1zLd09lvlLpTjshY4G0C2BgwzpRtsckoY0bIxiPGrhKfXU0bi5/0HIv8f3iao3rmIMM+6kbmd7GgNyXblRvxZsim0m/dHLAbnKxEI4AEqHlcPlDZuu3yPwEtovun0JiPwEECNlQIoCJ5blKw30fdzU7WsswI=
+	t=1724569814; cv=none; b=IOQYoq1WyosMAvQ1wIrsgn1VwsJGhscwjnb5eWItH8MLMJdp+dwXIxjz9qNIchk4M324zGnK5HjKzY0uJpS8RgtrFAMyGmz/oH5W8A1e+Emj0mOZNUfz+qhVQf3QCtEWt5xssF1NmNmM5qubxmoiOj72EjW4R74IVJOYRIifqOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724569806; c=relaxed/simple;
-	bh=U/Oq2er/y7XgBVRnIf3CZHOyXgN+R1fGm+JuTjj/FG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apW4r6HnFZTv8MDNX+00sw5i7BXuoU80pMVtqw/rP1TDCDNCXYBjBzHYyAIZwnPKIaBks6GvUWV30udyljqwn44tRqjHhneuG5zKG9QtrTN20rC/kc0aMw7tRzvBqocscPBf3XgKHjZ8usD9OA3AYFJa0XXk9tt4qqxt/oAyhhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9vyTaN8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB87DC32782;
-	Sun, 25 Aug 2024 07:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724569805;
-	bh=U/Oq2er/y7XgBVRnIf3CZHOyXgN+R1fGm+JuTjj/FG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c9vyTaN829lJaSdkU2m9TPa1dfiS0mEDAUOwvkkyFh38keko/Rf6lV7UaTWZ761nf
-	 8BYRP41HOB71UNXocqw9lEVU0O5Qu6obqz5E0Dx7i6W4+tVBfvQVTtsAczw+Zzq4Ag
-	 CeaBkK3gS/G3PRwchprIhaCXhY48sfN7ew66HdIPTQEBxmXhtyjyTGKhaD0DKAZWVT
-	 4L//pWNUZrmVe8+VODPW3VuOLNrRqNB+u4D0MpEYh4sVF+a5sccfq4r49EiJdBJoqr
-	 DCDN6NAeB3ECM6jB9vXqgDDrS501jUv+ZRffLHIPX2GxOMe1CYOHQJVpO2MOnuFksk
-	 IMp+Fe1UvXk9w==
-Date: Sun, 25 Aug 2024 09:10:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
-	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org, lenb@kernel.org, 
-	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
- mailbox
-Message-ID: <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
-References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
- <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
+	s=arc-20240116; t=1724569814; c=relaxed/simple;
+	bh=Fj/EmX7ib+Lfvn/AxCnJP32ADVfuI4FzB2LfAg7KANc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=tYLirvwmdk4KgF99ASAG0ZkfKyzOAyipnJC6ERaIfXJ6SM4NFW60gxK2oXgbr2j+zznuYHoYXP10Jp7U2dgmKv02G9o4t5zbRxDKc3zGupILAbPcQdrTs+bm8gp0K9luiDUGBeh7dlm6xXkrtpoLr78Azp4tbhx6PoCplwUkIrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rCQdQiKq; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724569805; bh=/semDDU5zsCaTr6xGw92C8FIyWfsAShZ+BMdvutBH7E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rCQdQiKqdwBpZo0lLWp/KeDov4Lmng+Nrl4p0iIuXV4UwluS0jLjo925APk7JrquH
+	 X4uGT7aL1tFpFk9VH6hSJknXoobn4ydij8Ogyh9lR5SUlAmt12DpRJJSjaVmnsIGcM
+	 WPdPyuMfJEVqCfGC90y5+iXLxDqllTjWgenMM5iE=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 282166DE; Sun, 25 Aug 2024 15:10:02 +0800
+X-QQ-mid: xmsmtpt1724569802tzo9ofaex
+Message-ID: <tencent_8D19734F828DA6A5938DF1122F5DDC5DBC07@qq.com>
+X-QQ-XMAILINFO: OdIVOfqOaVcri8+zm2SchNSIlQI0PU8lRV3EsHnwgGb1XrYFR/S8hz4dSIvMx9
+	 xXqqhxW7elDd5E44hOZSxQiaMbhnmYSTz3CvwSYxiFodjRj5nYkLylGLpkUztXyaJy+ElKFbl8AE
+	 tZ0yVV2R+YhZa9mSmbUKbmYNXV3sqry0x5oTPa+DbvMP1pWzywfDCgMMrXdF/sapBAGBmJsx6WDN
+	 QIa/9DdZhgzxSz99JZE1HTb5KVar88esE5LUttT/8ba5gGnCffUr2ncargrCEpht3IDBKWoPpbh4
+	 ls3arvy2tS7lXgA0eA0AljB/FNKiQJ1ilqRUfzNbe1HgYdWNMSsA5YNHqbgGsr3LkDZTxlWCzZFE
+	 +KuqyhdTUStiU7ccIrUOYgN0peKkiw2cClVKGhkhOJIQUsCd1xG0vRZ1n03fAETw8KeaH59eVBiq
+	 JdU5Y+z0qcvKiUYuXdGGxTQH4fni+YW0gJXri3h1caacj0imKTZOJvem/gmTiJh5U/aAYuWVT2az
+	 uJwUYadWcG6c86CD8ET6Chc9T2vYUjj8PW4yLirwwdrXlJCY2ZVDB5UUkuxH93iD3a9V2rMO0TmA
+	 QWsdzj02hGpENA8Z0WEbA0q6n6wcWVBOE2iDf/7/vBdib2H0Lo5Rq8l3GvMJ/th+0Q8FKUs9CLRK
+	 FiVFVpUCykP+MLX3o1Ny4zGA7vnccoeSK33x+3qppNswFtGaHKXG1Ta8/djhH8VM9vNXXROAxLz7
+	 oAZkG7ueftWinU2fYhyNaUk7ri6NJ/U8yueFC0AJzndn3ooBzAQcK4SpGwVMO3wvbbx5fo1nZCP0
+	 BEHkID9eEZWEObjwzp1maB1SoCW8NcgOtJzQadpB9Dr1GKYQCQ/iyjBcKMtCnOfLSX/z5xAAjMIM
+	 LpMb2baDKJ9fPhWBtGt4j5r032tD/9MOb9EczCA8PWsa1Dmfqyfl3RlngUMUayZAxYICtJE7u6Bw
+	 HbJFSdhLI=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+Cc: kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] wifi: ath6kl: Check that the read operation returns a data length of 0
+Date: Sun, 25 Aug 2024 15:10:03 +0800
+X-OQ-MSGID: <20240825071002.2186643-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <00000000000096ee8f061e991433@google.com>
+References: <00000000000096ee8f061e991433@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024 at 04:23:20PM -0700, Yunhong Jiang wrote:
-> Add the binding to use mailbox wakeup mechanism to bringup APs.
-> 
-> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> ---
->  .../devicetree/bindings/x86/wakeup.yaml       | 64 +++++++++++++++++++
->  1 file changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> new file mode 100644
-> index 000000000000..cb84e2756bca
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2024 Intel Corporation
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: x86 mailbox wakeup
-> +maintainers:
-> +  - Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> +
-> +description: |
-> +  The x86 mailbox wakeup mechanism defines a mechanism to let the bootstrap
-> +  processor (BSP) to wake up application processors (APs) through a wakeup
-> +  mailbox.
-> +
-> +  The "wakeup-mailbox-addr" property specifies the wakeup mailbox address. The
-> +  wakeup mailbox is a 4K-aligned 4K-size memory block allocated in the reserved
-> +  memory.
-> +
-> +  The wakeup mailbox structure is defined as follows.
-> +
-> +    uint16_t command;
-> +    uint16_t reserved;
-> +    uint32_t apic_id;
-> +    uint64_t wakeup_vector;
-> +    uint8_t  reservedForOs[2032];
-> +
-> +  The memory after reservedForOs field is reserved and OS should not touch it.
-> +
-> +  To wakes up a AP, the BSP prepares the wakeup routine, fills the wakeup
-> +  routine's address into the wakeup_vector field, fill the apic_id field with
-> +  the target AP's APIC_ID, and write 1 to the command field. After receiving the
-> +  wakeup command, the target AP will jump to the wakeup routine.
-> +
-> +  For each AP, the mailbox can be used only once for the wakeup command. After
-> +  the AP jumps to the wakeup routine, the mailbox will no longer be checked by
-> +  this AP.
-> +
-> +  The wakeup mailbox structure and the wakeup process is the same as
-> +  the Multiprocessor Wakeup Mailbox Structure defined in ACPI spec version 6.5,
-> +  section 5.2.12.19 [1].
-> +
-> +  References:
-> +
-> +  [1] https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
-> +
-> +select: false
+If the data length returned by the device is 0, the read operation
+should be considered a failure.
 
-This schema is still a no-op because of this false.
+Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-What is the point of defining one property if it is not placed anywhere?
-Every device node can have it? Seems wrong...
-
-You need to come with proper schema. Lack of an example is another thing
-- this cannot be even validated by the tools. 
-
-Best regards,
-Krzysztof
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 5220809841a6..2a89bab81b24 100644
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
+ 		ath6kl_err("Unable to read the bmi data from the device: %d\n",
+ 			   ret);
+ 		return ret;
++	} else {
++		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
++		return -EIO;
+ 	}
+ 
+ 	return 0;
+-- 
+2.43.0
 
 
