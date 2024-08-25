@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-300448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD34495E3C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:14:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F3495E3CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D34BB209F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C807F2818B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9A6154BFC;
-	Sun, 25 Aug 2024 14:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011C3155CB5;
+	Sun, 25 Aug 2024 14:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymPC2Up8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PltZezpS"
 Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DC242AAA
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7C213D625
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724595275; cv=none; b=WxF6G4rAnA+d1mE3Vr+RnIf8/MK7ecrb+37tzRjHx1RgcsRTVv0LcR6eH3ADPZny/etwD5lEDQiJqO8Sg/GO5TAgZD6fdifNRttaoGPXM3acAhYdCl02GZQBNdCrb1YQhYQwJmGUk2IGy0XRfsZgtNbJGQhUa3704j7iVb56xbs=
+	t=1724595277; cv=none; b=W8nY2P+l1FjyMxHqTg+BjKr2tzhG8xx+o+2TlTRIdOLgw7+mqBxYOa6UrMe5IJ0x1C/q8TCoJxiypKTzFmrXs9furkO2VfaoNFclSVciGZZUBPmpizEAnOO2DYWpsFiiGs2JXAazY1YX1o9gjgsHAyePNiUkcBnt49MAjzq6g3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724595275; c=relaxed/simple;
-	bh=yxPhDatH5WUc7tuXzelfpRYfEptizh/+MwSKeXvQgIQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jQ32N0uqcHOw4Hb5B7/LHUNT27QePKodXyaSvQdObjaffjY1DknhInL1afq+s2KQBAEi3U+ODia+XnGr50Ixb67SvAUE4u/z3bTCBrK1PRsDg5Xauozp6cGze1DloztCMNtSP5ySKV8cRcI0t7tdmS/jdsS2t96QW3ad4zeWAXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ymPC2Up8; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1724595277; c=relaxed/simple;
+	bh=joVnS8DmY0g4Y+2gErHi2Nv91aaUMO657tgyX7t8ZFA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=F2gZqjeTQrsLfBadNq9kTMWNCo81IQ+o85ymwnC30paX9v5nuSiUoicHtak97nw4xOB/DTRYWcRYEHALb8X9hd5d/NMYWUDXgu4CCiPtj2xEeuCUBELlC7cP+6VmQSKwpHCCSZpogFhwsHkrsqWuutH0ZYy8ybYFHkknQ1STyqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PltZezpS; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280692835dso5406505e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:14:33 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ef642fbso4330305e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724595272; x=1725200072; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YoFcw2YSN8fNBQRdNUDdvu+2vkq76xrOuLe4i+hjOWM=;
-        b=ymPC2Up8PIw3YSSqO9mKrSmECpqJbSeZEsUnRNNwzcx0im55BQ+NK3Tpb4g+LHd29x
-         lJ/nx3SpmPjZYo/GAQfhIJO/6E+mmtyb4nCgsAmlA0/0wFGWNtI0lrrq9n7ZWchjMyvL
-         95NpMBfPtm1BiiqV6MTqc+f6eU+1pk/Or19Kk0aUpIa+7djt1HsizSWTE/zS3VOwytsc
-         VoQQ1iZEPO4JBm5H+CZDT0xdHI1UZXLnPwQj9xkiz62667wm9KmqzQMnsGob8ZcYZcgj
-         hYNH4WxpTryGw0jO0PmKBjxgdWQ8n7i+XPFPD6RLKQH1V7LWwldS+ZbdgEMXetZ4PSH6
-         +pfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724595272; x=1725200072;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1724595274; x=1725200074; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YoFcw2YSN8fNBQRdNUDdvu+2vkq76xrOuLe4i+hjOWM=;
-        b=SDg49rfZi+JYJqMU4TQZB3etphBTAKxu2OzoFxswFTPPpv/n2Xa3C4ETUmHlhP2Xfd
-         HJrNZ/9g3uTPaAA9eRzMUDINfrXErZ6nmiZuECvPTSV3u1ewNvuGDMsKlgM743oiDMd/
-         +3HEXkHI4r3Dstyx8rMT9jzDFBPGbp5vgz1UfXExTlBB7BSnvXBU7i8rea20UcwqLc3D
-         XVyAv5/DrXDtpt3D6WBDNh3CNFu62tXwmSPACsS0iG34DrxSgfFaJuwpV6ZFJxSwn+X+
-         24x4YCVJkIj3zBJ7bXLoFcRwPwy22Qz1/hY8hSdbWIlHma5YZOs4cgorm1+4A4vgNGJM
-         0wRg==
-X-Gm-Message-State: AOJu0Yy2B3a+eNrC37JLz1EYFES16azQGR93kal7ZqwyVtd0pJ1/WN56
-	ypNmLx+lzJeLKzeXJ783P4BTegCrEPocK5hLaE/yzTDX1bS3CR+wDrHDsmYJJvE=
-X-Google-Smtp-Source: AGHT+IHh0Ll1HP8N31WmwAl7OJfgJMORIGH4OQ+QLhHwtkBEZUZkP57+M7JOktPIULTYmTf2110+Ag==
-X-Received: by 2002:a5d:6d0a:0:b0:367:9505:73ed with SMTP id ffacd0b85a97d-373118cec54mr2938507f8f.7.1724595272516;
-        Sun, 25 Aug 2024 07:14:32 -0700 (PDT)
+        bh=3V39aJFJWv5Ox+8nMTcg04luiBvVyWT65eor5O85K80=;
+        b=PltZezpSb1SdUjA3B/jtGKfWQ1q8sErWwsqu3hbdQ0Zv6T+0r6ePRVBLoUdv83sVd+
+         HqzTUGbAthNmOASZBiwpC1Yk0JDuY+Y/R7P+ds3gzBxguW9UFAEYp5PPuwTSVWe/WYMC
+         raZ1OH+6qXstLrZsPX5EEOrrw7WiXt63FWzlKRfg5DHdwGHFIJ5q7dMZx9beFBKTIxSr
+         uKqiCYsrmqO/QdKPryPjXLLn9tF5e9/3xxmNqUK63IfucS5SnIl4HOSZ3Vvtfp0zGTn7
+         JnTXCyCLzayKUwjgkdpXSRuGGon2hn5D/U2tJCiyxac8ZUIwB1+Damgyb/G9WdF66R4w
+         gq9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724595274; x=1725200074;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3V39aJFJWv5Ox+8nMTcg04luiBvVyWT65eor5O85K80=;
+        b=Fofk3vftFEX5/M7oFeXbGd70HJPsXf4sjR+ESriUAvVQpUb//JwXofscPKylXe+HPy
+         N+V52FJbj9hn0A1AHJIabCtrzElReOaTa8Qb3xw6qYFsQIoFaMLzCZDng8xi1JMB2lSj
+         JRBihTLvckhUg5FBatmZ7BTy5TQsEEwy1yjbghTaCuAV3wbprDoP8rp8iYU0HXfcq5Yh
+         hfLKbyHmHdnnnkTR1bDoc4a/IQiN/pTD1HyHS/5yBLWtqbPJJZrLLM4GPOqCyiTzcjHQ
+         gAwe8/14lWQEtPCEsmtK8mds/pDbPjpzMxeGai4Dr9dgUeM/QSiC3d/u7wz76OCm0UeT
+         6CqQ==
+X-Gm-Message-State: AOJu0YwqFMERaK/Cb9v8AEZ0Gp/8IMiTjXxm0LAae2bWGdrHXKPmmxNv
+	benJgumfaYYPoSeWmwTHvusG/8vlaKtAn21Zr/CwMEClT7Hn2wDVYfZeZ1e1OsE=
+X-Google-Smtp-Source: AGHT+IGxaU5SPPeM8id8GkXJPuRmYySTf3YFVPhWqsLL0MARUSWhix2AIa7U5LEypfPKdiEqh4SA5A==
+X-Received: by 2002:a05:600c:3b8b:b0:426:67e0:3aa with SMTP id 5b1f17b1804b1-42acc8d50f1mr32658585e9.1.1724595273921;
+        Sun, 25 Aug 2024 07:14:33 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5162347sm122556045e9.23.2024.08.25.07.14.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5162347sm122556045e9.23.2024.08.25.07.14.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 07:14:32 -0700 (PDT)
+        Sun, 25 Aug 2024 07:14:33 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/5] reset: cleanup and simplify with devm and scoped
-Date: Sun, 25 Aug 2024 16:14:23 +0200
-Message-Id: <20240825-reset-cleanup-scoped-v1-0-03f6d834f8c0@linaro.org>
+Date: Sun, 25 Aug 2024 16:14:24 +0200
+Subject: [PATCH 1/5] reset: berlin: fix OF node leak in probe() error path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,9 +76,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAD88y2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCyNT3aLU4tQS3eSc1MS80gLd4uT8gtQUXTOTpCTj5CQzQ1PzNCWg1oK
- i1LTMCrCx0bG1tQBYNjHeZgAAAA==
+Message-Id: <20240825-reset-cleanup-scoped-v1-1-03f6d834f8c0@linaro.org>
+References: <20240825-reset-cleanup-scoped-v1-0-03f6d834f8c0@linaro.org>
+In-Reply-To: <20240825-reset-cleanup-scoped-v1-0-03f6d834f8c0@linaro.org>
 To: Philipp Zabel <p.zabel@pengutronix.de>, 
  Antoine Tenart <atenart@kernel.org>, 
  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
@@ -88,52 +89,56 @@ Cc: linux-kernel@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
  linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=972;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1147;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=yxPhDatH5WUc7tuXzelfpRYfEptizh/+MwSKeXvQgIQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmyzxBPdLr1mvgz+JNMlIGh2xNjNChB919QhZU6
- kvQ8y8h6bOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZss8QQAKCRDBN2bmhouD
- 1+EVD/9IX0z/uMDEcCWffD+6AVh2mpulFnyUArfMZtoDny3TDw+LwhtG2MOgcd9dhJYuzm9hQa0
- APUdfdmV6DTjCyHzq1pxl7SZMVlcCYuqZqZce8CuGlKttARH6+KD4m5mHUnH+W2ABLWfS7SS3mu
- XS3nBC7x+ouFQ0Svd9hapBqTXq8LCK9JLd8Ih4PDKqnQdDlPa7Dy0tpDtAXOYmIwjj8Zu1fWjaE
- ngcLT48ZljMHLcUVfW7p9CAxLAy5HXOtTCG4Pb1jQyxiNSBC5s8GMR4MDfhGiHnlAiAYf5eevH+
- PvDTa3WQw3j/noAuW47zJIJE5OIdIwGGJdxjZ70UMryRLOiklPAr27xfF81UbVustuaFRdos0Kq
- TLgy9tVZ7KWlPEEGQvDholuG1prUa6R0jxTzs1PbWaEPXp6YQgSCUsVBeMdpsKzFxzCSvMOL5kK
- 4yGW4Dc0ObHHDqRc8iUmAV9twMbsLmhvZaVNLQF1hMJkQpVtySBBJHLLBlJqfibxor99apan7y+
- rUvRW6WLc9RbzVydkFV/KmCByBGIfDtdjbIBWfzY7cjL22JYVxzwNEmaQ5P03BXP5mWK1wfMT2e
- QzrTz5sbuuzpJrtsigAVEgtr7rUAUdCJGZwlUrG14XjbBUM8SPL3eORxPod5QxdIQLSSTHDDUTq
- lU53/aEgBhcTKyA==
+ bh=joVnS8DmY0g4Y+2gErHi2Nv91aaUMO657tgyX7t8ZFA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmyzxCjY77hkWpo20MJfyjjnVxsKR95SKAeU/iu
+ Y3zJ4/suN+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZss8QgAKCRDBN2bmhouD
+ 1/knD/9qX7o6/PZtVNH2lJW8W33eM3FNJFkdfkdS5NFkRnuq3XXEzDEAZLSSv6V/pWOYUEuiS0n
+ OO6zl+0bae9XYGJi++SiuGPQBh8B6+5oRMSq2NNF+xcAkq18NJzU7HMi1wR2G6O9qauYQfvL+UD
+ JR8TFFHdo+8DEObsVCOEA2ODYNY1+T4ABgXQqfOICeeQyWedx3g7BQ+Wn1ixGEQtvOjACRMjJ6H
+ bKo3D7lFjZQ4sMrVTvkRv5UDVx82kBcS+g7QaTMefWaT6V4//kJojlV9rB3XmoOPSxHb1SEbdkr
+ /+O5k2BFjG6wnjIwZhEKCBw5l25Y3IHD+ocwkt12CnOffinirDqQOiZ3yQlq2vQdLYxO9dT9hJl
+ cysTeZ4B5BSfg2PpfjKB0ItoTeUldc2ZF+5CrO/8AgCxvyvumSAslG0SGGbpjeyX8bdx60Dxkxt
+ iy843maH30+bYknaIMDKuY0lwb6p+fCtPR5/fnDhZp2j1wagrZmfZqux4PR3Cs8SUWAcyzH3/bR
+ GwOdyZKbYs3Gqgt3kKrUdRs4rOpOhVHA2lsf846AVXufeF7FDtpYav5WtOTno+vngsU5cDeD1n7
+ FV0UCpBnyGd61GcPxxbr1VvPpn+WnqXlRmZ4eCApcxWKPsDCn1TdmUg9Ib0+TTu7rEZ9/BJMBpH
+ xTPG14fHg7JSC/Q==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi,
+Driver is leaking OF node reference on memory allocation failure.
+Acquire the OF node reference after memory allocation to fix this and
+keep it simple.
 
-Two simple fixes, which do not cover real scenario (memory allocation
-failure during probe), thus not marking CC-stable. Rest of patchset is
-simplifying of code.
-
-Best regards,
-Krzysztof
-
+Fixes: aed6f3cadc86 ("reset: berlin: convert to a platform driver")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (5):
-      reset: berlin: fix OF node leak in probe() error path
-      reset: k210: fix OF node leak in probe() error path
-      reset: simplify locking with guard()
-      reset: lpc18xx: simplify with dev_err_probe()
-      reset: lpc18xx: simplify with devm_clk_get_enabled()
+ drivers/reset/reset-berlin.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/reset/core.c          | 15 ++++-----------
- drivers/reset/reset-berlin.c  |  3 ++-
- drivers/reset/reset-k210.c    |  3 ++-
- drivers/reset/reset-lpc18xx.c | 43 ++++++++++---------------------------------
- 4 files changed, 18 insertions(+), 46 deletions(-)
----
-base-commit: e706b1fe2384d38e6e9edfb6d9e11e26873c24c7
-change-id: 20240825-reset-cleanup-scoped-64bb3cb6157f
+diff --git a/drivers/reset/reset-berlin.c b/drivers/reset/reset-berlin.c
+index 2537ec05ecee..578fe867080c 100644
+--- a/drivers/reset/reset-berlin.c
++++ b/drivers/reset/reset-berlin.c
+@@ -68,13 +68,14 @@ static int berlin_reset_xlate(struct reset_controller_dev *rcdev,
+ 
+ static int berlin2_reset_probe(struct platform_device *pdev)
+ {
+-	struct device_node *parent_np = of_get_parent(pdev->dev.of_node);
++	struct device_node *parent_np;
+ 	struct berlin_reset_priv *priv;
+ 
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	parent_np = of_get_parent(pdev->dev.of_node);
+ 	priv->regmap = syscon_node_to_regmap(parent_np);
+ 	of_node_put(parent_np);
+ 	if (IS_ERR(priv->regmap))
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
