@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-300416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF8495E366
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:46:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892DE95E368
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BA9281DD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123031F212C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC7214037F;
-	Sun, 25 Aug 2024 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B9814D703;
+	Sun, 25 Aug 2024 12:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QQIRRkeS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AD5O39m5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ei2qBNEF"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5711EA91;
-	Sun, 25 Aug 2024 12:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3BC29408;
+	Sun, 25 Aug 2024 12:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724589969; cv=none; b=fW+UkBb/TAncZ0m4omEp/VhCxwiAV0Rwv54N/DYL4lZk1QYIa6OuhnqY1BpOlRepNGuw73iXRXqAmQSg4nGhEDDm5v9XmIMRDY5EcZ4gWRRtyrt4z6jOCswJ8CGX1dJNy4gzeWZcaKTDF9jPQugiAkTFtKSQixZx1w/1mCoryDw=
+	t=1724590223; cv=none; b=lnqRHq1hcBy5kuvXmuqAr7/ClshISE30EADD9Ma0jgsPGEdx8dqG8nCax806e0U6qbzRYhkesxt3oyT1bhB0DLcke7DsqWHUpuOXXLw2EfR3guqL6e68MyVM5ArDeVfJOc5cHc+ZIanxFy0YBve/1QJjIGTBrMEcrj2h6h9bRk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724589969; c=relaxed/simple;
-	bh=FsGnRDGdE/0ravs4XT6aMWLFeMBBzTtZnq9iKBBCa/s=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Azzz1aLhWWnN27qmayFr3BsgWS5rIOYR/6gsHfMGP7pq9j7iAIHkUO2Sweq+QWwYPuVTDwwnU5XDGjLH5JLhMcCIKAa0XmTzemQxxTI2uAZzpq6w3haQIr2n3izSCkOiWYG8FIu35Clr6Y23TI60dnuUNBfel5Ak/47RWtYXmtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QQIRRkeS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AD5O39m5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 25 Aug 2024 12:46:04 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724589965;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qGi8FLGlP7XvwD8pd9L+Njy/xDDsWwz2eJre/dtlghQ=;
-	b=QQIRRkeStz5fXgA+0FrWa/KxBxCvEv/b4uif6kFkdwiHIAakUkEeyxycMtV2dwJH9UPhth
-	+J4a2A6khgzA2Uou5+C4UtQZf520PeGkssYGMBW3DkmSOt/AwYfKVkQwSXOM7vjV+Hc4wQ
-	YzSHs8e5Bms2gBCST9YSxNrajdk/1UN05YuwkZr1PWfk1mvUFOW7nkcFlzcrgypznYiHTD
-	RuL21ZizUPvTwb67n6bjjTFYOk1KjnY0YWBmr0Vv/UhsSnxK3Af/6g+UUmj0bCCfjGSQSW
-	zypXyvnmI4NqxRGgoR2SI3BpY0f5zf1rhwxsi4gKHzyXc12aSuEU32YFt942IA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724589965;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qGi8FLGlP7XvwD8pd9L+Njy/xDDsWwz2eJre/dtlghQ=;
-	b=AD5O39m5fKcZWsTY3RvxdgpfuE2VI86kaMDj5PgnvoMCnEvBqE3j9YWKRMmRHt3Wh0zfWJ
-	VRTU8oaAxCXyASAQ==
-From: "tip-bot2 for WangYuli" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/cpu: Clarify the error message when BIOS does
- not support SGX
-Cc: Bo Wu <wubo@uniontech.com>, Zelong Xiang <xiangzelong@uniontech.com>,
- WangYuli <wangyuli@uniontech.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <F8D977CB368423F3+20240825104653.1294624-1-wangyuli@uniontech.com>
-References: <F8D977CB368423F3+20240825104653.1294624-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1724590223; c=relaxed/simple;
+	bh=wSsxZ7dI6+X7NQkH4B/DRRARY/PktUAwIQOrsJoOArI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VuhnPJzWUJP6dOhZj8T4xfostI9u732z6KnHqwDEvN625bbWtcxRtQ95RiWl7y0rh2VFsGRjnlIfGJkpH4Tq2olJxrjtGtK8iG2tb4h++COOgzBTeDyFB4phZjIPfj6IzfqtHZHN919sog96OWngxGQUpJOrZg3tDjy3C7svaWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ei2qBNEF; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso568947a12.0;
+        Sun, 25 Aug 2024 05:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724590221; x=1725195021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSsxZ7dI6+X7NQkH4B/DRRARY/PktUAwIQOrsJoOArI=;
+        b=Ei2qBNEFFU9ipOFCU8rObEYCKe3gJ6WCWD5G75MUp4eCdKHQySyTxAh8IfOXP++xLz
+         qtTCP86bBBllie8ixMH1SG2+MEY+5pHoVnw7T7su0xokRxMsOauXjBFg2FeVA63pZyVt
+         XOUBx8OuWXpagodCmtMbtz9pnS521t2mLXC6ViyyIEQrPtvL7f4e+0VlbqM8qMIBqAK5
+         XJnlPXUGPW8XOWmPfq57igvydoHT9sUAgTcKtAaRE8W4u8ftjNaeq5VWJO7alYtVlF3X
+         4SY5CumnlnwD7+5bLtgPax6Ubq20q2jKNEfOf6lMahMXXki5E9teOtoocHVEjlh1Wf3F
+         CF3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724590221; x=1725195021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wSsxZ7dI6+X7NQkH4B/DRRARY/PktUAwIQOrsJoOArI=;
+        b=vSJxeWZveuwTIHGFD1X9xVTGqn8llEEt7Q2SXTbXIRNtds2wKZEmJFIZDeKrSb5SvZ
+         6wZPedY03jJD3zRLQIjhz5hRzxsOCmpQa58Gc8HKZX42Hyqjlxh4h6FNN3BnTtKKVt6b
+         eavOaEsFl+iS18W8qYDXoN9sD0Tjw93TXU72AuM6wA0htM3CkoUoU4hqbZDpkmi4WRJE
+         mDIRAvzGHL9irK2ffqqdCNZpYfxHs1uS1+PKniDHsVyADeX2nCRsbArx7tylw0qUz0zf
+         rPn5oFtWVPlEoS82btBNT+OD8vvsDL6S96ETCG6MSUCCJhd7cx+yZjOzP0CBY4Hv4hmy
+         aePA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+L3vXVt/IyBn5q4Mqk5w3HjNfuWnmov7OzIRVP15KnY8VATjK5+o7Awk3r+JvevhtxNo05arkXlvUKRz7lwM=@vger.kernel.org, AJvYcCWvadQMcSSlvzWjFoqfr/oYBhcC0EyMj+klU8Hnku9tXit5Lsw3haKjt4Qc+DQmU1ugzm2rBmIhYNvPWL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywizt3P+R8g/JVfNSYRabS6GTu6o9vUtY+X7hAcK42KxdZq4Vca
+	t6DD578pvBaGXgUtTZ3jCRN0XvaIvt9/0743aPHjIMHv7JwrjUc9qo0JCl0q0nzrIYPqv5F5XOM
+	0+s+PigReHujREUgS4gJ0/VjNfCQ=
+X-Google-Smtp-Source: AGHT+IGUP/DfaB8aEfaxtY39P9KCRZBTpgnKO6o0P+JJlI1mDdidaAOCtFLZX+kqLiI2gqH878tXcACHcJ7jVSFugBU=
+X-Received: by 2002:a17:90b:2e83:b0:2d3:c2a3:2383 with SMTP id
+ 98e67ed59e1d1-2d6465fad68mr5180628a91.0.1724590221151; Sun, 25 Aug 2024
+ 05:50:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172458996487.2215.5672971101697733211.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240816181514.45696-1-ojeda@kernel.org>
+In-Reply-To: <20240816181514.45696-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 25 Aug 2024 14:50:09 +0200
+Message-ID: <CANiq72k9_B6zvB=WumaNfb6VhYYUH_HH0RF4duJGtA23bwqRqA@mail.gmail.com>
+Subject: Re: [PATCH] docs: rust: quick-start: add Debian Testing
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	=?UTF-8?Q?Fabian_Gr=C3=BCnbichler?= <debian@fabian.gruenbichler.email>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On Fri, Aug 16, 2024 at 8:15=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Debian Testing is now also providing recent Rust releases (outside of
+> the freeze period), like Debian Unstable (Sid).
+>
+> Thus add it to the list.
+>
+> Cc: Fabian Gr=C3=BCnbichler <debian@fabian.gruenbichler.email>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Commit-ID:     7678a53a1688e3d03337ca884b284c6e7b060ec5
-Gitweb:        https://git.kernel.org/tip/7678a53a1688e3d03337ca884b284c6e7b060ec5
-Author:        WangYuli <wangyuli@uniontech.com>
-AuthorDate:    Sun, 25 Aug 2024 18:46:53 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 25 Aug 2024 14:41:19 +02:00
+Applied to `rust-next` -- thanks!
 
-x86/cpu: Clarify the error message when BIOS does not support SGX
-
-When SGX is not supported by the BIOS, the kernel log contains the error
-'SGX disabled by BIOS', which can be confusing since there might not be an
-SGX-related option in the BIOS settings.
-
-For the kernel it's difficult to distinguish between the BIOS not
-supporting SGX and the BIOS supporting SGX but having it disabled.
-
-Therefore, update the error message to 'SGX disabled or unsupported by
-BIOS' to make it easier for those reading kernel logs to understand what's
-happening.
-
-Reported-by: Bo Wu <wubo@uniontech.com>
-Co-developed-by: Zelong Xiang <xiangzelong@uniontech.com>
-Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/all/F8D977CB368423F3+20240825104653.1294624-1-wangyuli@uniontech.com
-Closes: https://github.com/linuxdeepin/developer-center/issues/10032
----
- arch/x86/kernel/cpu/feat_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 1640ae7..4a41187 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -188,7 +188,7 @@ update_caps:
- update_sgx:
- 	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
- 		if (enable_sgx_kvm || enable_sgx_driver)
--			pr_err_once("SGX disabled by BIOS.\n");
-+			pr_err_once("SGX disabled or unsupported by BIOS.\n");
- 		clear_cpu_cap(c, X86_FEATURE_SGX);
- 		return;
- 	}
+Cheers,
+Miguel
 
