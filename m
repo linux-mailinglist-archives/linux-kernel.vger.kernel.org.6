@@ -1,132 +1,197 @@
-Return-Path: <linux-kernel+bounces-300468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7401195E400
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:50:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF20D95E408
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31EAE2819D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CBEBB2106A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1845915AADA;
-	Sun, 25 Aug 2024 14:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F12155730;
+	Sun, 25 Aug 2024 14:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRJDv/4L"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="keLeolZT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kS0d1+S1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50941DFCB;
-	Sun, 25 Aug 2024 14:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35451DFCB;
+	Sun, 25 Aug 2024 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724597438; cv=none; b=JHTuHkgrwGHnGxl5S2Diylr5L1Nq04kpqrIQKul4oeUT/HnVqn3ChzPKDENfWfy+AoBQ8hiXqviZZc7h8sEIfCz/3OP1v35Okm+4Jwl7D/+Vy2DBHNAmyRhpJVgve8my+WHoVY9o0Bm4sUra298745UR9KdVw+dKc1acMzkYJRo=
+	t=1724597692; cv=none; b=ULm+brVplpXrqPKFtCmoUZ0xv/rUz/uDBsD/ZD9sgdFsMxS4MuegDaoVbm91FY5MMFhRCBkg5rEBIaH4tMx7aykZLYY2XT3Ei5SNqolbRU360N6qEIJIcz6ocM+WPvYidZsq3u/Fmg/cCfiNJTBiKcXi3WPQraTZhbKjyqAG15A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724597438; c=relaxed/simple;
-	bh=ofQC/npSaoeKCg1WWe+IXgcVsQuPhBagALgMIZywEA8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=AUaLlyLRiBPqPxBjGrPPMT8kS6eCj9Di3WYsYnvgUPJ2FIlpt0CK7PvPaZFp76sIQ0P7pAvvpwPISq9eY4kN/p9Qg4FVaLAtTpMaZcAg3Taf7612HNoo9l30rOLtmMKmBDg2QOoj9rqprRKNoF2FwVrzZ/ItfqePugum7C2mI6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fRJDv/4L; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52fcc56c882so3337548e87.0;
-        Sun, 25 Aug 2024 07:50:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724597435; x=1725202235; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pc8FY73VtyRg3FAE2t6D99RHE0efb9mn6142+5HwO4c=;
-        b=fRJDv/4Lpt1SZREuJ7rKvEToQmyIZ2ta31UZVEA13jsWq2ve+bQBu7qtysA8RhNFvf
-         TD36rV2YaTmj4bjeETPz3pAENy48UYGgMtdR9lODdhLSht1Ae38HbS/ugXE7UVzhacci
-         1GAoVSXaMOmB+cDF+xzYB9oER7uWkBvAKSLiWwa0BR9kqS0wWOVEtZEEgX+S5VdZ5V1K
-         K9m06fflkY3T6CyDqiDqna6kcl1uVDsDZEkmfwCazncwfBLsu1qBfinKncOsf393mvpO
-         Nc5n1EDsWMVOu9s+ZOkUdpHmSu/aKYmVhmobw2THgdjQEl+KVdxD3b5gDHHUtIWsZnzg
-         T5Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724597435; x=1725202235;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pc8FY73VtyRg3FAE2t6D99RHE0efb9mn6142+5HwO4c=;
-        b=svIm2e79QZpZOK/cNMmGaHkLF5my0ewj/fQqyhGx4kamjox84p4EpMxufMHIqkW6MT
-         4Uvofua2okSHoCk51XATY7l/TyTC+Azbjv24ffXxqnDzAqWcbUpJwa6Ud4oJhB4DmSvS
-         aYtXdctWiqrepG8Bq3ejal/lhIqybtGydDxtGgnXrGhtJ8r8l0PAkLiSPQbxW5O6Uex0
-         zYdk6TFhnA8PU207oIMwkhTwB7lTIWeSE7hkmMFibz+b83aTgQOOTef1nFCRi6iz5/kt
-         PO8hMtv7XhAMg8u2KiReR5R+9axnfGD4QG+YUMXPcfgBTLlQ3wpJ3mspQD6lOCenOvT4
-         /Zmw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZFKpyalD6Gf+tcWJNxycoyFDjBTCQW8GrhiKuKraveJBaOjesMNoHrYDG/bfv2s6EL/sXmaG@vger.kernel.org, AJvYcCWBZxOeu9eoJJlRoM2HhBPv/DuhAGIqv1ostbRHRAvcGuCJpJ0uO+EY/HBQxvIs1TKFp+nYIUIT/IxMXgg=@vger.kernel.org, AJvYcCXCHZLbO1TexdAxzaphzVdTSO93XgN4ipZdm38e7enjVNyoI5O5P9H5sSK3sV4yoBLmA/HWjtyz9/1qw278jow=@vger.kernel.org, AJvYcCXuM76WWvjS+zXGNpmQaEyaJ/zdrjxKP7K+V8zsvXeYTGUK+IkexgLH9OkqO8IQmtnr5gdkKZRWwKmp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYZoXD4fJ6C3dqKRdJCgUpR7QI+BVU+WYGKEEviiq5m9R8hL/S
-	n7U7NFuA43t0TChgmpCRVfj3vyhGm9EpAJ5pkKDjc9J56lhP6A3H
-X-Google-Smtp-Source: AGHT+IH0/xfVzdRZjblK8KE69idqy4lw8tIafTxYwXC+VouljoNyroV0VA7MSy/dmO5QfZ/a6ulqbg==
-X-Received: by 2002:a05:6512:3e1a:b0:533:4322:d03e with SMTP id 2adb3069b0e04-5334cbaf0c2mr4162339e87.25.1724597434273;
-        Sun, 25 Aug 2024 07:50:34 -0700 (PDT)
-Received: from [192.168.1.105] ([31.173.80.155])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea2937bsm1214687e87.42.2024.08.25.07.50.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 07:50:33 -0700 (PDT)
-Subject: Re: [PATCH V2] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in with
- usb_control_msg_recv
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: gregkh@linuxfoundation.org, kvalo@kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <tencent_1D9967CEC6D952EC86530991EED86ED70C06@qq.com>
- <tencent_F0CB92D8867509922ED02ED5CCA4E7D2C606@qq.com>
-From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <580b93ac-58a0-6489-ad84-be6bdf98f7e6@gmail.com>
-Date: Sun, 25 Aug 2024 17:50:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1724597692; c=relaxed/simple;
+	bh=++LVRg4bp9nIRqe6eDRq9iQzNxspOTnDagj6ICY9YX8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZJXVj6Qjq/50tZoiadno03fLRiciLkyuesj30I42NkaJEoYxKqk0zaWM87jLZi4PTWDrVQ+tFDDZXdNkaHRjvS/v/KxPxM/PD8yQhBQ19fkh+TWPmwCgXdXA59L5jwE/8UU13pl5ZGabEAgbJyPzCRNKHfBwUnfp1bdZP8ilFvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=keLeolZT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kS0d1+S1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 25 Aug 2024 14:54:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724597689;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fWiOdt2XHcMTbBWWzZSL9waZ0W5oriL5BqzCMWpA2TA=;
+	b=keLeolZTMXnpEoSsneuLbuurVzANWsOVVK7KwK+7wc6NPF6936PLMVIsRkbktiRyGSh3Um
+	SL2pzfXeu8Au8dMeb0Uw/NF0iBmT04Wgsg7ywQpyavgFgjUHl47F97f0SITMefhFBrTvVK
+	Q9L6gLzfy3U8Yyaj1mi65HhvG6eryIK7QlA8Y0AAEwFGZlKNhQl65JdASnxlk3KDXRQMIF
+	2CMg4r//xcxBL0uUuklvLsXLKsRnpZXos/5WZ7Xz8Ey4f3gMFe6sY6+4bYwVwVCLTVrA/p
+	PBchmVo4tduvIQClmCETcutlGsg0RkkcoG8ltQ215AoHdq+vnDIS25h7oxJqFA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724597689;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fWiOdt2XHcMTbBWWzZSL9waZ0W5oriL5BqzCMWpA2TA=;
+	b=kS0d1+S110RmlDx5UtariB24GNBJffsRt19lSD88REKRY216UxigmQAQLmZcJr1tId0rkc
+	zuJAk1VH3MbhYVCg==
+From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86/intel: Limit the period on Haswell
+Cc: Li Huafei <lihuafei1@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kan Liang <kan.liang@linux.intel.com>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240819183004.3132920-1-kan.liang@linux.intel.com>
+References: <20240819183004.3132920-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <tencent_F0CB92D8867509922ED02ED5CCA4E7D2C606@qq.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Message-ID: <172459768833.2215.4831564360570699596.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 8/25/24 5:21 PM, Edward Adam Davis wrote:
+The following commit has been merged into the perf/urgent branch of tip:
 
-> ath6kl_usb_submit_ctrl_in() did not take into account the situation where
-> the length of the data read from the device is not equal to the len, and
-> such missing judgments will result in subsequent code using incorrect data.
-> 
-> usb_control_msg_recv() handles the abnormal length of the returned data,
-> so using it directly can fix this warning.
-> 
-> Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-[...]
+Commit-ID:     25dfc9e357af8aed1ca79b318a73f2c59c1f0b2b
+Gitweb:        https://git.kernel.org/tip/25dfc9e357af8aed1ca79b318a73f2c59c1f0b2b
+Author:        Kan Liang <kan.liang@linux.intel.com>
+AuthorDate:    Mon, 19 Aug 2024 11:30:04 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 25 Aug 2024 16:49:05 +02:00
 
-> diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> index 5220809841a6..dc1f89ebb740 100644
-> --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> @@ -1027,9 +1027,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
->  	int ret;
->  
->  	/* get response */
-> -	ret = ath6kl_usb_submit_ctrl_in(ar_usb,
-> -					ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
-> -					0, 0, buf, len);
-	ret = usb_control_msg_recv(ar_usb->udev, 0, ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
-				 USB_DIR_IN | USB_TYPE_VENDOR |
+perf/x86/intel: Limit the period on Haswell
 
-   Strange alignment style... If you're not going to reuse the old style,
-why this trailing space before USB_DIR_IN?
+Running the ltp test cve-2015-3290 concurrently reports the following
+warnings.
 
-> +				 USB_RECIP_DEVICE, 0, 0, buf, len, 2000, GFP_KERNEL);
+perfevents: irq loop stuck!
+  WARNING: CPU: 31 PID: 32438 at arch/x86/events/intel/core.c:3174
+  intel_pmu_handle_irq+0x285/0x370
+  Call Trace:
+   <NMI>
+   ? __warn+0xa4/0x220
+   ? intel_pmu_handle_irq+0x285/0x370
+   ? __report_bug+0x123/0x130
+   ? intel_pmu_handle_irq+0x285/0x370
+   ? __report_bug+0x123/0x130
+   ? intel_pmu_handle_irq+0x285/0x370
+   ? report_bug+0x3e/0xa0
+   ? handle_bug+0x3c/0x70
+   ? exc_invalid_op+0x18/0x50
+   ? asm_exc_invalid_op+0x1a/0x20
+   ? irq_work_claim+0x1e/0x40
+   ? intel_pmu_handle_irq+0x285/0x370
+   perf_event_nmi_handler+0x3d/0x60
+   nmi_handle+0x104/0x330
 
-   Same here...
+Thanks to Thomas Gleixner's analysis, the issue is caused by the low
+initial period (1) of the frequency estimation algorithm, which triggers
+the defects of the HW, specifically erratum HSW11 and HSW143. (For the
+details, please refer https://lore.kernel.org/lkml/87plq9l5d2.ffs@tglx/)
 
-[...]
+The HSW11 requires a period larger than 100 for the INST_RETIRED.ALL
+event, but the initial period in the freq mode is 1. The erratum is the
+same as the BDM11, which has been supported in the kernel. A minimum
+period of 128 is enforced as well on HSW.
 
-MBR, Sergey
+HSW143 is regarding that the fixed counter 1 may overcount 32 with the
+Hyper-Threading is enabled. However, based on the test, the hardware
+has more issues than it tells. Besides the fixed counter 1, the message
+'interrupt took too long' can be observed on any counter which was armed
+with a period < 32 and two events expired in the same NMI. A minimum
+period of 32 is enforced for the rest of the events.
+The recommended workaround code of the HSW143 is not implemented.
+Because it only addresses the issue for the fixed counter. It brings
+extra overhead through extra MSR writing. No related overcounting issue
+has been reported so far.
+
+Fixes: 3a632cb229bf ("perf/x86/intel: Add simple Haswell PMU support")
+Reported-by: Li Huafei <lihuafei1@huawei.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20240819183004.3132920-1-kan.liang@linux.intel.com
+Closes: https://lore.kernel.org/lkml/20240729223328.327835-1-lihuafei1@huawei.com/
+---
+ arch/x86/events/intel/core.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 0c9c270..9e519d8 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4589,6 +4589,25 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
+ 	return HYBRID_INTEL_CORE;
+ }
+ 
++static inline bool erratum_hsw11(struct perf_event *event)
++{
++	return (event->hw.config & INTEL_ARCH_EVENT_MASK) ==
++		X86_CONFIG(.event=0xc0, .umask=0x01);
++}
++
++/*
++ * The HSW11 requires a period larger than 100 which is the same as the BDM11.
++ * A minimum period of 128 is enforced as well for the INST_RETIRED.ALL.
++ *
++ * The message 'interrupt took too long' can be observed on any counter which
++ * was armed with a period < 32 and two events expired in the same NMI.
++ * A minimum period of 32 is enforced for the rest of the events.
++ */
++static void hsw_limit_period(struct perf_event *event, s64 *left)
++{
++	*left = max(*left, erratum_hsw11(event) ? 128 : 32);
++}
++
+ /*
+  * Broadwell:
+  *
+@@ -4606,8 +4625,7 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
+  */
+ static void bdw_limit_period(struct perf_event *event, s64 *left)
+ {
+-	if ((event->hw.config & INTEL_ARCH_EVENT_MASK) ==
+-			X86_CONFIG(.event=0xc0, .umask=0x01)) {
++	if (erratum_hsw11(event)) {
+ 		if (*left < 128)
+ 			*left = 128;
+ 		*left &= ~0x3fULL;
+@@ -6766,6 +6784,7 @@ __init int intel_pmu_init(void)
+ 
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = hsw_get_event_constraints;
++		x86_pmu.limit_period = hsw_limit_period;
+ 		x86_pmu.lbr_double_abort = true;
+ 		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
+ 			hsw_format_attr : nhm_format_attr;
 
