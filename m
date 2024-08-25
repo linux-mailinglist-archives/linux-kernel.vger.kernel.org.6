@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-300428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5862A95E390
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:14:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8257095E394
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E27B21554
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:14:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AEE1F213BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1E91547DA;
-	Sun, 25 Aug 2024 13:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFBD14E2E2;
+	Sun, 25 Aug 2024 13:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JXJZo+yS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GExvJF4K"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875B213D25E
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E722837B
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724591643; cv=none; b=TWX6t4rE7e4fAOmo8wkFCJK0TDNpguvEQ09+0DgcdQjx0U4NIUTu+lGo0tj6I20yeR77TJBJScmUeE3XwCYC0PY5PCsEKAK1TIVUFVo089ya6nQza8jFWQTdnXOTbtfwc0Kb7BrUhc9pwxAF/0OCyMNMOLBexthMZJL+1gPxVTs=
+	t=1724591996; cv=none; b=nATSGET1/QlmYiZm6LoNU7gfbzBvVd1/9FFLOmlXs3MqjmRYhu4xUVIqAciQg8tUAlRSvSY2Hmc5BuvUImomldtin+srPXAREkPoN7oxT43n93+uUAAGSZcDlX0+6RQvUSr3fWn/mVzZKnTDr/ElOUP6HuSvBzYttHzQ2pnIXCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724591643; c=relaxed/simple;
-	bh=If+/8xbIiesAUyAMotSQq4erR1sm/1SDnyOVcA8R6BQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLNWWZrVFMPX/jR1l6bWsZd0+AUkg6eUBwBL3jZrYMRHWdggcm/cZHha1cy8+WXRcNxWjFvRsEKHRbzOvZGdl787STw1XCUVe0tfeo6SzF1C/4yfqZurU7OaOZqfh8SotBkzbwd10rcQauDaf5w2P3X2PYU3Duhuc7mqNYNOoFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JXJZo+yS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724591641;
+	s=arc-20240116; t=1724591996; c=relaxed/simple;
+	bh=xFrJ8f2AgDg8Flf+mGJJ3kUYdoE2vS4mM0zUgZdJTN0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CtqdLffYEdSaA1/W4rsCg+T0KO/6KIdldZn/YdLTW0ry5BsI2K/L6TX6+i7BXPH143cpZWzIO3iOpFADZH0Exr5se1JxFNmTC0YcICdwkqyXviZYuOul9tpq86uumt3W72bnMvGYNRK+q2oi3KN9HhhGnAJZ1hSRe7KP86CNDTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GExvJF4K; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724591992;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z6JO4w81QAnxfI/sVFQ992flHyAjc9Uzm0HkU62Trw4=;
-	b=JXJZo+ySqhwRZ2yHmx4oH/7S2RESKEnthJXSxNRqmr0NPUZoN6WvDEtFTMCQOqdqbIAJ0i
-	EzdxZiMgDHQikFLFbThO1JLvBDipubOCJqtCMvU8txNkcXwTvGEWNhLp9veRET4aUy4Fc8
-	pV0De0tT7n5qIT2+2pTr89YXdoxZimE=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-ZW_uMi4iNWKi4RuIV2vmWQ-1; Sun, 25 Aug 2024 09:13:59 -0400
-X-MC-Unique: ZW_uMi4iNWKi4RuIV2vmWQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53349795d48so3647222e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 06:13:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724591638; x=1725196438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z6JO4w81QAnxfI/sVFQ992flHyAjc9Uzm0HkU62Trw4=;
-        b=vdy2bHl8/iYt385eY0oY9ma+sCltOfEcKZ65hDNY/5kx3cmUHKE7l6pAjN1tooHnhV
-         20RZVYoo8Z8WihmWlG7p1DSvdgl70pqfvjsDSjf/EUS6Tv0JvgEFfhvUL9KU+x4hQnn/
-         xT0D2tWeYTaw4o1tcgzhuEaNO7trGhLm3p5DOhNHjskEuCpDW+XgWNd7BNJRnFbz326d
-         MAAjK3lz/gFZ4/3rmEiLwK9nEHUfBwdSR2W5wIAC//ru0ph0fMYfH1zgWhP8Is2UhaBI
-         8aOFq3c0XVXC77RBVsyxSbJlgJRjX0U2s9vdpesbKDzhgb7QgZgcqpTYwnXGf9++ksT4
-         1o3g==
-X-Gm-Message-State: AOJu0YzOhZJEAWdoVgMANV0dgq7Wd95lsXEZ3rIxAuPlp2YJNYPJ3zPY
-	Y7QaiGkfccP2nM/WdcN1J+lqUD3eMXvwrKBMFVaJuxUUc2p7ehr4YRmEI+7Wxz+h6AnTzd82Vq3
-	0t9kWCR9uC7CN9gznw0otCJE+joWNZm8XD2i2HA2s14yB1PKlrLpAtEeJaknkGFpq3yTIAA==
-X-Received: by 2002:ac2:4e07:0:b0:52e:9f76:53dc with SMTP id 2adb3069b0e04-534387d23ffmr4435063e87.0.1724591637783;
-        Sun, 25 Aug 2024 06:13:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFij4DUMFVB07YMBQHND15S17vubAKk8zRYJctcQrk4OJNZ/Y6GfWIX0ARkcVXAeWLHy8YEVA==
-X-Received: by 2002:ac2:4e07:0:b0:52e:9f76:53dc with SMTP id 2adb3069b0e04-534387d23ffmr4435049e87.0.1724591637278;
-        Sun, 25 Aug 2024 06:13:57 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2a5764sm533272866b.79.2024.08.25.06.13.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 06:13:56 -0700 (PDT)
-Message-ID: <34c641d3-ee4e-4e93-ad42-90a33c0f8b0a@redhat.com>
-Date: Sun, 25 Aug 2024 15:13:56 +0200
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Eo7LJ2mrKNYIwpjSOrM1O0gpj6MgZAZTZUBa9pFYK6I=;
+	b=GExvJF4KLi3GOUsCy0nGkm7VPWc5gvl9O/fbJzZHty/+j7IJQo2FY9Xig44/5XFA2CJrzV
+	PqNIww/MwXhsuKKpkFoPLBYPQXEVm4dJd1WmloULukeFxbb7JBVKOZ9b94vHLw4e+pL2VX
+	U7RpcRKC0USaS2eph0Mda9jgK6O5dGA=
+From: Jeff Xie <jeff.xie@linux.dev>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	xiehuan09@gmail.com,
+	Jeff Xie <jeff.xie@linux.dev>
+Subject: [PATCH v2] genirq: procfs: Make smp_affinity read-only for interrupts that userspace can't set
+Date: Sun, 25 Aug 2024 21:19:11 +0800
+Message-Id: <20240825131911.107119-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: matrix-keymap - switch to using __free() cleanup
- facility
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>
-References: <ZspoEPdTcH-hpciy@google.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZspoEPdTcH-hpciy@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+The kernel already knows at the time of interrupt allocation that the
+affinity cannot be controlled by userspace and therefore creating the
+file with write permissions is wrong.
 
-On 8/25/24 1:09 AM, Dmitry Torokhov wrote:
-> Use __free(kfree) cleanup facility in matrix_keypad_parse_keymap() to
-> automatically free temporarily allocated memory.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Therefore set the file permissions to read-only for such interrupts.
 
-Thanks, patch looks good to me:
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+---
+v2:
+- Updated the description suggested by tglx
+- Corrected the return value from -EIO to -EPERM when the userspace can't set the affinity
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+ kernel/irq/proc.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/input/matrix-keymap.c | 25 +++++++++----------------
->  1 file changed, 9 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/input/matrix-keymap.c b/drivers/input/matrix-keymap.c
-> index 5d93043bad8e..3bea3575a0a9 100644
-> --- a/drivers/input/matrix-keymap.c
-> +++ b/drivers/input/matrix-keymap.c
-> @@ -73,10 +73,9 @@ static int matrix_keypad_parse_keymap(const char *propname,
->  	struct device *dev = input_dev->dev.parent;
->  	unsigned int row_shift = get_count_order(cols);
->  	unsigned int max_keys = rows << row_shift;
-> -	u32 *keys;
->  	int i;
->  	int size;
-> -	int retval;
-> +	int error;
->  
->  	if (!propname)
->  		propname = "linux,keymap";
-> @@ -94,30 +93,24 @@ static int matrix_keypad_parse_keymap(const char *propname,
->  		return -EINVAL;
->  	}
->  
-> -	keys = kmalloc_array(size, sizeof(u32), GFP_KERNEL);
-> +	u32 *keys __free(kfree) = kmalloc_array(size, sizeof(*keys), GFP_KERNEL);
->  	if (!keys)
->  		return -ENOMEM;
->  
-> -	retval = device_property_read_u32_array(dev, propname, keys, size);
-> -	if (retval) {
-> +	error = device_property_read_u32_array(dev, propname, keys, size);
-> +	if (error) {
->  		dev_err(dev, "failed to read %s property: %d\n",
-> -			propname, retval);
-> -		goto out;
-> +			propname, error);
-> +		return error;
->  	}
->  
->  	for (i = 0; i < size; i++) {
->  		if (!matrix_keypad_map_key(input_dev, rows, cols,
-> -					   row_shift, keys[i])) {
-> -			retval = -EINVAL;
-> -			goto out;
-> -		}
-> +					   row_shift, keys[i]))
-> +			return -EINVAL;
->  	}
->  
-> -	retval = 0;
-> -
-> -out:
-> -	kfree(keys);
-> -	return retval;
-> +	return 0;
->  }
->  
->  /**
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 8cccdf40725a..7b3a4c92d148 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -142,7 +142,7 @@ static ssize_t write_irq_affinity(int type, struct file *file,
+ 	int err;
+ 
+ 	if (!irq_can_set_affinity_usr(irq) || no_irq_affinity)
+-		return -EIO;
++		return -EPERM;
+ 
+ 	if (!zalloc_cpumask_var(&new_value, GFP_KERNEL))
+ 		return -ENOMEM;
+@@ -340,6 +340,7 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 	static DEFINE_MUTEX(register_lock);
+ 	void __maybe_unused *irqp = (void *)(unsigned long) irq;
+ 	char name [MAX_NAMELEN];
++	umode_t umode = S_IRUGO;
+ 
+ 	if (!root_irq_dir || (desc->irq_data.chip == &no_irq_chip))
+ 		return;
+@@ -362,8 +363,11 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 		goto out_unlock;
+ 
+ #ifdef CONFIG_SMP
++	if (irq_can_set_affinity_usr(desc->irq_data.irq))
++		umode |= S_IWUSR;
++
+ 	/* create /proc/irq/<irq>/smp_affinity */
+-	proc_create_data("smp_affinity", 0644, desc->dir,
++	proc_create_data("smp_affinity", umode, desc->dir,
+ 			 &irq_affinity_proc_ops, irqp);
+ 
+ 	/* create /proc/irq/<irq>/affinity_hint */
+@@ -371,7 +375,7 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 			irq_affinity_hint_proc_show, irqp);
+ 
+ 	/* create /proc/irq/<irq>/smp_affinity_list */
+-	proc_create_data("smp_affinity_list", 0644, desc->dir,
++	proc_create_data("smp_affinity_list", umode, desc->dir,
+ 			 &irq_affinity_list_proc_ops, irqp);
+ 
+ 	proc_create_single_data("node", 0444, desc->dir, irq_node_proc_show,
+-- 
+2.34.1
 
 
