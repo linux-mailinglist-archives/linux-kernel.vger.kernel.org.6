@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-300591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D0595E593
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 00:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5CF95E594
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 00:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 781E0B20F7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6B41C209B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE1F768EF;
-	Sun, 25 Aug 2024 22:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC19276F17;
+	Sun, 25 Aug 2024 22:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MLkivtSW"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLEQaVok"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A447A6A
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 22:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EED47A6A
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 22:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724625769; cv=none; b=S5+DCBpfgESXSzdYtslWudCr1yxSZjjjOuHlUfLQtAZiAzaHG+3G+9ahlRWIBWiOEr8d3ogBxK9B1cwE4HAoL6zc7l9e+e4wMxPxr8KsSKtJrG7xJc1Dgss6H+1FsDbwoh1Jy51kh3Ct1VvZRrHtNurJHWLipwGU5TkxnuLhUGI=
+	t=1724625802; cv=none; b=qMWlerJwrbNp6APTQGUDUPuPbz0jlc0vSOK27ggihynV89Q/N4je5frdMYJPXD+hk9pEZznoJ1Nkr7vcQkq+I5hG1tXr3nzDvRXBuKFQlG2/2pNE1anphqdPbhSIhLdkq3xx49frQSdvMmal0zpvvSMci64p6uHS3a1fINehl+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724625769; c=relaxed/simple;
-	bh=uZnQzlZJslSibUauQgkTs7hu2kmRwa/XGHZMpjqG0Jk=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=rq6CPshrE4J22BAiBbDol1knsLV/fZr0aEEMScROnKla3t+0oiVL65E71VkG+1Vv76JZRUdymNSMWlb/kcabnVHPh/6Vl3o8AyBANjG7InrzjCavp66DVrrRpWTVVasaeMYDPWyHDTgQiAwUW0zKbS5Kpoejb0/JyGdSeROY1Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MLkivtSW; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7141feed424so3036644b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 15:42:47 -0700 (PDT)
+	s=arc-20240116; t=1724625802; c=relaxed/simple;
+	bh=jngaTFMZPFu6vow30Ivlh/fYRC31JZ6x6YVe4xH7/qw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=YbmmRMR4ed+ZW2Emri0wYYxMe8qq/CwrnoCkwYxVHafGKRSCQR+jS05T7RekEHrHVq37PyC8ke6chIu2Ltl3cgfT36ya+ZBY9N1/A7V5F2cUvtqHgaXHAiTgwl2mhbuxzxO67/gc/+EXe84e5s3e2JZNsk1d163PlMXPVW7vtbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLEQaVok; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7142a93ea9cso2512970b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 15:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724625767; x=1725230567; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0rBvHDWVfkdQt9ZpCo+KYmKH0Q02QEi1n33koP6jBAs=;
-        b=MLkivtSW1hCD/WBsZvx3p2F5m44Lcxu9ThLEd6OISC9KN3y8dNfrw9jJcTx3PtG4Ou
-         wXyZeMGzKNlCAsBVDxbnxMcIuEF0LW+a/Nt1IC97Itaj5ZNH/fIDvqX2CbW/ulqz92/d
-         PjAp8QpsYevRhbHF96Rfg1bs24Zi55Om2bT0FFCZnxHyrOq2Anhum2IohiwJt0TNsdFr
-         r2mi4GCux7gAIsXJZJM6TE9frYbGBZJei8BwfvGdVLje4i7xFCOmAzg79fQ7bUBJYtM9
-         LIJWJVaq7Lu4nWR16tdJNpwXtI5jzkZl49JuwY0NKrwKzCo6rVEd1Lkh8UFZ98eyy0mO
-         8dLQ==
+        d=gmail.com; s=20230601; t=1724625800; x=1725230600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T9clC3OC/WS5+W1S9lzwSe4wn+WbVo8I74kkv+luY9g=;
+        b=mLEQaVok3lgt7/C6cIIdTcDCZqWpepGtCP8SWC0aGSGGxk+MMoWl+ErSzOrO+t0cqW
+         xib4za6zCUJNbFZJbiP9SH8oO1G6Z3vUz9ekEI2VWN0qWcVe95OTj++xKJoKteZJxZgQ
+         3xJO166CSM4/hK1YrJPvLnzt2P9FhwyNPmhV8asORbGx09SQsrPT9P8JAkIC+uPP/tym
+         GAowuOfQ9JpN5JIJ+ZatU9taeF2IsO2jjvTVG1fTcPzIagLbaCOGwg/fqli0aJUFB2t6
+         ThDYP+s3ZGT48kZ3u2v8W7+EHU6J7yWe2BcCcH1u+WjbvQTYit61UeidCptJAHkrg16J
+         5nYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724625767; x=1725230567;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0rBvHDWVfkdQt9ZpCo+KYmKH0Q02QEi1n33koP6jBAs=;
-        b=BZnQCm3tadAwbNswoRJ+Gf9YI70scd32H5GKTBCB8+jWQHENDizKdRuXtq2g/LhLTi
-         +/4uq0Z7hBHU0WieztOHmzcqb+3Lrmb98vS45CaL4VK4baV/h/BJcQDN3Eo44EHBleKf
-         Ge96lahFG4lYVsKYHpW+P2SsjAcLZO7dFcsZGGxuizG4HSgIHlBn33meAXlkH08Q1VzD
-         h5xINIS6HLG/VTn7VCjWIdZB38XzjLvpFIq0QFjeNXziP91zKgRlk8J2M+129SlM3Jre
-         MEuBQAi5ww1ZUnUUCUDFdar6soL7oNTkoAkFMWHAi7ba/UCsnUuvDiWc/2i2kaYGMxyy
-         I+qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDp+T9vbvY94bdrgSDEfnrt0/UXzfOkAeFXvJF5t+pA8v+Nx64yrKpRrliwd+9FqEKuooeZ1NlhCWR604=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Tmox7JaDIxM2IEbxVi1HQnLxKHcNpGDXVOF23pQ+nHBuky8A
-	n577NplhUORCFxTORprPT/x0c7jmuMzlm8dve70FmsNKgHo5f1D23ZDSl5foldNVZzKMkz804oC
-	7Cg==
-X-Google-Smtp-Source: AGHT+IHJwZpY6lEHZ/ct9FFk8qm5lFxEP/XcocOCIhB7oCMa+mmuyaBprncVdk8yfSnsFc5hznBgYA==
-X-Received: by 2002:a05:6a20:9e4d:b0:1ca:db51:85df with SMTP id adf61e73a8af0-1cc8b419fe7mr8650270637.8.1724625767042;
-        Sun, 25 Aug 2024 15:42:47 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613b2048fsm8379942a91.54.2024.08.25.15.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 15:42:46 -0700 (PDT)
-Date: Sun, 25 Aug 2024 15:42:45 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: [PATCH] mm: shmem: fix minor off-by-one in shrinkable calculation
-Message-ID: <d8e75079-af2d-8519-56df-6be1dccc247a@google.com>
+        d=1e100.net; s=20230601; t=1724625800; x=1725230600;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9clC3OC/WS5+W1S9lzwSe4wn+WbVo8I74kkv+luY9g=;
+        b=WWpBklqWgab1pr5VG2RUkBMG2bBBqre5z86ibPWRJ5c9RIWZWChqHsUpFDweekFyjA
+         3L3Uwb9/DZZviWkmF0v4JRdBHDshMcwl1DFhuCGXuZzd8NXoAnmxFiDkq2/BQLmOPtfy
+         faAvH78lmonzcHMi9DhI7RD3U5WGx85Hbahc5RVR+kmLRVYf365MLmMG/tb8zKn4agMj
+         swXcI9bqNGTYbzy52+KQdfyjFiQisQAKxTZYONGY7Zvp84ywM+gNGaQEY8PBkmSmhyFO
+         VEqrRonKB9/yNFRsQrgxH2Jj36u5EJWeoIO9atkclEkZrqImjb+cS6f/22hF2D6J6htA
+         6mag==
+X-Forwarded-Encrypted: i=1; AJvYcCWyYXzf2Wh4WzBCwgNxLDn3DjVQt8x/jRD5A2XCx29X8JmGd6ek+wbXbJTMf3PXVgsQU3mbFvrSA4EgIEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZS0ShoWog4I01aCrXThwkBAYLlafg+OhGq2AQbVfR72bmkLX3
+	fiU6HgwX/cgsA986Q2TtV4P6pZE//ZVJXIwVxztUN2zNpfDoSc1+
+X-Google-Smtp-Source: AGHT+IEh4IwWngx7WZaiCUY9uaLglxb6SYoHnJ7dMB74dC8VqAEV00ht36d3ocYW2SJlQeCM4oNJ8A==
+X-Received: by 2002:a05:6a00:9148:b0:714:3153:ab4 with SMTP id d2e1a72fcca58-714458b7d29mr7845008b3a.27.1724625800095;
+        Sun, 25 Aug 2024 15:43:20 -0700 (PDT)
+Received: from ?IPV6:2804:868:d047:ced3:41fa:c7cf:e733:9f1d? ([2804:868:d047:ced3:41fa:c7cf:e733:9f1d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434236aeesm6062201b3a.30.2024.08.25.15.43.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 15:43:19 -0700 (PDT)
+Message-ID: <324c34e3-3471-4cbe-aa6d-b14244ca48eb@gmail.com>
+Date: Sun, 25 Aug 2024 19:43:16 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8192e: Fix multiple assignments in
+ rtl_wx.c:529
+From: Alien Wesley <alienwesley51@gmail.com>
+To: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
+References: <20240825214612.49254-1-alienwesley51@gmail.com>
+Content-Language: en-US, pt-BR
+In-Reply-To: <20240825214612.49254-1-alienwesley51@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There has been a long-standing and very minor off-by-one, where
-shmem_get_folio_gfp() decides if a large folio extends beyond i_size
-far enough to leave a page or more for freeing later under pressure.
-
-This is not something needed for stable: but it will be proportionately
-more significant as support for smaller large folios is added, and is
-best fixed before duplicating the check in other places.
-
-Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 85e3bd3e709e..37c300f69baf 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2326,7 +2326,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 	alloced = true;
- 	if (folio_test_large(folio) &&
- 	    DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE) <
--					folio_next_index(folio) - 1) {
-+					folio_next_index(folio)) {
- 		struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
- 		struct shmem_inode_info *info = SHMEM_I(inode);
- 		/*
--- 
-2.35.3
+Sorry folks, this was supposed to be a v2.
+[PATCH v2] staging: rtl8192e: Fix multiple assignments in rtl_wx.c:529
+> Separated assignments for pairwise_key_type and group_key_type
+> in order to silence the following checkpatch warning.
+>
+> CHECK: multiple assignments should be avoided.
+>
+> ---
+> Changes in v2:
+>      - Removed two spaces in front of "=".
+>
+> Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
+> ---
+>   drivers/staging/rtl8192e/rtl8192e/rtl_wx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> index 47f1adf30ab4..67c4793e0fc1 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> @@ -526,7 +526,7 @@ static int _rtl92e_wx_set_enc(struct net_device *dev,
+>   	mutex_unlock(&priv->wx_mutex);
+>   
+>   	if (wrqu->encoding.flags & IW_ENCODE_DISABLED) {
+> -		ieee->pairwise_key_type  = KEY_TYPE_NA;
+> +		ieee->pairwise_key_type = KEY_TYPE_NA;
+>   		ieee->group_key_type = KEY_TYPE_NA;
+>   		rtl92e_cam_reset(dev);
+>   		memset(priv->rtllib->swcamtable, 0,
 
 
