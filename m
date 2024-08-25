@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-300462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6BC95E3F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E31795E3F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8171C20CF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18A628187B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8CF15B96C;
-	Sun, 25 Aug 2024 14:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E046C16F0C6;
+	Sun, 25 Aug 2024 14:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SgoVhZr0"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="T41hLwyA"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8959213DDA7
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C515667D
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724596476; cv=none; b=iyVWx2kN9fU8R6gxOqOyKg+iKeDL2Jpv+gyUBFHFilXAvnnoZwOrzi0V29LUixvhjydNxiJ95E2xQtI0SgqTC/5BUz6LKp/5SbU3LnunCC+892LiZRqiODrerycuv3NMy3AGTYBdlR79Z39jmQwmGaQgBDQosTYiHZ5hMJPKgzo=
+	t=1724596477; cv=none; b=jCSiuJvZfJncHr4JvI+ZLUs/8hb3UyUuDRQ05XUURPEVRX6lxHU1sD+y8MHFbQA/eMUAEnTOQIgSLrSjFwXvgAILCeajZyji06ILuxxwO8edCfY+EYtNQxs546v/RChEEyHBuWY5LXnViOIuJdNJOn3cygACTBeQi+YVszUqvDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724596476; c=relaxed/simple;
-	bh=FJAYltTw/vKUew7y1T5RlL01/wrW5nRptSnGTB1MgLk=;
+	s=arc-20240116; t=1724596477; c=relaxed/simple;
+	bh=0lv2+/R/Y1kEilZQGwotVCHUco7bj6y3rAOycGgHMaw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JhkpbDpKdgn8pTE7wNJZV2Y61s50SAjqhE4pEJU/UKiRd31GDdv2PHTvHwWD/AVI7ixXoem0n+owyy7LoebqHszYjUggjIgHX2vw13FjEFaKV4bSIgrgrhy0TKX1gzF5W6nTc1D8OH4fw58gJ/KO9zhciXmTu3enEiAJVJZTtvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=SgoVhZr0; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=BqfLWFP0Uo+ka6Q5dAyDNf3h6qyXkNzgpHVE9gHmxdB1Bdj8eOPvzxJsq9wOhXjV52Lq1tsTDuUWIoj8VjqXjSIphEuXfdIAbeQit6MreO9s8MD7exZifLcIN1HWKRh2yTP8F9t38dJQvOf5qByt4ZzLUcF8/q5MU8OXheU2K60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=T41hLwyA; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86859e2fc0so411072866b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:34:34 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c0a9ae3665so293435a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1724596473; x=1725201273; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1724596474; x=1725201274; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b/+WxYlkSCaxJVD+lANibTyIufP0s0obescAo/C5LRY=;
-        b=SgoVhZr0EfLB0dI24M6+tf+w4vfTFS7vF8UZeExAOY9kjQgsuSvNpULQRkzxBjl+MB
-         shbsoMjYu2EVWee8BZePEtQCbvWCC7wv8FgszCDOwODS9f5+lMSW01gQAP6Hy158+zoL
-         ZL6hSnBZsthH9BOWHwHdP83/736LXMrbTOaIM=
+        bh=pUP1tr1Biob0qdgqQZiV/8XgCxeEAXErXHQFm+tqx4M=;
+        b=T41hLwyAvWpX9mKA2U4aP5AqUIknepUthKOTph5no6+2aw7geAuIXdJckSU4Ey3pEr
+         gswiX0T2vl9R0AvMoJLsvaTTb8mxl3nGPkyNEzruCuDfom4JCOh9PufcLjJ6bmjrmy3p
+         kIn8/rsVmODxqjfYRvDSnAoV6M+5DKd4IPVgk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724596473; x=1725201273;
+        d=1e100.net; s=20230601; t=1724596474; x=1725201274;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b/+WxYlkSCaxJVD+lANibTyIufP0s0obescAo/C5LRY=;
-        b=Pk21wAjmlTnLhdmXCjhFpJQYPK4V5SsO5+DoeKelX1zjbOLFtwk6tPBN71Umnih7eh
-         aCGefq2If53ZncDX4d3ybYFd3Hvob61WzJP2wyEQP2zWHdBXGOsijZw0mUTJ/+XhzFcX
-         W6LeJuzPzvxNBdCcSweKWXgKAxVHcNNaieLFnOg9XIJCuqW73DY2kD3birzEXqkOxWNQ
-         vYLgdTUgikPANW0Q0CcReNnOSpYLjx47jRY82UzDgVzeponIyQcerLyjMhPUUCIrgzXw
-         jJ714WHPjulPZe//Y9LfPsj+6h8Zv9HSCn82DH8pko2xw5TL0IHvu2U0RCHwN/iWdLkG
-         4KLg==
-X-Gm-Message-State: AOJu0Yw6uCrJFcAHf/cC1nfW32/aHnBVV7VTHmdMO/kwYpcoiSLNP/WA
-	R6vEeKHE7oxj8b3w981nybSRmkkqngAQbTCr/K+iTD1sU1IUB7SIHJLQRRZjIwoQmLMOgdWO8Vs
-	YXuk=
-X-Google-Smtp-Source: AGHT+IFIxJEDmnRdmJ2yfEJLKXiwKOFoIxfU32uGKJOfRx3/E1xOLH6e41n99MLu4zc4j3as810TWA==
-X-Received: by 2002:a17:907:9626:b0:a86:899d:6459 with SMTP id a640c23a62f3a-a86a53017a9mr610711266b.38.1724596472420;
-        Sun, 25 Aug 2024 07:34:32 -0700 (PDT)
+        bh=pUP1tr1Biob0qdgqQZiV/8XgCxeEAXErXHQFm+tqx4M=;
+        b=RV2maNlH4WU6+OwbAqofDQSEMKu4Qef2hd4CLbsXGP4+HdXRst7n9HEjF/Gj6pg+yq
+         Hv9/UgrKONHmN8jy+lATng+5TarDcpqUK470K7wvZivbZGyLyRyGvvW5DfSLrfo9+qBr
+         JsFGqvk01OcsIEZV98P/QOKPejdoHnisCKp9JhIxl5r46mIhWhQUHW3P2u8Y+gzz1BOn
+         +KlTlvhN2tqAsQfpRC9Tb203FvW2ZYk9QpSImj3KVvAMnN5h3x9op8gcc2NWhjR/l1Gd
+         0DEzNa3lxe4kHrKZm7W2INezQJ+X0n+BxuXmyFCoXhOwVCNtovpgQ9rrd6XcmCyC0kpB
+         mEGQ==
+X-Gm-Message-State: AOJu0Yxtutq5VZm9p/rnDC88erlvpqdgleoufIoncVABa7dtw+3s+Z/B
+	F6lnkEII/AN4fdNIDxgX7v6MkGO8Oj/msdXL2Lbd/PoDc81xNEZlY4aGTztyiY0iyA+worRtYk3
+	/T4I=
+X-Google-Smtp-Source: AGHT+IFgNRayDgp4fmiIWVjZ3HTGdr0hITo8YBBn478cm5P7zRV+7T0cFa+54xo2Bary5GIFiosIxA==
+X-Received: by 2002:a17:906:c143:b0:a86:8368:860a with SMTP id a640c23a62f3a-a86a53005f6mr518996166b.35.1724596473780;
+        Sun, 25 Aug 2024 07:34:33 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-25-99-149.retail.telecomitalia.it. [79.25.99.149])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862b6sm550625566b.170.2024.08.25.07.34.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862b6sm550625566b.170.2024.08.25.07.34.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 07:34:32 -0700 (PDT)
+        Sun, 25 Aug 2024 07:34:33 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
 	Fabio Estevam <festevam@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+	Jacky Bai <ping.bai@nxp.com>,
 	Peng Fan <peng.fan@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
@@ -79,9 +79,9 @@ Cc: linux-amarula@amarulasolutions.com,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v2 2/3] pmdomain: imx93-pd: don't unprepare clocks on driver remove
-Date: Sun, 25 Aug 2024 16:34:01 +0200
-Message-ID: <20240825143428.556439-2-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v2 3/3] pmdomain: imx93-pd: drop the context variable "init_off"
+Date: Sun, 25 Aug 2024 16:34:02 +0200
+Message-ID: <20240825143428.556439-3-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240825143428.556439-1-dario.binacchi@amarulasolutions.com>
 References: <20240825143428.556439-1-dario.binacchi@amarulasolutions.com>
@@ -93,44 +93,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The removed code was added to handle the case where the power domain is
-already on during the driver's probing. In this use case, the "is_off"
-parameter is passed as false to pm_genpd_init() to inform it not to call
-the power_on() callback, as it's unnecessary to perform the hardware
-power-on procedure since the power domain is already on. Therefore, with
-the call to clk_bulk_prepare_enable() by probe(), the system is in the
-same operational state as when "is_off" is passed as true after the
-power_on() callback execution:
-
- probe() -> is_off == true  -> clk_bulk_prepare_enable() called by power_on()
- probe() -> is_off == false -> clk_bulk_prepare_enable() called by probe()
-
-Reaching the same logical and operational state, it follows that upon
-driver removal, there is no need to perform different actions depending
-on the power domain's on/off state during probing.
+This variable is only used within the probe() function, so let's remove
+it from the context and define it locally within the same function.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
 ---
 
 (no changes since v1)
 
- drivers/pmdomain/imx/imx93-pd.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/pmdomain/imx/imx93-pd.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-index 44daecbe5cc3..fb53a8e359bc 100644
+index fb53a8e359bc..25ab592945bd 100644
 --- a/drivers/pmdomain/imx/imx93-pd.c
 +++ b/drivers/pmdomain/imx/imx93-pd.c
-@@ -90,9 +90,6 @@ static void imx93_pd_remove(struct platform_device *pdev)
+@@ -28,7 +28,6 @@ struct imx93_power_domain {
+ 	void __iomem *addr;
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+-	bool init_off;
+ };
+ 
+ #define to_imx93_pd(_genpd) container_of(_genpd, struct imx93_power_domain, genpd)
+@@ -99,6 +98,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
  	struct device *dev = &pdev->dev;
  	struct device_node *np = dev->of_node;
+ 	struct imx93_power_domain *domain;
++	bool init_off;
+ 	int ret;
  
--	if (!domain->init_off)
--		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
--
- 	of_genpd_del_provider(np);
+ 	domain = devm_kzalloc(dev, sizeof(*domain), GFP_KERNEL);
+@@ -118,9 +118,9 @@ static int imx93_pd_probe(struct platform_device *pdev)
+ 	domain->genpd.power_on = imx93_pd_on;
+ 	domain->dev = dev;
+ 
+-	domain->init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
++	init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
+ 	/* Just to sync the status of hardware */
+-	if (!domain->init_off) {
++	if (!init_off) {
+ 		ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
+ 		if (ret)
+ 			return dev_err_probe(domain->dev, ret,
+@@ -128,7 +128,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
+ 					     domain->genpd.name);
+ 	}
+ 
+-	ret = pm_genpd_init(&domain->genpd, NULL, domain->init_off);
++	ret = pm_genpd_init(&domain->genpd, NULL, init_off);
+ 	if (ret)
+ 		goto err_clk_unprepare;
+ 
+@@ -144,7 +144,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
  	pm_genpd_remove(&domain->genpd);
- }
+ 
+ err_clk_unprepare:
+-	if (!domain->init_off)
++	if (!init_off)
+ 		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
+ 
+ 	return ret;
 -- 
 2.43.0
 
