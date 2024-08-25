@@ -1,151 +1,159 @@
-Return-Path: <linux-kernel+bounces-300491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D8195E45C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B79395E462
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918FF1F21529
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2141281550
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD33156F3C;
-	Sun, 25 Aug 2024 16:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E98156F3C;
+	Sun, 25 Aug 2024 16:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="bIcu0xoK"
-Received: from st43p00im-zteg10073501.me.com (st43p00im-zteg10073501.me.com [17.58.63.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aImeBj+X"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED11CD31
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197D0153BEE
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724603345; cv=none; b=hgiPsairX2qK/6K92NXqUBn30VIC7oDCMJxPQusmtI07Td1G7usHrqt9eHehCADl910LiQtLXgArya1+LIogogKaRBwZNwCaPclteXGYHUmPmjQ2T+qLOq8jVIXYXPkVneS+XvdSF3KuiS7ag1eVg4hYnImv7JlOl6HOXrjH3CA=
+	t=1724603823; cv=none; b=OpcoGurQUBfrJdTUvQEtI18foAxjc9KxOgkonTwhjIbZ7zmMqrqZWpdfGfwGZGBk+eR6CVIPtoludw3d7DzODIGiB/FIfRhoXI6wiN8dTGdARInN0hfjtIQ29R9hfsisTAgvK6peaFlKD5JcBcqRBooNnUVCRFZEMEE4JxRrR60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724603345; c=relaxed/simple;
-	bh=cRiXtW/W7gEva1QfbYQHGlyzfhay3r2iy1AFlHyErWQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=tuWAgzbgrbE7AjsIGsZe2ZbnG/6LS7LWa2vVnrtDGwgD2XxL9r2n9YHUYBQduP0expgI/u73VHYzx/HARWBGvwrH4eI2zOHPC5gZ0hCZssxxMN7rOxOr1SB4GHdfS9H/xKC8t6o5KLjSYlNKJ0rbiQWB5uFWMjx/DRNqEQ2yN94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=bIcu0xoK; arc=none smtp.client-ip=17.58.63.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1724603342;
-	bh=AzCw5QLZ7l/p6PS7v0oPCA4fX7Xj2R9lRNnxbx1J4Gs=;
-	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	b=bIcu0xoKDJkmgJLCJfjo9cDbmmaAB1TI7g8b2fY+oBRBHoTwopJxn/t2mCCYp3YkJ
-	 XeOp/o/r4WyfNWf01VdC6kdARg/+mNrJ9ula1OAM4bXCbrkpm7Qw+y3wLQlm5aNl3q
-	 KZdX/Jnte0M9fck9GclPEBsQfLUH2VbnlkZH7F88cpL+gkrcHzRtVFaFAbduKfdhGS
-	 MCpPwH4T2nOcoezIlWsbu+4A1WXe9Djf4khyUgOhPnn1oz26zWJEhnykX6OvOzSgEV
-	 30x1daNHpfw7trTWzyBFiIwQjgZTevuIyxOcOCR++4mVZKY2bjZknNddpNF5kdxFHw
-	 do1wYaxH0cA+A==
-Received: from smtpclient.apple (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
-	by st43p00im-zteg10073501.me.com (Postfix) with ESMTPSA id CCBE8A005BE;
-	Sun, 25 Aug 2024 16:28:58 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1724603823; c=relaxed/simple;
+	bh=BKejqw/69aK4ZVOdm6Ak7N9wzVVhqIvVKhZAUikd9Mk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nFX8eQYFv4nCpI1157Om+7zBs/6xLr4uQr0D/NgYkIFmS6srRCy/0AVGsbyXYjOPFhWbdNj6vHT26k98hnyRI4fVRO/eAn2uCqyiqEVaP32z28Sy+V5eNLI5tW4pAlFDzaquPgDvI3dwjtvFeHO12+BOGjyLFRvX4j5BwPCmQzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aImeBj+X; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724603818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aeMNQe0tBKS3oiPHgYZoJ2ZhIrMsmPhNpyzgPq5fx+k=;
+	b=aImeBj+X5Tdaji6fVQN5YhFXRfjZGFHg6IFQPEigGIvNQj9L0IQpiNuD6s3q56H8si4y4B
+	T+8p7O6SmEZ4CYduT9EKdmhfKFsUeDH2nfpKUJytaBTEL9/2+88DdoGB8SXa3F7I1TvNGd
+	p/z0nWVmYdSlu7tXt7D4aSDIbjGyuBA=
+From: Hao Ge <hao.ge@linux.dev>
+To: akpm@linux-foundation.org,
+	surenb@google.com,
+	linmiaohe@huawei.com
+Cc: hao.ge@linux.dev,
+	david@redhat.com,
+	kent.overstreet@linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	nao.horiguchi@gmail.com,
+	pasha.tatashin@soleen.com,
+	Hao Ge <gehao@kylinos.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] codetag: debug: mark codetags for poisoned page as empty
+Date: Mon, 26 Aug 2024 00:36:49 +0800
+Message-Id: <20240825163649.33294-1-hao.ge@linux.dev>
+In-Reply-To: <aa6bde95-68e5-4d94-0ce4-c9a1d90fdcdc@linux.dev>
+References: <aa6bde95-68e5-4d94-0ce4-c9a1d90fdcdc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v3 0/3] Add DTS for NanoPi R2S Plus
-From: m.plak@icloud.com
-In-Reply-To: <20240814170048.23816-1-jin@mediatomb.cc>
-Date: Sun, 25 Aug 2024 18:28:44 +0200
-Cc: robh@kernel.org,
- krzk+dt@kernel.org,
- conor+dt@kernel.org,
- heiko@sntech.de,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- cnsztl@gmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
-References: <20240814170048.23816-1-jin@mediatomb.cc>
-To: Sergey Bostandzhyan <jin@mediatomb.cc>
-X-Mailer: Apple Mail (2.3776.700.51)
-X-Proofpoint-ORIG-GUID: CwCDHv_4b7D2xsJVEH-ta0ZwFMvgEuRa
-X-Proofpoint-GUID: CwCDHv_4b7D2xsJVEH-ta0ZwFMvgEuRa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-25_13,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 phishscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408250132
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Sergey,
+From: Hao Ge <gehao@kylinos.cn>
 
-On 14 Aug 2024, at 19:00, Sergey Bostandzhyan <jin@mediatomb.cc> wrote:
-> here is version 3 of the NanoPi R2S Plus patchset.
+When PG_hwpoison pages are freed,they are treated differently in
+free_pages_prepare() and instead of being released they are isolated.
 
+Page allocation tag counters are decremented at this point since the
+page is considered not in use. Later on when such pages are released
+by unpoison_memory(), the allocation tag counters will be decremented
+again and the following warning gets reported:
 
-Thanks! I was just experimenting with a patch for that board.
+[  113.930443][ T3282] ------------[ cut here ]------------
+[  113.931105][ T3282] alloc_tag was not set
+[  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/alloc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
+[  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_man4
+[  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: loaded Tainted: G        W          6.11.0-rc4-dirty #18
+[  113.943003][ T3282] Tainted: [W]=WARN
+[  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
+[  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
+[  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
+[  113.946706][ T3282] sp : ffff800087093a10
+[  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27: ffff80008249f0a0
+[  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24: 0000000000000000
+[  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21: 0000000000000000
+[  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18: ffffffffffffffff
+[  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081746210
+[  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12: 5b5d353031313339
+[  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 : 00000000ffffffd0
+[  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 : c0000000ffff7fff
+[  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 : 0000000000000001
+[  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 : 0000000000000000
+[  113.957962][ T3282] Call trace:
+[  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
+[  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
+[  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
+[  113.960096][ T3282]  __folio_put+0xd4/0x120
+[  113.960614][ T3282]  folio_put+0x24/0x50
+[  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
+[  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
+[  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
+[  113.963183][ T3282]  simple_attr_write+0x38/0x48
+[  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
+[  113.964330][ T3282]  full_proxy_write+0x68/0x98
+[  113.964880][ T3282]  vfs_write+0xdc/0x4d0
+[  113.965372][ T3282]  ksys_write+0x78/0x100
+[  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
+[  113.966440][ T3282]  invoke_syscall+0x7c/0x104
+[  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
+[  113.967652][ T3282]  do_el0_svc+0x2c/0x38
+[  113.968893][ T3282]  el0_svc+0x3c/0x1b8
+[  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
+[  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
+[  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
 
+To fix this, clear the page tag reference after the page got isolated
+and accounted for.
 
-eMMC:
+Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
+Cc: stable@vger.kernel.org # v6.10
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+v2: adjusting the commit message and comments in the code
+    based on Suren's suggestions.
+---
+ mm/page_alloc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-A close cousin of that board, the NanoPi R2C Plus, similarly adds eMMC =
-to=20
-its base version, R2C.
-
-R2C Plus is already supported by rk3328-nanopi-r2c-plus.dts.
-
-The r2c-plus DTS file differs slightly from your patch.
-Would it not be better to use the same fragment for both r2s-plus and =
-r2c-plus?=20
-Or even place the eMMC activation in a shared dtsi file?
-
-
-I=E2=80=99ve compared the two and the friendlyelec kernel (not u-boot) =
-sources.
- your patch does not contain these lines from r2c-plus:
-    vmmc-supply =3D <&vcc_io_33>;
-    vqmmc-supply =3D <&vcc18_emmc>;
-    mmc-ddr-1_8v;
-
-your patch adds these lines that are not in r2c-plus:
-    supports-emmc;
-    disable-wp;
-    num-slots =3D <1>;
-
-r2c-plus has a line that is in rk3328.dtsi already:
-    max-frequency =3D <150000000>;=20
-
-the friendlyelec kernel sources also add:
-    no-sd;
-
-
-=46rom the description in the mmc-controller binding documentation, I =
-believe
-disable-wp should not be used. The description for no-sd  I find =
-confusing.
-Can't find num-slots and supports-emmc there.
-
-The RK3288 datasheet does not mention support for DDR mode, so =
-mmc-ddr-1_8v=20
-surprises me a bit. The datasheet does explicitly mention that HS400 is =
-_not_=20
-supported.
-
-
-USB:
-
-Another change with the Plus version of the R2S is that the USB 2.0 port =
-that=20
-used to be wired to the ethernet chip now is used for an external USB =
-port.=20
-I don=E2=80=99t have the hardware here (yet), so can't test if that USB =
-2.0 and the=20
-USB 3.0 work independently or need to be explicitly separated.
-
-
-refs:
-Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index c565de8f48e9..91ace8ca97e2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1054,6 +1054,13 @@ __always_inline bool free_pages_prepare(struct page *page,
+ 		reset_page_owner(page, order);
+ 		page_table_check_free(page, order);
+ 		pgalloc_tag_sub(page, 1 << order);
++
++		/*
++		 * The page is isolated and accounted for.
++		 * Mark the codetag as empty to avoid accounting error
++		 * when the page is freed by unpoison_memory().
++		 */
++		clear_page_tag_ref(page);
+ 		return false;
+ 	}
+ 
+-- 
+2.25.1
 
 
