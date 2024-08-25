@@ -1,82 +1,71 @@
-Return-Path: <linux-kernel+bounces-300393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1672495E32C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:52:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B84595E330
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3111F21949
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF627B211A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E39143C50;
-	Sun, 25 Aug 2024 11:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA2A149E15;
+	Sun, 25 Aug 2024 11:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQ2h2jQM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DL289A9E"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NcRO8GXu"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD7E143740;
-	Sun, 25 Aug 2024 11:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A03148FE1;
+	Sun, 25 Aug 2024 11:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724586749; cv=none; b=sK+QEXXkzFBm5BFU0SBs9XL5Oc9J8FHB7/SLj80sDgvUIXIbtWcU2f/hnsg8evTnWRzspDHRI5Pau+e2LT0EtGyBXo7ikyUgMIN8Lq6O4wKgZJ5gxejzsc86aCK16Ok8sBT53VcLcNshqBkABzQZPX5Wr+ww+tFHeytTiiYaEFE=
+	t=1724587137; cv=none; b=pHSUMSfcGpjSabGrw3cz4DI0myl/I1kFAG8lcKy2ch7qA5+QvHC/pvxOBhnzse3GnAbeWAGrS8aXbHxlXeTd/Uomklbd/OuXth53l2JmldFEy5rn+weNP27nh9m/7jVz3qmrVB2aC413Uf7Qu9azZwljF7fDc7u1ppz0ifNCfrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724586749; c=relaxed/simple;
-	bh=wcfJEOEK/OVFU9E0skQRjHALsyzqGuvuGOQZ8DvQiQg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ku+NrH8H3jBGALClvUR7dLfFsxIEIlgFWzXMnlLfXcA6mGisXyhks+me0IdPkD/IZDBIbA6RZlURM1rdui+rq0f+xdjZCC8QZtRZ5h8DXS2ipG06Hto1CWjGy4mOtbXfnJmdWlJ8aaCzDSKzYKbl1vFiiQTxE6Dx1dxUY0w3zx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQ2h2jQM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DL289A9E; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724586746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l4ldBgTs8Tk2fbqUbBu8bF82g0r8dVN8CCueqSsUf5M=;
-	b=oQ2h2jQM93DzsxgJjVsgviGy1RNH/XdCWJdNvahneWZQju/i0dcSNeReXz1Tm93C6YNmIR
-	gvvL5eqL3Q7zLRJ0nOndWmVSTaoR/4sEZIs5PVI4I8/jq3FMuBZ+0ROiotbd6Kkt0bvSJg
-	vtYjtp7w52XXTGmEsKSw9iCON+MP7IqwnqmhX5JSHNWsEl0erRhJPnijoppWsVeiqvwBPQ
-	t8jPmgpRL9hIRn9KRLL3le3uOnQPARvfnvihwe03+iud1IBGSgf1dPwnjnO2c7t5e/spS7
-	IltNumUbVNOIz6WAzp/JWk0U0/u0MRe9JJztGPSFCtqb3OOv082o2/OfC3LFCw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724586746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l4ldBgTs8Tk2fbqUbBu8bF82g0r8dVN8CCueqSsUf5M=;
-	b=DL289A9EY5v+PCgODp7o87ZmPdhY4czZmZ+XJrpwdjxWFC8KGEUs8DdIRZCJVaroUQJYth
-	dH91vnXc9X4DQIDQ==
-To: Wentao Zhang <wentaoz5@illinois.edu>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, llvm@lists.linux.dev, x86@kernel.org
-Cc: wentaoz5@illinois.edu, marinov@illinois.edu, tyxu@illinois.edu,
- jinghao7@illinois.edu, tingxur@illinois.edu,
- steven.h.vanderleest@boeing.com, chuck.wolber@boeing.com,
- matthew.l.weber3@boeing.com, Matt.Kelly2@boeing.com,
- andrew.j.oppelt@boeing.com, samuel.sarkisian@boeing.com, morbo@google.com,
- samitolvanen@google.com, masahiroy@kernel.org, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, luto@kernel.org,
- ardb@kernel.org, richard@nod.at, anton.ivanov@cambridgegreys.com,
- johannes@sipsolutions.net, arnd@arndb.de, rostedt@goodmis.org,
- mhiramat@kernel.org, oberpar@linux.ibm.com, akpm@linux-foundation.org,
- paulmck@kernel.org, bhelgaas@google.com, kees@kernel.org,
- jpoimboe@kernel.org, peterz@infradead.org, kent.overstreet@linux.dev,
- nathan@kernel.org, hpa@zytor.com, mathieu.desnoyers@efficios.com,
- ndesaulniers@google.com, justinstitt@google.com, maskray@google.com,
- dvyukov@google.com
-Subject: Re: [RFC PATCH 1/3] llvm-cov: add Clang's Source-based Code
- Coverage support
-In-Reply-To: <20240824230641.385839-2-wentaoz5@illinois.edu>
-References: <20240824230641.385839-1-wentaoz5@illinois.edu>
- <20240824230641.385839-2-wentaoz5@illinois.edu>
-Date: Sun, 25 Aug 2024 13:52:26 +0200
-Message-ID: <87bk1gg6px.ffs@tglx>
+	s=arc-20240116; t=1724587137; c=relaxed/simple;
+	bh=L6Uhnbjvvray5xcFbxymO9o9ahD5bexKxm1cklyDUQo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YF9QPaIVpAhBCZUXTmaGw18snmhJA41EIpzgfNEhmwfASz0+0skWrKnLceVzjLBb21ThIWQ9u7CLxmFVa/fEddHFUQ8Rsh+UnXqhRkQr4BlQMM2wzhDxP6AIy7m1Bys+F5DsKSIj80WR2NzOigSiMyTTQNbMfaejBUZKfgLAlYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NcRO8GXu; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47PBrfGW103864;
+	Sun, 25 Aug 2024 06:53:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724586821;
+	bh=L6Uhnbjvvray5xcFbxymO9o9ahD5bexKxm1cklyDUQo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=NcRO8GXuXtpnZ6hgTfwkjxuE34ohgxhdwEV8+T2wBsBlsRVgmzxAZeOnJ8cwXnQku
+	 6kYWcRNfWztFiMAWm/EltLTBxIjF6m9XAsh6n724/rUKb9v6rqa+Pbs0vbSBeZawR6
+	 hqzX+nweVeQZLWxuuvxIcHk11j/Kdb6jSZCkYy6I=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47PBrfMR019974
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 25 Aug 2024 06:53:41 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 25
+ Aug 2024 06:53:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 25 Aug 2024 06:53:40 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47PBrekA078295;
+	Sun, 25 Aug 2024 06:53:40 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Ma Ke <make24@iscas.ac.cn>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <t-kristo@ti.com>, <j-keerthy@ti.com>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ma Ke
+	<make24@iscas.ac.cn>, <stable@vger.kernel.org>
+Subject: Re: [PATCH] crypto: sa2ul - fix memory leak in sa_cra_init_aead()
+In-Reply-To: <20240813074958.3988528-1-make24@iscas.ac.cn>
+References: <20240813074958.3988528-1-make24@iscas.ac.cn>
+Date: Sun, 25 Aug 2024 17:23:39 +0530
+Message-ID: <87ttf8n7i4.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,40 +73,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sat, Aug 24 2024 at 18:06, Wentao Zhang wrote:
->  Makefile                          |   3 +
->  arch/Kconfig                      |   1 +
->  arch/x86/Kconfig                  |   1 +
->  arch/x86/kernel/vmlinux.lds.S     |   2 +
->  include/asm-generic/vmlinux.lds.h |  38 +++++
->  kernel/Makefile                   |   1 +
->  kernel/llvm-cov/Kconfig           |  29 ++++
->  kernel/llvm-cov/Makefile          |   5 +
->  kernel/llvm-cov/fs.c              | 253 ++++++++++++++++++++++++++++++
->  kernel/llvm-cov/llvm-cov.h        | 156 ++++++++++++++++++
->  scripts/Makefile.lib              |  10 ++
->  scripts/mod/modpost.c             |   2 +
+Ma Ke <make24@iscas.ac.cn> writes:
 
-Please split this into two parts:
+> Currently the resource allocated by crypto_alloc_shash() is not freed in
+> case crypto_alloc_aead() fails, resulting in memory leak.
+>
+> Add crypto_free_shash() to fix it.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: d2c8ac187fc9 ("crypto: sa2ul - Add AEAD algorithm support")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+LGTM.
 
-   1) Add the infrastructure
-   2) Enable it on x86
+Reviewed-by: Kamlesh Gurudasani <kamlesh@ti.com>
 
-Also the ordering of this patch series is wrong.
-
-First you enable it on x86 and then you mark the places which cannot be
-instrumented. You really want to do this in this order:
-
-   1) Add the infrastructure
-   2) Prevent instrumentation in drivers/firmware
-   3) Prevent instrumentation in kernel/trace
-   4) Prevent instrumentation in modfinal
-   5) Prevent instrumentation in x86
-   6) Enable it on x86
-
-Thanks,
-
-        tglx
 
 
