@@ -1,105 +1,214 @@
-Return-Path: <linux-kernel+bounces-300565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D2D95E526
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F215B95E536
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1799D1F2240D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9779280E43
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0DF16F273;
-	Sun, 25 Aug 2024 20:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAE3176AD7;
+	Sun, 25 Aug 2024 20:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPoDngky"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EkopoRdv"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D902E1803A;
-	Sun, 25 Aug 2024 20:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E92E15B56E;
+	Sun, 25 Aug 2024 20:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724617791; cv=none; b=RBI5Gj5IRRtjrgQ6rF0x8poYrD/PF5mvH1fwEfLAC54VX1yRFYqRwX2fYO2QSKv/3scVx5odJf372+CUDxPR1gy6q9fLe9iPS82y85IAX7H70GkIKn55Cs1ayd9kCSTkI++ACB4tZPsdE3Zc/fae1ZUE9XMm44e8RNjZuu8ZBwU=
+	t=1724617978; cv=none; b=g5t/UKw0D5mZJhjxLQBmJyUqjYPCeTQvankIozsIRfZ43b/EEgxxCSotGnf0Fm4aBS5mVksXw0a/UdKdWPDo8LizJJSWXefp5hdksKWssUosR8eIq4CHkqwyNfsrUUB8RYFO1pfVpWMIanoPrP2RQA26Qk7zhYtC2dhtC56cAV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724617791; c=relaxed/simple;
-	bh=Tabtq3pbe9qAyEkgCDeJgXpNUAzPs0xWGHdygU8SfDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WTXk5tD0sKxyb8plr5dEt8QZ1+HKBPD6rv4PZJwC0gisURpdeUp1IJYpZhqvvWTHakJzXacfSrtlQMeQmvgamAScsolZE1B50pyadtCGUbad9GlTZ6KelLbGpmp9OOuCX0yGwzsTfR/lmYRqvsN2cymHQf6PbT2l82Bt98If73Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPoDngky; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d3ba4e6ad9so670621a91.2;
-        Sun, 25 Aug 2024 13:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724617789; x=1725222589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tabtq3pbe9qAyEkgCDeJgXpNUAzPs0xWGHdygU8SfDU=;
-        b=mPoDngkyKq45m1xrUFUHPuHm00xyyK/+5Fx2/6+nVnKtwLYQHRG+JfNp02Urexp4rF
-         Fbk09kGcOb53lJMN47QREr3NProECBjlDbwNsyuOTteaL0+KwDGVQEpr65D+AkYfdpkc
-         g+yYg6OiCJ6wuiMTQW9YZBN3dyeQ6SsK+Bhipcxa3JD/5qjpDT77jEyhL6w40M2/kBxf
-         a7c+wQbyEc4wGPU4zc0j045g7cP/ZleTc2xvZ85ag9JksmXAZ4CgeWwVB1yq6vTjW4XD
-         U1QrrA+WBVKtV1VvRpfz3XrbG++uiWMZksAol/cRf6I90JGYUxCl84jCg7/nPBusbLNJ
-         b03g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724617789; x=1725222589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tabtq3pbe9qAyEkgCDeJgXpNUAzPs0xWGHdygU8SfDU=;
-        b=C4TLBHGglpYvQ6ZUzQCBpc6WiWiKdLgqLndTpIA2QDUuxpk0atjhP275oVlRuipz3n
-         z8CldWQ7eKYrzKaETVPQQV+ucLAUidxVdBO+wFg3rp4ZXg1bkK3/LahCj77SHaxI6Ttu
-         IPCrcgX6CuArSc2A1o8HXt7Q3Jb9RaYpyAlOJ0VAUZDE8e57UdmP1C9HUCVxjj11GAE5
-         NGIAlo2o28ELB+NmiKv54qnZ7+16OXxg0KWwtjTQ3bjT8hMDZroYbucLeQakBVu6+ONd
-         r4iS5cTLe5X6VSzvxUopeidXLZpUZPe3DnNSFeubxly/O+VKoSNQyOEH+PtIWDyrXrWn
-         eNbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQOVcWFGOw8KmFi7AyTkmu9p4pVT2bsMl6Z43GHLeoVJdQWB5Q70HqPjqALO4uFij3Zwqvzp0tf78=@vger.kernel.org, AJvYcCVgMMSOTPOKD8ZdT67rIyvSaRppAbGyZBOCzzUOTPr2djAdDsx2TrPOvlbIYf3M79rDu7n+oYFMFPT7GYwJr2I=@vger.kernel.org, AJvYcCXBhfgToT+0Z2yJRfcHtZkfCTBuP86Z1W7SVbhqUGxJ31kL1qf29L8+ucp2FI5XhDh3DGQ2q2mMfGyI2PML@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBxn6PUk+bjGlWkEr0DZRUFXUI+SjxcoemR/mmtWsUBKl/lPKw
-	ZxWm9fBt6rxR7aMc4mtmnmMB73ChI4CUmE3p6NmhXqjQQUQlVAJgNjlTKM52qN26hasMFASxmpb
-	12SivrTjq7XBl5Dmc0YVtySleWO4=
-X-Google-Smtp-Source: AGHT+IGJ0vPpx4EfP3jAuDeWFpMIZNHlyFSDsmJuLjEou2DJG7XpFM0CJHn7XJgN5N7kJO9sAW70557WPT2I2byI400=
-X-Received: by 2002:a05:6a21:6da5:b0:1c4:d312:64d8 with SMTP id
- adf61e73a8af0-1cc89d6442emr5691191637.3.1724617789154; Sun, 25 Aug 2024
- 13:29:49 -0700 (PDT)
+	s=arc-20240116; t=1724617978; c=relaxed/simple;
+	bh=/1+6VeXf8rNwgGAEiYJ5GjrKUCNPTo+uMwqH4dYh5vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KQxNKRIjdvnyc6NNuYdzunY48KEUPL28GowVo0VzT/v5VNhD24yKG1TFD9DFUHf+jlT7yFT1Rj34wFvzwcSgb+Mv3rk7ldjz9NOIzuZHXVMRIyqYLRE9n+nXQDxrr2usyqfNsB3/jVBGvvrtkH6nNVJDvvjA0vXoxjbAzsEhZEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EkopoRdv; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FVhOtaDAlhZmOBGkDX28xSMYNRN47hu06Q4HLYH7Fmk=; b=EkopoRdvmvatG55uYY5miQyxzP
+	T7X6jekdTHBt2n7modi/75c38/gaibPndTZiY9Q5jca2RGmw9p1vLp4ZI8AVWdPs44ftlPec8cN77
+	6i87RMzhdZdo5zj8McOK30m8uz4xiCGTogCcw80tsx9q7DGnJJ9Vn3S1j09UMJoAUmaM+GftE7+ik
+	V0q61DyJYcJRbTiy/ZblIt3sjuG3QYXE+TK4DAaqGjO40w9PSz8W1ctJbHtpvYbeS9wh+dFiIrOsn
+	aswZBBAktqdLQO7uYaU7HdurMNdBiWT36MOlfKiEZN2DELg/jkAvHAbZTVnLTyNsc9ALN6ypccnU/
+	dfewzS9w==;
+Received: from i53875a40.versanet.de ([83.135.90.64] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1siJui-0001cM-Fa; Sun, 25 Aug 2024 22:32:40 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	heiko@sntech.de,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v6 0/7] Drivers to support the MCU on QNAP NAS devices
+Date: Sun, 25 Aug 2024 22:32:28 +0200
+Message-ID: <20240825203235.1122198-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818141249.387166-1-ojeda@kernel.org> <CANiq72=amLCxV3QRVqK0gVKnGZe_YeqB79LkydEjZ_hJ6_K4QA@mail.gmail.com>
- <CAAOQCfSi9sMqgBzh+v42XGOh2fopytBSjxfPp6kd5DUcGtq20w@mail.gmail.com>
-In-Reply-To: <CAAOQCfSi9sMqgBzh+v42XGOh2fopytBSjxfPp6kd5DUcGtq20w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 25 Aug 2024 22:29:37 +0200
-Message-ID: <CANiq72nCJNGRSJCyYXn4+Xgq83doxB+oFE87P62pFtqpk6CZFw@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: enable rustdoc's `--generate-link-to-definition`
-To: Guillaume Gomez <guillaume1.gomez@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 25, 2024 at 10:25=E2=80=AFPM Guillaume Gomez
-<guillaume1.gomez@gmail.com> wrote:
->
-> Don't hesitate if you encounter any bug to tell me so I can fix them.
->
-> Any feedback is also very appreciated!
+This implements a set of drivers for the MCU used on QNAP NAS devices.
 
-Thanks Guillaume, that is very appreciated!
+Of course no documentation for the serial protocol is available, so
+thankfully QNAP has a tool on their rescue-inird to talk to the MCU and
+I found interceptty [0] to listen to what goes over the serial connection.
 
-We will hopefully not have to tell you about any bugs :)
+In general it looks like there are two different generations in general,
+an "EC" device and now this "MCU" - referenced in the strings of the
+userspace handlers for those devices.
 
-Cheers,
-Miguel
+For the MCU "SPEC3" and "SPEC4" are listed which is configured in
+the model.conf of the device. When setting the value from SPEC4 to
+SPEC3 on my TS433, the supported commands change, but the command
+interface stays the same and especially the version command is the
+same.
+
+The binding also does not expose any interals of the device that
+might change, so hopefully there shouldn't be big roadblocks to
+support different devices, apart from possibly adapting the commands.
+
+changes in v6:
+- format mcu commands arrays in single lines (Lee)
+
+mfd:
+- drop obsolete remain kdoc for the removed
+  reply_lock (kernel test robot)
+
+
+changes in v5:
+binding:
+- add Conor's Reviewed-by
+
+mfd:
+Address comments from Lee
+- improve commit message
+- improve Kconfig help text
+- sort headers alphabetical
+- style and spelling improvements
+- constants for magic numbers
+- drop reply assignment, the mcu only replies to commands sent to it,
+  so there should only ever be one command in fligth.
+
+hwmon:
+Add Acked-by from Guenter and address some remarks
+  - don't allow empty fan subnode
+  - use num var directly when getting cooling levels, without using ret
+    intermediate
+  - use dev_err_probe in thermal init function
+
+
+changes in v4:
+binding:
+- move cooling properties into a fan subnode and reference
+  fan-common.yaml (Rob)
+- dropped Krzysztof's Ack because of this
+
+mfd:
+- use correct format-string for size_t (kernel test robot)
+
+input:
+- added Dmitry's Ack
+
+hwmon:
+- adapted to fan-subnode when reading cooling properties
+- dropped Guenter's Ack because of this
+
+
+changes in v3:
+mfd
+- use correct power-off priority: default
+- constify the cmd-data array in command functions (Dmitry)
+
+leds:
+- don't point to temporary buffers for cdev->name (Florian Eckert)
+
+hwmon:
+- use clamp_val(), don't try to reimplement (Guenter)
+- add Guenter's Ack
+
+input:
+address Dmitry's comments
+- constify some cmd arrays
+- add input-close callback to cancel beep worker
+- drop initial input event report
+
+
+changes in v2:
+binding:
+- rename to qnap,ts433-mcu.yaml (Krzysztof)
+- drop "preserve formatting" indicator (Krzysztof)
+- add Krzysztof's Review tag
+
+mfd:
+- fix checkpatch --strict CHECKs
+- add a MAINTAINERS entry for all qnap-mcu-parts
+
+Heiko Stuebner (7):
+  dt-bindings: mfd: add binding for qnap,ts433-mcu devices
+  mfd: add base driver for qnap-mcu devices
+  leds: add driver for LEDs from qnap-mcu devices
+  Input: add driver for the input part of qnap-mcu devices
+  hwmon: add driver for the hwmon parts of qnap-mcu devices
+  arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+  arm64: dts: rockchip: set hdd led labels on qnap-ts433
+
+ .../bindings/mfd/qnap,ts433-mcu.yaml          |  42 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/qnap-mcu-hwmon.rst        |  27 ++
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   |  61 +++
+ drivers/hwmon/Kconfig                         |  12 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/qnap-mcu-hwmon.c                | 364 ++++++++++++++++++
+ drivers/input/misc/Kconfig                    |  12 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/qnap-mcu-input.c           | 153 ++++++++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-qnap-mcu.c                  | 226 +++++++++++
+ drivers/mfd/Kconfig                           |  13 +
+ drivers/mfd/Makefile                          |   2 +
+ drivers/mfd/qnap-mcu.c                        | 339 ++++++++++++++++
+ include/linux/mfd/qnap-mcu.h                  |  27 ++
+ 18 files changed, 1302 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+ create mode 100644 Documentation/hwmon/qnap-mcu-hwmon.rst
+ create mode 100644 drivers/hwmon/qnap-mcu-hwmon.c
+ create mode 100644 drivers/input/misc/qnap-mcu-input.c
+ create mode 100644 drivers/leds/leds-qnap-mcu.c
+ create mode 100644 drivers/mfd/qnap-mcu.c
+ create mode 100644 include/linux/mfd/qnap-mcu.h
+
+-- 
+2.43.0
+
 
