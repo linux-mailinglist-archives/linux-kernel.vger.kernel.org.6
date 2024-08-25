@@ -1,204 +1,90 @@
-Return-Path: <linux-kernel+bounces-300510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5164095E499
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552B595E49D
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C307F1F213E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A161F21434
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7E215B108;
-	Sun, 25 Aug 2024 17:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC066158D66;
+	Sun, 25 Aug 2024 17:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b="eKkUWM5u"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2044.outbound.protection.outlook.com [40.107.21.44])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dwOtLsgg"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887284EB45
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 17:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724607365; cv=fail; b=J+z35fD+55876QNko9wHoOFalZge9eJCBBGaLVTVzT0gM6KSdPKu/DuEAmffHXzpID2dkwSfw87dJsI6mlHwOldO9/V5idUN2YFd+40z5yDKCKutXvT1ORynUlytIIoygbCLqAO/p5Z3kW0rll2xqH//EMVG2ZMBHpiW/3kUgvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724607365; c=relaxed/simple;
-	bh=kxQ1SZWshgWjco7/HIYDrUWI56VnrhYr+OwdoKh6rqg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=t2+FCSpQxb+A/6aC3uUuXGDdIphqVfaT2fShwdi8OL+yjHMcmUZecjl/rFZOTpJpi6jWxvvysxnEHKIikfjKZuidhKAjOhVuUxriwCtgE+f0lEHOWarx2mQ/kyDynMkSJfZn1BQUQC4UN6YVFukZ5u0kOigTJdalNiC0OvBoNl4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com; spf=pass smtp.mailfrom=cs-soprasteria.com; dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b=eKkUWM5u; arc=fail smtp.client-ip=40.107.21.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs-soprasteria.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M0dzaD7+RA/GiymYNit+O8SzxFFWBCZ7F3N+HA0WrTSqH+jcvPxdcB82UcYF3pxnnvyRXr3kKcxLg0e7rRbg8HuDtzmbWOIZ06QqmW/NyNR8DF3huS2WQG3cbS5kvZeLOEPJ2g+fxq0CgoF+74S9S5oBP/V2gwVDe8zu08qWTsjwla+A417mjxVajDfHXbFv8uVlWi24P362+YzdDuFzF4px9tMKSxWOlwjoXYJlztZvkjIXkBCa6XTaSYiA3D/TbcTSgC05VEjxlKzxjv6hHJ5QJrZBADZdYTW4tb4uM6BPVeDR5e+8hNJzbhFYNXH8kTEoQoOhvb2zzLrNJJ4Obw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kxQ1SZWshgWjco7/HIYDrUWI56VnrhYr+OwdoKh6rqg=;
- b=ZvfkdLI9Y/0grdmn/hHKmiYoJadhETDsKC1Owv0gjUcSSyeVhA8C2yQmIpzDJFktk5/A/XaJIFO7lvxRYayGVOWc6nxmzsBafa+PaKABKqhWevCzJS63NlRONFXcH9s3fxAjOWop6z6RGGzMzYlPPtZLmU2vQQaLhpC1WY/6hLE4dNedOXIUKvR1vpMIS3OlxXv60uMEPiKxOiX3bClef00DABTGlfvz/OiMOV3GsjjdIu+6Pwydttdpa5SheZ1i+17b0YQPEWJ7lTsAmb8eQNTQN8VdMJpSGRHFchW+thnbhnG2NfWMCWKZnCdym4zMhM8I3gQ4BBTu/3BAlO6yJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cs-soprasteria.com; dmarc=pass action=none
- header.from=cs-soprasteria.com; dkim=pass header.d=cs-soprasteria.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs-soprasteria.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kxQ1SZWshgWjco7/HIYDrUWI56VnrhYr+OwdoKh6rqg=;
- b=eKkUWM5u/rsivlBmGdSLGU/vpXbVhJURGDIt9ooqhZkN181hYYDWWT0OnF4bPiTBB4+rgQSMzS0rRhw2uHNGxHEt+enoqF8/21iKpuQaiXq9cqV2+utaxvPRTRb/S3T7PUaULWqACH5y12d8oWwoIS2637xKosl69Fei6+tuIqnbXE7AzRyMbSQUFKncLXrG49C/5nxUe+VqIp27rmHNpgRq0wja9XTtTKp5qR/107qlQO983bXqRIwpPsgREypEVlNcCAqp6uV0OxGqa4TrA+KR3du8IVJENLueZLAsasKZU1vndvfIOTrk38c3mv6K2pWOp9OZn8pJWmD1f81rHA==
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com (2603:10a6:208:f3::19)
- by AM7PR07MB6788.eurprd07.prod.outlook.com (2603:10a6:20b:1be::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Sun, 25 Aug
- 2024 17:36:00 +0000
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2]) by AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2%4]) with mapi id 15.20.7897.021; Sun, 25 Aug 2024
- 17:36:00 +0000
-From: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-CC: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Subject: Re: perf build failure with v6.11-rc4 (commit 4bbe60029319 ("perf
- daemon: Fix the build on 32-bit architectures"))
-Thread-Topic: perf build failure with v6.11-rc4 (commit 4bbe60029319 ("perf
- daemon: Fix the build on 32-bit architectures"))
-Thread-Index: AQHa86lfUT4P+U1NSkONeDsXumYtILIxe08AgAbH2wA=
-Date: Sun, 25 Aug 2024 17:36:00 +0000
-Message-ID: <29368a80-3766-44ee-bfe6-fe367cfda531@cs-soprasteria.com>
-References: <83384a02-60f9-489b-8e58-a5f3b65992b8@cs-soprasteria.com>
- <CA+JHD92KFi5HMBAenm7cv8V2_z0ZnQmg5eenZ48zFs=DoWPoEA@mail.gmail.com>
-In-Reply-To:
- <CA+JHD92KFi5HMBAenm7cv8V2_z0ZnQmg5eenZ48zFs=DoWPoEA@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cs-soprasteria.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR07MB4962:EE_|AM7PR07MB6788:EE_
-x-ms-office365-filtering-correlation-id: 7ce8acbb-f4aa-4d96-26a5-08dcc52c6287
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MCttam01QVAwWU1HOCtXSFNTeEZkZHc4TDlxWWVuc3lvY2RJWHZJbEx5am5w?=
- =?utf-8?B?eExvY202UEkvalMrVkQ4UzRMck9YYXl4RDIxYTVvNXRnRTFkTVhuUFBsUU9V?=
- =?utf-8?B?UUNyMWlJUUcrQmwrODZBeElaNEZuYUh5cHMvNHRLbEdXdjBib0ZIc052TVVP?=
- =?utf-8?B?UXpMTFB3OVZQVVRYbXB5UUNpQlpKaGZ2MUxqWGtwemxCcFVGU3JXQ1lUektT?=
- =?utf-8?B?bW92UVlHUVlQOGRpSUgrMVBrNDhIVm54Y3IxeklKODIydXZpU1Bxb1ZxTUFk?=
- =?utf-8?B?Z1JmL1VpZ2c1NmdTVEoya1g0OXpoVDZQRThTNis1ZzRBNEx3SU5xYkZmVnBB?=
- =?utf-8?B?TXdFWFFTQXlQQmMrQmY5bnVhUDdMVnFSV0hKdmE1K202RUdLQXBSSjY2N1Uw?=
- =?utf-8?B?NFFWSTQ3Wm8rQ2o3K1pQQTBNOUI1cGpZS0haNGtwbm9ZR1NFVjBTUzJlNVM2?=
- =?utf-8?B?bHFRSEtMd1hLSVBpdnQ1cWIvbWVQOGJWN3ZQTTRUZ0dUSElQa0dSWVo2RS9M?=
- =?utf-8?B?ak1Ya0l6ZEszY0g2czRoa0prUnVKV0xwcTdNM3FKSWgyaFBBQ21JSFdMZ2Ri?=
- =?utf-8?B?aXhHTGFndmJON3dkM3VoYXA4bU1VSVV2aUs5QjBQRWVwWElwZ2dyaTBZeUti?=
- =?utf-8?B?OWMzcG40bFZrdjQvb21LMjg1NGZiYXBGR2IwTjQ4T3VUUGdYUks2VXd0T2Uy?=
- =?utf-8?B?UHpNbjI3bzhnYVg0alZSQVUxaHpmVExXd0dJL0VnRHZPb3hGeTJCaUhiNk9N?=
- =?utf-8?B?NmVPc1dKaDJqY2tsWW9OSkVrZDFESmNHdG5NNnk2RTN3b3lRU044azJJZllX?=
- =?utf-8?B?NEN6OHEyVXBEaVQxYlBJck42cTZRRXpPcUNEazYvdWJYZXRDclArWjlIZzJP?=
- =?utf-8?B?azcxdm00N3F1d2Y2dGNqOE82REo5a2ZKaFFIUUM0VGtHc0JkNzB0K2plQTEr?=
- =?utf-8?B?OERWQUZlZzZxdmRuSlpRTVBRcDM2Q0RMbnZxWFpSazhaeElVUnJ4a2RBaWVn?=
- =?utf-8?B?YXBQKytLSVJFWlphTFpnSFFwaSs5c0k5bGc1SUdLTEg2aVVjV1RRSGxPd3ZP?=
- =?utf-8?B?QlA0WmFEZitYSWpsQ0lmRzVLa2xPdXR5TkUrOS8rdFVxMWFYak5GRFVBQ2FS?=
- =?utf-8?B?cnZTV2txOFIzK2dlOVB2a3JxRHFlSmIxYlJndXBqVDd4MHBnUGJIa1E4UGYy?=
- =?utf-8?B?bWVhdjB2YXVodlF4ejNKcXhjazZrNjUwL2trTXkwNmRWdStvVTNicEhGNjE1?=
- =?utf-8?B?VTZFL3NBaHZ6Uk9aUkJRTkZrTzk1L1RuZ2h3RGxzUXpnWFdFMWkwa1lKbTlh?=
- =?utf-8?B?cmovTTVYRDllN0ZMbW1KRU42RlBhSDI2NExZMlRrcXpGVklodGpPUjVTOFhw?=
- =?utf-8?B?VCs2RjRRdnJMcURLbXh0Qnl5aFlyd3BHK01QMnhnZ3pPd0NEakJmYkY5VHM1?=
- =?utf-8?B?ZTNsTWlTYVF4VUFlVTBMTkQ5K0NBeE5LM2JyVWRqa3NSMHRQSDVJbmtWa0ts?=
- =?utf-8?B?WmMvMTU3WmsvT3FteElaSUd5eW11aEFuMjdzUjc1dTNqaDgrenFYRmp5T2N6?=
- =?utf-8?B?bWdkaUdabzNCc2E5U3E5dWlqdzBzNGZ0em5uRHZ4RGd6U3ZwMGtnSW9zMDdT?=
- =?utf-8?B?MGpTWERsNlAzOXlFeWxaNjY4WmwyZ1VPNitqRHhQTzZ0RzFyd0M0SGRxK0or?=
- =?utf-8?B?bGdNT0h6VDNHZmhXQlFmZ0JYN2JQaG1KVVlmVk9QQTVKamJ2dEU0Y1pHTE15?=
- =?utf-8?B?enJSUlkvU2t1NitXOEZ4WDk3Y25ad0RTN3RER0JrcHFJWW1qanBFYUtRaTY3?=
- =?utf-8?Q?j/5OAwtOz7sWzgO0ZYZJ+SSjO3pi6U0RNkwY4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR07MB4962.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?N1F1ZHZ6LzlacWRVZSsrQUxYa1g3M3ZDM2pTZU4xcndKQldtN1hQRnh5dVJC?=
- =?utf-8?B?anBUNkZScEd6SGxaanBZL2JleXN1YmRyZ0tQdjQ5TmJhU2dUVEJCQ3UxeGlk?=
- =?utf-8?B?cEtJTGs3U3ExcG9uc2RZcHRLYXFHQ3J6STc0N2hYcXU3RUVhODB3eCtmcSth?=
- =?utf-8?B?cWVVMnhoM25Sb3RYb0E1ckhNb1UvaUY2N28wUkd2czdBWmprZVVWSG5JNjd1?=
- =?utf-8?B?M2lyQm1KSk1jZDJvNkNNR2RkN3JDendieDQ3b2s2Wjh3VC95YnhqZjJ4TWhj?=
- =?utf-8?B?anRaaXBaUVJLdzdTOHBpek9rV1lYUFZrZFlNR3BnY2lVbU1vZURsT3oxQzht?=
- =?utf-8?B?S3dCWTNwZ0ZpU21vS043cHZNSHdLa3grY3prRkJIZ1AvM3dWMXZCTGlaTnJx?=
- =?utf-8?B?MHM2SU5Ram11dlhTT2JTMkhjdWEzVGZRNFF1RVFadWdoVVVIc0d1eXNpRUF1?=
- =?utf-8?B?cnRROW9ZOWhvQk1EdExsUUF3NFgzeEdDbzZLOWZrOUlzYVZZdzU0bDJtaWE4?=
- =?utf-8?B?M090dEV3aEtPNWIvTzNhUk1zNmFPUVdhOHk1ZWlxRmVGdWtCVzR0M29TQ0Zk?=
- =?utf-8?B?TmRoVkpacFJ4N0pSUXBPLy9JU0gxc2pqbU1Fb2hXQzFUWXBKSUhwZ2hxNjJ6?=
- =?utf-8?B?NDg5UDhrVzUvU3Z6YTdMZVBPYU1HbXdGQkhJd1VaSlNiS2lhYkgwRjlPOHAz?=
- =?utf-8?B?MFpSYlFYakNrc1U0a0Y5Tjd0OWd0anVmR3lBZ2oybjVvQUE1RTM0ditjRys2?=
- =?utf-8?B?alZvaC9SQU00MzI1OXhwamVIc0pPVWQ1dTk0TVhGRDUzUEt6L2ttc0x5NVdX?=
- =?utf-8?B?L0ZRR20yWDFYUFl2bHR0WExpWmMyR0llM3hPL1FUMmNNcWRUczhQTjBvSy8r?=
- =?utf-8?B?cUl2OFFKaS9lTmFOM2Iva21DYlV3ZEFRTVMzYkNLT1R3bmdidHNOV3ZwZW9N?=
- =?utf-8?B?OEgzU2tiZ1E5T3lrbTZQS1hITnRYdDBlM2lmNEF5cVdIRWxicjdva00xTk1F?=
- =?utf-8?B?S1hNb3ZkdjFjYWdRN0RTT3lWcEJHN2NiNmV1L2dpMnBtNEptejBxZkw2YTBL?=
- =?utf-8?B?M2NJdGErdnBrektZRE1ob3lkUGNiYXZuYm9MWVFFdk1EdUkxdElzeCswSzhi?=
- =?utf-8?B?ekszTmVNeUNhTjk3NFJuT0NENy9FUjdaNTBWNFowYllsbzZEMmFuNVRqUlkz?=
- =?utf-8?B?N1BzbXEvN0I2T3NWc1lNT3VuUVZJZHN4bDZJZDFBTVN5QmJ6TUcrdng0MkRS?=
- =?utf-8?B?OVRjR2FvSnYxZWlnREpqalpPNUJVRHVrLzNWN3NGd2FRbnUxZUx0Sm82Ui9a?=
- =?utf-8?B?YUptOXZlRURVdlkzZXZtRUt0cHQ5MzRSWG1DVlh3em45clkxMVl3V09wL2Ra?=
- =?utf-8?B?Y1pWdW0vbWhzaTd2ZEdFSmkxRVM1cVRpZmFhTzYybFEzR08vRi9mMG5DU0lm?=
- =?utf-8?B?dFZuYThaN2lJYW9Oc3pYclBBTnV0Q2NRY2N2aTJIQUp5QTlMSnp3dFpjeldZ?=
- =?utf-8?B?eDBGVUtHZHAzNElXUW1zYW5sWUFrM3lmZVc1MEl0THBzQVVueVFzWm1MSGRz?=
- =?utf-8?B?MW55Z3BXWWNsRWlDdnZYS21Rd2lnbVRlZUdzNHNCdThpSWx1OVRTZ0tLWHVu?=
- =?utf-8?B?TTlVN3VBYWFaYTh1N2FxL1ppcWJlbGxlbi8zUDVuN2ZTdUM2UVo2UHloR3pP?=
- =?utf-8?B?UXFnS0hIc1NaVHBkaThnNy9VVzMxRXphYVFMQTI4MDh5R2hLaUpkYnQ2anlQ?=
- =?utf-8?B?a2tNL3QwQk1KeEdkOU1vUHB0Q25oM3BhNWZFUjZQM0k2U2Q0RlFTNkNXYmVI?=
- =?utf-8?B?T01vNTlINGpRSXl4Z1JkanlzNkEwNHdYaVRmNzZ5TERtT3o1S0dONUw4TjZy?=
- =?utf-8?B?UWFWOUJMY3htYlIrSzA5MCtya04zbUlRYStoclNwU0ZBMGE5N2JtNTFpYysx?=
- =?utf-8?B?NE1tcG81eFpLeS9WeFY3eGtZRUdVa1hpR3krdzBJampVdlRjNUI5OXZ1M1RQ?=
- =?utf-8?B?QkltdVRyTlYyaXVtOXZ3djlHOUx6VlpXVHhkT1FQbHRGa3I1K2hrdWhlbE1N?=
- =?utf-8?B?K1hYNkVTcFZxYVFhWk5GQ2dWQ3BHY0tDaUVXL0dOWE1Ydi9zdGx2N0Fobm5s?=
- =?utf-8?B?ekt0Y3NpaUlNNkxjQkdIdzAxY0RmTDhkR1M2UzVnNUFQdXI3M2RXYk44ZGdJ?=
- =?utf-8?Q?h9W02LkgIaPWXe+EFcnvxt4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0518FBB98C35F3419A3E7D64570977BE@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1835D1DA3D
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 17:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724607705; cv=none; b=drK/xBrpQ/wk3eSsWBu4RfKMwM8SJ41YIuLACpFjJt7oDGIn7dSHKCUPFPBQ3WlM6LMla/Fv+HwEHjaeL1cdRpfVNL+yegh1sz5YdlIGnpj5245jwfjYUPQCNJt9jTX0EDvfdBDnt69v+Itq8AbN73mupxksoAL6X4krdEyYlVE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724607705; c=relaxed/simple;
+	bh=5e76Ul+WCH+8lGGNDt0QcqT1L5ud/pM3un2Fkpmbwbg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ROxtSsz6WwHzvzC0FUt4TIT77eGt8qHzBnMkLGBnHLdGhXvA5F+YtGjv1apH87hAc4JAOKTpTfdIYGpTgm19eGmKsyEGuUSn+5hrRapJJMp+Qtp7VVlKNbaP0TUqbIzg+IaGSf/zvl5g0XJqi+aW+Vap8s5JCmy9zXSrZW6sX68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dwOtLsgg; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724607699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dUjbebKPyAzDyV2pAzp4K1FFmau1gTXM+zFmTzQpT1Q=;
+	b=dwOtLsggz+/wSCgXFOPCV39W70aFlw1aNJqSVoTgvpj3BM27FYYoJ6eeVTJ3UOnDijEth8
+	ONXsjZqt3g8+xTT4Zge5ly/j8P345LGNMScna4FT8eaepFjb37C+ceBhwVSIMv4nEkyHTu
+	JGVE2b9FZ42VM01wMK99oUv4jKVEK1I=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/etnaviv: Use unsigned type to count the number of userspace pages
+Date: Mon, 26 Aug 2024 01:41:28 +0800
+Message-Id: <20240825174128.474100-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cs-soprasteria.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ce8acbb-f4aa-4d96-26a5-08dcc52c6287
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2024 17:36:00.1675
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8fjbgmef6dLPWFJVTAKjIza5383vwlbHFU+Qmt6lkC4dBNOsoj3C3Uyi4gAHVVESeurqmeWqIlyaUoAy1767Iw11DFVAjICA4lie/CPkQDEShMh66GAXlhTRUsCCcldl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR07MB6788
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 04
-X-MS-Exchange-CrossPremises-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-messagesource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-originalclientipaddress: 88.124.70.171
-X-MS-Exchange-CrossPremises-transporttraffictype: Email
-X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
-X-OrganizationHeadersPreserved: AM7PR07MB6788.eurprd07.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-DQoNCkxlIDIxLzA4LzIwMjQgw6AgMTI6MDMsIEFybmFsZG8gQ2FydmFsaG8gZGUgTWVsbyBhIMOp
-Y3JpdCA6DQo+DQo+DQo+DQo+DQo+IE9uIFdlZCwgQXVnIDIxLCAyMDI0LCA2OjA24oCvQU0gTEVS
-T1kgQ2hyaXN0b3BoZQ0KPiA8Y2hyaXN0b3BoZS5sZXJveTJAY3Mtc29wcmFzdGVyaWEuY29tDQo+
-IDxtYWlsdG86Y2hyaXN0b3BoZS5sZXJveTJAY3Mtc29wcmFzdGVyaWEuY29tPj4gd3JvdGU6DQo+
-DQo+ICAgICBHb3QgdGhlIGZvbGxvd2luZyBidWlsZCBmYWlsdXJlIG9uIHY2LjExLXJjNCwgc2Vl
-DQo+ICAgICBodHRwczovL2dpdGh1Yi5jb20vY2hsZXJveS9saW51eC9hY3Rpb25zL3J1bnMvMTA0
-ODU2ODAwNDEvam9iLzI5MDQyMzAyNTE5IDxodHRwczovL2dpdGh1Yi5jb20vY2hsZXJveS9saW51
-eC9hY3Rpb25zL3J1bnMvMTA0ODU2ODAwNDEvam9iLzI5MDQyMzAyNTE5Pg0KPg0KPg0KPg0KPg0K
-PiBDYW4geW91IHRyeSB3aXRoDQo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
-eC9rZXJuZWwvZ2l0L3BlcmYvcGVyZi10b29scy1uZXh0LmdpdC9jb21taXQvP2g9cGVyZi10b29s
-cy1uZXh0JmlkPTYyMzZlYmUwNzEzMWE3NzQ2ZDg3MGYxZDhlYjM2MzdhOGRmMTNlNzANCg0KSXQg
-d29ya3MsIHRoYW5rcy4NCg0KQ2hyaXN0b3BoZQ0K
+The unpin_user_pages() function takes an unsigned long argument to store
+length of the number of user space pages, and struct drm_gem_object::size
+is a size_t type. The number of pages can not be negative, hence, use an
+unsigned variable to store the number of pages.
+
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index ce9c9233c4a6..fa0d193cec26 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -695,7 +695,7 @@ static void etnaviv_gem_userptr_release(struct etnaviv_gem_object *etnaviv_obj)
+ 		kfree(etnaviv_obj->sgt);
+ 	}
+ 	if (etnaviv_obj->pages) {
+-		int npages = etnaviv_obj->base.size >> PAGE_SHIFT;
++		unsigned int npages = etnaviv_obj->base.size >> PAGE_SHIFT;
+ 
+ 		unpin_user_pages(etnaviv_obj->pages, npages);
+ 		kvfree(etnaviv_obj->pages);
+-- 
+2.34.1
+
 
