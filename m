@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-300550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A96C95E4FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:46:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DB395E500
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC2E1F2280A
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9751B1C20DEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CBA16B385;
-	Sun, 25 Aug 2024 19:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E1015B13A;
+	Sun, 25 Aug 2024 19:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGa+UQ2k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CWPU8w/Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ECD14A85;
-	Sun, 25 Aug 2024 19:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F4928DC1
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 19:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724615158; cv=none; b=XvM7Dq/NjGV7jspFeZut9RU5j5ULYZWFqKqpZa3BjDBOD86xzt4ei9OibSpAX/eFi7HQvrx2IJheVM+SFLV1YQJUno+qIAErZkEmdNDPMzpfrrqC7k1GbAyyL94uIU9vg3XHUldP3AAnLlhYSPhjvqwYbXnyHkuPrlsoWpJNdvo=
+	t=1724615668; cv=none; b=DkeAHzgutY/nbruggF28NvzW842m4KA4PASp3WikdC2roPAkiaGYPoYOZh4yBYxxhC5HcqkH4nmD++asQTPyR+r75SrQsHwIfv4h93QgfsCxzRBu3v2rEMXpz4ThEA5AWpCFrwJgGobPk9bFK1uaSLVv/LxsrQ6N/Ctt1uWM+Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724615158; c=relaxed/simple;
-	bh=L2q5TZieXl7mpgEZoO9ut2SpDIoxARMxSL8SJkrTIzE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QOuI0xvJDmBRDAvTqS7BWrsrtKK/ki3pVXYehiUtKnQOj+ADVtAVkwM9xxXXsiG+KwxZZal6NRisLGGDfEqtnm9CLOnwpaDOLN7uhl+aIRw3UlZKa078TdYho6Z63hFpZ4prdgLqvLeZFpgVMtn32VrM479giP8DWVVNtgKnAgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGa+UQ2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC61C4AF09;
-	Sun, 25 Aug 2024 19:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724615158;
-	bh=L2q5TZieXl7mpgEZoO9ut2SpDIoxARMxSL8SJkrTIzE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pGa+UQ2kmpdacGgBL5te60J4MMLrx5AwRjnxKdP7y6DPLeQzDG9L+Syxn2UzDcSWW
-	 it1mT0lfNz5fZgjq5kqDnmKpRkvJi5AMc/bFwuPOy5fod+fJVHky5Ub0AaGnNstQdV
-	 mg2uVx1Qazeg2l2ykL3Rr8QYUzrTZG2e9lvdyhRfE/Utu5xtne1BMGY6m7yhQLOdRI
-	 5xunCyiLbYyvChOPfq0z2IStOUwpu60cpBAcpC1Xyxx1P3Zs7QW6JCV6mRrVv5IHXg
-	 DdDQOzqIGRVLVdKL8xj6EKKDfHnnYokDnsIVk1i+BsbUTmLSROX20ov4sydsy+A/lG
-	 xw6ghwiXlzakQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1siJBT-006i9u-KS;
-	Sun, 25 Aug 2024 20:45:55 +0100
-Date: Sun, 25 Aug 2024 20:45:55 +0100
-Message-ID: <86seuswfm4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Shaoqin Huang <shahuang@redhat.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	kvmarm@lists.linux.dev,
-	Mark Brown <broonie@kernel.org>,
-	Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Morse <james.morse@arm.com>,
-	kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v5 0/4] Allow userspace to change ID_AA64PFR1_EL1
-In-Reply-To: <ZstlXHnSvlfnia/D@shell.armlinux.org.uk>
-References: <20240723072004.1470688-1-shahuang@redhat.com>
-	<86ttf8wnwz.wl-maz@kernel.org>
-	<ZstlXHnSvlfnia/D@shell.armlinux.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1724615668; c=relaxed/simple;
+	bh=SZDhFSz5cGQqOrGnjwqK1octDVUeO0+e9a3ispg7DMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HKqxRl9A7ThKlaCPqbps7cVUNIsvTMK7mVPijMxwRPLqrNFu3Ta0vGp0Iy1xRjOh/ePdrCJ0GLHRpPBTw8Yy/uikOFdI+U7DeD25mMwS8TYBlEG351s19KqNr/bmxGv25Pln2tPb9E/RwDR23M9XRq3YcCZaQjPwFNyQasFv41k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CWPU8w/Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724615664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SZDhFSz5cGQqOrGnjwqK1octDVUeO0+e9a3ispg7DMk=;
+	b=CWPU8w/Zr3X2eu8X1zdOj4DmiTeGOlTzQkKqaLhBjb253nfbA3zY1B+qOSPuhaIxzbzWDV
+	ZxjJpD0VCsCU1h4aJ9YXqP8bHfaaymltVBjMarwrwR1VV+qAfEVgop/P35N8JMpF0xxugq
+	szzXoqyiVVS5moMUdDjCcOq6ETIn3UY=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-22-ILqoDf-CPb-5b-GDT5n4rw-1; Sun, 25 Aug 2024 15:54:21 -0400
+X-MC-Unique: ILqoDf-CPb-5b-GDT5n4rw-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f3eaab2d0aso31240241fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 12:54:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724615660; x=1725220460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SZDhFSz5cGQqOrGnjwqK1octDVUeO0+e9a3ispg7DMk=;
+        b=XJSh9Z27o/4s5OA/K6SspF+hHdNC85k1tDHxg882Kgbom9VhNJsfAq7KPKpHDmPTiM
+         hIEho7HQicFrx7FZyU/3r89UavwdwARxo+PuPrLmVO8x2UmXhfe0Dshefewde+07RqHu
+         /x0rbN7uPq/ZygFjEtwBZwbc4PJG9LYRoN3YFv1c01uIggQ9AvPiF6D1i9nLlHn76K40
+         bmF73ZwRulVvfjZ9Sm56T8Ambotr3mCNq50IZVzUKn5iUsQTk4mPht/SCSt9AQnt1TUb
+         abn4ecQm+FxYw8942V/EwH6w8HMRLyUa++FWnJv9irbCyj2oeIbs2r5bUmEOI5gl4/8h
+         41wA==
+X-Forwarded-Encrypted: i=1; AJvYcCW76ON78RnHf0H4X8w3CxaaX9iYYuYUhcfb63sWpUSKceCwUvu5cu+ugSoU5oojANs5mtSk28QVyK4ynBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxapIzCnl+eXCwM9O8QvuJxpM8EJVzszovar0UBwu0CevyOYUsC
+	NBw9YXI5QCXFAwwu/3tYIvzcjyQ37H7DdEnLHtdVya98dciXoJbCbOI5gaBaN6zzGmU/obGQUCh
+	AhZcgcdoHG5zd/IEbnrWnlv/GuP7RQ+ERLKAXPSbvUlrub5RNdq9umyVH6iIVGc1w6VcD9j0z4f
+	DqbVKUn7tX4wyNfBBYlLMsAd3Y6CjBiGnFIxg7
+X-Received: by 2002:a05:651c:88a:b0:2ef:2843:4135 with SMTP id 38308e7fff4ca-2f401ef2f8bmr42010091fa.22.1724615660298;
+        Sun, 25 Aug 2024 12:54:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRR2RFGKYRIqaHIAtJY42+DmWhiPgyqSAg1f8W2qWMs4UGf31c1qZMTWRheB2QuKBk9MdDY6hnbgQqeIx520A=
+X-Received: by 2002:a05:651c:88a:b0:2ef:2843:4135 with SMTP id
+ 38308e7fff4ca-2f401ef2f8bmr42009901fa.22.1724615659703; Sun, 25 Aug 2024
+ 12:54:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux@armlinux.org.uk, shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, broonie@kernel.org, eauger@redhat.com, sebott@redhat.com, cohuck@redhat.com, catalin.marinas@arm.com, james.morse@arm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, shuah@kernel.org, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240814143414.1877505-1-aahringo@redhat.com> <20240814143414.1877505-9-aahringo@redhat.com>
+ <2024082459-neatly-screen-9d29@gregkh>
+In-Reply-To: <2024082459-neatly-screen-9d29@gregkh>
+From: Alexander Aring <aahringo@redhat.com>
+Date: Sun, 25 Aug 2024 15:54:08 -0400
+Message-ID: <CAK-6q+hqhitE=_Lw2kd3kN3-hrquK550-d4jHgrkUX1uqj=zDg@mail.gmail.com>
+Subject: Re: [RFC dlm/next 08/12] kobject: add kset_type_create_and_add() helper
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org, 
+	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, rafael@kernel.org, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, 
+	ocfs2-devel@lists.linux.dev, lucien.xin@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 25 Aug 2024 18:09:48 +0100,
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> 
-> On Sun, Aug 25, 2024 at 05:46:36PM +0100, Marc Zyngier wrote:
-> > On Tue, 23 Jul 2024 08:19:59 +0100,
-> > Shaoqin Huang <shahuang@redhat.com> wrote:
-> > > 
-> > > Hi guys,
-> > > 
-> > > This is another try to allow userspace to change ID_AA64PFR1_EL1, and we want to
-> > > give userspace the ability to control the visible feature set for a VM, which
-> > > could be used by userspace in such a way to transparently migrate VMs.
-> > 
-> > 
-> > I think this looks OK now, thanks for going through the motions and
-> > doing the right thing.
-> > 
-> > What is missing is similar handling for 32bit ID registers, but I'm
-> > not sure we keen on going down that road -- machines capable of
-> > running those are on their way out. This can be done later anyway,
-> > should anyone care.
-> 
-> The Aarch32 ID registers need doing - we've already established that
-> fact. Sadly, you decided you wouldn't respond to my patch addressing
-> one of the Aarch32 ID registers despite me sending follow-ups to nicely
-> ask you about this - you seemed to go utterly silent on it.
+Hi,
 
-No, Russell. *you* went utterly silent after your May patch. You sent
-an RFC, to which people responded. Given that your last email on the
-subject was almost 4 months ago and that you never brought the subject
-up again, it can't be that big a deal.
-
-To me, an RFC means "I have this idea, and I'm not sure how to do it".
-An RFC is usually only a proof of concept that has no purpose being
-taken at face value. If you want a patch taken seriously, don't send
-it as an RFC. And send it again if nobody replies. It's not that this
-is anything new.
-
-> The Aarch32 ID registers have changed value between different kernel
-> versions, and given that QEMU saves and restores _all_ ID registers,
-> changes to these ID registers cause a regression if one attempts to
-> migrate VMs between one kernel version and the next. It doesn't even
-> have to be between two physical machines. Libvirt supports managed-
-> saving on reboot, where it saves an image of a VM at shutdown, and
-> restores it at the next reboot. These changes in ID registers render
-> effectively data loss in VMs that have been managed-saved - the
-> saved state of the VM has to either be destroyed, or the host kernel
-> reverted back and _never_ moved forward.
+On Sat, Aug 24, 2024 at 1:18=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
 >
-> As you don't seem to be keen to address this (by ignoring my emails
-> on the topic, and now suggesting in your response above that you're
-> not keen to do anything with the Aarch32 ID registers, I guess this
-> just means that KVM on Aarch64 is going to forever suck.
+> On Wed, Aug 14, 2024 at 10:34:10AM -0400, Alexander Aring wrote:
+> > Currently there exists the kset_create_and_add() helper that does not
+> > allow to have a different ktype for the created kset kobject. To allow
+> > a different ktype this patch will introduce the function
+> > kset_type_create_and_add() that allows to set a different ktype instead
+> > of using the global default kset_ktype variable.
+> >
+> > In my example I need to separate the created kobject inside the kset by
+> > net-namespaces. This patch allows me to do that by providing a user
+> > defined kobj_type structure that implements the necessary namespace
+> > functionality.
+> >
+> > Signed-off-by: Alexander Aring <aahringo@redhat.com>
+>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
 
-I'm fine with that. Nobody is forced to use it, and I don't feel the
-need to put extra effort on things I don't care about any more.
-AArch32 support is one of these things, amongst many others.
+note that I added the comments the kernel test robot pointed out. [0]
 
-If you want the support to improve, I suggest you send patches. And
-send them again if no reply shows up in a timely manner.  Because
-you're probably the last person who gives a damn about the AArch32
-support in KVM. And if not even you can be bothered to fix it, then
-support for AArch32 EL1 should probably be removed altogether (I'm all
-for deleting unused code).
+Thanks.
 
-> I'm sure Oliver will recall my emails on this which you've decided to
-> ignore... he was supportive of my efforts to address this.
+- Alex
 
-I'm supportive as well. I'm just not going to fix it for you.
+[0] https://lore.kernel.org/gfs2/20240819183742.2263895-9-aahringo@redhat.c=
+om/T/#u
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
