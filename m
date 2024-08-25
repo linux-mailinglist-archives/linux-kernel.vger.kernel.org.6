@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-300377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DCC95E2FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFCA95E2FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1B99B2121F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CC3281A12
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBCA13DBA5;
-	Sun, 25 Aug 2024 10:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FB413A89A;
+	Sun, 25 Aug 2024 10:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="op6AZPm7"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="a8uAy1TB"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140E874418;
-	Sun, 25 Aug 2024 10:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057EC2F34
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 10:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724582870; cv=none; b=OqIhCfsUD7dXNXykT6qhVSTgtF42eguovk0B+g+p3YqAEj35c52coiCEM1qKzEKN+F3CLqrlmnzvhLB+d0FkSLM13UMjU25tAVJIjLP/35NeAzyj06Uw90shjWwclISTWx0mZib7oBkQzcOi+nYOkonKSU/jQLP4zhCLzKPqw9I=
+	t=1724583217; cv=none; b=SEF5//n/qLnkk2lH2GfH3iJFZpnXalvn8ZWRTpSB7vIwosJVaGjsacVPM/rt14+PM98BwJvyhOKcoLDZKZcJPtAAEiFKfE2q+y1ZxGX/AmCnrVn4pnvyfjBq33ZgtecbQah65167lxiD2jHiksTKyAteoczJiAfJQv8Eq/X/xPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724582870; c=relaxed/simple;
-	bh=Hs8txYmClETIj7VMTgAg1LNHS+Qu1hpFkNh6v3fOqAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oRCemKZzRYf4sLgsroREfMK/s/MWgD/JMgmYfxcfB0/+hElu9p7sAq2kzvRqFSkutwZgk9bOpVBi4/yze4cxPigA31dVGMC3CCLENSjrxkFeG12YXMHn9U2Vuhs0/ybRXx+mBZbmfHTe30iCS3bfGwNg2bO/SSYzm3AFHKZHVwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=op6AZPm7; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724582858;
-	bh=y5hcrGzatXkseHAxtnxhYe1zmrLtFaJr9NEoUCcFrs4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=op6AZPm7sFn9k6HzZRtJ7diWwWiFHZqsNljBRTiGiNIA42BK7rQgmt6o4p6MCM+Ey
-	 Wv1Hb/LRJ/lc6myCVri8sl75fTjmcUaHmbK8vgv4RXtaUICXcK8aiTdmvds9k9BtAV
-	 czR6YjX9wsRPsTOuDMz0F63erW2DSrikFs1zW1bs=
-X-QQ-mid: bizesmtp91t1724582818tp36isx7
-X-QQ-Originating-IP: gHw6+VBjdY/Q7DpBogLWxNCSHvAyDOUcTgMJHuHh8f8=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 25 Aug 2024 18:46:55 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18098951403119421999
-From: WangYuli <wangyuli@uniontech.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	wangyuli@uniontech.com,
-	seanjc@google.com,
-	xiangzelong@uniontech.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	wubo@uniontech.com,
-	guanwentao@uniontech.com,
-	linux-sgx@vger.kernel.org,
-	jarkko@kernel.org,
-	haitao.huang@linux.intel.com,
-	sean.j.christopherson@intel.com,
-	kai.huang@intel.com,
-	bp@suse.de
-Subject: [PATCH v4] x86/cpu: Adjust the error message when BIOS does not support SGX
-Date: Sun, 25 Aug 2024 18:46:53 +0800
-Message-ID: <F8D977CB368423F3+20240825104653.1294624-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1724583217; c=relaxed/simple;
+	bh=h//gVpOCG2CPlj20k2ValazWq1kISCg2yLClG5rKawQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UcDS0BTLo9jLA7TKIC00BQPe5/rE/vEqCua5odrR6O1k+ES+UBLswJ2B9+88LvSuetysNlTy0itOc8oDARQrLA/+dMy0Xovio9T2ekwo0VzI5I7in46tCaIubofu18aIALyTi7lfHoENr717U6kObmjSQxPjtztKap6tRl/G3Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=a8uAy1TB; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1724583208;
+	bh=h//gVpOCG2CPlj20k2ValazWq1kISCg2yLClG5rKawQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=a8uAy1TBBigBHNCPnbo+/YwVPVAIbFEpsAMXKGOefNw3Kg6rUfd5/mrvOkO12z7w5
+	 q9oSFXh2B2MXQjPSjFtPHYHF+KLG+0BEjcZ9t9EMbBiZ7nfCNGAhuMaPBayi2DLlgU
+	 vfw13kqM9HU9VrvhSsTrk4MtDdl3jiyb2f3Jvvis=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 25 Aug 2024 12:53:14 +0200
+Subject: [PATCH] ucounts: constify sysctl table user_table
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Message-Id: <20240825-sysctl-const-ucount-v1-1-b4e9277c62a1@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIABkNy2YC/x3MMQqAMAxA0atIZgOxWBSvIg5SowaklaaKIt7d4
+ viG/x9QjsIKXfFA5FNUgs+oygLcOvqFUaZsMGRqasmi3urShi54TXi4cPiEdhqpra2hpiHI5R5
+ 5luu/9sP7fht3OB1lAAAA
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Joel Granados <j.granados@samsung.com>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724583208; l=968;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=h//gVpOCG2CPlj20k2ValazWq1kISCg2yLClG5rKawQ=;
+ b=k4T0Ku3Lg26+aUrCCK+n3sw2rpEfkLLlanPQFKImCksUeNMaSlHtI5Hdxhxs0ksGvURIGDh+1
+ p5AsKDlmPRsCRY/GBdatlXB4UbJe0Vs12KHUliiOjt69iWshGJ2jfaQ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-When SGX is not supported by the BIOS, the kernel log still output
-the error 'SGX disabled by BIOS', which can be confusing since
-there might not be an SGX-related option in the BIOS settings.
+The data of user_table is never modified,
+but only used as a template to create copies from.
 
-As a kernel, it's difficult to distinguish between the BIOS not
-supporting SGX and the BIOS supporting SGX but it's disabled.
-
-Therefore, update the error message to
-'SGX disabled or unsupported by BIOS' to make it easier for those
-reading kernel logs to understand what's happening.
-
-Reported-by: Bo Wu <wubo@uniontech.com>
-Closes: https://github.com/linuxdeepin/developer-center/issues/10032
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/all/a30f7700c7817b3e7e2f2bdb37d5c10a318b2c3b.camel@intel.com/
-Co-developed-by: Zelong Xiang <xiangzelong@uniontech.com>
-Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- arch/x86/kernel/cpu/feat_ctl.c | 2 +-
+kernel/ucount.c has no proper maintainer.
+This patch is meant for the sysctl tree.
+---
+ kernel/ucount.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 1640ae76548f..4a4118784c13 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -188,7 +188,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- update_sgx:
- 	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
- 		if (enable_sgx_kvm || enable_sgx_driver)
--			pr_err_once("SGX disabled by BIOS.\n");
-+			pr_err_once("SGX disabled or unsupported by BIOS.\n");
- 		clear_cpu_cap(c, X86_FEATURE_SGX);
- 		return;
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index 8c07714ff27d..4f6dd1a30117 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -70,7 +70,7 @@ static long ue_int_max = INT_MAX;
+ 		.extra1		= &ue_zero,			\
+ 		.extra2		= &ue_int_max,			\
  	}
+-static struct ctl_table user_table[] = {
++static const struct ctl_table user_table[] = {
+ 	UCOUNT_ENTRY("max_user_namespaces"),
+ 	UCOUNT_ENTRY("max_pid_namespaces"),
+ 	UCOUNT_ENTRY("max_uts_namespaces"),
+
+---
+base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
+change-id: 20240805-sysctl-const-ucount-5da084520770
+
+Best regards,
 -- 
-2.43.4
+Thomas Weißschuh <linux@weissschuh.net>
 
 
