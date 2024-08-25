@@ -1,103 +1,228 @@
-Return-Path: <linux-kernel+bounces-300226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAE495E0D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:29:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5092395E0D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1B0282616
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FED11C20F5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17453D62;
-	Sun, 25 Aug 2024 03:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tard5wd2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348AEB647
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 03:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E4CF9DF;
+	Sun, 25 Aug 2024 03:34:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461F88C11;
+	Sun, 25 Aug 2024 03:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724556592; cv=none; b=jQt0hErxCQu6gc0qNasdPQ7d8sp7S6GtPbwN7yDA9qUjlhZ3WrSexl+BSERv1XQ0epPtRBzq4IDQWByNdg7rm09MPlKCvwo0lldh/xw2t/WGJIfKK0W28w3JWeT/7f6BMoDXyuHfbwUWBh+de3u+utYVZ9obPwS+C10yJUvhmX0=
+	t=1724556871; cv=none; b=FboT0LZNg5HQdK41pdG/bIbDMF2q7DukTeumxVCeaSyakVRZBz0kLSpbBqfefjMK2gn7ya65LJGG5ZuMilFnxTnI7eOqKlB2OZUo32GghSUDsAc88TuU/k/z2Z3KYVyaj/MF9kkcxS/rZL4SeCu51lJ9ht66mf02tDhda8sZgBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724556592; c=relaxed/simple;
-	bh=4xLQFMqugB1RpTJGmvAdJwsDVt72hgC3qjvoz1pST8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fdjj1tZYF79+kPaG32p0NvTfFToEikCtztUUM0oIuu7DGTvgEmW3Z07bDwfjFvidStm18pjLJWuaQ6ketdQd4IzlzHthmTKkBgx1aJyRcLDkc628PxSDZoIgcKa9Fz0JsQTnlnN2uv/GIXnP+femPSddD6G0nxZlfAdeA5BykQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tard5wd2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F77C32782;
-	Sun, 25 Aug 2024 03:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724556591;
-	bh=4xLQFMqugB1RpTJGmvAdJwsDVt72hgC3qjvoz1pST8Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tard5wd2nGNJTdz6lR0jQA+aqKJVfCUuPemaF8G+jaWP5kycYAtSDz3xlOFGAVREw
-	 f6w/sxlVfuH9soTJhFbqTYAMa4i8byEwEkTj8/huE7jdiJ8WcnzsLsAAqa4UVyZNK8
-	 3bgl/SlMchVy92OoTcnOkgTQDzUNrxby60X1mGl4hhNea+si7CKHcfp81clnCBro/Z
-	 TYvoEY2nkB04WzwSc/jYUEtGLHGomAoyfcijFTmAIOO74l3QqVTJlsgsD9NvVbPYpH
-	 AwYXW2dir8qzampyVBw8UVWUUymfDdhLcirAClIgS0fpTJ6q0IfORkAyhvb6KkLVCW
-	 EK+zNfyNJOadw==
-Date: Sun, 25 Aug 2024 05:29:23 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v8 06/13] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240825052923.715f88bc@sal.lan>
-In-Reply-To: <20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<2c8970b5d54d17b601dc65d778cc8b5fb288984b.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724556871; c=relaxed/simple;
+	bh=GLh0c4J0+6QysF3awcYBVB6C1NnBKgCQzHe7q4s8x9k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HmVB3LCYU1IugzqL/PbItILkNZHoPhHBJdyQitJd6iYbvPGYL4l+0PBEhePpjb8lh12djPYChaOuZYzUA1praX+R/00crzPWAVcJlKU6oPQMQR5ZYJMF/teem9/UIiJmd1wbe8oQuR0i3L2hTXIiKszqHLDhwWQtEXh2GVdTcyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8Axz5s7pspmVCsfAA--.38421S3;
+	Sun, 25 Aug 2024 11:34:19 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMAx62Y5pspm62shAA--.6265S2;
+	Sun, 25 Aug 2024 11:34:17 +0800 (CST)
+Message-ID: <778e50bc-58db-42e6-aee3-3b1e01ca227d@loongson.cn>
+Date: Sun, 25 Aug 2024 11:34:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ p.zabel@pengutronix.de, zhuyinbo <zhuyinbo@loongson.cn>,
+ Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang <wanghongliang@loongson.cn>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+ <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+ <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
+ <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
+ <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
+Content-Language: en-US
+In-Reply-To: <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAx62Y5pspm62shAA--.6265S2
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEABGbJzRsCPAAAsA
+X-Coremail-Antispam: 1Uk129KBj93XoWxCr1DJryDtrWkCr15CFyfAFc_yoWrKw17pF
+	4rGanrGryUtr10vr4Ut3W8Jr95t3s8Jw1DXr48XF17Gayqqw1jqr1rZF4jgryfXr48Jryj
+	qr1UKFy7ZF47Z3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	kF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4U
+	MxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
+	0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
+	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20x
+	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
+	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8m9aDUUUUU==
 
-Em Mon, 19 Aug 2024 14:51:36 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
 
-> > +        read_ack =3D 1;
-> > +        cpu_physical_memory_write(read_ack_start_addr,
-> > +                                  &read_ack, (uint64_t)); =20
-> we don't do this for SEV so, why are you setting it to 1 here?
+在 2024/8/12 16:25, Krzysztof Kozlowski 写道:
+> On 12/08/2024 10:09, 郑豪威 wrote:
+>> 在 2024/8/9 18:05, Krzysztof Kozlowski 写道:
+>>> On 09/08/2024 11:55, 郑豪威 wrote:
+>>>>>>>> +    description: Enables fractional-N division. Currently,
+>>>>>>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>>>>>>> +
+>>>>>>>> +  rts-invert:
+>>>>>>>> +    description: Inverts the RTS value in the MCR register.
+>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>>> +
+>>>>>>>> +  dtr-invert:
+>>>>>>>> +    description: Inverts the DTR value in the MCR register.
+>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>>> +
+>>>>>>>> +  cts-invert:
+>>>>>>>> +    description: Inverts the CTS value in the MSR register.
+>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>>> +      and Loongson LS7A bridge chips.
+>>>>>>>> +
+>>>>>>>> +  dsr-invert:
+>>>>>>>> +    description: Inverts the DSR value in the MSR register.
+>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>>> +      and Loongson LS7A bridge chips.
+>>>>> Same questions for all these. Why choosing invert is a board level
+>>>>> decision? If it "should be used" then why it is not used always?
+>>>>>
+>>>> Because these features are not applicable to all chips, such as
+>>>> 'fractional-division',
+>>> Hm?
+>>>
+>>>> which is currently supported only by 2K1500 and 2K2000, and for
+>>>> Loongson-3 series
+>>> These are SoCs. Compatible defines that. Please align with your
+>>> colleagues, because *we talked about this* already.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> I consulted with my colleagues and would like to confirm with you. For
+>> the five
+>>
+>> properties provided, fractional-division is offered as a new feature,
+>> supported by
+>>
+>> 2K1500 and 2K2000. As for the invert property, it is due to a bug in our
+>> controller,
+>>
+>> and its usage may vary across different chips. Should we add different
+>> compatible
+>>
+>> values to address these issues for different chips, whether they are new
+>> features or
+>>
+>> controller bugs?
+> How did you align? We had already talks with you about this problem -
+> you need specific compatibles. How you explain above properties, all of
+> them are deducible from the compatible, so drop them.
+>
+> Your entire argument above does not address at all my concerns, so
+> before you respond repeating the same, really talk with your colleagues.
+>
+> One of many previous discussions:
+> https://lore.kernel.org/linux-devicetree/25c30964-6bd3-c7eb-640a-ba1f513b7675@linaro.org/
+>
+> https://lore.kernel.org/linux-devicetree/20230526-dolly-reheat-06c4d5658415@wendy/
+>
+> I wish we do not have to keep repeating the same to Loongson. Please
+> STORE the feedback for any future submissions, so you will not repeat
+> the same mistakes over and over.
+>
+> Best regards,
+> Krzysztof
 
-According with:
-https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#generic-h=
-ardware-error-source-version-2-ghesv2-type-10
+Hi:
 
-   "These are the steps the OS must take once detecting an error from a par=
-ticular GHESv2 error source:
+I have been aligning with my colleagues over the past few days and
 
-    OSPM detects error (via interrupt/exception or polling the block status)
+reviewing previous discussions. Based on these, I have made the
 
-    OSPM copies the error status block
+following modifications according to the differences in the controller:
 
-    OSPM clears the block status field of the error status block
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - loongson,ls7a-uart
++          - loongson,ls3a5000-uart
++          - loongson,ls2k2000-uart
++      - items:
++          - enum:
++              - loongson,ls2k1000-uart
++              - loongson,ls2k0500-uart
++          - const: loongson,ls7a-uart
++      - items:
++          - enum:
++              - loongson,ls2k1500-uart
++          - const: loongson,ls2k2000-uart
++      - items:
++          - enum:
++              - loongson,ls3a6000-uart
++          - const: loongson,ls3a5000-uart
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clock-frequency: true
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clock-frequency
++
++allOf:
++  - $ref: serial.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/clock/loongson,ls2k-clk.h>
++
++    serial@1fe20000 {
++        compatible = "loongson,ls2k1000-uart", "loongson,ls7a-uart";
++        reg = <0x1fe20000 0x10>;
++        clock-frequency = <125000000>;
++        interrupt-parent = <&liointc0>;
++        interrupts = <0x0 IRQ_TYPE_LEVEL_HIGH>;
++    };
 
-    OSPM acknowledges the error via Read Ack register. For example:
+Does this modification meet the expectation?
 
-        OSPM reads the Read Ack register =E2=80=93> X
+Best regards,
 
-        OSPM writes =E2=80=93> (( X & ReadAckPreserve) | ReadAckWrite)"
+Haowei Zheng
 
-
-So, basically the guest OS takes some time to detect that an error
-is raised. When it detects, it needs to mark that the error was
-handled.
-
-IMO, this is needed, independently of the notification mechanism.
-
-Regards,
-Mauro
 
