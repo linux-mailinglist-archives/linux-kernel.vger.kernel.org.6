@@ -1,76 +1,72 @@
-Return-Path: <linux-kernel+bounces-300387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE29695E311
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:29:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5495E31A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D0F1C20A2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E3E3B21458
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFACF13FD84;
-	Sun, 25 Aug 2024 11:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49311422A6;
+	Sun, 25 Aug 2024 11:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xKyMuIZp"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qn2bhicO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="362fE7OT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C94EAD2;
-	Sun, 25 Aug 2024 11:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D421D69E;
+	Sun, 25 Aug 2024 11:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724585387; cv=none; b=O+C5HwumGd9/y0qIh/iB5B0F02qAb2C6j7uBNwDxdIpe3iBf0tDXGGpORpTZtHOQWjPeEdHps+bUr2QK5e8J2VCmTQVWVWDO+wi0VkyrXzp9QYqAM3uCaIQ/V0VGLLVHOZCGzfR0XCD+REps0OWziDP/6e1/bZjjYbGgRVCFafw=
+	t=1724585598; cv=none; b=IKxKAmVgOkfYVL8Gv3/ayqnWZnTXeEoXKn2+bKM+cUan4UqngTM8R6jmyi837P0/SRtdKWFa2etI7I1cAko+KQkbxVJ0i7rG8X9yHsMqyaQjVyOHsLPe29m2vn3vUhe1EH+EKiG0y4k2fqHNITnwzNAq6FwvpMGGszlz3jn2nYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724585387; c=relaxed/simple;
-	bh=M4pRoAHGHu1qm+pixB3vLyBtEqc4XHIgT7Gs2zoKjBY=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kxA3oW9svHQqUryfcvn/qnS9/WGZR1zYbXeJtG4wENWhjQgek1H8wxD1I1D99Tw9faefkdIwdynRNu7qgJ48wno8fFnhpp4vViqzXcZG6fgnh22uQKIqcZm4NILxBF/6xKbYFM7zsuhGxxhnZXUuq2k3i0Cp91WSKFMTHOZc37I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xKyMuIZp; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47PBTQqU073280;
-	Sun, 25 Aug 2024 06:29:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724585367;
-	bh=ExNoaWI/xODsv0v9/4PIKH89wZSK+FQsMCSXGYthPC0=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date;
-	b=xKyMuIZpVB1h9o68KYZT7w37JFH+lqoY9ZkQOz3j+2S7ICvBX54/iV0fP0mp1nlb0
-	 SEZEncF0iGDduRhJejz/AtDHPNDycm1if6FPxOGzQ1Ylu6gRNS2KY5y8wfqdMso652
-	 QJS8ruBVSRF8uPgNDhGQO7MlGj/VVTRGZnKH5sFA=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47PBTQ4Z069588
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 25 Aug 2024 06:29:26 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 25
- Aug 2024 06:29:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 25 Aug 2024 06:29:26 -0500
-Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47PBTPoj057650;
-	Sun, 25 Aug 2024 06:29:26 -0500
-From: Kamlesh Gurudasani <kamlesh@ti.com>
-To: Daniel Jordan <daniel.m.jordan@oracle.com>
-CC: Steffen Klassert <steffen.klassert@secunet.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] padata: Honor the caller's alignment in case of
- chunk_size 0
-In-Reply-To: <iqhynhx6xx67b2jpjazmzufh63nh24uqsawn7thlvlo4ezb3pp@rtvz6u5cc4ug>
-References: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
- <iqhynhx6xx67b2jpjazmzufh63nh24uqsawn7thlvlo4ezb3pp@rtvz6u5cc4ug>
-Date: Sun, 25 Aug 2024 16:59:25 +0530
-Message-ID: <8734mson6y.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+	s=arc-20240116; t=1724585598; c=relaxed/simple;
+	bh=6XMbpzg/JuSwUOH7P7AO5R4Ugnca4dCXUcfcSqerxdM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Jq0hluLOzzU9Q5lXg+q2fUOkUzq8Dxg4+1U/0Twnc/Jp16y7VdnKFHOGBHNM26r9LjHouxVBU2xZyIUKB3ffwuVy7vuaIqGxqB9ERogH9WodZXnQU/p8IGRCXFp3e2xchOUSzDbFi0oPyCp8HlvUDKjlfY43qda7Q+Sd3KvOIhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qn2bhicO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=362fE7OT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724585594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=traTpRXPEY3SvX85V4UNHLV9avrLQDajKAbi9KW9Mas=;
+	b=qn2bhicOfVHkdU7ck2v9tQF6W6WaJTXtqZEiWMHDfSL0Ev8o4KvGgHaALZgsyIAuFmttgs
+	z5VnO+/6JY/fpXdhsiJya6hJDEm92zNzekboN60EFMExyIDu4ptFxzhH4F3Ic/cIAkD5Z3
+	eTpykbtlXrP26a2G14buyr1ILLvcF3Fwjw+fU4Ds0yx9zmYL070XfvOjMbFbx0+G7GP/qN
+	QWk0cMlQW6lVQzcayW3GOUwF4N5MKvBs+rCVlIVgoMHKGRHCRYdZj9qmfE8WafyxZ6YmSX
+	+njM55adqgFTMeTO5hcBsEL9u4XGST4sctn9iwM/3LHcUT2tKJnm1xD+iixu3g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724585594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=traTpRXPEY3SvX85V4UNHLV9avrLQDajKAbi9KW9Mas=;
+	b=362fE7OT8P33AoXzNCnYkmiiNxEZ9GS9ZEvhn7ufxaWm1AsSruiz/SNKSgf7TwmCNyijB9
+	4r4ytqAeRlb3O+Cg==
+To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy
+ <robin.murphy@arm.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, "Michael S . Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-media@vger.kernel.org,
+ virtualization@lists.linux.dev, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] dma-mapping: clear mark DMA ops as an architecture feature
+In-Reply-To: <20240824035817.1163502-2-hch@lst.de>
+References: <20240824035817.1163502-1-hch@lst.de>
+ <20240824035817.1163502-2-hch@lst.de>
+Date: Sun, 25 Aug 2024 13:33:13 +0200
+Message-ID: <87ed6cg7ly.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,44 +74,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+On Sat, Aug 24 2024 at 05:57, Christoph Hellwig wrote:
+> DMA ops are a helper for architectures and not for drivers to override
+> the DMA implementation.  Unfortunately driver authors keep ignoring
+> this.  Make this more clear by renaming the symbol to ARCH_DMA_OPS,
+> have the three drivers overriding it depend on that.  They should
+> probably also be marked broken, but we can give them a bit of a grace
+> period for that.
 
-> On Thu, Aug 22, 2024 at 02:32:52AM GMT, Kamlesh Gurudasani wrote:
->> In the case where we are forcing the ps.chunk_size to be at least 1,
->> we are ignoring the caller's alignment.
->> 
->> Move the forcing of ps.chunk_size to be at least 1 before rounding it
->> up to caller's alignment, so that caller's alignment is honored.
->> 
->> While at it, use max() to force the ps.chunk_size to be at least 1 to
->> improve readability.
->> 
->> Fixes: 6d45e1c948a8 ("padata: Fix possible divide-by-0 panic in padata_mt_helper()")
->
-> Looks fine.
->
-> Acked-by: Daniel Jordan <daniel.m.jordan@oracle.com>
->
->> Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
->> ---
->>  kernel/padata.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
->> 
->> diff --git a/kernel/padata.c b/kernel/padata.c
->> index 0fa6c2895460..d8a51eff1581 100644
->> --- a/kernel/padata.c
->> +++ b/kernel/padata.c
->> @@ -509,21 +509,17 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
->>  
->>  	/*
->>  	 * Chunk size is the amount of work a helper does per call to the
->> -	 * thread function.  Load balance large jobs between threads by
->> +	 * thread function. Load balance large jobs between threads by
->
-> Though whitespace changes like these just add noise...
-Thanks for the Ack, would keep these in mind from next time onwards.
+One week :)
 
-Kamlesh
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
