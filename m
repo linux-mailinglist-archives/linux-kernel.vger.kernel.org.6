@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-300403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F8395E349
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:23:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17A195E34B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213861F218D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B0B281BD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6AD156F42;
-	Sun, 25 Aug 2024 12:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C839D1422A2;
+	Sun, 25 Aug 2024 12:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MxuFnpTy"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ikcE1jU1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wR56FUl7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CF5155389
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 12:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4731E4A2;
+	Sun, 25 Aug 2024 12:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724588538; cv=none; b=E+VHyVJtIhmkx6tLRPBAN160Q0rjeLdF6GwQPTmhOpauZezSQR7aHnRYm+JWTg+k7OrTWXFQxywkE04KUMJsWLLBPQfnjfQzU2CrfF2HdJuc/1lb4IkSfQ7d6RQV+HqT7jT6dijgEb/9ewlG2E04QHNdCZuNwQE9adbG0NzMZ74=
+	t=1724589359; cv=none; b=iloXNC7JMdGApCQ5m6stJ87TcKrJKC/hXRkbjcDR/xjB1YnereVyRto9TFFFm4DqW7kSMyiOs/QMvlJlALymgCWnrcW+UgC1mp4j+c1uaYLkzV2/INPNOY8lM8LSoVspY3HdWihO4CxbmHpTYofRJai1FN7LRD+YTriiYc9c6jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724588538; c=relaxed/simple;
-	bh=FWBbTWDTF6cDtrzQbyZLTrQCUrCkvuS4+bTaMk774To=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Mmsw6WTdor8TbLNJ5tJywSjiAChwq/7b3UxWxX171eq+wVmlCWu5r/lUK7ipIsYXI0EJsccvmLYBZIDd8Py/UCw8aElirC22/7Dz+kJ86FSkbSyZZccXfIvIdcQJy+5vuyEXpetu2jCYOwgQdkdHUwPIjh5ChPzIAF3BsG9w0g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MxuFnpTy; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e09ee91eso4236305e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 05:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724588534; x=1725193334; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PmOsV0yImlKoC69kweQVAT3xtLfWBJj1u/3pWJdp1ts=;
-        b=MxuFnpTytfw9AJ+gAylcSs8qCOZrYLscRbL20ECTnYs2qW2wdTB+03/Re004yF+45I
-         c7E7yL5q2S9tFTUmUvLcOTaokxaA8CeVp/TgD2+emPoulqO+sEIdRD/xSnc44MLulDAB
-         jFOTineEGyPRu6NojTd2IHQz012VkNaL8y/CqnH0dsRWV25SQ+5jit8yj2YZWHfdp4yW
-         qrczhdT31HSSNtZEn+SimboO4PyIadPrZc5TSPA9goK7XJt6PpjEyDC0u0lMv1zC1odb
-         22r4cPEW5J37Z7TZ7kUYgnzRUx+eLRqjcFvNzKwybTIajUx8xL25u+rlk5YU+I4SHdWF
-         ZPAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724588534; x=1725193334;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PmOsV0yImlKoC69kweQVAT3xtLfWBJj1u/3pWJdp1ts=;
-        b=S2dDpPbZmv6y2wJXyPgxS6paUg3W2jXuqXLRNpvGdqy5O0L48mnSq0LGckA4ngvLlS
-         oEDFxmBp0fUFZzfLPJth62fC48F2d+AecM2sW7QnIn3Vx1wLmQJE8Up5xe8kBW08q+Cx
-         AnaOCglfDXeBpXYn6m2HRh9dSk5Xq5oAo3bzHG6pMqbSf+glni6XaoKajsgVGOqtGwnP
-         U9iOLMgxFqOxrOMhWNF7QSF0QnJQfAllhisfKQ0jJRfio8T5ZHQnNoQGD3g2q9EyLPLV
-         Vi0Z/+7Y5W9+alCpdkQ9w7i1icN1gNIQY9JZx90L8+MhvKCjwL4+L8XKWjqSXFyqHXxM
-         FPpA==
-X-Gm-Message-State: AOJu0YxkcrZXR/fAn0XUVL01q0udQXBd9yW2dR3FzQPoRiCDJtW4wECy
-	VewRTdqFlgborFUNrxyM9jOu2Wi+/dPRORlBulGeDr+XKW7hE0ETuv7U83z/1GN0877tDRKv6/z
-	W
-X-Google-Smtp-Source: AGHT+IFern2xtsYagESwPRT1Z8RlfPFyAaudfiuCdSo22l1jDMZDhJlrQPnKSfT6K4z3f+2OGeIsXg==
-X-Received: by 2002:a05:600c:4445:b0:425:65b1:abb4 with SMTP id 5b1f17b1804b1-42acc8a7756mr30856035e9.0.1724588534380;
-        Sun, 25 Aug 2024 05:22:14 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef81777sm156774065e9.27.2024.08.25.05.22.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 05:22:13 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Santosh Shilimkar <ssantosh@kernel.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-In-Reply-To: <20240824080235.56472-1-brgl@bgdev.pl>
-References: <20240824080235.56472-1-brgl@bgdev.pl>
-Subject: Re: [PATCH] Revert "memory: ti-aemif: don't needlessly iterate
- over child nodes"
-Message-Id: <172458853245.37697.15563719161583396830.b4-ty@linaro.org>
-Date: Sun, 25 Aug 2024 14:22:12 +0200
+	s=arc-20240116; t=1724589359; c=relaxed/simple;
+	bh=XgRl8IZZ8Q/ktf6pFfAjj2i4C46Kar4pf/csOipfuWc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z8f3C8e5LwExKLKXTvig8+iYfXgetPHL2xwd6HMJGz2c9GlTkON7+2y/o7X97VTF4iI0bkK0SrvcQasXu5fzBXzBSMiTYaq8Te1+bVMIQkRjzp8lozwlnWyU1JrziZHXwfjqhDJCLy/Jbu3HyXLZj4JGR4wTT3lYj9MXq7dZiuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ikcE1jU1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wR56FUl7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724589356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xi/56QMQfPh2xxpoVj2jNAFcipohi/1raBVMkWkCEHs=;
+	b=ikcE1jU13ToH6febtssE78hzY5czE6WPHvmdUZeEh7RxXNsyWtFChfQGKfLklUM2gFz4hy
+	kmb0oXTCERgUFAFvKmNVHUzYX4UBoR/WOHrapdZkB2QLL6r2moaWFAnBwIvN3UZ1FMpo4M
+	OPH2lB5q6lYk6EDPJzNWs93VtoFuQPZj/H67MVRIm3N3zt43x3BEX5B0V+UXDRNMGje+jv
+	OAmKrMUGj6tc5GlEUSM1GjQT7fU8zW3VWUr0ChiY8J6lh3ko1BMLso/el6Qu78elyDH5El
+	vykAf4Of154SJe3FazSJlMBHYvXPkbMkxU+iHNTYPoOZgqyPhQIMHPhrlyIZzw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724589356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xi/56QMQfPh2xxpoVj2jNAFcipohi/1raBVMkWkCEHs=;
+	b=wR56FUl7sMC+5z0WOH0UQuAAcZ6M/4SQI1PAn2AAD5RONerz7xOpWNv4i2AcmfsdesF64c
+	uJbbXXvMYmcgh9AA==
+To: Kim Phillips <kim.phillips@amd.com>, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth
+ <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, "Nikunj A .
+ Dadhania" <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, Kim
+ Phillips <kim.phillips@amd.com>
+Subject: Re: [PATCH v2 1/2] x86/cpufeatures: Add "Allowed SEV Features" Feature
+In-Reply-To: <20240822221938.2192109-2-kim.phillips@amd.com>
+References: <20240822221938.2192109-1-kim.phillips@amd.com>
+ <20240822221938.2192109-2-kim.phillips@amd.com>
+Date: Sun, 25 Aug 2024 14:35:55 +0200
+Message-ID: <87y14keq50.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain
 
+On Thu, Aug 22 2024 at 17:19, Kim Phillips wrote:
+> Add CPU feature detection for "Allowed SEV Features" to allow the
+> Hypervisor to enforce that SEV-ES and SEV-SNP guest VMs cannot
+> enable features (via SEV_FEATURES) that the Hypervisor does not
+> support or wish to be enabled.
+>
+> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
 
-On Sat, 24 Aug 2024 10:02:35 +0200, Bartosz Golaszewski wrote:
-> This reverts commit 23a641d5c2bce4c723fff9118a5d865ee6b9d05a.
-> 
-> The first-level children of the aemif node are not the device nodes (ones
-> containing the 'compatible' property) but the chip-select nodes which
-> instead have their own children.
-> 
-> of_platform_populate() will skip such nodes so we must indeed iterate
-> over the direct children of the aemif node. The problem here is that we
-> never call of_platform_depopulate() as it takes the root device as
-> argument. We only have an unpopulated chip-select nodes so we will leak
-> these devices if any of the calls to of_platform_populate() fails.
-> 
-> [...]
+This Signed-off-by chain is wrong. Either the patch is authored by
+Kishon, then the changelog needs a From: Kishon... line or you need
+Co-developed-by. See Documentation/process ....
 
-Applied, thanks!
+Thanks
 
-[1/1] Revert "memory: ti-aemif: don't needlessly iterate over child nodes"
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/c7d2f3fbdf59b206414ddc306b0fb74cd174c0ed
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+        tglx
 
