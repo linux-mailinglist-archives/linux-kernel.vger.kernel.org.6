@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-300356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5539D95E2B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:35:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8649F95E2B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B251F218BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35EF6281F16
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F45B61FFC;
-	Sun, 25 Aug 2024 08:35:29 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9AC6F315;
+	Sun, 25 Aug 2024 08:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kk4ykh0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB04A5F
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5725E2BCFF;
+	Sun, 25 Aug 2024 08:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724574929; cv=none; b=nfP3mS9sGo1zWu4IN5SzhLX/m2bwlohO2I0G01MRDG1yLz5+Yi0TNpLo/7rkt12xhoWnrUl62W+AwgZgZ0qrtHZbbWtWiXOXbw2sFGcJIbSzYC/fxVfGS3h5Vk+HSjZJFTkehheQhTt+kbpyeSLopBaafd377VrX+u+JPJ7HTcI=
+	t=1724574962; cv=none; b=EJe88WPnh7DW9yWmBImr91N/g7rAtN9Me3Wg4iBcPTzYaxvjEws3N4qp7HP/xVFzSAmLpIo6FzmCWjz0BfPcdZQez2Xg/pOYJPRX+HfZPnF01h4TWzXofUojPssqMDXKSN7MNaWUMW3CGrWX8eH78VOoyglMT/KdPH5b9GnxsNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724574929; c=relaxed/simple;
-	bh=4wrlrF+jQs4JcflconAry3T2NvzOwZR+VqeoKDXqCx4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JoVY3coqYSsXu7RaWKTqSM6LjLBGUfKZVD8DKf0mcRi1PHLt40R0GOqT5KeY21O6VAJaLF+IFJ1XiMaYQGPVtZH9IgxesCDs0KzlVTQQpfW71Q5GjrP9uSryNnNd6vxNj3ozQgVTRjnJspfoolQkaCCRS0KipYEqQ4YmX7yPW/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Ws6Sk3RzCz69JS;
-	Sun, 25 Aug 2024 16:30:30 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D3D2818007C;
-	Sun, 25 Aug 2024 16:35:16 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 25 Aug
- 2024 16:35:16 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <richard@nod.at>, <miquel.raynal@bootlin.com>, <vigneshr@ti.com>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] mtd: ubi: remove unused parameter 'pnum' from add_volume()
-Date: Sun, 25 Aug 2024 16:35:15 +0800
-Message-ID: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.34.3
+	s=arc-20240116; t=1724574962; c=relaxed/simple;
+	bh=G649MelgvhgiF9yNphX0fE6Ui08+UQoEP3VGOe9dlR8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=U1Ch8ArvfjiSkZXNi+arFGdPnrXg/785gSHjqiTZCN2xjvMud6n8SfH/SsHH0vd1Y8DO+Ltit3lkPrYcw+nx7AoMif6m4WIFE9WC3599SLgLlrFQ+NzqBW1Rg4Y+/Pv2oRGnJb+VnHbkbKnd7rRqxPlEXIYLA9Jt6j5XwJijcYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kk4ykh0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43BCC32782;
+	Sun, 25 Aug 2024 08:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724574961;
+	bh=G649MelgvhgiF9yNphX0fE6Ui08+UQoEP3VGOe9dlR8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kk4ykh0rIsn3SNEQmwo+4cOoGPO29OjLGMB0tjDTqzegzdhTpzsO7nJPhY5B+e8Pt
+	 86xqDiVOo2eUcrb6+RXFn5ZST7ldYtWX5rdLCYu3/76irIuK36L2A9smZmW1rswopq
+	 GVl0ewR+RzlfjAb5C9QpTA/eCQRXhyNUvdW0ePyYJ0TOp0i/dlJC+R3UjXM9DFGXFU
+	 0pM0rhDxxZN6xDQpGbqiTVs8z2dYyPoYs/1vHkZDG6a0OPjbkjX/8wtdh4FUp9fVfK
+	 Tm9PkpFYZ4HPqKLLxP9vYl61V90RMz7xJVROMP9sJScST2KYyMjXVL50jJgfM7Yp+S
+	 97LEiu6P9CL3g==
+Date: Sun, 25 Aug 2024 17:35:57 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Akanksha J N <akanksha@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, shuah@kernel.org,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH v2] selftests/ftrace: Skip test for optimized probes on
+ PowerPC if Secure Boot is enabled
+Message-Id: <20240825173557.89c64ab5362b0fa78df2f45a@kernel.org>
+In-Reply-To: <20240813034056.74717-1-akanksha@linux.ibm.com>
+References: <20240813034056.74717-1-akanksha@linux.ibm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The parameter 'pnum' in the function add_volume() is not used inside the
-function body. This patch removes this unused parameter to clean up the
-code and improve readability.
+On Tue, 13 Aug 2024 09:10:56 +0530
+Akanksha J N <akanksha@linux.ibm.com> wrote:
 
-This change does not affect the functionality of add_volume() or any other
-part of the UBI subsystem, as the removed parameter is not utilized.
+> Currently while accessing debugfs with Secure Boot enabled on PowerPC,
+> it is causing the kprobe_opt_types.tc test to fail. Below is the snippet
+> of the error:
+> 
+> +++ grep kernel_clone /sys/kernel/debug/kprobes/list
+> grep: /sys/kernel/debug/kprobes/list: Operation not permitted
+> ++ PROBE=
+> + '[' 2 -ne 0 ']'
+> + kill -s 37 7595
+> ++ SIG_RESULT=1
+> + eval_result 1
+> + case $1 in
+> + prlog '	[\033[31mFAIL\033[0m]'
+> + newline='\n'
+> + '[' '	[\033[31mFAIL\033[0m]' = -n ']'
+> + printf '	[\033[31mFAIL\033[0m]\n'
+> 	[FAIL]
+> 
+> This is happening when secure boot is enabled, as it enables lockdown
+> by default. With lockdown, access to certain debug features and
+> filesystems like debugfs may be restricted or completely disabled.
 
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- drivers/mtd/ubi/attach.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hmm, if the kprobes lockdown causes this problem, all tests which use
+kprobes must not run. This seems onlu checks kprobe_opt_types.tc, but
+what about other tests?
 
-diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
-index ae5abe492b52..fe9784c90ea4 100644
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -393,8 +393,7 @@ static int validate_vid_hdr(const struct ubi_device *ubi,
-  * to the allocated "av" object in case of success and a negative error code in
-  * case of failure.
-  */
--static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai,
--					  int vol_id, int pnum,
-+static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai, int vol_id,
- 					  const struct ubi_vid_hdr *vid_hdr)
- {
- 	struct ubi_ainf_volume *av;
-@@ -576,7 +575,7 @@ int ubi_add_to_av(struct ubi_device *ubi, struct ubi_attach_info *ai, int pnum,
- 	dbg_bld("PEB %d, LEB %d:%d, EC %d, sqnum %llu, bitflips %d",
- 		pnum, vol_id, lnum, ec, sqnum, bitflips);
- 
--	av = add_volume(ai, vol_id, pnum, vid_hdr);
-+	av = add_volume(ai, vol_id, vid_hdr);
- 	if (IS_ERR(av))
- 		return PTR_ERR(av);
- 
+(Anyway, we don't recommend user to run tests in lockdown environment.)
+
+Thank you,
+
+> 
+> To fix this, modify the test to check for Secure Boot status using
+> lsprop /proc/device-tree/ibm,secure-boot. And, skip execution of the
+> test on PowerPC if Secure Boot is enabled (00000002).
+> 
+> With this patch, test skips as unsupported:
+> === Ftrace unit tests ===
+> [1] Register/unregister optimized probe	[UNSUPPORTED]
+> 
+> Signed-off-by: Akanksha J N <akanksha@linux.ibm.com>
+> ---
+>  .../selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc       | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
+> index 9f5d99328086..925e74d6acc7 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
+> @@ -10,6 +10,11 @@ x86_64)
+>  arm*)
+>  ;;
+>  ppc*)
+> +  lsprop_output=$(lsprop /proc/device-tree/ibm,secure-boot)
+> +  if echo "$lsprop_output" | grep -q "00000002"; then
+> +    echo "Secure Boot is enabled on PowerPC."
+> +    exit_unsupported
+> +  fi
+>  ;;
+>  *)
+>    echo "Please implement other architecture here"
+> -- 
+> 2.45.2
+> 
+
+
 -- 
-2.34.3
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
