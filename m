@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-300369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C6495E2E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEED95E2E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64FE41C20C51
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25F7B21376
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9150B13CF86;
-	Sun, 25 Aug 2024 09:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D4D13D504;
+	Sun, 25 Aug 2024 09:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ln/ntWGA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZeKhGV3O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0fmVaC/"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC6C2207A
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 09:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC756A59;
+	Sun, 25 Aug 2024 09:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724578824; cv=none; b=fkJmUYEc5C3lAKJSPIYSDOn2PZ6owMXaxou2qZpvPfQzbjKaluVx2s+aMlKUtVEqwtP8EVlSMh/e0Hr8IaASlhFIicKnidgIooFjoYPUrQNqfk8T3xXK9YNQqlueUxLRYgInWz8iutKwOIQ5KGJdBW4wQfHk2hA3nSWIX4nnd14=
+	t=1724579683; cv=none; b=Oxl4ZyofSaeIZwx+UygybcK6lMCEduPAAKfX3TRq2pEf9J/ICbTcGuxJDN4i3Weh4xn92qkhEzyMRsUR0v/qQsap15w7GZZB2Q/fNoKdKa/VMSgsAVoWT12JS9LTgKveMH2SC2hHT0qZVtGAhFhm6R165mm3gA+wbw5h/o98au0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724578824; c=relaxed/simple;
-	bh=Y6lOVFeGkZEIul1ReUgf0vf760b/SZtjUkjqrPFWgkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrHbqHkffxOaplke7Q6Aji5RsXnKUCZNnZuoWQ86/mLIbMEr2kwBCHxloEDECQYcLkTvUkLI20YUHK1Q8b+OKej5Qp+KZNXr2jxawMyrQI8Rik74wTOl9r8AnKLqudTv32c2g6KMkLYHP6XP6VzkG5GzcFGT4G66jeGZzL3aIvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ln/ntWGA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZeKhGV3O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 25 Aug 2024 11:40:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724578821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuwXP+rnomcsRu2oRLSiPatAHOqbx2HejldrdgYTASg=;
-	b=ln/ntWGA+giDjya2mW6mxYjy78rWFPWGa8NJjF4BKz/OuS5rp55HVQJjGdobjM6Ohtbduz
-	Enul8mSDlMYm1Rv56q2cQHPNoIxJZApQHlI8UCJuk8Khg1lxMz6F8JSfHanW7M4tZlyhj6
-	YtuFFI0kJkPr7viwc5fFf6ieKJtIAmvHVEYcFDxpYUO59cVeYIiXLPPp0ArZ6GlykC9gzW
-	9kGCHLvu9mjYzs3MqQoJuUbvtex5vhGZB345gbDHPX0lHfKZs+wwVDRJN9Nzvf9C2V7c2f
-	vsoJ8BNR03uNXP2RqMK/LmeDyr0som1YpfZC2BkjnYSpcrJ1W0iwLIg773eiPA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724578821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuwXP+rnomcsRu2oRLSiPatAHOqbx2HejldrdgYTASg=;
-	b=ZeKhGV3Ot0XCzxlAFI8ngO5Ui8JKSi2snzw6FjQ9JHHLxguB4aA0l2Ld50eKFk1+2m+Njw
-	5csVtdnj9m+ygUBA==
-From: Nam Cao <namcao@linutronix.de>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: vme_user: Change slot number type from int to
- u32
-Message-ID: <20240825094018.bm5yDW4g@linutronix.de>
-References: <20240825072955.120884-1-riyandhiman14@gmail.com>
- <20240825075017.WNpBd0l7@linutronix.de>
- <CAAjz0QbOVn-M2uDnWVsh1AJjdN5d-AYsMkx3DjgaXVmS+SzARA@mail.gmail.com>
+	s=arc-20240116; t=1724579683; c=relaxed/simple;
+	bh=1mBkGNFlDFxDWfPDkvYSxSHFHU6QkD9OAkyQG8G6pzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RzQdCm8X36PFOqVA8pCRN4rAGgOI+wwQ87qMsNMUR5tr8QHSCyfL7BHIiQpG/qynscmpl9RpkDLeu77+KpegwGOJz0TERDOqUXmGcNoO5kQuP8hPln3Cs4RpRmsjT6mJG5AHYcC76KV22UsFQCn8+aZ7Gk/N8nxqNyi8UcxuZ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0fmVaC/; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3da6d3f22so2578495a91.0;
+        Sun, 25 Aug 2024 02:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724579681; x=1725184481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ki9s/U4Sut/kkvy/DZiEXTPLLw1z1KDsCl7bqzPU3h4=;
+        b=J0fmVaC/PQkmek+IbE3UOtcKUr5O2FmYJA4aOP7+400Cge0IMyfclnlD2rTLKeM1bx
+         tau3fOd75UmVfxy6ayaII4LfEIpGjvJqUzBka9n0ndAAxxMmIBogriRwzEHK111v8uDH
+         vZlh6uJ3V1ifKns1QfsoZqASvu84prxM4nOan50E+39x/k/ig/iHUcuxPA+9x84MtNUq
+         LsU3AWcW04CFJRPbdd4IE0GtjNhht6uWUfkfnsDnoLVFkUamvvbGh/P8FW4WkK1v0660
+         ZKbAuoKMvRWUDqL21lzpV8oZnFt06cBI/mjZnRhvhaKnP0rh4TQWQH3Z7Gm/397OG2Vw
+         cN4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724579681; x=1725184481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ki9s/U4Sut/kkvy/DZiEXTPLLw1z1KDsCl7bqzPU3h4=;
+        b=wB0KWtiADUvF9IHfUGO8oZWXU2yKNgbuFITWUIUmH4JZTuONoVxxoa2y1d52EZbc98
+         loyyFqxSJvVzIm3L8T88eC+oBYcJliTdZweC6GhoUyr+d6xZ2/9Y99DO5ssdxVNbKDRi
+         ENYlMFYFpC4n0RdVJiaD1VtgpYCRBY7PkZZVFAJPMi49UpE3o37h93p3c9oRg2gLEWXD
+         kgiyrGDPzZXD/P3GVTqj5SvUhrQg2muUPKjl5joHaBP56RL8e6t0kCpcfS1COateEckf
+         n95yUA+HhiRN4KeI42otM4EO+yMZzr8YYtZ2rkhV1bKQd8xftGOMm+URyJpCJ65KPyit
+         5Tag==
+X-Forwarded-Encrypted: i=1; AJvYcCVS/OL7YmINkEBA/DmnKJIPCMreNVCrqKUsrWEAN+x3fX/NN2XwiNy3BBcGTNNqEo1x3p4IkB3yuNw=@vger.kernel.org, AJvYcCX1AMC5UgVsG2b/s2kH+96SKo47muARpMys6C0m0gyiN6tY+gzM/s4CDPwFIKsP5D0cwqQL68Vv2UfirWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz03nrCsBNARkuRaTcbFaaT6eI/qRPEB3Aty5uk47iBk9G7WgAw
+	Gupu5mBOVJFKGKyCFXtomR8WOXdGgssH8G+zScA+fpNvhSq6Eej1
+X-Google-Smtp-Source: AGHT+IGKDKyuEjDmKJ2HrlrT1n9OAVS1IkrqVYeL/JSUzQu9Op5OuYi5ifOBX9DZtCv3vpe88REJ7A==
+X-Received: by 2002:a17:90a:39c2:b0:2d3:c088:9c54 with SMTP id 98e67ed59e1d1-2d646bcd8a3mr7648841a91.6.1724579681173;
+        Sun, 25 Aug 2024 02:54:41 -0700 (PDT)
+Received: from 0x7f800001.. (2001-b400-e2db-5f0d-8150-1fac-9fab-d218.emome-ip6.hinet.net. [2001:b400:e2db:5f0d:8150:1fac:9fab:d218])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d613b1cb38sm7454970a91.50.2024.08.25.02.54.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2024 02:54:40 -0700 (PDT)
+From: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
+To: 
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	ricardo@marliere.net,
+	skhan@linuxfoundation.org,
+	0xff07@gmail.com,
+	Todd E Brandt <todd.e.brandt@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] pm-graph: ignore sleepgraph.py artifacts
+Date: Sun, 25 Aug 2024 17:53:50 +0800
+Message-Id: <20240825095353.7578-1-0xff07@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAjz0QbOVn-M2uDnWVsh1AJjdN5d-AYsMkx3DjgaXVmS+SzARA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 25, 2024 at 02:20:34PM +0530, Riyan Dhiman wrote:
-> > Are you sure none of the changed functions ever return a negative error
-> > code?
-> 
-> Yes, I have checked all the functions and variables for it.
-> the slot function is defined like this
+By default, sleepgraph.py creates suspend-{date}-{time} directories
+to store artifacts, or suspend-{date}-{time}-xN if the --multi option
+is used. Ignore those directories by adding a .gitignore file.
 
-What about vme_slot_num()? It may return -EINVAL, right?
+Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
+---
+ tools/power/pm-graph/.gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
+ create mode 100644 tools/power/pm-graph/.gitignore
 
-> static u32 tsi148_slot_get(struct vme_bridge *tsi148_bridge)
-> {
-> u32 slot = 0;
-> struct tsi148_driver *bridge;
-> 
-> bridge = tsi148_bridge->driver_priv;
-> 
-> if (!geoid) {
-> slot = ioread32be(bridge->base + TSI148_LCSR_VSTAT);
-> slot = slot & TSI148_LCSR_VSTAT_GA_M;
-> } else {
-> slot = geoid;
-> }
-> 
-> return slot;
-> }
-> 
-> Here, slot is defined as u32, and the value read from ioread32be is also
-> u32.
-> In the else case, it is assigned to geoid, which is an int global variable.
-> This global variable is a module parameter defined as follows:
-> 
-> MODULE_PARM_DESC(geoid, "Override geographical addressing");
-> module_param(geoid, int, 0);
-> 
-> which I assume will always be non-negative.
+diff --git a/tools/power/pm-graph/.gitignore b/tools/power/pm-graph/.gitignore
+new file mode 100644
+index 000000000000..37762a8a06d6
+--- /dev/null
++++ b/tools/power/pm-graph/.gitignore
+@@ -0,0 +1,3 @@
++# sleepgraph.py artifacts
++suspend-[0-9]*-[0-9]*
++suspend-[0-9]*-[0-9]*-x[0-9]*
+-- 
+2.34.1
 
-If this should always be non-negative, then perhaps we should prevent users
-from specifying negatives values. But that's a separate issue.
-
-Best regards,
-Nam
 
