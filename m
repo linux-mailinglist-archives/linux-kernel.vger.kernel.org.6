@@ -1,134 +1,116 @@
-Return-Path: <linux-kernel+bounces-300454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F895E3D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:18:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7EBD95E3C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95C81F21530
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:18:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA88281A34
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D6A15688C;
-	Sun, 25 Aug 2024 14:18:08 +0000 (UTC)
-Received: from mail-m1035.netease.com (mail-m1035.netease.com [154.81.10.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8A5154BFC;
+	Sun, 25 Aug 2024 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YMMReQ51";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Oq4hHHwl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B649C29CEF;
-	Sun, 25 Aug 2024 14:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3FA2AD15;
+	Sun, 25 Aug 2024 14:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724595488; cv=none; b=RzUiKLiF4xDn0CUqjsVXPrDikpn9Se2brkOk+XHRnyNos1TryQtGAPpqmPccoC6Esn3hdoXPh5Xg2ZITtt7LZ+vwO1eoQVuSr4t/V9/I0COP2DlAyyscFj4xyyRlJ7bDOcLWhknvgJjJ9NKSwa3Rkp4u6ZWp/f3vyHXo5Gtl3Yc=
+	t=1724595128; cv=none; b=GZzhkNGpmWCRc3a0JIo9dW24aslhPdkONtjPWgXvmkmF0WhAZ4z9yCDigVKiNMpCv+EDhZyfqMfAPpag5crNShlsOUcfwo/IZ2gZSPV5WKpNksf+5Ev8w+jMV0XT2gg4DKufmxBCcdWeWqz/9pIDNKUmARr513JekfVOtxpbPN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724595488; c=relaxed/simple;
-	bh=Tge7qNfQ7IBWwjRnKdpylWSoFux2yMMKX0erzV4q3Vg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bF42ww6KWrA9XLjFN5FnIPJZMgCjjOL12mzJVymPFv7Z1J6PwSALYcv842umLZweHKFGOWBb7S/gIiPvMJi8eI8bfocYeC25P9iZ7a7V3GzhuCAThfznvYk2m1hTdAlATkKk9Wh/04y2/R/Ty8MFuSfYOszDO0X4Ll4+ONgBtZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=154.81.10.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [58.61.141.165])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 50DE87E014E;
-	Sun, 25 Aug 2024 22:08:40 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: detlev.casanova@collabora.com
-Cc: airlied@gmail.com,
-	alchark@gmail.com,
-	amadeus@jmu.edu.cn,
-	andi.shyti@kernel.org,
-	andyshrk@163.com,
-	broonie@kernel.org,
-	cl@rock-chips.com,
-	conor+dt@kernel.org,
-	daniel@ffwll.ch,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dsimic@manjaro.org,
-	efectn@protonmail.com,
-	finley.xiao@rock-chips.com,
-	gregkh@linuxfoundation.org,
-	heiko@sntech.de,
-	honyuenkwun@gmail.com,
-	jagan@edgeble.ai,
-	jamie@jamieiles.com,
-	jic23@kernel.org,
-	jirislaby@kernel.org,
-	jonas@kwiboo.se,
-	jszhang@kernel.org,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lars@metafoo.de,
-	lee@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux@roeck-us.net,
-	maarten.lankhorst@linux.intel.com,
-	macromorgan@hotmail.com,
-	megi@xff.cz,
-	michael.riesch@wolfvision.net,
-	mripard@kernel.org,
-	robh@kernel.org,
-	tim@feathertop.org,
-	tzimmermann@suse.de,
-	ulf.hansson@linaro.org,
-	wim@linux-watchdog.org
-Subject: Re: [PATCH v2 11/12] arm64: dts: rockchip: Add rk3576 SoC base DT
-Date: Sun, 25 Aug 2024 22:08:24 +0800
-Message-Id: <20240825140824.200453-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <23624422.6Emhk5qWAg@trenzalore>
-References: <23624422.6Emhk5qWAg@trenzalore>
+	s=arc-20240116; t=1724595128; c=relaxed/simple;
+	bh=nlut8vKsFc0JMCDfvCdexmiw+J6OA4qbqKaIUuC4yCI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eNcehh5+3AF8j/H3ZBnW6SYEbJPV/D/sOovcbbC8oXPtshe05Uwn5gmBrpuCw6RobTVh4BTozwo7hen0SjoXCnQehY7aZp62v7HjTsPvoKNgC0q1qt1+NBKlpNam5tZCbYkqtXOH34eA/5/R/4A8DwKe+sJmwZJJCJ2Vnoh3Izc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YMMReQ51; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Oq4hHHwl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 25 Aug 2024 14:12:02 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724595122;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mqI4IVHyfwu8vsK9CD4QaMudH7OwCD6VmsWdr91d7Zk=;
+	b=YMMReQ518k2HYowMcq3b9qnHt4t+Jv2d5Ct5BVfzWqyzU/ncAmSJQF0CdYnlRscT5HrxyL
+	jhe0EO163y8NROy9lEjs1FEMPnAENype7Gu1mPWEwNyTAh5/wtQq1k+w1psiW/egIACvT7
+	+6CYn94GiSY8MeEhDSxRRnrqH32KfeuRG0wjdpk8iNCa77nK6AzBnhiCOknn6FwFrASilj
+	ul8CnEUWTFf8x7JYuk6t5HFes69blolqSk5qrt6y75nbzTuPH7DX0MswJa4y8c11f5ky2i
+	2ku9oPTY779Ui8Zic2miIEfdQ49YBl8Ilb2TFjW9vsZGLtBrNQrwS4dI9l8fmA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724595122;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mqI4IVHyfwu8vsK9CD4QaMudH7OwCD6VmsWdr91d7Zk=;
+	b=Oq4hHHwlvdq/oK8Uw5L50t4nHm+vzncq92UeeJHQcG3eWDuJZ8KgpyR69eyXBZ2ScDRv4k
+	oOt/xEOFjSwtzwCg==
+From: "tip-bot2 for Yue Haibing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cleanups] x86/extable: Remove unused declaration fixup_bug()
+Cc: Yue Haibing <yuehaibing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816102219.883297-1-yuehaibing@huawei.com>
+References: <20240816102219.883297-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkxIVk9DSUNIGhlPShpKT1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0pVSk1OWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
-X-HM-Tid: 0a9189de204f03a2kunm50de87e014e
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MQg6ARw5NzIxEhkzMVE8OBgK
-	HB8wCU5VSlVKTElPTkJPQklKQkJJVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWU5D
-	VU1KVUpPSlVKTU5ZV1kIAVlBSExMSzcG
+Message-ID: <172459512215.2215.10248995476587682569.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+The following commit has been merged into the x86/cleanups branch of tip:
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> ...
-> +		opp-1416000000 {
-> +			opp-hz = /bits/ 64 <1416000000>;
-> +			opp-microvolt = <725000 725000 950000>;
-> +			opp-microvolt-L1 = <712500 712500 950000>;
-> +			opp-microvolt-L2 = <700000 700000 950000>;
-> +			opp-microvolt-L3 = <700000 700000 950000>;
-> +			opp-microvolt-L4 = <700000 700000 950000>;
-> +			opp-microvolt-L5 = <700000 700000 950000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> ...
+Commit-ID:     cc5e03f3be3154f860c9d08b2ac8c139863e1515
+Gitweb:        https://git.kernel.org/tip/cc5e03f3be3154f860c9d08b2ac8c139863e1515
+Author:        Yue Haibing <yuehaibing@huawei.com>
+AuthorDate:    Fri, 16 Aug 2024 18:22:19 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 25 Aug 2024 16:07:51 +02:00
 
-I'm curious if these frequencies work properly. On the bsp kernel,
-'opp-microvolt-L<name>' is used by the PVTM driver, I don't know
-if it works on the upstream kernel. Sorry but have you tested it
-with mhz (https://github.com/wtarreau/mhz)?
+x86/extable: Remove unused declaration fixup_bug()
 
-Thanks,
-Chukun
+Commit 15a416e8aaa7 ("x86/entry: Treat BUG/WARN as NMI-like entries")
+removed the implementation but left the declaration.
 
--- 
-2.25.1
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240816102219.883297-1-yuehaibing@huawei.com
 
+---
+ arch/x86/include/asm/extable.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/extable.h b/arch/x86/include/asm/extable.h
+index eeed395..a0e0c6b 100644
+--- a/arch/x86/include/asm/extable.h
++++ b/arch/x86/include/asm/extable.h
+@@ -37,7 +37,6 @@ struct pt_regs;
+ 
+ extern int fixup_exception(struct pt_regs *regs, int trapnr,
+ 			   unsigned long error_code, unsigned long fault_addr);
+-extern int fixup_bug(struct pt_regs *regs, int trapnr);
+ extern int ex_get_fixup_type(unsigned long ip);
+ extern void early_fixup_exception(struct pt_regs *regs, int trapnr);
+ 
 
