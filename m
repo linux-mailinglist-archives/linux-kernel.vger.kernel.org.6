@@ -1,175 +1,80 @@
-Return-Path: <linux-kernel+bounces-300522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A17395E4B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D67395E4BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AF61C20A2A
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223A8281725
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491716C453;
-	Sun, 25 Aug 2024 18:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3025D16F287;
+	Sun, 25 Aug 2024 18:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RRxZsR9Q"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Rh8yo5Wz"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F9F1448C5
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168FF4778C;
+	Sun, 25 Aug 2024 18:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724611406; cv=none; b=SgAHGYIHNJbHCP0Ax83r0Y1j/pqFe60OcEoNdp0TrlgYpmpJ8+cOen7dftah8CA5UpDRKptX7EiRs3+scOGApYs1v5fCD/EigrsHyDHPwHfXyumCCLmsTQJ29IpRNTAamajcrOeBDRQdiRgad66Zh+gGENoe09dK1B/wXvxgKf0=
+	t=1724611897; cv=none; b=Py93Lwxq7P+doDgK5Supa9nW4eL4XYlv6HsI3Dmanv2BFSKM+RNKYCDmus3T9CdKVPhnpzuvWTBn57Z3oOKS6yp4dktsmbiIURxSOVrY+q7PqwsKaWQ9yL2WlrcNkOH70ujNdkgQSvnGRuk+c/qNVogv127jLePmkzvXdm+CqBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724611406; c=relaxed/simple;
-	bh=bD2/x+0opolo4shekMlLc3lwxnFeu+TOE1RPC+j2CMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJnDa9RgMYynjJ67v76YfA2/cqkormcZ8Z1nGCievM5cMBNEi52tItW4kNT+HorRi7V/d4FVkXe8l02T39zh1odncTDstb0ufuIyPlFLugTLV5BYdbN/eKeLqLj0dC3HCEsnehsQSSo5XbIVSXRBBR/95HzpeZ6izv+p6qtu7zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RRxZsR9Q; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 25 Aug 2024 14:43:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724611401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IWZF8cgdRpy8POz9dmk7qaJyxeNkE/0T2W0ZlBhFHv8=;
-	b=RRxZsR9QT2uGHB23JCPzneeO4RdqKEiTOCwtZpk5NSV13+8XaKKEw+eJ8NEx76j2gGL+fL
-	m5dniHb+DNF7cdJKqY2K/+TGXZVMGfWFanqPAdGdfS52TpdktDfVSL3PzWgZMA5S8/vTD7
-	9sczD6Fi+en5RQLhJVTIF8l9ZaAgb8k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: kees@kernel.org, gustavoars@kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: Annotate bch_replicas_entry_{v0,v1} with
- __counted_by()
-Message-ID: <cqyrlfpjprkwdteljmtcnl3z2etzitvodrlv7v57tuizvklpcx@gg7dbstowwd6>
-References: <20240825133601.24036-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1724611897; c=relaxed/simple;
+	bh=5cTbhky7YFrpL+RevDm6rybDE7zSEzYgqdVDOFzKi5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GvyZvfQc6+SpASmHaIHgmiQcCznjjVAdJ3VDyvEfcvXF1FoP9sUBjoWNoXD+c6b03IWGkSwqTo7j22LKrHLQrgQQiJs9TUdpCZYDV7WI8Do/E1wGqdR4KyTj9f17uw1Y8I6hiK8rBh4zRUSgc6bkHQ61F/9ELXBAnW3APgGFH3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Rh8yo5Wz; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4Tf919g5pjHDA2tr82ZwJYUnCMczwQw53R+x8hlGhrU=; b=Rh8yo5WzRO2pcALV+TShKqmqFx
+	EedVbP0R9DH0In+YtURIyzpiD52JJMuDYBQU5//E1DSsZC8GYnmvnF+Jr+FD6wMunFwJt42jAxqmv
+	L5l2fl5Q3FA+HtSF+MtYZYZ8oQEJQdKw0GZr3mMxzge02BEoh0I0CHaG7PwSQ1OpQ5bBJ9ZLK1irS
+	i9HuiMGGL1KdIlnYljPzN6v1zjaBt0F6O0swGnbE29yzxry+kCPySX30DKkx2noxuyNT7teJwEmbE
+	EFOc6FTIUCOGngDtHrP8rnxL/4jwa/FhhikgUd2LKEEWNTavaZzp59wavuSGy19h3PLZsKReJEO7M
+	5bp096oQ==;
+Received: from i53875a40.versanet.de ([83.135.90.64] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1siIKj-00019f-9Y; Sun, 25 Aug 2024 20:51:25 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] pmdomain: rockchip: Simplify dropping OF node reference
+Date: Sun, 25 Aug 2024 20:52:20 +0200
+Message-ID: <1931675.GKX7oQKdZx@diego>
+In-Reply-To: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
+References: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240825133601.24036-2-thorsten.blum@toblux.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, Aug 25, 2024 at 03:36:02PM GMT, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array members
-> devs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+Am Sonntag, 25. August 2024, 20:31:16 CEST schrieb Krzysztof Kozlowski:
+> Drop OF node reference immediately after using it in
+> syscon_node_to_regmap(), which is both simpler and typical/expected
+> code pattern.
 > 
-> Increment nr_devs before adding a new device to the devs array and
-> adjust the array indexes accordingly.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The nr_devs changes are pretty gross - please add a helper for that
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-> 
-> In bch2_journal_read(), explicitly set nr_devs to 0.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  fs/bcachefs/buckets.c         | 3 ++-
->  fs/bcachefs/journal_io.c      | 3 ++-
->  fs/bcachefs/replicas.c        | 6 +++---
->  fs/bcachefs/replicas_format.h | 4 ++--
->  4 files changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
-> index be2bbd248631..1e6badf9ddd2 100644
-> --- a/fs/bcachefs/buckets.c
-> +++ b/fs/bcachefs/buckets.c
-> @@ -740,7 +740,8 @@ static int __trigger_extent(struct btree_trans *trans,
->  				return ret;
->  		} else if (!p.has_ec) {
->  			replicas_sectors       += disk_sectors;
-> -			acc_replicas_key.replicas.devs[acc_replicas_key.replicas.nr_devs++] = p.ptr.dev;
-> +			acc_replicas_key.replicas.nr_devs++;
-> +			acc_replicas_key.replicas.devs[acc_replicas_key.replicas.nr_devs - 1] = p.ptr.dev;
->  		} else {
->  			ret = bch2_trigger_stripe_ptr(trans, k, p, data_type, disk_sectors, flags);
->  			if (ret)
-> diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-> index 7664b68e6a15..d1bd883c2c55 100644
-> --- a/fs/bcachefs/journal_io.c
-> +++ b/fs/bcachefs/journal_io.c
-> @@ -1353,6 +1353,7 @@ int bch2_journal_read(struct bch_fs *c,
->  	genradix_for_each(&c->journal_entries, radix_iter, _i) {
->  		struct bch_replicas_padded replicas = {
->  			.e.data_type = BCH_DATA_journal,
-> +			.e.nr_devs = 0,
->  			.e.nr_required = 1,
->  		};
->  
-> @@ -1379,7 +1380,7 @@ int bch2_journal_read(struct bch_fs *c,
->  			goto err;
->  
->  		darray_for_each(i->ptrs, ptr)
-> -			replicas.e.devs[replicas.e.nr_devs++] = ptr->dev;
-> +			replicas.e.devs[++replicas.e.nr_devs - 1] = ptr->dev;
->  
->  		bch2_replicas_entry_sort(&replicas.e);
->  
-> diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
-> index 1223b710755d..90d9b7d761bc 100644
-> --- a/fs/bcachefs/replicas.c
-> +++ b/fs/bcachefs/replicas.c
-> @@ -122,7 +122,7 @@ static void extent_to_replicas(struct bkey_s_c k,
->  			continue;
->  
->  		if (!p.has_ec)
-> -			r->devs[r->nr_devs++] = p.ptr.dev;
-> +			r->devs[++r->nr_devs - 1] = p.ptr.dev;
->  		else
->  			r->nr_required = 0;
->  	}
-> @@ -139,7 +139,7 @@ static void stripe_to_replicas(struct bkey_s_c k,
->  	for (ptr = s.v->ptrs;
->  	     ptr < s.v->ptrs + s.v->nr_blocks;
->  	     ptr++)
-> -		r->devs[r->nr_devs++] = ptr->dev;
-> +		r->devs[++r->nr_devs - 1] = ptr->dev;
->  }
->  
->  void bch2_bkey_to_replicas(struct bch_replicas_entry_v1 *e,
-> @@ -180,7 +180,7 @@ void bch2_devlist_to_replicas(struct bch_replicas_entry_v1 *e,
->  	e->nr_required	= 1;
->  
->  	darray_for_each(devs, i)
-> -		e->devs[e->nr_devs++] = *i;
-> +		e->devs[++e->nr_devs - 1] = *i;
->  
->  	bch2_replicas_entry_sort(e);
->  }
-> diff --git a/fs/bcachefs/replicas_format.h b/fs/bcachefs/replicas_format.h
-> index b97208195d06..d2e080d0ecb7 100644
-> --- a/fs/bcachefs/replicas_format.h
-> +++ b/fs/bcachefs/replicas_format.h
-> @@ -5,7 +5,7 @@
->  struct bch_replicas_entry_v0 {
->  	__u8			data_type;
->  	__u8			nr_devs;
-> -	__u8			devs[];
-> +	__u8			devs[] __counted_by(nr_devs);
->  } __packed;
->  
->  struct bch_sb_field_replicas_v0 {
-> @@ -17,7 +17,7 @@ struct bch_replicas_entry_v1 {
->  	__u8			data_type;
->  	__u8			nr_devs;
->  	__u8			nr_required;
-> -	__u8			devs[];
-> +	__u8			devs[] __counted_by(nr_devs);
->  } __packed;
->  
->  struct bch_sb_field_replicas {
-> -- 
-> 2.46.0
-> 
+
 
