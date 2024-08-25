@@ -1,126 +1,100 @@
-Return-Path: <linux-kernel+bounces-300412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD60F95E35C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:37:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD8395E361
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767B5281BE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:37:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184D1B220C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C278D155749;
-	Sun, 25 Aug 2024 12:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479FA153824;
+	Sun, 25 Aug 2024 12:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KkZrmgQ8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0VERNtkR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8fL7pGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580246F2E0;
-	Sun, 25 Aug 2024 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE5C74076;
+	Sun, 25 Aug 2024 12:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724589435; cv=none; b=kcsjkU8BD/XFHDcEruhwbExQkBLsK1jXcQcsourlDOQ1dYxrlKpOlv6Q8trdM559kjue0YIx0L8PDhwDMkb647ekmaA1Ex85hIVMerVFSFqWkVOYMb7eAA1syxQ7ddWyeLJNvZbgMPigiKn1Z4DJf+3WGKV1jvyyzMX26JkRl08=
+	t=1724589468; cv=none; b=pwX+V0MkQNn45HJnFvKujqBULBhhXzDPofi64zV0httgmo+bHJPgbRhuRi/kqnoa5EPMwxkZ2SzOwNetk62sAxt0jakY6iq03Jz3v6J6HeoIFuczhv2f1NpaiVSL46FI7MkxFkFqg8/vUQbQ3BVYjrBq4vnx4l2Rc2y1ah9z4Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724589435; c=relaxed/simple;
-	bh=rfDck3qf9DcKnTy20mKF6PFk4nJ/1el696iBWWGGaVM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qhgJWSJ/0KgYBlUOY8OYpMpv9FusSkqkgdZUjnKdp8w78Ukkz4UwXH8dq+b+D2w+8YG1aB/bhK/gkesm2vuDHKhgfj79bdlTZjkdv0NmzlLY6x3HPguL7bEE5uH93wxg8K1DpCNe4i9M0HOUxzqddZ4Kh0oeZXiMs1HbON9D3WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KkZrmgQ8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0VERNtkR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 25 Aug 2024 12:37:12 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724589432;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Yd27D7GWAdfF4eCLpg7GNiyr0+N6E7YUAwnKvYx8SM=;
-	b=KkZrmgQ8EUc6f0HoytCkW2kxQOhBpTuKN9JZElJWlD7P957d8VLbvJNTB5qcemNVPwe+/Q
-	G06Bmtp3vTtzGqMBpYZ48OmoHRe0K4naPJC2kdtjMalVPgeg5i9Fg4UvJ8nC3f+fJaX/Tj
-	U1JhQuaaijD/P0H9vyPNitFln4xoBP8OphSaMqVDKJSz3m6ynSfzr7EP9dfOPxtZ/UYivJ
-	KkWQJk0yX5Qcm5GFIOcJM8v1NA8qH0F1rqt3P5dm6SmY8Lg4Hl5TyNTIS+1V4BYkDBPpXB
-	Kl3oecm8aHJwdW50aLdq4QLXrdjChA9rsRr/XozwVERUAT0GTXeLCLlMcr/yMw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724589432;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Yd27D7GWAdfF4eCLpg7GNiyr0+N6E7YUAwnKvYx8SM=;
-	b=0VERNtkRSDXKFOHt7phDJ3JDpHWy0nVz3iijxY4HFOOSe6fxqta6+760Z1NOhxBuv9qMpq
-	nawloSCD8/1wG4Cg==
-From: "tip-bot2 for Gaosheng Cui" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/mtrr: Remove obsolete declaration for
- mtrr_bp_restore()
-Cc: Gaosheng Cui <cuigaosheng1@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240824120234.2516830-1-cuigaosheng1@huawei.com>
-References: <20240824120234.2516830-1-cuigaosheng1@huawei.com>
+	s=arc-20240116; t=1724589468; c=relaxed/simple;
+	bh=ehb4C4WLmyUJs/6wpAK5MGPHln+w8i78S61mk5Dy0Qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HSQ1gFr4czor+t/4l9C+gGzCZ5ml/rlwjwdUZE/Nxm3SIsDcKhxrqc7CWkCM1QzmhQiaGbmdBcTeB0VgMBTprDEiS1+drvS63Q5GgIrFR5Cchbt6CxMBZFyW0cUqWFxWAXX8gbcGGeXgrCnZA5W47xOU57MG8ZkTbD/b6sJ6a7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8fL7pGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D99F6C32782;
+	Sun, 25 Aug 2024 12:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724589468;
+	bh=ehb4C4WLmyUJs/6wpAK5MGPHln+w8i78S61mk5Dy0Qc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H8fL7pGB4Tyv4QF/tTKBsOFJO25D/8OEzzgIqEP481LY/IToFchHlucyskmROfoht
+	 azAtUGdaEGxqVG7fNpBPhMJthdYxRD3jY+U7U9issHIAiNdiBY/6kY1YR38fHaLQtl
+	 sHpOe+hM5n8vFGhneIQMO/0bkrrosbsUj3uePba5Ro/Y2F8u6cOKJxHHPWCEk9HCPo
+	 uNaOcHheCXmOoabjKxxEWKxOSm8B0P5K4/W6/Wd7cZ+RLfmdGG5/6tTuidvcua82T+
+	 M6AM4a5HD23Ezu0OAGpd6Vx9Cc34PpHRMrnPF7o2d2fE+2oVbl4btUqJ7/G+NOjTmE
+	 34QkaOUgcBwDA==
+Message-ID: <979c3fc3-33d3-49fa-af80-52ec09325a08@kernel.org>
+Date: Sun, 25 Aug 2024 07:37:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172458943231.2215.5248898838647596696.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tsc: Use rdtsc_ordered() when RDTSCP or LFENCE_RDTSC
+ are supported
+To: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas
+ <bhelgaas@google.com>, Mathias Nyman <mathias.nyman@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+ Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20240823042508.1057791-1-superm1@kernel.org>
+ <20240823042508.1057791-3-superm1@kernel.org> <8734msg5ce.ffs@tglx>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <8734msg5ce.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cleanups branch of tip:
 
-Commit-ID:     741fc1d788c0aff3022249e561fd489c7adaded3
-Gitweb:        https://git.kernel.org/tip/741fc1d788c0aff3022249e561fd489c7adaded3
-Author:        Gaosheng Cui <cuigaosheng1@huawei.com>
-AuthorDate:    Sat, 24 Aug 2024 20:02:34 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 25 Aug 2024 14:29:38 +02:00
 
-x86/mtrr: Remove obsolete declaration for mtrr_bp_restore()
+On 8/25/24 07:22, Thomas Gleixner wrote:
+> On Thu, Aug 22 2024 at 23:25, Mario Limonciello wrote:
+> 
+> Why is this hidden in a reply to the middle of a PCI patch series?
+> 
+> Sigh.
 
-mtrr_bp_restore() has been removed in commit 0b9a6a8bedbf ("x86/mtrr: Add a
-stop_machine() handler calling only cache_cpu_init()"), but the declaration
-was left behind. Remove it.
+As I mentioned in my reply I didn't mean for this to go out at this 
+time.  Sorry for the noise!
 
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240824120234.2516830-1-cuigaosheng1@huawei.com
+It's still under testing that it REALLY helps things.
+It was in my working directory and I totally missed it when I sent this 
+PCI series.
 
----
- arch/x86/include/asm/mtrr.h | 2 --
- 1 file changed, 2 deletions(-)
+> 
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> On AMD processors the TSC has been reported drifting on and off for
+>> various platforms.  This has been root caused to becaused by out of order
+>> TSC and HPET counter values.  When the SoC supports RDTSCP or LFENCE_RDTSC
+>> use ordered tsc reads instead.
+> 
+> This really wants a fixes tag.
 
-diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
-index 090d658..4218248 100644
---- a/arch/x86/include/asm/mtrr.h
-+++ b/arch/x86/include/asm/mtrr.h
-@@ -69,7 +69,6 @@ extern int mtrr_add_page(unsigned long base, unsigned long size,
- 			 unsigned int type, bool increment);
- extern int mtrr_del(int reg, unsigned long base, unsigned long size);
- extern int mtrr_del_page(int reg, unsigned long base, unsigned long size);
--extern void mtrr_bp_restore(void);
- extern int mtrr_trim_uncached_memory(unsigned long end_pfn);
- extern int amd_special_default_mtrr(void);
- void mtrr_disable(void);
-@@ -117,7 +116,6 @@ static inline int mtrr_trim_uncached_memory(unsigned long end_pfn)
- 	return 0;
- }
- #define mtrr_bp_init() do {} while (0)
--#define mtrr_bp_restore() do {} while (0)
- #define mtrr_disable() do {} while (0)
- #define mtrr_enable() do {} while (0)
- #define mtrr_generic_set_state() do {} while (0)
+Yes; assuming it really helps I will send it properly with tags and to 
+the right lists.
 
