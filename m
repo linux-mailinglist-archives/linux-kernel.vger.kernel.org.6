@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-300492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C8195E45E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:31:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1AF95E459
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE5A28161C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF111F214B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C5A158D66;
-	Sun, 25 Aug 2024 16:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A1E15538C;
+	Sun, 25 Aug 2024 16:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="U5tvvkGl"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG/DyatI"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29E92E636;
-	Sun, 25 Aug 2024 16:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140181CD31
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724603484; cv=none; b=MCuMBbOHgP+61AOtNmZeuNje0cjK4QJWcQJyEsrGgc+uxpfVviuWQQ8stQC2SpN1MXllZCkc263lXmflRvFXkiQ0Yd5Ohbc2xxJHr9brU7m3BBiJaFNrrnIBudKccS+0svk5d6C8W8H2bGlA/RmNjuR6AOmRTuD07XkO+hnLYoI=
+	t=1724603083; cv=none; b=sWeA9gFhpjMiMpq4S9g2eDRAb7TD8tpbLYTE5XeOjk9OXQVVV15EfGVqbooqGbORsopCDLumZdsaqMiiLtIk5HNhupRGpahYBi1w4rJa7RtTFUVTfFzWbKjyl1N/N1ItvffJnOoPA7QIIG0nxNuuaHBI90780HHvS7Dbxca7ueI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724603484; c=relaxed/simple;
-	bh=92Dz1fkXnRnMEXcn58jZfdW2YkKTdEzFSQY128vy7KE=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ipkPDUIvgga4S6QZCSF0teJ7zblrtKmniERIyoQ1D03CfPlZhve9GTGsdq8z4eLABuudvYnK4+hPjFKIT/5H1dVVd/J4GwK6yWCJ85YSaK+0VAHH5Vl65S8yw22Zuwtixpv7gEGgTWDULH8cc8RNAToBqTePtQwhZnPtgUGkbmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=U5tvvkGl; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1724603042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O/0CVHEKDJQyYWXwIbOQUlthvfXsND9N1ahK4smTqQ0=;
-	b=U5tvvkGlfI6OBAY8Wz4LUP+Z8uR5hNZyzLXiS7vFNvvx31EUjMDofXUubr8axmBJBtZFPT
-	wl1Ehve6XMHlC7A48DB2zyufLuREtd2O5e5zM5uV/yFCDtkciQhXXyKyMAjJZujAFSFl0m
-	YZv/gixXtw5t8M5TCyFGIOudVjwA33A=
-From: Sven Eckelmann <sven@narfation.org>
-To: mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- b.a.t.m.a.n@lists.open-mesh.org, Xingyu Li <xli399@ucr.edu>
-Subject: Re: BUG: general protection fault in batadv_bla_del_backbone_claims
-Date: Sun, 25 Aug 2024 18:23:54 +0200
-Message-ID: <13617673.uLZWGnKmhe@bentobox>
-In-Reply-To:
- <CALAgD-7C3t=vRTvpnVvsZ_1YhgiiynDaX_ud0O6pxSBn3suADQ@mail.gmail.com>
-References:
- <CALAgD-7C3t=vRTvpnVvsZ_1YhgiiynDaX_ud0O6pxSBn3suADQ@mail.gmail.com>
+	s=arc-20240116; t=1724603083; c=relaxed/simple;
+	bh=KJ+Z50j8sUoBHy3hhy960h2rh2ePf4Ly0jSUPqKdGDM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OMEdP4Xo8zRZ5eRHTmoIR9II4omZiq8i8OV7rAB741IhjEDJv9AxaoxK0vMbbbhJTpy8SHgkIuoExwZQ2ZFESxMgO9JfgsYEI0D811+jir8oc9IT+sZgCSg/kDN/lvNrMf+Qjq8arPqL4RYgMBIB+8W38QX6kf7QGmfBL+u5xhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG/DyatI; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3cb747fafso38064121fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 09:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724603080; x=1725207880; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n6XomT4xNhYnUhlhJpfg6DQnFwYDy19uzJG9jCJSIOE=;
+        b=ZG/DyatIs0Cu/sia4ttT6BxgT22HDLV5k3QtJTZWUfUHIh79hTrn4vpdKiD1cBCWeR
+         s1V24OJ5TfJF+L5rYMoQspb6udvjqd8/houerMkJaZwUrBReOFJja0N3BDmxZGgYaIXS
+         J8rwhVNlPFqTCHxT6+zYQuWY8eGq1CckKHkvTNOmfWqG4IDfdeD/kp1oUIcY8aRNc4oX
+         k7Yf18oh/H3n57T+tCHx0AERM6QYv5gWIpku7H73gP8wc6aDobqRwM2aVugCmicp7cwC
+         13VoImLc3I13d+Yy2ner2dA6bKpBHW6BR/hE8zjoAzYIU9f8kyJuJCbQe+Bd6clLKi3q
+         EBIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724603080; x=1725207880;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n6XomT4xNhYnUhlhJpfg6DQnFwYDy19uzJG9jCJSIOE=;
+        b=kc+bMzFzu2BCWZeXLAK6DJE57SRtJms5mzQHRsjA+bWGgz5PZaznlek+zDYcXxLIsj
+         +R46l+UBtvnawLJXbcPH3Eaz3JDMy8b6+wiV7I1PjoIC4iajuyAlZFMIh/GqWTFcRYeE
+         eTmKiB18Mft5fSVG+ngAxJbWM4d1jZ7Y98af8hz/vqk+YqNnuHe/XYvWYdpUiz+BIOWx
+         MaqsQM/ZZGt+F5rouMZfubevMtMmo4B8u+hwdsmLLjXdGHUr3SPGdXdNRWp3/kCwpaRt
+         UTeaWVaEDX/yBXmLE5QkjIVruFYxrX9XxWeV8w+LqwhU6OGkXfgWRSHzzXVXAxIoHtqL
+         RE9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNK8aIYSaxLBepA6Z6knexnLE7NHB49jSbSR/baQDb8FftKx0w77z3IFl0jLw5+Gp2whrJ8n1q7CE3jUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrlPzMLprRaVF3cJ2Jcyr15sXjuYcIPzqK7vYTuBESAZ3hdXsy
+	JLVA1SuRBmyMspuFrQNFhUWxuQ4XEBejOhst5Jlu1x0+N6lJ6vXb
+X-Google-Smtp-Source: AGHT+IHTCz6agKZpn/0TM6H5VB1xS4o1qPHzlO6+ruqCMC63cLFJxFAOns8FPsvm6zqLp2Zk54MvFg==
+X-Received: by 2002:a05:651c:211a:b0:2ef:2006:bfb1 with SMTP id 38308e7fff4ca-2f4f9dced35mr48808711fa.15.1724603079772;
+        Sun, 25 Aug 2024 09:24:39 -0700 (PDT)
+Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4048acb0bsm10663581fa.125.2024.08.25.09.24.38
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 25 Aug 2024 09:24:39 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2986161.e9J7NaK4W3";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-
---nextPart2986161.e9J7NaK4W3
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Date: Sun, 25 Aug 2024 18:23:54 +0200
-Message-ID: <13617673.uLZWGnKmhe@bentobox>
-MIME-Version: 1.0
-
-On Sunday, 25 August 2024 06:14:48 CEST Xingyu Li wrote:
-> In line 307 of net/batman-adv/bridge_loop_avoidance, when executing
-> "hash = backbone_gw->bat_priv->bla.claim_hash;", it does not check if
-> "backbone_gw->bat_priv==NULL".
-
-Because it cannot be NULL unless something really, really, really bad 
-happened. bat_priv will only be set when the gateway gets created using 
-batadv_bla_get_backbone_gw(). It never gets unset during the lifetime on the 
-backbone gateway.
-
-Maybe Simon has more to say about that.
-
-On Sunday, 25 August 2024 06:14:48 CEST Xingyu Li wrote:
-> RIP: 0010:batadv_bla_del_backbone_claims+0x4e/0x360
-
-Which line would that be in your build?
-
-On Sunday, 25 August 2024 06:14:48 CEST Xingyu Li wrote:
-> Syzkaller reproducer:
-
-At the moment, I am unable to reproduce this crash with the provided 
-reproducer.
-
-Can you reproduce it with it? If you can, did you try to perform a bisect 
-using the reproducer?
-
-Kind regards,
-	Sven
---nextPart2986161.e9J7NaK4W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZstamgAKCRBND3cr0xT1
-y9x3AQCI8h/Dcc3iVqqa0XiVgpP7ecJxHatYGydBR1RH46HCcwEA997cKeW4kX8v
-myVNLA90kDo9mmb3MHmOmn0BjgJhrQM=
-=Z8g1
------END PGP SIGNATURE-----
-
---nextPart2986161.e9J7NaK4W3--
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+Date: Sun, 25 Aug 2024 18:24:28 +0200
+Cc: Nhat Pham <nphamcs@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Yosry Ahmed <yosryahmed@google.com>,
+ Linux-MM <linux-mm@kvack.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+ <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com>
+ <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
 
 
+> Wiadomo=C5=9B=C4=87 napisana przez Pedro Falcato =
+<pedro.falcato@gmail.com> w dniu 25.08.2024, o godz. 17:05:
+>=20
+> Also, could you try a memtest86 on your machine, to shake out =
+potential hardware problems?
+
+
+I found less time consuming way to trigger issue: 12c24t cross compile =
+of llvm with =E2=80=9Eonly 16G=E2=80=9D of ram - as this triggers many =
+heavy swappings (top swap usage gets 8-9G out of 16G swap part)
+
+With such setup - on 6.9.12 - i=E2=80=99m getting not available system =
+(due cpu soft lockup) just in 1..3h
+(usually first or second compile iteration; i wrote simple scrip =
+compiling in loop + counting interations)
+
+Then i switched back to 6.8.2 and=E2=80=A6. decided interrupt successful =
+test after 14 iterations (it was 19h of non-stop compiling with heavy =
+swapping)
+(sure - i can still keep test going - but builder is also needed for my =
+normal development)
+
+So summarising:
+-on 6.9+ just 1..3h seems enough to provoke issue
+-on 6.8.2 so far never in past + currently can=E2=80=99t provoke issue =
+(last day in 19h test window nor 5 full distro builds nor last 2 weeks =
+of development)
+
+By above i personally don=E2=80=99t believe issue is in hw (ram)
+
+
+  =20=
 
