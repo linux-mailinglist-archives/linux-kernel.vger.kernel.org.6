@@ -1,228 +1,93 @@
-Return-Path: <linux-kernel+bounces-300227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5092395E0D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:34:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA26995E0D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FED11C20F5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838D428263A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E4CF9DF;
-	Sun, 25 Aug 2024 03:34:32 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461F88C11;
-	Sun, 25 Aug 2024 03:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6C7C8E0;
+	Sun, 25 Aug 2024 03:37:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A7A1D69E
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 03:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724556871; cv=none; b=FboT0LZNg5HQdK41pdG/bIbDMF2q7DukTeumxVCeaSyakVRZBz0kLSpbBqfefjMK2gn7ya65LJGG5ZuMilFnxTnI7eOqKlB2OZUo32GghSUDsAc88TuU/k/z2Z3KYVyaj/MF9kkcxS/rZL4SeCu51lJ9ht66mf02tDhda8sZgBo=
+	t=1724557026; cv=none; b=VHK+2U2ubOm5i+kGyChqoPUdYUKJO29HHsjBQ/N07m3GEK+knjYi0yxK8KXh+lTXu1ZUUBoGwk6MYoBVSiQgZuAcLagz3sUOAUv6LOr9Iuha6b/P5p95AtN8CMBfLmyHKIlrlpmRr9ruciKsQnxSid3iV9QCvJ8QihBjsc+9phs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724556871; c=relaxed/simple;
-	bh=GLh0c4J0+6QysF3awcYBVB6C1NnBKgCQzHe7q4s8x9k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HmVB3LCYU1IugzqL/PbItILkNZHoPhHBJdyQitJd6iYbvPGYL4l+0PBEhePpjb8lh12djPYChaOuZYzUA1praX+R/00crzPWAVcJlKU6oPQMQR5ZYJMF/teem9/UIiJmd1wbe8oQuR0i3L2hTXIiKszqHLDhwWQtEXh2GVdTcyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8Axz5s7pspmVCsfAA--.38421S3;
-	Sun, 25 Aug 2024 11:34:19 +0800 (CST)
-Received: from [10.20.4.132] (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMAx62Y5pspm62shAA--.6265S2;
-	Sun, 25 Aug 2024 11:34:17 +0800 (CST)
-Message-ID: <778e50bc-58db-42e6-aee3-3b1e01ca227d@loongson.cn>
-Date: Sun, 25 Aug 2024 11:34:17 +0800
+	s=arc-20240116; t=1724557026; c=relaxed/simple;
+	bh=qs8x+3+P7R5Yu46yXDf1sNvEY3Wimh2kH94I3uOLjq0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lN9pgBHzmsNbG+ThVnjspAr2YfG0PNxKLb+xK+BZ6zEPU327+rleKdi0KFLtrCD+RPmOhRrEahSp8FmxIFhqCgm3YVW8U6VhtcYCknmfeUbhbb9Owj49NvzIwknzTEKVwBnaCPyf5Lmk0ywJBjKU9mbvjbHQbPMJRvTeAuFUrDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d4c0fc036so38046145ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 20:37:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724557024; x=1725161824;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9Y7prTirX60Zjf7MKnC93bQnU3UQk7j54mGU0BXZMI=;
+        b=T8do0GExiBVwBdwPCi37e/SSuKMczWfmAznwWedgpT59LDQ7ENExZvTiq58QCcPI3p
+         Ew37nzNEX9HoSeZXKGR3Tc4EsNhCt4J4tFpSRjAEXDgqnz4qjUTlh3BHXiQYK2BuOBRo
+         xEg9FRjjazTyRq8Dbzlrzbw5lMhLmE8dgfzhtW1wju4q3ueYgXZ9E0I+NrTNSPTrohS0
+         WkZvvj/9SIRUrxvalONSBIHdpbTQyrQASl2jGMaXue9DfXRhZc3K8ZpWkNvAiwmPOSNo
+         AGlU+pOEzggaW5GgtsaeiVTLJ6U9zwIz1ENrC3+wHbGnFpjQ8jo21zJRKaI0p8zDyLi0
+         M7Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPATYWK2kErHN3uYNGYEqBiyhgWn7eqt4gYZRzGQQyZBD0b3iDG/6jymreguaEF+7dVdqenYEO/SQ1LZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQx0LqyM5w5knEcSg3W+tmwJ73z8GfQlfr3G2uN2iI4E9q6fxD
+	iWtQmI5kJRJB3+S+EhSRpXFBdb4xH3G7e/h4vym62dvQzmQxeFxEV1DIApcrk5YKkrmQG3ESBkL
+	vWax/kO/ne20JWwkVvgQz2SJyV6JcL3eC1MzobK3/2GQYCyNeGuNZRm8=
+X-Google-Smtp-Source: AGHT+IG4h7J5l4jttEEali2eWLWHbj4PjUwD+750YNkmr8ye40PAEwm3+AmjpuzBBHHVSW6sVcYvyyKkJNP/kSyTJnB4YaI/A0Rt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
- p.zabel@pengutronix.de, zhuyinbo <zhuyinbo@loongson.cn>,
- Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang <wanghongliang@loongson.cn>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
- <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
- <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
- <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
- <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
- <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
- <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
-Content-Language: en-US
-In-Reply-To: <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAx62Y5pspm62shAA--.6265S2
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEABGbJzRsCPAAAsA
-X-Coremail-Antispam: 1Uk129KBj93XoWxCr1DJryDtrWkCr15CFyfAFc_yoWrKw17pF
-	4rGanrGryUtr10vr4Ut3W8Jr95t3s8Jw1DXr48XF17Gayqqw1jqr1rZF4jgryfXr48Jryj
-	qr1UKFy7ZF47Z3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
-	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	kF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4U
-	MxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
-	0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
-	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20x
-	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
-	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8m9aDUUUUU==
+X-Received: by 2002:a92:ca4b:0:b0:397:2946:c83c with SMTP id
+ e9e14a558f8ab-39e3c9f5955mr6047325ab.4.1724557024186; Sat, 24 Aug 2024
+ 20:37:04 -0700 (PDT)
+Date: Sat, 24 Aug 2024 20:37:04 -0700
+In-Reply-To: <00000000000039e8e1061bc7f16f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d26462062079b885@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in do_ip_setsockopt (4)
+From: syzbot <syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com>
+To: alibuda@linux.alibaba.com, davem@davemloft.net, dsahern@kernel.org, 
+	dust.li@linux.alibaba.com, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	schnelle@linux.ibm.com, syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
-在 2024/8/12 16:25, Krzysztof Kozlowski 写道:
-> On 12/08/2024 10:09, 郑豪威 wrote:
->> 在 2024/8/9 18:05, Krzysztof Kozlowski 写道:
->>> On 09/08/2024 11:55, 郑豪威 wrote:
->>>>>>>> +    description: Enables fractional-N division. Currently,
->>>>>>>> +      only LS2K1500 and LS2K2000 support this feature.
->>>>>>>> +
->>>>>>>> +  rts-invert:
->>>>>>>> +    description: Inverts the RTS value in the MCR register.
->>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
->>>>>>>> +
->>>>>>>> +  dtr-invert:
->>>>>>>> +    description: Inverts the DTR value in the MCR register.
->>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
->>>>>>>> +
->>>>>>>> +  cts-invert:
->>>>>>>> +    description: Inverts the CTS value in the MSR register.
->>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>>>>>>> +      and Loongson LS7A bridge chips.
->>>>>>>> +
->>>>>>>> +  dsr-invert:
->>>>>>>> +    description: Inverts the DSR value in the MSR register.
->>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>>>>>>> +      and Loongson LS7A bridge chips.
->>>>> Same questions for all these. Why choosing invert is a board level
->>>>> decision? If it "should be used" then why it is not used always?
->>>>>
->>>> Because these features are not applicable to all chips, such as
->>>> 'fractional-division',
->>> Hm?
->>>
->>>> which is currently supported only by 2K1500 and 2K2000, and for
->>>> Loongson-3 series
->>> These are SoCs. Compatible defines that. Please align with your
->>> colleagues, because *we talked about this* already.
->>>
->>> Best regards,
->>> Krzysztof
->> I consulted with my colleagues and would like to confirm with you. For
->> the five
->>
->> properties provided, fractional-division is offered as a new feature,
->> supported by
->>
->> 2K1500 and 2K2000. As for the invert property, it is due to a bug in our
->> controller,
->>
->> and its usage may vary across different chips. Should we add different
->> compatible
->>
->> values to address these issues for different chips, whether they are new
->> features or
->>
->> controller bugs?
-> How did you align? We had already talks with you about this problem -
-> you need specific compatibles. How you explain above properties, all of
-> them are deducible from the compatible, so drop them.
->
-> Your entire argument above does not address at all my concerns, so
-> before you respond repeating the same, really talk with your colleagues.
->
-> One of many previous discussions:
-> https://lore.kernel.org/linux-devicetree/25c30964-6bd3-c7eb-640a-ba1f513b7675@linaro.org/
->
-> https://lore.kernel.org/linux-devicetree/20230526-dolly-reheat-06c4d5658415@wendy/
->
-> I wish we do not have to keep repeating the same to Loongson. Please
-> STORE the feedback for any future submissions, so you will not repeat
-> the same mistakes over and over.
->
-> Best regards,
-> Krzysztof
+commit d25a92ccae6bed02327b63d138e12e7806830f78
+Author: D. Wythe <alibuda@linux.alibaba.com>
+Date:   Thu Jun 13 18:00:30 2024 +0000
 
-Hi:
+    net/smc: Introduce IPPROTO_SMC
 
-I have been aligning with my colleagues over the past few days and
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15e95825980000
+start commit:   d2bafcf224f3 Merge tag 'cgroup-for-6.11-rc4-fixes' of git:..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17e95825980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e95825980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fc2afd52fd008bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4c27043b9315839452d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e70233980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a44815980000
 
-reviewing previous discussions. Based on these, I have made the
+Reported-by: syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com
+Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
 
-following modifications according to the differences in the controller:
-
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - loongson,ls7a-uart
-+          - loongson,ls3a5000-uart
-+          - loongson,ls2k2000-uart
-+      - items:
-+          - enum:
-+              - loongson,ls2k1000-uart
-+              - loongson,ls2k0500-uart
-+          - const: loongson,ls7a-uart
-+      - items:
-+          - enum:
-+              - loongson,ls2k1500-uart
-+          - const: loongson,ls2k2000-uart
-+      - items:
-+          - enum:
-+              - loongson,ls3a6000-uart
-+          - const: loongson,ls3a5000-uart
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clock-frequency: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clock-frequency
-+
-+allOf:
-+  - $ref: serial.yaml
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/loongson,ls2k-clk.h>
-+
-+    serial@1fe20000 {
-+        compatible = "loongson,ls2k1000-uart", "loongson,ls7a-uart";
-+        reg = <0x1fe20000 0x10>;
-+        clock-frequency = <125000000>;
-+        interrupt-parent = <&liointc0>;
-+        interrupts = <0x0 IRQ_TYPE_LEVEL_HIGH>;
-+    };
-
-Does this modification meet the expectation?
-
-Best regards,
-
-Haowei Zheng
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
