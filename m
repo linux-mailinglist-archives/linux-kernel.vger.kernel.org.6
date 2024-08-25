@@ -1,52 +1,70 @@
-Return-Path: <linux-kernel+bounces-300266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CE895E1B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F1495E1B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB10282003
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EC81F21D60
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB38288BD;
-	Sun, 25 Aug 2024 04:28:41 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23D021373;
+	Sun, 25 Aug 2024 04:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CK+dlzKo"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1141714293;
-	Sun, 25 Aug 2024 04:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EBEBE6F
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 04:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724560121; cv=none; b=Whou/ThrZ7+MOzHLw3mmrS4OKLfp3l3YdRDks1dWx5R4vuFqcXVOeJz8SV3iRbT/5RKJUYd09K9CTP5CVovYTiNCMPFWJS3IDkRTpaD+uqHQsrekGCFhhBz4NNhZqHfc1T1nTMkOkPoxv/6Nsx4CIwzid/eo+iEdd979KurxIxc=
+	t=1724560514; cv=none; b=Siz2gkx+O8sm0ydcuw0swwCxnCqwg1QwCuKQyZ3LekQtwEInAj9F/DaKdA6cB6jBdi+TCtbLvtAKlf5zju+VQMw7HWmXM+a5wFI4ixVBCDWo6k/rG0SaOueTYK2T+0aywvFsBOh/ESM9RfNrNLd4raF7GsJ7Y9wbCDPcV/yrmu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724560121; c=relaxed/simple;
-	bh=L6008oDfcpGOdp3sZj7mO4v81wzU3PhcgEhuJkxXEyk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tMLQIMUAM8Z1vquToA+80lvQvkB1OofF+IhoCVzMJjsVuAuPBqy8ADwEJlWDuR2qqSYcHxSb/DQf6gy7TN+ZN/ze7Y9IQhYHdlwThl/mcSGoAHW+xczMN/ihUHCXgXbg1GzxnMWcMQqcZn6FQ6coheqjldPGFyDvDHnpE9ybhnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAC3vzPYsspmG8MKCg--.4294S2;
-	Sun, 25 Aug 2024 12:28:14 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	make24@iscas.ac.cn,
-	bskeggs@redhat.com,
-	airlied@redhat.com,
-	akpm@linux-foundation.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] drm/nouveau: fix a possible null pointer dereference
-Date: Sun, 25 Aug 2024 12:28:07 +0800
-Message-Id: <20240825042807.2354750-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724560514; c=relaxed/simple;
+	bh=YqfiVkgCXAF4vDpaemgH1noE7UX36kshipNPJKc8vUU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=LphKArMWaK8vWU6pgWztM85GBruTio7vC09TjcJYV9OCm3qBiuYMuEiEg/hRRuVHz9N1yhvrMmzpZ4pDYN97NNy9/b1ygD/dEF14GKuF1jefJqzfWNMi/Aach1D0Y34y9Mf0E1KlUDeHucYvSNL5TH7spHTWM4jzyNP252VxQBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CK+dlzKo; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724560506; bh=DKef8wlxJI/dydtA5flD0kPv0oVLFGif+xu0cfjX7/s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CK+dlzKoKBV+us5TaxXF94HAQoLMxTiudH6f3/jRq1Fb9kswj85gQY0E5iD8y8cg3
+	 CTm/p5Pp027GNgUg776B8nrtDO1IScAWNMsZW/pn3lgzB7DLlCBtp7ekTgG+yyJzSO
+	 1Tyzvpg+jVg5z3GFtnLT0uHxHMKs1uUQaY9f5RB8=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 74301EF0; Sun, 25 Aug 2024 12:29:03 +0800
+X-QQ-mid: xmsmtpt1724560143tov2dfmqd
+Message-ID: <tencent_64FB06448999AEE1EEE50C9927E9C6D15206@qq.com>
+X-QQ-XMAILINFO: OdIVOfqOaVcrVz7lZ/6IcCuvW2qOYK4mjAWe1478e0nNy0+APel4rFrezZgPyU
+	 wtqK1rNx5QfSMVnxeIC2YsnhvU4LyumcpjIfDHHSYJsLfkSD4Rz0RE9FUUf/n6lG6saodfcNUXF8
+	 WGvxBPIp1gMGA2mQyfka0NnvGAfFcbyI2l+vfftJIYZYrfg97KhPZl/FjtA5xiV59ORYawS+lXQ2
+	 ZfFo8PDZQ75l/uU/5SZj1JIv+IXtS9aOMIJsweSBv3W7KL93Q96JDbdBJ8BeUyMoT5yOQcgFxAfx
+	 Ndu/y/WNnkDJ4qKiPKeyc8p7qIHiy/5uwHoHfF9uSA7YAnnc6qIsiHQiYlkncy5meB0J6+V78k9C
+	 fs0wF6WyHwmg3SkUn66F3h9Njb3Puo1E8jhuO+5OB2CO1TN6NUoLatuLo5weVnYwX7kR1rm1cS7U
+	 TpXA1W8YYMNfKKcFqRES2pw+oBYMNSjOhYuvt8cHoANf/wjXXXb8w8bf+Kbgdn0yeazPHP+O8m7J
+	 cGo6U6xfdLQJaIBFfjqySq0a+l6f4Vxh2lMxKA0Gv0O+//AM2qG4YTSMhPqdepulGMiL3KHTNWrt
+	 s5pwckQDUyWJjRPWu48aoFa18vcbn3NxyRFjHRqLEVavRg/+m5/Vpf1HO2BqWxyw7NOW8TOasMse
+	 0UOcV3lxZms3pdlwi0ZzFNMfrT53nwBQtePstqYqXykpr5G0ibeCS5dWX4WZ6Zalo2X+xlONHLNl
+	 MZRwo6KXRVXJ6Oo5+2tS0Qm7jPcbQQmhKxIHBdm5XsI0Y3ULhg/I1nP5oKHlYKlE2LH14eIYt3Qz
+	 hitoaofaHU8wDD8NtYl5L151bSNPX5eQ3wVpgrp+U2QY4ytsezW9TbOXrdalcUe7Zqy0hKdJLIEO
+	 OOH8UjrB2YTIHTWui5RE8bX7CUD+gVTD7L/HkTgQWlNix1mSWhvug=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] [usb?] WARNING in ath6kl_bmi_get_target_info (2)
+Date: Sun, 25 Aug 2024 12:29:03 +0800
+X-OQ-MSGID: <20240825042902.2046699-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <00000000000096ee8f061e991433@google.com>
+References: <00000000000096ee8f061e991433@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,63 +72,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC3vzPYsspmG8MKCg--.4294S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFykCryUWr4DuFyDCF1ftFb_yoW8GFWkpF
-	srG34YyFW5JFZruF18Ja4avF15G3W7JF1xuw10van3C3ZayryUtryrXryYgryfAFW3Kr12
-	qwnFvFy7WF12krJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAxhLUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-In ch7006_encoder_get_modes(), the return value of drm_mode_duplicate() is
-used directly in drm_mode_probed_add(), which will lead to a NULL pointer
-dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+Actual read the bmi data length is 0 from the device
 
-Cc: stable@vger.kernel.org
-Fixes: 6ee738610f41 ("drm/nouveau: Add DRM driver for NVIDIA GPUs")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/i2c/ch7006_drv.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+#syz test: upstream master
 
-diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
-index 131512a5f3bd..48bf6e4e8bdb 100644
---- a/drivers/gpu/drm/i2c/ch7006_drv.c
-+++ b/drivers/gpu/drm/i2c/ch7006_drv.c
-@@ -229,6 +229,7 @@ static int ch7006_encoder_get_modes(struct drm_encoder *encoder,
- {
- 	struct ch7006_priv *priv = to_ch7006_priv(encoder);
- 	const struct ch7006_mode *mode;
-+	struct drm_display_mode *encoder_mode = NULL;
- 	int n = 0;
- 
- 	for (mode = ch7006_modes; mode->mode.clock; mode++) {
-@@ -236,8 +237,11 @@ static int ch7006_encoder_get_modes(struct drm_encoder *encoder,
- 		    ~mode->valid_norms & 1<<priv->norm)
- 			continue;
- 
--		drm_mode_probed_add(connector,
--				drm_mode_duplicate(encoder->dev, &mode->mode));
-+		encoder_mode = drm_mode_duplicate(encoder->dev, &mode->mode);
-+		if (!encoder_mode)
-+			return 0;
-+
-+		drm_mode_probed_add(connector, encoder_mode);
- 
- 		n++;
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 5220809841a6..2a89bab81b24 100644
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
+ 		ath6kl_err("Unable to read the bmi data from the device: %d\n",
+ 			   ret);
+ 		return ret;
++	} else {
++		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
++		return -EIO;
  	}
--- 
-2.25.1
+ 
+ 	return 0;
 
 
