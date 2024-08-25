@@ -1,108 +1,202 @@
-Return-Path: <linux-kernel+bounces-300331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB6895E276
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0648495E284
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CF0D1C21393
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF421F21FAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B5648CCC;
-	Sun, 25 Aug 2024 07:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5052E6BFC7;
+	Sun, 25 Aug 2024 07:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XdFRlqEV"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="AHsO4whx";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="UbVmgG1v"
+Received: from mx-lax3-3.ucr.edu (mx-lax3-3.ucr.edu [169.235.156.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9B12A1D6
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7E342A90
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724571483; cv=none; b=ntXyBr+GjWkrsVvfJlAtKHwybdYK1BM4dJyv0U2AxDzV4AAWiaCtm7S+sazRNcFnChvy7w90eDkiVw5m49lcuAlEm2fpPDAIM1p5HK5mpPqimuQRUd3w+mibMpW3LdX8vrtl4oT7VgF7Bw/xUw9QH5fPoDM6sRbvhk+Yapuf77M=
+	t=1724571947; cv=none; b=P7nFjJkRsyF2umLCZ0fUuN08goiEN4aBd4LnTa/WJ+Lj8YRgvLIEXCc6NYxe74dThmEb68sAITYqvLBQheR3v2yDdSco7gVDDz+DGd6mtTsOMhseSi9btnVarfvJW/3T12dAk0wxagR1uXWwfm/e+rEoOWYzFd2PPW56SmOyQtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724571483; c=relaxed/simple;
-	bh=i8WLKy0kzl3QBJsz+vOUwl4AsgA4hLoGEadHRQP3BtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=IRedfTsZBEdEg3je9r1iUMR7JZjhug8eCGNQyaTKEmLY9wcWSuRGlpI1SiVoXX/UJc58SMSNGdHKe7SKMHMSztAW4iiFpZvjVRwWR3jYJJ3P6J9N9XQI9a06nV8IYCtd8kTye3ifutz+E+F13Kr97PnpzQTEj1VuAVRnkycjdcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XdFRlqEV; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3719f0758c6so1913031f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 00:38:01 -0700 (PDT)
+	s=arc-20240116; t=1724571947; c=relaxed/simple;
+	bh=Wc1ReSSoRHrxczllmAyrC82DrWl15s7C5Gl7hBzXjR0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=XX2erJjgC+UKzp8gordni7ROfFae+38RalRg6u9kJHZu1Up9gPluXTaYjTETiUFb6S3nTnvlzZilslhkrfdX1APUhRdvkA1Qec8LPXI3Clpa3e96n365dN+Zwzy1Ftb/zsMy7izTjyRcSgqLWCdOOBJ4x2oQxYWLjAJbR2N1/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=AHsO4whx; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=UbVmgG1v; arc=none smtp.client-ip=169.235.156.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724571945; x=1756107945;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=Wc1ReSSoRHrxczllmAyrC82DrWl15s7C5Gl7hBzXjR0=;
+  b=AHsO4whxB93RjytoJ7XWbRWOyvOSQzqc5BppEiQdMvJQTNyTRBQVXkI/
+   ufsrk5t3WCxII8ty4IkAIYFVoUexUpTw4ALzLl5EBmzoKJpTtbNwLbpyN
+   CpnaVRKr3xQZ/XOWrA71VBiwieZw7Iwo+FX05csZJR3joedxB8i6LMDx6
+   VnQv3oSL1AmefsPQw4aIWRBRMsdtY4r95+omxmDlDcprK8hIGmj7qBtgu
+   wDHz3D/qhUmhxFsvLzLJ9PAVN51O3RGdpJOfkklekWYHJWfmkXYypPVO6
+   jcGX2pj/lJXusx2vErXOyBmWc7nrEz5IOu5y4aBHPZWhmBf6Ld/lYTRK8
+   w==;
+X-CSE-ConnectionGUID: Yywg31baTMyst35Avh9w6g==
+X-CSE-MsgGUID: jKTWDW4kTxWrrGASu1jRLg==
+Received: from mail-io1-f72.google.com ([209.85.166.72])
+  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 25 Aug 2024 00:45:44 -0700
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f901cd3b5so351406039f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 00:45:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724571480; x=1725176280; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXm58TCs+2qNiNfDJ8ymrl4Uf/SCXS8WPeafSKvrsYI=;
-        b=XdFRlqEVRlaugSDWoDjCR1YBAhWu6PiPIA5jGRN17i4sdL0fReC2LWPRqfYqRXd7KM
-         yE0ufllu/r6lfwo1/8Pu99YScmRILIR58J/yWX8Kxya6zOHoe0RA0v+xcVeJOnVH+zO7
-         lejd7DC2HlS64xpdqeI6k5fKYJP4fIy8ww/8A=
+        d=ucr.edu; s=rmail; t=1724571944; x=1725176744; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Nd8St0Q3+Z5rQPfjGMrPNgX+gBQoI0R6Kq0GksepDsQ=;
+        b=UbVmgG1v2Hb9d+OeR8yeG5mVzt+PcyJwcPOhWRE4jTQDuVLNetKFmRkPMEeLgcDvgB
+         RECHiiekg4kNPD9bsxKjSlCFTvhCxIq7OU1ytv8daSNO57UpaM8mSqR2agycaWrjI2VU
+         xberCY3K2iUfCPp8Jw/gm9BLX1uXpxwjUYtyE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724571480; x=1725176280;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXm58TCs+2qNiNfDJ8ymrl4Uf/SCXS8WPeafSKvrsYI=;
-        b=HrzSLDGpwVrGcq4URFR0pzSrxyeW0ayYgduQK8OQrMBFHZHXEKZQlsEQ4ZHjsAVN2b
-         FYs4eJ4KQ26usBkR7xMwcUgB64R1UQksOSE1pmuqnyAY5zjXIUKDcZSCnuJTLW+U4ic2
-         0e5SsjYiLHcdpjkZoj81dIfknK+OOQruSa1phgYdLCkKBaYvnJ9IpoYDOcgO0zSyEpbq
-         k32fe8hOnL1Q67OhI1CjfmlIsOX8s1xfOFm9RVzQC8YXjqvQTK+59oynXt57AmAHo132
-         AFK9ebbzXR0AHKNCpkndc+yB/agJCEDVCBB1pBuAFu38RiEdfCqlIKpjxMlZ/ZFaUk/y
-         VIeg==
-X-Gm-Message-State: AOJu0YzCRBY+Bva+LrmrKigbcz2L8AJxHtlX6HmNmkzlwFXol5JQTaNd
-	piYACWu8qhNwXQIS53sKp3BJVv8FXgnFBjD6qzRt6/A21z0HsdPMsIZMw0bXavaBeELZppWsdQE
-	DBVkWYw==
-X-Google-Smtp-Source: AGHT+IHpkp8Z8kThAytUzPI4VbkzBOYkjBj+ho1hD1KqJirlcpDTw6eroPbP3Iposfy3OqhMrGlUzg==
-X-Received: by 2002:adf:ef06:0:b0:36b:bcef:b39f with SMTP id ffacd0b85a97d-373118ea0c6mr4319519f8f.56.1724571479417;
-        Sun, 25 Aug 2024 00:37:59 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3ca46esm4140375a12.27.2024.08.25.00.37.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 00:37:58 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so4069541a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 00:37:58 -0700 (PDT)
-X-Received: by 2002:a05:6402:380e:b0:5a3:5218:5d80 with SMTP id
- 4fb4d7f45d1cf-5c0891748a3mr4025469a12.21.1724571478242; Sun, 25 Aug 2024
- 00:37:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724571944; x=1725176744;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nd8St0Q3+Z5rQPfjGMrPNgX+gBQoI0R6Kq0GksepDsQ=;
+        b=wuajg3lfmAvxBnclwhyUwRLWiMt/+zW0DVaFGwdKxsBt8rGdp6hVvJdf4VcBhccRng
+         hYvwGe7N8VdEf2rB/jgBvhAKIXHRmtca90Ef2P8tZS2Co7NTwy35FzOSDrIql5gw42CP
+         +cxnlSQtu7cGB9bV93SeIh2voaVmwh0lfNAdZDZETh8UoTkTiwqCmM9eGIvFe2eyauVe
+         JXi4FtjfDHIfKbsRz21+WsFTPvQdzKMQ8hzmJiq/kzeiH3XuxYvSkaDPPXuUUJs1vatm
+         JORt4LZ50lYa9wphH76Ds9MWS5FiAvXyjssrvpF41RpSAOZ1sGCMskWJH0dXbdF4Wne3
+         ha5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU65GiJS51YY6x2j4mILPhxJIUxAhaozaV6/fJEkXRSCWKDpW4D8zZJqKs9OIP7XCUCiCLdxOZ2/4tY9kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy79H6hi4sPi7twdu6f+wnZM8kSt5Bu8WMflN2eMd2GHK5jxrPb
+	x3jX+KsYFnAogV+bl6C37Vcy1dkH9HmIwk6iqy2P1UteSdQiyZr0TeYgqZJHVF1s4HNLmdZrrzQ
+	JJ2SaeZ2lZmJIs3JMIU7OOkaYaYcIaK0QN5FVlgjWdG6LppKMMkd8jsPBHbNI6Pkkj4QxLw25gL
+	r09+IQLk5QWe5RgRgRP7p2Nahpyr/Lcg9SANcCGg==
+X-Received: by 2002:a05:6602:2c08:b0:804:f2be:ee33 with SMTP id ca18e2360f4ac-82787323b5bmr1085271239f.2.1724571943623;
+        Sun, 25 Aug 2024 00:45:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHLdzYf+KApPZ3mER63Tiqo6L2o5S4C2XhxzItF+QR6Mv/oPhPCKwSu0JNzBqAWSVNlul45WSG5uwliJtUEao=
+X-Received: by 2002:a05:6602:2c08:b0:804:f2be:ee33 with SMTP id
+ ca18e2360f4ac-82787323b5bmr1085270339f.2.1724571943267; Sun, 25 Aug 2024
+ 00:45:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wh599movdAyCHfVmYakq8rqKQD9wCvUAgBqbF3znEu_2g@mail.gmail.com>
-In-Reply-To: <CAHk-=wh599movdAyCHfVmYakq8rqKQD9wCvUAgBqbF3znEu_2g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 25 Aug 2024 19:37:41 +1200
-X-Gmail-Original-Message-ID: <CAHk-=whsqTTsiZ=XmecYwQqqya2C4ufysiDj2bOPhvke4mR2mg@mail.gmail.com>
-Message-ID: <CAHk-=whsqTTsiZ=XmecYwQqqya2C4ufysiDj2bOPhvke4mR2mg@mail.gmail.com>
-Subject: Re: Linux 6.11-rc5
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Sun, 25 Aug 2024 00:45:30 -0700
+Message-ID: <CANikGpd2u3=GH8TLL40UuOJroe0-WdYCjj1vZJyCBgmSRvtNWQ@mail.gmail.com>
+Subject: BUG: unable to handle kernel paging request in __netif_receive_skb_core
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 25 Aug 2024 at 19:27, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I delayed things to the point where it was at least Sunday back home,
-> even if not even remotely afternoon. [..]
+Hello,
+We found the following issue using syzkaller on Linux v6.10.
+In function `__netif_receive_skb_core`, an error of "unable to handle
+kernel paging request" happend when executing `if (ptype->type !=
+type)`. It happened because the register $r12 became an unexpected
+value 0xffffffffffffffc0, because it was propagated from $r15 whose
+value was null. So it's likely that this is an null-pointer
+dereference issue.
 
-Oh, and I forgot to mention that there's something special about this
-Sunday: today, Aug 25th, is the 33th anniversary of the original
-public mention of Linux (although not using that name):
+The full report including the Syzkaller reproducer:
+https://gist.github.com/TomAPU/38bb00292b33d52a6dd2d1b629247146/revisions
 
- "I'm doing a (free) operating system (just a hobby, won't be big and
-  professional like gnu) for 386(486) AT clones.  This has been brewing
-  since april, and is starting to get ready. [..]"
+The brief report is below:
 
-and while 33 years may not sound like a particularly round number, the
-"brewing since April" means that it was actually 33 and 1/3 years ago
-that it all started.
+Syzkaller hit 'BUG: unable to handle kernel paging request in
+__netif_receive_skb_core' bug.
 
-A third of a century. And it *still* isn't ready. I really need to get
-my sh*t together..
-
-           Linus
+BUG: unable to handle page fault for address: ffffffffffffffc0
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD d936067 P4D d936067 PUD d938067 PMD 0
+Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 8484 Comm: kworker/0:5 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: wg-crypt-wg0 wg_packet_tx_worker
+RIP: 0010:deliver_ptype_list_skb net/core/dev.c:2247 [inline]
+RIP: 0010:__netif_receive_skb_core+0x3163/0x3ef0 net/core/dev.c:5581
+Code: 48 8d 41 10 48 89 44 24 48 4d 8d 67 c0 4c 89 e0 48 c1 e8 03 48
+b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 0f 85 61 02 00 00 <41> 0f
+b7 1c 24 89 df 44 89 f6 e8 ee f5 b8 f8 66 44 39 f3 0f 85 a0
+RSP: 0018:ffffc90000007880 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: 0000000080000101 RSI: 000000000000dd86 RDI: 0000000000000000
+RBP: ffffc90000007a50 R08: ffffffff88d85c72 R09: ffffffff88d82f9b
+R10: 0000000000000002 R11: ffff8880244b5a00 R12: ffffffffffffffc0
+R13: ffffffff8f260cb0 R14: 000000000000dd86 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffc0 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ __netif_receive_skb_one_core net/core/dev.c:5623 [inline]
+ __netif_receive_skb+0x11e/0x640 net/core/dev.c:5739
+ process_backlog+0x37d/0x7a0 net/core/dev.c:6068
+ __napi_poll+0xcc/0x480 net/core/dev.c:6722
+ napi_poll net/core/dev.c:6791 [inline]
+ net_rx_action+0x7ed/0x1040 net/core/dev.c:6907
+ handle_softirqs+0x272/0x750 kernel/softirq.c:554
+ do_softirq+0x117/0x1e0 kernel/softirq.c:455
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x1b0/0x1f0 kernel/softirq.c:382
+ wg_socket_send_skb_to_peer+0x172/0x1d0 drivers/net/wireguard/socket.c:184
+ wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
+ wg_packet_tx_worker+0x1ba/0x960 drivers/net/wireguard/send.c:276
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+CR2: ffffffffffffffc0
+---[ end trace 0000000000000000 ]---
+RIP: 0010:deliver_ptype_list_skb net/core/dev.c:2247 [inline]
+RIP: 0010:__netif_receive_skb_core+0x3163/0x3ef0 net/core/dev.c:5581
+Code: 48 8d 41 10 48 89 44 24 48 4d 8d 67 c0 4c 89 e0 48 c1 e8 03 48
+b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 0f 85 61 02 00 00 <41> 0f
+b7 1c 24 89 df 44 89 f6 e8 ee f5 b8 f8 66 44 39 f3 0f 85 a0
+RSP: 0018:ffffc90000007880 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: 0000000080000101 RSI: 000000000000dd86 RDI: 0000000000000000
+RBP: ffffc90000007a50 R08: ffffffff88d85c72 R09: ffffffff88d82f9b
+R10: 0000000000000002 R11: ffff8880244b5a00 R12: ffffffffffffffc0
+R13: ffffffff8f260cb0 R14: 000000000000dd86 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffc0 CR3: 000000000d932000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0: 48 8d 41 10           lea    0x10(%rcx),%rax
+   4: 48 89 44 24 48       mov    %rax,0x48(%rsp)
+   9: 4d 8d 67 c0           lea    -0x40(%r15),%r12
+   d: 4c 89 e0             mov    %r12,%rax
+  10: 48 c1 e8 03           shr    $0x3,%rax
+  14: 48 b9 00 00 00 00 00 movabs $0xdffffc0000000000,%rcx
+  1b: fc ff df
+  1e: 0f b6 04 08           movzbl (%rax,%rcx,1),%eax
+  22: 84 c0                 test   %al,%al
+  24: 0f 85 61 02 00 00     jne    0x28b
+* 2a: 41 0f b7 1c 24       movzwl (%r12),%ebx <-- trapping instruction
+  2f: 89 df                 mov    %ebx,%edi
+  31: 44 89 f6             mov    %r14d,%esi
+  34: e8 ee f5 b8 f8       call   0xf8b8f627
+  39: 66 44 39 f3           cmp    %r14w,%bx
+  3d: 0f                   .byte 0xf
+  3e: 85                   .byte 0x85
+  3f: a0                   .byte 0xa0
 
