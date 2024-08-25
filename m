@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-300523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1101595E4BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3CD95E4A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44CB1F214B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:47:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9F61C20950
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157BE16EC19;
-	Sun, 25 Aug 2024 18:47:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A5015B562;
+	Sun, 25 Aug 2024 18:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8b9ytw3"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301E24778C
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1F68C07
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724611656; cv=none; b=oFlSPsMyvoXrxRw2suORbDFTrXLWst+DUgY7R5KkIONG55rH6b7e6azt6E00dRemlGpRGrV+wbx1HUBgjOTo5Dme0VC5wiqeyhnBgn7kP1XacT2EQ8uezIhye14cmHMjT1dxm/hKSYwT2COL7xhH7/cEOB73le8xCtOkOocvNNE=
+	t=1724609152; cv=none; b=U51zRihlr0nEVKA8iiJQyjOCzK64/gXNbnqG7jO8yDA+Dpe0f+Q219a+YHw8gymS9Va2RFLf6WVpa18LKMJm51LI7AhzJEHCIATpKa0E6+iFaEKIywEs5RQY3mdeGqY6qsAwGQ4WOx4cuL2PZA/ruTxCuBk3V/a73kQ1KsBFx0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724611656; c=relaxed/simple;
-	bh=O/7y1BOiwtlj5xGNQ0xs73F0TB1wZAvE87D1/HoMSp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+aiKChXFVax+9C/k/Ru20vGff491O85IwaueuGwqHaoe34Df0gk9X1QT/mbyahvMumz5F7ipNgwEZ776kEqmxF6g7/8xqQY3WsdXLgljK42Bun2++jmiv+eqGF9Q5o8D/G16UJc7KhYVGZqssDQi+EOUCM1k7md3rRZSbOqEqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1siIGg-0006m5-RD; Sun, 25 Aug 2024 20:47:14 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1siIGf-0030Xc-EV; Sun, 25 Aug 2024 20:47:13 +0200
-Received: from pengutronix.de (unknown [IPv6:2a0a:edc0:0:701:6bf1:9aed:c5c2:5c56])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9FB09325443;
-	Fri, 23 Aug 2024 12:36:48 +0000 (UTC)
-Date: Fri, 23 Aug 2024 14:36:47 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: shawnguo@kernel.org, krzk+dt@kernel.org, festevam@gmail.com, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] arm64: dts: imx8mm-emtop-baseboard: Add Peripherals
- Support
-Message-ID: <20240823-demonic-jolly-chital-fb4d61-mkl@pengutronix.de>
-References: <20240823120158.19294-1-tarang.raval@siliconsignals.io>
+	s=arc-20240116; t=1724609152; c=relaxed/simple;
+	bh=LJWD5cjLfcvI40Ci+Z5t/UhfXs3V4IqTFTPAUwn80lA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=f2gXZiiTBxYRRNwdPaotRf5elfOL4SlcPUO1PXpE2GRJHD98UZ1jqg+PcHl6rdwEAWaxZKsG38kSkeMp/RQRyQU+4sI+3owP5JxkKQdEEdgZOHRZEQaPkiwvk4jr6Vp0AJRMmNrPQr+B8M8qEmNXvxTrLh4zwuJvfytzKflTMzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M8b9ytw3; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-371a939dab9so511191f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 11:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724609150; x=1725213950; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JydotQLE8NcEmGdi6bR2mk1j+jVATNkPy6mshwtvk+M=;
+        b=M8b9ytw3ZbEQlfxzcJM5F/ARpgNE05jc7cBAn6eEu0qnqJ8ahZW8CpzTU6kMECw0pp
+         qym4yYQzaurHya6eI/2P9/aY+TCxwpu7IxIxbFIgYuvcD9nT9J+AoxWMpZn5udy1AJUg
+         Av6pf+FjUDJsTf32CIj6gBLQ9tvN7kwz8Ah2f0MIbc6KdneKYQFYm8x+chdgbGabF8Il
+         /+fDtYrskr2bEYz/AOoza5rE/uSJMjSdenwLqd9ynEMlofgmBVrCNQ/OcX2ArBNUYSio
+         HcBeL6s/q8wa8FnTNZwPnblke2eff3baCOQd2CDx1rFKW5rMOqOhNvgm14Zvn0kj6Cgp
+         EZFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724609150; x=1725213950;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JydotQLE8NcEmGdi6bR2mk1j+jVATNkPy6mshwtvk+M=;
+        b=UUJMHTzb0JznLoerGYk8VrLJDzAZFHAhGESLcvxMEf8WgbZ5kQYrWrUNoJZwBRnbDR
+         chp3VDqgyExCaVLBWPPw2E4jxA5RMt5vv605k5c4d/t2juTRJR84is0gIuFFswufJ2QB
+         aJAIFPy6+E+jq4zExCXEiEamdEDaujvcbzcTRtsRC+sT3R1VR0713XQeCgBjWVK1VjK9
+         wNFMm6TQK3dZ5penvNx4jOp0Fz951NN2feFKAHFeNfqM5jzOTxL4Z3NyeCb6lYiEiH2u
+         EGGkZVvQerit0OB1u5IEWHHCQTQlb7x408i3vaDsSxfH53Z7Sks0ctf63sXzKcZAioxS
+         A7gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg1h2VLK1r87WC8cEqhmasoj/uuu4umd6yLOXEz6yl+mcZ5CiU+4cPgjjF+VOlCAADTromEp5MKp6zdwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzso6wfIOExRq+P5+Ljl7uf8cWlkWLfSzLjfnolE+LmKwpbb73c
+	LM81dADdRtQiwQPFUaIdylbeK4QorSDc3gqymEiLbQyZLQjwLO7gLDNoyb+7egQ=
+X-Google-Smtp-Source: AGHT+IHdpS7K2bNJA2sKTBWBRGd1lUhDyRx7b7buaWzFAqTspCw0ycRlWL48DMa129b1eaCLq+UiVw==
+X-Received: by 2002:a5d:5f48:0:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-37311852317mr3445728f8f.2.1724609149547;
+        Sun, 25 Aug 2024 11:05:49 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37311dca113sm6438736f8f.16.2024.08.25.11.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2024 11:05:48 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] soc: versatile: fixes and compile test
+Date: Sun, 25 Aug 2024 20:05:21 +0200
+Message-Id: <20240825-soc-dev-fixes-v1-0-ff4b35abed83@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iesc4bfsdftuxohg"
-Content-Disposition: inline
-In-Reply-To: <20240823120158.19294-1-tarang.raval@siliconsignals.io>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGFyy2YC/x3LQQ5AMBBG4avIrE1SRZSriAX1YzYlnUQkjbtrL
+ L+8vESKKFAaikQRt6icIaMqC/LHHHawrNlkjW2Msy3r6XnFzZs8UIY3zvULXN31lJ8r4g95Gaf
+ 3/QAnzoXjXwAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=874;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=LJWD5cjLfcvI40Ci+Z5t/UhfXs3V4IqTFTPAUwn80lA=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmy3J1y1cAVfrpP2ehO5uXANH0zwCds6NAmKP8d
+ 8G2tNliVJSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZstydQAKCRDBN2bmhouD
+ 13+0D/4qW/balWzJ4RewENfM1PpseBCi1Aqc7MrPSRFFV7ixcBm42pxUyXL+R854LBZOkHmzEUr
+ jegiIj5tPnqhze97XEjM/35mx55ZZ0v+/VksJh0mxJ6ME2birpFKkpv5hFXLINpRDSPOEBGPfG2
+ VVBA9t2nN0gbcRVQ/3v4lFbOIW46RG62xPnHCRweFBDOU8Bopg/XIuXDj/00pALgD6ABTiA7vIQ
+ iMMKMrieAyXPsIsGY4PTeMhGbnj0LT1EEift8eXig6hqw55ytqJFWtHJC6NmY+XR4hw1hP3vqXm
+ mFoYVkvmO8c6DlJWa0YAHll9+Awhfnx48bDGlWEujuVzHHDLkq2C0Mm2kSgZ1WanFaD9RpX++l+
+ BuFg8Hqzva/Kpa08F6bJHpX9MtIPS6KM2W2pFhTV/7qQxvlnE6dupgxEF3iG2krds2UL1aLgREW
+ kD4U1g9xTf6ITbRspbnYhag2Dv7awiGQyG/eIXJ+9EmCTNJadpQGhoZYviTuygvfal9zU6FpMF7
+ VAGb35ZqrMuLy/pzkZsSxkVZal+MMphnKzg7nyWpDqAEWQqSNLG733/qcz/fzyo6AOtYqxyUBPs
+ VqvB1q8H6ybSvrvz5/m3D/fFkGIq0CU60nU4xoKJs3QxsAtizOGx8QY9Jtq/wWzqYQgu88LLHkt
+ mS/Zl+eIQ3E6yPg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
+Hi,
 
---iesc4bfsdftuxohg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Three fixes for unbinding and error paths.  Enable also compile testing
+as cherry on top.
 
-On 23.08.2024 17:31:57, Tarang Raval wrote:
-> Add following peripherals support for the Emtop i.MX8M Mini Baseboard
->=20
-> 	* Wi-Fi
-> 	* Audio
-> 	* SD card
-> 	* RTC
-> 	* CAN bus
-> 	* USB OTG
->=20
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->=20
-> Changes in v2:
->=20
-> 1. Updated the node name and pinctrl name.
-> 2. Removed the 'regulators' container.
-> 3. Removed a stray blank line.
-> 4. Removed non-existent properties.
-> 5. Removed unused node and pinctrl:
->    -modem-reset
->    -pinctrl_uart1
-> 6. Defined the CAN transceiver reset GPIO separately.
->=20
-> Change in v3:
->=20
-> 1. Removed 'can-connector'.
-> 2. Use USB connector instead of extcon_usb.
-> 3. Changed id-gpio to id-gpios.
-> 4. Use Level trigger IRQ in the CAN node.
-> 5. Corrected the compatible property of RTC.
-> 6. Added blank lines to separate the pinctrl groups.
-> ---
->  .../dts/freescale/imx8mm-emtop-baseboard.dts  | 326 ++++++++++++++++++
->  1 file changed, 326 insertions(+)
+Best regards,
+Krzysztof
 
-[...]
+---
+Krzysztof Kozlowski (4):
+      soc: versatile: integrator: fix OF node leak in probe() error path
+      soc: versatile: realview: fix memory leak during device remove
+      soc: versatile: realview: fix soc_dev leak during device remove
+      soc: versatile: enable compile testing
 
-> +/* CAN BUS */
-> +&ecspi2 {
-> +        pinctrl-names =3D "default";
-> +        pinctrl-0 =3D <&pinctrl_ecspi2>;
-> +        status =3D "okay";
-> +
-> +        can: can@0 {
-> +                compatible =3D "microchip,mcp2515";
-> +                reg =3D <0>;
-> +                pinctrl-names =3D "default";
-> +                pinctrl-0 =3D <&pinctrl_canbus>;
-> +                clocks =3D <&osc_can>;
-> +                interrupt-parent =3D <&gpio1>;
-> +                interrupts =3D <14 IRQ_TYPE_LEVEL_HIGH>;
+ drivers/soc/Makefile                   |  2 +-
+ drivers/soc/versatile/Kconfig          |  4 ++--
+ drivers/soc/versatile/soc-integrator.c |  1 +
+ drivers/soc/versatile/soc-realview.c   | 20 ++++++++++++++++----
+ 4 files changed, 20 insertions(+), 7 deletions(-)
+---
+base-commit: 80a76294855640056006e29988f99d46438dcd2b
+change-id: 20240825-soc-dev-fixes-ec0889be8379
 
-Have you actually tested this?
-Previously there was: "interrupts =3D <14 IRQ_TYPE_EDGE_FALLING>;",
-meaning the IRQ triggers on the edge "1 -> 0". It doesn't look correct,
-if you say now there is an IRQ at level "1".
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> +                spi-max-frequency =3D <10000000>;
-> +        };
->  };
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---iesc4bfsdftuxohg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbIglwACgkQKDiiPnot
-vG/OWQf9FkXLvVKzVzNOGUcIOCbSF3IxVHcLdinwDSB1sOMSkfUTUacmR58NC+hx
-/c/M3Z3+ZwbOseCs5Aup1RYQ74DylZdWDXfsnpShDxm9/hCDoLluc1ELqt6WrBEU
-siBzXms2l4n1NIklW3pSMfR+sJR5+UnavvLogsFy7LgggjIOFEYIwl3hatwtHA/o
-nOT67UXKcQpqDQ6qGKZxDTCh1NX+VyAQm69QWGH30m7DXM0oJCO0hn12PXBOEd6E
-Caq7RrLw1zMCVu1vGcbfLGdXI0t9YINfFlbhCC4scenGhD97fMQr/Jgxj8/6O/a0
-ehd+08pK+pIHfXBPmgdKx3XdQ/cN1w==
-=1Lb5
------END PGP SIGNATURE-----
-
---iesc4bfsdftuxohg--
 
