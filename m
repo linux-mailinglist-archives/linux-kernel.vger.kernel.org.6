@@ -1,359 +1,230 @@
-Return-Path: <linux-kernel+bounces-300537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4EB95E4DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1427D95E4E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01201283003
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:07:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 403F81C2127A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E22155730;
-	Sun, 25 Aug 2024 19:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961F116F0C1;
+	Sun, 25 Aug 2024 19:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MRO1jPr7"
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="n0RGQfbv";
+	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="n0RGQfbv"
+Received: from ZRZP278CU001.outbound.protection.outlook.com (mail-switzerlandnorthazon11021089.outbound.protection.outlook.com [40.107.167.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C5429408
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 19:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724612848; cv=none; b=b5bovt41gmXQIq8JxxH+3NEcP5fEBuK8BM6duqLN3qB8Njsczt93Yqt/qtXe7vOy5dTEBgcYXIavIG0v5JoKQ2k4or36Q5hmX8+mO+ljyI1E4EyTmg0tPeN5mSB8bc4F6zgObmiitp8YY1SdIHatrw6bOpXY/oSp17OZCUNCg7s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724612848; c=relaxed/simple;
-	bh=XQyA+Zq17YKLl40zkmb3Ne7PSBvnWvxF9XksHqSs8Eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hU31eKBWRPzB2KNb7BJ21X9Ufmz10NWO9bBCB8dK/R0z2fi6tQnfmaqpNOZconJ/hIo4Nf+aHwG24/2juv7CYUf+a1ysDCLi0sJW4vNXqyAehDkahGTAdLJesxOYggX79kb9iaibAoa5WV7LEKLdFTT7zquRCARjSfRxcl+3/Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=MRO1jPr7; arc=none smtp.client-ip=66.163.191.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724612845; bh=A+ujkyFJqfrbVOxajgw7izgd7QW3xgj6enPTx+tW0LQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=MRO1jPr7OvwRY/Sm2Za/+BFexZKUXw4e4pj2mwx3BNwnmfruxFPpAisyl8E4QCXSuNWn/PEHEEL4GlhvY5M2ZkjlHmarMHrAHP4i3UjUyWlSSFLhwFm5uDsCgG4mAv6apOpiZ4xUK0De6Hc1FM8HoZMXUnHH+7IFxz2woLGjjCjeDz8+kwvH47/eHwl6hVQEVa8ca6QNo/s6EfLMgtlkQ5NDjoQKI552JQpqwoRY0qkKGT53yH6h8nq8Ikml1aY8cTu2hwZAPA2oK68ihfXtudrWZnPyyr/W5ORx5tKuwgaRAU8L8+KTje1/FPDbd/PMvw/FtbVWTZOyzYeLyRvy7A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724612845; bh=4r9IwMMt3Jg8xJzSdREPUfQYd+oA1GO6/vc2SMZqk0F=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=k7KdkP9hY4QJvqZueLV9ROQSbAKLvbEyWIyqbMpEzS5/DPOkLRkSiw2Yht6OnCElYO7bTZ0cvEXTRTRJ/pB4gLirsIaqLaF5fmlI/A5viIBh1tFHvi/nF8r7QheiC1lFCiw1YdezzaC0cWEHFYzkeIcdyQ7YtpxPJYki67NtPyVIwKi7Sh1DeVy7tF0j0h2aA1jVMIPkbssByau5xs0BMpAzS7e5QYBnfUkf9oWckiMzr0T0++QCo00iN66MJmSdry0fs9XkpRTAJSjhYX7GqE36dEX1O7eJKjJChk70Aw+wehTw57qduabccDWw7xhkIGUYt8PTYr3od3SyQbjRMg==
-X-YMail-OSG: 7fiqVGwVM1klGv2sRwJ6sEPajqrer9N1c3cNFyxLbVQvlVwxpjcohPgWEhUSaWq
- WFsxtZL8hoMxGRM4qEYw1Gioq2WD4SUGYvgcjb_6oSfm.sTJdBGWNRq5915e.aZg41tpuhAA4LtO
- UA6w7DYoNboOFce3AzKCkm6qBciNRsq_JZR3Yzodtf4PheIyHlZizvPe_4Cn6n9VRrLACeG0Jcwz
- x9Om85k27ENsggegKtweNfwcQA66HGmCuuF21vlL2mhGr4GOkXzCjO6hu07aw9sL2Omr854uYlhg
- o2UmQ_DS9e3G.40aLNZJDbxmrW.yF5Q7jVnYiEDgnrcLpIvb9XIdJEmiSXD8PsLJ6e1yNflcBp74
- nY_6OCVX.wQYeksRFzp2Z6iZbOaZunrf6efOj2b8mO2FyAkuWaBJ4dtoCcPn17UwAyk73YV8rqXe
- 8Xos1wnLBGkDmd_8hsGNETT0tIs6uFtM6AwoZC1_kNPWxgWNaXQgQByNjatN_pwJ8Ffk3NBeaBzP
- XBvgOMb.omaX9_bgUtIqReTQxSwVfcaQpJHLIe2QPpgaMR_u9TVQkaW9eOr3OuSlwdNGxoctSCqJ
- g0_6IbdhKO_SqfA7v5uwWHJwUs07Bu2bzl0ZltZBkQAeEFXzKGGsZslwf.lFT2CFIMtPFVUWhbFz
- DxGSKAYIwizlac6MC_EUEvIC2w0BlGP3NbZCM67zu6ov0oKKvXJgPMqv42YI1.PPL5KOZgYPwGcT
- KboWRc2MCINm_BSWr4CTxQqWID8wcX_DQwzSH351Wf94fvNXo_37YFi841apHNEoUNiiP_NHApnJ
- FsX1ObNQ0i9Nl7DBbBUAvNLJPXLyZ0ugB.fmjFXZMSIa_tieN4UDs_q8vKVzkNCwbNBKgcuUFAzB
- ZdsRGexI36ezdijYmS_.2xQqn2bItfgqMGAxx3OVxdD2ziAdhZ4Z6miUExMijZexUNw0m1mjAiAS
- 0WtbzR8Zj20Lx3HpFqlg9YKwC_VQJlyULJbBWRRTwi.P6QAX0TbiCR_gCAIZsVj9ytR9GebE8GC6
- ONJe6Ddhi2FReCqGdRR22Ux_Mlopt7tXyg61jW69w2AUn5ktN4Os4Krh_Y.f3CcF.Mszs7bgOESa
- B79dwmzWEOULpkXmPra1hP8yp.58Ht09xdQ_17HbwHYNaIgsNjj7QzF9Wzv9qUze_nbOE4G_l8at
- MD0HGeIJJ_03.2g1CtI2EOeukPFO25NSURgucMS4gUJtIFsH3tsVhIlZ43ySgtDrX23nN7.SuQnZ
- SKciTgu.jRkQPfuf6651_7De5n.7okSgZ6nnohEtrAupeJylx2ZWR8GoAP3B5jcPVDW9NfhIelRx
- JBE9Lx0O._CqGZqphkWfFpmvoHxzYtuxCnZ85N4f4gT6XH.gDggfmjiIO1Ux3Jz.6dPo3n4jOgRm
- lkgkDjGYdaykRKclmrXVk5Xqer.jTUkRcwdykiE6lNlzDLQ_jO9MNVnLFpHxBRYEDjMbh_DXXb48
- 5SIPIb5se7s5SqgFvAOV8SehWFIoqE_rO5ahAgjZplan6EfLOU.LJIucazGCjRarSjXA9lvTvLrE
- jWX9KE8aRU33e1Pj6csA66RY7t7lkcvL6omDS269nHmUdtMIZXk2kdyqOGKJLVwYVV5ZXpBVQmkg
- PR3KMG8Ry_Dh226pseQHawhmHEDLydfRoD65RMxAXF6RZsA3mwWEKJe1nZNRyN6Cxba7GygzsohJ
- 5U2BsrBpwxDoVbdDZLosDbYDQpfFigYatnKg.KJQ6Xm1EMDZyr9c.V0ZLSuN.uEi2y.v.Ch6EORV
- xxa22aFIBSdbDelvqQmo3P2r6FShh7uFGSyA3zG8TfsChhfWW_K9M.ugkG1j5gcnlAnCb7adP_sE
- jtb_gXeK.ODhKtFUd9mbZdT0Uj78KNZEyKM2UVuVT6renVn.OWSo_EjQFmwhsH.KIaEECIPLuC7o
- vHZQAqxUQ_nlMisw83emz4pmaTqMkz4sDbbtqVjq7gLWI8iF7NANAWmsX00owVDbZhIna89cbE1K
- SEPRbA96DlGFt7NdsXUt2g899xSlmjA.oA4b3EUl5Y7ypTBEepnIvtnap9w3_Zxdn_f_Zrcqj8MH
- Kti7xYxM4bqsLSwLa.oSBs3JigFTjgRdQCm6eMepuFo0H7uG8zGYPNHhMuj3Ipv.zu7bnq.Z2aZV
- 8HwcxriKM63_6IdyO_g9CRJnFhmJ1xp.Ey1OQqbxWs64ASV7TgfM3UsNJOtpDiyoOpjwHI3vJQH5
- 0JqHr.NKwYUk.UybOOITU1_wEhGcofH1i3szZMVaOSeBXjRAt0VRobe3aauWM3zC0X68_
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 759b7bf1-2f31-4bae-8437-8582a422ca5c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Sun, 25 Aug 2024 19:07:25 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ed4e1fab5441326e8fd35b3239a0dd08;
-          Sun, 25 Aug 2024 19:07:24 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH 13/13] LSM: Remove lsmblob scaffolding
-Date: Sun, 25 Aug 2024 12:00:48 -0700
-Message-ID: <20240825190048.13289-14-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240825190048.13289-1-casey@schaufler-ca.com>
-References: <20240825190048.13289-1-casey@schaufler-ca.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DB28366;
+	Sun, 25 Aug 2024 19:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.167.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724613540; cv=fail; b=aUernMhuGuInZc4hBPM9xQIvgakajsNsAWBYcFAQxtpfUqWbUtzt2ONn9s8l57J2oAg7Z52xTwVLpUXSUMNjI6BrQq4vxtQAxb/0ZY9aJcdrX501WKALUXPcV3zNDxyWLS+aHM9uXgWgXX5p7MxjQcMHapDAuL9fIVpQaq/7LWg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724613540; c=relaxed/simple;
+	bh=nR81B13WKA4dyFubJO8AEA08OH4WGkYAFn+UjDXGr3k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=T3/faoMSNWJdqA+tAm5cIn5J0DWkEtkYydQ+sHgFbAZG3zWrRdDUv2/PetdcY6iJJR8Mepz+vQnYDTFKTo8zB6x5DJZXr69CduCQvvx0baL68oWyelvINyKf3SL0rJUope59BV4lzjPQLDIkSoVIkJf0vcOLzYdfkZQmnVK3d6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cern.ch; spf=pass smtp.mailfrom=cern.ch; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=n0RGQfbv; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=n0RGQfbv; arc=fail smtp.client-ip=40.107.167.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cern.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cern.ch
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WcqiofpGYbfZFwxt2uJ6aBz8KrjPgD9U41qSW3w5TRiI3kMYvWdlGkMjvD0YUqVtgqENPfGxfSKLStFEn2HXKyonsdLKmSOXTvlb4zbTYJWcmDYksgBOpTMsp4PBAy9Cx+NSZOGmqRZM3yBbKMc2XSUP87moQRozZvoagkjAYPJgm85F5Uwfqg1testqTuAjKRXM1apTSO3YkHP4mGtiEeMPs+EFnbhJIywO8gc2gZ0BkvddWpb4OJQJBGLsKN8JkI8/DMORmL+JvPzrb3JIvkmeobySxmhW63DqiDOM10nMNTo04jgshypmAfkgYc0DftewFB96IBggpHosuJclIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qpRastar5/DVT5HUcdZph18jJsCONJPbGH/mdbFnMkg=;
+ b=F520gHxoJtPyCRucaJu1ih6W8M12Gae1nlxgHxuQ6i8u2m6a9Ssfoa5hloPs/0RyJs7FmF6rT4otK63LG5wG9XwhKmayT3c1BxX50vIl84IfP/krAleDQMmQWJb1St8YVTvXQXnCb+J0HfcCxU4kBF3h3KrdFi2euYeYz1h95gwlxbVb8Oo488aKljI0mWry2o/uERb8GsVOaJ6TFIQebaIwXHO5z0S9p6o9iSIo4PBwyx5Dv4ztJsRZ6Y/f2X48W0Iq+lEEMuLoXCdH43HlGTy7WHw2gDFbXR7AEM+kHNtOWMLq9oLBlLy2/LhakGQYbS0gzuLFFJqMme6e7KeNpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 51.107.2.244) smtp.rcpttodomain=davemloft.net smtp.mailfrom=cern.ch;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=cern.ch;
+ dkim=pass (signature was verified) header.d=cern.ch; arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qpRastar5/DVT5HUcdZph18jJsCONJPbGH/mdbFnMkg=;
+ b=n0RGQfbv6LflNMYDQYKUTZbrOnzL2AdnUPuvccwXORX8JjuJ+CAswxPMRi9s+wuoEb4HTFnG5GyDGyDIkBR9umLUDwh7p94EiFnye5xkkewYyGC6uF8GPLE9+aPKlmxnZRSzEa+y0do08MJdAsVgbuen4ti7b0q/tIlhk1/YKCE=
+Received: from DU2P250CA0006.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:231::11)
+ by GV0P278MB1746.CHEP278.PROD.OUTLOOK.COM (2603:10a6:710:6a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Sun, 25 Aug
+ 2024 19:18:53 +0000
+Received: from DB1PEPF000509FC.eurprd03.prod.outlook.com
+ (2603:10a6:10:231:cafe::e0) by DU2P250CA0006.outlook.office365.com
+ (2603:10a6:10:231::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
+ Transport; Sun, 25 Aug 2024 19:18:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 51.107.2.244)
+ smtp.mailfrom=cern.ch; dkim=pass (signature was verified)
+ header.d=cern.ch;dmarc=pass action=none header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 51.107.2.244 as permitted sender) receiver=protection.outlook.com;
+ client-ip=51.107.2.244; helo=mx2.crn.activeguard.cloud; pr=C
+Received: from mx2.crn.activeguard.cloud (51.107.2.244) by
+ DB1PEPF000509FC.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7897.11
+ via Frontend Transport; Sun, 25 Aug 2024 19:18:52 +0000
+Received: from xguard (ag_core.activeguard.xor [172.18.0.5])
+	by mx2.crn.activeguard.cloud (Postfix) with ESMTP id 0B3BE82264;
+	Sun, 25 Aug 2024 21:18:52 +0200 (CEST)
+Received: from ZRZP278CU001.outbound.protection.outlook.com (mail-switzerlandnorthazlp17011027.outbound.protection.outlook.com [40.93.85.27])
+	by mx2.crn.activeguard.cloud (Postfix) with ESMTPS id 9958682206;
+	Sun, 25 Aug 2024 21:18:50 +0200 (CEST)
+Authentication-Results-Original: auth.opendkim.xorlab.com;	dkim=pass (1024-bit
+ key; unprotected) header.d=cern.ch header.i=@cern.ch header.a=rsa-sha256
+ header.s=selector1 header.b=n0RGQfbv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qpRastar5/DVT5HUcdZph18jJsCONJPbGH/mdbFnMkg=;
+ b=n0RGQfbv6LflNMYDQYKUTZbrOnzL2AdnUPuvccwXORX8JjuJ+CAswxPMRi9s+wuoEb4HTFnG5GyDGyDIkBR9umLUDwh7p94EiFnye5xkkewYyGC6uF8GPLE9+aPKlmxnZRSzEa+y0do08MJdAsVgbuen4ti7b0q/tIlhk1/YKCE=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cern.ch;
+Received: from ZR0P278MB0759.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:4f::14)
+ by ZR0P278MB1314.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:80::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Sun, 25 Aug
+ 2024 19:18:48 +0000
+Received: from ZR0P278MB0759.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::1a96:59c:94fe:3ae8]) by ZR0P278MB0759.CHEP278.PROD.OUTLOOK.COM
+ ([fe80::1a96:59c:94fe:3ae8%5]) with mapi id 15.20.7897.021; Sun, 25 Aug 2024
+ 19:18:48 +0000
+Message-ID: <1411a2ff-538e-40c2-86ef-7b6c628b478b@cern.ch>
+Date: Sun, 25 Aug 2024 21:18:47 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 2/2] net: dsa: microchip: Add KSZ8895/KSZ8864
+ switch support
+To: Tristram.Ha@microchip.com, Woojung.Huh@microchip.com,
+ UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com
+Cc: o.rempel@pengutronix.de, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, marex@denx.de, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <BYAPR11MB3558F407712B5C5DFB6F409DEC882@BYAPR11MB3558.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+In-Reply-To: <BYAPR11MB3558F407712B5C5DFB6F409DEC882@BYAPR11MB3558.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0196.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:44::22) To ZR0P278MB0759.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:4f::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-TrafficTypeDiagnostic:
+	ZR0P278MB0759:EE_|ZR0P278MB1314:EE_|DB1PEPF000509FC:EE_|GV0P278MB1746:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5fa6b6c0-9503-4f45-8cb7-08dcc53ac17c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?eVJJdVlwUTJHZGtFMktWdVJscWxVSFN2c284OGVaRC9EajdUd3grRkRCcWNz?=
+ =?utf-8?B?YjRIRzYxK2tBOEpjcWprZmVZR0ZHbWhqcFZjT3haa1lEVjk1Zlhzd1RWVUpu?=
+ =?utf-8?B?NVRGV01wdWVaNkJkYkdBb2hnWnh6d2dUNDArZFRwT20rNkduSytyQ096Yi8z?=
+ =?utf-8?B?ZHZTSUl4SnU5TG4zam1zT3dnamZZdkhSV3JjSFg2SVk2RXBycEFiUTFQYklX?=
+ =?utf-8?B?cVdjd2VhQ1dBSXBBRU9DQnNVdmtiWUV1bEw2MHNndWVWVmtnTlRscFdoWXBD?=
+ =?utf-8?B?RHRGNWpxdHpTc2VPZDRkSW5SVXpheE1ZNk9JcEJhMFdNT3dIek9KTVRvdU5I?=
+ =?utf-8?B?VHhMZ1ROenBSNWtGRkdaU1VaYzM4WjFoYXRTaElzS3JzMURTU2x0Q2NabjZY?=
+ =?utf-8?B?K0hJUnR3NG9aUCtuNlhFUEs4b0c4anJhaTZWcFNRSGtjZzZZaEtYUnY1aFJO?=
+ =?utf-8?B?dE5HWjlKUUhGaVBreVluQkk5YnRHM3RBazdSNlgrVlErRExCOC9TVlVUVHJ0?=
+ =?utf-8?B?NWp3L1A1UEVXQjBGMmZnMlBrWTQ4N0YwanE1a2xIUUpjQnQ1RkEyazZlbnRx?=
+ =?utf-8?B?cjQ1NUtDa2I5cm9keHE2OU9rb1pVMlhGVGhwTThVR2Y2MjhMK240RWNaVk9C?=
+ =?utf-8?B?WklETmYyYm00MXMyTm90K1VrS0lMdFVDOHVvekxONXl3TXJCUnJiOGRJV2lt?=
+ =?utf-8?B?SzNPTmZuaWRhQW04ZzliZkFYQzNDZHRGVm00N3Z5bmhzQUxYQ3lVSDFoMnpz?=
+ =?utf-8?B?eCtyam1PaGp1S3FtZ3dLMDhXcUVObUppc01OZUcyQmhEU0hMVHRDRHE0STcv?=
+ =?utf-8?B?ZlRjeVQ1c3JUanFTTVpabmNpQkk1RGFGZ3o4VlpCSmMvYWdlSGFyb1dVU2Uv?=
+ =?utf-8?B?VjVyaG4zZWhlTXRRRUNZUHRKTEl1T3dLQmtWZ2syRUJWQ2ZTRVpFNkZjWlU2?=
+ =?utf-8?B?SE5MUkZIMjNLMW43dmpDZkx1VVBWSG9tcmZ6d0lZV3V3R1lOZzN1QkFkcEhQ?=
+ =?utf-8?B?UXZJY0psajRvVlVGbXVYRlk1aHh4RDBmbGdrVk1iTnV0MzRDMmVwSXZRRDRy?=
+ =?utf-8?B?T1d0b1FPSWw5SFR3MG5yMzdOZlRhRTFmSlN3N25JQnZOdlJPY0Q3bm5aVFBz?=
+ =?utf-8?B?Y3YxT24vdUthK010TmRJSThvQ0pCUys2bkdFR3lEbXpHQytkZFhtYmNUdXZj?=
+ =?utf-8?B?MmhNdVU1VjR6cXcvT1h4SFpMUEhQZUtrQkVEM1ZUVnFQUnBLZWcxVXliN1gv?=
+ =?utf-8?B?WEhkVmlBVit3bElkUjBtMVc1cVFWRVFNY3orQlA4K2VZbVZaKzJHU2Jjb3hy?=
+ =?utf-8?B?bFJCK05Tb0p3M3NWQW9ia3RCTS8rYXpIRnhoSDhkbFdqNzJ0bjNZaHRBTDFP?=
+ =?utf-8?B?dUcwenU4MCtWeEtNMkVkRC9GR1hrcTFQeHZ5SnpleUlLZEI5VkZ3M3p5T1Jz?=
+ =?utf-8?B?OHhkNS9XQnpITFlLT0ZLZ0tmQTluSUVDU2E1bnU4dWlEWmRnd3VMWDRrY0t4?=
+ =?utf-8?B?OWYyVjFPRUxqTWlHSTZERVVuVEhKNVpwM1FsVXJubXRZODVSOXlRWE1oTmMw?=
+ =?utf-8?B?Ry9nRXVNQUgxS0ljNnk3b2VFME13eWMrQW1jTittTjY4MEVNempyaHlJN0JL?=
+ =?utf-8?B?Y2NJOG9oekc2YTFVV0xGTUJkN0pLZzFLR2FYajBLallzYkcvYWFPZWpaYk5O?=
+ =?utf-8?B?bnA2QmNsMXd0N2JhRTE3WFZsWUhsL0lURHlxNW5NKzNtVzVxbWR3bCs3OW9L?=
+ =?utf-8?B?V2ttYmwwSHQ1cjllT1N0YW9PVndWTnNSM1FQbGJJZ3ZSS3JlVEdqTC8zWDVM?=
+ =?utf-8?B?SFlRSURyVlVWajBSalE1Zz09?=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR0P278MB1314
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509FC.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	6197fe81-66be-4f57-000d-08dcc53abf4b
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ek1sQXlWSzdDdzhCT3dNcmVjbHVpZUFRRWtYc2IwQlQ2VnAvT0pONEwvcDBq?=
+ =?utf-8?B?RU9Kc0UyU3dtQWNWTklPaVBER0tPVmFmTEFndENtdEFUQ0F6SUcyRnppUXc5?=
+ =?utf-8?B?ZnB5bE41QVVDK0dNRVZHUzU5T0ZETnFWeEEvZkViUVFOODMwZWhYOW5tY0xM?=
+ =?utf-8?B?Vm5QSHNwVjVvVDhVMW1zM1lBRWE3VndYVFRHMWIvZkZaT0pHTUU0SHY5UlhG?=
+ =?utf-8?B?Yjd3SndZNWlNSlpHNzRxV1lXYjhKem1kYldoVW1Mc2szOG1yYTJrMEM0U2Ir?=
+ =?utf-8?B?M2htTFFteW1CQVRiUS81eHJLYVRZS2FwampObGZFVjBEWElqVi9Na1FqUmxx?=
+ =?utf-8?B?UnVxcHFwd3Q1ZTF1dXJIckcxa05jb1NhSWpQNHoyWnRTcjZXZW9pdmtHVzcw?=
+ =?utf-8?B?c2dQTWRFeHdRZVFtVTZZT0x4Qlpjd3o3SG1vK0ZKbWhjeDY3cUJQZTc2YTVi?=
+ =?utf-8?B?SDlXVXpvVkRtaWNkUUVpUEkydzcyQWU2NVVwTm1zdnRlRXF5a0REQlZGUzJu?=
+ =?utf-8?B?L2Y0YkhWeVEySTE5V3lqbkhjU2pQblRSSWN3YkRYN080dklyck52M01EZ08w?=
+ =?utf-8?B?THNhOG80N0puS0Z4NDkxT0lva01XZjZOWU9lQ3dXK29lVUJLMUFITTE3L2tE?=
+ =?utf-8?B?c0RxeHpxd21iTkhnZkZ1MTdUeG45dnl3UzF4a3NkZ04wb3duRktldHByV0ZC?=
+ =?utf-8?B?ZS9ULzQ2TWtaZmxoOXRrLy9JdERFdENmamFSbFlPcXp6aHQ4MndnRHpvTUI2?=
+ =?utf-8?B?TDBONEh3dHdtMURaL0c4b2lwWXNkU2dKTXUrcW42V05kbndxZjFXeStuV2lX?=
+ =?utf-8?B?L1VrV1ltNlYzZGdqWkpDM1EybmNRNjAxNjVneWxtMWpNNUNic2RqMS9VS3c5?=
+ =?utf-8?B?VXdKYVorMkFBcjZVSlM4OWtIYjJrR0s3cld0RWNJSE9xMGllb2ZZTFV1d3BN?=
+ =?utf-8?B?NGhOQiszNkJJbTNESzJYUmRpTm5vUHhienZXVnVPOU5Mc3dpZ2FOaS9qVDU1?=
+ =?utf-8?B?ZEtVK0R6VHBGbGJXYTQxeS83UDR2TVNtVHhHNkVDZXBTcVNhb0ozYThudzcr?=
+ =?utf-8?B?SGlJOHJSS2hCaURtZUlSUUZjSWMwTDNKdCtPdTRKKzJUdElZMGg4SVlEMUE1?=
+ =?utf-8?B?R2g5SnJ3bVQvdXhueUgwa0pzSzZkSHdFS2pRUmNUZE5EeURyQ1R2ZzNUdXRZ?=
+ =?utf-8?B?aVZ5THZOSkUySVZScVZJdnNRU1lBSlZJY3VadWc3a0xldFc4NFBxM0VGR3Nv?=
+ =?utf-8?B?K0NsVHE0ZS9NbUlWcXFaNHRDRG5rV1lzUCtYOUVEZmFTeWZpL2ErV1lUQ2Rl?=
+ =?utf-8?B?ZHY2TTdDWXBoRFUrWXYyRnFKK005aEVkZmF6eDU5VUJxS1JxUG90TjVaYnIr?=
+ =?utf-8?B?ajVFWmRRb0dKZFh2TmdDVzFSVEFEVVcwRmZhR3psZ2NId3hvUk54OE1SWmQ3?=
+ =?utf-8?B?NTNRcGd3YUpGZUZPd0ZyL1IwbWNxY2JCSzhDMmV4Mnp3bWpEQVlnN3hDUUZY?=
+ =?utf-8?B?TjFVU1lEbWg0ZlBaU3hCUTdBTjJWVFdvMFN5cG92bnIyNFYzK2ZsS2xyZnB4?=
+ =?utf-8?B?elhMMmw3bEhNTHZEVXVoUDA5aGNnRnVNVTZVSXBJWGlpbFEvbURYTGkyUXNQ?=
+ =?utf-8?B?MWpqZ05rd0lZTjIreUFFNDBVNGdySXlFQ3dSMFVyMlZoZXVYbzlTTlphcG90?=
+ =?utf-8?B?ZDhqWGN2eDd4eUpVRmt2c0U4Kzd1NHlkRS9wckZpY1hFYlVlM3ltVy9hK24v?=
+ =?utf-8?B?L3p5cFJVVlFoKzFzQXJmOURhS3dVQlkzRTBDckJSZ0NSSlBYcnh2b2VORnNs?=
+ =?utf-8?B?OFBkYjdpaVpKcjNpNEYwdEhpZlZ2R0RBWFJTbkdJOE91b0Y4bjNqVjA5UUdG?=
+ =?utf-8?B?TldpWEMvUExvVzg1ZkF3Ymo0ZTJ4NjJpV0dlRlBaanZxQmVZQlFuTFpid1Vu?=
+ =?utf-8?Q?jyX99gro516JrJ78gOd7FWqcwRKRVVTB?=
+X-Forefront-Antispam-Report:
+	CIP:51.107.2.244;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mx2.crn.activeguard.cloud;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(35042699022);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2024 19:18:52.3458
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fa6b6c0-9503-4f45-8cb7-08dcc53ac17c
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[51.107.2.244];Helo=[mx2.crn.activeguard.cloud]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509FC.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV0P278MB1746
 
-Remove the scaffold member from the lsmblob. Remove the
-remaining places it is being set.
+On 8/24/24 01:07, Tristram.Ha@microchip.com wrote:
+> KSZ8895/KSZ8864 is a switch family between KSZ8863/73 and KSZ8795, so it
+> shares some registers and functions in those switches already
+> implemented in the KSZ DSA driver.
+>
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/security.h       |  6 ------
- security/apparmor/audit.c      |  6 +-----
- security/apparmor/lsm.c        |  4 ----
- security/apparmor/secid.c      |  6 +-----
- security/selinux/hooks.c       | 18 +-----------------
- security/selinux/ss/services.c |  4 ----
- security/smack/smack_lsm.c     | 33 ++++-----------------------------
- 7 files changed, 7 insertions(+), 70 deletions(-)
+Thanks to me the naming is somehow coherent now. I've quickly tested it 
+with the KSZ8794 I have available to check for possible regressions and 
+there's none I could see. So *not* tested with a KSZ8895/64; I don't 
+know if that merits the tested-by tag but feel free to add it if you like:
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 111c1fc18f25..ca4f3b41f344 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -144,11 +144,6 @@ enum lockdown_reason {
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
- 
--/* scaffolding */
--struct lsmblob_scaffold {
--	u32 secid;
--};
--
- /*
-  * Data exported by the security modules
-  */
-@@ -157,7 +152,6 @@ struct lsmblob {
- 	struct lsmblob_smack smack;
- 	struct lsmblob_apparmor apparmor;
- 	struct lsmblob_bpf bpf;
--	struct lsmblob_scaffold scaffold;
- };
- 
- extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
-diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
-index 758b75a9c1c5..120154a6d683 100644
---- a/security/apparmor/audit.c
-+++ b/security/apparmor/audit.c
-@@ -270,11 +270,7 @@ int aa_audit_rule_match(struct lsmblob *blob, u32 field, u32 op, void *vrule)
- 	struct aa_label *label;
- 	int found = 0;
- 
--	/* scaffolding */
--	if (!blob->apparmor.label && blob->scaffold.secid)
--		label = aa_secid_to_label(blob->scaffold.secid);
--	else
--		label = blob->apparmor.label;
-+	label = blob->apparmor.label;
- 
- 	if (!label)
- 		return -ENOENT;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 877c4e809ae8..08fde302c9fe 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -987,8 +987,6 @@ static void apparmor_current_getlsmblob_subj(struct lsmblob *blob)
- 	struct aa_label *label = __begin_current_label_crit_section();
- 
- 	blob->apparmor.label = label;
--	/* scaffolding */
--	blob->scaffold.secid = label->secid;
- 	__end_current_label_crit_section(label);
- }
- 
-@@ -998,8 +996,6 @@ static void apparmor_task_getlsmblob_obj(struct task_struct *p,
- 	struct aa_label *label = aa_get_task_label(p);
- 
- 	blob->apparmor.label = label;
--	/* scaffolding */
--	blob->scaffold.secid = label->secid;
- 	aa_put_label(label);
- }
- 
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 3c389e5810cd..2b48050f97a6 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -100,11 +100,7 @@ int apparmor_lsmblob_to_secctx(struct lsmblob *blob, char **secdata,
- 
- 	AA_BUG(!seclen);
- 
--	/* scaffolding */
--	if (!blob->apparmor.label && blob->scaffold.secid)
--		label = aa_secid_to_label(blob->scaffold.secid);
--	else
--		label = blob->apparmor.label;
-+	label = blob->apparmor.label;
- 
- 	if (!label)
- 		return -EINVAL;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 076511c446bd..a81529c21517 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3510,8 +3510,6 @@ static void selinux_inode_getlsmblob(struct inode *inode, struct lsmblob *blob)
- 	struct inode_security_struct *isec = inode_security_novalidate(inode);
- 
- 	blob->selinux.secid = isec->sid;
--	/* scaffolding */
--	blob->scaffold.secid = isec->sid;
- }
- 
- static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
-@@ -4032,8 +4030,6 @@ static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
- static void selinux_cred_getlsmblob(const struct cred *c, struct lsmblob *blob)
- {
- 	blob->selinux.secid = cred_sid(c);
--	/* scaffolding */
--	blob->scaffold.secid = blob->selinux.secid;
- }
- 
- /*
-@@ -4174,16 +4170,12 @@ static int selinux_task_getsid(struct task_struct *p)
- static void selinux_current_getlsmblob_subj(struct lsmblob *blob)
- {
- 	blob->selinux.secid = current_sid();
--	/* scaffolding */
--	blob->scaffold.secid = blob->selinux.secid;
- }
- 
- static void selinux_task_getlsmblob_obj(struct task_struct *p,
- 					struct lsmblob *blob)
- {
- 	blob->selinux.secid = task_sid_obj(p);
--	/* scaffolding */
--	blob->scaffold.secid = blob->selinux.secid;
- }
- 
- static int selinux_task_setnice(struct task_struct *p, int nice)
-@@ -6348,8 +6340,6 @@ static void selinux_ipc_getlsmblob(struct kern_ipc_perm *ipcp,
- {
- 	struct ipc_security_struct *isec = selinux_ipc(ipcp);
- 	blob->selinux.secid = isec->sid;
--	/* scaffolding */
--	blob->scaffold.secid = isec->sid;
- }
- 
- static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
-@@ -6634,13 +6624,7 @@ static int selinux_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- static int selinux_lsmblob_to_secctx(struct lsmblob *blob, char **secdata,
- 				     u32 *seclen)
- {
--	u32 secid = blob->selinux.secid;
--
--	/* scaffolding */
--	if (!secid)
--		secid = blob->scaffold.secid;
--
--	return security_sid_to_context(secid, secdata, seclen);
-+	return security_sid_to_context(blob->selinux.secid, secdata, seclen);
- }
- 
- static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 43eb1d46942c..002072912800 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -3660,10 +3660,6 @@ int selinux_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
- 		goto out;
- 	}
- 
--	/* scaffolding */
--	if (!blob->selinux.secid && blob->scaffold.secid)
--		blob->selinux.secid = blob->scaffold.secid;
--
- 	ctxt = sidtab_search(policy->sidtab, blob->selinux.secid);
- 	if (unlikely(!ctxt)) {
- 		WARN_ONCE(1, "selinux_audit_rule_match: unrecognized SID %d\n",
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index dbcf1c65da3c..670050f739da 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1655,11 +1655,7 @@ static int smack_inode_listsecurity(struct inode *inode, char *buffer,
-  */
- static void smack_inode_getlsmblob(struct inode *inode, struct lsmblob *blob)
- {
--	struct smack_known *skp = smk_of_inode(inode);
--
--	blob->smack.skp = skp;
--	/* scaffolding */
--	blob->scaffold.secid = skp->smk_secid;
-+	blob->smack.skp = smk_of_inode(inode);
- }
- 
- /*
-@@ -2162,8 +2158,6 @@ static void smack_cred_getlsmblob(const struct cred *cred,
- {
- 	rcu_read_lock();
- 	blob->smack.skp = smk_of_task(smack_cred(cred));
--	/* scaffolding */
--	blob->scaffold.secid = blob->smack.skp->smk_secid;
- 	rcu_read_unlock();
- }
- 
-@@ -2265,11 +2259,7 @@ static int smack_task_getsid(struct task_struct *p)
-  */
- static void smack_current_getlsmblob_subj(struct lsmblob *blob)
- {
--	struct smack_known *skp = smk_of_current();
--
--	blob->smack.skp = skp;
--	/* scaffolding */
--	blob->scaffold.secid = skp->smk_secid;
-+	blob->smack.skp = smk_of_current();
- }
- 
- /**
-@@ -2282,11 +2272,7 @@ static void smack_current_getlsmblob_subj(struct lsmblob *blob)
- static void smack_task_getlsmblob_obj(struct task_struct *p,
- 				      struct lsmblob *blob)
- {
--	struct smack_known *skp = smk_of_task_struct_obj(p);
--
--	blob->smack.skp = skp;
--	/* scaffolding */
--	blob->scaffold.secid = skp->smk_secid;
-+	blob->smack.skp = smk_of_task_struct_obj(p);
- }
- 
- /**
-@@ -3474,11 +3460,8 @@ static void smack_ipc_getlsmblob(struct kern_ipc_perm *ipp,
- 				 struct lsmblob *blob)
- {
- 	struct smack_known **iskpp = smack_ipc(ipp);
--	struct smack_known *iskp = *iskpp;
- 
--	blob->smack.skp = iskp;
--	/* scaffolding */
--	blob->scaffold.secid = iskp->smk_secid;
-+	blob->smack.skp = *iskpp;
- }
- 
- /**
-@@ -4825,10 +4808,6 @@ static int smack_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
- 	if (field != AUDIT_SUBJ_USER && field != AUDIT_OBJ_USER)
- 		return 0;
- 
--	/* scaffolding */
--	if (!skp && blob->scaffold.secid)
--		skp = smack_from_secid(blob->scaffold.secid);
--
- 	/*
- 	 * No need to do string comparisons. If a match occurs,
- 	 * both pointers will point to the same smack_known
-@@ -4889,10 +4868,6 @@ static int smack_lsmblob_to_secctx(struct lsmblob *blob, char **secdata,
- {
- 	struct smack_known *skp = blob->smack.skp;
- 
--	/* scaffolding */
--	if (!skp && blob->scaffold.secid)
--		skp = smack_from_secid(blob->scaffold.secid);
--
- 	if (secdata)
- 		*secdata = skp->smk_known;
- 	*seclen = strlen(skp->smk_known);
--- 
-2.41.0
+Tested-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+
+Cheers, Pieter
 
 
