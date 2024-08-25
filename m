@@ -1,266 +1,220 @@
-Return-Path: <linux-kernel+bounces-300504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEA495E48F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C231795E493
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72926B2127A
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E64B21211
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7024B158D79;
-	Sun, 25 Aug 2024 17:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D65616BE09;
+	Sun, 25 Aug 2024 17:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RnWCij8u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aj/jQH4B";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GosxqwSd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540ADBE6F
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 17:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD6BBE6F;
+	Sun, 25 Aug 2024 17:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724606809; cv=none; b=FvQfvjW2h5d+QfhwM7FLjcEHGnhai3Et9teG6KfQmU91+8A7Yr7CrO/wVkvzGzGHt0+rFsJ+3qElHkCqp3KXfRLW9kTK6YT4k3eH8m3XLok0k2ckzzqbaAGiDpGqAW4f5mwNGaNxV2ii5FAj2kFXvRhLLKwv0SKeifx9DikxC8I=
+	t=1724606926; cv=none; b=SCjoys032En8xmDWuNSWB7HHtiYPUMVsEwueBbFGDRTOMR6hvp/FZ3vSfKg9L8XnluaaBkARtzr7HcgeDF+wvYjfobwNbKZK8DWkZBB/M2b3pzoGt2nMDJE4p88qjNfkKzdX/IWaY1sWrnmQe0epne2ElJJvAzTXwKgI6LVoa8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724606809; c=relaxed/simple;
-	bh=sh6+qNAxwtD4GnFqAApqORmS+DuidonV6Y9tPrNTZeI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Ek6DeifiR5bL+vEz1y73Kqi5wTzcem5Wbumqwa18pzaVCp1Hp3Bh9cG2t/SKaTntf0yDvuaGIDisPlLphSSl///R1eBu1rRlil7K8vAjM8mSDbmNsnDCbC//HfUdpc8xCp0XRBTA4rKImuFbP/AMcFQiw3mbTcBgakrGVFAVJko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RnWCij8u; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724606807; x=1756142807;
-  h=date:from:to:cc:subject:message-id;
-  bh=sh6+qNAxwtD4GnFqAApqORmS+DuidonV6Y9tPrNTZeI=;
-  b=RnWCij8ule7RMeND75GXb/BJdXbKPlsdtcLHQvK14pxe50cqmd59Hcf9
-   Kl14Qy2KdhsSSA6OyyaQUhu7Rfv4EydCbL37vDmoXFDtTidK01dWa8FOx
-   sj/h13urARlNG6aHTq4QJJ0G0oCcH9OxNQdf5R/3H64myiSMLSdUGVfuK
-   Tccpm/YAFXckPT4NvgsND55Mgo6J8+i07PhUkn2nfxcxizeKQNtEwan5c
-   8w/0yd6QAYoXzYZl7e6rv3SyPg76ugqk0snoVEenPwqBXo3BDBODeBWJH
-   flgWr4XGSWz85wWV9TDt07lv94422LMwenvaG7iGiPLKiKIwHcx1FUHZA
-   w==;
-X-CSE-ConnectionGUID: cCVgVjX7RumFHtgxWV7zUA==
-X-CSE-MsgGUID: Ipi7D4J6SA2QuL5zapl0pQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22892099"
-X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
-   d="scan'208";a="22892099"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 10:26:46 -0700
-X-CSE-ConnectionGUID: wt1Ikxh8RHGNqs1+fq8U7g==
-X-CSE-MsgGUID: E4wPKosnRlOZRO8v3Lhclw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
-   d="scan'208";a="62816588"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 25 Aug 2024 10:26:45 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siH0l-000FKj-10;
-	Sun, 25 Aug 2024 17:26:43 +0000
-Date: Mon, 26 Aug 2024 01:26:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- e77f8f275278886d05ce6dfe9e3bc854e7bf0713
-Message-ID: <202408260138.G7Jls2if-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1724606926; c=relaxed/simple;
+	bh=u1MP966MnMybKvy9fVYLnREgry69HzUKTccYTd+3aVE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=bSRVq/D6KGbzboVzmSB1qEwNur8ezVgyzOjb3TdEXRSDDV0AUNJv1FeFpX8lQKZXkv/m07O294cqD973DdT8Y8TKNEoIFRuXDOc6m2Hx3shSGBDdx5PUpNdpBjoQ6d0rxsOYtXepC90I7Da4jWdHKPhsBqyGRnJlLtp6IqeL6iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aj/jQH4B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GosxqwSd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 25 Aug 2024 17:28:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724606923;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nRUI/aPNE/KF0+qMq3J/fxcCsbjy3J+AogSFJy1KQQQ=;
+	b=Aj/jQH4BNpC/0hsM5kuzF6q5oCQD4kgLBPzBW1v3HGB2tjtRD+dbaczVpISyhB7kCq+WOr
+	BtCDlbL8yDyMWMyERDxqBndYoUSqKCnJeTH9kCsW8lCCybfzPPMVFaLm46uJUzo1iqR4s3
+	FUdEGLSTtuUkrKoNLePqCRzS/tzvTcWSXkL1D8dZlls4kbjpp5QmYHymivBqzXnu9Mo2GD
+	zf5wXvw3W63eAY/riiPcPyA7v3ZuFTem/Ygm0rX+AZQtNAzIHHwVJP1MgJ93MyowYeISHV
+	JQNYETYewFmPrwzTrm+SATNcxtF9M63TZUEkVjdcT3VbumOxlWFrHfa1FUWQxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724606923;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nRUI/aPNE/KF0+qMq3J/fxcCsbjy3J+AogSFJy1KQQQ=;
+	b=GosxqwSd+Tob4C8gNFlFdpal5WaGvT7JzzMJxKsFFW6ebTPdmy9bFMLO29o5orLcmmc1mi
+	IUOKsvIuhre8YkDg==
+From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fred] x86/entry: Set FRED RSP0 on return to userspace
+ instead of context switch
+Cc: Sean Christopherson <seanjc@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Xin Li (Intel)" <xin@zytor.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240822073906.2176342-4-xin@zytor.com>
+References: <20240822073906.2176342-4-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Message-ID: <172460692214.2215.327817940155797017.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: e77f8f275278886d05ce6dfe9e3bc854e7bf0713  Merge branch into tip/master: 'x86/timers'
+The following commit has been merged into the x86/fred branch of tip:
 
-elapsed time: 1389m
+Commit-ID:     fe85ee391966c4cf3bfe1c405314e894c951f521
+Gitweb:        https://git.kernel.org/tip/fe85ee391966c4cf3bfe1c405314e894c951f521
+Author:        Xin Li (Intel) <xin@zytor.com>
+AuthorDate:    Thu, 22 Aug 2024 00:39:06 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 25 Aug 2024 19:23:00 +02:00
 
-configs tested: 174
-configs skipped: 6
+x86/entry: Set FRED RSP0 on return to userspace instead of context switch
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The FRED RSP0 MSR points to the top of the kernel stack for user level
+event delivery. As this is the task stack it needs to be updated when a
+task is scheduled in.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240825   gcc-13.2.0
-arc                   randconfig-002-20240825   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                         at91_dt_defconfig   clang-20
-arm                                 defconfig   gcc-13.2.0
-arm                          ep93xx_defconfig   clang-14
-arm                         mv78xx0_defconfig   clang-20
-arm                             mxs_defconfig   clang-14
-arm                         nhk8815_defconfig   clang-20
-arm                   randconfig-001-20240825   gcc-13.2.0
-arm                   randconfig-002-20240825   gcc-13.2.0
-arm                   randconfig-003-20240825   gcc-13.2.0
-arm                   randconfig-004-20240825   gcc-13.2.0
-arm                             rpc_defconfig   clang-20
-arm                         socfpga_defconfig   clang-14
-arm                           sunxi_defconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240825   gcc-13.2.0
-arm64                 randconfig-002-20240825   gcc-13.2.0
-arm64                 randconfig-003-20240825   gcc-13.2.0
-arm64                 randconfig-004-20240825   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240825   gcc-13.2.0
-csky                  randconfig-002-20240825   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240825   clang-18
-i386         buildonly-randconfig-002-20240825   clang-18
-i386         buildonly-randconfig-003-20240825   clang-18
-i386         buildonly-randconfig-004-20240825   clang-18
-i386         buildonly-randconfig-005-20240825   clang-18
-i386         buildonly-randconfig-006-20240825   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240825   clang-18
-i386                  randconfig-002-20240825   clang-18
-i386                  randconfig-003-20240825   clang-18
-i386                  randconfig-004-20240825   clang-18
-i386                  randconfig-005-20240825   clang-18
-i386                  randconfig-006-20240825   clang-18
-i386                  randconfig-011-20240825   clang-18
-i386                  randconfig-012-20240825   clang-18
-i386                  randconfig-013-20240825   clang-18
-i386                  randconfig-014-20240825   clang-18
-i386                  randconfig-015-20240825   clang-18
-i386                  randconfig-016-20240825   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240825   gcc-13.2.0
-loongarch             randconfig-002-20240825   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                          rb532_defconfig   clang-14
-mips                          rb532_defconfig   clang-20
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240825   gcc-13.2.0
-nios2                 randconfig-002-20240825   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240825   gcc-13.2.0
-parisc                randconfig-002-20240825   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                     mpc512x_defconfig   clang-14
-powerpc                 mpc8313_rdb_defconfig   clang-14
-powerpc                      ppc44x_defconfig   clang-20
-powerpc               randconfig-001-20240825   gcc-13.2.0
-powerpc               randconfig-002-20240825   gcc-13.2.0
-powerpc                        warp_defconfig   clang-14
-powerpc64             randconfig-001-20240825   gcc-13.2.0
-powerpc64             randconfig-002-20240825   gcc-13.2.0
-powerpc64             randconfig-003-20240825   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                    nommu_k210_defconfig   clang-20
-riscv                 randconfig-001-20240825   gcc-13.2.0
-riscv                 randconfig-002-20240825   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-14
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240825   gcc-13.2.0
-s390                  randconfig-002-20240825   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240825   gcc-13.2.0
-sh                    randconfig-002-20240825   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240825   gcc-13.2.0
-sparc64               randconfig-002-20240825   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240825   gcc-13.2.0
-um                    randconfig-002-20240825   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240825   gcc-12
-x86_64       buildonly-randconfig-002-20240825   gcc-12
-x86_64       buildonly-randconfig-003-20240825   gcc-12
-x86_64       buildonly-randconfig-004-20240825   gcc-12
-x86_64       buildonly-randconfig-005-20240825   gcc-12
-x86_64       buildonly-randconfig-006-20240825   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240825   gcc-12
-x86_64                randconfig-002-20240825   gcc-12
-x86_64                randconfig-003-20240825   gcc-12
-x86_64                randconfig-004-20240825   gcc-12
-x86_64                randconfig-005-20240825   gcc-12
-x86_64                randconfig-006-20240825   gcc-12
-x86_64                randconfig-011-20240825   gcc-12
-x86_64                randconfig-012-20240825   gcc-12
-x86_64                randconfig-013-20240825   gcc-12
-x86_64                randconfig-014-20240825   gcc-12
-x86_64                randconfig-015-20240825   gcc-12
-x86_64                randconfig-016-20240825   gcc-12
-x86_64                randconfig-071-20240825   gcc-12
-x86_64                randconfig-072-20240825   gcc-12
-x86_64                randconfig-073-20240825   gcc-12
-x86_64                randconfig-074-20240825   gcc-12
-x86_64                randconfig-075-20240825   gcc-12
-x86_64                randconfig-076-20240825   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240825   gcc-13.2.0
-xtensa                randconfig-002-20240825   gcc-13.2.0
+The update is done at context switch. That means it's also done when
+switching to kernel threads, which is pointless as those never go out to
+user space. For KVM threads this means there are two writes to FRED_RSP0 as
+KVM has to switch to the guest value before VMENTER.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Defer the update to the exit to user space path and cache the per CPU
+FRED_RSP0 value, so redundant writes can be avoided.
+
+Provide fred_sync_rsp0() for KVM to keep the cache in sync with the actual
+MSR value after returning from guest to host mode.
+
+[ tglx: Massage change log ]
+
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240822073906.2176342-4-xin@zytor.com
+---
+ arch/x86/include/asm/entry-common.h |  3 +++
+ arch/x86/include/asm/fred.h         | 21 ++++++++++++++++++++-
+ arch/x86/include/asm/switch_to.h    |  5 +----
+ arch/x86/kernel/fred.c              |  3 +++
+ 4 files changed, 27 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/entry-common.h
+index db97082..77d2055 100644
+--- a/arch/x86/include/asm/entry-common.h
++++ b/arch/x86/include/asm/entry-common.h
+@@ -8,6 +8,7 @@
+ #include <asm/nospec-branch.h>
+ #include <asm/io_bitmap.h>
+ #include <asm/fpu/api.h>
++#include <asm/fred.h>
+ 
+ /* Check that the stack and regs on entry from user mode are sane. */
+ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs)
+@@ -63,6 +64,8 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
+ 	if (IS_ENABLED(CONFIG_X86_DEBUG_FPU) || unlikely(ti_work))
+ 		arch_exit_work(ti_work);
+ 
++	fred_update_rsp0();
++
+ #ifdef CONFIG_COMPAT
+ 	/*
+ 	 * Compat syscalls set TS_COMPAT.  Make sure we clear it before
+diff --git a/arch/x86/include/asm/fred.h b/arch/x86/include/asm/fred.h
+index 66d7dbe..25ca00b 100644
+--- a/arch/x86/include/asm/fred.h
++++ b/arch/x86/include/asm/fred.h
+@@ -36,6 +36,7 @@
+ 
+ #ifdef CONFIG_X86_FRED
+ #include <linux/kernel.h>
++#include <linux/sched/task_stack.h>
+ 
+ #include <asm/ptrace.h>
+ 
+@@ -87,12 +88,30 @@ void cpu_init_fred_exceptions(void);
+ void cpu_init_fred_rsps(void);
+ void fred_complete_exception_setup(void);
+ 
++DECLARE_PER_CPU(unsigned long, fred_rsp0);
++
++static __always_inline void fred_sync_rsp0(unsigned long rsp0)
++{
++	__this_cpu_write(fred_rsp0, rsp0);
++}
++
++static __always_inline void fred_update_rsp0(void)
++{
++	unsigned long rsp0 = (unsigned long) task_stack_page(current) + THREAD_SIZE;
++
++	if (cpu_feature_enabled(X86_FEATURE_FRED) && (__this_cpu_read(fred_rsp0) != rsp0)) {
++		wrmsrns(MSR_IA32_FRED_RSP0, rsp0);
++		__this_cpu_write(fred_rsp0, rsp0);
++	}
++}
+ #else /* CONFIG_X86_FRED */
+ static __always_inline unsigned long fred_event_data(struct pt_regs *regs) { return 0; }
+ static inline void cpu_init_fred_exceptions(void) { }
+ static inline void cpu_init_fred_rsps(void) { }
+ static inline void fred_complete_exception_setup(void) { }
+-static __always_inline void fred_entry_from_kvm(unsigned int type, unsigned int vector) { }
++static inline void fred_entry_from_kvm(unsigned int type, unsigned int vector) { }
++static inline void fred_sync_rsp0(unsigned long rsp0) { }
++static inline void fred_update_rsp0(void) { }
+ #endif /* CONFIG_X86_FRED */
+ #endif /* !__ASSEMBLY__ */
+ 
+diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
+index e9ded14..7524854 100644
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -70,12 +70,9 @@ static inline void update_task_stack(struct task_struct *task)
+ #ifdef CONFIG_X86_32
+ 	this_cpu_write(cpu_tss_rw.x86_tss.sp1, task->thread.sp0);
+ #else
+-	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
+-		wrmsrns(MSR_IA32_FRED_RSP0, (unsigned long)task_stack_page(task) + THREAD_SIZE);
+-	} else if (cpu_feature_enabled(X86_FEATURE_XENPV)) {
++	if (!cpu_feature_enabled(X86_FEATURE_FRED) && cpu_feature_enabled(X86_FEATURE_XENPV))
+ 		/* Xen PV enters the kernel on the thread stack. */
+ 		load_sp0(task_top_of_stack(task));
+-	}
+ #endif
+ }
+ 
+diff --git a/arch/x86/kernel/fred.c b/arch/x86/kernel/fred.c
+index 266c69e..8d32c3f 100644
+--- a/arch/x86/kernel/fred.c
++++ b/arch/x86/kernel/fred.c
+@@ -21,6 +21,9 @@
+ 
+ #define FRED_STKLVL(vector, lvl)	((lvl) << (2 * (vector)))
+ 
++DEFINE_PER_CPU(unsigned long, fred_rsp0);
++EXPORT_PER_CPU_SYMBOL(fred_rsp0);
++
+ void cpu_init_fred_exceptions(void)
+ {
+ 	/* When FRED is enabled by default, remove this log message */
 
