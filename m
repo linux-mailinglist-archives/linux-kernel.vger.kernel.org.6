@@ -1,142 +1,117 @@
-Return-Path: <linux-kernel+bounces-300385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDCD95E30D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:26:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11B195E30F
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF7E81F20F44
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A7B7B21376
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082A91411FD;
-	Sun, 25 Aug 2024 11:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DC913F458;
+	Sun, 25 Aug 2024 11:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IFBP60fv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xHqlT4v6"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07730801;
-	Sun, 25 Aug 2024 11:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C3B75804;
+	Sun, 25 Aug 2024 11:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724585160; cv=none; b=CbSWd0esTatnnMXm0+LkWxu/DnCRifDMtszjkNrRWob0uQa5k/zFznldNcKDd7f5xzXBQXUPmt/GaS0t0C9F71FcT2AMTjvUDGzZ46zBN9sK8Tyet/6aju0D0G84ge+HM1r0Aayf29UQ+bju9o5MoQ4il/2UVJIPUooPP/fMy3U=
+	t=1724585298; cv=none; b=DxmL347DKF0GOqIBp5MiSiUMe46jN5IuSXABlQ9Y8vxw+rTEpnst7DZqR96n81mQMxi4HdOdRct7wQUzf60QyaBaRu+TpBRbpRSxLkslm1f/XsVdnWyn8pXIfApt1MFMQZkkgIeDZTpBA/LlT7J/+Z7ijyF5lqnT76TEMH4/Q0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724585160; c=relaxed/simple;
-	bh=mfY+835+6x4vd1sUirZL47mKpUKMMBG2vJ2EWL/D5Es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZYGJ89aiwPfMlNcOB7ApjLXZiOKt28gcN9e9g318m5ky/cOHNoM2B/yO25Tr3JMBeVMnR5R3k66gTdW4j+G+tPxBPE0RtfaRxbKU9RgEDLbFVLt9rSkr2Wldoylq3pGnO6ACP8zSTsP/kDaYEGp93TbRlpJhVJXhnllxSlgJObg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IFBP60fv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38F6EC32782;
-	Sun, 25 Aug 2024 11:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724585159;
-	bh=mfY+835+6x4vd1sUirZL47mKpUKMMBG2vJ2EWL/D5Es=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IFBP60fvvTM0yH3/4f8Zpvpw2+W6JEY5ZhEr/8378rri9RxzMpV1PrfN+sL7z95/4
-	 +KfRL8smkGwuirbzYisJQrOA63FxZkv69hE8LFM9S8fLyO14Qy3RiCgxxOB9QfCdjd
-	 NGlE46m2oBN5MOzrDHcxCjYmX6TgDxMLZWbuktJk=
-Date: Sun, 25 Aug 2024 13:25:56 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] wifi: ath6kl: Check that the read operation returns a
- data length of 0
-Message-ID: <2024082501-tiling-prelaw-38d7@gregkh>
-References: <2024082554-manatee-ashamed-12d5@gregkh>
- <tencent_89BAE8BB0933D89E1D1BD94B891BBD257208@qq.com>
+	s=arc-20240116; t=1724585298; c=relaxed/simple;
+	bh=aKL2+WnKMItoTgXl5Q9BEp9gPqH6uqq5r/lOHNMsaEY=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YBfMjPqRv+sls/4xojDKkwWIusSketA87EFJZJZr79r8FHKkC68T2uq0VntLQWElLmRDNXImoaIm8VnFaFPcbDEGLCusFo0yqsN63P+2waduRZd/M/qOJkXXWG7AlCzG8Dh4d6p3VUH2xS8gL2SHz51OtloEhfxb1mgRkYqkPdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xHqlT4v6; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47PBRuPO100175;
+	Sun, 25 Aug 2024 06:27:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724585276;
+	bh=13HkAd8uIykV2ZLB5tTbdO7zhur6caaq5inBbOyHjmw=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=xHqlT4v6fbGGgSfnbPvmOhZZ/UYMOO6qdOIttVNDXkvxFL95dkBDUHOZUJfwNz3Jl
+	 nsTh+92JrT7U0U3GsRCqgSUi/ESVlr7vEG2HXhS7/7auXOjSp8iXZDH5+56Ve7y4a0
+	 uXuYdtuJKu/pw0bBbK66MtlWR1lX8ZalGLef+fHM=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47PBRuhQ068991
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 25 Aug 2024 06:27:56 -0500
+Received: from lewvowa01.ent.ti.com (10.180.75.79) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 25
+ Aug 2024 06:27:56 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by lewvowa01.ent.ti.com
+ (10.180.75.79) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Sun, 25 Aug
+ 2024 06:27:56 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 25 Aug 2024 06:27:56 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47PBRtPh056683;
+	Sun, 25 Aug 2024 06:27:55 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: Steffen Klassert <steffen.klassert@secunet.com>,
+        Daniel Jordan
+	<daniel.m.jordan@oracle.com>,
+        Waiman Long <longman@redhat.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH] padata: Honor the caller's alignment in
+ case of chunk_size 0
+In-Reply-To: <20240821154136.a09fa0e80903aa9ae17d43bd@linux-foundation.org>
+References: <20240822-max-v1-1-cb4bc5b1c101@ti.com>
+ <20240821154136.a09fa0e80903aa9ae17d43bd@linux-foundation.org>
+Date: Sun, 25 Aug 2024 16:57:54 +0530
+Message-ID: <875xroon9h.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_89BAE8BB0933D89E1D1BD94B891BBD257208@qq.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sun, Aug 25, 2024 at 06:09:45PM +0800, Edward Adam Davis wrote:
-> On Sun, 25 Aug 2024 10:34:00 +0200, Greg KH wrote:
-> > On Sun, Aug 25, 2024 at 04:14:17PM +0800, Edward Adam Davis wrote:
-> > > On Sun, 25 Aug 2024 09:25:37 +0200, Greg KH wrote:
-> > > > > If the data length returned by the device is 0, the read operation
-> > > > > should be considered a failure.
-> > > > >
-> > > > > Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-> > > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > > > ---
-> > > > >  drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > index 5220809841a6..2a89bab81b24 100644
-> > > > > --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > @@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
-> > > > >  		ath6kl_err("Unable to read the bmi data from the device: %d\n",
-> > > > >  			   ret);
-> > > > >  		return ret;
-> > > > > +	} else {
-> > > > > +		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
-> > > > > +		return -EIO;
-> > > >
-> > > > Close, but not quite there.  ath6kl_usb_submit_ctrl_in() needs to verify
-> > > > that the actual amount of data was read that was asked for.  If a short
-> > > > read happens (or a long one), then an error needs to propagate out, not
-> > > > just 0.  See the "note:" line in that function for what needs to be
-> > > > properly checked.
-> > > >
-> > > > hope this helps,
-> > > Thanks for your analysis.
-> > > I have carefully read your analysis and I am not sure if the following
-> > > understanding is appropriate:
-> > > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > index 2a89bab81b24..35884316a8c8 100644
-> > > --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> > > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > @@ -932,6 +932,15 @@ static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
-> > >
-> > >         kfree(buf);
-> > 
-> > First off, this should be using usb_control_msg_send() instead of having
-> > to roll their own buffer handling, right?
-> I couldn't figure it out with what you said. 
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Meaning this kfree() should not be needed if you use
-usb_control_msg_send() (nor the allocation above it.)
+> This message was sent from outside of Texas Instruments. 
+> Do not click links or open attachments unless you recognize the source of this email and know the content is safe. 
+> Report Suspicious 
+>  
+> On Thu, 22 Aug 2024 02:32:52 +0530 Kamlesh Gurudasani <kamlesh@ti.com> wrote:
+>
+>> In the case where we are forcing the ps.chunk_size to be at least 1,
+>> we are ignoring the caller's alignment.
+>> 
+>> Move the forcing of ps.chunk_size to be at least 1 before rounding it
+>> up to caller's alignment, so that caller's alignment is honored.
+>> 
+>> While at it, use max() to force the ps.chunk_size to be at least 1 to
+>> improve readability.
+>
+> Please (as always) describe the userspace-visible runtime effects of
+> this change.  This helps others to determine which kernel(s) should be
+> patched.  And it helps others decide whether this fix might address an
+> issue which they are encountering.
 
-> ath6kl_usb_submit_ctrl_in() is similar to usb_control_msg_send(),
-> both calling usb_control_msg() to communicate with USB devices.
+Thanks for the review, Andrew.
+Honestly, I'm not sure the effects would be visble to userspace or not.
+or even how to reproduce it.
 
-Yes, it's close, but not quite the same.
+I have fixed according to discussion here,
+https://patchwork.kernel.org/project/linux-crypto/patch/20240806174647.1050398-1-longman@redhat.com/#25984314
 
-> In the current issue, when executing an ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP
-> read request, the length of the data returned from the device is 0, which
-> is different from the expected length of the data to be read, resulting in
-> a warning.
-> 
-> ath6kl_usb_submit_ctrl_in()--->
-> 	usb_control_msg()--->
-> 		usb_internal_control_msg()
-> 
-> usb_internal_control_msg() will return the length of the data returned from
-> the device, usb_control_msg() return the length too, so in ath6kl_usb_submit_ctrl_in(),
-> we can filter out incorrect data lengths by judging the value of ret, such
-> as ret != Size situation.
-
-Then just do that type of check for that type of read request in the
-code that does that call, not 2-3 layers deeper, no need for making this
-more complex than needed.
-
-Try removing both of these functions and just call usb functions
-directly.
-
-thanks,
-
-greg k-h
+Kamlesh
 
