@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-300354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D53D95E2B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB5B95E2B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 220772820F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0591F21822
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79B26F2F0;
-	Sun, 25 Aug 2024 08:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7221D74429;
+	Sun, 25 Aug 2024 08:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgB94j4p"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C+SZxzMj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4FC4AEE9
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770F3A5F;
+	Sun, 25 Aug 2024 08:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724574513; cv=none; b=nFbsEtVhiVizXaR1JBgaTxlBcosS+YZMVElDYu8bVGtvusttXD8W4lYWWM5hp8GjSXRWh6DhyHu2SympZ1H64gu/DGhoSGJnAprJOwZIitiBtWIyGytQslcxULAdRmXZGCQPFNEbUMQTUZjibJmJSbvcVehRUiMON+LeFn2Oksg=
+	t=1724574844; cv=none; b=ryXIHbaHJvXeaEGW9zu/nnyP3J7/p8ExQoeaBUwJzy95XCqxOT+HnMpuCydvU3taiwN0sLonmBbeiEry6B0tcv0TL4T/xaofzOj9ttmZ443HEGc+oWir8NfX8o42sZ3BqD0z5SeUOfzAuxxTgyyPJOUAkEHhC7eYgXFt35rPOy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724574513; c=relaxed/simple;
-	bh=gS4NON5oj7zFrO2NoBZNKYLCan5eGttZvrXg5yUpSGw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bPM9aUAAnLbPCdkdN+L9k4eVdrqcMjsi9zbaKI6EQVbva97s6bHWMGaHTCHgXeCi4Me1y89kzOcXP1KGOiQ00dn9eX1M16mu1x6KTOIwYtmQB1Gadq+czXV7TESeD+pQl7uzgiKBuO9TCWUZtyR6tTHPGAhhapmjvMhzetxrPvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgB94j4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A3FEC32782;
-	Sun, 25 Aug 2024 08:28:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724574512;
-	bh=gS4NON5oj7zFrO2NoBZNKYLCan5eGttZvrXg5yUpSGw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FgB94j4p0D/995e0lcLoFfApG7MTnPnitReggdfJhokhLxwa/Mct1O1DYB7gJVCGI
-	 g3WYpIn43exyILAKNcO+lb23ZkaKN4d05IooYHL6s8hV/GXoMVUBWjLb2Gp2+FldOO
-	 7Pqly2HnwQU6wTshjfoMqcE3Os6JacJ2nvxTyiJJpfJjLNqO5FWAy+F9yGaqLReY+C
-	 YsuTY8sOjaZGp+urSdBR2F9fM6qGSob3Y8OCt55RFPFEFRmfiyWSa2W5fsD+W6bvcO
-	 82Qm9qO8CZuabfxugJ2dFFF5XOdyOiWONt5mdi6SsSDXgKhjdY3lyN+lcDy7kVJC1a
-	 HHUjXBgavLEBQ==
-Message-ID: <e86d13f6-2a0b-4415-93ff-3a8990f8017e@kernel.org>
-Date: Sun, 25 Aug 2024 10:28:28 +0200
+	s=arc-20240116; t=1724574844; c=relaxed/simple;
+	bh=u3+W8p/Is8iM+oDz8GIA+0dHRSNMz0iqZScB80VIfQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFsQRmZI2J97iNadwYK1qG3tidPexpOVWu8gDJCD2PLiMHAzgfnO/zvuqUIOf1pJfDbypjcD7URKkGRbDZxZwgTgiXAHYPrDgsQ9PeVfGXSfHjWY2JcyYekmPA01uJ+cuYMuuS7T4YVzgG12KKh+FGnwnrJfXVPuTnIFQnvmiek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C+SZxzMj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3906BC32782;
+	Sun, 25 Aug 2024 08:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724574843;
+	bh=u3+W8p/Is8iM+oDz8GIA+0dHRSNMz0iqZScB80VIfQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C+SZxzMj5dAd6q6wfAFECqei110sE9TcrArrT1OWLbaLpZhHwyL0dDESSku5LxvH0
+	 XE+aMsoTiEQaPZudEvT+Y7iyLJcabE94c3Q8Eb2vlCvIvIzKNNoA6oMEwLE2SHBUOZ
+	 jZrEV0QzQJfRsmQH32oaTu3vw/P3Rd6S5d371jEw=
+Date: Sun, 25 Aug 2024 10:34:00 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] wifi: ath6kl: Check that the read operation returns a
+ data length of 0
+Message-ID: <2024082554-manatee-ashamed-12d5@gregkh>
+References: <2024082507-clay-riveting-16f3@gregkh>
+ <tencent_F3E6370A4B6C7467779367AE3CB3363E9609@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "memory: ti-aemif: don't needlessly iterate over
- child nodes"
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240824080235.56472-1-brgl@bgdev.pl>
- <886da76d-f04e-46a6-b854-2148f7f6068d@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <886da76d-f04e-46a6-b854-2148f7f6068d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_F3E6370A4B6C7467779367AE3CB3363E9609@qq.com>
 
-On 25/08/2024 10:15, Krzysztof Kozlowski wrote:
-> On 24/08/2024 10:02, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
->> This reverts commit 23a641d5c2bce4c723fff9118a5d865ee6b9d05a.
->>
->> The first-level children of the aemif node are not the device nodes (ones
->> containing the 'compatible' property) but the chip-select nodes which
->> instead have their own children.
->>
->> of_platform_populate() will skip such nodes so we must indeed iterate
->> over the direct children of the aemif node. The problem here is that we
->> never call of_platform_depopulate() as it takes the root device as
->> argument. We only have an unpopulated chip-select nodes so we will leak
->> these devices if any of the calls to of_platform_populate() fails.
->>
->> I don't have a batter idea right now but my patch was not correct so we
->> need to revert it. While at it: at least use the scoped variant of the
->> OF node iterator. Down the line, we should find a better solution to fix
->> this potential resource leak in error path.
->>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
->>  drivers/memory/ti-aemif.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
+On Sun, Aug 25, 2024 at 04:14:17PM +0800, Edward Adam Davis wrote:
+> On Sun, 25 Aug 2024 09:25:37 +0200, Greg KH wrote:
+> > > If the data length returned by the device is 0, the read operation
+> > > should be considered a failure.
+> > >
+> > > Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > >  drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+> > > index 5220809841a6..2a89bab81b24 100644
+> > > --- a/drivers/net/wireless/ath/ath6kl/usb.c
+> > > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
+> > > @@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
+> > >  		ath6kl_err("Unable to read the bmi data from the device: %d\n",
+> > >  			   ret);
+> > >  		return ret;
+> > > +	} else {
+> > > +		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
+> > > +		return -EIO;
+> > 
+> > Close, but not quite there.  ath6kl_usb_submit_ctrl_in() needs to verify
+> > that the actual amount of data was read that was asked for.  If a short
+> > read happens (or a long one), then an error needs to propagate out, not
+> > just 0.  See the "note:" line in that function for what needs to be
+> > properly checked.
+> > 
+> > hope this helps,
+> Thanks for your analysis.
+> I have carefully read your analysis and I am not sure if the following
+> understanding is appropriate:
+> diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+> index 2a89bab81b24..35884316a8c8 100644
+> --- a/drivers/net/wireless/ath/ath6kl/usb.c
+> +++ b/drivers/net/wireless/ath/ath6kl/usb.c
+> @@ -932,6 +932,15 @@ static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
 > 
-> I'll drop the original commit, because my upstream (arm/soc) might
-> question this.
-> 
+>         kfree(buf);
 
-Dropping is non-trivial, so indeed revert.
+First off, this should be using usb_control_msg_send() instead of having
+to roll their own buffer handling, right?
 
-Best regards,
-Krzysztof
+> +       /* There are two types of read failure situations that need to be captured:
+> +        * 1. short read: ret < size && ret >= 0
+> +        * 2. long read: ret > size
+> +        * */
+> +       if (req == ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP && ret != size) {
+> +               ath6kl_warn("Actual read the data length is: %d, but input size is %d\n", ret, size);
+> +               return -EIO;
+> +       }
 
+If you switch to usb_control_msg_send() this logic gets a lot simpler.
+Perhaps do that instead?
+
+If not, then you need to check for "short writes" or zero writes, see
+the documentation for usb_control_msg() for what it returns.  Your
+comment is not correct here, there are 3 different return "states" that
+you need to handle.
+
+And why are you caring about what the req type is?
+
+thanks,
+
+greg k-h
 
