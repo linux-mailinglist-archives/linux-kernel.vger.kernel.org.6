@@ -1,147 +1,145 @@
-Return-Path: <linux-kernel+bounces-300465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4836195E3F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:41:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521CE95E3F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0876281994
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171E9281A71
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2E615572B;
-	Sun, 25 Aug 2024 14:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="A9xP9UGA"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED666156225;
+	Sun, 25 Aug 2024 14:42:30 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B4320C
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34602320C;
+	Sun, 25 Aug 2024 14:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724596855; cv=none; b=Wo+EcK78nD1v0Qiwm+5MG0pcE9YYCA7yJ6bOjdgU0PjoeJ0WXOcSQbvMcXTMi+ZsHndf2a/zmqTQRUHnkk6DxM1Ez9r72Ua0WXjqgmu6fhC7VY4FoYSFWygbJMSdEvOBObmMEoBQnA6KcHgXzMWtW8cszWWPn3jfSix+zDepmwc=
+	t=1724596950; cv=none; b=kn0FxRVOF4mF6XOt/iSnEUmeozr12aL5Fzk0g8mVDKlKHrgHprjwujRsAGX2IpSM0Cd67aIwamtEBjJ0b2cGBccUeDXL6HqbvuhPq5ITcXiZvn1Ehajnb9Xbtsq6E2joOtOeLXO4uegLXC8lKpnsBh7aKFvnzaSTZ4z9aVL+8Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724596855; c=relaxed/simple;
-	bh=10MkRKmKKW4Sruv9vrMgYF2z5VuL21Xk6jq4tURXoDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mSB3pzdyIBcBSZDcAgnKNCoUqWZDs5CH4Pciyx21QpewUZOTafTKM6QSIwBiUP6M4cjrHsUUtBpGBKsutnhcPAI/tT/Jx0Y02y4Rk1MW4b0k12w2ciiL/xpDE4LlVuACZmfIhz+mWuVdXUckASs8VX0K35Wc4BkdgBxaIcIU6DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=A9xP9UGA; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-714262f1bb4so2509653b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724596852; x=1725201652; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Yw9jk5TjmUChhFAY8V11/5PWzPNq5KzoBrg61+ZS9nw=;
-        b=A9xP9UGAGAg9yT/5qRlpVPzPvyM8aVgdQ/uTCzpUr9XPTyA0/QHz8fyWfETRiERosc
-         rylVECFxh5UKe2iTOMNC9rurPRccFzE8D+f0Xg8LiqB+LCnCM5obwRi8llE9OXAYKvjH
-         U1HbSnNUVHWq/dhdnRPSm3k7Pa8QpvfJLHHr2m+REvCtdYZcKqZbyO8FBy9Lep/pGqpq
-         5fK8tUHXwQQHQHIanlbvc4jMydZc1eN1JxmalRmOtGkoC2GFTrNULtoSqt0IqA8j6/2A
-         qZW5xcXHi/W6rljyL1h+XLtqzoW909m5zfM+Ol2gp5+DqhTQHEXuN8OYwAjw6z2guFS2
-         dZiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724596852; x=1725201652;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yw9jk5TjmUChhFAY8V11/5PWzPNq5KzoBrg61+ZS9nw=;
-        b=WeRuOpkqy55qf058c4SNg3sLhbDB6oCUdBta5o00MJlfiVMVkM9LQjozurflu847p0
-         r31ANiKaYMeMQqF3RK1GNJ2dkIrCc/qh3afSeRvrsttyRrqb58sXs+PgGNdk1j40Vbb9
-         PntvRRgWasuozBh+tV1l2WMpAs32F7UZYCLZbyrxkDHa+WK5CMAuATp9eHXRtqyodlqi
-         2Ym3yJm9bUJghO0z/oNbDbhOLx2IAX/G7DXMR8F8hTxnRwnEQisSXUXOdVz8xZ6cAiXQ
-         vmwrLASzUEB3C3keu9s/Lh79WtsuG+tQLhzLsRxuyNXWpDNVE6B4dCHq54Si9B6WI4DU
-         BAdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfpXYLeBRNif2O+HBIi9kDb5MhKdrymxWtbcpJSxyerY2l94ju8EDo5EDMEYKW5oli51Q9WcbYYrPRPpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwcU5U8umPDxfjXctVv8hmuFt5d/CayBube+7hFSAAnWYiZZbZ
-	ePUwtxlgQSQ4k+h1+dftgGG54NpvkKgVwXxWnIp3Sxz4RKPBiGvNX6Wjm9aKuCs=
-X-Google-Smtp-Source: AGHT+IEui5tqTKrX9jWvtOyymBygudoz9I+mdkopr9lkl2faiFKdqJLOrGkbBjz/TWXowqxVJ21sOQ==
-X-Received: by 2002:a05:6a20:4311:b0:1c4:87b9:7ef9 with SMTP id adf61e73a8af0-1cc8b59171emr8833961637.42.1724596852078;
-        Sun, 25 Aug 2024 07:40:52 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613a3f2dfsm7953804a91.27.2024.08.25.07.40.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 07:40:51 -0700 (PDT)
-Message-ID: <5886f3c8-f417-481e-9726-f5ebe1e013fc@kernel.dk>
-Date: Sun, 25 Aug 2024 08:40:49 -0600
+	s=arc-20240116; t=1724596950; c=relaxed/simple;
+	bh=GFKNlmSu3GWJZfej888LPMpOgEYnF4XHx//K2cXP4s0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivh0cRQfzCP+r0wjzd/M0gX1axfxnmsl9ZMhdQtJHIvCZBOZq/2xB7pt9g2i43AQ68NKa20RenOd3KFDMWr9uj2oUi/z0QogDqWiPKCNlqyb2J+wPejewEmm3ha2TaYMIGH/ZbMG6Lyi0UndTSokmpVRy/OCSMknbVZMo6HEafg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id BB4442800B3D2;
+	Sun, 25 Aug 2024 16:42:18 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 94612356259; Sun, 25 Aug 2024 16:42:18 +0200 (CEST)
+Date: Sun, 25 Aug 2024 16:42:18 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Esther Shimanovich <eshimanovich@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	iommu@lists.linux.dev,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] PCI: Detect and trust built-in Thunderbolt chips
+Message-ID: <ZstCyti3FHZIeFO8@wunner.de>
+References: <20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] WARNING in io_sq_thread
-To: syzbot <syzbot+82e078bac56cae572bce@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000003a7ed0620796b9d@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <00000000000003a7ed0620796b9d@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org>
 
-On 8/24/24 9:15 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    bb1b0acdcd66 Add linux-next specific files for 20240820
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1363f893980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=49406de25a441ccf
-> dashboard link: https://syzkaller.appspot.com/bug?extid=82e078bac56cae572bce
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ebc2ae824293/disk-bb1b0acd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5f62bd0c0e25/vmlinux-bb1b0acd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ddf6d0bc053d/bzImage-bb1b0acd.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+82e078bac56cae572bce@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff816d32e6>] prepare_to_wait+0x186/0x210 kernel/sched/wait.c:237
-> WARNING: CPU: 1 PID: 5335 at kernel/sched/core.c:8556 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 5335 Comm: iou-sqp-5333 Not tainted 6.11.0-rc4-next-20240820-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8552
-> Code: 9d 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 3e 9d 97 00 48 8b 4d 00 48 c7 c7 c0 60 0a 8c 44 89 ee 48 89 ca e8 b8 01 f1 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
-> RSP: 0018:ffffc900041e7968 EFLAGS: 00010246
-> RAX: 11f47f6d1cba3d00 RBX: 1ffff110040802ec RCX: ffff888020400000
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffff888020401760 R08: ffffffff8155acc2 R09: fffffbfff1cfa354
-> R10: dffffc0000000000 R11: fffffbfff1cfa354 R12: dffffc0000000000
-> R13: 0000000000000001 R14: 0000000000000249 R15: ffffffff8c0ab880
-> FS:  00007ffbe99d66c0(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffed4fbfdec CR3: 0000000024c2c000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __mutex_lock_common kernel/locking/mutex.c:585 [inline]
->  __mutex_lock+0xc1/0xd70 kernel/locking/mutex.c:752
->  io_sq_thread+0x1310/0x1c40 io_uring/sqpoll.c:367
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
+On Fri, Aug 23, 2024 at 04:53:16PM +0000, Esther Shimanovich wrote:
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
+> +{
+> +	struct fwnode_handle *fwnode;
+> +
+> +	/*
+> +	 * For USB4, the tunneled PCIe root or downstream ports are marked
+> +	 * with the "usb4-host-interface" ACPI property, so we look for
+> +	 * that first. This should cover most cases.
+> +	 */
+> +	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
+> +				       "usb4-host-interface", 0);
 
-For this to hit, we'd need to come out of schedule() without having set
-the task state back to TASK_RUNNING. That should not be possible, so
-unsure what is going on there... But does not look like an io_uring
-issue.
+This is all ACPI only, so it should either be #ifdef'ed to CONFIG_ACPI
+or moved to drivers/pci/pci-acpi.c.
 
--- 
-Jens Axboe
+Alternatively, it could be moved to arch/x86/pci/ because ACPI can also
+be enabled on arm64 or riscv but the issue seems to only affect x86.
 
+
+>  static void set_pcie_untrusted(struct pci_dev *dev)
+>  {
+> -	struct pci_dev *parent;
+> +	struct pci_dev *parent = pci_upstream_bridge(dev);
+>  
+> +	if (!parent)
+> +		return;
+>  	/*
+> -	 * If the upstream bridge is untrusted we treat this device
+> +	 * If the upstream bridge is untrusted we treat this device as
+>  	 * untrusted as well.
+>  	 */
+> -	parent = pci_upstream_bridge(dev);
+> -	if (parent && (parent->untrusted || parent->external_facing))
+> +	if (parent->untrusted)
+>  		dev->untrusted = true;
+> +
+> +	if (pcie_is_tunneled(dev)) {
+> +		pci_dbg(dev, "marking as untrusted\n");
+> +		dev->untrusted = true;
+> +	}
+>  }
+
+I think you want to return in the "if (parent->untrusted)" case
+because there's no need to double-check pcie_is_tunneled(dev)
+if you've already determined that the device is untrusted.
+
+
+>  static void pci_set_removable(struct pci_dev *dev)
+>  {
+>  	struct pci_dev *parent = pci_upstream_bridge(dev);
+>  
+> +	if (!parent)
+> +		return;
+>  	/*
+> -	 * We (only) consider everything downstream from an external_facing
+> +	 * We (only) consider everything tunneled below an external_facing
+>  	 * device to be removable by the user. We're mainly concerned with
+>  	 * consumer platforms with user accessible thunderbolt ports that are
+>  	 * vulnerable to DMA attacks, and we expect those ports to be marked by
+> @@ -1657,9 +1784,13 @@ static void pci_set_removable(struct pci_dev *dev)
+>  	 * accessible to user / may not be removed by end user, and thus not
+>  	 * exposed as "removable" to userspace.
+>  	 */
+> -	if (parent &&
+> -	    (parent->external_facing || dev_is_removable(&parent->dev)))
+> +	if (dev_is_removable(&parent->dev))
+> +		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
+> +
+> +	if (pcie_is_tunneled(dev)) {
+> +		pci_dbg(dev, "marking as removable\n");
+>  		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
+> +	}
+>  }
+
+Same here, return in the "if (dev_is_removable(&parent->dev))" case.
+
+Thanks,
+
+Lukas
 
