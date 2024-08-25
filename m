@@ -1,254 +1,265 @@
-Return-Path: <linux-kernel+bounces-300229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D50995E0D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:44:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1555295E0F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266A81C20D25
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D3D2823B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C3117C61;
-	Sun, 25 Aug 2024 03:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E960354765;
+	Sun, 25 Aug 2024 03:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="nG/jGa0b";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="fDAxZ56V"
-Received: from mx-lax3-2.ucr.edu (mx-lax3-2.ucr.edu [169.235.156.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7HAFj8k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF4AF9DF
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 03:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF08D3BB24;
+	Sun, 25 Aug 2024 03:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724557458; cv=none; b=TkYpnkMrdvDk/H0rIuWrIgJAeSMSXSU7GN94Z4Z21c3tDg6qcgRa0OE2RdhNg86icqn1yw1znGSkhjPfasbQB0VroCQRPdxsRNoSrWlDpTswzVODl3Ja2Eb+FAMAAbfRvoqaner+rR5No96xERh87Ln55Zoj7l9kY76vEbLbJI0=
+	t=1724557673; cv=none; b=atUA6tb0FMD79PdyUt/RX2j5rWhLpW84ZTgiJQ02dAM8EgKB6BNDHK66fZGJwRPKoyrATYIIw+nhknRCIeUQXlJaD77PLnvcu6tmlHT/HXa3deWteSUyfySMxrW4Jy4qhK4FcR8Pg2zZRgKG7oL+efrwRePK/92zTDacboRLzyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724557458; c=relaxed/simple;
-	bh=FM7whOXNd89QmiEQN7nmFm0ChdBqJCYLOGAlFoljVJ4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=E+woo0cvK+bhnhxIJa5FLXrgb6ZnrRD5OUffaV7Ud7Ijb9yBDgRNPQujWscDbdN7ZoOmPEUSG/7QWeExpthGoyBjXYd3o44x4qFScEBK7Utqm/9XMGPL0FXZXdpbPIASChiZL4P20XCgzdbA4xPzupmML6DIhbgkgtLHEgcsTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=nG/jGa0b; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=fDAxZ56V; arc=none smtp.client-ip=169.235.156.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724557456; x=1756093456;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=FM7whOXNd89QmiEQN7nmFm0ChdBqJCYLOGAlFoljVJ4=;
-  b=nG/jGa0bEcvKNajHQYUKVdP9p3tCeQffmRafH8W4DwDvj+GZeDEThweK
-   BJg4MjLgykuZ9K9uIQQ6MVUBXphCfxaaMmT03rPOndOek5RRW9Y0fLU/C
-   6MxvEB3y3iGrdbp4F04Pa7PiUQZzONfXspEEeVwI6RL+tyO/xcag6Cvr4
-   0dQ+kPIPe4TxsFWRiNtGIqtf2iju/2Y+eoEkbZm2hz2KgxW8PzwKjSjmi
-   ySWt+BtIU6YqRE8kPox/UzCpEX+1MrqGY+yuh+1wQaj/5lO9GlM158CTs
-   1XWJbMUwUO8QbDkFaK4xIg0x50WjNecw8d43OzJs3bmrOaH0oPE6cpBAd
-   w==;
-X-CSE-ConnectionGUID: KNhvH+VlSniMkBHUow6gkQ==
-X-CSE-MsgGUID: V2phmNmdRayDurViYCxCxA==
-Received: from mail-pj1-f71.google.com ([209.85.216.71])
-  by smtp-lax3-2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 20:44:15 -0700
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d432914cc7so2837564a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 20:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724557455; x=1725162255; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WlNFO+ztLG6nNab5HHTwGPu+w5ltrPjK5YCSFxoG/5g=;
-        b=fDAxZ56V0Xh35QyyS52lN97wBZDfGylT+8gJ+cwRgvxanH1bPrh8kuE42EsO1nlInM
-         wIP56SY5VSMVGHcoEEipMor8jqeBZA6Oi3rVwNObKoE7XTSNLvKtAqBPBlFF6dOWnJYb
-         ggIOFFuTdwrNmI4DenPDSAvEE8EX6IN3i2VrM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724557455; x=1725162255;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WlNFO+ztLG6nNab5HHTwGPu+w5ltrPjK5YCSFxoG/5g=;
-        b=vVNFt8AVltzlKgcxZab+cNGj+9RIyTiO+Y3kodh17Ovig9mITeWMHqhcL1jmTeK9lz
-         ROisUD2ePPgEmMZBJfoSk3Xxg6kxbTHo+JhAWk2q08hapTZCo2warnmrw848AViBGShD
-         a5I4zPfJ/jjCUJrLhxUkurloT4AXuUi5n7dV8wg1K5o6skapdCjR6Jk5N4dTOk+4Mr9f
-         Czf8jbOw7bv9C6Zb/CqfVrafwk20ujDHfuA397uzW43gQ1JO7XCTtKIn+ViCP0RsWUsi
-         47voKussolpnESAMPUeCl+H1W3IH2k4JdKvgqg5y65Fwh3UViRa7+B0BEb3BvFhEIImc
-         YYkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTInQMVQrox0HzaX7+C30QZ8+CmovFjFM0SjY75Q6iSdBrtmmQCdMENELs5pvtl5skslQnqsyE/M/RTf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuxnayWpgNZwvfu1XhAd9GBwsBfqJ+dCiHNNInew7CN8YyKxjN
-	Mke9+o63Se1oPLx3WmJ52qPE44+gkL1veJiNQ84qKk8p1AQHmalRuNmrR7aTUZ9uEDfgHwCu7VT
-	5xGuT0MwYPyxbZ2rkUQyT+x8bhiOXIF3+/saRgRNPJwIIgNkRO4hkxL3oyeQgpp5rgbGU/kzTqE
-	IA0LOCBTmo6iKhOGfhJxNT+CGURmdur6AAFqOhSEO9wXfKUjIT
-X-Received: by 2002:a17:90a:ff17:b0:2c8:2cd1:881b with SMTP id 98e67ed59e1d1-2d60aa0f083mr16910248a91.20.1724557454677;
-        Sat, 24 Aug 2024 20:44:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGU+HsVb/G5ejwZ52uDwS7YiO4LT+f3lOluJtWwrv+4yYkeEbROdJ0e06yk4D07CQzPf2+4FqMGy+N+GHKxs4w=
-X-Received: by 2002:a17:90a:ff17:b0:2c8:2cd1:881b with SMTP id
- 98e67ed59e1d1-2d60aa0f083mr16910233a91.20.1724557454242; Sat, 24 Aug 2024
- 20:44:14 -0700 (PDT)
+	s=arc-20240116; t=1724557673; c=relaxed/simple;
+	bh=cwotV459PaV3Ve/HitSaedrlUF8y42brdmvLbhIUyaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBIvwFRElGdg5fR/tqUWnTv2KNzVw8As4Rb9ntddqtm64JjOiNC0XD1kerkHiRZRudEGlROkgZS+rd5e6ChsWKIxaJ6/KSMBzM08ts7a3H1JXSFJ1cjrqcWg7+NddJ8ZL4aQilaw+DWf7DOF/5ckzJ5pqyPSLbTEQw8h5XhIuFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7HAFj8k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC762C32782;
+	Sun, 25 Aug 2024 03:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724557672;
+	bh=cwotV459PaV3Ve/HitSaedrlUF8y42brdmvLbhIUyaQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=q7HAFj8koZV/+5SuxuSLG1pfajDqQZY+JYRMlGGJ9/YIjn1Ih85UBcqNLZ0OAbqhW
+	 LIib0PZnOnCkVFAf7iTxDzH2vIFkVVD4JzWIe7KEgnUNwVyGfsYdV8rA3Zi1ZZ1tIl
+	 PZnlD/IU/xTmUdpBOt51vFGZ+BJOjqeBrUqf8OFck/zgzRb67SgNGfi1XxXNKdTGj8
+	 /g/AKMzjDUSzbkyh75qHJCzwcXDYw0Y+aGF0Q6wZB2VZ2AzaxvCEbDjCWGpMkLaTKv
+	 RO6CIR+VDGr6+oHseBZq+X+M5ukbdK1D2Qpx7xF67oJT/YIR0Z2PuNteKKBK57Xuez
+	 YdsvnbDJp5kZA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab@kernel.org>)
+	id 1si4Ch-00000001RMU-24kO;
+	Sun, 25 Aug 2024 05:46:11 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: 
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Cleber Rosa <crosa@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Eric Blake <eblake@redhat.com>,
+	Igor Mammedov <imammedo@redhat.com>,
+	John Snow <jsnow@redhat.com>,
+	Markus Armbruster <armbru@redhat.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH v9 00/12] Add ACPI CPER firmware first error injection on ARM emulation
+Date: Sun, 25 Aug 2024 05:45:55 +0200
+Message-ID: <cover.1724556967.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Sat, 24 Aug 2024 20:44:03 -0700
-Message-ID: <CALAgD-4b_yFdN4fwPxpXEpJkcxEwXBxRHeQjeA3x3rMX4JpUwA@mail.gmail.com>
-Subject: BUG: unable to handle kernel NULL pointer dereference in stack_depot_save_flags
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Hi,
+This series add support for injecting generic CPER records.  Such records
+are generated outside QEMU via a provided script.
 
-We found a null pointer dereference bug in Linux v6.10 using syzkaller.
-We listed the bug report and the syzkaller reproducer as below:
+On this  version, patches were reorganized to follow this pattern:
 
-Bug report:
+1. Addition of hest_add_le, mapping to the beginning of the HEST
+   error source structure size. This is the part of the HEST table that
+   contains the error source IDs to be notified;
+2. GHESv2 code rework. It is basically a merge of all changes from v8,
+   except for GPIO notify, QEMU notifier and renames;
+3. cleanups and renames for hw/acpi/ghes.c;
+4. GPIO GED device creation logic;
+5. Logic to inject errors via QMP;
+6. Error injection script 
 
-BUG: kernel NULL pointer dereference, address: 0000000000000010
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 55851 Comm: syz-executor Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:find_stack lib/stackdepot.c:553 [inline]
-RIP: 0010:stack_depot_save_flags+0x19a/0x840 lib/stackdepot.c:618
-Code: 48 89 54 24 18 31 f6 4c 89 44 24 10 e8 1f 78 c7 ff 31 f6 4c 8b
-44 24 10 48 8b 54 24 18 45 85 e4 75 62 4d 8b 3f 49 39 d7 74 5d <45> 39
-77 10 75 f2 45 39 47 14 75 ec 31 c0 49 8b 4c c5 00 49 3b 4c
-RSP: 0018:ffffc9000479ed30 EFLAGS: 00010207
-RAX: ffff888134c00000 RBX: 0000000000000001 RCX: 000000000022f640
-RDX: ffff888134e2f640 RSI: 0000000000000000 RDI: 0000000021439b4f
-RBP: 000000000000001c R08: 000000000000001c R09: 1ffffffff1e48be5
-R10: dffffc0000000000 R11: fffffbfff1e48be6 R12: ffffffff845e6c46
-R13: ffffc9000479ed90 R14: 00000000c7222f64 R15: 0000000000000000
-FS:  000055558666b500(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000010 CR3: 000000001ae74000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_save_track+0x4d/0x70 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x62/0x70 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4002 [inline]
- kmem_cache_alloc_noprof+0x13a/0x2c0 mm/slub.c:4009
- fill_pool lib/debugobjects.c:168 [inline]
- debug_objects_fill_pool+0x796/0x9a0 lib/debugobjects.c:615
- debug_object_activate+0x34/0x4a0 lib/debugobjects.c:704
- debug_rcu_head_queue kernel/rcu/rcu.h:227 [inline]
- __call_rcu_common kernel/rcu/tree.c:3057 [inline]
- call_rcu+0x93/0xa60 kernel/rcu/tree.c:3176
- kernfs_put+0x1d6/0x340 fs/kernfs/dir.c:578
- kernfs_remove_by_name_ns+0xdb/0x150 fs/kernfs/dir.c:1695
- kernfs_remove_by_name include/linux/kernfs.h:625 [inline]
- remove_files fs/sysfs/group.c:28 [inline]
- sysfs_remove_group+0xfa/0x2c0 fs/sysfs/group.c:319
- sysfs_remove_groups+0x50/0xa0 fs/sysfs/group.c:343
- device_remove_groups drivers/base/core.c:2833 [inline]
- device_remove_attrs+0x1d8/0x290 drivers/base/core.c:2963
- device_del+0x512/0x940 drivers/base/core.c:3867
- unregister_netdevice_many_notify+0x11a3/0x16d0 net/core/dev.c:11249
- unregister_netdevice_many net/core/dev.c:11277 [inline]
- unregister_netdevice_queue+0x2ff/0x370 net/core/dev.c:11156
- unregister_netdevice include/linux/netdevice.h:3119 [inline]
- nsim_destroy+0x17c/0x5b0 drivers/net/netdevsim/netdev.c:778
- __nsim_dev_port_del+0x14a/0x1b0 drivers/net/netdevsim/dev.c:1425
- nsim_dev_port_del_all drivers/net/netdevsim/dev.c:1437 [inline]
- nsim_dev_reload_destroy+0x282/0x480 drivers/net/netdevsim/dev.c:1658
- nsim_drv_remove+0x54/0x160 drivers/net/netdevsim/dev.c:1673
- device_remove drivers/base/dd.c:566 [inline]
- __device_release_driver drivers/base/dd.c:1270 [inline]
- device_release_driver_internal+0x4a6/0x7b0 drivers/base/dd.c:1293
- bus_remove_device+0x377/0x440 drivers/base/bus.c:574
- device_del+0x51a/0x940 drivers/base/core.c:3868
- device_unregister+0x17/0xb0 drivers/base/core.c:3909
- nsim_bus_dev_del drivers/net/netdevsim/bus.c:462 [inline]
- del_device_store+0x35b/0x470 drivers/net/netdevsim/bus.c:226
- kernfs_fop_write_iter+0x3ae/0x500 fs/kernfs/file.c:334
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x8a1/0xc70 fs/read_write.c:590
- ksys_write+0x19b/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x7f7a8717f49f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 c9 8c 02 00 48 8b 54
-24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 1c 8d 02 00 48
-RSP: 002b:00007ffe05a55700 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f7a8717f49f
-RDX: 0000000000000001 RSI: 00007ffe05a55750 RDI: 0000000000000005
-RBP: 00007f7a871f5fcf R08: 0000000000000000 R09: 00007ffe05a55557
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000001
-R13: 00007ffe05a55750 R14: 00007f7a87e74620 R15: 0000000000000003
- </TASK>
-Modules linked in:
-CR2: 0000000000000010
----[ end trace 0000000000000000 ]---
-RIP: 0010:find_stack lib/stackdepot.c:553 [inline]
-RIP: 0010:stack_depot_save_flags+0x19a/0x840 lib/stackdepot.c:618
-Code: 48 89 54 24 18 31 f6 4c 89 44 24 10 e8 1f 78 c7 ff 31 f6 4c 8b
-44 24 10 48 8b 54 24 18 45 85 e4 75 62 4d 8b 3f 49 39 d7 74 5d <45> 39
-77 10 75 f2 45 39 47 14 75 ec 31 c0 49 8b 4c c5 00 49 3b 4c
-RSP: 0018:ffffc9000479ed30 EFLAGS: 00010207
-RAX: ffff888134c00000 RBX: 0000000000000001 RCX: 000000000022f640
-RDX: ffff888134e2f640 RSI: 0000000000000000 RDI: 0000000021439b4f
-RBP: 000000000000001c R08: 000000000000001c R09: 1ffffffff1e48be5
-R10: dffffc0000000000 R11: fffffbfff1e48be6 R12: ffffffff845e6c46
-R13: ffffc9000479ed90 R14: 00000000c7222f64 R15: 0000000000000000
-FS:  000055558666b500(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000010 CR3: 000000001ae74000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0: 48 89 54 24 18       mov    %rdx,0x18(%rsp)
-   5: 31 f6                 xor    %esi,%esi
-   7: 4c 89 44 24 10       mov    %r8,0x10(%rsp)
-   c: e8 1f 78 c7 ff       call   0xffc77830
-  11: 31 f6                 xor    %esi,%esi
-  13: 4c 8b 44 24 10       mov    0x10(%rsp),%r8
-  18: 48 8b 54 24 18       mov    0x18(%rsp),%rdx
-  1d: 45 85 e4             test   %r12d,%r12d
-  20: 75 62                 jne    0x84
-  22: 4d 8b 3f             mov    (%r15),%r15
-  25: 49 39 d7             cmp    %rdx,%r15
-  28: 74 5d                 je     0x87
-* 2a: 45 39 77 10           cmp    %r14d,0x10(%r15) <-- trapping instruction
-  2e: 75 f2                 jne    0x22
-  30: 45 39 47 14           cmp    %r8d,0x14(%r15)
-  34: 75 ec                 jne    0x22
-  36: 31 c0                 xor    %eax,%eax
-  38: 49 8b 4c c5 00       mov    0x0(%r13,%rax,8),%rcx
-  3d: 49                   rex.WB
-  3e: 3b                   .byte 0x3b
-  3f: 4c                   rex.WR
+On this version, the logic now better navigates the source IDs, 
+double-checking them at error injecting time. It is now easier to
+add other HEST types if ever needed.
 
-Syzkaller reproducer:
-# {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
-Sandbox:none SandboxArg:0 Leak:false NetInjection:true NetDevices:true
-NetReset:true Cgroups:true BinfmtMisc:true CloseFDs:true KCSAN:false
-DevlinkPCI:false NicVF:false USB:true VhciInjection:false Wifi:false
-IEEE802154:true Sysctl:true Swap:true UseTmpDir:true HandleSegv:false
-Trace:false LegacyOptions:{Collide:false Fault:false FaultCall:0
-FaultNth:0}}
-ioctl$TCSETSF2(0xffffffffffffffff, 0x402c542d,
-&(0x7f0000000080)={0xffffffff, 0x80000001, 0x9, 0x5, 0x1,
-"59a5c6499e35bca140f08427393b336889f0cc", 0x2, 0x101})
-r0 = syz_open_dev$sg(&(0x7f0000000040), 0x0, 0x8000)
-openat$ptmx(0xffffffffffffff9c, 0x0, 0x80, 0x0)
-ioctl$syz_spec_1724254976_2866(r0, 0x1, &(0x7f0000000080)={0x0, 0x2,
-[0x85, 0x8, 0x15, 0xd]})
+Also, the source ID is now guest-OS specific: ARM will use SEA and GPIO,
+but x86 will likely use other notifiers and source IDs. Same will apply
+to other processor types.
+
+---
+
+v9:
+- Patches reorganized to make easier for reviewers;
+- source ID is now guest-OS specific;
+- Some patches got a revision history since v8;
+- Several minor cleanups.
+
+v8:
+- Fix one of the BIOS links that were incorrect;
+- Changed mem error internal injection to use a common code;
+- No more hardcoded values for CPER: instead of using just the
+  payload at the QAPI, it now has the full raw CPER there;
+- Error injection script now supports changing fields at the
+  Generic Error Data section of the CPER;
+- Several minor cleanups.
+
+v7:
+- Change the way offsets are calculated and used on HEST table.
+  Now, it is compatible with migrations as all offsets are relative
+  to the HEST table;
+- GHES interface is now more generic: the entire CPER is sent via
+  QMP, instead of just the payload;
+- Some code cleanups to make the code more robust;
+- The python script now uses QEMUMonitorProtocol class.
+
+v6:
+- PNP0C33 device creation moved to aml-build.c;
+- acpi_ghes record functions now use ACPI notify parameter,
+  instead of source ID;
+- the number of source IDs is now automatically calculated;
+- some code cleanups and function/var renames;
+- some fixes and cleanups at the error injection script;
+- ghes cper stub now produces an error if cper JSON is not compiled;
+- Offset calculation logic for GHES was refactored;
+- Updated documentation to reflect the GHES allocated size;
+- Added a x-mpidr object for QOM usage;
+- Added a patch making usage of x-mpidr field at ARM injection
+  script;
+
+v5:
+- CPER guid is now passing as string;
+- raw-data is now passed with base64 encode;
+- Removed several GPIO left-overs from arm/virt.c changes;
+- Lots of cleanups and improvements at the error injection script.
+  It now better handles QMP dialog and doesn't print debug messages.
+  Also, code was split on two modules, to make easier to add more
+  error injection commands.
+
+v4:
+- CPER generation moved to happen outside QEMU;
+- One patch adding support for mpidr query was removed.
+
+v3:
+- patch 1 cleanups with some comment changes and adding another place where
+  the poweroff GPIO define should be used. No changes on other patches (except
+  due to conflict resolution).
+
+v2:
+- added a new patch using a define for GPIO power pin;
+- patch 2 changed to also use a define for generic error GPIO pin;
+- a couple cleanups at patch 2 removing uneeded else clauses.
+
+Example of generating a CPER record:
+
+$ scripts/ghes_inject.py -d arm -p 0xdeadbeef
+GUID: e19e3d16-bc11-11e4-9caa-c2051d5d46b0
+Generic Error Status Block (20 bytes):
+      00000000  01 00 00 00 00 00 00 00 00 00 00 00 90 00 00 00   ................
+      00000010  00 00 00 00                                       ....
+
+Generic Error Data Entry (72 bytes):
+      00000000  16 3d 9e e1 11 bc e4 11 9c aa c2 05 1d 5d 46 b0   .=...........]F.
+      00000010  00 00 00 00 00 03 00 00 48 00 00 00 00 00 00 00   ........H.......
+      00000020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+      00000030  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+      00000040  00 00 00 00 00 00 00 00                           ........
+
+Payload (72 bytes):
+      00000000  05 00 00 00 01 00 00 00 48 00 00 00 00 00 00 00   ........H.......
+      00000010  00 00 00 80 00 00 00 00 10 05 0f 00 00 00 00 00   ................
+      00000020  00 00 00 00 00 00 00 00 00 20 14 00 02 01 00 03   ......... ......
+      00000030  0f 00 91 00 00 00 00 00 ef be ad de 00 00 00 00   ................
+      00000040  ef be ad de 00 00 00 00                           ........
+
+Error injected.
+
+[    9.358364] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
+[    9.359027] {1}[Hardware Error]: event severity: recoverable
+[    9.359586] {1}[Hardware Error]:  Error 0, type: recoverable
+[    9.360124] {1}[Hardware Error]:   section_type: ARM processor error
+[    9.360561] {1}[Hardware Error]:   MIDR: 0x00000000000f0510
+[    9.361160] {1}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000080000000
+[    9.361643] {1}[Hardware Error]:   running state: 0x0
+[    9.362142] {1}[Hardware Error]:   Power State Coordination Interface state: 0
+[    9.362682] {1}[Hardware Error]:   Error info structure 0:
+[    9.363030] {1}[Hardware Error]:   num errors: 2
+[    9.363656] {1}[Hardware Error]:    error_type: 0x02: cache error
+[    9.364163] {1}[Hardware Error]:    error_info: 0x000000000091000f
+[    9.364834] {1}[Hardware Error]:     transaction type: Data Access
+[    9.365599] {1}[Hardware Error]:     cache error, operation type: Data write
+[    9.366441] {1}[Hardware Error]:     cache level: 2
+[    9.367005] {1}[Hardware Error]:     processor context not corrupted
+[    9.367753] {1}[Hardware Error]:    physical fault address: 0x00000000deadbeef
+[    9.374267] Memory failure: 0xdeadb: recovery action for free buddy page: Recovered
+
+Such script currently supports arm processor error CPER, but can easily be
+extended to other GHES notification types.
 
 
+Mauro Carvalho Chehab (12):
+  acpi/ghes: add a firmware file with HEST address
+  acpi/ghes: rework the logic to handle HEST source ID
+  acpi/ghes: rename etc/hardware_error file macros
+  acpi/ghes: better name GHES memory error function
+  acpi/ghes: add a notifier to notify when error data is ready
+  acpi/generic_event_device: add an APEI error device
+  arm/virt: Wire up a GED error device for ACPI / GHES
+  qapi/acpi-hest: add an interface to do generic CPER error injection
+  docs: acpi_hest_ghes: fix documentation for CPER size
+  scripts/ghes_inject: add a script to generate GHES error inject
+  target/arm: add an experimental mpidr arm cpu property object
+  scripts/arm_processor_error.py: retrieve mpidr if not filled
 
-
+ MAINTAINERS                            |  10 +
+ docs/specs/acpi_hest_ghes.rst          |   6 +-
+ hw/acpi/Kconfig                        |   5 +
+ hw/acpi/aml-build.c                    |  10 +
+ hw/acpi/generic_event_device.c         |   8 +
+ hw/acpi/ghes-stub.c                    |   2 +-
+ hw/acpi/ghes.c                         | 309 +++++++----
+ hw/acpi/ghes_cper.c                    |  32 ++
+ hw/acpi/ghes_cper_stub.c               |  19 +
+ hw/acpi/meson.build                    |   2 +
+ hw/arm/Kconfig                         |   5 +
+ hw/arm/virt-acpi-build.c               |  12 +-
+ hw/arm/virt.c                          |  12 +-
+ include/hw/acpi/acpi_dev_interface.h   |   1 +
+ include/hw/acpi/aml-build.h            |   2 +
+ include/hw/acpi/generic_event_device.h |   1 +
+ include/hw/acpi/ghes.h                 |  28 +-
+ include/hw/arm/virt.h                  |  10 +
+ qapi/acpi-hest.json                    |  36 ++
+ qapi/meson.build                       |   1 +
+ qapi/qapi-schema.json                  |   1 +
+ scripts/arm_processor_error.py         | 388 ++++++++++++++
+ scripts/ghes_inject.py                 |  51 ++
+ scripts/qmp_helper.py                  | 702 +++++++++++++++++++++++++
+ target/arm/cpu.c                       |   1 +
+ target/arm/cpu.h                       |   1 +
+ target/arm/helper.c                    |  10 +-
+ target/arm/kvm.c                       |   3 +-
+ 28 files changed, 1539 insertions(+), 129 deletions(-)
+ create mode 100644 hw/acpi/ghes_cper.c
+ create mode 100644 hw/acpi/ghes_cper_stub.c
+ create mode 100644 qapi/acpi-hest.json
+ create mode 100644 scripts/arm_processor_error.py
+ create mode 100755 scripts/ghes_inject.py
+ create mode 100644 scripts/qmp_helper.py
 
 -- 
-Yours sincerely,
-Xingyu
+2.46.0
+
+
 
