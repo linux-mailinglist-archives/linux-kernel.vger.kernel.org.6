@@ -1,202 +1,172 @@
-Return-Path: <linux-kernel+bounces-300333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0648495E284
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1D195E282
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BF421F21FAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0E11C2158B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5052E6BFC7;
-	Sun, 25 Aug 2024 07:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89935FB95;
+	Sun, 25 Aug 2024 07:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="AHsO4whx";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="UbVmgG1v"
-Received: from mx-lax3-3.ucr.edu (mx-lax3-3.ucr.edu [169.235.156.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bslASVOi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="N3jBryQT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WN2HVeSV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="da0+/3Y+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7E342A90
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B4E2AEFD;
+	Sun, 25 Aug 2024 07:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724571947; cv=none; b=P7nFjJkRsyF2umLCZ0fUuN08goiEN4aBd4LnTa/WJ+Lj8YRgvLIEXCc6NYxe74dThmEb68sAITYqvLBQheR3v2yDdSco7gVDDz+DGd6mtTsOMhseSi9btnVarfvJW/3T12dAk0wxagR1uXWwfm/e+rEoOWYzFd2PPW56SmOyQtU=
+	t=1724571924; cv=none; b=c5aQZeBG1UPlWsFa7Y8by0odqBTV1scaeLDhUmpFY9trXNqLL3IDmUfsqwF5K01MEaXj3u76GAKsF9fuaYLc51fE2J+OCNHK17pni9c03z62ZLz75lchijpzGYFQcTZbSCrChj2XVfpIkMOK3yCgct1boWiUYAsnxU/hKrwhtSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724571947; c=relaxed/simple;
-	bh=Wc1ReSSoRHrxczllmAyrC82DrWl15s7C5Gl7hBzXjR0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=XX2erJjgC+UKzp8gordni7ROfFae+38RalRg6u9kJHZu1Up9gPluXTaYjTETiUFb6S3nTnvlzZilslhkrfdX1APUhRdvkA1Qec8LPXI3Clpa3e96n365dN+Zwzy1Ftb/zsMy7izTjyRcSgqLWCdOOBJ4x2oQxYWLjAJbR2N1/Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=AHsO4whx; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=UbVmgG1v; arc=none smtp.client-ip=169.235.156.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724571945; x=1756107945;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=Wc1ReSSoRHrxczllmAyrC82DrWl15s7C5Gl7hBzXjR0=;
-  b=AHsO4whxB93RjytoJ7XWbRWOyvOSQzqc5BppEiQdMvJQTNyTRBQVXkI/
-   ufsrk5t3WCxII8ty4IkAIYFVoUexUpTw4ALzLl5EBmzoKJpTtbNwLbpyN
-   CpnaVRKr3xQZ/XOWrA71VBiwieZw7Iwo+FX05csZJR3joedxB8i6LMDx6
-   VnQv3oSL1AmefsPQw4aIWRBRMsdtY4r95+omxmDlDcprK8hIGmj7qBtgu
-   wDHz3D/qhUmhxFsvLzLJ9PAVN51O3RGdpJOfkklekWYHJWfmkXYypPVO6
-   jcGX2pj/lJXusx2vErXOyBmWc7nrEz5IOu5y4aBHPZWhmBf6Ld/lYTRK8
-   w==;
-X-CSE-ConnectionGUID: Yywg31baTMyst35Avh9w6g==
-X-CSE-MsgGUID: jKTWDW4kTxWrrGASu1jRLg==
-Received: from mail-io1-f72.google.com ([209.85.166.72])
-  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 25 Aug 2024 00:45:44 -0700
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f901cd3b5so351406039f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 00:45:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724571944; x=1725176744; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Nd8St0Q3+Z5rQPfjGMrPNgX+gBQoI0R6Kq0GksepDsQ=;
-        b=UbVmgG1v2Hb9d+OeR8yeG5mVzt+PcyJwcPOhWRE4jTQDuVLNetKFmRkPMEeLgcDvgB
-         RECHiiekg4kNPD9bsxKjSlCFTvhCxIq7OU1ytv8daSNO57UpaM8mSqR2agycaWrjI2VU
-         xberCY3K2iUfCPp8Jw/gm9BLX1uXpxwjUYtyE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724571944; x=1725176744;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nd8St0Q3+Z5rQPfjGMrPNgX+gBQoI0R6Kq0GksepDsQ=;
-        b=wuajg3lfmAvxBnclwhyUwRLWiMt/+zW0DVaFGwdKxsBt8rGdp6hVvJdf4VcBhccRng
-         hYvwGe7N8VdEf2rB/jgBvhAKIXHRmtca90Ef2P8tZS2Co7NTwy35FzOSDrIql5gw42CP
-         +cxnlSQtu7cGB9bV93SeIh2voaVmwh0lfNAdZDZETh8UoTkTiwqCmM9eGIvFe2eyauVe
-         JXi4FtjfDHIfKbsRz21+WsFTPvQdzKMQ8hzmJiq/kzeiH3XuxYvSkaDPPXuUUJs1vatm
-         JORt4LZ50lYa9wphH76Ds9MWS5FiAvXyjssrvpF41RpSAOZ1sGCMskWJH0dXbdF4Wne3
-         ha5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU65GiJS51YY6x2j4mILPhxJIUxAhaozaV6/fJEkXRSCWKDpW4D8zZJqKs9OIP7XCUCiCLdxOZ2/4tY9kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy79H6hi4sPi7twdu6f+wnZM8kSt5Bu8WMflN2eMd2GHK5jxrPb
-	x3jX+KsYFnAogV+bl6C37Vcy1dkH9HmIwk6iqy2P1UteSdQiyZr0TeYgqZJHVF1s4HNLmdZrrzQ
-	JJ2SaeZ2lZmJIs3JMIU7OOkaYaYcIaK0QN5FVlgjWdG6LppKMMkd8jsPBHbNI6Pkkj4QxLw25gL
-	r09+IQLk5QWe5RgRgRP7p2Nahpyr/Lcg9SANcCGg==
-X-Received: by 2002:a05:6602:2c08:b0:804:f2be:ee33 with SMTP id ca18e2360f4ac-82787323b5bmr1085271239f.2.1724571943623;
-        Sun, 25 Aug 2024 00:45:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHLdzYf+KApPZ3mER63Tiqo6L2o5S4C2XhxzItF+QR6Mv/oPhPCKwSu0JNzBqAWSVNlul45WSG5uwliJtUEao=
-X-Received: by 2002:a05:6602:2c08:b0:804:f2be:ee33 with SMTP id
- ca18e2360f4ac-82787323b5bmr1085270339f.2.1724571943267; Sun, 25 Aug 2024
- 00:45:43 -0700 (PDT)
+	s=arc-20240116; t=1724571924; c=relaxed/simple;
+	bh=/DABWROC1adRtXnWduaVICJKfy7K1ffXdGB6MNny38Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kRDcGcx/m9mqn9Z3YKRg5wnRvpXa2kDd8NpkV+JaJ/Yb4VQUYr56RekcwX3owOG9yfiTBB8t4mobgyY0RWA2ChBu2Hd3F44ov801SwbkbF7SGNYGx+goNKzoL+ry8yn7cPPrxVMltLPp6xJ8zDXmGGu5KeCMaruKEYG/Gm3mRlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bslASVOi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=N3jBryQT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WN2HVeSV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=da0+/3Y+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 54BC121A28;
+	Sun, 25 Aug 2024 07:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724571920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ywAiuhHecTp3MGsrAA/iUK/3ImfbVXkO3ORRDzjFjgA=;
+	b=bslASVOi+d+zvNlSb0PHOovLB1Bdsi1/q6GvVEoo/Zg+RYJD+vwU0Wogc/KoStUvw0O+vv
+	2/28+vkXB7qS40foMJFMMP/HlAYy6pLxXj1ho6Vwjc/PJ0GAcCbmCxS1SJHhMRYgUi/v/g
+	sR29pwDtS2NVuwjNZHXrrFpnUwgoo14=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724571920;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ywAiuhHecTp3MGsrAA/iUK/3ImfbVXkO3ORRDzjFjgA=;
+	b=N3jBryQTjpz0wgNHkfUKTUw8asFzM4kbJ2MUcJXdXZk30c3unPhlGQoaO6MjqGcBp5QbUW
+	MN37gSVs4r4LWjDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724571919; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ywAiuhHecTp3MGsrAA/iUK/3ImfbVXkO3ORRDzjFjgA=;
+	b=WN2HVeSV0mQAsCmhyDuVBInbdCHljvv7veKgockJ3f7X9k5QK7b9wuMPcnj1j1ovA4Mmyd
+	scmrZoF8UiK1Gst4wSq9m7T5M4UKR0cV9D16A3TncS2URAkSn7sLtcsBUn7QOj5xB6hywk
+	0dPT9HkSTg4t8RhAbtO6jNx2bWpMu94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724571919;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ywAiuhHecTp3MGsrAA/iUK/3ImfbVXkO3ORRDzjFjgA=;
+	b=da0+/3Y+3Lw0E4UAt+rTiysmaBoG47+HfZ5yyKy9LnMkr4er6zDFQ/n8w4AmWDnVAqzOd8
+	ToTuy5FQfNNBVlCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 04FA013704;
+	Sun, 25 Aug 2024 07:45:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GZNiOw7hymbnYQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 25 Aug 2024 07:45:18 +0000
+Date: Sun, 25 Aug 2024 09:46:02 +0200
+Message-ID: <87frqtjb9h.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Hendrik Borghorst <hendrikborghorst@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Athaariq Ardhiansyah <foss@athaariq.my.id>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alsa: support HP Pavilion Aero 13-bg0xxx Mute LED
+In-Reply-To: <20240824183445.6610-1-hendrikborghorst@gmail.com>
+References: <20240824183445.6610-1-hendrikborghorst@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Juefei Pu <juefei.pu@email.ucr.edu>
-Date: Sun, 25 Aug 2024 00:45:30 -0700
-Message-ID: <CANikGpd2u3=GH8TLL40UuOJroe0-WdYCjj1vZJyCBgmSRvtNWQ@mail.gmail.com>
-Subject: BUG: unable to handle kernel paging request in __netif_receive_skb_core
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-Hello,
-We found the following issue using syzkaller on Linux v6.10.
-In function `__netif_receive_skb_core`, an error of "unable to handle
-kernel paging request" happend when executing `if (ptype->type !=
-type)`. It happened because the register $r12 became an unexpected
-value 0xffffffffffffffc0, because it was propagated from $r15 whose
-value was null. So it's likely that this is an null-pointer
-dereference issue.
+On Sat, 24 Aug 2024 20:34:38 +0200,
+Hendrik Borghorst wrote:
+> 
+> This patch adds the HP Pavilion Aero 13 (13-bg0xxx) (year 2024) to list of
+> quirks for keyboard LED mute indication.
+> 
+> The laptop has two LEDs (one for speaker and one for mic mute). The
+> pre-existing quirk ALC245_FIXUP_HP_X360_MUTE_LEDS chains both the quirk for
+> mic and speaker mute.
+> 
+> Tested on 6.11.0-rc4 with the aforementioned laptop.
+> 
+> Signed-off-by: Hendrik Borghorst <hendrikborghorst@gmail.com>
+> ---
+>  sound/pci/hda/patch_realtek.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index d022a25635f9..a45062c9ed6d 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -10217,6 +10217,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+>  	SND_PCI_QUIRK(0x103c, 0x8902, "HP OMEN 16", ALC285_FIXUP_HP_MUTE_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x890e, "HP 255 G8 Notebook PC", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+>  	SND_PCI_QUIRK(0x103c, 0x8919, "HP Pavilion Aero Laptop 13-be0xxx", ALC287_FIXUP_HP_GPIO_LED),
+> +	SND_PCI_QUIRK(0x103c, 0x8cbd, "HP Pavilion Aero Laptop 13-bg0xxx", ALC245_FIXUP_HP_X360_MUTE_LEDS),
+>  	SND_PCI_QUIRK(0x103c, 0x896d, "HP ZBook Firefly 16 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x896e, "HP EliteBook x360 830 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
+>  	SND_PCI_QUIRK(0x103c, 0x8971, "HP EliteBook 830 G9", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
 
-The full report including the Syzkaller reproducer:
-https://gist.github.com/TomAPU/38bb00292b33d52a6dd2d1b629247146/revisions
+The table is sorted in PCI SSID number.  Could you try to put the
+entry at the right position?
 
-The brief report is below:
 
-Syzkaller hit 'BUG: unable to handle kernel paging request in
-__netif_receive_skb_core' bug.
+thanks,
 
-BUG: unable to handle page fault for address: ffffffffffffffc0
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD d936067 P4D d936067 PUD d938067 PMD 0
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 8484 Comm: kworker/0:5 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: wg-crypt-wg0 wg_packet_tx_worker
-RIP: 0010:deliver_ptype_list_skb net/core/dev.c:2247 [inline]
-RIP: 0010:__netif_receive_skb_core+0x3163/0x3ef0 net/core/dev.c:5581
-Code: 48 8d 41 10 48 89 44 24 48 4d 8d 67 c0 4c 89 e0 48 c1 e8 03 48
-b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 0f 85 61 02 00 00 <41> 0f
-b7 1c 24 89 df 44 89 f6 e8 ee f5 b8 f8 66 44 39 f3 0f 85 a0
-RSP: 0018:ffffc90000007880 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 000000000000dd86 RDI: 0000000000000000
-RBP: ffffc90000007a50 R08: ffffffff88d85c72 R09: ffffffff88d82f9b
-R10: 0000000000000002 R11: ffff8880244b5a00 R12: ffffffffffffffc0
-R13: ffffffff8f260cb0 R14: 000000000000dd86 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffc0 CR3: 000000000d932000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __netif_receive_skb_one_core net/core/dev.c:5623 [inline]
- __netif_receive_skb+0x11e/0x640 net/core/dev.c:5739
- process_backlog+0x37d/0x7a0 net/core/dev.c:6068
- __napi_poll+0xcc/0x480 net/core/dev.c:6722
- napi_poll net/core/dev.c:6791 [inline]
- net_rx_action+0x7ed/0x1040 net/core/dev.c:6907
- handle_softirqs+0x272/0x750 kernel/softirq.c:554
- do_softirq+0x117/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1b0/0x1f0 kernel/softirq.c:382
- wg_socket_send_skb_to_peer+0x172/0x1d0 drivers/net/wireguard/socket.c:184
- wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
- wg_packet_tx_worker+0x1ba/0x960 drivers/net/wireguard/send.c:276
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
-CR2: ffffffffffffffc0
----[ end trace 0000000000000000 ]---
-RIP: 0010:deliver_ptype_list_skb net/core/dev.c:2247 [inline]
-RIP: 0010:__netif_receive_skb_core+0x3163/0x3ef0 net/core/dev.c:5581
-Code: 48 8d 41 10 48 89 44 24 48 4d 8d 67 c0 4c 89 e0 48 c1 e8 03 48
-b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 0f 85 61 02 00 00 <41> 0f
-b7 1c 24 89 df 44 89 f6 e8 ee f5 b8 f8 66 44 39 f3 0f 85 a0
-RSP: 0018:ffffc90000007880 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 000000000000dd86 RDI: 0000000000000000
-RBP: ffffc90000007a50 R08: ffffffff88d85c72 R09: ffffffff88d82f9b
-R10: 0000000000000002 R11: ffff8880244b5a00 R12: ffffffffffffffc0
-R13: ffffffff8f260cb0 R14: 000000000000dd86 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffc0 CR3: 000000000d932000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0: 48 8d 41 10           lea    0x10(%rcx),%rax
-   4: 48 89 44 24 48       mov    %rax,0x48(%rsp)
-   9: 4d 8d 67 c0           lea    -0x40(%r15),%r12
-   d: 4c 89 e0             mov    %r12,%rax
-  10: 48 c1 e8 03           shr    $0x3,%rax
-  14: 48 b9 00 00 00 00 00 movabs $0xdffffc0000000000,%rcx
-  1b: fc ff df
-  1e: 0f b6 04 08           movzbl (%rax,%rcx,1),%eax
-  22: 84 c0                 test   %al,%al
-  24: 0f 85 61 02 00 00     jne    0x28b
-* 2a: 41 0f b7 1c 24       movzwl (%r12),%ebx <-- trapping instruction
-  2f: 89 df                 mov    %ebx,%edi
-  31: 44 89 f6             mov    %r14d,%esi
-  34: e8 ee f5 b8 f8       call   0xf8b8f627
-  39: 66 44 39 f3           cmp    %r14w,%bx
-  3d: 0f                   .byte 0xf
-  3e: 85                   .byte 0x85
-  3f: a0                   .byte 0xa0
+Takashi
 
