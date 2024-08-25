@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-300432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B1F95E39D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:40:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A23995E39F
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB66281DC5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:40:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1799BB20D12
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4942F154BFF;
-	Sun, 25 Aug 2024 13:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="INfqn6vN"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A31F1DDE9;
-	Sun, 25 Aug 2024 13:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610EF155351;
+	Sun, 25 Aug 2024 13:47:25 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E0E13F458;
+	Sun, 25 Aug 2024 13:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724593236; cv=none; b=d1ehXcNmkjvLp51kKMDELTjsbW3ETdXRcup1D3r7AO/g48eCFmFUZMAyWvH0f8JKPfKfbTtk86X0I+4LMh41lxacWGv8RMF0d21b/GGCAdViUcTw+8KBNEhPSVpvL0RcAyAi6PDdET6Clwp0ut5AxmTUd0pJwC8SXhj/O+vcU+A=
+	t=1724593645; cv=none; b=NWIr8pfkwQKF0Of7H4XXhRF/GOMvynIcd/GZCmFcvmPvdaurS3nNWT2t/EVsD4WQSZZApSwBf/RiFXSzg0cM1UA/7WeXJaZPn5AA/yHh8AbSwcUGzUgC/6IP3hatr3Cafv/stHzJjhtFiy2y9VIkBUTXuuxl5uwC3dcUC0iiY9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724593236; c=relaxed/simple;
-	bh=lDuklK7q3QCT4iGA6hRIpyYmNP+Ic8gWGRHG5/1q88E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P2lFlIasGWzTc1sNQBpFQXLO9AisxdTOzcw8T47RNCtPdho0hdfhTrhVla0vOCggS00MTciPpT4L5ES2PObChY9wmh+MIoflt8g3XH+rz2wKhA3AnnetqjtNMPFdZvRDAVsCipWFFBp2e22sI4AhxMAJEme+gXUAl2nyovY55kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=INfqn6vN; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id iDTgsnQX8bNNsiDTgsn5tE; Sun, 25 Aug 2024 15:40:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724593226;
-	bh=AHnIX+a/yIVsUeGn9xjaC+MEHZoIwAnQwChHfduPZS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=INfqn6vNlvNcE3fxreIy6pylKbLxYfrtrPFw3lfYP37S+JG1v0Ffgf+dizJjsNQoj
-	 ozylthI+kkw5dobZR9cc2Qh95ViKr7RWUmjhosEJp6v8OjV/kWXQfEHCg3jescgs0h
-	 nYYYvpUvKE++0vqJZXwiJAowP4jOG8mp40Et4VQFyTMo4hs8OxH3ko3WM2INfxDvzq
-	 YdYuR0VOdTRK1vdIaHsTdhfr7aa602/yhyGRXgaajekm9zWdZqewRWcR6JBMBu7j1X
-	 /dvVCJYcSclisPiQqWju9y2YqNlvXJftNJdmpBG1zUIyEYOZmKTet0qmaaSGFThvpq
-	 LLXvcxwzmanIw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 25 Aug 2024 15:40:26 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <8cd324a7-1a08-47ca-9729-a5d680ca0589@wanadoo.fr>
-Date: Sun, 25 Aug 2024 15:40:20 +0200
+	s=arc-20240116; t=1724593645; c=relaxed/simple;
+	bh=GNG7BHifXDRPnG0cDudbbadTux08EVatgwyXmdmVRYQ=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=KEvCmWjUKHdmdWh6PDPFfZbDiX5iAs5E8UXrE0CYhUQj7KmtA+cZIDTaW9sL7LGWq2XB72/mozUNJ8aoqbkcUtKRerrbghN5x5kzRs0jiZlLEgmIHmPA4SI5ezm1ccCwZpBtmi8H0s6RNvUTl8w7t6EkrVpYsTlgpmZt1/XQNCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id D35D792009C; Sun, 25 Aug 2024 15:47:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id CDAD292009B;
+	Sun, 25 Aug 2024 14:47:19 +0100 (BST)
+Date: Sun, 25 Aug 2024 14:47:19 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    Matthew W Carlis <mattc@purestorage.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>
+cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] PCI: Rework error reporting with PCIe failed link
+ retraining
+Message-ID: <alpine.DEB.2.21.2408251354540.30766@angie.orcam.me.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] pmdomain: imx93-pd: replace dev_err() with
- dev_err_probe()
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com, Fabio Estevam <festevam@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org
-References: <20240825123626.3877812-1-dario.binacchi@amarulasolutions.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240825123626.3877812-1-dario.binacchi@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Le 25/08/2024 à 14:36, Dario Binacchi a écrit :
-> This way, the code becomes more compact, and dev_err_probe() is used in
-> every error path of the probe() function.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> ---
-> 
->   drivers/pmdomain/imx/imx93-pd.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-> index d750a7dc58d2..afc482ec563f 100644
-> --- a/drivers/pmdomain/imx/imx93-pd.c
-> +++ b/drivers/pmdomain/imx/imx93-pd.c
-> @@ -126,9 +126,9 @@ static int imx93_pd_probe(struct platform_device *pdev)
->   	if (!domain->init_off) {
->   		ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
->   		if (ret) {
-> -			dev_err(domain->dev, "failed to enable clocks for domain: %s\n",
-> -				domain->genpd.name);
-> -			return ret;
-> +			return dev_err_probe(domain->dev, ret,
-> +					     "failed to enable clocks for domain: %s\n",
-> +					     domain->genpd.name);
->   		}
+Content-Type: text/plain; charset=US-ASCII
 
 Hi,
 
-you can now also remove the extra { } to be even more compact.
+ This is a minor update to the patch series posted here: 
+<https://lore.kernel.org/r/alpine.DEB.2.21.2408091017050.61955@angie.orcam.me.uk> 
+which includes a change to 2/4 suggested by Ilpo to wait on LT rather than 
+DLLLA with the recovery call to `pcie_retrain_link' in the failure path, 
+so as to avoid an excessive delay where we expect training to fail anyway.
 
-CJ
+ This patch series addresses issues observed by Ilpo as reported here: 
+<https://lore.kernel.org/r/aa2d1c4e-9961-d54a-00c7-ddf8e858a9b0@linux.intel.com/>, 
+one with excessive delays happening when `pcie_failed_link_retrain' is 
+called, but link retraining has not been actually attempted, and another 
+one with an API misuse caused by a merge mistake.
 
->   	}
->   
+ It also addresses an issue observed by Matthew as discussed here: 
+<https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.com/> 
+and here: 
+<https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.com/>. 
+where a stale LBMS bit state causes `pcie_failed_link_retrain', in the 
+absence of a downstream device, to leave the link stuck at the 2.5GT/s 
+speed rate, which then negatively impacts devices plugged in in the 
+future.
 
+ See individual change descriptions for further details.
+
+ Original submission at:
+<https://lore.kernel.org/r/alpine.DEB.2.21.2402092125070.2376@angie.orcam.me.uk/>.
+
+  Maciej
 
