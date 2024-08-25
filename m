@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-300463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E31795E3F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A26495E3F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18A628187B
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18731F215DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E046C16F0C6;
-	Sun, 25 Aug 2024 14:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33164155727;
+	Sun, 25 Aug 2024 14:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="T41hLwyA"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/r+oMYP"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C515667D
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 14:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D34320C;
+	Sun, 25 Aug 2024 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724596477; cv=none; b=jCSiuJvZfJncHr4JvI+ZLUs/8hb3UyUuDRQ05XUURPEVRX6lxHU1sD+y8MHFbQA/eMUAEnTOQIgSLrSjFwXvgAILCeajZyji06ILuxxwO8edCfY+EYtNQxs546v/RChEEyHBuWY5LXnViOIuJdNJOn3cygACTBeQi+YVszUqvDk=
+	t=1724596643; cv=none; b=Qg91pExtvxIs8D5j+soPEEcmXdTGXSSWPHEM3QNYvzON/VR7hGo97CtCF+JIukGd00MNqUCOYE+AaabZxwHd3lA3cvDVUVahjhQZc0rJPz6X1kmLbR4uKIxMJK+Ltrf0lw9CM76EQmzHBc9Mdq29fXHOAOhqe5JqkYZrPBwBLRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724596477; c=relaxed/simple;
-	bh=0lv2+/R/Y1kEilZQGwotVCHUco7bj6y3rAOycGgHMaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BqfLWFP0Uo+ka6Q5dAyDNf3h6qyXkNzgpHVE9gHmxdB1Bdj8eOPvzxJsq9wOhXjV52Lq1tsTDuUWIoj8VjqXjSIphEuXfdIAbeQit6MreO9s8MD7exZifLcIN1HWKRh2yTP8F9t38dJQvOf5qByt4ZzLUcF8/q5MU8OXheU2K60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=T41hLwyA; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c0a9ae3665so293435a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:34:35 -0700 (PDT)
+	s=arc-20240116; t=1724596643; c=relaxed/simple;
+	bh=bcfaR3Ia1v0cVAj3dSnAjPImEKQQqoPr3BJzACBaPEE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lHU1k6Efteo76V884V36Sc9urYsa6sI4AHptC8CG3C1azGYplbb38ybDFbzQn1zOLAoJMzdFW0b7HmZdXB6LD7hDFxbRp6Cb3unf2tS4sJEyH3/ufk6pc3ylnzh811B/dTo3AHcEYuOC38vaRsSH5u7B2G5PrzZ3a69UnNdXaTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/r+oMYP; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7141e20e31cso2955252b3a.3;
+        Sun, 25 Aug 2024 07:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1724596474; x=1725201274; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724596641; x=1725201441; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pUP1tr1Biob0qdgqQZiV/8XgCxeEAXErXHQFm+tqx4M=;
-        b=T41hLwyAvWpX9mKA2U4aP5AqUIknepUthKOTph5no6+2aw7geAuIXdJckSU4Ey3pEr
-         gswiX0T2vl9R0AvMoJLsvaTTb8mxl3nGPkyNEzruCuDfom4JCOh9PufcLjJ6bmjrmy3p
-         kIn8/rsVmODxqjfYRvDSnAoV6M+5DKd4IPVgk=
+        bh=bcfaR3Ia1v0cVAj3dSnAjPImEKQQqoPr3BJzACBaPEE=;
+        b=k/r+oMYPtIx6lLytcnKgBkWJIZ4q21IdtmF8DHmSBckw3tQxeTLEnpm9sSi7smY/eQ
+         Bkz8pFRnvH4TNltpO6IqeLZ7amj/a3CbBn2OWXLGZGwuxyRjVr+ixnIkilke3OhvaVBJ
+         LMGOf2VKShLNsUZkZ56nEwVEYbLanDegYfZF2CtEK2ik8CXVCJleahNwMCZusYmg1o1I
+         HGUec7s+liakF6IL9e4ANXGLlvWm8hgGU34vHD7AQtjXXgYTRtLBJHIb4RjTxqIw6fAW
+         WcClWsMP1/jvhJ8BwATV/CRNMs4/ESEOy9RbOYjJsfnnydQxgXSK5JS4IOT1iDJ4o4EC
+         glOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724596474; x=1725201274;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724596641; x=1725201441;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pUP1tr1Biob0qdgqQZiV/8XgCxeEAXErXHQFm+tqx4M=;
-        b=RV2maNlH4WU6+OwbAqofDQSEMKu4Qef2hd4CLbsXGP4+HdXRst7n9HEjF/Gj6pg+yq
-         Hv9/UgrKONHmN8jy+lATng+5TarDcpqUK470K7wvZivbZGyLyRyGvvW5DfSLrfo9+qBr
-         JsFGqvk01OcsIEZV98P/QOKPejdoHnisCKp9JhIxl5r46mIhWhQUHW3P2u8Y+gzz1BOn
-         +KlTlvhN2tqAsQfpRC9Tb203FvW2ZYk9QpSImj3KVvAMnN5h3x9op8gcc2NWhjR/l1Gd
-         0DEzNa3lxe4kHrKZm7W2INezQJ+X0n+BxuXmyFCoXhOwVCNtovpgQ9rrd6XcmCyC0kpB
-         mEGQ==
-X-Gm-Message-State: AOJu0Yxtutq5VZm9p/rnDC88erlvpqdgleoufIoncVABa7dtw+3s+Z/B
-	F6lnkEII/AN4fdNIDxgX7v6MkGO8Oj/msdXL2Lbd/PoDc81xNEZlY4aGTztyiY0iyA+worRtYk3
-	/T4I=
-X-Google-Smtp-Source: AGHT+IFgNRayDgp4fmiIWVjZ3HTGdr0hITo8YBBn478cm5P7zRV+7T0cFa+54xo2Bary5GIFiosIxA==
-X-Received: by 2002:a17:906:c143:b0:a86:8368:860a with SMTP id a640c23a62f3a-a86a53005f6mr518996166b.35.1724596473780;
-        Sun, 25 Aug 2024 07:34:33 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-25-99-149.retail.telecomitalia.it. [79.25.99.149])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862b6sm550625566b.170.2024.08.25.07.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 07:34:33 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v2 3/3] pmdomain: imx93-pd: drop the context variable "init_off"
-Date: Sun, 25 Aug 2024 16:34:02 +0200
-Message-ID: <20240825143428.556439-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240825143428.556439-1-dario.binacchi@amarulasolutions.com>
-References: <20240825143428.556439-1-dario.binacchi@amarulasolutions.com>
+        bh=bcfaR3Ia1v0cVAj3dSnAjPImEKQQqoPr3BJzACBaPEE=;
+        b=wUKUc9Sj9llV0/BiVgcIZ5McDBPZt26LVT4bxfo4XRbCY4+3V2ltUasBl72+3wETBi
+         hXk22MPx6I/L8SfXx6/QjsudDLzHzPIoCLgQhdORFQMzM93JHlOWVTzmlIWGGm+LjWpF
+         xDvpGtlXAUklg+ky1nYLgVhHmY3enI3szCix4DcYKb39rYBiq8j9bXI1vbjhBQwcZwax
+         fy0YI6pHU9FXY1dRolPgJmYZw++2MtG/L4zzizcQ8hPncs5qh/UA/kMZWAOKNveVf1mo
+         JCYF61dRkqMUJNCN8Ts1vebsqlZB4S3BG3rkgEixQ12d80LPG7hhF0bS3LpWsuiUB0p8
+         uKUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzFQhGxyKyTnOvcyd328lGtCGa6HfhTi6bB10jEPrNEvr2uRq3ygFC69DJ4e8pTCFltZWhQ2NS5825jMU=@vger.kernel.org, AJvYcCXI68etcCQ2fg9Xdt9Gee1//V78jx8I1K209FoB5sLFelaKAySCWqJPPRaW4abFDwZkP1qX5COo+OqD0KrgAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx/J5LWQc9GscishpLdx1TYuywfUPA93sdB9id7XybZ+1sca7h
+	XgLjBNltzW7C22/ngZOUXeVnSI+h8j38r/aM2m4HUsQj0Pq8PfsQNvxiKYaP
+X-Google-Smtp-Source: AGHT+IFS+ySC2coJy5JKTZjUkeP2oRrQFN0FNlB40rsrFpCEc96bMq8SbqFX/PXvwq9BTdn11fIebg==
+X-Received: by 2002:a05:6a20:d504:b0:1ca:dcae:a798 with SMTP id adf61e73a8af0-1cc89d19911mr10561045637.9.1724596641450;
+        Sun, 25 Aug 2024 07:37:21 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6136fd98esm7900754a91.3.2024.08.25.07.37.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 25 Aug 2024 07:37:21 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v3 1/2] Introduce klp_ops into klp_func structure
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <Zsq3g4HE4LWcHHDb@infradead.org>
+Date: Sun, 25 Aug 2024 22:37:06 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ jikos@kernel.org,
+ pmladek@suse.com,
+ joe.lawrence@redhat.com,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C3B45B71-C7D1-45EB-B749-39514A49C521@gmail.com>
+References: <20240822030159.96035-1-zhangwarden@gmail.com>
+ <20240822030159.96035-2-zhangwarden@gmail.com>
+ <Zsq3g4HE4LWcHHDb@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-This variable is only used within the probe() function, so let's remove
-it from the context and define it locally within the same function.
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
----
+> On Aug 25, 2024, at 12:48, Christoph Hellwig <hch@infradead.org> =
+wrote:
+>=20
+> On Thu, Aug 22, 2024 at 11:01:58AM +0800, Wardenjohn wrote:
+>> 1. Move klp_ops into klp_func structure.
+>> Rewrite the logic of klp_find_ops and
+>> other logic to get klp_ops of a function.
+>>=20
+>> 2. Move definition of struct klp_ops into
+>> include/linux/livepatch.h
+>=20
+> Why?
+>=20
 
-(no changes since v1)
+Hi, Christoph.
 
- drivers/pmdomain/imx/imx93-pd.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+When introducing feature of "using", we should handle the klp_ops check.
+In order to get klp_ops from transition, we may have more complex logic =
+for=20
+checking.
 
-diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-index fb53a8e359bc..25ab592945bd 100644
---- a/drivers/pmdomain/imx/imx93-pd.c
-+++ b/drivers/pmdomain/imx/imx93-pd.c
-@@ -28,7 +28,6 @@ struct imx93_power_domain {
- 	void __iomem *addr;
- 	struct clk_bulk_data *clks;
- 	int num_clks;
--	bool init_off;
- };
- 
- #define to_imx93_pd(_genpd) container_of(_genpd, struct imx93_power_domain, genpd)
-@@ -99,6 +98,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct imx93_power_domain *domain;
-+	bool init_off;
- 	int ret;
- 
- 	domain = devm_kzalloc(dev, sizeof(*domain), GFP_KERNEL);
-@@ -118,9 +118,9 @@ static int imx93_pd_probe(struct platform_device *pdev)
- 	domain->genpd.power_on = imx93_pd_on;
- 	domain->dev = dev;
- 
--	domain->init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
-+	init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
- 	/* Just to sync the status of hardware */
--	if (!domain->init_off) {
-+	if (!init_off) {
- 		ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
- 		if (ret)
- 			return dev_err_probe(domain->dev, ret,
-@@ -128,7 +128,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
- 					     domain->genpd.name);
- 	}
- 
--	ret = pm_genpd_init(&domain->genpd, NULL, domain->init_off);
-+	ret = pm_genpd_init(&domain->genpd, NULL, init_off);
- 	if (ret)
- 		goto err_clk_unprepare;
- 
-@@ -144,7 +144,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
- 	pm_genpd_remove(&domain->genpd);
- 
- err_clk_unprepare:
--	if (!domain->init_off)
-+	if (!init_off)
- 		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
- 
- 	return ret;
--- 
-2.43.0
+If we move klp_ops into klp_func. We can remove the global list head of =
+klp_ops.
+What's more, there are some code in livepatch should get function's ops.
+With this feature, we don't need the original search to the one ops.
+It can be simple and straightforward.
 
+Regards,
+Wardenjohn=
 
