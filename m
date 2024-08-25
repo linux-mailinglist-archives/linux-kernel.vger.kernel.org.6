@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-300604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ED495E5B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:29:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A22A95E5B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CE61F2167F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 23:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D96F1C20A80
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 23:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D208778C7F;
-	Sun, 25 Aug 2024 23:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D9F77104;
+	Sun, 25 Aug 2024 23:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="isy9xSiw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dYiZvETC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD203987D;
-	Sun, 25 Aug 2024 23:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B55D6BFC7
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 23:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724628555; cv=none; b=W2vBzdlLn1KldltdoCNJ6zJyZVdVCNynETFiATdABMCCTo6qnA+7hDikVK1zTWGRJ7OFP2ftuf17pEaX6EQ/lun+yHdvj9B6rQ6H0CmOo6tFnRpPN0bcmNBjE6LWUiUVLU7xaySrHnp/MlItbOrM3JPnCtuN7hlVfzfCu0BpYMI=
+	t=1724628569; cv=none; b=liOre5KJdugt8s77pS8GYlwz2hixG4SDS3/umvPdGZ6l4mNkJxetQPb33Dj2JtkP8zXM4k2PGpb2p1/FSL/w1aUBS0fPVExIMkzX8aAwqMUB2yUONCONYtDg2ZqIbn18Xx1WU7Qd70iuAwQzmqg907bhhZMgptugQzh1JSnS/f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724628555; c=relaxed/simple;
-	bh=/0kV2KvRQj7gYmrQ25xC5+gQ1yI8WEI2KA7WLBk2tcI=;
+	s=arc-20240116; t=1724628569; c=relaxed/simple;
+	bh=BLVhj000wKo9s66rw2blw0rhyQLyunot2S12h4z2QAo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Is+vx/TZksaUTww4MnFb4gSU5/3H0dTZKuI+nmb7omyVx9Twv7ktagTqgvE6YK/GKBe5nH/q6fyIZpWDIEXPBhjpcuDq04DCLJix8R/tg78n7DTSqc5pSfSQCBTO4XzR8bkjZJexE8aZPcCE9DXVPj20UoQAQg4wPsG4Pb72fCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=isy9xSiw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=/VNzMLPggM5KWfh9zESfXylqyB6nhMdOi1C2TagrgtU=; b=isy9xSiwcOu8VCkugyBCT0BL0n
-	wnd844Nd2la+kYnglinmGQlG+JlKtFxGwrrLxJJLb97SWRcYkQsYMcGJaj77XWvNkkxM6BeAanVN8
-	00BR3p+KMYErj4BRmvfv8UqEb4/QYnqs9+8Y93U5+ZYFCCSAmoS9DnlkiH311LY3Sim8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1siMf8-005evj-U6; Mon, 26 Aug 2024 01:28:46 +0200
-Date: Mon, 26 Aug 2024 01:28:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, f.fainelli@gmail.com,
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAavasXkCQ6Ve+9rseHdjzZgEuIyBNW2MbwFZrrHqhTn+/R3LQMrIyL4o6nkCAKcCzqGvs6XTExcNvZhqudFKUvXjSTS0bnfHThYBiPO6U6+JTeMfoXn4++wZBiWpNE4Zz5EIFm7jsZdZAqU6c1dGVc7RPfabFw08cYgbwOY19c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dYiZvETC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6WmqFAxCOp6Wliq2cYkJz9GIAwrqWnHFntY1ZSayFFE=; b=dYiZvETC4JIeF5bkrobqpWY9EM
+	G/NyA4FO2OhvvZD+d51CgYP8gk5PEZSzyAR0iT0AWEPdPmns7i2kppBtCdQOgUa66xAmCRsvhyPwA
+	qea4zaYlht2arz69kk+wmQ4/Swv6fuQej2JLyTSXstM/xnnT2X4uhWDg319I/N1YUfe7dmvC+Mr71
+	GvSd4kkEM239V/M0w+HM8J4XQ+hNHDV91ntpS0jgsHmYSBIGIhneTljyp2ZWZSRcMBVmLtGnVSteQ
+	bht5EzchQNJ4nXpW6Y+Evsht297TS/LLUlOmPmolMlZQ7kY8PljZPwIs6XGPTb6dokrksg6ZlXMr3
+	5bTpjo6A==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1siMfI-0000000EinG-2sB6;
+	Sun, 25 Aug 2024 23:28:56 +0000
+Date: Mon, 26 Aug 2024 00:28:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+	david@redhat.com, wangkefeng.wang@huawei.com, chrisl@kernel.org,
+	ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+	shy828301@gmail.com, ziy@nvidia.com, ioworker0@gmail.com,
+	da.gomez@samsung.com, p.raghav@samsung.com, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] net: dsa: Simplify with scoped for each OF child
- loop
-Message-ID: <af8c128a-ff6c-4441-9ab5-c0401900db76@lunn.ch>
-References: <20240820065804.560603-1-ruanjinjie@huawei.com>
- <20240821171817.3b935a9d@kernel.org>
- <2d67e112-75a0-3111-3f3a-91e6a982652f@huawei.com>
- <20240822075123.55da5a5a@kernel.org>
- <0d2ac86a-dc01-362a-e444-e72359d1f0b7@huawei.com>
+Subject: Re: [PATCH v5 4/9] mm: filemap: use xa_get_order() to get the swap
+ entry order
+Message-ID: <Zsu-OCxgB9OAK050@casper.infradead.org>
+References: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
+ <6876d55145c1cc80e79df7884aa3a62e397b101d.1723434324.git.baolin.wang@linux.alibaba.com>
+ <d3dc75e2-40a7-8439-734c-19d83707164c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,41 +66,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0d2ac86a-dc01-362a-e444-e72359d1f0b7@huawei.com>
+In-Reply-To: <d3dc75e2-40a7-8439-734c-19d83707164c@google.com>
 
-On Fri, Aug 23, 2024 at 02:35:04PM +0800, Jinjie Ruan wrote:
+On Sun, Aug 25, 2024 at 02:55:41PM -0700, Hugh Dickins wrote:
+> The second issue is that swap is more slippery to work with than
+> folios or pages: in the folio_nr_pages() case, that number is stable
+> because we hold a refcount (which stops a THP from being split), and
+> later we'll be taking folio lock too.  None of that in the swap case,
+> so (depending on how a large entry gets split) the xa_get_order() result
+> is not reliable. Likewise for other uses of xa_get_order() in this series.
 > 
-> 
-> On 2024/8/22 22:51, Jakub Kicinski wrote:
-> > On Thu, 22 Aug 2024 10:07:25 +0800 Jinjie Ruan wrote:
-> >> On 2024/8/22 8:18, Jakub Kicinski wrote:
-> >>> On Tue, 20 Aug 2024 14:58:04 +0800 Jinjie Ruan wrote:  
-> >>>> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> >>>> device nodes to make code a bit simpler.  
-> >>>
-> >>> Could you add more info here that confirms this works with gotos?
-> >>> I don't recall the details but I thought sometimes the scoped
-> >>> constructs don't do well with gotos. I checked 5 random uses
-> >>> of this loop and 4 of them didn't have gotos.  
-> >>
-> >> Hi, Jakub
-> >>
-> >> From what I understand, for_each_available_child_of_node_scoped() is not
-> >> related to gotos, it only let the iterating child node self-declared and
-> >> automatic release, so the of_node_put(iterating_child_node) can be removed.
-> > 
-> > Could you either test it or disasm the code to double check, please?
-> 
-> Hi, Jakub, I test it with a fake device node on QEMU with a simple
-> example using for_each_available_child_of_node_scoped() and goto out of
-> the scope of for_each_available_child_of_node_scoped(), the
-> of_node_put(child) has been called successfully.
+> There needs to be some kind of locking or retry to make the order usable,
+> and to avoid shmem_free_swap() occasionally freeing more than it ought.
+> I'll give it thought after.
 
-What compiler version?
+My original thought was that we'd take a bit from the swap entry in
+order to indicate the order of the entry.  I was surprised to see the
+xa_get_order() implementation, but didn't remember why it wouldn't work.
+Sorry.
 
-Please test with 5.1
-
-https://www.kernel.org/doc/html/next/process/changes.html
-
-	Andrew
+Anyway, that's how I think it should be fixed.  Is that enough?  Holding
+a reference on the folio prevents truncation, splitting, and so on.
+There's no reference to be held on a swap entry, so could we have some
+moderately implausible series of operations while holding only the RCU
+read lock that would cause us to go wrong?
 
