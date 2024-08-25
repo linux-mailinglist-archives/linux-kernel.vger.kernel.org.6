@@ -1,203 +1,176 @@
-Return-Path: <linux-kernel+bounces-300219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3861A95E0BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFDCB95E0C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E27281B91
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:43:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6F71C20CA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850E4F9DF;
-	Sun, 25 Aug 2024 02:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3258F77;
+	Sun, 25 Aug 2024 02:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="pu7VET7S";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="urXw0AhU"
-Received: from mx6.ucr.edu (mx6.ucr.edu [138.23.62.71])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZSMZ1gx8"
+Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazolkn19010005.outbound.protection.outlook.com [52.103.7.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB2CBA27
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 02:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724553831; cv=none; b=IPV0oMGpaswourj/fal4RmSkFDJ6VWrXPMLfRIWR1PCVoKMW2Wl/k7TyVZdzOdGlv+6K+KvfeFz1Jxhi/ZrY5IKlIUyQBJiiR3AxWqjfPpyhL1yShgusVxmtCpG7kixpGwTM5JRWH7PUgyiDBU7X9a9wLCvShDVe+2pk3DsVPD4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724553831; c=relaxed/simple;
-	bh=xYwht60nwukBIB8VvdyNWQ1W6v8FzgDLlaemLk8iqvs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=TDIaVlanXkJOr2Dvcvt55vKz8W5ls4EGoiavAfKaKHgAHaTr8BekJQbiw3T4ljhmalK4df0zHCI4k6T0otlO5jQUHrseVn1L7vmGj5S37kx0Itjm8gWrBYymmKJIA1wIchPfceYC9rhFKIpmDICRk7pgTgCCFPl3NUg/Rs9ElpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=pu7VET7S; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=urXw0AhU; arc=none smtp.client-ip=138.23.62.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724553830; x=1756089830;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=xYwht60nwukBIB8VvdyNWQ1W6v8FzgDLlaemLk8iqvs=;
-  b=pu7VET7SBt7+sU7NE+J/KlCiycFpO9EdD8zc+7v4up4GD1VIzVzg6SpF
-   NM/5LJMqZdZBUfaMbH7t+MfeCKu2UQTnXk+Gb4YHXOyn6Dzdv+U3mjJwI
-   jCwICi19xBuhCtl+kyxfd3hDFFqJzvocr8vuSlgKzannspmDPAg0/mRWI
-   CbQCAKc6JZYq9Q7iBYokjMYShnDYZhndmd7necQkJgBlrauVd9obYbGL/
-   1kDEtht4SUxgs/b7uChizOGWTZnrqmQw5Hhc+IbMHwRo7swEi9PSX+NOE
-   loIkt28cTMeXvCtO3bMFsRY0GktRTMyG3zNttwGUreBNyBSSc54/awB2h
-   g==;
-X-CSE-ConnectionGUID: Ila0DzhWT82SpYy2bHw5oQ==
-X-CSE-MsgGUID: V7xreW32SpObAwVHEMkAcQ==
-Received: from mail-il1-f199.google.com ([209.85.166.199])
-  by smtpmx6.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 19:43:43 -0700
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d306a36daso35008905ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724553822; x=1725158622; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4MNH+fMGdP9JHLT+281L3G2ZahxWv0gRwwGG3Pw9Mrw=;
-        b=urXw0AhUEaSFCqW1NBeuVHtsyQkk111oNXqnAJgSF4uLSvz036Z4wLvkyMtq+MCbts
-         G49V3/MYYUmGGDniPqlpB/QjSwm+jIK8w6UlhDAXX1a1BQcR0N7yDIzIlZW7kjNAOT9n
-         DnKe1cCwCTSSvtKMaga4/YoqtFYhhwhkme+/M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724553822; x=1725158622;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4MNH+fMGdP9JHLT+281L3G2ZahxWv0gRwwGG3Pw9Mrw=;
-        b=iIfXFbq647GKbHZeWXTLapN+Y4bGapvCdKGU5/4B280vdKmlE6JgvubUvfYFUuK+DA
-         scfL+oInTB7Ly3pO0RnLkbB5soY2C91vYjUdyNvrAvoVOugybcVKd2V4efAZyqlRpY2K
-         ydvpk5GprGRJWVlSvTxr7RXte70S8DIEwPo3kuWjOAARYU8ShIWRSaWgSkK11pJ4rmhS
-         mX5FJpyioBGRoLNSLMCrajQS4O5YCEXsvsuo5JAVNqhrYXLmjZSjC/9yIftOivdeLicE
-         x1NQU0pI65WPUlKg63UFpFViNvotdzHSc6MW0dBBsUyRoYpjBm1KFdByOmuxMj5tkHmC
-         fXdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXmoLQ/y3w0WnFMSgQooXefYHmISTQ88HmQeWZRTJxA1CZ5EVloaJsplLhKL9BNHCyPHnalvLRIyNVW4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzUJwvT3v1P4+hPbZ8VND8ULoCr5xVywxLnhDOMoBP/J6xrUbE
-	irl8L0XIyFnI85pn+BsQoeG/gO2pB/XdN2Hx6H9VCztbv3rcwPrI3knbEed7rPqn/ZYo35wugYs
-	ilHuaSha+xK12NHptyAu5EbYY/IWCqiRWtLKS71LwowZTMbblrWkZ/M++25bX8rcnnmNo+sYQma
-	tdWy62GIYm6NCp+9VSm4Y9MXxjndJfo6IpqSKllQ==
-X-Received: by 2002:a05:6e02:188a:b0:396:f026:b0ac with SMTP id e9e14a558f8ab-39e3c989ecfmr81369855ab.14.1724553822541;
-        Sat, 24 Aug 2024 19:43:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHr8z+YHMldSfKdzax7ksxhfCeggpAybAldZfkpvfBau9UN11Sq+ooUijQjlihTL6LPNcWCm6zdS6A/CIPsSIU=
-X-Received: by 2002:a05:6e02:188a:b0:396:f026:b0ac with SMTP id
- e9e14a558f8ab-39e3c989ecfmr81369785ab.14.1724553822239; Sat, 24 Aug 2024
- 19:43:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF6A163;
+	Sun, 25 Aug 2024 02:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.7.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724554304; cv=fail; b=kc0XTeKnurmXRItW5UAfSTwDKSDxOzDpUDZGzZesxu9jqTWL/QoG5YyZ6NTflWjWbl7zB17EgwbDVNVrZrq2uqIu1WJntJ2qsu/xMzpuK08eS/sYnt02VHtTgsItopdnFlObfq0FdhPkWpnnrgGktkqxuZbDHrnlSGtFxPY+8wQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724554304; c=relaxed/simple;
+	bh=WAuPa0eQawebJhTQJGo11yiigw5SZtDJfUuPK4hZ6ZA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=f7E0GQPqYHJgz/ORA3cdD4EcxXb5oO2nlpW4Kym++cghpVJWYIsItpNL35ecAISDi56P/t+zMpbfPiaeU6CI1/zXSkQY8irrCSFV8gplNpZuGYzg8kIGMsEEl0ZVCr/jOzr1lNq5IVhABtOI2TbZpjtCLAt9gEHUZ1XlzVwmdSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZSMZ1gx8; arc=fail smtp.client-ip=52.103.7.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PpE46sWmmXrJNJTD0ZdH6ivcCe4EIsjJvgmCO76AjNJfeD9IoXQJv9aJTyJurmzUyBYDVwlc959SJyGMYUBjglAb1+Vh3fKrYOyeslquR5xMBYM5pBZHHSbPVM/U9HKnQsCLAopnxM2S6J32LlTHTPbGmnlSHd0URddmQoL4rHECJ6zumwU6kn1pDerlvwfGooK4gJkvn3N4Gl2V94k5SPTQnCQkU0hBotSJ1KmF1iQ3cboYtSb7gJQiGAmzocG87Se+6yVVV25sQSZRgEYMb+0csaZ0KK6DUmucz0ONDUYpiOi5FNUiSfG0w+bqNTU0Z6P8mjF2bOQNm6zAo2RANg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CmHuF7CEjoCp4EAFDFFlY31q3ET8WePuMQkoU/xy/Zg=;
+ b=CtT0GjC+8+znPNCE2BSNoxFsvK0QtuoyCjFzVnCc81Ijzb4QiXEZhcVHZTPys3aBvvTiEWEB+RuT8wDpAaf7uqNdG9c8x2w3svqO08l4+pF5zMyJtsdKICIeiR9rtakEbnaCj8Ml6QcAbj5iBnZj7B/bUWTvkrOU927F/geQMN9coxfbbriqJoMCLUh+uJdOV1cefTeeDbdMaK8swQNyGLBbQ1dIybJ3MlaWiL4FrH9HB7EH7n8BQGNmeprYDh7x1lBspVVWADzVZTUFKDqYjn/ka7tWIFcspS1DSyQdlAQNwqTQsLJQtdGKtZkcXG+TfTF5tvDvmf2lNdcXkxK94Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CmHuF7CEjoCp4EAFDFFlY31q3ET8WePuMQkoU/xy/Zg=;
+ b=ZSMZ1gx8YWFJqe4Iio4GXaIaSRGMNi1puVl/Kby4nj2RUpVF4zTNl7YOVEae3KFC5QpbZ4uzf3sf/wBnwnZil0/3+mb8wZOt0Zg6/YjvVyEHzMmmFbD2OZTO6oKwOk82Zgauk7zmn1qdi2xWG6AbI9OUpopyFr22zqyd3eFm0GOevTDqw6Eaieh/1Dre/BslBV1+/aPQLtTwUh5LPP+krBxelS+mheQ0+sPBjoUUClrbAKCQUymfxp0qpX4MTmdXMVyEtD08k5rO/vzq1J2vOcyjA4B7S1siAvlyfNFHn4wi9uiRbtCow+fcz8xMVDadmdEx3jX1yTCkJQma4nMfyQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SN4PR0201MB8805.namprd02.prod.outlook.com (2603:10b6:806:200::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Sun, 25 Aug
+ 2024 02:51:41 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Sun, 25 Aug 2024
+ 02:51:41 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
+	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Stephen Hemminger <stephen@networkplumber.org>
+CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Saurabh Sengar
+	<ssengar@linux.microsoft.com>
+Subject: RE: [PATCH 1/2] uio_hv_generic: Fix kernel NULL pointer dereference
+ in hv_uio_rescind
+Thread-Topic: [PATCH 1/2] uio_hv_generic: Fix kernel NULL pointer dereference
+ in hv_uio_rescind
+Thread-Index: AQHa9IPaKeKLgv3auEyyAVvZzl/4nrI3SF/A
+Date: Sun, 25 Aug 2024 02:51:40 +0000
+Message-ID:
+ <SN6PR02MB4157FDCAE52019E13DB97229D48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240822110912.13735-1-namjain@linux.microsoft.com>
+ <20240822110912.13735-2-namjain@linux.microsoft.com>
+In-Reply-To: <20240822110912.13735-2-namjain@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [m2fKHLKBAU7coh+WDfHPaGM1KTUopvto]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SN4PR0201MB8805:EE_
+x-ms-office365-filtering-correlation-id: d8f8a8d3-8242-4b17-5ec6-08dcc4b0d8bf
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799003|15080799006|8060799006|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ XZnBB0yTkjR4TheZp1lTHliUFMkYZPLlFzh4UmXOzlfNSFGyg4lahjV9SeQLNZF5JBNedqB3mxZT9bj3nzZ+aHyGxHmey2LkGBAo3G4RZ969kWd5EnJHKUpjHlksW0gOCNq29gm6PSZftCbVsCk5jduKKZBWM921JtUOo/qlSIzd4fvGWilYhuCHqwnBHNL5LUZgh5A+uLzkRrtl5mbNayYCyFyWVhlLjwH/c81YaAI1kZ98wL0icYTBW37+jW23ct7ihA2jk2fWurhSMcuKrTX2l62ZRmWvBlxuhNCG60cLYYHlHLJ9k/cImiCFNfxENcIQVrtLRHofKDdaXrtND04SgjPpeBSN3evqI46P/IjcF0agHZ5gHmHFQ6eDwanizJ8tPm65mdbN7PZ5TS1ZSGgBarkwSbMiYhNjJC+Xzzz0y+WnD4/sb3ZWYsByvLwQbjssNONO5KIcVoorDK+Wp9Q5PK25Tir7FqvbDSvCFnV1PPgStieHhjS4PMlSMq9vaFGULm4jdSk7tFynz6W22GQebGtm9qKFyG07CRI9Miq5vqRtlCLvMhAanZPP/RgTfXrHN6X93goY0XoUGbLvpoDOMmVYNdmXvBOo4mjLtggN3B0cfDFz/l+EHoA5yaUUibL/vvXEjRenPvSCk75Yat2ST8Ld0SwnG/NzzkXn4M0=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?yyX3dCnD4dguSFrMOPWeppZSKi6ld6kulKX51Ohezw/widiKTaDqCof5kV6M?=
+ =?us-ascii?Q?iQVJXi/pLuM7j8BGoQ480qmJ3xm6psu0/UX0c5PbVuZG4OCo1MgpEoLhqzUG?=
+ =?us-ascii?Q?tv1Y3kC5MdJmSjDE2346DVlSulNk/vjlwAjUx5q7XZ1dLzoEk3wl15FR5V8Z?=
+ =?us-ascii?Q?0WOua4yfjTdeg92wFPA4QSzQn97zzARxpWzwDHsJwpvpojqAhMq/3TePSZ/k?=
+ =?us-ascii?Q?2mhifoinPiVKaxTNiJoLG6EJ1qaiDo+zOzGVaLtaD13sqCCtQ7Pc5NBz8KBr?=
+ =?us-ascii?Q?eV2kthiv7JGQNAGbZmDCkCp0aTSnQum08QV6eVQd17RGhfVoDvvJ7SC9KmFh?=
+ =?us-ascii?Q?uW81qn8dR/FGJOUTjRMi2672gW+8KyfLtPPlA4rXXcMzAMOH+zKrIoiZEpiZ?=
+ =?us-ascii?Q?ZsN3aCqUs5NiicEaS4sTaLuzr3seyekBMfVU0ZSx6aFyZKa7vamp4l/q0KXW?=
+ =?us-ascii?Q?Eb6SWD68Vs/w2GyA9mVO211MfIXfbQ1AQQoWA9EgkUfrnk48uADRh78V41zu?=
+ =?us-ascii?Q?s5w464ATzlh5DeIdW3k90C3K3FZHe+8yss9WyqCzrE7v/t3ZOAyrIj6O+5i5?=
+ =?us-ascii?Q?parzRdEVKfcvr5TiCJ8vcoculpJhDjA5q/yDaOwlC95ha/xFMLNyQcencqNv?=
+ =?us-ascii?Q?PEXWmAvYLsRNs++nHsSD/5qIaW7nRyy3XB+aP/7hPVw75ppLWxj9ZaKl5NPo?=
+ =?us-ascii?Q?JISVHEXlYzL9qzzVxBsUS6fd9UkvBYcMGtKMch0VGUl39hCqMzHL42/EB5mi?=
+ =?us-ascii?Q?tfpFZSQP8nXvObVLezXfm77tFAoCOOk47KfyAx2okWR82wJW0HEWglcvG/z6?=
+ =?us-ascii?Q?BB70WEUpTTGC/GBTnGsoiou2kGQK6gC9iJ47maduTlBmPQGcS+qfZlouGW3w?=
+ =?us-ascii?Q?7Cz0qYp0ZUiTRDztYPIbQgufc9RlUO75A7c7tVTi2sBJfhKejwVgbyLw6oWY?=
+ =?us-ascii?Q?kZ5Yq0jMI++VfjaP0poBpGIGDoWg3zlWTMVUzUDQdKkNGBz24XD31u24L2yw?=
+ =?us-ascii?Q?HVki8XA7kY9nBldkpA3Mi8wXNBX9cmhdqEgxlVTbUP/+rOwfi1SPYiG60uxz?=
+ =?us-ascii?Q?1SD7dmTSuXeN/4sFhAWcsw02tPBRONO1qCKmlp8E6F6s6+dZmIrS0vXpMwYU?=
+ =?us-ascii?Q?fTVuwCxmHJtVa5JwHb+VEUJWINJbCvth8ylOvbZoyh1rc9pAzRaWcdRnKJzd?=
+ =?us-ascii?Q?92yd9XT7PMdy2K5zLkxC656S9I9UtT/L6KmX86bYLYyW+VwiCp4uC90H0HY?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Juefei Pu <juefei.pu@email.ucr.edu>
-Date: Sat, 24 Aug 2024 19:43:30 -0700
-Message-ID: <CANikGpfm_DbtXV9+omVrZhGiFA3iVEb=JeE1OQwvB3cXXDPoag@mail.gmail.com>
-Subject: BUG: general protection fault in sctp_inet6addr_event
-To: marcelo.leitner@gmail.com, lucien.xin@gmail.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8f8a8d3-8242-4b17-5ec6-08dcc4b0d8bf
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2024 02:51:40.9450
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB8805
 
-Hello,
-We found the following issue using syzkaller on Linux v6.10.
-In `sctp_inet6addr_event`, a general protection fault error is
-triggered when trying to execute `list_for_each_entry_safe(addr, temp,
-&net->sctp.local_addr_list, list) { ...`
-According to the report, it looks like the register $rax (propagated
-from $r15) is unexpectedly set to null, causing an null-pointer
-dereference issue.
+From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, August 22, 2=
+024 4:09 AM
+>=20
+> From: Saurabh Sengar <ssengar@linux.microsoft.com>
+>=20
+> For primary VMBus channels primary_channel pointer is always NULL. This
+> pointer is valid only for the secondry channels.
+>=20
+> Fix NULL pointer dereference by retrieving the device_obj from the parent
+> in the absence of a valid primary_channel pointer.
+>=20
+> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/uio/uio_hv_generic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index b45653752301..c99890c16d29 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -109,7 +109,8 @@ static void hv_uio_channel_cb(void *context)
+>   */
+>  static void hv_uio_rescind(struct vmbus_channel *channel)
+>  {
+> -	struct hv_device *hv_dev =3D channel->primary_channel->device_obj;
+> +	struct hv_device *hv_dev =3D channel->primary_channel ?
+> +				   channel->primary_channel->device_obj : channel->device_obj;
 
+It looks to me like hv_uio_rescind() is called only for the primary
+channel. That makes sense, because waking up the reader should
+presumably be done once for the device, not once for each channel.
 
-Unfortunately, the syzkaller failed to generate a reproducer.
-But at least we have the report:
+Rather than generalizing the function so it works for both primary
+and secondary channels, I'd suggest checking if the channel is a
+secondary channel. If so, output a warning message or do WARN(),
+and then return immediately, as some there's some kind of
+programming error.
 
-bond0 (unregistering): (slave bond_slave_0): Releasing backup interface
-bond0 (unregistering): (slave bond_slave_1): Releasing backup interface
-bond0 (unregistering): Released all slaves
-Oops: general protection fault, probably for non-canonical address
-0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 PID: 16764 Comm: kworker/u4:10 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: netns cleanup_net
-RIP: 0010:sctp_inet6addr_event+0x118/0x6e0
-Code: 44 24 08 48 89 44 24 40 4c 89 e0 48 c1 e8 03 48 89 44 24 38 4c
-89 64 24 28 4c 89 74 24 30 4c 89 f8 48 c1 e8 03 48 89 44 24 48 <42> 80
-3c 28 00 74 08 4c 89 ff e8 89 25 b3 f7 49 8b 07 48 89 44 24
-RSP: 0018:ffffc9000a037340 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888024170000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000000000a
-RBP: ffff88802e8ed520 R08: ffffffff8a413727 R09: fffff52001406e58
-R10: dffffc0000000000 R11: fffff52001406e58 R12: ffff88801856d000
-R13: dffffc0000000000 R14: ffff88802cd22b88 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f10a8812088 CR3: 0000000028e84000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- notifier_call_chain kernel/notifier.c:93 [inline]
- atomic_notifier_call_chain+0x195/0x2d0 kernel/notifier.c:231
- addrconf_ifdown+0xedb/0x1b50 net/ipv6/addrconf.c:3980
- addrconf_notify+0x3c4/0x1000
- notifier_call_chain kernel/notifier.c:93 [inline]
- raw_notifier_call_chain+0xe0/0x180 kernel/notifier.c:461
- call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
- call_netdevice_notifiers net/core/dev.c:2044 [inline]
- dev_close_many+0x352/0x4e0 net/core/dev.c:1585
- dev_close+0x1bb/0x2c0 net/core/dev.c:1607
- cfg80211_shutdown_all_interfaces+0xbc/0x1d0 net/wireless/core.c:280
- ieee80211_remove_interfaces+0x111/0x690 net/mac80211/iface.c:2278
- ieee80211_unregister_hw+0x59/0x2d0 net/mac80211/main.c:1659
- mac80211_hwsim_del_radio+0x2ba/0x4b0
-drivers/net/wireless/virtual/mac80211_hwsim.c:5576
- hwsim_exit_net+0x5bd/0x660 drivers/net/wireless/virtual/mac80211_hwsim.c:6453
- ops_exit_list net/core/net_namespace.c:173 [inline]
- cleanup_net+0x810/0xcd0 net/core/net_namespace.c:640
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:sctp_inet6addr_event+0x118/0x6e0
-Code: 44 24 08 48 89 44 24 40 4c 89 e0 48 c1 e8 03 48 89 44 24 38 4c
-89 64 24 28 4c 89 74 24 30 4c 89 f8 48 c1 e8 03 48 89 44 24 48 <42> 80
-3c 28 00 74 08 4c 89 ff e8 89 25 b3 f7 49 8b 07 48 89 44 24
-RSP: 0018:ffffc9000a037340 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff888024170000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000000000a
-RBP: ffff88802e8ed520 R08: ffffffff8a413727 R09: fffff52001406e58
-R10: dffffc0000000000 R11: fffff52001406e58 R12: ffff88801856d000
-R13: dffffc0000000000 R14: ffff88802cd22b88 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f10a8812088 CR3: 0000000028e84000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0: 44 24 08             rex.R and $0x8,%al
-   3: 48 89 44 24 40       mov    %rax,0x40(%rsp)
-   8: 4c 89 e0             mov    %r12,%rax
-   b: 48 c1 e8 03           shr    $0x3,%rax
-   f: 48 89 44 24 38       mov    %rax,0x38(%rsp)
-  14: 4c 89 64 24 28       mov    %r12,0x28(%rsp)
-  19: 4c 89 74 24 30       mov    %r14,0x30(%rsp)
-  1e: 4c 89 f8             mov    %r15,%rax
-  21: 48 c1 e8 03           shr    $0x3,%rax
-  25: 48 89 44 24 48       mov    %rax,0x48(%rsp)
-* 2a: 42 80 3c 28 00       cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f: 74 08                 je     0x39
-  31: 4c 89 ff             mov    %r15,%rdi
-  34: e8 89 25 b3 f7       call   0xf7b325c2
-  39: 49 8b 07             mov    (%r15),%rax
-  3c: 48                   rex.W
-  3d: 89                   .byte 0x89
-  3e: 44                   rex.R
-  3f: 24                   .byte 0x24
+Looking at the history of the code, it appears that rescinding a UIO
+device could never have worked. Is that your conclusion as well,
+or am I missing something?
+
+Michael
 
