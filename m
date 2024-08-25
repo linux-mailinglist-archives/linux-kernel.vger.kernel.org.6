@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-300547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C834895E4F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:40:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CFD95E4F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F211F216F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150571C21430
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB38216C453;
-	Sun, 25 Aug 2024 19:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AC156225;
+	Sun, 25 Aug 2024 19:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niGc+LSG"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6Px275z"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B23987D;
-	Sun, 25 Aug 2024 19:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCC128F1
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 19:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724614795; cv=none; b=DCJgkklM3DEuw/8n4GI3xIuUPId6eNPl6GVtiAW81rUglm+hLZIYOiT47D4G9J2LhEJhzV2VCn6/dBOnZ1GZG/hJ9j5zqlOf9laJqDprSr9pUjKvSFZdJi0JhebzgiGZwJQDX1GRV/5ywSfR5AGd4wwtKoWgeej1qD+G9Frp0Ho=
+	t=1724614873; cv=none; b=CyC2JqKAxmynraGzH5Uvlkix7uXf5iwD5vp33N/OiTPQYKZxHSrR4cqv2uI+FnnyxLfOMJ+dLrK4m2AKuZD4qLPlmX9BdJaRLgzsDU7C3JYRsy2JjAYTsCyiiiOfAL7kOPbVq61bOUCxWImO0VX0oH4BAtQV+yWa7xu0BGWPu+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724614795; c=relaxed/simple;
-	bh=tJFMf7Ox3/eoUXodySBxnPvVaHnjOizgVNRxMtWdrpM=;
+	s=arc-20240116; t=1724614873; c=relaxed/simple;
+	bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iwr2Qn9cfMQ0uCGb5MlsthoY1lm2onVmtl24YAzn5E/sEwcD46o9C15p0MNHxr1LO9VI4gi0M5VAu4v15EPNazdFWPX47B28ycR6ySBGiIqEmvhBe0+/TJCNtSr/T2srWPmdykMe4LnPRceHyUlFSeO77HZQ5JKbAXkxtCyzW30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niGc+LSG; arc=none smtp.client-ip=209.85.221.48
+	 To:Cc:Content-Type; b=nQlKCfdy/zb0Xoj450Fjy5p68HiasC8hpY5aiRaGlRenR6Hp4yfgUZS8XB3kr2R7uzb6WfQeBEwkZvTEHaj5L1iB8mjk7kqF7CJSp4aZsKWEt8l9+0mn5u8n/4zl1oG8tYomkt7arIlAv18VCAM1Q0vydiK3RmV6Iw2x1Ydpjx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6Px275z; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3718c176ed7so2016106f8f.2;
-        Sun, 25 Aug 2024 12:39:53 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86abbd68ffso343711466b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 12:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724614792; x=1725219592; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724614870; x=1725219670; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tJFMf7Ox3/eoUXodySBxnPvVaHnjOizgVNRxMtWdrpM=;
-        b=niGc+LSGEIFXnZC4qkAPjJXrA9o3YNZXL2khorLJ5Y6i/mRmw7DczQv+3AGq41l8K6
-         jRLaCAWLjZZiSGYAbddnd9mg1yRDZL2S2JUI+PuZY+z09uW1ekiJLaXvxl/yj0+0vZQI
-         QcohzQ2nwgI3sgvAwF8hF3q3lH0lsAEY5U1yHEOuZR5POlWKyRCssEkwmmMEJudFUgQ7
-         Qwv/8m/ppU7xhCv7YGIz3tYbIqPp5qi9PFv4N5NuFo5DBkGZ4fJIpk6fKxeDg0kVrxU1
-         SbLuLcZWJRtTwtzU2S/Rf8hUsAUgeFYxXdO5+wL9KsziEGjI2PqIse/ci4Q5aelSQCFN
-         2aSQ==
+        bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
+        b=B6Px275zFF8BYmK7QXcD4t+vfDo767vpTvrhLb5EvjtDuY+Cc4c28HrOHrJjxqgJuD
+         IYuVuaZQqVDeWrhlH+waT/MyaZsy2zbPO/4wQ2pPy4X89BZEPI3mTGaBN4VzrIVdQLDb
+         fAoebMiTJRygs2Pf4R+4JKiJGAjTh/PhCB8xK6WuH0jFlreECg8wi3F0od0xP3kLvzs4
+         p20Akf/djkr2A/KnCxjsya2YO6/61t4gPTbfQ3BJEYCI0HF5PWisjQuJeTwzd8Ho5qQR
+         HjNzvSRk2l74OERyb0lPSGvuXNp3f3/NSnnTWBl56dESThUANgp2GFzRbRqSAbMqwfW5
+         e0QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724614792; x=1725219592;
+        d=1e100.net; s=20230601; t=1724614870; x=1725219670;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tJFMf7Ox3/eoUXodySBxnPvVaHnjOizgVNRxMtWdrpM=;
-        b=MM6Nwe+B5bPkBVqUfp7T/CfkCqSLKdTAele1Vs6eFrXu7UT5IjXYAkSYn1PLdlFZ5U
-         GoOL1E+kj8sZlQqqTh7mZe0+yoJN0EfM9p0o+rGW9j8Svg2dGmM65UN8gVZWJbHTq8aB
-         UsS7mdeYLKKpcaoSK9VSsiu8i7oiJqlmw+Ef9I1gsOkmnchoyxqIBCPvWE6gxea+YRFG
-         LSdwCMsJXAceRdX8x0yOnnXI4wQ3YPjnzmScz+ni90Hyjkad9weqrCq+KbZwEfB/x9dQ
-         ufEoDhqjT9mYo3C+nihHmQcDRJokUzzCSUcOd/fgZN6FN9rvj4C0WztIuG9epQqInCCm
-         lyQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKYCIWJpH2HkQqYXgxq+DNz+iR4Sqn5l4bZ1fmQ4HaVYEv3OJKtaE/wEIv/MhFx64HzrtEzh0PvDPwOQLd@vger.kernel.org, AJvYcCV3RAnFCYkvMZ94SJrVCh92J/7i737ITfn6oSbdQ6OQt3qZVAbs/R9icFY0y6npbDMQxnM=@vger.kernel.org, AJvYcCVr+1jJCIqdsrorcM09WT2TZjT0gEmwa5d9Gt5GYL6VOE5P5KgzAHhL19k9mvLMUh1V1iHFjmZP5IACBLUYphnl@vger.kernel.org, AJvYcCXjqx2F80k4HgISXYBDfXcP0EWDOcQDACj5opDxZhqpMt6GHirQWApLaeRJV7k7dUSPki13HlPj@vger.kernel.org
-X-Gm-Message-State: AOJu0YynUYCeXIQIVGQ/2WRF1F60WigRYaeNNecw2Y4mrJp6FYmybhuC
-	Af9ddi28rujhaPi/jN50HQOlBmcBRKoFHfdaoo3RK0zlD4WbbdG54Dq1uf3Prl4UERCfp/9RoR9
-	dCTpB8yDUpkVrwezylroVYVtAOzc=
-X-Google-Smtp-Source: AGHT+IGFbKNA4xLPSpMgdIAMRw0iydK7vN0/OI26qARJK1To1kpg2vBiPumvMtuCJAricMBw6H2GFqQcYHoRXaV2YOI=
-X-Received: by 2002:a05:6000:1006:b0:371:82ec:206e with SMTP id
- ffacd0b85a97d-37311840ec0mr4673128f8f.5.1724614791663; Sun, 25 Aug 2024
- 12:39:51 -0700 (PDT)
+        bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
+        b=wT4YtllJBWnbs3ZfmnQB+ZuReCSH798vqE49K8so00oYrGXBB9/ubr/rzVrBS6baUP
+         hfgJg/NteV4ekmt5xv5DkqUNVPDSWOvCqbzhK4KAz8bNHwU5X7182knrRyvQhuyTebP0
+         ljb/RP774zjo1MF1zhVjR0cFT59tCcsXX+S4Bc5RRDnFu7pm+HMAjzKtTjBGuUK5mMeX
+         iLp3uIcDh16rK27OICWWyj4VZ7e7P+XClMeGg9fe/OcTqzQdla8d/S1cgfBYoO8XmOxr
+         PA2d5dJ9VX90HxTSVAdLDNrtlX+c0Bmn/VSbDwr1spWGN8CMl9nMiPs9Wpjq/pjG4d0D
+         kC2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXlfRr/wfpuPzjqP5wVjqWZ/YW9oL8WK/qW2+MEGUt2lAkPEy1qwxapQvUJis9UA7WGYOYbj+DPDZQLzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTebwXa5cq+oNidKOU/N2klHyYfm4TI4f4Xog+eGqlW6V9pnz4
+	AJqWlwCzrMNhE+C6g3DehS45x0IpAG3587alwc52NXS1mmYM+eNWLfmgl2On9QDVCszwTHFx+dr
+	wtdZ6Z0EsBGycvijQaLsuh6bbMnpRg+Jh
+X-Google-Smtp-Source: AGHT+IGrbQwHe617+0dnnmaIpmeE+W3mzJVUAYY/BBybCdWz+UQEx9vhaWprhNp0asXOCQVT4uZreudzrgByyNeKZ7I=
+X-Received: by 2002:a17:907:9725:b0:a6e:f869:d718 with SMTP id
+ a640c23a62f3a-a86a2fae427mr882065466b.21.1724614869511; Sun, 25 Aug 2024
+ 12:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816-ups-bpf-next-selftests-use-khdr-v1-0-1e19f3d5b17a@kernel.org>
- <20240816-ups-bpf-next-selftests-use-khdr-v1-1-1e19f3d5b17a@kernel.org>
- <CAADnVQ+JBq8-6Rhi_LHX470uj2_2xxJAhgdUfg_abUxEDqpdJQ@mail.gmail.com>
- <6a693ad6-f145-48c1-b3a7-d441d3764e73@kernel.org> <CAADnVQKnEuQ4XZROLWH47mEZNwnJ9TuyTrauOnuobcLgVMrimw@mail.gmail.com>
- <41ef2c53-600a-47d6-a35f-674e1e7860f8@kernel.org>
-In-Reply-To: <41ef2c53-600a-47d6-a35f-674e1e7860f8@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 25 Aug 2024 12:39:40 -0700
-Message-ID: <CAADnVQKoesL+Rmp9eB6mQbU1J0yDWgFioigy6jK6XMsd3S1u=A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] selftests: bpf: use KHDR_INCLUDES for the
- UAPI headers
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>
+References: <20240825132617.8809-1-hdegoede@redhat.com>
+In-Reply-To: <20240825132617.8809-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 25 Aug 2024 22:40:33 +0300
+Message-ID: <CAHp75Vd_qkmpekrGUAR96kE5D5Ry3z-sifTzqGTjov-yueMAEw@mail.gmail.com>
+Subject: Re: [PATCH] mfd: intel_soc_pmic_chtwc: Make Lenovo Yoga Tab 3 X90F
+ DMI match less strict
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 24, 2024 at 3:37=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org=
-> wrote:
+On Sun, Aug 25, 2024 at 4:26=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
+ wrote:
 >
-> Now that the CI runners have been updated to use Ubuntu 24.04 [1], we
-> can use mptcp.h from the system headers, or do some actions via
-> IPRoute2. So not having KHDR_INCLUDES is no longer blocking us for the
-> moment. I think it might still be useful to add it for future use, and
-> also to use the latest version of the UAPI headers that are not in
-> 'tools/include/uapi', but I don't want to insist if you prefer not to
-> use the latest version.
+> There are 2G and 4G RAM versions of the Lenovo Yoga Tab 3 X90F and it
+> turns out that the 2G version has a DMI product name of
+> "CHERRYVIEW D1 PLATFORM" where as the 4G version has
+> "CHERRYVIEW C0 PLATFORM". The sys-vendor + product-version check are
+> unique enough that the product-name check is not necessary.
+>
+> Drop the product-name check so that the existing DMI match for the 4G
+> RAM version also matches the 2G RAM version.
 
-Let's not fix what is not broken. We'll add KHDR_INCLUDES when
-it's actually necessary.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
