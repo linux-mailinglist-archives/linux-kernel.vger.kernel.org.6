@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-300508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647FB95E496
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:31:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E160395E498
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C49F1F213EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867C61F213E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177B615530F;
-	Sun, 25 Aug 2024 17:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D901B15B108;
+	Sun, 25 Aug 2024 17:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eNMRCR59";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CBmQ0yUK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EashDiwg"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B51118C36
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 17:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA75210FB
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 17:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724607083; cv=none; b=dt6HemEosK9jWtpwWJ55ybx/1AWq5/ydys/oy7ja6A/UtlECjN4EivpyDWYaiD0NwiLGv/5v7qqhUYttFEIx6EphID2eEnmZ/iVtSxiM5inlzll6J2xublvT/xB9IbGVQraUFu100U6bZMTPbU6bOf8datpNz17cqYfbDSBrbxY=
+	t=1724607348; cv=none; b=ipUEJ9DTgd3meUUJEn2TD2lVbMkoBsAXNWJt7Q42ad2XqcTmn4iaZwlEwYpgNZ9xhEigWbNqAJJMWfp32bkOB8D2kAb9YhCrfzmyp19+oTUFQWhZEncfNfLaE/copjKmsgaOqR/UshTu/yiWrVad8z9vg9vBTJWbDm9YAFxTs48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724607083; c=relaxed/simple;
-	bh=wmtWUfpmfCZGEMQdVRnTrLIYzG+Q2zI2WQxByn/Uy8c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kn2AYSyFE2h9aPmT5Gz3jVoU1i0NAfF1rfrG2/7k1IV+JwfDUXODznsDdqN8UZqLs5fxWWi0qXKuQH/knJ5IVR9k/+QUanbiXZUk+wSn4H72P+6u29dR8Otkq2tFTehpRE9jPx0ZHPqMYLFN/ccaBRlTzOnLaOSZFWTCD02yJYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eNMRCR59; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CBmQ0yUK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724607080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rifzP16A2yr95plgYd6zfpZQqnQuyygW57qXYWyKsyg=;
-	b=eNMRCR59PFJvK1Drkdb9KpEB8NRNi2WrmAYMWE5M9huxwFGfMSU6qJi3uu0A3lgs5mT0B1
-	lq0i4MANemreAUXxhWeuxtxigSyk3f/Kwxe/2RoCt3VeHc2JfFb2/IMl+GLOfazQd7ckwF
-	DjIOpAdQ3rBCjJmJDSIbCkhQO1puNwifH6aJbrza2uo8CxKMjzQTV8kGivkr3Z2cHBYqXt
-	XmeOC0sZnGU6OOXumvhDtpuDCrCC4UuQ+1jxhQ7rY+0mui58LrfQSP0ABxp2G6Maz4D53k
-	vx/JiGmloQVF7PcjE/1JIhMd6lnpGWPQ5HnkNG86cAKtMepxOJ6EmzOq/BXueQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724607080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rifzP16A2yr95plgYd6zfpZQqnQuyygW57qXYWyKsyg=;
-	b=CBmQ0yUKYOsYJEOi4kMVjHlJPXOs8H243l+QRvk4dMqygWkrrumlQ29Np5PVDI0DV0F2zs
-	843zjwSLsXLBwpDA==
-To: kernel test robot <lkp@intel.com>, Chen Yufan <chenyufan@vivo.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip:timers/core 5/5] kernel/time/timekeeping.c:220:7: warning:
- comparison of distinct pointer types ('unsigned long *' and 'typeof
- (tk->last_warning + (100 * 300)) *' (aka 'long *'))
-In-Reply-To: <202408241701.NSEI3MOV-lkp@intel.com>
-References: <202408241701.NSEI3MOV-lkp@intel.com>
-Date: Sun, 25 Aug 2024 19:31:20 +0200
-Message-ID: <87seusecgn.ffs@tglx>
+	s=arc-20240116; t=1724607348; c=relaxed/simple;
+	bh=XhM7xFZ+HD+CLl/hPjKrMMP5PPL2J3uytRBUBMI1dQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mRiOm2s9peA1miw4ByWjj67acVMBX4Vv9FTcExHUE1SdDgCkb+JqfcMPE7ib6rWVl0VrYd2893nBWfsYbCzHi86Gs0VUiK2FyVCuRpuf166JeVnovHXq1emjyb+JGQsE9fRExYWW896I/nVlMlglrdc31oe6jRdCttwRzv5nt1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EashDiwg; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428119da952so31581645e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 10:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724607345; x=1725212145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=he266uKSoBPrnIX/bWlKMDUsonIDnd3kNbR3Ld/RGFs=;
+        b=EashDiwgs+BhaFVMKFKB3zTyi1QswNudYjGpugbIIu3boOgQIp2dQfa4cjL4QdVpfK
+         yguIYEk+2KvPMBczSyhUHfp0fkrLm7Aab3EkGlWWmrk7CkdsHqypAhpvT8UDY5S8fvKd
+         /6o+kX0eQ3k0kvncLw0q5ityReMutNVcmPfhFQ2wzOkUa6bVPvyqVSY7ceYoNBkzZ0dl
+         qk4JadzbZJ3aDLdtzmV2sY+GlG28CsrEUNtJD2/2glaV8IHg+Wr203MY29wNOxojcnlC
+         PljlKFV4STzQeuI5myWzzg6nRICk7dykPlH+iqU9Ha7Fodiu/6tCCaxaCd9PnrOHc0Zu
+         YXPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724607345; x=1725212145;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=he266uKSoBPrnIX/bWlKMDUsonIDnd3kNbR3Ld/RGFs=;
+        b=XP8ea2dsjed+fO1GY5Ma3T99LHGZtDBsA+3rbm1Jpmi0kY5Ad8Kf3osye9Ab9ZR21N
+         XTgL3lBr9PVn8RCbkQocf86vIC6wHZIa8xb+Upsj/0HLHcB4H1FecV5noTCpbtSnaJGI
+         GmNWSxfG3ZSPE68ROTo5qTusdqtVS8zp8ryovK5rpsZtVLe0kcFJ5EDyeo8XeA3UqNcb
+         T9dOeF+rTraWIvmaZfMb6jQOyvmdrw1kdbFf7jY1QYtq53A6ZEsHl0EvBEX/VJTpBJnv
+         T6N1I0Rdcunaj0zfR3acFKJgScZuW3AQxyhKTAJvh+FD2xRS0Fzb5gCWWrxf7u2lQbfA
+         Tsgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7O80RtqlqENyhewJoSEGCYQYUr4u2bwxNRHv0omrJjHEiMT01Wl5LsbZ9ePYvMMHJ++PFnJYmthHSgZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKp015ase6TJ10OvwbYYe5x/nDzviTQw25zq0AsvScZjvr3jqT
+	q9E2QnLXbdurEk3Cw2e6pcpyhIUqESQCG8sfaTgNjpwfrxcDvGxu
+X-Google-Smtp-Source: AGHT+IGpc9bnz+HeiZS/6uM9ho+rDI+SqxG4iviCjK0mfY940mefKA1OhPp52DXQiXZPB4v7fP6Arg==
+X-Received: by 2002:a5d:48cf:0:b0:368:3789:1a2 with SMTP id ffacd0b85a97d-3731189af72mr5079832f8f.21.1724607344586;
+        Sun, 25 Aug 2024 10:35:44 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8562:53f2:85f6:2f59:f97d? (p200300c78f2a856253f285f62f59f97d.dip0.t-ipconnect.de. [2003:c7:8f2a:8562:53f2:85f6:2f59:f97d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f4a67sm552304966b.214.2024.08.25.10.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 10:35:44 -0700 (PDT)
+Message-ID: <01f4337d-baff-4df6-9367-3e9cf2fe32d1@gmail.com>
+Date: Sun, 25 Aug 2024 19:35:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8192e: Fix multiple assignments in
+ rtl_wx.c:529
+To: Alien Wesley <alienwesley51@gmail.com>, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ ~lkcamp/patches@lists.sr.ht
+References: <20240825154557.17912-1-alienwesley51@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240825154557.17912-1-alienwesley51@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 24 2024 at 17:58, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-> head:   42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7
-> commit: 42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7 [5/5] timekeeping: Use time_after() in timekeeping_check_update()
-> config: i386-buildonly-randconfig-002-20240824 (https://download.01.org/0day-ci/archive/20240824/202408241701.NSEI3MOV-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240824/202408241701.NSEI3MOV-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408241701.NSEI3MOV-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->>> kernel/time/timekeeping.c:220:7: warning: comparison of distinct pointer types ('unsigned long *' and 'typeof (tk->last_warning + (100 * 300)) *' (aka 'long *')) [-Wcompare-distinct-pointer-types]
->      220 |                 if (time_after(jiffies, tk->last_warning + WARNING_FREQ)) {
->          |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On 8/25/24 17:45, Alien Wesley wrote:
+> Separated assignments for pairwise_key_type and group_key_type
+> in order to silence the following checkpatch warning.
+> 
+> CHECK: multiple assignments should be avoided.
+> 
+> Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
+> ---
+>   drivers/staging/rtl8192e/rtl8192e/rtl_wx.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> index fc8e7f73b2a4..47f1adf30ab4 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> @@ -526,7 +526,8 @@ static int _rtl92e_wx_set_enc(struct net_device *dev,
+>   	mutex_unlock(&priv->wx_mutex);
+>   
+>   	if (wrqu->encoding.flags & IW_ENCODE_DISABLED) {
+> -		ieee->pairwise_key_type = ieee->group_key_type = KEY_TYPE_NA;
+> +		ieee->pairwise_key_type  = KEY_TYPE_NA;
 
-Indeed. For that to work tk->last_warning must me changed to unsigned
-long. Zapped the commit for now.
+This line contains two spaces in front of "=".
 
-Thanks,
+> +		ieee->group_key_type = KEY_TYPE_NA;
+>   		rtl92e_cam_reset(dev);
+>   		memset(priv->rtllib->swcamtable, 0,
+>   		       sizeof(struct sw_cam_table) * 32);
 
-        tglx
 
