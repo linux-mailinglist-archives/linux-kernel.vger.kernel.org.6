@@ -1,70 +1,104 @@
-Return-Path: <linux-kernel+bounces-300593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D140295E59B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 00:49:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29A495E58D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 00:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC5D1C20B74
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594B7281859
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D527829C;
-	Sun, 25 Aug 2024 22:48:53 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957436BB5B;
+	Sun, 25 Aug 2024 22:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sRm/qMHx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCF37441F;
-	Sun, 25 Aug 2024 22:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA592A59;
+	Sun, 25 Aug 2024 22:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724626133; cv=none; b=T/ITDBv2aogAC9edFBel8QqdBZMrJHxuDMaSRHH4LeAPS94jnB4T5EaNXbftdgt1mZ6Dh51738eh91thpIYoxsCQx3p2RTnv+I8kXTvVPRT2KIwKdJAVBUHeR1Pc6uwNxqzj99fGpcxuckloWrIWb1IiQIwqWquy+6bmmhvXEIc=
+	t=1724624736; cv=none; b=ktwlbyY/ybF/Bkn/kmPjDhjwiI+1nVKM2GXrqQ8v/Axv/9m+iJmlx1M1gqZTKV8ERDS77ll8Pn3Y/NdJJmIQ9cMT+oO3lEFPusczNv/31njcLZA6TsNdw9ScEvobA/HCPh6RokJ6A6pEGwHKDS2yHzDSsta+eut23tuBlj8vklk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724626133; c=relaxed/simple;
-	bh=Y7ukIYgyj34kzicFN2EZfCkb7ApWgS8GHa754G33Y4U=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=TYTIU1tND3cjvuJnPiyaqnhDHZitwsI5dZE1FiilWaxwpxKVWCPeX3/4qJ8sK1xGUMYnuZ4WQ8GrbNIlyJmRqRwzf/5mevrue6mr3D1aNENyqT23vuFtUujfLCIbyngrs5Z7116PsogVY8tDcaZ+DGVJq73IAIYdEdxcVOEmBfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id D9FB91A0913;
-	Sun, 25 Aug 2024 22:23:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id 5B0F22002D;
-	Sun, 25 Aug 2024 22:23:42 +0000 (UTC)
+	s=arc-20240116; t=1724624736; c=relaxed/simple;
+	bh=mxzc51XfDXIUZfHLj0FhPJO7mbVrL6NL4GJoPI0g6lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=exL3hQOq2yfkPUlb46SXS5lgk+VBb9EO1g5Hx9invLLzZhxXGVz4PbHT47z23gf123Z0YJkoYST8SQBDaB/GZIN/pyx5uTjyUjxdU7thYVEkYpwrWT9PF/JflWUs6WSqqWfWhDOr/EBepvi4+YpwKYw9UNLryzOlFmoxZPg4d7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sRm/qMHx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724624731;
+	bh=P3Gy0CkOxIVW39ZpjK6tJ0BCykbPrhNwz0Cd6RhbYVA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sRm/qMHxDV1TVaxFRmMSSkF/wCOR5wFRv+VcpL6XVJHCctJEo3pZIXeLCDxqba7Xf
+	 vj4phhErIoK5Hk3y/OJPwFsjvIyZlBtI3+sYfZLC4aEWvssGL1VXdeLfJxtEDcKtPI
+	 Fcg7d8bSdo8ALMMxZp4+1jztlC+lwo+Yhk2YsSARaUgX2YinAlNIFtrFMOuIpP4xeu
+	 cmZrDhOvyQ6mAkAR2AecHAL5mSpQ0CNWkjFOVICV+9QfHtnBvDOv7LPh1sQHvAcCMj
+	 pNswjtRLNDtI3F+Wi3iopjuj89mT1Vav7bvh7JJvwfe+6YD9i9X1sYrfaq5AimM5vV
+	 AqFrUvtJRq6dA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WsT0B1Xwcz4x3d;
+	Mon, 26 Aug 2024 08:25:30 +1000 (AEST)
+Date: Mon, 26 Aug 2024 08:24:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Konstantin Komarov
+ <almaz.alexandrovich@paragon-software.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the vfs-brauner tree
+Message-ID: <20240826082448.557c2c3b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 25 Aug 2024 15:23:42 -0700
-From: Joe Perches <joe@perches.com>
-To: Siddharth Menon <simeddon@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org, apw@canonical.com,
- ojeda@kernel.org
-Subject: Re: [PATCH] scripts/checkpatch.pl: check for non-permalinks to Zulip
-In-Reply-To: <20240825221806.253575-1-simeddon@gmail.com>
-References: <20240825221806.253575-1-simeddon@gmail.com>
-Message-ID: <f53fa069b9cc24a9552d54c7a004fe6d@perches.com>
-X-Sender: joe@perches.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5B0F22002D
-X-Rspamd-Server: rspamout01
-X-Stat-Signature: 4u3wmiyokw19s98z8c6a187d5asuaawq
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+zkfSnsJQ/IQVGjMyf8RVvtKgtLwQY73c=
-X-HE-Tag: 1724624622-984051
-X-HE-Meta: U2FsdGVkX1/jFxYIqeZdH/Q4MB9o+hq2lLr9McUno24VaQBukcDvQ1MY6TV/YHHluxikW2Ink5Xu+kTTMBjFcKLe1XQhVjeNfdgLkMheoDQXb4W5FJ4KdL3YdgWJTLgfzGhylL2/E1GtNRKXXfiVqceEDd4IjKqPFrl82r+2GM6A4/mqN6GnAKvP4NjPVTFVay7tOHissn79pL7S+tcKvm9V7ZQ295uJdYcBinK0pFMGwSDPBsPHXb6NYhSRZ5NTklucqoKFKIF60qD9gSGjR3EyXmwqhFWfAcyuS+gUG15oBh8XRtJW+RTAsLq1kASxc/HaAwzTv93ZFUDzVonINg==
+Content-Type: multipart/signed; boundary="Sig_/Nlc9lmJRyINc1kQs_xHcg6V";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2024-08-25 15:18, Siddharth Menon wrote:
-> Zulip links to https://rust-for-linux.zulipchat.com can break in
-> case of renaming the topic or channel if they are not a message
-> links (which are permalinks).
+--Sig_/Nlc9lmJRyINc1kQs_xHcg6V
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why should these links be used in the kernel at all?
+Hi all,
+
+The following commit is also in the ntfs3 tree as a different commit
+(but the same patch):
+
+  c4c9c89c8c8e ("ntfs3: Remove reset_log_file()")
+
+This is commit
+
+  3205fe852665 ("fs/ntfs3: Remove reset_log_file()")
+
+in the ntfs3 tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Nlc9lmJRyINc1kQs_xHcg6V
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbLrzAACgkQAVBC80lX
+0GyI1Qf/WFE5VwY8RpCk0K/Ry33c6cNvL4+/5/76sJsWTfr63sXA0lrc4ba2j5HV
+VDZYz3G5D5YnepVtlk1Ch8YJghXZPytG0nd52AsNlNUB3N6Q4NQ9FWczZXTwGFma
+gWmoyKqxAEoGIgFGe+fUORZcc5lOPop4yC21/hFiUprxPoPSYUh2ZwLIwvk2Pt0J
+o0ZuOU0m6mqyO6pa7oPnFDEI8auGUx/xwffG0QUxB1jn5mKVzkeWTIx/Ee/fxksZ
+4WMdVn4HUs9OiVvEp5twf2etmJs5QtmTvjALOubSNauvhcozEFfdw/+ml4gCul9s
+OgdCMD86cIG/Y13w2mWgblRykdT6Ww==
+=/5Ae
+-----END PGP SIGNATURE-----
+
+--Sig_/Nlc9lmJRyINc1kQs_xHcg6V--
 
