@@ -1,111 +1,250 @@
-Return-Path: <linux-kernel+bounces-300426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C3895E38B
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564F795E382
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA41282009
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8260A1C20AAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE731714AA;
-	Sun, 25 Aug 2024 13:10:59 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CAF158DD4;
+	Sun, 25 Aug 2024 13:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GtsD6BWP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB37155320;
-	Sun, 25 Aug 2024 13:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FEC156225
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724591459; cv=none; b=OjEmmJeZRPPHFUILdtAJ88LWTE5/t4gveaN8ifLGu1Fw2hvX4D9dlfPvoJpMqX+v5i01EMPFdbTpmK49XxXX0ouyekH6JWGej39B+M4kqVfmkrLNup4LzTx5NwTahTxtxJMpom2chMTwR5oFso0Ly/vjiJvMkb1lOqmGzoC959s=
+	t=1724591451; cv=none; b=JK5t9jEaZepi0MbcWb+Xwy8yMypLng3E2f9D9fJ6svNo8eZwm+SBLqGGAIyTAgUkagvqJE3x3YNigWL2joaJ1bwg43+NhobAosFMgIEW56+FZglGKzHNKqgs/0gG72nqxBUGSg8T5us4zQ0hKHOpNYCEt9WBNrEF03j+5g3QCW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724591459; c=relaxed/simple;
-	bh=gWmuyPDq21pf5ffpnoMsUraKHy3KBjlrnMFcvKOQvaI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f9mBimt49Hmnm+o3HitLItHjzsb/MMT1SSAaZ+dX6TAmaCNvjidTN8ECHX02Em+77+jXWHn2sB1Nk8aZ7kykv1/Vmc0cDIs70WJPgH9fa7zIj+z2OoDC+BCbwdycu0AJYwDuVd2Q2qMe5vc909EdZI9+iA4WRkg6789HgRMQLTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Yixun Lan <dlan@gentoo.org>
-Date: Sun, 25 Aug 2024 13:10:05 +0000
-Subject: [PATCH v2 4/4] riscv: dts: spacemit: add pinctrl property to uart0
- in BPI-F3
+	s=arc-20240116; t=1724591451; c=relaxed/simple;
+	bh=iKMY1BsfXW5DCDOM1rJutDkN7zW/92A/o9tWLFXitOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8TU4m1/RRvtEZD9vkFWSqghLnhcoGiX+rmesQ6I4QBVEm2JobCRWZ1VKENSSMrOf3ebqSEIbMnL1aJ+ddTlvAHrPX8hYU6BoX1SpCk4VXRvqLQaJmboV/uJt4Gv3spi6klSqdx1W6ORycnk8BoI8C1PRwsIHVmrWnW2PljD3c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GtsD6BWP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724591448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5HPuabIgkyx2GqHJrYxVWzQ9JtdHpCasYdEjisxJKo=;
+	b=GtsD6BWPUetXAT/kd/ERI49JTLgcDIjvFcRHKrF2Y2onodGLiWyTTXbCPcX7HkPAQpSlNc
+	FKA7KNSHdQNpAN4fokuqxMYwpJZMJ3LgaOE/VpTCaI/z4VkWiHflq1t/Y3X1yNnoN7p7r/
+	91K4UbpIDCLq4bFvUChAEz79ANdYtXs=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-63-XrDPU8bhNlCHIxUk_dkl_w-1; Sun, 25 Aug 2024 09:10:46 -0400
+X-MC-Unique: XrDPU8bhNlCHIxUk_dkl_w-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-53341717c62so2949755e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 06:10:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724591445; x=1725196245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5HPuabIgkyx2GqHJrYxVWzQ9JtdHpCasYdEjisxJKo=;
+        b=GaGJPfriIlB9UOPYBR8CGCeu7oNm2rlGvXyM9Spahj+0jbH8ukct3CTPxxDxbIZwnJ
+         IEsOoBL9pq19YxEJoMAWKAlh6dLAgBkPflFWx+shD9/rBAXt6caE+kGUnHgkPr81L3pQ
+         6BlqJk1RvqRCvb528be5+mziGhWYtdP77xgzCvKipH2+SIMyDI3HUAE5RojMoOgjUYEZ
+         wWGy0x1t7qJb02KmPmMgrUen9QpyAFqpn+37XBAGfV94xIgNyxNaB3cDr8XzmtxJMmx9
+         FTH+K+2ZEgRzAv6v8TSR1Zr+bMNSP+qxTj2b8yAZTkDhR3cYTNeM2sBwNhsHG//OBqS1
+         tovw==
+X-Forwarded-Encrypted: i=1; AJvYcCWchRNeKCHftdNe6VR+BXYdgiNJbQi3DqXjCK6ywqEQJUqVX0ObMoBxL0kYwOc8zN8EMBAbSm7mxHes9Os=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx8BR5ccuHmwcOYvpyTiXhTQ9XIonFm9j8KMm4XLYFGDFmPYDO
+	+B0CaHNLIKdcnKC4aKVlEJ9k88h7Web+bDhfQZmmjh5gGFbtdCdBxM1/gvyVt3Vpi+mGmpI7E+O
+	P8dHwUiFRae8xo+b63evzDGa97T9CseASRBfj9DVDt5K1ucd59cyGUBWqzcJunQ==
+X-Received: by 2002:a05:6512:2814:b0:52e:9ac6:a20f with SMTP id 2adb3069b0e04-534388610f5mr4667335e87.37.1724591444706;
+        Sun, 25 Aug 2024 06:10:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyq3crzju8WROi3/9aXixWRhW7fyntueq+5N6z4YHdvwe29s5TLxrye+t2/cfTKoEIxN6TcA==
+X-Received: by 2002:a05:6512:2814:b0:52e:9ac6:a20f with SMTP id 2adb3069b0e04-534388610f5mr4667316e87.37.1724591444076;
+        Sun, 25 Aug 2024 06:10:44 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f29a4c7sm536588766b.65.2024.08.25.06.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 06:10:43 -0700 (PDT)
+Message-ID: <0e8ae323-d6c7-4460-a342-85e52ce0c1ef@redhat.com>
+Date: Sun, 25 Aug 2024 15:10:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/17] Input: gpio-keys - switch to using cleanup
+ functions
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org
+References: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
+ <20240825051627.2848495-6-dmitry.torokhov@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240825051627.2848495-6-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240825-02-k1-pinctrl-v2-4-ddd38a345d12@gentoo.org>
-References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
-In-Reply-To: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Icenowy Zheng <uwu@icenowy.me>, Meng Zhang <zhangmeng.kevin@spacemit.com>, 
- Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=866; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=gWmuyPDq21pf5ffpnoMsUraKHy3KBjlrnMFcvKOQvaI=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBmyy1LY7BfomQ4OaNo/voQ9Uklrc1sU+g8YPp7i
- t8Aa4Di2rqJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZsstS18UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277TMgD/4hf3LdOS3W3E1dPh
- 5VIydrMUw5A9R0j2+vRxifJAy5ZN+SqDZ55uHUBXL270EUslItPMAaCbs/lamBSlVjPUxCClk6v
- CbsOO57HSArNuFRcnfcQMugpaF1jOSsLlxCdVU7zpCohXrmCKquJZ5UOGkXtuu14EvbgloSS77b
- Rmrs4TtjVyso6keTSrKzX/nYljSyZwBd2N1DxAKSDhmnXqLcZPqsyPwY9EsFmwq5Pzk6PsnU4gu
- fXgLsKYrmnu+Znw6LrnyXh4ckBHwaRbYNj42zBCk0i/H2dle1IwDMFX+/Z3ge+VDautH1FQjUb8
- ZbiZKbsrxGR2opytNN8eAskJpxSiIvERSvidcFmUfaHwr0UN3locGSH7fe08GWGD/yQn3Dj7xXN
- 6uHq9ItCxHC3RSK2dE0mzfJY4uEtSIPaBXUgfvCYdAUExHyEJhVZH6jEW6EiCGtmm0wB0oH/JJ+
- 1cK5cSIaGgGage1JIhv9RHERZa11SZbpxzl3GJkFBuoDHR3ELyLXSuL/0oK2Q2vtqJsTzi+AXYz
- AVrwwZIWspQVKetlEJRwb4igPRvVT95bHKK8SSbKnekQNmOy5hEuAcLiffSl6iEZGc/eip3F0Cu
- d6N4hCnXaE/7eXskalOq1AKELg3GUiGR5+u8Ap+Zvs8Eqz/0hZrdl69wQAh6E2keG8Kg==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-Before pinctrl driver implemented, the uart0 controller reply on
-bootloader for setting correct pin mux and configurations.
+Hi,
 
-Now, let's add pinctrl property to uart0 of Bananapi-F3 board.
+On 8/25/24 7:16 AM, Dmitry Torokhov wrote:
+> Start using __free() and guard() primitives to simplify the code
+> and error handling. This makes the code more compact and error
+> handling more robust by ensuring that locks are released in all
+> code paths when control leaves critical section and all allocated
+> memory is freed.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks, patch looks good to me:
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 023274189b492..bc88d4de25a62 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -4,6 +4,7 @@
-  */
- 
- #include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
- 
- / {
- 	model = "Banana Pi BPI-F3";
-@@ -15,5 +16,7 @@ chosen {
- };
- 
- &uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_2_cfg>;
- 	status = "okay";
- };
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
--- 
-2.45.2
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/input/keyboard/gpio_keys.c | 44 ++++++++++++------------------
+>  1 file changed, 17 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index 9fb0bdcfbf9e..380fe8dab3b0 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -245,23 +245,20 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  {
+>  	int n_events = get_n_events_by_type(type);
+>  	const unsigned long *bitmap = get_bm_events_by_type(ddata->input, type);
+> -	unsigned long *bits;
+>  	ssize_t error;
+>  	int i;
+>  
+> -	bits = bitmap_alloc(n_events, GFP_KERNEL);
+> +	unsigned long *bits __free(bitmap) = bitmap_alloc(n_events, GFP_KERNEL);
+>  	if (!bits)
+>  		return -ENOMEM;
+>  
+>  	error = bitmap_parselist(buf, bits, n_events);
+>  	if (error)
+> -		goto out;
+> +		return error;
+>  
+>  	/* First validate */
+> -	if (!bitmap_subset(bits, bitmap, n_events)) {
+> -		error = -EINVAL;
+> -		goto out;
+> -	}
+> +	if (!bitmap_subset(bits, bitmap, n_events))
+> +		return -EINVAL;
+>  
+>  	for (i = 0; i < ddata->pdata->nbuttons; i++) {
+>  		struct gpio_button_data *bdata = &ddata->data[i];
+> @@ -271,12 +268,11 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  
+>  		if (test_bit(*bdata->code, bits) &&
+>  		    !bdata->button->can_disable) {
+> -			error = -EINVAL;
+> -			goto out;
+> +			return -EINVAL;
+>  		}
+>  	}
+>  
+> -	mutex_lock(&ddata->disable_lock);
+> +	guard(mutex)(&ddata->disable_lock);
+>  
+>  	for (i = 0; i < ddata->pdata->nbuttons; i++) {
+>  		struct gpio_button_data *bdata = &ddata->data[i];
+> @@ -290,11 +286,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  			gpio_keys_enable_button(bdata);
+>  	}
+>  
+> -	mutex_unlock(&ddata->disable_lock);
+> -
+> -out:
+> -	bitmap_free(bits);
+> -	return error;
+> +	return 0;
+>  }
+>  
+>  #define ATTR_SHOW_FN(name, type, only_disabled)				\
+> @@ -470,11 +462,10 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+>  {
+>  	struct gpio_button_data *bdata = dev_id;
+>  	struct input_dev *input = bdata->input;
+> -	unsigned long flags;
+>  
+>  	BUG_ON(irq != bdata->irq);
+>  
+> -	spin_lock_irqsave(&bdata->lock, flags);
+> +	guard(spinlock_irqsave)(&bdata->lock);
+>  
+>  	if (!bdata->key_pressed) {
+>  		if (bdata->button->wakeup)
+> @@ -497,7 +488,6 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+>  			      ms_to_ktime(bdata->release_delay),
+>  			      HRTIMER_MODE_REL_HARD);
+>  out:
+> -	spin_unlock_irqrestore(&bdata->lock, flags);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> @@ -1062,10 +1052,10 @@ static int gpio_keys_suspend(struct device *dev)
+>  		if (error)
+>  			return error;
+>  	} else {
+> -		mutex_lock(&input->mutex);
+> +		guard(mutex)(&input->mutex);
+> +
+>  		if (input_device_enabled(input))
+>  			gpio_keys_close(input);
+> -		mutex_unlock(&input->mutex);
+>  	}
+>  
+>  	return 0;
+> @@ -1075,20 +1065,20 @@ static int gpio_keys_resume(struct device *dev)
+>  {
+>  	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
+>  	struct input_dev *input = ddata->input;
+> -	int error = 0;
+> +	int error;
+>  
+>  	if (device_may_wakeup(dev)) {
+>  		gpio_keys_disable_wakeup(ddata);
+>  	} else {
+> -		mutex_lock(&input->mutex);
+> -		if (input_device_enabled(input))
+> +		guard(mutex)(&input->mutex);
+> +
+> +		if (input_device_enabled(input)) {
+>  			error = gpio_keys_open(input);
+> -		mutex_unlock(&input->mutex);
+> +			if (error)
+> +				return error;
+> +		}
+>  	}
+>  
+> -	if (error)
+> -		return error;
+> -
+>  	gpio_keys_report_state(ddata);
+>  	return 0;
+>  }
 
 
