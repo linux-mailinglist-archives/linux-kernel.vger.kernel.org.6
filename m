@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-300243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B79A95E0F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D4295E0F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33DFA1F21C97
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415661C20E12
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 03:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5152222301;
-	Sun, 25 Aug 2024 03:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F28376E6;
+	Sun, 25 Aug 2024 03:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cU9m02+Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=moabit.uno header.i=@moabit.uno header.b="JPAjAqxs"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E4022F11
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 03:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8642BB1B
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 03:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724557711; cv=none; b=oSe/I9pXbvsezmNqwPFalhV+EmkXq6LqfTCIYu5EBn2uBZpWL78HQaTXaRnso5USsvtBbJIHlxANdQypGGjLu0VdaqG6gDr8Oea2nqInbCJ0p1/prOHXIwlAhEu/k1zo5+f7LVxa8Ujm6W3kOZsrGqSFv19K97cBoRkTPSpB2gE=
+	t=1724557788; cv=none; b=VqQCkYYra8bMnbOefVpKnZQrwns6FQIWMd7mEMnER8Dum/ss9Auhz70LH9uXM/g/J9dp31sObMXTc14JrYqw+gXt68I4yQggbVBckbMwBfGCFn51hKmeCGqZrMlBiKmroHqMhsn3ZcVmSuFM4W88SbhADtK3dl30G6hhLz68SLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724557711; c=relaxed/simple;
-	bh=wYgVuEohUFvuJR7BKrYMXwPNC/z0NyGx+4ELX1Susf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iWlSdTZ6Vj2toQ3EwNrDM1R8jOR3W4bx7jg9H/trz6gArdfBjp2ukGul0SQeK+EVGPWBUSWoVTTGVrNGjMV3tRPonu66jbdkcUbBn9Lsi3hJa1Mx8cA2N1dTMdasZzq8ld0RZ+xJJtatLVTkUPslGxGoipaZ3vO4neSrixTAtaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cU9m02+Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D72EC32782;
-	Sun, 25 Aug 2024 03:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724557711;
-	bh=wYgVuEohUFvuJR7BKrYMXwPNC/z0NyGx+4ELX1Susf4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cU9m02+Q+n9ZugrlSKrJO3kJq9i/EDGjwYHvvSXjDN6St7fDBdNzFeg2kTNP7eXpQ
-	 PaGvOKE+ladpOqXrfG1yDUHWw3b/gTnwP7jdSfWHYJIuVNT9i2Z+UvXJYryyssTTu8
-	 5IWGzqjwlqwOcuWlyZhUWkjf3Pp2lkDm+YqSCfIzY7FmObj3yqzWQg/HCV1Gy0vfkq
-	 clvSWadtyQVDElaXntxw9pKuf8CKX90GGAmyUythIk23qoVVLs9r/TPwE0cX34BJah
-	 3eS/YVBl9QgTknLHBPVfifvJ1KwPLbaBDynVKuJAU9/ZsD82V8JkJNd6ndSqkHPvdG
-	 3LrgZ6IPU/L0A==
-Date: Sun, 25 Aug 2024 05:48:12 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v8 13/13] acpi/ghes: check if the BIOS pointers for HEST
- are correct
-Message-ID: <20240825054812.32f780e5@sal.lan>
-In-Reply-To: <20240824021510.71451b57@sal.lan>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<52e6058feba318d01f54da6dca427b40ea5c9435.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819160733.464ccebf@imammedo.users.ipa.redhat.com>
-	<20240824021510.71451b57@sal.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1724557788; c=relaxed/simple;
+	bh=qeHwI3cQ5FPXVhaIUl4qEg8LEOCava/FxgpVruSNwWA=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Hdhvq+bkay6j6hu5XBeKGV3rU0r6mQSD6A8x+NBBaKycx2ZwhqlGqxKGTuGFdTCtdrWuBVPbq6IbVZUlM7CvfURWo+xkZ3hKJQFqbkSQ6ydf+6TfK+Uvimim14ucQb54FVePv8LWz/QFSaduH1rrUhYdyLkCFMQAyDBTFPmDpcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moabit.uno; spf=pass smtp.mailfrom=moabit.uno; dkim=pass (2048-bit key) header.d=moabit.uno header.i=@moabit.uno header.b=JPAjAqxs; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moabit.uno
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=moabit.uno
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=moabit.uno;
+	s=ds202408; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JpjAX3fav2a4cCbqTCBnN/PcJhHByqtnClKKxBkFoz4=; b=JPAjAqxs6Il+TSUbYjO+pZUaWz
+	64PxROQ56V9fkSUP66mcNW79QqH6HAL/6+4W+i9MshWy5qbHSobkg9x455I0ZTCNjllXVf7AiZXz7
+	wDQCGCU8R3WoOwECPg46jngW9qRs2BMFEG9s+eaelXbWpZZzVvgd7Cw9Z+DAyU111aCWVRlpnJcx4
+	Q7QZw+deGIDSD6ne61Y3oouCMMOvGDehWG6dEPLd5/Fm9Rrwiq2HIq3qUI9F2Rqsu3sdOplOSGmGj
+	lDnOlcvFKjIcnJv/c2EMltjfVhmju/a2HQPJdW11kmAGyrT55wWa7JnhQZXgOnr1uAUab3gUbkXIS
+	dB/nCOFA==;
+Received: from [2a02:fe1:716d:5f00:f940:7ace:518d:8015] (port=50547)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ruhban@moabit.uno>)
+	id 1si4G3-006u3N-4M
+	for linux-kernel@vger.kernel.org;
+	Sun, 25 Aug 2024 05:49:39 +0200
+Message-ID: <eb2ebc0c-cd59-4cfe-b87a-0232e8232b9c@moabit.uno>
+Date: Sun, 25 Aug 2024 05:49:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ruhban@moabit.uno>
+Subject: Sin? (cont: Low Jitter, Philosophy, Fair Pay)
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Em Sat, 24 Aug 2024 02:15:10 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+There is some discussion on whether to use the concept Sin or not in 
+electronics design.
 
-> Ok, we could still do something like this pseudo-code to get the
-> error source offset:
-> 
-> 	#define ACPI_HEST_TYPE_GHESV2	11
-> 
-> 	err_struct_offset = 0;
-> 	for (i = 0; i < source_id_count; i++) {
-> 		/* NOTE: Other types may have different sizes */
-> 		assert(ghes[i].type == ACPI_HEST_TYPE_GHESV2);
-> 		if (ghes[i].source_id == source_id)
-> 			break;
-> 		err_struct_offset += HEST_GHES_V2_TABLE_SIZE;
-> 	}
-> 	assert (i < source_id_count);
+I think the association to sinfulness is suboptimal here, and IT can 
+actually be used for electronics design instead.
 
-This is what I ended implementing on v9.
+This unifies computer and electronics design, with fair pay background, 
+something everybody wants.
 
-Regards,
-Mauro
+IT short for The Initiator.
+
+Read more about IT x philosophy background on https://moabit.uno/
+
+Light.
+Ywe.
 
