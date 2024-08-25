@@ -1,71 +1,48 @@
-Return-Path: <linux-kernel+bounces-300490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1AF95E459
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D8195E45C
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF111F214B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918FF1F21529
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A1E15538C;
-	Sun, 25 Aug 2024 16:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD33156F3C;
+	Sun, 25 Aug 2024 16:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG/DyatI"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="bIcu0xoK"
+Received: from st43p00im-zteg10073501.me.com (st43p00im-zteg10073501.me.com [17.58.63.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140181CD31
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED11CD31
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724603083; cv=none; b=sWeA9gFhpjMiMpq4S9g2eDRAb7TD8tpbLYTE5XeOjk9OXQVVV15EfGVqbooqGbORsopCDLumZdsaqMiiLtIk5HNhupRGpahYBi1w4rJa7RtTFUVTfFzWbKjyl1N/N1ItvffJnOoPA7QIIG0nxNuuaHBI90780HHvS7Dbxca7ueI=
+	t=1724603345; cv=none; b=hgiPsairX2qK/6K92NXqUBn30VIC7oDCMJxPQusmtI07Td1G7usHrqt9eHehCADl910LiQtLXgArya1+LIogogKaRBwZNwCaPclteXGYHUmPmjQ2T+qLOq8jVIXYXPkVneS+XvdSF3KuiS7ag1eVg4hYnImv7JlOl6HOXrjH3CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724603083; c=relaxed/simple;
-	bh=KJ+Z50j8sUoBHy3hhy960h2rh2ePf4Ly0jSUPqKdGDM=;
+	s=arc-20240116; t=1724603345; c=relaxed/simple;
+	bh=cRiXtW/W7gEva1QfbYQHGlyzfhay3r2iy1AFlHyErWQ=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=OMEdP4Xo8zRZ5eRHTmoIR9II4omZiq8i8OV7rAB741IhjEDJv9AxaoxK0vMbbbhJTpy8SHgkIuoExwZQ2ZFESxMgO9JfgsYEI0D811+jir8oc9IT+sZgCSg/kDN/lvNrMf+Qjq8arPqL4RYgMBIB+8W38QX6kf7QGmfBL+u5xhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG/DyatI; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3cb747fafso38064121fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 09:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724603080; x=1725207880; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6XomT4xNhYnUhlhJpfg6DQnFwYDy19uzJG9jCJSIOE=;
-        b=ZG/DyatIs0Cu/sia4ttT6BxgT22HDLV5k3QtJTZWUfUHIh79hTrn4vpdKiD1cBCWeR
-         s1V24OJ5TfJF+L5rYMoQspb6udvjqd8/houerMkJaZwUrBReOFJja0N3BDmxZGgYaIXS
-         J8rwhVNlPFqTCHxT6+zYQuWY8eGq1CckKHkvTNOmfWqG4IDfdeD/kp1oUIcY8aRNc4oX
-         k7Yf18oh/H3n57T+tCHx0AERM6QYv5gWIpku7H73gP8wc6aDobqRwM2aVugCmicp7cwC
-         13VoImLc3I13d+Yy2ner2dA6bKpBHW6BR/hE8zjoAzYIU9f8kyJuJCbQe+Bd6clLKi3q
-         EBIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724603080; x=1725207880;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n6XomT4xNhYnUhlhJpfg6DQnFwYDy19uzJG9jCJSIOE=;
-        b=kc+bMzFzu2BCWZeXLAK6DJE57SRtJms5mzQHRsjA+bWGgz5PZaznlek+zDYcXxLIsj
-         +R46l+UBtvnawLJXbcPH3Eaz3JDMy8b6+wiV7I1PjoIC4iajuyAlZFMIh/GqWTFcRYeE
-         eTmKiB18Mft5fSVG+ngAxJbWM4d1jZ7Y98af8hz/vqk+YqNnuHe/XYvWYdpUiz+BIOWx
-         MaqsQM/ZZGt+F5rouMZfubevMtMmo4B8u+hwdsmLLjXdGHUr3SPGdXdNRWp3/kCwpaRt
-         UTeaWVaEDX/yBXmLE5QkjIVruFYxrX9XxWeV8w+LqwhU6OGkXfgWRSHzzXVXAxIoHtqL
-         RE9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNK8aIYSaxLBepA6Z6knexnLE7NHB49jSbSR/baQDb8FftKx0w77z3IFl0jLw5+Gp2whrJ8n1q7CE3jUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrlPzMLprRaVF3cJ2Jcyr15sXjuYcIPzqK7vYTuBESAZ3hdXsy
-	JLVA1SuRBmyMspuFrQNFhUWxuQ4XEBejOhst5Jlu1x0+N6lJ6vXb
-X-Google-Smtp-Source: AGHT+IHTCz6agKZpn/0TM6H5VB1xS4o1qPHzlO6+ruqCMC63cLFJxFAOns8FPsvm6zqLp2Zk54MvFg==
-X-Received: by 2002:a05:651c:211a:b0:2ef:2006:bfb1 with SMTP id 38308e7fff4ca-2f4f9dced35mr48808711fa.15.1724603079772;
-        Sun, 25 Aug 2024 09:24:39 -0700 (PDT)
-Received: from smtpclient.apple (89-73-96-21.dynamic.chello.pl. [89.73.96.21])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4048acb0bsm10663581fa.125.2024.08.25.09.24.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Aug 2024 09:24:39 -0700 (PDT)
+	 Message-Id:References:To; b=tuWAgzbgrbE7AjsIGsZe2ZbnG/6LS7LWa2vVnrtDGwgD2XxL9r2n9YHUYBQduP0expgI/u73VHYzx/HARWBGvwrH4eI2zOHPC5gZ0hCZssxxMN7rOxOr1SB4GHdfS9H/xKC8t6o5KLjSYlNKJ0rbiQWB5uFWMjx/DRNqEQ2yN94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=bIcu0xoK; arc=none smtp.client-ip=17.58.63.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724603342;
+	bh=AzCw5QLZ7l/p6PS7v0oPCA4fX7Xj2R9lRNnxbx1J4Gs=;
+	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	b=bIcu0xoKDJkmgJLCJfjo9cDbmmaAB1TI7g8b2fY+oBRBHoTwopJxn/t2mCCYp3YkJ
+	 XeOp/o/r4WyfNWf01VdC6kdARg/+mNrJ9ula1OAM4bXCbrkpm7Qw+y3wLQlm5aNl3q
+	 KZdX/Jnte0M9fck9GclPEBsQfLUH2VbnlkZH7F88cpL+gkrcHzRtVFaFAbduKfdhGS
+	 MCpPwH4T2nOcoezIlWsbu+4A1WXe9Djf4khyUgOhPnn1oz26zWJEhnykX6OvOzSgEV
+	 30x1daNHpfw7trTWzyBFiIwQjgZTevuIyxOcOCR++4mVZKY2bjZknNddpNF5kdxFHw
+	 do1wYaxH0cA+A==
+Received: from smtpclient.apple (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
+	by st43p00im-zteg10073501.me.com (Postfix) with ESMTPSA id CCBE8A005BE;
+	Sun, 25 Aug 2024 16:28:58 +0000 (UTC)
 Content-Type: text/plain;
 	charset=utf-8
 Precedence: bulk
@@ -74,62 +51,101 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
- mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
-Date: Sun, 25 Aug 2024 18:24:28 +0200
-Cc: Nhat Pham <nphamcs@gmail.com>,
- Matthew Wilcox <willy@infradead.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Yosry Ahmed <yosryahmed@google.com>,
- Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 0/3] Add DTS for NanoPi R2S Plus
+From: m.plak@icloud.com
+In-Reply-To: <20240814170048.23816-1-jin@mediatomb.cc>
+Date: Sun, 25 Aug 2024 18:28:44 +0200
+Cc: robh@kernel.org,
+ krzk+dt@kernel.org,
+ conor+dt@kernel.org,
+ heiko@sntech.de,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ cnsztl@gmail.com
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
-References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
- <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
- <ZsiLElTykamcYZ6J@casper.infradead.org>
- <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
- <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
- <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com>
- <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
-To: Pedro Falcato <pedro.falcato@gmail.com>
+Message-Id: <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
+References: <20240814170048.23816-1-jin@mediatomb.cc>
+To: Sergey Bostandzhyan <jin@mediatomb.cc>
 X-Mailer: Apple Mail (2.3776.700.51)
+X-Proofpoint-ORIG-GUID: CwCDHv_4b7D2xsJVEH-ta0ZwFMvgEuRa
+X-Proofpoint-GUID: CwCDHv_4b7D2xsJVEH-ta0ZwFMvgEuRa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-25_13,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408250132
+
+Hello Sergey,
+
+On 14 Aug 2024, at 19:00, Sergey Bostandzhyan <jin@mediatomb.cc> wrote:
+> here is version 3 of the NanoPi R2S Plus patchset.
 
 
-
-> Wiadomo=C5=9B=C4=87 napisana przez Pedro Falcato =
-<pedro.falcato@gmail.com> w dniu 25.08.2024, o godz. 17:05:
->=20
-> Also, could you try a memtest86 on your machine, to shake out =
-potential hardware problems?
+Thanks! I was just experimenting with a patch for that board.
 
 
-I found less time consuming way to trigger issue: 12c24t cross compile =
-of llvm with =E2=80=9Eonly 16G=E2=80=9D of ram - as this triggers many =
-heavy swappings (top swap usage gets 8-9G out of 16G swap part)
+eMMC:
 
-With such setup - on 6.9.12 - i=E2=80=99m getting not available system =
-(due cpu soft lockup) just in 1..3h
-(usually first or second compile iteration; i wrote simple scrip =
-compiling in loop + counting interations)
+A close cousin of that board, the NanoPi R2C Plus, similarly adds eMMC =
+to=20
+its base version, R2C.
 
-Then i switched back to 6.8.2 and=E2=80=A6. decided interrupt successful =
-test after 14 iterations (it was 19h of non-stop compiling with heavy =
-swapping)
-(sure - i can still keep test going - but builder is also needed for my =
-normal development)
+R2C Plus is already supported by rk3328-nanopi-r2c-plus.dts.
 
-So summarising:
--on 6.9+ just 1..3h seems enough to provoke issue
--on 6.8.2 so far never in past + currently can=E2=80=99t provoke issue =
-(last day in 19h test window nor 5 full distro builds nor last 2 weeks =
-of development)
-
-By above i personally don=E2=80=99t believe issue is in hw (ram)
+The r2c-plus DTS file differs slightly from your patch.
+Would it not be better to use the same fragment for both r2s-plus and =
+r2c-plus?=20
+Or even place the eMMC activation in a shared dtsi file?
 
 
-  =20=
+I=E2=80=99ve compared the two and the friendlyelec kernel (not u-boot) =
+sources.
+ your patch does not contain these lines from r2c-plus:
+    vmmc-supply =3D <&vcc_io_33>;
+    vqmmc-supply =3D <&vcc18_emmc>;
+    mmc-ddr-1_8v;
+
+your patch adds these lines that are not in r2c-plus:
+    supports-emmc;
+    disable-wp;
+    num-slots =3D <1>;
+
+r2c-plus has a line that is in rk3328.dtsi already:
+    max-frequency =3D <150000000>;=20
+
+the friendlyelec kernel sources also add:
+    no-sd;
+
+
+=46rom the description in the mmc-controller binding documentation, I =
+believe
+disable-wp should not be used. The description for no-sd  I find =
+confusing.
+Can't find num-slots and supports-emmc there.
+
+The RK3288 datasheet does not mention support for DDR mode, so =
+mmc-ddr-1_8v=20
+surprises me a bit. The datasheet does explicitly mention that HS400 is =
+_not_=20
+supported.
+
+
+USB:
+
+Another change with the Plus version of the R2S is that the USB 2.0 port =
+that=20
+used to be wired to the ethernet chip now is used for an external USB =
+port.=20
+I don=E2=80=99t have the hardware here (yet), so can't test if that USB =
+2.0 and the=20
+USB 3.0 work independently or need to be explicitly separated.
+
+
+refs:
+Documentation/devicetree/bindings/mmc/mmc-controller.yaml
+
 
