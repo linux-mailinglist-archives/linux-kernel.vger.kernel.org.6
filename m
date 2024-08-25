@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-300548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CFD95E4F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:41:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D475695E4FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150571C21430
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9851C21173
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AC156225;
-	Sun, 25 Aug 2024 19:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181CD156C63;
+	Sun, 25 Aug 2024 19:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6Px275z"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGIkaKl8"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCC128F1
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 19:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5D14A2C
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 19:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724614873; cv=none; b=CyC2JqKAxmynraGzH5Uvlkix7uXf5iwD5vp33N/OiTPQYKZxHSrR4cqv2uI+FnnyxLfOMJ+dLrK4m2AKuZD4qLPlmX9BdJaRLgzsDU7C3JYRsy2JjAYTsCyiiiOfAL7kOPbVq61bOUCxWImO0VX0oH4BAtQV+yWa7xu0BGWPu+w=
+	t=1724615077; cv=none; b=C3sBTyfZNmKG9cF/flweQ9TN0ce613CV9WjsbGD5cOXWSwsAkyMQyRpkaaOfaJ9rBg227QOlZSFpcrvVmHJ5jPOu+NCdPaI7yC8LoYpvGZZ58c9oBkYNYaMBzK+ID1D711urp2ygbPIWVOUTeN+BZwlPvA6HZ1AR40F5zhT/YK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724614873; c=relaxed/simple;
-	bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nQlKCfdy/zb0Xoj450Fjy5p68HiasC8hpY5aiRaGlRenR6Hp4yfgUZS8XB3kr2R7uzb6WfQeBEwkZvTEHaj5L1iB8mjk7kqF7CJSp4aZsKWEt8l9+0mn5u8n/4zl1oG8tYomkt7arIlAv18VCAM1Q0vydiK3RmV6Iw2x1Ydpjx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6Px275z; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1724615077; c=relaxed/simple;
+	bh=3aSgmy2z4pausqZBDFYJruBHjeDB2tWoXHMVkZB36YY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=t+bPnbN0ILjohwPZKcHVSbHHP1aU1b/Dbk8s5jVNESCx3FvNTIwZS/a9IxcJ/sLem1hftvA2//NyIoOVptMrVuHlx3hhJMV/K0axwpuSeWY3YpCbEZkmCMnaSUfPExIAtraTxDPOJ+6qGUXY02Z8zh3qRitErQRXO94AwvsqTD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IGIkaKl8; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86abbd68ffso343711466b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 12:41:11 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5becc379f3fso3954121a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 12:44:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724614870; x=1725219670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
-        b=B6Px275zFF8BYmK7QXcD4t+vfDo767vpTvrhLb5EvjtDuY+Cc4c28HrOHrJjxqgJuD
-         IYuVuaZQqVDeWrhlH+waT/MyaZsy2zbPO/4wQ2pPy4X89BZEPI3mTGaBN4VzrIVdQLDb
-         fAoebMiTJRygs2Pf4R+4JKiJGAjTh/PhCB8xK6WuH0jFlreECg8wi3F0od0xP3kLvzs4
-         p20Akf/djkr2A/KnCxjsya2YO6/61t4gPTbfQ3BJEYCI0HF5PWisjQuJeTwzd8Ho5qQR
-         HjNzvSRk2l74OERyb0lPSGvuXNp3f3/NSnnTWBl56dESThUANgp2GFzRbRqSAbMqwfW5
-         e0QA==
+        d=gmail.com; s=20230601; t=1724615074; x=1725219874; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YRw0/BmZA1JaNPxfbsuBNaktJ+Y30bFXZTx3rW6j/Es=;
+        b=IGIkaKl8RRvyEe+CQygw/gCKF0leit7AS6qESstc9uGXmufP/95QHHFvMaQQJ0eaL7
+         xhiMWujaRkWLuXSHKdVmVEhMLW/MbXI3Ba833UfxP+shvLoFjbzv0/BB2p7kPvFmtmg9
+         nbeYE/oaoVDH5MgOwQQsvZraCGxVg1V3o/aXWhstPVKd6mLSBRds7yE27EIH6E0p+rXs
+         luG1R+2nVnVG2Jjc2mwEAL0EOs3/5PxbVXo6W5bRBi+g2L64QsS658betF9oEHaqU6xP
+         Ed9zaNevjjyQYia1RT5PAeLYhoq6rvoDk5vecC/eqWiksY7aGJZYK4RxTBWLBKEK+Zr9
+         98MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724614870; x=1725219670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j1L05yXBQ4GUue1HO1qQvgYs07UsdMOkGMA+gJWHjKg=;
-        b=wT4YtllJBWnbs3ZfmnQB+ZuReCSH798vqE49K8so00oYrGXBB9/ubr/rzVrBS6baUP
-         hfgJg/NteV4ekmt5xv5DkqUNVPDSWOvCqbzhK4KAz8bNHwU5X7182knrRyvQhuyTebP0
-         ljb/RP774zjo1MF1zhVjR0cFT59tCcsXX+S4Bc5RRDnFu7pm+HMAjzKtTjBGuUK5mMeX
-         iLp3uIcDh16rK27OICWWyj4VZ7e7P+XClMeGg9fe/OcTqzQdla8d/S1cgfBYoO8XmOxr
-         PA2d5dJ9VX90HxTSVAdLDNrtlX+c0Bmn/VSbDwr1spWGN8CMl9nMiPs9Wpjq/pjG4d0D
-         kC2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUXlfRr/wfpuPzjqP5wVjqWZ/YW9oL8WK/qW2+MEGUt2lAkPEy1qwxapQvUJis9UA7WGYOYbj+DPDZQLzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTebwXa5cq+oNidKOU/N2klHyYfm4TI4f4Xog+eGqlW6V9pnz4
-	AJqWlwCzrMNhE+C6g3DehS45x0IpAG3587alwc52NXS1mmYM+eNWLfmgl2On9QDVCszwTHFx+dr
-	wtdZ6Z0EsBGycvijQaLsuh6bbMnpRg+Jh
-X-Google-Smtp-Source: AGHT+IGrbQwHe617+0dnnmaIpmeE+W3mzJVUAYY/BBybCdWz+UQEx9vhaWprhNp0asXOCQVT4uZreudzrgByyNeKZ7I=
-X-Received: by 2002:a17:907:9725:b0:a6e:f869:d718 with SMTP id
- a640c23a62f3a-a86a2fae427mr882065466b.21.1724614869511; Sun, 25 Aug 2024
- 12:41:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724615074; x=1725219874;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YRw0/BmZA1JaNPxfbsuBNaktJ+Y30bFXZTx3rW6j/Es=;
+        b=VtkCAO8RkS7F+A2+zCx/kj6iRPJ1rTbjv8Aj8ltevL2MDKP+YgTk+fvAV/A9jBqEUv
+         4C4ApOMhaYqcp3xQq5eaJetgRae6kpnD0b1AiAoWxHAtpnNhAJwMyFHbrlxzgKFtXmZA
+         jOuMAqBlpYWgtMjnHf8nyimXy6Hvlo75rLnzIb4QH8DDQhHd82aDOZis/Ex7klIpSfzf
+         w3/RIDgVsB+NbjREisHLRKiezmt1+nVi6GY4Yciyw5sKtiWGw46tHYy2Bq6Qt61RLMsj
+         lC4ecGKzivHSCEXGZYfIrJUzX12oXDz97CkQsi+UKWeZeZK+OgQ41aJXj4bewpV2+EBK
+         sf5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXUleEoQwyUlKMHy3YAtxlqR/VsdIANNh16WQM2WZKVEUEkuPqjmuZjBaopVoXSF9CFlal+k3CfsgCvaFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLYvJbJiesd9gSTIMe4KQWMUbSuC7J/PK8JXcrT+rYtmDg2YIF
+	MAwqKFk/xb0O4nGuR23BphCfZhI3E30kHqGAhTYBncZObRLj9rhlIXto4w==
+X-Google-Smtp-Source: AGHT+IHdZzIXvWAwVnqVi7nwuR8NFGLFih+D3hWUgh/Fk+yqokxyjBn8tVBsCU7Y1FDf8XecZ7SYZQ==
+X-Received: by 2002:a05:6402:5187:b0:5a3:3cfd:26f7 with SMTP id 4fb4d7f45d1cf-5c0891abad5mr5926380a12.32.1724615073776;
+        Sun, 25 Aug 2024 12:44:33 -0700 (PDT)
+Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddc0dbsm4720390a12.20.2024.08.25.12.44.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 12:44:33 -0700 (PDT)
+Message-ID: <f514b1db-154e-4450-88e9-cbfb8c66a69e@gmail.com>
+Date: Sun, 25 Aug 2024 21:44:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240825132617.8809-1-hdegoede@redhat.com>
-In-Reply-To: <20240825132617.8809-1-hdegoede@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 25 Aug 2024 22:40:33 +0300
-Message-ID: <CAHp75Vd_qkmpekrGUAR96kE5D5Ry3z-sifTzqGTjov-yueMAEw@mail.gmail.com>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_chtwc: Make Lenovo Yoga Tab 3 X90F
- DMI match less strict
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8192e: Fix Assignment operator '=' in
+ rtl_wx.c:681
+To: Alien Wesley <alienwesley51@gmail.com>, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ ~lkcamp/patches@lists.sr.ht
+References: <20240825161335.21737-1-alienwesley51@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240825161335.21737-1-alienwesley51@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 25, 2024 at 4:26=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
- wrote:
->
-> There are 2G and 4G RAM versions of the Lenovo Yoga Tab 3 X90F and it
-> turns out that the 2G version has a DMI product name of
-> "CHERRYVIEW D1 PLATFORM" where as the 4G version has
-> "CHERRYVIEW C0 PLATFORM". The sys-vendor + product-version check are
-> unique enough that the product-name check is not necessary.
->
-> Drop the product-name check so that the existing DMI match for the 4G
-> RAM version also matches the 2G RAM version.
+On 8/25/24 18:13, Alien Wesley wrote:
+> Separated assignments for pairwise_key_type and group_key_type
+> in order to silence the following checkpatch warning.
+> 
+> CHECK: Assignment operator '=' should be on the previous line.
+> 
+> Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
+> ---
+>   drivers/staging/rtl8192e/rtl8192e/rtl_wx.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> index 47f1adf30ab4..2d42e7a5bcdb 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+> @@ -677,8 +677,8 @@ static int _rtl92e_wx_set_encode_ext(struct net_device *dev,
+>   
+>   		if ((encoding->flags & IW_ENCODE_DISABLED) ||
+>   		    ext->alg == IW_ENCODE_ALG_NONE) {
+> -			ieee->pairwise_key_type = ieee->group_key_type
+> -						= KEY_TYPE_NA;
+> +			ieee->pairwise_key_type = KEY_TYPE_NA;
+> +			ieee->group_key_type = KEY_TYPE_NA;
+>   			rtl92e_cam_reset(dev);
+>   			memset(priv->rtllib->swcamtable, 0,
+>   			       sizeof(struct sw_cam_table) * 32);
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
---=20
-With Best Regards,
-Andy Shevchenko
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
