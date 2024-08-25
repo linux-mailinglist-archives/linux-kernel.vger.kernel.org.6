@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-300316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E25695E248
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D65B195E24B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A31E1C213A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136971C2130B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B80B4F602;
-	Sun, 25 Aug 2024 06:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122A24AEE9;
+	Sun, 25 Aug 2024 07:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJuoVwSq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stVOAa4R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3158F48CCC;
-	Sun, 25 Aug 2024 06:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CF710E6;
+	Sun, 25 Aug 2024 07:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724569062; cv=none; b=PulFUg0ilOErXh+oPAr+62xsZDCk/GGRIl4E/pYc5rOaJaZSNaNAizWx8sdrLDR74S2SbrHoWUPlSq81Paazzwt+oTJiBHl748Ma9mpJXH1bkvBFm4wkpmcmsbm/IXJVWn0vzbN/nyAFQoZhJ0TTNcdGA9nd9Vg6/30WD5Zh0rE=
+	t=1724569416; cv=none; b=cPklOQ39Mx+CP9UdoZCp3AMV5jT6MGsnk7EudAjMBp1E6J99I2Ai8nmJsx8ypGuPMlrUjhoB9XnVJOr6SZJLS0egW8Efpyolm8QyPuNyVkKuWKoqFYCBSvUb8fmwPdsacSIUMYRrdskGPmDnKHsEDp+8U39CyWS03rmo9ZRWLZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724569062; c=relaxed/simple;
-	bh=LErsbjVHh/2RC4TzJkjoffgzZjjXdGkyTQ4ZdiQHAxw=;
+	s=arc-20240116; t=1724569416; c=relaxed/simple;
+	bh=FFcG+eY9buRsb85CTY0R/4I65V+U5KehytBxVkcoTyw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ShKLBdA/mMu+fVikqiYuPTBJeGRSzaNBjFaFUAsC7PO0arKVpCCkAP9izPbME995HwQz6KkLcQSqUq1hc9ckJPBF2vafWzMHSytX+6+/2iKrrVw+QmTSMqfape+5AVBoWgryCgg+dudV+s6KIMSACapszaD188f6sCwJgTelrNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJuoVwSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE36C32782;
-	Sun, 25 Aug 2024 06:57:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MzgRr0TeFMMq1PMT7bzHApdf8DVVOQPQZtzOhqQ24REDL0I3ubvTxdPwb3sgaHTD3hNwTVly2gljxefd0LLb/8cQuKb8Ks7OKrkAvpIREfjep1JgBzlsk4rUb/uJTjcceqYyy4QrrVYFSLez6GmwCgBbCsHJbFytpVk+ZKhIqBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stVOAa4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D614C4AF0E;
+	Sun, 25 Aug 2024 07:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724569061;
-	bh=LErsbjVHh/2RC4TzJkjoffgzZjjXdGkyTQ4ZdiQHAxw=;
+	s=k20201202; t=1724569415;
+	bh=FFcG+eY9buRsb85CTY0R/4I65V+U5KehytBxVkcoTyw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FJuoVwSqKbrqpI8dt6tLIJiHK7NNGyg8gRNrbjtBSwShPZa9L3eJOQEwTbvhx6exE
-	 dtst60Du/LPcxeYe500yRtdyAkBSugm0pGLsMnPAKpJLMeslyYOCrYYmqvGT6QPscI
-	 j0EWLxvD+LSa1tANm3ALS90kTuqNArom3qDcmRDSutiQTFBQxKk8V6w2n3ClLXm8mK
-	 XQLWf8FXstcB0+STb9Uc69RPvYJocXtALhJNtgl6pv/KDrLncJtt2tVOyYIB7vdHSt
-	 Qxp8oGL6n55+4sgktwVyCQy+kkP4GTDZxMNQhXDd27ppZDB1nuC3McUHWn18TgXe8Q
-	 Ifa3PDIS6+RmQ==
-Message-ID: <1400d007-861d-432a-8fd6-a948556b5dcd@kernel.org>
-Date: Sun, 25 Aug 2024 08:57:33 +0200
+	b=stVOAa4RL5OHT8fKI7XifxLkD6izj0M9kXHx/7MKawbszh3ItDDQk558RJqi/D6Qv
+	 uUFo0DehcceASPi1ow9ZfmzQPZaWznj6gO/14uuXLU7Pt0Hilgr2jNnvg6x0fttL0w
+	 DrMaMt3d150qAm3gr/8hvgewjM2ZVVaYaZ/VJtfh8TpSX8f3Z3teTPA1AqOcLhccox
+	 INTw5/HzviX6Y1zX+bmdTfaQ7Y/KdQ7S8cFAAwaki/QkzuiU0Xi6+GCwJT6ksbavvf
+	 bvpW/b5WFaQ4D/VlI7kkdmfFcdcWRaYasarmXZkNu1+CIhPQtgMQspgzgpiOxL055m
+	 DnAMBIvSxHb3w==
+Message-ID: <fdf5677f-e7e2-442e-91d2-bcc9c2b3793e@kernel.org>
+Date: Sun, 25 Aug 2024 09:03:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] dt-bindings: iio: pressure: bmp085: Add interrupts
- for BMP3xx and BMP5xx devices
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
- biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
- semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-6-vassilisamir@gmail.com>
- <7eqtnkkgnyskkmecv7dtiyzd6invdl7xa56cih6fbuuu2jrprx@s4jpi4ls6dxn>
- <20240824113511.GF9644@vamoiridPC>
+Subject: Re: [PATCH v4 2/4] dt-bindings: media: Document bindings for HDMI RX
+ Controller
+To: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,55 +108,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240824113511.GF9644@vamoiridPC>
+In-Reply-To: <20240719124032.26852-3-shreeya.patel@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2024 13:35, Vasileios Amoiridis wrote:
-> On Sat, Aug 24, 2024 at 09:45:43AM +0200, Krzysztof Kozlowski wrote:
->> On Fri, Aug 23, 2024 at 08:17:12PM +0200, Vasileios Amoiridis wrote:
->>> Add interrupt options for BMP3xx and BMP5xx devices as well.
->>>
->>> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/iio/pressure/bmp085.yaml | 7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
->>> index 6fda887ee9d4..eb1e1ab3dd18 100644
->>> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
->>> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
->>> @@ -48,9 +48,14 @@ properties:
->>>  
->>>    interrupts:
->>>      description:
->>> -      interrupt mapping for IRQ (BMP085 only)
->>> +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
->>
->> Supported by driver or device?
->> If the latter, this should be constrained per device variant in
->> allOf:if:then:.
->>
+On 19/07/2024 14:40, Shreeya Patel wrote:
+> Document bindings for the Synopsys DesignWare HDMI RX Controller.
 > 
-> Hi Krzysztof,
-> 
-> Supported by some devices controlled by the same (just 1) driver.
-> Thanks for the hint, I will take a look how other drivers do it :)
-> 
->>
->>>      maxItems: 1
->>>  
->>> +  drive-open-drain:
->>
->> Missing type, unless some other core schema defined it? But then I
->> actually wonder if we need it.  Maybe this should be interrupt flag?
->> Just like GPIO has such.
-> 
-> I took it from the bindings/iio/imu/bosch,bmi323.yaml example which is
-> the same. You think something needs to change?
-> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
 
-You need type: boolean.
+If you are going to send a new version, then:
+
+A nit, subject: drop second/last, redundant "Document bindings for". The
+"dt-bindings" prefix is already stating that these are bindings and this
+is documentation.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+
+"Add Synopsys HDMI RX Controller".
+
 
 Best regards,
 Krzysztof
