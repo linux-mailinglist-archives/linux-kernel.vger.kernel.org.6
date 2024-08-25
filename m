@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-300554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C0295E508
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:10:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06AE95E50A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 22:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34F122815A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7F831C212F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 20:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255B8157A6C;
-	Sun, 25 Aug 2024 20:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6169D15B562;
+	Sun, 25 Aug 2024 20:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0pYPWKf"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnVrTeAo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B6D801
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 20:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9982214A85;
+	Sun, 25 Aug 2024 20:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724616600; cv=none; b=bFpwj2QjAKij+o0DVSOlbzCz+bU2+3XnAVtbMd+wmun0tVVOhfUb4eOiifGb6Tkj4t8iM342Gz9edtfQfizX9m+U9wGHIV444YHYSIhCO3ZFDSC6vDDw65jSCqMZG7MhRh0hiJ3l3Ca57oBeehd8WunJ/rZaF0zY0unnVBi2iqU=
+	t=1724616832; cv=none; b=ICm8md65YWCy3vSBKIJPGX3KQOdRG1Nq0hhaZfESRX03AlPECAni7cM5yUixyCm0EBsABaYdhQq9QmQQUaHFWDvii/JICODjn1PrpvstgjekxSC3QThAJaH7dXUw9LNRb2UOgLDNCJucVNGuwfaqQGEEaN/AXnLN0CktLBfHqwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724616600; c=relaxed/simple;
-	bh=q57ET+f6ygnmgbWmR7czSsxa8EjuSqc+Z5cLEQWTYUo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JzKQQEbbgU5Bx9dH/AwJD5eD0UNR+r4dRnId5vhHXaPed0Fbk5UMs5mrlgyhA9ACF47l8tu+uwaM3+K2pOjVNfR1mWHSsnr6GEit+TV4kBttwAMp5hNso/S6gUQWvjjKNCGi26kDu5x3GftIaQweCHm8RZKGxiNNPhFvpRakzFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c0pYPWKf; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd9d408040so2476274a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724616598; x=1725221398; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWHFnrQEGj5Ht1yOFJDGh50JpswZV3cRjQ1W+u6fDyo=;
-        b=c0pYPWKfSDnOSOEFrhhWvzyLvhkn7MW1L3EHBqoDgP97lDPjqk+Hl/vmcCgD9By35o
-         S5/+pRshYtt5k94N+Mp/sPgvxypVFA5vyVVWg2C2ThPUUPsXh/JNM5/IOfI+6k4QTbq3
-         BCYLb5iNvZy+b0h5KBNxPCNSy61GRCyqOTvJvFGhGSDLZ32+g3rQbPP35wYG16Fwplfj
-         6k+/79hIAR3Fwe7hyRYwLX9S4KjudUwbh5DyIoRAztJW43WvAG+AeyrbIOtD8tMlx+iK
-         NVicPzfCWZFVZ2AC09Bcs/GwKnSkqZ7VWpDi946uQK6IDRR160H7ws3X+vZDJcplcKGT
-         L4eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724616598; x=1725221398;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWHFnrQEGj5Ht1yOFJDGh50JpswZV3cRjQ1W+u6fDyo=;
-        b=aFccAxdli6V9EwHhthRdU0xsf3Fn6Ju5HAMmYk3mImGsx+7n/6OzY4dcTIbLncSr6Y
-         kQycS/8Q6dBDDe0WzJJzDqXFgLheSXr90CMVzY6gHxjwbRR1mSuGE0T1uMSQ6UzpaIkb
-         pUsejKrW1Lu/VGpTueERT9OkSBYdzlPDnVafTTKvGkBjWSJ+mnCY604ormALYnj9Porz
-         Do9o9cpEObcOaZBHPWBn1LKaEnkGbUbUvVTA9+5wd7oajuombnaQ9oPU8DFMPdTjEztA
-         x0qWg9RAqRcSJSFgPpYETSIEyDa94f5eGp+S6DKmyIayMJW9hGuuc3jyizqnMCvK+bCg
-         6rQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqoZsMj0kAuO83QsktFSvgFjnIW/5PpF/yQEFS6xrAIDjE64Vc33k1Zqfngg8rApgAxee/60wquVOzmaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF8NNH2303uWncQcBIosUbvQ4dlS2qkbFVhDgUV4gazA1yvnzf
-	uNywAII1W3BvtP4+OS5sKfkz29vFzGHZ61SMq9UpZMGyN1YC03j+1wAgRCxRUQ==
-X-Google-Smtp-Source: AGHT+IE4JlewYcwKbLYTy17wMYrbgSoNDCjG32TUPtDDFX/hpSki7y2PWuwuX7h5hECFwzqxG/TRSg==
-X-Received: by 2002:a17:903:2310:b0:203:a22f:6b09 with SMTP id d9443c01a7336-203a22f6b2emr111839355ad.13.1724616597825;
-        Sun, 25 Aug 2024 13:09:57 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dbefbsm56949855ad.136.2024.08.25.13.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 13:09:56 -0700 (PDT)
-Date: Sun, 25 Aug 2024 13:09:46 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Barry Song <21cnbao@gmail.com>
-cc: chrisl@kernel.org, david@redhat.com, hughd@google.com, 
-    justinjiang@vivo.com, kaleshsingh@google.com, kasong@tencent.com, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryan.roberts@arm.com, 
-    v-songbaohua@oppo.com, ying.huang@intel.com, yosryahmed@google.com
-Subject: Re: [PATCH v3 2/2] mm: attempt to batch free swap entries for
- zap_pte_range()
-In-Reply-To: <20240815215308.55233-1-21cnbao@gmail.com>
-Message-ID: <33f34a88-0130-5444-9b84-93198eeb50e7@google.com>
-References: <CACePvbUOgPLyCPzQMvH8sNZj_=FayR9Y7A4sGBEyk4ubW1Uo_w@mail.gmail.com> <20240815215308.55233-1-21cnbao@gmail.com>
+	s=arc-20240116; t=1724616832; c=relaxed/simple;
+	bh=wIOeSreSp6y4Bkfkum6UfCwLo5NOKD2g9dtMQYJoxOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAjL63xWQOoPOudNXFt7V9qEPFlqXEj4Y+SddE7hDOG4utVLF4R15UO7aGkMHE+0nCCy8DJBGAu++cEokFmhWzG7FzGiDfhIwdzOeyRV5+EIqG74agncxYrnK0zNi9Fg9rZ5jPdCQ3moGM1MhcDS2EJWcNagNMJdiBSNyo8fH/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnVrTeAo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0DEC4AF13;
+	Sun, 25 Aug 2024 20:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724616832;
+	bh=wIOeSreSp6y4Bkfkum6UfCwLo5NOKD2g9dtMQYJoxOw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lnVrTeAo5bD4mg9+KRryv5DqjWO9iiY97IUNzjk16TDeGTfXyulfCfSgahKWvMZwg
+	 56H1O0IjyFxBSg1Q7DUtnTAXtv1cHhiqANw0N3XD4SfhIVPD983emrNsrHIwkCJQwY
+	 HVrEhjP3Kk+j++oRwV3GVVmwjUrIWM94yR85dHe9LhT7HXlBFy03nCsIT2SimBouqe
+	 f2mG9fIrZns2rI+WtpVbh/FP4De5WZxCOYAChnBS2oxQyZq3AE79/CMa9NYys4FUDv
+	 UFE7NUgaq7q+jkEtgZN6+fsoOWhKFNo86Kamz4HCi3k+p6uQEAaxj/uRHIZUVeULEI
+	 nSYS+IVwtMhVQ==
+Received: by pali.im (Postfix)
+	id 345ED28C; Sun, 25 Aug 2024 22:13:47 +0200 (CEST)
+Date: Sun, 25 Aug 2024 22:13:47 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Erick Archer <erick.archer@outlook.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: alps - use guard notation when acquiring mutex
+Message-ID: <20240825201347.pdphq33cmng4ltds@pali>
+References: <ZsrBkWIpyEqzClUG@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsrBkWIpyEqzClUG@google.com>
+User-Agent: NeoMutt/20180716
 
-On Fri, 16 Aug 2024, Barry Song wrote:
-> Subject: [PATCH] mm: check all swaps belong to same swap_cgroup in
->  swap_pte_batch()
+On Saturday 24 August 2024 22:30:57 Dmitry Torokhov wrote:
+> This makes the code more compact and error handling more robust
+> by ensuring that mutexes are released in all code paths when control
+> leaves critical section.
 > 
-> Right now, it is possible two folios are contiguous in swap slots
-> but they don't belong to one memcg. In this case, even we return
-> a large nr, we can't really batch free all slots.
-> 
-> Reported-by: Yosry Ahmed <yosryahmed@google.com>
-> Reported-by: Chris Li <chrisl@kernel.org>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
->  mm/internal.h | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  drivers/input/mouse/alps.c | 48 +++++++++++++++++++++-----------------
+>  1 file changed, 27 insertions(+), 21 deletions(-)
 > 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index adbf8c88c9df..d1f1e221212d 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -15,6 +15,7 @@
->  #include <linux/rmap.h>
->  #include <linux/swap.h>
->  #include <linux/swapops.h>
-> +#include <linux/swap_cgroup.h>
->  #include <linux/tracepoint-defs.h>
+> diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+> index d5ef5a112d6f..4e37fc3f1a9e 100644
+> --- a/drivers/input/mouse/alps.c
+> +++ b/drivers/input/mouse/alps.c
+> @@ -1396,24 +1396,16 @@ static bool alps_is_valid_package_ss4_v2(struct psmouse *psmouse)
 >  
->  /* Internal core VMA manipulation functions. */
-> @@ -275,18 +276,22 @@ static inline int swap_pte_batch(pte_t *start_ptep, int max_nr, pte_t pte)
+>  static DEFINE_MUTEX(alps_mutex);
+>  
+> -static void alps_register_bare_ps2_mouse(struct work_struct *work)
+> +static int alps_do_register_bare_ps2_mouse(struct alps_data *priv)
 >  {
->  	pte_t expected_pte = pte_next_swp_offset(pte);
->  	const pte_t *end_ptep = start_ptep + max_nr;
-> +	swp_entry_t entry = pte_to_swp_entry(pte);
->  	pte_t *ptep = start_ptep + 1;
-> +	unsigned short cgroup_id;
->  
->  	VM_WARN_ON(max_nr < 1);
->  	VM_WARN_ON(!is_swap_pte(pte));
-> -	VM_WARN_ON(non_swap_entry(pte_to_swp_entry(pte)));
-> +	VM_WARN_ON(non_swap_entry(entry));
->  
-> +	cgroup_id = lookup_swap_cgroup_id(entry);
->  	while (ptep < end_ptep) {
->  		pte = ptep_get(ptep);
->  
->  		if (!pte_same(pte, expected_pte))
->  			break;
+> -	struct alps_data *priv =
+> -		container_of(work, struct alps_data, dev3_register_work.work);
+>  	struct psmouse *psmouse = priv->psmouse;
+>  	struct input_dev *dev3;
+> -	int error = 0;
 > -
-> +		if (lookup_swap_cgroup_id(pte_to_swp_entry(pte)) != cgroup_id)
-> +			break;
->  		expected_pte = pte_next_swp_offset(expected_pte);
->  		ptep++;
+> -	mutex_lock(&alps_mutex);
+> -
+> -	if (priv->dev3)
+> -		goto out;
+> +	int error;
+>  
+>  	dev3 = input_allocate_device();
+>  	if (!dev3) {
+>  		psmouse_err(psmouse, "failed to allocate secondary device\n");
+> -		error = -ENOMEM;
+> -		goto out;
+> +		return -ENOMEM;
 >  	}
+>  
+>  	snprintf(priv->phys3, sizeof(priv->phys3), "%s/%s",
+> @@ -1446,21 +1438,35 @@ static void alps_register_bare_ps2_mouse(struct work_struct *work)
+>  		psmouse_err(psmouse,
+>  			    "failed to register secondary device: %d\n",
+>  			    error);
+> -		input_free_device(dev3);
+> -		goto out;
+> +		goto err_free_input;
+>  	}
+>  
+>  	priv->dev3 = dev3;
+> +	return 0;
+>  
+> -out:
+> -	/*
+> -	 * Save the error code so that we can detect that we
+> -	 * already tried to create the device.
+> -	 */
+> -	if (error)
+> -		priv->dev3 = ERR_PTR(error);
+> +err_free_input:
+> +	input_free_device(dev3);
+> +	return error;
+> +}
+>  
+> -	mutex_unlock(&alps_mutex);
+> +static void alps_register_bare_ps2_mouse(struct work_struct *work)
+> +{
+> +	struct alps_data *priv = container_of(work, struct alps_data,
+> +					      dev3_register_work.work);
+> +	int error;
+> +
+> +	guard(mutex)(&alps_mutex);
+> +
+> +	if (!priv->dev3) {
+> +		error = alps_do_register_bare_ps2_mouse(priv);
+> +		if (error) {
+> +			/*
+> +			 * Save the error code so that we can detect that we
+> +			 * already tried to create the device.
+> +			 */
+> +			priv->dev3 = ERR_PTR(error);
+> +		}
+> +	}
+>  }
+>  
+>  static void alps_report_bare_ps2_packet(struct psmouse *psmouse,
 > -- 
+> 2.46.0.295.g3b9ea8a38a-goog
+> 
+> 
+> -- 
+> Dmitry
 
-[PATCH] mm: check all swaps belong to same swap_cgroup in swap_pte_batch() fix
+Hello, I'm not familiar with new guards and their usage. But if this is
+a preferred way for handling mutexes then go ahead.
 
-mm-unstable swap_pte_batch() adds a new usage of lookup_swap_cgroup_id(),
-which crashes if CONFIG_MEMCG kernel booted with "cgroup_disable=memory":
-it now needs a mem_cgroup_disabled() check.
-
-Fixes: 92b50df44566 ("mm: check all swaps belong to same swap_cgroup in swap_pte_batch()")
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- mm/swap_cgroup.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-index db6c4a26cf59..da1278f0563b 100644
---- a/mm/swap_cgroup.c
-+++ b/mm/swap_cgroup.c
-@@ -161,6 +161,8 @@ unsigned short swap_cgroup_record(swp_entry_t ent, unsigned short id,
-  */
- unsigned short lookup_swap_cgroup_id(swp_entry_t ent)
- {
-+	if (mem_cgroup_disabled())
-+		return 0;
- 	return lookup_swap_cgroup(ent, NULL)->id;
- }
- 
--- 
-2.35.3
+I just looked at the code and I do not see any obvious error neither in
+old nor in new version.
 
