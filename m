@@ -1,231 +1,130 @@
-Return-Path: <linux-kernel+bounces-300297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABB095E211
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:20:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFC395E1EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCAD1C2162B
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD2028272D
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 05:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9613CA95;
-	Sun, 25 Aug 2024 05:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C02A757E0;
+	Sun, 25 Aug 2024 05:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky5NFyOy"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tI7fZsIR"
+Received: from msa.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320CA4778C;
-	Sun, 25 Aug 2024 05:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F7B2BB0D
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 05:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724563023; cv=none; b=LbaxOekw3ZOfi62Ncam0vVTzbGK5tghdM+WNEOvtVvHGczdGnS4nueSI1a+kGzKpwD5+LrwZE97iE+EpuD0T4kzRFbRX+TjQZHFte2e4yqonmFyUtKSApIRm3cbNXC25UyuXVhjHX04r4SMoQdEooCgEuXhQ9qP9h41B++bSWuM=
+	t=1724563007; cv=none; b=YZ7S1hEMb6laMBdz6GHUFkNtRcr0u6WgUmVcqK8Akwgudnt4whEXpDH9JBc1XhQtIgQ4CW+e2nsnWy0m1Z22jPDC1l8dJwxzPIywl3XUVE3AABHPFnr8eCydoSNgzdBpJVOTa1Z0V4ZSKYJFIPVzOkrMhU22E13bDV+Xr8wFpEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724563023; c=relaxed/simple;
-	bh=yY4ZVaSxsIM1IRldiqRRPie18QZDpDnG/Gx5Op+I8sM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k+cLKGtSOAwjud0R9P9bbl0OmrjnwTwo7D6EuwgjTuRbimJD5YUe30bwCGbfZdjgmD3iEIMr1n0kXjsqLiIGnN4amiIZV/ttT9crBoPnrj+3LeEtDgb8fLtdBKAUf25AZARnfkSgVzOAr4N3s97QP3JnWeimT/raK+CKFZDu+Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky5NFyOy; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5daa93677e1so2541516eaf.3;
-        Sat, 24 Aug 2024 22:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724563021; x=1725167821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iL+2InRXO647WU3Yi34+ctBbVoiJtTYGlGR4qSXeVCA=;
-        b=Ky5NFyOyT5Rs3ZCCPReCy0Q8a1H9MoPC/0KwgZS8O3dXX8/8pErvDUPXot/UbeWgWa
-         Ezh+NsWryoKoPvSp3twIQqs7Ul2M6DOJpFZM9UrR1d0pw5gOPowtp9Ga9J2STMwhwaxU
-         vWPMsk2W1SShX+UWmzIXtDLPrUsoTseOtu6LOLWGh+2MWaaEuKdWczlT5eryfX05/Amy
-         6jCfA2M+hwubmMkJyXeTSwnam26T8EDdVjxachlwWrh1Knk4XRMeTf8l6rvn8y3agPLa
-         qsjOO0qbwTAWW3E98EXPRPHQJIuI24WcCW4J1NroS94DWAA3yHtcg7Yo8S+t6RE3LlQk
-         R2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724563021; x=1725167821;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iL+2InRXO647WU3Yi34+ctBbVoiJtTYGlGR4qSXeVCA=;
-        b=glzyEvkTDMDeoFoLvBff4ZZrE8eWwZBziAT1nPmFEUCAm5Bu59gHVpHoq0kLUZ4qyf
-         LyZcfLfx85k/ngcCb8bkKRPWRQa74vbrMrriLtTdcwWFycAoNLkvCqI+Lv1VpDK7H0o9
-         54NCHBM/qgp5YTJd8oPZSDXEmuuW44tQ1DWd3drBy/qTCKRoJ8hJCCmjusIseQJ5mO82
-         df1iFmPuaYphT0q9bswyoZDawYNgyc092gM5fbq3MzoqvWdOmy+UXIiHEyeujbmy43w1
-         6TymS6z3XcLdKMRYfwailgcpTJTL794PDKeoPmC9iQ9l1bQYXz2E+Wyyb8LO9Wcv8LHP
-         YzoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcqd6ID+rj6KhBMrc/+k/qc6RH105t1ocpN1sLIsVapF7tE4tC4B84uICtDSMA363GbP5UYor+CZOp/9A=@vger.kernel.org, AJvYcCXcyHhRfKF+LZyqiXIEUA5r1kTPBm/MSTcpoasRKBYw3jVz0Kfvu/f8ZrFuMNctaXrf3Lw4YL6zXl5RR64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpPiRmvAxPoL/fG55etWJbhBmogLoE2jQYMldWorREIHX51OeZ
-	3m2PZxNOD2GFVBqY/XkKeCIuFMadzDwsQR3HAhAGC86uEAXu/vRzbOKZBw==
-X-Google-Smtp-Source: AGHT+IHIrpT9TrF1Y6WIh6M0wyTrLhvKWZg8Ae6gbV2uHoKlDK9dxT5dBqBF7dMmWUdbcIyQW1ik1w==
-X-Received: by 2002:a05:6808:199a:b0:3d9:3f51:f351 with SMTP id 5614622812f47-3de2a853444mr7501714b6e.11.1724563020952;
-        Sat, 24 Aug 2024 22:17:00 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:66dc:ce07:b7cc:51ea])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad55a94sm5622442a12.57.2024.08.24.22.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 22:17:00 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Jeff LaBundy <jeff@labundy.com>,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 17/17] Input: tegra-kbc - use guard notation when acquiring mutex and spinlock
-Date: Sat, 24 Aug 2024 22:16:21 -0700
-Message-ID: <20240825051627.2848495-18-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
-References: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1724563007; c=relaxed/simple;
+	bh=MgYNPYwiYmnwAbOQyYJUKJs3MNfpo5stsgVI1hozc0A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=ILFzv+8JLFDSMy2gV2cH0xqeJEa9PCw2MIRu2De5iTlh6QwgOolSWHduLSsIF/xecypIrS8RIUtOSozJZXknvXKqnmZiBeuPyHoDHIilIHbqWGr2HmONSM+ih0d63dUHbhffYQe07Fp5ESf5axH7NW+qRxyAa2q2zjVAlIFVClM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tI7fZsIR; arc=none smtp.client-ip=193.252.22.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id i5c3sfnbnQaX2i5c3sLa2L; Sun, 25 Aug 2024 07:16:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724562996;
+	bh=etav4+/0d2M+KsLJwpfXRerYAOxWEVkaPUajKyxnERA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=tI7fZsIR0lGDL5Pu+kP2C5UybE/oSXFDDtlpXC4+Ou/dEZJehmNg3cSPp0fbMf+kJ
+	 /nl2i/cUQLxosXcliwSxw3wuWv1gSX3eMn5fwpSpJEvvgwh25wLN7dCi9tYfPRfsmc
+	 BnTbo2u/NXT/bYI62v1S8aCAA6tXBDJGWee+849U9n/xNfCZyds4E7ajW15ItIv5tZ
+	 u/Jr34DFxZb30t2kiYsdiIfD28l9kULLWpDdtBkNwMMGKigaobpkuSaKzNBaxGRi/c
+	 o9HO204ux7k3oFB9h4pPS7qTj+KxSnKqvBWFbmxZzuOowXc2IQn7gJU01z3jUuGA3j
+	 3dX0K6x9UEmLw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 25 Aug 2024 07:16:36 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <6d4ec950-878f-499c-a808-dd5b31c2ddb6@wanadoo.fr>
+Date: Sun, 25 Aug 2024 07:16:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 2/5] drm/mediatek: Fix missing of_node_put() for
+ mtk_drm_get_all_drm_priv()
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jinjie Ruan <ruanjinjie@huawei.com>, hjc@rock-chips.com, heiko@sntech.de,
+ andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ krzk@kernel.org, jic23@kernel.org
+References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
+ <20240823092053.3170445-3-ruanjinjie@huawei.com>
+ <a4d23c3a-9791-4d2b-9853-9c9b27460db5@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <a4d23c3a-9791-4d2b-9853-9c9b27460db5@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-This makes the code more compact and error handling more robust
-by ensuring that locks are released in all code paths when control
-leaves critical section.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/tegra-kbc.c | 45 +++++++++++++-----------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index a1765ed8c825..204ba189807e 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -241,11 +241,10 @@ static void tegra_kbc_set_fifo_interrupt(struct tegra_kbc *kbc, bool enable)
- static void tegra_kbc_keypress_timer(struct timer_list *t)
- {
- 	struct tegra_kbc *kbc = from_timer(kbc, t, timer);
--	unsigned long flags;
- 	u32 val;
- 	unsigned int i;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
-+	guard(spinlock_irqsave)(&kbc->lock);
- 
- 	val = (readl(kbc->mmio + KBC_INT_0) >> 4) & 0xf;
- 	if (val) {
-@@ -270,17 +269,14 @@ static void tegra_kbc_keypress_timer(struct timer_list *t)
- 		/* All keys are released so enable the keypress interrupt */
- 		tegra_kbc_set_fifo_interrupt(kbc, true);
- 	}
--
--	spin_unlock_irqrestore(&kbc->lock, flags);
- }
- 
- static irqreturn_t tegra_kbc_isr(int irq, void *args)
- {
- 	struct tegra_kbc *kbc = args;
--	unsigned long flags;
- 	u32 val;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
-+	guard(spinlock_irqsave)(&kbc->lock);
- 
- 	/*
- 	 * Quickly bail out & reenable interrupts if the fifo threshold
-@@ -301,8 +297,6 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
- 		kbc->keypress_caused_wake = true;
- 	}
- 
--	spin_unlock_irqrestore(&kbc->lock, flags);
--
- 	return IRQ_HANDLED;
- }
- 
-@@ -413,14 +407,13 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
- 
- static void tegra_kbc_stop(struct tegra_kbc *kbc)
- {
--	unsigned long flags;
- 	u32 val;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
--	val = readl(kbc->mmio + KBC_CONTROL_0);
--	val &= ~1;
--	writel(val, kbc->mmio + KBC_CONTROL_0);
--	spin_unlock_irqrestore(&kbc->lock, flags);
-+	scoped_guard(spinlock_irqsave, &kbc->lock) {
-+		val = readl(kbc->mmio + KBC_CONTROL_0);
-+		val &= ~1;
-+		writel(val, kbc->mmio + KBC_CONTROL_0);
-+	}
- 
- 	disable_irq(kbc->irq);
- 	del_timer_sync(&kbc->timer);
-@@ -724,7 +717,8 @@ static int tegra_kbc_suspend(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
- 
--	mutex_lock(&kbc->idev->mutex);
-+	guard(mutex)(&kbc->idev->mutex);
-+
- 	if (device_may_wakeup(&pdev->dev)) {
- 		disable_irq(kbc->irq);
- 		del_timer_sync(&kbc->timer);
-@@ -747,11 +741,9 @@ static int tegra_kbc_suspend(struct device *dev)
- 		tegra_kbc_set_keypress_interrupt(kbc, true);
- 		enable_irq(kbc->irq);
- 		enable_irq_wake(kbc->irq);
--	} else {
--		if (input_device_enabled(kbc->idev))
--			tegra_kbc_stop(kbc);
-+	} else if (input_device_enabled(kbc->idev)) {
-+		tegra_kbc_stop(kbc);
- 	}
--	mutex_unlock(&kbc->idev->mutex);
- 
- 	return 0;
- }
-@@ -760,9 +752,10 @@ static int tegra_kbc_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
--	int err = 0;
-+	int err;
-+
-+	guard(mutex)(&kbc->idev->mutex);
- 
--	mutex_lock(&kbc->idev->mutex);
- 	if (device_may_wakeup(&pdev->dev)) {
- 		disable_irq_wake(kbc->irq);
- 		tegra_kbc_setup_wakekeys(kbc, false);
-@@ -787,13 +780,13 @@ static int tegra_kbc_resume(struct device *dev)
- 			input_report_key(kbc->idev, kbc->wakeup_key, 0);
- 			input_sync(kbc->idev);
- 		}
--	} else {
--		if (input_device_enabled(kbc->idev))
--			err = tegra_kbc_start(kbc);
-+	} else if (input_device_enabled(kbc->idev)) {
-+		err = tegra_kbc_start(kbc);
-+		if (err)
-+			return err;
- 	}
--	mutex_unlock(&kbc->idev->mutex);
- 
--	return err;
-+	return 0;
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops,
--- 
-2.46.0.295.g3b9ea8a38a-goog
+Le 23/08/2024 à 12:46, Christophe JAILLET a écrit :
+>> @@ -933,10 +931,8 @@ static int mtk_drm_probe(struct platform_device 
+>> *pdev)
+>>           }
+>>           ret = mtk_ddp_comp_init(node, &private->ddp_comp[comp_id], 
+>> comp_id);
+>> -        if (ret) {
+>> -            of_node_put(node);
+>> +        if (ret)
+>>               goto err_node;
+> 
+> Hi,
+> 
+> I've seen on another thread that is was not sure that scoped versions 
+> and gotos played well together.
+> 
+> It was asked to check more in details and confirm that it was safe 
+> before applying the patch.
+> 
+> I've not followed the discussion, so I just point it out, in case it helps.
+> 
+> I'll try to give it a look in the coming days.
+> 
+> 
+> CJ
+> 
 
+Hi,
+looking at the generated asm file (gcc 14.2.1), everything looks fine.
+
+# drivers/gpu/drm/mediatek/mtk_drm_drv.c:933: 		ret = 
+mtk_ddp_comp_init(node, &private->ddp_comp[comp_id], comp_id);
+	salq	$5, %rax	#, _36
+	movl	%r14d, %edx	# comp_id,
+	movq	%rbx, %rdi	# node,
+	leaq	552(%rbp,%rax), %rsi	#, _28
+	call	mtk_ddp_comp_init	#
+	movl	%eax, %r12d	# tmp205, <retval>
+# drivers/gpu/drm/mediatek/mtk_drm_drv.c:934: 		if (ret)
+	testl	%eax, %eax	# <retval>
+	jne	.L212	#,
+
+...
+
+.L212:
+# ./include/linux/of.h:138: DEFINE_FREE(device_node, struct device_node 
+*, if (_T) of_node_put(_T))
+	movq	%rbx, %rdi	# node,
+	call	of_node_put	#
+	jmp	.L171	#
+
+CJ
 
