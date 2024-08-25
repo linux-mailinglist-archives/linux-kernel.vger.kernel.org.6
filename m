@@ -1,209 +1,239 @@
-Return-Path: <linux-kernel+bounces-300350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BF395E2A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:20:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C200595E2AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E43FB21657
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A83528206C
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12806F2E8;
-	Sun, 25 Aug 2024 08:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RzexYrau"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2066.outbound.protection.outlook.com [40.107.243.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5995A61FFC;
-	Sun, 25 Aug 2024 08:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724574005; cv=fail; b=RST9MQOT+/3yXNd6JatPdg9ccQRrdnjIxOCEbBqHr87j9puVOQkrPYKnC709V+xj2twOtuIb8sIvTvCa0aqQp4xyo+bf1tX061Cx5JeyEBVAedb2a1o0n4uMbfmK/iA99ghrM7ieQ8SEALrgfe81jIGsE/kKuhb4yvRq7HQ4p+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724574005; c=relaxed/simple;
-	bh=jBr/GAF2VX814U3jDkxOc+9D48Trhn5X0ly+pdPr1ts=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CGSrPMfURFq3M31MtbpycLLBzlcOz7P3fX+y+Usvxse2qKjG0QZ9gvPnPhiQWyqsFs6yOd3japBAFrQvIFNWPBOCGSZD4PREj9q1+duW7OSzEr+a120jvAKufAVoQ2aATkOBk5FOLzwU22X58ED93edUj4zwmvnhc6Hrvsl8Wqk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RzexYrau; arc=fail smtp.client-ip=40.107.243.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mNZhmoMQk4yXYhf+zUZcwdPSy/o921U/HOYWq91aw1axST7e4fOtVan2QX282ycfOGTKFywXH+PruReXx6RBkXVREdw3EUYJUlpAnesKMGo/ygpdlhNvRF9Cd+GEsiApa67Skn6QIVUerv+2sAdA1abqSsWE5NpPtqz2ZfZpiYLC/ztuFMlO+DdcRDgC1vS9r8zDvwiaYWAdRsvNHtc6mhdN3W1pn+nQ5/6Brlw2yAHf1rPE7aVuwoCBVW93nOyji46M1cq8YqhaSvUMqotDFdCQPGDm/l9F5GPbq5eovpjqg+Yv7uG4zHSbruKf9BsuB4bfidxF0/W4ZMlzB7UmMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wxquqHwHheJRay+jT6mnUOObAqx9P1gyl2AxEy8peZE=;
- b=VNHIi/UPqiIKhJ3UwJ/o88zhxZDAfV7M5YMU5ifQtSADOMyiDn0vZ6r4KvGjmhjBZAUqURvrulU9XBNeOpqATiIed1NmNwPfjh1EHemSteWIFIiNgCnlMpbRN3XENgayFUYgBQ1aPriZj70fO6VkG4DPclwLpMc79sp714uuUrXb5Fy3E1y/tEmz8lV0AfeE217WjaslG4wld6x8YzmPoEq+Zo12bO/b+qI57vdzHmtT7QMsTFBI4MUxLbNnGNIdk50w6fD+sJ0PqAtLC/nkeBfzDZYtzBWwuQneDx9eBcpyBYgm9r/oYo8UZ3mviGsHQEs7X5VXhyytwF9Qh6rlUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wxquqHwHheJRay+jT6mnUOObAqx9P1gyl2AxEy8peZE=;
- b=RzexYrauF1dCpPx0Cp2rdlGBXELbF39e36BUhQL1gbu9u88g28hByK0QA3gPSq2X2SzmVgEdQ5ELDAe7dhmwaZ0tXI2H7Zs3pjGxcHZ1IvNzoWkjS6nvQXFyApSaeePD89vtYcd5nH2NphQX+42v2JwtZ0Wrw0rUX+DqNZ81EMMqI/I86Vnl6c20ZjNd2MOKbBMaJxJcolqsJImNj7Enf3pmTLVrvhwA9nHPsa3R9OaxxmjKv2ZXcVf2pCEjyEPfpx/hX5RM/dJ6ko4OOgLLkcwnENYrcwwf+Ljj0buHu1qxHASGpv40ItqaivmCZ/1rbUZHXT+Mog+gsDdTvVbOyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8691.namprd12.prod.outlook.com (2603:10b6:a03:541::10)
- by SA1PR12MB8094.namprd12.prod.outlook.com (2603:10b6:806:336::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Sun, 25 Aug
- 2024 08:20:00 +0000
-Received: from SJ2PR12MB8691.namprd12.prod.outlook.com
- ([fe80::63d0:a045:4ab1:d430]) by SJ2PR12MB8691.namprd12.prod.outlook.com
- ([fe80::63d0:a045:4ab1:d430%4]) with mapi id 15.20.7897.014; Sun, 25 Aug 2024
- 08:19:59 +0000
-Message-ID: <a1b025a9-4fa0-42d8-9ad7-5a3888574b3f@nvidia.com>
-Date: Sun, 25 Aug 2024 11:19:49 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 2/6] netdev_features: remove unused
- __UNUSED_NETIF_F_1
-To: Eric Dumazet <edumazet@google.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- David Ahern <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew@lunn.ch>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240821150700.1760518-1-aleksander.lobakin@intel.com>
- <20240821150700.1760518-3-aleksander.lobakin@intel.com>
- <CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
-From: Gal Pressman <gal@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <CANn89iL+VTJ6tEe-PZ24h+0U9BYs0t4gZDndiy7j1DwuKMBEFg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: GV3P280CA0017.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:150:b::15) To SJ2PR12MB8691.namprd12.prod.outlook.com
- (2603:10b6:a03:541::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A056F2F6;
+	Sun, 25 Aug 2024 08:25:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38698A5F;
+	Sun, 25 Aug 2024 08:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724574299; cv=none; b=mmsx4zuve7Yk9s5TRp3wIaSlQx24iyVjZ86YYAxqXmVSFEXIOsiuytSarJYCeAY44i3Nv8ffaxuJXlC9BXiLH+fa0XVkCGw09+4N10ZBJKes3uoIsvwX5kIDntPjRimygnuzvrAUVW/FS9IqSvyRlmW4iXagpz/+xvc/KzNARfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724574299; c=relaxed/simple;
+	bh=qys+6otdWMnaNL1Kde4B/ALIofTqT+C5sT89c4vfQY8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cjmhl5aBLhiOMRr2kMqlqAgASNbz/bGZvVMeiMIG8j0nvcr8piJSyzN2QJ9AkGSCFhLjbXo6i+tSUp6hb8OIcRm/g7czmIOo4GTv8KJY23EBl5etouSBoF9OSbyyuUf+HA24XgfdL4UZrtUgJ7Ke1ckLx1HImjuswPDVVRZsrME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8BxnptW6spmk1UfAA--.39320S3;
+	Sun, 25 Aug 2024 16:24:54 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMAxE+BU6spmY6QhAA--.39828S2;
+	Sun, 25 Aug 2024 16:24:52 +0800 (CST)
+Message-ID: <a4faba2b-061a-44e9-b5c0-ea06c65764a2@loongson.cn>
+Date: Sun, 25 Aug 2024 16:24:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8691:EE_|SA1PR12MB8094:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a902895-a391-4cb7-26c9-08dcc4deb5c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?blVmM1Y3eVZ5ZHdwbkJTZmV5ait2N0N4OFNJNU8xT0k5aHpIRE5DNGFVVFRU?=
- =?utf-8?B?di9kS3l6Q252ZklnYkY0dWdLbEo1enVPL1JMYzBDYWMraFBJNFFxZk94amoz?=
- =?utf-8?B?OW9TNWF4TUpwVnhGa2kvTjg2bEk3QWRTYWNsM3BPN05wSVNqcXpwazUxYlNq?=
- =?utf-8?B?YmMrd0VyVFdGUFJKSzlRRzJDYmF2djlYRzM2L1NRMWxTQW02Rk5XRURNWnY3?=
- =?utf-8?B?YzFwTmRTVjkrQkpCaE1MSnhPWGZ2WWRlbUp1UmxTb0haQlNnUWJvV1VrV3Fo?=
- =?utf-8?B?N2dXTjBMSlgzSzEwMDVmK2QzTjBoUUlTSTdtY0M2ZzVZeTdaSmNoWUh4YXpS?=
- =?utf-8?B?T2dkb3BoaE9yU2R2QlFmdHJOSTkxVDJtZStXWEhJczI0ZmtRbVg2YzhySXd2?=
- =?utf-8?B?Y2dsUzdzdDVXaytkWlhWQTdIaWpHRjVhcm1Zdy9nSE13TlNXMW0vWm5zMlBZ?=
- =?utf-8?B?VjdqWXhWS3Z3WGx6SUpNdENNblU4SjFHMG5oUkJyN3dPdDhQSWx6RzlYOWR2?=
- =?utf-8?B?TFJ6UE5wNGNNOGRFYWlmRU9oMDRTY1paSVdKK2RYaUlwNHFENmE5THRTVUx3?=
- =?utf-8?B?eUhBOVV4Mk5aSjViVFUzUnRiRFY4cEk3YWZHTUJhN1VYTHN0YzNwTjFob0k2?=
- =?utf-8?B?QTE5aFZ5VCtpRWJyczZQSmdORjJnRWtHckk1RHhkdjZ6dkxEV29RN2Y4MkZS?=
- =?utf-8?B?S1pHNVdQRFJBTXJpbW4xMW1Pc0l3Z2l5ejVxUkNWWlArdkYreENRR0tjL01B?=
- =?utf-8?B?aWVVdXYrdGtxQkpYVVoybmc5OGFCWWRaSTQ1RXlMNnU2cUJNTW5FNm5uTE5X?=
- =?utf-8?B?YXZUTlR6WFpMVzlldHAxUVpFYTAxYTlyYWtBSlNrQ3BZamk5a3dBUFhsWUhI?=
- =?utf-8?B?VHN0alZEVkk3TmZjenhkaXBlWUxYMXpobmd2VzBCUkxvRUJWUW9ITzNiMFBO?=
- =?utf-8?B?MTFRRllqaDYzRGp0ZUdsQnY5UFdHWDhrc0NkVnhIV3cvUFlwUXZNWW1FeE5L?=
- =?utf-8?B?M0ZkM1dHQ0VGcXVqL0sySXl3V25nZW9OaHFlZG1ZMDI2MnJLNk1qbjdxU1dX?=
- =?utf-8?B?MjhZeUpMODZLNWtIMFl6SnpiVWF2RWVFdTZFVTc5K0t1eFBieW1KQ2lzUFgz?=
- =?utf-8?B?aWZ0Lzh5QUFnUU56OXpwRVZkSGRtV3Y4UTBxSlU0TnpZMVNiMG51bXNCVkMx?=
- =?utf-8?B?VHBiZElPOE12R0ZWd2tCajg1ZWVZbTQ2R1pLTHR3aEdibTNlejNwdUFpNzRO?=
- =?utf-8?B?N3I3ZmFuKzRaeTdYZ1RqU1ovT1F4UUlkeUkrWEQvV0daM3AwT1lMUEFuZUcy?=
- =?utf-8?B?K25QU2twd2Nub05EdVMwR3VFQ0U1MVFSWGtOQWRzS2pQVU1oQm9GMGRUVlNX?=
- =?utf-8?B?cndqaHp6RkVoTlF5Q2NUOGtLLzFCU0lGeHdybFNuVFlsYUNWSFduT0h0dzRR?=
- =?utf-8?B?UHZINFdnc0FQV2xmZGcxNWlWc3dKZVk0a2J4QWlyYWc3YXlJMjhkYjFNUGdO?=
- =?utf-8?B?Tm51ZGRXRElFcU5ranFjbFlvOVVCck81K1pLZXk3RWxQbGJJZldad0FidUpR?=
- =?utf-8?B?elBTY2RsYmxuVStkQitma1N6WjA3WVNoZ3lGeGdtUXVKbHhIZ2NKZ28zMUZn?=
- =?utf-8?B?Ni9sVFdMbkhrUnVmWVM1ZEUrcjA4SXh6aDh0RCtDbU55bUhERFErQWE0Zm1X?=
- =?utf-8?B?NktXRVJyU0JIVG5iMDRrWkgxOWV1ZkoveitBZVlzOHZvRktDUmZqTVVXTGVD?=
- =?utf-8?B?TlhVcjA4NkorbWYwMTlzSmVlcmYxcFFmNW12N1RRNFFPT0FEeS9zOHVmdGhq?=
- =?utf-8?B?bGNZRElzTDdCTjJHdklNZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8691.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anR6dlRONUdMc1BXU29GazBoeEo3TlFCNURILzdmNld6L3VUNDhVU0lSTGJs?=
- =?utf-8?B?c1pyOVNQRGM0YW9ZODYrOFovOVdGNExGS083WjgvbHRSY1hvbFNDeGYyTGlE?=
- =?utf-8?B?YUFyVkR2TEhqdldpOHBKMDRLaVNFZHZ1bFlwcXNaRkpGSHpTZVd4Z0hMZzh3?=
- =?utf-8?B?eEE1ekU2M2g3MDkybzlrc1g2czJDZm5SUWlIcElVWnlqMHcvc3VaaCtmUmlM?=
- =?utf-8?B?T1hzdmlickRLZ0l5dlUyc3d1TU5vRXhFcS9YNkVBWlR1QnBqQXErek1nc0RG?=
- =?utf-8?B?M0FHTWVCZGhSWm5WOGNMOE1xNmIvS3A0U0piVVdNS200UzFCcjlOek1GUkkr?=
- =?utf-8?B?V3ZYZkdMQ2kxMUFod1JSRkxEYm1Ka2NSYVRXTU9hYmJzVzdoOE1USG9SSGxF?=
- =?utf-8?B?eXZibndmTUpJM3cxWDZwOG5NdjBua2tObFJxbDdieXl0TE9GczhxWU1Iamkx?=
- =?utf-8?B?dDkzSzAvZm9MeHBoa3ZYOVl4TDJvY3V1UC9iRGQzdUZGdEFPcW15NDI0aEZa?=
- =?utf-8?B?bE9YenNXT1ZoWm16WHNESk4xZXFlUGxxVzV5Sko0dVc1YnJzMjUwQ0tXaHRE?=
- =?utf-8?B?TW1TbXJ6QzY3M1grWEd5SHNxcWc3K0FCRlpQU29LbkxnWS9YQWFmR1JpMjF1?=
- =?utf-8?B?SzBiUkdWd0xGWmhyaHRoYUJFMmdzZHFSMkhPQXBMcmZzeGdKL0RaT04wREc5?=
- =?utf-8?B?NllRVVlid1BSakxVbmV4eUsyTGdMK3NrOHNwQTZib05FVkN4eldQaVMrc29j?=
- =?utf-8?B?WHBGR2l6blg1bDEzaFRJWVJvSTJkQ0NBclRpb1hLRGtTOVpZclZuazdHSHdS?=
- =?utf-8?B?bkpkSDRZTWZWOWdsUGpmM05rTDQzSEV6MzBSUTBvV0FhVHExM2pqdFFMOE16?=
- =?utf-8?B?WmpGZVhsSmpoUnVBM2hDbXRlMzM1VDJ5QzBndlJtTWFGQjR4TjdPR3dHb0J6?=
- =?utf-8?B?VlpyMEhyQTY4cHV0QnkwU3N5ZEZKV0dZYWtVUUxMelNPaEl2Qk9oNWxtR2kr?=
- =?utf-8?B?V1N0UnJiUXFSVUdZYXh5d2FUTnhVOCs4QmNuTjh0cUI5ZUczK2FjU3FSK0Fo?=
- =?utf-8?B?a1VCU1IrblFyajFHRUFPazUwRnRjWUJCRHp0Q2xVTFVrOXZFc1Z4QjFyMDFB?=
- =?utf-8?B?Vkl0Q052bWEzZE12ZldoY3ZGTC9TMFFpSE5SUEZWb3M3ZVQ1anFEbEplY2VU?=
- =?utf-8?B?RUMyZ2tqQUNucVZYZlFtNktuUUZaVlc3a0R2U2ZoWjBqUWp5UE41SlF0OUZi?=
- =?utf-8?B?ZXU0QmQ3YmZta0NkTHhzUU85eUJrMTI0VDNRdkg4d09Qb2dyRXBIUWxqNVNk?=
- =?utf-8?B?UVlhOStIZGM0S3J3YWcwQkh6d0R0K1gyUFRTYllJeUZFVUYrYWhOSlg2b1dC?=
- =?utf-8?B?NWlsd0lsYXdVMHVJMFhUL3BMVE00eGVDYkM4Q2ZGSUkvMkRvYmU4YkFLSXdU?=
- =?utf-8?B?cnRTTTRFbTd2YVpCcjZ3dGF4QjNTVy82MDZCSUtBZm1qYUVvNVN1eFB0OXho?=
- =?utf-8?B?cDg2TWpCamFKSDdOOVE3V0tnVFhpcFU0Q3NCYjNTVGZjd0N5L3pNdTErQkI1?=
- =?utf-8?B?NjF1UlNPTmFmQXkwUE9sSTkybkdPZG9taXRaNDlKV0dQQ0Y1Uy9xM0ptL0hM?=
- =?utf-8?B?Tmc5NTJ0TStqRWV3MVRNblU4YkU2MUJjSGU3NTV4bkdqd0JGWllHN1FMbTZR?=
- =?utf-8?B?RmlqUlpIcEdwbWgxWHJ4YzRNTTFqQmpRamJ2VzZZcHlpZVhjbUU3QlBSK09K?=
- =?utf-8?B?akNwWTAvS3pWNGpwcWJsZ3dBVVpobEJCR1pKRUZKMkVNUWF1V2tDd3h4bFdy?=
- =?utf-8?B?K0VITzdzdUxhdXNZN3R2MnRSQzZwdHRXbUltcnBsVzZzZ2ExVkdyZmE3eFdo?=
- =?utf-8?B?d2l1UXdzM2dtNkZEa3hNZkx5SDFhSU5wbGZmVU5KZ1lyUkcvMll2NGtlNUZk?=
- =?utf-8?B?QW85Y2dHeHN4aTdmUFZ0QVgyMnZwZ3htNkZIKzA3RGJ1RDZ5b2hzdTRHRys4?=
- =?utf-8?B?VmI0cTVzR0N1bWY0WVJlbStxNUlnbExURWJ3TGhORmdBcDZqOUlJRDJXTUlk?=
- =?utf-8?B?VFUyNzZjTFJPcmIrU3JuTXJCVXFxTTFobFBpVlFPUmY3ZWhHZXdPMDdBVTVE?=
- =?utf-8?Q?r5lo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a902895-a391-4cb7-26c9-08dcc4deb5c3
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8691.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2024 08:19:59.7132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jSKtXxUIjeDzEj0AmtW1nRj94VQVkgaYzyD5jtsWQOTYHqtjNkd4KFVbQ06b7/Ml
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8094
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ p.zabel@pengutronix.de, zhuyinbo <zhuyinbo@loongson.cn>,
+ Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang <wanghongliang@loongson.cn>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+ <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+ <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
+ <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
+ <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
+ <778e50bc-58db-42e6-aee3-3b1e01ca227d@loongson.cn>
+ <efb7bba5-b19c-49f5-8ff5-214ce070015d@kernel.org>
+Content-Language: en-US
+In-Reply-To: <efb7bba5-b19c-49f5-8ff5-214ce070015d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxE+BU6spmY6QhAA--.39828S2
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAQEABGbJzHYDcAAAsi
+X-Coremail-Antispam: 1Uk129KBj93XoW3AFy5GFy7WFW8Xw47tF1kJFc_yoW7Aw18pF
+	s5JayDAryUtr1rZr1Ut3W8JFWFyr98J3WDXr18XF17JayDtr1jqr17ZF4qgryfXr48Jryj
+	qr1jqF9rZF4UZrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	kF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4U
+	MxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
+	0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
+	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20x
+	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
+	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0Urc3UUUUU==
 
-On 21/08/2024 18:43, Eric Dumazet wrote:
-> On Wed, Aug 21, 2024 at 5:07 PM Alexander Lobakin
-> <aleksander.lobakin@intel.com> wrote:
+
+在 2024/8/25 14:55, Krzysztof Kozlowski 写道:
+> On 25/08/2024 05:34, 郑豪威 wrote:
+>> 在 2024/8/12 16:25, Krzysztof Kozlowski 写道:
+>>> On 12/08/2024 10:09, 郑豪威 wrote:
+>>>> 在 2024/8/9 18:05, Krzysztof Kozlowski 写道:
+>>>>> On 09/08/2024 11:55, 郑豪威 wrote:
+>>>>>>>>>> +    description: Enables fractional-N division. Currently,
+>>>>>>>>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>>>>>>>>> +
+>>>>>>>>>> +  rts-invert:
+>>>>>>>>>> +    description: Inverts the RTS value in the MCR register.
+>>>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>>>>> +
+>>>>>>>>>> +  dtr-invert:
+>>>>>>>>>> +    description: Inverts the DTR value in the MCR register.
+>>>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>>>>> +
+>>>>>>>>>> +  cts-invert:
+>>>>>>>>>> +    description: Inverts the CTS value in the MSR register.
+>>>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>>>>> +      and Loongson LS7A bridge chips.
+>>>>>>>>>> +
+>>>>>>>>>> +  dsr-invert:
+>>>>>>>>>> +    description: Inverts the DSR value in the MSR register.
+>>>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>>>>> +      and Loongson LS7A bridge chips.
+>>>>>>> Same questions for all these. Why choosing invert is a board level
+>>>>>>> decision? If it "should be used" then why it is not used always?
+>>>>>>>
+>>>>>> Because these features are not applicable to all chips, such as
+>>>>>> 'fractional-division',
+>>>>> Hm?
+>>>>>
+>>>>>> which is currently supported only by 2K1500 and 2K2000, and for
+>>>>>> Loongson-3 series
+>>>>> These are SoCs. Compatible defines that. Please align with your
+>>>>> colleagues, because *we talked about this* already.
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>> I consulted with my colleagues and would like to confirm with you. For
+>>>> the five
+>>>>
+>>>> properties provided, fractional-division is offered as a new feature,
+>>>> supported by
+>>>>
+>>>> 2K1500 and 2K2000. As for the invert property, it is due to a bug in our
+>>>> controller,
+>>>>
+>>>> and its usage may vary across different chips. Should we add different
+>>>> compatible
+>>>>
+>>>> values to address these issues for different chips, whether they are new
+>>>> features or
+>>>>
+>>>> controller bugs?
+>>> How did you align? We had already talks with you about this problem -
+>>> you need specific compatibles. How you explain above properties, all of
+>>> them are deducible from the compatible, so drop them.
+>>>
+>>> Your entire argument above does not address at all my concerns, so
+>>> before you respond repeating the same, really talk with your colleagues.
+>>>
+>>> One of many previous discussions:
+>>> https://lore.kernel.org/linux-devicetree/25c30964-6bd3-c7eb-640a-ba1f513b7675@linaro.org/
+>>>
+>>> https://lore.kernel.org/linux-devicetree/20230526-dolly-reheat-06c4d5658415@wendy/
+>>>
+>>> I wish we do not have to keep repeating the same to Loongson. Please
+>>> STORE the feedback for any future submissions, so you will not repeat
+>>> the same mistakes over and over.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> Hi:
 >>
->> NETIF_F_NO_CSUM was removed in 3.2-rc2 by commit 34324dc2bf27
->> ("net: remove NETIF_F_NO_CSUM feature bit") and became
->> __UNUSED_NETIF_F_1. It's not used anywhere in the code.
->> Remove this bit waste.
+>> I have been aligning with my colleagues over the past few days and
 >>
->> It wasn't needed to rename the flag instead of removing it as
->> netdev features are not uAPI/ABI. Ethtool passes their names
->> and values separately with no fixed positions and the userspace
->> Ethtool code doesn't have any hardcoded feature names/bits, so
->> that new Ethtool will work on older kernels and vice versa.
-> 
-> This is only true for recent enough ethtool (>= 3.4)
-> 
-> You might refine the changelog to not claim this "was not needed".
-> 
-> Back in 2011 (and linux-2.6.39) , this was needed for sure.
-> 
-> I am not sure we have a documented requirement about ethtool versions.
-> 
+>> reviewing previous discussions. Based on these, I have made the
+>>
+>> following modifications according to the differences in the controller:
+>>
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - enum:
+>> +          - loongson,ls7a-uart
+>> +          - loongson,ls3a5000-uart
+>> +          - loongson,ls2k2000-uart
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls2k1000-uart
+>> +              - loongson,ls2k0500-uart
+>> +          - const: loongson,ls7a-uart
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls2k1500-uart
+>> +          - const: loongson,ls2k2000-uart
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls3a6000-uart
+>> +          - const: loongson,ls3a5000-uart
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  clock-frequency: true
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - clock-frequency
+>> +
+>> +allOf:
+>> +  - $ref: serial.yaml
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
+>> +
+>> +    serial@1fe20000 {
+>> +        compatible = "loongson,ls2k1000-uart", "loongson,ls7a-uart";
+>> +        reg = <0x1fe20000 0x10>;
+>> +        clock-frequency = <125000000>;
+>> +        interrupt-parent = <&liointc0>;
+>> +        interrupts = <0x0 IRQ_TYPE_LEVEL_HIGH>;
+>> +    };
+>>
+>> Does this modification meet the expectation?
+> Yes, assuming ls7a is a specific SoC, not a family of SoC.
+>
+> Best regards,
+> Krzysztof
 
-This is a nice history lesson, so before the features infrastructure the
-feature bits were considered as "ABI"?
+I got it, thank you for your reply. I will update the discussion
 
-I couldn't find a point in time where they were actually defined in the
-uapi files?
+content in the next version.
+
+Best regards,
+
+Haowei Zheng
+
 
