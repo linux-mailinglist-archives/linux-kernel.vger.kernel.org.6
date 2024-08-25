@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-300349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E8395E2A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:19:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CEF95E2A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF679281ECC
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA2DB20B81
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602CF6F303;
-	Sun, 25 Aug 2024 08:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB10D5FBBA;
+	Sun, 25 Aug 2024 08:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="de6NWhhs"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUIR/bnt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A332D6F2F8;
-	Sun, 25 Aug 2024 08:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91FEAD2
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724573927; cv=none; b=mBt1T1dQ0zGeMGqFcjo2zfFtFl17bTJguKAOfPcPyJd3sXvQKgZA1QguFbaIMTiiB4SJTaFJV0SLwIjPN/YdaeTzkl/lHN9cK0eeXzkuLOpIwM5SP3VHoEVmMrkL4akDZgrw25MDDfteaPR4xQUWaH7UvSW5ZNzusd85+HduUs0=
+	t=1724573899; cv=none; b=tujjIrpmKNQ6aVaXOnS8z2gW9FMtB3V8jPH6PY6HEEGuD/KNbWG5THY8l5YVFNbIn0eGldnM0ZPeE6M7db2Mk8SZ/mXF7ddQohsaErRNrjVe5dkBP7gWTkVweJTq9WWG0yAe0H5KC8GwKS3QQxY7WNf271ZoP31+WHcgGvpItMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724573927; c=relaxed/simple;
-	bh=PptGPdsSiCxQygWbPxjtc8rFKK839L3jUNBstFDR5ps=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SL9GXVRM+NUpy2ZQ09xSoUJeOG4LevNp3xZd8SCPJE+LxTDnf0aM3PHjkmDtI+DCf6/mgnTK/qKbCs4MkqXfZNbzAQNLlCI0VXFpbOlBh9qvm4Q2j3GSqdDKgMG+OuZGqXtVfDDUqkaFgLWPhS0hw9I2Dd0Q2Ve6HouF642DErU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=de6NWhhs; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724573914;
-	bh=FpY/AOVbICm4AfOKvhjlskWc6vstiHFw82BA0qUrDLE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=de6NWhhsNgviI2aJXgINB0i/eRW/KsKJ7z8LD1I1rVsZZppw9YVWipFg6LWwVob95
-	 qAgolLpvYWUQAR1ATD1uRxKAEA0OmULNI0TXKvAfsxvEooFL+RJuZIC2JRwkTwwrTB
-	 FwgCX57BF1TImCWBynDlXXmbsPC9JG3iSrRwzgk0=
-X-QQ-mid: bizesmtpsz14t1724573873t7wkdx
-X-QQ-Originating-IP: FbvOgYpWR+t2y1aEU38HPmN+G7PdIf74VUwR0lU0jCk=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 25 Aug 2024 16:17:51 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14574832690500442864
-From: WangYuli <wangyuli@uniontech.com>
+	s=arc-20240116; t=1724573899; c=relaxed/simple;
+	bh=wF8losfJndWVHuf38eSXLMRB4D0NVFWP1R6GEWiLL/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EwgfI3SL4D8x6p3xoL3WO+7A71BOMJzxD7i2YGwyxes0Tj40+yhWbEDId+dN9DTzCGuNgAJSOkCF9AmAcCioXCu8AT8wQZAXYNH1QgFI4MpM2MbPmjYEdtXeSxNdue8ouCnztgYnLJwMj4WPzUVlA6dp8bC9P/NWNR+Xliy3fvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUIR/bnt; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724573897; x=1756109897;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wF8losfJndWVHuf38eSXLMRB4D0NVFWP1R6GEWiLL/s=;
+  b=WUIR/bntkLcGgUjMx71pGrraAycLHF3ar6+lF7iWqypHtl8iOBI3i1z2
+   /R/smyYbcyss5Nyf1lV1uTZL17fO7y8njTHJ1QR9uNQ4YUpwB9hb5rbZ0
+   7/KxFk/UMp9p2Yg0GIKZJnqINGFnAMdVq1qLUh0h7ajQcLE+38/faGtiy
+   Xfm/B0+VOjEqSMyQkabWlNvVQKmDJnPw8EUf8zK8yIjqpGi6MyLTGhQHT
+   RZX5HYbekWp9M36cmNEmgokwsg+l7e3hVCBHF5mmrp9838pPVcB/T+n+m
+   XqkAAcFL7R7nE+qmXYjXQF+jXdmN5123iIlArVwtcz7KsI86XjFsMBOUX
+   g==;
+X-CSE-ConnectionGUID: Gn5lLO7cRYurT8GijXz1KA==
+X-CSE-MsgGUID: fKmBjdwBTv2f7p6jofgZug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="23186603"
+X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
+   d="scan'208";a="23186603"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:17 -0700
+X-CSE-ConnectionGUID: vap24edkTp6ORMt305zOqQ==
+X-CSE-MsgGUID: /SJl8KWMQHmq63rh3+8HCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
+   d="scan'208";a="67014939"
+Received: from daliomra-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.196])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:15 -0700
+From: Kai Huang <kai.huang@intel.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
 	bp@alien8.de,
-	dave.hansen@linux.intel.com,
+	dave.hansen@intel.com,
 	hpa@zytor.com,
-	wangyuli@uniontech.com,
-	seanjc@google.com,
-	xiangzelong@uniontech.com
-Cc: x86@kernel.org,
+	peterz@infradead.org
+Cc: kirill.shutemov@linux.intel.com,
+	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
-	wubo@uniontech.com,
-	guanwentao@uniontech.com,
-	linux-sgx@vger.kernel.org,
-	jarkko@kernel.org,
-	haitao.huang@linux.intel.com,
-	sean.j.christopherson@intel.com,
-	kai.huang@intel.com,
-	bp@suse.de
-Subject: [PATCH v3] x86/cpu: Adjust the error message when BIOS does not support SGX
-Date: Sun, 25 Aug 2024 16:17:41 +0800
-Message-ID: <2FA59E9E3461354C+20240825081741.3890887-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	nik.borisov@suse.com
+Subject: [PATCH v2 0/2] Misc comments fixup in relocate_kernel_64.S
+Date: Sun, 25 Aug 2024 20:18:04 +1200
+Message-ID: <cover.1724573384.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,44 +78,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-When SGX is not supported by the BIOS, the kernel log still output
-the error 'SGX disabled by BIOS', which can be confusing since
-there might not be an SGX-related option in the BIOS settings.
+The assembly code of relcocate_kernel() takes some time to follow for
+newbies like me.  This series adds some comments to try to improve the
+readability hoping they could be helpful to others too.  Also fix an
+error (IIUC) in one comment.
 
-As a kernel, it's difficult to distinguish between the BIOS not
-supporting SGX and the BIOS supporting SGX but it's disabled.
+v1 -> v2:
+  - Add Kirill's tag.
 
-Therefore, update the error message to
-'SGX disabled or unsupported by BIOS' to make it easier for those
-reading kernel logs to understand what's happening.
+  v1: https://lore.kernel.org/lkml/q2y5vte3wwn5qde5p4nfmjfqtzxfen3nhjdyafc7nbirfidpvr@ro3djjz3pub4/T/
 
-Reported-by: Bo Wu <wubo@uniontech.com>
-Closes: https://github.com/linuxdeepin/developer-center/issues/10032
-Acked-by: Kai Huang <kai.huang@intel.com>
-Link: https://lore.kernel.org/all/a30f7700c7817b3e7e2f2bdb37d5c10a318b2c3b.camel@intel.com/
-Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/x86/kernel/cpu/feat_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Kai Huang (2):
+  x86/kexec: Fix a comment of swap_pages() assembly
+  x86/kexec: Add comments around swap_pages() assembly to improve
+    readability
 
-diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
-index 1640ae76548f..4a4118784c13 100644
---- a/arch/x86/kernel/cpu/feat_ctl.c
-+++ b/arch/x86/kernel/cpu/feat_ctl.c
-@@ -188,7 +188,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
- update_sgx:
- 	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
- 		if (enable_sgx_kvm || enable_sgx_driver)
--			pr_err_once("SGX disabled by BIOS.\n");
-+			pr_err_once("SGX disabled or unsupported by BIOS.\n");
- 		clear_cpu_cap(c, X86_FEATURE_SGX);
- 		return;
- 	}
+ arch/x86/kernel/relocate_kernel_64.S | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+
+base-commit: e77f8f275278886d05ce6dfe9e3bc854e7bf0713
 -- 
-2.43.4
+2.46.0
 
 
