@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-300343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961C195E29D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:13:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F147095E2AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48358281E08
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2B5281822
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA96BFB0;
-	Sun, 25 Aug 2024 08:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2972F7441F;
+	Sun, 25 Aug 2024 08:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eBJAlGQy"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="J51wO6Gf"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211B62837B
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F67364AE;
+	Sun, 25 Aug 2024 08:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724573607; cv=none; b=mCmAgmntw+LgsnGcxc+Kcz3v2mj3J1VDf4w4ZhR0IUKvS+ZNxovFC+KbXUXtpVwgQaE74v3uM52HMCmhwmWpm9co1ialV///iGNsf38iIf2J+QMEZiIqxPkKK8lNZJApY1yhUq8jx4r/22U+T+i6+kYekCuiy5UeMAErG41CD4w=
+	t=1724574475; cv=none; b=Z3pD6uTYAoQKLz1yF4fo63Og56O8A84ewDiMIrs9b/+gIcSF1Z/UrR9XRJSo7madVQI/mtYpNmDpTKxxUkL7iUWGcBJosu5rNHHVQ746IgyLi7O1LrKwTLIP38/E3fOQh0KM1UwozkEJBifkE8O1Xi1EpQiwzfE3y4yELCAyYok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724573607; c=relaxed/simple;
-	bh=SHBNGs6nn3QGwEz2EkHLl6q3ZvdoDOGioeL3/3TxkKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PDzpAvHdJQoYj0zjVkCYe5Fm0wf4GJQguzzye/ur6JSHlttHma3TrPAKNbeabeizMwMqDGUzKEMRCFJBJ+8UpqDrGj7n35Xyeeh54lLvuihmSmVXrqInv5AKYtBkEhNdfdp5h6cqF8c+sI4Wls8wBV8vkiA0wfCCketOrar7f1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eBJAlGQy; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3718ea278a8so474085f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 01:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724573604; x=1725178404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ITK0HFbFHliZoF59JxFYdp4nn3GH328FIrQJYLnEIkg=;
-        b=eBJAlGQyQRpjW79intIHN8SEg9ctc1gI0lkUbuoroLz6RFayeRxMZ5EjgcdPxF7NRv
-         Z55Vi7ShSVDQ4FB8RKJfULVnH8mdqd6AlWEXkBj4GOwLvZC04FVxKp/Is/NE11Icg63j
-         JCi2K087CGkudtd+qQv9joIAK+gE0LZTfL4krjY8G10EBqKhwiPd58tB4rkkgtAUOMUY
-         /X132IzWp0oHTI6yW+xQlCf7Se5Xdmpqf0T+dVC2T+sTgG9tII5T+p1s5iitfY7jORjy
-         XkY1VTvk3nEBpvEhi8/wI+5dQWHJoB90xCse6BFSBPJmICPd+/TR0tdAtfszncvLFBXk
-         kydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724573604; x=1725178404;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ITK0HFbFHliZoF59JxFYdp4nn3GH328FIrQJYLnEIkg=;
-        b=mka+hC3wMyiUKxkEpvyqGW8aCah8hm+9dycS6sYf/MEqmTnqDNRsfCX9onzpdld3b+
-         smMhQTzlYE9UJzrWNce/F+d3oQ2doRRk4aIE1oq1GxQV6dKMlQZ0FhiKkXB0F+qbtwSj
-         9vRnL+UOYJEAvr+b22x62Cw9rF9njWiQlklmO7zTFhYFERZUNCTiFguMxIQapEac+W6k
-         facaMSUtav5MqZQKeDZ5jab3maDyoizSoBrXFkig643hU7lAj3NAipqfN5Efsc6+xCbE
-         QaiDzRjFstxNPG1ds1tRLxF/qeeRioQP0iogkWNI7zNR2Ltdr7DYvXGSFdTqtEdF4TQD
-         BP4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaPnDROL3EfZJAGXoxZe11sTWFTjPt2CwbBinhpcchjJXBaMuv6Ob50lObBaYo8ZbZoivOI6pD0VPhxjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6RoXFDOZSqN6+cinah4NnXmdxXenkupx7IPb90EhppGMYv4BQ
-	vPXscy8c6gYIAfAcUHGqDvC9/z5WpyUrZaMaHecIfWulxaZQfRep89GDdKOO9vU=
-X-Google-Smtp-Source: AGHT+IE0rQ5gTDmF+PEUeAD4bdCX006kmQFqfDBA+PnlIbWdSgw9D/zdbLOgGaAFAvA6Oc7ya8RphA==
-X-Received: by 2002:a05:6000:1842:b0:36b:3394:f06f with SMTP id ffacd0b85a97d-37311900b7fmr2761757f8f.5.1724573604276;
-        Sun, 25 Aug 2024 01:13:24 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff5c4sm8147679f8f.78.2024.08.25.01.13.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 01:13:23 -0700 (PDT)
-Message-ID: <bad910c9-debb-421b-ba2c-5b214e39159f@linaro.org>
-Date: Sun, 25 Aug 2024 10:13:20 +0200
+	s=arc-20240116; t=1724574475; c=relaxed/simple;
+	bh=EzfTqwP5++54n0emJ1pPOQ13RC+y/TmNzsNT7yCk4w8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Fbq+/ZzuECtYoimEeM1URPduRFAAirLJjpI1FTXIF0+ME/XvVSkxSysJFf75lWhSP90jaM/7GELYKrtDBLia68GUbm9ajC+C8Wg5w5xqypuElrVpC4bN0VyYia/HPyDaMlq4woNd1LYKNyDrMHaULwMHj1uNLhQzYOf3M7xgc8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=J51wO6Gf; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724574467; bh=K9JDy1HTUTK/42il7BrDFNhHYqZjLglr18rgG3OYqpM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=J51wO6GfOlfNi+SMz/EkMgPANGOY5jYCCAuRP/eI3uJZXQ8ujKVRxN2TxgpJ/amQG
+	 lFMwgUdAOQ65adkY42+ql2tfQKpwuG9v4vLylRahlM8ndTFrnPHgtOiu+TyM3pTIUo
+	 Evo/lRboPZekN7uvxjIXNJPRJYyiesNi2aqOTeHI=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 3913681C; Sun, 25 Aug 2024 16:14:17 +0800
+X-QQ-mid: xmsmtpt1724573657tk9vp3f2y
+Message-ID: <tencent_F3E6370A4B6C7467779367AE3CB3363E9609@qq.com>
+X-QQ-XMAILINFO: MR/iVh5QLeieHUBSR0h8MKSzOutAdv4xELzxcoToh2vQs2nEQx+Z/dqlYhLW7y
+	 0K0Q3YA1Z4aq6Ij1E5NdvdYiNT2pGXcMNRLbLkzgGIEnCY1rx69xZsWbPZTlFvIWZpa6jfj6x0Lb
+	 T9AWamZ8ayhfd62BkCKeWdLqwC/iKRVsfEYHL1QL3N0v8md+Z5A3N7QMa6Px7NlmVa3+wAjSj5Is
+	 ZtsbJvH4J7icQotwafAyVHgjJV3IHf2ka0+pPsIgC/nuz7qKUEefBuLk2mKO0LF90TU41qV09ZI0
+	 iP9D4Fj+uigCpyFDdW7z0HjeCgG3MvvyJFvY7mms6ttgBHuZMLcajDHeK9CY43WvY5+BvciwJePm
+	 WOHreJj6DuVjF6PZ34B5HC8Iwa1SvnxabfTqnM168rYdjZScHvE82Dxeg7sRVkAEOtOK8dBGYZQ9
+	 L9VO5RKwYq93rfHnF8xw9do3lXnhf9Aaa85JNjioMMb90FiwqLHOwLFRXAdtlVahtUWjLc9g2SS8
+	 UI3a6LHNgXDDdQwZSVRSWgFr+FFBFkVjbyaHEYV1xsY+AflgLibPnR5NevCAXgKu2bTdVIliA5J7
+	 fTSizQiO1/j+/v6dnBHri09UY5UpA/zfIat2vj0v5vN56fLEv/GscMnuPFpx16/efVT7jmw8TfK4
+	 hZvjeJjZasxULv8SFAYXqzZGYu/rrQ0l5WiCCG17Qyk8TgdC0N9p5Q+R5mUw0MgNWNyLeMOIiqD9
+	 u9cYdm9DIMKchIM6x2b7p4YvEf/dqTj0ToDvjoZHfT4nWEPDvzs8j5N1ytOBrV3D9zRXsZQxnCoJ
+	 sL/p97pR9YvtKmp+g8uQJSSAwCDurFwfVzPHyJignA/4VkfIvWoXmE6Ud6Kaj6E2NZm28jTq7x5X
+	 McOb4WNrFmYKuzyv0Wnu9NTplRMe09fDpHxx6C0HXcdngfVKarhL2nuMwPCncO0PIo6/9xPgyK8a
+	 jp6BlzYrmVKGej1qXJHwcUfkGBpZHg
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: eadavis@qq.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] wifi: ath6kl: Check that the read operation returns a data length of 0
+Date: Sun, 25 Aug 2024 16:14:17 +0800
+X-OQ-MSGID: <20240825081416.2242421-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <2024082507-clay-riveting-16f3@gregkh>
+References: <2024082507-clay-riveting-16f3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] memory: pl353-smc: simplify with
- devm_clk_get_enabled()
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Roger Quadros <rogerq@kernel.org>,
- Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240823-b4-cleanup-h-guard-v1-0-01668915bd55@linaro.org>
- <20240823-b4-cleanup-h-guard-v1-7-01668915bd55@linaro.org>
- <20240823125637.00007fe4@Huawei.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240823125637.00007fe4@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/08/2024 13:56, Jonathan Cameron wrote:
-> With change below this becomes unconditional as we'll have already
-> returned in the loop for the good path.
+On Sun, 25 Aug 2024 09:25:37 +0200, Greg KH wrote:
+> > If the data length returned by the device is 0, the read operation
+> > should be considered a failure.
+> >
+> > Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > ---
+> >  drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+> > index 5220809841a6..2a89bab81b24 100644
+> > --- a/drivers/net/wireless/ath/ath6kl/usb.c
+> > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
+> > @@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
+> >  		ath6kl_err("Unable to read the bmi data from the device: %d\n",
+> >  			   ret);
+> >  		return ret;
+> > +	} else {
+> > +		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
+> > +		return -EIO;
 > 
-> Might as well use dev_err_probe() here as well to save a few lines.
+> Close, but not quite there.  ath6kl_usb_submit_ctrl_in() needs to verify
+> that the actual amount of data was read that was asked for.  If a short
+> read happens (or a long one), then an error needs to propagate out, not
+> just 0.  See the "note:" line in that function for what needs to be
+> properly checked.
 > 
->> -		err = -ENODEV;
->>  		dev_err(&adev->dev, "no matching children\n");
->> -		goto disable_mem_clk;
->> +		return -ENODEV;
->>  	}
->>  
->>  	of_platform_device_create(child, NULL, &adev->dev);
->>  	of_node_put(child);
-> 
-> An additional cleanup looks sensible here.
-> 
-> Push this last bit into the loop and use 
-> 
-> for_each_available_child_of_node_scoped()
-> 
-> Assuming you don't already have a patch doing that :)
+> hope this helps,
+Thanks for your analysis.
+I have carefully read your analysis and I am not sure if the following
+understanding is appropriate:
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 2a89bab81b24..35884316a8c8 100644
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@ -932,6 +932,15 @@ static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
 
-Yes, this could be simplified, thanks for the hint.
+        kfree(buf);
 
-Best regards,
-Krzysztof
++       /* There are two types of read failure situations that need to be captured:
++        * 1. short read: ret < size && ret >= 0
++        * 2. long read: ret > size
++        * */
++       if (req == ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP && ret != size) {
++               ath6kl_warn("Actual read the data length is: %d, but input size is %d\n", ret, size);
++               return -EIO;
++       }
++
+        return 0;
+ }
+
+BR,
+Edward
 
 
