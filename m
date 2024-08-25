@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-300344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36D295E29E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E8395E2A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50862824EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:16:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF679281ECC
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A6158203;
-	Sun, 25 Aug 2024 08:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602CF6F303;
+	Sun, 25 Aug 2024 08:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNRF05Vv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="de6NWhhs"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFD79EA
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A332D6F2F8;
+	Sun, 25 Aug 2024 08:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724573757; cv=none; b=gbthmK3fMfD1qwlRuELfW8li1JP+rv/0Aoyg2yVTGCMN1zKNciq7dDTWgPTtO0rED0x85PPJS6xbRiw7tR5xCVratbjvQy7ay15aAHSkw7Ete1WhNtevjpTzLv0aHzrguWXK8fPgGnuV4mVJj1i/CDkBySGx19+Y384L6X2xwzc=
+	t=1724573927; cv=none; b=mBt1T1dQ0zGeMGqFcjo2zfFtFl17bTJguKAOfPcPyJd3sXvQKgZA1QguFbaIMTiiB4SJTaFJV0SLwIjPN/YdaeTzkl/lHN9cK0eeXzkuLOpIwM5SP3VHoEVmMrkL4akDZgrw25MDDfteaPR4xQUWaH7UvSW5ZNzusd85+HduUs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724573757; c=relaxed/simple;
-	bh=AxTl/BHUEsZ0eckUPdXCZ05E/wVTep1+yRcokgxJzHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UYq9LKhoL7vdaBRjAHQKFyexZBzLpxQCBrfXewhpCKu/2mD5abVqguWIKf37yogDCuvTndYUdYhLMMWmo6IBbcT6eQXHKvWRpbIRXaQyAvCLYBnJqqMTTjwKUaOuA7TkoAcFifJzjSipBI7ycSuyqKvPDCrT9F1O14qhRm1Qf+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNRF05Vv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7C2C32782;
-	Sun, 25 Aug 2024 08:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724573756;
-	bh=AxTl/BHUEsZ0eckUPdXCZ05E/wVTep1+yRcokgxJzHg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZNRF05VvWFx0wf1zUsexdBCeQjhU+hWQyfj2wGqf9Y/nAojG5V52FQGDHOjIezClZ
-	 Kcsm7zmltgSX8W5ZLu6oTA7QakCiYBAst9xADgStXbCGbZ4dfJuP4UXR0QLzeGbBJd
-	 r27DpqnDqCGefPTyRiaMCua/4+zPZDSchm2xZ+hiarQHTZk3oaX2RAaCOlasA8Ddfi
-	 NaJQfs7hjCDBB1sWCfHDw7yT6XwqT8mmWVLa7H8+NRxU4gakK2b2XuLU/69LIhvKPL
-	 F96f0IQGwFC/hAix/JGZO/1iCvXOS3vyE29uWvB7ecg9DqxVouj+T3PercA9+lC99O
-	 Uiq9gkXu+Rw6w==
-Message-ID: <886da76d-f04e-46a6-b854-2148f7f6068d@kernel.org>
-Date: Sun, 25 Aug 2024 10:15:51 +0200
+	s=arc-20240116; t=1724573927; c=relaxed/simple;
+	bh=PptGPdsSiCxQygWbPxjtc8rFKK839L3jUNBstFDR5ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SL9GXVRM+NUpy2ZQ09xSoUJeOG4LevNp3xZd8SCPJE+LxTDnf0aM3PHjkmDtI+DCf6/mgnTK/qKbCs4MkqXfZNbzAQNLlCI0VXFpbOlBh9qvm4Q2j3GSqdDKgMG+OuZGqXtVfDDUqkaFgLWPhS0hw9I2Dd0Q2Ve6HouF642DErU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=de6NWhhs; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724573914;
+	bh=FpY/AOVbICm4AfOKvhjlskWc6vstiHFw82BA0qUrDLE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=de6NWhhsNgviI2aJXgINB0i/eRW/KsKJ7z8LD1I1rVsZZppw9YVWipFg6LWwVob95
+	 qAgolLpvYWUQAR1ATD1uRxKAEA0OmULNI0TXKvAfsxvEooFL+RJuZIC2JRwkTwwrTB
+	 FwgCX57BF1TImCWBynDlXXmbsPC9JG3iSrRwzgk0=
+X-QQ-mid: bizesmtpsz14t1724573873t7wkdx
+X-QQ-Originating-IP: FbvOgYpWR+t2y1aEU38HPmN+G7PdIf74VUwR0lU0jCk=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 25 Aug 2024 16:17:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14574832690500442864
+From: WangYuli <wangyuli@uniontech.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	wangyuli@uniontech.com,
+	seanjc@google.com,
+	xiangzelong@uniontech.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	wubo@uniontech.com,
+	guanwentao@uniontech.com,
+	linux-sgx@vger.kernel.org,
+	jarkko@kernel.org,
+	haitao.huang@linux.intel.com,
+	sean.j.christopherson@intel.com,
+	kai.huang@intel.com,
+	bp@suse.de
+Subject: [PATCH v3] x86/cpu: Adjust the error message when BIOS does not support SGX
+Date: Sun, 25 Aug 2024 16:17:41 +0800
+Message-ID: <2FA59E9E3461354C+20240825081741.3890887-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "memory: ti-aemif: don't needlessly iterate over
- child nodes"
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240824080235.56472-1-brgl@bgdev.pl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240824080235.56472-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On 24/08/2024 10:02, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> This reverts commit 23a641d5c2bce4c723fff9118a5d865ee6b9d05a.
-> 
-> The first-level children of the aemif node are not the device nodes (ones
-> containing the 'compatible' property) but the chip-select nodes which
-> instead have their own children.
-> 
-> of_platform_populate() will skip such nodes so we must indeed iterate
-> over the direct children of the aemif node. The problem here is that we
-> never call of_platform_depopulate() as it takes the root device as
-> argument. We only have an unpopulated chip-select nodes so we will leak
-> these devices if any of the calls to of_platform_populate() fails.
-> 
-> I don't have a batter idea right now but my patch was not correct so we
-> need to revert it. While at it: at least use the scoped variant of the
-> OF node iterator. Down the line, we should find a better solution to fix
-> this potential resource leak in error path.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/memory/ti-aemif.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+When SGX is not supported by the BIOS, the kernel log still output
+the error 'SGX disabled by BIOS', which can be confusing since
+there might not be an SGX-related option in the BIOS settings.
 
-I'll drop the original commit, because my upstream (arm/soc) might
-question this.
+As a kernel, it's difficult to distinguish between the BIOS not
+supporting SGX and the BIOS supporting SGX but it's disabled.
 
-Best regards,
-Krzysztof
+Therefore, update the error message to
+'SGX disabled or unsupported by BIOS' to make it easier for those
+reading kernel logs to understand what's happening.
+
+Reported-by: Bo Wu <wubo@uniontech.com>
+Closes: https://github.com/linuxdeepin/developer-center/issues/10032
+Acked-by: Kai Huang <kai.huang@intel.com>
+Link: https://lore.kernel.org/all/a30f7700c7817b3e7e2f2bdb37d5c10a318b2c3b.camel@intel.com/
+Signed-off-by: Zelong Xiang <xiangzelong@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/x86/kernel/cpu/feat_ctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/feat_ctl.c b/arch/x86/kernel/cpu/feat_ctl.c
+index 1640ae76548f..4a4118784c13 100644
+--- a/arch/x86/kernel/cpu/feat_ctl.c
++++ b/arch/x86/kernel/cpu/feat_ctl.c
+@@ -188,7 +188,7 @@ void init_ia32_feat_ctl(struct cpuinfo_x86 *c)
+ update_sgx:
+ 	if (!(msr & FEAT_CTL_SGX_ENABLED)) {
+ 		if (enable_sgx_kvm || enable_sgx_driver)
+-			pr_err_once("SGX disabled by BIOS.\n");
++			pr_err_once("SGX disabled or unsupported by BIOS.\n");
+ 		clear_cpu_cap(c, X86_FEATURE_SGX);
+ 		return;
+ 	}
+-- 
+2.43.4
 
 
