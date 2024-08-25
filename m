@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-300315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB9B95E245
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:56:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E25695E248
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C28B2132E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A31E1C213A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BFC4DA13;
-	Sun, 25 Aug 2024 06:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B80B4F602;
+	Sun, 25 Aug 2024 06:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Thasth8M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJuoVwSq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6D2B647;
-	Sun, 25 Aug 2024 06:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3158F48CCC;
+	Sun, 25 Aug 2024 06:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724568965; cv=none; b=sXmpLoL99AlF8q3GLP/mmLZwfMpGR+1UkLbgCI4yucxChWzq1IJM6qLyNyG11iMLFPvlL85YFHscwjrC1vG+1ivz3dFh7vMZaV+pbzL6O7/vTTCPEeufcXXZkv0EnqXZm7v3pxk3bTzl8bwtblc+MxLTHZ2lJyzeMAhb8HkGEq0=
+	t=1724569062; cv=none; b=PulFUg0ilOErXh+oPAr+62xsZDCk/GGRIl4E/pYc5rOaJaZSNaNAizWx8sdrLDR74S2SbrHoWUPlSq81Paazzwt+oTJiBHl748Ma9mpJXH1bkvBFm4wkpmcmsbm/IXJVWn0vzbN/nyAFQoZhJ0TTNcdGA9nd9Vg6/30WD5Zh0rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724568965; c=relaxed/simple;
-	bh=WT8l8RP5ckgdJm8xdE0uaqIa5UP0nizOqSwZQmdWIwk=;
+	s=arc-20240116; t=1724569062; c=relaxed/simple;
+	bh=LErsbjVHh/2RC4TzJkjoffgzZjjXdGkyTQ4ZdiQHAxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QdRLLNobO0W9PYibn4QtkMGIkvYEt4rIXHhS3m5moYDjin/OhCCSG4rcA6OjvnRom5BwZY1tSA6HhkD4Jq2O+R9lTTGcbl5XLnCuHdYYn+T6ulbOQvdEYHPQmDUQ6KnD2gvFCyYQ/0otcHRISWlReaYkKgS7FqzLwVLJfSji0mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Thasth8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39128C32782;
-	Sun, 25 Aug 2024 06:56:00 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ShKLBdA/mMu+fVikqiYuPTBJeGRSzaNBjFaFUAsC7PO0arKVpCCkAP9izPbME995HwQz6KkLcQSqUq1hc9ckJPBF2vafWzMHSytX+6+/2iKrrVw+QmTSMqfape+5AVBoWgryCgg+dudV+s6KIMSACapszaD188f6sCwJgTelrNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJuoVwSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE36C32782;
+	Sun, 25 Aug 2024 06:57:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724568965;
-	bh=WT8l8RP5ckgdJm8xdE0uaqIa5UP0nizOqSwZQmdWIwk=;
+	s=k20201202; t=1724569061;
+	bh=LErsbjVHh/2RC4TzJkjoffgzZjjXdGkyTQ4ZdiQHAxw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Thasth8MtncmnKwvt9jlHJodQ4wOB/K1gvr2zMEPkGn9xz5ANSZfVAVIUsk8+QGUE
-	 5sF4sd4gGmWN/cVfXUW0Y++J/m0plUkBtRl+ULWclm4diOhJdmiDrmiCuvHVfZAcE3
-	 261sjeX/E3zhWMghsvB2I+ArAEnwetlZmPsAqptKVZC66y5SedHFZ1Bd69TrPK0kiQ
-	 ixaw1ilGF+yHu4wcs7cUrbzptxoaN96K8lrjjm0yH/0IxUdogbpWtP0n99mzDt22jD
-	 qVkUNvNjl8owUrX0ZlFgaDEHZ9FYQTtV5GxjGOPF/Wifcj0rz4WLaQ4Njh/8DjdEyz
-	 QG2s435EWAxvQ==
-Message-ID: <efb7bba5-b19c-49f5-8ff5-214ce070015d@kernel.org>
-Date: Sun, 25 Aug 2024 08:55:57 +0200
+	b=FJuoVwSqKbrqpI8dt6tLIJiHK7NNGyg8gRNrbjtBSwShPZa9L3eJOQEwTbvhx6exE
+	 dtst60Du/LPcxeYe500yRtdyAkBSugm0pGLsMnPAKpJLMeslyYOCrYYmqvGT6QPscI
+	 j0EWLxvD+LSa1tANm3ALS90kTuqNArom3qDcmRDSutiQTFBQxKk8V6w2n3ClLXm8mK
+	 XQLWf8FXstcB0+STb9Uc69RPvYJocXtALhJNtgl6pv/KDrLncJtt2tVOyYIB7vdHSt
+	 Qxp8oGL6n55+4sgktwVyCQy+kkP4GTDZxMNQhXDd27ppZDB1nuC3McUHWn18TgXe8Q
+	 Ifa3PDIS6+RmQ==
+Message-ID: <1400d007-861d-432a-8fd6-a948556b5dcd@kernel.org>
+Date: Sun, 25 Aug 2024 08:57:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, p.zabel@pengutronix.de, zhuyinbo <zhuyinbo@loongson.cn>,
- Jianmin Lv <lvjianmin@loongson.cn>, wanghongliang <wanghongliang@loongson.cn>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
- <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
- <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
- <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
- <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
- <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
- <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
- <778e50bc-58db-42e6-aee3-3b1e01ca227d@loongson.cn>
+Subject: Re: [PATCH v3 5/7] dt-bindings: iio: pressure: bmp085: Add interrupts
+ for BMP3xx and BMP5xx devices
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240823181714.64545-1-vassilisamir@gmail.com>
+ <20240823181714.64545-6-vassilisamir@gmail.com>
+ <7eqtnkkgnyskkmecv7dtiyzd6invdl7xa56cih6fbuuu2jrprx@s4jpi4ls6dxn>
+ <20240824113511.GF9644@vamoiridPC>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,151 +108,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <778e50bc-58db-42e6-aee3-3b1e01ca227d@loongson.cn>
+In-Reply-To: <20240824113511.GF9644@vamoiridPC>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 25/08/2024 05:34, 郑豪威 wrote:
-> 
-> 在 2024/8/12 16:25, Krzysztof Kozlowski 写道:
->> On 12/08/2024 10:09, 郑豪威 wrote:
->>> 在 2024/8/9 18:05, Krzysztof Kozlowski 写道:
->>>> On 09/08/2024 11:55, 郑豪威 wrote:
->>>>>>>>> +    description: Enables fractional-N division. Currently,
->>>>>>>>> +      only LS2K1500 and LS2K2000 support this feature.
->>>>>>>>> +
->>>>>>>>> +  rts-invert:
->>>>>>>>> +    description: Inverts the RTS value in the MCR register.
->>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
->>>>>>>>> +
->>>>>>>>> +  dtr-invert:
->>>>>>>>> +    description: Inverts the DTR value in the MCR register.
->>>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
->>>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
->>>>>>>>> +
->>>>>>>>> +  cts-invert:
->>>>>>>>> +    description: Inverts the CTS value in the MSR register.
->>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>>>>>>>> +      and Loongson LS7A bridge chips.
->>>>>>>>> +
->>>>>>>>> +  dsr-invert:
->>>>>>>>> +    description: Inverts the DSR value in the MSR register.
->>>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
->>>>>>>>> +      and Loongson LS7A bridge chips.
->>>>>> Same questions for all these. Why choosing invert is a board level
->>>>>> decision? If it "should be used" then why it is not used always?
->>>>>>
->>>>> Because these features are not applicable to all chips, such as
->>>>> 'fractional-division',
->>>> Hm?
->>>>
->>>>> which is currently supported only by 2K1500 and 2K2000, and for
->>>>> Loongson-3 series
->>>> These are SoCs. Compatible defines that. Please align with your
->>>> colleagues, because *we talked about this* already.
->>>>
->>>> Best regards,
->>>> Krzysztof
->>> I consulted with my colleagues and would like to confirm with you. For
->>> the five
+On 24/08/2024 13:35, Vasileios Amoiridis wrote:
+> On Sat, Aug 24, 2024 at 09:45:43AM +0200, Krzysztof Kozlowski wrote:
+>> On Fri, Aug 23, 2024 at 08:17:12PM +0200, Vasileios Amoiridis wrote:
+>>> Add interrupt options for BMP3xx and BMP5xx devices as well.
 >>>
->>> properties provided, fractional-division is offered as a new feature,
->>> supported by
+>>> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/iio/pressure/bmp085.yaml | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
 >>>
->>> 2K1500 and 2K2000. As for the invert property, it is due to a bug in our
->>> controller,
->>>
->>> and its usage may vary across different chips. Should we add different
->>> compatible
->>>
->>> values to address these issues for different chips, whether they are new
->>> features or
->>>
->>> controller bugs?
->> How did you align? We had already talks with you about this problem -
->> you need specific compatibles. How you explain above properties, all of
->> them are deducible from the compatible, so drop them.
+>>> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+>>> index 6fda887ee9d4..eb1e1ab3dd18 100644
+>>> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+>>> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+>>> @@ -48,9 +48,14 @@ properties:
+>>>  
+>>>    interrupts:
+>>>      description:
+>>> -      interrupt mapping for IRQ (BMP085 only)
+>>> +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
 >>
->> Your entire argument above does not address at all my concerns, so
->> before you respond repeating the same, really talk with your colleagues.
+>> Supported by driver or device?
+>> If the latter, this should be constrained per device variant in
+>> allOf:if:then:.
 >>
->> One of many previous discussions:
->> https://lore.kernel.org/linux-devicetree/25c30964-6bd3-c7eb-640a-ba1f513b7675@linaro.org/
+> 
+> Hi Krzysztof,
+> 
+> Supported by some devices controlled by the same (just 1) driver.
+> Thanks for the hint, I will take a look how other drivers do it :)
+> 
 >>
->> https://lore.kernel.org/linux-devicetree/20230526-dolly-reheat-06c4d5658415@wendy/
+>>>      maxItems: 1
+>>>  
+>>> +  drive-open-drain:
 >>
->> I wish we do not have to keep repeating the same to Loongson. Please
->> STORE the feedback for any future submissions, so you will not repeat
->> the same mistakes over and over.
->>
->> Best regards,
->> Krzysztof
+>> Missing type, unless some other core schema defined it? But then I
+>> actually wonder if we need it.  Maybe this should be interrupt flag?
+>> Just like GPIO has such.
 > 
-> Hi:
+> I took it from the bindings/iio/imu/bosch,bmi323.yaml example which is
+> the same. You think something needs to change?
 > 
-> I have been aligning with my colleagues over the past few days and
-> 
-> reviewing previous discussions. Based on these, I have made the
-> 
-> following modifications according to the differences in the controller:
-> 
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - loongson,ls7a-uart
-> +          - loongson,ls3a5000-uart
-> +          - loongson,ls2k2000-uart
-> +      - items:
-> +          - enum:
-> +              - loongson,ls2k1000-uart
-> +              - loongson,ls2k0500-uart
-> +          - const: loongson,ls7a-uart
-> +      - items:
-> +          - enum:
-> +              - loongson,ls2k1500-uart
-> +          - const: loongson,ls2k2000-uart
-> +      - items:
-> +          - enum:
-> +              - loongson,ls3a6000-uart
-> +          - const: loongson,ls3a5000-uart
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clock-frequency: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clock-frequency
-> +
-> +allOf:
-> +  - $ref: serial.yaml
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
-> +
-> +    serial@1fe20000 {
-> +        compatible = "loongson,ls2k1000-uart", "loongson,ls7a-uart";
-> +        reg = <0x1fe20000 0x10>;
-> +        clock-frequency = <125000000>;
-> +        interrupt-parent = <&liointc0>;
-> +        interrupts = <0x0 IRQ_TYPE_LEVEL_HIGH>;
-> +    };
-> 
-> Does this modification meet the expectation?
 
-Yes, assuming ls7a is a specific SoC, not a family of SoC.
+You need type: boolean.
 
 Best regards,
 Krzysztof
