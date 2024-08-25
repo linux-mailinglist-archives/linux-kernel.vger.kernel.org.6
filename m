@@ -1,277 +1,225 @@
-Return-Path: <linux-kernel+bounces-300545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA8A95E4F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:36:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6935095E4F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 21:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97C0283872
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:36:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4526B21295
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 19:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481A513DDB6;
-	Sun, 25 Aug 2024 19:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D0E156225;
+	Sun, 25 Aug 2024 19:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhYsF8P8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cmHnKLWb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/1yXIiW8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4CB3207;
-	Sun, 25 Aug 2024 19:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1687E3987D;
+	Sun, 25 Aug 2024 19:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724614611; cv=none; b=UAUdxILkh4MMVKWQU4rJcR1iSev91Fi8gBdqu5KKIpvYiob+PK6ENh6v0XiNYcYRX7OLTcQQYFiZUggggkKvNkozYCOwFBANwC0qWEQXe5gFnjJ6TQWZ0UcgZZxtosTmN5iOiIbWJgmDCycZtqPkC7hecTqV309o3I2+fMD7y8I=
+	t=1724614706; cv=none; b=LbjqzR7nUrzvhzSCbt1DKZftOtXrYldiHqRF6zyORy8RS7tLC7E3n2MYZDSe+qE/cnAjDLfMk5LaReVwYzTU50j9dcG7TaVfv5jwowPqGILutgdY1LQFXOlmazsGSkZeidil9arlQ6IkJCFtu6o0pfi970zSlLlgMCJGIJfAtNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724614611; c=relaxed/simple;
-	bh=3j6GWV9iQp70RTJUvuuxizRoIPhQrRZTXKd2ZMf4lC8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7+v9i7PyXDopk8IKEgnJYnOtw1nfbqsKyzeEgFASfCV/pF3Ih9AXV8bZjbdGR03yDRxwKwMGYp8BE92H0yi0r+auUvXclgGv9XgSL0XVG+iZUwVO0RrnLUpZRx0MAhbltBIk6wPtndNx7Wh6eObjAcnLJevc9CsFbWgkEoDS1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhYsF8P8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950ECC4AF11;
-	Sun, 25 Aug 2024 19:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724614610;
-	bh=3j6GWV9iQp70RTJUvuuxizRoIPhQrRZTXKd2ZMf4lC8=;
-	h=Date:From:To:Subject:Reply-To:References:In-Reply-To:From;
-	b=fhYsF8P8OCT28xzfq2/1DjA9fwF/DeRErFeRKJ8yOBYMU1bKt50+nqmugTgErVhgq
-	 aS4uxTRMyrdrO/gtSripgjs55vYHzaqm0VsNOqUIqQg5QebSf68roiInBjKSSUAdqo
-	 ilvEHCxxbeKQssABeEyuCa5D/sxRavlB4WgQYPS4r5x3jyAhsrWz0leEqlj8+nXUWe
-	 eS/IfrN9U0qtHqz6qYrp174YI30INWhQBsEQxU4V5zg2B9TGlnqKWLIclP9rXy0xVN
-	 YVsUfyr93NPOlvBE05utOlDv5cfroKuz0ztdmqtmssnTC8zA31XViDk6jluxQShB26
-	 l8IJJU+No247Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3B512CE0D99; Sun, 25 Aug 2024 12:36:50 -0700 (PDT)
-Date: Sun, 25 Aug 2024 12:36:50 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <667bea49-f772-4093-93cd-c590b666330b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c28dbc65-7499-41a5-84d0-991843153b1a@paulmck-laptop>
- <20240823074705.GB12053@noisy.programming.kicks-ass.net>
- <eb929d94-6f0b-44a9-b408-feb81b228ff0@paulmck-laptop>
- <a122efbe-fd81-471d-89b7-e9257bf3ce49@paulmck-laptop>
- <20240824065434.GA26474@noisy.programming.kicks-ass.net>
- <1a1009b9-615f-44fc-8ef6-da3bbc773012@paulmck-laptop>
- <5a90aec0-9959-4bac-a479-d9c3c4dedd69@paulmck-laptop>
+	s=arc-20240116; t=1724614706; c=relaxed/simple;
+	bh=/HyReDsS/Q6abv3UjVGJuEKWi48E0Jj7lks2zvcH4Xo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eIVXCd6UjueWTGYYEYKlU83y6miSEKICp4xhUz4fjRLdNoWhmgzzaIfgxSuQvzQwTgQvP/1vLXqC5P1foPys6640uL2qGcSFlcy4LhXe5RNn0fwodCfNk3q/+44WANeA2GHihfMn/YuZk6LKQ8PT2VkjII037Gw2USyCKPOwTQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cmHnKLWb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/1yXIiW8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724614703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jJSKvEmkkzKpv96rA25JobqOC+oEXXuQpxCL8IroZqk=;
+	b=cmHnKLWbQNXA/+iyZvEpPaoFirFl2niT1BGEyekcbBr/gvn+f0bBxShpXQ+wh2C93kc+IT
+	jOnEz+gXvynoIybwJF5SABT3PSeLjMM4/00EwKYsm0yCIRRsrx+2D2dBtynjp1nFpHCOBG
+	Qva4hyQSREKxL4Rr+k1PigdH0BDm109IynQB25rfsNMaMxPY/c4tBlAP3DPh+KOU9xJ6pd
+	PtQ273g0pscLvX/1Jqplw1ECHZjap1HLfjX/aBO8Tw2N116qknRrUe/sZCRnUOYVCToBOn
+	16AxudUM1BzOslAjVq/ekZhwQVyteiXVPhMhYZsRfpI9E85x86wU0/Zdyz8FqA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724614703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jJSKvEmkkzKpv96rA25JobqOC+oEXXuQpxCL8IroZqk=;
+	b=/1yXIiW8Ghqg/98u5IEKBs3qa84ZRMI+Amn6liwCA+ecB6yQkJydjWoqnKhZc+e+hVb56s
+	X7LdogQcik1ArxCw==
+To: Xingyu Li <xli399@ucr.edu>, anna-maria@linutronix.de,
+ frederic@kernel.org, linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>
+Subject: Re: BUG: general protection fault in hrtimer_try_to_cancel
+In-Reply-To: <CALAgD-4F7g=Fqy0KL0t0SaZburRiENsnzm_CYbb8SzbAk1+8oA@mail.gmail.com>
+References: <CALAgD-4F7g=Fqy0KL0t0SaZburRiENsnzm_CYbb8SzbAk1+8oA@mail.gmail.com>
+Date: Sun, 25 Aug 2024 21:38:22 +0200
+Message-ID: <87plpwe6kx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a90aec0-9959-4bac-a479-d9c3c4dedd69@paulmck-laptop>
+Content-Type: text/plain
 
-On Sat, Aug 24, 2024 at 07:10:21PM -0700, Paul E. McKenney wrote:
-> On Sat, Aug 24, 2024 at 08:26:57AM -0700, Paul E. McKenney wrote:
-> > On Sat, Aug 24, 2024 at 08:54:34AM +0200, Peter Zijlstra wrote:
-> > > On Fri, Aug 23, 2024 at 02:51:03PM -0700, Paul E. McKenney wrote:
-> > > 
-> > > > > > Does the below help any? That's more or less what it was before Valentin
-> > > > > > asked me why it was weird like that :-)
-> > > > > > 
-> > > > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > > > > index 6be618110885..5757dd50b02f 100644
-> > > > > > --- a/kernel/sched/fair.c
-> > > > > > +++ b/kernel/sched/fair.c
-> > > > > > @@ -13107,7 +13107,6 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
-> > > > > >  	 * and we cannot use DEQUEUE_DELAYED.
-> > > > > >  	 */
-> > > > > >  	if (p->se.sched_delayed) {
-> > > > > > -		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
-> > > > > >  		p->se.sched_delayed = 0;
-> > > > > >  		p->se.rel_deadline = 0;
-> > > > > >  		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
-> > > > > 
-> > > > > Removing that line from 2e0199df252a still gets me the complaint about
-> > > > > __SCHED_FEAT_DELAY_ZERO being undefined.  To my naive eyes, it appears
-> > > > > that this commit:
-> > > > > 
-> > > > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> > > > > 
-> > > > > Need to be placed before 2e0199df252a.  Of course, when I try it, I
-> > > > > get conflicts.  So I took just this hunk:
-> > > > > 
-> > > > > ------------------------------------------------------------------------
-> > > > > 
-> > > > > diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-> > > > > index 97fb2d4920898..6c5f5424614d4 100644
-> > > > > --- a/kernel/sched/features.h
-> > > > > +++ b/kernel/sched/features.h
-> > > > > @@ -28,6 +28,11 @@ SCHED_FEAT(NEXT_BUDDY, false)
-> > > > >   */
-> > > > >  SCHED_FEAT(CACHE_HOT_BUDDY, true)
-> > > > >  
-> > > > > +/*
-> > > > > + * DELAY_ZERO clips the lag on dequeue (or wakeup) to 0.
-> > > > > + */
-> > > > > +SCHED_FEAT(DELAY_ZERO, true)
-> > > > > +
-> > > > >  /*
-> > > > >   * Allow wakeup-time preemption of the current task:
-> > > > >   */
-> > > > > 
-> > > > > ------------------------------------------------------------------------
-> > > > > 
-> > > > > That makes the build error go away.  Maybe even legitimately?
-> > > 
-> > > Yep.
-> > > 
-> > > > > Just to pick on the easy one, I took a look at the complaint about
-> > > > > cfs_rq being unused and the complaint about __SCHED_FEAT_DELAY_ZERO
-> > > > > being undefined.  This variable was added here:
-> > > > > 
-> > > > > 781773e3b680 ("sched/fair: Implement ENQUEUE_DELAYED")
-> > > > > 
-> > > > > And its first use was added here:
-> > > > > 
-> > > > > 54a58a787791 ("sched/fair: Implement DELAY_ZERO")
-> > > > > 
-> > > > > Which matches my experience.
-> > > > > 
-> > > > > So left to myself, I would run on these commits with the above hunk:
-> > > > > 
-> > > > > 54a58a7877916 sched/fair: Implement DELAY_ZERO
-> > > > > 152e11f6df293 sched/fair: Implement delayed dequeue
-> > > > > e1459a50ba318 sched: Teach dequeue_task() about special task states
-> > > > > a1c446611e31c sched,freezer: Mark TASK_FROZEN special
-> > > > > 781773e3b6803 sched/fair: Implement ENQUEUE_DELAYED
-> > > > > f12e148892ede sched/fair: Prepare pick_next_task() for delayed dequeue
-> > > > > 2e0199df252a5 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-> > > > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-> > > > > 
-> > > > > And where needed, remove the unused cfs_rq local variable.
-> > > > > 
-> > > > > Would that likely work?
-> > > 
-> > > Sounds about right.
-> > > 
-> > > > > 
-> > > > > In the meantime, SIGFOOD!
-> > > > 
-> > > > Hearing no objections...
-> > > 
-> > > Yeah, sorry, I'm on holidays with the kids and not glued to the screen
-> > > as per usual :-)
-> > 
-> > No worries, and have a great holiday!!!
-> > 
-> > > > Given two patches each of which might or might not need to be applied to a
-> > > > given commit, I chose to rebase as follows:
-> > > > 
-> > > > e28b5f8bda017 sched/fair: Assert {set_next,put_prev}_entity() are properly balanced
-> > > > 8aed87410a695 EXP sched/fair: Provide DELAY_ZERO definition
-> > > > 	I took this from 54a58a7877916 sched/fair: Implement DELAY_ZERO.
-> > > > 49575c0087bc0 sched/fair: Prepare exit/cleanup paths for delayed_dequeue
-> > > > 14c3207fd2456 sched/fair: Prepare pick_next_task() for delayed dequeue
-> > > > be567af45dd04 sched/fair: Implement ENQUEUE_DELAYED
-> > > > 	I dropped the unused cfs_rq local variable from requeue_delayed_entity()
-> > > > ed28f7b3ac3f4 sched,freezer: Mark TASK_FROZEN special
-> > > > 48d541847b4a6 sched: Teach dequeue_task() about special task states
-> > > > ef3b9c5d038dc sched/fair: Implement delayed dequeue
-> > > > 	--- First bad commit with dequeue_rt_stack() failures.
-> > > > 876c99c058219 sched/fair: Implement DELAY_ZERO
-> > > > 	I added the cfs_rq local variable to requeue_delayed_entity()
-> > > > 
-> > > > This is on -rcu branch peterz.2024.08.23b.
-> > > > 
-> > > > I ran 50*TREE05 in a bisection, which converged on be567af45dd04, but only
-> > > > one run of the 50 had a complaint, and that was in enqueue_dl_entry(),
-> > > 
-> > > Hmm, I have one other report about that. Hasn't made much sense yet --
-> > > then again, as per the above mentioned reason, I'm not able to put real
-> > > time in atm.
-> > 
-> > I ran 1000*TREE03 on that same commit, no failures.  Just started
-> > 5000*TREE03, and will let you know what happens.  This will likely take
-> > better part of a day to complete.
-> > 
-> > > > not the dequeue_rt_stack() that I have been chasing.  I ran three
-> > > > additional 50*TREE05 runs on its predecessor (14c3207fd2456) with no
-> > > > failures.  I then ran 50*TREE03 on each of ed28f7b3ac3f4, 48d541847b4a6,
-> > > > and ef3b9c5d038dc.  Only this last ("ef3b9c5d038dc sched/fair: Implement
-> > > > delayed dequeue") had failure, and they were all the dequeue_rt_stack()
-> > > > failures I am chasing.  One of the runs also hung.
-> > > 
-> > > I'm a little confused now though; this is with the dequeue removed from
-> > > switched_from_fair() ?
-> > 
-> > Ah!!!  I thought that change was for the build issue, which I will
-> > admit puzzled me a bit.
-> > 
-> > > Looking at your tree, 49575c0087bc0 still has that dequeue. Does the
-> > > dequeue_rt_stack() issue go away with that line removed?
-> > 
-> > I will try it and let you know.  Thank you for reminding me!
-> 
-> Preliminary results show that removing the dequeue from that commit or
-> just from next-20240823 at the very least greatly reduces the probability
-> of the problem occurring.  I am doing an overnight run with that dequeue
-> removed from next-20240823 and will let you know how it goes.
+On Sat, Aug 24 2024 at 21:50, Xingyu Li wrote:
 
-No dequeue_rt_stack() or enqueue_dl_entry() issues in 5000*TREE03 runs, so
-I think we can declare the first to be fixed and the second to be rather
-low probability.  I also searched for "enqueue_dl_entry" in my employer's
-full fleet's worth of console output from the past week, and saw no hits.
-(Not too surprising, given that we don't do much RT here, but still...)
+Cc=: network folks.
 
-I did get what appears to me to be an unrelated one-off shown below.  I am
-including this not as a bug report, but just for completeness.  I didn't
-find anything like this from the fleet over the past week, either.
+> We found a bug in Linux 6.10. It is probably a null pointer dereference bug.
+> The reason is probably that in line 1615 of kernel/time/hrtimer.c,
+> before "seq = raw_read_seqcount_begin(&base->seq);", there is no null
+> pointer check for 'base'.
 
-Unicorns!!!  ;-)
+So something in the network code invokes hrtimer_cancel() in a teardown
+operation on a non-initialized hrtimer and hrtimers contrary to the timer
+wheel does not check for initialization. That's trivial to fix, see
+below.
 
-							Thanx, Paul
+But that does not explain the actual root cause. That NULL pointer
+dereference is just the messenger.
 
-------------------------------------------------------------------------
+This is gro_cells related:
 
-[   66.315476] smpboot: CPU 2 is now offline
-[   67.245115] rcu-torture: rcu_torture_read_exit: Start of episode
-[   69.232773] rcu-torture: Stopping rcu_torture_boost task
-[   70.290610] rcu-torture: rcu_torture_boost is stopping
-[   70.295436] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[   70.295444] smpboot: CPU 3 is now offline
-[   70.296343] #PF: supervisor write access in kernel mode
-[   70.296343] #PF: error_code(0x0002) - not-present page
-[   70.296343] PGD 0 P4D 0
-[   70.296343] Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
-[   70.296343] CPU: 14 UID: 0 PID: 414 Comm: kworker/u67:1 Not tainted 6.11.0-rc4-next-20240823-dirty #53827
-[   70.296343] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-[   70.296343] RIP: 0010:_raw_spin_lock_irq+0x13/0x30
-[   70.303668] Code: 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa fa 65 ff 05 7c c9 0e 6e 31 c0 ba 01 00 00 00 <f0> 0f b1 17 75 05 c3 cc cc cc cc 89 c6 e9 1b 00 00 00 66 2e 0f 1f
-[   70.303668] RSP: 0018:ffffa13840cafec0 EFLAGS: 00010046
-[   70.322799] rcu-torture: rcu_torture_read_exit: End of episode
-[   70.323615] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff9fb682c0ac40
-[   70.323615] RDX: 0000000000000001 RSI: ffffa13840cafe60 RDI: 0000000000000000
-[   70.323615] RBP: ffff9fb68294c300 R08: 000000000000041e R09: 0000000000000001
-[   70.323615] R10: 0000000000000003 R11: 00000000002dc6c0 R12: ffff9fb682b2ba80
-[   70.323615] R13: ffff9fb682c120c0 R14: ffff9fb682c120c0 R15: ffff9fb682c0ac40
-[   70.323615] FS:  0000000000000000(0000) GS:ffff9fb69f580000(0000) knlGS:0000000000000000
-[   70.323615] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   70.323615] CR2: 0000000000000000 CR3: 000000001ac2e000 CR4: 00000000000006f0
-[   70.323615] Call Trace:
-[   70.323615]  <TASK>
-[   70.323615]  ? __die+0x1f/0x70
-[   70.323615]  ? page_fault_oops+0x155/0x440
-[   70.323615]  ? _raw_spin_lock_irq+0x15/0x30
-[   70.323615]  ? is_prefetch.constprop.0+0xed/0x1b0
-[   70.323615]  ? exc_page_fault+0x69/0x150
-[   70.323615]  ? asm_exc_page_fault+0x26/0x30
-[   70.323615]  ? _raw_spin_lock_irq+0x13/0x30
-[   70.323615]  worker_thread+0x41/0x3a0
-[   70.323615]  ? __pfx_worker_thread+0x10/0x10
-[   70.323615]  kthread+0xd1/0x100
-[   70.323615]  ? __pfx_kthread+0x10/0x10
-[   70.323615]  ret_from_fork+0x2f/0x50
-[   70.323615]  ? __pfx_kthread+0x10/0x10
-[   70.323615]  ret_from_fork_asm+0x1a/0x30
-[   70.323615]  </TASK>
-[   70.323615] Modules linked in:
-[   70.323615] CR2: 0000000000000000
-[   70.323615] ---[ end trace 0000000000000000 ]---
+>  hrtimer_cancel+0x12/0x50 kernel/time/hrtimer.c:1447
+>  napi_disable+0x1b6/0x210 net/core/dev.c:6648
+>  gro_cells_destroy+0x12a/0x3d0 net/core/gro_cells.c:116
+
+gro_cells_init() invokes netif_napi_add() for each per cpu
+cell. netif_napi_add() invokes hrtimer_init().
+
+So how can gro_cells_destroy() have a non-initialized hrtimer?
+
+I defer that question to the network people
+
+Thanks,
+
+        tglx
+
+> The bug report is as follows, but unfortunately there is no generated
+> syzkaller reproducer.
+>
+> bridge0: port 2(bridge_slave_1) entered disabled state
+> bridge_slave_0: left allmulticast mode
+> bridge_slave_0: left promiscuous mode
+> bridge0: port 1(bridge_slave_0) entered disabled state
+> Oops: general protection fault, probably for non-canonical address
+> 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+> CPU: 0 PID: 29 Comm: kworker/u4:2 Not tainted 6.10.0 #13
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> Workqueue: netns cleanup_net
+> RIP: 0010:__seqprop_raw_spinlock_sequence include/linux/seqlock.h:226 [inline]
+> RIP: 0010:hrtimer_active kernel/time/hrtimer.c:1615 [inline]
+> RIP: 0010:hrtimer_try_to_cancel+0x7c/0x410 kernel/time/hrtimer.c:1332
+> Code: 2f 12 00 48 8b 5c 24 10 48 8b 44 24 08 42 80 3c 30 00 74 08 48
+> 89 df e8 02 3b 75 00 4c 8b 3b 4d 8d 67 10 4c 89 e3 48 c1 eb 03 <42> 8a
+> 04 33 84 c0 0f 85 f4 00 00 00 41 8b 2c 24 89 ee 83 e6 01 31
+> RSP: 0018:ffffc9000080f7a0 EFLAGS: 00010202
+> RAX: 1ffffd1ffff88a14 RBX: 0000000000000002 RCX: 1ffffd1ffff88a15
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffc45070
+> RBP: ffffe8ffffc45070 R08: ffffc9000080f867 R09: 1ffff92000101f0c
+> R10: dffffc0000000000 R11: fffff52000101f0d R12: 0000000000000010
+> R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f09772124b0 CR3: 000000001f978000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  hrtimer_cancel+0x12/0x50 kernel/time/hrtimer.c:1447
+>  napi_disable+0x1b6/0x210 net/core/dev.c:6648
+>  gro_cells_destroy+0x12a/0x3d0 net/core/gro_cells.c:116
+>  unregister_netdevice_many_notify+0x10a5/0x16d0 net/core/dev.c:11239
+>  cleanup_net+0x764/0xcd0 net/core/net_namespace.c:635
+>  process_one_work kernel/workqueue.c:3248 [inline]
+>  process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+>  worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+>  kthread+0x2eb/0x380 kernel/kthread.c:389
+>  ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__seqprop_raw_spinlock_sequence include/linux/seqlock.h:226 [inline]
+> RIP: 0010:hrtimer_active kernel/time/hrtimer.c:1615 [inline]
+> RIP: 0010:hrtimer_try_to_cancel+0x7c/0x410 kernel/time/hrtimer.c:1332
+> Code: 2f 12 00 48 8b 5c 24 10 48 8b 44 24 08 42 80 3c 30 00 74 08 48
+> 89 df e8 02 3b 75 00 4c 8b 3b 4d 8d 67 10 4c 89 e3 48 c1 eb 03 <42> 8a
+> 04 33 84 c0 0f 85 f4 00 00 00 41 8b 2c 24 89 ee 83 e6 01 31
+> RSP: 0018:ffffc9000080f7a0 EFLAGS: 00010202
+> RAX: 1ffffd1ffff88a14 RBX: 0000000000000002 RCX: 1ffffd1ffff88a15
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffc45070
+> RBP: ffffe8ffffc45070 R08: ffffc9000080f867 R09: 1ffff92000101f0c
+> R10: dffffc0000000000 R11: fffff52000101f0d R12: 0000000000000010
+> R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000563cd2cf2058 CR3: 000000001d166000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess), 1 bytes skipped:
+>    0: 12 00                 adc    (%rax),%al
+>    2: 48 8b 5c 24 10       mov    0x10(%rsp),%rbx
+>    7: 48 8b 44 24 08       mov    0x8(%rsp),%rax
+>    c: 42 80 3c 30 00       cmpb   $0x0,(%rax,%r14,1)
+>   11: 74 08                 je     0x1b
+>   13: 48 89 df             mov    %rbx,%rdi
+>   16: e8 02 3b 75 00       call   0x753b1d
+>   1b: 4c 8b 3b             mov    (%rbx),%r15
+>   1e: 4d 8d 67 10           lea    0x10(%r15),%r12
+>   22: 4c 89 e3             mov    %r12,%rbx
+>   25: 48 c1 eb 03           shr    $0x3,%rbx
+> * 29: 42 8a 04 33           mov    (%rbx,%r14,1),%al <-- trapping instruction
+>   2d: 84 c0                 test   %al,%al
+>   2f: 0f 85 f4 00 00 00     jne    0x129
+>   35: 41 8b 2c 24           mov    (%r12),%ebp
+>   39: 89 ee                 mov    %ebp,%esi
+>   3b: 83 e6 01             and    $0x1,%esi
+>   3e: 31                   .byte 0x31
+
+---
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index a023946f8558..448bce5e6a05 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -485,6 +485,11 @@ static inline void debug_deactivate(struct hrtimer *timer)
+ 	trace_hrtimer_cancel(timer);
+ }
+ 
++static inline bool hrtimer_initialized(const struct hrtimer *timer)
++{
++	return timer->base && timer->function;
++}
++
+ static struct hrtimer_clock_base *
+ __next_base(struct hrtimer_cpu_base *cpu_base, unsigned int *active)
+ {
+@@ -1285,7 +1290,7 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
+ 	struct hrtimer_clock_base *base;
+ 	unsigned long flags;
+ 
+-	if (WARN_ON_ONCE(!timer->function))
++	if (WARN_ON_ONCE(!hrtimer_initialized(timer)))
+ 		return;
+ 	/*
+ 	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
+@@ -1612,6 +1617,9 @@ bool hrtimer_active(const struct hrtimer *timer)
+ 	struct hrtimer_clock_base *base;
+ 	unsigned int seq;
+ 
++	if (WARN_ON_ONCE(!hrtimer_initialized(timer)))
++		return false;
++
+ 	do {
+ 		base = READ_ONCE(timer->base);
+ 		seq = raw_read_seqcount_begin(&base->seq);
 
