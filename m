@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-300441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD85195E3B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:50:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE8595E3B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45274282CE3
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8343B21C18
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3B9155C9B;
-	Sun, 25 Aug 2024 13:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0800B15530F;
+	Sun, 25 Aug 2024 13:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCqDzkgF"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XaWLpZmp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A9329CEF
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED2F8C06
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 13:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724593811; cv=none; b=BvmtrsbyxZp5sZpZ1XpXwnbow60A087JnV5pqx19jqim17ed3WbnCuFqvsTVxRnP0gzWZH967vMhpWBHX3JD9XvrzTfeb75oii3azIJHektzDlIS6IbDHv5i2sLkARHTRoX8Im3k2C25OP72PnD4yIxnJKx254m2b2BpzT29clg=
+	t=1724593916; cv=none; b=hF/0uZXtgchMygEHTVBiM3el9PF852eJ3x9WOpXkzVI+Opnhy4x83UFeWSqRmD/0Q0ktAgwK/pHgb+qLOSnortyTOTe3Jifm0T9B7DL4moWgx76D+IkfSppwF7LiwLVqoNI3LBL9OSX8fwB6WLttlcHA2AypEaqC7z/We+4tl3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724593811; c=relaxed/simple;
-	bh=4uh3rJXCUZL0N3DgAeYYc0MeMO09QwEYofrL3WFBWoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XTdY/lAbeWpr57hQMG7O6zfo9mlodSL+LuORhP68tkpNFhP5nbw56qCWp4t0m0YyepjwqIIVNkb3Os40IuVEDvMIPbVh40jzpNhANqOphKbThUY2HW3In9bp/JMGZ7BTsU7FWZ9bzULQjz2U/Li19Gu1OvJXk7oQ8skQ++aSsP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MCqDzkgF; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42802ddfaa6so3919695e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 06:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724593807; x=1725198607; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pVr+4PPQohBq2Hhdcp2P4lz8bIedV9DtOFUZkPdBmHE=;
-        b=MCqDzkgF5Qkcn1R1wMcATJUZT9v8rLnwwjrPEOEuz/sZXbTnu0CeBbSWOKizIe9FU6
-         bDgaHGZqB1iwhQzgNpnc8hUzvpWsxxBgX0RE8PFnJzKlhlKgfnd+3EsycgJggVaUkgKn
-         1d/jO7g8btAN95ys5m+dyCD7cnqrbEEKB+L0ZsJBBvuuTvgxu6S2P7ZyWTWuu9NBKoPk
-         0Ybt8RRq7apt3pvGFSkswoqQi0sucAoOUUrhL4L995ZD1y94XnRbgtgPEoNDx9TK9EYd
-         PNLz+lMwPsUHQdDpR3FHoWVHaD5ejXxWgK1XljSC0R8Y1St4ixRlbPlGLwCI2k927u2G
-         J3uw==
+	s=arc-20240116; t=1724593916; c=relaxed/simple;
+	bh=cxEMb15cvEJg1PIhEqMrDmascCh1VmMYsmZCf7+60cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dts0MkOsQmR66XUrSqatAM8A9q0P7ncRmySZM2vRROm1s26SDIzyEiaj3Es1SajrwfauVG1rxt3l+azUQ2J9F+aa24RkpRqgf7kzEDZpek4KEZDgV0zELbd1cBNslKnJnAtKT5a6836iOOCbmfYz2srbGZHm4f5pWSLRTaxjCGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XaWLpZmp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724593913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cxEMb15cvEJg1PIhEqMrDmascCh1VmMYsmZCf7+60cw=;
+	b=XaWLpZmpzLUZFRsCCVBoGsu7zuafa9vwNJG63X661Jo3lLKMTT2xOolDRSu993No5mJcXF
+	TZyVAIWAkr8Qvqc2uDw3jXIR9AkgGIaEyo3akR/CyzBlB/I28EdnYAdsIKOWIp6/TMHNeM
+	yra9q/TH1abzPDOkzUAAl31hV4eZQYQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-494-bNF8Kel7PdWL-cwaLc-4jg-1; Sun, 25 Aug 2024 09:51:51 -0400
+X-MC-Unique: bNF8Kel7PdWL-cwaLc-4jg-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3717cc80ce1so2359454f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 06:51:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724593807; x=1725198607;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pVr+4PPQohBq2Hhdcp2P4lz8bIedV9DtOFUZkPdBmHE=;
-        b=O2zGVsZ+bDlRIOyVhjLyQDjY8zuOFRhy/KUpSqIXmIUoI8r18U+QDKv52nn+HlWVyz
-         yaYyRSz3ucfM9rhlzx7jI0SQRTCtM1Z4EohYFyUnGzSynfPOPRoWv2jsX3nyEn1Xir/f
-         weQR1HLw9Ry46aWhPtpJNgoSGJf606KbvTUntikkGUdtPARiM0bMfqHJ6cmy8dilvmv2
-         uEjfbMVxUBgLUOUZvAQ01wJTlUPXKZSG4Vc0q3QNpARQlsYFfEx9lPHk5pWkJlFm3y4h
-         ky4rg7mQtjG5YwoQpSgqsAfUsPEM5u7IJ68dp+30dSNmBUAP00LYVsFybU57gzwrUwKC
-         IqLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZaWCY/gjoW9ZzMeBPUk4JSkt60CgFGxpJDG3eZJI7dwJvaLq7sB4NAVtaS274KytJTg7KXVe2qUt4R5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWeZVbGz5b6ieDofjT7+MLlpqCiDojKfJ8uTxfUbkKkKgOC2Cw
-	ZchRTivo1zmHPTQXvqF70pTcwC8ri3NwuuIc8/cKypq4XfvdMmJcISF/YbpmQ/3yq433lQyctP1
-	/
-X-Google-Smtp-Source: AGHT+IF1JPg8c/K+unhOGNVfEAMIz5SMqT+TqLYrkg4HV3S7iZetXZI5aLVbvkuvFOtR1wwGEAxw3w==
-X-Received: by 2002:a05:600c:198c:b0:425:73b8:cc5d with SMTP id 5b1f17b1804b1-42acc8da99dmr32783395e9.1.1724593806925;
-        Sun, 25 Aug 2024 06:50:06 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac514e1f7sm122188365e9.5.2024.08.25.06.50.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 06:50:06 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vladimir Zapolskiy <vz@mleia.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Subject: [PATCH 2/2] memory: pl353-smc: simplify with scoped for each OF child loop
-Date: Sun, 25 Aug 2024 15:50:01 +0200
-Message-ID: <20240825135001.48963-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240825135001.48963-1-krzysztof.kozlowski@linaro.org>
-References: <20240825135001.48963-1-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1724593910; x=1725198710;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cxEMb15cvEJg1PIhEqMrDmascCh1VmMYsmZCf7+60cw=;
+        b=cxNMZazyev9ltRp881+WlR+2YSEXInRkA9Pyf2sO6YioasuBgtsDtFdchpZy6WJ925
+         BhA/mXwSIGWJRYbBmID/GrmxoC5WtQKZ70jE8iPTA+GM/v1urEesuq3dkqb/x15Ufibg
+         Ef+FFCY3h0DZtUPbMcVVLiJFUzfXBITfh7w0MXx1DsWCkOXNxnHR5bSQ+xzuPHFXCRFP
+         eOf5m6flP7RqCnypgrppLV5gNJ4R31e9+hC9/dE5JWGMM9Ny2E6cHSN7mfTS7QVKbZ1r
+         bHyWuGiV8V3NRXlvILD8WwvSccIzbqza0JFjyB4aNwRJVdXt55LFhfC2VrzTva0nQD4P
+         Dakw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbOKYHBp0DmY7jDmlcM1Rrtlgu0f3qf3syV601hJC70IUzlcBxQuTPShw+M9YIi0RWPLbRM2SY1ooN58w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSdxNVJVLd6VZVeO/sif0zKGRe+oJt823wDpocgTu287D90wU4
+	JfIWkRMivxNTLgGDswWwYYGoetjzQEfvTEa6FjQq5iZY7KD48aYF1KZyIi30+zobxLbzI/7DWAK
+	k4hUyRZhK11Kfra6RK3iTRDmcfyr8Z3igHqo3GarupL+BP8W/hCoOTptxe+b3czT5ax1B2kf12O
+	iRXeqrcDi01o3snGitFbP5qgoLI/v5+nODZlb6
+X-Received: by 2002:a5d:6247:0:b0:371:8d47:c17b with SMTP id ffacd0b85a97d-373118b8b17mr4459164f8f.30.1724593910356;
+        Sun, 25 Aug 2024 06:51:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHO5Rt2ZGQtty1SlsmajcJ+wRy/l+/mv03lE2W14jpsoR7vK/6p6UGJpKH8n5n/fwUQIRtgECnR6MJjKUVjvz0=
+X-Received: by 2002:a5d:6247:0:b0:371:8d47:c17b with SMTP id
+ ffacd0b85a97d-373118b8b17mr4459156f8f.30.1724593909881; Sun, 25 Aug 2024
+ 06:51:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240819092851.441670-1-lulu@redhat.com> <20240819092851.441670-8-lulu@redhat.com>
+ <ZsV17ACIEelIQuKx@infradead.org>
+In-Reply-To: <ZsV17ACIEelIQuKx@infradead.org>
+From: Cindy Lu <lulu@redhat.com>
+Date: Sun, 25 Aug 2024 21:51:13 +0800
+Message-ID: <CACLfguX6-q3=ydUsCcaPsS42NiOph6j0zNHVrmpMk2zcMgwQrA@mail.gmail.com>
+Subject: Re: [RFC 7/7] vhost: Add new UAPI to support changing Kthread mode
+To: Christoph Hellwig <hch@infradead.org>
+Cc: jasowang@redhat.com, mst@redhat.com, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
-
-Suggested-by: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/memory/pl353-smc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/memory/pl353-smc.c b/drivers/memory/pl353-smc.c
-index 994c7a792e34..28a8cc56003c 100644
---- a/drivers/memory/pl353-smc.c
-+++ b/drivers/memory/pl353-smc.c
-@@ -74,7 +74,6 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
- 	struct device_node *of_node = adev->dev.of_node;
- 	const struct of_device_id *match = NULL;
- 	struct pl353_smc_data *pl353_smc;
--	struct device_node *child;
- 
- 	pl353_smc = devm_kzalloc(&adev->dev, sizeof(*pl353_smc), GFP_KERNEL);
- 	if (!pl353_smc)
-@@ -93,12 +92,13 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
- 	amba_set_drvdata(adev, pl353_smc);
- 
- 	/* Find compatible children. Only a single child is supported */
--	for_each_available_child_of_node(of_node, child) {
-+	for_each_available_child_of_node_scoped(of_node, child) {
- 		match = of_match_node(pl353_smc_supported_children, child);
- 		if (!match) {
- 			dev_warn(&adev->dev, "unsupported child node\n");
- 			continue;
- 		}
-+		of_platform_device_create(child, NULL, &adev->dev);
- 		break;
- 	}
- 	if (!match) {
-@@ -106,9 +106,6 @@ static int pl353_smc_probe(struct amba_device *adev, const struct amba_id *id)
- 		return -ENODEV;
- 	}
- 
--	of_platform_device_create(child, NULL, &adev->dev);
--	of_node_put(child);
--
- 	return 0;
- }
- 
--- 
-2.43.0
+On Wed, 21 Aug 2024 at 13:07, Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, Aug 19, 2024 at 05:27:33PM +0800, Cindy Lu wrote:
+> > Add a new UAPI to support setting the vhost device to
+> > use kthread mode. The user space application needs to use
+> > VHOST_SET_USE_KTHREAD to set the mode. This setting must
+> > be set before VHOST_SET_OWNER is set.
+>
+> Usage of an API is a complete kernel internal detail that has absolutely
+> no business being exposed to applications.
+>
+> What is the application visible behavior that the API use is the proxy
+> for?
+>
+The userspace application may need to know the details of the kernel.
+For example, some userspaces may use a script to track threads. If
+they use task mode, the script may not work properly. In that case,
+they can choose Kthread mode.
+Thanks
+Cindy
+>
 
 
