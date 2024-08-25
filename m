@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-300320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4350B95E251
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:10:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE24195E255
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF34E28275E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBEC1C215A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AAD52F70;
-	Sun, 25 Aug 2024 07:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A29359155;
+	Sun, 25 Aug 2024 07:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UI/Gpgn9"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9vyTaN8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC36D3B78D
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E67710E6;
+	Sun, 25 Aug 2024 07:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724569793; cv=none; b=gf5ZeAFAHIP+kI9us/9PDyWL3qnHBvoMpt7YOgm82HcAlttKNUI1SGsbFZD1Miwxymo2N9YHk9MsVKdL87l6PW0KWsHLuWXo38ARuJsu27IV1NzlsQxVZSusPBdNFNxgd9rWymKDvTGT82V7wotIIWj1U1rSSIhGrlRF23AiZM4=
+	t=1724569806; cv=none; b=MjMX5WS7OEYqdKT1zLd09lvlLpTjshY4G0C2BgwzpRtsckoY0bIxiPGrhKfXU0bi5/0HIv8f3iao3rmIMM+6kbmd7GgNyXblRvxZsim0m/dHLAbnKxEI4AEqHlcPlDZuu3yPwEtovun0JiPwEECNlQIoCJ5blKw30fdzU7WsswI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724569793; c=relaxed/simple;
-	bh=cQRnn1n1kkZVLNeZfQxh11rL+9kptIzgU5EFR5FoQSE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kyhn2/8CgJonBPt9JdguKJCp+SbIlQe8iLZmDkWkk5PxMPv8Ecq9apVtBiaaynXsYQ0EtrjMVngXz3KGV03jtUB5Uwa5JqtQN5uGOYeQFukw+nEDil9WqtqeSC6crvYVTrkF/Ial5N56Uzgu4IV1IelgeT8WtXYYgVWSvar1Tbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UI/Gpgn9; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724569788; x=1724828988;
-	bh=r+JlGWakdNmuWvqHZkN1l/8TkAJmG126UQ/vIF8Paus=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=UI/Gpgn9m1bvR+faB1ZPCWnmc212U88gAqG/cEciQ4anN6v09Apuxit4sAUqIr9+j
-	 N52ZVLbAZ/doSsmNI1gpyTCb8tWQgVilGqO83sQMKW+baQylnLWS+MfB9IfyEIgf/T
-	 PiQEu9Sj6XVkZaS86y4oZE+1NuzOv1OXk3REVf/FIcxHNwR5atx/dGzieCLBZo9xya
-	 CnTXIRPNrYL1jkRGcuT80Zhk4mH+GfEPO1Uw2i+F/hsmTtYHtti/Pg0suJZaPg8n66
-	 eHLgFu2dkJwe4LDy32nv00spoUvlZbfwVAZ7QkBojwdTkOnSnKyJZOjFM+rRhGbpEF
-	 TwtbB3cK1j+qQ==
-Date: Sun, 25 Aug 2024 07:09:45 +0000
-To: Trevor Gross <tmgross@umich.edu>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <nmi@metaspace.dk>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] rust: add `module_params` macro
-Message-ID: <9eea4df8-09aa-4067-b408-2aa86c7f4084@proton.me>
-In-Reply-To: <CALNs47tLRa4uVU8t8w6=oi+sMPxEVdw5GQdLwpatc-kEREQg6A@mail.gmail.com>
-References: <20240819133345.3438739-1-nmi@metaspace.dk> <CALNs47sqt==o+hM5M1b0vTayKH177naybg_KurcirXszYAa22A@mail.gmail.com> <c5af692e-56e7-427f-81d5-8b887478aff1@proton.me> <CALNs47tLRa4uVU8t8w6=oi+sMPxEVdw5GQdLwpatc-kEREQg6A@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d73dfc11e9ff9a9b2dea24f4c958c759cc107d01
+	s=arc-20240116; t=1724569806; c=relaxed/simple;
+	bh=U/Oq2er/y7XgBVRnIf3CZHOyXgN+R1fGm+JuTjj/FG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apW4r6HnFZTv8MDNX+00sw5i7BXuoU80pMVtqw/rP1TDCDNCXYBjBzHYyAIZwnPKIaBks6GvUWV30udyljqwn44tRqjHhneuG5zKG9QtrTN20rC/kc0aMw7tRzvBqocscPBf3XgKHjZ8usD9OA3AYFJa0XXk9tt4qqxt/oAyhhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9vyTaN8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB87DC32782;
+	Sun, 25 Aug 2024 07:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724569805;
+	bh=U/Oq2er/y7XgBVRnIf3CZHOyXgN+R1fGm+JuTjj/FG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c9vyTaN829lJaSdkU2m9TPa1dfiS0mEDAUOwvkkyFh38keko/Rf6lV7UaTWZ761nf
+	 8BYRP41HOB71UNXocqw9lEVU0O5Qu6obqz5E0Dx7i6W4+tVBfvQVTtsAczw+Zzq4Ag
+	 CeaBkK3gS/G3PRwchprIhaCXhY48sfN7ew66HdIPTQEBxmXhtyjyTGKhaD0DKAZWVT
+	 4L//pWNUZrmVe8+VODPW3VuOLNrRqNB+u4D0MpEYh4sVF+a5sccfq4r49EiJdBJoqr
+	 DCDN6NAeB3ECM6jB9vXqgDDrS501jUv+ZRffLHIPX2GxOMe1CYOHQJVpO2MOnuFksk
+	 IMp+Fe1UvXk9w==
+Date: Sun, 25 Aug 2024 09:10:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, kys@microsoft.com, haiyangz@microsoft.com, 
+	wei.liu@kernel.org, decui@microsoft.com, rafael@kernel.org, lenb@kernel.org, 
+	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] dt-bindings: x86: Add a binding for x86 wakeup
+ mailbox
+Message-ID: <ujfqrllrii6iijlhbwx3bltpjogiosw4xx5pqbcddgpxjobrzh@xqqrfxi5lv3i>
+References: <20240823232327.2408869-1-yunhong.jiang@linux.intel.com>
+ <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,167 +61,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20240823232327.2408869-3-yunhong.jiang@linux.intel.com>
 
-On 24.08.24 23:23, Trevor Gross wrote:
-> On Sat, Aug 24, 2024 at 8:16=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>> We shouldn't enable `const_mut_refs`. It is indeed close to
->>> stabilization, but it is still kind of churny right now and we don't
->>> want to enable the sharp edges everywhere.
->>>
->>> If the change from `static mut` to `UnsafeCell` that I mentioned above
->>> happens, `addr_of_mut!` turns into a `.get().cast::<...>()` takes the
->>> place of `addr_of_mut!` and doesn't require this feature (and also
->>> isn't unsafe).
->>
->> I think this is a good idea. There might only be a problem with not
->> being `Sync` though... So probably need to use `SyncUnsafeCell` instead.
->=20
-> Ah whoops, yeah that is what I meant.
->=20
->>> If you prefer not to make that change, I think
->>> `addr_of!(...).cast_mut()` might be the best solution.
->>
->> Won't that be resulting in the wrong provenance? I.e. the pointer won't
->> be allowed to write to that location?
->>
->> I just checked with miri, it doesn't complain (even with
->> `strict-provenance`), so I guess it's fine? It feels rather wrong to me
->> to allow writing through a pointer obtained via `addr_of!`.
->=20
-> I think that `static mut` gets the interior mutability rules that
-> `UnsafeCell` has, that *const and *mut become interchangeable. Quick
-> demo for the `UnsafeCell` at [1]. We would probably have to ask opsem
-> to clarify.
+On Fri, Aug 23, 2024 at 04:23:20PM -0700, Yunhong Jiang wrote:
+> Add the binding to use mailbox wakeup mechanism to bringup APs.
+> 
+> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> ---
+>  .../devicetree/bindings/x86/wakeup.yaml       | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/x86/wakeup.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/x86/wakeup.yaml b/Documentation/devicetree/bindings/x86/wakeup.yaml
+> new file mode 100644
+> index 000000000000..cb84e2756bca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/x86/wakeup.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2024 Intel Corporation
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/x86/wakeup.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: x86 mailbox wakeup
+> +maintainers:
+> +  - Yunhong Jiang <yunhong.jiang@linux.intel.com>
+> +
+> +description: |
+> +  The x86 mailbox wakeup mechanism defines a mechanism to let the bootstrap
+> +  processor (BSP) to wake up application processors (APs) through a wakeup
+> +  mailbox.
+> +
+> +  The "wakeup-mailbox-addr" property specifies the wakeup mailbox address. The
+> +  wakeup mailbox is a 4K-aligned 4K-size memory block allocated in the reserved
+> +  memory.
+> +
+> +  The wakeup mailbox structure is defined as follows.
+> +
+> +    uint16_t command;
+> +    uint16_t reserved;
+> +    uint32_t apic_id;
+> +    uint64_t wakeup_vector;
+> +    uint8_t  reservedForOs[2032];
+> +
+> +  The memory after reservedForOs field is reserved and OS should not touch it.
+> +
+> +  To wakes up a AP, the BSP prepares the wakeup routine, fills the wakeup
+> +  routine's address into the wakeup_vector field, fill the apic_id field with
+> +  the target AP's APIC_ID, and write 1 to the command field. After receiving the
+> +  wakeup command, the target AP will jump to the wakeup routine.
+> +
+> +  For each AP, the mailbox can be used only once for the wakeup command. After
+> +  the AP jumps to the wakeup routine, the mailbox will no longer be checked by
+> +  this AP.
+> +
+> +  The wakeup mailbox structure and the wakeup process is the same as
+> +  the Multiprocessor Wakeup Mailbox Structure defined in ACPI spec version 6.5,
+> +  section 5.2.12.19 [1].
+> +
+> +  References:
+> +
+> +  [1] https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html
+> +
+> +select: false
 
-I see. I suggested to Andreas to change it to the current version, seems
-like I was wrong on this... I feel like the `SyncUnsafeCell` version is
-still better, since we can avoid a `static mut`.
+This schema is still a no-op because of this false.
 
-> Coincidentally I had been talking to Ralf about this very pattern
-> before seeing this, at [2].
->=20
->>> Other thought: would a wrapper type make more sense here? Something lik=
-e this:
->>>
->>> ```
->>> /* implementation */
->>> struct ModParam<T>(UnsafeCell<T>);
->>> [...]
->>> module! {
->>>     // ...
->>>     // instantiated as:
->>>     // `static MY_PARAM: ModParam<i64> =3D ModParam::new(1);`
->>
->> We used to do this, but it lead to problems: normally the parameter has
->> a lower case name, since that's the convention in the kernel. [...]
->=20
-> To me it seemed logical to keep the uppercase names here since it
-> matches the convention for what they are (statics), and the macro
-> could lowercase it for the bits exposed to the kernel. But I
-> absolutely get the consistency argument here.
+What is the point of defining one property if it is not placed anywhere?
+Every device node can have it? Seems wrong...
 
-That would also be an option, but it might be confusing for people, they
-enter a SCREAMING_CASE_SNAKE name, but when they start the kernel it
-doesn't work.
+You need to come with proper schema. Lack of an example is another thing
+- this cannot be even validated by the tools. 
 
->> [...] But then
->> pattern matching prioritises the static instead of introducing it as a
->> local parameter:
->>
->>     let MY_PARAM =3D ...;
->>
->> would fail, since you can't match MY_PARAM.
->>
->> This is also the reason why they live in their own module.
->=20
-> I'm not sure I follow the example here. It looks like it is shadowing
-> a static's name as a local, why would you want that? Or if you meant
-> the other way around `let SomePat(...) =3D MY_PARAM`, wouldn't it just
-> be `let SomePat(...) =3D MY_PARAM.get()`? (Sorry if I missed some
-> context here).
-
-Yeah I expressed this poorly, the problem before was that you would
-write:
-
-    module! {
-        /* ... */
-        params: {
-            foo: i64 {
-                default: 1,
-                description: "foo",
-            }
-        }
-    }
-
-    pub struct MyDriver {
-        foo: i64,
-    }
-
-    impl Module for MyDriver {
-        fn init(_: &'static ThisModule) -> Result<Self> {
-            let foo =3D foo.read();
-            //  ^^^ cannot be named the same as a static
-            Ok(Self { foo })
-        }
-    }
-
->> But you can still do the modification of creating `ModParam` and using
->> that as the type of the static.
->=20
-> Do you mean an expansion like this?
->=20
->     // module_parameters is kind of a long name
->     mod mod_params {
->         #[allow(non_upper_case_globals)]
->        static my_param: ModParam<i32> =3D ModParam::new(...);
->     }
-
-Yes that's what I meant, although `my_param` should be `pub(crate)`.
-
-> I don't mind that, even if the name is a bit weird by rust conventions.
-
-Yeah, but I think since they are in their own module, it's fine.
-
-One thing that we need to decide would be if we want
-
-    mod_params::my_param::read()
-
-or
-
-    mod_params::my_param.read()
-
-I slightly prefer the first one, which would mean that the expansion
-would have to be:
-
-    mod mod_params {
-        pub(crate) enum my_param {}
-        static my_param_value: ModParam<i32> =3D ModParam::new(...);
-        impl my_param {
-            pub(crate) fn read() {
-                my_param_value.read()
-            }
-            /* ... */
-        }
-    }
-
-> (For what it's worth, I used this wrapper type pattern for a plugin
-> project that does shared variables in a similar way. I have been quite
-> happy with it.)
-
-Good to know!
-
----
-Cheers,
-Benno
-
->=20
-> - Trevor
->=20
-> [1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D=
-2021&gist=3D43664620f50384b7a3d5bf74ce7c3e39
-> [2]: https://rust-lang.zulipchat.com/#narrow/stream/146212-t-compiler.2Fc=
-onst-eval/topic/More.20accidental.20stabilization
+Best regards,
+Krzysztof
 
 
