@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-300445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D1D95E3C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:09:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F895E3D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BBC281F84
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95C81F21530
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB11155C9B;
-	Sun, 25 Aug 2024 14:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rIyuXQMF"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D6A15688C;
+	Sun, 25 Aug 2024 14:18:08 +0000 (UTC)
+Received: from mail-m1035.netease.com (mail-m1035.netease.com [154.81.10.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6422BB1C;
-	Sun, 25 Aug 2024 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B649C29CEF;
+	Sun, 25 Aug 2024 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724594946; cv=none; b=j4RBCTFN65lNqBfhtYPdPm4fROAuVXzs+mqO4sgR92euQqBgit9L9GBD1SqrbDVd4Kd6KAu0f1R77dikIj3y+DOKmN5R9JMkMNZVBKDu71nix4pQnFwrilSnCNIhawBcT6lqfKI/xY/6OnWl9IFwMCqeTPx65rLLh1paecQdQKo=
+	t=1724595488; cv=none; b=RzUiKLiF4xDn0CUqjsVXPrDikpn9Se2brkOk+XHRnyNos1TryQtGAPpqmPccoC6Esn3hdoXPh5Xg2ZITtt7LZ+vwO1eoQVuSr4t/V9/I0COP2DlAyyscFj4xyyRlJ7bDOcLWhknvgJjJ9NKSwa3Rkp4u6ZWp/f3vyHXo5Gtl3Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724594946; c=relaxed/simple;
-	bh=1vMTfkV3u3f8XzrlV2oCUiPnfvE+KGzhYdx9HGVM5OM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=DYNllAB3VkbBdhEITlBcdA2iDtFB6Yb4QulknPSuLR4huaRLoSbxdfIHjnC64oCVf3iGNGFV2bX2WVfsofsoz6GBMEjDUG+ruJ/eZD1IzpYNRq0sS2qaU7qWK9UhUp7Ik02CHgVogExd3tivs2dlt2I7L4Vx7RGEdWcLlnBseSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rIyuXQMF; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724594633; bh=bHonpRwI/VKAepoYUCYAp7Tybv88sHViLVAqA20dF+I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rIyuXQMFhHt5Z8cgu8032BnsjzIENFvfTj4fTszFGYVbgxM3DVgNH5fZQILQ8ffvi
-	 pla7kgQBNR68DtwbY7mmQvkkKGXWhQNoWzIJ7OgNuQG1KhhAZCjH5n44hv9Dq/Crjq
-	 3mtRsusTqQyEehMoXPLU8wNCL8t6Ou79jm1siXv8=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id F1A0814; Sun, 25 Aug 2024 22:03:49 +0800
-X-QQ-mid: xmsmtpt1724594629ts0dbh151
-Message-ID: <tencent_1D9967CEC6D952EC86530991EED86ED70C06@qq.com>
-X-QQ-XMAILINFO: NWOHIAASQnT+Q6isGvpmjAvtrBYB5rImQ2kljw761wrKgw9UHYGPmxIWk2Rail
-	 ALWs7lUvswpqXB8YgN5fQSULuLqXFnCli4F8vllM95kCfrlWNUv55cv6Rf20Kr8gorMMTAwlK7Qt
-	 VZGLBTSgY2WV7RW0JrhrXp/1zDALGITTiDOAF1BV0vhVikGE3jjp+he5YhhdV3ydOII3vR0U2gez
-	 +PhUc2kq2rINlLH+dh3KN4NeITIlvbkx7qKFXN+BKg2EaKE4IJVRoJCvxYvaoGkIfLebmXj+aoiE
-	 nLVuAGqVlK+S+b24G/i+VypXP4Vtgoh3mSOkn7sx9YpA6mcfwpLszdynfkICCn93r614uw2JINVs
-	 gKrXqn8d8obasoLA3N2R2tTjmBjuUUTnf6Bghn8rbtQHIGYU/CeaABTeYXVqyauKElCjUSR1CO//
-	 h9MniNyCp36lKIB9flSQ5QdGiZ9f1Kw/amIVXdVTdNsb5AdOZnjXeshQ5OoOJr7WE3SCfCcPM0yB
-	 4khx1faZmKO03l0TiF+7dKZ/8XShSPZsqdCLeRQUIJdyYl3eIXD0JVs4ZWf05/m+EI7ykFDP6apb
-	 OmitQgx+4JZb9sXjdOQIJj+JS/nov0pYD5pOLpT90sgZPCbzXXx50qf7wk/copgvgxHDo9UmXPWG
-	 FOeCLdByTSnVoO0Z6iOrYyfjzb4FAQ9lxoaemJIYnToT0H1uWjMVBP+WgOE8Fa8Htgkk6W9JRc6l
-	 ptOm/hMZjGK21xHICNQ9FFz7CpU8V1ZPUMZVxZpuDTzhZxdhpqvqD7HNXYq/zDaNOl3d54cDezmM
-	 9SNjhIlrumVYbIKnOCVW5c/UHZflOMX6M9esiZZ+uWMtUpqrThp2KTEDc0PNtjrNH+UqQVw8L7+S
-	 2HrAR2gujhMTLNdJOrcn4O9jpx8tXQlgIo9gVtDF1vlySo3pXnr8sA+sjW7vlqTq08bHMHAIIawr
-	 CnI6an32hGQ8gsIXmTfgneJ7IR2stuPegt/SBnrwijHuTZ/n7ubSycwnr1Ua+XVKuZRR32D5Cm2j
-	 jJFmAJHQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: eadavis@qq.com,
-	kvalo@kernel.org,
+	s=arc-20240116; t=1724595488; c=relaxed/simple;
+	bh=Tge7qNfQ7IBWwjRnKdpylWSoFux2yMMKX0erzV4q3Vg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bF42ww6KWrA9XLjFN5FnIPJZMgCjjOL12mzJVymPFv7Z1J6PwSALYcv842umLZweHKFGOWBb7S/gIiPvMJi8eI8bfocYeC25P9iZ7a7V3GzhuCAThfznvYk2m1hTdAlATkKk9Wh/04y2/R/Ty8MFuSfYOszDO0X4Ll4+ONgBtZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=154.81.10.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [58.61.141.165])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 50DE87E014E;
+	Sun, 25 Aug 2024 22:08:40 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: detlev.casanova@collabora.com
+Cc: airlied@gmail.com,
+	alchark@gmail.com,
+	amadeus@jmu.edu.cn,
+	andi.shyti@kernel.org,
+	andyshrk@163.com,
+	broonie@kernel.org,
+	cl@rock-chips.com,
+	conor+dt@kernel.org,
+	daniel@ffwll.ch,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dsimic@manjaro.org,
+	efectn@protonmail.com,
+	finley.xiao@rock-chips.com,
+	gregkh@linuxfoundation.org,
+	heiko@sntech.de,
+	honyuenkwun@gmail.com,
+	jagan@edgeble.ai,
+	jamie@jamieiles.com,
+	jic23@kernel.org,
+	jirislaby@kernel.org,
+	jonas@kwiboo.se,
+	jszhang@kernel.org,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	lars@metafoo.de,
+	lee@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] wifi: ath6kl: Check that the read operation returns a data length of 0
-Date: Sun, 25 Aug 2024 22:03:50 +0800
-X-OQ-MSGID: <20240825140349.2547232-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <2024082501-tiling-prelaw-38d7@gregkh>
-References: <2024082501-tiling-prelaw-38d7@gregkh>
+	linux-mmc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net,
+	maarten.lankhorst@linux.intel.com,
+	macromorgan@hotmail.com,
+	megi@xff.cz,
+	michael.riesch@wolfvision.net,
+	mripard@kernel.org,
+	robh@kernel.org,
+	tim@feathertop.org,
+	tzimmermann@suse.de,
+	ulf.hansson@linaro.org,
+	wim@linux-watchdog.org
+Subject: Re: [PATCH v2 11/12] arm64: dts: rockchip: Add rk3576 SoC base DT
+Date: Sun, 25 Aug 2024 22:08:24 +0800
+Message-Id: <20240825140824.200453-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <23624422.6Emhk5qWAg@trenzalore>
+References: <23624422.6Emhk5qWAg@trenzalore>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,106 +93,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkxIVk9DSUNIGhlPShpKT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0pVSk1OWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
+	tLWQY+
+X-HM-Tid: 0a9189de204f03a2kunm50de87e014e
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MQg6ARw5NzIxEhkzMVE8OBgK
+	HB8wCU5VSlVKTElPTkJPQklKQkJJVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWU5D
+	VU1KVUpPSlVKTU5ZV1kIAVlBSExMSzcG
 
-On Sun, 25 Aug 2024 13:25:56 +0200, Greg KH wrote:
-> On Sun, Aug 25, 2024 at 06:09:45PM +0800, Edward Adam Davis wrote:
-> > On Sun, 25 Aug 2024 10:34:00 +0200, Greg KH wrote:
-> > > On Sun, Aug 25, 2024 at 04:14:17PM +0800, Edward Adam Davis wrote:
-> > > > On Sun, 25 Aug 2024 09:25:37 +0200, Greg KH wrote:
-> > > > > > If the data length returned by the device is 0, the read operation
-> > > > > > should be considered a failure.
-> > > > > >
-> > > > > > Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-> > > > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > > > > ---
-> > > > > >  drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
-> > > > > >  1 file changed, 3 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > > index 5220809841a6..2a89bab81b24 100644
-> > > > > > --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > > > @@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
-> > > > > >  		ath6kl_err("Unable to read the bmi data from the device: %d\n",
-> > > > > >  			   ret);
-> > > > > >  		return ret;
-> > > > > > +	} else {
-> > > > > > +		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
-> > > > > > +		return -EIO;
-> > > > >
-> > > > > Close, but not quite there.  ath6kl_usb_submit_ctrl_in() needs to verify
-> > > > > that the actual amount of data was read that was asked for.  If a short
-> > > > > read happens (or a long one), then an error needs to propagate out, not
-> > > > > just 0.  See the "note:" line in that function for what needs to be
-> > > > > properly checked.
-> > > > >
-> > > > > hope this helps,
-> > > > Thanks for your analysis.
-> > > > I have carefully read your analysis and I am not sure if the following
-> > > > understanding is appropriate:
-> > > > diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > index 2a89bab81b24..35884316a8c8 100644
-> > > > --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> > > > @@ -932,6 +932,15 @@ static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
-> > > >
-> > > >         kfree(buf);
-> > > 
-> > > First off, this should be using usb_control_msg_send() instead of having
-> > > to roll their own buffer handling, right?
-> > I couldn't figure it out with what you said. 
-> 
-> Meaning this kfree() should not be needed if you use
-> usb_control_msg_send() (nor the allocation above it.)
-> 
-> > ath6kl_usb_submit_ctrl_in() is similar to usb_control_msg_send(),
-> > both calling usb_control_msg() to communicate with USB devices.
-> 
-> Yes, it's close, but not quite the same.
-> 
-> > In the current issue, when executing an ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP
-> > read request, the length of the data returned from the device is 0, which
-> > is different from the expected length of the data to be read, resulting in
-> > a warning.
-> > 
-> > ath6kl_usb_submit_ctrl_in()--->
-> > 	usb_control_msg()--->
-> > 		usb_internal_control_msg()
-> > 
-> > usb_internal_control_msg() will return the length of the data returned from
-> > the device, usb_control_msg() return the length too, so in ath6kl_usb_submit_ctrl_in(),
-> > we can filter out incorrect data lengths by judging the value of ret, such
-> > as ret != Size situation.
-> 
-> Then just do that type of check for that type of read request in the
-> code that does that call, not 2-3 layers deeper, no need for making this
-> more complex than needed.
-> 
-> Try removing both of these functions and just call usb functions
-> directly.
-I have tried following fix:
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 5220809841a6..dc1f89ebb740 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -1027,9 +1027,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
-        int ret;
- 
-        /* get response */
--       ret = ath6kl_usb_submit_ctrl_in(ar_usb,
--                                       ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
--                                       0, 0, buf, len);
-+       ret = usb_control_msg_recv(ar_usb->udev, 0, ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
-+                                USB_DIR_IN | USB_TYPE_VENDOR |
-+                                USB_RECIP_DEVICE, 0, 0, buf, len, 2000, GFP_KERNEL);
-        if (ret) {
-                ath6kl_err("Unable to read the bmi data from the device: %d\n",
-                           ret);
+Hi,
 
-I researched usb_control_msg_recv(), It handles the abnormal length of the
-returned data, so using it directly can fix this warning.
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> ...
+> +		opp-1416000000 {
+> +			opp-hz = /bits/ 64 <1416000000>;
+> +			opp-microvolt = <725000 725000 950000>;
+> +			opp-microvolt-L1 = <712500 712500 950000>;
+> +			opp-microvolt-L2 = <700000 700000 950000>;
+> +			opp-microvolt-L3 = <700000 700000 950000>;
+> +			opp-microvolt-L4 = <700000 700000 950000>;
+> +			opp-microvolt-L5 = <700000 700000 950000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> ...
 
-BR,
-Edward
+I'm curious if these frequencies work properly. On the bsp kernel,
+'opp-microvolt-L<name>' is used by the PVTM driver, I don't know
+if it works on the upstream kernel. Sorry but have you tested it
+with mhz (https://github.com/wtarreau/mhz)?
+
+Thanks,
+Chukun
+
+-- 
+2.25.1
 
 
