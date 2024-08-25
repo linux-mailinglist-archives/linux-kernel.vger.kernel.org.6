@@ -1,66 +1,85 @@
-Return-Path: <linux-kernel+bounces-300309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4166695E233
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:09:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E456595E23B
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6146B21620
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14B9E1C213E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 06:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA77A3C092;
-	Sun, 25 Aug 2024 06:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27DD374F6;
+	Sun, 25 Aug 2024 06:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu97N3MD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjOHj++t"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C42207A;
-	Sun, 25 Aug 2024 06:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAB02B9A5
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 06:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724566176; cv=none; b=Wh/Uiic3GBqKNB3mnokuwvdyBa8naNNNWz5x3vaOMtYnfyYiiHeTA5G4vm9sLRJLAG5besRZD19/dp0NL6zgYkTqCjCrBX2HSeC21Csq3p9FU3DEE6PpY0K/2vt+WmmNtKTDP9F9Bg/xlOn41X+zzHQnTQcSx24dVCQsAmI1WRE=
+	t=1724567917; cv=none; b=rt6HOPwBLuP1RQDvYb0WUsnEnbRU+ctHarQSBaBWW53bDwnu2Uh0CsoyiefqBx37w06kUUAbczeo7C8L9OyJ7oeLKWYwKdKOeC35an2n1gqW4uokTshWuzubFfstZ43I8yBXIxoteczB5f/Ru+JrhB06Lz+4SzhDT0U/VjZK2P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724566176; c=relaxed/simple;
-	bh=yMvpINQILHrBMgqZhN+ev45oSXl4Mu+d6EKpsnzamo4=;
+	s=arc-20240116; t=1724567917; c=relaxed/simple;
+	bh=L0K0COdIw9y4JHfFG4e6bM1X22MMmS3p4nJ+jNEHcTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fEKhvM0LqidY6aGMdogsnPRjS+fCV8OyibU8B0wskF/j5DswD5Ud+cHYT7UG28Hqpw3gt7jGzm9xMfYe1b0+OvNGlv9CfawAjfMWbY+sgLPkscQ1Bvbkg1gk2c4kgkrGMZGc7Jq0P1Ah8aLVnPVl7c+53BfwOpMnJyIJKK8/wgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu97N3MD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A494BC32782;
-	Sun, 25 Aug 2024 06:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724566175;
-	bh=yMvpINQILHrBMgqZhN+ev45oSXl4Mu+d6EKpsnzamo4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hu97N3MDrNd8BStUsqpDNcq0X/iSZ+9GHNXJsmGtSKUFq2zk8ku22GdHXGPskN887
-	 +ZT5cIzQiQBd1xwcR2+rNHlJsPgaYJHlAVGelIwqYi+qCy50maD2+FSnb9deUbujGU
-	 YvxvXw7xcbOLQ8fy3j6pFqtOnrMV6hAU2zWauTqBML/Zzjei3XtFNdlTvPJm2/G94/
-	 VxJ5zdGpr+8XDc5/xksOdDiMh8/LinNHtd8T6va7L/7T5kp6H2E1t4bRgwNDT9bCIO
-	 KUIivTn52YDm/6ohyypPAw5nS/vVgY0tm4zDeSi42CD1fxMTQFFlih9gCJtBYdavW5
-	 qW84xmd74Pl/g==
-Date: Sun, 25 Aug 2024 11:39:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-	quic_msarkar@quicinc.com, quic_kraravin@quicinc.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] PCI: qcom: Refactor common code
-Message-ID: <20240825060926.jup7l47uo76gdvff@thinkpad>
-References: <20240821170917.21018-2-quic_schintav@quicinc.com>
- <20240821173318.GA260075@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=abHQ7BNw6XndECtATvhvxb5pW8uocG4pGjMSR3ATXVWXRuOnkN96/H4C7OWOSs3hBIxATuaDt5EngOX7c2YZ+5h6psiNctMWsES/mb4JkHPNgUeuB/2TLDchq89FqYCjSELZ6TRlzC1tZALTdlNY28a0DxdiBemNdZsGsqlvHWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjOHj++t; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso2365821a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 23:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724567915; x=1725172715; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EnWipGSGRNUpxTH706hRTY90cJiU4b+kfr2jSKM5g/s=;
+        b=NjOHj++tE/p69z1GD3STsdJ69KWlE1u0IW6KcMqJcDHuXkim+T5uEQVPNXtpOzo2x/
+         7K7f7EFKe9ZzAkILBqMk1WbVAzCv4MOmbcXFHdbxKlCss3xgwGCMxJ4Pqmzo3Y6CEPCj
+         beKSgjZuRRk7pv8ipx7/Or0PJa3uv6YC2pZL9bqsy6c4y3phm0fJICtC4qGBJCDDF/S+
+         /NkqPu8Vbl7tYKyps3rD5yitwgpwbFBHxVUoYJM6TPoLX6MSDEe97kSE/7wjMuC5PzGi
+         kf6fDpMnUhybE8NepobdGU0zlxvsMT7sUewCh0qGlbUQiXXYNNj2E9OxEkorTSjAalAo
+         fy3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724567915; x=1725172715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnWipGSGRNUpxTH706hRTY90cJiU4b+kfr2jSKM5g/s=;
+        b=KA9tGXnivWK68OhzGguhNtUj25nIgjAmtfHeFZ6xKqG9pA9tkIT11XIgZXC+m9de9j
+         ChcjSq36kbT9c6F4XpqIzKjiS5R+7k0Ac0GoIBhBOA7qLFztvEXP9qY2sgNK4mSNN/VF
+         PZYKhTm6pRkDfAlUh2H573u+kzeAEenqSVfhRnLy+ZM84k/ECkELqdHnmsZ+F5F6KP3v
+         Rw+sPsG7HK2S+KujV63TSAnHwdnqWpxaNcJSvII2pkqKXIeqsiv+SOX0K29aBNmkbYVn
+         Ob8ut0OqbnjLVI2Puc7Fm+iuWnzDMfyTndJCCztybDaMuvwnK+OXEKLsP1FLJZl6QgE5
+         cYqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTjDg9P6kxaIm0r2vK+6x/EWtd8PTvYk5qdUpf1GAIOTenwc5vnx7Yd9F59FH6DOQJeSGnebnbhjDDaBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh5Ol+uzLI/9WGS6Fzy34DkJhHICwYLxg5weRQz0/Bcd4Web3U
+	kQhh0QvSzDniAgdxpgdWSKSSn1ABFLVZdTasPmJl9TGojQU007le
+X-Google-Smtp-Source: AGHT+IETSpALFu2+A7eFzubBAgBvk/KzvFDhLlTmDgXtMQ3q7/INDCIeOJBXA4FjqYO6SRjgZntLJw==
+X-Received: by 2002:a05:6a20:c793:b0:1bd:feed:c031 with SMTP id adf61e73a8af0-1cc89d80195mr7497177637.28.1724567914814;
+        Sat, 24 Aug 2024 23:38:34 -0700 (PDT)
+Received: from five231003 ([2405:201:c006:3236:b871:d8f1:d936:dc0c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560e3e8sm49676505ad.219.2024.08.24.23.38.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2024 23:38:34 -0700 (PDT)
+Date: Sun, 25 Aug 2024 12:08:28 +0530
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] soc: ti: pruss: factor out memories setup
+Message-ID: <ZsrRZLqgtegrbwO7@five231003>
+References: <20240707055341.3656-1-five231003@gmail.com>
+ <20240707055341.3656-2-five231003@gmail.com>
+ <20240824184950.gzsgdawt2ujjt6ky@subgroup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,83 +88,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240821173318.GA260075@bhelgaas>
+In-Reply-To: <20240824184950.gzsgdawt2ujjt6ky@subgroup>
 
-On Wed, Aug 21, 2024 at 12:33:18PM -0500, Bjorn Helgaas wrote:
-> On Wed, Aug 21, 2024 at 10:08:42AM -0700, Shashank Babu Chinta Venkata wrote:
-> > Refactor common code from RC(Root Complex) and EP(End Point)
-> > drivers and move them to a common driver. This acts as placeholder
-> > for common source code for both drivers, thus avoiding duplication.
+On Sat, Aug 24, 2024 at 01:49:50PM -0500, Nishanth Menon wrote:
+> On 10:44-20240707, Kousik Sanagavarapu wrote:
+> > Factor out memories setup code from probe() into a new function
+> > pruss_of_setup_memories().  This sets the stage for introducing auto
+> > cleanup of the device node (done in the subsequent patch), since the
+> > clean up depends on the scope of the pointer and factoring out
+> > code into a seperate function obviously limits the scope of the various
+> typo s/seperate/separate - use --codespell with checkpatch to catch :)
 > 
-> Much of this seems to be replacing qcom_pcie_icc_opp_update() and
-> qcom_pcie_ep_icc_update() with qcom_pcie_common_icc_update().
-> 
-> That seems worthwhile and it would be helpful if the commit log called
-> that out so we'd know what to look for in the patch.
-> 
-> I think the qcom_pcie_common_icc_init() rework would be more
-> understandable if it were in its own patch and not mixed in here.
-> 
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> > @@ -0,0 +1,88 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2014-2015, 2020 The Linux Foundation. All rights reserved.
-> > + * Copyright (c) 2015, 2021 Linaro Limited.
-> > + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > + *
-> 
-> Spurious blank line.
-> 
-> > + */
-> 
-> > +struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
-> > +{
-> > +	struct icc_path *icc_p;
-> > +
-> > +	icc_p = devm_of_icc_get(pci->dev, path);
-> > +	return icc_p;
-> 
->   return devm_of_icc_get(pci->dev, path);
-> 
-> > +}
-> > +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
-> > +
-> > +int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc, u32 bandwidth)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = icc_set_bw(icc, 0, bandwidth);
-> > +	if (ret) {
-> > +		dev_err(pci->dev, "Failed to set interconnect bandwidth: %d\n",
-> > +			ret);
-> > +		return ret;
-> > +	}
-> 
-> The callers also check and log similar messages.  I don't see the
-> point.
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_init);
-> 
-> These both seem of dubious value.
-> 
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
-> 
-> Do we need "-common" in the filename?  Seems like "pcie-qcom.h" would
-> be enough.  I *hope* we don't someday need both a "pcie-qcom.h and a
-> "pcie-qcom-common.h"; that seems like it would really be overkill.
-> 
+> A follow on patch has the same problem as well.
 
-I suggested the -common suffix since pcie-qcom is historically meant for RC
-driver. So creating a common header with that name will create confusion since
-we have a separate EP driver.
+Oh, yes should've used --codespell, my bad.  Thanks for spotting.
 
-- Mani
+> > variables used in that function.
 
--- 
-மணிவண்ணன் சதாசிவம்
+[...]
+
+> > -	of_node_put(child);
+> > +	ret = pruss_of_setup_memories(dev, pruss);
+> > +	if (ret < 0)
+> > +		goto rpm_put;
+> 
+> Why? We have not called pm_runtime_enable at this point.
+
+Didn't catch this too, will change.
+
+Thanks
 
