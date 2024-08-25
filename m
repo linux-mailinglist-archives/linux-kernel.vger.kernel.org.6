@@ -1,185 +1,121 @@
-Return-Path: <linux-kernel+bounces-300419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340E395E36D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E1395E369
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBF11F216EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24015281A0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 12:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156B21509B4;
-	Sun, 25 Aug 2024 12:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979F11514F6;
+	Sun, 25 Aug 2024 12:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="XygxjPE8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sXQ19pl4"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzpVp6LJ"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554C16F2E0;
-	Sun, 25 Aug 2024 12:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9834F13DDB6;
+	Sun, 25 Aug 2024 12:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724590267; cv=none; b=Sit5UqyHdOsQWDaeSCKMF4bKrwoteiyQNJa9QgZEPVRBtbsQvbC0NTrXQSwvnClovXh6gtiHR3//rHpXj/muH0G6X4gKmXyM31645jYfKFTADQkZUMN3x4/T+2XOWl51O5w5ChBVJ+KH1H/ibcrD1XXMQGr0jWB608i+UbRnGHg=
+	t=1724590246; cv=none; b=elHpkuZseISsL+Ik/JptnegySNzR6oJ83BveMON0Wxz8ETBd/miyYWJsqJAv3+TEcmxNYO5yc2bLFjCpxk6F3OniZOmPYGhZzBTLZjeFuBjxyC7bgb5mdG1tazGvVNWV9sZkq54Yj7YTh2XkpV2bcELofruCicacicBK+UFaQJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724590267; c=relaxed/simple;
-	bh=uH0vRo07eqJvNRsWlEFkW8Fn11KexfDSYwMeQpYSrZs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=lWb06ieFGtMBDa/cdKnJIWT+pESRVS0ug85EiKtyz9apDGQvQ3m5lLK6Lsb0VdPpT7BeWN5KY39q2IiRmEQdZsPdclsQA0FOLxuV2564GvJTXctKo1d1Hvu4eHe0zk/Uc17sFeek69p9CLYFfULZOwLtn0heKnbqTZ4EJ3A5oEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=XygxjPE8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sXQ19pl4; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 67E2F1151A93;
-	Sun, 25 Aug 2024 08:51:03 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Sun, 25 Aug 2024 08:51:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1724590263;
-	 x=1724676663; bh=C07nC/Gdw5FMNcdh4udq8f0bUm0ol8opjnDd2CaMRtQ=; b=
-	XygxjPE8y3g4/t++wyifh+hUrIrfk+Jgk/Wngaa+XuMCbHZgrBmoScOSRLD9qcLv
-	PF8/CYNdYunpdFCKQKDoOwwPa9WBIWbnDdzsOiYe9Uh8HsD+JTWryyFvSaiRROs0
-	4CEoMANscMUKPB+/4+NFx2v0+nBWHdFtsuoTYwTrJsRR113o4jFBbvANEu6rY9Yy
-	ybfmq1vjSH2U/P5tihLkrbJjwDxneT8A/F68WdWKzDLqgiEVrj92a9P7uw5y5UCS
-	csZQpoTXo8gPwbCUWQZboCVVaepVpbrrxpHhaVkSPH4gCl/VvF+onyJTgzxnc6MB
-	hGo4k3ez195FYk4JMWnp7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724590263; x=
-	1724676663; bh=C07nC/Gdw5FMNcdh4udq8f0bUm0ol8opjnDd2CaMRtQ=; b=s
-	XQ19pl4xQl2ksOFs7hkEwKun0/amB21blORw6EMfkvZyQp/qJMhGt7KirJUHB0Th
-	tvAqeObSs8sCq1yneSXSGkxY+IjFlM1sOHe4mSAElXfrUnN7uFCm6XH9WJ358uQk
-	XNAYEhWYgL8Ryj+CR5s8M1yObBbo19yOOs44CX0PkCEGspOEbx2P+4OLpDuMSEQY
-	d1L+upAZscID1XDjHOXMIPkrdzTbNJr60Ce6M0S+7OkjwX9z5AN3JRn31DfLdIhM
-	84LKGLIwo42z76msmz5eyMPUYwnfPAUqCSSYl0vMidYwbYkp5xL9e8n4Mvg3Cn+7
-	3dEiJj0sBRvvGv4uOroUg==
-X-ME-Sender: <xms:tijLZvNIX_RN9CQycVqlO1a_v8GFQWrQjUhkEWiUI8qtOmNKtxUf2A>
-    <xme:tijLZp99FuoEDzxfTtBuUdWGYWR9UFbUvcV3ieHCEFbG7I8Bzea_SRJUhM1mmy5xk
-    tSfLPyyf00escATl6k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddviedgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
-    pehsthgvvhgvnhdrhhhilhhlsehimhhgthgvtgdrtghomhdprhgtphhtthhopegsjhhorh
-    hnsehmohhrkhdrnhhopdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:tijLZuSuZIiinWWz8lcIXwXXiUQopnWOOSLTYdlB1PrsuN2nZpXnvQ>
-    <xmx:tijLZju7Er9yHfGgPAtQko5GbwtVWmrRmHYSdLohUi5Py9e9svd6Mg>
-    <xmx:tijLZnd-2C82drQGRTUbwY8YBt5UV2CX4qcaGc8zgIzZKDO9197uIg>
-    <xmx:tijLZv1eZynntPuVfGgLr9DHbg_xKP-ucZNYDi8PR3p-6tkJ2wkK3g>
-    <xmx:tyjLZoE3NaHoUnqPFQ-rjwlrBPK_xsyh09jaV6DGKN2ZhruIIXZLNczn>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 968F41C20064; Sun, 25 Aug 2024 08:51:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724590246; c=relaxed/simple;
+	bh=r9WeuWABwMmRkPqLpGJAMX1LfE7ljeaPQU3aY0g/cHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uMNB8o7l44c41Q6Yu3afTOS83982zgESt4LoXK0mYV+vLHjEJhjER4PLzJqRt4zZJoxNqSJMuAeD1m13klh4PACWKucG4sDybAz4VBX/TAs8BskaqnT6ok+hSJaYDIjL7P5hGQ2AeBFQXMg+1WyOhnIPJA8tXYo6P8FocHY2NUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzpVp6LJ; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3ed48c748so618138a91.3;
+        Sun, 25 Aug 2024 05:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724590245; x=1725195045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1NectQEqGBNO86BpxEJPRR5vvssTGqVJHmsHRMzJiCk=;
+        b=VzpVp6LJ4ZMh4+IUqep4pgWcHAsnh2GsedOOwDpFqxcimlOI3dTOIxMXo9FxodUqSc
+         WHOiEXt9/AwsAaZlJ9cj8rqtj53f4iLzhE+4ICS2Smo8+13Hs50Xi0m13yXuWT9AqcSA
+         P1jFHhp1HSHr09F+SjHhghnP4LkZEnTvO4rLFk6BnshPngQ/w9eDAKVWtX5FyxXIbL+u
+         +p6T1H3GacBWIqy5X6ks8LD4AKYvs4DosvxCMxcxRjP7UJYV8ZsNQ6Dsr2uG2P8zwP48
+         F0ZjrJrZyLwdb2vHNe4gsqn+NZMjlyVaqNd0yulBixwm3wdqb+7Few0DIJNXhm7HLJaZ
+         olQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724590245; x=1725195045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1NectQEqGBNO86BpxEJPRR5vvssTGqVJHmsHRMzJiCk=;
+        b=kJOEt8no6IQ4B8r5VmXWgrvZN7CCp6dB3rDLphi+dGmce+MUhW2qe1BK80pS9Ulvin
+         uj/oAgvy0dbNUtx0YhKIScJ52twP36bUOEZQIpMmxOxiSQGHfJnZ4iACCVcnJ5ERKADB
+         H1Pnk5PcPW3ElHmeBkR23Qx3lW2CnZjTHk3EkROrKqHO0fY/5crSvFbFYtggQHaCG1fz
+         7mfG67JLaNjOvmPjdKzoxPxEmz4M2cL70AuK5jcw8m4LO60vC3dx1+/jF6Yg1KqfS2k0
+         0N62ZB5Q+1OzYGOmqI22IH1aYXZ8HY/E7VxhXHU8yonMTlLFxKFSVimXk8H7x/BpkVj1
+         Fuiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUc0TcUS/9GU1OrEwxrno0xNHwClcmx1h9QcxGcaho5eOICgiDQu52TftLoRc2ajME3E4m3IVfPS3NohnaLQ8s=@vger.kernel.org, AJvYcCXPWiolvDCZM/xX3TDouUmbXuSYrn6sUO0mG90MfxMCXUsVpTVHTKyRMepUzGYoPesnO0qfN6DktObiz2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVp22UYqn5yk5SE8m3M2esbMeu3u1e32OyBCX6gGrIcb6HLCmR
+	5nDCGGO01W5WppJNWKKqVZ1GiZvP0P2o3PWy9nO+qD7Vd5vbFfq6iVxX+1Etygr1tjEFMQnsMil
+	DWCTVJR5hWMAHhYxjRQloPfzWEoY=
+X-Google-Smtp-Source: AGHT+IFhLRblrp5yfgJOeY2kAtUzgPNt47PKkc86rSetVTd5vH/BaqrFrIKFcbLJPhBSdAsNsGH0XUv5AngSlA3qoSU=
+X-Received: by 2002:a17:90b:30d6:b0:2cd:1e0d:a4c8 with SMTP id
+ 98e67ed59e1d1-2d646d44922mr4654116a91.3.1724590244796; Sun, 25 Aug 2024
+ 05:50:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 25 Aug 2024 13:50:20 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "Steven J . Hill" <Steven.Hill@imgtec.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Message-Id: <7f0602dc-8a47-46cb-a12f-09afc082b48f@app.fastmail.com>
-In-Reply-To: <20240824144133.1464835-1-bjorn@mork.no>
-References: <20240824144133.1464835-1-bjorn@mork.no>
-Subject: Re: [PATCH] MIPS: fw: Gracefully handle unknown firmware protocols
-Content-Type: text/plain; charset=utf-8
+References: <20240821-aref-into-raw-v2-1-9215bbca5720@google.com>
+In-Reply-To: <20240821-aref-into-raw-v2-1-9215bbca5720@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 25 Aug 2024 14:50:31 +0200
+Message-ID: <CANiq72mB3dOqTedkRN2zMea_2Y88XBiDWwBHgyEAm3mWyZnjCA@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: add `ARef::into_raw`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kartik Prajapati <kartikprajapati987@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A82024=E5=B9=B48=E6=9C=8824=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=883:41=EF=BC=8CBj=C3=B8rn Mork=E5=86=99=E9=81=93=EF=BC=9A
-> Boards based on the same SoC family can use different boot loaders.
-> These may pass numeric arguments which we erroneously interpret as
-> command line or environment pointers. Such errors will cause boot
-> to halt at an early stage since commit 056a68cea01e ("mips: allow
-> firmware to pass RNG seed to kernel").
+On Wed, Aug 21, 2024 at 9:59=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
 >
-> One known example of this issue is a HPE switch using a BootWare
-> boot loader.  It was found to pass these arguments to the kernel:
+> From: Kartik Prajapati <kartikprajapati987@gmail.com>
 >
->   0x00020000 0x00060000 0xfffdffff 0x0000416c
+> Add a method for `ARef` that is analogous to `Arc::into_raw`. It is the
+> inverse operation of `ARef::from_raw`, and allows you to convert the
+> `ARef` back into a raw pointer while retaining ownership of the
+> refcount.
 >
-> We can avoid hanging by validating that both passed pointers are in
-> KSEG1 as expected.
-
-Hi Bjorn,
-
-This is actually breaking 64 bit systems passing fw_args in XKPHYS or KS=
-EG0.
-
-Maybe something like:
-
-static inline bool valid_fw_arg(unsigned long arg)
-{
-#ifdef CONFIG_64BIT
-	if (arg >=3D XKPHYS && arg < XKSEG)
-		return TRUE;
-#endif
-	return arg >=3D CKSEG0 && arg < CKSSEG;
-}
-
-Will be more robust.
-
-Thanks
-- Jiaxun
-
+> This new function will be used by [1] for converting the type in an
+> `ARef` using `ARef::from_raw(ARef::into_raw(me).cast())`. The author has
+> also needed the same function for other use-cases in the past, but [1]
+> is the first to go upstream.
 >
-> Cc: stable@vger.kernel.org
-> Fixes: 14aecdd41921 ("MIPS: FW: Add environment variable processing.")
-> Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
-> ---
->  arch/mips/fw/lib/cmdline.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> This was implemented independently by Kartik and Alice. The two versions
+> were merged by Alice, so all mistakes are Alice's.
 >
-> diff --git a/arch/mips/fw/lib/cmdline.c b/arch/mips/fw/lib/cmdline.c
-> index 892765b742bb..51238c4f9455 100644
-> --- a/arch/mips/fw/lib/cmdline.c
-> +++ b/arch/mips/fw/lib/cmdline.c
-> @@ -22,7 +22,7 @@ void __init fw_init_cmdline(void)
->  	int i;
->=20
->  	/* Validate command line parameters. */
-> -	if ((fw_arg0 >=3D CKSEG0) || (fw_arg1 < CKSEG0)) {
-> +	if (fw_arg0 >=3D CKSEG0 || fw_arg1 < CKSEG0 || fw_arg1 >=3D CKSEG2) {
->  		fw_argc =3D 0;
->  		_fw_argv =3D NULL;
->  	} else {
-> @@ -31,7 +31,7 @@ void __init fw_init_cmdline(void)
->  	}
->=20
->  	/* Validate environment pointer. */
-> -	if (fw_arg2 < CKSEG0)
-> +	if (fw_arg2 < CKSEG0 || fw_arg2 >=3D CKSEG2)
->  		_fw_envp =3D NULL;
->  	else
->  		_fw_envp =3D (int *)fw_arg2;
-> --=20
-> 2.39.2
+> Link: https://lore.kernel.org/r/20240801-vma-v3-1-db6c1c0afda9@google.com=
+ [1]
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1044
+> Signed-off-by: Kartik Prajapati <kartikprajapati987@gmail.com>
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
---=20
-- Jiaxun
+Applied to `rust-next` -- thanks everyone!
+
+    [ Reworded to correct the author reference and changed tag to Link
+      since it is not a bug. - Miguel ]
+
+Cheers,
+Miguel
 
