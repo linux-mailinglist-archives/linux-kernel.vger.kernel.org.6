@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-300366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2C095E2D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A51F95E2DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B70282265
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33061F21A77
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074B6FE16;
-	Sun, 25 Aug 2024 09:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25AA6FE16;
+	Sun, 25 Aug 2024 09:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9JhP8FM"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bitmath.se header.i=@bitmath.se header.b="SgC3p5dZ";
+	dkim=permerror (0-bit key) header.d=bitmath.se header.i=@bitmath.se header.b="Lgzmk+KD"
+Received: from mailrelay3-2.pub.mailoutpod2-cph3.one.com (mailrelay3-2.pub.mailoutpod2-cph3.one.com [46.30.211.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EF24F602
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 09:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC062F3E
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 09:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724576460; cv=none; b=iW9sjFoBbexHsb5HVH/YZ9i84+XVV6znC1RVSbC+ZkvNpuG6NeKZxz61qAU0LSIiS5kPvMj9kXw4Z78EawvOwLuSw1DQYqkPvyKJKEwaiKHLSi6bOkE3+x90E/GAYjRQbF/T1HVAr2TjmJ/deG+At6qJdWGYUbObqI05KzafFHg=
+	t=1724576940; cv=none; b=qfQ0kRjDC9uei/1BO2smdp5yOXDflL9w4oNrnaM5GrgzQlBbn3Ss3nkWNvIYhv8FPeTzzmS3K0c3oXvbk5+sSGZesGJ4LrdliS0BsaQlfMh6lVTyLmF9FJVN0pYD9gGcygfnisTKiCNrimZfACLN+6Mw+EbbpQnPaZCbR+BNAeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724576460; c=relaxed/simple;
-	bh=zPtjJAHCcjLGpjo3WyxKQTDsk06tKU7xrLNNHU1rVLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drgapkiis19UTg4CirlTdDtiLdnNV6vSG8AxanjtbR0Vw9MIL7e9nKOJFZtn6/hwkqQB9iLTu6VXDGnDY1bLQvNv9en1LBC8NHSAg9BvoHt9r/LGIxFfp4cIQJHnxnJ5xRAlvlJ0VOwyU1Ee6UBqkDeiqKngPITp1sXAJ6x55hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9JhP8FM; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368633ca4ffso508753f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 02:00:57 -0700 (PDT)
+	s=arc-20240116; t=1724576940; c=relaxed/simple;
+	bh=oWyvZcv3KLB75n2dWGYT4ymEiqc/u5pAQQBhAFTAM8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImSODWaplmvIm/cM1usW7/GsCqbz1G3SsdmvvuwwdaYVrUskq91JVQgkLWe+iRINtLBbW5WilYlUFOPAP5bwbcQqZRnR+I//0vwofmJbFDSXlcPEeo2ifBMmT1qnmgdis0Mp6q1zs9Lf8BqOVSHwEmz+N0HcSP2jpY3nurQWnVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitmath.se; spf=none smtp.mailfrom=bitmath.se; dkim=pass (2048-bit key) header.d=bitmath.se header.i=@bitmath.se header.b=SgC3p5dZ; dkim=permerror (0-bit key) header.d=bitmath.se header.i=@bitmath.se header.b=Lgzmk+KD; arc=none smtp.client-ip=46.30.211.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitmath.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bitmath.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724576456; x=1725181256; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3n4NDcotA3y63waYC9ChSZVHTLNYfnqOEMaVdu0sMbA=;
-        b=M9JhP8FMjlF2apUeaNN8juMH9Cf7KhlaebXoQygh6FNjJb1K60K5K5rJ74QFxC6cwy
-         h8YsYlfwb+b93D6/ikPxXLqtSyu1HBrQhOx8sAWBXVnfNHzNH1bhlYzWjvh/+amvU1NC
-         ieFPqwhOzsYZtfRuuYcxuhUQx+OHNaWZNKwe8rYwa8ghzn35GTSNIUt5BUHfNAkFsA4A
-         SI8xQUJiBYb++Y2AJuVa9y7GESdPbivJxCEIYNmyNz/TIxoIQERxksY5RD21hJWoKb8O
-         sRGEiOZkTzNoddVTN3+MLsv6ND4iyQbiTSN6IQmL8zUZ0m+HB24rSG4t0hFXDC+MtcdU
-         lEgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724576456; x=1725181256;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3n4NDcotA3y63waYC9ChSZVHTLNYfnqOEMaVdu0sMbA=;
-        b=eHS5XTg6jQGK2pDEosPMb+bOOX8ND/aKy8A2B/HPBsvGw6dISYjZqTmrIZu1cYUBXY
-         9NFC5A+S905VzRdAssNLdXneFau+1E52GdTcYgsOz9KRCSPigp9g5F/cclfR/7iXlHDo
-         MFmnt0TQz6fIpautOfcl4rYZf8sDHJx+EeJe2WDtxzSX1xsmX0aUPV84rp2IFcpByXmG
-         8J+xNaHDtKAXM0Q9ZBGI2qh2RstCHWfTBPw1kxfqG+72WnHVJ0kilp7w4j5xJKE8fAE+
-         x+OHWAqtbtEl1JhJ3KXWdxkMOr2bSHTJv84dnZ1lpxjv413BNTG1pLOlzE8x/jErvnLX
-         LJug==
-X-Forwarded-Encrypted: i=1; AJvYcCUqFRZmNVs//AqyBDkJQONFzQrnSH1Ke6Wbp1+FzRwSO1a0dVoDU4WbKTGCOvv/cs/v7JXvhRamjBCQ+Ug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaFw11Hx1O5m1rvLSM9xJnUXru8qC8FJVQjAY6v3x9htHepKr9
-	7qNtz7v1PqVmAqOy3wqgusj+7+Kc2TuZhs0dx+TijAFU44rj0VL112vTgkLd9Tw=
-X-Google-Smtp-Source: AGHT+IFM5MEyUzYaYhlWSvMHBGsJqUVqINFe9O3P8umMlD6v8D2dpc5UOtJx+T8nsUJsdyoIoUZK5w==
-X-Received: by 2002:a05:6000:154f:b0:368:4c5:12ec with SMTP id ffacd0b85a97d-3731191d5c5mr2656753f8f.8.1724576456307;
-        Sun, 25 Aug 2024 02:00:56 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308160586sm8237298f8f.58.2024.08.25.02.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 02:00:55 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	d=bitmath.se; s=rsa1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=i86L5iceR2GEC+0H4NBgHtzszPbBP2XN5/nrKvH6uPc=;
+	b=SgC3p5dZk60KFmgxNyGsWXXqX5ugO72WD0hd3IPgh0+Yjz3PncrD+D3qMk14Dyv0wa29TQl7aVbjB
+	 afH9Erlmz+OvAei+ydGsqThLxUAp8YJ4AJso0JF0z+gdKpMRoc2yAuuRCfPLK9WGhKm+KceP5Z2/1E
+	 RMxiiDATy4GeNI8wrixNh4c2+6zwP74t38kJZ+grR1a6szeDagjwkIgMV/m+PW6dYye1DAhRBpQfUh
+	 GEzXr2UkwCzM3Bj5/jSrZDfGgqaBKTYHntHM/i0zd+eErWRJWtLXbIXb63ObLruo+oOGNz3ML+BGnk
+	 0bxObXNjlZ4mT18VW+4ef5rx2Ly58GA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+	d=bitmath.se; s=ed1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=i86L5iceR2GEC+0H4NBgHtzszPbBP2XN5/nrKvH6uPc=;
+	b=Lgzmk+KDhIvgf1o21TuLrldDVvYdskJlgaydN5C3RSjI8/vO9ET/EpnU4cdqMva1o++n9FnizpO87
+	 CzwwNaVDA==
+X-HalOne-ID: 7c98b066-62c1-11ef-9176-dd3f8b2e2fd4
+Received: from localhost (h-94-254-62-230.na.cust.bahnhof.se [94.254.62.230])
+	by mailrelay3.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 7c98b066-62c1-11ef-9176-dd3f8b2e2fd4;
+	Sun, 25 Aug 2024 09:07:44 +0000 (UTC)
+Date: Sun, 25 Aug 2024 11:09:42 +0200
+From: rydberg@bitmath.se
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Erick Archer <erick.archer@outlook.com>,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: MAINTAINERS: drop stale exynos file pattern
-Date: Sun, 25 Aug 2024 11:00:52 +0200
-Message-ID: <20240825090052.22135-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH] Input: bcm5974 - use guard notation when acquiring mutex
+Message-ID: <Zsr01pEW0Y-F1Hbf@mars.bitmath.org>
+References: <ZsrBVO2w9WwX73iU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsrBVO2w9WwX73iU@google.com>
 
-With last TXT binding converted to DT schema, all Samsung Exynos display
-bindings are in "samsung" directory, already present in maintainers
-entry.  Drop old "exynos" directory to fix get_maintainers.pl self-test
-warning:
+On Sat, Aug 24, 2024 at 10:29:56PM -0700, Dmitry Torokhov wrote:
+> This makes the code more compact and error handling more robust
+> by ensuring that mutexes are released in all code paths when control
+> leaves critical section.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/mouse/bcm5974.c | 35 +++++++++++++----------------------
+>  1 file changed, 13 insertions(+), 22 deletions(-)
+> 
 
-  ./MAINTAINERS:7539: warning: no file matches	F:	Documentation/devicetree/bindings/display/exynos/
+Thanks Dmitry,
 
-Fixes: ad6d17e10306 ("dt-bindings: display: samsung,exynos5-dp: convert to DT Schema")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 028186bb4e8d..c75918994a53 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7536,7 +7536,6 @@ M:	Kyungmin Park <kyungmin.park@samsung.com>
- L:	dri-devel@lists.freedesktop.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
--F:	Documentation/devicetree/bindings/display/exynos/
- F:	Documentation/devicetree/bindings/display/samsung/
- F:	drivers/gpu/drm/exynos/
- F:	include/uapi/drm/exynos_drm.h
--- 
-2.43.0
-
+Acked-by: Henrik Rydberg <rydberg@bitmath.org>
 
