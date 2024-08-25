@@ -1,200 +1,320 @@
-Return-Path: <linux-kernel+bounces-300221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A0A95E0C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:57:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939EE95E0C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 04:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EAE728255E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1649E1F21A07
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 02:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9858F45;
-	Sun, 25 Aug 2024 02:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1999B8F45;
+	Sun, 25 Aug 2024 02:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="FQttCHVQ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2087.outbound.protection.outlook.com [40.92.21.87])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="WR/IBd8M";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="kbaZ9nZY"
+Received: from mx-lax3-3.ucr.edu (mx-lax3-3.ucr.edu [169.235.156.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2F3163;
-	Sun, 25 Aug 2024 02:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724554633; cv=fail; b=kDS77q3rFC+ZgQ/y1l21UqrQi7GTjZr1QZe1samnsp63hMJy3jexFpAL77SMxL5M6UU6UFRZwhEXh88EPJa9JvfMgH+K/vCRHY5xJZOgFXSUvlbD/DVZjl/aGXkw7UVuJw67IpjgoebUnaPyrAwtiOkTdZB0MM9rYm5BWyr1p0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724554633; c=relaxed/simple;
-	bh=3BCFKituJ2eBylbxyuVs4AGmEsIl9Gq9UoP1Pbpc3o8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SBKHQKXiC9dM49Nt9socmB8H0KwYUG9ztvcuQBbKlNZmSAsCqUj7OaMSxlRyyK9CRaC4GXO8esKM/D9htLOpuzDkn6L/acKafZOIunuRA2huXKIi/7Gzo8mJHrHmVhqT1dPwTHZbVmfrE1gP52+iIxC4nr19snAFsOXNaAoA4+U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=FQttCHVQ; arc=fail smtp.client-ip=40.92.21.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fLQ+LBgJtFJOJx1uLnP6YPZI3DCzgCFXzl1Y34+5jvINBpUonThC9rebki0PK/1V8pZEVC+u66AehPUwe5AZzrF/E+tpfJIbPEai5gkz7a8Ut4VV46Bwu7OxvIR39QZqojECisbdF4dyXkOTfHyk05zVkMc97kI8gNIQ3VFilagf9piEhHd5d6g73KvZvRc3SQ90qSBmRH03H00oj9Q3lvQu0eknFL4u6unvWkoz01/PLIvx8KsEPEx7fDfBM/i4WaujtTRNdpDuTAQi6f25ugbKx82nvkZNx2r4ROfoNBSRJQnLu0bHN359oJCBZiEg9b/26xug3l0RHrapkSP8cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BIzDNNdPQSuaWt+BRbg28Gl8diozw6Ls0hDgG1PuqGw=;
- b=aMpyWXeWMQk79KabYggnjNS5++4qFcSQH0Cdc524wwlgIJIF+2FqV1Ov2PlrpDNVw1DVqr5B3Uf4e2KiUEo0+vjjUw+hw5rhd4/1Fc+c4NaBzTHulBiORjup1wPJFyrG696DJd374iY5niceed0US/BJtzptClxw8GeKzWF57cv7KKEcbRSZ7J6aM3FtXfhwOkUl3jUtGOFbAcCLMk4Z6TWZRuF9Ct6gXAP9auAf1KpW/6Evvq9t4WEO440VHI8rItfQCwI6Shh6a5xCiVZjNO79dTveAEFpzgvtrJNvURwxVyJhAgpq1ob1KSKmbJmUCKVQ3nU1q1ZVa2qDYpk3XA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BIzDNNdPQSuaWt+BRbg28Gl8diozw6Ls0hDgG1PuqGw=;
- b=FQttCHVQi9zo+BzRVPaBw5x8TE8FQ8ki81fTFEWU9L113+CkE/D06NLFFEyz/lfGuhzOyglO10XL496/cxFXugES9QytzoaqLC94EJJqRStxtsYhdbg8Gst5ic69NnTQVER/Bbmfvu9wR2gJChyxxMCz4rcDjFMfj+TUUXH/XvadvuNw3sqK6ionM00uLCS3tNavXRad0BT3HQnvEc1Im5ydoCkr+x62M+NJ/Rfjs6WIaUDPiXzmhdyYPO11Ytod2zUtf8DNpbu89zdwp7PnHZ5+oqiia6yTTpb1YiwZ4CafipC9wQi8OlPmMeAsgvgbc6uaxZo/80UtXNlPEKjOVw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DM6PR02MB6620.namprd02.prod.outlook.com (2603:10b6:5:222::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Sun, 25 Aug
- 2024 02:57:09 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Sun, 25 Aug 2024
- 02:57:09 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Stephen Hemminger <stephen@networkplumber.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Saurabh Sengar
-	<ssengar@linux.microsoft.com>
-Subject: RE: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-Thread-Topic: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-Thread-Index: AQHa9IPP2ZEuiKarEkiNA338VE6Og7I3Smgw
-Date: Sun, 25 Aug 2024 02:57:08 +0000
-Message-ID:
- <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822110912.13735-1-namjain@linux.microsoft.com>
- <20240822110912.13735-3-namjain@linux.microsoft.com>
-In-Reply-To: <20240822110912.13735-3-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [tt93zZYV+YF7v5Kf/cyhyoFIPs2/KYEC]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM6PR02MB6620:EE_
-x-ms-office365-filtering-correlation-id: aae2fd50-01af-4573-27f7-08dcc4b19c32
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|15080799006|8060799006|461199028|102099032|56899033|440099028|3412199025;
-x-microsoft-antispam-message-info:
- ddQiSlGDxpeZI1DZz3UdF4V5PbBEsNJSlYRNS0T+OBEORTs2But9cgGVh0g382xaftF6xuaCVsrlhZT7yqTMpQoK12Ptmuy3E9cmIuRykn7nLoHatfapoX68h26NkLvwXznym+deoiklt6un7cgAc62PaxFUMiYjLfaTdDMs0OX65UmH9BiKT4wNPxlf7oOBb8c5aqg2879uTYgWwAvwtEGEpZ6IvYVpEBtFFVIN457jhP0uffn+YHJ3R4SSdU+XOBU12Dt5BYXyUAXynHpJkfQVaBlSucB1uL86AGwjlVEV+MtFd7rYWc3Scss2wXf+wu1hh4bA8zUPArAqUmkblfKCBKVvm6wbhQGKXDIteZS7TRlpT4qMC7RCKicGTdl9aLcCVdleLD8tpL4YPfegPWL62SFkF+/mdN7C9jDgr7T0w13IO6hwWoU/bBinXfpIsbwB16HUi8BWC2pMX9+3120qcmYgeyQDZ34coAqJr+w4n48cMzrbPJ+afJpRo9RnCGQPYHmOsjemqzskA4ii9gY4tS0vcEzekE8dYVckqW4rMpmw+SBQnT1q16zzfaSjoH6AbH8HF+wyOsuAR8UsQvUBgiz0Rgf53xeOlduJSOyMTIDoSjci/cUVEoGnUJTvviVJDsXjXvWMbHfBhCgYr0jJ5PnvWn1QLnBd0sWgrmbdQV9pe/AH2a3rxeVTy5Gq
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?xm/GAaCiDrZrjL7lAQaQ1Ga0RRJz/TtwcyLe3bvDJ+xCvnDTMVkxrfWCk568?=
- =?us-ascii?Q?59Rctz/HX6MZhW11d2KyNUOBSVt+NdFvTQaDl4oo2F/OPEo3e/0I/Z2ppToC?=
- =?us-ascii?Q?OiQohmL7Sto7S6hFUZxh4gCzlqIPiGXGDpfIWxOJS0x0wqsP4N/kB3x2iMdE?=
- =?us-ascii?Q?snQjusErt+t7LhEPb4GoL3nRL4qdhrca7dZLfwzzMjI/+jB7VCj8U2xHQSvX?=
- =?us-ascii?Q?YubPMabuD6mWNjLLSf+jszrlbuIZBpHSNe1gig883vp3gWvcmQjJht9DmPkh?=
- =?us-ascii?Q?gnaJFwxv1I68vuVKNiqZE2nipzK8lFjur2ylCtSc2/i2VCn0PoroD1RvABeZ?=
- =?us-ascii?Q?6GSsF4V7bZb8Q3M4P0bowvCzmudz0lvJx5rwOZ+5FRJMRq00EUWP1zmOlTga?=
- =?us-ascii?Q?3vXgIBDrEGn4kU4SsbHnKoDMP0aRsUoPP4erWfn9Uzto44aBaR8UnOZxBioF?=
- =?us-ascii?Q?W3U02PTfSCDpAM5w01c+UfOmd0tiCzT1ArmnTyC1k0oeQVzLD6eUDcyPwdA+?=
- =?us-ascii?Q?Abe/ZzNM1V7BZdfZkWzHi7mqW5cey2AnJw9m3TfnBsH+53MTsO5aea3DNI1d?=
- =?us-ascii?Q?POXlPKuf04LvB37KQXM93t/Z0SC0pKX60q5B8uE34qsSnhxb9VRHXZVU74hp?=
- =?us-ascii?Q?/hks8P66jPzPgoFRuIpyAbC/tdCbJhgwDKuihpcprS35bkDv3F0ZxepvP6Kf?=
- =?us-ascii?Q?yTdmSNbHp4QWt4Fag2r/MwGRwmj5HdYN7GHz+O35b02V6ycRO6qzIhWoCl/+?=
- =?us-ascii?Q?05if/+h4FJttDN/+moR1HMDzTGRRiaVAOrspANkWPcBgIqzRO91fuUpIxe36?=
- =?us-ascii?Q?9uu3p+alkNDrjSxRDlIvVo/aMJqBtGwdYvGiMX+GEUHNlAAHi1F83tyXjw6b?=
- =?us-ascii?Q?p0/3Es4H/CYmJ6ctd9R3yKIh7pur6SZVbFflh8qsY+tZcqNJyNu0J1RmCtWP?=
- =?us-ascii?Q?iYC1jVfRCx5ES25L2PPKK1hhsE7XMsXEBrQOd5bYL+LczKvLgg4emCIF96en?=
- =?us-ascii?Q?HLdxs8OZMGXUjNpgSmZGBggO0U/AGXk1XA49eOuk3zYbS6b42IREShu5dXXk?=
- =?us-ascii?Q?PQHehb/uuKpTOofxRUBvmelkVz1GLbo+GnK1ZWCsuyj28cPlxFy/dT5Znd61?=
- =?us-ascii?Q?T2DOy03uiQ8xN+DWnaldsaXiHth4zVQwuOye7h3I0aPZdCKTrbFinNqMKQQu?=
- =?us-ascii?Q?y2KZm6FN4sTbYwV1aNx4sCA/xubhPK5FipmaL8C/KxVVYiWJycsXZHufceI?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005014A2C
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 02:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724554758; cv=none; b=jVOSFODjhWK6EvLCEwvX6jsYbbEcguqIpS+TzPYNnl3ifY3fxviEwHg5TgL9/TR+OQJrXOf7Sy8vB9DA2P9T+eI3fTUz/USpHghnd09g2HVQ5N9Wrof9OTyxYclS1Ws+63p5sXGL8qtNmFNZlQmj4qWFVaviCoA/cSVBPZlbrzU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724554758; c=relaxed/simple;
+	bh=fZFpUStijfzfp8t+fLKfNFmYpBZ6unBu0C1PNq3NVKc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=nCTuLEaZpHZncQ/PZSPEHNLEw47NCA6/weEkmQhTQKXviHpVH8zWT7u8jKkaBkj418i4BXujAMY3308F6qrhA8i2i0gssAzcv0I052uAGJIFMn1JaZ9Lsg7jQRM0vQ7bvfdLO6jIdZn4lIeTPzYZPEcYdSwM/T+U+lzrEDBUjIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=WR/IBd8M; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=kbaZ9nZY; arc=none smtp.client-ip=169.235.156.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724554756; x=1756090756;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=fZFpUStijfzfp8t+fLKfNFmYpBZ6unBu0C1PNq3NVKc=;
+  b=WR/IBd8Mw7w9r8qxfSBXN+7gnHOvzAyl/Js0hh3g0tR59mL6urPWwP8Z
+   b5zwGapCDzwBEl1wVsfvmCgohes4RwwpVlXlcywqN6smrkJV/FtwzuYux
+   4PS/CS/bv4r5eqIr+E0Yu6nth7sZ32NZMF9e2cAOC0wAOJPMJDtU8ZHPG
+   WOC130OQ0Qrchn5WuM0FJtLqrXvM2gGrwMunGWHwYxMYbYLwScmfWB2OY
+   rWUNewt0AOoOKAmESjLANn6sgPhfD5OmXgon3M3hz1hNXys5ND9UkCm/6
+   tFMaX/uqoFY5lstqQZSst5YYitR9x0xiNuW+x3wbsZpHxODTzgamzcc1t
+   w==;
+X-CSE-ConnectionGUID: lneQhNkURPGJEzfsZbiFEw==
+X-CSE-MsgGUID: L5nRPHaoRCmZIWhnSFHs1g==
+Received: from mail-io1-f70.google.com ([209.85.166.70])
+  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 24 Aug 2024 19:59:09 -0700
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81faf98703eso365212239f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2024 19:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724554748; x=1725159548; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uGG1b6EFOZjuanG9XBctddu6ZSqL4PxjrsDdukn+VgI=;
+        b=kbaZ9nZYY2sc6nhKrzkEV5lSPALPLYchrRFqQwWF0XjGoTMAkPJTH9q6tOIlHLmwXc
+         2zVxF0/NEGCI6qVlvX/iJ4WbVDQ0fa8m+sJQBeXtGzak01F8KqqnUEIytbEA6OB0osHv
+         lkEtAezdmVgPWy/vFx4tYtkCm+Qa0TTgwzYQo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724554748; x=1725159548;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uGG1b6EFOZjuanG9XBctddu6ZSqL4PxjrsDdukn+VgI=;
+        b=dLgxC+wJJ7S3KjVnnhzf427hfwsr2G3C2lel3XwDLotk3ub7l01InUS/beZweJ8Kof
+         RPGdwJxdQaIEmTozlD8sxNNoi0nB9iwSNOkinlJcBq07P95UNNAOAjoCVF7yJHQyqh2T
+         RHTgqmuO+TID+ZSbVVlobmED6QhYX2pafgFX5NWjBG0hV7vRltrC6Xtd1pk3gaKLvQAv
+         GGrg7xi4pyE8/toin3E+95jm9788o7BmQbk4vNtxJWDtv92a0Xo92bpZR/ST/Pn8mHVh
+         MO6wSVj8xBAzxPIM5+CAowvgiLxK6FBNjKB212ArTgn8a1/PTVIYh44B4CUe3ovONbEJ
+         P2iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDnGRoq205mIqwK1vgHf4UmUJ6yTeY3MqUIl/OP4zUN6t2PApQNX1yPvPc4v7oCtviWY8peRkOcV0l87M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR3OHfdjdK2nESNI0GbWF4zZl4vV91dzIZWTsCwCpTkCgdeLZF
+	YVWPLIQqzlw7/wwhxZ4SFi7rnjimPHJQ/BJDMR6JGumxGbdKrLs+lNNfmL8lYQBN4cfVdYbqCcV
+	Tyj0zut0O15Dq1hUzqVxXcj5BF+AqV8ZgBtrclWc4MNn/TndRlzTGxkvhcjl9Qcbqc9SiUE088/
+	87XQpjeNnT+Pd1rp1b+OBy/bkCA93VHGLXH0F0yQ==
+X-Received: by 2002:a05:6602:6210:b0:81f:75bf:6570 with SMTP id ca18e2360f4ac-8278731c917mr803361939f.5.1724554748102;
+        Sat, 24 Aug 2024 19:59:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENZkR7DacYk8BBrWhezxNQh58licG6jHu2ICL/deecxmVsIPLL+c58Q5sYkIW5KhOoqaa9lXHcfbIudyWKS9E=
+X-Received: by 2002:a05:6602:6210:b0:81f:75bf:6570 with SMTP id
+ ca18e2360f4ac-8278731c917mr803361039f.5.1724554747701; Sat, 24 Aug 2024
+ 19:59:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: aae2fd50-01af-4573-27f7-08dcc4b19c32
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2024 02:57:08.8024
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6620
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Sat, 24 Aug 2024 19:58:55 -0700
+Message-ID: <CANikGpcFAw6DWr0b3c8_s5f+KaMCqUnVv-xvPEnA__OOGENUPQ@mail.gmail.com>
+Subject: BUG: INFO: task hung in tty_buffer_flush
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, August 22, 2=
-024 4:09 AM
->=20
-> Rescind offer handling relies on rescind callbacks for some of the
-> resources cleanup, if they are registered. It does not unregister
-> vmbus device for the primary channel closure, when callback is
-> registered.
-> Add logic to unregister vmbus for the primary channel in rescind callback
-> to ensure channel removal and relid release, and to ensure rescind flag
-> is false when driver probe happens again.
->=20
-> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> ---
->  drivers/hv/vmbus_drv.c       | 1 +
->  drivers/uio/uio_hv_generic.c | 7 +++++++
->  2 files changed, 8 insertions(+)
->=20
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index c857dc3975be..4bae382a3eb4 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -1952,6 +1952,7 @@ void vmbus_device_unregister(struct hv_device
-> *device_obj)
->  	 */
->  	device_unregister(&device_obj->device);
->  }
-> +EXPORT_SYMBOL_GPL(vmbus_device_unregister);
->=20
->  #ifdef CONFIG_ACPI
->  /*
-> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> index c99890c16d29..ea26c0b460d6 100644
-> --- a/drivers/uio/uio_hv_generic.c
-> +++ b/drivers/uio/uio_hv_generic.c
-> @@ -121,6 +121,13 @@ static void hv_uio_rescind(struct vmbus_channel *cha=
-nnel)
->=20
->  	/* Wake up reader */
->  	uio_event_notify(&pdata->info);
-> +
-> +	/*
-> +	 * With rescind callback registered, rescind path will not unregister t=
-he device
-> +	 * when the primary channel is rescinded. Without it, next onoffer msg =
-does not come.
-> +	 */
-> +	if (!channel->primary_channel)
-> +		vmbus_device_unregister(channel->device_obj);
+Hello,
+We found the following issue using syzkaller on Linux v6.10.
+In `tty_buffer_flush`,  the task hangs when trying to acquire lock
+`buf->lock`.
 
-When the rescind callback is *not* set, vmbus_onoffer_rescind() makes the
-call to vmbus_device_unregister(). But it does so bracketed with get_device=
-()/
-put_device(). Your code here does not do the bracketing. Is there a reason =
-for
-the difference? Frankly, I'm not sure why vmbus_onoffer_rescind() does the
-bracketing, and I can't definitively say if it is really needed. So I guess=
- I'm
-just asking if you know. :-)
+Unfortunately, the syzkaller failed to generate a reproducer.
+But at least we have the report:
 
-Michael
-
->  }
->=20
->  /* ysfs API to allow mmap of the ring buffers
-> --
-> 2.34.1
->=20
-
+INFO: task kworker/0:5:8495 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:5     state:D stack:24400 pid:8495  tgid:8495  ppid:2
+   flags:0x00004000
+Workqueue: events vc_SAK
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:6897
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x69a/0xd50 kernel/locking/mutex.c:752
+ tty_buffer_flush+0x75/0x3f0 drivers/tty/tty_buffer.c:229
+ tty_ldisc_flush+0x66/0xc0 drivers/tty/tty_ldisc.c:388
+ __do_SAK+0xc4/0x710 drivers/tty/tty_io.c:3038
+ vc_SAK+0x73/0x210 drivers/tty/vt/vt_ioctl.c:993
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/u4:27:17406 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:27   state:D stack:20472 pid:17406 tgid:17406 ppid:2
+   flags:0x00004000
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_timeout+0xac/0x300 kernel/time/timer.c:2557
+ ___down_common kernel/locking/semaphore.c:225 [inline]
+ __down_common+0x31c/0x510 kernel/locking/semaphore.c:246
+ down+0x7e/0xb0 kernel/locking/semaphore.c:63
+ console_lock+0x140/0x1a0 kernel/printk/printk.c:2665
+ con_flush_chars+0x67/0x260 drivers/tty/vt/vt.c:3503
+ __receive_buf drivers/tty/n_tty.c:1644 [inline]
+ n_tty_receive_buf_common+0xd30/0x1370 drivers/tty/n_tty.c:1739
+ tty_port_default_receive_buf+0x69/0x90 drivers/tty/tty_port.c:37
+ receive_buf drivers/tty/tty_buffer.c:445 [inline]
+ flush_to_ldisc+0x2ef/0x850 drivers/tty/tty_buffer.c:495
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz.0.1346:24748 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.1346      state:D stack:24680 pid:24748 tgid:24748
+ppid:22281  flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_timeout+0xac/0x300 kernel/time/timer.c:2557
+ ___down_common kernel/locking/semaphore.c:225 [inline]
+ __down_common+0x31c/0x510 kernel/locking/semaphore.c:246
+ down+0x7e/0xb0 kernel/locking/semaphore.c:63
+ console_lock+0x140/0x1a0 kernel/printk/printk.c:2665
+ con_shutdown+0x44/0x80 drivers/tty/vt/vt.c:3567
+ release_tty+0xbf/0x560 drivers/tty/tty_io.c:1595
+ tty_release_struct+0xb8/0xd0 drivers/tty/tty_io.c:1707
+ tty_release+0xb66/0xd70 drivers/tty/tty_io.c:1867
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x239/0x2f0 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x12d/0x280 kernel/entry/common.c:218
+ do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7faaf81809b9
+RSP: 002b:00007ffd386bad68 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007faaf8347a80 RCX: 00007faaf81809b9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007faaf8347a80 R08: 0000000000000006 R09: 00007ffd386bb04f
+R10: 00000000003ffc40 R11: 0000000000000246 R12: 000000000009e184
+R13: 00007ffd386bae60 R14: 00007ffd386bae80 R15: ffffffffffffffff
+ </TASK>
+INFO: task syz.0.1346:24760 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.1346      state:D stack:27400 pid:24760 tgid:24748
+ppid:22281  flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:6897
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x69a/0xd50 kernel/locking/mutex.c:752
+ tty_release_struct+0xad/0xd0 drivers/tty/tty_io.c:1706
+ tty_release+0xb66/0xd70 drivers/tty/tty_io.c:1867
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x239/0x2f0 kernel/task_work.c:180
+ get_signal+0x15d5/0x1730 kernel/signal.c:2681
+ arch_do_signal_or_restart+0x92/0x7f0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x95/0x280 kernel/entry/common.c:218
+ do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7faaf81809b9
+RSP: 002b:00007faaf9013038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: 0000000000000000 RBX: 00007faaf8346058 RCX: 00007faaf81809b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007faaf81f4f70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007faaf8346058 R15: 00007ffd386bac08
+ </TASK>
+INFO: task syz.1.1347:24771 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.1347      state:D stack:24680 pid:24771 tgid:24771
+ppid:19241  flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:6897
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x69a/0xd50 kernel/locking/mutex.c:752
+ tty_release_struct+0xad/0xd0 drivers/tty/tty_io.c:1706
+ tty_release+0xb66/0xd70 drivers/tty/tty_io.c:1867
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x239/0x2f0 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x12d/0x280 kernel/entry/common.c:218
+ do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f80957809b9
+RSP: 002b:00007fff493e0918 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007f8095947a80 RCX: 00007f80957809b9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f8095947a80 R08: 0000000000000006 R09: 00007fff493e0bff
+R10: 00000000003ffc0c R11: 0000000000000246 R12: 000000000009e315
+R13: 00007fff493e0a10 R14: 00007fff493e0a30 R15: ffffffffffffffff
+ </TASK>
+INFO: task syz.1.1347:24776 blocked for more than 143 seconds.
+      Not tainted 6.10.0 #13
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.1347      state:D stack:27400 pid:24776 tgid:24771
+ppid:19241  flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5407 [inline]
+ __schedule+0xf4a/0x15e0 kernel/sched/core.c:6748
+ __schedule_loop kernel/sched/core.c:6825 [inline]
+ schedule+0x143/0x310 kernel/sched/core.c:6840
+ schedule_timeout+0xac/0x300 kernel/time/timer.c:2557
+ ___down_common kernel/locking/semaphore.c:225 [inline]
+ __down_common+0x31c/0x510 kernel/locking/semaphore.c:246
+ down+0x7e/0xb0 kernel/locking/semaphore.c:63
+ console_lock+0x140/0x1a0 kernel/printk/printk.c:2665
+ do_con_write+0x150/0x4ca0 drivers/tty/vt/vt.c:3056
+ con_write+0x22/0x40 drivers/tty/vt/vt.c:3434
+ process_output_block drivers/tty/n_tty.c:574 [inline]
+ n_tty_write+0xda5/0x12d0 drivers/tty/n_tty.c:2389
+ iterate_tty_write drivers/tty/tty_io.c:1021 [inline]
+ file_tty_write+0x589/0xa00 drivers/tty/tty_io.c:1096
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x8a1/0xc70 fs/read_write.c:590
+ ksys_write+0x19b/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f80957809b9
+RSP: 002b:00007f80951ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f8095946058 RCX: 00007f80957809b9
+RDX: 000000000000fdef RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00007f80957f4f70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8095946058 R15: 00007fff493e07b8
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 0
+CPU: 0 PID: 25 Comm: khungtaskd Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x23d/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x451/0x480 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x181/0x2d0 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xdbd/0xe00 kernel/hung_task.c:379
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
 
