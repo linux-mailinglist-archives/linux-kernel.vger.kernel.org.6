@@ -1,230 +1,97 @@
-Return-Path: <linux-kernel+bounces-300381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EE195E302
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9355795E304
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 13:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E481E1F216EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9C52820EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 11:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F090F13DDCE;
-	Sun, 25 Aug 2024 11:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA5B13DBB6;
+	Sun, 25 Aug 2024 11:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4+RZmaX"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GXEuB+ZM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eVwO0QZc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E732F3E;
-	Sun, 25 Aug 2024 11:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12A3801;
+	Sun, 25 Aug 2024 11:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724583994; cv=none; b=S+YyyDrD6gAhJVjJrEfP2RxDxfzH/DUnPf7zdFx+04Zvt9ljaTudPyM14xaQwlNzpV6X6+b07x8MQ713Q2upGyZLYA4ESk9OiWi2BoSz9iW5G9/3Vm/EbiCy02la72SPY88s1V4JKiZS6z8KG3wEAwyrHZvuUtBbHNRC7IspRgE=
+	t=1724584601; cv=none; b=siqiV8pvAgs2ODIS2zpAq8KLG82uXmeMVXOlKj+Ymnp2tq8sDWNG1eyX+TTUlvu0JDUKQ0t2clfgMXH6zCzVSEmZbzJr9C149iiYVjUpIuC07Ut06OaIlKFKK3IgOeiNrdoWvvecK92Rv/wMumjCjWBucQerzSe1X/mG7OoMzTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724583994; c=relaxed/simple;
-	bh=NxXP+9Tj7Ma7qbOuUBw5f+orxXhUo7vqtHJu+g87oX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U4giLDUZp8vyS0Zd28fun3iNGZggHIVV09PAjcMLXHfxgvb8VjB5hQz3JPn18eEUSfTiK9f8RrkhmpiVQw4XB+RioNyLKIFGAWqNA94UP5w606ZDse+U0dZ2F4HkrYqQOwU2Odu1ULI+ATXVBW2ZgN+NrfsFnhnB2ABrp1jcR9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4+RZmaX; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-714226888dfso2999075b3a.1;
-        Sun, 25 Aug 2024 04:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724583992; x=1725188792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZnIhzNWTBy2dvgbdWu1kUHfrHb98TIY9Kq9/3Jiigb0=;
-        b=l4+RZmaXb6LG1LUxrkVWlD3hfnuOtPP9qzFMJ+4jI8Dk0vQGeEqsUNr/4l73We3roI
-         +34dwf1q7tOng4CqWdCuWWwU6JJXHFMNZam5WyknnjNnQiCxAKXvObyhnaLn8BJZbSXM
-         aGttN1cry9/hhKn+gd8B8aq0iaiv7aco77/UiMw9PxVxeCFJxqEjCsunuDTQZ46qKlpq
-         KAq0Q+IG6SQNAriKMO75/Z6bFc8HcW/3o4gRcIZ/BH06cnwjjYohUyzDRJZBRFAAjD4V
-         F6MP3yc0rDhIfuNftawndTY5Zw1PfNAZ9bvjKbrmpdgaJFgt6nxozffVQT17Mp6tocZz
-         aSUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724583992; x=1725188792;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZnIhzNWTBy2dvgbdWu1kUHfrHb98TIY9Kq9/3Jiigb0=;
-        b=G2+eI0bw+uyMqzDenaXA+iQbf4V2JQkhaF9c1Mc8zMOKkofN2iUa2mDJzqTTcKV2sG
-         5udjXYcwhSiPg84dJ3hz5olAdq+dvsz7FMRbM+SX3wWI0D9RJWwrer4C/2qsqr+Mi+/H
-         n0z4WaIRo1yMHIK09ghI0EwfUQQypYFaE8peVsgPT6fhXYE11OflNTjb6A/f90DdNtJa
-         Ehj8JQOmTNzwhW1G4gkj/kfg4lhIiHH0MczSGyr/ctoBvhf/01v72QNKjFBGKY4Jf6mj
-         chbQW2ot4G0oCKt6FIrcd/QhLK8I7VThcGYLrMBVNHqBm5+dsyowlJlPejthnV0T4W7X
-         qFMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEtaIVBqkGrddZiM6ItIlAFikpmiiS8CBZZ/O/BgwzDcK6UtxFV8nLtZtUFCNDcofVO1zxsZIiZ1PDWro=@vger.kernel.org, AJvYcCUM6hV+Kp3K2m6xgea7u0YepzUbqGj2FJ+5CsZqmZzyZKSYM/w19vVklFt/2F46uXOsWVLu635FDxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgss5zXNZxsADZfn8SaKHW29jqcC8mQuBH3xM+eO6oYmwBbfEY
-	pB1dnNjUdxhK/LZ5rXeltGko71NsppYCvnjzqGs8XTr7J3M+Lorv
-X-Google-Smtp-Source: AGHT+IG78cB3xRh69jsCqb3/wOLpy3CcO6Zg3iV0BTDnpDj/H8rutawMDNO+49k4ma/7dkt+wYvorg==
-X-Received: by 2002:a05:6a20:439f:b0:1ca:cc16:1ebc with SMTP id adf61e73a8af0-1cc89d29a8amr8094741637.11.1724583991365;
-        Sun, 25 Aug 2024 04:06:31 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40c1:2c:e57:3d3a:9292:2a7f:6dd4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdb54asm6012409a12.42.2024.08.25.04.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2024 04:06:30 -0700 (PDT)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: todd.e.brandt@linux.intel.com,
-	skhan@linuxfoundation.org,
-	ricardo@marliere.net
-Cc: av2082000@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pm-graph: Update directory handling and installation process in Makefile
-Date: Sun, 25 Aug 2024 16:36:20 +0530
-Message-Id: <20240825110620.30109-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724584601; c=relaxed/simple;
+	bh=RajbgqR5Erm4zWRhKcrx7qF6pT7BQY3NbOH8twt7mK8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=So2Yx8OK0x/QrJloUzIzl93d1kNbmCoppXisxELmqJBHKi5WsNVZl925kp4rkCeAa3cIkeT1Gg4dBJHwL8nIEPBMgRMW/CRC9m7WeMMR8XEOXPPuItHkfL+K4Y1mTC8cDS2taDFYiaNeiFP5n4WXw3IQTSXmyAGln2MwHHrC/eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GXEuB+ZM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eVwO0QZc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724584598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ejO4Q+Mjm+7UqRKEKTS3n25cv2Z3Fr9xoOnbp5A5p6U=;
+	b=GXEuB+ZM/wAEYoOyxBhNuGWfhBCPJQ0AFMYijKs+y5t6+GjerNj0U1S82j8eM81g8tOj8W
+	fd/PhPlo18iJbtQGjDyz2AoodoCdNDZqSt1NR2PJfNJylUkdgHLV48QSgYAa1Jp2mnUElF
+	WBZ5JUz7JX2j+Rtqt6zs4cYDJgCV0hnWedkhRxeplc7rzgFrvxpQWs22agsNAqFDW5duai
+	EtQmHMyiAvGWKkAcSibCshEqTV5t9573mIjZeLGHqRMWiFoZ443ctVtWmz1cyCdtF/sfr1
+	GK8bFFDrcA0KcLfIUmRswg3ZY3wlcsK3t78bSVn3Zd/Gsn1zlcRoBHsFJqTMWA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724584598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ejO4Q+Mjm+7UqRKEKTS3n25cv2Z3Fr9xoOnbp5A5p6U=;
+	b=eVwO0QZcWsLPzD7ImqOfkJjHxEyPo/CFW0UIYupcjP0Qh07tJEbKoQDy9p3AsnLtJ2UMRk
+	ms53hj19WxemwXBw==
+To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
+ avadhut.naik@amd.com, john.allen@amd.com, boris.ostrovsky@oracle.com,
+ Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: Re: [PATCH] x86/MCE: Prevent CPU offline for SMCA CPUs with
+ non-core banks
+In-Reply-To: <20240821140017.330105-1-yazen.ghannam@amd.com>
+References: <20240821140017.330105-1-yazen.ghannam@amd.com>
+Date: Sun, 25 Aug 2024 13:16:37 +0200
+Message-ID: <87jzg4g8dm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-- Standardize directory variables to support more flexible installations.
-- Add copyright and licensing information to the Makefile.
-- Introduce ".PHONY" declarations to ensure that specific targets are always
-  executed, regardless of the presence of files with matching names.
-- Add a help target to provide usage instructions.
+On Wed, Aug 21 2024 at 09:00, Yazen Ghannam wrote:
+> Logical CPUs in AMD Scalable MCA (SMCA) systems can manage non-core
+> banks. Each of these banks represents unique and separate hardware
+> located within the system. Each bank is managed by a single logical CPU;
+> they are not shared. Furthermore, the "CPU to MCA bank" assignment
+> cannot be modified at run time.
+>
+> The MCE subsystem supports run time CPU hotplug. Many vendors have
+> non-core MCA banks, so MCA settings are not cleared when a CPU is
+> offlined for these vendors.
+>
+> Even though the non-core MCA banks remain enabled, MCA errors will not
+> be handled (reported, cleared, etc.) on SMCA systems when the managing
+> CPU is offline.
+>
+> Check if a CPU manages non-core MCA banks and, if so, prevent it from
+> being taken offline.
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
----
- tools/power/pm-graph/Makefile | 111 ++++++++++++++++++++++------------
- 1 file changed, 73 insertions(+), 38 deletions(-)
+Which in turn breaks hibernation and kexec...
 
-diff --git a/tools/power/pm-graph/Makefile b/tools/power/pm-graph/Makefile
-index b5310832c19c..aeddbaf2d4c4 100644
---- a/tools/power/pm-graph/Makefile
-+++ b/tools/power/pm-graph/Makefile
-@@ -1,51 +1,86 @@
- # SPDX-License-Identifier: GPL-2.0
--PREFIX		?= /usr
--DESTDIR		?=
-+#
-+# Copyright (c) 2013, Intel Corporation.
-+#
-+# This program is free software; you can redistribute it and/or modify it
-+# under the terms and conditions of the GNU General Public License,
-+# version 2, as published by the Free Software Foundation.
-+#
-+# This program is distributed in the hope it will be useful, but WITHOUT
-+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+# more details.
-+#
-+# Authors:
-+#	 Todd Brandt <todd.e.brandt@linux.intel.com>
-+
-+# Prefix to the directories we're installing to
-+DESTDIR ?=
-+
-+# Directory definitions. These are default and most probably
-+# do not need to be changed. Please note that DESTDIR is
-+# added in front of any of them
-+
-+BINDIR ?=	/usr/bin
-+MANDIR ?=	/usr/share/man
-+LIBDIR ?=	/usr/lib
-+
-+# Toolchain: what tools do we use, and what options do they need:
-+INSTALL = /usr/bin/install
-+INSTALL_DATA  = ${INSTALL} -m 644
- 
- all:
- 	@echo "Nothing to build"
- 
- install : uninstall
--	install -d  $(DESTDIR)$(PREFIX)/lib/pm-graph
--	install sleepgraph.py $(DESTDIR)$(PREFIX)/lib/pm-graph
--	install bootgraph.py $(DESTDIR)$(PREFIX)/lib/pm-graph
--	install -d  $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/cgskip.txt $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/freeze-callgraph.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/freeze.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/freeze-dev.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/standby-callgraph.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/standby.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/standby-dev.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/suspend-callgraph.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/suspend.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/suspend-dev.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--	install -m 644 config/suspend-x2-proc.cfg $(DESTDIR)$(PREFIX)/lib/pm-graph/config
--
--	install -d  $(DESTDIR)$(PREFIX)/bin
--	ln -s ../lib/pm-graph/bootgraph.py $(DESTDIR)$(PREFIX)/bin/bootgraph
--	ln -s ../lib/pm-graph/sleepgraph.py $(DESTDIR)$(PREFIX)/bin/sleepgraph
--
--	install -d  $(DESTDIR)$(PREFIX)/share/man/man8
--	install bootgraph.8 $(DESTDIR)$(PREFIX)/share/man/man8
--	install sleepgraph.8 $(DESTDIR)$(PREFIX)/share/man/man8
-+	$(INSTALL) -d  $(DESTDIR)$(LIBDIR)/pm-graph
-+	$(INSTALL) sleepgraph.py $(DESTDIR)$(LIBDIR)/pm-graph
-+	$(INSTALL) bootgraph.py $(DESTDIR)$(LIBDIR)/pm-graph
-+	$(INSTALL) -d  $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/cgskip.txt $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/freeze-callgraph.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/freeze.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/freeze-dev.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/standby-callgraph.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/standby.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/standby-dev.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/suspend-callgraph.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/suspend.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/suspend-dev.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+	$(INSTALL_DATA) config/suspend-x2-proc.cfg $(DESTDIR)$(LIBDIR)/pm-graph/config
-+
-+	$(INSTALL) -d  $(DESTDIR)$(BINDIR)
-+	ln -s ../lib/pm-graph/bootgraph.py $(DESTDIR)$(BINDIR)/bootgraph
-+	ln -s ../lib/pm-graph/sleepgraph.py $(DESTDIR)$(BINDIR)/sleepgraph
-+
-+	$(INSTALL) -d  $(DESTDIR)$(MANDIR)/man8
-+	$(INSTALL) bootgraph.8 $(DESTDIR)$(MANDIR)/man8
-+	$(INSTALL) sleepgraph.8 $(DESTDIR)$(MANDIR)/man8
- 
- uninstall :
--	rm -f $(DESTDIR)$(PREFIX)/share/man/man8/bootgraph.8
--	rm -f $(DESTDIR)$(PREFIX)/share/man/man8/sleepgraph.8
-+	rm -f $(DESTDIR)$(MANDIR)/man8/bootgraph.8
-+	rm -f $(DESTDIR)$(MANDIR)/man8/sleepgraph.8
- 
--	rm -f $(DESTDIR)$(PREFIX)/bin/bootgraph
--	rm -f $(DESTDIR)$(PREFIX)/bin/sleepgraph
-+	rm -f $(DESTDIR)$(BINDIR)/bootgraph
-+	rm -f $(DESTDIR)$(BINDIR)/sleepgraph
- 
--	rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/config/*
--	if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph/config ] ; then \
--		rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/config; \
-+	rm -f $(DESTDIR)$(LIBDIR)/pm-graph/config/*
-+	if [ -d $(DESTDIR)$(LIBDIR)/pm-graph/config ] ; then \
-+		rmdir $(DESTDIR)$(LIBDIR)/pm-graph/config; \
- 	fi;
--	rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__/*
--	if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__ ] ; then \
--		rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__; \
-+	rm -f $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__/*
-+	if [ -d $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__ ] ; then \
-+		rmdir $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__; \
- 	fi;
--	rm -f $(DESTDIR)$(PREFIX)/lib/pm-graph/*
--	if [ -d $(DESTDIR)$(PREFIX)/lib/pm-graph ] ; then \
--		rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph; \
-+	rm -f $(DESTDIR)$(LIBDIR)/pm-graph/*
-+	if [ -d $(DESTDIR)$(LIBDIR)/pm-graph ] ; then \
-+		rmdir $(DESTDIR)$(LIBDIR)/pm-graph; \
- 	fi;
-+
-+help:
-+	@echo  'Building targets:'
-+	@echo  '  all		  - Nothing to build'
-+	@echo  '  install	  - Install the program and create necessary directories'
-+	@echo  '  uninstall	  - Remove installed files and directories'
-+
-+.PHONY: all install uninstall help
--- 
-2.25.1
+Thanks,
+
+        tglx
+
 
 
