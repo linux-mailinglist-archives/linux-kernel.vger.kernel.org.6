@@ -1,107 +1,90 @@
-Return-Path: <linux-kernel+bounces-300322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CCE95E259
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:10:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E5195E25F
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 841F6B21306
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BB01C21504
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF16CDCC;
-	Sun, 25 Aug 2024 07:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825905811A;
+	Sun, 25 Aug 2024 07:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rCQdQiKq"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIA3BA+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AEA54BD8;
-	Sun, 25 Aug 2024 07:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB5739AE3;
+	Sun, 25 Aug 2024 07:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724569814; cv=none; b=IOQYoq1WyosMAvQ1wIrsgn1VwsJGhscwjnb5eWItH8MLMJdp+dwXIxjz9qNIchk4M324zGnK5HjKzY0uJpS8RgtrFAMyGmz/oH5W8A1e+Emj0mOZNUfz+qhVQf3QCtEWt5xssF1NmNmM5qubxmoiOj72EjW4R74IVJOYRIifqOU=
+	t=1724570329; cv=none; b=fCB5nXM7099zPtqfkKtrc/uEHnl3+cIr8pzErLe/Dm3hsnXj432NbR/VutZdKHPT51BjOT476uNOFJxICBZbUZpP0vatFXKnr7n+ipRn1egI7+XrVgK8CLte6RRXZhiTXPT9sQSIHUM59+xVWINlFr+2Jr5KJvz8V5u8ychiCL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724569814; c=relaxed/simple;
-	bh=Fj/EmX7ib+Lfvn/AxCnJP32ADVfuI4FzB2LfAg7KANc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=tYLirvwmdk4KgF99ASAG0ZkfKyzOAyipnJC6ERaIfXJ6SM4NFW60gxK2oXgbr2j+zznuYHoYXP10Jp7U2dgmKv02G9o4t5zbRxDKc3zGupILAbPcQdrTs+bm8gp0K9luiDUGBeh7dlm6xXkrtpoLr78Azp4tbhx6PoCplwUkIrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rCQdQiKq; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724569805; bh=/semDDU5zsCaTr6xGw92C8FIyWfsAShZ+BMdvutBH7E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rCQdQiKqdwBpZo0lLWp/KeDov4Lmng+Nrl4p0iIuXV4UwluS0jLjo925APk7JrquH
-	 X4uGT7aL1tFpFk9VH6hSJknXoobn4ydij8Ogyh9lR5SUlAmt12DpRJJSjaVmnsIGcM
-	 WPdPyuMfJEVqCfGC90y5+iXLxDqllTjWgenMM5iE=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 282166DE; Sun, 25 Aug 2024 15:10:02 +0800
-X-QQ-mid: xmsmtpt1724569802tzo9ofaex
-Message-ID: <tencent_8D19734F828DA6A5938DF1122F5DDC5DBC07@qq.com>
-X-QQ-XMAILINFO: OdIVOfqOaVcri8+zm2SchNSIlQI0PU8lRV3EsHnwgGb1XrYFR/S8hz4dSIvMx9
-	 xXqqhxW7elDd5E44hOZSxQiaMbhnmYSTz3CvwSYxiFodjRj5nYkLylGLpkUztXyaJy+ElKFbl8AE
-	 tZ0yVV2R+YhZa9mSmbUKbmYNXV3sqry0x5oTPa+DbvMP1pWzywfDCgMMrXdF/sapBAGBmJsx6WDN
-	 QIa/9DdZhgzxSz99JZE1HTb5KVar88esE5LUttT/8ba5gGnCffUr2ncargrCEpht3IDBKWoPpbh4
-	 ls3arvy2tS7lXgA0eA0AljB/FNKiQJ1ilqRUfzNbe1HgYdWNMSsA5YNHqbgGsr3LkDZTxlWCzZFE
-	 +KuqyhdTUStiU7ccIrUOYgN0peKkiw2cClVKGhkhOJIQUsCd1xG0vRZ1n03fAETw8KeaH59eVBiq
-	 JdU5Y+z0qcvKiUYuXdGGxTQH4fni+YW0gJXri3h1caacj0imKTZOJvem/gmTiJh5U/aAYuWVT2az
-	 uJwUYadWcG6c86CD8ET6Chc9T2vYUjj8PW4yLirwwdrXlJCY2ZVDB5UUkuxH93iD3a9V2rMO0TmA
-	 QWsdzj02hGpENA8Z0WEbA0q6n6wcWVBOE2iDf/7/vBdib2H0Lo5Rq8l3GvMJ/th+0Q8FKUs9CLRK
-	 FiVFVpUCykP+MLX3o1Ny4zGA7vnccoeSK33x+3qppNswFtGaHKXG1Ta8/djhH8VM9vNXXROAxLz7
-	 oAZkG7ueftWinU2fYhyNaUk7ri6NJ/U8yueFC0AJzndn3ooBzAQcK4SpGwVMO3wvbbx5fo1nZCP0
-	 BEHkID9eEZWEObjwzp1maB1SoCW8NcgOtJzQadpB9Dr1GKYQCQ/iyjBcKMtCnOfLSX/z5xAAjMIM
-	 LpMb2baDKJ9fPhWBtGt4j5r032tD/9MOb9EczCA8PWsa1Dmfqyfl3RlngUMUayZAxYICtJE7u6Bw
-	 HbJFSdhLI=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] wifi: ath6kl: Check that the read operation returns a data length of 0
-Date: Sun, 25 Aug 2024 15:10:03 +0800
-X-OQ-MSGID: <20240825071002.2186643-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <00000000000096ee8f061e991433@google.com>
-References: <00000000000096ee8f061e991433@google.com>
+	s=arc-20240116; t=1724570329; c=relaxed/simple;
+	bh=xb63LHtKD3tB9UW2G3VObufzQoQ9/LCxFdP///ubXr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uCmdlSWcE9gQaP+GOaYG9GOHjuC6qKlHe/hTTNkbyiWivpkW+JZkiX9U0AuzjCYU6z7iWBQCwG4d214WHBKbLJFpG9+Cox/Pyt/8yXiNIokfwCsuwOi+8/8FNfLkLjBBm7xVHtJshGdxcISd1WNFnXpqaGUE/9zMFZOSUgnVGng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIA3BA+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC67C32782;
+	Sun, 25 Aug 2024 07:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724570329;
+	bh=xb63LHtKD3tB9UW2G3VObufzQoQ9/LCxFdP///ubXr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JIA3BA+2ynbP91MOk8MJEKT5o1jcLyy6/htwtQD0+oqlBslRfcDSTBSicvc+WPxkU
+	 iUiGkJ7fN47NtxnZSQYL04dIuZNcxCJbLXEwF+R3grr2nFhIq4d/jXkrs28rx/EXUx
+	 U0UotYktg+XFNaNe7EuZkWaB6RmFUwSTY6b7tbNmDccoa7pJPYHSJ/812QQNg0DAeu
+	 JkcApt47qLyUc6H5mJQ08LkvWo6+jb+NiIR+ipK4+qSYrI4dwrydK4x78SMkmmTbUn
+	 zUxa4I+kXTlIf+O+0Y1Ku35uRu7wOI+NZad1twCkOB0gjPsAUj0C1GX6WkASMXTkld
+	 MsDg4kIaY6cnQ==
+Date: Sun, 25 Aug 2024 09:18:45 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	chenhuacai@kernel.org, Kevin Wheatfox <enkerewpo@hotmail.com>
+Subject: Re: [PATCH] of_reserved_mem: Save region name string into struct
+ reserved_mem
+Message-ID: <lsn4bkeup4bjmxwgbgwtaancunszsqnnowi7gocyh2l5kftosh@jcrvd2gnkuli>
+References: <20240821-save_resv_name-v1-1-b9c17f103ffb@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240821-save_resv_name-v1-1-b9c17f103ffb@flygoat.com>
 
-If the data length returned by the device is 0, the read operation
-should be considered a failure.
+On Wed, Aug 21, 2024 at 02:51:02PM +0100, Jiaxun Yang wrote:
+> Previously only a pointer to fdt string pool is saved to struct
+> reserved_mem as region name.
+> 
+> As on some architectures booting FDT will be wiped at later initialisation
+> stages, this is breaking reserved_mem users.
+> 
+> Copy and save the whole string into struct reserved_mem to avoid
+> FDT lifecycle problem.
+> 
+> Reported-by: Kevin Wheatfox <enkerewpo@hotmail.com>
+> Closes: https://lore.kernel.org/loongarch/ME4P282MB1397447C3C094554C7AF2E37B58E2@ME4P282MB1397.AUSP282.PROD.OUTLOOK.COM/
 
-Reported-and-tested-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/net/wireless/ath/ath6kl/usb.c | 3 +++
- 1 file changed, 3 insertions(+)
+I doubt this uses mainline tree...
 
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 5220809841a6..2a89bab81b24 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -1034,6 +1034,9 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
- 		ath6kl_err("Unable to read the bmi data from the device: %d\n",
- 			   ret);
- 		return ret;
-+	} else {
-+		ath6kl_err("Actual read the bmi data length is 0 from the device\n");
-+		return -EIO;
- 	}
- 
- 	return 0;
--- 
-2.43.0
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+This is a bigger problem and should be solved unified way in multiple
+places. You cannot just wipe out FDT from the memory, because it is used
+in all other places.
+
+Your report earlier probably used some custom patches allowing this
+wipe out, but that's the mistake. Fix your wiping out mechanism...
+
+Best regards,
+Krzysztof
 
 
