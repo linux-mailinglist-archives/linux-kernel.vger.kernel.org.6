@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-300460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A32495E3ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:30:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA6695E3EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30CA81F20596
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:30:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 710C8B20FD0
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 14:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAC1156F42;
-	Sun, 25 Aug 2024 14:29:48 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F32315538C;
+	Sun, 25 Aug 2024 14:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ADHf4fZW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1HDyfy0c"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C0D2AD15;
-	Sun, 25 Aug 2024 14:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6120C13C9CF;
+	Sun, 25 Aug 2024 14:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724596187; cv=none; b=WcDtJ09NHCzX+efTickYtVR9hGl+xVXSQMqlidC6kqy2QjBMi8RNv2RgXUpIkYUaY4dxHdToMAI+Ch+FlOPxosdRf0SwA335e+00IDvY5HcQ8RrYCZ9uAe4+U9sa+u/FA62ds/xKLMwWX4ppMz9Z+O/SCGfsdE2mlp/49WPATa8=
+	t=1724596186; cv=none; b=Qzx/foHmwpKqVYDNf+691IJvg8FPiFwmrHihB/6W8Axkh9tMBPOblGDhpq205s3JutUiiRDILp7/25kQOZWUMwpwqrXyUkrcCR1wX7x9V1DL1ATGVNK19SMLt8kUdTssB/njixGY0BD/x3Skte02MVgIWryxfLRjOdCSfk2/yyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724596187; c=relaxed/simple;
-	bh=hkUw4CN+PllqJm92DaOyGtZOxUYqKkH4lgEa3f3vRA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjCvMuMJJ+njfkDKfJNtwQa1FIDIjYcLrF7h6lSkpbnS9PU9/BHtRrq1u1vSM2RaGQ1ePK2/t0WDY5nmyKt9wAzfhFcvrthAp0SnBskIIHAdoXS+k7ddhSjlR32wPHqOnl2lu1pJDWpap8N3DK6SgrxHR1kP8ypP4ZVkDZYwvr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 1E68030000085;
-	Sun, 25 Aug 2024 16:29:35 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id E3915356236; Sun, 25 Aug 2024 16:29:34 +0200 (CEST)
-Date: Sun, 25 Aug 2024 16:29:34 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Esther Shimanovich <eshimanovich@chromium.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-Message-ID: <Zss_zqsJOZKes1Dp@wunner.de>
-References: <20240511054323.GE4162345@black.fi.intel.com>
- <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
- <ZkUcihZR_ZUUEsZp@wunner.de>
- <20240516083017.GA1421138@black.fi.intel.com>
- <20240516100315.GC1421138@black.fi.intel.com>
- <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
- <ZnvWTo1M_z0Am1QC@wunner.de>
- <20240626085945.GA1532424@black.fi.intel.com>
- <ZqZmleIHv1q3WvsO@wunner.de>
- <20240729080441.GG1532424@black.fi.intel.com>
+	s=arc-20240116; t=1724596186; c=relaxed/simple;
+	bh=hCKBzifBehPjzgwtA4UpPN4BIlOg03rM5CczhS3Xj5A=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iPrRqGI2YEvVzw+EgOT4qItsI+3Ot+hyoiYQE8ohXBse378J1vDk8QjouidFo4Jq3h2u1x6DOCTo8qCx3MWNVXwHdtgZqKPjt27qD+D6WsmxAvch21nmqsd48riZ90OIMNs27B6Wtnd+Z7+4XzgcXMzN09OSHrfMROkvp1aaVdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ADHf4fZW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1HDyfy0c; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 25 Aug 2024 14:29:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724596183;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vqp+ex3qOfMli02dkGkk9kM1N2f1BhsQPGpwAhvj5QM=;
+	b=ADHf4fZWzxn3BL8YIW/WRTnSGOeIQzLGzl+RQGEGlDPOJyvJ3lsYvsdMYCT4X4CqNiSylj
+	b7v9DyTv3bZw9fP0b4q2XkkozW47mPi2xlHhCaDDeb6ZmrmBVcEpsLas1Ava1MOhftrrpg
+	BCsYLQBlAcf5tbrDM8dNDbbHvNywcdbJXyGgollpwgx+GxgjLjqEWwdYLRxTw+VTi+A813
+	0eJmKtoyA5w9oBNjA8oVBjbdU8e1SenhMktNJ5P27xmnirBycTEy1TQZLb0a4ErZmkykQQ
+	V2XK33G1rsFsZ7dtYJSHO0nPpidt2deVbqV/pcMDY+L74xyfAEQwa6C16eIy6g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724596183;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vqp+ex3qOfMli02dkGkk9kM1N2f1BhsQPGpwAhvj5QM=;
+	b=1HDyfy0cdWy8wgvBYe4+pxoLCYUyHyUDN8DbtmtSuCIFKZNlbFiO5W+8wcGC3IQLbxjVlO
+	zBr3G2gO85HZaEAQ==
+From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fred] x86/fred: Set SS to __KERNEL_DS when enabling FRED
+Cc: "Xin Li (Intel)" <xin@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816104316.2276968-1-xin@zytor.com>
+References: <20240816104316.2276968-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729080441.GG1532424@black.fi.intel.com>
+Message-ID: <172459618303.2215.9606006283032900098.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 11:04:41AM +0300, Mika Westerberg wrote:
-> On Sun, Jul 28, 2024 at 05:41:09PM +0200, Lukas Wunner wrote:
-> > Do the DROMs on ICM root switches generally lack PCIe Upstream and
-> > Downstream Adapter Entries?
-> 
-> My guess is that they are not populated for ICM host router DROM
-> entries. These are pretty much Apple stuff and USB4 dropped them
-> completely in favour of the router operations.
+The following commit has been merged into the x86/fred branch of tip:
 
-I note that Microsoft specifies a "usb4-port-number" for PCIe Downstream
-Adapters as well as DP and USB ports:
+Commit-ID:     723edbd2ca5fb4c78ac4a5644511c63895fd1c57
+Gitweb:        https://git.kernel.org/tip/723edbd2ca5fb4c78ac4a5644511c63895fd1c57
+Author:        Xin Li (Intel) <xin@zytor.com>
+AuthorDate:    Fri, 16 Aug 2024 03:43:16 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 25 Aug 2024 16:24:52 +02:00
 
-https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
+x86/fred: Set SS to __KERNEL_DS when enabling FRED
 
-Presumably the "usb4-port-number" allows for associating a
-pci_dev with a tb_port.  So that's a third way to do that,
-on top of DROM entries and the USB4 router operation.
+SS is initialized to NULL during boot time and not explicitly set to
+__KERNEL_DS.
 
-What I don't quite understand is whether the "usb4-port-number"
-is only present on PCIe Adapters of the Host Router or whether
-it can also exist on PCIe Adapters of Device Routers?
+With FRED enabled, if a kernel event is delivered before a CPU goes to
+user level for the first time, its SS is NULL thus NULL is pushed into
+the SS field of the FRED stack frame.  But before ERETS is executed,
+the CPU may context switch to another task and go to user level.  Then
+when the CPU comes back to kernel mode, SS is changed to __KERNEL_DS.
+Later when ERETS is executed to return from the kernel event handler,
+a #GP fault is generated because SS doesn't match the SS saved in the
+FRED stack frame.
 
-I would also like to know whether "usb4-port-number" is set on
-the machines that Esther's quirk seeks to fix?
+Initialize SS to __KERNEL_DS when enabling FRED to prevent that.
 
-I found this DSDT of an unknown Lenovo model which does not have
-"usb4-port-number" set on any PCIe Adapters, only on USB ports:
+Note, IRET doesn't check if SS matches the SS saved in its stack frame,
+thus IDT doesn't have this problem.  For IDT it doesn't matter whether
+SS is set to __KERNEL_DS or not, because it's set to NULL upon interrupt
+or exception delivery and __KERNEL_DS upon SYSCALL.  Thus it's pointless
+to initialize SS for IDT.
 
-https://gist.github.com/64kramsystem/ab2410f081a4f47d4a205699828ab2f9
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240816104316.2276968-1-xin@zytor.com
 
-I assumed that my solution to this problem would not be viable as
-we seem to be lacking port numbers for Host Router PCIe Adapters.
-Those are needed to associate a pci_dev with a tb_port on the
-Host Router and adjust its "untrusted" and "external_facing"
-properties.
+---
+ arch/x86/kernel/fred.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-However if we do have the "usb4-port-number" on Host Router
-PCIe Adapters, then my solution would still be viable and
-I could look into adding support for the "usb4-port-number"
-property to it.
-
-Thanks,
-
-Lukas
+diff --git a/arch/x86/kernel/fred.c b/arch/x86/kernel/fred.c
+index 99a134f..266c69e 100644
+--- a/arch/x86/kernel/fred.c
++++ b/arch/x86/kernel/fred.c
+@@ -26,6 +26,20 @@ void cpu_init_fred_exceptions(void)
+ 	/* When FRED is enabled by default, remove this log message */
+ 	pr_info("Initialize FRED on CPU%d\n", smp_processor_id());
+ 
++	/*
++	 * If a kernel event is delivered before a CPU goes to user level for
++	 * the first time, its SS is NULL thus NULL is pushed into the SS field
++	 * of the FRED stack frame.  But before ERETS is executed, the CPU may
++	 * context switch to another task and go to user level.  Then when the
++	 * CPU comes back to kernel mode, SS is changed to __KERNEL_DS.  Later
++	 * when ERETS is executed to return from the kernel event handler, a #GP
++	 * fault is generated because SS doesn't match the SS saved in the FRED
++	 * stack frame.
++	 *
++	 * Initialize SS to __KERNEL_DS when enabling FRED to avoid such #GPs.
++	 */
++	loadsegment(ss, __KERNEL_DS);
++
+ 	wrmsrl(MSR_IA32_FRED_CONFIG,
+ 	       /* Reserve for CALL emulation */
+ 	       FRED_CONFIG_REDZONE |
 
