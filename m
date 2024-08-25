@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-300323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E5195E25F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:18:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B68395E261
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 09:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BB01C21504
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C86BB21395
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 07:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825905811A;
-	Sun, 25 Aug 2024 07:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIA3BA+2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EED65E093;
+	Sun, 25 Aug 2024 07:23:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB5739AE3;
-	Sun, 25 Aug 2024 07:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B11B4A07
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 07:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724570329; cv=none; b=fCB5nXM7099zPtqfkKtrc/uEHnl3+cIr8pzErLe/Dm3hsnXj432NbR/VutZdKHPT51BjOT476uNOFJxICBZbUZpP0vatFXKnr7n+ipRn1egI7+XrVgK8CLte6RRXZhiTXPT9sQSIHUM59+xVWINlFr+2Jr5KJvz8V5u8ychiCL8=
+	t=1724570626; cv=none; b=W7Zsotph6TvlERGNUm6BEiKwAySoAnU8IEIbkzyzhTZ16/NZdAXciQLv0XagaQzfwwiboFMRrzFxdgpw0cpRg1ZsVLC18+0aVrKoxzAJM916590udsR9K5SEEyKwr+4ZZo7LwsYTL77m6JHIclYxED13cViSGlkmAfUcaRkdZ6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724570329; c=relaxed/simple;
-	bh=xb63LHtKD3tB9UW2G3VObufzQoQ9/LCxFdP///ubXr8=;
+	s=arc-20240116; t=1724570626; c=relaxed/simple;
+	bh=ez/J/WQv1YTW5i/up15opC2jNgAa92z+qoZdR7sPpSU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uCmdlSWcE9gQaP+GOaYG9GOHjuC6qKlHe/hTTNkbyiWivpkW+JZkiX9U0AuzjCYU6z7iWBQCwG4d214WHBKbLJFpG9+Cox/Pyt/8yXiNIokfwCsuwOi+8/8FNfLkLjBBm7xVHtJshGdxcISd1WNFnXpqaGUE/9zMFZOSUgnVGng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIA3BA+2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC67C32782;
-	Sun, 25 Aug 2024 07:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724570329;
-	bh=xb63LHtKD3tB9UW2G3VObufzQoQ9/LCxFdP///ubXr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JIA3BA+2ynbP91MOk8MJEKT5o1jcLyy6/htwtQD0+oqlBslRfcDSTBSicvc+WPxkU
-	 iUiGkJ7fN47NtxnZSQYL04dIuZNcxCJbLXEwF+R3grr2nFhIq4d/jXkrs28rx/EXUx
-	 U0UotYktg+XFNaNe7EuZkWaB6RmFUwSTY6b7tbNmDccoa7pJPYHSJ/812QQNg0DAeu
-	 JkcApt47qLyUc6H5mJQ08LkvWo6+jb+NiIR+ipK4+qSYrI4dwrydK4x78SMkmmTbUn
-	 zUxa4I+kXTlIf+O+0Y1Ku35uRu7wOI+NZad1twCkOB0gjPsAUj0C1GX6WkASMXTkld
-	 MsDg4kIaY6cnQ==
-Date: Sun, 25 Aug 2024 09:18:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	chenhuacai@kernel.org, Kevin Wheatfox <enkerewpo@hotmail.com>
-Subject: Re: [PATCH] of_reserved_mem: Save region name string into struct
- reserved_mem
-Message-ID: <lsn4bkeup4bjmxwgbgwtaancunszsqnnowi7gocyh2l5kftosh@jcrvd2gnkuli>
-References: <20240821-save_resv_name-v1-1-b9c17f103ffb@flygoat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iv2iEVGr5blOLrpX6C01YIkt+FrpIVhL+562t56Zfx4+dOiX1lwaN3kxvWLPUZhVgLLsfEYDuUYmHntQISe2cFdj0IYD8zxJrfief7pXkZw0MenAX/DRok1IuA+vgZ3Xg99xCw6io84jZQCyIMm6bMCC7IEVssXMX3OSVpfdIpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1si7ak-0002oM-V4; Sun, 25 Aug 2024 09:23:14 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1si7ai-002tiR-OT; Sun, 25 Aug 2024 09:23:12 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1si7ai-005AmU-1t;
+	Sun, 25 Aug 2024 09:23:12 +0200
+Date: Sun, 25 Aug 2024 09:23:12 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 net-next] net: ag71xx: get reset control using devm api
+Message-ID: <Zsrb4K0XQ2DaotcA@pengutronix.de>
+References: <20240824181908.122369-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,33 +59,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240821-save_resv_name-v1-1-b9c17f103ffb@flygoat.com>
+In-Reply-To: <20240824181908.122369-1-rosenp@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2024 at 02:51:02PM +0100, Jiaxun Yang wrote:
-> Previously only a pointer to fdt string pool is saved to struct
-> reserved_mem as region name.
+On Sat, Aug 24, 2024 at 11:18:56AM -0700, Rosen Penev wrote:
+> Currently, the of variant is missing reset_control_put in error paths.
+> The devm variant does not require it.
 > 
-> As on some architectures booting FDT will be wiped at later initialisation
-> stages, this is breaking reserved_mem users.
+> Allows removing mdio_reset from the struct as it is not used outside the
+> function.
 > 
-> Copy and save the whole string into struct reserved_mem to avoid
-> FDT lifecycle problem.
-> 
-> Reported-by: Kevin Wheatfox <enkerewpo@hotmail.com>
-> Closes: https://lore.kernel.org/loongarch/ME4P282MB1397447C3C094554C7AF2E37B58E2@ME4P282MB1397.AUSP282.PROD.OUTLOOK.COM/
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+ 
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-I doubt this uses mainline tree...
-
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-
-This is a bigger problem and should be solved unified way in multiple
-places. You cannot just wipe out FDT from the memory, because it is used
-in all other places.
-
-Your report earlier probably used some custom patches allowing this
-wipe out, but that's the mistake. Fix your wiping out mechanism...
-
-Best regards,
-Krzysztof
-
+Thank you!
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
