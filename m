@@ -1,139 +1,68 @@
-Return-Path: <linux-kernel+bounces-300475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8405195E419
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:14:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6119395E422
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 17:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B9A1C20B6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5BE1F216D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 15:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DA0156F45;
-	Sun, 25 Aug 2024 15:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFezltXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E928E61FFC;
-	Sun, 25 Aug 2024 15:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E704158DD9;
+	Sun, 25 Aug 2024 15:18:24 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE91FA5;
+	Sun, 25 Aug 2024 15:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724598856; cv=none; b=jphv4ttE5AOYxLFYyfRUf+biSvsEhHCzFRKFvO6suRVqu3UglwPOU/QOoDV1k/eNUJRovSxQ79AJZAdcZsbuxEBBggp2hr4GP/V/ZwYJq9b5K6z578jixmR3JgSHM5qcKKd9zz9vIUxhFiReLjIPE8zKEDx7TsjTx7BrXO0RvJw=
+	t=1724599104; cv=none; b=MAuynX+hnV4mHn41PbEOt3rGsXIgQxUf7rcoePUZOXTICUZY9ocC3uH0BE+vB9mv4gIiINsiTKxe94r3crsVcpI29MsMXC/e0VUFjUw+s4LcwGJ8Y2tUWzVsMvkuffb1Q2UhcYpBDIZ5tCoVx+Br/nbYflKMLjr6xh7QBobj4i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724598856; c=relaxed/simple;
-	bh=+Ejih42HNI9fRfwQo8o4of4mjbUFyPFvcmlliCErK2s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iAp1sXgwMU4p3DKwc1lWeiB3HXE5nMtpg5c803e7LMIflT8uYeApODL0LvvNJUVBQhUvHz9c+VUzgLGvxsUC2hetqjk//lorb8W1nZEsAN6P7lpos1mKR0Dxkm3Pd91MevcTSbYesIFOFIWSlCM1Qt/Xwt9yEqhRXFDrmWiegXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFezltXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1138EC32782;
-	Sun, 25 Aug 2024 15:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724598855;
-	bh=+Ejih42HNI9fRfwQo8o4of4mjbUFyPFvcmlliCErK2s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZFezltXxFeIUp1wg4DUNsV8YHR73bAH6SePViAfmXnvi5/Yrtbg0o+KsA5zDV5g4I
-	 hwfRNkZ+jmSMDjF+BiWddTeNkRwN2v5q5oaJp1lXS4my04DenrbRKhbbVdFgVGG4ZC
-	 imsdS0JuZnl548AEEDdWyIKinDyKmvax1AGrL04C5Ch7sgpoH9ElZfbZKk3SJwDsQi
-	 jfYftMG6iaBe/3xC744s7BYgBP6R6SClJyrwknFcmAXcCh4Fy4QdAgJQ6ngznqLx0Z
-	 Ypr6jciaZp8GZTt4BVhENnCwPFZahFQn8Rj+sxDhUhq9ckzJflOpMzkBO+eaasIdNo
-	 pHqupwcgLGgLw==
-Date: Mon, 26 Aug 2024 00:14:10 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>, Shuah
- Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] ftrace/selftest: Test combination of function_graph
- tracer and function profiler
-Message-Id: <20240826001410.76bcc8304e7c3ee188420b5c@kernel.org>
-In-Reply-To: <20240821150903.05c6cf96@gandalf.local.home>
-References: <20240821150903.05c6cf96@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724599104; c=relaxed/simple;
+	bh=lJw8g/0UD/7O7fg4U8NWwAWSvZ0jEi66ORXrJE+k8+s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=V1bvXvuF+7pJa/PVFY4OedutZT2PfmaoE2uHjoj+g0PRtwK211Q4a+Q70H529wX0XVYU9wk3gnLUBSLUA8OygOAbKiNq9taiUyG+lpauRuljgtcZt93zwKX2iFnxY0gEBCaZ2dyS0oXvUEbaTE0e6a3Obklnn0hurd7kC5hM/S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 60B1F92009C; Sun, 25 Aug 2024 17:18:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 5ACB092009B;
+	Sun, 25 Aug 2024 16:18:19 +0100 (BST)
+Date: Sun, 25 Aug 2024 16:18:19 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    linux-kernel@vger.kernel.org, 
+    "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: fw: Gracefully handle unknown firmware protocols
+In-Reply-To: <87o75gy85b.fsf@miraculix.mork.no>
+Message-ID: <alpine.DEB.2.21.2408251612500.30766@angie.orcam.me.uk>
+References: <20240824144133.1464835-1-bjorn@mork.no> <7f0602dc-8a47-46cb-a12f-09afc082b48f@app.fastmail.com> <87o75gy85b.fsf@miraculix.mork.no>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On Wed, 21 Aug 2024 15:09:03 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sun, 25 Aug 2024, Bjørn Mork wrote:
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Masami reported a bug when running function graph tracing then the
-> function profiler. The following commands would cause a kernel crash:
-> 
->   # cd /sys/kernel/tracing/
->   # echo function_graph > current_tracer
->   # echo 1 > function_profile_enabled
-> 
-> In that order. Create a test to test this two to make sure this does not
-> come back as a regression.
-> 
-> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
+> But I can't make that match what U-Boot does.  AFAICS,
+> u-boot/arch/mips/lib/bootm.c doesn't care about 32 or 64 bit, and simply
+> does:
 
-This looks good to me, but note that this depends on the above fix, unless
-that, this may crash the kernel. I think the above fix should be merged in
-v6.11-rcX so this may be safe for released kernel.
+ U-Boot isn't the only firmware used with MIPS systems, and in fact it's 
+quite a recent addition; e.g. DEC REX and SGI ARCS firmware goes back at 
+least to 1990 and we continue supporting these systems.  There's also CFE, 
+PMON, YAMON, etc.
 
-Thanks,
-
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> new file mode 100644
-> index 000000000000..62d44a1395da
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-> @@ -0,0 +1,30 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: ftrace - function profiler with function graph tracing
-> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
-> +
-> +# The function graph tracer can now be run along side of the function
-> +# profiler. But there was a bug that caused the combination of the two
-> +# to crash. It also required the function graph tracer to be started
-> +# first.
-> +#
-> +# This test triggers that bug
-> +#
-> +# We need function_graph and profiling to to run this test
-> +
-> +fail() { # mesg
-> +    echo $1
-> +    exit_fail
-> +}
-> +
-> +echo "Enabling function graph tracer:"
-> +echo function_graph > current_tracer
-> +echo "enable profiler"
-> +
-> +# Older kernels do not allow function_profile to be enabled with
-> +# function graph tracer. If the below fails, mark it as unsupported
-> +echo 1 > function_profile_enabled || exit_unsupported
-> +
-> +sleep 1
-> +
-> +exit 0
-> -- 
-> 2.43.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+  Maciej
 
