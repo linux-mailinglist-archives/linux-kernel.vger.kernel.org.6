@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-300489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211AD95E457
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:24:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1539C95E454
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 18:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C293B20F74
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C71AB20F99
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 16:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6A415B108;
-	Sun, 25 Aug 2024 16:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FB813F43A;
+	Sun, 25 Aug 2024 16:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jD4Y7aGW"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CER7Z9cw"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8115538C;
-	Sun, 25 Aug 2024 16:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208ABB640
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 16:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724603030; cv=none; b=CWODf/mJIOUcPcWgPWiVjUJA7P5uqzVt+csu/t0wRNv78oisk2MWjv0R/rl6kaFal62aQlsV2dCBctHndHOHYHD/k1aTiHkOcWb9BhE9UimYJeNw7WuWHmkm1+swjoAHrS0FRRK4db3nAHUaCRkmkAEdr5KMN9T25/Chv975f/s=
+	t=1724603012; cv=none; b=Lm6QJmA1e+vL3jcO6y0RCxxznxm75Gw4F8Fsz0R+2PDidroX9TvuWqEcEXjh1laY6/ga4p4lR/93QvjFM7tyJcz2R+6y4qCtxDFMSDHt3VldLgT2ouH5C6C0xtV+LHHYWGA3TCBYq+MTrFK7RtDNZsIwu6OrAe0lDsNeXkZUhh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724603030; c=relaxed/simple;
-	bh=AwruPQNWEj3O9iDHvIhAch81aQxRPzP0uPk3sr2VxBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RoR8Yclc5iHf6UgShV70oPxTH1SwkBMRzoLye7b2lE80jFpZ5BpZc4/tBxGpfZtAawT57hcvviNTij+tvn63x2XfeRoCzommJq4zxjIoJfYW4Q/jpX/m57nxAdmY11lTrSLChH+pyts9JWPohJizsK7KQRQfIz8pzETYj8+FMaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jD4Y7aGW; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id iG0Zs22q8jDE7iG0ZswTyj; Sun, 25 Aug 2024 18:22:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724602948;
-	bh=dWmD0V+W1NiHZUZkeWhaQAh8ZUporSmdN746Lio9aro=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=jD4Y7aGW+AP7mCFOiQtxNv1Ze05yNleFkbmCSCIJjBErp9S+CNqbeq7isXLW8S7e/
-	 l80O6buXBuwgjC2+BC9F8brGqjHZDPs7PYqOiyTLPMwc0EbYekuo9H2pJaukRvO4yi
-	 jXl+UTQqWROs3SiAWilcm7o2H9KD+WnlwCCO6s3sMy5B+0bRWqMQMjVyWC+QisB3SF
-	 rq9XS+GTOGRzVdD6ruO4tTKJmZ4EtFXSjkwUgnRVeSP3vO/ak23syLNAUMrZWVfNqj
-	 nyszHp3pbfo7p8Vex4KD/d4LlnNkiqCy4bsxn2F7iJKGwxLsKpyr+SLt6XX4yNc0v9
-	 pn8vWnCHPuJ+Q==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 Aug 2024 18:22:28 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org
-Subject: [PATCH] drbd: Remove an unused field in struct drbd_device
-Date: Sun, 25 Aug 2024 18:22:23 +0200
-Message-ID: <d5322ef88d1d6f544963ee277cb0b427da8dceef.1724602922.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724603012; c=relaxed/simple;
+	bh=9c0/mFJtPTEcFPABXk2NyyBsMPiEG5INItjCqp79CPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IGG3935+RCYGzNrhNrV2LoKWW/b0k1EBsCzq1ditiqHWxudtYupm1BT4lGgxqOjVN/KcRI2Kan69mUwaiNfuoVnL28WSzO3pOv/h4vvwEA+tJKd6NUKtMPGrLSfMBhQf+/EA6O1QAU4qT5vj78oHa1ZnxsND7q4FX0yKk90He9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CER7Z9cw; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724603007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=okOLfjQVl4D8wTvlHZg+l7qNyNYtvSQnrJ226EM9Ivw=;
+	b=CER7Z9cwG8vuqhW8bXU0fXKMBXslT0I23xEa2vfA1m4BwPlqeOCmMF7V0cNUuY9zswotoz
+	SWoGcCYCZCx8etzk0WnHZ/PfOWb+bfguESF9xO3h3iBiIfDCeTx+eJzxlGsgH32JqAX+6a
+	+3+e5vkQ5OCIsxmAeugqUYCRs5+bdds=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/etnaviv: Use unsigned type to count the number of pages
+Date: Mon, 26 Aug 2024 00:23:00 +0800
+Message-Id: <20240825162300.417306-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,32 +59,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-'next_barrier_nr' is not used in this driver. Remove it.
+The drm_prime_pages_to_sg() function takes unsigned int argument to store
+length of the page vector, and the type of struct drm_gem_object::size is
+a size_t. The size of the object in CPU pages can not be negative, hence,
+use unsigned variable to store the number of pages, instead of the signed
+type.
 
-It was already part of the original commit b411b3637fa7 ("The DRBD driver")
-Apparently, it has never been used.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 ---
-Compile tested-only.
----
- drivers/block/drbd/drbd_int.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index d2937bca1fe4..2a05d955e30b 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -860,7 +860,6 @@ struct drbd_device {
- 	struct list_head read_ee;   /* [RS]P_DATA_REQUEST being read */
- 	struct list_head net_ee;    /* zero-copy network send in progress */
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+index 3524b5811682..6b98200068e4 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+@@ -17,7 +17,7 @@ static struct lock_class_key etnaviv_prime_lock_class;
+ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ {
+ 	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
+-	int npages = obj->size >> PAGE_SHIFT;
++	unsigned int npages = obj->size >> PAGE_SHIFT;
  
--	int next_barrier_nr;
- 	struct list_head resync_reads;
- 	atomic_t pp_in_use;		/* allocated from page pool */
- 	atomic_t pp_in_use_by_net;	/* sendpage()d, still referenced by tcp */
+ 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
+ 		return ERR_PTR(-EINVAL);
 -- 
-2.46.0
+2.34.1
 
 
