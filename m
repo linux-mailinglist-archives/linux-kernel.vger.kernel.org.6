@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-300345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CEF95E2A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C109B95E2A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 10:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA2DB20B81
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7F7281DBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2024 08:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB10D5FBBA;
-	Sun, 25 Aug 2024 08:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFE474402;
+	Sun, 25 Aug 2024 08:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUIR/bnt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DAff0fs/"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91FEAD2
-	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5205558203
+	for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 08:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724573899; cv=none; b=tujjIrpmKNQ6aVaXOnS8z2gW9FMtB3V8jPH6PY6HEEGuD/KNbWG5THY8l5YVFNbIn0eGldnM0ZPeE6M7db2Mk8SZ/mXF7ddQohsaErRNrjVe5dkBP7gWTkVweJTq9WWG0yAe0H5KC8GwKS3QQxY7WNf271ZoP31+WHcgGvpItMs=
+	t=1724573900; cv=none; b=brqAtlUWAiy8QE8SJCXdjbIxDcBbW4jotuD/GEA6WxGEHQ+MYy+9vlo2PmodHVuoFYxKafoI1rOMwVRbpWodjNgo8PTg7+iQm7dUT3ty5BV260J4XUm1e4XMdyUWJEWEeuNKGUuZhUXNk+WW3770Hkd6BF9rkUsbAe3EeXr/2Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724573899; c=relaxed/simple;
-	bh=wF8losfJndWVHuf38eSXLMRB4D0NVFWP1R6GEWiLL/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EwgfI3SL4D8x6p3xoL3WO+7A71BOMJzxD7i2YGwyxes0Tj40+yhWbEDId+dN9DTzCGuNgAJSOkCF9AmAcCioXCu8AT8wQZAXYNH1QgFI4MpM2MbPmjYEdtXeSxNdue8ouCnztgYnLJwMj4WPzUVlA6dp8bC9P/NWNR+Xliy3fvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUIR/bnt; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1724573900; c=relaxed/simple;
+	bh=kmi1n5QiSy/LLBcoMn53Y0nqNYOSRw14+cjGatk73uI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mmCvcN+WUTQjFrLLtoGLgDrbQRGOMiozpMR4HTep+VuBb7XxOdsMx7JN/zp66udF7PhrkHpBBX6zYYBllUFs//xYDIJ+/aYVMEzbmFF4tzhw4TROE5LzxAqCfi6tM4JQ7Dqn1SUhfvkDBB2+HD8ZrnBtTsXLDKIwMz3kzOVn/Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DAff0fs/; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724573897; x=1756109897;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wF8losfJndWVHuf38eSXLMRB4D0NVFWP1R6GEWiLL/s=;
-  b=WUIR/bntkLcGgUjMx71pGrraAycLHF3ar6+lF7iWqypHtl8iOBI3i1z2
-   /R/smyYbcyss5Nyf1lV1uTZL17fO7y8njTHJ1QR9uNQ4YUpwB9hb5rbZ0
-   7/KxFk/UMp9p2Yg0GIKZJnqINGFnAMdVq1qLUh0h7ajQcLE+38/faGtiy
-   Xfm/B0+VOjEqSMyQkabWlNvVQKmDJnPw8EUf8zK8yIjqpGi6MyLTGhQHT
-   RZX5HYbekWp9M36cmNEmgokwsg+l7e3hVCBHF5mmrp9838pPVcB/T+n+m
-   XqkAAcFL7R7nE+qmXYjXQF+jXdmN5123iIlArVwtcz7KsI86XjFsMBOUX
+  t=1724573899; x=1756109899;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kmi1n5QiSy/LLBcoMn53Y0nqNYOSRw14+cjGatk73uI=;
+  b=DAff0fs/ERC1DoAn9K6sWp1068mwDr4UwY3aGmItPU4vp7KrtzYoVgUT
+   b0ZUoovwSVGU0zqSzodG6LGnzKAtjD+Cbs0Ptfk7Y0anAzcsuvGmU2Uzb
+   OJ0AWzQQHfq/+3CuDRcPg2i4TXapIRxC/XeslalFR1qMwRgV+cBiJz/1p
+   X0mXYV6w0Q7eL4SwrMaVq+C3msykhspW7L2XXbWhVaQmJ+Bhhnih9SfNu
+   vRYNgXB6t7BpDddD5yHHXgrZXobBX/4yjH8VV2qeZSwU4SSmxH1PspWRa
+   D9diWwJyHhcC1mAtF/v9bY2Btmu9IhnnMRGAD5nc4/SVZXx1WS2Y062a3
    g==;
-X-CSE-ConnectionGUID: Gn5lLO7cRYurT8GijXz1KA==
-X-CSE-MsgGUID: fKmBjdwBTv2f7p6jofgZug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="23186603"
+X-CSE-ConnectionGUID: /nwploDVRk+O4BuSNXJTBg==
+X-CSE-MsgGUID: sP5zKx5GSUSIEL12YPI/gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11173"; a="23186608"
 X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
-   d="scan'208";a="23186603"
+   d="scan'208";a="23186608"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:17 -0700
-X-CSE-ConnectionGUID: vap24edkTp6ORMt305zOqQ==
-X-CSE-MsgGUID: /SJl8KWMQHmq63rh3+8HCw==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:19 -0700
+X-CSE-ConnectionGUID: 2LwgFeIdTVOS4rMPrcndhA==
+X-CSE-MsgGUID: iN40LHlMRnGRsCXipbXNVw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,175,1719903600"; 
-   d="scan'208";a="67014939"
+   d="scan'208";a="67014950"
 Received: from daliomra-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.196])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:15 -0700
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 01:18:17 -0700
 From: Kai Huang <kai.huang@intel.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -67,10 +68,12 @@ Cc: kirill.shutemov@linux.intel.com,
 	x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	nik.borisov@suse.com
-Subject: [PATCH v2 0/2] Misc comments fixup in relocate_kernel_64.S
-Date: Sun, 25 Aug 2024 20:18:04 +1200
-Message-ID: <cover.1724573384.git.kai.huang@intel.com>
+Subject: [PATCH v2 1/2] x86/kexec: Fix a comment of swap_pages() assembly
+Date: Sun, 25 Aug 2024 20:18:05 +1200
+Message-ID: <adafdfb1421c88efce04420fc9a996c0e2ca1b34.1724573384.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1724573384.git.kai.huang@intel.com>
+References: <cover.1724573384.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,26 +82,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The assembly code of relcocate_kernel() takes some time to follow for
-newbies like me.  This series adds some comments to try to improve the
-readability hoping they could be helpful to others too.  Also fix an
-error (IIUC) in one comment.
+When relocate_kernel() gets called, %rdi holds 'indirection_page' and
+%rsi holds 'page_list'.  And %rdi always holds 'indirection_page' when
+swap_pages() is called.
 
-v1 -> v2:
-  - Add Kirill's tag.
+Therefore the comment of the first line code of swap_pages()
 
-  v1: https://lore.kernel.org/lkml/q2y5vte3wwn5qde5p4nfmjfqtzxfen3nhjdyafc7nbirfidpvr@ro3djjz3pub4/T/
+	movq    %rdi, %rcx      /* Put the page_list in %rcx */
 
-Kai Huang (2):
-  x86/kexec: Fix a comment of swap_pages() assembly
-  x86/kexec: Add comments around swap_pages() assembly to improve
-    readability
+.. isn't correct because it actually moves the 'indirection_page' to
+the %rcx.  Fix it.
 
- arch/x86/kernel/relocate_kernel_64.S | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ arch/x86/kernel/relocate_kernel_64.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-base-commit: e77f8f275278886d05ce6dfe9e3bc854e7bf0713
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 042c9a0334e9..f7a3ca3dee53 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -258,7 +258,7 @@ SYM_CODE_END(virtual_mapped)
+ 	/* Do the copies */
+ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	UNWIND_HINT_END_OF_STACK
+-	movq	%rdi, %rcx	/* Put the page_list in %rcx */
++	movq	%rdi, %rcx	/* Put the indirection_page in %rcx */
+ 	xorl	%edi, %edi
+ 	xorl	%esi, %esi
+ 	jmp	1f
 -- 
 2.46.0
 
