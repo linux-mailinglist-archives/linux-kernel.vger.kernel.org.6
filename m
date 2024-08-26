@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-301009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F5695EB84
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E02495EB82
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E4D2B237F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:13:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE201F214FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2D913AD13;
-	Mon, 26 Aug 2024 08:13:10 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA9C13BAE4;
+	Mon, 26 Aug 2024 08:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVDE35Cj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CA413A25F;
-	Mon, 26 Aug 2024 08:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4DF13AD3F;
+	Mon, 26 Aug 2024 08:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659989; cv=none; b=Cwa39ay3ha3zfSCUYHTO8r6GoWNCJg4CJgG+BSVcoAPMDwOh8UsqItKD4RB33iEsBUnE6LYXrTXJRJJ8Zs1GobNwAaSp4PbFAhyRPvv4VrBIojRWhA6mA7FgLaWx7qSyTiKnbKvlDGTu09UmiQrujOpGuwvktV5NCAsOPAOhfug=
+	t=1724659971; cv=none; b=npSpMevM02TizRkXUMnMSGED5H83JbYX7CrYuO0GJZ9kwAm85X8LhpqMIZHFlPRnAXARBBUAzWC+zXJdM3oSFLlB9yonvwh5EqbIA9gzEF6gLPFc+cbl1mx7wJD8T8iVWBu8dhisSgvXISKpp8hZPIxve2omTjoBq7dIxQx49lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659989; c=relaxed/simple;
-	bh=tv4R+xLpVJ+I5SCmDOqiaZYRimD2PEYc2t1gfpl1/Ko=;
+	s=arc-20240116; t=1724659971; c=relaxed/simple;
+	bh=GJX8WMOWMde/kMse+6fBcih9AFB2KaEoktYH4eL1+BA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjGKUtJABZEM1kTe1HafZp0atxSHGc+lrPVEGuB+dyMWToOInZjRkK92imJ1v3tom/0fq4ryVF6T6eKvY9mVmR7PVyvY+aaRtigivRx+cDaeCVU7LW0pPKDWmzQnY2trOBdaWfWULlrcEZVGl8PzWuanBrEXN7+RgmCh80mKh3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.53] (ip5f5aead7.dynamic.kabel-deutschland.de [95.90.234.215])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 1CF4861E5FE05;
-	Mon, 26 Aug 2024 10:12:30 +0200 (CEST)
-Message-ID: <e4f29cb9-fbc1-47db-b4fa-769d72d42642@molgen.mpg.de>
-Date: Mon, 26 Aug 2024 10:12:29 +0200
+	 In-Reply-To:Content-Type; b=R/1rpeFYNNHotIL6LZdGn4qPqLMam+Ul4Bzs9Elv+iULMM3EA3GmYbPQ0qNSJ87nlPL5h6crVl/a2tPClghspt/AfxH5Lp7PVmxh4Qvysk5Qv4uVTIzUB15LA7Cr3iNyXhsuIDogvOyHfuaLNV67ONX/4+qUQlVQNfMMge6T6h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVDE35Cj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75CC1C8CDC1;
+	Mon, 26 Aug 2024 08:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724659970;
+	bh=GJX8WMOWMde/kMse+6fBcih9AFB2KaEoktYH4eL1+BA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SVDE35Cjmxr+/k2lBwT0mCM/tQSt4AuGzZgpMcyv8Shf9SYBF7nhdme/Ll1iQQWA+
+	 puftrSTyIixn36Wj4DWynLOF35Mf9qaeHI+QTh79ynJc5YPUNMpGlowGZMGgxtNWMA
+	 Q2zq3ANCYyBARU5UdNjuHzs53JS8jQG79whJ5IBQr3xKp4oyGf/XdX/NbSmt+tpMDA
+	 +Vi+v2e7qvO0f4fH8Td8hza6DMlH5p/Uw292IyYHS5wvPnYWeTbg7YK5ULNR22Wfh4
+	 OB3y8lLOY6Ko7ycvHnx1Tdess462qragDPDLXbVak9PHsZdzuDO8KDe21RVM/jLlKV
+	 YpudVOMX4+/MQ==
+Message-ID: <cad20aa4-43a9-4754-b1e8-290ce0beb64d@kernel.org>
+Date: Mon, 26 Aug 2024 10:12:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,703 +49,298 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH md-6.12 v2 42/42] md/md-bitmap: make in memory structure
- internal
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@linux.intel.com, xni@redhat.com, song@kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
- <20240826074452.1490072-43-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>,
+ Aradhya Bhatia <a-bhatia1@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+ <20240716084248.1393666-3-a-bhatia1@ti.com>
+ <0144d9b4-e830-44b0-95cd-4d49d5051155@kernel.org>
+ <2c1afef7-fed9-4685-bf07-b9f3d44a0077@linux.dev>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240826074452.1490072-43-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <2c1afef7-fed9-4685-bf07-b9f3d44a0077@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Dear Kuai,
-
-
-Am 26.08.24 um 09:44 schrieb Yu Kuai:
-> From: Yu Kuai <yukuai3@huawei.com>
+On 26/08/2024 07:47, Aradhya Bhatia wrote:
+> Hi Krzysztof,
 > 
-> Now that struct btimap_page and bitmap is not used external anymore,
+> Thank you for the reviewing the patches.
+> 
+> 
+> On 7/21/24 21:06, Krzysztof Kozlowski wrote:
+>> On 16/07/2024 10:42, Aradhya Bhatia wrote:
+>>> The OLDI (transmitters) TXes do not have registers of their own, and are
+>>> dependent on the source video-ports from the DSS to provide
+>>> configuration data. This hardware doesn't directly sit on the internal
+>>> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
+>>> supposed to be child nodes under the DSS, and not independent devices.
+>>>
+>>> Two of the OLDI TXes can function in tandem to output dual-link OLDI
+>>> output, or cloned single-link outputs. In these cases, one OLDI will be
+>>> the primary OLDI, and the other one, a companion.
+>>>
+>>> The OLDI functionality is further supported by a system-control module,
+>>> which contains a few registers to control OLDI IO power and
+>>> characteristics.
+>>>
+>>> Add devicetree binding schema for AM625 OLDI TXes.
+>>>
+>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>>> ---
+>>>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
+>>>  MAINTAINERS                                   |   1 +
+>>>  2 files changed, 154 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>> new file mode 100644
+>>> index 000000000000..0a96e600bc0b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>> @@ -0,0 +1,153 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Texas Instruments AM625 OLDI Transmitter
+>>> +
+>>> +maintainers:
+>>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>> +  - Aradhya Bhatia <a-bhatia1@ti.com>
+>>> +
+>>> +description: |
+>>
+>> Do not need '|' unless you need to preserve formatting.
+> 
+> Okay!
+> 
+>>
+>>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
+>>> +  pixel data transmission between host and flat panel display over LVDS (Low
+>>> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
+>>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
+>>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
+>>> +  padded and un-padded 18-bit RGB bus formats as input.
+>>> +
+>>> +properties:
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>
+>> How does it even work without compatible? How is this schema selected?
+>> If by part of your next patch, then this is not a proper split - this
+>> patch itself is noop. Squash the patches.
+>>
+> 
+> Yes, it is supposed to be picked like the next patch does it. I can
+> squash these both.
+> 
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +    description: serial clock input for the OLDI transmitters
+>>> +
+>>> +  clock-names:
+>>> +    const: s_clk
+>>
+>> Drop _clk or name it correctly.
+> 
+> Alright!
+> 
+>>
+>>> +
+>>> +  ti,companion-oldi:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      phandle to companion OLDI transmitter. This property is mandatory for the
+>>> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
+>>> +      mode or in clone mode. This property should point to the secondary OLDI
+>>> +      TX.
+>>> +
+>>> +  ti,secondary-oldi:
+>>> +    type: boolean
+>>> +    description: Boolean property to mark an OLDI TX as secondary node.
+>>
+>> Why? Lack companion tells it, doesn't it?
+> 
+> A lack of companion doesn't mean secondary-OLDI automatically, actually.
+> 
+> There is also a possible configuration where 2 OLDI TXes could be
+> individually connected to 2 different sources => 2x single Link
+> configuration. The OLDI TXes would then work independently.
 
-s/btimap/bitmap/
+You are responding for something month old. I am not in the context anymore.
 
-externally(?)
-
-> move them from md-bitmap.h to md-bitmap.c.(expect that dm-raid is still
-
-Please add space before (.
-
-> using define marco 'COUNTER_MAX').
-
-(Except that dm-raid is still using the macro `COUNTER_MAX`.)
+Probably you miss proper graphs here, not such property.
 
 > 
-> Also fix some checkpatch warnings.
-
-Which ones? Maybe make it separate patches.
-
-
-Kind regards,
-
-Paul
-
-
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md-bitmap.c  | 247 ++++++++++++++++++++++++++++++++++++----
->   drivers/md/md-bitmap.h  | 189 +-----------------------------
->   drivers/md/md-cluster.c |   4 +-
->   drivers/md/md.h         |   2 +-
->   drivers/md/raid1.c      |   5 +-
->   5 files changed, 235 insertions(+), 212 deletions(-)
+>>
+>>> +
+>>> +  ti,oldi-io-ctrl:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
+>>> +      control MMR region. This property is needed for OLDI interface to work.
+>>
+>> "This property is needed for OLDI interface to work." tells nothing.
+>> Everything is needed for everything to work. Be specific.
+>>
 > 
-> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-> index 098bffac2167..864418c8c028 100644
-> --- a/drivers/md/md-bitmap.c
-> +++ b/drivers/md/md-bitmap.c
-> @@ -32,6 +32,186 @@
->   #include "md.h"
->   #include "md-bitmap.h"
->   
-> +#define BITMAP_MAJOR_LO 3
-> +/* version 4 insists the bitmap is in little-endian order
-> + * with version 3, it is host-endian which is non-portable
-> + * Version 5 is currently set only for clustered devices
-> + */
-> +#define BITMAP_MAJOR_HI 4
-> +#define BITMAP_MAJOR_CLUSTERED 5
-> +#define	BITMAP_MAJOR_HOSTENDIAN 3
-> +
-> +/*
-> + * in-memory bitmap:
-> + *
-> + * Use 16 bit block counters to track pending writes to each "chunk".
-> + * The 2 high order bits are special-purpose, the first is a flag indicating
-> + * whether a resync is needed.  The second is a flag indicating whether a
-> + * resync is active.
-> + * This means that the counter is actually 14 bits:
-> + *
-> + * +--------+--------+------------------------------------------------+
-> + * | resync | resync |               counter                          |
-> + * | needed | active |                                                |
-> + * |  (0-1) |  (0-1) |              (0-16383)                         |
-> + * +--------+--------+------------------------------------------------+
-> + *
-> + * The "resync needed" bit is set when:
-> + *    a '1' bit is read from storage at startup.
-> + *    a write request fails on some drives
-> + *    a resync is aborted on a chunk with 'resync active' set
-> + * It is cleared (and resync-active set) when a resync starts across all drives
-> + * of the chunk.
-> + *
-> + *
-> + * The "resync active" bit is set when:
-> + *    a resync is started on all drives, and resync_needed is set.
-> + *       resync_needed will be cleared (as long as resync_active wasn't already set).
-> + * It is cleared when a resync completes.
-> + *
-> + * The counter counts pending write requests, plus the on-disk bit.
-> + * When the counter is '1' and the resync bits are clear, the on-disk
-> + * bit can be cleared as well, thus setting the counter to 0.
-> + * When we set a bit, or in the counter (to start a write), if the fields is
-> + * 0, we first set the disk bit and set the counter to 1.
-> + *
-> + * If the counter is 0, the on-disk bit is clear and the stripe is clean
-> + * Anything that dirties the stripe pushes the counter to 2 (at least)
-> + * and sets the on-disk bit (lazily).
-> + * If a periodic sweep find the counter at 2, it is decremented to 1.
-> + * If the sweep find the counter at 1, the on-disk bit is cleared and the
-> + * counter goes to zero.
-> + *
-> + * Also, we'll hijack the "map" pointer itself and use it as two 16 bit block
-> + * counters as a fallback when "page" memory cannot be allocated:
-> + *
-> + * Normal case (page memory allocated):
-> + *
-> + *     page pointer (32-bit)
-> + *
-> + *     [ ] ------+
-> + *               |
-> + *               +-------> [   ][   ]..[   ] (4096 byte page == 2048 counters)
-> + *                          c1   c2    c2048
-> + *
-> + * Hijacked case (page memory allocation failed):
-> + *
-> + *     hijacked page pointer (32-bit)
-> + *
-> + *     [		  ][		  ] (no page memory allocated)
-> + *      counter #1 (16-bit) counter #2 (16-bit)
-> + *
-> + */
-> +
-> +#define PAGE_BITS (PAGE_SIZE << 3)
-> +#define PAGE_BIT_SHIFT (PAGE_SHIFT + 3)
-> +
-> +#define NEEDED(x) (((bitmap_counter_t) x) & NEEDED_MASK)
-> +#define RESYNC(x) (((bitmap_counter_t) x) & RESYNC_MASK)
-> +#define COUNTER(x) (((bitmap_counter_t) x) & COUNTER_MAX)
-> +
-> +/* how many counters per page? */
-> +#define PAGE_COUNTER_RATIO (PAGE_BITS / COUNTER_BITS)
-> +/* same, except a shift value for more efficient bitops */
-> +#define PAGE_COUNTER_SHIFT (PAGE_BIT_SHIFT - COUNTER_BIT_SHIFT)
-> +/* same, except a mask value for more efficient bitops */
-> +#define PAGE_COUNTER_MASK  (PAGE_COUNTER_RATIO - 1)
-> +
-> +#define BITMAP_BLOCK_SHIFT 9
-> +
-> +/*
-> + * bitmap structures:
-> + */
-> +
-> +/* the in-memory bitmap is represented by bitmap_pages */
-> +struct bitmap_page {
-> +	/*
-> +	 * map points to the actual memory page
-> +	 */
-> +	char *map;
-> +	/*
-> +	 * in emergencies (when map cannot be alloced), hijack the map
-> +	 * pointer and use it as two counters itself
-> +	 */
-> +	unsigned int hijacked:1;
-> +	/*
-> +	 * If any counter in this page is '1' or '2' - and so could be
-> +	 * cleared then that page is marked as 'pending'
-> +	 */
-> +	unsigned int pending:1;
-> +	/*
-> +	 * count of dirty bits on the page
-> +	 */
-> +	unsigned int  count:30;
-> +};
-> +
-> +/* the main bitmap structure - one per mddev */
-> +struct bitmap {
-> +
-> +	struct bitmap_counts {
-> +		spinlock_t lock;
-> +		struct bitmap_page *bp;
-> +		/* total number of pages in the bitmap */
-> +		unsigned long pages;
-> +		/* number of pages not yet allocated */
-> +		unsigned long missing_pages;
-> +		/* chunksize = 2^chunkshift (for bitops) */
-> +		unsigned long chunkshift;
-> +		/* total number of data chunks for the array */
-> +		unsigned long chunks;
-> +	} counts;
-> +
-> +	struct mddev *mddev; /* the md device that the bitmap is for */
-> +
-> +	__u64	events_cleared;
-> +	int need_sync;
-> +
-> +	struct bitmap_storage {
-> +		/* backing disk file */
-> +		struct file *file;
-> +		/* cached copy of the bitmap file superblock */
-> +		struct page *sb_page;
-> +		unsigned long sb_index;
-> +		/* list of cache pages for the file */
-> +		struct page **filemap;
-> +		/* attributes associated filemap pages */
-> +		unsigned long *filemap_attr;
-> +		/* number of pages in the file */
-> +		unsigned long file_pages;
-> +		/* total bytes in the bitmap */
-> +		unsigned long bytes;
-> +	} storage;
-> +
-> +	unsigned long flags;
-> +
-> +	int allclean;
-> +
-> +	atomic_t behind_writes;
-> +	/* highest actual value at runtime */
-> +	unsigned long behind_writes_used;
-> +
-> +	/*
-> +	 * the bitmap daemon - periodically wakes up and sweeps the bitmap
-> +	 * file, cleaning up bits and flushing out pages to disk as necessary
-> +	 */
-> +	unsigned long daemon_lastrun; /* jiffies of last run */
-> +	/*
-> +	 * when we lasted called end_sync to update bitmap with resync
-> +	 * progress.
-> +	 */
-> +	unsigned long last_end_sync;
-> +
-> +	/* pending writes to the bitmap file */
-> +	atomic_t pending_writes;
-> +	wait_queue_head_t write_wait;
-> +	wait_queue_head_t overflow_wait;
-> +	wait_queue_head_t behind_wait;
-> +
-> +	struct kernfs_node *sysfs_can_clear;
-> +	/* slot offset for clustered env */
-> +	int cluster_slot;
-> +};
-> +
->   static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
->   			   int chunksize, bool init);
->   
-> @@ -491,9 +671,10 @@ static void md_bitmap_wait_writes(struct bitmap *bitmap)
->   
->   
->   /* update the event counter and sync the superblock to disk */
-> -static void bitmap_update_sb(struct bitmap *bitmap)
-> +static void bitmap_update_sb(void *data)
->   {
->   	bitmap_super_t *sb;
-> +	struct bitmap *bitmap = data;
->   
->   	if (!bitmap || !bitmap->mddev) /* no bitmap for this array */
->   		return;
-> @@ -1844,10 +2025,11 @@ static void bitmap_flush(struct mddev *mddev)
->   	bitmap_update_sb(bitmap);
->   }
->   
-> -static void md_bitmap_free(struct bitmap *bitmap)
-> +static void md_bitmap_free(void *data)
->   {
->   	unsigned long k, pages;
->   	struct bitmap_page *bp;
-> +	struct bitmap *bitmap = data;
->   
->   	if (!bitmap) /* there was no bitmap */
->   		return;
-> @@ -2076,7 +2258,7 @@ static int bitmap_load(struct mddev *mddev)
->   }
->   
->   /* caller need to free returned bitmap with md_bitmap_free() */
-> -static struct bitmap *bitmap_get_from_slot(struct mddev *mddev, int slot)
-> +static void *bitmap_get_from_slot(struct mddev *mddev, int slot)
->   {
->   	int rv = 0;
->   	struct bitmap *bitmap;
-> @@ -2143,15 +2325,18 @@ static int bitmap_copy_from_slot(struct mddev *mddev, int slot, sector_t *low,
->   	return rv;
->   }
->   
-> -static void bitmap_set_pages(struct bitmap *bitmap, unsigned long pages)
-> +static void bitmap_set_pages(void *data, unsigned long pages)
->   {
-> +	struct bitmap *bitmap = data;
-> +
->   	bitmap->counts.pages = pages;
->   }
->   
-> -static int bitmap_get_stats(struct bitmap *bitmap, struct md_bitmap_stats *stats)
-> +static int bitmap_get_stats(void *data, struct md_bitmap_stats *stats)
->   {
->   	struct bitmap_storage *storage;
->   	struct bitmap_counts *counts;
-> +	struct bitmap *bitmap = data;
->   	bitmap_super_t *sb;
->   
->   	if (!bitmap)
-> @@ -2510,6 +2695,7 @@ space_show(struct mddev *mddev, char *page)
->   static ssize_t
->   space_store(struct mddev *mddev, const char *buf, size_t len)
->   {
-> +	struct bitmap *bitmap;
->   	unsigned long sectors;
->   	int rv;
->   
-> @@ -2520,8 +2706,8 @@ space_store(struct mddev *mddev, const char *buf, size_t len)
->   	if (sectors == 0)
->   		return -EINVAL;
->   
-> -	if (mddev->bitmap &&
-> -	    sectors < (mddev->bitmap->storage.bytes + 511) >> 9)
-> +	bitmap = mddev->bitmap;
-> +	if (bitmap && sectors < (bitmap->storage.bytes + 511) >> 9)
->   		return -EFBIG; /* Bitmap is too big for this small space */
->   
->   	/* could make sure it isn't too big, but that isn't really
-> @@ -2698,10 +2884,13 @@ __ATTR(metadata, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
->   static ssize_t can_clear_show(struct mddev *mddev, char *page)
->   {
->   	int len;
-> +	struct bitmap *bitmap;
-> +
->   	spin_lock(&mddev->lock);
-> -	if (mddev->bitmap)
-> -		len = sprintf(page, "%s\n", (mddev->bitmap->need_sync ?
-> -					     "false" : "true"));
-> +	bitmap = mddev->bitmap;
-> +	if (bitmap)
-> +		len = sprintf(page, "%s\n", (bitmap->need_sync ? "false" :
-> +								 "true"));
->   	else
->   		len = sprintf(page, "\n");
->   	spin_unlock(&mddev->lock);
-> @@ -2710,17 +2899,24 @@ static ssize_t can_clear_show(struct mddev *mddev, char *page)
->   
->   static ssize_t can_clear_store(struct mddev *mddev, const char *buf, size_t len)
->   {
-> -	if (mddev->bitmap == NULL)
-> +	struct bitmap *bitmap = mddev->bitmap;
-> +
-> +	if (!bitmap)
->   		return -ENOENT;
-> -	if (strncmp(buf, "false", 5) == 0)
-> -		mddev->bitmap->need_sync = 1;
-> -	else if (strncmp(buf, "true", 4) == 0) {
-> +
-> +	if (strncmp(buf, "false", 5) == 0) {
-> +		bitmap->need_sync = 1;
-> +		return len;
-> +	}
-> +
-> +	if (strncmp(buf, "true", 4) == 0) {
->   		if (mddev->degraded)
->   			return -EBUSY;
-> -		mddev->bitmap->need_sync = 0;
-> -	} else
-> -		return -EINVAL;
-> -	return len;
-> +		bitmap->need_sync = 0;
-> +		return len;
-> +	}
-> +
-> +	return -EINVAL;
->   }
->   
->   static struct md_sysfs_entry bitmap_can_clear =
-> @@ -2730,21 +2926,26 @@ static ssize_t
->   behind_writes_used_show(struct mddev *mddev, char *page)
->   {
->   	ssize_t ret;
-> +	struct bitmap *bitmap;
-> +
->   	spin_lock(&mddev->lock);
-> -	if (mddev->bitmap == NULL)
-> +	bitmap = mddev->bitmap;
-> +	if (!bitmap)
->   		ret = sprintf(page, "0\n");
->   	else
-> -		ret = sprintf(page, "%lu\n",
-> -			      mddev->bitmap->behind_writes_used);
-> +		ret = sprintf(page, "%lu\n", bitmap->behind_writes_used);
->   	spin_unlock(&mddev->lock);
-> +
->   	return ret;
->   }
->   
->   static ssize_t
->   behind_writes_used_reset(struct mddev *mddev, const char *buf, size_t len)
->   {
-> -	if (mddev->bitmap)
-> -		mddev->bitmap->behind_writes_used = 0;
-> +	struct bitmap *bitmap = mddev->bitmap;
-> +
-> +	if (bitmap)
-> +		bitmap->behind_writes_used = 0;
->   	return len;
->   }
->   
-> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-> index c720729687e2..662e6fc141a7 100644
-> --- a/drivers/md/md-bitmap.h
-> +++ b/drivers/md/md-bitmap.h
-> @@ -7,81 +7,7 @@
->   #ifndef BITMAP_H
->   #define BITMAP_H 1
->   
-> -#define BITMAP_MAJOR_LO 3
-> -/* version 4 insists the bitmap is in little-endian order
-> - * with version 3, it is host-endian which is non-portable
-> - * Version 5 is currently set only for clustered devices
-> - */
-> -#define BITMAP_MAJOR_HI 4
-> -#define BITMAP_MAJOR_CLUSTERED 5
-> -#define	BITMAP_MAJOR_HOSTENDIAN 3
-> -
-> -/*
-> - * in-memory bitmap:
-> - *
-> - * Use 16 bit block counters to track pending writes to each "chunk".
-> - * The 2 high order bits are special-purpose, the first is a flag indicating
-> - * whether a resync is needed.  The second is a flag indicating whether a
-> - * resync is active.
-> - * This means that the counter is actually 14 bits:
-> - *
-> - * +--------+--------+------------------------------------------------+
-> - * | resync | resync |               counter                          |
-> - * | needed | active |                                                |
-> - * |  (0-1) |  (0-1) |              (0-16383)                         |
-> - * +--------+--------+------------------------------------------------+
-> - *
-> - * The "resync needed" bit is set when:
-> - *    a '1' bit is read from storage at startup.
-> - *    a write request fails on some drives
-> - *    a resync is aborted on a chunk with 'resync active' set
-> - * It is cleared (and resync-active set) when a resync starts across all drives
-> - * of the chunk.
-> - *
-> - *
-> - * The "resync active" bit is set when:
-> - *    a resync is started on all drives, and resync_needed is set.
-> - *       resync_needed will be cleared (as long as resync_active wasn't already set).
-> - * It is cleared when a resync completes.
-> - *
-> - * The counter counts pending write requests, plus the on-disk bit.
-> - * When the counter is '1' and the resync bits are clear, the on-disk
-> - * bit can be cleared as well, thus setting the counter to 0.
-> - * When we set a bit, or in the counter (to start a write), if the fields is
-> - * 0, we first set the disk bit and set the counter to 1.
-> - *
-> - * If the counter is 0, the on-disk bit is clear and the stripe is clean
-> - * Anything that dirties the stripe pushes the counter to 2 (at least)
-> - * and sets the on-disk bit (lazily).
-> - * If a periodic sweep find the counter at 2, it is decremented to 1.
-> - * If the sweep find the counter at 1, the on-disk bit is cleared and the
-> - * counter goes to zero.
-> - *
-> - * Also, we'll hijack the "map" pointer itself and use it as two 16 bit block
-> - * counters as a fallback when "page" memory cannot be allocated:
-> - *
-> - * Normal case (page memory allocated):
-> - *
-> - *     page pointer (32-bit)
-> - *
-> - *     [ ] ------+
-> - *               |
-> - *               +-------> [   ][   ]..[   ] (4096 byte page == 2048 counters)
-> - *                          c1   c2    c2048
-> - *
-> - * Hijacked case (page memory allocation failed):
-> - *
-> - *     hijacked page pointer (32-bit)
-> - *Yu
-> - *     [		  ][		  ] (no page memory allocated)
-> - *      counter #1 (16-bit) counter #2 (16-bit)
-> - *
-> - */
-> -
-> -#ifdef __KERNEL__
-> -
-> -#define PAGE_BITS (PAGE_SIZE << 3)
-> -#define PAGE_BIT_SHIFT (PAGE_SHIFT + 3)
-> +#define BITMAP_MAGIC 0x6d746962
->   
->   typedef __u16 bitmap_counter_t;
->   #define COUNTER_BITS 16
-> @@ -91,26 +17,6 @@ typedef __u16 bitmap_counter_t;
->   #define NEEDED_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 1)))
->   #define RESYNC_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 2)))
->   #define COUNTER_MAX ((bitmap_counter_t) RESYNC_MASK - 1)
-> -#define NEEDED(x) (((bitmap_counter_t) x) & NEEDED_MASK)
-> -#define RESYNC(x) (((bitmap_counter_t) x) & RESYNC_MASK)
-> -#define COUNTER(x) (((bitmap_counter_t) x) & COUNTER_MAX)
-> -
-> -/* how many counters per page? */
-> -#define PAGE_COUNTER_RATIO (PAGE_BITS / COUNTER_BITS)
-> -/* same, except a shift value for more efficient bitops */
-> -#define PAGE_COUNTER_SHIFT (PAGE_BIT_SHIFT - COUNTER_BIT_SHIFT)
-> -/* same, except a mask value for more efficient bitops */
-> -#define PAGE_COUNTER_MASK  (PAGE_COUNTER_RATIO - 1)
-> -
-> -#define BITMAP_BLOCK_SHIFT 9
-> -
-> -#endif
-> -
-> -/*
-> - * bitmap structures:
-> - */
-> -
-> -#define BITMAP_MAGIC 0x6d746962
->   
->   /* use these for bitmap->flags and bitmap->sb->state bit-fields */
->   enum bitmap_state {
-> @@ -152,88 +58,6 @@ typedef struct bitmap_super_s {
->    *    devices.  For raid10 it is the size of the array.
->    */
->   
-> -#ifdef __KERNEL__
-> -
-> -/* the in-memory bitmap is represented by bitmap_pages */
-> -struct bitmap_page {
-> -	/*
-> -	 * map points to the actual memory page
-> -	 */
-> -	char *map;
-> -	/*
-> -	 * in emergencies (when map cannot be alloced), hijack the map
-> -	 * pointer and use it as two counters itself
-> -	 */
-> -	unsigned int hijacked:1;
-> -	/*
-> -	 * If any counter in this page is '1' or '2' - and so could be
-> -	 * cleared then that page is marked as 'pending'
-> -	 */
-> -	unsigned int pending:1;
-> -	/*
-> -	 * count of dirty bits on the page
-> -	 */
-> -	unsigned int  count:30;
-> -};
-> -
-> -/* the main bitmap structure - one per mddev */
-> -struct bitmap {
-> -
-> -	struct bitmap_counts {
-> -		spinlock_t lock;
-> -		struct bitmap_page *bp;
-> -		unsigned long pages;		/* total number of pages
-> -						 * in the bitmap */
-> -		unsigned long missing_pages;	/* number of pages
-> -						 * not yet allocated */
-> -		unsigned long chunkshift;	/* chunksize = 2^chunkshift
-> -						 * (for bitops) */
-> -		unsigned long chunks;		/* Total number of data
-> -						 * chunks for the array */
-> -	} counts;
-> -
-> -	struct mddev *mddev; /* the md device that the bitmap is for */
-> -
-> -	__u64	events_cleared;
-> -	int need_sync;
-> -
-> -	struct bitmap_storage {
-> -		struct file *file;		/* backing disk file */
-> -		struct page *sb_page;		/* cached copy of the bitmap
-> -						 * file superblock */
-> -		unsigned long sb_index;
-> -		struct page **filemap;		/* list of cache pages for
-> -						 * the file */
-> -		unsigned long *filemap_attr;	/* attributes associated
-> -						 * w/ filemap pages */
-> -		unsigned long file_pages;	/* number of pages in the file*/
-> -		unsigned long bytes;		/* total bytes in the bitmap */
-> -	} storage;
-> -
-> -	unsigned long flags;
-> -
-> -	int allclean;
-> -
-> -	atomic_t behind_writes;
-> -	unsigned long behind_writes_used; /* highest actual value at runtime */
-> -
-> -	/*
-> -	 * the bitmap daemon - periodically wakes up and sweeps the bitmap
-> -	 * file, cleaning up bits and flushing out pages to disk as necessary
-> -	 */
-> -	unsigned long daemon_lastrun; /* jiffies of last run */
-> -	unsigned long last_end_sync; /* when we lasted called end_sync to
-> -				      * update bitmap with resync progress */
-> -
-> -	atomic_t pending_writes; /* pending writes to the bitmap file */
-> -	wait_queue_head_t write_wait;
-> -	wait_queue_head_t overflow_wait;
-> -	wait_queue_head_t behind_wait;
-> -
-> -	struct kernfs_node *sysfs_can_clear;
-> -	int cluster_slot;		/* Slot offset for clustered env */
-> -};
-> -
->   struct md_bitmap_stats {
->   	u64		events_cleared;
->   	int		behind_writes;
-> @@ -272,21 +96,20 @@ struct bitmap_operations {
->   	void (*cond_end_sync)(struct mddev *mddev, sector_t sector, bool force);
->   	void (*close_sync)(struct mddev *mddev);
->   
-> -	void (*update_sb)(struct bitmap *bitmap);
-> -	int (*get_stats)(struct bitmap *bitmap, struct md_bitmap_stats *stats);
-> +	void (*update_sb)(void *data);
-> +	int (*get_stats)(void *data, struct md_bitmap_stats *stats);
->   
->   	void (*sync_with_cluster)(struct mddev *mddev,
->   				  sector_t old_lo, sector_t old_hi,
->   				  sector_t new_lo, sector_t new_hi);
-> -	struct bitmap *(*get_from_slot)(struct mddev *mddev, int slot);
-> +	void *(*get_from_slot)(struct mddev *mddev, int slot);
->   	int (*copy_from_slot)(struct mddev *mddev, int slot, sector_t *lo,
->   			      sector_t *hi, bool clear_bits);
-> -	void (*set_pages)(struct bitmap *bitmap, unsigned long pages);
-> -	void (*free)(struct bitmap *bitmap);
-> +	void (*set_pages)(void *data, unsigned long pages);
-> +	void (*free)(void *data);
->   };
->   
->   /* the bitmap API */
->   void mddev_set_bitmap_ops(struct mddev *mddev);
->   
->   #endif
-> -#endif
-> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-> index 7647ce4f76fa..6595f89becdb 100644
-> --- a/drivers/md/md-cluster.c
-> +++ b/drivers/md/md-cluster.c
-> @@ -1144,7 +1144,7 @@ static int update_bitmap_size(struct mddev *mddev, sector_t size)
->   
->   static int resize_bitmaps(struct mddev *mddev, sector_t newsize, sector_t oldsize)
->   {
-> -	struct bitmap *bitmap = mddev->bitmap;
-> +	void *bitmap = mddev->bitmap;
->   	struct md_bitmap_stats stats;
->   	unsigned long my_pages;
->   	int i, rv;
-> @@ -1218,9 +1218,9 @@ static int cluster_check_sync_size(struct mddev *mddev)
->   {
->   	int current_slot = md_cluster_ops->slot_number(mddev);
->   	int node_num = mddev->bitmap_info.nodes;
-> -	struct bitmap *bitmap = mddev->bitmap;
->   	struct dlm_lock_resource *bm_lockres;
->   	struct md_bitmap_stats stats;
-> +	void *bitmap = mddev->bitmap;
->   	unsigned long sync_size = 0;
->   	unsigned long my_sync_size;
->   	char str[64];
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index e56193f71ab4..1c6a5f41adca 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -535,7 +535,7 @@ struct mddev {
->   	struct percpu_ref		writes_pending;
->   	int				sync_checkers;	/* # of threads checking writes_pending */
->   
-> -	struct bitmap			*bitmap; /* the bitmap for the device */
-> +	void				*bitmap; /* the bitmap for the device */
->   	struct bitmap_operations	*bitmap_ops;
->   	struct {
->   		struct file		*file; /* the bitmap file */
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 52a707e39a4d..6093df281eb1 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1425,7 +1425,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	struct r1conf *conf = mddev->private;
->   	struct r1bio *r1_bio;
->   	int i, disks;
-> -	struct bitmap *bitmap = mddev->bitmap;
->   	unsigned long flags;
->   	struct md_rdev *blocked_rdev;
->   	int first_clone;
-> @@ -1578,7 +1577,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	 * at a time and thus needs a new bio that can fit the whole payload
->   	 * this bio in page sized chunks.
->   	 */
-> -	if (write_behind && bitmap)
-> +	if (write_behind && mddev->bitmap)
->   		max_sectors = min_t(int, max_sectors,
->   				    BIO_MAX_VECS * (PAGE_SIZE >> 9));
->   	if (max_sectors < bio_sectors(bio)) {
-> @@ -1614,7 +1613,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   			 * Not if there are too many, or cannot
->   			 * allocate memory, or a reader on WriteMostly
->   			 * is waiting for behind writes to flush */
-> -			err = mddev->bitmap_ops->get_stats(bitmap, &stats);
-> +			err = mddev->bitmap_ops->get_stats(mddev->bitmap, &stats);
->   			if (!err && write_behind && !stats.behind_wait &&
->   			    stats.behind_writes < max_write_behind)
->   				alloc_behind_master_bio(r1_bio, bio);
+> Yes! Will fix this.
+> 
+>>> +
+>>> +  ports:
+>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>> +
+>>> +    properties:
+>>> +      port@0:
+>>> +        $ref: /schemas/graph.yaml#/properties/port
+>>> +        description: Parallel RGB input port
+>>> +
+>>> +      port@1:
+>>> +        $ref: /schemas/graph.yaml#/properties/port
+>>> +        description: LVDS output port
+>>> +
+>>> +    required:
+>>> +      - port@0
+>>> +      - port@1
+>>> +
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        ti,secondary-oldi: true
+>>
+>> This does not work... Test your schema.
+>>
+> 
+> I tested again just now. At least the schema check didn't report any
+> error. I used the v2024.05 dtschema too.
+
+No, test your condition. Come with DTS with exercises this if. You will
+see this DOES NOT WORK. This is just no-op, does not perform any useful
+work. So test the code that it actually performs what you want it to do.
+
+> 
+> This github gist[0] captures all details of this test.
+> 
+> Could you instead please elaborate what maybe wrong here, and I will try
+> to fix that.
+
+Look at example-schema or any of my talks with useful references.
+
+> 
+> 
+>>> +    then:
+>>> +      properties:
+>>> +        ti,companion-oldi: false
+>>> +        ti,oldi-io-ctrl: false
+>>> +        clocks: false
+>>> +        clock-names: false
+>>> +
+>>> +    else:
+>>> +      required:
+>>> +        - ti,oldi-io-ctrl
+>>> +        - clocks
+>>> +        - clock-names
+>>> +
+>>> +required:
+>>> +  - reg
+>>> +  - ports
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>> +
+>>> +    oldi_txes {
+>>
+>> No underscores in node names.
+>>
+>> Node names should be generic. See also an explanation and list of
+>> examples (not exhaustive) in DT specification:
+>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> Right. Will make the name generic.
+> 
+>>
+>>
+>>> +        #address-cells = <1>;
+>>> +        #size-cells = <0>;
+>>> +        oldi: oldi@0 {
+>> What is the "reg" for?
+> 
+> The reg is for indexing purposes so that the driver can distinguish
+> between which OLDI TX is under question. Since, the syscon controller
+> has different power control registers and bits for different OLDIs - its
+> important for the driver to be able to tell one from another.
+
+Again, not sure, not in context. Patch is not even in the inbox anymore.
+
+Best regards,
+Krzysztof
 
 
