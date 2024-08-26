@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-302339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670F195FCD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:37:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE0395FCD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE8A1C210AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:37:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF891F22E2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD7419D07B;
-	Mon, 26 Aug 2024 22:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2787E19D8BC;
+	Mon, 26 Aug 2024 22:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryhTXtJX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdyUMeqk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999F119AA4E;
-	Mon, 26 Aug 2024 22:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A71719D892;
+	Mon, 26 Aug 2024 22:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724711828; cv=none; b=fjrNPOS3BeuxWwqQh7Zi6GmhVR5zj0fAbWozKRwEMdsMBrS8y8zQHUhXarIpw/FsuAI0xStrJPZ1AnaReEs2/SEf9czuYAn9PyuQLzJBwkbwBRstm5HCzzF6y182INMzl3zClD/BqUecSiIwf4FqbGVIGaYB0aKqf47lNNXF934=
+	t=1724711830; cv=none; b=JYguJldnqMQWrjVOfLwPHsfM68icqKCwsNYoRqjChtuVFFU1TmDeNB9UMWVAuh7c2qz3LQTzh9gUhJg1WfpgVfbmENmfioXv0vu1xLndjl9riYHY7kTM6G2i0SvMs0MtZlxkaCBBZVZ5OX4sZ6eyzThtkgQ4HDsWGIKdwiZPGrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724711828; c=relaxed/simple;
-	bh=M0Ntd6s913U5SOeV1TIdFxvvzwDT79BkVPTJjzmt8gE=;
+	s=arc-20240116; t=1724711830; c=relaxed/simple;
+	bh=owF/uU5XYoewaMP+Grcjv11JWy/GgILqWerwTJo4fjo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PDOhvmeNZVNqNl7Z16KcymUr995bWwM6GAWyH7MnY6ddIvv2Nf7gPsMtSIYRytJcILXuwZd1Al5l/ITpj7LLybTaEZa2ZnfzbT73YG5kZ7ktpMmStAX7KhKock7QiOzA9YP6AzgscpzFk99f/zQnazhmM5nnI7rFQKdUW+8lBYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ryhTXtJX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B3CC8B7DE;
-	Mon, 26 Aug 2024 22:37:04 +0000 (UTC)
+	 MIME-Version:Content-Type; b=mqAYGvqyQF4CknmBHT/IsPvWf0PkQ6lKtScYgw/whJ/v2FjcRoLFaOgv9ndI6jzPMzA/3tg8Yb0QxZyenfupEmn+29lQZ27Mvvx9rmaBoddXCtO97NkNkRNhQxwxrZUcXnR8XfW6YwjwALUhjGkzGAkJG5URY6jV+12lfxaQDJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdyUMeqk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CDFC4AF18;
+	Mon, 26 Aug 2024 22:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724711828;
-	bh=M0Ntd6s913U5SOeV1TIdFxvvzwDT79BkVPTJjzmt8gE=;
+	s=k20201202; t=1724711830;
+	bh=owF/uU5XYoewaMP+Grcjv11JWy/GgILqWerwTJo4fjo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ryhTXtJXPh3dqovOWwDUQ1RYohxer3IcchVGxS7K9Z24kWywHCbddiVSR25zMIwuC
-	 wUHlaOoaXrsxe/eqWry5jFM6fiEDdadcnWWbnY81/iCBXunS0WK3ZpmRLA3yfciHY/
-	 5uHCsp+hG7Xb0lgF4Ax6+EbH2m1NCvfc6eqvKqdiwKf13bdavU26I2nZkALXs5QIdP
-	 /UR5KVmddJA6im3LdaoFA63yeIIhaGe80QU05z5QR30FjppaKFxf/dBumwoU9L7zXe
-	 omX/B5t1+rDVeHQlnucrhRTUwYQgRqctNeOZovukVVuG5wtuOkusQKmQE8akVj9fLN
-	 nAAAVYPnhgfSQ==
+	b=gdyUMeqk12Yv+9HlARB+KuO+eIf1Tnn4+0As0q8jcIXXsXpbfWmtjy8TWFELz8UhN
+	 3MCOjoCnRHSnDdwtxCDa+BMCXaFLZZ9GE+3o5okHGTbkhpN+5pZoQfHyDAEyEi6M1z
+	 Xc69NjdhiAKUfz8vqs1QKT5Cyteqn4xxETM3uS8bgamdWI4j1YBe58ih02Dc0ZVZye
+	 adCRuI/e43OPMRxIFDcCRrJNEYG1K4sNTrW0GBjChW2dvGLCpwxVoh/HbvFIC+Q5EB
+	 RoKv3bhlg9Mt31R8KV5A7TTgewQs1O/L/nib7oGV05mAzpJKUEMdRehykDjYIkkNUV
+	 WCFKzofa9lDZQ==
 From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- alsa-devel@alsa-project.org, Liao Chen <liaochen4@huawei.com>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- cezary.rojewski@intel.com, pierre-louis.bossart@linux.intel.com, 
- peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com, 
- ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com, 
- u.kleine-koenig@pengutronix.de, andy.shevchenko@gmail.com, 
- kuninori.morimoto.gx@renesas.com, robh@kernel.org
-In-Reply-To: <20240826084924.368387-1-liaochen4@huawei.com>
-References: <20240826084924.368387-1-liaochen4@huawei.com>
-Subject: Re: [PATCH -next 0/4] ASoC: fix module autoloading
-Message-Id: <172471182196.865478.11843966952043605315.b4-ty@kernel.org>
-Date: Mon, 26 Aug 2024 23:37:01 +0100
+To: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240826182442.6191-1-laurentiumihalcea111@gmail.com>
+References: <20240826182442.6191-1-laurentiumihalcea111@gmail.com>
+Subject: Re: [PATCH] ASoC: SOF: ipc: replace "enum sof_comp_type" field
+ with "uint32_t"
+Message-Id: <172471182590.865478.17639735740855065708.b4-ty@kernel.org>
+Date: Mon, 26 Aug 2024 23:37:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,16 +63,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Mon, 26 Aug 2024 08:49:20 +0000, Liao Chen wrote:
-> This patchset aims to enable autoloading of some use modules.
-> By registering MDT, the kernel is allowed to automatically bind
-> modules to devices that match the specified compatible strings.
+On Mon, 26 Aug 2024 14:24:42 -0400, Laurentiu Mihalcea wrote:
+> Normally, the type of enums is "unsigned int" or "int". GCC has
+> the "-fshort-enums" option, which instructs the compiler to
+> use the smallest data type that can hold all the values in
+> the enum (i.e: char, short, int or their unsigned variants).
 > 
-> Liao Chen (4):
->   ASoC: intel: fix module autoloading
->   ASoC: google: fix module autoloading
->   ASoC: tda7419: fix module autoloading
->   ASoC: fix module autoloading
+> According to the GCC documentation, "-fshort-enums" may be
+> default on some targets. This seems to be the case for SOF
+> when built for a certain 32-bit ARM platform.
 > 
 > [...]
 
@@ -83,14 +81,8 @@ Applied to
 
 Thanks!
 
-[1/4] ASoC: intel: fix module autoloading
-      commit: ae61a3391088d29aa8605c9f2db84295ab993a49
-[2/4] ASoC: google: fix module autoloading
-      commit: 8e1bb4a41aa78d6105e59186af3dcd545fc66e70
-[3/4] ASoC: tda7419: fix module autoloading
-      commit: 934b44589da9aa300201a00fe139c5c54f421563
-[4/4] ASoC: fix module autoloading
-      commit: 1165e70a4a5d8b4da77002ac22b4c5397f30e00d
+[1/1] ASoC: SOF: ipc: replace "enum sof_comp_type" field with "uint32_t"
+      commit: 22652022c7eef3c4ad6ab5f13a6dfc7f25f853d4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
