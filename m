@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-301980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A5E95F839
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1574D95F837
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B5DC1F23A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6506283F57
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7161991A8;
-	Mon, 26 Aug 2024 17:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF721990DB;
+	Mon, 26 Aug 2024 17:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="NpwW0zjK"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFhMatMq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D930B198E84
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC1B198E84;
+	Mon, 26 Aug 2024 17:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693613; cv=none; b=BLlgPbh6xNPT7hrM4yNNURSb9t4E/XWgWcOEnn2D8AHViaCsoZoHiGaRJjyn/9r81yXLGHOHKPQP43cBnp3WHKyvAht3bFS13zeML+RGkyUXR8FNTbHx101CedPGZR5uJ8Md+FWxLPPchopVOKDGNLQsiiBjpJaIWkqWqc5OFI8=
+	t=1724693583; cv=none; b=levpVPXRHPQy4Glz6KyjVt6UeVqQHK9E2GZDakg6VGSmQm9QYUcwDHrRoGJlRKiDaJzdw1jKlgGQelgbI9QFZOoafN2xb0VwP39wTzpE+k2p3kZmDJF814DkvjLjBV7TKfamT5wm6Ipe3ONDpIaivi5mX3KM+fbu+eVNr5Z0xlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693613; c=relaxed/simple;
-	bh=jF0AFybnEgu4YAohDDh06EmYAk8jCuZvF04I5MfW/sA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lYDu8h36D5XohEANJus0gexzKupTOq6faX3h4T11yt5iWQYCZKDIL8wRN7556dzHZmwtM+/ZveLSJEvPhWKq14r6D5qvCjInP8JxzoDzjsf+H/vJQv6GMOR1Fzkl2PXCm8qvhqAGT1QUbMXFKlu0+4DOG39xeNLM2MZX194q/VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=NpwW0zjK; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47QHWWCR3949296
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 26 Aug 2024 10:32:32 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47QHWWCR3949296
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024081601; t=1724693553;
-	bh=IDtuNVIhlKMEKOcyuxVSY36eaZkOAiZx816C5idJyvA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=NpwW0zjKGr6DK6BhJDjW5uVqWrQfsU5uaWht1wcHFf48Sy+Ew39WRhvg5LQ6YtPOG
-	 HoB9+G/FeD6MwIbmaibINF9ur9YjK75I41Mi6V/TW96o6IRAIbeYrPAzN1L3bfx72d
-	 OCoVvbVJlPKL6Z9TB/hzVUJAPM5ZxsNuA3TZ3GDb06DYnBGrUO2vcSO6kYYCtHpS4H
-	 I2/WU8youaGJ89KvvSQFu1M2bj6xYfWW1xlnSWxNsK6ELgVECehksUOTywS9GMGgfO
-	 bbr0LHUCRMuPnXh4IaFQygzbKMggsAZCJ4lJ94+beVTxLtZjl8zX5h4gM8jmUJWH9E
-	 LPU2HlknorCIw==
-Message-ID: <469a7dc3-b4de-4d2b-9068-381a250273d3@zytor.com>
-Date: Mon, 26 Aug 2024 10:32:31 -0700
+	s=arc-20240116; t=1724693583; c=relaxed/simple;
+	bh=TAh6Bl1VLr1EWHR5IFo9O+tDZgymLTN1OTXOZRGQQg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhonBj/A95lYmszcHWeRLWUB0x+0QB6qbZTUCfSpwt/VB2WIaRPxAMWWxv0bjs6H4sMIj5os8oOG/UnSSkktFPGxfHl+4837OKKZ0ihy54jATiMiiBkDBJbTHKPE3/HNgIYdNAh6zr/as7YTL+HC3ZDBAXcw4jdVzJSveke9jKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFhMatMq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27306C8B7B7;
+	Mon, 26 Aug 2024 17:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724693583;
+	bh=TAh6Bl1VLr1EWHR5IFo9O+tDZgymLTN1OTXOZRGQQg0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vFhMatMq++we8GsDVkjMSZ5V+XOzeCBM0jCASf1ecE7B3mJ806+s36hXg45nAdV9Z
+	 vFphtkEorTrEsSOusgAXlzVxq5BwrLvk2e6nNCBujrjPf1j71ZOo19I1opnFjfhMDN
+	 KLOcU5rj3rWLEO/Eod9BT9ZYv959KEnFbRm4minS/QcEbfw0CQUqZRU4bu8pneBjtP
+	 U1e7m8I78wQJHwGU38Hy8iIuWQ1ibf7qx4JaqjwYWZP3iQFhl4g58Tos3kylxW5uxv
+	 bN5LAzt8iuPijoURrpEgh3i5yXaKBgWClVv+bVGZA+q7qZjatZdjR4UU0FNeI3yBmQ
+	 fIBneDHDpVeDA==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2705dd4ba64so3191883fac.3;
+        Mon, 26 Aug 2024 10:33:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIFPUPHGmCCN9x6djZhy2446Q5K4zDDlPXN6sVZ0Rr8v0uZ4K1brHlW5tc4Wjnq0ipIFuD7cOGaqKZ8Og=@vger.kernel.org, AJvYcCV206tPrgvrlEtzVW0SJY5iIH8ApdudZ9NlS7MrsUwoVzqT3gQ34j2AMOGHBKCL340e73N2uj0H5fc=@vger.kernel.org, AJvYcCWRv7PB1DyszB76fE6VmOmbSEWIt+n7GNUuFnzsrF+T5ZuPdsu4TqEl4dGAx7TorhtMUUpv/Dbs@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzST6ESEA/k1kqve3+vPtWfYzS7YzTQtnZUqGwaOaBCUgrgmvX
+	gNOnYW/F+/M+D8/TyaIq96nYFd2uhvtd/10v3p0tpSD4q1f7HLPN8gIV4v+uA55glTkLDDSz2tA
+	Inx3s6X8UlFJVtWlMqdEaSMJ2ytA=
+X-Google-Smtp-Source: AGHT+IFSrSBZa62SwXA+5JbHIGCzklV8q64pAeJZw2PY0F5WyUkkpcfoaNJSjtZqpIeCsacUKPDi+IBq53muwhJ7UpE=
+X-Received: by 2002:a05:6870:4713:b0:260:f75c:c28b with SMTP id
+ 586e51a60fabf-273e646d7a8mr11338790fac.8.1724693582147; Mon, 26 Aug 2024
+ 10:33:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] x86: Allow variable-sized event frame
-From: Xin Li <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, brgerst@gmail.com
-References: <20240617084516.1484390-1-xin@zytor.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240617084516.1484390-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <tencent_13F0C81B16C09CC67E961B5E22F78CC72805@qq.com>
+In-Reply-To: <tencent_13F0C81B16C09CC67E961B5E22F78CC72805@qq.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 26 Aug 2024 19:32:50 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hC6G7Xvd=jzCvS4re3kk0-h72DdXCkwFiBV8xzT8doOw@mail.gmail.com>
+Message-ID: <CAJZ5v0hC6G7Xvd=jzCvS4re3kk0-h72DdXCkwFiBV8xzT8doOw@mail.gmail.com>
+Subject: Re: [PATCH] Fixes: 496d0a648509 ("cpuidle: Fix guest_halt_poll_ns
+ failed to take effect when setting guest_halt_poll_allow_shrink=N")
+To: Yanhao Dong <570260087@qq.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, ysaydong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/17/2024 1:45 AM, Xin Li (Intel) wrote:
-> This was initially posted as part of the FRED patch series and turned
-> down due to its unacceptable quality:
->    https://lore.kernel.org/lkml/20230410081438.1750-31-xin3.li@intel.com/
-> 
-> And this is another attempt to meet the bar.
-> 
+Why did you put a Fixes; tag in the subject?
 
-I'm expecting to get some review comments on this patch set :-)
+Please provide a proper subject and put the Fixes: tag next to the
+Signed-off-by: one below.
 
-> 
-> a FRED event frame could contain different amount of information for
-> different event types, e.g., #MCE could push extra bytes of information,
-> or perhaps even for different instances of the same event type. Thus
-> the size of an event frame pushed by a FRED CPU is not fixed and the
-> address of a pt_regs structure that is used to save the user level
-> context of current task is not at a fixed offset from top of current
-> task kernel stack.
-> 
-> This patch set adds a new field named 'user_pt_regs' in the thread_info
-> structure to save the address of user level context pt_regs structure,
-> thus to eliminate the need of any advance information of event frame
-> size and allow a FRED CPU to push variable-sized event frame.
-> 
-> With the above change, we can
-> 1) Remove the padding space at top of the init stack because there is
->     no user level context for init task.
-> 2) Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64, which was defined
->     to 0 for IDT to keep the code consistent with 32bit.
-> 
-> 
-> Xin Li (Intel) (3):
->    x86/fred: Allow variable-sized event frame
->    x86: Remove the padding space at top of the init stack
->    x86: Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64
-> 
->   arch/x86/entry/entry_fred.c        | 22 +++++++++++++++++
->   arch/x86/include/asm/processor.h   | 38 +++++++++++++++++++++++-------
->   arch/x86/include/asm/switch_to.h   |  2 +-
->   arch/x86/include/asm/thread_info.h | 19 +++++----------
->   arch/x86/kernel/process.c          | 21 +++++++++++++++++
->   arch/x86/kernel/vmlinux.lds.S      | 18 ++++++++++++--
->   include/linux/thread_info.h        |  1 +
->   kernel/fork.c                      |  6 +++++
->   8 files changed, 102 insertions(+), 25 deletions(-)
-> 
-> 
-> base-commit: 49b33979e3bf0a5424420d14f026de12f34e8b1e
-
+On Mon, Aug 26, 2024 at 11:07=E2=80=AFAM Yanhao Dong <570260087@qq.com> wro=
+te:
+>
+> From: ysay <ysaydong@gmail.com>
+>
+> When guest_halt_poll_allow_shrink=3DN,setting guest_halt_poll_ns
+> from a large value to 0 does not reset the CPU polling time,
+> despite guest_halt_poll_ns being intended as a mandatory maximum
+> time limit.
+>
+> The problem was situated in the adjust_poll_limit() within
+> drivers/cpuidle/governors/haltpoll.c:79.
+>
+> Specifically, when guest_halt_poll_allow_shrink was set to N,
+> resetting guest_halt_poll_ns to zero did not lead to executing any
+> section of code that adjusts dev->poll_limit_ns.
+>
+> The issue has been resolved by relocating the check and assignment for
+> dev->poll_limit_ns outside of the conditional block.
+> This ensures that every modification to guest_halt_poll_ns
+> properly influences the CPU polling time.
+>
+> Signed-off-by: ysay <ysaydong@gmail.com>
+> ---
+>  drivers/cpuidle/governors/haltpoll.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/gover=
+nors/haltpoll.c
+> index 663b7f164..99c6260d7 100644
+> --- a/drivers/cpuidle/governors/haltpoll.c
+> +++ b/drivers/cpuidle/governors/haltpoll.c
+> @@ -78,26 +78,22 @@ static int haltpoll_select(struct cpuidle_driver *drv=
+,
+>
+>  static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
+>  {
+> -       unsigned int val;
+> +       unsigned int val =3D dev->poll_limit_ns;
+>
+>         /* Grow cpu_halt_poll_us if
+>          * cpu_halt_poll_us < block_ns < guest_halt_poll_us
+>          */
+>         if (block_ns > dev->poll_limit_ns && block_ns <=3D guest_halt_pol=
+l_ns) {
+> -               val =3D dev->poll_limit_ns * guest_halt_poll_grow;
+> +               val *=3D guest_halt_poll_grow;
+>
+>                 if (val < guest_halt_poll_grow_start)
+>                         val =3D guest_halt_poll_grow_start;
+> -               if (val > guest_halt_poll_ns)
+> -                       val =3D guest_halt_poll_ns;
+>
+>                 trace_guest_halt_poll_ns_grow(val, dev->poll_limit_ns);
+> -               dev->poll_limit_ns =3D val;
+>         } else if (block_ns > guest_halt_poll_ns &&
+>                    guest_halt_poll_allow_shrink) {
+>                 unsigned int shrink =3D guest_halt_poll_shrink;
+>
+> -               val =3D dev->poll_limit_ns;
+>                 if (shrink =3D=3D 0) {
+>                         val =3D 0;
+>                 } else {
+> @@ -108,8 +104,12 @@ static void adjust_poll_limit(struct cpuidle_device =
+*dev, u64 block_ns)
+>                 }
+>
+>                 trace_guest_halt_poll_ns_shrink(val, dev->poll_limit_ns);
+> -               dev->poll_limit_ns =3D val;
+>         }
+> +
+> +       if (val > guest_halt_poll_ns)
+> +               val =3D guest_halt_poll_ns;
+> +
+> +       dev->poll_limit_ns =3D val;
+>  }
+>
+>  /**
+> --
+> 2.43.5
+>
+>
 
