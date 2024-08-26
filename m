@@ -1,192 +1,132 @@
-Return-Path: <linux-kernel+bounces-301680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099E295F3F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8FE95F3F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B487B2820F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A152B1C21E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812D818F2FF;
-	Mon, 26 Aug 2024 14:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1366143C70;
+	Mon, 26 Aug 2024 14:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQYuqpY1"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ASjHTVpI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E28143C70
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8635A1917E6
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682884; cv=none; b=HCoXE6Y4ff9rKfZnGOkCx4C/kAAHdsUMWDcoSNl8ddklVBTg0hJgl4jboN8OU/F0wG4jQ7Ldb51xxWCLwb+Vanfo48ZNMg5gWA+cElTRIqDMa8UvwfHAsDYyO0LrXaCqp/ECq6FjNYtAE2+y0cbQTyJyPuYLb9jwmicrcR6xT9c=
+	t=1724682888; cv=none; b=XF+FOrkJ7Y7K+FQqYz1UHW4aFZrPtEEaW2j2Zuz+gn37CXNsz/qiTNiGU41+49AuJIl1caVQ0c6hamt4zZg8ATByemxXu8XIhlTYXNxO38q3T9szwXtpC7sPGwlgtwCjHtQoyDQjy67d/xIxOwxcqzoXoyG4IC8JQd4OyFURxdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724682884; c=relaxed/simple;
-	bh=NKmENQZd/I0OamIT6Wd0ddl1rtdBoHe6puFACr/5d84=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TSkYqJy6wDB/+7vDJ0WyGtEbgfIpNRuRwXjgZs+lL2g4YM7xqXQ6HjYnVGTlPdmm34XVO6SDpUr0/W45BgpKK/Gw8HSx+igSTgBpk3QxmTVIrHEwORN0gzavj16xMQiEIMWTHa4MV4zrQlPz15RibOaGGOWkvL6US5mO4hlgWWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LQYuqpY1; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690404fd230so73856047b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724682882; x=1725287682; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XweLBpKE263oEy5QxtTcmCCOjmArflFgXe8Eq5cViM=;
-        b=LQYuqpY1A3BGslGgQNVcstrBUQbjetJeTaOjUrd3waH8l7iVX2/Zjk2OjC2nKcQvxd
-         SwR4SJs7K7sTYx5flLvTpSk8vQ5SAvHWk1NsuQnXW9b7+HU7ha5wQOQ2Wxo/S6QGHPRn
-         fB8iiZUdFysDyGY4qgJqKK6TK97phIiQ6pg/0icpNKxr3kq3SPtMTj4X/LXBy9b7xtz+
-         NHnuEw5AucgAe2s2T5ytIgjbcRMae6cbYKXnQ47u9daNbx0OrJWRRQAVLAGl5fhPK1/v
-         Ss/JlrXLiSg6Fuhf7Bt2oVVVdVULMorHCnzeuxCQRl7hdP6j7MJFs0v5jeT1SMjgnL64
-         GBCw==
+	s=arc-20240116; t=1724682888; c=relaxed/simple;
+	bh=8HhpJlOGt2+/dYbwaoVj3byzmwVR3VEmwanL2/m8idU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cyVUkwYxUcM/IGSZTr5E9V2uOCiPPCPXXkbm5f3r547sT++towXKLolDP6gEgO2VbySPI+bES+JFMlTXrO5vSSfXTuT6cNGywD8kMil1ZyYFXaEl55HH97jZp8HIhCnU4ME9LMjVky1hg+wJuNJyuL+hhmm0hjHImDWyq5YiG3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ASjHTVpI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724682885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VW+HIHEhMAo3/O8qS6yn7a/M9Jq5ewUkNW1oEWQ5L3A=;
+	b=ASjHTVpIeCTSeGgid4jlaNZjwZpjL+AIUsYYQe5rFo8Ccg1aVGo926oYYaCdf0NLoixEKc
+	7nJW68+t/lfkrJ5qwRyVujGWSaIuHl4rVe2qa18knxDIAmm3VlpJ6JdyDhxFpxtI6sOPAw
+	Tk7UNpy+kRTmOh1n7vfE+og5BBon4fE=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-R9kT6izQNnOxEQJTNyI4Og-1; Mon, 26 Aug 2024 10:34:44 -0400
+X-MC-Unique: R9kT6izQNnOxEQJTNyI4Og-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6bf788e4692so52487256d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724682882; x=1725287682;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XweLBpKE263oEy5QxtTcmCCOjmArflFgXe8Eq5cViM=;
-        b=Yp+GEBjikBs6ymgPSBvLBNEM8p62kdCOpUGDj42fVyboXwDrCTpq9wkPPlYF4iu647
-         jjz6fmTicRFyhIZdAtCZZ0WcJYQe0Qc7dFJYU0bsEcsAOe+dTSGj8e+LykeijN6lejwR
-         VEiby658+1x81SQHsqLf5b4R++LM+QKCn97viIjVYeUs9JpbvNsDF3eMRit/V1+hYMxx
-         ofGt6yzFm0B8Wsha9ZLQyTvX9j7UeiBmwAIsvqbwm6gCr69rq58v2iWStovy6CM7AxHy
-         IA/0tmg2Skun7ZQrC20wbjoG72bxxDGUyfhN1RbrlPbjyyHvgFDw+I9zGUnNhDAY86PV
-         5TmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsD1zQThKEly6dVmnUy8uYHJ4rHvbgvPHSZ5vH0LYBgudbAvkc7fDk5zgVg7y16eMGgf7x4RJBP5ZLI9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBJN8x8mgrIBTXbyVFmZOVgt4qcsSFfwnfaFX8g3XtUHQLj9Ls
-	m9S1jfmuVm0CP27XgJNv6EL7OPvagf3vLG3QGbDuR9h97E1lRCgPoB1UpZPDCqwX2en0BGrLKKO
-	Aag==
-X-Google-Smtp-Source: AGHT+IF7LGVXL0BPqXys0c3S7QqlhU4D6PhBJbKwSJrijGqoCE6ICdmlx3a4u+ubcgJD9HeDtU/MHyRVAvU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:3309:b0:6b0:d571:3540 with SMTP id
- 00721157ae682-6c6289a64a5mr620947b3.6.1724682882008; Mon, 26 Aug 2024
- 07:34:42 -0700 (PDT)
-Date: Mon, 26 Aug 2024 07:34:35 -0700
-In-Reply-To: <20240823223800.GB678289.vipinsh@google.com>
+        d=1e100.net; s=20230601; t=1724682884; x=1725287684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VW+HIHEhMAo3/O8qS6yn7a/M9Jq5ewUkNW1oEWQ5L3A=;
+        b=hfTX+hy8eSdKowr5X9r/8eohHwizCnmiK3zAbm5A63e2u8eZ+IjWDOJqKZ/kuvjLWo
+         elvSLt0AFJ+5jNHdZ7ufUl2RxXr5ef4Cbeus5p1koFS1uRPwVzODOMLNU9ZVQ+MiJgg+
+         X1bhyWbrNudYLFElBsDsG5149GwcYSaRhq/+5h2DnB/oWshkSg0kBZO+qSowwYCjCKzL
+         o8bWXGdO3bPdoOhzY8YJUXHvaU+bmhv02HmdBfqBQuIzF468+rx4I2yiA5vVPrUr3GBu
+         vjaCiALn73MDOYFZ95XuYAikiH0cd4gPMyYfwrHO/yknR0EyZAEyskuQ72uSPI4DEkB7
+         +CKg==
+X-Gm-Message-State: AOJu0YwLnsPNzADU9/3o6Se3MGiLwfZYmnVTB+ei1CK24uXxrHPefEdM
+	BaZ9PkVi+NvTGJQnVM+rxD7ahT71fAfXmvmk5LaLapCnwfAxPdVaD+8wGmHAvInllgnSnMEXgD+
+	4oOMyKQ+Nni638SdUlFGYXZhvrLbWpQJ4IYBCho2t0cFAFACqLSuWghH5zDfRbA==
+X-Received: by 2002:a05:6214:4304:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c16dcb7b2amr123089116d6.38.1724682883714;
+        Mon, 26 Aug 2024 07:34:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJyXhGmqDSVXXp1D+XITrKt9Uq9T5JuT4lUbtmj8ua5Df7FPqa8sCBxKyCSdGvctdo+BxBQQ==
+X-Received: by 2002:a05:6214:4304:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c16dcb7b2amr123088766d6.38.1724682883376;
+        Mon, 26 Aug 2024 07:34:43 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c184ce9034sm10939096d6.73.2024.08.26.07.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 07:34:42 -0700 (PDT)
+Date: Mon, 26 Aug 2024 10:34:39 -0400
+From: Peter Xu <peterx@redhat.com>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, "x86@kernel.org" <x86@kernel.org>,
+	Alistair Popple <apopple@nvidia.com>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Hugh Dickins <hughd@google.com>,
+	Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH RFC 2/6] mm: PGTABLE_HAS_P[MU]D_LEAVES config options
+Message-ID: <ZsySf2F9djR5YVOr@x1n>
+References: <20240717220219.3743374-1-peterx@redhat.com>
+ <20240717220219.3743374-3-peterx@redhat.com>
+ <dcdde9fc-7e7c-45a8-8dc7-7f7ed13b81ec@cs-soprasteria.com>
+ <ZseOp7M9AmZtW4jw@x1n>
+ <d3e4256f-253a-4a61-a83b-93f50ebabed8@cs-soprasteria.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-3-vipinsh@google.com>
- <Zr_i3caXmIZgQL0t@google.com> <20240819173453.GB2210585.vipinsh@google.com>
- <ZsPDWqOiv_g7Wh_H@google.com> <20240823223800.GB678289.vipinsh@google.com>
-Message-ID: <ZsySe8tpDyZAvb6l@google.com>
-Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
- MMU under MMU read lock
-From: Sean Christopherson <seanjc@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d3e4256f-253a-4a61-a83b-93f50ebabed8@cs-soprasteria.com>
 
-On Fri, Aug 23, 2024, Vipin Sharma wrote:
-> On 2024-08-19 15:12:42, Sean Christopherson wrote:
-> > On Mon, Aug 19, 2024, Vipin Sharma wrote:
-> > Huh.  Actually, after a lot of fiddling and staring, there's a simpler solution,
-> > and it would force us to comment/document an existing race that's subly ok.
-> > 
-> > For the dirty logging case, the result of kvm_mmu_sp_dirty_logging_enabled() is
-> > visible to the NX recovery thread before the memslot update task is guaranteed
-> > to finish (or even start) kvm_mmu_zap_collapsible_sptes().  I.e. KVM could
-> > unaccount an NX shadow page before it is zapped, and that could lead to a vCPU
-> > replacing the shadow page with an NX huge page.
-> > 
-> > Functionally, that's a-ok, because the accounting doesn't provide protection
-> > against iTLB multi-hit bug, it's there purely to prevent KVM from bouncing a gfn
-> > between an NX hugepage and an execute small page.  The only downside to the vCPU
-> > doing the replacement is that the vCPU will get saddle with tearing down all the
-> > child SPTEs.  But this should be a very rare race, so I can't imagine that would
-> > be problematic in practice.
-> 
-> I am worried that whenever this happens it might cause guest jitter
-> which we are trying to avoid as handle_changed_spte() might be keep a
-> vCPU busy for sometime.
+On Fri, Aug 23, 2024 at 06:19:52AM +0000, LEROY Christophe wrote:
+> Why is an option needed for that ? If pmd_leaf() returns always false, 
+> it means the arch doesn't support pmd mappings and if properly used all 
+> related code should fold away without a config option, shouldn't it ?
 
-That race already exists today, and your series already extends the ways in which
-the race can be hit.  My suggestion is to (a) explicit document that race and (b)
-expand the window in which it can occur to also apply to dirty logging being off.
+It's not always easy to leverage an "if" clause there, IIUC.  Take the case
+of when a driver wants to inject a pmd pfnmap, we may want something like:
 
-> > void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm, unsigned long to_zap)
-> > 
-> > 		/*
-> > 		 * Unaccount the shadow page before zapping its SPTE so as to
-> > 		 * avoid bouncing tdp_mmu_pages_lock() more than is necessary.
-> > 		 * Clearing nx_huge_page_disallowed before zapping is safe, as
-> > 		 * the flag doesn't protect against iTLB multi-hit, it's there
-> > 		 * purely to prevent bouncing the gfn between an NX huge page
-> > 		 * and an X small spage.  A vCPU could get stuck tearing down
-> > 		 * the shadow page, e.g. if it happens to fault on the region
-> > 		 * before the SPTE is zapped and replaces the shadow page with
-> > 		 * an NX huge page and get stuck tearing down the child SPTEs,
-> > 		 * but that is a rare race, i.e. shouldn't impact performance.
-> > 		 */
-> > 		unaccount_nx_huge_page(kvm, sp);
-> 
-> Might cause jitter. A long jitter might cause an escalation.
-> 
-> What if I do not unaccount in the beginning, and  move page to the end
-> of the list only if it is still in the list?
+  if (pmd_leaf_supported())
+      inject_pmd_leaf(&pmd);
 
-The race between kvm_mmu_sp_dirty_logging_enabled() vs. kvm_tdp_mmu_map() vs.
-kvm_mmu_zap_collapsible_sptes() still exists.
+We don't have a pmd entry to reference at the point of pmd_leaf_supported()
+when making the decision.
 
-> If zapping failed because some other flow might be removing this page but it
-> still in the possible_nx_huge_pages list, then just move it to the end. The
-> thread which is removing will remove it from the list eventually.
-> 
-> for ( ; to_zap; --to_zap) {
-> 	spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> 	if (list_empty(&kvm->arch.possible_tdp_mmu_nx_huge_pages)) {
-> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> 		break;
-> 	}
-> 
-> 	sp = list_first_entry(&kvm->arch.possible_tdp_mmu_nx_huge_pages,
-> 			      struct kvm_mmu_page,
-> 			      possible_nx_huge_page_link);
-> 
-> 	WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
-> 	WARN_ON_ONCE(!sp->role.direct);
-> 
-> 	spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> 
-> 
-> 	/*
-> 	 * Don't bother zapping shadow pages if the memslot is being
-> 	 * dirty logged, as the relevant pages would just be faulted
-> 	 * back in as 4KiB pages.  Potential NX Huge Pages in this slot
-> 	 * will be recovered, along with all the other huge pages in
-> 	 * the slot, when dirty logging is disabled.
-> 	 */
-> 	if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp)) {
-> 		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> 		unaccount_nx_huge_page(kvm, sp);
-> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> 		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
-> 	} else if (tdp_mmu_zap_possible_nx_huge_page(kvm, sp)) {
-> 		flush = true;
-> 		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
-> 	} else {
-> 		/*
-> 		 * Try again in future if the page is still in the
-> 		 * list
-> 		 */
-> 		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> 		if (!list_empty(&sp->possible_nx_huge_page_link))
-> 			list_move_tail(&sp->possible_nx_huge_page_link,
-> 			kvm-> &kvm->arch.possible_nx_huge_pages);
+Thanks,
 
-This is unsafe.  The only thing that prevents a use-after-free of "sp" is the fact
-that this task holds rcu_read_lock().  The sp could already been queued for freeing
-via call_rcu().
+-- 
+Peter Xu
 
-> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> 	}
-> 
-> 	/* Resched code below */
-> }
 
