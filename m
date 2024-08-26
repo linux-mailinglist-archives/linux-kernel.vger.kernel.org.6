@@ -1,193 +1,110 @@
-Return-Path: <linux-kernel+bounces-302405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFC395FDDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:55:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BEC95FDDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3EA2831A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74D7A1C221B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7961619D09F;
-	Mon, 26 Aug 2024 23:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC15819D8A2;
+	Mon, 26 Aug 2024 23:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="AuQigSbz"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFD3B66C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="OGjj+9G6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C93A1494CF;
+	Mon, 26 Aug 2024 23:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724716549; cv=none; b=GyxW1txz6zHqaiebvJTkpLaw3+ltgamf4yNLCWdVxwQy6+vl5mWZks4PXvWhkqaWiiu8hXl2VvWB5rDnhf7yNMCdTWk8EswmwmrgM/Sgn9VTZZwLBQ9R2BYAg2qhsDbsWgNbM7VY1eABtRrrR+rUIVCnsHrmmlOC9ffx/uxPbu0=
+	t=1724716737; cv=none; b=V46/KnhTv/Y/up3Pcpo4UMVTe9VFg9uXwiuiBx3E0GRuEXKjnsQdECEUdcl46yM1cNEn/g7eTLhkBgzeEZnbe89Ec7XhC1w3Pvvx1hL6is0VxG3oFHMIyqogZN7iPqup4Vn5obDNSQTxFriI+x1CXOrKLzqCKdBZ4SdAyk5x8WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724716549; c=relaxed/simple;
-	bh=nrH3TZ6YHLWyBeHIRo5xrSVenIAktZ+LbymJzk/ofkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GrcQx9loKG/1CgkIY2J2PmDkrZpm9D8o3m89sf9PhInbP+SxQefwYKaMbSt0RX1FD7k0L+plKGgIQGWqy9L+4aE9lm0dzZaBtgnjkLnW45S6ymhrVf4C+rpNAZW9cWqL0r1uxxQr9Y2wT1pw2b0Kp+qdL98puzIdAgQM0psqwck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=AuQigSbz; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fdcd7a622so27984571cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724716547; x=1725321347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxKS43x5b6GIR/dn5+DFA/LtxoDW2/9sZiDISPay3P4=;
-        b=AuQigSbz1XEfC79NDCxdvaXxS6TTnIxXIY4yxZZJXjQ9AfBdUJui1lYyasMfWqWle5
-         4+j6/0hlPEcG8FuaBUfm86VKlx0PW6C/9wW+Iprag5gEUEyKjyydD5j6VeKX35sXyDcP
-         M+D3hWbN3FiKR1s+1ZwjU+ZYV4fgZbrB6fc2N9KoPpQgeXVg2siOGoICRPpCt8PpRNQM
-         C0BNIgpTT70vxSU1s/ern2nfjYMy+bzxFkiPgyIRHQvDY6wFNvRAYZ/ELZwcB1Uv2/bh
-         mSRO5xidQpLIoj4/+nJm+wg79Gq/s4DphzxH74eAYGkLr1E15Vt5/Vh+JeXabgQSI6dR
-         WeMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724716547; x=1725321347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxKS43x5b6GIR/dn5+DFA/LtxoDW2/9sZiDISPay3P4=;
-        b=QHhaDVnUaSu3vpqqfNYq31IALyiXAJXlkDlAFRTeqtYUCnvZ+OUkw0zHJEkMZ3V/q9
-         O4o17KqjtwSDnuNI8Ztr6yWodvM7/Nuit+staatNSWtPXHx25WpiabgILcWgUNLfx9dw
-         uLtek3np+ex0axbHvKT1fU+DCCnUZvv5Gism1H72MgWdV5xe5yKGKdUl1RjxSJ9Fmcvi
-         KMYmMfAUCls8WO9pDXY8xhHuJXijkCt5udrmp6GeqBnc+t7Q64Y/3F3kNN/fbtTOxi4W
-         ory27dgcSoFWb2EwW+AxkFxhEV8xHD3Un36utwMzY6kHfQi8Dz+PzxbsdU89cOYdR9sr
-         ZpuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW29caLJOQEyK2UYXwyLBqKHbaWOJhQavQTG/+bjXWQ7oCZwmxgdiWBsljmNVGP7urHFik52qMzgkC7+dM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0l5Yi1YHmrFxMnH7X9gSoa9vbZmUqvjxMYgGDhHE3mHFa4ZxS
-	kpwUBf3bq9gNDSki80sxei08jaCs+6mE6Fd7Fv2+fRviKWO77oyYNe4YLf4hut9gV0ECrcqJ2IB
-	I03VxrjypjhjZIQi9u+3CUYonV8bBajH5Gv9xkA==
-X-Google-Smtp-Source: AGHT+IEOn6iheQ+POTNkt4bD5q0z6HwLv9JFIyTkR0lASztMPmZRjIB4WL0FfTO9oAm8pCv3vVk09jQ/Aosb8BUmJRA=
-X-Received: by 2002:a05:622a:134b:b0:456:627d:5542 with SMTP id
- d75a77b69052e-456627d56c0mr5515331cf.44.1724716546842; Mon, 26 Aug 2024
- 16:55:46 -0700 (PDT)
+	s=arc-20240116; t=1724716737; c=relaxed/simple;
+	bh=nUxLJotlRFoie2z1KF7VG7SqPZm71IRkxR8soOR/bP4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=NKA72a65f8RaJLVZOYRmLrNP0h9NppAPG8H/3GDXeldyNbc/JzAL2vtTWonfZcMFLLKQSQyoR6R7a1SWIMjhj/jKF0Ngk1iIO2dccRpIG8fngP0RA5SZwaGRYMj3uR3dqHPOo2I7Ja3R4XV3Pwv/fdxIWYT/1hfBfEb2/zCtHws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=OGjj+9G6 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=lYvDMtU32GzRUMqBUsd+A3LiN5p58lzdAs5JVRbFdOg=; b=O
+	Gjj+9G6heFpV3s/b6y3M2dwLljRcLJsGIKV5UTsQ/EdwhABirXVqvy15/2TvNMzj
+	oCYpX2YC+jTe0BjKVIR+JMfCzvEJLQnITHx8fdLUfyR1xw8mK+Tc38Fxc+ncZHKj
+	ZCgPXKNfBLz+TVvGf4SsOwgu89Vv/hz+2a7u1lljd4=
+Received: from 00107082$163.com ( [111.35.190.113] ) by
+ ajax-webmail-wmsvr-40-120 (Coremail) ; Tue, 27 Aug 2024 07:58:32 +0800
+ (CST)
+Date: Tue, 27 Aug 2024 07:58:32 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: rafael@kernel.org, lenb@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re:[PATCH] Add rev and func to warning message when
+ acpi_evaluate_dsm failed.
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240826043858.4292-1-00107082@163.com>
+References: <20240826043858.4292-1-00107082@163.com>
+X-NTES-SC: AL_Qu2ZBvuauU8q5COfZukXn0oTju85XMCzuv8j3YJeN500qiTB+iklRXJ/B3zW+u6qFgS3vRWqTjpD8cFbQ7JIR7qo95lFP/wY86hIRFIatsl3
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240824215130.2134153-1-max@kutsevol.com> <20240824215130.2134153-2-max@kutsevol.com>
- <20240826143546.77669b47@kernel.org>
-In-Reply-To: <20240826143546.77669b47@kernel.org>
-From: Maksym Kutsevol <max@kutsevol.com>
-Date: Mon, 26 Aug 2024 19:55:36 -0400
-Message-ID: <CAO6EAnX0gqnDOxw5OZ7xT=3FMYoh0ELU5CTnsa6JtUxn0jX51Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <d43b414.1fb.191912081ba.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3f8qpFs1mRrsiAA--.65311W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQVHqmVOCdN33QACsY
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hey Jakub,
-thank you for your time looking into this.
-
-PS. Sorry for the html message, noob mistake.
-
-On Mon, Aug 26, 2024 at 5:35=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Sat, 24 Aug 2024 14:50:24 -0700 Maksym Kutsevol wrote:
-> > Enhance observability of netconsole. UDP sends can fail. Start tracking=
- at
->
-> nit: "UDP sends" sounds a bit too much like it's using sockets
-> maybe "packet sends"?
-
-
-Sure, it makes sense, I will update it.
-
->
-> > least two failure possibilities: ENOMEM and NET_XMIT_DROP for every tar=
-get.
-> > Stats are exposed via an additional attribute in CONFIGFS.
->
-> Please provide a reference to another configfs user in the kernel which
-> exposes stats. To help reviewers validate it's a legit use case.
->
-doc/Documentation/block/stat.txt describes what stats block devices expose.
-The idea is the same there - a single read gives a coherent snapshot of sta=
-ts.
-Did you mean that the commit message needs updating or info provided
-here is enough?
-
-> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
-> > +struct netconsole_target_stats  {
-> > +     size_t xmit_drop_count;
-> > +     size_t enomem_count;
-> > +};
-> > +#endif
->
-> Don't hide types under ifdefs
-> In fact I'm not sure if hiding stats if DYNAMIC isn't enabled makes
-> sense. They don't take up much space.
->
-I'll remove the ifdef.
-
-Without _DYNAMIC it will not create the sysfs config group, so there
-will be no place to expose the stats from,
-hence the attachment to dynamic config.
-The reason to hide the type comes from the same idea. It's not about
-saving space, but about the fact that
-it can't exist without it the way it's currently implemented. There's
-no way to expose those metrics if _DYNAMIC
-is not enabled.
-
-> > +static ssize_t stats_show(struct config_item *item, char *buf)
-> > +{
-> > +     struct netconsole_target *nt =3D to_target(item);
-> > +
-> > +     return
-> > +             nt->stats.xmit_drop_count, nt->stats.enomem_count);
->
-> does configfs require value per file like sysfs or this is okay?
-
-
-Docs say (Documentation/filesystems/sysfs.txt):
-
-Attributes should be ASCII text files, preferably with only one value
-per file. It is noted that it may not be efficient to contain only one
-value per file, so it is socially acceptable to express an array of
-values of the same type.
-
-Given those are of the same type, I thought it's ok. To make it less
-"fancy" maybe move to
-just values separated by whitespace + a block in
-Documentation/networking/netconsole.rst describing the format?
-E.g. sysfs_emit(buf, "%lu %lu\n", .....) ? I really don't want to have
-multiple files for it.
-What do you think?
-
->
->
-> >  /**
-> >   * send_ext_msg_udp - send extended log message to target
-> >   * @nt: target to send message to
-> > @@ -1063,7 +1102,9 @@ static void send_ext_msg_udp(struct netconsole_ta=
-rget *nt, const char *msg,
-> >                                            "%s", userdata);
-> >
-> >               msg_ready =3D buf;
-> > -             netpoll_send_udp(&nt->np, msg_ready, msg_len);
-> > +             count_udp_send_stats(nt, netpoll_send_udp(&nt->np,
-> > +                                                       msg_ready,
-> > +                                                       msg_len));
->
-> Please add a wrapper which calls netpoll_send_udp() and counts the
-> stats. This sort of nested function calls are unlikely to meet kernel
-> coding requirements.
-
-
-I see, will do. Noob question -  I couldn't find any written guidance
-regarding this, if you have it handy - I'd appreciate
-a link to some guidance regarding passing the result of a function to
-a classifier vs wrapper function.
-
-> --
-> pw-bot: cr
+SSBtYWRlIGEgbWlzdGFrZSBhYm91dCB0aGUgcGF0Y2ggdGl0bGUsIHBsZWFzZSBpZ25vcmUgdGhp
+cyBhbmQgSSB3aWxsIHNlbmQgYW5vdGhlciBvbmUuCgpEYXZpZAoKQXQgMjAyNC0wOC0yNiAxMjoz
+ODo1OCwgIkRhdmlkIFdhbmciIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPldoZW4gYWNwaV9l
+dmFsdWF0ZV9kc20gZmFpbGVkLCB0aGUgd2FybmluZyBtZXNzYWdlIGxhY2tzIHRoZSByZXYKPmFu
+ZCBmdW5jIGluZm9ybWF0aW9uIHdoaWNoIGlzIGF2YWlsYWJsZSBhbmQgaGVscGZ1bC4gRm9yIGV4
+YW1wbGUsCj5pd2x3aWZpIHdvdWxkIG1ha2UgRFNNIHF1ZXJpZXMgZm9yIGxhcmkgY29uZmlnLCBh
+bmQgd2l0aCBzb21lIEhXLAo+RFNNIGVycm9yIHdvdWxkIHJldHVybjoKPglBQ1BJOiBcOiBmYWls
+ZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUg
+KDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhm
+LWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZh
+bHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkK
+PglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTVi
+My0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RT
+TSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBc
+OiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUy
+ODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJm
+Mi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4MTAwMSkKPglBQ1BJOiBcOiBmYWlsZWQg
+dG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTViMy0xZjczOGUyODVhZGUgKDB4
+MTAwMSkKPldpdGggdGhpcyBwYXRjaCwgdGhlIHdhcm5pbmcgd291bGQgYmUgbW9yZSBpbmZvcm1h
+dGl2ZToKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2
+NGQtYTViMy0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzoxICgweDEwMDEpCj4JQUNQSTogXDogZmFp
+bGVkIHRvIGV2YWx1YXRlIF9EU00gYmYwMjEyZjItNzg4Zi1jNjRkLWE1YjMtMWY3MzhlMjg1YWRl
+IHJldjowIGZ1bmM6NiAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0byBldmFsdWF0ZSBfRFNN
+IGJmMDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6MCBmdW5jOjcgKDB4MTAw
+MSkKPglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQt
+YTViMy0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzo4ICgweDEwMDEpCj4JQUNQSTogXDogZmFpbGVk
+IHRvIGV2YWx1YXRlIF9EU00gYmYwMjEyZjItNzg4Zi1jNjRkLWE1YjMtMWY3MzhlMjg1YWRlIHJl
+djowIGZ1bmM6MyAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0byBldmFsdWF0ZSBfRFNNIGJm
+MDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6MCBmdW5jOjkgKDB4MTAwMSkK
+PglBQ1BJOiBcOiBmYWlsZWQgdG8gZXZhbHVhdGUgX0RTTSBiZjAyMTJmMi03ODhmLWM2NGQtYTVi
+My0xZjczOGUyODVhZGUgcmV2OjAgZnVuYzoxMCAoMHgxMDAxKQo+CUFDUEk6IFw6IGZhaWxlZCB0
+byBldmFsdWF0ZSBfRFNNIGJmMDIxMmYyLTc4OGYtYzY0ZC1hNWIzLTFmNzM4ZTI4NWFkZSByZXY6
+MCBmdW5jOjEyICgweDEwMDEpCj4KPlNpZ25lZC1vZmYtYnk6IERhdmlkIFdhbmcgPDAwMTA3MDgy
+QDE2My5jb20+Cj4tLS0KPiBkcml2ZXJzL2FjcGkvdXRpbHMuYyB8IDMgKystCj4gMSBmaWxlIGNo
+YW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJp
+dmVycy9hY3BpL3V0aWxzLmMgYi9kcml2ZXJzL2FjcGkvdXRpbHMuYwo+aW5kZXggYWU5Mzg0Mjgy
+MjczLi42ZGU1NDJkOTk1MTggMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2FjcGkvdXRpbHMuYwo+Kysr
+IGIvZHJpdmVycy9hY3BpL3V0aWxzLmMKPkBAIC04MDEsNyArODAxLDggQEAgYWNwaV9ldmFsdWF0
+ZV9kc20oYWNwaV9oYW5kbGUgaGFuZGxlLCBjb25zdCBndWlkX3QgKmd1aWQsIHU2NCByZXYsIHU2
+NCBmdW5jLAo+IAo+IAlpZiAocmV0ICE9IEFFX05PVF9GT1VORCkKPiAJCWFjcGlfaGFuZGxlX3dh
+cm4oaGFuZGxlLAo+LQkJCQkgImZhaWxlZCB0byBldmFsdWF0ZSBfRFNNICVwVWIgKDB4JXgpXG4i
+LCBndWlkLCByZXQpOwo+KwkJCQkgImZhaWxlZCB0byBldmFsdWF0ZSBfRFNNICVwVWIgcmV2OiVs
+bGQgZnVuYzolbGxkICgweCV4KVxuIiwKPisJCQkJIGd1aWQsIHJldiwgZnVuYywgcmV0KTsKPiAK
+PiAJcmV0dXJuIE5VTEw7Cj4gfQo+LS0gCj4yLjM5LjIK
 
