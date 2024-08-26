@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-301098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2547995EC57
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF79995EC59
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C066F1F21045
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FDD1F210F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA6B13E3E7;
-	Mon, 26 Aug 2024 08:50:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344BD14430A;
+	Mon, 26 Aug 2024 08:50:29 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58D13BACC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF26613B286
 	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662227; cv=none; b=HLKAzUSZBHgHZg6l+3q2IItANbHR99XD76RzlOkryqBHYsIDxOk0VRz6x5ui6f8tAafTv0bn2qfjG77JcDhm96MrGQntc1WIOoAC6DAwO0ysCzbX7ce0klobU7IV4HJDSvjlHhWqfTsby15gM4NMZxMg68KhnpML4N15Y7Otgrk=
+	t=1724662228; cv=none; b=iotUgHJs71LAZyCupslX2Ur/njbCs3pLL6UJCwsBLDYw0paC2gYqhlXVGnE68X6shYTChn19pOcm/fzpDJIv86WbKIZ0+K533k681/naNVvTz3jTNaJNhwnSiftKSK9OfyhPzRcS+lsErv2xhgRcyrgrrFBrGaFghY5iqDkb3uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662227; c=relaxed/simple;
-	bh=/8OMjyMKP32nyWD3bY4RtK1OkgExk79WkqrxLQh+NS0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LEYsHspyxv7odGDA4+vrImncSCYHEa46VCCc7hIjJKu/XNw6P7V2v1vdz+IAfRPQNZxIkPwKsIUqF1k7yPa+n2Jhb6XOirJbSinBN/mwayKoFTmZBBvY0luKgzqMz3FetSf3OQVfWlK+aZqmZrOtmqXxYjXt9tZZC02qboVRyBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	s=arc-20240116; t=1724662228; c=relaxed/simple;
+	bh=7vFJJ3txwB2z0MEcMHTFI2WBhYC02WWYy3xpouFHJKE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NglcQSVB9k3BaTLdfUpv6E3Suk5CnJiykcDYI4WKDQVRH1bTY6PTSL03yy2Wj197QeKWeyjarCjv6RUbzbAZqxFEmXVDSYx3gOXy4UqeUGe7ugq//TRFdIGGLWrmNhH/lO43WDzCExS6iazKwbc1lkPw3V+dLJgYz+Go/K5IaEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d415635e6so51268975ab.1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-827973cb3baso182278039f.2
         for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:50:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1724662225; x=1725267025;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KXoA7V26Vu1+mpFmGXBjVYRi2S3dGlbEwoJSJ9UDrig=;
-        b=Gjns2omO8u85CgANA6e31VGtmtp6f5iz0I8dJ1+p0jeeFvKk0cg0OUKABfaixWPN9K
-         TLAMy88lxzE5NhIns5gMR7W4oLsWlwabu+wgDkAuB20BepKEsG5/DlF9ao9tFKcim9I9
-         0bax7bU3SAN+FlYLdwAzRyS/N3ZNKxcJAn2Q3zAYLrwv8vwSC8ygGcTaAosdSU1vZhN3
-         Ee4zDYY1xthKTaeCuvsEjWh1amdCyXPz1rGaittAaAfdTDZcEzBbhYnArAQyBNEP9Wqo
-         fDd+5gGTo8VrNW7zw6dpFUoKDdbNfqeErPsuWEHF09AHA0rlykWH2kKfjG2k3VC4aYpX
-         g74A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEMvGFWg/4UXYlkd2sCK1g9U4bdag8eYx+YJ/BDIGt3gC51CmzQEtWeJ+c0+yQsp215MtxiyM7q6iFcCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNvrSEOMtq7RMNIzBtfVPbk+cP+7aCZKilMf0YuCwMgH4atImN
-	ey0kCchcRp8ptVRxN3gDVaGifTm4NIS/WCwAIuCxK1MTxZqtS9KwARV+BTD4P+C+n30EoYoFfIh
-	V5CruWku7RME8+oOVSybQafDJzH83ZVtj1a51U6iEOYTH0r2pu3VBFLg=
-X-Google-Smtp-Source: AGHT+IEV++OBemK7/oFbA+zcWD9z7Jd4TCNWsuVgFp+gXUej/hQrOCotr3aDAFXs7fQWo0SESxSbW4xwFzd/0chZe4t8TncsWIYw
+        bh=6bii5ClLr5UsuXWOo+Lybiof65kgdF6FcoRGyCA9/LM=;
+        b=ChHX0YSBeMFwQ68ynms062i/1PTpdtWOIfAXwSVrveHKpcUVaDBDzfxhLqeCOtTxKo
+         Ph6rY2bfNZzvquSuPt+BD7kfLYi7JWUFEqTK8nPyu82SKS8DA8r/62jiILWFKJlK2UXt
+         xVuj5Wme086Oq1q000GxNhc17dHD1da+pPZM/LZyAxZXYao5+QQr3a2WMhcAt2v8lTP9
+         xGg1FXSQKChQlDBH4tRE8OUgCJRsdQUebcWeD/eoQqBgevjrTaEO4hdKqs9RZO5qYV7L
+         DVcA48RVvFV2wOaS+rA8XTaXMC7TsN12OwehXqp4uWHjOXYokObWH8it74gIWKERB3CQ
+         lN3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXmWdsjjj2hW7+16QqtIh8AjhQ2ffhXl/thR59oAvER8Vd10nZ+kNpcY9iIQOwXq+m8jba32ocLxFSRdO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/N0NLaoAxxF3JaNXCCtDnTxHe4iGzJ17gaul7+g736epnPhtX
+	oEFfDkwxIhzxoUS/stpx5glRKmBthonlG+ivL47LqXzg3kHBLQfUsx/N/T8vbSn/jv0dM2RaZDy
+	mUjA41hBW3W/Qh5WcQxBQYq81yYLx4XD+enlD+4Ujbd4DhgxF5/4cfwQ=
+X-Google-Smtp-Source: AGHT+IGqLiPf7C/UCIC9sKZ2/snIZVM1VZbI5kIbw2a0v9194pReQWwwrsPRldTGuX+/CK7Z5p6MlV6ubhU2nWZZE/aQEKRndF4W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4c:b0:39a:e900:7e3e with SMTP id
- e9e14a558f8ab-39e3c9f0512mr10870965ab.3.1724662224873; Mon, 26 Aug 2024
- 01:50:24 -0700 (PDT)
-Date: Mon, 26 Aug 2024 01:50:24 -0700
+X-Received: by 2002:a05:6e02:1a4b:b0:397:fa4e:3df0 with SMTP id
+ e9e14a558f8ab-39e3c9e7c0cmr8404455ab.3.1724662225139; Mon, 26 Aug 2024
+ 01:50:25 -0700 (PDT)
+Date: Mon, 26 Aug 2024 01:50:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045769206209237db@google.com>
-Subject: [syzbot] [net?] WARNING: lock held when returning to user space in ethnl_act_cable_test
-From: syzbot <syzbot+c641161e97237326ea74@syzkaller.appspotmail.com>
-To: andrew@lunn.ch, christophe.leroy@csgroup.eu, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux@treblig.org, maxime.chevallier@bootlin.com, netdev@vger.kernel.org, 
+Message-ID: <00000000000049861306209237f4@google.com>
+Subject: [syzbot] [mptcp?] WARNING in mptcp_pm_nl_set_flags
+From: syzbot <syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, geliang@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org, 
+	matttbe@kernel.org, mptcp@lists.linux.dev, netdev@vger.kernel.org, 
 	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -70,43 +70,86 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f9db28bb09f4 Merge branch 'net-redundant-judgments'
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=115eb015980000
+HEAD commit:    8af174ea863c net: mana: Fix race of mana_hwc_post_rx_wqe a..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1718a993980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c641161e97237326ea74
+dashboard link: https://syzkaller.appspot.com/bug?extid=455d38ecd5f655fc45cf
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d2d609980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1741fbf5980000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a653d5980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/585e02f7fe7b/disk-f9db28bb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b9faf5d24900/vmlinux-f9db28bb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f9df5868ea4f/bzImage-f9db28bb.xz
+disk image: https://storage.googleapis.com/syzbot-assets/86225fd99eec/disk-8af174ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fc4394f330d4/vmlinux-8af174ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f30959324a7/bzImage-8af174ea.xz
 
 The issue was bisected to:
 
-commit 3688ff3077d3f334cee1d4b61d8bfb6a9508c2d2
-Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date:   Wed Aug 21 15:10:05 2024 +0000
+commit 322ea3778965da72862cca2a0c50253aacf65fe6
+Author: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Date:   Mon Aug 19 19:45:26 2024 +0000
 
-    net: ethtool: cable-test: Target the command to the requested PHY
+    mptcp: pm: only mark 'subflow' endp as available
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=146fcd8d980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=166fcd8d980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=126fcd8d980000
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=159fb015980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=179fb015980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=139fb015980000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
-Fixes: 3688ff3077d3 ("net: ethtool: cable-test: Target the command to the requested PHY")
+Reported-by: syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com
+Fixes: 322ea3778965 ("mptcp: pm: only mark 'subflow' endp as available")
 
-================================================
-WARNING: lock held when returning to user space!
-6.11.0-rc4-syzkaller-00565-gf9db28bb09f4 #0 Not tainted
-------------------------------------------------
-syz-executor124/5240 is leaving the kernel with locks still held!
-1 lock held by syz-executor124/5240:
- #0: ffffffff8fc84b88 (rtnl_mutex){+.+.}-{3:3}, at: ethnl_act_cable_test+0x187/0x3f0 net/ethtool/cabletest.c:74
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 __mark_subflow_endp_available net/mptcp/pm_netlink.c:1467 [inline]
+WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_pm_nl_fullmesh net/mptcp/pm_netlink.c:1948 [inline]
+WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_nl_set_flags net/mptcp/pm_netlink.c:1971 [inline]
+WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_pm_nl_set_flags+0x926/0xd50 net/mptcp/pm_netlink.c:2032
+Modules linked in:
+CPU: 1 UID: 0 PID: 5507 Comm: syz.3.20 Not tainted 6.11.0-rc4-syzkaller-00138-g8af174ea863c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__mark_subflow_endp_available net/mptcp/pm_netlink.c:1467 [inline]
+RIP: 0010:mptcp_pm_nl_fullmesh net/mptcp/pm_netlink.c:1948 [inline]
+RIP: 0010:mptcp_nl_set_flags net/mptcp/pm_netlink.c:1971 [inline]
+RIP: 0010:mptcp_pm_nl_set_flags+0x926/0xd50 net/mptcp/pm_netlink.c:2032
+Code: 00 00 00 49 89 c5 e8 29 b4 ef f5 e9 08 fd ff ff e8 1f b4 ef f5 4c 89 f7 be 03 00 00 00 e8 02 1c 0d f9 eb a0 e8 0b b4 ef f5 90 <0f> 0b 90 e9 14 ff ff ff 89 d9 80 e1 07 38 c1 0f 8c 19 fd ff ff 48
+RSP: 0018:ffffc90003adf2a0 EFLAGS: 00010293
+RAX: ffffffff8ba3d735 RBX: 1ffff11005fae2ca RCX: ffff888016b73c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003adf470 R08: ffffffff8ba3d621 R09: 1ffff11005fae2cb
+R10: dffffc0000000000 R11: ffffed1005fae2cc R12: ffff88802fd71608
+R13: ffff88802fd70bc0 R14: 0000000000000000 R15: ffff88802fd71650
+FS:  00007fe0b3ff86c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0485fd5fb8 CR3: 000000002e73e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe0b3179e79
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe0b3ff8038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fe0b3316058 RCX: 00007fe0b3179e79
+RDX: 0000000000000000 RSI: 0000000020000480 RDI: 0000000000000009
+RBP: 00007fe0b31e793e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fe0b3316058 R15: 00007ffd9b67c0d8
+ </TASK>
 
 
 ---
