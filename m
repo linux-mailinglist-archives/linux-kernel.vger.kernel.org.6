@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-302246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C1295FB99
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:24:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FCA95FB9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431DF1F22D1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2911F23337
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80B219B5AC;
-	Mon, 26 Aug 2024 21:23:51 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446DE190486;
+	Mon, 26 Aug 2024 21:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iAtXZjz3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB16F199EAF
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE85E13C8EA;
+	Mon, 26 Aug 2024 21:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707431; cv=none; b=LGw4pOFv6arIIKV399+akyD5nAbENzmn0ClJ16CaaZCdVOLLWsDgStSZgI2x5SXHerCskt1Vim4GYVQuBiVQmWg2LtbEPd4IgIOR0bmymAYK09wf8ol4M9O+8B9AATDq5PTfkMBc2B+Hq6+NaM1f0iHW1nlkejQq3bx+ofQWPZY=
+	t=1724707477; cv=none; b=WS9Kzm+cDsUqWhmjafrMj2zYn6wWqzvlyTUtSgJUQQBzgOkbNtlj+9XVAnp33ppro2lq0GUAO9UH3jXFn7vrtykDSHRZe5sTYrADAzBOgW/X1Aw7W+SnK5fAWN+e1l+i3+bN6beDGNHWYo6ax/wCfCGuEXi7X/vWTzIsgU1fuOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707431; c=relaxed/simple;
-	bh=AJvpk1xtG+Ud7tuglDJ1RPHK7+JF6ECeU6+oT7zj7KU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qkUFhEDkTahnjD+CjCe+8dl0JtyNj6h+mAHB8b468TJ/iuo4BX/wj08yLVqfPFx5yNkeGHZKimHUp+m5zFQWIuKmVP8sSf2wnuHmfSIao5Yq3b33/T4FPo4b+hPAv6WCXZHNARvHeyzHEMwmNqpKkDChC/RU1KTq6zjJcJ1Vr54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 7af5e7e2-63f1-11ef-aba1-005056bdd08f;
-	Tue, 27 Aug 2024 00:23:47 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v1 2/2] iio: imu: st_lsm6dsx: Remove useless dev_fwnode() calls
-Date: Tue, 27 Aug 2024 00:22:40 +0300
-Message-ID: <20240826212344.866928-3-andy.shevchenko@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826212344.866928-1-andy.shevchenko@gmail.com>
-References: <20240826212344.866928-1-andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1724707477; c=relaxed/simple;
+	bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUi5NVPf7TTosHn5NPA86BwgrjyFntLFyov5yII/r+M6WOdmLouqKsT5x4Ut0bAxqGTP/Evgabo6ZTA05uH3LYXKEtP9A96h7sT6j3sLtgD1KOmbB9lQ8PYQCejB+HDEyC1dCCo6jSOMT3BHixrffF/EflHISZX74RnIxsQUtmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iAtXZjz3; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724707476; x=1756243476;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
+  b=iAtXZjz3EOd1S6HLYg6PCD4zCWiYtDtpuLzYG0mTCDgAB8cwljRQTQvx
+   hi3hdqrUEsMNZhMplRoSEsor6FJsnBmCetgJlj65ljmbEYJCi3PUpmYkR
+   cMzYI1G+j8X7GgVLIGWSTYXEpLYLldOS28/8oEO53if59fbhCpVb4ZNd8
+   0ob2TQozPNkPhM3XBsW07/O1Y+3Zh5h9urwko/Od8b6nRxdFksmZnzgbp
+   R0D47GfxDZ0fbfvzlgYXlSLzRrNnhsfG66sBvgH0o08TY9pBOhH0yz01w
+   VcicIbliM2bEorcy3sVLEuXU/Hyk2DX1zJv7Wy9Bk0wn6EmgImbIO1yLV
+   w==;
+X-CSE-ConnectionGUID: g6QesiqmSvynN0KJifAGMg==
+X-CSE-MsgGUID: yEwqeXOoTQOmmtV7XmKPoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23337144"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="23337144"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 14:24:35 -0700
+X-CSE-ConnectionGUID: /Epz5TVJRmKWkjh2VxUsjg==
+X-CSE-MsgGUID: Dct1gWmaT0eV6Pz1/y1SBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="93369759"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 14:24:31 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sihCO-000Hc2-0L;
+	Mon, 26 Aug 2024 21:24:28 +0000
+Date: Tue, 27 Aug 2024 05:24:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
+	keescook@chromium.org, john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org, mic@digikod.net,
+	linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
+Message-ID: <202408270512.9cZ78Eog-lkp@intel.com>
+References: <20240825190048.13289-8-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240825190048.13289-8-casey@schaufler-ca.com>
 
-The device property APIs designed that way that they will return an error when
-there is no valid fwnode provided. Moreover, the check for NULL of dev_fwnode()
-is not fully correct as in some (currently rare) cases it may contain an error
-pointer. This is not a problem anyway (see keyword 'valid' above) that's why
-the code works properly even without this change.
+Hi Casey,
 
-Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 23 +++++---------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index 722b43f9203b..a7760c000c8c 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -2127,25 +2127,15 @@ static const struct iio_info st_lsm6dsx_gyro_info = {
- 	.write_raw_get_fmt = st_lsm6dsx_write_raw_get_fmt,
- };
- 
--static int st_lsm6dsx_get_drdy_pin(struct st_lsm6dsx_hw *hw, int *drdy_pin)
--{
--	struct device *dev = hw->dev;
--
--	if (!dev_fwnode(dev))
--		return -EINVAL;
--
--	return device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin);
--}
--
- static int
- st_lsm6dsx_get_drdy_reg(struct st_lsm6dsx_hw *hw,
- 			const struct st_lsm6dsx_reg **drdy_reg)
- {
-+	struct device *dev = hw->dev;
- 	int err = 0, drdy_pin;
- 
--	if (st_lsm6dsx_get_drdy_pin(hw, &drdy_pin) < 0) {
-+	if (device_property_read_u32(dev, "st,drdy-int-pin", drdy_pin) < 0) {
- 		struct st_sensors_platform_data *pdata;
--		struct device *dev = hw->dev;
- 
- 		pdata = (struct st_sensors_platform_data *)dev->platform_data;
- 		drdy_pin = pdata ? pdata->drdy_int_pin : 1;
-@@ -2180,7 +2170,7 @@ static int st_lsm6dsx_init_shub(struct st_lsm6dsx_hw *hw)
- 	hub_settings = &hw->settings->shub_settings;
- 
- 	pdata = (struct st_sensors_platform_data *)dev->platform_data;
--	if ((dev_fwnode(dev) && device_property_read_bool(dev, "st,pullups")) ||
-+	if (device_property_read_bool(dev, "st,pullups") ||
- 	    (pdata && pdata->pullups)) {
- 		if (hub_settings->pullup_en.sec_page) {
- 			err = st_lsm6dsx_set_page(hw, true);
-@@ -2565,7 +2555,7 @@ static int st_lsm6dsx_irq_setup(struct st_lsm6dsx_hw *hw)
- 		return err;
- 
- 	pdata = (struct st_sensors_platform_data *)dev->platform_data;
--	if ((dev_fwnode(dev) && device_property_read_bool(dev, "drive-open-drain")) ||
-+	if (device_property_read_bool(dev, "drive-open-drain") ||
- 	    (pdata && pdata->open_drain)) {
- 		reg = &hw->settings->irq_config.od;
- 		err = regmap_update_bits(hw->regmap, reg->addr, reg->mask,
-@@ -2693,8 +2683,7 @@ int st_lsm6dsx_probe(struct device *dev, int irq, int hw_id,
- 
- 	hub_settings = &hw->settings->shub_settings;
- 	if (hub_settings->master_en.addr &&
--	    (!dev_fwnode(dev) ||
--	     !device_property_read_bool(dev, "st,disable-sensor-hub"))) {
-+	    !device_property_read_bool(dev, "st,disable-sensor-hub")) {
- 		err = st_lsm6dsx_shub_probe(hw, name);
- 		if (err < 0)
- 			return err;
-@@ -2735,7 +2724,7 @@ int st_lsm6dsx_probe(struct device *dev, int irq, int hw_id,
- 			return err;
- 	}
- 
--	if ((dev_fwnode(dev) && device_property_read_bool(dev, "wakeup-source")) ||
-+	if (device_property_read_bool(dev, "wakeup-source") ||
- 	    (pdata && pdata->wakeup_source))
- 		device_init_wakeup(dev, true);
- 
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on zohar-integrity/next-integrity linus/master pcmoore-audit/next v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240826-170520
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20240825190048.13289-8-casey%40schaufler-ca.com
+patch subject: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
+config: arc-randconfig-001-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408270512.9cZ78Eog-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> security/smack/smack_lsm.c:2265: warning: Function parameter or struct member 'blob' not described in 'smack_task_getlsmblob_obj'
+>> security/smack/smack_lsm.c:2265: warning: Excess function parameter 'secid' description in 'smack_task_getlsmblob_obj'
+
+
+vim +2265 security/smack/smack_lsm.c
+
+1fb057dcde11b35 Paul Moore      2021-02-19  2255  
+1fb057dcde11b35 Paul Moore      2021-02-19  2256  /**
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2257   * smack_task_getlsmblob_obj - get the objective data of the task
+1fb057dcde11b35 Paul Moore      2021-02-19  2258   * @p: the task
+1fb057dcde11b35 Paul Moore      2021-02-19  2259   * @secid: where to put the result
+1fb057dcde11b35 Paul Moore      2021-02-19  2260   *
+1fb057dcde11b35 Paul Moore      2021-02-19  2261   * Sets the secid to contain a u32 version of the task's objective smack label.
+e114e473771c848 Casey Schaufler 2008-02-04  2262   */
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2263  static void smack_task_getlsmblob_obj(struct task_struct *p,
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2264  				      struct lsmblob *blob)
+e114e473771c848 Casey Schaufler 2008-02-04 @2265  {
+1fb057dcde11b35 Paul Moore      2021-02-19  2266  	struct smack_known *skp = smk_of_task_struct_obj(p);
+2f823ff8bec03a1 Casey Schaufler 2013-05-22  2267  
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2268  	blob->smack.skp = skp;
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2269  	/* scaffolding */
+fd64f9693f6c226 Casey Schaufler 2024-08-25  2270  	blob->scaffold.secid = skp->smk_secid;
+e114e473771c848 Casey Schaufler 2008-02-04  2271  }
+e114e473771c848 Casey Schaufler 2008-02-04  2272  
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
