@@ -1,107 +1,84 @@
-Return-Path: <linux-kernel+bounces-302401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E498895FDCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C07395FDCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7DA28219F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0312824E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EAC19B59F;
-	Mon, 26 Aug 2024 23:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C09F19ADB9;
+	Mon, 26 Aug 2024 23:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FrTYElyo"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1656A7DA92;
-	Mon, 26 Aug 2024 23:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxZr0/hK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2737DA92;
+	Mon, 26 Aug 2024 23:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724715321; cv=none; b=L65BUHMPNAZStAbWrVvR0AIqkBZj7XIhE05btGVTPM4zjs1b3FtPk3UxxQgZG9BBEntc1ctES2BS7HQBQUi6iCI1n5eunJpLGBQTux/cKP7MRHqlEnjlcCkh0DZNaL1JaipFIutIewS2Su4Jjryg4rz9YkMmaA9OtEMlSPLPUUg=
+	t=1724715287; cv=none; b=J6rsF/G39m+GUZSVlTQpeiGjg2GXKsHmurnZyDBm0hx0lvqYl98KTGZXKY9NynjW4tT3+l/U3qkfs70lYOaonpPFm5kXn4opMBbImtzY2Fog2L4/QaHK6hO85U+Aarx8g+Dw0JokZbVSMxoZOVlV+4kVCaWPLm1uS0B8AkWVgbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724715321; c=relaxed/simple;
-	bh=jvRskkPp2UNFxuSs1KmGXQf0+zNARsdAbtFaKe6i0GI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kX0nzwowcmJY2n7dXYT600SIY2yjcx/68hwbHH0SYJht+VifaeJ06DHzDxY8gZLebLbuLJqxaGb9Gna5lMM3NKWLoobkxrWNLN4z7+jp1ZGyk1cqw7UiR6Tm8Dx6mxPpaV7FEhW6/Ea9brCzVJdbwQ1N+Uftf+N06pj8xjxSx3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FrTYElyo; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zx3Z/
-	skLD261Grlw5va5uoZD4LvrxeLByUbYg6lWgtU=; b=FrTYElyo2rpbMUQqRWiTB
-	Z609ncu8uVzAsZrfFO8JidRvEvK6yRuS5UUZnuwLuVAV3ibun1z8e8bGo8ca0166
-	7tQh6O0UI9T83gmE1as9a7ZjNGdc7HZ++mJJ4xyn2FKsge68h/eOgfn7y9fyI87Q
-	P0/yAkN/b2oBhnc1OQHd7g=
-Received: from localhost.localdomain (unknown [111.35.190.113])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wD3H6oQEc1mo37+Ag--.52917S4;
-	Tue, 27 Aug 2024 07:34:57 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: rafael@kernel.org,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH] acpi/_DSM: Add rev/func to warning message when acpi_evaluate_dsm failed.
-Date: Tue, 27 Aug 2024 07:34:37 +0800
-Message-Id: <20240826233437.19632-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724715287; c=relaxed/simple;
+	bh=oPJH4KLtGg8l9XraRPJikgy+VRDJF4zXcfVhPAShEc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G125cZm+4mie0ipw0bTdqOQ7pA1qIkpAevuatbK9KhtvESeJag1nW+NLChBq5fvXboXyokUmp0nvkY/w0JtpRzehrXLbMh4O2jUroyX3YJp8+Tbt8+eJxENpYjYlFDjYeGhWE4QNZkwVKlaO1ErLJW+Srq4vvQ1AERVLb85Cz/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxZr0/hK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5DFC8B7A2;
+	Mon, 26 Aug 2024 23:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724715287;
+	bh=oPJH4KLtGg8l9XraRPJikgy+VRDJF4zXcfVhPAShEc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pxZr0/hKFsgM7uU6Re2NR0y7KNR831Ko6ln000tawk9/9QG8z+fyuirdBQokssvxr
+	 ePCFiZK+j5pTHv56ivx/+tzpnx63HHpjzXxa3bEL28K6BOEE8aU30SZLzdObdCdks+
+	 2dkG8KI45Qyh8UzlYmHbIjiJlwojuK4gAeZZhQH3d+P2r+wT29MT8AHAWg2NsRwhmb
+	 sWl1n5A0RSzQkwO3ayDM0b+45pT+JtjWc1qE3MOq7CRN2qSH3bBS7DInkWQlhhTiKe
+	 hYciYTJFO2IbykrQd18FHad/MCbB52F14fgj/s9UerllP4QLCyQzswwNt4dQag4ZnS
+	 /Wshp9WGqbp+A==
+Date: Mon, 26 Aug 2024 20:34:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 1/4] Create source symlink in perf object dir
+Message-ID: <Zs0RE60KpHyZlj8g@x1>
+References: <20240813213651.1057362-1-ak@linux.intel.com>
+ <Zstiry-K_v51oDC4@tassilo>
+ <ZsyR4eQr8X-q2X28@x1>
+ <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H6oQEc1mo37+Ag--.52917S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tFWxCw45Zw4kAw45uF4rKrg_yoW8Kw45pF
-	y7Zr4jkrZrAayUtwn7t3yxKw1S9a9xW39I9w4xGFyUX34DWrn29rW5GrnFyayDAw17Xa45
-	Z3W2qF1jgr4kZr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pE1vVZUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxBHqmXAnb6sJQABsA
+In-Reply-To: <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
 
-When acpi_evaluate_dsm failed, the warning message lacks the rev
-and func information which is available and helpful.
-For example, iwlwifi would make _DSM queries for lari config,
-and when it failed, all warning messages are all the same:
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (0x1001)
-With this patch, the warnings would be more informative:
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:1 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:6 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:7 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:8 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:3 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:9 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:10 (0x1001)
-  ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade rev:0 func:12 (0x1001)
+On Mon, Aug 26, 2024 at 08:27:43AM -0700, Ian Rogers wrote:
+> On Mon, Aug 26, 2024 at 7:32 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Sun, Aug 25, 2024 at 09:58:23AM -0700, Andi Kleen wrote:
+> > > Arnaldo,
+> >
+> > > can you please apply the patchkit? This fixes a regression.
+> >
+> > First one was applied, was letting the others to be out there for a
+> > while, I thought there were concerns about it, but I see Namhyung's Ack,
+> > so applied.
+> 
+> Can we not apply this? See comments on the thread. Basically we're
 
-Signed-off-by: David Wang <00107082@163.com>
----
- drivers/acpi/utils.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+And what about the reported segfault?
 
-diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
-index ae9384282273..6de542d99518 100644
---- a/drivers/acpi/utils.c
-+++ b/drivers/acpi/utils.c
-@@ -801,7 +801,8 @@ acpi_evaluate_dsm(acpi_handle handle, const guid_t *guid, u64 rev, u64 func,
- 
- 	if (ret != AE_NOT_FOUND)
- 		acpi_handle_warn(handle,
--				 "failed to evaluate _DSM %pUb (0x%x)\n", guid, ret);
-+				 "failed to evaluate _DSM %pUb rev:%lld func:%lld (0x%x)\n",
-+				 guid, rev, func, ret);
- 
- 	return NULL;
- }
--- 
-2.39.2
-
+- Arnaldo
 
