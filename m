@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-302169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1A895FAC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:45:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4891D95FACC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71EE28565F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52E81F23D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74D619D098;
-	Mon, 26 Aug 2024 20:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AA719D89F;
+	Mon, 26 Aug 2024 20:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U/IvSmSi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LEWHxxWV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AE419D075
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCF319A282
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705050; cv=none; b=okp+3SLCPvaJVGVc2W6+HqGNhS2rnFPziJ5e0SnfFbK78gBgc6so0I6WLZI4yLVxXCndjr+JVvaRapd/Ic1d2uaLll4eBIRoAJEfFgDtj/ky2PjEC3dENWhiN2Zv7/yq20kWwJ2Lni/lorotn32NrCSdJNO8qFsH6yqYsWwUVtQ=
+	t=1724705051; cv=none; b=O1LWY0/jCLYbMUnlRvI8XOe1JMRuv7gDhYIQuLR0/Q0P8rTB5BHOeGyaPhIka7ZeC98eWnmipATvtPykSwzQjPW+p/UXd0cNQx3xZGabNm9O48kJuixhc+8GQUEQmPbOzLNJDb/tWpFOR7fpE4CIQwrK/D4+aKsODbMDEUpmt1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705050; c=relaxed/simple;
-	bh=aAVG1dQkK4CK+bGKDFmGiwLRBBmSB50x/ZhpxKIy1+Q=;
+	s=arc-20240116; t=1724705051; c=relaxed/simple;
+	bh=B4CjEPEBNhW/7ay+iPhYCq//7mfGSaIpgiOs2kdAYJU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MgCUhjn/hNOXOEuzujiQvHqIemIogDXCluorzFQD0I0K5JaV5+Yg32XcB3xdj7k+5x8BbzekfnpoW70wfNnTiKQatSbv54xwey6Q5KQr43Ue8cxMXsOV4GELn/tNyPDkH0g00hul03wtFsFWK6/FLaPuDZU0k/8w3WtP4Bq6PTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U/IvSmSi; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=H71KcEso55ilbzznE3kSKc7wI92YoBoA6jbhirUbuI1vSS+IOxQ2k8izrlB0IuCGXwC0WCdzsxQkOcWYyfo0pUMG5v9RLgs4t7qnwaH1rFj6gWuvcQO9Q4C9LhqhNpfaV9AhX6rW4x8CtjP7x0JlqBCjF8bLQLpwg3Z59/QHZCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LEWHxxWV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724705047;
+	s=mimecast20190719; t=1724705049;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p41Ko1t0SYR+aQ+NnkPoKcQjWVRbF5iAoso+I7QNClw=;
-	b=U/IvSmSirmaWE7Ef8vFO/UCoqdpHgwXgcB21EQ0xYAHCKX4ww5M7QJgkYHrqhIRaZVKKDt
-	oQsRiF5dePjh3ynn/KKuf9gP/RuOtqkhCP+sSewgmtLnNcouhljEO/itrzqKrSM+9bj9kx
-	oM5DnUZpkoWk8wulDD2hQSsA9asi9Sk=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=SFHgAMnpeJHqDMa0ADr1pyvSduy44GuxF04BOe5aqcw=;
+	b=LEWHxxWV8B/d9KIasPxZRdl7+97lJzSjELsdoiljqRqKCSpLXavw+Msj8Swo2aUJnCRRxw
+	Ti12aQE7K4xioUm6jHUoQFu2JYBiu7UuPQmuIYbo2dhube5JAQc4ClI0HqgOJlB3PqQQbJ
+	+Z2b4E7bPyiSt8U2C6I7VorRLRfOtho=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-IbEQQn_8Pt2o-fsa8U2Uww-1; Mon, 26 Aug 2024 16:44:06 -0400
-X-MC-Unique: IbEQQn_8Pt2o-fsa8U2Uww-1
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-26823e7e16eso10889817fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:44:05 -0700 (PDT)
+ us-mta-552-VDlJFQtUOGa2JtpI0OZahw-1; Mon, 26 Aug 2024 16:44:07 -0400
+X-MC-Unique: VDlJFQtUOGa2JtpI0OZahw-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a1de8a2adbso643966485a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:44:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724705044; x=1725309844;
+        d=1e100.net; s=20230601; t=1724705047; x=1725309847;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p41Ko1t0SYR+aQ+NnkPoKcQjWVRbF5iAoso+I7QNClw=;
-        b=Jp6ydELLv1ConluF+gkkSt8H/rPj+QxFIczg5d3ReahH8T4GdB7B5dgOO3zD0wyWL9
-         IBJBR1O/PvSbTnbeWuVqrz8SW1EChL5Cw4jyWWSZs5jS0YrayAWguPCrJvbLQZYCXJUK
-         0tQR/6EF+BoBwEDFUCzAdKQ77r5MO5zoG1BVJPC/MoHrOgDzWzeu+7nYrqb09k4Wi2SP
-         6B8/dmOwD2kptao0hg05bfXABujbGVkpMMtqbT6qevVIHae9LHt8kH8YDw0gPvXYZ6EL
-         iNGl4Oq0cWvkxMk1SqAlUsv0a7KL8DAjNDNb7gDdHR+godayoXocTPI8R2NaedlVcZet
-         bs0g==
-X-Gm-Message-State: AOJu0Yx2D3hvslrM/h5vNozkJ5swFAGA5liHIlhwsjf9eBt5JiXf/OCo
-	hu6NORgzVVVGgXKbSkuh9plSHtCQt974In91OlXrefcB7ZH0AnbrsaIAHDf5vbud6IQK7RiFFzG
-	I+B5bpKl4tFkskKD2F2jgpKKwRFTZ/NK3Q20PGZF951Zou0nWykg/f7m44fZ38vH0nSblCkXPiM
-	UATH8uupe746lDPSZHRhO+msv0ukC8t5OF2D06Q6Eb+bU=
-X-Received: by 2002:a05:6358:ca5:b0:1b5:ecce:b760 with SMTP id e5c5f4694b2df-1b5ecceb805mr68657855d.21.1724705044596;
-        Mon, 26 Aug 2024 13:44:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqSprkmyPyKIDES0Mxu2D+0b60kqL8Leav+5Mf5w5kuR6qgHz2l36Zs0Y1NhYRXD/bnn90Fg==
-X-Received: by 2002:a05:6358:ca5:b0:1b5:ecce:b760 with SMTP id e5c5f4694b2df-1b5ecceb805mr68653955d.21.1724705044223;
-        Mon, 26 Aug 2024 13:44:04 -0700 (PDT)
+        bh=SFHgAMnpeJHqDMa0ADr1pyvSduy44GuxF04BOe5aqcw=;
+        b=Ef0s8DatuycrXPNZWzmlhqfJrr8rH4c16M8uDRsGTNhMst80YiDpOfDza/0qMB1ZQh
+         EsBTXZ78DFq4Zf0PPjUxtq/0f31ryUR24Aq4xBXafSBiJNVwwHUo3rXOobbSmQ4KBI/E
+         VoCA6M+OlB+td9OR2OZFwhHAJAjoOiq3YQp7jrzq5+rgsAwAUgkdvneYLSpcCExowRkH
+         8LFF6Up43SmQ7rjQGM9Jt1lN4S6E1bqstb28S8eNfnCbKkba9Q8nl2+n4GRFkntRZpju
+         dE0nYW6/bykQX4N64b+m74TCFFGju87f2PzxA7/ZMOvNnauRbYrGvogDjtg4FF4qQWKa
+         NXPg==
+X-Gm-Message-State: AOJu0YxvgolvSOk/++JPcbfhDPIFgEMVp5neL/mplfNcTKTOLTHuxI/v
+	28msSh2OqFHoIB+hkSToWyxoK49xih47+NwSdAUyjp7wjM/oPXQIRtPlJQtZRa1FYEGOOdqzk8H
+	AuKf6e/3zUN9Dvkal5HN1yC7QhcBgA53q4vBhg1BSfOj1nBtmrV+rtH00eWCm6bdcijoMv636mN
+	bTLhwfE9MJHj1t8F/zkNA3ta3giXKUKjeHhHdaa63zePo=
+X-Received: by 2002:a05:620a:2a14:b0:7a2:ccd:9672 with SMTP id af79cd13be357-7a7e4e6144fmr67569885a.67.1724705046930;
+        Mon, 26 Aug 2024 13:44:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG++rZwRsHPi3LEX2hBpbUb+Bhnwx97nv6F7Fy5QJm5RgQYxXJ7nF8aD8ykhSm+rXvWrvbUzQ==
+X-Received: by 2002:a05:620a:2a14:b0:7a2:ccd:9672 with SMTP id af79cd13be357-7a7e4e6144fmr67565885a.67.1724705046455;
+        Mon, 26 Aug 2024 13:44:06 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fd6c1sm491055185a.121.2024.08.26.13.44.02
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f3fd6c1sm491055185a.121.2024.08.26.13.44.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 13:44:03 -0700 (PDT)
+        Mon, 26 Aug 2024 13:44:05 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
@@ -97,12 +97,10 @@ Cc: Gavin Shan <gshan@redhat.com>,
 	Yan Zhao <yan.y.zhao@intel.com>,
 	Will Deacon <will@kernel.org>,
 	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: [PATCH v2 04/19] mm: Allow THP orders for PFNMAPs
-Date: Mon, 26 Aug 2024 16:43:38 -0400
-Message-ID: <20240826204353.2228736-5-peterx@redhat.com>
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH v2 05/19] mm/gup: Detect huge pfnmap entries in gup-fast
+Date: Mon, 26 Aug 2024 16:43:39 -0400
+Message-ID: <20240826204353.2228736-6-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240826204353.2228736-1-peterx@redhat.com>
 References: <20240826204353.2228736-1-peterx@redhat.com>
@@ -114,62 +112,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This enables PFNMAPs to be mapped at either pmd/pud layers.  Generalize the
-dax case into vma_is_special_huge() so as to cover both.  Meanwhile, rename
-the macro to THP_ORDERS_ALL_SPECIAL.
+Since gup-fast doesn't have the vma reference, teach it to detect such huge
+pfnmaps by checking the special bit for pmd/pud too, just like ptes.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Gavin Shan <gshan@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/huge_mm.h | 6 +++---
- mm/huge_memory.c        | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ mm/gup.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index b550b5a248bb..4da102b74a8c 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -76,9 +76,9 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- /*
-  * Mask of all large folio orders supported for file THP. Folios in a DAX
-  * file is never split and the MAX_PAGECACHE_ORDER limit does not apply to
-- * it.
-+ * it.  Same to PFNMAPs where there's neither page* nor pagecache.
-  */
--#define THP_ORDERS_ALL_FILE_DAX		\
-+#define THP_ORDERS_ALL_SPECIAL		\
- 	(BIT(PMD_ORDER) | BIT(PUD_ORDER))
- #define THP_ORDERS_ALL_FILE_DEFAULT	\
- 	((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
-@@ -87,7 +87,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
-  * Mask of all large folio orders supported for THP.
-  */
- #define THP_ORDERS_ALL	\
--	(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
-+	(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_SPECIAL | THP_ORDERS_ALL_FILE_DEFAULT)
+diff --git a/mm/gup.c b/mm/gup.c
+index d19884e097fd..a49f67a512ee 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -3038,6 +3038,9 @@ static int gup_fast_pmd_leaf(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 	if (!pmd_access_permitted(orig, flags & FOLL_WRITE))
+ 		return 0;
  
- #define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
- #define TVA_IN_PF		(1 << 1)	/* Page fault handler */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index dec17d09390f..e2c314f631f3 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -96,8 +96,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	/* Check the intersection of requested and supported orders. */
- 	if (vma_is_anonymous(vma))
- 		supported_orders = THP_ORDERS_ALL_ANON;
--	else if (vma_is_dax(vma))
--		supported_orders = THP_ORDERS_ALL_FILE_DAX;
-+	else if (vma_is_special_huge(vma))
-+		supported_orders = THP_ORDERS_ALL_SPECIAL;
- 	else
- 		supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
++	if (pmd_special(orig))
++		return 0;
++
+ 	if (pmd_devmap(orig)) {
+ 		if (unlikely(flags & FOLL_LONGTERM))
+ 			return 0;
+@@ -3082,6 +3085,9 @@ static int gup_fast_pud_leaf(pud_t orig, pud_t *pudp, unsigned long addr,
+ 	if (!pud_access_permitted(orig, flags & FOLL_WRITE))
+ 		return 0;
  
++	if (pud_special(orig))
++		return 0;
++
+ 	if (pud_devmap(orig)) {
+ 		if (unlikely(flags & FOLL_LONGTERM))
+ 			return 0;
 -- 
 2.45.0
 
