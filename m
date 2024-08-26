@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-300873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635E395E9D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:03:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726C795EA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2092128185D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3A6280E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9787A13A256;
-	Mon, 26 Aug 2024 07:02:48 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E9A129E93;
+	Mon, 26 Aug 2024 07:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cXrmkmeR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T20gYIe3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0F857CBA;
-	Mon, 26 Aug 2024 07:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66DF85270
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655768; cv=none; b=FDJTRVD7Ll/7oYrrBxgaQV2gcYRQ/CAoLPJWiftr6BJw6p9PBSiuzny4bADBYtgKz16xZMgjg5Tyc4w4vb1iL/qW8jBlJmUki74IWDq7qVcEj90/pXAqpdEtmnnRg+8gTzCZndAbfpPhaPMred4o5Ukck5cc0iIQgx+RUZFRdUI=
+	t=1724656287; cv=none; b=j1oZDLRozKK+rSlFYuSoUIXGtOt+BRoAWV9Dzbp/mOj7XXYW4TE1/Iff/PKUYJzURWHp0AVpgkC+X+ddp0hEkwq0r2TYtmwVzIRG+gpI6c7hfMNLKmq0D3M9+02AjprrCrUmPNJAGf+hYBIOuI0sowQcp106H8giHrT7pgHSPCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655768; c=relaxed/simple;
-	bh=WFHhsIkRmkdGK2QWMeAh5kJ20knoPvV2uJ+PkYCQu1A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHokE/xPxG/fQc80dqA0IZr3m5dhIitzRv7YWB4/LVExb/IaB/zapi+KfROc1EVkvRTT50MO3fJMDklDa8O5DMxRkoj7R/PLrU3I0Cmoim6e/GgbBvLjCn0Gp4AHnqfbiCnWJqnh1NGBUZozqtk6Db9JV6hwxYe34+uFSS9rYjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WshS52JC7z14G6b;
-	Mon, 26 Aug 2024 15:01:57 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0B5F1401F0;
-	Mon, 26 Aug 2024 15:02:42 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
- (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
- 2024 15:02:42 +0800
-From: Li Zetao <lizetao1@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<willy@infradead.org>, <akpm@linux-foundation.org>
-CC: <lizetao1@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [RFC PATCH -next 3/3] splice: Using scope-based resource instead of folio_lock/unlock
-Date: Mon, 26 Aug 2024 15:10:36 +0800
-Message-ID: <20240826071036.2445717-4-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240826071036.2445717-1-lizetao1@huawei.com>
-References: <20240826071036.2445717-1-lizetao1@huawei.com>
+	s=arc-20240116; t=1724656287; c=relaxed/simple;
+	bh=vaqXwIfLnKIH52QHQUbxfQeH4mfM4vRtssD8yZyEb+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chkeJA0wKWmtnY9kvA1KiFWldTf/OOUn1HZByXFxWInsu1zxaPffW8Oz+mHvdCDvrjW4zuoH3S1Az0wZva0aYicGWWHzhgchJ/maFuPaQv0E8JsNwWs9//jXijIz9+AyLr+iM8LBi8zAsMPZzsc6rZ+e+e1a3+JTeC/JVsitgZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cXrmkmeR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T20gYIe3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 Aug 2024 09:11:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724656283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g46RXz25EG/tDHSxyQpu6a8JT4ayEJq99k3eM3BtBYM=;
+	b=cXrmkmeRyoT78pMMekcZc3nc67McgwgHmXmOETFm5WsKGGV7kZzxcZUhEx4F56bdWSVdA8
+	JBzcOeCk6FunvcHai4n7B6cfih4O1e28BQnU1KWrIS+LdLE4BLhzhyAnZo4pxn9ohdCI4s
+	eRT6VR8+dl8WaAeqML8W/SHXJKw8XCUagYbKGVnUHbiKLoI/lLGZDp9dv0Y9o9n9oueedi
+	RFWokNYzhKIbR37hPbMBTcS5oFZTl9Y5wgD0C7MjBhvBAzDK2hqr28vLYPFKwta9vjKokW
+	4+mhN4gEjkq6vYSgEb7HB0IwoNRBElNoBnUwGEC1pcS8wxp0ERj97PVhiCmRuA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724656283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g46RXz25EG/tDHSxyQpu6a8JT4ayEJq99k3eM3BtBYM=;
+	b=T20gYIe3Z38c7pHt/15SdQ/hrKsJ9fLlGIjbvdyzsGiai3Q1M2QQsHrf4wzGV2rf4SxWob
+	sPD82AtwhMCMhOAQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, bigeasy@linutronix.de
+Subject: Re: [PATCH] x86/mm/pat: Support splitting of virtual memory areas
+Message-ID: <20240826071103.7xq5iOjF@linutronix.de>
+References: <20240825152403.3171682-1-namcao@linutronix.de>
+ <8ed51ba1-a844-483a-9eea-36571ec635ff@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ed51ba1-a844-483a-9eea-36571ec635ff@lucifer.local>
 
-Use guard() to manage locking and unlocking a folio, thus avoiding the
-use of goto unlock code. Remove the out_unlock and error label, and
-return directly when an error occurs, allowing the compiler to release
-the folio's lock.
+On Sun, Aug 25, 2024 at 05:04:44PM +0100, Lorenzo Stoakes wrote:
+> On Sun, Aug 25, 2024 at 05:24:03PM GMT, Nam Cao wrote:
+> 
+> [snip]
+> 
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index d0dfc85b209b..64067ddb8382 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -2486,6 +2486,12 @@ static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> >  	if (err)
+> >  		goto out_free_mpol;
+> >
+> > +	if (unlikely(vma->vm_flags & VM_PFNMAP)) {
+> > +		err = track_pfn_split(vma, addr);
+> > +		if (err)
+> > +			goto out_vma_unlink;
+> > +	}
+> > +
+> >  	if (new->vm_file)
+> >  		get_file(new->vm_file);
+> >
+> > @@ -2515,6 +2521,8 @@ static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
+> >  		vma_next(vmi);
+> >  	return 0;
+> >
+> > +out_vma_unlink:
+> > +	unlink_anon_vmas(vma);
+> >  out_free_mpol:
+> >  	mpol_put(vma_policy(new));
+> >  out_free_vmi:
+> > --
+> > 2.39.2
+> >
+> 
+> Right from the start the 6.11rc cycle mm-unstable and therefore -next has
+> moved this function out to mm/vma.c, so you will need to make this change
+> there rather than against mm/mmap.c (or whichever tree this is intended to
+> come through needs to sync up, especially as there's a fairly substantial
+> amount of change going on right now in VMA handling).
+> 
+> Sorry about that!
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
- fs/splice.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+Ah okay, thanks for lettimg me know.
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 06232d7e505f..bf976f2edfc1 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -120,36 +120,25 @@ static int page_cache_pipe_buf_confirm(struct pipe_inode_info *pipe,
- 				       struct pipe_buffer *buf)
- {
- 	struct folio *folio = page_folio(buf->page);
--	int err;
- 
- 	if (!folio_test_uptodate(folio)) {
--		folio_lock(folio);
-+		guard(folio)(folio);
- 
- 		/*
- 		 * Folio got truncated/unhashed. This will cause a 0-byte
- 		 * splice, if this is the first page.
- 		 */
--		if (!folio->mapping) {
--			err = -ENODATA;
--			goto error;
--		}
-+		if (!folio->mapping)
-+			return -ENODATA;
- 
- 		/*
- 		 * Uh oh, read-error from disk.
- 		 */
--		if (!folio_test_uptodate(folio)) {
--			err = -EIO;
--			goto error;
--		}
--
--		/* Folio is ok after all, we are done */
--		folio_unlock(folio);
-+		if (!folio_test_uptodate(folio))
-+			return -EIO;
- 	}
- 
- 	return 0;
--error:
--	folio_unlock(folio);
--	return err;
- }
- 
- const struct pipe_buf_operations page_cache_pipe_buf_ops = {
--- 
-2.34.1
+We could wait for 6.12-rc1 to be out, and then let this patch go to x86
+tree. Or we could let it go to mm tree, if x86 maintainers are okay with
+that?
 
+Best regards,
+Nam
 
