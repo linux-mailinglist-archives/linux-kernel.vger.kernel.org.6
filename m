@@ -1,92 +1,144 @@
-Return-Path: <linux-kernel+bounces-302092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13FC95F9B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600F895F9B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74AFEB2114A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FEFE1C21F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C547F79945;
-	Mon, 26 Aug 2024 19:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9CD198E93;
+	Mon, 26 Aug 2024 19:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="L1MdCpJO"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hc/Nm7dr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D319198E6C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775FA7F460
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724700612; cv=none; b=LgKP/4IxYkZWLehbx9RxX1Sfln6QLQ0/GPiFl1cj4WBo8OQsTzz6G9EyqybiQZXZzMmsOpmwlg+pW6uWb/A31tur66dZGCxNm0K8Q9uPkoH4ECBXS2rcgIgUkdxiRgbJ2en+ezaTmbG5KFc8Jq/NfhVt3tHTFItlwHW53HHWOAM=
+	t=1724700631; cv=none; b=Lo6PTy8rRVmQ8QqmFF5OGUuEp3szRvjC1jw6LEhuUn31CeyTYabP4W4hhAxmnQDCVtCicwMTIVSAudCk2PzXGhq+Fb7UlAdgM2QVGwypDKFDEp3AgjN9NCIn4bJ/P7iCDFamjOTQqBYj2gXDW4JVLPHLc3cpQq7IWhmBW3avzTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724700612; c=relaxed/simple;
-	bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=caibBuaqe3uXgSM5jh6g459nSX4OoWuGATREUEwwva7Y1jbXXXrPN3zfmBxr//5kpe7L4dwgCloi2GVMYVuZHxKoU4KrIbxn6lgDUSxY6sXEfdRZt0VnKDtUZ5dJs7TdcYwJGeZmvtEllaEo+WLCJBWe/CHnu9VAji97WfJC48c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=L1MdCpJO; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so4967855276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724700609; x=1725305409; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
-        b=L1MdCpJOr+SAZfVyN6Bw8R9asLhnPzW2fHnOV/QyaxtOj1y7Kav8gj0pQHgPoCH8bG
-         3imho5EzNu4EAq/EHehBKBTfSlkioWL4jvOo4VLwoNtslIZ4jKDu8Vn7eMkD0OFvgEbz
-         dAeYXJl+TxsgzEvBs+5Gn52hAW0EBcSse+++0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724700609; x=1725305409;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hcRvwF87oztYXFmspwLvuXVmC1FGdlbdFo9ufr4Pf2U=;
-        b=Ly4ZooetpamvBLAesP9RtSYQQl7eQh6Z++YDvx0P967sBDUQq7OyOQWGPOf8rQZzog
-         HOLu3heQT+3krxl0bzHZumVkA9Ho096bQh+H50e/FHLEiMgYtB+fiBZEBCTOA7DBmoxg
-         kaqgaU48Zkz5pymZiBySMUAJtVt3bLyayg5SK67+z0X+Z1/cKTsm/tde8L4lQHUp011e
-         vrTX0V7p7XcExpuB/LS0sFxTNlJTlMo7Un4mbGoMfnXnIz5/YZ7bKazGR240R94ecY/a
-         BGZ3Sw0xfyGWBRAIDmjcOBZCWYPOq1nvXqqLGLIK8tjCwSnPKlnzBa6rl4E/qIWn6j3O
-         1n2w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+xlQ6shLin7WrIuqVwdc16qHfrUvokxfb4SjW0WHt16HlzkE/D+nEuw5xh1YcRVOtCOlskLxQFK1jDzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFC/TwKErrtmEJ2J2GIDjyciFzvX+8TYh/CkykPqQWNorSFNhp
-	F+fuec9X6Eek/eh97DB6G1QMLUKpZSxKpFRZeQtlt6KYqZJ/PMQILLTJeVGDr1JFXW1rc/+2yt5
-	pOQAbm9cH1kuWfAB0QZhDHVm+6LrwjhD+Hd2HPq+HXShZ6JwZ
-X-Google-Smtp-Source: AGHT+IH9OKCoXZU4ZY1OpV22CH8LZbAk8o4r/ypIvORd7W0PJgSWCSqUslpmBTkJiaMOKHPlHpoLfy4bG+SLPynCflA=
-X-Received: by 2002:a05:6902:dc9:b0:e13:e9ca:7bcc with SMTP id
- 3f1490d57ef6-e17a8680788mr10420377276.54.1724700608979; Mon, 26 Aug 2024
- 12:30:08 -0700 (PDT)
+	s=arc-20240116; t=1724700631; c=relaxed/simple;
+	bh=E1gan4GaPQpanO19xJ4vqkBlLkLMe5LhuKkzJLKBA+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZuLYMhWdR0j4LqI5EXv638ZVjlPCEqRAzqWiUW4U9vkVZ82pS4h3JyT8/BbsuVi0sYdAI1QkVQpyF05ij9wA4H67KIvVTGfusTpAV7bFEsPybmd0Zg1zBIeUP3MczkGvoILrbSdb2wzROeG7qB2Msrxt0OK86Nl/hrzJcSdgrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hc/Nm7dr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724700628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GIDJsT8JfsnF0fOlQyoE0wsNEozg+jaZA+6mr9HP8FQ=;
+	b=Hc/Nm7drtZCCYjqvlp5yZosZe5WmfAz/BQ/NPCfMRl2slIBl9o3Ul00NXmTVr13Qxab+jz
+	tEzpwG0kUs8nqA8GVDycNYCVflpvEBevgpiNVsYOB6ys2d2Lw6aTjNEphSLDW8PtC2JZug
+	ahqobQwQc3K9zhqaP+jI83x5NE7TyFk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-564-V2x8GoLANH21-lBgZvvvhw-1; Mon,
+ 26 Aug 2024 15:30:20 -0400
+X-MC-Unique: V2x8GoLANH21-lBgZvvvhw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 363EC1955BEF;
+	Mon, 26 Aug 2024 19:30:18 +0000 (UTC)
+Received: from [10.2.16.157] (unknown [10.2.16.157])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C5A63300019C;
+	Mon, 26 Aug 2024 19:30:15 +0000 (UTC)
+Message-ID: <eaef1faf-c3f3-4664-ae7d-5cca611925e4@redhat.com>
+Date: Mon, 26 Aug 2024 15:30:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823085146.4017230-1-yangyun50@huawei.com>
-In-Reply-To: <20240823085146.4017230-1-yangyun50@huawei.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 26 Aug 2024 21:29:57 +0200
-Message-ID: <CAJfpegu-nd9Oa+eeNKbzqtMJOgoFHgxO3fVr=2qt_WZv2EU3-w@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix memory leak in fuse_create_open
-To: yangyun <yangyun50@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lixiaokeng@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 09/11] cgroup/cpuset: move v1 interfaces to
+ cpuset-v1.c
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
+ sergeh@kernel.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenridong@huaweicloud.com
+References: <20240826132703.558956-1-chenridong@huawei.com>
+ <20240826132703.558956-10-chenridong@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240826132703.558956-10-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, 23 Aug 2024 at 10:52, yangyun <yangyun50@huawei.com> wrote:
+On 8/26/24 09:27, Chen Ridong wrote:
+> Move legacy cpuset controller interfaces files and corresponding code
+> into cpuset-v1.c. 'update_flag', 'cpuset_write_resmask' and
+> 'cpuset_common_seq_show' are also used for v1, so declare them in
+> cpuset-internal.h.
 >
-> The memory of struct fuse_file is allocated but not freed
-> when get_create_ext return error.
+> 'cpuset_write_s64', 'cpuset_read_s64' and 'fmeter_getrate' are only used
+> cpuset-v1.c now, make it static.
 >
-> Fixes: 3e2b6fdbdc9a ("fuse: send security context of inode on file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: yangyun <yangyun50@huawei.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset-internal.h |   9 +-
+>   kernel/cgroup/cpuset-v1.c       | 194 ++++++++++++++++++++++++++++++-
+>   kernel/cgroup/cpuset.c          | 195 +-------------------------------
+>   3 files changed, 199 insertions(+), 199 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+> index 07551ff0812e..a6c71c86e58d 100644
+> --- a/kernel/cgroup/cpuset-internal.h
+> +++ b/kernel/cgroup/cpuset-internal.h
+> @@ -271,15 +271,16 @@ void callback_lock_irq(void);
+>   void callback_unlock_irq(void);
+>   void update_tasks_cpumask(struct cpuset *cs, struct cpumask *new_cpus);
+>   void update_tasks_nodemask(struct cpuset *cs);
+> +int update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on);
+> +ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+> +				    char *buf, size_t nbytes, loff_t off);
+> +int cpuset_common_seq_show(struct seq_file *sf, void *v);
+>   
+>   /*
+>    * cpuset-v1.c
+>    */
+> +extern struct cftype legacy_files[];
 
-Thanks, applied.
+The legacy_files name is rather generic. By making it globally visible 
+within the kernel, it runs the risk conflicting with another variable of 
+the same name (namespace pollution). I would suggest adding "cpuset_" 
+prefix to make it unique to cpuset.
 
-Miklos
+The following functions also have similar issue.
+
+- update_flag()
+- update_tasks_flags()
+- validate_change_legacy()
+- callback_lock_irq()
+- callback_unlock_irq().
+
+Another alternative is to include cpuset-v1.c directly into cpuset.c like
+
+#ifdef CONFIG_CPUSETS_V1
+#include "cpuset-v1.c"
+#else
+    ....
+#endif
+
+Then you don't need to change the names and will not need 
+cpuset-internal.h. It is up to you to decide what you want to do.
+
+Cheers,
+Longman
+
 
