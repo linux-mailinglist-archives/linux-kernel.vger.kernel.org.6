@@ -1,236 +1,123 @@
-Return-Path: <linux-kernel+bounces-302403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D3095FDD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C1F95FDDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C941C2139E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964DD1C2152D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C1719D88E;
-	Mon, 26 Aug 2024 23:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D288619D88C;
+	Mon, 26 Aug 2024 23:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2jobZu2O"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="37HkrmzI"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DD27DA92
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF661B66C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724715797; cv=none; b=OuydSvfDBGACdmywRw4fOW/1mUtX3zdlHm9vbdU3EG6lUey0s1tlyvo/GZb6rRr1NMQ9x0tvdVvKrGbG/VyoPv+t0hADAD1PCP/zuqEBUvamvGuxvk3mtpDj2PQBj9gScJ9LeV7XiXpqto6C5hx7cPimSkkf0tsQwtps6NP37KM=
+	t=1724716398; cv=none; b=M0X+u1Fw2+Aayi0/4bGVtdxxQ0OXyltK2sndo0Pn5rhCBRj+syMlLAx0XSFpSvcVJyVLZfBoyaOauwRX8DohcMtI46T5GLNb2z9yxywE38XB0Pho9GXbC2n9DPVMwH52PA0HMjQ5VQafQGApf/2PFi0o3L/yMr+Kq6EJWFVaSkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724715797; c=relaxed/simple;
-	bh=aLKvXwCQ8CpZX8jumViMtPWTpxywDphZ6fLhEFAOD9U=;
+	s=arc-20240116; t=1724716398; c=relaxed/simple;
+	bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UTqzRzLVmUaVKBVxwdnXjNK5e8wHB8xQOFKKdJ2An+J/aYZ7lv7BPX5MERACl0cXOycyWs2AqBseJRvJaliH+KkGwlgnzNYto5p0hXhFs39ol0uFJ8RHquVy5d8itGWwzXVFYuIYMHa9PsnDupboSN6UUUEY1aj4dOMIDKmrlS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2jobZu2O; arc=none smtp.client-ip=209.85.166.172
+	 To:Cc:Content-Type; b=V5/dN+XZLoYFjR9pTezDVjL4+5jgZhSx6Uv6qvHChGKy13GPD1RG//iZC4Zu811B9oS0BbHAVEIrKUDGV4BaDqMy22O66wBW1PKlZ7SnZ2PxMJtB+TKTX7J5uK1IAaoMMnGP2/BmANJZJpQe88FyxgXjHh4dyKKl2yUdgk8Tj0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=37HkrmzI; arc=none smtp.client-ip=209.85.166.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39d41b61178so38025ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:43:15 -0700 (PDT)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso41865ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724715794; x=1725320594; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724716396; x=1725321196; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dnincskxIZjFY36curyurg9fJCPd6cnHUMKQnuVVoFk=;
-        b=2jobZu2OZCmcjuR6xeSEPHogVnKQb6uUhW7xz2CpqQrA5LChdZ5h6HcX0uaQjiVgbn
-         MDiCK5/sv74DYnY7ykBZTpamu1x5zEmWQp/fhtxrnUo5nGYFn6WO2A4bt883/4rrlo9T
-         XgmoDnl/nVqD61siUHUoOAvBrtkqLWKu5T+1iWsRXPwjDPuvMbjhMhaKdUt8EFZN3qqF
-         SkvBTMtVA5oN5mqhbtdkpXvx9cKcf03u27YPY1/WLpC9Rh0s7u1v3RRZOvBpkUWYP5QI
-         O2lNfTISv8Sg15fXfL5Ot223AC57B8NWfE+Q5aUHkPUsUb7rj7kefbGBzNO3aV5npbP7
-         v7jg==
+        bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
+        b=37HkrmzI0rAAbrXX8bksT61XerBPCtCWgSw1eR9UCJJqoS5lpMjsUnQYUUP14mKz7k
+         L/+Bk43zl/LTIG4jkQsMCmaYXxB7vy3O/YA2JLh735tzbZpK4Uf9yf/0v9zj+uR8lcjG
+         Z0lbQJ31bYa8wT9LHVZsRMQQOJ5ZM9hNxHupbRPNRAAWtkoYF1gEEBt8WSgrlTrjO8l1
+         gGBEn+6+nF8mqokNoY4Yqn1oHEU+bhCSHx8aIwDXktN8qZbm5BJ+qCicBPsbuX2Pxkph
+         ysJfTNHvWV7To6WFarJWHjzMoBSaCdKWfcdLWUd11RKGluc/syLY8lFUd2kLLMzmiZWd
+         4V0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724715794; x=1725320594;
+        d=1e100.net; s=20230601; t=1724716396; x=1725321196;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dnincskxIZjFY36curyurg9fJCPd6cnHUMKQnuVVoFk=;
-        b=JdaH6ZjUZCoi0q+wPcEMEQlOGP9seXv0dul/ZgiboftJSNW1Hm2LmjXTlUH1GaRU6u
-         ejPAh6tlSHhIuLAUBlzM4CIu58sTiRi/mIB+dOGMgU42H8aoXB0pLqkJ0M/2ExfACW1D
-         4dvimcYtS/02syym9WcjC8n9d/fE5Km9IuhObP7ojLNyx/voQZ5rivog3+sDB0XiMDNl
-         vSwPljrnQQkZy3X5lyI+fdtBZN0OLL2KV9cnLEPh84Jhh3QKFbqQ36x+e75nXDXQlYX/
-         ORl9WECvBwGJITXmeQurt86uctMmdAiueMAG5xJoaOLcAiVX1NLY2N8fjxshzK3WPHMj
-         oyzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgE40LdUsxUkPXnJ4djdIqOCbIgrOAeGw5JqI1OeT4QvOmVZWg95AQJUAVEmzRxGWx1KYRD1qQftRnFdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMKMm8DqXpN5QZr7P9nDR5sfNZMxU+ojSQnRMBXub/Q3H/rD/N
-	0epI4X1xejmSkodGcDHp1NtPesHkNlEbWeyvZZUKyNK3chaqyBKJXjYz3HFGMAkU6386JhoTU47
-	PSLa/q4uF695oQ27jmuOokd8XM8okLj5vnhhG
-X-Google-Smtp-Source: AGHT+IFE60KjWQ+LhatMhLcNn4ylcp/3BX1PMZw7JB2CKalx7ld2SR1EOoZ3z8exQZ8pHnycdnnra1ayimhJIxisGrc=
-X-Received: by 2002:a05:6e02:18c7:b0:381:24d7:7cc6 with SMTP id
- e9e14a558f8ab-39e65ea0ae0mr778165ab.3.1724715794374; Mon, 26 Aug 2024
- 16:43:14 -0700 (PDT)
+        bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
+        b=O/5OuyB9xF4Bm1gxRFzU+0let0ucwKqpvi5SINQ0xKbwGQBKsKJtwoJmiLhykeYbAV
+         Am+eBe9sw8ueEWNMncDPTHFRuripnUVzfFSmXV94TrI6VloQL1lagMskpRzdkfsAGALs
+         NwC0iCc0Kkn1+7DV8GUbz0tyA0hKzTDys9pQyhFXYRKAXzvIdvPQWWUa2KeysC5EBF1P
+         xFMtUj0N3URkqqIbXpCWqhEMZLPmqeHu0u5DsDGqV4nH6HWna3V6bjQwpkUFupEZb6mN
+         WMxrU1GLS03/LTELdGx1oE3fTyjsgA6vSqdUsAnKh3pSCUamTFZF9YvF4C0Oanmtg+ha
+         CFFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwOyktpNNxGUI1yjN9aym431/duXn4HabYVryn8sLBO7UwNKPiJmbINLOVRs5gCWlmnfs7iS+9CUU6gpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyeu5iUxTwvWg9dVVlCwGJjiMiqKsDbUUM3UhFOX4kv2VzNtc5L
+	LKVvvGCVYab+xBvm9rxPQoUkEECman6gpEqTQB9CwU0W1lC16SyDi6Szwc5yG+L5ky6Cn19Gygk
+	YAWmuprvKHcjILy/yf2Va+60U/X5++ihrJnrK
+X-Google-Smtp-Source: AGHT+IGXtO3D10Uezf3WuYt0RVII2+j/KXfLazJLjbXs+ApM0V9QEMs2qZuqXBWdWC8zxibHnJ6RBxyuRpNdMTukOl0=
+X-Received: by 2002:a05:6e02:1c43:b0:377:1653:a1da with SMTP id
+ e9e14a558f8ab-39e65ef32f7mr573245ab.19.1724716395620; Mon, 26 Aug 2024
+ 16:53:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813165619.748102-1-yuanchu@google.com> <ZsSTdY5hsv05jcj-@PC2K9PVX.TheFacebook.com>
-In-Reply-To: <ZsSTdY5hsv05jcj-@PC2K9PVX.TheFacebook.com>
-From: Yuanchu Xie <yuanchu@google.com>
-Date: Mon, 26 Aug 2024 16:43:01 -0700
-Message-ID: <CAJj2-QGtvvrhjH_h1wL3FCg4HgZU27rqxSCDZzPws81yPK_DvQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] mm: workingset reporting
-To: gourry@gourry.net
-Cc: David Hildenbrand <david@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
-	Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
-	Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Gregory Price <gregory.price@memverge.com>, Huang Ying <ying.huang@intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lance Yang <ioworker0@gmail.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>, 
-	David Rientjes <rientjes@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Shuah Khan <shuah@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>, 
-	Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Abel Wu <wuyun.abel@bytedance.com>, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240813213651.1057362-1-ak@linux.intel.com> <Zstiry-K_v51oDC4@tassilo>
+ <ZsyR4eQr8X-q2X28@x1> <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
+ <Zs0RE60KpHyZlj8g@x1>
+In-Reply-To: <Zs0RE60KpHyZlj8g@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 26 Aug 2024 16:53:01 -0700
+Message-ID: <CAP-5=fUZwoDrGaEh7Us1aDM+W3aj1zb3D5VEH39qDfCjQGvePQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/4] Create source symlink in perf object dir
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-perf-users <linux-perf-users@vger.kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 6:00=E2=80=AFAM Gregory Price <gourry@gourry.net> w=
-rote:
+On Mon, Aug 26, 2024, 4:34=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kernel=
+.org> wrote:
 >
-> On Tue, Aug 13, 2024 at 09:56:11AM -0700, Yuanchu Xie wrote:
-> > This patch series provides workingset reporting of user pages in
-> > lruvecs, of which coldness can be tracked by accessed bits and fd
-> > references. However, the concept of workingset applies generically to
-> > all types of memory, which could be kernel slab caches, discardable
-> > userspace caches (databases), or CXL.mem. Therefore, data sources might
-> > come from slab shrinkers, device drivers, or the userspace. IMO, the
-> > kernel should provide a set of workingset interfaces that should be
-> > generic enough to accommodate the various use cases, and be extensible
-> > to potential future use cases. The current proposed interfaces are not
-> > sufficient in that regard, but I would like to start somewhere, solicit
-> > feedback, and iterate.
+> On Mon, Aug 26, 2024 at 08:27:43AM -0700, Ian Rogers wrote:
+> > On Mon, Aug 26, 2024 at 7:32=E2=80=AFAM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Sun, Aug 25, 2024 at 09:58:23AM -0700, Andi Kleen wrote:
+> > > > Arnaldo,
+> > >
+> > > > can you please apply the patchkit? This fixes a regression.
+> > >
+> > > First one was applied, was letting the others to be out there for a
+> > > while, I thought there were concerns about it, but I see Namhyung's A=
+ck,
+> > > so applied.
 > >
-> ... snip ...
-> > Use cases
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > Promotion/Demotion
-> > If different mechanisms are used for promition and demotion, workingset
-> > information can help connect the two and avoid pages being migrated bac=
-k
-> > and forth.
-> > For example, given a promotion hot page threshold defined in reaccess
-> > distance of N seconds (promote pages accessed more often than every N
-> > seconds). The threshold N should be set so that ~80% (e.g.) of pages on
-> > the fast memory node passes the threshold. This calculation can be done
-> > with workingset reports.
-> > To be directly useful for promotion policies, the workingset report
-> > interfaces need to be extended to report hotness and gather hotness
-> > information from the devices[1].
-> >
-> > [1]
-> > https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirem=
-ents-white-paper-pdf-1
-> >
-> > Sysfs and Cgroup Interfaces
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > The interfaces are detailed in the patches that introduce them. The mai=
-n
-> > idea here is we break down the workingset per-node per-memcg into time
-> > intervals (ms), e.g.
-> >
-> > 1000 anon=3D137368 file=3D24530
-> > 20000 anon=3D34342 file=3D0
-> > 30000 anon=3D353232 file=3D333608
-> > 40000 anon=3D407198 file=3D206052
-> > 9223372036854775807 anon=3D4925624 file=3D892892
-> >
-> > I realize this does not generalize well to hotness information, but I
-> > lack the intuition for an abstraction that presents hotness in a useful
-> > way. Based on a recent proposal for move_phys_pages[2], it seems like
-> > userspace tiering software would like to move specific physical pages,
-> > instead of informing the kernel "move x number of hot pages to y
-> > device". Please advise.
-> >
-> > [2]
-> > https://lore.kernel.org/lkml/20240319172609.332900-1-gregory.price@memv=
-erge.com/
-> >
+> > Can we not apply this? See comments on the thread. Basically we're
 >
-> Just as a note on this work, this is really a testing interface.  The
-> end-goal is not to merge such an interface that is user-facing like
-> move_phys_pages, but instead to have something like a triggered kernel
-> task that has a directive of "Promote X pages from Device A".
->
-> This work is more of an open collaboration for prototyping such that we
-> don't have to plumb it through the kernel from the start and assess the
-> usefulness of the hardware hotness collection mechanism.
+> And what about the reported segfault?
 
-Understood. I think we previously had this exchange and I forgot to
-remove the mentions from the cover letter.
+It is better addressed by:
+https://lore.kernel.org/lkml/20240720074552.1915993-1-irogers@google.com/
 
->
-> ---
->
-> More generally on promotion, I have been considering recently a problem
-> with promoting unmapped pagecache pages - since they are not subject to
-> NUMA hint faults.  I started looking at PG_accessed and PG_workingset as
-> a potential mechanism to trigger promotion - but i'm starting to see a
-> pattern of competing priorities between reclaim (LRU/MGLRU) logic and
-> promotion logic.
+One option though is to just remove this formatter. It is possible to
+change my patch to add the thread map support. I think also we should
+change perf script to not inject leader sample events similar to what
+was done for perf inject. This may break scripts, the scripts may
+already have been broken by the event injection. The change to perf
+script actively increases tech debt and aside from comments I see no
+difference in this series from the first that I objected to and set
+about trying to show how to fix the problem more properly.
 
-In this case, IMO hardware support would be good as it could provide
-the kernel with exactly what pages are hot, and it would not care
-whether a page is mapped or not. I recall there being some CXL
-proposal on this, but I'm not sure whether it has settled into a
-standard yet.
-
->
-> Reclaim is triggered largely under memory pressure - which means co-optin=
-g
-> reclaim logic for promotion is at best logically confusing, and at worst
-> likely to introduce regressions.  The LRU/MGLRU logic is written largely
-> for reclaim, not promotion.  This makes hacking promotion in after the
-> fact rather dubious - the design choices don't match.
->
-> One example: if a page moves from inactive->active (or old->young), we
-> could treat this as a page "becoming hot" and mark it for promotion, but
-> this potentially punishes pages on the "active/younger" lists which are
-> themselves hotter.
-
-To avoid punishing pages on the "young" list, one could insert the
-page into a "less young" generation, but it would be difficult to have
-a fixed policy for this in the kernel, so it may be best for this to
-be configurable via BPF. One could insert the page in the middle of
-the active/inactive list, but that would in effect create multiple
-generations.
-
->
-> I'm starting to think separate demotion/reclaim and promotion components
-> are warranted. This could take the form of a separate kernel worker that
-> occasionally gets scheduled to manage a promotion list, or even the
-> addition of a PG_promote flag to decouple reclaim and promotion logic
-> completely.  Separating the structures entirely would be good to allow
-> both demotion/reclaim and promotion to occur concurrently (although this
-> seems problematic under memory pressure).
->
-> Would like to know your thoughts here.  If we can decide to segregate
-> promotion and demotion logic, it might go a long way to simplify the
-> existing interfaces and formalize transactions between the two.
-
-The two systems still have to interact, so separating the two would
-essentially create a new policy that decides whether the
-demotion/reclaim or the promotion policy is in effect. If promotion
-could figure out where to insert the page in terms of generations,
-wouldn't that be simpler?
-
->
-> (also if you're going to LPC, might be worth a chat in person)
-
-I cannot make it to LPC. :( Sadness
-
-Yuanchu
+Thanks,
+Ian
 
