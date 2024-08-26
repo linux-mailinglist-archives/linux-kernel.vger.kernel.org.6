@@ -1,266 +1,137 @@
-Return-Path: <linux-kernel+bounces-301133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F46C95ECCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B442A95ECD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35BBD281C2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E655A1C21715
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327AB13AD22;
-	Mon, 26 Aug 2024 09:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FE8143723;
+	Mon, 26 Aug 2024 09:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q7hLIsIL"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMqQu3GE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7DD13E033
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663492; cv=fail; b=jtTB3CojZplOdyB0LgSxQ/TGl9lXOdp47wDGLDpoiVKrqdepkGNCXdNkX/SNq5m6Y4fezVdYngrGxzuvWZHh6lCR1QfBgH2N9HErHPQWgGOZyKX+WRjDrXK0oCMvtJSMhLIEUtsn8dZQTOTflAvblof8kdVt6VYoZmKCQw6trxo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663492; c=relaxed/simple;
-	bh=GYN2ulYMbmHdUBX27Jtzg9DzWk6LDTI1ZyKnBBj5nPE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sp43qn89yQo2NIKMc7I0U1qki2K0/jhryJ0OFmrkJDtxNnRbdqoFUnDt/z9IdmN4kZU/TjRmepwNuZ7kxD7btwTgXPOVmTIBZv2gDl3LQYgqUyG73p6fUA9BRDJICC6V/+WdtZWNhi8eiZZzf4+Qii0nrjJqoifL83FaKrw+Owg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q7hLIsIL; arc=fail smtp.client-ip=40.107.223.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=isiYbVG1t1RB2qfm9lUhlek4lolbpdIyo+o9IJ7TMAMncnR0gUySr2R6xsy6Oq6t11HzK0xR9pwwdHXfZlUXsHstmkw6jX60ny/zjnUBh+c64+wxgSD0KV9CYIIFw1lvE7yP8kcemGkgk+HHdAeUSUsw2KAbhqwP7noJAjG4xufbzEKrXFG1pKXa+Zw/Zgp7B/I+ZknmTf+aKQ8UY+GxTBJrp3WI+SL0TxrBPdsSt6zaoNX4epwGhQxpJNCaFZOtSO/pxJFPv1UEB+HSe6hA5+iwF5oUfFb5Kmhwu7QeM8gSHHuJRWueSXiSoxFSbQAHqelgZ4/lx9d4XGdJnEDicQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T4yGqf0Og3CqY0/J2EvjjnMlgMDvclmrmK+98wDiVPU=;
- b=iGzjxk9zdegJr5S4SVKNaAPTZk5JmiyhBH1wT6l30Sj9eOuy2pB+DRQf2POnwmSq7U/PtIU/2ESWOGW6wvCilpgySt0sZmGV1Bk3c6t6uEFxd248EexP6eWYT5QbeJx/zM5EdcaR49RwOUCKceXY9wnvi0LoMbES7243TXgEzbKhdO5n0+cOW2PZPxb+OTBBHeusqNH5pdlYjYD3mfyfxNoPu5xFD5mqNjPxWIqJIp2CyFQZLS9PgTqOKrf0n13rFTTj/Rk31l8NzMBgNipAo2fSsPWZGYSV+jOib3BSzaBJjq7cE6URLGoDiC4ucw5+MlKPr5sMCBZmWe5EO7RI+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T4yGqf0Og3CqY0/J2EvjjnMlgMDvclmrmK+98wDiVPU=;
- b=q7hLIsILcdZvI73GbvCTMZjspIV4zG04TMXyol5FWmWrxBv7awEggQdq/WIUlk81kLO7b10vN27RZtUX4NJElfGpisHS/KK5fJZPab0mhl9WIThPGhaC57PnO3X/l7f/of0/TLKuC95qYbuQCqZYIf1ZgMdjpPMgh1TxVKr5z5c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- IA0PR12MB7507.namprd12.prod.outlook.com (2603:10b6:208:441::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
- 2024 09:11:27 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 09:11:27 +0000
-Message-ID: <0f80d53f-ea8b-4f16-acf8-aa1c99966dfa@amd.com>
-Date: Mon, 26 Aug 2024 14:41:18 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
- <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
- <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
- <635b24b7-632d-4046-b82e-6ac6976686c9@amd.com>
- <0e807eec-ce51-42e2-9290-dc90c4210888@linux.intel.com>
- <20240819123400.GU3468552@ziepe.ca>
- <4d9c1513-8062-4594-a06a-c9f179abdaab@linux.intel.com>
- <72e59734-431e-4eb4-b27c-44eefab3dcb0@amd.com>
- <20240820135153.GW3468552@ziepe.ca>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20240820135153.GW3468552@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0004.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:25::9) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0A13F441;
+	Mon, 26 Aug 2024 09:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724663600; cv=none; b=eO1or5xvMkMNQB3lRBIDA2PfQMeBhhh5+F0mf78SpERKIuyxDLqkQlsytsBxpda7WdYCn82RKZDonTtnvAreJz2ZaHUEnpvl+c/6axVynH5BsT5CIsw3PmSrOl9Ky/BNVDDWaaD+mT5Hre6oqNYuStQDt/urhG8hLghRB7mARS8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724663600; c=relaxed/simple;
+	bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPXOn8HRfCZgXmZkH5qoTjpYeX+arC8QZcMmhoCZsTZ57DHSSwt1dgGp1q3paWrkO7CE4kYNvR0OBYmaxrFJ6etbG3Tv/VFISjlysMwQRwR+qJkJctwUKirLugQswXZDAXpobIi4U8J+wKxGaqvCRMAXg7b4zptfo78C72DJa0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMqQu3GE; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724663599; x=1756199599;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
+  b=YMqQu3GE+SO+wcb5Rr20FBi1LawGEh2sWdvNzJFXpg7hDS2FH+Qe6U+H
+   tY3aDZi2FZ9z1Wb3EPcyyBYzOaTUMYk3vP02A5aN3Yqa6ZrRyEVsUwNXP
+   gVSvvCVEeVxulB7e8Hy8GIB2QHcrwCvBV0gJdn/cTNePyf6EKh+mXK0FG
+   ewE145e13oaOoWz9CI1R0EqnhMDfn4NcIWamYRY3xzjRnJJzrNmDoXBVE
+   H1F0yXTcmR1PN6puiK/sz76GavwDsdxsLzsoFwgr5d0AhfDn2Q3oH6dBp
+   LRCqr6Sst7OZnkV+t8FbHE4m33Vk/T8uFQzjgyFiYQuSQVGjCvoNN2+cV
+   w==;
+X-CSE-ConnectionGUID: VDTinndkQ+a7Czynw8oB4Q==
+X-CSE-MsgGUID: pe2uhRrUQSO2qFDj3THYKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="40544221"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="40544221"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:12:53 -0700
+X-CSE-ConnectionGUID: Nox2pa3eRfOZXOnsj0pspg==
+X-CSE-MsgGUID: yZyvcUs2SMG63Lg3QNqQZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62288980"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 02:12:51 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siVmK-000GoG-1W;
+	Mon, 26 Aug 2024 09:12:48 +0000
+Date: Mon, 26 Aug 2024 17:12:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: sergii.boryshchenko@globallogic.com, dushistov@mail.ru
+Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
+Subject: Re: [PATCH] ufs: Remove redundant inode number check from
+ ufs_nfs_get_inode
+Message-ID: <202408261605.ARxTA9jX-lkp@intel.com>
+References: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|IA0PR12MB7507:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12abc817-4e3b-42f9-8e14-08dcc5af10aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RUNLRVJIMHJBQ0FXRTVxRzFaUmJjM1A0SExNNDUyZTFYWERPK045c29qUU1h?=
- =?utf-8?B?ekVIZTA1bFF2bFFIMGh2VmV1My9jVzhYNDlBYmttTHFLdlphaTVoOVBIN0pU?=
- =?utf-8?B?VUtvYm9laVpueXd3Szh5MWVucGxTMHYvU2REamdubE8wOHYvaFUvd3JCQVNv?=
- =?utf-8?B?azd5RTJ6cUNRa1JWbWZ5MGRieVpNa2ZSRk5MMUE2dFZWZTlKRi82ajFKd0Vy?=
- =?utf-8?B?emdpN1FNN0tHUy9aMzd4MTZrL0FrZHZ0QVB5ckJ5eDliV2lXWG03aGp6dWJZ?=
- =?utf-8?B?bjZwdlJxdFY5U2FkNmF3Nmc1UDdhczVOWExKN3VGOVpxUHBqenQyM2phZ0Rj?=
- =?utf-8?B?NXptLzQ3NXRmV3RhMTBiV05ZV1BUYTI3a003WXhKeGJYN3c0Ym1POWo0NkJJ?=
- =?utf-8?B?UDJ2VzdDTVpaVksxYkFRSGI1Q01TVjk5YWhxbkRkWUcvdFl0eXBtUFlBTUwv?=
- =?utf-8?B?RHF1RVRiWFQ5RGxrSnVSM25ZZ1lwMUhLWkRDYkdOb1d6RDFLcVkrR1l4dGg3?=
- =?utf-8?B?NzZYRGs1ZFBaN244QnZPLzQzR210V2hOamNWSGlreUhXQmVaS0RnSmNOZ0pl?=
- =?utf-8?B?aWtuTWRhZEpKQjNyS0R5L0tvanRXL2tadVFXY3RRdFF1dkkzb0h0bW5sSkYx?=
- =?utf-8?B?UDQ0YVhtVE1OOFNkVm5FWHBwOW41S0YyVFJHWXBvSVBsYzJDS1BJZjJQTHcv?=
- =?utf-8?B?Y3VRSS9jWWpWNWxrTk1tOHFFZjhIOEhqQVd5TXIwZy9UR1RDVUUrcTZncVdF?=
- =?utf-8?B?WHVlakJad1A1QVVCOTlXOFpWanAyckRhemNyb1hxY29JcUF0S21jWDZQcTBN?=
- =?utf-8?B?STFFUE00YUVrMXdTRXJ6dStkNWZmTWc1RUlBT3M5aG91LzdIWDZPUHE4dWRk?=
- =?utf-8?B?Qitxd2tHYUFTaS9KYkZhemNIc1NTZFNjSHRleDF4eDlXMlRCeVlHdFUzcTRG?=
- =?utf-8?B?MWliUkREcTc3cTg3K2o2YWlKUXV6SjBrSm1rbkVWU0FOdlVndXJlb3ByNkYv?=
- =?utf-8?B?SEhKSHFOMzZyK0dVRFpJeEtaSlV5YUdIVmZNUWk0S1doZUZYQVY3eHpmU21i?=
- =?utf-8?B?YzArWkR0RkdMMnlVMEd2dXRiQ2RadkNDRW1Ld1E5eG9UbENJR28vcG1SWFd5?=
- =?utf-8?B?bjl4OWpGY05EbkFuTkZidk8rS0RkaTZtNmtITkYrUjFJb1I3a3I3OHVrWmcy?=
- =?utf-8?B?M21QV0RxSWg3WllXNjFjN205VHNnNHRQTTA0NDNydXZUbHdDc3d5ZVRUVTlC?=
- =?utf-8?B?dXFON3Z5bWZ2VlFhbmtGcy9qMUFVd3k5dEpmNjlwRkEwYndsdk96ejArSmJ1?=
- =?utf-8?B?NXB4YkRYR215MmNOWW5talZqRXNCcFlac21sQ1NwdzV1NlcxSVgzSFlra05u?=
- =?utf-8?B?NGpFaG15YnNDRGtyaW5aRGUxanFqTHE3VlpxWGFnbXRSaXlFQTVma3lkZkFr?=
- =?utf-8?B?ZkFLTG14bEN3TW5mSXh5ZStNdWh0b3JsNFQ4MU5ybmZLd1Y0cHFySmJxMU82?=
- =?utf-8?B?SmtWK1IyN3o0RjJNQktodkljL2hNQUZKTTRTdVBXSmFTWllJcmd5RmRaWXdw?=
- =?utf-8?B?U29LV3FScVlmVVN5SzlsM1RtbGhHYzVLQmFSOGdBRFN6N0lsdmpjVVYxOVQ2?=
- =?utf-8?B?TUNMbmtycFRNbDJxWFphVTBRMTF6aHpDaEt3NmlTUGZ1c1dHK1NVaXMyWk1j?=
- =?utf-8?B?bE5MOTJDTGRzOUt4aENlek5palFqdXA0NWlQb1FNM05XR0VXNGQ0VGVWU0pV?=
- =?utf-8?B?cTBoT2xtcDNLSUtxZ1BvS0tZVHl3NEM4b3FBUnVXZkc0S2RMZkdwL1E2VWFW?=
- =?utf-8?Q?BZe3G9ttgwU7YjRytCigOsTu66FPJcE1klu0o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aDhNOVp2NGp0bWZGeU02dE5XU3N0elpVN3BUSjQ5U1ptVXVHZXJhdDlDdzJY?=
- =?utf-8?B?UHQycW56dEpJZWY1UDBQdTJOSlRnM2RJWlF4T0ttRGNtV2tBYVEvRGFnbjJC?=
- =?utf-8?B?dEJuOFZmS1pIbUp0R1hMcHpNaG8zNWhJTjcrdUVEQ3BVdURjdFNLTmVOdGcy?=
- =?utf-8?B?OVR6OEthOGVVSjF5WGtqTjFmOGd4azUvQm5IcTBnQVIwcDJLd0llOGI4MWpU?=
- =?utf-8?B?YmlJVWtXUVIzejJVNWt2TEdXamNYVlBkeTJBdVN2QXZEL1VRTE5YeFVXSStY?=
- =?utf-8?B?SjhVT0ZGOVFzSTRQbW5GaVN3dFhVU0ZBem5SY1Z0ME5BOERQWTU2ZlZjVnRI?=
- =?utf-8?B?TDJ3ZGppUXhGOUNWd0pUZjdmMW9oYkFhbHZ4T0o2UXR4NGl6VkZER3JGM1ZY?=
- =?utf-8?B?MUVkRVJUU1l0ZllNMm0yVEdhRm9oKzh0RDJQVUR1UlZ0eE1pTVczRHpYMlhk?=
- =?utf-8?B?N1ZocFlaYk1rdFZ5SGhzVGhjRDcrbzlEbjg2VGZTeG56bTVvZDFHMW5qZzM0?=
- =?utf-8?B?cXFqaVRDSkU0L3BRNDdpdEw2SWdWQmptTFdhb1FMcGthcHFab3pkK0tndmh5?=
- =?utf-8?B?YlJIMzl4SG5wd0pTK25EMTdseS83MkhSaEpZL1h2akJYeVNVcjU3dHB2bzFN?=
- =?utf-8?B?QlgvSUNJaXBNQUd3ZE96NEF4Mi9KUW5qOEhrUnBSQWtFa2xTQi9NVHFqbXRP?=
- =?utf-8?B?VUFVQUZkbVc3ellwZFBoVmZBd3VSRUM2L1JmZVVoWFJHUkRZS2NJc1RLcG82?=
- =?utf-8?B?K2FodjlWWjBuUDJaVU94QklFYS9IU3Fabll5ZzViVnJtZWNlRWR5SjQrOTZE?=
- =?utf-8?B?cDBTTzBlbDU2SWJlRkdWODlYZmZWZlZWV09yMGhQaWZFdlRsWHdadkdNTW4r?=
- =?utf-8?B?dU4vaStaTGtwZUVKQTlGdVl1SnhOVVd5aVJ0cnJrenVKL2drNFQvV1p1MjFq?=
- =?utf-8?B?QncwM1VhOFlHZDU3Kzdtb3UxbTA5ZVMzMGRndU0rTlRNb1AzSWJCMFlRQ1VW?=
- =?utf-8?B?UHpoWENMWHhaRDBkSkxXNGg2Rm1uTnJiRmVtdGErRTZpUzRyRHVSKzlxQ0xE?=
- =?utf-8?B?NEhjS21pTXZzbmZOTENCTldhNDNMUnRSR2tuK1Yzb0FXdkxVcHB6NGZkVEVy?=
- =?utf-8?B?dEw2d1piZXZlMUM2dWNxN2MvUEZsK0U0ais1emZ0OUxyYkM3aWZScVlCZXhh?=
- =?utf-8?B?clBDRk1laFVzWUN5RElwNUlpZjlJdXY3VDRicFZvSTdtUm9qVlJTR1RGU0JF?=
- =?utf-8?B?NGxGcjEyRUZtVDVYYktzQUdHTVlYbHNGSWtuK1JxVVVBVElwMDBjMnU3SlNj?=
- =?utf-8?B?OUZPYmk2a1AzeURBYUJEb3o3VVJvWWN1bEcrSHlubmtiSk9FREVuSWYvR3Vs?=
- =?utf-8?B?bWE4ZE1oYWMxeXg4K3lRVGdLVWZnMXJ1aXliRE1hci9HcnpMWWZjR0JjRW9m?=
- =?utf-8?B?VmhGVmtGVHk2aFhwUmg0blFWRWV1WU82WE40SGE0ZmVYeEswRGRpUDZzallt?=
- =?utf-8?B?c0l2dXVzZGxPaDlwckhxSWdlTzhWUEdJS084em90Y3FyaWxRVy9seGI2VHFo?=
- =?utf-8?B?U1l0N1UwWkF2YWlmUjJYcDREbStNamFVQ2VkRHVXV2pMQ24zSFFiNGZjNzFr?=
- =?utf-8?B?ZWFxR3d2MVM0ZHJ6MEFyWmNyLzlPZ01STlJ6TUkzVnBvcmdCSFJsSTBTaDA5?=
- =?utf-8?B?ZEZkV0ZrOU5HSzdaaC81MGxHa1hNdU8raU9rTU1TTmszSVZka1VoYkplb2V4?=
- =?utf-8?B?eGx2RkUzNExvRVo2OVhSWjljT0RNU3pVcWNCMGtZcmw3TDJTVDN2SytwUkRN?=
- =?utf-8?B?SVFFcERQMmtYZks0NStDY2x3dTh6YjAxaWZkMHF6cVNsYkNvdmpOdlVPRmtq?=
- =?utf-8?B?M2o3OUpVUU5VTWZjdGx3bGdCUkQxcVd6YU13ditscjhUS0xsZ09nWXpSaHBn?=
- =?utf-8?B?MW1RWmYwaExPVGhRNUVFcmgwQ0VHZjBoNjhiSXJENXA5K0dFRVFxVE91UUdY?=
- =?utf-8?B?WHNNN1lNdG5JcUNjZ2JySzhUNzNKM3d0RURPR2QrbGR3Q09rd2J3MHBERllk?=
- =?utf-8?B?cVRxbGZXWVFidjNJOFZaQjFDOWxjMTlCa3dXQkU0MjNLL1UrN3JBWWVSUWtm?=
- =?utf-8?Q?zWP3BY5lohuxoWbpWloIRufZC?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12abc817-4e3b-42f9-8e14-08dcc5af10aa
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 09:11:27.2199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Ti/JUO7PLGA3+XzWoOjf8p9dRpVg4O1+gZlnJfuu8/7aJ1pxkPX8w+eIKRfrKbY32K/BfLXwg9IeZXCJC8mNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7507
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
 
-Jason,
+Hi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on viro-vfs/for-next v6.11-rc5 next-20240823]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/sergii-boryshchenko-globallogic-com/ufs-Remove-redundant-inode-number-check-from-ufs_nfs_get_inode/20240826-120030
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240822142610.129668-1-sergii.boryshchenko%40globallogic.com
+patch subject: [PATCH] ufs: Remove redundant inode number check from ufs_nfs_get_inode
+config: arc-randconfig-001-20240826 (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408261605.ARxTA9jX-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   fs/ufs/super.c: In function 'ufs_nfs_get_inode':
+>> fs/ufs/super.c:101:37: warning: unused variable 'uspi' [-Wunused-variable]
+     101 |         struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
+         |                                     ^~~~
 
 
-On 8/20/2024 7:21 PM, Jason Gunthorpe wrote:
-> On Tue, Aug 20, 2024 at 02:00:08PM +0530, Vasant Hegde wrote:
-> 
->>> Some architectures, including VT-d non-scalable mode, doesn't support
->>> ATS translation and translated requests when it is working in the
->>> IDENTITY domain mode. 
-> 
-> ARM has a similar issue.
-> 
-> ATS enablement should be done when the domain is attached in those
-> cases.
-> 
-> Arguably you don't want to turn ATS on anyhow for pure IDENTITY with
-> no PASID because it is just pointless.
-> 
->> In that case, probably PCI ATS still need to be
->>> disabled when such domain is attached and re-enabled when the domain is
->>> detached.
->>
->> Does it make sense to move both PASID/PRI enablement to probe() path? something
->> like below :
-> 
-> It makes sense.
-> 
-> I don't see any ordering restriction in the PCI specification.
-> 
-> Notice that PASID does have a specific called out restriction:
-> 
-> 	/*
-> 	 * Note that PASID must be enabled before, and disabled after ATS:
-> 	 * PCI Express Base 4.0r1.0 - 10.5.1.3 ATS Control Register
-> 	 *
-> 	 *   Behavior is undefined if this bit is Set and the value of the PASID
-> 	 *   Enable, Execute Requested Enable, or Privileged Mode Requested bits
-> 	 *   are changed.
-> 	 */
-> 
->> [I am assuming ops->dev_enable_feat() interface is going away]
-> 
-> Is the plan
->  
->>   - Enable device side PASID/PRI during ops->probe_device()
-> 
-> Yes
-> 
->>   - In device attach path (ops->attach_dev()), depending on IOMMU, device and
->> domain capability configure the features like PASID, IOPF and ATS. That means
->> ATS enablement is still done at attach device path.
-> 
-> From a PCI perspective only ATS can be changed at this point..
-> 
-> The SW construct of IOPF can be changed during domain attachment.
-> 
-> Everything that is PF-only must be setup during probe_device only
-> otherwise SRIOV VFs will be broken insome cases.
+vim +/uspi +101 fs/ufs/super.c
 
-Makes sense. I will modify AMD driver to enable PRI/PASID in probe() path.
+^1da177e4c3f41 Linus Torvalds  2005-04-16   98  
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15   99  static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 generation)
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  100  {
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15 @101  	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  102  	struct inode *inode;
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  103  
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  104  	inode = ufs_iget(sb, ino);
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  105  	if (IS_ERR(inode))
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  106  		return ERR_CAST(inode);
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  107  	if (generation && inode->i_generation != generation) {
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  108  		iput(inode);
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  109  		return ERR_PTR(-ESTALE);
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  110  	}
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  111  	return inode;
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  112  }
+f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  113  
 
-
-> 
-> See
-> https://lore.kernel.org/all/0-v1-0fb4d2ab6770+7e706-ats_vf_jgg@nvidia.com/
-> for this concept applied to ATS.
-> 
-> This means probe_device() has to do:
-> 
->  - ATS properties 
->  - PRI
->  - PASID properties
-> 
-> At a minimum.
-> 
-> It would be nice if the iommu core code did this setup in one place
-> immediately after calling probe_device() but before attaching a
-> domain.
-> 
-> There is no particularly good reason to have this coded in all the
-> iommu drivers.
-
-Yeah. that makes sense. We may have to adjust few things in driver (at least AMD
-driver). But its doable.
-
--Vasant
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
