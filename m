@@ -1,69 +1,54 @@
-Return-Path: <linux-kernel+bounces-301621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2168195F351
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB0E95F359
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03071F225FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CC61F2251E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E40918732F;
-	Mon, 26 Aug 2024 13:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ACF188915;
+	Mon, 26 Aug 2024 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HUReV4MW"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Nvgrh7RX"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DEB944D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B508188588;
+	Mon, 26 Aug 2024 13:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680412; cv=none; b=DyZUHr+HjB0WusHMbdAlm7Z7FfgHNG96JEG/RczRvfnBuZWQtGyKOl+KfJpxYjnoOCR9G3j86OtnjvmwVTC1KwrGcoYiJHobkTS3s40rCuf9LINFYpU9ukJRxSMM0N4iqW8zTGRfpf++Totpchs/ch3a68rPXgEoP+gVHB9dsfg=
+	t=1724680582; cv=none; b=jAtGZ2tdgWSRHEVQjjNJ1ctrecCGeoCTBLuXrVQjGZ/bbGK2PoA/M4D6yD7rWjJCb9xaLvrQ1mYkNs198EkriPNMoieJbQKSE4zr/b7M2X7ZRmqkD2LoTucb9UQoe2MfWxOO4c/ULMwfzyFib37ESVe7m1qr7VlLWTC5qTHz6Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680412; c=relaxed/simple;
-	bh=Unqx8jmeFdF1VI5QOpi4woYBB3HElD7uCXnAKWY7p3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6ZlApvwJ2P6DPRedHM3+ABej7UdyUnN1jrp4gtTeYJhR6LerknQ1hqFkczrlP6Zt5zOYyD+mouIU1TQnZ9vxrPLAaAjoGiAabYo1ZMdW4EN1FSsxiJlf0HhRhAq5a24cj2Qo628DhQwW5a/tgKJ5U/7fuDYuuLIAPEUpQ8Armg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HUReV4MW; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202318c4f45so43556705ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724680409; x=1725285209; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Q9PuXmg221v4n3ZTHASMPKovmaAn+KWVQTnJOgnGGc=;
-        b=HUReV4MWCmsCMNZbMEcp9XXMs8oxkpkgHLci9RZGSOUbBd5DCsV3uroinBPRJ1W8Qw
-         X7+4pBxnHmPsn49Nl9ho1YxA+F/N3IDHZrw2coQNdAmYzLeH3Y89n4ZFFqaaDoz1a6bL
-         m7cC5hxnz8+nYIQKGy4Z9WHjNpEioiULU2r0w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724680409; x=1725285209;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Q9PuXmg221v4n3ZTHASMPKovmaAn+KWVQTnJOgnGGc=;
-        b=PkXFnlyURYOKcg2SlWsodOfAZe+LbcDdzx+aS42Ui0PjwudBjKoMtTAXNWCiDhdlHg
-         HNORBBIgPItMyPTa73cARteE8FkvcdMkcsA0gdAOPy2PdKokQ5qwrpSzBBRnb2zdS5JJ
-         ZqzdYJ71vow3cAmgRweWgqlFGaDO8XeNaRzqQ+ID4qleDUEAIYU/Aw4XmE3gtHObejSC
-         0y86vHt590qw6oQbRUIc49W2S3E9b1vLCndh4CJYIOBPQUQOevAyO0ndguW7nhmVkY1p
-         etacojPzH553pCjqw76kUHsTxBq86k1Tmes/2jnKWp6x2veoV6gxqYR3X3sNhxFCeDQz
-         M5+g==
-X-Gm-Message-State: AOJu0YwtnnaJLGRtPbZoweUcQdrXJy1qNtQGKqFLTh7y7R+09lD60Ci+
-	rutgawejvc7HWCAQsI83+UljN4Gdopj8HXX4aQYsKpOBkkwpV1NvIwDQSMjKprc=
-X-Google-Smtp-Source: AGHT+IHPm3yVwNwle/7bH3vLcBP8lhcS/vg7K/OhSlZ4Tf+Gfj75dqkDPda3S/tSNa+iUkm9JiM9Hg==
-X-Received: by 2002:a17:902:e5cd:b0:1fd:876b:2a5c with SMTP id d9443c01a7336-2039e56ad74mr124917195ad.65.1724680408762;
-        Mon, 26 Aug 2024 06:53:28 -0700 (PDT)
-Received: from [192.168.121.153] ([218.49.71.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560faddsm67820495ad.231.2024.08.26.06.53.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 06:53:28 -0700 (PDT)
-Message-ID: <32d722e4-7c0d-414e-b94b-8c40e0be0302@linuxfoundation.org>
-Date: Mon, 26 Aug 2024 07:53:22 -0600
+	s=arc-20240116; t=1724680582; c=relaxed/simple;
+	bh=yUh/PbjdVDRxVpF/67lzvzXYxBudQEH3r7sO0dX3+oo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Gt9JhKu14hq74OJMnq386SD7cRCfymbO/RUZe6TrBtp7DYsZBrNMzVeMl1vVEL5gef5I0XpQ71s8RjSU2iXy4akRHJ3dOIJg7QKwUPfwb4JgNGkqD0pNKpmmAr50AfRWlS2Ze2QjRdi0d8jqLKNAJ7DGYG2LbTek9TnfwaC9Uo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Nvgrh7RX; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724680549; x=1725285349; i=markus.elfring@web.de;
+	bh=ljutM5Y53a9lGEfXooTYa7wadR0GIhj1IYjFGa40WFg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Nvgrh7RX15Ac31PPghZGdKOtpIxEnMvv7UtmkCjPDo3tDIehXJ38ynLuZNMIqSTT
+	 gc3O4cK0jg/p7FCovMLQEX2/9DEcqWD54h1hOAnax2bH56eZ3L+wT8MIBZQ7BGlcQ
+	 lHgDWkKAuPpX++rRzsa5lEA8+79Sf/wr+A843Uqlz/HsCL77pSnRzuja/MiNhbIZj
+	 Q0wg6cLaBBSLjbnLsxfgxWMQBd3OMuEzRXQPbd2HuJtSEHkPU82clAqWQE9t9corM
+	 PGhKxZCHs3UGd2uA5RakNaQE/X/9lK8o8N1MohoEjNz9y8/4PivscpAzoG7OpyCZH
+	 Wm0R+pfCwDY286V2yw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M43KW-1siaCD2eYq-0014VI; Mon, 26
+ Aug 2024 15:55:49 +0200
+Message-ID: <467d9b9b-34b4-4a94-95c1-1d41f0a91e05@web.de>
+Date: Mon, 26 Aug 2024 15:55:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,109 +56,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ftrace/selftest: Test combination of function_graph
- tracer and function profiler
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240821150903.05c6cf96@gandalf.local.home>
- <3901c521-be69-4824-a571-9182b9af02b6@linuxfoundation.org>
- <20240822091929.0db8837f@gandalf.local.home>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240822091929.0db8837f@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Baokun Li <libaokun1@huawei.com>, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>
+Cc: stable@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Hou Tao <houtao1@huawei.com>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Yang Erkun <yangerkun@huawei.com>,
+ Yu Kuai <yukuai3@huawei.com>, Zizhi Wo <wozizhi@huawei.com>
+References: <20240826040018.2990763-1-libaokun@huaweicloud.com>
+Subject: Re: [PATCH] cachefiles: fix dentry leak in cachefiles_open_file()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240826040018.2990763-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PSLR65nK0lrzwvj7aCO9Q5QQ575PH5NO4WNx1CzaS5+UEojxG7C
+ buOAAyDAT148MNNGAPB7xBJ8yvQGIgFXKtemIZahq3sIoRu9TpbjYfhDWiq+2ktNs987Keo
+ 1+2gCpSu6fysH172XTpXZ4C+6SZnII/EcJ5sqwSd4/lyi7+m1fnLlcngJGrqkqv6gNvD60N
+ jihrE3BDCtu4jgWe+UA1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kWz6dCq+QCA=;Oev0cpJj8SFp3IYWlRmTfc+vk6x
+ ULO5y1OqDNMz9dgmRY7vwVAyRoJCQMdbPS7xd+Z/zqQas36onHhj0yAYtqwRjLMiBvnDBUngC
+ u12pYqjEnR6DEx7t5hnYHonHFZZ9PVmjmxoWLX3NxdzlHcqm6kx5LjWH0TUh5rJ4V+CFsin6v
+ AxSrBF0WEYYxLYczmL++hgyl5rZaoMMtcYYaVJhIJ+pYYiOZQm8DbjlqHli06u0QPL2ivd9h0
+ pWpSC0233evlVhZ7JSvTZJbtkOdIzDduw08vp7iXOivwFoLHsGXEkYn7iUl8zSo8xjOuT6oGi
+ QmszX8Qv86Nv4s4DCxhp47gAPo4cbf4/29IkLWy6WRnbjtRV5dDmNFbp/0jwxKbAoE8wa+kpv
+ jAkS4P4zGS50IWFq3KYlArx4RA2Cz6T2d5gaghQqo+K8ya5i6JLPipZQwYVj64ihz2AE+dAMC
+ CYuB1A8eaCiQfDNczZbLUgmGHoWQS3gHCJg4stYda0QadFGU2LCcO1Y4DPUsS5CJ7GQW4Rxu7
+ oZwNL16rJvuyYDOay7dzNtmeMOzqZmwGzZGPAOWA5wdxZPeuTw1bbvTMM79zEa1oOw6IUAR1r
+ R9jQmn3D1jrtcEKcpIDB/PyAEgsg+plOhNJK5FLxZRKcq5YUxN3FRtlhrX2gC1bOoqEjOtXbY
+ 81mCG86t3onqhoS3fJXwUUOk9uqHtdDf3iHOOrx7UE+7JWV3lgcLoTf7YZLHbz7v4fTpI89zf
+ m+dgLrBNv3CNRAt6ByUM/qZobRtQl3HO+/YcFw9pJB7ST7nPeO8iI/eaSfh7579pnWIR+ycob
+ TG3aXi4nrhj76LWaJuy1v+zw==
 
-On 8/22/24 07:19, Steven Rostedt wrote:
-> On Wed, 21 Aug 2024 21:54:42 -0600
-> Shuah Khan <skhan@linuxfoundation.org> wrote:
-> 
->> On 8/21/24 13:09, Steven Rostedt wrote:
->>> From: Steven Rostedt <rostedt@goodmis.org>
->>>
->>> Masami reported a bug when running function graph tracing then the
->>> function profiler. The following commands would cause a kernel crash:
->>>
->>>     # cd /sys/kernel/tracing/
->>>     # echo function_graph > current_tracer
->>>     # echo 1 > function_profile_enabled
->>>
->>> In that order. Create a test to test this two to make sure this does not
->>> come back as a regression.
->>>
->>> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
->>>
->>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->>> ---
->>>    .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 30 +++++++++++++++++++
->>>    1 file changed, 30 insertions(+)
->>>    create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
->>>
->>> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
->>> new file mode 100644
->>> index 000000000000..62d44a1395da
->>> --- /dev/null
->>> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
->>> @@ -0,0 +1,30 @@
->>> +#!/bin/sh
->>> +# SPDX-License-Identifier: GPL-2.0
->>> +# description: ftrace - function profiler with function graph tracing
->>> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
->>> +
->>> +# The function graph tracer can now be run along side of the function
->>> +# profiler. But there was a bug that caused the combination of the two
->>> +# to crash. It also required the function graph tracer to be started
->>> +# first.
->>> +#
->>> +# This test triggers that bug
->>> +#
->>> +# We need function_graph and profiling to to run this test
->>> +
->>> +fail() { # mesg
->>> +    echo $1
->>> +    exit_fail
->>> +}
->>> +
->>> +echo "Enabling function graph tracer:"
->>> +echo function_graph > current_tracer
->>> +echo "enable profiler"
->>> +
->>> +# Older kernels do not allow function_profile to be enabled with
->>> +# function graph tracer. If the below fails, mark it as unsupported
->>> +echo 1 > function_profile_enabled || exit_unsupported
->>> +
->>> +sleep 1
->>
->> Any specific reason for this sleep 1 - can you add a comment on top?
-> 
-> We add sleep 1 in several locations of the ftrace selftests to let the
-> tracing run for a bit just to see if it triggers anything. Otherwise the
-> clean up can happen before anything gets traced. Although, it's highly
-> unlikely in this case, but still.
-> 
-> I could add a comment if you want of just:
-> 
-> # let it run for a bit
-> sleep 1
-> 
-> 
->>> +
->>> +exit 0
->>
->> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
->>
->> Let me know if you would like v2 for this to be taken through my tree.
-> 
-> I'll make a v2 if you want me to.
+=E2=80=A6
+> Add the missing dput() to cachefiles_open_file() for a quick fix.
 
-No need for a v2
+I suggest to use a goto chain accordingly.
 
-thanks,
--- Shuah
 
+=E2=80=A6
+> +++ b/fs/cachefiles/namei.c
+> @@ -554,6 +554,7 @@ static bool cachefiles_open_file(struct cachefiles_o=
+bject *object,
+>  	if (!cachefiles_mark_inode_in_use(object, d_inode(dentry))) {
+>  		pr_notice("cachefiles: Inode already in use: %pd (B=3D%lx)\n",
+>  			  dentry, d_inode(dentry)->i_ino);
+> +		dput(dentry);
+>  		return false;
+
+Please replace two statements by the statement =E2=80=9Cgoto put_dentry;=
+=E2=80=9D.
+
+
+=E2=80=A6
+> error:
+> 	cachefiles_do_unmark_inode_in_use(object, d_inode(dentry));
++put_dentry:
+> 	dput(dentry);
+> 	return false;
+> }
+
+Regards,
+Markus
 
