@@ -1,112 +1,166 @@
-Return-Path: <linux-kernel+bounces-301536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB7295F23A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7548A95F23F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 313AAB23925
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAE71C21336
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055841741C0;
-	Mon, 26 Aug 2024 12:56:12 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0368F17625C;
+	Mon, 26 Aug 2024 12:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hGphyEwF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC6155A43;
-	Mon, 26 Aug 2024 12:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806AD1547E9;
+	Mon, 26 Aug 2024 12:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676971; cv=none; b=DlohVf/TZzT5dBbJy4EqgMiN5gW0xSDjP9qvHwD4wvRtvV02RxjaKTzpt8RVKCZGv35swg2SGctJkkedmgyloa1VReXvPOUUa/YGTYFIEEfRb01cnF1RLQjFIFN6FC7ZBhLElsgIYl4hQIDETqs4xNnhZPIGkRr7AsjhvjT6xDo=
+	t=1724677091; cv=none; b=E7ClQaADsUtsULE1KXKRPLWlTbKpVw2bLtrWjtXDEGZOcPMz/vNNXngTucroxoGnhu4WPpKdAldDp4rWXM8bH0DkpotgRWOJ1ZCtDeM5FzLdjL2jbqUehJUNgwVbkPJxxOmE6jm1vVIZbeNGMxM13zg28SNweHuOslyXnAtBvvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676971; c=relaxed/simple;
-	bh=EzVe+IRj5Ys6ZzjzM1mOznky6zY0gybFP8fcg3upRys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G7sOYKOYR2fdQj7A0A8Hzf+a5Rf4nh0ojD+fwDeCS31XgtWdgYUiDBQzNzrrVJJxzqDOZiYKmc1V1lXj+777q8RIdqcsZnjXOCYUAx4Mzu3oQS6Q4ts8TTrHeVZmySH15mft8Wdk4OmHoq0R75Xa2eTkYqVdDtlks0hsTIjTE9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WsrJ9268SzyR3h;
-	Mon, 26 Aug 2024 20:55:37 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 79DC01800A5;
-	Mon, 26 Aug 2024 20:56:05 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 20:56:03 +0800
-Message-ID: <061c39b9-c2fb-34e8-5848-dc2d2d9ca5eb@huawei.com>
-Date: Mon, 26 Aug 2024 20:56:02 +0800
+	s=arc-20240116; t=1724677091; c=relaxed/simple;
+	bh=+PbHs8l+qbavMVlAXLwDj8SfpLxFMgAxuZhwJr8ymE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egXXTvsHQAKsHa0832+LKor8/5kVqlDhcbnprQe4yiHqA5BXbY0gKshcIhUPzKPA5qsfuOrvQZaCMtoRPO4sxPE0e1hjYGYacGroBOuQZHLy5m8pcMviI05HLJsb157Vbf0R/0vnU9Ft7tSUTEdOjgb6gsAp4JVRMJy1n7P6z2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hGphyEwF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724677087; x=1756213087;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+PbHs8l+qbavMVlAXLwDj8SfpLxFMgAxuZhwJr8ymE0=;
+  b=hGphyEwF7frnJNA2dEPB0F6zzOgHkzyCTtFPq6gQfZFaOeUyuTZOKOKN
+   /BX4BGB6tKEIgWoHUqFfmitQtDSQ8w7McSE+j0qErs2Bbzt5AVbhc/5hQ
+   7yDd5+ZtgHNQGMG4LKfvZlGfvhPs1a1w/lFPBjlGssKz9ic2/SwUAvyKn
+   038fKYk9Rnsgr7iyP9VAejJndz6rbq5zlw+Jj5fTMYH3O9zBAtHOchG2a
+   cB+VXnloOHChyTMXXmgUPcJqOGoCKKca7epwiiKokfpj31JSXRFqaG8jP
+   f1ObR+j9uJ5eEx/ea65xd6GNatwsm9rbaVdEQ3hdkVZWCsszv2Zc8tecB
+   Q==;
+X-CSE-ConnectionGUID: fH2n1XfHQjuhNfLEot/hwA==
+X-CSE-MsgGUID: vhMXP1C/S6er9YGSdLGD6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="45614097"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="45614097"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 05:58:06 -0700
+X-CSE-ConnectionGUID: v8gTvY0mSQOLgpDYqNeKHw==
+X-CSE-MsgGUID: leVOLblET+yax54yva8Ong==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="67200477"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 26 Aug 2024 05:58:03 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siZIH-000H63-0F;
+	Mon, 26 Aug 2024 12:58:01 +0000
+Date: Mon, 26 Aug 2024 20:57:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
+	Yiting Deng <yiting.deng@amlogic.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
+Message-ID: <202408262035.4BysJ5CK-lkp@intel.com>
+References: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
- for_each_child_of_node_scoped()
-Content-Language: en-US
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: <michal.simek@amd.com>, <richard@nod.at>, <vigneshr@ti.com>,
-	<liang.yang@amlogic.com>, <neil.armstrong@linaro.org>,
-	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <heiko@sntech.de>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>, <wens@csie.org>,
-	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
-	<gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
-	<u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
-	<christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
-	<christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <jic23@kernel.org>
-References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
- <20240826115213.389acaef@xps-13>
- <f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
- <20240826144917.2c4e202d@xps-13>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240826144917.2c4e202d@xps-13>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
+
+Hi Xianwei,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on dff71e5c6076314f3eefe700abd6af834c57bd64]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xianwei-Zhao-via-B4-Relay/dt-bindings-rtc-Add-Amlogic-A311L2-and-A113X2-rtc/20240826-125504
+base:   dff71e5c6076314f3eefe700abd6af834c57bd64
+patch link:    https://lore.kernel.org/r/20240823-rtc-v1-2-6f70381da283%40amlogic.com
+patch subject: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
+config: i386-buildonly-randconfig-003-20240826 (https://download.01.org/0day-ci/archive/20240826/202408262035.4BysJ5CK-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408262035.4BysJ5CK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408262035.4BysJ5CK-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/rtc/rtc-amlogic.c:159:6: warning: variable 'alarm_sec' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     159 |         if (alarm->enabled) {
+         |             ^~~~~~~~~~~~~~
+   drivers/rtc/rtc-amlogic.c:173:19: note: uninitialized use occurs here
+     173 |                 alarm->enabled, alarm_sec);
+         |                                 ^~~~~~~~~
+   include/linux/dev_printk.h:168:46: note: expanded from macro 'dev_dbg'
+     168 |         dev_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                     ^~~~~~~~~~~
+   include/linux/dev_printk.h:129:34: note: expanded from macro 'dev_printk'
+     129 |                 _dev_printk(level, dev, fmt, ##__VA_ARGS__);            \
+         |                                                ^~~~~~~~~~~
+   drivers/rtc/rtc-amlogic.c:159:2: note: remove the 'if' if its condition is always true
+     159 |         if (alarm->enabled) {
+         |         ^~~~~~~~~~~~~~~~~~~
+   drivers/rtc/rtc-amlogic.c:157:20: note: initialize the variable 'alarm_sec' to silence this warning
+     157 |         time64_t alarm_sec;
+         |                           ^
+         |                            = 0
+>> drivers/rtc/rtc-amlogic.c:565:34: warning: unused variable 'aml_rtc_device_id' [-Wunused-const-variable]
+     565 | static const struct of_device_id aml_rtc_device_id[] = {
+         |                                  ^~~~~~~~~~~~~~~~~
+   2 warnings generated.
 
 
+vim +159 drivers/rtc/rtc-amlogic.c
 
-On 2024/8/26 20:49, Miquel Raynal wrote:
-> Hi Krzysztof,
-> 
-> krzk@kernel.org wrote on Mon, 26 Aug 2024 12:19:07 +0200:
-> 
->> On 26/08/2024 11:52, Miquel Raynal wrote:
->>> Hi Jinjie,
->>>
->>> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
->>>   
->>>> Use scoped for_each_available_child_of_node_scoped() when iterating over
->>>> device nodes to make code a bit simpler.  
->>>
->>> Why is this a resend ? Did I miss a previous iteration?  
->>
->> You were not cc-ed on previous iteration. I asked for proper split
->> between subsystems and sending to maintainers, thus this resend.
-> 
-> Ok. Makes sense, and the patchset looks fine.
-> 
-> Jinjie, please always include a changelog when you send new versions,
-> and explanations for a RESEND.
+   153	
+   154	static int aml_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+   155	{
+   156		struct aml_rtc_data *rtc = dev_get_drvdata(dev);
+   157		time64_t alarm_sec;
+   158	
+ > 159		if (alarm->enabled) {
+   160			regmap_update_bits(rtc->map, RTC_CTRL,
+   161					   RTC_ALRM0_EN, RTC_ALRM0_EN);
+   162			regmap_update_bits(rtc->map, RTC_INT_MASK,
+   163					   RTC_ALRM0_IRQ_MSK, 0);
+   164	
+   165			alarm_sec = rtc_tm_to_time64(&alarm->time);
+   166			if (alarm_sec > U32_MAX) {
+   167				dev_err(dev, "alarm value invalid!\n");
+   168				return -EINVAL;
+   169			}
+   170			aml_set_alarm(rtc, alarm_sec);
+   171		}
+   172		dev_dbg(dev, "%s: alarm->enabled=%d alarm_set=%llds\n", __func__,
+   173			alarm->enabled, alarm_sec);
+   174	
+   175		return 0;
+   176	}
+   177	
 
-Ok, thanks for the advice.
-
-> 
-> Thanks,
-> Miquèl
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
