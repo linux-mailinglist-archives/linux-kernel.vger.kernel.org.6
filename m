@@ -1,109 +1,287 @@
-Return-Path: <linux-kernel+bounces-302113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF05995F9F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:47:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686F395F9FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69571284679
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:47:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4841B224EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00DD132121;
-	Mon, 26 Aug 2024 19:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D461993A3;
+	Mon, 26 Aug 2024 19:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OF+SCS3v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AHghUoTk"
+Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596D12C80F
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D499A54648
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701641; cv=none; b=YMBnbq73CJAB9E0xUuRV+ZjRXdfQsr2DJcIZmZuvZAKX4Lnpz2BfUfJ7ASZH0Cyzny/Pp4jKFgQEz7oQdYLuEcHL/7WPE/roUsOcBZ2uP7hURGmMM/htDDjEyv1sHYJtlZA51Z8BgadISPdI2o130Dthafmb9Bpvm+GZ1OQCAkU=
+	t=1724701861; cv=none; b=LuIP3VYrclmMszpO5mCF0mYa7JE400m3/tkucn6zk0zjXlLNdttXaB8uGyXdPv5syJ0Aa5Kfh7UFka+DFR5Ro27E7z4HG8GjAEi9x0wsrx8CDCb+GJ4mR/hoc4cXgQPcjUb90R/nBwrWXQ200nlqcgoP1geH0KHe1WnPV/FxhPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701641; c=relaxed/simple;
-	bh=k+9W/nw17jlBjjtfac2axE2lhU/IXbWLpg+gT0rR8JI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=spZ9fq+sL5gQmJZeMZR6KDinZlvi5Knb9lfM0/oMD5cbuN6Mucbkb/5GNMdAs7/D6GHq2rU0Ok9y+PYe6J/LQz5qvFVmjQDd1e6/jAB0hrD02dKztfNx78rMhceyZE6BlArPfMBwP3jp537dZBwMM0CkDtJg6yQc/FV5fOM+JH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OF+SCS3v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724701638;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+qhWVNvkXNJ4Pj/gRvSvQxzHwZIu1ZYnGi5nOysGGjk=;
-	b=OF+SCS3vmEPGKokMRsClp/U0/Gv4hraoYX4x1zsj6UnLiP1V9WY46VJKULJ2X3KnX1vZwJ
-	123I2pS5NQiOwpgyoALv7cS1wnFj1jrYDD/3ZcaytmGVJAe0ZywnUXr+7Z8uhEP8TY5zY7
-	MfHwg3QNn9Sg+b5LIsqqjBYCLPBjoyw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-hAwK9ZWPPzyDKeQ5KdUDlQ-1; Mon,
- 26 Aug 2024 15:47:13 -0400
-X-MC-Unique: hAwK9ZWPPzyDKeQ5KdUDlQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E3C81955BF4;
-	Mon, 26 Aug 2024 19:47:09 +0000 (UTC)
-Received: from [10.2.16.157] (unknown [10.2.16.157])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0862C300019C;
-	Mon, 26 Aug 2024 19:47:06 +0000 (UTC)
-Message-ID: <9793ce0d-842a-4876-860a-9b7b8d538e45@redhat.com>
-Date: Mon, 26 Aug 2024 15:47:06 -0400
+	s=arc-20240116; t=1724701861; c=relaxed/simple;
+	bh=MMfRm30DKmAgIRDJDysPRmHSCruCns16kqlRyLPykmk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvZh8ZNklI0cZr1mFEH5RKbA7zfGQCRe5COWdPURtyox30GKI1wwOs3TOM4ONp1s4jySOxPse1BJSHWFjpIQp7+NYvMLfb4mIxLQlkDXfIj+EYGhGIcdSjcm7tikB//5IYn/R64rahjFwmSWkpH24NgfMnaAJgMNIzgZziFQSyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AHghUoTk; arc=none smtp.client-ip=209.85.128.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso41286705e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724701858; x=1725306658; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nm1b7fe+EM2KbxsMouqWXhXxk0JeYyRkXhbMRY2MV68=;
+        b=AHghUoTkE4yOiAJy4LNPy1fRpzci6tNt0XLPUUrS/9LFDz+62u0CiSkq11a5sqrZB1
+         ejDhhkmaBRMWLSLdpjLiKiNkLPySpx6kRxpBkhtLof7zvZTuA4noA2uMK2Om6wpUe4Ot
+         KHfz+HmnN7t/yIN3LGi52LusAA83E3EwB1vXT1NoF2sgA3f+PnSFzJ0marK48bmP2pk/
+         C1fSCgiOzw8SGKRL7I4PJidY0bUbroj2SuGSeZ4np+7v+pNBaNFIz5M0SfOw+AFvdeln
+         2KeAMh00RnCFuoEpTsBJV3v4pYRgRyTpCi42EhyMndSWuyR/AnalfKoRfeL/yQTJDjpc
+         hTRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724701858; x=1725306658;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nm1b7fe+EM2KbxsMouqWXhXxk0JeYyRkXhbMRY2MV68=;
+        b=j1palX7dvca02FEKRKl+dEe4YkVY9022DiOAaHYbYSsJl0dKm6zZeTsWf3rYOMGt8p
+         hi66nJesrCgnBwDTZfuahST9gS6SFCcMrtxYWfHjYR9At0VxlTyzpz83YAFmAleY8UAu
+         T4UIec1bo9YZl1L0RftZPvtJKcBqUbUEBLGVexl2Wg1y3l6mtGG4PRwuWq21kUAaLEFy
+         VYOsQv6M1u62c3V8ATcQy0aWiSRZEOr34DVUXPN7VC1IPnNetxw9AZ3/Q1oiDp3oqkek
+         dhmj252SwOsQkng+PF7mipfHjSxCVleGXNy8Iwp7s3pUQFsuk2CCuirIeW1QfuouuYLY
+         ZhoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoe2wcPqoCDGrgjQL8wVBRqJzA8s/KrNOmzs2pYsD88rZtoF/aCExnhs2745nPs5Dr0euBTPqI75y7NXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzulGl4UUlNxpwDgGbM9HLd1Gfi2S2mbfzMbjdnjHDc7ZLkTJj8
+	0u6ADb+JuoL/SfaYj58tJ+nr81RWLEBNSZu1nX/SI7khjFbxDqTD9xFua5rtUEE=
+X-Google-Smtp-Source: AGHT+IF2zQ2HTqZgToRotlgcOcl2W6GGPXIdSXXSe9YgqKKpwd3OPRH5/4dJ7SYP5S2nDsD/4FzRPA==
+X-Received: by 2002:a5d:4cc2:0:b0:371:72a8:15e with SMTP id ffacd0b85a97d-37311855fecmr7064417f8f.16.1724701857803;
+        Mon, 26 Aug 2024 12:50:57 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f41f249sm488655485a.126.2024.08.26.12.50.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 12:50:57 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 26 Aug 2024 21:51:02 +0200
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
+ parsed from DT
+Message-ID: <Zszcps6bnCcdFa54@apocalypse>
+Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <8b4fa91380fc4754ea80f47330c613e4f6b6592c.1724159867.git.andrea.porta@suse.com>
+ <20240821152441.GA222583@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next 09/11] cgroup/cpuset: move v1 interfaces to
- cpuset-v1.c
-To: Tejun Heo <tj@kernel.org>
-Cc: Chen Ridong <chenridong@huawei.com>, lizefan.x@bytedance.com,
- hannes@cmpxchg.org, adityakali@google.com, sergeh@kernel.org,
- mkoutny@suse.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- chenridong@huaweicloud.com
-References: <20240826132703.558956-1-chenridong@huawei.com>
- <20240826132703.558956-10-chenridong@huawei.com>
- <eaef1faf-c3f3-4664-ae7d-5cca611925e4@redhat.com>
- <ZszaJFzcmBskojVS@slm.duckdns.org>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZszaJFzcmBskojVS@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821152441.GA222583@bhelgaas>
 
+Hi Bjorn,
 
-On 8/26/24 15:40, Tejun Heo wrote:
-> On Mon, Aug 26, 2024 at 03:30:14PM -0400, Waiman Long wrote:
-> ...
->> Another alternative is to include cpuset-v1.c directly into cpuset.c like
->>
->> #ifdef CONFIG_CPUSETS_V1
->> #include "cpuset-v1.c"
->> #else
->>     ....
->> #endif
->>
->> Then you don't need to change the names and will not need cpuset-internal.h.
->> It is up to you to decide what you want to do.
-> FWIW, I'd prefer to have cpuset1_ prefixed functions declared in cpuset1.h
-> or something rather than including .c file.
+On 10:24 Wed 21 Aug     , Bjorn Helgaas wrote:
+> On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
+> > The of_pci_set_address() function parse devicetree PCI range specifier
+> 
+> s/parse/parses/ ? 
 
-Sure. Let's have "cpuset1_" prefix if it is v1 specific and "cpuset_" 
-prefix if it is used by both v1 and v2. That applies only to newly 
-exposed names.
+Ack.
 
-Cheers,
-Longman
+> 
+> > assuming the address is 'sanitized' at the origin, i.e. without checking
+> > whether the incoming address is 32 or 64 bit has specified in the flags.
+> > In this way an address with no OF_PCI_ADDR_SPACE_MEM64 set in the flagss
+> 
+> s/flagss/flags/
 
+Ack.
+
+> 
+> > could leak through and the upper 32 bits of the address will be set too,
+> > and this violates the PCI specs stating that ion 32 bit address the upper
+> 
+> s/ion/in/
+
+Ack.
+
+> 
+> > bit should be zero.
+> 
+> I don't understand this code, so I'm probably missing something.  It
+> looks like the interesting path here is:
+> 
+>   of_pci_prop_ranges
+>     res = &pdev->resource[...];
+>     for (j = 0; j < num; j++) {
+>       val64 = res[j].start;
+>       of_pci_set_address(..., val64, 0, flags, false);
+>  +      if (OF_PCI_ADDR_SPACE_MEM64)
+>  +        prop[1] = upper_32_bits(val64);
+>  +      else
+>  +        prop[1] = 0;
+> 
+> OF_PCI_ADDR_SPACE_MEM64 tells us about the size of the PCI bus
+> address, but the address (val64) is a CPU physical address, not a PCI
+> bus address, so I don't understand why of_pci_set_address() should use
+> OF_PCI_ADDR_SPACE_MEM64 to clear part of the CPU address.
+>
+
+It all starts from of_pci_prop_ranges(), that is the caller of of_pci_set_address().
+val64 (i.e. res[j].start) is the address part of a struct resource that has
+its own flags.  Those flags are directly translated to of_pci_range flags by
+of_pci_get_addr_flags(), so any IORESOURCE_MEM_64 / IORESOURCE_MEM in the
+resource flag will respectively become OF_PCI_ADDR_SPACE_MEM64 / OF_PCI_ADDR_SPACE_MEM32
+in pci range.
+What is advertised as 32 bit at the origin (val64) should not become a 64
+bit PCI address at the output of of_pci_set_address(), so the upper 32 bit
+portion should be dropped. 
+This is explicitly stated in [1] (see page 5), where a space code of 0b10
+implies that the upper 32 bit of the address must be zeroed out.
+Please note that of_pci_prop_ranges() will be called only in case 
+CONFIG_PCI_DYNAMIC_OF_NODES is enabled to populate ranges for pci bridges and
+pci endpoint for which a quirk is declared, so I would say not a very
+often recurring use case.
+ 
+[1] - https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+
+> Add blank lines between paragraphs.
+
+Ack.
+
+> 
+> > This could cause mapping translation mismatch on PCI devices (e.g. RP1)
+> > that are expected to be addressed with a 64 bit address while advertising
+> > a 32 bit address in the PCI config region.
+> > Add a check in of_pci_set_address() to set upper 32 bits to zero in case
+> > the address has no 64 bit flag set.
+> 
+> Is this an indication of a DT error?  Have you seen this cause a
+> problem?  If so, what does it look like to a user?  I.e., how could a
+> user find this patch if they saw a problem?
+
+Not neccessarily a DT error, but an inconsistent representation of addresses
+wrt the specs. I incidentally encountered this on RaspberryPi 5, where
+the PCI config space for the RP1 endpoint shows 32 bit BARs (basically an
+offset from zero) but the effective address to which the CPU can access the
+device is 64 bit nonetheless (0x1f_00000000).  I believe this is backed by
+some non standard hw wiring.
+
+Without this patch the range translation chain is broken, like this:
+
+pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
+~~~ chain breaks here ~~~
+pci@0      : <0x82000000 0x1f 0x00   0x82000000 0x1f 0x00     0x00 0x600000>;
+dev@0,0    : <0x01 0x00 0x00         0x82010000 0x1f 0x00     0x00 0x400000>;
+rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+
+while with the patch applied the chain correctly become:
+
+pcie@120000: <0x2000000 0x00 0x00    0x1f 0x00                0x00 0xfffffffc>;
+pci@0      : <0x82000000 0x00 0x00   0x82000000 0x00 0x00     0x00 0x600000>;
+dev@0,0    : <0x01 0x00 0x00         0x82010000 0x00 0x00     0x00 0x400000>;
+rp1@0      : <0xc0 0x40000000        0x01 0x00 0x00           0x00 0x400000>;
+
+I'm not advocating here that this patch is fixing the behaviour on Rpi5, this
+is just a nice side effect of the correct address representation. I think we can
+also probably fix it by patching the pcie node in the devicetree like this:
+
+pcie@120000: <0x2000000 0xi1f 0x00    0x1f 0x00                0x00 0xfffffffc>;
+
+but this is of course just a 1:1 mapping, while the address will still be at
+least 'virtually' unconsistent, showing 64 bit address wihile the 32 bit flag is
+set.
+The net symptoms to the user would be, in the case of the RP1, a platform driver
+of one of its sub-peripheral that fails to be probed.
+
+Many thanks,
+Andrea
+
+> 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  drivers/pci/of_property.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
+> > index 5a0b98e69795..77865facdb4a 100644
+> > --- a/drivers/pci/of_property.c
+> > +++ b/drivers/pci/of_property.c
+> > @@ -60,7 +60,10 @@ static void of_pci_set_address(struct pci_dev *pdev, u32 *prop, u64 addr,
+> >  	prop[0] |= flags | reg_num;
+> >  	if (!reloc) {
+> >  		prop[0] |= OF_PCI_ADDR_FIELD_NONRELOC;
+> > -		prop[1] = upper_32_bits(addr);
+> > +		if (FIELD_GET(OF_PCI_ADDR_FIELD_SS, flags) == OF_PCI_ADDR_SPACE_MEM64)
+> > +			prop[1] = upper_32_bits(addr);
+> > +		else
+> > +			prop[1] = 0;
+> >  		prop[2] = lower_32_bits(addr);
+> >  	}
+> >  }
+> > -- 
+> > 2.35.3
+> > 
 
