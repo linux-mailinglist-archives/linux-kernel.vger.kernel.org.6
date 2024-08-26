@@ -1,468 +1,311 @@
-Return-Path: <linux-kernel+bounces-302024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A372695F8D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:12:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214C795F8DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B6D1C21749
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59DC1F238E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473AA1991DB;
-	Mon, 26 Aug 2024 18:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C645D8002A;
+	Mon, 26 Aug 2024 18:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSe+O3pf"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="HKbZZKQz"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD05198E6D
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D12B677
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724695867; cv=none; b=efmWYzjlmNHFPKsmqYur500MSMV6zY+o+Qq3OjhcFQSL7Hh4Hts33uhA18z4Zryn58BGInKoI9CfLELCKwr2zcXj6f6euvhrJLTxKv0Mes2lmkhNl/khj45AWD3Vt+kaTQHXc/N5ppT6vdr2WbRlN1E7gG9rXPr9S2AbP+OprGc=
+	t=1724696351; cv=none; b=PzPNpONZQBLUVG3OpSpXPEewd5B3j2M7SVudm7Vs47/yxfHQRKzXb5JrEmZ3F522ylMORTTrP3uri1OjeMaLoIifjoZOApO/Kkl9pq5IyjE0thoyWbvQA/k1rubW9kzL+wq96bD4YJqI3HShgOASj+25IF3lpxh6FmrVCrF+jtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724695867; c=relaxed/simple;
-	bh=uthdXNx31JmWvz62LIWT8ZQV0hwrdzWbfzkZXJ3gAhI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=QlQRPHOziILSLD+l/0bGNb2ci1CQdfURqRtHWKPX2yvXf3LJbh29EJfePp9L2SeYxBEeyG7RwqaRDQVO/oVmXp2N907vt+zAnH+ptUXSJnn2AWWAbz3pKVSBMD8KkIOaNpXLRkvKzX1E56UcM2xWXS0aldRbiDvY4acdjGfcUDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BSe+O3pf; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371b97cfd6fso2934267f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:11:03 -0700 (PDT)
+	s=arc-20240116; t=1724696351; c=relaxed/simple;
+	bh=fr3n87uqzXFl9khU9HwXuoTtd2j4MJWxmMhb+L6QkYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lv48zG29DRxQWxlPPSXUoior20TxKCax2pYrOufhTSudjCCAEdEJUIjkTdGrGjjUB8hb7vp1WQ0ha9vDiNwq/OQAt7ic9UeZSG1GCsX8yxBAQgtx3J8O4YFDwoDleP1Yfk3tA3+yA7jImNXKLzNyMRh+5pT9xUi52v1Fm+eIpoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=HKbZZKQz; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-5befe420fc2so5658758a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:19:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724695862; x=1725300662; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LRaz1GRBL3rmFEbKjfhR0hV2WeRnx6bg9mC5s4Xg1I=;
-        b=BSe+O3pfnYdFuWE5ytvGa0CfFog8muOT/i5hJQ+spxiuHjHB+SAPcAxB7ICCgBUfpT
-         lWlsewdpnalnHIwyguE0aX6txWsu8Mwa4tdbEG+PBUDasfdC1xENtVQzoxt83y6VpML3
-         dW/56BfboMDfHf/KWOuLoFQdUHgMv+mypmapGRJrTAqU5ejYt1fZDRs6NHAtEgbYzlmA
-         Q/D5OxC6l2RUDBKNbmw9DrnRKyHPMXI7cAuw7S3GSzJvsRo/y4ieO8gZJDVvQNqa4Hlx
-         rJzS09SeGlqrF7weLY8HCrvGPBK4OvFshw+XSrxA4iJvHL47jn0DNnJMwIEWiVqqSsgl
-         4O3g==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1724696346; x=1725301146; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PcZd+LHSZruXN3ccbiyxEH9/4HmykqRuLA/zHtu0Ok0=;
+        b=HKbZZKQzJdQteyPfFHwxjkEqYdoQcB/Insk7WPIXvyyUdxVPuhbSItZy2T0YvN6vTy
+         m5biyzJm3Wwh9SWnTMcoYkVShygtBcW1Y/twTaXKFnA+JJM6+wr0HfKxHthr7Oay4dDb
+         ePI7Pq/JMXllCxSvvHc55kWJVyGgLjx0fR+/8LxxxRrSGPr70a13PPr14YD2vTycmtoz
+         tspg499zQvLjaSJ8yeZ20Cs3WbY/HpIikPzwHB2x6B7akKj2uZvyr/33bQyYBzAFadhO
+         PCdJn6VPQCtC6crAveLCT0knvLq6sXkQnCwToE2Yf4GpkM7O4CMBl5E0GljJOPyFdzEU
+         h2Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724695862; x=1725300662;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LRaz1GRBL3rmFEbKjfhR0hV2WeRnx6bg9mC5s4Xg1I=;
-        b=BN55kMINYMrO+eZE7mp4gJsAkbCRJok/ERWBkktT7+nU0rfU8EbH6Ee5ci2P9f84TZ
-         Uong9hB+xcgun/Qmo6QDuWWtBU1kMMbGHXtAXNJOnyxU10mzuU/xuiAPF+NRdJdJnxa3
-         occCbKUThJmYXi7i8VvjIfiYwoyuLn1gDGBvohokVnSzomnT4cdMhT/BKUAKLpH/X+5K
-         +K+kQ0tBncoTBn59oTCH1UjZyV80pdEgb78N9xZlNT4LhnM2X0xDjrhyheSRGGEsn1Uv
-         32DXJPI2BEazwyFu8c701eJ9nrNEevdkB/jDqMXA54rumRL/gxipmEQAKhj6K2t8Asch
-         9B+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHgOJEh6SjUOEgo3Mmvzo2yQQZ10mGbr2D2kW7Tuk6K/b4HWfLaPDAuvrbMqZba+mvSGHWRX68yEvwIHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgBdjDTAfo8vIPbsPyEU/d2WOymiPr+4TvIvm+FYJTPpkXvZkv
-	t2OWf21jpEw1trN2NVmJRk1Yqn02aNTXHQILuOkYkD7HGC5/lUTFwUQmP0Dwz+w=
-X-Google-Smtp-Source: AGHT+IGl4CTiwN5RmNHH1IyVMdtSUofDYoZ9OwbiNZQrP8o9MZJrAPYq5lbwkAg5c4dbNdyT2NZKnQ==
-X-Received: by 2002:a5d:644c:0:b0:371:8c06:82ee with SMTP id ffacd0b85a97d-3748c81a1d6mr259153f8f.49.1724695862293;
-        Mon, 26 Aug 2024 11:11:02 -0700 (PDT)
-Received: from ubuntu-vm.. (51-148-40-55.dsl.zen.co.uk. [51.148.40.55])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308160426sm11247113f8f.57.2024.08.26.11.11.01
+        d=1e100.net; s=20230601; t=1724696346; x=1725301146;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PcZd+LHSZruXN3ccbiyxEH9/4HmykqRuLA/zHtu0Ok0=;
+        b=Q1kKaGm0XJsiDkpOJbkK8YtnWdG5e7FVhg1Z20rVufmOuGr6E9ekPN7IJLC/AjL+k5
+         OUll7r4iYM2UkFbSY2WighwL8u005zhKP56AN30LgbGQSDM01aCq2btX30/Q05fwGd/9
+         RgehcWhHQywCam5bx5zwco88GTZtnW59DtxAQKHyfmtIR2mUH6OlO0GfaiX95pzi3e3q
+         i2mGo4e0q91/FJB/ZDTqzflhSkKuCwKfJFTuqA+MA+c+qMTfzDbuTwdDXSan0C3OfDk+
+         3FM0HsZTKQLTyQi68iDpHdbaG5hwMxfeTU9Bw8NpSqt17jwNyPaUtnfBLmPArlqlpLEJ
+         F0zg==
+X-Forwarded-Encrypted: i=1; AJvYcCX45PXA2faIZAwU+5CojJo8eUFk/qaj8o+z62r0g6Gt/hUitsBeC1PC9qWyRPtMoKkqkL5lUs3P0rxj/mQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvSQGtlQHgyDgGjKUDQ4IifKkpabyxz/jkOlAldGvzNZnzGy7G
+	Zz94WLNHTd+axGXXNnP/zeVK7eKiws4o8J/GsevbpnbgwCjoBuAisKrJqVlKU4JsGK2zf2jJyq4
+	9peBv2vhA
+X-Google-Smtp-Source: AGHT+IFp7FZgPDAMMd5QMww8EplS7CaF0MtqqIYU71Cs/i5eyOGppC8jFuCuntrQq+pSdgHPwnG7PQ==
+X-Received: by 2002:a05:6402:34d6:b0:5a3:283d:b05a with SMTP id 4fb4d7f45d1cf-5c089171c7emr8353035a12.17.1724696346206;
+        Mon, 26 Aug 2024 11:19:06 -0700 (PDT)
+Received: from localhost (ip-046-005-139-073.um12.pools.vodafone-ip.de. [46.5.139.73])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb471f07sm34794a12.61.2024.08.26.11.19.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 11:11:01 -0700 (PDT)
-From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: [PATCH] aarch64: vdso: Wire up getrandom() vDSO implementation
-Date: Mon, 26 Aug 2024 18:10:40 +0000
-Message-ID: <20240826181059.111536-1-adhemerval.zanella@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Mon, 26 Aug 2024 11:19:05 -0700 (PDT)
+Date: Mon, 26 Aug 2024 20:19:00 +0200
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: bugzilla-daemon@kernel.org
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [Bug 219194] New: PSI full-stall duration reports nonsensically
+ large value when reading pressure file too frequently
+Message-ID: <20240826181900.GA3214@cmpxchg.org>
+References: <bug-219194-14699@https.bugzilla.kernel.org/>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bug-219194-14699@https.bugzilla.kernel.org/>
 
-Hook up the generic vDSO implementation to the aarch64 vDSO data page.
-The _vdso_rng_data required data is placed within the _vdso_data vvar
-page, by using a offset larger than the vdso_data
-(__VDSO_RND_DATA_OFFSET).
+Hi Brandon,
 
-The vDSO function requires a ChaCha20 implementation that does not
-write to the stack, and that can do an entire ChaCha20 permutation.
-The one provided is based on the current chacha-neon-core.S and uses NEON
-on the permute operation.
+On Mon, Aug 26, 2024 at 12:49:34AM +0000, bugzilla-daemon@kernel.org wrote:
+> https://bugzilla.kernel.org/show_bug.cgi?id=219194
+> 
+>             Bug ID: 219194
+>            Summary: PSI full-stall duration reports nonsensically large
+>                     value when reading pressure file too frequently
+>            Product: Other
+>            Version: 2.5
+>           Hardware: AMD
+>                 OS: Linux
+>             Status: NEW
+>           Severity: normal
+>           Priority: P3
+>          Component: Other
+>           Assignee: other_other@kernel-bugs.osdl.org
+>           Reporter: brandon@buildbuddy.io
+>                 CC: hannes@cmpxchg.org
+>         Regression: No
+> 
+> Created attachment 306775
+>   --> https://bugzilla.kernel.org/attachment.cgi?id=306775&action=edit
+> Minimal reproducible example
+> 
+> The cumulative full-stall duration ("total" field) reported in
+> /sys/fs/cgroup/.../cpu.pressure is occasionally nonsensically large - a value
+> much longer than the total execution duration of the only process that was run
+> in the cgroup.
+> 
+> Interestingly, the nonsensical value that it reports is often exactly 4.294967
+> seconds. This value looks suspiciously like UINT32_MAX (4294967295) which made
+> me think that this is a bug with PSI code rather than something I was doing
+> wrong.
 
-Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Thanks for reporting this. Your reproducer was immensely helpful in
+tracking this down, much appreciated. With the below patch, I can no
+longer trigger it. If at all possible, could you try it on your end?
+
+It's a race condition between aggregator (reader) and a task changing
+state. Specifically, it's an issue with the live state snooping: the
+aggregator will add cpu_clock() - state_start to the sample of any
+currently active states that have not been recorded yet. This makes
+the aggregator get ahead of recorded task state, but we assume this is
+okay because, as the state concludes, that delta we snooped ahead will
+be incorporated back into the recorded times.
+
+But there is a bug. When the state change concludes it reads
+cpu_clock() before acquiring the seq write lock. This means an
+aggregator can race and snoop ahead to a later clock value than the
+one at which the state will conclude. The next aggregation will see a
+negative delta and record a UINT_MAX - <race time> sample:
+
+psi_group_change()               get_recent_times()
+  now = cpu_clock() (X)
+
+  <a few cycles pass>
+
+                                 read_seqcount_begin()
+                                 now = cpu_clock() (X+42)
+                                 memcpy(times, groupc->times)
+                                 !read_seqcount_retry()
+
+                                 /* Snoops live state up to X+42 */
+                                 if (state_mask & (1 << s))
+                                   times[s] += now - state_start
+
+				 delta = times[s] - groupc->times_prev[s]
+                                 groupc->times_prev[s] = times[s]
+
+                                 /* times_prev up to X+42 */
+
+  write_seqcount_begin()
+  /* concludes state ending at X */
+  groupc->times[s] += now - state_start
+  groupc->state_mask &= 1 << s
+  write_seqcount_end()
+
+                                 read_seqcount_begin()
+                                 memcpy(times, groupc->times)
+                                 !read_seqcount_retry()
+
+                                 if (state_mask & (1 << s))
+                                   ; /* nope, state concluded */
+
+				 delta = times[s] - groupc->times_prev[s]
+                                 /* times_prev ahead, sample is UINT_MAX-42 */
+
+The solution is to move the clock read of the state change into the
+locked section. This way, live snooping cannot get ahead of the time
+at which the state will conclude:
+
 ---
- arch/arm64/Kconfig                         |   1 +
- arch/arm64/include/asm/vdso/getrandom.h    |  50 +++++++
- arch/arm64/include/asm/vdso/vsyscall.h     |   9 ++
- arch/arm64/kernel/vdso/Makefile            |   7 +-
- arch/arm64/kernel/vdso/vdso.lds.S          |   4 +
- arch/arm64/kernel/vdso/vgetrandom-chacha.S | 153 +++++++++++++++++++++
- arch/arm64/kernel/vdso/vgetrandom.c        |  13 ++
- tools/testing/selftests/vDSO/Makefile      |   4 +-
- 8 files changed, 238 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
- create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
- create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b3fc891f1544..e3f4c5bf0661 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -237,6 +237,7 @@ config ARM64
- 	select HAVE_KPROBES
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
-+	select VDSO_GETRANDOM
- 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
-diff --git a/arch/arm64/include/asm/vdso/getrandom.h b/arch/arm64/include/asm/vdso/getrandom.h
-new file mode 100644
-index 000000000000..6e2b136813ca
---- /dev/null
-+++ b/arch/arm64/include/asm/vdso/getrandom.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_VDSO_GETRANDOM_H
-+#define __ASM_VDSO_GETRANDOM_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <asm/unistd.h>
-+#include <vdso/datapage.h>
-+
-+/**
-+ * getrandom_syscall - Invoke the getrandom() syscall.
-+ * @buffer:	Destination buffer to fill with random bytes.
-+ * @len:	Size of @buffer in bytes.
-+ * @flags:	Zero or more GRND_* flags.
-+ * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
-+ */
-+static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
-+{
-+	register long int x8 asm ("x8") = __NR_getrandom;
-+	register long int x0 asm ("x0") = (long int) buffer;
-+	register long int x1 asm ("x1") = (long int) len;
-+	register long int x2 asm ("x2") = (long int) flags;
-+
-+	asm ("svc 0" : "=r"(x0) : "r"(x8), "0"(x0), "r"(x1), "r"(x2));
-+
-+	return x0;
-+}
-+
-+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-+{
-+	return &_vdso_rng_data;
-+}
-+
-+/**
-+ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-+ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-+ * @key:	32-byte input key.
-+ * @counter:	8-byte counter, read on input and updated on return.
-+ * @nblocks:	Number of blocks to generate.
-+ *
-+ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-+ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-+ * leaking into forked child processes.
-+ */
-+extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_GETRANDOM_H */
-diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
-index f94b1457c117..7ddb2bc3b57b 100644
---- a/arch/arm64/include/asm/vdso/vsyscall.h
-+++ b/arch/arm64/include/asm/vdso/vsyscall.h
-@@ -2,6 +2,8 @@
- #ifndef __ASM_VDSO_VSYSCALL_H
- #define __ASM_VDSO_VSYSCALL_H
- 
-+#define __VDSO_RND_DATA_OFFSET  480
-+
- #ifndef __ASSEMBLY__
- 
- #include <linux/timekeeper_internal.h>
-@@ -21,6 +23,13 @@ struct vdso_data *__arm64_get_k_vdso_data(void)
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 020d58967d4e..84dad1511d1e 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -769,12 +769,13 @@ static void record_times(struct psi_group_cpu *groupc, u64 now)
  }
- #define __arch_get_k_vdso_data __arm64_get_k_vdso_data
  
-+static __always_inline
-+struct vdso_rng_data *__arm64_get_k_vdso_rnd_data(void)
-+{
-+	return (void *)__arm64_get_k_vdso_data() + __VDSO_RND_DATA_OFFSET;
-+}
-+#define __arch_get_k_vdso_rng_data __arm64_get_k_vdso_rnd_data
-+
- static __always_inline
- void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
+ static void psi_group_change(struct psi_group *group, int cpu,
+-			     unsigned int clear, unsigned int set, u64 now,
++			     unsigned int clear, unsigned int set,
+ 			     bool wake_clock)
  {
-diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-index d11da6461278..37dad3bb953a 100644
---- a/arch/arm64/kernel/vdso/Makefile
-+++ b/arch/arm64/kernel/vdso/Makefile
-@@ -9,7 +9,7 @@
- # Include the generic Makefile to check the built vdso.
- include $(srctree)/lib/vdso/Makefile
+ 	struct psi_group_cpu *groupc;
+ 	unsigned int t, m;
+ 	u32 state_mask;
++	u64 now;
  
--obj-vdso := vgettimeofday.o note.o sigreturn.o
-+obj-vdso := vgettimeofday.o note.o sigreturn.o vgetrandom.o vgetrandom-chacha.o
+ 	lockdep_assert_rq_held(cpu_rq(cpu));
+ 	groupc = per_cpu_ptr(group->pcpu, cpu);
+@@ -789,6 +790,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 	 * SOME and FULL time these may have resulted in.
+ 	 */
+ 	write_seqcount_begin(&groupc->seq);
++	now = cpu_clock(cpu);
  
- # Build rules
- targets := $(obj-vdso) vdso.so vdso.so.dbg
-@@ -40,8 +40,13 @@ CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
- 				$(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
- 				$(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
- 				-Wmissing-prototypes -Wmissing-declarations
-+CFLAGS_REMOVE_vgetrandom.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
-+			     $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
-+			     $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
-+			     -Wmissing-prototypes -Wmissing-declarations
- 
- CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
-+CFLAGS_vgetrandom.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
- 
- ifneq ($(c-gettimeofday-y),)
-   CFLAGS_vgettimeofday.o += -include $(c-gettimeofday-y)
-diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
-index 45354f2ddf70..f8dbcece20e2 100644
---- a/arch/arm64/kernel/vdso/vdso.lds.S
-+++ b/arch/arm64/kernel/vdso/vdso.lds.S
-@@ -12,6 +12,8 @@
- #include <asm/page.h>
- #include <asm/vdso.h>
- #include <asm-generic/vmlinux.lds.h>
-+#include <vdso/datapage.h>
-+#include <asm/vdso/vsyscall.h>
- 
- OUTPUT_FORMAT("elf64-littleaarch64", "elf64-bigaarch64", "elf64-littleaarch64")
- OUTPUT_ARCH(aarch64)
-@@ -19,6 +21,7 @@ OUTPUT_ARCH(aarch64)
- SECTIONS
+ 	/*
+ 	 * Start with TSK_ONCPU, which doesn't have a corresponding
+@@ -899,18 +901,15 @@ void psi_task_change(struct task_struct *task, int clear, int set)
  {
- 	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
-+	PROVIDE(_vdso_rng_data = _vdso_data + __VDSO_RND_DATA_OFFSET);
- #ifdef CONFIG_TIME_NS
- 	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
- #endif
-@@ -102,6 +105,7 @@ VERSION
- 		__kernel_gettimeofday;
- 		__kernel_clock_gettime;
- 		__kernel_clock_getres;
-+		__kernel_getrandom;
- 	local: *;
- 	};
+ 	int cpu = task_cpu(task);
+ 	struct psi_group *group;
+-	u64 now;
+ 
+ 	if (!task->pid)
+ 		return;
+ 
+ 	psi_flags_change(task, clear, set);
+ 
+-	now = cpu_clock(cpu);
+-
+ 	group = task_psi_group(task);
+ 	do {
+-		psi_group_change(group, cpu, clear, set, now, true);
++		psi_group_change(group, cpu, clear, set, true);
+ 	} while ((group = group->parent));
  }
-diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-new file mode 100644
-index 000000000000..3fb9715dd6f0
---- /dev/null
-+++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/linkage.h>
-+#include <asm/cache.h>
-+
-+	.text
-+
-+/*
-+ * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
-+ * number of blocks of output with nonnce 0, taking an input key and 8-bytes
-+ * counter.  Importantly does not spill to the stack.
-+ *
-+ * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
-+ *				       const uint8_t *key,
-+ * 				       uint32_t *counter,
-+ *				       size_t nblocks)
-+ *
-+ * 	x0: output bytes
-+ *	x1: 32-byte key input
-+ *	x2: 8-byte counter input/output
-+ *	x3: number of 64-byte block to write to output
-+ */
-+SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-+
-+	/* v0 = "expand 32-byte k" */
-+	adr_l		x8, CTES
-+	ld1		{v5.4s}, [x8]
-+	/* v1,v2 = key */
-+	ld1		{ v6.4s, v7.4s }, [x1]
-+	/* v3 = counter || zero noonce  */
-+	ldr		d8, [x2]
-+
-+	adr_l		x8, ONE
-+	ldr		q13, [x8]
-+
-+	adr_l		x10, ROT8
-+	ld1		{v12.4s}, [x10]
-+.Lblock:
-+	/* copy state to auxiliary vectors for the final add after the permute.  */
-+	mov		v0.16b, v5.16b
-+	mov		v1.16b, v6.16b
-+	mov		v2.16b, v7.16b
-+	mov		v3.16b, v8.16b
-+
-+	mov		w4, 20
-+.Lpermute:
-+	/*
-+	 * Permute one 64-byte block where the state matrix is stored in the four NEON
-+	 * registers v0-v3.  It performs matrix operations on four words in parallel,
-+	 * but requires shuffling to rearrange the words after each round.
-+	 */
-+
-+.Ldoubleround:
-+	/* x0 += x1, x3 = rotl32(x3 ^ x0, 16) */
-+	add		v0.4s, v0.4s, v1.4s
-+	eor		v3.16b, v3.16b, v0.16b
-+	rev32		v3.8h, v3.8h
-+
-+	/* x2 += x3, x1 = rotl32(x1 ^ x2, 12) */
-+	add		v2.4s, v2.4s, v3.4s
-+	eor		v4.16b, v1.16b, v2.16b
-+	shl		v1.4s, v4.4s, #12
-+	sri		v1.4s, v4.4s, #20
-+
-+	/* x0 += x1, x3 = rotl32(x3 ^ x0, 8) */
-+	add		v0.4s, v0.4s, v1.4s
-+	eor		v3.16b, v3.16b, v0.16b
-+	tbl		v3.16b, {v3.16b}, v12.16b
-+
-+	/* x2 += x3, x1 = rotl32(x1 ^ x2, 7) */
-+	add		v2.4s, v2.4s, v3.4s
-+	eor		v4.16b, v1.16b, v2.16b
-+	shl		v1.4s, v4.4s, #7
-+	sri		v1.4s, v4.4s, #25
-+
-+	/* x1 = shuffle32(x1, MASK(0, 3, 2, 1)) */
-+	ext		v1.16b, v1.16b, v1.16b, #4
-+	/* x2 = shuffle32(x2, MASK(1, 0, 3, 2)) */
-+	ext		v2.16b, v2.16b, v2.16b, #8
-+	/* x3 = shuffle32(x3, MASK(2, 1, 0, 3)) */
-+	ext		v3.16b, v3.16b, v3.16b, #12
-+
-+	/* x0 += x1, x3 = rotl32(x3 ^ x0, 16) */
-+	add		v0.4s, v0.4s, v1.4s
-+	eor		v3.16b, v3.16b, v0.16b
-+	rev32		v3.8h, v3.8h
-+
-+	/* x2 += x3, x1 = rotl32(x1 ^ x2, 12) */
-+	add		v2.4s, v2.4s, v3.4s
-+	eor		v4.16b, v1.16b, v2.16b
-+	shl		v1.4s, v4.4s, #12
-+	sri		v1.4s, v4.4s, #20
-+
-+	/* x0 += x1, x3 = rotl32(x3 ^ x0, 8) */
-+	add		v0.4s, v0.4s, v1.4s
-+	eor		v3.16b, v3.16b, v0.16b
-+	tbl		v3.16b, {v3.16b}, v12.16b
-+
-+	/* x2 += x3, x1 = rotl32(x1 ^ x2, 7) */
-+	add		v2.4s, v2.4s, v3.4s
-+	eor		v4.16b, v1.16b, v2.16b
-+	shl		v1.4s, v4.4s, #7
-+	sri		v1.4s, v4.4s, #25
-+
-+	/* x1 = shuffle32(x1, MASK(2, 1, 0, 3)) */
-+	ext		v1.16b, v1.16b, v1.16b, #12
-+	/* x2 = shuffle32(x2, MASK(1, 0, 3, 2)) */
-+	ext		v2.16b, v2.16b, v2.16b, #8
-+	/* x3 = shuffle32(x3, MASK(0, 3, 2, 1)) */
-+	ext		v3.16b, v3.16b, v3.16b, #4
-+
-+	subs		w4, w4, #2
-+	b.ne		.Ldoubleround
-+
-+	/* output0 = state0 + v0 */
-+	add		v0.4s, v0.4s, v5.4s
-+	/* output1 = state1 + v1 */
-+	add		v1.4s, v1.4s, v6.4s
-+	/* output2 = state2 + v2 */
-+	add		v2.4s, v2.4s, v7.4s
-+	/* output2 = state3 + v3 */
-+	add		v3.4s, v3.4s, v8.4s
-+	st1		{ v0.4s - v3.4s }, [x0]
-+
-+	/* ++copy3.counter */
-+	add		d8, d8, d13
-+
-+	/* output += 64, --nblocks */
-+	add		x0, x0, 64
-+	subs		x3, x3, #1
-+	b.ne		.Lblock
-+
-+	/* counter = copy3.counter */
-+	str		d8, [x2]
-+
-+	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
-+	eor		v0.16b, v0.16b, v0.16b
-+	eor		v1.16b, v1.16b, v1.16b
-+	eor		v2.16b, v2.16b, v2.16b
-+	eor		v3.16b, v3.16b, v3.16b
-+	eor		v6.16b, v6.16b, v6.16b
-+	eor		v7.16b, v7.16b, v7.16b
-+	ret
-+SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-+
-+        .section        ".rodata", "a", %progbits
-+        .align          L1_CACHE_SHIFT
-+
-+CTES:	.word		1634760805, 857760878, 	2036477234, 1797285236
-+ONE:    .xword		1, 0
-+ROT8:	.word		0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
-+
-+emit_aarch64_feature_1_and
-diff --git a/arch/arm64/kernel/vdso/vgetrandom.c b/arch/arm64/kernel/vdso/vgetrandom.c
-new file mode 100644
-index 000000000000..b6d6f4db3a98
---- /dev/null
-+++ b/arch/arm64/kernel/vdso/vgetrandom.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/types.h>
-+#include <linux/mm.h>
-+
-+#include "../../../../lib/vdso/getrandom.c"
-+
-+ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-+
-+ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-+{
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-+}
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 10ffdda3f2fa..f07ea679a4cc 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- uname_M := $(shell uname -m 2>/dev/null || echo not)
--ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
- SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
  
- TEST_GEN_PROGS := vdso_test_gettimeofday
-@@ -11,7 +11,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
--ifeq ($(uname_M),x86_64)
-+ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
- TEST_GEN_PROGS += vdso_test_getrandom
- ifneq ($(SODIUM),)
- TEST_GEN_PROGS += vdso_test_chacha
--- 
-2.43.0
-
+@@ -919,7 +918,6 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ {
+ 	struct psi_group *group, *common = NULL;
+ 	int cpu = task_cpu(prev);
+-	u64 now = cpu_clock(cpu);
+ 
+ 	if (next->pid) {
+ 		psi_flags_change(next, 0, TSK_ONCPU);
+@@ -936,7 +934,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 				break;
+ 			}
+ 
+-			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
++			psi_group_change(group, cpu, 0, TSK_ONCPU, true);
+ 		} while ((group = group->parent));
+ 	}
+ 
+@@ -974,7 +972,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		do {
+ 			if (group == common)
+ 				break;
+-			psi_group_change(group, cpu, clear, set, now, wake_clock);
++			psi_group_change(group, cpu, clear, set, wake_clock);
+ 		} while ((group = group->parent));
+ 
+ 		/*
+@@ -986,7 +984,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+ 			clear &= ~TSK_ONCPU;
+ 			for (; group; group = group->parent)
+-				psi_group_change(group, cpu, clear, set, now, wake_clock);
++				psi_group_change(group, cpu, clear, set, wake_clock);
+ 		}
+ 	}
+ }
+@@ -997,8 +995,8 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	int cpu = task_cpu(curr);
+ 	struct psi_group *group;
+ 	struct psi_group_cpu *groupc;
+-	u64 now, irq;
+ 	s64 delta;
++	u64 irq;
+ 
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+@@ -1011,7 +1009,6 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	if (prev && task_psi_group(prev) == group)
+ 		return;
+ 
+-	now = cpu_clock(cpu);
+ 	irq = irq_time_read(cpu);
+ 	delta = (s64)(irq - rq->psi_irq_time);
+ 	if (delta < 0)
+@@ -1019,12 +1016,15 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
+ 	rq->psi_irq_time = irq;
+ 
+ 	do {
++		u64 now;
++
+ 		if (!group->enabled)
+ 			continue;
+ 
+ 		groupc = per_cpu_ptr(group->pcpu, cpu);
+ 
+ 		write_seqcount_begin(&groupc->seq);
++		now = cpu_clock(cpu);
+ 
+ 		record_times(groupc, now);
+ 		groupc->times[PSI_IRQ_FULL] += delta;
+@@ -1223,11 +1223,9 @@ void psi_cgroup_restart(struct psi_group *group)
+ 	for_each_possible_cpu(cpu) {
+ 		struct rq *rq = cpu_rq(cpu);
+ 		struct rq_flags rf;
+-		u64 now;
+ 
+ 		rq_lock_irq(rq, &rf);
+-		now = cpu_clock(cpu);
+-		psi_group_change(group, cpu, 0, 0, now, true);
++		psi_group_change(group, cpu, 0, 0, true);
+ 		rq_unlock_irq(rq, &rf);
+ 	}
+ }
 
