@@ -1,109 +1,148 @@
-Return-Path: <linux-kernel+bounces-301589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A3895F2F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:32:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEF095F2FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256A61C21C03
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0171C21AED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4233185E7B;
-	Mon, 26 Aug 2024 13:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mAKD5Sbq"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0489185956;
+	Mon, 26 Aug 2024 13:34:30 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8454253373;
-	Mon, 26 Aug 2024 13:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD5253362;
+	Mon, 26 Aug 2024 13:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679165; cv=none; b=gvIlarQV8hObjsu7NNY2mgDsOVtaa6/ovq8NkHz1csSw63gFCilTPhbXHpVSu8f+7jCizeGHwJ4Ag3sIAHUOcfmbl998CLn1Qpt+iyClZTFqXp2ITezDGncpNJizdP59PgW4PW78fOEejVf71SUZ2hEvMRtTpi73ooC6SFO8P2o=
+	t=1724679270; cv=none; b=gGLUN9pTa84J+LsQNSzkaBypn34kpINMlfMGmMVtVCTdk5XncN4oCw2JF0Thv4axvYIPyYAu4tdW3Jz2X0WFciNOiz2iShCXxOTlsNT7gAyC4lxPkuWVN03ZxjtYBaSQKhm4y/n6apfSeUyMW8TwiiW/kMdqvp+kfgNGJn5EwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679165; c=relaxed/simple;
-	bh=hMPEedZ7R8kQX2dAOqK1OinhKb8ITJnQhO+8RaFfET0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDq73TCwwoCK6epaNeOFnwI87vv+Oyi4TiwgjxnwVq31ZEF4W+UA3lOrY1+0Ek++VSpJUdLBrbHwwgQfkl/EwR1JUjiXhyrFhpi0p4Pey3IypKYOeEnPd4OD7DF9MuxskvJKkqPA0DXFnzRIc2UDa9bvcYHEZDg/mNHVqeZUaX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mAKD5Sbq; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 052F4E0009;
-	Mon, 26 Aug 2024 13:32:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724679160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Fl/SRGdttN3lDqzZyvZSVzuNCB/OVFNgjawoVIbl+Rc=;
-	b=mAKD5SbqWGZ+7WygHA3/fj5+Ong7bLdaqJFsQI/caBjZPgcc1KMRxTA7PvLjpwVuUn7Mb/
-	ltilOywn2keIo4EsUSLcKZyX3v/lkZppfEDpnouD34TgFHe0Poz6Sr7PdbLcNe1CqAXxat
-	qbiECd7junX1KdKIcTM7unhWGhwuVLUObZXclr10JZJ/erYNzE/+PLCfVA5FvFxls+7mrt
-	/SW2VMbq5u8fRnThJp49pJAm2FLfzIdpAKEsEJ3jtYfLUVxJUYDAwX4yBW0n467rulnhZA
-	+NG8V92US7tgFZzxUHZyQ6G9jXIkfvM3r/Ls91CsbeazM0MI/awcbpeIA0JzYA==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Riku Voipio <riku.voipio@iki.fi>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	stable@vger.kernel.org
-Subject: [PATCH] leds: pca9532: Remove irrelevant error message
-Date: Mon, 26 Aug 2024 15:32:37 +0200
-Message-ID: <20240826133237.134604-1-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1724679270; c=relaxed/simple;
+	bh=9k9/5gI/iC9n1d3p2dgCLcApTdyK3eFpFtG0njcovcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OumtFQMHIbssVIK6ef9KPuoH9/Hp2mcSF6VFPazrvvnAkmXfRKcdxQ9QgO1T+ucnHbydYF0k0OD3IdDzSIBLCWgv+PB1bKdQFFT3gYbIMokyYhsTXavAoi54Qjx3jh4b8UpRwa1VXwe6Pif9WMKgnR3ubL+pbVJn04D4tN2RJUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so4547899276.2;
+        Mon, 26 Aug 2024 06:34:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724679266; x=1725284066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BZbdblcDNT8GZP9ChcDYCER0K22dBrCIi3spdBLOpfM=;
+        b=bQRck9UfJacjBulz2ELd2CwVp0mvGhHBLq4J9646onelq6n/nN5VthIzoSV+tTtCT5
+         +CYyzn7hP5++FlUbWXcvPZc2OcStoWDRjh9G1BvHGeuGGFMotb/Zx2wJPf03GPi8L0wY
+         F3++Tb77dvEIULpDdm8B9t6FRjR0be6aZqYroUvbn9gF4zZHzBhSt4aHzps8MrgnvpcV
+         lzPmW2EpyMOVB1MFtJVoj04/TqxmbhHBQr5hQCo5HA1tu4FSnm+XnW+Uc7OkzTgZwqWG
+         GbZ/ruvJL4YtSunQZjL7vgjIx2cLf3SUAOnH79blbJDkr0oFqo78HS7K4fIAmUSDKmGN
+         Kx6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRvQoTwbDUzX44KwVQcxXN3ei9+DOHXHS+R4OImk2FX+kLuOReQXNnJSljG1Vpp0f/KqE6luOuQwSHIomN@vger.kernel.org, AJvYcCW7XvfTeOY9CfCYrlzTnvlqFnVOdauEgivwp8d/fphxMKDXeYC8mtIFp0G8MLB3Wu50KkhMiYlDywHw90KxdewIJy8=@vger.kernel.org, AJvYcCXkqRKDPXIvlGV5dezV+sy0FXg7cz5vDDS/3WYKq7M2pPKRwinG6USCJ7fWVdD5Y/okpWDcDnYI9ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGGzTflKt0NoPCWHUmO2Y4kJ50mgIDfuzDsB5uLVwYaUAnIwz/
+	OXvVRYgKj3ieElZKN8EvjAxI5/hoQNW1E37hwhWnK+HSy7IjLHrdABTbFKtJ
+X-Google-Smtp-Source: AGHT+IH2vZbD95QinbvyqmENyH2Fb5tiX3/TdznklyiAIluD/VEXP1i6yWVGeiOx3IM3yGSvoqXiog==
+X-Received: by 2002:a25:a549:0:b0:e16:700c:4b63 with SMTP id 3f1490d57ef6-e17a88be277mr9681677276.3.1724679266379;
+        Mon, 26 Aug 2024 06:34:26 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e5696dcsm2046882276.46.2024.08.26.06.34.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 06:34:26 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6bd3407a12aso40132537b3.3;
+        Mon, 26 Aug 2024 06:34:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQXYobNAaI7t+2Uuh1nqx1MjTmBlgm3uESN2zdirtyzBcDFsKeH1zfHlKvv4+jSiVJNhNTCusZy8ukP11M1TQnu3I=@vger.kernel.org, AJvYcCUjHEd9JBlkXUygOi0/Bk6frsmNhdSj779xkfiWTvlD+ovL0dQsjvSbbALwA8KgOyUbfsRRfQNnjfFl07w2@vger.kernel.org, AJvYcCW6kXgPG/3Zu/1rGLi83LESd8NIawy8nrDD3tyINlap6F6CaWgUYEc4qHoNLarwrFY7H9OOmlNr12k=@vger.kernel.org
+X-Received: by 2002:a05:690c:2c81:b0:6ae:dab5:a3b5 with SMTP id
+ 00721157ae682-6c624fb4900mr88162487b3.13.1724679265567; Mon, 26 Aug 2024
+ 06:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+References: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240822111631.544886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240822111631.544886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 15:34:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+Message-ID: <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add support for dynamic
+ switching divider clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The update_hw_blink() function prints an error message when hardware is
-not able to handle a blink configuration on its own. IMHO, this isn't a
-'real' error since the software fallback is used afterwards.
+Hi Prabhakar,
 
-Remove the error messages to avoid flooding the logs with unnecessary
-messages.
+On Thu, Aug 22, 2024 at 1:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for dynamic switching divider clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Dropped DDIV_DIVCTL_WIDTH
+> - width is now extracted from conf
+> - Updated DDIV_GET_* macros
+> - Now doing rmw as some of the DIVCTLx require it
 
-Cc: stable@vger.kernel.org
-Fixes: 48ca7f302cfc ("leds: pca9532: Use PWM1 for hardware blinking")
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/leds/leds-pca9532.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Thanks for the update!
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 9f3fac66a11c..bcc3063bd441 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -215,8 +215,7 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
- 		if (other->state == PCA9532_PWM1) {
- 			if (other->ldev.blink_delay_on != delay_on ||
- 			    other->ldev.blink_delay_off != delay_off) {
--				dev_err(&led->client->dev,
--					"HW can handle only one blink configuration at a time\n");
-+				/* HW can handle only one blink configuration at a time */
- 				return -EINVAL;
- 			}
- 		}
-@@ -224,7 +223,7 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
- 
- 	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
- 	if (psc > U8_MAX) {
--		dev_err(&led->client->dev, "Blink period too long to be handled by hardware\n");
-+		/* Blink period too long to be handled by hardware */
- 		return -EINVAL;
- 	}
- 
--- 
-2.45.0
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -45,14 +45,23 @@
+>  #define PDIV(val)              FIELD_GET(GENMASK(5, 0), (val))
+>  #define SDIV(val)              FIELD_GET(GENMASK(2, 0), (val))
+>
+> +#define DDIV_DIVCTL_WEN(shift)         (1 << ((shift) + 16))
 
+BIT((shift) + 16)
+
+> +#define DDIV_GET_WIDTH(val)            FIELD_GET(GENMASK(3, 0), (val))
+> +#define DDIV_GET_SHIFT(val)            FIELD_GET(GENMASK(7, 4), (val))
+> +#define DDIV_GET_REG_OFFSET(val)       FIELD_GET(GENMASK(18, 8), (val))
+> +#define DDIV_GET_MON(val)              FIELD_GET(GENMASK(23, 19), (val))
+
+These are not register fields, so you might as well just use C bitfields
+accesses instead:
+
+    struct ddiv {
+            unsigned int width:4;
+            unsigned int shift:4;
+            unsigned int offset:11;
+            unsigned int monbit:5;
+    };
+
+    if ((shift + core->ddiv.width > 16)
+            return ERR_PTR(-EINVAL);
+
+(you can put cpg_core_clk.conf and cpg_core_clk.ddiv in a union to save spa=
+ce)
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
