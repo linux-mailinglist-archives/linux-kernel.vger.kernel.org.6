@@ -1,184 +1,137 @@
-Return-Path: <linux-kernel+bounces-301938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D78C95F7C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:15:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E87D95F7C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B7591C21F6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6FF283CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B33198A19;
-	Mon, 26 Aug 2024 17:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AF8198A3D;
+	Mon, 26 Aug 2024 17:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RdlVNqXD"
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZhQAN52"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA51946DA;
-	Mon, 26 Aug 2024 17:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733D18BC02;
+	Mon, 26 Aug 2024 17:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692511; cv=none; b=Bbm24jVwcYVZWGIWpL8CW0EQiD6EEaF7Wx4Ex4Ul1VXuEOwAQAKcKlLc1CIQvHABZ9CQfiXe15GnbMfYf6coTS69xBvHTgBZDDp67r7tMR88jOO6QmSWAiHePWt/ek6jtZCtF01m8a8mpYCKkBd/aK2MIi8qpuqyyqYaCXAMBOQ=
+	t=1724692556; cv=none; b=SlgOn3PKFLpT4zzB3UiNkmPPeaGOsO+n6XmF2QvFEVgW9vXQHvOhtlWbEp+3tigPW8YSSdYYwGgrIvmWyiVmDgwcIgMKztG126iv0XSbC4boItWCLr6zWnQryyrXpx74jqyQOh3Azc7vDDQU8Pa5v2IkM2wp6Pah7bFjfCF9+p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692511; c=relaxed/simple;
-	bh=XO/V8hWz4NH2myBpWtZGoY/SK13uVHnn+BzlOVcF39I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOXE+WHecr0FPJVLqreKmwKMDm0K/A8evQtFtEqcfUr5OcR1COUZ9RJJlkyNi4AIrq3wjl8Kmwj/Tz/2aLLYRWa+mhqxQCLQXiZjmsLVEWC5FIfQI5T772RvN/uNhIVEf/d5knqjtbIzM/NcEe8TlYk0OSw32sdNcQGjPy5KpeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RdlVNqXD; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id idIusKUkBFtEmidIus4Qnh; Mon, 26 Aug 2024 19:15:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724692500;
-	bh=NoAjW2R+o80sdyLbdCHHBi35GI05J7LD2G0MnQa6MWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=RdlVNqXDGoIcfOHx16drsR+hMe5aGLy1GFtGLONfa7t0tUPljKNgfBzgYSkDvMuxG
-	 RILfXksBLAaN1wlZokC2GYKU2m7jyMde44Bp4jlaVCfHDS3dL0wqkaLPE8LNCe8oxX
-	 RMPZ1uwuumGbYzi59I0rFTg6NPB6kMWgbgt3Uem/CBHvAfdF9Kd7JfdgsRaKYsgRUi
-	 9vs12BmYVjT3OJ8ewJn+YslnWH5BKNmZRuD3emjhEH87R4tGHUQ4/K64JZCvfR++JG
-	 bDslmHqL+dyHAabDSR3ngKZWBtwfXIFWZ8oQGLAOuSWeHFr0aOLbx6dWkuVW5izlH/
-	 UE29btMe4pKCQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 26 Aug 2024 19:15:00 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <bbe06f51-459a-4973-9322-56b3d27427f1@wanadoo.fr>
-Date: Mon, 26 Aug 2024 19:14:55 +0200
+	s=arc-20240116; t=1724692556; c=relaxed/simple;
+	bh=aag4ttsnwtXSFMZta8hZFDauX1VZpiHxIrwcXJXjvsg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tq4CR7XOc4CY84js8D+oE9hcuJVcmS5GcPt02NnJbdgvvJlaTACNi4QH/BS3HU2lex5kkVnxMD0dtJp9VdFOQ79vMDjfULJRqbtt+7QD5fvNUUSSI8l6JigDmqbukpflXsz3MfuPfzaq3hHYKhZR3hXv65cn/IvlmOnytkxVXks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZhQAN52; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7106cf5771bso3662871b3a.2;
+        Mon, 26 Aug 2024 10:15:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724692554; x=1725297354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vcql72JPQTQ2OTkoapF5mbW4vnMiQPQvKYGW7HfPhkQ=;
+        b=jZhQAN52Qfl+0RvBWsagF+Ws/BcUswb9biaLsRwMemBePZtseSsQne45ASBtFmJjLm
+         6R1H028oOB9lbMxLFimyKEDhDBw5zW9sIfKWBEgVq8/KPltRXL5YyCpdr5m2O+7VSzYR
+         itR/puTHLFDGRkrR7Th3hy/5Z7ps2XtEfgF50vZsBKmHT8bXpOJWlYtbQzshAPK5tOH/
+         SM6SHlST3tq9HJhm39N2vqMDgODfv5o4Jil7Et+kE3GwRBglAqrYr3Yv8qy+SrsDid+E
+         1jAaiStaI58bWKA/2i4CGF4vWRlhpiPTpUSb5O/zzASw3Bhrq+qhondsNTmbzXYd6mFs
+         BnhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724692554; x=1725297354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vcql72JPQTQ2OTkoapF5mbW4vnMiQPQvKYGW7HfPhkQ=;
+        b=kq2XvgHJzCeDq7t4xJpm4cOE9UcowgI6yFDqhb9oOivffGFzVPNnEk46TlzN9K+4qg
+         54e/sIPrhqSPqVmmIIrjcXpdDfyaVYNMUTseDOXlVZa/Foxmfst9jvukhRApNlcVUWJu
+         VxCwTgGV8a3bL99GcDrgrRmaHM4noiC/t9Eh4oqDi7GbDqzWOcRcHd5TaLe2ua/unyiZ
+         aOEZBHQ0ddbBhLnALLetV+Zhvo4gM7pjfswgCxFIEEeMDVyFPVvaaCLYsZ7ljVZwTId3
+         Rv/dTprXSv1kjn6kwzV5cr9IB+/p3VXN1M9guzWhQuYEb5TTA7GN/bz+R9ftjtCHko4A
+         nHuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxJRfgDy9TioOKjBknOJ9rJCKV1DJyV9eR8o/Htjz6wFBG0VZ1weT+5DETAZJ+qe/3d+uqzvo7omGwM25I@vger.kernel.org, AJvYcCWP0BtUciZ8IHzgZ0jERTiUbIrpcu7YjpmuTn87swKpaotD8Y/N9jFNtDefvINcf9D/N6PRmSfGCKwCvl4g@vger.kernel.org, AJvYcCWq1xdDdsnUQajr0FoNi0X5wBej2WgHNjSPPstbotX6QrYU0XECmOuPtaYUSFuVLQvX4PAe46/ZhEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp7UqhDu2dWwz8KAeU90mS+rzRq7tmAezObudoV0Qw9Sskc4ky
+	ZpW7toIXanGczdN0S4dO9Yvc6bvkUupck+wTj+7AA8md1q4efcYl
+X-Google-Smtp-Source: AGHT+IHqCiVZD8k41tBXvr0tubaCtVb1j37tqzR+PZ1WdzT88DIUTlpRPwV6ErHFhiO0ftk2Eidn8w==
+X-Received: by 2002:a05:6a20:4f89:b0:1cc:bb4e:a905 with SMTP id adf61e73a8af0-1ccbb4ea95amr1234779637.1.1724692553998;
+        Mon, 26 Aug 2024 10:15:53 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:12e9:d196:a1e9:ab67])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdca6asm6761815a12.48.2024.08.26.10.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 10:15:53 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux.dev
+Cc: Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
+	freedreno@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Joao Martins <joao.m.martins@oracle.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-arm-msm@vger.kernel.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
+	linux-kernel@vger.kernel.org (open list),
+	linux-pm@vger.kernel.org (open list:SUSPEND TO RAM),
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Sean Paul <sean@poorly.run>
+Subject: [PATCH v8 0/4] io-pgtable-arm + drm/msm: Extend iova fault debugging
+Date: Mon, 26 Aug 2024 10:15:37 -0700
+Message-ID: <20240826171546.6777-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] idpf: Slightly simplify memory management in
- idpf_add_del_mac_filters()
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-References: <fa4f19064be084d5e740e625dcf05805c0d71ad0.1724394169.git.christophe.jaillet@wanadoo.fr>
- <c786a345-9ec4-4e41-8e69-506239db291c@stanley.mountain>
- <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2896a4b2-2297-44cd-b4c7-a4d320298740@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 26/08/2024 à 11:15, Przemek Kitszel a écrit :
-> On 8/23/24 11:10, Dan Carpenter wrote:
->> On Fri, Aug 23, 2024 at 08:23:29AM +0200, Christophe JAILLET wrote:
->>> In idpf_add_del_mac_filters(), filters are chunked up into multiple
->>> messages to avoid sending a control queue message buffer that is too 
->>> large.
->>>
->>> Each chunk has up to IDPF_NUM_FILTERS_PER_MSG entries. So except for the
->>> last iteration which can be smaller, space for exactly
->>> IDPF_NUM_FILTERS_PER_MSG entries is allocated.
->>>
->>> There is no need to free and reallocate a smaller array just for the 
->>> last
->>> iteration.
->>>
->>> This slightly simplifies the code and avoid an (unlikely) memory 
->>> allocation
->>> failure.
->>>
-> 
-> Thanks, that is indeed an improvement.
-> 
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c 
->>> b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> index 70986e12da28..b6f4b58e1094 100644
->>> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
->>> @@ -3669,12 +3669,15 @@ int idpf_add_del_mac_filters(struct 
->>> idpf_vport *vport,
->>>           entries_size = sizeof(struct virtchnl2_mac_addr) * 
->>> num_entries;
->>>           buf_size = struct_size(ma_list, mac_addr_list, num_entries);
->>> -        if (!ma_list || num_entries != IDPF_NUM_FILTERS_PER_MSG) {
->>> -            kfree(ma_list);
->>> +        if (!ma_list) {
->>>               ma_list = kzalloc(buf_size, GFP_ATOMIC);
->>>               if (!ma_list)
->>>                   return -ENOMEM;
->>>           } else {
->>> +            /* ma_list was allocated in the first iteration
->>> +             * so IDPF_NUM_FILTERS_PER_MSG entries are
->>> +             * available
->>> +             */
->>>               memset(ma_list, 0, buf_size);
->>>           }
->>
->> It would be even nicer to move the ma_list allocation outside the loop:
->>
->>          buf_size = struct_size(ma_list, mac_addr_list, 
->> IDPF_NUM_FILTERS_PER_MSG);
->>          ma_list = kmalloc(buf_size, GFP_ATOMIC);
-> 
-> good point
-> 
-> I've opened whole function for inspection and it asks for even more,
-> as of now, we allocate an array in atomic context, just to have a copy
-> of some stuff from the spinlock-protected list.
-> 
-> It would be good to have allocation as pointed by Dan prior to iteration
-> and fill it on the fly, sending when new message would not fit plus once
-> at the end. Sending procedure is safe to be called under a spinlock.
+From: Rob Clark <robdclark@chromium.org>
 
-If I understand correctly, you propose to remove the initial copy in 
-mac_addr and hold &vport_config->mac_filter_list_lock till the end of 
-the function?
+This series extends io-pgtable-arm with a method to retrieve the page
+table entries traversed in the process of address translation, and then
+beefs up drm/msm gpu devcore dump to include this (and additional info)
+in the devcore dump.
 
-That's it?
+This is a respin of https://patchwork.freedesktop.org/series/94968/
+(minus a patch that was already merged)
 
-There is a wait_for_completion_timeout() in idpf_vc_xn_exec() and the 
-default time-out is IDPF_VC_XN_DEFAULT_TIMEOUT_MSEC	(60 * 1000)
+v2: Fix an armv7/32b build error in the last patch
+v3: Incorperate Will Deacon's suggestion to make the interface
+    callback based.
+v4: Actually wire up the callback
+v5: Drop the callback approach
+v6: Make walk-data struct pgtable specific and rename
+    io_pgtable_walk_data to arm_lpae_io_pgtable_walk_data
+v7: Re-use the pgtable walker added for arm_lpae_read_and_clear_dirty()
+v8: Pass pte pointer to callback so it can modify the actual pte
 
-So, should an issue occurs, and the time out run till the end, we could 
-hold the 'mac_filter_list_lock' spinlock for up to 60 seconds?
-Is that ok?
+Rob Clark (4):
+  iommu/io-pgtable-arm: Make pgtable walker more generic
+  iommu/io-pgtable-arm: Re-use the pgtable walk for iova_to_phys
+  iommu/io-pgtable-arm: Add way to debug pgtable walk
+  drm/msm: Extend gpu devcore dumps with pgtbl info
 
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c |  10 ++
+ drivers/gpu/drm/msm/msm_gpu.c           |   9 ++
+ drivers/gpu/drm/msm/msm_gpu.h           |   8 ++
+ drivers/gpu/drm/msm/msm_iommu.c         |  22 ++++
+ drivers/gpu/drm/msm/msm_mmu.h           |   3 +-
+ drivers/iommu/io-pgtable-arm.c          | 147 +++++++++++++++---------
+ include/linux/io-pgtable.h              |  15 +++
+ 7 files changed, 158 insertions(+), 56 deletions(-)
 
-And if in asynch update mode, idpf_mac_filter_async_handler() also takes 
-&vport_config->mac_filter_list_lock;. Could we dead-lock?
-
-
-So, I'm not sure to understand what you propose, or the code in 
-idpf_add_del_mac_filters() and co.
-
-> 
-> CCing author; CCing Olek to ask if there are already some refactors that
-> would conflict with this.
-
-I'll way a few days for these feedbacks and send a v2.
-
-CJ
-
-> 
->>
->> regards,
->> dan carpenter
->>
-> 
-> 
-> 
+-- 
+2.46.0
 
 
