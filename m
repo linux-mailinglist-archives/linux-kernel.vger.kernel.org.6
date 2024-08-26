@@ -1,175 +1,147 @@
-Return-Path: <linux-kernel+bounces-301455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5226A95F128
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9288F95F129
 	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBD61F226E1
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC58281B66
 	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A791714A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FB11714AA;
 	Mon, 26 Aug 2024 12:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cj74y9VQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5348C140369;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D9313BC3F;
 	Mon, 26 Aug 2024 12:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674687; cv=none; b=T8LS2PC0LLUmZ36wMCw4sBTCGIOyPZ8JaRRNJpiIDmZTROVKax3POVvmCNi4akW4DgcHNmmPb3Zg1pfwJ3FdnpUU5tkOojHBYKSX9AWFyDWilq6x5EpHDpWKrDCi4/gMlG6XofPdjyjkSSBUz7FT9+M764t1nwJ7HRPmTEHDOy8=
+	t=1724674687; cv=none; b=M20189t9G6uZH8y2/s8OuKq95vVFjKlhoVHPOUZOxr29ihJmYxXyyNnDtTtgj58L2b4d2gSkV0vz+0v8D73JZo5Ijs/9xn63KEIZBIABLbQttUn+eQ6FUAUS2DuOVXE5iugKqip3kL3t2zkkuJvkIhR8fxwZQiVGU39FBubbcvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724674687; c=relaxed/simple;
-	bh=0gKOTDN02xP/TYDq8rdQ5A2bRV/fvYT6EBL3PpPfiug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQbcqm7K/wQH6hS0fBAppw51NX1w6aDc2nFDHWxCoowkGEvJqYShkxzW2Ftsl4qAPmeD9abIinq3fnV0mVsuRrfqMgF2D53zNvbruL6zWxOPG9Ts+N81wMBHRIypY2raUa0NefUB/uM3ZvJtGUrM9yDZ/n76R8UGT0ffaUmKu48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cj74y9VQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724674686; x=1756210686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0gKOTDN02xP/TYDq8rdQ5A2bRV/fvYT6EBL3PpPfiug=;
-  b=Cj74y9VQIkQxKUK6A55dqMWxPK9a/R24s4L7na/bPKvgeBsXfcBtHyPr
-   avNpEvfYA3jJNlW66gW1sHkJZ2gXDjMeMCDKqDBUT7+o5nFMyaOcbRWbN
-   uf8ct2CEdPso1+pC4dzPD9g5i4VAxxxqlKw2Yo+K1gUaKW9uyREwgGpF/
-   JEaEnUqmRi1/PgH/hsz8P/0/n+GUi+bEFGmdwWO5dy1rhFquWFKs1swkY
-   Lebao9qv7pvxP6qXjhxnq4ptY+C3EH6Nvj9KxwNtePOao46O2MZYfxeLm
-   dPt8ANLHSsMgZNo1Obtb+sz4TLGfcsm0dM468yaLNETxl6416YtHnpoZ6
-   g==;
-X-CSE-ConnectionGUID: 8ws6Dv86R2Kaxjp9H6JrUA==
-X-CSE-MsgGUID: iGOhVdkjQPuzh26JrLx+kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="33713998"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="33713998"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 05:18:05 -0700
-X-CSE-ConnectionGUID: Hz7RjpVWSgqIJQDveQnlsA==
-X-CSE-MsgGUID: cg4jXx3WTuu5PLOYt6zTag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="85675660"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 26 Aug 2024 05:18:02 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siYfW-000H1d-1v;
-	Mon, 26 Aug 2024 12:17:58 +0000
-Date: Mon, 26 Aug 2024 20:17:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	kees@kernel.org, gustavoars@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, wangshuaijie@awinic.com,
-	liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V8 2/2] iio: proximity: aw96103: Add support for
- aw96103/aw96105 proximity sensor
-Message-ID: <202408262027.ynenF6mX-lkp@intel.com>
-References: <20240823094947.3511730-3-wangshuaijie@awinic.com>
+	bh=ntpVWLB5Doc8EWeQ/tzd/K4/zGASTfLa/jTy8p7w1wY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUncI8EDfgOYKaZ7Qa9hzvShG5x7RMduOuEcIrZ+h673qPuWtObM2FYb7Sp9Gy+nJ9yBqzo9iPXo/kFrkHMdZlbM3kqEKM6pVx6qliTDz79ICgy2pOJj7i0tEBlG5dJiHeAw77aaqxA2xRPM4c+VmA2ykcOC6hV0c0drrwlWmP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so4356139276.2;
+        Mon, 26 Aug 2024 05:18:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724674684; x=1725279484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhpgtKr3dh0AsOBTCJwBp71vRKXSTrPRL4HJL1BkAiY=;
+        b=ZmkTzRxhs2xaqKgeTWPYtA9Dq9h2UXN847886KFkvIWiqR2V853RMd9LEAe1FoXjqN
+         3Ka+w5m8DUUUdcKJJB8z9gfIMs5UJvG7kvkeOHE19H6hduHb1vP1XXvxzykg+QZGCeqF
+         h1DybjkN67ARtarKOA/8RSSfR935r4x2ffV3qPTzvhKCAO1fNA9IYR/3ov/FFWwHJrA0
+         Zn3pndqNXcEibeGOVXtGby2GOi8O9DBA1IdbyGFEKGSzdKN4JrMYNdEj0F0DYg7Q/70M
+         Wrr3LDa+W9iRBmV/IGABY9PeJEF7uJHquTWaBQ857955gNvfteeGk1BtnGd7PVRIrDu1
+         lzhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMZXYGPSH9BLO36Scd6ywsa7kbc6UOXbjWDKFeq+bzCD0vqVXpH4Lc/M43c/t2BLlUIZ19yHPDKDsvuEYERGKa2s=@vger.kernel.org, AJvYcCWnWIHSDQS30T2BypzXeZcgSfo7OEjuDin0g6SenqEIKMZ1v4mx3ObgwTFeeHqcKbUgCZqWFp7XxDSU@vger.kernel.org, AJvYcCX1C2ju0GKZ6/gHXGFzh6Z58Dnywy9HE9zmCiZWCafbuIgHVuasZjZNFslxY19uhMQjYzTzTV+EspB0axzE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy279879H3KvKpk4FftZYKZGXn7dBCzSNoN/gxxgYMQAWmfUErk
+	+zcwt00a5p6kSNhVLdPVLDwepvKxezWp5+sOmWtdQnzUqvXfZ5Ug/qf9hcV0
+X-Google-Smtp-Source: AGHT+IF4FlzKBI546uxsJl19n9hsCflDuOC1RQyYnsyU6G8Bqp+yYdrW0mcbnArY101ECZBQf7lj/A==
+X-Received: by 2002:a05:6902:2411:b0:e0b:ba20:7f87 with SMTP id 3f1490d57ef6-e17a83e713emr10704835276.25.1724674683974;
+        Mon, 26 Aug 2024 05:18:03 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4637e1sm1951427276.15.2024.08.26.05.18.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 05:18:03 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-69483a97848so40705207b3.2;
+        Mon, 26 Aug 2024 05:18:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/Q+iWqEfxflzv53NE5+7QxVJAKaLChZ7BgE6B8WZwlC8sSo9hy5BHJV9PsHcQEMRBGAfmXaJ2n5bUa6rB@vger.kernel.org, AJvYcCVOgH3zAwVhKLIJNbTYenZECVZjLK8fZvxYaXwfzq1P1zCY6k8WWqdOtb9kOLlCzrVfoSCvmNtMu146@vger.kernel.org, AJvYcCVZWj1kYRdxoLdwKXtpsQXNFVrx3TEdqIRJ1PJj3FyouzhwIRnBRmbF4WLHTKTvvmsT0vLXfecrgWIGxh3r1IlPXZE=@vger.kernel.org
+X-Received: by 2002:a05:690c:f94:b0:6ae:1e27:c993 with SMTP id
+ 00721157ae682-6c625390575mr113494377b3.7.1724674683260; Mon, 26 Aug 2024
+ 05:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823094947.3511730-3-wangshuaijie@awinic.com>
+References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240821085644.240009-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 14:17:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWQodA1NdmCEXmW7UYjAbdLFP-YS=rnKffHbEP7zH+ErQ@mail.gmail.com>
+Message-ID: <CAMuHMdWQodA1NdmCEXmW7UYjAbdLFP-YS=rnKffHbEP7zH+ErQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] arm64: dts: renesas: r9a09g057: Add RIIC0-RIIC8 nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Prabhakar,
 
-kernel test robot noticed the following build warnings:
+On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add RIIC0-RIIC8 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Grouped the I2C nodes
+> - Dropped clock-frequency
+> - Updated I2C nodes to match with the coding-style of DTS
 
-[auto build test WARNING on b78b25f69a1dfa79798f684ad34707b1da10a48f]
+Thanks for the update!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-iio-aw96103-Add-bindings-for-aw96103-aw96105-sensor/20240826-130421
-base:   b78b25f69a1dfa79798f684ad34707b1da10a48f
-patch link:    https://lore.kernel.org/r/20240823094947.3511730-3-wangshuaijie%40awinic.com
-patch subject: [PATCH V8 2/2] iio: proximity: aw96103: Add support for aw96103/aw96105 proximity sensor
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240826/202408262027.ynenF6mX-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408262027.ynenF6mX-lkp@intel.com/reproduce)
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> @@ -201,6 +201,195 @@ ostm3: timer@14001000 {
+>                         status =3D "disabled";
+>                 };
+>
+> +               i2c8: i2c@11c01000 {
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408262027.ynenF6mX-lkp@intel.com/
+Usually we sort the instances within a group by instance number, i.e.
 
-All warnings (new ones prefixed by >>):
+    i2c0: i2c@14400400 {
+    i2c1: i2c@14400800 {
+    i2c2: i2c@14400c00 {
+    i2c3: i2c@14401000 {
+    i2c4: i2c@14401400 {
+    i2c5: i2c@14401800 {
+    i2c6: i2c@14401c00 {
+    i2c7: i2c@14402000 {
+    i2c8: i2c@11c01000 {
 
-   drivers/iio/proximity/aw96103.c: In function 'aw96103_i2c_probe':
->> drivers/iio/proximity/aw96103.c:806:28: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     806 |         aw96103->chip_info = i2c_get_match_data(i2c);
-         |                            ^
+See e.g. the scif nodes in arch/arm64/boot/dts/renesas/r8a77951.dtsi:
 
+    scif0: serial@e6e60000 {
+    scif1: serial@e6e68000 {
+    scif2: serial@e6e88000 {
+    scif3: serial@e6c50000 {
+    scif4: serial@e6c40000 {
+    scif5: serial@e6f30000 {
 
-vim +/const +806 drivers/iio/proximity/aw96103.c
+scif3 and scif4 have lower base addresses than scif0.
 
-   793	
-   794	static int aw96103_i2c_probe(struct i2c_client *i2c)
-   795	{
-   796		struct iio_dev *aw_iio_dev;
-   797		struct aw96103 *aw96103;
-   798		int ret;
-   799	
-   800		aw_iio_dev = devm_iio_device_alloc(&i2c->dev, sizeof(*aw96103));
-   801		if (!aw_iio_dev)
-   802			return -ENOMEM;
-   803	
-   804		aw96103 = iio_priv(aw_iio_dev);
-   805		aw96103->dev = &i2c->dev;
- > 806		aw96103->chip_info = i2c_get_match_data(i2c);
-   807		aw96103->max_channels = aw96103->chip_info->num_channels;
-   808	
-   809		aw96103->regmap = devm_regmap_init_i2c(i2c, &aw96103_regmap_confg);
-   810		if (IS_ERR(aw96103->regmap))
-   811			return PTR_ERR(aw96103->regmap);
-   812	
-   813		ret = devm_regulator_get_enable(aw96103->dev, "vcc");
-   814		if (ret < 0)
-   815			return ret;
-   816	
-   817		ret = aw96103_read_chipid(aw96103);
-   818		if (ret)
-   819			return ret;
-   820	
-   821		ret = aw96103_sw_reset(aw96103);
-   822		if (ret)
-   823			return ret;
-   824	
-   825		ret = aw96103_wait_chip_init(aw96103);
-   826		if (ret)
-   827			return ret;
-   828	
-   829		ret = request_firmware_nowait(THIS_MODULE, true, "aw96103_0.bin",
-   830					      aw96103->dev, GFP_KERNEL, aw96103,
-   831					      aw96103_cfg_update);
-   832		if (ret)
-   833			return ret;
-   834	
-   835		ret = aw96103_interrupt_init(aw_iio_dev, i2c);
-   836		if (ret)
-   837			return ret;
-   838		aw_iio_dev->modes = INDIO_DIRECT_MODE;
-   839		aw_iio_dev->num_channels = aw96103->chip_info->num_channels;
-   840		aw_iio_dev->channels = aw96103->chip_info->channels;
-   841		aw_iio_dev->info = &iio_info;
-   842		aw_iio_dev->name = aw96103->chip_info->name;
-   843		aw_iio_dev->dev.parent = aw96103->dev;
-   844	
-   845		return devm_iio_device_register(aw96103->dev, aw_iio_dev);
-   846	}
-   847	
+The rest LGTM.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
