@@ -1,99 +1,153 @@
-Return-Path: <linux-kernel+bounces-301460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D903E95F13A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:22:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B02795F140
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E911C21CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C4C1F22ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF46D43152;
-	Mon, 26 Aug 2024 12:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0AA15B56E;
+	Mon, 26 Aug 2024 12:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjJvHRvE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="GK0bZZsd"
+Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DB7155326
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC3443152
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674957; cv=none; b=i9NYH6abTmjcXVTQwcJVIIgFK6g0mTbWZl6VyUXDaiALBBKpg2B39Iq4yr+vqp4WQ/gcMAB3WRN+FO3pk+mtKSu8nGl51soFnlY4E8KkEaNpbT0M9uVujEn3AEC98aSISvjc/RoXdCl3PqESltQipo43ijs6hrWsGcqQ1EUcJug=
+	t=1724675019; cv=none; b=Z3ROuVOfuNv43NHy7DduHTtWluekSf0RCWnV+zxX1dpLOGmIpRhIJF7rDm1K8iTKBGl4U4uJCob4B9HwphCH8uIrcwxzWaZWhb7RjH/ANIxjub1emG0soe7Nm7r3waZkx8qlv1LXuYv6WGJHhXj8bOVUD/b3tddh61cWVhWgtfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674957; c=relaxed/simple;
-	bh=m5wtQla5FgoWz7ZxfK1ger/KDhcx7TO+oRRgN1ZhGeg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jj78pByADCS1f2jjBZUBhHNeJWpSgw0osZW3I0qF55CeCpc2+5mAoWgc3pUVxUFhkPcAGO1YLQXBWG/9v6vNj+1un+ydPqLl8v86qNkGrYfeDXq6hj4292OwRe0xmMBlOaVgXzsSbTO3MKc9NATE60LJsKQ84PsVz/0vhs33HNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjJvHRvE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724674955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=LUXUZJ2+JyyNU9O9Z+6HVFbmCd3VdbShk2keZH+bP6s=;
-	b=SjJvHRvEeHzSvJySeZVC6qs8HjzJee2Rl+2RQNq2NX+Byo2hic4c6v13C6qWZ9mG7uQ6m/
-	G61qZwAheOZCnZeXUABigM3dp87ydeeB6VKisDz8lCX6SSaREM6cVeOciz/FzeTADwixly
-	m+K7fkOUMNOxlGe1BkEPWXhepT2oVYc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-VOLqy6ElM16LcHu0OpnxYA-1; Mon,
- 26 Aug 2024 08:22:30 -0400
-X-MC-Unique: VOLqy6ElM16LcHu0OpnxYA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 67C431954B0E;
-	Mon, 26 Aug 2024 12:22:29 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.2.16.8])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84BC319560A3;
-	Mon, 26 Aug 2024 12:22:27 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Recommended version handshake for FUSE clients
-Date: Mon, 26 Aug 2024 14:22:24 +0200
-Message-ID: <87seurv5hb.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724675019; c=relaxed/simple;
+	bh=NGNuO7b6HqvQMZTRpQYtKXImvZv18AhKyVxbRvncbOw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F70TyC/qCxoTLCnMeDWw6YOQXAGII56Tkz7FUb2Lb6bzhwU4ynJI6lnXB2yMIiHp/pRgtF8jY5Gm5mSGg0u8Wqi/1xtTBr2CANkRIDhtzTNzxJ9iwr4YHM95yw/wbesKDLHG1dudZ6JZYmq/pwZ8VFka3evYGilUU3ZDB8MoqBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=GK0bZZsd; arc=none smtp.client-ip=17.58.6.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1724675017;
+	bh=arCgGz+KTYXJ008/MuCBxOBSjDGOop8UkjnG9nPczys=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=GK0bZZsd4XuPRGuSBXnziHY4wAlZDb7oOrv1UoG/1NquysNjr4oHTSPull/scooUM
+	 80CMge0F1+7uyl1WTECovjShNiFzwt3vyQr9aQc3z/KpqhG7D8bzkgh0JCTZDlG7WN
+	 IDuByJymHgqTXmEZisF6XWZPN+TdyJZGWP1keZFNjT8BmV3OiZJX59RL/bwuBQ80gX
+	 ODs3yHTyNUlssiTx5KhAdqQuTZvLSffht05lka3KHwxsGdAcwBGcG1zHiqvCB3/Czk
+	 uoqFmkvw+cdTzCMJOfzCTQEBE1m86C1uNcv5oCtigQ9r5ZGzsqlwEICY5MuDmWE/fQ
+	 SKzP/35wXZPhQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPSA id 992392C0322;
+	Mon, 26 Aug 2024 12:23:33 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Mon, 26 Aug 2024 20:23:06 +0800
+Subject: [PATCH RFC] driver core: bus: Correct return value for storing bus
+ attribute drivers_probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240826-fix_drivers_probe-v1-1-be511b0d54c5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKlzzGYC/x2MQQqAIBAAvxJ7TlAJsa5BD+gaEWZb7cVkBQmiv
+ ycdB2bmgYRMmKCrHmDMlOgKBVRdgT9dOFDQVhi01I202oid7mVjyshpiXytKKz1xmnvlW1bKF1
+ kLNL/nGAcepjf9wNI0UB+aAAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, Greg Kroah-Hartman <gregkh@suse.de>, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: uAseHAhC_F9xXK6xPYQ1OG0a5f_uGONT
+X-Proofpoint-GUID: uAseHAhC_F9xXK6xPYQ1OG0a5f_uGONT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_08,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 suspectscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408260097
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-I cannot use libfuse, so I'm writing my own mini-wrapper directly on top
-of the kernel interface.  For the major version handshake, I understand
-that I need to reply with version 7 if a later major version is
-required.  But what to do about the minor version?
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Should I use the minimum version that is expected to work (because there
-have not been any struct layout changes since)?  I think this could end
-up problematic if some struct sizes have grown between the known-good
-minimum version and the <linux/fuse.h> version, something that a future
-<linux/fuse.h> version might bring.
+drivers_probe_store() regards bus_rescan_devices_helper()'s returned
+value 0 as success when find driver for a single device user specify
+that is wrong since the following 3 failed cases also return 0:
 
-Or should I just send back FUSE_KERNEL_MINOR_VERSION from the system
-version of <linux/fuse.h>?  I think this assumes that merely increasing
-the minor version does not result in behavioral changes (such as
-additonal FUSE events being generated that the current code knows
-nothing about).
+(1) the device is dead
+(2) bus fails to match() the device with any its driver
+(3) bus fails to probe() the device with any its driver
 
-The code only has to run on the system that it was compiled on and
-possibly newer kernels.  Going back to older kernels is not needed.  But
-I also expect people using a wide range of kernel header versions to
-compile this code.
+Fixed by only regarding successfully attaching the device to a driver
+as success.
 
-Or perhaps I should bundle some older version of <linux/fuse.h> with my
-sources?
+Fixes: b8c5cec23d5c ("Driver core: udev triggered device-<>driver binding")
+Cc: stable@vger.kernel.org
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ drivers/base/bus.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-Thanks,
-Florian
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index abf090ace833..0a994e63785c 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -40,6 +40,20 @@ static struct kset *bus_kset;
+ 	struct driver_attribute driver_attr_##_name =		\
+ 		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+ 
++/* Bus rescans drivers for a single device */
++static int __must_check bus_rescan_single_device(struct device *dev)
++{
++	int ret;
++
++	if (dev->parent && dev->bus->need_parent_lock)
++		device_lock(dev->parent);
++	ret = device_attach(dev);
++	if (dev->parent && dev->bus->need_parent_lock)
++		device_unlock(dev->parent);
++
++	return ret;
++}
++
+ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 						void *data);
+ 
+@@ -311,12 +325,19 @@ static ssize_t drivers_probe_store(const struct bus_type *bus,
+ {
+ 	struct device *dev;
+ 	int err = -EINVAL;
++	int res;
+ 
+ 	dev = bus_find_device_by_name(bus, NULL, buf);
+ 	if (!dev)
+ 		return -ENODEV;
+-	if (bus_rescan_devices_helper(dev, NULL) == 0)
++
++	res = bus_rescan_single_device(dev);
++	/* Propagate error code upwards as far as possible */
++	if (res < 0)
++		err = res;
++	else if (res == 1)
+ 		err = count;
++
+ 	put_device(dev);
+ 	return err;
+ }
+
+---
+base-commit: 888f67e621dda5c2804a696524e28d0ca4cf0a80
+change-id: 20240826-fix_drivers_probe-88c6a2cc1899
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
