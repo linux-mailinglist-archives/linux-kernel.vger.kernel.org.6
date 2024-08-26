@@ -1,198 +1,146 @@
-Return-Path: <linux-kernel+bounces-301769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2444F95F558
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:41:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B53C95F565
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD7DB21B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B069B21E5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3E193408;
-	Mon, 26 Aug 2024 15:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEB11946C1;
+	Mon, 26 Aug 2024 15:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UlYdBR+y"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdjS9CZa"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B36193093;
-	Mon, 26 Aug 2024 15:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94D19306C;
+	Mon, 26 Aug 2024 15:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686888; cv=none; b=JrVXGYi38y6sDWEuQkNzEib+susfKBX3+BgstizFySwQqwvDuZx86x1h9QkrlYOYSCnwX6/jJw+9eapwUWn9mOMI99IjuFqK5Keire7TikaUZ0IF/7kNjzCi5Fpumq5XiBPd44MU1lUCtZbA25e9mMnYrh6GSSg6F9KDuATz+rI=
+	t=1724686937; cv=none; b=PqiENNsrCI/Iquu4kbfC43dz8sSqIa9utJmK+lagtaYx1aitKLsL5MoXRufpJfn+XAFn3a+8wNLSnCmV9qBYl3WPHufgCS6oW5o42ElV/wReHo92t+3lDNfkRACc+xrRi1HhvU7LVfTDEzmbptAH7XXq23plaJLBZpHuqerFXqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686888; c=relaxed/simple;
-	bh=1MwTIlGrIy/EyLUvXSMdyXtOo7gSaAtE9p5AL0+Qp3g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TnKvwFuVeWN/z7BI9mHop+oy+JFQtRzODdS9YtJtcZYE2BR+3q1EPQ0rl/3iMwnhopi+aAUXTDzafRodJyEXwCs3ZNFnAXreHAoncgdQ0/O7DgbnROufqhSB7jYwjJzMQkgXjPn8IJJaN4jT3FqTDjbd89pyJFifBXbdCfbnNU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UlYdBR+y; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1724686937; c=relaxed/simple;
+	bh=xM8pXW+HgjT0erxnOsIGtoopuFkOjZ2IcKxNFrbxs24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCZrOFK+2hXKBDQAUS40EMbewcaWyu1MUrgWV9+P2/V97lwdYGNOXpxnHNiz3bBBVCgwueURk6fFsIesudDF8A4Dnm4eXzr4rbv9SSHowIobN34NKL8NziYwtDqQV/DZtB1olu5D6kaLZvX0L2MfePcVoYtM/oBMJHNy8l0ajI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdjS9CZa; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d3da94f059so3054589a91.2;
-        Mon, 26 Aug 2024 08:41:26 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5343eeb4973so3703342e87.2;
+        Mon, 26 Aug 2024 08:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724686886; x=1725291686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=5cL8vmve9HVfmH5Wdh+0xihsE23pZPujvVmfl+16k4g=;
-        b=UlYdBR+yW4ZRnP9gdu6ZJx7toZMl6er8AHHixIinh9UAhw+mR1OLKCtTmmgLBqacEw
-         Dhp34QQGWmzhK5C65rgslOwy5n5sFaFZ3zl9jUOM5ApgTE1tkrSE/bvGrbMCtGWIa5K4
-         q5oPfKAoEHh25fgYYYnPBTSjuASyxl/jYjacKi9IznKGEUMIc5gsNGuEr4RF3dkHIsSk
-         3m7aEy+NtOH3rqVS+lkSlfkKgWdfVL0RPOMzgulof0KtpGzu6iR5tdCqKsb20sQcYpWX
-         2T7DAfdQ3yvGCra77oEFW1ld2FPWmsS9UjatwPSe6dy4vLKbvzb6B3Y++xOcYeYoNiRY
-         4Q4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686886; x=1725291686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724686933; x=1725291733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5cL8vmve9HVfmH5Wdh+0xihsE23pZPujvVmfl+16k4g=;
-        b=gstt7kNIoA6ie29ljtGFk+l/8ybNi/tec0FIl5zu4PAokrtJQmNGRowWtL+S6RcqPT
-         8k8bxmgThiqT5pBCxwNQaL4xNtB2SiUlbq/vQa+hsTCdGXAmY8TxaeLlwhfH5UNxX3nb
-         C9kImkSc06Z46qjSAhXTA3QeUhTkx/6Lo1gbRspNYWICi2N3olVB+E1NOswU/3u0E97R
-         xgYzAz9qjSQjytB4VZjv1j6wppxrKA41kYcFHZnEqLFrrEs2VimGEjudpC7Jda7TgCoG
-         uKD9fmXyF72vAvkZ+eHY0NvYutDlCgcMbAkajKV+567vcn84LCuHmoKJH3LAc06tow/3
-         7cxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxmYGgIA713v47ahD+Q36NLric4X7fWQRqyjmwvAEJowQAfTrkAeS+00aj4HsBe/1LD6ACZTAjfNsAHdPzKI=@vger.kernel.org, AJvYcCXFLFsw9EOem/cdZtQViAjmSxCV/jhS/vlTRa3K2ufNzUFL4YDy5KJom9r+89mhyLfh6ftEzwG8Nic2Dgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbD/ZtdARVao/SlCfi11r+40Lr6GJEpSsQ3sdGzIEIhPRIlMfG
-	GVGKGEt2gZoR+KLz9oEEDO6ZgJJ9UmeE+RQF7fvCurBJPLkhYNoy
-X-Google-Smtp-Source: AGHT+IEoS3cGu2TFsLfwCd22I0UXs8kMV5LoXESj4cLxdNO9rWXoFBIxkbh9TdxjDKY2XehGxFAnCA==
-X-Received: by 2002:a17:90a:ca83:b0:2c9:999d:a22d with SMTP id 98e67ed59e1d1-2d646cebe18mr9331357a91.30.1724686885950;
-        Mon, 26 Aug 2024 08:41:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5eb8d235esm12400328a91.6.2024.08.26.08.41.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:41:25 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9afcde72-6720-494e-9a02-b0089253c121@roeck-us.net>
-Date: Mon, 26 Aug 2024 08:41:23 -0700
+        bh=FH/rM9r8vy15gTO0SvqG09ShUwI8MYLfcApXi3x19VU=;
+        b=EdjS9CZavbm/qHjdqAVWAMe51uCR7TIdmv8bxidfh6CYSFEDINpoD9bnNZw/44NEd2
+         bwBi7FKlKtyMt0aRH9pV5PVxbBLin9ef5NWVI29BzbN/ecmH7ybQvBjssgCuZxe2N6ZU
+         7ix90zpw2jETILZoFi3jgRNr5r8Uc+0KPKg8uDr8uTXolk0iCXovdJcMfQ0COUo0Fagf
+         aIVHXK2pNYoUTKjnCizNHQ2GnNb3Ssg1jeZQVF2hHit1AtRoMmTpfyj80pjyAYaVa3SL
+         190xbe2zVRO5EoXJuoymLYZLXgIt0VN5KzhSc99Ki7QVuE4o/Lg4evW1RfKxHAV1p1jZ
+         VsIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724686933; x=1725291733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FH/rM9r8vy15gTO0SvqG09ShUwI8MYLfcApXi3x19VU=;
+        b=OfchqeexupTnQ70b/gPvTSp4ysO6+DSuBIzlVLqODF84aw3sTALHkfvT3hvcmmbuya
+         4jdOLh7DNXR6+k7hm2oNSxBm3H2CQfRZWZE7bWobKs/vPIxCsAiGqTpka2JtNw8h2h0M
+         tLhJHtB0tHKzsPT7/FU1qvbvg98315bSVMfOzetEC15qRrr+WnJnPLR0X0Qx86CwU+1a
+         W1BdoruNDwHJ5zgXUzCjAEG24whjNZKyBfHfG2yX5yi9AmR1n50/Kk21b1qiiqUgkNGh
+         ezOuRQyCdPURdLohfIk8677CHVQAbELVp3rFyzRr92YeTlx2ZbCKOX1+2Zknuk9VpwNe
+         Nbgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV82Yc0GfBiVscdpNiH8Cn1HQ0lYpvuSjt7qaJLOwA7h3aPdyAHtosYXKiZvRpibbuebyhAPTvn4CLKbA==@vger.kernel.org, AJvYcCVI/piB7xYhp2AHSPIQF5Hk0tDk577LglGcyylXlTgtoaXrXEq5Or9FY6RXK39IQ1kDpOadZyZA@vger.kernel.org, AJvYcCVl833agkMpi5UadWwaCyPL5YHvENsRbuJ13BnzKYdY2hoDUHJWqcFtyzBCVD09LtQY5JO3vrYhJ4kWxoLx@vger.kernel.org, AJvYcCWGRmTCqwn/PSfdfXgT1AAVmlZnnskaFi6uXQdehnW9n2MQpRoJ309ZJ8OyGu9Xxrunu3Q4JthwcARz@vger.kernel.org, AJvYcCWKN89Y418s69KCCpnQbddorcfo/8aSC5MMwvtKd6cH2ZMrUFAzAQZLEcFa+Vyj8fI0w/GCaDawDRsC@vger.kernel.org, AJvYcCWWlpsZ8jctj9IxWb8rtQvxQs1vqqrexaHjZ7YNhuNAIvLxnZVw1sDiWp0IDgkBYvY5QtQkIyzyf/6dsQ==@vger.kernel.org, AJvYcCXuzaFrSIuR/W/rSaj86l3u9rw6GOtN9wKq/KJS32EAWj8zas0gTCJXrxwiKUVmX53q8dLcX/97D4pXXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkmXMIVUA9sKDzyL8jEy9n3kr4Qxovw8z1bM2cGDcWxbyAG//6
+	AFqhaHBjbrFkL/rqOTtRTb203J3BDnzRje5y1MGPsPxrMEN9PSxU7766//v/ZH7mr11JzDSMnh3
+	AME9aKOsRvcxxnkE4TnqlG5qJnig=
+X-Google-Smtp-Source: AGHT+IEO+gUPPoFWhnVIZyFPIRMKkPjZZ1g7sFSpxYSDeKMazFoujBp34K9I3yoSDp0PEZ365NhxrirOyyk84oqJOVc=
+X-Received: by 2002:ac2:4e06:0:b0:52e:936e:a237 with SMTP id
+ 2adb3069b0e04-53438846debmr7930724e87.16.1724686932982; Mon, 26 Aug 2024
+ 08:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] iTCO_wdt: ignore NMI_NOW bit on register comparison
-From: Guenter Roeck <linux@roeck-us.net>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Oleksandr Ocheretnyi <oocheret@cisco.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Jean Delvare
- <jdelvare@suse.de>, Wolfram Sang <wsa@kernel.org>,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- xe-linux-external@cisco.com
-References: <20240826075303.3964392-1-oocheret@cisco.com>
- <20240826111811.GP1532424@black.fi.intel.com>
- <7fda0a60-e34e-4853-bb4b-2c29c0806754@roeck-us.net>
- <124070dc-77ed-4854-9322-9cc9a4c54b57@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <124070dc-77ed-4854-9322-9cc9a4c54b57@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240822134744.44919-1-pstanner@redhat.com> <20240822134744.44919-6-pstanner@redhat.com>
+ <ZsdO2q8uD829hP-X@smile.fi.intel.com> <ad6af1c4194873e803df65dc4d595f8e4b26cb33.camel@redhat.com>
+In-Reply-To: <ad6af1c4194873e803df65dc4d595f8e4b26cb33.camel@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 26 Aug 2024 18:41:36 +0300
+Message-ID: <CAHp75VfKS_PWer2hEH8x0qgBUEPx05p8BA=c0UirAWjg0SaLeA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] ethernet: cavium: Replace deprecated PCI functions
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, 
+	Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, 
+	Xu Yilun <yilun.xu@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Alvaro Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, Chaitanya Kulkarni <kch@nvidia.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fpga@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/26/24 08:15, Guenter Roeck wrote:
-> On 8/26/24 08:12, Guenter Roeck wrote:
->> On 8/26/24 04:18, Mika Westerberg wrote:
->>> Hi,
->>>
->>> On Mon, Aug 26, 2024 at 12:53:01AM -0700, Oleksandr Ocheretnyi wrote:
->>>> Commit da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake
->>>> PCH iTCO") does not ignore NMI_NOW bit on write operation to TCO1_CNT
->>>> register what causes unexpected NMIs due to NMI_NOW bit inversion
->>>> during regular crashkernel's workflow with following logs:
->>>>
->>>> iTCO_vendor_support: vendor-support=0
->>>> iTCO_wdt iTCO_wdt: unable to reset NO_REBOOT flag, device
->>>>                                              disabled by hardware/BIOS
->>>>
->>>> This change clears NMI_NOW bit in the TCO1_CNT register to have no
->>>> effect on NMI_NOW bit inversion what can cause NMI immediately.
->>>>
->>>> Fixes: da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake PCH iTCO")
->>>> Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
->>>> ---
->>>>   drivers/watchdog/iTCO_wdt.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
->>>> index 264857d314da..679c115ef7d3 100644
->>>> --- a/drivers/watchdog/iTCO_wdt.c
->>>> +++ b/drivers/watchdog/iTCO_wdt.c
->>>> @@ -224,7 +224,7 @@ static int update_no_reboot_bit_cnt(void *priv, bool set)
->>>>           val |= BIT(0);
->>>>       else
->>>>           val &= ~BIT(0);
->>>> -    outw(val, TCO1_CNT(p));
->>>> +    outw(val & ~BIT(8), TCO1_CNT(p));
->>>
->>> I suggest adding some #define for the magical number 8 so that it is
->>> easier for anyone looking at this driver to figure out what it is doing.
->>>
->>> Otherwise looks good to me, thanks!
->>>
->>
->> Not really; it appears to be hiding a change in code which is supposed to do
->> something different (it is supposed to set or clear the no_reboot bit),
->> with no explanation whatsoever. That warrants a comment in the code.
->> Also, I would prefer
->>      val = inw(TCO1_CNT(p)) & ~BIT(8);
->>
-> 
-> On top of that, I fail to understand "on register comparison" in the subject.
-> What register comparison ?
-> 
+On Mon, Aug 26, 2024 at 5:51=E2=80=AFPM Philipp Stanner <pstanner@redhat.co=
+m> wrote:
+> On Thu, 2024-08-22 at 17:44 +0300, Andy Shevchenko wrote:
+> > On Thu, Aug 22, 2024 at 03:47:37PM +0200, Philipp Stanner wrote:
 
-Sorry, one more: The comment will need to explain why clearing bit 8 is needed
-here but not for any other writes to TCO1_CNT. Obviously this isn't just "ignore
-bit on write" but something more.
+...
 
-Guenter
+> > > -   err =3D pcim_iomap_regions(pdev, 1 << PCI_PTP_BAR_NO,
+> > > pci_name(pdev));
+> > > -   if (err)
+> > > +   clock->reg_base =3D pcim_iomap_region(pdev, PCI_PTP_BAR_NO,
+> > > pci_name(pdev));
+> > > +   if (IS_ERR(clock->reg_base)) {
+> > > +           err =3D PTR_ERR(clock->reg_base);
+> > >             goto error_free;
+> > > -
+> > > -   clock->reg_base =3D pcim_iomap_table(pdev)[PCI_PTP_BAR_NO];
+> > > +   }
+> >
+> > Perhaps
+> >
+> >       clock->reg_base =3D pcim_iomap_region(pdev, PCI_PTP_BAR_NO,
+> > pci_name(pdev));
+> >       err =3D PTR_ERR_OR_ZERO(clock->reg_base);
+> >       if (err)
+> >               goto error_free;
+> >
+> > This will make your patch smaller and neater.
+> >
+> > P.S. Do you use --histogram diff algo when preparing patches?
+>
+> So far not.
+> Should one do that?
 
+Id doesn't alter your code, it's in addition to what I suggested, but
+as Linus shared that there is no reason to avoid using --histogram not
+only in Linux kernel, but in general as it produces more
+human-readable diff:s.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
