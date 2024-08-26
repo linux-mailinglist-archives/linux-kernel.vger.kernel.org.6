@@ -1,205 +1,103 @@
-Return-Path: <linux-kernel+bounces-301149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13F895ED04
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F3895ED05
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9681F22262
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2806D1C21688
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC9E14430A;
-	Mon, 26 Aug 2024 09:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pc+8Ezsn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDDD85654
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177C814375D;
+	Mon, 26 Aug 2024 09:21:58 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AE013A88D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664064; cv=none; b=MWkCp8eWn2l1JoZDhAZc5LkLcDKMYZFkDP+T9Fy21ABGdalbO2rh8WEXXJXlMa+vIIQMJ2v9fE5JUO+d9GrYoHJQ+e+NeaXMSOZWM6FARX/GowaWTHosRNPWPfbRS+D86cBDBRoBe3AaKadnNuwfVUitjt5RnZENcmBusmvT4aQ=
+	t=1724664117; cv=none; b=u0JmGXKrho2QFAFEzb06gq7U32GfxReGRsL0UIl8v/s+eOokASxEL7KJHg+qP+fLSn6c88vVjFIzvXyymFDkE/gJX5Dtu6vCsrzjBFPoN3bRkF1DYCOZYBGMejK+M+D81XjidQFLfGNFEa59I8l7+CV5iyzmzehRFhKVlLiydTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664064; c=relaxed/simple;
-	bh=7/jvPfPjLNWe682qDWZCvhO4ske8Ezk1Ybv6oqrtboM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3r+abOWKPHqpRI0MurXU0MowJNXv6vvNrQoGYKQDkVhg3xMgincF9ejkZDw+KTuXVYaVRWzZe4rSXZFPWxAhAOB/A+xgRqIsTntJxtHIcOylY363B8lpzKDBuQ6ppk1kdIcqLhdHTj5RBSfDufnUMhHtWshnzFRlHrF5uXMAik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pc+8Ezsn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724664061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m/Rz9OL2Ql7AeANS5jndVyW8EU9zBxk9meDOMyH+oFI=;
-	b=Pc+8Ezsnx9wedBNyFNHMxRFFV0hWFaNYO7VhkvfoeWK5jWgFUvd4WAg0SFoyNd2jDlVcg/
-	+w48r6El9C5M79l+4uK8+j1GXjmF7+pecZxjb5DdFN13sBT3s0sj6EehHp0rY8sKV57Th9
-	q3wCMxekFkWBVr/HW2s/v/ySHGqUCOM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-343-KZ5NH_XSNcO0E27HjFksIw-1; Mon,
- 26 Aug 2024 05:20:55 -0400
-X-MC-Unique: KZ5NH_XSNcO0E27HjFksIw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E63A31955D53;
-	Mon, 26 Aug 2024 09:20:53 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.156])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C3A219560A3;
-	Mon, 26 Aug 2024 09:20:48 +0000 (UTC)
-Date: Mon, 26 Aug 2024 17:20:42 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Muchun Song <muchun.song@linux.dev>
-Cc: Muchun Song <songmuchun@bytedance.com>, Jens Axboe <axboe@kernel.dk>,
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, ming.lei@redhat.com
-Subject: Re: [PATCH 4/4] block: fix fix ordering between checking
- QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
-Message-ID: <ZsxI6uCbGpQh1XrF@fedora>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-5-songmuchun@bytedance.com>
- <ZshyPVEc9w4sqXJy@fedora>
- <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
- <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev>
+	s=arc-20240116; t=1724664117; c=relaxed/simple;
+	bh=54vAyqWzP74SvcfqrhJzsG+kPxYADVWM+AOyl2jeO7s=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=Wvw4gCsM6MO1TCOFA0tHU4ptFjxZqLTaQXpKC29FshQMuctXEDDmgFB7c2ao4G/vkyDhai4rmqmwtvyGvq2DYy1VKwcQiSN/qtRcyLZyV0G+ta0QtXK0JLxbb+/0rr4wGTiJ7VyUbWIBRtPPAvsweeAQKANGezvLmPGFTI9KKOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 92B7F92009C; Mon, 26 Aug 2024 11:21:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 8B53A92009B;
+	Mon, 26 Aug 2024 10:21:47 +0100 (BST)
+Date: Mon, 26 Aug 2024 10:21:47 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org
+cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+    Isaku Yamahata <isaku.yamahata@intel.com>, 
+    Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86/EISA: Use memremap() to probe for the EISA BIOS
+ signature
+Message-ID: <alpine.DEB.2.21.2408261015270.30766@angie.orcam.me.uk>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Aug 26, 2024 at 03:33:18PM +0800, Muchun Song wrote:
-> 
-> 
-> > On Aug 26, 2024, at 15:06, Muchun Song <songmuchun@bytedance.com> wrote:
-> > 
-> > On Fri, Aug 23, 2024 at 7:28 PM Ming Lei <ming.lei@redhat.com> wrote:
-> >> 
-> >> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
-> >>> Supposing the following scenario.
-> >>> 
-> >>> CPU0                                                                CPU1
-> >>> 
-> >>> blk_mq_request_issue_directly()                                     blk_mq_unquiesce_queue()
-> >>>    if (blk_queue_quiesced())                                           blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
-> >>>        blk_mq_insert_request()                                         blk_mq_run_hw_queues()
-> >>>            /*                                                              blk_mq_run_hw_queue()
-> >>>             * Add request to dispatch list or set bitmap of                    if (!blk_mq_hctx_has_pending())     4) load
-> >>>             * software queue.                  1) store                            return
-> >>>             */
-> >>>        blk_mq_run_hw_queue()
-> >>>            if (blk_queue_quiesced())           2) load
-> >>>                return
-> >>>            blk_mq_sched_dispatch_requests()
-> >>> 
-> >>> The full memory barrier should be inserted between 1) and 2), as well as
-> >>> between 3) and 4) to make sure that either CPU0 sees QUEUE_FLAG_QUIESCED is
-> >>> cleared or CPU1 sees dispatch list or setting of bitmap of software queue.
-> >>> Otherwise, either CPU will not re-run the hardware queue causing starvation.
-> >> 
-> >> Memory barrier shouldn't serve as bug fix for two slow code paths.
-> >> 
-> >> One simple fix is to add helper of blk_queue_quiesced_lock(), and
-> >> call the following check on CPU0:
-> >> 
-> >>        if (blk_queue_quiesced_lock())
-> >>         blk_mq_run_hw_queue();
-> > 
-> > This only fixes blk_mq_request_issue_directly(), I think anywhere that
-> > matching this
-> > pattern (inserting a request to dispatch list and then running the
-> > hardware queue)
-> > should be fixed. And I think there are many places which match this
-> > pattern (E.g.
-> > blk_mq_submit_bio()). The above graph should be adjusted to the following.
-> > 
-> > CPU0                                        CPU1
-> > 
-> > blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-> > blk_mq_run_hw_queue()
-> > blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
-> >    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
-> >        return                                      blk_mq_run_hw_queue()
-> >    blk_mq_sched_dispatch_requests()                    if
-> > (!blk_mq_hctx_has_pending())     4) load
-> >                                                            return
-> 
-> Sorry. There is something wrong with my email client. Resend the graph.
-> 
-> CPU0                                        CPU1
-> 
-> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-> blk_mq_run_hw_queue()                       blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
->     if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->         return                                      blk_mq_run_hw_queue()
->     blk_mq_sched_dispatch_requests()                    if (!blk_mq_hctx_has_pending())     4) load
->                                                             return
+Area at the 0x0FFFD9 physical location in the PC memory space is regular 
+memory, traditionally ROM BIOS and more recently a copy of BIOS code and 
+data in RAM, write-protected.
 
-OK.
+Use memremap() then to get access to it rather than ioremap(), avoiding 
+issues in virtualization scenarios and complementing changes such as 
+commit f7750a795687 ("x86, mpparse, x86/acpi, x86/PCI, x86/dmi, SFI: Use 
+memremap() for RAM mappings") or commit 5997efb96756 ("x86/boot: Use 
+memremap() to map the MPF and MPC data").
 
-The issue shouldn't exist if blk_queue_quiesced() return false in
-blk_mq_run_hw_queue(), so it is still one race in two slow paths?
+Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Closes: https://lore.kernel.org/r/20240822095122.736522-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
+---
+Changes from v1:
 
-I guess the barrier-less approach should work too, such as:
+- Access the signature directly rather than via `readl', fixing a sparse 
+  warning found by CI.
+---
+ arch/x86/kernel/eisa.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e3c3c0c21b55..632261982a77 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2202,6 +2202,12 @@ void blk_mq_delay_run_hw_queue(struct blk_mq_hw_ctx *hctx, unsigned long msecs)
+linux-x86-eisa-bus-probe-memremap.diff
+Index: linux-macro/arch/x86/kernel/eisa.c
+===================================================================
+--- linux-macro.orig/arch/x86/kernel/eisa.c
++++ linux-macro/arch/x86/kernel/eisa.c
+@@ -11,15 +11,15 @@
+ 
+ static __init int eisa_bus_probe(void)
+ {
+-	void __iomem *p;
++	unsigned int *p;
+ 
+ 	if ((xen_pv_domain() && !xen_initial_domain()) || cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+ 		return 0;
+ 
+-	p = ioremap(0x0FFFD9, 4);
+-	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
++	p = memremap(0x0FFFD9, 4, MEMREMAP_WB);
++	if (p && *p == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
+ 		EISA_bus = 1;
+-	iounmap(p);
++	memunmap(p);
+ 	return 0;
  }
- EXPORT_SYMBOL(blk_mq_delay_run_hw_queue);
- 
-+static inline bool blk_mq_hw_queue_need_run(struct blk_mq_hw_ctx *hctx)
-+{
-+	return !blk_queue_quiesced(hctx->queue) &&
-+		blk_mq_hctx_has_pending(hctx);
-+}
-+
- /**
-  * blk_mq_run_hw_queue - Start to run a hardware queue.
-  * @hctx: Pointer to the hardware queue to run.
-@@ -2231,11 +2237,19 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
- 	 * quiesced.
- 	 */
- 	__blk_mq_run_dispatch_ops(hctx->queue, false,
--		need_run = !blk_queue_quiesced(hctx->queue) &&
--		blk_mq_hctx_has_pending(hctx));
-+		need_run = blk_mq_hw_queue_need_run(hctx));
- 
--	if (!need_run)
--		return;
-+	if (!need_run) {
-+		unsigned long flags;
-+
-+		/* sync with unquiesce */
-+		spin_lock_irqsave(&hctx->queue->queue_lock, flags);
-+		need_run = blk_mq_hw_queue_need_run(hctx);
-+		spin_unlock_irqrestore(&hctx->queue->queue_lock, flags);
-+
-+		if (!need_run)
-+			return;
-+	}
- 
- 	if (async || !cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask)) {
- 		blk_mq_delay_run_hw_queue(hctx, 0);
-
-
-thanks,
-Ming
-
+ subsys_initcall(eisa_bus_probe);
 
