@@ -1,141 +1,205 @@
-Return-Path: <linux-kernel+bounces-301384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E234C95EFD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2EE95EFD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A017328119E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6940A1F24005
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CED11547FF;
-	Mon, 26 Aug 2024 11:35:14 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2F61547E7;
+	Mon, 26 Aug 2024 11:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSDmglr9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60A214D6ED;
-	Mon, 26 Aug 2024 11:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CF11482E3;
+	Mon, 26 Aug 2024 11:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672114; cv=none; b=mBq9lyiJDoM1xrxGA321hw2Qzo8XOgSmpVjtG7N/CDrYWRDIn5nKQH26MSN+mYWEvj9MZakRNnCIygaqlSbRzfyIEBlyuZLqqriNYPGm5jjf+p5aUGsnqv7CojSLrsCa6Q3cYTP66ENKneKnRRocdp35+HEhRrsLriU+CrcEcC8=
+	t=1724672166; cv=none; b=EtlAgo33VArRfnECt/hfBuP8d8kdDhTcbZ10/MYQ+/xMj1kbP9P22vTv6yIblSQo6tR5ZlnzmBvUuJknzzr0xoFbaktef2MAY85U7ImNAXmpurw2cIaPw6N6ux7tfQqt4e2z6Cm7xS/Jd/hsW2ov6SIjCHy1t0mg+ZMM7e8XeTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672114; c=relaxed/simple;
-	bh=mLBT6mTdBJnwc+dF9PGzGVBQ3Av2W02Ffrkq0yV/usw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rzeP4oXzKg8r88RTvmUQgvY1Hz7zVzyk+gDSggIr8kYL3wX9+iAH8TLu0U7glUPZHM/6Etm0uQK9P9ED1suO8gjNwNc0eEQa2v9Ng4XGxcz537BwH0zfgnX+Qk90NOQa+Z4vqAj/WkKWdPK3vnPc7LkSmb7T5lYB8XN+wp9Wxg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WspW06z8yz4f3jHh;
-	Mon, 26 Aug 2024 19:34:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6E72F1A0568;
-	Mon, 26 Aug 2024 19:35:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4VoaMxmkUITCw--.22524S4;
-	Mon, 26 Aug 2024 19:35:07 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: netfs@lists.linux.dev,
-	dhowells@redhat.com,
-	jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com,
-	jefflexu@linux.alibaba.com,
-	linux-erofs@lists.ozlabs.org,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	libaokun@huaweicloud.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	stable@kernel.org
-Subject: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module exits
-Date: Mon, 26 Aug 2024 19:34:04 +0800
-Message-Id: <20240826113404.3214786-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724672166; c=relaxed/simple;
+	bh=5sAkNko9+nQJZifSZ42etJ+PTBpZ7HtaPHbIKOOPcRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQthDEMmjAsEtNLc3W9taqOlpZ/VrcTkVi6pOYjD0GXNyPu9DWuBXEKJQ7B8DV/xvhlhPdDPrZLybJr20pozPcdy4AbybBHJ8CbdvMM1oURlNviUDE1BPZ7OBSCz5nRXu0fUyc6S0AsYQILHY3835/5IFVUC92uHjMLIv6K0f6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSDmglr9; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724672164; x=1756208164;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5sAkNko9+nQJZifSZ42etJ+PTBpZ7HtaPHbIKOOPcRM=;
+  b=RSDmglr9DHoGRMnuzdet9mQsUZVSbhPzsqGgbW1PqPjoCnQnk5vuS2EB
+   2GXPL9wtgUdn4HGI7N2eDvBSqah6WbI2by1SFeB9RcwsUYvPYOPYJXlRm
+   lOehfUQPExSOK15OtlI5uG0sXPDY11h04qmudkQR2TajQpn1nwLgjV1D5
+   Rl+vmvm9FJT3KRZYEezqhmvxF8ktH26H8eMu2CWaDGo01uYurANpdwClY
+   IwzC+sfowVEI+elwZwqPwuobOuvJi4R7Sq0dCpdoL/zZABKXo0Ft8MVoR
+   FPANBm7uOE1BrUSrbvPJqvij7+Xs/sYKJG7LU5vzg1htI5ari1Ju0YhsV
+   w==;
+X-CSE-ConnectionGUID: dqnqcCeTSqClv0w2jhIiRA==
+X-CSE-MsgGUID: zNFwDVa6R66WotyDnfNSnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22675392"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="22675392"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 04:36:03 -0700
+X-CSE-ConnectionGUID: Q6C1UERGSW2Car//bibTDw==
+X-CSE-MsgGUID: qzzorrm7ROqJiPtdBxyfsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="67297721"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 26 Aug 2024 04:36:00 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siY0r-000Gzp-28;
+	Mon, 26 Aug 2024 11:35:57 +0000
+Date: Mon, 26 Aug 2024 19:35:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
+	ritesh.list@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, grant.jung@samsung.com,
+	jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com,
+	sh043.lee@samsung.com, cw9316.lee@samsung.com,
+	sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: Re: [PATCH] mmc : fix for check cqe halt.
+Message-ID: <202408261932.pcT0dqsD-lkp@intel.com>
+References: <20240823071025.15410-1-sh8267.baek@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4VoaMxmkUITCw--.22524S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4xXr1kCFyxXr1UCrWxJFb_yoW8ZFWxp3
-	ZrZryxGr1jqryUJF45Ja1Utr1UZF1qg3W7GryxCr1fZan7Aw1UX3W0qr15ZFy2kF48AFs8
-	t3W8trnYvr15Z3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1bdb5UUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgADBWbFpZhEIwADs+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823071025.15410-1-sh8267.baek@samsung.com>
 
-From: Baokun Li <libaokun1@huawei.com>
+Hi Seunghwan,
 
-In netfs_init() or fscache_proc_init(), we create dentry under 'fs/netfs',
-but in netfs_exit(), we only delete the proc entry of 'fs/netfs' without
-deleting its subtree. This triggers the following WARNING:
+kernel test robot noticed the following build errors:
 
-==================================================================
-remove_proc_entry: removing non-empty directory 'fs/netfs', leaking at least 'requests'
-WARNING: CPU: 4 PID: 566 at fs/proc/generic.c:717 remove_proc_entry+0x160/0x1c0
-Modules linked in: netfs(-)
-CPU: 4 UID: 0 PID: 566 Comm: rmmod Not tainted 6.11.0-rc3 #860
-RIP: 0010:remove_proc_entry+0x160/0x1c0
-Call Trace:
- <TASK>
- netfs_exit+0x12/0x620 [netfs]
- __do_sys_delete_module.isra.0+0x14c/0x2e0
- do_syscall_64+0x4b/0x110
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-==================================================================
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.11-rc5 next-20240823]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Therefore use remove_proc_subtree instead() of remove_proc_entry() to
-fix the above problem.
+url:    https://github.com/intel-lab-lkp/linux/commits/Seunghwan-Baek/mmc-fix-for-check-cqe-halt/20240826-130042
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240823071025.15410-1-sh8267.baek%40samsung.com
+patch subject: [PATCH] mmc : fix for check cqe halt.
+config: arc-randconfig-001-20240826 (https://download.01.org/0day-ci/archive/20240826/202408261932.pcT0dqsD-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261932.pcT0dqsD-lkp@intel.com/reproduce)
 
-Fixes: 7eb5b3e3a0a5 ("netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink")
-Cc: stable@kernel.org
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/netfs/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408261932.pcT0dqsD-lkp@intel.com/
 
-diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index 5f0f438e5d21..9d6b49dc6694 100644
---- a/fs/netfs/main.c
-+++ b/fs/netfs/main.c
-@@ -142,7 +142,7 @@ static int __init netfs_init(void)
- 
- error_fscache:
- error_procfile:
--	remove_proc_entry("fs/netfs", NULL);
-+	remove_proc_subtree("fs/netfs", NULL);
- error_proc:
- 	mempool_exit(&netfs_subrequest_pool);
- error_subreqpool:
-@@ -159,7 +159,7 @@ fs_initcall(netfs_init);
- static void __exit netfs_exit(void)
- {
- 	fscache_exit();
--	remove_proc_entry("fs/netfs", NULL);
-+	remove_proc_subtree("fs/netfs", NULL);
- 	mempool_exit(&netfs_subrequest_pool);
- 	kmem_cache_destroy(netfs_subrequest_slab);
- 	mempool_exit(&netfs_request_pool);
+All errors (new ones prefixed by >>):
+
+   In file included from include/asm-generic/div64.h:27,
+                    from ./arch/arc/include/generated/asm/div64.h:1,
+                    from include/linux/math.h:6,
+                    from include/linux/delay.h:22,
+                    from drivers/mmc/host/cqhci-core.c:5:
+   drivers/mmc/host/cqhci-core.c: In function '__cqhci_enable':
+>> drivers/mmc/host/cqhci-core.c:285:13: error: implicit declaration of function 'cqhci_halted'; did you mean 'cqhci_writel'? [-Werror=implicit-function-declaration]
+     285 |         if (cqhci_halted(cq_host))
+         |             ^~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+   drivers/mmc/host/cqhci-core.c:285:9: note: in expansion of macro 'if'
+     285 |         if (cqhci_halted(cq_host))
+         |         ^~
+   drivers/mmc/host/cqhci-core.c: At top level:
+>> drivers/mmc/host/cqhci-core.c:956:13: error: conflicting types for 'cqhci_halted'; have 'bool(struct cqhci_host *)' {aka '_Bool(struct cqhci_host *)'}
+     956 | static bool cqhci_halted(struct cqhci_host *cq_host)
+         |             ^~~~~~~~~~~~
+   drivers/mmc/host/cqhci-core.c:285:13: note: previous implicit declaration of 'cqhci_halted' with type 'int()'
+     285 |         if (cqhci_halted(cq_host))
+         |             ^~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+   drivers/mmc/host/cqhci-core.c:285:9: note: in expansion of macro 'if'
+     285 |         if (cqhci_halted(cq_host))
+         |         ^~
+   cc1: some warnings being treated as errors
+
+
+vim +285 drivers/mmc/host/cqhci-core.c
+
+   245	
+   246	static void __cqhci_enable(struct cqhci_host *cq_host)
+   247	{
+   248		struct mmc_host *mmc = cq_host->mmc;
+   249		u32 cqcfg;
+   250	
+   251		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
+   252	
+   253		/* Configuration must not be changed while enabled */
+   254		if (cqcfg & CQHCI_ENABLE) {
+   255			cqcfg &= ~CQHCI_ENABLE;
+   256			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+   257		}
+   258	
+   259		cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
+   260	
+   261		if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
+   262			cqcfg |= CQHCI_DCMD;
+   263	
+   264		if (cq_host->caps & CQHCI_TASK_DESC_SZ_128)
+   265			cqcfg |= CQHCI_TASK_DESC_SZ;
+   266	
+   267		if (mmc->caps2 & MMC_CAP2_CRYPTO)
+   268			cqcfg |= CQHCI_CRYPTO_GENERAL_ENABLE;
+   269	
+   270		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+   271	
+   272		cqhci_writel(cq_host, lower_32_bits(cq_host->desc_dma_base),
+   273			     CQHCI_TDLBA);
+   274		cqhci_writel(cq_host, upper_32_bits(cq_host->desc_dma_base),
+   275			     CQHCI_TDLBAU);
+   276	
+   277		cqhci_writel(cq_host, cq_host->rca, CQHCI_SSC2);
+   278	
+   279		cqhci_set_irqs(cq_host, 0);
+   280	
+   281		cqcfg |= CQHCI_ENABLE;
+   282	
+   283		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+   284	
+ > 285		if (cqhci_halted(cq_host))
+   286			cqhci_writel(cq_host, 0, CQHCI_CTL);
+   287	
+   288		mmc->cqe_on = true;
+   289	
+   290		if (cq_host->ops->enable)
+   291			cq_host->ops->enable(mmc);
+   292	
+   293		/* Ensure all writes are done before interrupts are enabled */
+   294		wmb();
+   295	
+   296		cqhci_set_irqs(cq_host, CQHCI_IS_MASK);
+   297	
+   298		cq_host->activated = true;
+   299	}
+   300	
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
