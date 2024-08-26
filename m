@@ -1,42 +1,55 @@
-Return-Path: <linux-kernel+bounces-301293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595B295EEBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:45:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA66C95EEBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8697B22647
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74B0283851
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37DD14B06E;
-	Mon, 26 Aug 2024 10:45:18 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AD114D6ED;
+	Mon, 26 Aug 2024 10:45:45 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26CC13A869;
-	Mon, 26 Aug 2024 10:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356D013A869;
+	Mon, 26 Aug 2024 10:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669118; cv=none; b=NR22otmw8D97j1OQcJQeDzxuX3T85FRphaVR4czmQ2kxshXKKUBwxGAgqdzS+fHjaAmI/i1fB1hs47f4CoeWS7KnLnRmYiZ2jBQI+7rvTfgWFtkC072ymW3kqmXF5V9ZH4i5BA7oAQuTfco9EJX1Eii6UkstETLiAUR7BAOI0qU=
+	t=1724669145; cv=none; b=hWDncWWosqOEAG+D8/TCe3+OFT7qLD6djFYzluR8xnnvzNOmT7vuu3RKsx/Slr8Oez72vim6uiiicDFqzrl5kmlAkbABjUq1/6EZOlW7D12tZ5sibikb8peS2JbJvotBIhFS+OYHdgFgM/2zFpfoS5cX5m1hNuHUtkMHPVc7v5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669118; c=relaxed/simple;
-	bh=5gWYyrNgg6sVsuz/4qTpQ/yQgUCkgur0kDiqSfQAaZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ugUMzWl/svTP2vpqo2rn52/X+2oQvNM6oCQpe0hRaINjZvACv/uAyzqpQEYy7XmdgaWgdCxJAxzwxPfQAYjTCgwgdrj7vxn0r8rT+GzeWncbKigqNGz5EjGMyMrHlEcXH0fzQOWVRuuMCIOS+HGNr7wnJJXXHlzmNSHnZrmGoCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 26 Aug
- 2024 13:45:13 +0300
-Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
- (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 26 Aug
- 2024 13:45:13 +0300
-Message-ID: <56362df7-7502-4b35-81da-f3fe9ff7da47@fintech.ru>
-Date: Mon, 26 Aug 2024 03:45:12 -0700
+	s=arc-20240116; t=1724669145; c=relaxed/simple;
+	bh=g0USLf+Ak90WITfjotmZss3CJ/mqie6EleQ66n1D8sw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DUtPlkqH7YO+J54ACptvZ542dgNBug5nyxjKFzEjODNlJJYTHKeNQ0ZwFDY4o/19KHScM22GPbdDPrHKVxsqJTcr5MFUMj8LLpfrDrVspGA7CrsbWcsAq9EjGj8JvyoIAcOw/Ldluo18A1uTpCRXdzhStuwtzu7Ps11LgipUSv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WsnQF0ZHkz9sRk;
+	Mon, 26 Aug 2024 12:45:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 8l3J2mPFqWI2; Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WsnQD6mKZz9sPd;
+	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D56398B779;
+	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id L__8Kfk3Evvz; Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 86F3C8B763;
+	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
+Message-ID: <51adbe91-3c3a-4baa-bb39-29df98a6eea5@csgroup.eu>
+Date: Mon, 26 Aug 2024 12:45:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,64 +57,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/guc: prevent a possible int overflow in wq
- offsets
-Content-Language: en-US
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>
-CC: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<stable@vger.kernel.org>, <n.zhandarovich@fintech.ru>
-References: <20240725155925.14707-1-n.zhandarovich@fintech.ru>
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-In-Reply-To: <20240725155925.14707-1-n.zhandarovich@fintech.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
+ <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
+ <Zsw3xMoX2EI5UUs1@zx2c4.com>
+ <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
+ <ZsxDssNPbLkcPetJ@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <ZsxDssNPbLkcPetJ@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 7/25/24 08:59, Nikita Zhandarovich wrote:
-> It may be possible for the sum of the values derived from
-> i915_ggtt_offset() and __get_parent_scratch_offset()/
-> i915_ggtt_offset() to go over the u32 limit before being assigned
-> to wq offsets of u64 type.
-> 
-> Mitigate these issues by expanding one of the right operands
-> to u64 to avoid any overflow issues just in case.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with static
-> analysis tool SVACE.
-> 
-> Fixes: 2584b3549f4c ("drm/i915/guc: Update to GuC version 70.1.1")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-> ---
->  drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> index 9400d0eb682b..908ebfa22933 100644
-> --- a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> +++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
-> @@ -2842,9 +2842,9 @@ static void prepare_context_registration_info_v70(struct intel_context *ce,
->  		ce->parallel.guc.wqi_tail = 0;
->  		ce->parallel.guc.wqi_head = 0;
->  
-> -		wq_desc_offset = i915_ggtt_offset(ce->state) +
-> +		wq_desc_offset = (u64)i915_ggtt_offset(ce->state) +
->  				 __get_parent_scratch_offset(ce);
-> -		wq_base_offset = i915_ggtt_offset(ce->state) +
-> +		wq_base_offset = (u64)i915_ggtt_offset(ce->state) +
->  				 __get_wq_offset(ce);
->  		info->wq_desc_lo = lower_32_bits(wq_desc_offset);
->  		info->wq_desc_hi = upper_32_bits(wq_desc_offset);
 
-Gentle ping,
+Le 26/08/2024 à 10:58, Jason A. Donenfeld a écrit :
+> On Mon, Aug 26, 2024 at 10:37:49AM +0200, Christophe Leroy wrote:
+>>
+>>
+>> Le 26/08/2024 à 10:07, Jason A. Donenfeld a écrit :
+>>> On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
+>>>>    
+>>>> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+>>>> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
+>>>
+>>> If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
+>>> instead of _PAGE_SIZE? But if that's the case, why not put the vdso
+>>> definition of PAGE_SIZE into some vdso header included by this file?
+>>
+>> It was working ok on powerpc but on x86 I got:
+> 
+> Seems like there might be some more fiddling to do, then? Or did you
+> conclude it's impossible?
 
-Regards,
-Nikita
+Maybe someone who knows x86 in details could helps but after a first 
+look I gave up because it looks very x86 specific, indeed that's 
+x86/asm/vdso/gettimeofday.h that pulls several x86/asm/ headers , and 
+the same type of issue might arise for any new architecture coming in.
+
+For me it looked cleaner to just do as commit cffaefd15a8f ("vdso: Use 
+CONFIG_PAGE_SHIFT in vdso/datapage.h") and not use PAGE_SIZE at all. But 
+I didn't want to directly use (1UL << CONFIG_PAGE_SHIFT) and (~(1UL << 
+(CONFIG_PAGE_SHIFT - 1))) in the code directly hence the new macros with 
+a leading underscore to avoid any conflict with existing macros.
+
+Christophe
 
