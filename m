@@ -1,316 +1,140 @@
-Return-Path: <linux-kernel+bounces-302215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFDE95FB38
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B30195FB3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D6D281CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6C2282E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505C0145344;
-	Mon, 26 Aug 2024 21:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007E113CABC;
+	Mon, 26 Aug 2024 21:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3zDUVUv"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y6oSd4w0"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646FD881E;
-	Mon, 26 Aug 2024 21:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED8013B58F
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724706482; cv=none; b=BKVGsrWvx3DvbTeN5tYKdP83+k2wGW6wOMwHBHck8vedN7l4hSRIGndFt1T6tA23jorZ3+DqynrIzxdPBa9JPx99WV8xLBEv2dTy27Wqcugbs1xUzAF0ret4ogcoK1JVSbg4RdSo3AjCDfRscDiUyTR9SbJ3PjhaTerkMwmxIyA=
+	t=1724706523; cv=none; b=aorS5+YcDZ/7Tku9tmcu4niXoGklW70TkqAxxZRJY/9IbehzmZRccOPVhDf+U4iS+LnZSDFxpARCoZhusq4iNJTp0ng7TBaPPkWlvrlwyi3hKFXOIB1eC1tyGxmPZj2xCcTEQaEzETV6eVPW4wIW4uvDn2SEshIxMjWKpP7xbIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724706482; c=relaxed/simple;
-	bh=cdd5obyw7srqelHloj6P273/h00emHAI+OxZnhTrKrE=;
+	s=arc-20240116; t=1724706523; c=relaxed/simple;
+	bh=KiSs8Ld+Hqvh7z73BkjqcrZBmHfVf37Ng8cEdIWdzgg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DZls3i83foD8ygC7eZ1O9EFQyQAHdFHW3GDWKrHfphy5SVdsEYgZKVkmroRbcHwYHUFofrSr5P0sT7aS6odw+CFOU5aY8kmddqt9cvACHVW/U+fe+TTqBNTpAYwJQDZu6xOjUiqx+WsjcrnV5CvPsUQnVx0cXF8ED8yE+9C9nvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3zDUVUv; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so5104130a12.1;
-        Mon, 26 Aug 2024 14:07:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=Bi6bBSETtcr4u/ZtukDN6dtrn3ZZ2tU5Yyp6MgnKIv070Tu9GLANyV8fXbpETK5FYo6CPRVMNVhDAupcKiCzcds13Xgyif8YakTtNGIpXXMBuZf7tjp6lSZE/SmywGpz8PWOv7yp5t16ODgXxsvZ8HoTWWQOsxxyDpJZTboKqbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y6oSd4w0; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44fee2bfd28so34201cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724706478; x=1725311278; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1724706520; x=1725311320; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J36/CymdnCHvVQ/2BT4x5qO1L0RUXRVdfDynGuZq2aY=;
-        b=Q3zDUVUvwzue5SIkU1ETZBvKnMGuN/iO8eokBxOoko+hMafcD6DXnH85UkgwLvq5uU
-         6qpzm/OzOmieIj+nqDNVmw1TskVyzSjx28ym6hjfEWcsUtiI2BH1MiV9lWvk5n6I4Hbz
-         F4cE1syjPbe0OwYkqWo3eGu1OmE2R81Q2cRqwVLugAUcqakR+UonVwtMsmgIK4LtIbui
-         JFE3lYUtbOr/5EnFGkJaOm+5BYLxN4ArtVurz3aG3gN2M6qMh6f2A9UkMubVj1DH0S3/
-         XUBVtW1x7OMa/zvlQ4yn4XDbRde9/hXhWkBsWwsR30uWriCfqW2qpSFh8LkJkOJnK5hP
-         lmiQ==
+        bh=KiSs8Ld+Hqvh7z73BkjqcrZBmHfVf37Ng8cEdIWdzgg=;
+        b=y6oSd4w0VP+abRyaRZeCZKKesFuRL1JljaJnqvJVn8xKdJCzyZnJN3M9j+5O19T1mf
+         GJ5s/YBdW1G+uURhzeTTIJb9eVNIIn3wQ/2ByeOswG23hF/i8IOK0JdfhhqUoHX3i+Jq
+         Zp+/6ZI0tfPL07D8YTjC9hJXoTkWR4z+Z+OHXVlr2YouArb57GNabvvvEL4DuX3a/7pr
+         H5jgYd42ARyg+RcHlB82LC2tJ0YZSlxAFvuPkoxk2EG5WtFM3bIaboN52x+lr42+Hicp
+         M32Nb8bgr5C8sSb/Ids4TIkKH/DcVmwwnWVDiJPPflm4rDSO044FRnms+NAQyyR66v87
+         wBag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724706478; x=1725311278;
+        d=1e100.net; s=20230601; t=1724706520; x=1725311320;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J36/CymdnCHvVQ/2BT4x5qO1L0RUXRVdfDynGuZq2aY=;
-        b=U9cnNbcF2AaZnZLGonElTskPKwFgXWq7Lk0HDbZztGFR2BI+bjl5OAkDjIKZ1M4Gw/
-         gUYW2N2s2fEI1cwPQ3uvqyVFEAJX97KabFA4qU0/4xzqhqBIWfSDhzICqX+YyqnxzhUH
-         hCJ49zs4HnCMXn16ZXgM2WySRQr1sMVHskdnP581lB799eNquzjn+qocQYBEZqI/Z7LX
-         j84f6/2coXOIWIAAa5seez/N2i2BiGpI5WrXvsVM8JDK4dY99YeHeB3wrwqCSF4RqEyF
-         uqSLTLUVveM0GC/HIvL43ISKJku0KyoxbCtLD4USFctjm/5blwu1lliSFQNQVSGJn1lr
-         AN4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVxouHvIyuLwz3L84USIDFsiZGu36VQgbESBqs/qWX0sJQZK7kLEG2+u3Ui4PVpZo9FVfxd4k2KWeoitEfl@vger.kernel.org, AJvYcCXOvc2wHBmYIUppVRP6HTuUQrDAsKucHcFPiGDGVbgKDo6DGjza/T/JqgeD/nFmJAGmCpzb4gNbTtbYIj8l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNzTtl0jy1vUkbJsczIVCi5tG3uEMR8ntmvGcQqMeEGaIpWBv4
-	iWQatCX/a9laVFpr8v1CuXKZ4uEYEOXzyVWySHe5AF3N+RlZNWKy6jihtcqFCrueCRnpMZfiR3l
-	RznWV6KSwZGMQqKnKhXecKhiIf6Q=
-X-Google-Smtp-Source: AGHT+IHvzWvB0zVgjvHOKFOfr1EK93YvT8CI+D2/F1twYSa20wJDGiGGI9Ey5WbmGIclEHIdFQtSkdOB9KO4UVkNs8A=
-X-Received: by 2002:a05:6402:3481:b0:57c:9d54:67db with SMTP id
- 4fb4d7f45d1cf-5c0ba2ad84dmr504590a12.9.1724706476994; Mon, 26 Aug 2024
- 14:07:56 -0700 (PDT)
+        bh=KiSs8Ld+Hqvh7z73BkjqcrZBmHfVf37Ng8cEdIWdzgg=;
+        b=LyV/y+agAHFc4sYGmVhUGPH3q9Irk3zEv76LwviaK433F1VouYtw6bzw6gBvsWJetE
+         SV0RUwBy9Dc/hRud5AWpWsyL7va/7Zn+15gLMBIyT76ddHbhY0uPIK/cUv3WqT10C2S0
+         OL3Bc2seasa7S689AdMFJCGP3wVXIW4G909gzbTERe3po+CGCNMAkz/XgILic2AFhZu0
+         eHcwKveKLH79MTymqJj9JsTBBOymvs2H1AiJU28P62gYOVWy9wE57FdrxtbOAbWh2XW4
+         Metj3PQmaTAcbwAfhrX2iushflKVPRMvYiR3gJ1KAYXcQ9b6EsUuGxU6SCHGZLmUdFKB
+         NfLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/XjHMgptvK3/CtRrD68f60SrBSB69ZXNxH+b79MFep79gGr/87rDCudnEdipjAvtYPJk9FsiRf+KjrfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWMSUkA+B5zjC3B61DKzpCaHmbxG0jJCGshLufcJf7drV3l+b7
+	CYxHylEclLPmwIavBPRBiCW4916Qgu53vH/KPRlZjflhEit91gxAf0qgOZ1xSJqjuqm2qXD/hf/
+	I/UJmj0K31UvcwxSOfLVG7fB4dNYLhViW/Oso
+X-Google-Smtp-Source: AGHT+IECWdasfY/UFIN7bMKm81uTAaPDrHsUsCHLY9/cLTZKNWb/yflFWF/SW7xORk1YUXgxUIFzUcCbaUD6VgF3LhI=
+X-Received: by 2002:a05:622a:4a:b0:447:dbac:facd with SMTP id
+ d75a77b69052e-45661a350fbmr1007471cf.24.1724706520341; Mon, 26 Aug 2024
+ 14:08:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org> <20240719-topic-a621-v1-3-850ae5307cf4@linaro.org>
-In-Reply-To: <20240719-topic-a621-v1-3-850ae5307cf4@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 26 Aug 2024 14:07:44 -0700
-Message-ID: <CAF6AEGs23d5OqKst+ik-kMMXPCS_0=-a8ndskv3j4NduOVR1Vw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] drm/msm/a6xx: Store gmu_cgc_mode in struct a6xx_info
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
+In-Reply-To: <20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Mon, 26 Aug 2024 14:08:01 -0700
+Message-ID: <CABCJKucaxfOZki64Yb8vVEuGN+0mH9mh6NvsEKPE-NF5o2KHgQ@mail.gmail.com>
+Subject: Re: [PATCH v6] rust: support for shadow call stack sanitizer
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 3:03=E2=80=AFAM Konrad Dybcio <konrad.dybcio@linaro=
-.org> wrote:
->
-> This was apparently almost never set on a6xx.. move the existing values
-> and fill out the remaining ones within the catalog.
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 19 ++++++++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     |  6 ++----
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
->  3 files changed, 21 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/=
-msm/adreno/a6xx_catalog.c
-> index 1ea535960f32..deee0b686962 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -448,7 +448,6 @@ static const struct adreno_reglist a690_hwcg[] =3D {
->         {REG_A6XX_RBBM_CLOCK_CNTL_GMU_GX, 0x00000222},
->         {REG_A6XX_RBBM_CLOCK_DELAY_GMU_GX, 0x00000111},
->         {REG_A6XX_RBBM_CLOCK_HYST_GMU_GX, 0x00000555},
-> -       {REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL, 0x20200},
->         {REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL, 0x10111},
->         {REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL, 0x5555},
->         {}
-> @@ -636,6 +635,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a612_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00080000,
->                 },
->                 /*
-> @@ -668,6 +668,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a615_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00000222,
->                         .prim_fifo_threshold =3D 0x00180000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -691,6 +692,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .init =3D a6xx_gpu_init,
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00000222,
->                         .prim_fifo_threshold =3D 0x00180000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -714,6 +716,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a615_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00000222,
->                         .prim_fifo_threshold =3D 0x00018000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -737,6 +740,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a615_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00000222,
->                         .prim_fifo_threshold =3D 0x00018000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -760,6 +764,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a615_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00000222,
->                         .prim_fifo_threshold =3D 0x00018000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -788,6 +793,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a630_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00180000,
->                 },
->         }, {
-> @@ -806,6 +812,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a640_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00180000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -829,6 +836,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a650_hwcg,
->                         .protect =3D &a650_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00300200,
->                 },
->                 .address_space_size =3D SZ_16G,
-> @@ -855,6 +863,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a660_hwcg,
->                         .protect =3D &a660_protect,
-> +                       .gmu_cgc_mode =3D 0x00020000,
->                         .prim_fifo_threshold =3D 0x00300200,
->                 },
->                 .address_space_size =3D SZ_16G,
-> @@ -874,6 +883,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a660_hwcg,
->                         .protect =3D &a660_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00200200,
->                 },
->                 .address_space_size =3D SZ_16G,
-> @@ -899,6 +909,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a640_hwcg,
->                         .protect =3D &a630_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x00200200,
->                 },
->         }, {
-> @@ -917,6 +928,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a690_hwcg,
->                         .protect =3D &a690_protect,
-> +                       .gmu_cgc_mode =3D 0x00020200,
->                         .prim_fifo_threshold =3D 0x00800200,
->                 },
->                 .address_space_size =3D SZ_16G,
-> @@ -1178,6 +1190,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a702_hwcg,
->                         .protect =3D &a650_protect,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                         .prim_fifo_threshold =3D 0x0000c000,
->                 },
->                 .speedbins =3D ADRENO_SPEEDBINS(
-> @@ -1202,6 +1215,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .hwcg =3D a730_hwcg,
->                         .protect =3D &a730_protect,
-> +                       .gmu_cgc_mode =3D 0x00020000,
->                 },
->                 .address_space_size =3D SZ_16G,
->         }, {
-> @@ -1221,6 +1235,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
->                         .hwcg =3D a740_hwcg,
->                         .protect =3D &a730_protect,
->                         .gmu_chipid =3D 0x7020100,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                 },
->                 .address_space_size =3D SZ_16G,
->         }, {
-> @@ -1239,6 +1254,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
->                         .hwcg =3D a740_hwcg,
->                         .protect =3D &a730_protect,
->                         .gmu_chipid =3D 0x7050001,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                 },
->                 .address_space_size =3D SZ_256G,
->         }, {
-> @@ -1257,6 +1273,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
->                 .a6xx =3D &(const struct a6xx_info) {
->                         .protect =3D &a730_protect,
->                         .gmu_chipid =3D 0x7090100,
-> +                       .gmu_cgc_mode =3D 0x00020202,
->                 },
->                 .address_space_size =3D SZ_16G,
->         }
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.c
-> index aaeb1161f90d..871452daa189 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -402,7 +402,7 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool s=
-tate)
->         struct a6xx_gmu *gmu =3D &a6xx_gpu->gmu;
->         const struct adreno_reglist *reg;
->         unsigned int i;
-> -       u32 val, clock_cntl_on, cgc_mode;
-> +       u32 val, clock_cntl_on;
->
->         if (!(adreno_gpu->info->a6xx->hwcg || adreno_is_a7xx(adreno_gpu))=
-)
->                 return;
-> @@ -417,10 +417,8 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool =
-state)
->                 clock_cntl_on =3D 0x8aa8aa82;
->
->         if (adreno_is_a7xx(adreno_gpu)) {
-> -               cgc_mode =3D adreno_is_a740_family(adreno_gpu) ? 0x20222 =
-: 0x20000;
-> -
+Hi Alice,
 
-This does appear to change the gmu_cgc_mode in nearly all cases.. was
-this intended?
+On Mon, Aug 26, 2024 at 7:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This patch adds all of the flags that are needed to support the shadow
+> call stack (SCS) sanitizer with Rust, and updates Kconfig to allow only
+> configurations that work.
+>
+> The -Zfixed-x18 flag is required to use SCS on arm64, and requires rustc
+> version 1.80.0 or greater. This restriction is reflected in Kconfig.
+>
+> When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
+> include unwind tables in the build artifacts. Dynamic SCS uses the
+> unwind tables at boot to find all places that need to be patched. The
+> -Cforce-unwind-tables=3Dy flag ensures that unwind tables are available
+> for Rust code.
+>
+> In non-dynamic mode, the -Zsanitizer=3Dshadow-call-stack flag is what
+> enables the SCS sanitizer. Using this flag requires rustc version 1.82.0
+> or greater on the targets used by Rust in the kernel. This restriction
+> is reflected in Kconfig.
+>
+> It is possible to avoid the requirement of rustc 1.80.0 by using
+> -Ctarget-feature=3D+reserve-x18 instead of -Zfixed-x18. However, this fla=
+g
+> emits a warning during the build, so this patch does not add support for
+> using it and instead requires 1.80.0 or greater.
+>
+> The dependency is placed on `select HAVE_RUST` to avoid a situation
+> where enabling Rust silently turns off the sanitizer. Instead, turning
+> on the sanitizer results in Rust being disabled. We generally do not
+> want changes to CONFIG_RUST to result in any mitigations being changed
+> or turned off.
+>
+> At the time of writing, rustc 1.82.0 only exists via the nightly release
+> channel. There is a chance that the -Zsanitizer=3Dshadow-call-stack flag
+> will end up needing 1.83.0 instead, but I think it is small.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-BR,
--R
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
 
->                 gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MOD=
-E_CNTL,
-> -                         state ? cgc_mode : 0);
-> +                         state ? adreno_gpu->info->a6xx->gmu_cgc_mode : =
-0);
->                 gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DEL=
-AY_CNTL,
->                           state ? 0x10111 : 0);
->                 gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYS=
-T_CNTL,
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.h
-> index bc37bd8c7f65..0fb7febf70e7 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> @@ -22,6 +22,7 @@ struct a6xx_info {
->         const struct adreno_reglist *hwcg;
->         const struct adreno_protect *protect;
->         u32 gmu_chipid;
-> +       u32 gmu_cgc_mode;
->         u32 prim_fifo_threshold;
->  };
->
->
-> --
-> 2.45.2
->
+Sami
 
