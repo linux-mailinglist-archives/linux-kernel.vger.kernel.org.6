@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-301908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4867195F739
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:55:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA7A95F73C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5E5B1F21082
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB39D1F22713
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18304197A8E;
-	Mon, 26 Aug 2024 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB02A198822;
+	Mon, 26 Aug 2024 16:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrigSJ+S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G/hUm7P1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eh6mNGi+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D17194AF6;
-	Mon, 26 Aug 2024 16:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB141197A6C;
+	Mon, 26 Aug 2024 16:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691344; cv=none; b=k29KVT74R7TP4kJHuH2yNdUVnKIzbSVgFmSihhs3ytmqiWsZ+NAdkJ0ufKps4CTBw0dlx3qw5o6qCRFSHlYBPR8TB7JUZFDMh827VrQrAUV6VTdwnd00irlj2lm9mhlmfOIDDWnov1zrH+pH/RhBel2No2TukfVmr6NP1THoR0Q=
+	t=1724691413; cv=none; b=p+EU8B3qxkde2wNwu8RG4GfIo5U+VzRrhSsb4AmTp6/QjAAI4cZUQUxwhSvZOjesItZ/n283Spq/+sXwhLaRMpRQYCdt36ogRlHukitF69kbqq8E8P/LNJToV7IqPMjKnDXrIb0w5mHWcoxp97Fzzcaf1mlnvQkYF811HmH5kSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691344; c=relaxed/simple;
-	bh=GBAMfUuh5G20pya2ZI/Zh7FGgVvgajbUdQYDU4Z/id4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGwIYLQpDnG98g5+SPeTP0WNdnNaWheJJ7nylL4+HjSz8BI0EImNzdSNS+X6XkC9t1P1k6qMZimwF/XTGraBm2hOXqkPVXAPptpZWIBdEKttKz+MKXK9eNN9jBY24I70H0b3hEiSC+SsX6FvN5hSi13ByKvWV0p7hSiMlhJdXm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrigSJ+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5A1C4FE8A;
-	Mon, 26 Aug 2024 16:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724691343;
-	bh=GBAMfUuh5G20pya2ZI/Zh7FGgVvgajbUdQYDU4Z/id4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WrigSJ+Sudw0B0qD1HRCvXw152MoCmtLbvWG68aurAKPlaPV34RIGqZbvz/o6o9F7
-	 AWOu9NVlNhnygBpnFIXCvBLB4Uc4Nd16v9yoEbKzt+eTgXITVq2LHsZLVSP40JmcML
-	 Ms6RKY1AyjAwjU7LFAdja4sdQNw2CGIjg9/7VT4tlL7OOqju3yaLZ9GJQT4HYWpERd
-	 sK45IxL+U7yiWwnhmjAJHTByDmZVIQG9nl36RHiMvZxdrSssk7FmrxH/C2gJvNKxtw
-	 +dRVRkr61ACvYToNonK9FjNjThBM7M3IZeO3dObZU6Yhv4knRNpwFQxluU52hxqY1m
-	 liOoBZAOVNlDA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2701a521f63so3675464fac.0;
-        Mon, 26 Aug 2024 09:55:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGqJVpCCjPxdb+v/EPFOMFHyAPyUBRXhWfLNGDYQ4N12+tVULmwnqd+twrE3gSvUkcFv8yAreNa6xH@vger.kernel.org, AJvYcCWTxcdfbF6slBhnhOBiDYOEOwORwPpWDu1ZGMucHBiyGV+izB1I+JkKpfhytCHeTtWpM2BZgR9yWK93cPmR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIh3CP2ommXfZjmgkiEDGf9wTBNW23sYRVvEkkdGap1WwF+gwa
-	j9rkvkH7zl8OJL0UD8v2jR+JY+npNXxW/P0lZNpd00z/gXIuvTK1oBT0L65JaZa3iI7rLwI6Ah+
-	Ieja1OpJiYO7tcnoKVXcdNZicPMY=
-X-Google-Smtp-Source: AGHT+IE+yvdi3mcT7jaBFx1R19262ytVNA2p+Y7ErduADLovJo2GaiKdwy9rr8B42nR2S9dq38X9+Vxy6oX7P/GYlA8=
-X-Received: by 2002:a05:6870:b252:b0:261:360:746c with SMTP id
- 586e51a60fabf-27759d5012emr273549fac.19.1724691343210; Mon, 26 Aug 2024
- 09:55:43 -0700 (PDT)
+	s=arc-20240116; t=1724691413; c=relaxed/simple;
+	bh=xxwRw4YOaj8TLcPHOU91iuY6HhcCQVRbnNGCZn7HdkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cFGyKE07vdl6pAqPAIhywLAITpaVz44pqgeWnbfym/3kQ34KjYwHZnKeO/dRI5VDggrEdjAP1U6ejqeaWDTNhM5Bz503vbeo6G4vKlSiR3XEizxohVLfXK9u2iD0h7d4aS+FUEXjr18Ay+hTXgVduUpW5mnjDo2zAcMEuIeWaCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G/hUm7P1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Eh6mNGi+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724691409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gC1Dl6gLiQeB9RGS1ZMPwFGcoDhW+yOH0OvpGdt7hZQ=;
+	b=G/hUm7P1KRN0bex64Zt5mhqswA8uRtdhJy2onsHymv3rmDER2QaKQneNqXKGB9Mdx9tfl3
+	2u/6vVoUOckIKbSmVHraCqq906vznTlPW6upgjUcaC9KV0AwTKhBIJDOy2QIWSieoxJW0J
+	tXI1kuBOE/lb6h9EviAyEKxqVd9ecsLiP5inZRccMNQLSHlV/F5l+7O28WIdVNp781VDYr
+	cHdzAAmoA2hnDbdhhcjfL9RR7ov6zRwUFLwkNz2e376KhNeSdcSLCmvxggHLcMNnvkqJV5
+	o/mreEmoChWUDvIt0gWY+Xa3Kpj++Ag+u5YZ+oPdXY3eDi4Eemn3E7lxUypTzA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724691409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gC1Dl6gLiQeB9RGS1ZMPwFGcoDhW+yOH0OvpGdt7hZQ=;
+	b=Eh6mNGi+joxXRxK+qzEX131wode5hGq7MJWGNC5Bd6Uvtp5CMh0gcQZPqf5FRj71fGvUFf
+	I+c1usPeZ2bV1bAg==
+To: Petr Mladek <pmladek@suse.com>, Derek Barbosa <debarbos@redhat.com>
+Cc: pmaldek@suse.com, williams@redhat.com, tglx@linutronix.de,
+ linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: test 1: was: Re: A Comparison of printk between upstream and
+ linux-rt-devel
+In-Reply-To: <Zsyafduo2UItzLAK@pathway.suse.cz>
+References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+ <ZshiIdUFQs4CKW2t@pathway.suse.cz>
+ <Zsjd0WUNIU8_kprt@debarbos-thinkpadt14sgen2i.remote.csb>
+ <ZsyK-s2D8eqqBrXU@pathway.suse.cz>
+ <ZsyVXMqM2SK0aYyV@debarbos-thinkpadt14sgen2i.remote.csb>
+ <Zsyafduo2UItzLAK@pathway.suse.cz>
+Date: Mon, 26 Aug 2024 19:02:49 +0206
+Message-ID: <871q2b8bou.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87y15e6n35.wl-me@linux.beauty>
-In-Reply-To: <87y15e6n35.wl-me@linux.beauty>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 18:55:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jeDFx4q7jDsBQbdDHh_jC3fqytiOyyn1wH0hDjrsqZAw@mail.gmail.com>
-Message-ID: <CAJZ5v0jeDFx4q7jDsBQbdDHh_jC3fqytiOyyn1wH0hDjrsqZAw@mail.gmail.com>
-Subject: Re: [PATCH V2] ACPI: resource: Do IRQ override on MECHREV GM7XG0M
-To: Li Chen <me@linux.beauty>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sat, Aug 3, 2024 at 10:13=E2=80=AFAM Li Chen <me@linux.beauty> wrote:
+On 2024-08-26, Petr Mladek <pmladek@suse.com> wrote:
+>> [  111.777491]  ? __pfx_hrtimer_wakeup+0x10/0x10
+>> ** 8555 printk messages dropped **
+>> [  111.807996]  ? __lruvec_stat_mod_folio+0x86/0xd0
+>> 
 >
->
-> Listed device need the override for the keyboard to work.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 9946e39fe8d0 ("ACPI: resource: skip IRQ override on AMD Zen platfo=
-rms")
-> Signed-off-by: Li Chen <me@linux.beauty>
-> ---
-> Changes since V1:
-> [1] https://lore.kernel.org/lkml/MN0PR12MB610178FBE11426B042C61A24E22AA@M=
-N0PR12MB6101.namprd12.prod.outlook.com/T/
->
-> - replace DMI_SYS_VENDOR + DMI_PRODUCT_NAME with DMI_BOARD_NAME
-> - rebase on top of next-20240802
->
->  drivers/acpi/resource.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-> index df5d5a554b388..aa9990507f34c 100644
-> --- a/drivers/acpi/resource.c
-> +++ b/drivers/acpi/resource.c
-> @@ -554,6 +554,12 @@ static const struct dmi_system_id irq1_level_low_ski=
-p_override[] =3D {
->   * to have a working keyboard.
->   */
->  static const struct dmi_system_id irq1_edge_low_force_override[] =3D {
-> +       {
-> +               /* MECHREV Jiaolong17KS Series GM7XG0M */
-> +               .matches =3D {
-> +                       DMI_MATCH(DMI_BOARD_NAME, "GM7XG0M"),
-> +               },
-> +       },
->         {
->                 /* XMG APEX 17 (M23) */
->                 .matches =3D {
-> --
+> I see. I guess that the panic CPU ended in a deadlock in
+> console_flush_on_panic() after it ignored the console_lock().
+> Otherwise, it would have flushed the last messages and rebooted.
 
-Applied as 6.12 material, thanks!
+For the 8250, I would expect the legacy driver (even during "hope and
+pray" mode) to be fairly reliable.
+
+If this is running in QEMU, you could attach gdb and dump the backtrace
+for the panic CPU and investigate some state variables. If this is
+reproducible, it may be worth investigating where/why the legacy
+printing is choking.
+
+John Ogness
 
