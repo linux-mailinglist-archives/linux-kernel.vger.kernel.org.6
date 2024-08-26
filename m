@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-302317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC1095FC7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702CC95FC84
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4947C2826A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2510A284F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B010C19D06C;
-	Mon, 26 Aug 2024 22:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA0619D07A;
+	Mon, 26 Aug 2024 22:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mYqIGOfp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLB6RhDd"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D7E19CCE6
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D19129E93;
+	Mon, 26 Aug 2024 22:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710327; cv=none; b=d37DSQWNZLoq6y/OWxa2hjqkf8b+8ZV7bzJ37i/SZIXxByuYu91enlspiJVPWFWb3FTDZE4GzqPr+TgWQtlIJg/9VutHc6O0d5IqkauAa1ioTKSca3lxKdE0p46fQtHFlZcYRE6tImuPSpE+aSx65guq9s7x3ejzvoDhCOoVWlc=
+	t=1724710437; cv=none; b=oqAmoCvD/PQAWwbEPuRcMKOxq86gugWDXT0ZwKlL6qpfTbjMQcXagk17ihTxIKthEdcYcV60WBHl7Tl75kHmhAUyGg1mQ8MnDgmk+VUeAtKnCBxEmP8zaYic9lN7QoPCrDJ27dWBu4+iOZnjCg4WeeEpYUsKvdAk/lmoJi+7xF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710327; c=relaxed/simple;
-	bh=vHTWezTDg3VjLJ9BJa7omSY9dIg3RiuEC6mMMyKLquY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbQV9zOn/G8ySDFEC6cWxbW5WOvNFnyPaLs1deLmTNln7ipzUAbGpyL41zW9Wy4dTB9WYpTMcIDsHBAETbkxuMkQqg3ABSbBIdn0FWeYflh/Ncbe17tYnfHl40ydZZsEEKTKwxCRzKkKGfINDP765qjEcaeJYtI9D7dZx8wOL+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mYqIGOfp; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724710325; x=1756246325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vHTWezTDg3VjLJ9BJa7omSY9dIg3RiuEC6mMMyKLquY=;
-  b=mYqIGOfpqejq6XQ9slnOrRQOHZCXsuFKHDRrXk2EpTsULwNf0mJCMJhL
-   aWualSImbvMetFiCTcUC9vY0zzpNPSPHIRXdApK6aZ3hKhG6iIp4aktJz
-   dJ9bIatKZQ0pi/np2UOGOIRyFuEiOhjREbvy+mh7MEATZh2GhBCNBkQoW
-   YMpCqDrnQWv7ii+0U0AClyI2oFblBpbm6laGniTqDHTIOA7XVczmvqDnu
-   bRfZJ30QuP5N1+ySxDxfEAMEbBhlMdhdAJfFqKQLxCB1WgwzkymFoFPhj
-   9gYqIEuMH+gFXzwKcU+IhmASVPWu5lxesvbl8ir0A1tETKlPBiP9jJxGV
-   Q==;
-X-CSE-ConnectionGUID: oG8fmIAQQ6WgH2NzOO5cfw==
-X-CSE-MsgGUID: jR9KrNzUTPC+EGbZNqsslg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26059719"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="26059719"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:12:03 -0700
-X-CSE-ConnectionGUID: pV5z/GHRQKWpL2Z3L6N29g==
-X-CSE-MsgGUID: h8vg/mEyT82OaKbHTAPF9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62700903"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO intel.com) ([10.245.246.180])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:11:55 -0700
-Date: Tue, 27 Aug 2024 00:11:51 +0200
-From: Andi Shyti <andi.shyti@linux.intel.com>
-To: renjun wang <renjunw0@foxmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, lyude@redhat.com,
-	imre.deak@intel.com, Wayne.Lin@amd.com,
-	ville.syrjala@linux.intel.com, vidya.srinivas@intel.com,
-	jouni.hogander@intel.com, andi.shyti@linux.intel.com,
-	janusz.krzysztofik@linux.intel.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Fix kerneldoc for "Returns" section
-Message-ID: <Zsz9pwQ3m9zHrjo-@ashyti-mobl2.lan>
-References: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
+	s=arc-20240116; t=1724710437; c=relaxed/simple;
+	bh=Fg99RQDp5OyTdSS1IpA88kjy6GMQKo5zYiTthZ+QMSk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BGZ02TB3bc49g9FhRPLeJ0p5Vvd+6Jzt6xPOV595PJvS6c121WgRzqWOCjcw6bdnB3mqwAZEYuumcjGIAgHBE7ae4BXXG2bNdA5Wa5vIQjMteDdDBpis3MnaQUy6NmZseP9mHq7JaOhVgafs4WrVlkXLtcjwwUaMwYkky6TrjyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLB6RhDd; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4fd01340753so1363096e0c.1;
+        Mon, 26 Aug 2024 15:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724710435; x=1725315235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zdznXswWaLI4oUBUJ8gE1WYggKIl2eflQsRsLuaFGMs=;
+        b=FLB6RhDdYhpdh2zsFa+px5BOhjWeKRbJAzQwGl2eRT13pA6HQEmdCgHaayV69VuoKR
+         ZReP5k1OQ6umrqTvNNp3/bbRX3KmAZqb/iBrnVtdsAoo5fHEqg4UJ/ifjKlC6SQ+JAQk
+         pjeIJW578jAJIP66b90LJgQih1bHrzCogeOzt2gLGFU4HgMkI2ibFfcxBO25TyW2tSbc
+         RxvYYX0mAvM3tJ6d5RgosZPuM9VKUY7JqA7qkSGoAz7xHjvH2U2Ghq/FQfSQA2w4MGM1
+         SfXIWM/HSYhdW/mZ1wLjXdqZ8mebVLm1TS3d/eubvLeCMU1b6fWFEl3QRDZRTFZbXBn4
+         bNEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724710435; x=1725315235;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zdznXswWaLI4oUBUJ8gE1WYggKIl2eflQsRsLuaFGMs=;
+        b=isX6nKAanEqTceNQc1S+AXaI2VUBfrQIqdQLS5KKnNzwq8F7/tlREF9osbK2ICx8e7
+         H0H+Es2J91AMfOMEveChXGVrlZX8sKc+bktmZNAEisaCEszpUPSIKJWFyN5n8SbxPyxT
+         MrIIEYScgdYvP+/9i96d14zyfgLEgNglrdAo0rfKHtrNj6CcFlN/Aq3LyvkqgqXbzvyh
+         81B7j6rxJ9tLZ5pzmE7zcHFTxcZLCb2fEhgE0l3XfS7LS5d31OH9PxMkqfj0j/MEQ19e
+         gbf6VBFCu8ziL8BsK92DuqmJT5ai2vu8x/G4GTs/gzdnfEFH0rUOSBhkWCS1hQ7Nt8LL
+         BV7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjbUrXOqhRgsn5RXdtdks6VkzxNn7/cc6kkPBE8oEaH5Gv0WzFlYeF5DTmnQM3TItfHj0=@vger.kernel.org, AJvYcCUsOAmoM1TheImROghlWXE2VFc5OwX5b9rSlzKqWRSwYR4ZBngXkox3ysVTNcU8PD1HoAwDKAy/HfDGSMVP@vger.kernel.org, AJvYcCVe3cwgSqLiitogEZyOGB61Rs8ZhoY2GqTptXat15RBdUld6ZKqdNb8jjF31khIvGLdGZXwnZvT@vger.kernel.org
+X-Gm-Message-State: AOJu0YynU5hxlflo5G+Bs6spD3RagW9fO+qK0OdBKAHreOtsqg9CFHSp
+	8Sa1rHbMIwAJ2+7N91yWhqK4RVxCwfKIEW5KkwuxfzZKluQPNgfz
+X-Google-Smtp-Source: AGHT+IF6vjxeO+/qrvpoGvVW6o0I5kF6H1BQFQP8XdTB0rClL7V+v1zvjwyTZoZOFFmPWRh1EQjjzw==
+X-Received: by 2002:a05:6122:1810:b0:4f5:2c0c:8528 with SMTP id 71dfb90a1353d-4fd1a82d51dmr9734268e0c.11.1724710434659;
+        Mon, 26 Aug 2024 15:13:54 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4fd082711a7sm1026529e0c.28.2024.08.26.15.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 15:13:54 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: seanjc@google.com
+Cc: dave.hansen@linux.intel.com,
+	david.hunter.linux@gmail.com,
+	hpa@zytor.com,
+	javier.carrasco.cruz@gmail.com,
+	jmattson@google.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lirongqing@baidu.com,
+	pbonzini@redhat.com,
+	pshier@google.com,
+	shuah@kernel.org,
+	stable@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH 6.1.y 0/2 V2] KVM: x86: fire timer when it is migrated
+Date: Mon, 26 Aug 2024 18:13:34 -0400
+Message-ID: <20240826221336.14023-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ZsSiQkQVSz0DarYC@google.com>
+References: <ZsSiQkQVSz0DarYC@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Renjun,
 
-On Sat, Aug 24, 2024 at 04:36:34PM +0800, renjun wang wrote:
-> The blank line between title "Returns:" and detail description is not
-> allowed, otherwise the title will goes under the description block in
-> generated .html file after running `make htmldocs`.
-> 
-> There are a few examples for current kerneldoc:
-> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_crtc_commit_wait
-> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_atomic_get_crtc_state
-> https://www.kernel.org/doc/html/latest/gpu/i915.html#c.i915_vma_pin_fence
-> 
-> Signed-off-by: renjun wang <renjunw0@foxmail.com>
-> ---
->  drivers/gpu/drm/display/drm_dp_mst_topology.c | 4 ----
->  drivers/gpu/drm/drm_atomic.c                  | 6 ------
->  drivers/gpu/drm/drm_atomic_helper.c           | 2 --
->  drivers/gpu/drm/drm_file.c                    | 7 -------
->  drivers/gpu/drm/drm_gem.c                     | 7 ++-----
->  drivers/gpu/drm/drm_modes.c                   | 1 -
->  drivers/gpu/drm/drm_rect.c                    | 1 -
->  drivers/gpu/drm/drm_vblank.c                  | 2 --
->  drivers/gpu/drm/i915/gem/i915_gem_object.h    | 1 -
->  drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c  | 1 -
->  drivers/gpu/drm/i915/i915_vma.h               | 1 -
->  11 files changed, 2 insertions(+), 31 deletions(-)
+Hello, 
 
-next time, please, split the series so that each component goes
-to the right branch.
+I'm sending you two this first because this will be my first time
+sending a series patch. Is this okay?
 
-Andi
+Backport for 6.1.y. These two commits should be backported together to
+fix an issue that arrises from commit 967235d320329e4a7a2bd1a36b04293063e985ae 
+	-Subject: 'VM: vmx: clear pending interrupts on KVM_SET_LAPIC'
+
+
+[ Upstream Commit 8e6ed96cdd5001c55fccc80a17f651741c1ca7d2 ]
+Haitao Shan (1):
+  KVM: x86: Fix lapic timer interrupt lost after loading a snapshot.
+
+[ Upstream Commit 9cfec6d097c607e36199cf0cfbb8cf5acbd8e9b2 ]
+Li RongQing (1):
+  KVM: x86: fire timer when it is migrated and expired, and in oneshot
+    mode
+---
+V1 --> V2
+	- changed to a series patch to fix an issue with the patch
+
+ arch/x86/kvm/lapic.c   | 8 ++++++--
+ arch/x86/kvm/vmx/vmx.c | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+-- 
+2.43.0
+
 
