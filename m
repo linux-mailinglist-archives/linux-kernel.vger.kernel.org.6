@@ -1,55 +1,92 @@
-Return-Path: <linux-kernel+bounces-301248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A295EE31
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A8B95EE41
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC88B28187E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2FC1F222CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35C914830C;
-	Mon, 26 Aug 2024 10:13:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449191474A5;
+	Mon, 26 Aug 2024 10:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZXu2l/y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497C91465A5;
-	Mon, 26 Aug 2024 10:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BD6146D5A;
+	Mon, 26 Aug 2024 10:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724667183; cv=none; b=iP8axmpdMvOxG3dopLijW7oAsmHqpAlTc+6JIc7bq3Be6A5yJFYcchBmMiXqE1nDEDGiFc9SLX3jqMI7dTC6wfXzpTghBygD6shTCPZnomNGPu248IVkEOkgwat/T6OG1IO34Gs+5XSlXMgYjAZwPc/S89nbP8Y8uo+pJw6mMGU=
+	t=1724667241; cv=none; b=q3KAzgYk7/ssC/OkYKfOz3RrxWtRsVP5gVmW56zvuivpNo9uyAT0rbBGGHQVaKo7zR2xWku4h2cf/ts3urwsza+5fv938Pejx14qq6bm+nEtexN8ItqGqlpbHShTcSGfVMg+gqw4EbTWEn9aq98DD+cGlEe95mArUF+mdw9Ah9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724667183; c=relaxed/simple;
-	bh=0VFJjTZUkoAmfzcu4gQMaBLbHuaJDE7k+e7lEchBslQ=;
+	s=arc-20240116; t=1724667241; c=relaxed/simple;
+	bh=3OMh0I6YDGa+H54lyN0aZeKV/jasJN3FKzzG5FqwCZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHE5zJgg5vL9haGrEqWIjNiLJVMd5PmhCDtFfBEkyJPY2NZ5EmNUEDeSZVADOWpRpXMPJDRdpszqRl8hjMhiwvfia131dIFM7umDF8hNXEdL/XWTwPtIyQo28M+I2g/hgq5x8AINmZq552+MSaa9Tfn/aeYxggfGEoZnCRHiea0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A11C51409;
-	Mon, 26 Aug 2024 10:12:58 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:13:06 +0300
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 12/19] efi: arm64: Map Device with Prot Shared
-Message-ID: <ZsxVMv2pA0bQzm3L@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-13-steven.price@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKAR5Ih128LkGsnk5Sha8UaPgdC6ulFc4l6Qn8JxgFbXOvoz1KBMNNZczBSE/uq59Yx1wXOplIURVfz8g8TM43YQJdchM3kNeYhPS/ejBi69uh9BXPReA8BEM6ojlgpB2HyZNuNVgGGyqcIsOAi/dDK6kxaf6+uafmYH33bQzHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZXu2l/y; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724667239; x=1756203239;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3OMh0I6YDGa+H54lyN0aZeKV/jasJN3FKzzG5FqwCZc=;
+  b=fZXu2l/y3+EUsVjdUXllCwg319KvR9Jn3KbszwHRinQTIhzAHJyIlEgI
+   YgIbvlxiqitTpovCoWt918fXmuuaSQHy1e76PABagoztuMWfGodr+2G1m
+   n7ZhiNnHGISIuz26zWvIXx1r2CGqHpIUtjt2Pdy6UYVIZDjkqeMjS3XvK
+   juvRMroOIZ46FPEzMqzx32I45f+YDtb/W3U9qCr+6RCjinXKgnfdemxFb
+   b+6tmFrAmEIPdsoyb5W6vGGGne89BE8WOiQh9spMzU1dJN0P7bCqfGBmg
+   T0gqTT61uCAj1kt5garcXXD5Vb78o3RHVUHA2rnID/22rwHILPaM8GUSh
+   Q==;
+X-CSE-ConnectionGUID: hikeqfFQQAy4Xzi7HpN7hg==
+X-CSE-MsgGUID: LMuIbSs4SimboBXhJfMtOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="23257018"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="23257018"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:13:58 -0700
+X-CSE-ConnectionGUID: j2hGswy3Tqa//Z8Y2y8Osg==
+X-CSE-MsgGUID: FKbHAQ2HT1Woa5mT7v3qTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62437513"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 26 Aug 2024 03:13:53 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siWjO-000GsF-2m;
+	Mon, 26 Aug 2024 10:13:50 +0000
+Date: Mon, 26 Aug 2024 18:13:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
+Message-ID: <202408261734.UAvnH7Mv-lkp@intel.com>
+References: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,55 +95,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240819131924.372366-13-steven.price@arm.com>
+In-Reply-To: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Mon, Aug 19, 2024 at 02:19:17PM +0100, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Device mappings need to be emualted by the VMM so must be mapped shared
-> with the host.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v4:
->  * Reworked to use arm64_is_iomem_private() to decide whether the memory
->    needs to be decrypted or not.
-> ---
->  arch/arm64/kernel/efi.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-> index 712718aed5dd..95f8e8bf07f8 100644
-> --- a/arch/arm64/kernel/efi.c
-> +++ b/arch/arm64/kernel/efi.c
-> @@ -34,8 +34,16 @@ static __init pteval_t create_mapping_protection(efi_memory_desc_t *md)
->  	u64 attr = md->attribute;
->  	u32 type = md->type;
->  
-> -	if (type == EFI_MEMORY_MAPPED_IO)
-> -		return PROT_DEVICE_nGnRE;
-> +	if (type == EFI_MEMORY_MAPPED_IO) {
-> +		pgprot_t prot = __pgprot(PROT_DEVICE_nGnRE);
-> +
-> +		if (arm64_is_iomem_private(md->phys_addr,
-> +					   md->num_pages << EFI_PAGE_SHIFT))
-> +			prot = pgprot_encrypted(prot);
-> +		else
-> +			prot = pgprot_decrypted(prot);
-> +		return pgprot_val(prot);
+Hi Christophe,
 
-Nit: This pattern appears in the previous patch as well. Maybe add a
-pgprot_maybe_decrypted().
+kernel test robot noticed the following build warnings:
 
-The patch looks fine other than the need for an early initialisation if
-we find any workaround. In the pKVM case, IIUC this would need to call
-into the hypervisor as well but that can be handled by the bootloader.
-For CCA, our problem is setting the top bit of the IPA.
+[auto build test WARNING on powerpc/next]
+[also build test WARNING on powerpc/fixes shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc5 next-20240823]
+[cannot apply to crng-random/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-What's the x86 approach here? The EFI is a bigger problem than the
-earlycon.
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/asm-generic-unaligned-h-Extract-common-header-for-vDSO/20240826-103525
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+patch link:    https://lore.kernel.org/r/315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy%40csgroup.eu
+patch subject: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240826/202408261734.UAvnH7Mv-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261734.UAvnH7Mv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408261734.UAvnH7Mv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from mm/debug_page_ref.c:6:
+   In file included from include/trace/events/page_ref.h:11:
+   include/trace/events/mmflags.h:168:5: warning: 'VM_DROPPABLE' is not defined, evaluates to 0 [-Wundef]
+     168 | #if VM_DROPPABLE != VM_NONE
+         |     ^
+   include/trace/events/mmflags.h:168:21: warning: 'VM_NONE' is not defined, evaluates to 0 [-Wundef]
+     168 | #if VM_DROPPABLE != VM_NONE
+         |                     ^
+   In file included from mm/debug_page_ref.c:6:
+   In file included from include/trace/events/page_ref.h:135:
+   In file included from include/trace/define_trace.h:95:
+   In file included from include/trace/events/page_ref.h:11:
+   include/trace/events/mmflags.h:168:5: warning: 'VM_DROPPABLE' is not defined, evaluates to 0 [-Wundef]
+     168 | #if VM_DROPPABLE != VM_NONE
+         |     ^
+   include/trace/events/mmflags.h:168:21: warning: 'VM_NONE' is not defined, evaluates to 0 [-Wundef]
+     168 | #if VM_DROPPABLE != VM_NONE
+         |                     ^
+   In file included from mm/debug_page_ref.c:6:
+   In file included from include/trace/events/page_ref.h:135:
+   In file included from include/trace/define_trace.h:102:
+   In file included from include/trace/trace_events.h:94:
+   In file included from include/trace/events/page_ref.h:11:
+>> include/trace/events/mmflags.h:169:10: warning: 'IF_HAVE_VM_DROPPABLE' macro redefined [-Wmacro-redefined]
+     169 | # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+         |          ^
+   include/trace/events/mmflags.h:171:10: note: previous definition is here
+     171 | # define IF_HAVE_VM_DROPPABLE(flag, name)
+         |          ^
+   5 warnings generated.
+
+
+vim +/IF_HAVE_VM_DROPPABLE +169 include/trace/events/mmflags.h
+
+7677f7fd8be766 Axel Rasmussen     2021-05-04  167  
+41e2c674b334ed Christophe Leroy   2024-08-22 @168  #if VM_DROPPABLE != VM_NONE
+9651fcedf7b92d Jason A. Donenfeld 2022-12-08 @169  # define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+9651fcedf7b92d Jason A. Donenfeld 2022-12-08  170  #else
+9651fcedf7b92d Jason A. Donenfeld 2022-12-08  171  # define IF_HAVE_VM_DROPPABLE(flag, name)
+9651fcedf7b92d Jason A. Donenfeld 2022-12-08  172  #endif
+9651fcedf7b92d Jason A. Donenfeld 2022-12-08  173  
 
 -- 
-Catalin
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
