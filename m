@@ -1,126 +1,98 @@
-Return-Path: <linux-kernel+bounces-301121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCC395EC99
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E48595EC9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF052B23F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:00:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DC76B2405E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696C13F435;
-	Mon, 26 Aug 2024 09:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230813DDB6;
+	Mon, 26 Aug 2024 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q2aqxNvQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pXL8eYFR"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DFC82D91;
-	Mon, 26 Aug 2024 09:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749913AD22;
+	Mon, 26 Aug 2024 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662829; cv=none; b=fYxN3E+Bm2kwqSUNiQB1w6ETe0Pi7z7YoZ3OFfVke8RlibUGGfy89tsywHvQCkF32HPfCUj0pHl9irSoH3i6/YuI6NsLDyT5oq2f6UyMRTEeHen4JXmv2SlrpoehbsaBCJEImNhDW15GFTbwIS7PUnbBq1V3M4dN8pblvMS3bTo=
+	t=1724662846; cv=none; b=SS2McssDUVA6izXaPETtPs7FjSZgptqjhCXMZhxxd2TAJ5QEmXl2nfkF7qYPXcJpB/VWjjLj6uB9DliF17/nZTEzJxsRUj3sDBOeALhTwugPK1nmZmx2pN8w780aCxbHgz4q7ogXwFolt72mY8AmXxwZFFyTkeQFsCj+FneTagI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662829; c=relaxed/simple;
-	bh=0+v+6zgCTWTJdyPeZdNDjZRW7PVDkAvO33D9xC64CMU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoPjHDbjiXCZae+7q4pzQ/HM5oWvYXv0TE+E4+DDBAfoAomYST0BNELQHvN6MUrA/tUAtLjSS37ekeOSYzb3MwxHeB8VfTqa6GgQN5ghvJwS00Lg4ZUQu6I8MLyVkN4hrWcE/S/09piQVhCOK8eAW54/yxkxHV0bnS7a5hgZYo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q2aqxNvQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MPXV027697;
-	Mon, 26 Aug 2024 09:00:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=oDBSAHNkZ3cABfL+kp3A5Frz
-	IvohjNhv16hz3rGTf0I=; b=Q2aqxNvQWKMa/Q+XVjv20h8KdbJMxpbPNT01M6Xg
-	zOLH0tdoUdXhRaymxB9A2Zpv9xtCVqvGi/naMRsPFmc02IxYU6XP+vR7Dy/R2kSe
-	9TBDJrDyJKFYUWO1O01IWF6GZqJr7ZgX46sXxW7tvnbz504IyuA0N0z2NB/3AyxU
-	B+k4dBtKtK9gNvJi8PyDxCnChnQi8m6dB0UfshkVk0NXOgPpCJigy7jKwc7m/4/F
-	vADMeHDolV4s6NX5IbRPagsJi2wu/q+aFbnYVVjaTkF35pw4ltKh8rqG45/ZaMdp
-	LeGujCg7I1n4tjysRWlzy1uJD+3dMyJhmmabLPFpaBaPdQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417980u3yu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 09:00:23 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q90M5U017662
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 09:00:22 GMT
-Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 26 Aug 2024 02:00:18 -0700
-Date: Mon, 26 Aug 2024 17:00:15 +0800
-From: JieGan <quic_jiegan@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        Yushan Li <quic_yushli@quicinc.com>
-Subject: Re: [PATCH] arm64: dts: qcom: Add coresight nodes for x1e80100
-Message-ID: <ZsxEHyOk31+Fg2E/@jiegan-gv.ap.qualcomm.com>
-References: <20240826061900.790715-1-quic_jiegan@quicinc.com>
- <548ccc89-3e0b-47ce-891b-4a181b79c714@kernel.org>
- <Zsw/xTCZMDHkfrEm@jiegan-gv.ap.qualcomm.com>
+	s=arc-20240116; t=1724662846; c=relaxed/simple;
+	bh=fw3mwugogCB7KnXEdkXpUIMDWmO4PBh+J4IMIJItIZI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ff6cmtyJwAOggG+7X8zp8mjR0XXRiqkf2KwBMSLdUOS5i9gBzvd0tBMdXDMsDUq5pSjrZid1bJBryPykQC4rxF3tfmiCb6cRn6qCIWihCO+XewJXs+FBMpcERWncD2nfqB770zc66HrsWpneaT/yZ9aRzf2M4krKIRhxjcpomFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pXL8eYFR; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724662830; x=1725267630; i=markus.elfring@web.de;
+	bh=fw3mwugogCB7KnXEdkXpUIMDWmO4PBh+J4IMIJItIZI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pXL8eYFRNcxdMdZT0savz718Vnmqg4hulxFAw5Dp+L/NA3f792ar2uW1iWUJPhmR
+	 f5yHDkQ8nbHeelR04ifjGuT9mLOGp0WX6B4YYR+PFg2AId/QZgWn+ezRoD5JPpOoc
+	 al4+4dWdCbM5GzGYAhJb1LYBm6PKiLvcHPduoAXPo79EALfETPVSS9H3FLHUcNf06
+	 jRG3hh8jwtbZ90yRsXVWaALrY1CZCn3T4ugcQBDws4pBZmG3DG06S3XdfUMLAkFU6
+	 i2MzlH/Kbg2Vdu19qJ5QqtOC/6ILXwTOSmzpeVbcAwFmhJJwTXT5895hOsGFiLWfL
+	 HrBMRH4uYbBtadizlg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Gkg-1s1AQW1znO-00zsLs; Mon, 26
+ Aug 2024 11:00:30 +0200
+Message-ID: <05a1b1bf-4de7-4e1e-8ec9-8c61e129e5b5@web.de>
+Date: Mon, 26 Aug 2024 11:00:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zsw/xTCZMDHkfrEm@jiegan-gv.ap.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: K5rg83v05YizjvG1l9-AHyM64oUX8q2j
-X-Proofpoint-ORIG-GUID: K5rg83v05YizjvG1l9-AHyM64oUX8q2j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_06,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 mlxlogscore=581 spamscore=0 lowpriorityscore=0 clxscore=1015
- malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408260070
+User-Agent: Mozilla Thunderbird
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <ZsrAa9XcDvHeIs9T@google.com>
+Subject: Re: [PATCH] Input: psmouse-smbus - use guard notation when acquiring
+ mutex
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <ZsrAa9XcDvHeIs9T@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3Z2aoRuaPlsTgz07INOT3VvchL+LwZAFNzoMIAFiuj3zPvmM5Xm
+ oIKD2tLweh1nm1c6LYjBv4U2z2qgG38WMRhDcXCdzCNQkMDLXKrd4DFoFM2H5ae8twIIe1q
+ zcejtzekH6CKnaaRyjU57CqkR3eWRcLwCvGeK0t/wWGd0tX4VHQKWl4b6ul1sS24MW7Hp5/
+ wTuYbpztUGfaW9kc8sfBA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bxSVx8RpDCc=;qIlbB4Qx+F5roM7zGOVTn91fST/
+ xbfvou3+OPHo7UkdkcIzf5rREXfPGBWsfn7baCEdM9EZXoIk7Ziryz1qn1KJQCfcZZ6KyCsPe
+ 1n2G6ZBfN3NeENhqtj/N6GuArE3d26tKfS1ilpqTJDaxXZzLwZlFwtwGEGiAaGE9cJwQF3kys
+ 5BtyOQD7QnUdQ6+n+dUT93rz78FpO52llALuu3sM16zqWiowBWNLQJca7vwZVWG+/TCAU/isR
+ sYweaP1HphG4jUWCEtyaTlz3kXCG8wccaPdMNy14whwU4meNsx79QAy35uhVtEruKbJKHbokJ
+ BorZOjV9clBufA59dPvHfOkpRh7KvTnAD9mK08cst3quyNyOaHYXD10Bqzy2FbGtBkQcvT9zk
+ 1q2v5ch2NaTqD3EMrPiUFVO9tPf2rDpSPZz2QdHf5WOfqSUO5hmqSBvpZeM+X+lYUI6RP58PP
+ 5A1jOqhNlfYmBHEZpiO892Hr4uNKsc3WaXhuWjIi3UKeM4Tm6LyF0PpBCX293pO4VC8it1V7m
+ J8sUYgFkSIkDIaD+khlgFKOiwo0WaTB+WvlCEs6ELA9NmqLSKvuKbxpS0e9FN1pTz2swnZ3zB
+ NXXDuZ2a4rNN9D16zbMCDLJBWd1OJzl1XURa6CqVdKGfDJgDnl+9ASIqbvmiQRlhNFPIVyUeY
+ RDzNkCPecgjofwfbFXdVnootBSuIBrhKDobrDbiVgpT7mQ21NsIBd1UlCqaiJl7TIwUCOlLst
+ RQXYVvOh3mtwazLF7pYvdM64JlydnZ3NbwhAoDaxGxkT/biFs3rhnER7zQ1n94M5dGm9o1Dm1
+ 5VSleBjXqQdMBrqvP5yoAqjg==
 
-On Mon, Aug 26, 2024 at 04:41:41PM +0800, JieGan wrote:
-> On Mon, Aug 26, 2024 at 10:20:54AM +0200, Krzysztof Kozlowski wrote:
-> > On 26/08/2024 08:19, Jie Gan wrote:
-> > > Add following coresight components for x1e80100 platform,
-> > > include CTI, dummy sink, dynamic Funnel, Replicator, STM,
-> > > TPDM, TPDA and TMC ETF.
-> > > 
-> > > Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> > > Tested-by: Yushan Li <quic_yushli@quicinc.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1534 ++++++++++++++++++++++++
-> > >  1 file changed, 1534 insertions(+)
-> > > 
-> > 
-> > And does it pass dtbs_check W=1?
-> >
-> It passed with "make CHECK_DTBS=y qcom/x1e80100-crd.dtb".
->  
-Checked with dtbs_check W=1 and found 4 warnings.
-will fix in next version.
+> This makes the code =E2=80=A6
 
-Thanks,
-Jie 
+How do you think about to improve such a change description with imperativ=
+e wordings?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.11-rc5#n94
+
+Regards,
+Markus
 
