@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-301979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1574D95F837
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:33:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3744895F83B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6506283F57
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:33:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD40B21C95
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF721990DB;
-	Mon, 26 Aug 2024 17:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3642A198851;
+	Mon, 26 Aug 2024 17:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFhMatMq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjXHhz8r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC1B198E84;
-	Mon, 26 Aug 2024 17:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154F5166F13;
+	Mon, 26 Aug 2024 17:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693583; cv=none; b=levpVPXRHPQy4Glz6KyjVt6UeVqQHK9E2GZDakg6VGSmQm9QYUcwDHrRoGJlRKiDaJzdw1jKlgGQelgbI9QFZOoafN2xb0VwP39wTzpE+k2p3kZmDJF814DkvjLjBV7TKfamT5wm6Ipe3ONDpIaivi5mX3KM+fbu+eVNr5Z0xlg=
+	t=1724693744; cv=none; b=DbnL5DE7RA4tMTHHGOJIRhTn+RS0J/6LhSl3NihMso43v+nnUZukfevV5kX+I+SapAqDqEhN9VZqtRanHjXG8e45oTSD1Op3yuFXo2qsx4Tz25NDzBviZzBVDCtmq2CA6SWgk8/ZOQa964nqgnOk2YMq/9dKs11gOuw+h9rkWeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693583; c=relaxed/simple;
-	bh=TAh6Bl1VLr1EWHR5IFo9O+tDZgymLTN1OTXOZRGQQg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhonBj/A95lYmszcHWeRLWUB0x+0QB6qbZTUCfSpwt/VB2WIaRPxAMWWxv0bjs6H4sMIj5os8oOG/UnSSkktFPGxfHl+4837OKKZ0ihy54jATiMiiBkDBJbTHKPE3/HNgIYdNAh6zr/as7YTL+HC3ZDBAXcw4jdVzJSveke9jKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFhMatMq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27306C8B7B7;
-	Mon, 26 Aug 2024 17:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724693583;
-	bh=TAh6Bl1VLr1EWHR5IFo9O+tDZgymLTN1OTXOZRGQQg0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vFhMatMq++we8GsDVkjMSZ5V+XOzeCBM0jCASf1ecE7B3mJ806+s36hXg45nAdV9Z
-	 vFphtkEorTrEsSOusgAXlzVxq5BwrLvk2e6nNCBujrjPf1j71ZOo19I1opnFjfhMDN
-	 KLOcU5rj3rWLEO/Eod9BT9ZYv959KEnFbRm4minS/QcEbfw0CQUqZRU4bu8pneBjtP
-	 U1e7m8I78wQJHwGU38Hy8iIuWQ1ibf7qx4JaqjwYWZP3iQFhl4g58Tos3kylxW5uxv
-	 bN5LAzt8iuPijoURrpEgh3i5yXaKBgWClVv+bVGZA+q7qZjatZdjR4UU0FNeI3yBmQ
-	 fIBneDHDpVeDA==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2705dd4ba64so3191883fac.3;
-        Mon, 26 Aug 2024 10:33:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIFPUPHGmCCN9x6djZhy2446Q5K4zDDlPXN6sVZ0Rr8v0uZ4K1brHlW5tc4Wjnq0ipIFuD7cOGaqKZ8Og=@vger.kernel.org, AJvYcCV206tPrgvrlEtzVW0SJY5iIH8ApdudZ9NlS7MrsUwoVzqT3gQ34j2AMOGHBKCL340e73N2uj0H5fc=@vger.kernel.org, AJvYcCWRv7PB1DyszB76fE6VmOmbSEWIt+n7GNUuFnzsrF+T5ZuPdsu4TqEl4dGAx7TorhtMUUpv/Dbs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzST6ESEA/k1kqve3+vPtWfYzS7YzTQtnZUqGwaOaBCUgrgmvX
-	gNOnYW/F+/M+D8/TyaIq96nYFd2uhvtd/10v3p0tpSD4q1f7HLPN8gIV4v+uA55glTkLDDSz2tA
-	Inx3s6X8UlFJVtWlMqdEaSMJ2ytA=
-X-Google-Smtp-Source: AGHT+IFSrSBZa62SwXA+5JbHIGCzklV8q64pAeJZw2PY0F5WyUkkpcfoaNJSjtZqpIeCsacUKPDi+IBq53muwhJ7UpE=
-X-Received: by 2002:a05:6870:4713:b0:260:f75c:c28b with SMTP id
- 586e51a60fabf-273e646d7a8mr11338790fac.8.1724693582147; Mon, 26 Aug 2024
- 10:33:02 -0700 (PDT)
+	s=arc-20240116; t=1724693744; c=relaxed/simple;
+	bh=0sWVcw96T8tSLQcwGgeWLTWjxATb/PQPdf28mrheZsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFqke2afeDcxyAEgZkld+UYUJjKcbrc5+HRhYnOVhWblXIJA28nsuQ+7twoy/PjgIBkA8T2doP7v3KrrJFQTHWfJE1TNztX8GR2fnAqzHgendMlrpS48LNPTXcEKdtBEC5/MNtv6PxP1nmFFFd+lVZcWKP9m5W67hHlGZ7APMqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjXHhz8r; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724693743; x=1756229743;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0sWVcw96T8tSLQcwGgeWLTWjxATb/PQPdf28mrheZsE=;
+  b=TjXHhz8rUxraygpm9YxyTkswHaPz9LC0OdZkzHEMfAttyHahmxyiy//n
+   xuakahtEv4lW9ZLvrw1KHVdkurh0zuvB2r6BerPsrN2GGz0QPMksY9ZCB
+   eH4fbHka+L3haVaTZId4mhyoSEDybwiNGx1U6xUN8oPr4qb0Z2NO3fcDh
+   QCllJcqFLNBhJ/Vlo2iwwCclbqxs47IvG8mO0cjAyuPf+WxU7XG4fPVku
+   3wE2kl3fCNw77ZmmGYl6DUc+zhS5fACQC/puIRaQV/cI7thU8P1VwazCx
+   jkekBKFtChzCKVQGSOBRNiKkVvEpFsflEwT9G1aTKIfZtb3rYEtQNB9rE
+   A==;
+X-CSE-ConnectionGUID: bUoBmjBySR+91cI7s0GTWg==
+X-CSE-MsgGUID: hrcPCJ3sQEe0gN/7bYbuig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33760645"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="33760645"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:35:42 -0700
+X-CSE-ConnectionGUID: 3ZaPV8csSDq9Lp5rfbTY1Q==
+X-CSE-MsgGUID: CFx360prSKeBQzT6tXDZBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="63110120"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:35:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sidcu-000000021fS-2HAa;
+	Mon, 26 Aug 2024 20:35:36 +0300
+Date: Mon, 26 Aug 2024 20:35:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] hexdump: Allow skipping identical lines
+Message-ID: <Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
+References: <20240826162416.74501-1-miquel.raynal@bootlin.com>
+ <20240826162416.74501-3-miquel.raynal@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_13F0C81B16C09CC67E961B5E22F78CC72805@qq.com>
-In-Reply-To: <tencent_13F0C81B16C09CC67E961B5E22F78CC72805@qq.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 19:32:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hC6G7Xvd=jzCvS4re3kk0-h72DdXCkwFiBV8xzT8doOw@mail.gmail.com>
-Message-ID: <CAJZ5v0hC6G7Xvd=jzCvS4re3kk0-h72DdXCkwFiBV8xzT8doOw@mail.gmail.com>
-Subject: Re: [PATCH] Fixes: 496d0a648509 ("cpuidle: Fix guest_halt_poll_ns
- failed to take effect when setting guest_halt_poll_allow_shrink=N")
-To: Yanhao Dong <570260087@qq.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, ysaydong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826162416.74501-3-miquel.raynal@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Why did you put a Fixes; tag in the subject?
+On Mon, Aug 26, 2024 at 06:24:16PM +0200, Miquel Raynal wrote:
+> When dumping long buffers (especially for debug purposes) it may be very
+> convenient to sometimes avoid spitting all the lines of the buffer if
+> the lines are identical. Typically on embedded devices, the console
+> would be wired to a UART running at 115200 bauds, which makes the dumps
+> very (very) slow. In this case, having a flag to avoid printing
+> duplicated lines is handy.
+> 
+> Example of a made up repetitive output:
+> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
+> 
+> Same but with the flag enabled:
+> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> *
+> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
 
-Please provide a proper subject and put the Fixes: tag next to the
-Signed-off-by: one below.
+The problem here is that without offset we can't see how many lines were
+skipped.
 
-On Mon, Aug 26, 2024 at 11:07=E2=80=AFAM Yanhao Dong <570260087@qq.com> wro=
-te:
->
-> From: ysay <ysaydong@gmail.com>
->
-> When guest_halt_poll_allow_shrink=3DN,setting guest_halt_poll_ns
-> from a large value to 0 does not reset the CPU polling time,
-> despite guest_halt_poll_ns being intended as a mandatory maximum
-> time limit.
->
-> The problem was situated in the adjust_poll_limit() within
-> drivers/cpuidle/governors/haltpoll.c:79.
->
-> Specifically, when guest_halt_poll_allow_shrink was set to N,
-> resetting guest_halt_poll_ns to zero did not lead to executing any
-> section of code that adjusts dev->poll_limit_ns.
->
-> The issue has been resolved by relocating the check and assignment for
-> dev->poll_limit_ns outside of the conditional block.
-> This ensures that every modification to guest_halt_poll_ns
-> properly influences the CPU polling time.
->
-> Signed-off-by: ysay <ysaydong@gmail.com>
-> ---
->  drivers/cpuidle/governors/haltpoll.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/gover=
-nors/haltpoll.c
-> index 663b7f164..99c6260d7 100644
-> --- a/drivers/cpuidle/governors/haltpoll.c
-> +++ b/drivers/cpuidle/governors/haltpoll.c
-> @@ -78,26 +78,22 @@ static int haltpoll_select(struct cpuidle_driver *drv=
-,
->
->  static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
->  {
-> -       unsigned int val;
-> +       unsigned int val =3D dev->poll_limit_ns;
->
->         /* Grow cpu_halt_poll_us if
->          * cpu_halt_poll_us < block_ns < guest_halt_poll_us
->          */
->         if (block_ns > dev->poll_limit_ns && block_ns <=3D guest_halt_pol=
-l_ns) {
-> -               val =3D dev->poll_limit_ns * guest_halt_poll_grow;
-> +               val *=3D guest_halt_poll_grow;
->
->                 if (val < guest_halt_poll_grow_start)
->                         val =3D guest_halt_poll_grow_start;
-> -               if (val > guest_halt_poll_ns)
-> -                       val =3D guest_halt_poll_ns;
->
->                 trace_guest_halt_poll_ns_grow(val, dev->poll_limit_ns);
-> -               dev->poll_limit_ns =3D val;
->         } else if (block_ns > guest_halt_poll_ns &&
->                    guest_halt_poll_allow_shrink) {
->                 unsigned int shrink =3D guest_halt_poll_shrink;
->
-> -               val =3D dev->poll_limit_ns;
->                 if (shrink =3D=3D 0) {
->                         val =3D 0;
->                 } else {
-> @@ -108,8 +104,12 @@ static void adjust_poll_limit(struct cpuidle_device =
-*dev, u64 block_ns)
->                 }
->
->                 trace_guest_halt_poll_ns_shrink(val, dev->poll_limit_ns);
-> -               dev->poll_limit_ns =3D val;
->         }
-> +
-> +       if (val > guest_halt_poll_ns)
-> +               val =3D guest_halt_poll_ns;
-> +
-> +       dev->poll_limit_ns =3D val;
->  }
->
->  /**
-> --
-> 2.43.5
->
->
+Two ways to solve (that come to my mind immediately, maybe more and better):
+1) make sure that new flag implies or expects (otherwise BUILD_BUG_ON() or so)
+  the OFFSET to be set;
+2) [OR] add number of lines skipped in that * line.
+
+Personally I prefer the 1) as I think that you tried to follow the existing
+format of user space tools and there is a chance that there are other tools or
+scripts that parse the dump to restore the binary contents.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
