@@ -1,88 +1,100 @@
-Return-Path: <linux-kernel+bounces-301967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBF795F80D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:27:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28CD95F809
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF32B1C2234A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E500A1C21551
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFF4199E9D;
-	Mon, 26 Aug 2024 17:26:03 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DC9199243;
+	Mon, 26 Aug 2024 17:25:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123CE1991CB;
-	Mon, 26 Aug 2024 17:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9C91991CB;
+	Mon, 26 Aug 2024 17:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693163; cv=none; b=TC2ArGlsEFU9rj/7OTfncM1jI+WfgUkQwB9q1cM1IvFeVQKEuX1Q5IrDintXMaJTMReaD6Z/EUGj/FArFOqGP8ezchZBcs5/Z+9NogOC8/p/NidU7yjPBf5sHTGsOyxWCBq47I4XNS9Awd0gq5enOi1sznBeI+4U3/TnEINrf1Y=
+	t=1724693142; cv=none; b=G916XjrtO5PFdatmhgNI4nYOGPtW/2J3wuZVGs2UvGeugx7yYl4F88tLt7m8Ay+fN+1xzwK+0oxNi3GA7i91Csg9NCKaxkPGge5RCJWYJzI6SaXD4OCvHf5FdJWxquzlEz2AJT7fvAL1YP3k2lxvfNz2y/QNZZYtpHgysCpsExA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693163; c=relaxed/simple;
-	bh=JsDdnLS2fGsM8ZypPWIx1C5ELSLkeSsbtZWDRLnMpdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unCa1wRhCAfsyOFagOoyCpo/rMvD+lHolsk3+CRtFtqeVZ/HxJW8zz5cqJTkbxDSCgIekKynoC2p6iNp0/hBPqP7uMlTmf73+1N6HJvj5ETni3wiAEzyttU4W+c5OlCfgSROps5UBOKT7DiUUtNqWONLq/l7RJ6WR6/8c6TaDrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: D/iLN+GGTSuOCkiplWKSRg==
-X-CSE-MsgGUID: lB5PYgEKSfSoaSyZYaGW4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33795718"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="33795718"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:26:01 -0700
-X-CSE-ConnectionGUID: 2/yfE6YpR8KiMBVoXqYIVQ==
-X-CSE-MsgGUID: dWEh/z8aSGSZrmH+mDcH4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="93306656"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:26:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sidTZ-000000021Wl-1dhC;
-	Mon, 26 Aug 2024 20:25:57 +0300
-Date: Mon, 26 Aug 2024 20:25:57 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: kerneldoc fixes for excess members
-Message-ID: <Zsy6pZ9LYDk0LOHs@smile.fi.intel.com>
-References: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1724693142; c=relaxed/simple;
+	bh=bFCDh6HQGIio1OqCsuLrcWyXqRIk/lGjSx9LbGP/dQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LcaRANxQlu/pQB7NXVr6LjThH77XLc/LVAvV39+99iadaGULqlZZFna91weRH3nrs4VMO5Ot/LhqAqkMnfgrCZA2I/bfAoul1I8Zdp+Ex2rbaZJJNgMGH1gk2kKsNmQQMKNox5vwHuZ6pC3smBfyVDABQigkRbEYlfJSRh3zFYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EABC8B7A2;
+	Mon, 26 Aug 2024 17:25:40 +0000 (UTC)
+Date: Mon, 26 Aug 2024 13:26:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <20240826132620.1618d201@gandalf.local.home>
+In-Reply-To: <CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+	<20240823125426.404f2705@gandalf.local.home>
+	<20240823145211.34ccda61@gandalf.local.home>
+	<CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 06:18:50PM +0200, Krzysztof Kozlowski wrote:
-> Drop kerneldoc descriptions of struct members which do not exist to fix
-> W=1 warnings:
+On Mon, 26 Aug 2024 15:01:24 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
+
+> > Before the reset, all but one of the tlat->kthread is NULL. Then it dawned
+> > on me that this is a global per CPU variable. It gets initialized when the
+> > tracer starts. If another program is has the timerlat fd open when the
+> > tracer ends, the tracer starts again, and you close the fd, it will cancel
+> > the hrtimer for the new task.
+> >
+> > I think there needs to be some ref counting here, that keeps the tracer
+> > from starting again if there's still files opened.
+> >  
 > 
->   drivers/gpio/gpio-pch.c:101: warning: Excess struct member 'lock' description in 'pch_gpio'
->   drivers/gpio/gpio-syscon.c:46: warning: Excess struct member 'compatible' description in 'syscon_gpio_data'
+> The timerlat fd is not supposed to be open when the tracer ends/starts
+> again, since osnoise_workload_stop() calls stop_kthread(), which in
+> turn calls kill_pid() to SIGKILL the user workload, which will also
+> close the file descriptor. Only one PID per CPU should have the
+> timerlat fd open at one moment, since timerlat_fd_open() will refuse
+> to open if tlat->pid is set. It appears that this is somehow bypassed
+> and osnoise_workload_start() happens before closing the fd, not sure
+> why.
+> 
+> > This looks to be a bigger problem than I have time to work on it for now.
+> > I'll just apply the mutex patch for the kthreads, but this bug is going to
+> > take a bit more work in solving.
+> >  
+> 
+> Yeah, unfortunately the issue looks more complicated now after looking
+> at the traces you posted, I will probably have to do more tracing to
+> see what is actually happening here. Thank you again for helping us
+> with this and also for the patch for the mutex.
 
-I prefer on per-driver basis, but since it's simple and I have nothing
-in my queue,
+Yeah, I think I finally found the real issue. I don't think we need the ref
+counting. The problem is the creating and killing of the threads via the
+start and stop callbacks. That's not their purpose. The purpose of stop
+and start callbacks is when tracing_on is set to off and back on again. I
+think this is what is racing with the close.
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org> # for gpio-pch
+Anyway, the start and stop should probably just pause the threads and not
+kill them an start them again. That is, the osnoise_workload_start() should
+be called by the init callbacks and the osnoise_workload_stop should be
+called by reset callback.
 
-in the assumption that Bart takes it directly.
+The start and stop callbacks should just pause and restart the the threads.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Steve
 
