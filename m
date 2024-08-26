@@ -1,85 +1,145 @@
-Return-Path: <linux-kernel+bounces-300713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F4995E779
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:58:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F25195E77F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848C42815B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:58:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9196B20819
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B64383BF;
-	Mon, 26 Aug 2024 03:58:00 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BFD450EE;
+	Mon, 26 Aug 2024 04:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYkgrfdx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5697320C;
-	Mon, 26 Aug 2024 03:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF242D052;
+	Mon, 26 Aug 2024 04:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724644680; cv=none; b=HAmhJGIwjUy+hkirPqaEbMuCCuBRHLQomvn70MeE+LM1lmlYSdWA3Q1KsIzKdFry204ANNtVKP6281hCHxoFN9edCqtBLCYYqJQm00vgVtECtG8bFLFn4lOyjQPno10kBqjYJgHaydZx3snpoqWhyncezTpkk0N1GSptMkZyx5s=
+	t=1724644944; cv=none; b=D+91gwy6uKm5qOip5p9S/nrLtIQ1y3S+Omk3M+2grf2obsv8uyR6eC7ga4cWtFra8VL9L1V+og4cvvTLV5hJfQq+OTYf9ijr/IRnxAZ7kzuppyqeLYW0umbUAoYjM17CIcDrkyotHo9erB+c31tVK4IhB8/DeR/4RCUpn4Vi6Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724644680; c=relaxed/simple;
-	bh=zsSo2stRyFTbAbP1smklFqSp9tifqlGAFlKWoiyHp5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qfSwgNOXb89bqpedcCgRUTP3Q2vhMrdybw6NRnmvFEAv7yYl9zEZ8Dh+T+evTDuVCfvgi2jI4pZ/5HokWIY5N5+kn64luSnpvSIOtI7QPiK/BEALo/1sDECsfXT+WR4YRQzoWVi3N7UerQrOMp/Srnxe+Fr3yz33J3SloReRGwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WscKN0my3zhYF4;
-	Mon, 26 Aug 2024 11:55:52 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1B801402E1;
-	Mon, 26 Aug 2024 11:57:54 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 11:57:54 +0800
-Message-ID: <8d63758f-15cf-8d26-d5cd-74974a2083ea@huawei.com>
-Date: Mon, 26 Aug 2024 11:57:53 +0800
+	s=arc-20240116; t=1724644944; c=relaxed/simple;
+	bh=AjH5pEyXc0+xxc6LRgaucLwumSeZDdXzNMpJgBfQ5B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VoNnJdrq0VeTIFdzJx7TMpkO+wy7dfVhx6MY0IhDCiHZz1DbxArQaaEacUcrjUoJNYrP3Gf9GdLlkf+dMxUuOYJSIO0KyAmKF/NQy0zgsAbqex+zhugEt2028584vFfjZxLa9uD604XuBqmgFMkVR6YkQK8PfyXbIFvPZALwdP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYkgrfdx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421B4C32786;
+	Mon, 26 Aug 2024 04:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724644943;
+	bh=AjH5pEyXc0+xxc6LRgaucLwumSeZDdXzNMpJgBfQ5B0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PYkgrfdxjiVYuQG++6O51oxmp+HZbGp8/2e2P+OCoqOO7GEaauI/bae75Xt78u1Ld
+	 jSogZBbI8vWY7y9gS8uCNfj+cyHHuul2a9aG9J98AFfkUlDU6C306IFTS0SNnjB+kW
+	 A57otHXv7Zo7YPFiCiBYrgXv3VVvWq8+C7dfE3LjVo2VErejy5ozh/T89GmSgLsMpI
+	 c2sG6HPe6Xwa+sD4ZzhPUeNzkzaKBmZV44pc2HioMAhflHDvMa+HaB39FnCAgN7p+y
+	 /Zr+EAAD7U5M9bjTPIVYuCJgEy5CMLSGEQS6Dah88sjPp6ip4VrLQZWZTZbgIL1pi5
+	 QblEWJ1+D3ALA==
+Message-ID: <ab0b512c-2d02-4eec-876c-2340284583fe@kernel.org>
+Date: Mon, 26 Aug 2024 13:02:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next] of/platform: Simplify with scoped for each OF child
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ata: libata: Fix memory leak for error path in
+ ata_host_alloc()
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20240822033050.2909195-1-zhengqixing@huaweicloud.com>
+ <e5862d36-6f16-469c-9d03-e7681bfb5bf5@kernel.org>
+ <080848aa-dece-431a-9974-30a377786b69@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <robh@kernel.org>, <saravanak@google.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240822073417.3582286-1-ruanjinjie@huawei.com>
- <q6oqvxc4hdmnfcjlrmrbhd4d6cvt3vvi7rxmwslazadrpadlbk@4mdmxsqoijwk>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <q6oqvxc4hdmnfcjlrmrbhd4d6cvt3vvi7rxmwslazadrpadlbk@4mdmxsqoijwk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Organization: Western Digital Research
+In-Reply-To: <080848aa-dece-431a-9974-30a377786b69@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/8/24 15:56, Krzysztof Kozlowski wrote:
-> On Thu, Aug 22, 2024 at 03:34:17PM +0800, Jinjie Ruan wrote:
->> Use scoped for_each_child_of_node_scoped() when iterating over device
->> nodes to make code a bit simpler.
+On 8/26/24 11:49 AM, Zheng Qixing wrote:
+> 
+> 在 2024/8/23 9:10, Damien Le Moal 写道:
+>> On 8/22/24 12:30 PM, Zheng Qixing wrote:
+>>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>>
+>>> In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
+>>> for a port, the allocated 'host' structure is not freed before returning
+>>> from the function. This results in a potential memory leak.
+>>>
+>>> This patch adds a kfree(host) before the error handling code is executed
+>>> to ensure that the 'host' structure is properly freed in case of an
+>>> allocation failure.
+>>>
+>>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+>> This needs a Fixes tag. So I added:
 >>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  drivers/of/platform.c | 14 ++++----------
+>> Fixes: 2623c7a5f279 ("libata: add refcounting to ata_host")
+>> Cc: stable@vger.kernel.org>
+>>
+>> and applied to for-6.11-fixes. Thanks.
 > 
-> There are like 3 or 4 patches for OF from you. Send them as ONE
-> PATCHSET, not one after another.
+> 
+> Based on Niklas Cassel's suggestion, the commit message and the actual
+> content of the patch do not match.
+> 
+> It should state "if devres_alloc(ata_devres_release, 0, GFP_KERNEL)
+> fails to allocate memory" instead of "if ata_port_alloc(host) fails to allocate
+> memory for a port".
+> 
+> Should I modify the commit message and submit a new version of the patch?
 
-Thank you very much!
+No need. I fixed it up. The commit message now is:
+
+    ata: libata: Fix memory leak for error path in ata_host_alloc()
+
+    In ata_host_alloc(), if devres_alloc() fails to allocate the device host
+    resource data pointer, the already allocated ata_host structure is not
+    freed before returning from the function. This results in a potential
+    memory leak.
+
+    Call kfree(host) before jumping to the error handling path to ensure
+    that the ata_host structure is properly freed if devres_alloc() fails.
 
 > 
-> Best regards,
-> Krzysztof
 > 
+> Zheng Qixing
+> 
+> 
+>>> ---
+>>> Changes in v2:
+>>>   - error path is wrong in v1
+>>>
+>>>   drivers/ata/libata-core.c | 4 +++-
+>>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+>>> index e4023fc288ac..f27a18990c38 100644
+>>> --- a/drivers/ata/libata-core.c
+>>> +++ b/drivers/ata/libata-core.c
+>>> @@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev,
+>>> int n_ports)
+>>>       }
+>>>         dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
+>>> -    if (!dr)
+>>> +    if (!dr) {
+>>> +        kfree(host);
+>>>           goto err_out;
+>>> +    }
+>>>         devres_add(dev, dr);
+>>>       dev_set_drvdata(dev, host);
+> 
+> 
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
