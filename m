@@ -1,259 +1,171 @@
-Return-Path: <linux-kernel+bounces-300852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465D095E946
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:54:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18F295E949
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AD92816B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E04D281859
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BD4839F4;
-	Mon, 26 Aug 2024 06:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TYtZVC2b"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E1A376E6;
-	Mon, 26 Aug 2024 06:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300CE85283;
+	Mon, 26 Aug 2024 06:54:50 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C3C4EB2B;
+	Mon, 26 Aug 2024 06:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655286; cv=none; b=O7MJI93ds633uxAbn4XiTPDQQU/sfwuAXrLvwa3j/1g7oBj7sRd2rIp+qfXeum29IrtCcX/NKvapcRa3n5bp0jiM+ehWMpEbtEj3RN0IcWfvah8sVqDSCCYThaEdr3h+cCGuzqSeqhyrzEutydarXrEE1etJd0X42MO5+SMsgVk=
+	t=1724655289; cv=none; b=OHyUkDmdgyvGs43dZRnfEOyIwxx25j6pIBH0WBjb2CGd0jHDZ3+b+KHoMRmwdbz111iwBHcsgL98UOkqM/c+kmVgi71T/AGhkpoDSbD4M5p1qhtZWNTuyI103iB76llywZgnm3RzYQc0JMzWKa3zgkxcnztwNIsfCvcJaYiYGeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655286; c=relaxed/simple;
-	bh=NijuPrNNY8R0rCq8srbalaQaVxCtGYdkjcA43ZCcJ+Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=adnvTsG3SU1Rp+tGAHffHo97AapIuF0SJCCKE25An3UgCPBCWeqRFrcWSqFQFeUgEaNjCZMZarxu0AoYTZLOqx9QZGXxKm+ca+OL5cnnsIF1CsMf4bcFJ19USnizZCcc/5srCClqBWFjHEqQB5U8J06kHAy+ymov9/i24VIbWw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TYtZVC2b; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0cce08aa637811ef8593d301e5c8a9c0-20240826
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GhEGP67YqgDTHdc3MR4JRlg6CcNYu9PfdwxgzbrschE=;
-	b=TYtZVC2bXZYu92oVLzbLgtex4mnx4pwnc01egiAbQxQYo07bNDXl4Oda92mFvwpGEIBtxRB+417OKjI3duaNN3ztgNb4EF/BlQ6nKMNEG3GPcIk1SM29SBpO+KjesjnCJQpW0lZVwQ5ZvVucKlzBEjo3F6J2lcbxECo7NKf/ZF4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:682e81d5-5dcd-4add-901b-daf16065caa6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:70282dcf-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0cce08aa637811ef8593d301e5c8a9c0-20240826
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 597071622; Mon, 26 Aug 2024 14:54:33 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 26 Aug 2024 14:54:33 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 26 Aug 2024 14:54:33 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>, "Flora
- Fu" <flora.fu@mediatek.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, "Sen
- Chu" <sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>, "Chen-Yu
- Tsai" <wenst@chromium.org>
-Subject: [PATCH] dt-bindings: mfd: mediatek,mt6357: Fixup reference to pwrap node
-Date: Mon, 26 Aug 2024 14:54:15 +0800
-Message-ID: <20240826065415.19641-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1724655289; c=relaxed/simple;
+	bh=WnelEQkz9msN7SegJG/9eJhWytSzJccHwwXnNHJPbSQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AYFrEWUnImmYZAK3eW/D+jLrtC80+vI6gV46wJ3luE6cIJ5fWox4/3MhhVF5NiD5jLsDfuEeyIXGsU6t83sAvOtfIhEfH31GIdT90L6EvZ6uLhcYoVo+ULegekIizBQ8g45YxZ7GWGr5GRLZTXF0nlzaYPBIFJDJtooLn9+BVZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.4.132])
+	by gateway (Coremail) with SMTP id _____8AxmOmvJsxmwiMgAA--.64676S3;
+	Mon, 26 Aug 2024 14:54:39 +0800 (CST)
+Received: from [10.20.4.132] (unknown [10.20.4.132])
+	by front1 (Coremail) with SMTP id qMiowMCxTGetJsxmAK8iAA--.12952S2;
+	Mon, 26 Aug 2024 14:54:37 +0800 (CST)
+Message-ID: <e0f40e93-a325-4db2-86af-5d2d29fb0095@loongson.cn>
+Date: Mon, 26 Aug 2024 14:54:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v3 1/3] dt-bindings: serial: Add Loongson UART controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, p.zabel@pengutronix.de, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ loongarch@lists.linux.dev
+References: <20240826024705.55474-1-zhenghaowei@loongson.cn>
+ <20240826024705.55474-2-zhenghaowei@loongson.cn>
+ <7346m2dmduzdrhzmhlnms24bltoczbajfxfh6wcxxplzydqskc@2xey7pdc24t3>
+Content-Language: en-US
+In-Reply-To: <7346m2dmduzdrhzmhlnms24bltoczbajfxfh6wcxxplzydqskc@2xey7pdc24t3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--5.439900-8.000000
-X-TMASE-MatchedRID: 4yX2sz1oRLp9lFIAHkDJoGwbuvhCHs3cIaLR+2xKRDJx1e3NhjX9AuYh
-	IkEoymbrAVodxTEMxukn1aTwtcqsuC2W7Y+Npd9R2Ud/1nepkpO4vBuE2X0HlbVhTD1Udgq8sfS
-	7f652nAkaHPg6l5sD1LC4kqiZ5QQdN/oZxYKnT+KJLZlzl4NipK+LpFmmk3oAzsQ8iRVyD453Bx
-	krWYnPYuLzNWBegCW2wgn7iDBesS15zdAzex5xZvDdgbPba51UvzNMf/9vK7qOHIk1iqa/6b+AX
-	Gx5R3JwZtl4/3Pi+WmUTGVAhB5EbQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.439900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	AC04E90D57252F3BA31C6C398C459E4271DFE4A6508F56029BBE6ECF0243C2992000:8
-X-MTK: N
+X-CM-TRANSID:qMiowMCxTGetJsxmAK8iAA--.12952S2
+X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEBBGbLHpsHKwABsD
+X-Coremail-Antispam: 1Uk129KBj93XoWxAr1DAFyxWr45ur4kuFWUZFc_yoW5Wry8pr
+	13C3ZrCw10qF17u390qFy8Ga1rZrZ5GanIqF47tw12kasYgas3Xr4fKr1UX3y3Ar18Xryj
+	va4FgF47K3WUArXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
+	6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUxUGYDUUUU
 
-The mt6357 is a subnode of pwrap node. Previously, the documentation
-only included a note in the description of mt6357. This change adds the
-appropriate $ref for pwrap to ensure clarity and correctness.
 
-  $ref: /schemas/soc/mediatek/mediatek,pwrap.yaml
+在 2024/8/26 13:59, Krzysztof Kozlowski 写道:
+> On Mon, Aug 26, 2024 at 10:47:03AM +0800,zhenghaowei@loongson.cn wrote:
+>> From: Haowei Zheng<zhenghaowei@loongson.cn>
+>>
+>> Add Loongson UART controller binding with DT schema format using
+>> json-schema.
+>>
+>> Signed-off-by: Haowei Zheng<zhenghaowei@loongson.cn>
+>> ---
+>>   .../bindings/serial/loongson,uart.yaml        | 63 +++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/serial/loongson,uart.yaml
+>>
+>> Changes in V2:
+>>
+>> - Correct the schema formatting errors.
+>>
+>> - file name changed from 'loongson-uart.yaml' to 'loongson,ls7a-uart.yaml'
+>>
+>> - Replace 'loongson,loongson-uart' with 'loongson,ls7a-uart'.
+>>
+>> Changes in V3:
+>>
+>> - Change the filename from 'loongson,ls7a-uart.yaml' to 'loongson,uart.yaml'.
+>>
+>> - Drop newly defined features: fractional-division, rts-invert, dtr-invert,
+>>    cts-invert and dsr-invert.
+>>
+>> - Add three specific SoC: 'loongson,ls7a-uart', 'loongson,ls3a5000-uart' and
+>>    'loongson,ls2k2000-uart'.
+>>
+>> - Drop 'LOONGSON UART DRIVER' description in MAINTAINERS.
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/loongson,uart.yaml b/Documentation/devicetree/bindings/serial/loongson,uart.yaml
+>> new file mode 100644
+>> index 000000000000..19a65dd5be9f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/serial/loongson,uart.yaml
+>> @@ -0,0 +1,63 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id:http://devicetree.org/schemas/loongson,uart.yaml#
+>> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Loongson UART
+>> +
+>> +maintainers:
+>> +  - Haowei Zheng<zhenghaowei@loongson.cn>
+>> +
+>> +allOf:
+>> +  - $ref: serial.yaml
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - enum:
+>> +          - loongson,ls7a-uart
+> Quick look tells me there is no such soc like ls7a. If there is such,
+> please point me to the DTSI.
+>
+I had a problem with my description of ls7a, it's just a bridge chip, but
 
-Additionally, the indentation for the pmic section has been adjusted
-to match the corresponding structure.
+both ls2k0500 and ls2k1000 share the same UART controller as it.
 
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- .../bindings/mfd/mediatek,mt6357.yaml         | 124 +++++++++---------
- 1 file changed, 65 insertions(+), 59 deletions(-)
+>> +          - loongson,ls3a5000-uart
+>> +          - loongson,ls2k2000-uart
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls2k1000-uart
+>> +              - loongson,ls2k0500-uart
+>> +          - const: loongson,ls7a-uart
+> Just use real SoC names.
 
-Changes for v1:
- - This patch has been made based on linux-next/master branch.
+The ls7a is not an SoC; it is typically used in conjunction with 
+Loongson 3 series
 
-diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
-index b67fbe0..5f4f540 100644
---- a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
-+++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
-@@ -22,69 +22,75 @@ description: |
- 
-   It is interfaced to host controller using SPI interface by a proprietary hardware
-   called PMIC wrapper or pwrap. This MFD is a child device of pwrap.
--  See the following for pwrap node definitions:
--  Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
- 
- properties:
--  compatible:
--    const: mediatek,mt6357
--
--  interrupts:
--    maxItems: 1
--
--  interrupt-controller: true
--
--  "#interrupt-cells":
--    const: 2
--
--  mediatek,hp-pull-down:
--    description:
--      Earphone driver positive output stage short to
--      the audio reference ground.
--    type: boolean
--
--  mediatek,micbias0-microvolt:
--    description: Selects MIC Bias 0 output voltage.
--    enum: [1700000, 1800000, 1900000, 2000000,
--           2100000, 2500000, 2600000, 2700000]
--    default: 1700000
--
--  mediatek,micbias1-microvolt:
--    description: Selects MIC Bias 1 output voltage.
--    enum: [1700000, 1800000, 1900000, 2000000,
--           2100000, 2500000, 2600000, 2700000]
--    default: 1700000
--
--  regulators:
--    type: object
--    $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
--    unevaluatedProperties: false
--    description:
--      List of MT6357 BUCKs and LDOs regulators.
--
--  rtc:
-+  pwrap:
-     type: object
--    $ref: /schemas/rtc/rtc.yaml#
--    unevaluatedProperties: false
--    description:
--      MT6357 Real Time Clock.
-+    $ref: /schemas/soc/mediatek/mediatek,pwrap.yaml
-     properties:
--      compatible:
--        const: mediatek,mt6357-rtc
--      start-year: true
--    required:
--      - compatible
--
--  keys:
--    type: object
--    $ref: /schemas/input/mediatek,pmic-keys.yaml
--    unevaluatedProperties: false
--    description:
--      MT6357 power and home keys.
--
--required:
--  - compatible
--  - regulators
-+      pmic:
-+        type: object
-+        additionalProperties: false
-+        properties:
-+          compatible:
-+            const: mediatek,mt6357
-+
-+          interrupts:
-+            maxItems: 1
-+
-+          interrupt-controller: true
-+
-+          "#interrupt-cells":
-+            const: 2
-+
-+          mediatek,hp-pull-down:
-+            description:
-+              Earphone driver positive output stage short to
-+              the audio reference ground.
-+            type: boolean
-+
-+          mediatek,micbias0-microvolt:
-+            description: Selects MIC Bias 0 output voltage.
-+            enum: [1700000, 1800000, 1900000, 2000000,
-+                   2100000, 2500000, 2600000, 2700000]
-+            default: 1700000
-+
-+          mediatek,micbias1-microvolt:
-+            description: Selects MIC Bias 1 output voltage.
-+            enum: [1700000, 1800000, 1900000, 2000000,
-+                   2100000, 2500000, 2600000, 2700000]
-+            default: 1700000
-+
-+          regulators:
-+            type: object
-+            $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
-+            unevaluatedProperties: false
-+            description:
-+              List of MT6357 BUCKs and LDOs regulators.
-+
-+          rtc:
-+            type: object
-+            $ref: /schemas/rtc/rtc.yaml#
-+            unevaluatedProperties: false
-+            description:
-+              MT6357 Real Time Clock.
-+            properties:
-+              compatible:
-+                const: mediatek,mt6357-rtc
-+              start-year: true
-+            required:
-+              - compatible
-+
-+          keys:
-+            type: object
-+            $ref: /schemas/input/mediatek,pmic-keys.yaml
-+            unevaluatedProperties: false
-+            description:
-+              MT6357 power and home keys.
-+
-+        required:
-+          - compatible
-+          - regulators
- 
- additionalProperties: false
- 
--- 
-2.45.2
+processors and boots via ACPI. Currently, there is no corresponding DTSI 
+provided.
+
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls2k1500-uart
+>> +          - const: loongson,ls2k2000-uart
+>> +      - items:
+>> +          - enum:
+>> +              - loongson,ls3a6000-uart
+>> +          - const: loongson,ls3a5000-uart
+> Best regards,
+> Krzysztof
 
 
