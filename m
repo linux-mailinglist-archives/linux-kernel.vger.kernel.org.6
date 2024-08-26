@@ -1,172 +1,109 @@
-Return-Path: <linux-kernel+bounces-301414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308BE95F03E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0F695F046
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0BF81F225D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFC21C21570
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAF7156241;
-	Mon, 26 Aug 2024 11:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D48C149018;
+	Mon, 26 Aug 2024 11:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWYcG9Pr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AwhBIz1F"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FAE155351;
-	Mon, 26 Aug 2024 11:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F8214B08E
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724673483; cv=none; b=MVkAYk722YNdE+pqLelmMOEaz2cUXgjNjfmKR9wu9kI2FrGEm0YRph1sIadHQhijVGGStSFFgGm3EaBuDb0kLZOqIyic6QFzrVwZEt7+3gpOGCdJldcpUPDe68DCEv5WEXx8Yo5CBSRjvMvYvqbP4bx3MopeeQg4e580mL4psl4=
+	t=1724673579; cv=none; b=C2DV4eb6/wNR9vXHFgVPEhEcIJtETZy96BiPulxEkGPc7z2ZMyyFcCzIaOOP3UiPwsHhkI8+oRXh9XKpUltZfYVAXE0naxISasY/YK3wQ05fp+LM2JRqcTSy2rmHrrR9+OBN9WXLVrghIL68NZHP06F5pG82XQgCrDGtNEPNsII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724673483; c=relaxed/simple;
-	bh=QgIwlyhJMKlvwcUhs6fgookAUVkK/bKJx1cVwJwaESc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=A1Z6//4Wz2Phho5WNzQpJacKCV0KtLXII9ElVzzKHTzhUkbK7l0luyv0XSt9A4an+WF8zsBfg1HVaUBHS4brn7ESfZ1wQoqGFE2ELSiNQI7JoATVGd4J2bWjLYV+evuujXYs/uqoxDWyeuWN68Hd9B2zi+UFD+X/zmjvgniYpbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWYcG9Pr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11695C51400;
-	Mon, 26 Aug 2024 11:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724673483;
-	bh=QgIwlyhJMKlvwcUhs6fgookAUVkK/bKJx1cVwJwaESc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=rWYcG9PrG7TB48zrApTVIymSNQ8QsNpfxziwQMRqclJEzDBj35GtBOQWUyThXrFI3
-	 xl7UdlexX2501/K2vUJvofe/2dSvXZIZ6NDU9VzFB/bDXJsbp66olcmmvOtH99Cq7P
-	 dOSFoDm8c3zASrpioZJnYiHXmM0n6hyRK7bj0XrJEGTqLAimHhyja3GVDTZIdSO8ea
-	 JFzLAUa7AMTTvGd6VWEJiXssfJKxV320Ruo5CPx7vjcwL+1d7fwNk2G6smxw4++1dQ
-	 dUnqI3VC5cc//ijpYnKL6iLM8xSAvuVyiv8SkFpYYVsN7uOBhMzSTCBdJ9cfLh+Q4E
-	 gjcdg9iCb1ygQ==
-Message-ID: <21137e85-c791-4ff7-9492-00ace243d488@kernel.org>
-Date: Mon, 26 Aug 2024 13:57:52 +0200
+	s=arc-20240116; t=1724673579; c=relaxed/simple;
+	bh=2Gc4rUT89+kCaOVxsaKCmlkj9zfal6pMrdwtwEvIMKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZB4K9vqt2pZKQ2iL/E3Zudc2eBnT46dtpqs8DczoN70ngy1BF6veFmrSzpSKYMDXderOn4I9TGANeyWol6L5aXAmKW9TY1XGwQt6sAGMUGhItTmiaBQksLg0hvMBbXlw4k7qtLC6wDX3Z2bel0cWoz0KnjS8D3FbuwlIl6ZpWtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AwhBIz1F; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so5475286a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724673576; x=1725278376; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ataFHi6wYyiiD9cTzzrRwByuJhJC70WggWtUT9kwKg=;
+        b=AwhBIz1FCTyOlrdQk960BhhbgpbKvtxRP0gzAuTJS6ubTU/2h6b114P2zfIk/I3KFp
+         YPjLUgu4miLcqpxyCppSSv05uzWQSqUdgEKKQbBo7OMEHG+lFNt6xkKIJngXRleicS/H
+         auFk7/YT+6JUtD0uKlZfUiAUv6WVSD8SahfmFXRbojzPyWyl+nXiz9Z93GJw4JaQY7rj
+         GOEDLkKS14oB7holt+fxW5EMjlCDaKI+hskhdr1OEd5Q5LC2Wj3rEhtSPn1yLxOEqti5
+         /zb5UlayyCKORV9k3S/J43BBBz1UDqnprM34yZ6imtcAqn8Ax+lAL6efifqTIcEr+UHu
+         LwYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724673576; x=1725278376;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ataFHi6wYyiiD9cTzzrRwByuJhJC70WggWtUT9kwKg=;
+        b=eUiCvy8n8qd+nyeafGA45XbDcFbcxGvQAypxRTj9BgphtD0uZEQfaTY+7eCsBQc3Mp
+         eoH3DYrFNghmKTTqRA9Q6AYPYJNtXYEeR21CR6LMm5sX++OL1m4gFlYZVQY/DAQ9XCmW
+         Z7UBitUic1QcWZLMWjFBiU0zNm4LW9Heak/Qs0lOwhcGzoKrWcVnSQBBBv1cI+Kqcv+7
+         4ACHJSl9jqfKmK1E/6T0b56NSIRy36QLNSjryWaV5J7/QonDtR+YtU/4L6hYRoHXXxVp
+         FUGG9EkSVvQVlZvv3fk5HR2c7QHJOozyVqIW5PEXQmUsj1+fx/WwD7weTk6yitf5K2ff
+         PRGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5LsOd+EQjF7A1exNx4f87iC2Gg8lV3aC98jGXvxyVYFaOKuegdWEExvC7p0LhMKc8E06qUS/D2mH81rc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw1uyB87C4/ywzT9frz8FeUrGahmM2UdtS8AbvvLDuOy7EGJem
+	d4YFUBfijKPv8jWYyBFOTYTFE66qpGgFX21KM6r8kvacCpTSYLVr0nBnJfXG/Cg=
+X-Google-Smtp-Source: AGHT+IHJapUjUiMqfFgXQZN7btLnjR8mKnVNx99urgJ6GEY0QbCn3ebax3APSaYwnptj7nqVrP4y5g==
+X-Received: by 2002:a05:6402:2754:b0:5c0:a9ae:d333 with SMTP id 4fb4d7f45d1cf-5c0a9aed520mr1578615a12.37.1724673576168;
+        Mon, 26 Aug 2024 04:59:36 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0515a91afsm5529770a12.93.2024.08.26.04.59.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 04:59:35 -0700 (PDT)
+Date: Mon, 26 Aug 2024 13:59:34 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: JoshuaHahnjoshua.hahn6@gmail.com
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	shuah@kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 0/2] Exposing nice CPU usage to userspace
+Message-ID: <tpqxx4hk45qkbt5e7sb3jlomfcqt5ickbor5gmclvbqxbrngp6@yqltckvwce3z>
+References: <20240823201317.156379-1-joshua.hahn6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [syzbot] [mptcp?] WARNING in mptcp_pm_nl_set_flags
-Content-Language: en-GB
-To: syzbot <syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com>,
- davem@davemloft.net, edumazet@google.com, geliang@kernel.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org, martineau@kernel.org,
- mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com
-References: <00000000000049861306209237f4@google.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <00000000000049861306209237f4@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823201317.156379-1-joshua.hahn6@gmail.com>
 
-Hello,
+Hello.
 
-Thank you for having released this bug report!
+On Fri, Aug 23, 2024 at 01:05:16PM GMT, JoshuaHahnjoshua.hahn6@gmail.com wrote:
+> Niced CPU usage is a metric reported in host-level /proc/stat, but is
+> not reported in cgroup-level statistics in cpu.stat. However, when a
+> host contains multiple tasks across different workloads, it becomes
+> difficult to gauage how much of the task is being spent on niced
+> processes based on /proc/stat alone, since host-level metrics do not
+> provide this cgroup-level granularity.
 
-On 26/08/2024 10:50, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8af174ea863c net: mana: Fix race of mana_hwc_post_rx_wqe a..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1718a993980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=455d38ecd5f655fc45cf
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a653d5980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/86225fd99eec/disk-8af174ea.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/fc4394f330d4/vmlinux-8af174ea.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1f30959324a7/bzImage-8af174ea.xz
-> 
-> The issue was bisected to:
-> 
-> commit 322ea3778965da72862cca2a0c50253aacf65fe6
-> Author: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> Date:   Mon Aug 19 19:45:26 2024 +0000
-> 
->     mptcp: pm: only mark 'subflow' endp as available
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=159fb015980000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=179fb015980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=139fb015980000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com
-> Fixes: 322ea3778965 ("mptcp: pm: only mark 'subflow' endp as available")
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 __mark_subflow_endp_available net/mptcp/pm_netlink.c:1467 [inline]
-> WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_pm_nl_fullmesh net/mptcp/pm_netlink.c:1948 [inline]
-> WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_nl_set_flags net/mptcp/pm_netlink.c:1971 [inline]
-> WARNING: CPU: 1 PID: 5507 at net/mptcp/pm_netlink.c:1467 mptcp_pm_nl_set_flags+0x926/0xd50 net/mptcp/pm_netlink.c:2032
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 5507 Comm: syz.3.20 Not tainted 6.11.0-rc4-syzkaller-00138-g8af174ea863c #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> RIP: 0010:__mark_subflow_endp_available net/mptcp/pm_netlink.c:1467 [inline]
-> RIP: 0010:mptcp_pm_nl_fullmesh net/mptcp/pm_netlink.c:1948 [inline]
-> RIP: 0010:mptcp_nl_set_flags net/mptcp/pm_netlink.c:1971 [inline]
-> RIP: 0010:mptcp_pm_nl_set_flags+0x926/0xd50 net/mptcp/pm_netlink.c:2032
+The difference between the two metrics is in cputime.c:
+        index = (task_nice(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
 
-Arf, my bad, I already fixed the issue in our tree. In fact, I had more
-than 15 patches to send, so I decided to split the series, and the fix
-is not in -net yet. I forgot syzbot was also checking the netlink API,
-imitating a user adding, and removing local MPTCP endpoints. I should
-have moved the WARN to a later commit, I will try to remember that next
-time!
+> Exposing this metric will allow load balancers to correctly probe the
+> niced CPU metric for each workload, and make more informed decisions
+> when directing higher priority tasks.
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+How would this work? (E.g. if too little nice time -> reduce priority
+of high prio tasks?)
 
+Thanks,
+Michal
 
