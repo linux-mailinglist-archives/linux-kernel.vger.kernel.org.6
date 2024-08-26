@@ -1,166 +1,316 @@
-Return-Path: <linux-kernel+bounces-301449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE9295F10D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFE395F105
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D371C237EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606BF1C23879
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D56F19306C;
-	Mon, 26 Aug 2024 12:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A198518E057;
+	Mon, 26 Aug 2024 12:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NN4pM6e7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYPHoJVh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B81A1922C5;
-	Mon, 26 Aug 2024 12:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C12172798;
+	Mon, 26 Aug 2024 12:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674280; cv=none; b=Xme7y8mlYpCVowWshMbKoe7siQDmufEUV97VLTE6miH/7DAjlC3bTRcNbmlznob6mDmZxEb1ofBX1fubr/pCswY7+VZ60R0p893IYGvsidPoDpFZwm3jhXrGWJ1yQXuPFpoyRAw3nT73amIDS8IYtL9Hcaoryughba6qo1cu19M=
+	t=1724674257; cv=none; b=B1GSpu4en7Vw4eNHQQ9GzmfGn+HwCYV79rgxDskhbDAP/x/tvkPPdeIz+P+yRRaGVumb+dI1YadUYLD7YnYBj3bPqlHsFb26M7dMNeOQvxWQh3Kjoc/XRxbbhXWBu5lYeyh1DkcC9jH+iT7sCuGZGJGWaJ0Ua9K3Ce7gzJnxdNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674280; c=relaxed/simple;
-	bh=2LR4QjIA/PkoKFG4ghzl7hwL4NmodTxNSXJuhMxmrVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Z7WNwSS2c1G0KNB2dW/jaZydJIcJqjYuSELWsN3x5FC/stAcb7XruNCbwqMWAuXIfgYBO+IDxKszuphAPwo6nOXVwcSg+/P8PTkm26hMDzXiVqsihlM4x3gK7z3xEvgavMcxKoS49ksxiHfWpsasEhX6RrJCeDwD8fnMnG1PFcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NN4pM6e7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MOnP017688;
-	Mon, 26 Aug 2024 12:11:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=X4BCi4GwH41+U+y5D6WUKqWUYYIsRuvsCMc7bjn8fTk=; b=NN
-	4pM6e7pcboVLpH6Wb6pTThprZaTcxU0+vfjPtZZouSAe0wiTHvjp0EcdopXjsrcr
-	DjVjJNd2v02PXPM3UTvdKf/7VQ61D6CjN4QWpU0UFuVYbNmhr/5/hFjIvqhdBVOj
-	gVIWPgVAcSYgld0U1D7pnQw9cLlIl3uUcqGKa/v3Wab+ZbMw+TgNLiXeUVwu70mi
-	ryZ150DCOK51W/+wvxdkzVg10Qcs65tC3Lj61ZXdNYGEWKiYFu2R0AArBy4krlr3
-	zKRWzZ4K95hxXdF65DV9o/f44FB77dnLc0kc4ufQtw6ySRKPt/yveQbqYXJe/mW5
-	U8s9n5tJ035+4Ts73fgw==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4179a1uhjd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 12:11:10 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47QCB7Mn023402;
-	Mon, 26 Aug 2024 12:11:07 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4178kkjan7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 26 Aug 2024 12:11:07 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47QCB7nU023396;
-	Mon, 26 Aug 2024 12:11:07 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.194])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47QCB75O023393;
-	Mon, 26 Aug 2024 12:11:07 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3891782)
-	id 66C5FB63; Mon, 26 Aug 2024 17:41:06 +0530 (+0530)
-From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
-        vkoul@kernel.org
-Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com,
-        quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Mrinmay Sarkar <quic_msarkar@quicinc.com>, stable@vger.kernel.org,
-        Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
-Date: Mon, 26 Aug 2024 17:41:01 +0530
-Message-Id: <1724674261-3144-3-git-send-email-quic_msarkar@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1724674261-3144-1-git-send-email-quic_msarkar@quicinc.com>
-References: <1724674261-3144-1-git-send-email-quic_msarkar@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CWL01elRRLT20lk9S5NS2KdGYT3U3BpE
-X-Proofpoint-ORIG-GUID: CWL01elRRLT20lk9S5NS2KdGYT3U3BpE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_08,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=467
- spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408260095
+	s=arc-20240116; t=1724674257; c=relaxed/simple;
+	bh=XoNvGZEd0jn83AcWVePGvHhp0KOl9p5SiFsphjRpmvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msSiAX9NiI0yOM4HqgTEp0qun8cjK9iUHVjX6syTcFSHhnzxpWXeaW3AouNNa+llErLwDGexkesrnobznFycZV3Em3cM0+8klJLBc7XijK8GuwUR5/A1diQD+UC4UIVyJ4MQDgJOngRua+VetwSMI+zW/CGVUQE3HxTDbI2n2Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYPHoJVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F30C4DE1A;
+	Mon, 26 Aug 2024 12:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724674257;
+	bh=XoNvGZEd0jn83AcWVePGvHhp0KOl9p5SiFsphjRpmvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BYPHoJVhVrTUQVg624ssVlJGmQJD/+H8HzNNE9dKy7zrKQjG3Gxarcg37xJf+jA1/
+	 P9MkH+KVzhMNWFDHOw1MTPvGwZgV0LWc69OZsNOTEC0sR9yXM2oYk3a8s9Y4+y6g+E
+	 T6hh5FJicCaukVpFSoNdRoeaWLbq/OcWXtFaKkhnev4zsTGQv38nr5ibwRsPtRvpRV
+	 dkGV6iuaIH3rr307QJSOMHt16Z0lociUZZoIzFp8qR/IAN4fZ57NAgEvKT1p1DLLPP
+	 cnT4rLLVbS/xuQSGdOep35JXh7p1meEkz97rSTuU7u61Xu1Ys6VTVJLuetQXrKMZR3
+	 9rOf/IXrRwDag==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1siYYr-000000002Pq-3ak2;
+	Mon, 26 Aug 2024 14:11:06 +0200
+Date: Mon, 26 Aug 2024 14:11:05 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+Cc: agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+	mani@kernel.org, quic_msarkar@quicinc.com,
+	quic_kraravin@quicinc.com,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] PCI: qcom: Refactor common code
+Message-ID: <Zsxw2RIfLxEfgYN8@hovoldconsulting.com>
+References: <20240821170917.21018-1-quic_schintav@quicinc.com>
+ <20240821170917.21018-2-quic_schintav@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821170917.21018-2-quic_schintav@quicinc.com>
 
-DW_HDMA_V0_LIE and DW_HDMA_V0_RIE are initialized as BIT(3) and BIT(4)
-respectively in dw_hdma_control enum. But as per HDMA register these
-bits are corresponds to LWIE and RWIE bit i.e local watermark interrupt
-enable and remote watermarek interrupt enable. In linked list mode LWIE
-and RWIE bits only enable the local and remote watermark interrupt.
+On Wed, Aug 21, 2024 at 10:08:42AM -0700, Shashank Babu Chinta Venkata wrote:
+> Refactor common code from RC(Root Complex) and EP(End Point)
 
-Since the watermark interrupts are not used but enabled, this leads to
-spurious interrupts getting generated. So remove the code that enables
-them to avoid generating spurious watermark interrupts.
+Space before open parentheses, please (again).
 
-And also rename DW_HDMA_V0_LIE to DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE to
-DW_HDMA_V0_RWIE as there is no LIE and RIE bits in HDMA and those bits
-are corresponds to LWIE and RWIE bits.
+> drivers and move them to a common driver. This acts as placeholder
+> for common source code for both drivers, thus avoiding duplication.
+> 
+> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
 
-Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
-cc: stable@vger.kernel.org
-Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/dma/dw-edma/dw-hdma-v0-core.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> new file mode 100644
+> index 000000000000..1d8992147bba
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2015, 2020 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2015, 2021 Linaro Limited.
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
 
-diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-index 2addaca..e3f8db4 100644
---- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-@@ -17,8 +17,8 @@ enum dw_hdma_control {
- 	DW_HDMA_V0_CB					= BIT(0),
- 	DW_HDMA_V0_TCB					= BIT(1),
- 	DW_HDMA_V0_LLP					= BIT(2),
--	DW_HDMA_V0_LIE					= BIT(3),
--	DW_HDMA_V0_RIE					= BIT(4),
-+	DW_HDMA_V0_LWIE					= BIT(3),
-+	DW_HDMA_V0_RWIE					= BIT(4),
- 	DW_HDMA_V0_CCS					= BIT(8),
- 	DW_HDMA_V0_LLE					= BIT(9),
- };
-@@ -195,25 +195,14 @@ static void dw_hdma_v0_write_ll_link(struct dw_edma_chunk *chunk,
- static void dw_hdma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- {
- 	struct dw_edma_burst *child;
--	struct dw_edma_chan *chan = chunk->chan;
- 	u32 control = 0, i = 0;
--	int j;
- 
- 	if (chunk->cb)
- 		control = DW_HDMA_V0_CB;
- 
--	j = chunk->bursts_alloc;
--	list_for_each_entry(child, &chunk->burst->list, list) {
--		j--;
--		if (!j) {
--			control |= DW_HDMA_V0_LIE;
--			if (!(chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
--				control |= DW_HDMA_V0_RIE;
--		}
--
-+	list_for_each_entry(child, &chunk->burst->list, list)
- 		dw_hdma_v0_write_ll_data(chunk, i++, control, child->sz,
- 					 child->sar, child->dar);
--	}
- 
- 	control = DW_HDMA_V0_LLP | DW_HDMA_V0_TCB;
- 	if (!chunk->cb)
--- 
-2.7.4
+Again, you can't claim copyright for just moving code around.
 
+> + *
+> + */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/units.h>
+> +
+> +#include "../../pci.h"
+> +#include "pcie-designware.h"
+> +#include "pcie-qcom-common.h"
+> +
+> +struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
+> +{
+> +	struct icc_path *icc_p;
+> +
+> +	icc_p = devm_of_icc_get(pci->dev, path);
+> +	return icc_p;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
+> +
+> +int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc, u32 bandwidth)
+> +{
+> +	int ret;
+> +
+> +	ret = icc_set_bw(icc, 0, bandwidth);
+> +	if (ret) {
+> +		dev_err(pci->dev, "Failed to set interconnect bandwidth: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_init);
+
+As I already pointed out, these helpers seems to be of very little worth
+and just hides what is really going on (e.g. that the resources are
+device managed). Please consider dropping them.
+
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> new file mode 100644
+> index 000000000000..897fa18e618a
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2014-2015, 2020 The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2015, 2021 Linaro Limited.
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+
+Same copyright issue here.
+
+> + */
+> +
+> +#include "pcie-designware.h"
+> +
+> +#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+> +		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+> +
+> +struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path);
+> +int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc_mem, u32 bandwidth);
+> +void qcom_pcie_common_icc_update(struct dw_pcie *pci, struct icc_path *icc_mem);
+
+Compile guards still missing, despite me pointing that out before.
+
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index 236229f66c80..e1860026e134 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+  
+> -	ret = icc_set_bw(pcie_ep->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
+> +	ret = qcom_pcie_common_icc_init(pci, pcie_ep->icc_mem);
+
+Does not even compile, as reported by the build bots.
+
+> -static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+> -{
+> -	struct dw_pcie *pci = pcie->pci;
+> -	int ret;
+> -
+> -	pcie->icc_mem = devm_of_icc_get(pci->dev, "pcie-mem");
+> -	if (IS_ERR(pcie->icc_mem))
+> -		return PTR_ERR(pcie->icc_mem);
+> -
+> -	pcie->icc_cpu = devm_of_icc_get(pci->dev, "cpu-pcie");
+> -	if (IS_ERR(pcie->icc_cpu))
+> -		return PTR_ERR(pcie->icc_cpu);
+> -	/*
+> -	 * Some Qualcomm platforms require interconnect bandwidth constraints
+> -	 * to be set before enabling interconnect clocks.
+> -	 *
+> -	 * Set an initial peak bandwidth corresponding to single-lane Gen 1
+> -	 * for the pcie-mem path.
+> -	 */
+> -	ret = icc_set_bw(pcie->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
+> -	if (ret) {
+> -		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+> -			ret);
+> -		return ret;
+> -	}
+> -
+> -	/*
+> -	 * Since the CPU-PCIe path is only used for activities like register
+> -	 * access of the host controller and endpoint Config/BAR space access,
+> -	 * HW team has recommended to use a minimal bandwidth of 1KBps just to
+> -	 * keep the path active.
+> -	 */
+> -	ret = icc_set_bw(pcie->icc_cpu, 0, kBps_to_icc(1));
+> -	if (ret) {
+> -		dev_err(pci->dev, "Failed to set bandwidth for CPU-PCIe interconnect path: %d\n",
+> -			ret);
+> -		icc_set_bw(pcie->icc_mem, 0, 0);
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+
+Just keep this function as is.
+
+> -static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
+> -{
+> -	u32 offset, status, width, speed;
+> -	struct dw_pcie *pci = pcie->pci;
+> -	unsigned long freq_kbps;
+> -	struct dev_pm_opp *opp;
+> -	int ret, freq_mbps;
+> -
+> -	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> -	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
+> -
+> -	/* Only update constraints if link is up. */
+> -	if (!(status & PCI_EXP_LNKSTA_DLLLA))
+> -		return;
+> -
+> -	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, status);
+> -	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, status);
+> -
+> -	if (pcie->icc_mem) {
+> -		ret = icc_set_bw(pcie->icc_mem, 0,
+> -				 width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+> -		if (ret) {
+> -			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+> -				ret);
+> -		}
+> -	} else {
+> -		freq_mbps = pcie_dev_speed_mbps(pcie_link_speed[speed]);
+> -		if (freq_mbps < 0)
+> -			return;
+> -
+> -		freq_kbps = freq_mbps * KILO;
+> -		opp = dev_pm_opp_find_freq_exact(pci->dev, freq_kbps * width,
+> -						 true);
+> -		if (!IS_ERR(opp)) {
+> -			ret = dev_pm_opp_set_opp(pci->dev, opp);
+> -			if (ret)
+> -				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
+> -					freq_kbps * width, ret);
+> -			dev_pm_opp_put(opp);
+> -		}
+> -	}
+> -}
+
+Maybe it's worth trying to generalise this, but probably not. Either
+way, I don't think the gen4 stability *fixes* should depend on this (the
+gen4 nvme link on x1e80100 is currently broken and depends on the later
+changes in this series).
+
+Please consider dropping all this, mostly bogus, refactoring and just
+get the gen4 fixes in first.
+
+> -
+>  static int qcom_pcie_link_transition_count(struct seq_file *s, void *data)
+>  {
+>  	struct qcom_pcie *pcie = (struct qcom_pcie *)dev_get_drvdata(s->private);
+> @@ -1561,6 +1472,18 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  		goto err_pm_runtime_put;
+>  	}
+>  
+> +	pcie->icc_mem = qcom_pcie_common_icc_get_resource(pcie->pci, "pcie-mem");
+> +	if (IS_ERR_OR_NULL(pcie->icc_mem)) {
+
+This will break machines which don't have this path. NULL is valid here.
+
+> +		ret = PTR_ERR(pcie->icc_mem);
+> +		goto err_pm_runtime_put;
+> +	}
+> +
+> +	pcie->icc_cpu = qcom_pcie_common_icc_get_resource(pcie->pci, "cpu-pcie");
+> +	if (IS_ERR_OR_NULL(pcie->icc_cpu)) {
+
+Same here.
+
+> +		ret = PTR_ERR(pcie->icc_cpu);
+> +		goto err_pm_runtime_put;
+> +	}
+> +
+>  	/* OPP table is optional */
+>  	ret = devm_pm_opp_of_add_table(dev);
+>  	if (ret && ret != -ENODEV) {
+
+> @@ -1681,7 +1629,8 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+>  	if (pm_suspend_target_state != PM_SUSPEND_MEM) {
+>  		ret = icc_disable(pcie->icc_cpu);
+>  		if (ret)
+> -			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
+> +			dev_err(dev,
+> +			"Failed to disable CPU-PCIe interconnect path: %d\n", ret);
+
+Unrelated, bogus change.
+
+Johan
 
