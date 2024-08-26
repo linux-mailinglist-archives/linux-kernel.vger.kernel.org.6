@@ -1,320 +1,172 @@
-Return-Path: <linux-kernel+bounces-300673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69AF95E70F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:55:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D3D95E717
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE10AB20B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C321F21A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255821119A;
-	Mon, 26 Aug 2024 02:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5272E29408;
+	Mon, 26 Aug 2024 02:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="nQlHqfAg"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2068.outbound.protection.outlook.com [40.107.117.68])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="It0FK7Yk"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2057.outbound.protection.outlook.com [40.92.18.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D76B672
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE41E6F2F6;
+	Mon, 26 Aug 2024 02:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.18.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724640944; cv=fail; b=u6lJvGml1hlSur7f0RGKm3OSVDSW3AuhQOV0PpBwCOeJT8krt1CSuV1s0beexse01YaEIZtcf3+KaQlKqxUY0V/Gv7DUoeDUXbCJchplgNXTrNyPfDu9ZGEqCAMeWt7CmSlNxatnzybQ2b2uHIimWMvd0Zfocy8pQhfLVsFgAlE=
+	t=1724641003; cv=fail; b=DCzJypr2jvf4hr3WXBWrEuO+yijbK4ZY+d4Pag4weSZI4/dmIWkyiApj/lqijIDOr/rIO2/2WBNBantnsJUhWZKNKexVDp8uD0DQv4ZslVT/E/jaZsPRsVsKDEwqtvYpQ3F83UjmJA/MFNneE6Pq+pris8Pc+2SseBr+JhxeKhw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724640944; c=relaxed/simple;
-	bh=da1Y2FlVL4D/F2WZQ/9EgpSSQaZvfwEYN/Bwdm3Lq1k=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pc+l/yToAqNqpr/BnfTpvlVAljRp9BHyKiagSHjNpF+qHWNpsix2GtSJeLu2Fs6Uw83Ob9k9mbYwRIW9fEDhiUjGgiMhNP/ief9mzlOxVohwTquxOrIW5K6iBaZCY1gdBYbLdNTKWebopt0Gu5A97CZpzgwwa5tZqR7NVpMyTZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=nQlHqfAg; arc=fail smtp.client-ip=40.107.117.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1724641003; c=relaxed/simple;
+	bh=Ad5pnd9fKxleMnAwBrZGuOXypZS4OwbSLzbFyUFxlL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AmOjfrPbl6LSnJy2dFhTobT7BfjwJPglLhfQy0Xf9X9cUASHS9RlD6w1aFdNwCZduiOx+Pv3pNUjeyGoRw9aSK5NOnUPlsnZ2T7RdnRUF8dzxFHui4pYOtQ+5WIwejXN9TNzJjBbDpTnC3Mag0YawWu3WDVImVhb13lP3VjvG0M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=It0FK7Yk; arc=fail smtp.client-ip=40.92.18.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gHIvi6Rj4lM8Xnw93NAJNyXwLta2wGqyVFEqfckS4bmk68Btjxs0kKVoo4G6JChCBAkHEkCP36w6YRbNTM89uMIohjaubX//nP6wkCz32+3YkU4sB4lqwlLr+ibkIvT7P0ZLVet/HchCecbiMv7Rw3TlFAX7pjrF/L2MtichrcctjV6caGh47kb3x1vmx3SKyWK/2dh7dWAqfrbeEst7laHeEkBhGm9aNftM1ZY60LaWM9vEe+mFHMt7ykZFCFqMef8hAuuPEC2h8LnV7Knd7lYgMP2jkmd4ydbmzFYS0URYx1mj1aH4Gj7A3qv0Mrb9xBFY4uyDnkrYLGHi8SifbA==
+ b=mTYL77voAcnnFJiaccQSUvIVbZ7RxL+V7zoBGUzED47TO+vhukeGRwOO0GffGPkjidcP5269EyfijQlt0WlQtCZ0wla/csrGdggaakQMeZ2AUPHHCaNlcvyuZaMALEIsX4ty2clnKyvINRnPNgAKS2A7/G8lMzS4V6kVasz6Z2S+ZhrNFf1+PQegIrU2k2QcrY2MPkpucgwzaDNy0BwBcCHZEeomEpkq0xXVBl2/lqxFF6mu/LPkxSKB6JrwlGLZkGg51xMJpwTYpIlB5x//7ecmIdJ1J8wZs4DcN6cLRAHOP4EuSMPWpkharmO1QRSEzXyigHdsG14ZGZwyZSsZ4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F8rfuUr/xNpvoE0F9bSyecwlsIRnqr5tDaN6W0okL+Q=;
- b=itfkGNNGCFcF8jQe0R41fxu8WX+tf5K1pSImuJaL6ToNIko5WSQEf5h24wbdFS63xB3vOQ2Qbd/RyWFODt2C49cNmjHvyOu7yGZUs4LCugfaCgR7hKZHF5n47xR7gffIcYP7Q3MRv0yufSvhwWKJmTxq3TD+jw5pDSQ0MFc1sntBrVDQIOyV8iHSeKbdnkFz8tS7UFt+fMk/RyW8KzJvNtEGg4VLWW8OShooRIu7X5EiBLoQWThsgUrUGnAjWhqTt489eW1JmrGTIv9NE0FjQDVH1rPg1WkhVndsrkLlt9MBvdS6Z8aTUp44sgqtpXJkJKx4VWBstA+xldcbsvnU1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ bh=XE5KAG6u97A1XDtdRa27fa3TYeVRdGHoB+D2kcAekvc=;
+ b=JdBMwqM4O+2UWFheDta7HAgnofKr6o+JBsHgSGaJxOh/7PXzFwXI0P1hF4/93gj15ExxyBBAa4LWFlspjMcZUN5PyMBqUyH9nDxNZZBgN2vtwtPOf4jCGzsCj7VQfhfRHe1cPuiuqiglHbCKtrZ38wmHU8mOePuTrV0hTOPlU80hYLz+AQwLE5wNimSV99FP981an/08hQXZMHFkEZNx0UWmHtSsBRaHiUlxzcohfeard1cM+aAuPuuvLBReAgkqOrcfF3QqJ/cznZqZAMd4eZfJLyEny9KeCuaWDdsq+6V3xuNCILbCX3VDYi7plBMWAb511a4S8JI0Xc7sCJHbBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F8rfuUr/xNpvoE0F9bSyecwlsIRnqr5tDaN6W0okL+Q=;
- b=nQlHqfAgXVqfhfasPsuqDnisj+sfkcfpNEqqE1wXs8qpAku1sz7+JJljADkt/YE4ButW54mEicPTR41bk/zeO9e07ahjOLrUktBEJaAayH8WqNglwmhqqB51SYsw4kb4AD77k8k7bLpdVNb1IeLQbPu8UQBBAHljuOSO7vunGkAT8zPOL66m/bFX5M0XT9rHHen8DI9jxRV+FRsz5boZhQ0FxGQxuISw5QLw753oeNrGk8iRkIRdKarNSNoiMWjGmNkPCQc6e295WnqbHE+IPX0qpywFwFoftWiRHaUbcup4iJ3PUkoZMJnfOR6iswc/PWJi5mbBJbhAQzIepc0RZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEYPR06MB6252.apcprd06.prod.outlook.com (2603:1096:101:c5::14)
- by SEZPR06MB5877.apcprd06.prod.outlook.com (2603:1096:101:e2::7) with
+ bh=XE5KAG6u97A1XDtdRa27fa3TYeVRdGHoB+D2kcAekvc=;
+ b=It0FK7YkJpFDrKKzRg6EAUxhYtG1gdfKj6MqYs/WfYxIMw7yTUtdRqcVfIrrcX72fCkqxqaS+PRSy7LCjNig8Nht+3spkJlUp6WuFBFdDjooRGQmhGilVqLWk8d2OO7/mAJ/nspYmBEtQO8h02qqDqGcnnskuhJ95mHmr/uTmTDBaRdVbNsQkaKzU6EsI1JStyFWpZrFSUmoRQyqW+bVoDLXyi+Ilcj/DcXc0RphXrVtqGHWbG8qEzGQThjfFdIMXfKTa7nnOJ9S2iZa2WkAlKkvz4iu3St95tL1I0J2i+95QaELS0joiCjT+mP9Iy+CBwicLJ4JiPF+ikSY+TvyZA==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by MW6PR20MB6742.namprd20.prod.outlook.com (2603:10b6:303:242::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Mon, 26 Aug
- 2024 02:55:36 +0000
-Received: from SEYPR06MB6252.apcprd06.prod.outlook.com
- ([fe80::d2f1:960e:a2e7:406b]) by SEYPR06MB6252.apcprd06.prod.outlook.com
- ([fe80::d2f1:960e:a2e7:406b%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 02:55:35 +0000
-From: Yang Ruibin <11162571@vivo.com>
-To: Kenneth Feng <kenneth.feng@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Yang Ruibin <11162571@vivo.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v3] fix up the misspellings
-Date: Mon, 26 Aug 2024 10:55:04 +0800
-Message-Id: <20240826025522.1474757-1-11162571@vivo.com>
-X-Mailer: git-send-email 2.34.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Mon, 26 Aug
+ 2024 02:56:37 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 02:56:37 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Conor Dooley <conor@kernel.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Inochi Amaoto <inochiama@outlook.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 0/4] Add board support for Sipeed LicheeRV Nano
+Date: Mon, 26 Aug 2024 10:55:38 +0800
+Message-ID:
+ <IA1PR20MB49531ED9F5A8F685E1AE2692BB8B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+References: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0014.apcprd04.prod.outlook.com
- (2603:1096:4:197::18) To SEYPR06MB6252.apcprd06.prod.outlook.com
- (2603:1096:101:c5::14)
+X-TMN: [jkHHrsrMHvfL1wznLstqa6p/fD+tl5IMVKwoYrIBONk=]
+X-ClientProxiedBy: TYCP286CA0122.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::8) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <172464089405.43748.14986659500049351960.b4-ty@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR06MB6252:EE_|SEZPR06MB5877:EE_
-X-MS-Office365-Filtering-Correlation-Id: 474b1c1d-8144-4e9e-9d5a-08dcc57a8ec0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MW6PR20MB6742:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b235ee9-cc2e-429b-7c70-08dcc57ab398
+X-MS-Exchange-SLBlob-MailProps:
+	0wLWl8rLpvuFPcexptlQQ31fj5pwhFvfwTfX0MCrcXMY+7uVifDtjdAzdbqwRtR7qJJnTmPdrF/1Q21torFei/vmB5uWdo2wIgtAJ1GdjoJLGClTLiu57AuSX20Iqnq7m3XzEMKVf9cppem4dxpp06fh5fHiD3+zvYAXZL73e2PCB4H14wiysDdQUo3Cbtql4vxhQ34utgsDBLhfyVoKvyn4uIdhj+ZafsR1oE5eLd1GyVax90jDm2DyiEgbZF4/eHRm7IsQjFf029aNRhifxRgMQ5H66S+RTV7/InzMNdOqcdeSuTQ5Tx51sErglgkJRzAbUEpZo5VM5JKqFgGJuOrwhNfCcj+uimsB8EzJdKr/LYtY2GQHKoGny6nC5xiBSpuSBUMBes9YrcBMGTF2G2EcP/VoWSr7VQEb9pDwYlWe2cExLDdSdvJEON2XsktmZYs/4nKkG14t5Lrw+VzlslnV5535yH7Rr3fx6qruvH3Ua2gbGUJJxIDgu2OjfreJzJ5C+xhzLwdhfBoTSgZtC8wCPn8b7Sz7Uag6WT2Qo58Lf1j4qddNBCiik+hmLDtdj5sKOclaAUQ3d2BiCXyVdJAT+Rdv4maX4j7giJyG80KO0rZER0xW9nSHHDQI+pNDe+2CViJdJg2pTZ+XC5MrcX3QguCKeCRFJIZzWgMOnpHsxHRXQctZCAUadQQhEN1Hbk4QLWHjhDjMbSE/YTwyYrE6MAjoWrHaQVTVo2PeR8XcRGtLEqUQ2xTOT3wtxxzqsgupU5Y9Rjo=
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014|921020|81742002;
+	BCL:0;ARA:14566002|19110799003|5072599009|8060799006|15080799006|461199028|1602099012|440099028|4302099013|3412199025|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jKLnZFWeYjCCUac2Qa2y9jyxxCmMCwp8O4i+9EsZvCEdhoW1dii7k3hwl64g?=
- =?us-ascii?Q?O+50rRRU3GhoWDCTYmiBD2AUwNlDAkahML/ojnAKOmS5dU4EYGT2iWxabKhK?=
- =?us-ascii?Q?g0JQuKip9e62RHIKrmqPhClvSM+kz5/UxBV77aBgpS0P59vKYBmc61gn0ew2?=
- =?us-ascii?Q?Ew5t/sNqepLk1fYxV8XgNmz7DmvPPfrBk5BrIsBzMWNVCAcazGTubGQC6Nw1?=
- =?us-ascii?Q?fb5RtD8QaFYTz+7KBczhnq8Ug6Dre01AANYWGM5JGMBODKOkj0uxgMOKzLPa?=
- =?us-ascii?Q?EAqFguTic284V+UBbvOwIAwvZncdm+0xcmmGBnpewfuJiAcWHLFzZOzIep5R?=
- =?us-ascii?Q?2io13VvOZiEHznDbyAFBwLBhKzFBbM7m88LwrYKGrBDy8g0chaCVwd2vIcWC?=
- =?us-ascii?Q?6kWvIsLR1mmLsIXq7juZAKbYGbh5BP9HZcwus+pzTPH8wy8kO2CwKtuKH1K5?=
- =?us-ascii?Q?saoMTVcTAgw5ni5bEs2GE/V1ZX6DIF7HwGpM6zHbCyUI7aJtuk7Iw6F5LAB8?=
- =?us-ascii?Q?5Mc2RHkR75qdmG8f/sXuG+Z6DN6W0w0Pl4hnZx5aj6MdtUeWDsdxmkbip2Ye?=
- =?us-ascii?Q?HGxaOH3kVEl7Ogu12RiRdy0MdIhaJR1YcLmaj5EYRkBfCWHlkcKKr5eqvPTJ?=
- =?us-ascii?Q?T7Z+rjP3LGzGS+BImNupunEvn++BqWionpstEmZ/F8QcUwVB9yQpL1YCdbxf?=
- =?us-ascii?Q?Y/7jj9Zv9fLniFVH/J5Kgd0Vp1J04asvcI+HeOM8aanHF7IrUU97IPtWy2az?=
- =?us-ascii?Q?DegFCUEdMmfzSpuIgDm/qkdhBBMsMeH9jkmjIVLMQzF6p5bnxaYhSTP8z4R+?=
- =?us-ascii?Q?y3oy7j2kdc1skJuL95ZLMY67UulPHaV8tIqGRvMxjlMfLGHMKhHJrGHwYknw?=
- =?us-ascii?Q?rCiHOerf1Ui5K00gWNe21PYxyvZhBvG5SZyX5PLXA52QuJCkpZbbuSmP9u+P?=
- =?us-ascii?Q?GthhpbfPmae01V0VtZi81M1ML8XTnzA6Z7JcaLxAdas2b3Ijwuxre5+mr23Z?=
- =?us-ascii?Q?lWq0/mfXqRCDIyYRf+i1U09tcxfjhx9deldS5O1QO3rTb3pzgFSaXX/roRxo?=
- =?us-ascii?Q?LgGCZ/MzqmCIY4PsVo0LQyav6OisdCZHegSfSQ8FUnNQVQsACByedJ/shFXH?=
- =?us-ascii?Q?IdSEoWTe5oD5cub4jjKVVblKHakDa1oZFyb5W29ttYJX3Bl2E6/ePdIq7YsV?=
- =?us-ascii?Q?tufH27Hx6U4hzWD0O3kqOx6HYceNPE8U6wvutoLvNjI82qLmHr4jJGB4gN2k?=
- =?us-ascii?Q?MBF4A3HJeCJ3kO1hzyxs0rDlsWw7yNUqi7FkKQec77h7ti7QKFmNFaf11i+5?=
- =?us-ascii?Q?zMijo4tULprl/pOTy5zdFpVdT+VhlW8CfI7BK41fbqwJPHUe21xFC693/Lw9?=
- =?us-ascii?Q?Xs69rGT2AVlzaoNdx5sdjT72taKDfu//dSOgKl2Q/ut+qiEO5yE4FLhY9IcQ?=
- =?us-ascii?Q?J0/Uf3B8RN3SavxAmYTVImH+GvBN2q5I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014)(921020)(81742002);DIR:OUT;SFP:1101;
+	i/Y97YmFpOu48XlSCItazO/NgskUMZfrWwjCnSWDwJeUCUQXyWAlLgeEKqOsg5gN+VXc2ZAUAHRGBg908Ualk0lVXa6unv3EUlnoUOzg3mJOJGMWvhoxn/Q49y+96FS4foLDsKP7wRgAumLsbB6bsL6H/o2eESuGbISp71udPawvChEdBJQMpum/TgE7uPReWTtm/7uUQ5McyvEwGPC34WcDPcXunJ2T40H3Az0+Rnh+KgC7YBLce/fnTdXLCnFUPKRWINLE5SNVDFU+efFdtSwP5x7Cz16QwGRBQv8U1INZrpJ0SiMODO4YHkf4UkQAG9q5ywgFZadYE04lUsisW/6Q6zQrZpRh1u/Rr9HnGe0WePDfHy1PT0VXbmTsdloXzs6Gumtl0DyQ1r+GTc1y1wTIPQAuqhnH5DmY0jiY5KRDqx/6/2fseCJNAehziKHC1oK4jC2htqQt1r0HLdfrwfOBZpOimLFj7QoU29ePW+9lp9fslJtVJdEn9vfGwoUVw86DIWCloHulxoDqL1CYTH3xFPcbWatN6AyvWKdyvgBaly8Pi417SdfYpCMbtHKGsJPBdoxrPxhoLHBRuX+idTmrxbTsDmErbomhtkMbPY+60RGi2gXRSu59tY6+iPoI/MFfPpLql8XhvspNXxkA830JbEF9fM3f21UY/LPF029JX0Y7WDD/RugD/l7ewDp2WCjBgM8blmmaZevCHhgo1zudGdjxFuWyDxPIrcUltJRkAWEdWr6c1AWp70hOM0lMCw5WkxCaBJmXM1cd1AyK/HtWMNvK9DpKfYndDS5/509cxMoE1HKUSEc7CupBcr6LKrIx93SWVdykDul/K/mDiItMNdGNlm8xgJMWcogk69Y=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2WbaEoFRDmYmx8LsKfP2QcWKR0G3Qyz87nnJ4PqiFUjBgJRKtyqLhcguwZrv?=
- =?us-ascii?Q?RE0j41kTqCEPJHNgvB2HhkkXQ8V7z4OAOeFmN6N2Nbl0yQm7MVva05fUwhcu?=
- =?us-ascii?Q?kLxLMY1iXa7WILKhwMrdWF5oWNcXYp9+XX1X/QJ3Qoa/n4VF1ScdLN3xk1CG?=
- =?us-ascii?Q?FosTgQyemWZPYxynQlT6wURh0yIrGW2ungGX6ANHYNCZgUtAYX/rCzFt0lsk?=
- =?us-ascii?Q?9fs7GpnKZ/rmL1HUpwjcDGVOTyTkqam9GNnBAhas3Z+dUwmu0OyRlvqP2Uo9?=
- =?us-ascii?Q?9ZdXHrWuYyU0saHUPX2iSqPLgSqIaV44K1yTgEOl0s74cNvoWwqvaQO4CLHF?=
- =?us-ascii?Q?y42rsA5+FmEOemkFVWpEjKTDIqCywsigytylV41sZIzSzuP38Q+X6XFW3VYP?=
- =?us-ascii?Q?6rWVknmUp56YZTkS98lVmlgWoZC5Q6ZfT1niGW1SUIpUwCqHWEA6nBFwsxej?=
- =?us-ascii?Q?5I7RBTfXPm39wdENmYOjPqD8rsq8dRejB6FZaH0p6MBTu8pc0MBTtiSW0b5f?=
- =?us-ascii?Q?QGkzXf1arnIItK2e3n+f+EdEU9Fmhih6cbxEoMaTm92Gz4IS9vRVqHs9MJej?=
- =?us-ascii?Q?5L6otlmaiCMPlX2vklWLUO4ndRjPH42jAQwF+KgxUZx6Ni7dnlFrPj+682f6?=
- =?us-ascii?Q?JvO+8al+OLgkFtsMitEYXNkUlzcFQ9Zmafr/bnWdeIj6NeGOhIFEz6EnyHBj?=
- =?us-ascii?Q?lwOu5XB4clcJr8nqQDtMt3mf2QXHhNP1fyPYaYj+0QwOHUj6NamovTH4oByM?=
- =?us-ascii?Q?pgOX1WxswOu0BrAV6GP5glf08zN8vjTVdLyPqr+WDNZjv3vlzPbs/4RbVvvk?=
- =?us-ascii?Q?1fk6JvOSh0GT4bm9PcGU+phtn8ErxKApxGzrJE56j6GlWTZUV/GI+VQl+1fQ?=
- =?us-ascii?Q?oVCGwoK1EtgztbHMekv2ARb8Rv/eIvBPzvQWmm6qekxNWTOGC+if2nJLnSDE?=
- =?us-ascii?Q?ogSw5j6ZbbU68eHv2vlyfiiu0diMfAP+pHzq/UeQdfj0mYgS8tqL19uq6sL8?=
- =?us-ascii?Q?bCjOQ/DaQCNPlzbf7KlKCESileHHPD0nOOnvRPodJUUtk4kay6K+6BPe7ROb?=
- =?us-ascii?Q?UwA6ic9ajDnyBEwYnP6qUzacBUMqdGbZJV5mI35FczZ0MdC1zXLYNqnz+nma?=
- =?us-ascii?Q?7FzQSgo+4O6IPYAzLU8RBu0avWbXe9q5cgOQQJDMub2dTTheTkPgCWhYVaZ+?=
- =?us-ascii?Q?NlC5fPSFjpzX+JgQoQWhEL8+DyPTZ18UMquuZPBpfu4Bdc42ZMgWXBlKL/ue?=
- =?us-ascii?Q?ohKChOo/ppRh0RYPfINVhKfabq+yPF0WS4bAgZFzfH5VkrB3uAfDWH6XWs+e?=
- =?us-ascii?Q?JGj+7GkOytpYy6aebAu3qxmUTpUOL1tTcufOCXeg2qv7rbWo1XEOQSit+GQl?=
- =?us-ascii?Q?GT1VsBQsV5NbYg3eTW9O8EASHa4JdCFZCf5XCqGI5FpywYlhXbkiRjsgHYvW?=
- =?us-ascii?Q?XMh58RKJjeqe2bq+Hw2dDUzkwfZcANa1w+CMvEgV0Ub82KIRlJNsNw/yK2Os?=
- =?us-ascii?Q?f9XARGGfzch6M9lsK9foSwq+IKB0Y+DpiVXDtD3xeSLf+gq6GtALnQdnBqZU?=
- =?us-ascii?Q?Bhu9gPn3JO4mvQE1On5NnA4a7Bk6nq+8f122q2kN?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 474b1c1d-8144-4e9e-9d5a-08dcc57a8ec0
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6252.apcprd06.prod.outlook.com
+	=?utf-8?B?SmdmRWdkNTlVNytEZkhJWVlrVFdUZmVpQWhpQ05GNU9QMjZQMTVFWGJTSjJH?=
+ =?utf-8?B?VDRzY0VpWGd1cnBEWFp6YmU1bmRUMkFWTUJJTU9sYklydDExZDlQQUIrclFk?=
+ =?utf-8?B?UzA4NnhVU0szcVFteUptT3VUa2ZoQThCbTA1ZUE2KzVXNDgxR2tPWGdMR2xX?=
+ =?utf-8?B?YWExL3l6N2JxMzFqalhHUXhZL3B4eC80eUNmZXYraVAxVWRHbGZRaC9IMEpk?=
+ =?utf-8?B?V2xybVdSU2x1aE9JSWh0bVBFL1dYaVJsa2IxZTNsR1RDRk1kejFNekNxR3VJ?=
+ =?utf-8?B?emJadlRBU1UyN2g4Z1F3WTZveDNQUm13WU1VSlVScFF4Y3dWOWZyVzY1bFpJ?=
+ =?utf-8?B?TVlDdzhSRkVXMEFmME5xZUUyOVVoTWllUVhVNFQ3NXRPQWp3bS9DK2h5U05l?=
+ =?utf-8?B?UmFYVHlGbGdYZnRERkJuMkp1ZDF5endRZ3ZyMmpEdUU3N05nTVJad1l5eHEv?=
+ =?utf-8?B?OTNWWVgxbGJrSnlkalUzMXh0MDM5bU83Kys4RGRYOWJLa1FlQWZzTGZOaUM4?=
+ =?utf-8?B?NmVKTzRzeDVyVEJqWGlZM3VlL3BLZUVvUGVxR3IxMUpYS0lPcnU3ZVlIWGF4?=
+ =?utf-8?B?ZkRMUCsvVTdwV3lJSnM0a0ZhdXl2ODU0VU53RVFuM21XMnlzT0FsRE5jVWhI?=
+ =?utf-8?B?cEFJRUF6anZCeW9GTS9qb0ZJYng0Q2ZsbVFsaWVRN2ZDZ1hmUUsrN0RVWVZy?=
+ =?utf-8?B?SGh0N1ZvS21aNUcwYVhObHNvWDUyT1FpWW43N3Q5bzBhRWJsT0YyTmpZMjVu?=
+ =?utf-8?B?cGQ0bmJvMjQrV2Y4U2g4L2N6WFArZDFKS2M1MXVrRS9EZFMzeHVWdFBwdVZl?=
+ =?utf-8?B?ZlFTM3dYR1dqWWd1RFo2OEEwUklYZlV5dW1NcjJCbnhSMVYzZXl5QTNrMkNx?=
+ =?utf-8?B?RVFVNWMxSkw3Mk85Umh5VEtzUFcvZ1ViS0w0dlN2WHd0QnVCLzc5SmpYVVV3?=
+ =?utf-8?B?dlh6eDlEalpHS3pyVlJyZXplRU5rbGduL3NldS9lanArVmJwNFZWSUdoSWFo?=
+ =?utf-8?B?WERnb1NQdGtRSWxuSWFiWDdXNXhkZDZSclVDck5hdEZWR3VWTEFtZW5tbkNl?=
+ =?utf-8?B?SDZ6bFVvTVB3eGgrMkgzRWdmblk3K0YyeDgzWFNYWDN6L1pnUnFRcVljYy9m?=
+ =?utf-8?B?d08wUkFZMzdyWTNpMzdBd2RJbnMwMm1TeHBYOFF2NTZ2M0FCOUFVb3RYTEpq?=
+ =?utf-8?B?aUpTd1pKVno0M1FqQ2J2ak1kbnpmOEVlL3RjYlJTeXJ1ZXdDQXdwWVVpMjBE?=
+ =?utf-8?B?VmRZdzVLZUtoaExqaWpXRGczekd4aHBZY0hwNE5TbGdrN1Rpak8yM3VDT0Mx?=
+ =?utf-8?B?c0lBZ01lZFNaUFF6djRUVEhJUmE4SmJVOFBoT09YWVdtekdiV1J5RmdaMHBN?=
+ =?utf-8?B?VGNPRmlDMEppQ2xneXJ0Qlc1V0gwbmVGeTA1UTN3aUtNK2RlK28vdGpuM0Ry?=
+ =?utf-8?B?SllVaStMU2t6R2JwNWtrVHcyTWtuRWZvWE93ZEoxbUcvaVQ0bUhhSlJKeFNI?=
+ =?utf-8?B?eExJT2N1QWIxeFplZHpWWHJRMW1mSnNoc2NBaUJNa28wejQ0WDJ0MUxPd1Zu?=
+ =?utf-8?B?OXYxUEFLVWNsbXJKc216ZWRNTjVnQjlZWlcycVV0TXIrQ3hSaG9mRHVKbGxs?=
+ =?utf-8?B?QlZwSUg3TVp0RVI0R1hOUG50cHRWOGlUdk13bGZNQmlGbTNWdTV1WHVYS3FP?=
+ =?utf-8?Q?7RIoPz2Ju0mSTLDA6XQb?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b235ee9-cc2e-429b-7c70-08dcc57ab398
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 02:55:35.3772
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 02:56:37.3566
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4KAo9qX01KoocqNuX/hiDaBb8Ai9m8IaCexBf9oOPPdFbFdsIey21Wd+wnbLB7KbXXwBb6f6lk+s8pd9y13nlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5877
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR20MB6742
 
-Hightest is a typo. It should be highest.Please ensure
-the consistency of variable naming.
+On Thu, 11 Jul 2024 12:01:27 +0200, Thomas Bonnefille wrote:
+> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+> minimal device tree files for this board to make it boot to a basic
+> shell.
+> 
+> 
 
-Signed-off-by: Yang Ruibin <11162571@vivo.com>
----
-Changes V3:
--Updated the ignored misspellings
----
- .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c    | 16 ++++++++--------
- .../amd/pm/powerplay/smumgr/polaris10_smumgr.c   | 16 ++++++++--------
- .../drm/amd/pm/powerplay/smumgr/vegam_smumgr.c   | 16 ++++++++--------
- 3 files changed, 24 insertions(+), 24 deletions(-)
+Applied to cv18xx/for-next, thanks!
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-index 5e43ad2b2956..e16efc44df88 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-@@ -1014,7 +1014,7 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	struct SMU73_Discrete_GraphicsLevel *levels =
- 			smu_data->smc_state_table.GraphicsLevel;
- 	uint32_t i, max_entry;
--	uint8_t hightest_pcie_level_enabled = 0,
-+	uint8_t highest_pcie_level_enabled = 0,
- 			lowest_pcie_level_enabled = 0,
- 			mid_pcie_level_enabled = 0,
- 			count = 0;
-@@ -1054,27 +1054,27 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	} else {
- 		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
--						(1 << (hightest_pcie_level_enabled + 1))) != 0))
--			hightest_pcie_level_enabled++;
-+						(1 << (highest_pcie_level_enabled + 1))) != 0))
-+			highest_pcie_level_enabled++;
- 
- 		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << lowest_pcie_level_enabled)) == 0))
- 			lowest_pcie_level_enabled++;
- 
--		while ((count < hightest_pcie_level_enabled) &&
-+		while ((count < highest_pcie_level_enabled) &&
- 				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
- 			count++;
- 
- 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
--				hightest_pcie_level_enabled ?
-+				highest_pcie_level_enabled ?
- 						(lowest_pcie_level_enabled + 1 + count) :
--						hightest_pcie_level_enabled;
-+						highest_pcie_level_enabled;
- 
--		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-+		/* set pcieDpmLevel to highest_pcie_level_enabled */
- 		for (i = 2; i < dpm_table->sclk_table.count; i++)
--			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-+			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
- 
- 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
- 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-index ff6b563ecbf5..d785cc6468ef 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-@@ -1050,7 +1050,7 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	struct SMU74_Discrete_GraphicsLevel *levels =
- 			smu_data->smc_state_table.GraphicsLevel;
- 	uint32_t i, max_entry;
--	uint8_t hightest_pcie_level_enabled = 0,
-+	uint8_t highest_pcie_level_enabled = 0,
- 		lowest_pcie_level_enabled = 0,
- 		mid_pcie_level_enabled = 0,
- 		count = 0;
-@@ -1114,27 +1114,27 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	} else {
- 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
--						(1 << (hightest_pcie_level_enabled + 1))) != 0))
--			hightest_pcie_level_enabled++;
-+						(1 << (highest_pcie_level_enabled + 1))) != 0))
-+			highest_pcie_level_enabled++;
- 
- 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << lowest_pcie_level_enabled)) == 0))
- 			lowest_pcie_level_enabled++;
- 
--		while ((count < hightest_pcie_level_enabled) &&
-+		while ((count < highest_pcie_level_enabled) &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
- 			count++;
- 
- 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
--				hightest_pcie_level_enabled ?
-+				highest_pcie_level_enabled ?
- 						(lowest_pcie_level_enabled + 1 + count) :
--						hightest_pcie_level_enabled;
-+						highest_pcie_level_enabled;
- 
--		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-+		/* set pcieDpmLevel to highest_pcie_level_enabled */
- 		for (i = 2; i < dpm_table->sclk_table.count; i++)
--			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-+			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
- 
- 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
- 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-index 34c9f59b889a..3e73f380a591 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-@@ -878,7 +878,7 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	struct SMU75_Discrete_GraphicsLevel *levels =
- 			smu_data->smc_state_table.GraphicsLevel;
- 	uint32_t i, max_entry;
--	uint8_t hightest_pcie_level_enabled = 0,
-+	uint8_t highest_pcie_level_enabled = 0,
- 		lowest_pcie_level_enabled = 0,
- 		mid_pcie_level_enabled = 0,
- 		count = 0;
-@@ -925,27 +925,27 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
- 	} else {
- 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
--						(1 << (hightest_pcie_level_enabled + 1))) != 0))
--			hightest_pcie_level_enabled++;
-+						(1 << (highest_pcie_level_enabled + 1))) != 0))
-+			highest_pcie_level_enabled++;
- 
- 		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << lowest_pcie_level_enabled)) == 0))
- 			lowest_pcie_level_enabled++;
- 
--		while ((count < hightest_pcie_level_enabled) &&
-+		while ((count < highest_pcie_level_enabled) &&
- 				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
- 						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
- 			count++;
- 
- 		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
--				hightest_pcie_level_enabled ?
-+				highest_pcie_level_enabled ?
- 						(lowest_pcie_level_enabled + 1 + count) :
--						hightest_pcie_level_enabled;
-+						highest_pcie_level_enabled;
- 
--		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-+		/* set pcieDpmLevel to highest_pcie_level_enabled */
- 		for (i = 2; i < dpm_table->sclk_table.count; i++)
--			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-+			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
- 
- 		/* set pcieDpmLevel to lowest_pcie_level_enabled */
- 		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
--- 
-2.34.1
+[1/4] dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
+      https://github.com/sophgo/linux/commit/866e86d73f0a1bc4e482162276c4e9765597362c
+[2/4] dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+      https://github.com/sophgo/linux/commit/4ecff14f1a45f82c60ec77d2662e439d088fefd6
+[3/4] riscv: dts: sophgo: Add initial SG2002 SoC device tree
+      https://github.com/sophgo/linux/commit/05949703b659b138a9ade02e456ddfe112581457
+[4/4] riscv: dts: sophgo: Add LicheeRV Nano board device tree
+      https://github.com/sophgo/linux/commit/c919edd074714f53763cbfeb8bdc9f1accfa7f52
+
+Thanks,
+Inochi
 
 
