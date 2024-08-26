@@ -1,192 +1,175 @@
-Return-Path: <linux-kernel+bounces-301308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0188095EEDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738AD95EE95
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA9D1F21FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0237F1F22BD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8363D155325;
-	Mon, 26 Aug 2024 10:50:06 +0000 (UTC)
-Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F8152160;
-	Mon, 26 Aug 2024 10:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147A14A62F;
+	Mon, 26 Aug 2024 10:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHXHaC6M"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8092E414;
+	Mon, 26 Aug 2024 10:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669406; cv=none; b=Sn5CJbjHGQiviMmRdWPGxFANZX4D4mqljz2GAYGHZXba+E52M5cAGtnx6dPmuICtKue4T7CDOBEOQQ7IyzQgLNv9gSzKzGFhQnNOpZfhWWUQ6WVAj31gHz+iY7O98qHro5KH0ZMu7i7QBrn1Fv0RqNZik6qx7I1iNar67/5CtgI=
+	t=1724668693; cv=none; b=n5ppe3rtQ4uXLzVR+R1F475pwHyyl8HO66nz07+AS29Y8ukPIZ+1c8kIHb+65gpApIMrk9oCxj3qkoR/sAJ97+oYW1l3VK60cvFKLVZL2MSXJqUhxxvitfGsZ5ZbHLpLYPtr8znRF+6ebzhDIu0P2Co3UjCiC+ZLHjQdtQFfxqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669406; c=relaxed/simple;
-	bh=tsijDg1QpHf/XW2pCyQGKWUItm4MMvjUNdWU+pyh3k8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E0TjKxM6pdpomHFVFOOSDvZu/cmonOS2KnbB3bcULBnMTNf3FarFFGRPyaerxDuxFTvYwNHanofPXO1nvtVEEgLcXNnkvDPwIkZQT6Jg/QymSDn7ZWEbtFx614mhmGc0MZgt06PvCVubz0BM/lixxUmX6nBVJF9uOovW9tMZoHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
-Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbWmR003457;
-	Mon, 26 Aug 2024 05:37:32 -0500
-Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbW6d003456;
-	Mon, 26 Aug 2024 05:37:32 -0500
-X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
-From: Greg Wettstein <greg@enjellic.com>
-To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jmorris@namei.org
-Subject: [PATCH v4 14/14] Activate the configuration and build of the TSEM LSM.
-Date: Mon, 26 Aug 2024 05:37:28 -0500
-Message-Id: <20240826103728.3378-15-greg@enjellic.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
-References: <20240826103728.3378-1-greg@enjellic.com>
+	s=arc-20240116; t=1724668693; c=relaxed/simple;
+	bh=ERmA+CQJNVBk28DwXjuku6KyoJl+p00nopizk4PpeYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2WRHAmtvFcDMiCl90u+UgcIwGHL7+zvpOjXnm569AJfx021sGfW1eNvUTlIE1SZM9+Cf+1VhRWiLmksh+CVu0Di/bcyx+AXMDWLdL5w2aySaQnd/xLXYbCWJk0lWZu9xMFpD68M21QrFqD/cFfPZDOzvLW686MNTaD5wlpF2E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHXHaC6M; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724668692; x=1756204692;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ERmA+CQJNVBk28DwXjuku6KyoJl+p00nopizk4PpeYE=;
+  b=dHXHaC6MHE/5P73jawzIC28AWh2WKLqgrHLxOnAvyef5hrQF2VqvJ8iL
+   /16Cvxyxn2SDa7KC2fK8vD56KIbv44U8/z6dXgjoqeFjroynSP/b9szts
+   rP3yuHw48bk4Un5ZJ9dgGgnNbIV8gKdRLsJv7WjwADI9t/RFPb8wb/jo0
+   hglZ82wdE9o8Og6aACLBQJ5lSCHVJmtaYq8iMQgxLhuc9nubOsJ3k3Cip
+   6VwQ05fhOkRmlis7bDkmkC0evFWYyC/Iy1wN+NZBfyjVIVi71mm0EGHSL
+   6DgywLgJqVA93yO6sLFmJFALET8gID4U+3ct1cHTxTh7c1lo6lj5yRUJf
+   g==;
+X-CSE-ConnectionGUID: Pql3PzoGTD+wo6orhdHfTw==
+X-CSE-MsgGUID: erOMMxKlSgiNLeroYOFTeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22670088"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="22670088"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:38:11 -0700
+X-CSE-ConnectionGUID: xDE6/mNfTlStamQ231jlHw==
+X-CSE-MsgGUID: qETryUhjTlmdnzut8dKMMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="66643611"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:38:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1siX6q-00000001pog-41CB;
+	Mon, 26 Aug 2024 13:38:04 +0300
+Date: Mon, 26 Aug 2024 13:38:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: "brendan.higgins@linux.dev" <brendan.higgins@linux.dev>,
+	"benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 2/3] i2c: aspeed: support AST2600 i2c new register
+ mode driver
+Message-ID: <ZsxbDK25mJ0sjcQy@smile.fi.intel.com>
+References: <20240819092850.1590758-1-ryan_chen@aspeedtech.com>
+ <20240819092850.1590758-3-ryan_chen@aspeedtech.com>
+ <ZsNT7LPZ7-szrgBJ@smile.fi.intel.com>
+ <OS8PR06MB7541EE5BA5B400445FE0295EF28E2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <ZsXVU2qy0GIANFrc@smile.fi.intel.com>
+ <OS8PR06MB7541945591A62B956DA28AD9F28F2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <Zsc9_UddBybdnM1Z@smile.fi.intel.com>
+ <OS8PR06MB75419F3E3A222AE941DE3007F2882@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <ZsiWp5ENQ0BeBjMn@smile.fi.intel.com>
+ <OS8PR06MB7541A23130F469357B7FE5F4F28B2@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OS8PR06MB7541A23130F469357B7FE5F4F28B2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Complete the implementation by integrating TSEM into the
-configuration and kernel build infrastructure.  This includes
-registration of TSEM with the LSM infrastructure and the
-assignment of an LSM identifier number.
----
- include/uapi/linux/lsm.h |  1 +
- security/Kconfig         | 11 ++++++-----
- security/Makefile        |  1 +
- security/security.c      |  3 ++-
- security/tsem/Kconfig    | 36 ++++++++++++++++++++++++++++++++++++
- security/tsem/Makefile   |  6 ++++++
- 6 files changed, 52 insertions(+), 6 deletions(-)
- create mode 100644 security/tsem/Kconfig
- create mode 100644 security/tsem/Makefile
+On Mon, Aug 26, 2024 at 07:50:24AM +0000, Ryan Chen wrote:
+> > On Fri, Aug 23, 2024 at 06:23:54AM +0000, Ryan Chen wrote:
+> > > > On Thu, Aug 22, 2024 at 02:24:26AM +0000, Ryan Chen wrote:
+> > > > > > On Wed, Aug 21, 2024 at 06:43:01AM +0000, Ryan Chen wrote:
+> > > > > > > > On Mon, Aug 19, 2024 at 05:28:49PM +0800, Ryan Chen wrote:
 
-diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
-index 33d8c9f4aa6b..6b63c158c1df 100644
---- a/include/uapi/linux/lsm.h
-+++ b/include/uapi/linux/lsm.h
-@@ -64,6 +64,7 @@ struct lsm_ctx {
- #define LSM_ID_LANDLOCK		110
- #define LSM_ID_IMA		111
- #define LSM_ID_EVM		112
-+#define LSM_ID_TSEM		113
- 
- /*
-  * LSM_ATTR_XXX definitions identify different LSM attributes
-diff --git a/security/Kconfig b/security/Kconfig
-index 412e76f1575d..a7802eb29034 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -192,6 +192,7 @@ source "security/yama/Kconfig"
- source "security/safesetid/Kconfig"
- source "security/lockdown/Kconfig"
- source "security/landlock/Kconfig"
-+source "security/tsem/Kconfig"
- 
- source "security/integrity/Kconfig"
- 
-@@ -231,11 +232,11 @@ endchoice
- 
- config LSM
- 	string "Ordered list of enabled LSMs"
--	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
--	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
--	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
--	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
--	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
-+	default "tsem,landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-+	default "tsem,landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-+	default "tsem,landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-+	default "tsem,landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
-+	default "tsem,landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list, except for those with order
-diff --git a/security/Makefile b/security/Makefile
-index 59f238490665..1d4e0a698a2d 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
- obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
- obj-$(CONFIG_BPF_LSM)			+= bpf/
- obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
-+obj-$(CONFIG_SECURITY_TSEM)		+= tsem/
- 
- # Object integrity file lists
- obj-$(CONFIG_INTEGRITY)			+= integrity/
-diff --git a/security/security.c b/security/security.c
-index e5ca08789f74..1dfd85293ad4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -51,7 +51,8 @@
- 	(IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0) + \
- 	(IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0) + \
- 	(IS_ENABLED(CONFIG_IMA) ? 1 : 0) + \
--	(IS_ENABLED(CONFIG_EVM) ? 1 : 0))
-+	(IS_ENABLED(CONFIG_EVM) ? 1 : 0) + \
-+	(IS_ENABLED(CONFIG_SECURITY_TSEM) ? 1 : 0))
- 
- /*
-  * These are descriptions of the reasons that can be passed to the
-diff --git a/security/tsem/Kconfig b/security/tsem/Kconfig
-new file mode 100644
-index 000000000000..2e9d54eb3acc
---- /dev/null
-+++ b/security/tsem/Kconfig
-@@ -0,0 +1,36 @@
-+config SECURITY_TSEM
-+	bool "Trusted Security Event Modeling"
-+	depends on SECURITY
-+	depends on NET && INET
-+	select SECURITY_NETWORK
-+	select SECURITYFS
-+	select CRYPTO
-+	select CRYPTO_SHA256
-+	select CRYPTO_HASH_INFO
-+	select TCG_TPM if HAS_IOMEM && !UML
-+	select TCG_TIS if TCG_TPM && X86
-+	select TCG_CRB if TCG_TPM && ACPI
-+	default n
-+	help
-+	  This option selects support for Trusted Security Event
-+	  Modeling (TSEM).  TSEM implements the ability to model
-+	  the security state of either the system at large or in a
-+	  restricted namespace on the basis of the LSM security
-+	  events and attributes that occur in the scope of the model.
-+	  The model may be implemented either in the kernel proper
-+	  or exported to an external Trusted Modeling Agent (TMA).
-+	  If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_TSEM_ROOT_MODEL_PCR
-+	int "TPM PCR index for root domain"
-+	depends on SECURITY_TSEM
-+	range 8 14
-+	default 11
-+	help
-+	  This configuration variable determines the TPM Platform
-+	  Configuration Register (PCR) that the coefficients of
-+	  security events for the root modeling domain are extended
-+	  into.  The default value is one register above the default
-+	  value that IMA uses for its integrity measurements, in order
-+	  to avoid a conflict between the two sub-systems.  If unsure,
-+	  leave the value at its default value of 11.
-diff --git a/security/tsem/Makefile b/security/tsem/Makefile
-new file mode 100644
-index 000000000000..5b26edbe02b0
---- /dev/null
-+++ b/security/tsem/Makefile
-@@ -0,0 +1,6 @@
-+obj-$(CONFIG_SECURITY_TSEM) := tsem.o model.o namespace.o map.o event.o fs.o \
-+	export.o trust.o model0.o
-+
-+ifdef CONFIG_MODULES
-+obj-y += nsmgr.o
-+endif
+...
+
+> > > > > > > > > +	if (i2c_bus->mode == BUFF_MODE) {
+> > > > > > > > > +		i2c_bus->buf_base =
+> > > > > > > > devm_platform_get_and_ioremap_resource(pdev, 1, &res);
+> > > > > > > > > +		if (!IS_ERR_OR_NULL(i2c_bus->buf_base))
+> > > > > > > > > +			i2c_bus->buf_size = resource_size(res) / 2;
+> > > > > > > > > +		else
+> > > > > > > > > +			i2c_bus->mode = BYTE_MODE;
+> > > > > > > >
+> > > > > > > > What's wrong with positive conditional? And is it even
+> > > > > > > > possible to have NULL here?
+> > > > > > > >
+> > > > > > > Yes, if dtsi fill not following yaml example have reg 1, that
+> > > > > > > will failure at buffer
+> > > > > > mode.
+> > > > > > > And I can swith to byte mode.
+> > > > > > >
+> > > > > > > reg = <0x80 0x80>, <0xc00 0x20>;
+> > > > > >
+> > > > > > I was asking about if (!IS_ERR_OR_NULL(...)) line:
+> > > > > > 1) Why 'if (!foo) {} else {}' instead of 'if (foo) {} else {}'?
+> > > > > I will update to following.
+> > > > > 		if (IS_ERR(i2c_bus->buf_base))
+> > > > > 			i2c_bus->mode = BYTE_MODE;
+> > > > > 		else
+> > > > > 			i2c_bus->buf_size = resource_size(res) / 2;
+> > > > >
+> > > > > > 2) Why _NULL?
+> > > > > 	If dtsi file is claim only 1 reg offset. reg = <0x80 0x80>; that
+> > > > > will goto byte
+> > > > mode.
+> > > > > 	reg = <0x80 0x80>, <0xc00 0x20>; can support buffer mode.
+> > > > > 	due to 2nd is buffer register offset.
+> > > >
+> > > > I have asked why IS_ERR_OR_NULL() and not IS_ERR().
+> > > >
+> > > OH, I will doing by this.
+> > > 		if (IS_ERR_OR_NULL(i2c_bus->buf_base))
+> > 
+> > The question about _NULL remains unanswered...
+> Sorry, I may not catch your point.
+> So, Do you mean I should passive coding by following?
+
+No. I already mentioned that in one of the previous mails.
+Why do you use IS_ERR_OR_NULL() and not IS_ERR()?
+
+You should understand your code better than me :-)
+
+> If (i2c_bus->buf_base > 0)
+> 	i2c_bus->buf_size = resource_size(res) / 2;
+> else
+>     i2c_bus->mode = BYTE_MODE;
+> 
+> > > 			i2c_bus->mode = BYTE_MODE;
+> > > 		else
+> > > 			i2c_bus->buf_size = resource_size(res) / 2;
+
 -- 
-2.39.1
+With Best Regards,
+Andy Shevchenko
+
 
 
