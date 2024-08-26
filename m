@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-300979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0978395EB2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3006E95EB2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E5E1C20FDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2D41F25658
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28FF13B59E;
-	Mon, 26 Aug 2024 07:53:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB013D51B;
+	Mon, 26 Aug 2024 07:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hvsc95h1"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8712E1EE
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FAE137776
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724658799; cv=none; b=PMpD0SkpdA0vKw1AgKF5/HNHF0GulKsAs6rv9JnJeuxHOtB644nI5YnUMANYlqNlb6ykdQl1GWel2wgIqVXbdAnWmogrwOoAS9BevN12Yxy3ylZ87TxRRwM8HmtN1FnvSVa969LpfXnUjNqhSfutnz7AYE6JjbmImm8CcMQRvVk=
+	t=1724658767; cv=none; b=SRZyO1oGoq5rNFOjrIaCpYO5nZRFV9EoEttB90ed/e3c63xDuU4zkFWXobG2jursXF1/jvCq2jJz46K9+T/Bu0XP7zFfGrQaNLyY0i6S0e0zo0zyMD9kZT+LUHkqVZyDftOIAp+F9wp0VRMIz/AWKK7GCd7N8V80XxYkwKuEcXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724658799; c=relaxed/simple;
-	bh=Pzeast/KuQTsUx/8UNRiLKWBfOfCRK1vLZpSERoh2pU=;
+	s=arc-20240116; t=1724658767; c=relaxed/simple;
+	bh=uEAvcHdc2ebFd95oE2bW6T/wQ3szzEthBor+0WDO4HU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOzQ1++DChQ7SaG5EWQxNtRAyj5JjWInkvMiOgJS0oQbw82cF393MP/UF5RK4NOB4vUdpQ/nhKoK/WeqJjNT4hdctfhlbN9kym4z+/jnsM9c+fZqrdigPagKLa6blM6dfEXdHk15jkdQgH0WsYVYCJ3Vg7xc12KlxRcJmRHR9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1siUVR-0006mO-Jk; Mon, 26 Aug 2024 09:51:17 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1siUVK-0038Ph-Cg; Mon, 26 Aug 2024 09:51:10 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1siUVK-006xmZ-0b;
-	Mon, 26 Aug 2024 09:51:10 +0200
-Date: Mon, 26 Aug 2024 09:51:10 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 0/9] AT24 EEPROM MTD Support
-Message-ID: <20240826075110.u3cxc6dootou72eq@pengutronix.de>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <Zsi3s9XithGEROwX@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uE3wOyjRy3s6haFmElWAt3VwjP4uR1ZkqEcq9fziFazzbfIIFM2EBikep3MV9plZWz8FqEUeUxwZ0e5G3zvj40QXLSDnHrh9OnjKWz4tdaXXtn2X9Yi36+c1Fhb2lmTAhmB6i+wbPNyy9Tl32Np1/CJIMndY34jF9NqCxiubn8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hvsc95h1; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a83562f9be9so350180466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724658763; x=1725263563; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mWpjqvTPtHlK5lheMP9E3P4lBAgBvroCp9x579oAwI=;
+        b=Hvsc95h1Y6GE1vAQg4RPnM3V67FEYPjzGYW9XDw36M8AEe1j5JwcyxZqlrkhVP4D/L
+         gh+mU8fdpLGHny1XT5ZOTA3AIUdVlE8JME3TrBIVJnEU6VRk3zjxXWG5dizpoDQYeAA7
+         ascD7Nf20wzEVjQ1Jkr4ItBuORs6goehhGLF2F2OYJA6H1LErmOs7478AEXY84cspM9P
+         0hp7Y3Ep2endyzDZDtCcNlnpRncmcoZIhAKpBwhiy6iFkOVBPK2qPAuF4cMsRYTza3Wo
+         dJPJUMOl44Seay622o4WN29jzhM52yVS4H+17nqpDP5FU4cwDGBMx4IUj0s/maQPZ+9Q
+         4prg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724658763; x=1725263563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mWpjqvTPtHlK5lheMP9E3P4lBAgBvroCp9x579oAwI=;
+        b=nQFfpUiCtWyPqgvBHtO/YKEDZvZdZhgruOWhOfZdTKMbQvZqq0v1/6C3Ry6JAbAzTH
+         8Pevr27gK44wng9bPHQD03rNkY7Fk7wuZmxZ/1HGsBAtr5or+ZsupBDJxn8nWAdR2qUL
+         chLduJEUt2vEcab6LVDsWQURzIS1OKXnN0/Pd0ChrUDbQ8UFNFayXbZtQe69Ga518Sjz
+         3uctcLSNyxYxSpQATyhxqfbwO8vSh4tInTASeEtBYgz25hH+lQrrhZqhOXAlIucNBHuh
+         oy4zy/59Q9Ma6DrgljCjD6LoGvmsixqs1GKI63cxjTfSEQTJxKZx3EGI2gMd4gqu/pLs
+         7Jgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2TgS34Bf3iBPrwQWCD7/sJ6tvpPsRoKC+GezZ/QlgjZnqtqCOreVLxvIWbK5WLTIcMuCABjFIaDYYFyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+HmODA0CigO++eJmV0FMRERryCzKJYm1JFdHTRt6fNn+MPSfu
+	1y5CKtDmtiahCkR+Ht4SatCUSH59sm9BDHCwfsDjf9+2GGxC8uBDMYePxI9Qu9U=
+X-Google-Smtp-Source: AGHT+IEzV3jS/6ppHaAZh7jMr6N30qSPi273cP9sOA4SscXrkGrqDWhLVhBKUnQARYOoFbbsvyUckg==
+X-Received: by 2002:a17:907:7e9e:b0:a80:f6a9:c311 with SMTP id a640c23a62f3a-a86a4e5c7demr677648066b.0.1724658762991;
+        Mon, 26 Aug 2024 00:52:42 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484b29sm624639566b.162.2024.08.26.00.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 00:52:42 -0700 (PDT)
+Date: Mon, 26 Aug 2024 09:52:42 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Hailong Liu <hailong.liu@oppo.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Barry Song <21cnbao@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <Zsw0Sv9alVUb1DV2@tiehlicka>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
+ <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
+ <ZrXiUvj_ZPTc0yRk@tiehlicka>
+ <ZrXkVhEg1B0yF5_Q@pc636>
+ <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+ <20240816091232.fsliktqgza5o5x6t@oppo.com>
+ <Zr8mQbc3ETdeOMIK@pc636>
+ <20240816114626.jmhqh5ducbk7qeur@oppo.com>
+ <Zr9G-d6bMU4_QodJ@tiehlicka>
+ <Zsi8Byjo4ayJORgS@pc638.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,60 +97,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zsi3s9XithGEROwX@smile.fi.intel.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <Zsi8Byjo4ayJORgS@pc638.lan>
 
-Hi Andy,
+On Fri 23-08-24 18:42:47, Uladzislau Rezki wrote:
+[...]
+> @@ -3666,7 +3655,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
+>  	page_order = vm_area_page_order(area);
+>  
+> -	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
+> +	/*
+> +	 * Higher order nofail allocations are really expensive and
+> +	 * potentially dangerous (pre-mature OOM, disruptive reclaim
+> +	 * and compaction etc.
+> +	 *
+> +	 * Please note, the __vmalloc_node_range_noprof() falls-back
+> +	 * to order-0 pages if high-order attempt has been unsuccessful.
+> +	 */
+> +	area->nr_pages = vm_area_alloc_pages(page_order ?
+> +		gfp_mask &= ~__GFP_NOFAIL : gfp_mask | __GFP_NOWARN,
+>  		node, page_order, nr_small_pages, area->pages);
+>  
+>  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+> <snip>
+> 
+> Is that aligned with your wish?
 
-On 24-08-23, Andy Shevchenko wrote:
-> On Mon, Jul 01, 2024 at 03:53:39PM +0200, Marco Felsch wrote:
-> > This series adds the intial support to handle EEPROMs via the MTD layer
-> > as well. This allow the user-space to have separate paritions since
-> > EEPROMs can become quite large nowadays.
-> > 
-> > With this patchset applied EEPROMs can be accessed via:
-> >   - legacy 'eeprom' device
-> >   - nvmem device
-> >   - mtd device(s)
-> > 
-> > The patchset targets only the AT24 (I2C) EEPROMs since I have no access
-> > to AT25 (SPI) EEPROMs nor to one of the other misc/eeprom/* devices.
-> > 
-> > Note: I'm not familiar with Kconfig symbol migration so I don't know if
-> > the last patch is required at the moment. Please be notified that the
-> > list of recipients is quite large due to the defconfig changes.
-> 
-> FWIW, I think that MTD is *not* the place for EEPROMs.
-> 
-> Yeah, we have the driver spread over the kernel for EEPROMs (mostly due to
-> historical reasons and absence an umbrella subsystem for them), but it's not
-> the reason to hack them into something which is not quite suitable.
+I am not a great fan of modifying gfp_mask inside the ternary operator
+like that. It makes the code harder to read. Is there any actual reason
+to simply drop GFP_NOFAIL unconditionally and rely do the NOFAIL
+handling for all orders at the same place?
 
-Thank you for you input. There are two things to mention:
- 1st) I send a RFC patch and asked for feedback and all I got was: looks
-      okay, please send a proper patch [1] which I did.
- 2nd) I don't see the hacky part in this patchset.
+Not that I care about this much TBH. It is an improvement to drop all
+the NOFAIL specifics from vm_area_alloc_pages.
 
-Anyway the customer doesn't need the nvmem-partitions anymore and
-therefore this patchset can be seen as obsolote.
-
-Regards,
-  Marco
-
-[1] https://lore.kernel.org/lkml/20231201144441.imk7rrjnv2dugo7p@pengutronix.de/T/#m1e0e5778448971b50a883f62bd95622f6422b9a2
-
-> 
-> If NVMEM needs to be updated and may cover these cases after all (and do not
-> forget about *small* size EEPROMs that most likely appear on the devices with
-> limited amount of resources!) in a reasonable size and performance, why not?
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
-> 
+-- 
+Michal Hocko
+SUSE Labs
 
