@@ -1,194 +1,207 @@
-Return-Path: <linux-kernel+bounces-302197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EEF95FB05
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CE495FAFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47072B2305A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:54:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7B11C224ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7DC19AD7E;
-	Mon, 26 Aug 2024 20:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E5C19A282;
+	Mon, 26 Aug 2024 20:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2DlK/86"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="daTaeHTi"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012063.outbound.protection.outlook.com [52.101.66.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E66199EAC;
-	Mon, 26 Aug 2024 20:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705676; cv=none; b=KiEw77TgLwKEfbE1KM9oWCX4ooF3VWsJik4LqIofjTYWu2Q+BJwkGz7443yYCiP7VnDXlGRD1AugyV2lLLNP0oTSSbS8tOJ6uip30vgFHNhGskR/ZCplnx5YqqMxB900YgCk88plN86mAhOl0Jdn/xldcDupmXU1JECKc1XWxXY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705676; c=relaxed/simple;
-	bh=k+TQRYD+JH8C/rBpKmaN1zOafqMznb8cVJmo0xOJUb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7tRbjSPCuqrA6x3xfQn3DtrkBE3oE5eZJnAibi3VY3Ut2ODNh6P0XorNAXcmFesaIihULjDFVz147ModhtEKk89tagy8Y8oSvcTyz4DVQtxSJbg9HFk8Ri6s1vtF39dSp9gHQfY/v5lCIQByxNHb1hDKBQdfnncRnbXbOa7hpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2DlK/86; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724705675; x=1756241675;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k+TQRYD+JH8C/rBpKmaN1zOafqMznb8cVJmo0xOJUb0=;
-  b=J2DlK/86oHBfHi9cG/l1ByHtLKj3KZxVWyFRW2lpjPTPwUn2Lqa2ko9L
-   9qp5vgmQ5jZ0Ipzp13mUmK2DcJJ2cDVcJipCleHaF1pgeIyB1spqYVu/I
-   OvguD/W5oFbnq//NMxzfNMQ7bJNErR3uth0lmWEalexKpNJLaphoHC9z/
-   LjKbG/wVPgE2R6HSWLJM564vO0wy3Qdoqu9dMxLTUyRxldZE+H0sgI967
-   u5CXRL3CNKJzrRvQsQm+wuQTXuj31Us+6f4uDS+/KuQO6NbLHXIRQCJph
-   PokAMRyIrVNonHmwZqDUQPWCqT93t2MHNlfCMq2n2M7ec1w8vnfc7bPKs
-   Q==;
-X-CSE-ConnectionGUID: NC8ry6IjSx+8R0uzQmYdxw==
-X-CSE-MsgGUID: MHHF64zPQ/mKGm+vU9wZMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23332965"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23332965"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 13:54:34 -0700
-X-CSE-ConnectionGUID: Ns8CnMvxRZ6DEQfFoFoGVg==
-X-CSE-MsgGUID: apbdG7+TS1uH63Jl7VN+2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="63365817"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 26 Aug 2024 13:54:30 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sigjL-000Hai-0L;
-	Mon, 26 Aug 2024 20:54:27 +0000
-Date: Tue, 27 Aug 2024 04:53:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <202408270446.6Ew7FPHA-lkp@intel.com>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A764A77115;
+	Mon, 26 Aug 2024 20:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724705633; cv=fail; b=TcC3pEWN1usG+q3sUd80+BlZNOBTIwSG7AxV6XSa9Ks6XtP6WzX8qfRYJIl7seKDZJ8zifiYKoXfDgsFp4jhAQ+ascbknIHoSth4Z56cT99nyXV9DEu1xeAl6RnMZYSJuYbGE7SB304RnDyMULRbY28tuO1fVx88YEzi6jABrh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724705633; c=relaxed/simple;
+	bh=xVaDuwfScIxt1fhirTJa1+q1s+kiNEPNcS+PxRE+GVY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=awFjhGFI2vtiTAsIYD46UOxu5SXSf4MjwoU+WlNtfK41zwPJV0wXalR1p5JGHI6O+BKgJnha6YzFPMyfIaqtfIgu9CXAtRNBJhLg8hMZ8RsySJ0nYoWMEhtaVfxKemlEcnGWrMcUy9a2WskqAVLlpEGDpPfmJNFdFjkk2HZVW7Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=daTaeHTi; arc=fail smtp.client-ip=52.101.66.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yp5OVBUiZxYNr5d7BOscOMBkfFOFYOf6LpHfvUKdJ47Hy2b9w9SAHZmrsoLSK6Sf7GBNQWrLRHD4sv84Vdm3/OCUN/hn67hhvsZjM1aGpgWzWcqNNCa4YKsS3sGdJH8QmdL4z0RWnwhCTrYUhXq8eBXNHLl35D0O9kIlQypk9Mb4PQvHMQrgINy8g0bCgR0yaREvDnJbNGfV1sr+CNmmv1lZ730d8873gjtk2qLQsYGGmQvk80gky2myuVXc5G0yCUCH9gT46JHe2/TQTrsixrniFVGaazYonCOQVL4jduqEXM0dtTWMUrp3u3uyGznhizR38cYF+3Zah+vA0+js/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GnaBO6ZwW9cE/JLN6wwr2ZIFi8v1FJaCpS+2jlmSSU4=;
+ b=klV2kseT+Pa9eV92f5C5E8Nx3/jCwnmg4eLgJp5OxoszNTQhQysYxpUFPjEdNHMDXI6p5Xr/3+2Ny7fpwHwpr4Vc4yxTwFI6xraCPJ5T//bJNkXt58KxThBbWNVC5O2NtPoEhMoYxZoAxzIgvGIu748McWb/71biYfWSi3YCnk4aeNQsu8D5XaKl7srkBzc0Wuql/wGRoZsKKK0Iwi0mNir+/ixQDxfueyq0mqO9UQtWc6KlTyd3rbZjUzCKSl/OTzGC1SQC9gYd4JzbPRWzzRclBel4q+6hFfkvMnZmMROtF9UqpJRd/i2ZHhTLw5serzrj5d8mBX6eDAhqubEcBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GnaBO6ZwW9cE/JLN6wwr2ZIFi8v1FJaCpS+2jlmSSU4=;
+ b=daTaeHTidPm4dgNd3f9QP8oTSlHvtWdHu/7ncD+Qn5m6AGph2ZNbnBdd6ZNreSQQjoVivH2Vmka+9lCBvCkG+T92VtSXjniYOGitMHfCBIrWlUrdGq0Qa/JqX2k5p8tjssLybk9br71DEchoMPcy56DSk3mw63yrGOP0Jauz2f6iSC1iQKqkF6AY7jcwad7kx99AjSIoH9EzC3zJ2a46ky8Az7FWUe33dPcQckLnn3xOtdydpKLHJtXdZsQ9JKjpURh+1Z9yln25Pg8UCCw/eyyBLjm+KnGllAm1859mAnHATvPropTRhv00hzPX2u/R8JUe0cRUMNDblP4UccAdIw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB10681.eurprd04.prod.outlook.com (2603:10a6:150:226::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 20:53:48 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7875.019; Mon, 26 Aug 2024
+ 20:53:48 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/3] arm64: dts: imx93-11x11-evk: add io-expander adi,adp5585-00
+Date: Mon, 26 Aug 2024 16:53:32 -0400
+Message-Id: <20240826205334.975272-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SA1PR04CA0019.namprd04.prod.outlook.com
+ (2603:10b6:806:2ce::26) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10681:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fcaa792-0876-4124-394c-08dcc6112eb5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3Sw3ii4dd0tqTNn5EroceFl4dhV+T3c//OwInZttyONVxTgZlYahMMZzxOSh?=
+ =?us-ascii?Q?WQHHhyHToQmK/E3/vmAiFWg5WVk413tkXv/QTYGBgdP+q4Tzy85z9uS9OuaS?=
+ =?us-ascii?Q?qGpbF0+yz0ovL+PhyE7LkXjaXzhIe/aepI27HUbH8Dz/eLJfIYb2k8XRdXKZ?=
+ =?us-ascii?Q?2XS6/HWZfmDHXFuEINy1YMaWOxlGbY5sY6WlSILleGdYsR8okTCWvA6Nt+9M?=
+ =?us-ascii?Q?ZdVcQrwrKaUAeAa7BiL4hD4yQ6rUKcYTBvJq0BoYP/eMyboNxDQyeqHpwcyj?=
+ =?us-ascii?Q?Z2hSwR2CS7IlTlARGMa8C+m6cqVbFE1KI9nt2iWlETRrb+p2XPJR97tLyBWR?=
+ =?us-ascii?Q?AyNgbmdsyLpzjgAZRhdw25vcFYcBguJBIT0Oh1oD2UjoBfVm9x105IoozzWk?=
+ =?us-ascii?Q?y+I7duky1fFQeCqum8lq+6opD4j/py9FHS65fqeSNhvaN1yALOO+YjyLYhO6?=
+ =?us-ascii?Q?90nyUidRsPIGjLJjnTJGjE4Zl5cICRax3FjGmHk7FKFK5UQ2TtwtX2xVheYP?=
+ =?us-ascii?Q?/Svs41RNq2MZSIPIWYU8jTO8fcNsC/ZQn0SlIk77TzfqpetlqufGH93Ye0qH?=
+ =?us-ascii?Q?1KHFOE2nlAIqztyvCDInnDJCkJ9Swv+gC86E1YDC3FqDCTUZg1cqhgoS5j7i?=
+ =?us-ascii?Q?rQfQ+SfCKJKTi8PPnW68j2LJikLntS2Ui5/mfAstc2mRbEv8hX6pwnPdHGIZ?=
+ =?us-ascii?Q?/yykz33+vbijJX5Ry72aMwa/OQqSVThgyjCGb0E86mbmAuUodpleUFZ61AWQ?=
+ =?us-ascii?Q?l9YCgseZT8tkauF0DF9jTII0lbq39iIyMK7FPpTgDi64YBpFFJDM+JFPZZca?=
+ =?us-ascii?Q?XeTDiezF6Z1tL6sQuXLqgLUWJ0m/p0/hfjEk9PAwJBExaKxXNlXBwkp43Ntn?=
+ =?us-ascii?Q?JBuige5P4lDfK3TCE5ICgJNKUFOKcxhU6oopxyCUhw9+CFvQXSTQoJAYCA68?=
+ =?us-ascii?Q?pX5bbsAZH4I3ijsA4HYMvUluDVm+VafYAHp+Ot01ZZbAKDdBFrd/1tK5e4Ec?=
+ =?us-ascii?Q?UIE0iRb3mlmjl3v0CL3vuVDyMSp+xJAeCH874CxXNMPSGrIRjqqk9LVpm4MV?=
+ =?us-ascii?Q?kuZHeUvyEtNyH71z9j04P57O9AuUY6l4pRzdTOBHLujfy9FpqiS1w3tb79BX?=
+ =?us-ascii?Q?V3TE718CKHiKM6P17IO5dCAZmxXOFP61T/ke2YvU+AXAKXqwI/rsgcVfgwi+?=
+ =?us-ascii?Q?WOKMFAEp94u3FmYLuNj1Ie82IICkhRgCPfhDdITKaCGmvxVPUnofHqbeWV5F?=
+ =?us-ascii?Q?ulQwRx9qwSA8iGpr9km9w3bjxiSk9EgrK6a0wi+sHfQjQnUwI8PX0478+WyA?=
+ =?us-ascii?Q?9EQN4PB7YSLOWRJoojWAS8siPWSr2bYo9f0H1gHX4hfTNkLr0aDCmJQ3I8yG?=
+ =?us-ascii?Q?Bukh9cETo8SfbND1+rmTHAVq0Jp/8KP52SCp5TpQqVgeUYVcNbbKheMJ4pPu?=
+ =?us-ascii?Q?r+556hc9WW4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lrfmsf6uBe1DNs3QGjQIu9wDjWzclo6/pfgs6/es0XgDCjtAwPx9zfrOLoxa?=
+ =?us-ascii?Q?v8AGSlEqE9L7inDHgLRkXnUGjSnbvKzK40C1qU+KuBpn0u0pbms5m5vu0szS?=
+ =?us-ascii?Q?N8JsybAOT/6f2xrwIdXCzX+gcs7dRJc11TI5Y4Fi5omwiQ+U+e/OlWvS/U+x?=
+ =?us-ascii?Q?sLl0e17z8prfTkROvWey3orYWPA8/rE9Dg8aEEiGD1GNFKwBuENCQV1rnZ9B?=
+ =?us-ascii?Q?iNBChr2d5cPWzocb2FWkztt/qvvKIUmwXUkdrdQgXnqtO9xbS3DAekJOxNIw?=
+ =?us-ascii?Q?nDEtabjf+WZWQobzZsFCgn9wUjWN+w6BgueMmiHTRf3ZZIfpC+Nyo+THK6l5?=
+ =?us-ascii?Q?yf5pg5Qog8jqUgWxumMDlS6IjX99/BmJAhYHaaMZVW+VICnaN7deXifZXBnm?=
+ =?us-ascii?Q?Jq/j022FDMEmartjcVqo8/yEqjO46NEXukOfikKmMTgcN0bsP2K42WKwSuh8?=
+ =?us-ascii?Q?hpzc1gyn4SOjCBCuv256wTeKh8CK+AbRzpVqi+95vSj5Magg5HPGpGWd1h+U?=
+ =?us-ascii?Q?MEM7Pii9u6qvhufkyyCe26m0vjnfXW596hRyWwyBM7Xe48vSlWIA0fGgPH45?=
+ =?us-ascii?Q?Ht7NesJ18H93hSANVZAYJUaB4FHTG42bKegiDMlDzt8+0nnC4/Q6londPfme?=
+ =?us-ascii?Q?/YiCRiDV7AjM26AkCRoXYrGFuE/epMyaWszWEuS0Hvgsul9tvcZwCkFe7PYR?=
+ =?us-ascii?Q?5IvEmU3eKssJyoZmhMDXY+utUJTKrqJHnU/R6PRSw+hLz85S5NeWgxIe0OR2?=
+ =?us-ascii?Q?Wf7uLIJELteAJt/cIq1bI7+sJzjN0zEAEeWKAdsTtjLqM35eEu7GVYlz2OAB?=
+ =?us-ascii?Q?qjEOL8mTUTz/iBwDMvv5TuK1qtjd6VVOke9lk9jsD9zKjMTySJGWuXn5rf8i?=
+ =?us-ascii?Q?jKVTc23pXukjWvcD2W6Y0YfWL7PzKlbGwAwrMZHern9fipRvEyLUpCglOo4m?=
+ =?us-ascii?Q?MOIhtCL8e+mRuTvqfQjQBkz0Llt240m7KqStLlzeoH/3QrLeS3SE0mOqlZTu?=
+ =?us-ascii?Q?pvfJb+bvx2VyQCET2Q7JU9pETGOa8fVMGMxSoKCZC+aeGc2HSDjJpFjryX0L?=
+ =?us-ascii?Q?lJyQXum2nNmzIQUYW7SFozFGVZor3ssgaS/dZZhPD50N3DJbKasyYQE61ydi?=
+ =?us-ascii?Q?c81rGlnMXkcpszTelBy94cSywW0qdvIA60jJdbZ40tLSdo9Qq7fd1p+CxXlj?=
+ =?us-ascii?Q?9/38mmv4VuBlNG1bq22u2tqseYMv5mKu1J7tKvqMqVtgSuxsEh5hWDfP4+5X?=
+ =?us-ascii?Q?hEhpPCJ9Kx6BZUxmMkDTuwUOY1GRFVHMGoiLpOCPhivwpaMVlvlWY/vXe6VF?=
+ =?us-ascii?Q?XZ+zOdBxLC1uO66DpCPqkjnYZpCnsDsEzCJSP13+QeE3Ei7KfcRQYyfmXzwp?=
+ =?us-ascii?Q?+O/klqsm7sB2zJjtfTWMz628100paaWu/8yGKupNUkJAb7gbWyWJAYFWNFYg?=
+ =?us-ascii?Q?UP/VnpVLFyezqngnsfuJcIeWxLpVPkOifRy7BAAr1UzwfHNvzJxb6KljkpbR?=
+ =?us-ascii?Q?yh+yqrlNNzfhFd0SsEWRdW4GhIEnETW2JJnmcxMVJ4cYZAr/sY9MwOSTBVk9?=
+ =?us-ascii?Q?drcsxMr1bHyxdavA3XscqRdlSdI3eEQJ9IDrdFYR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fcaa792-0876-4124-394c-08dcc6112eb5
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 20:53:48.2433
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: csy0K1Xp0c32Bf76LrO7C5zYInLVzZI3xw7udq7bo5j79iao6xwfhQdG5IbRWeF946LaUgpTWuBfsFEDWRYwGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10681
 
-Hi Michal,
+Add io-expander adi,adp5585 under lpi2c2 and lpi2c3.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../boot/dts/freescale/imx93-11x11-evk.dts     | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on tip/sched/core brauner-vfs/vfs.all linus/master v6.11-rc5]
-[cannot apply to next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Hocko/bcachefs-do-not-use-PF_MEMALLOC_NORECLAIM/20240826-171013
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240826085347.1152675-2-mhocko%40kernel.org
-patch subject: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-config: arm-randconfig-003-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270446.6Ew7FPHA-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270446.6Ew7FPHA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270446.6Ew7FPHA-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/bcachefs/fs.c:4:
-   In file included from fs/bcachefs/bcachefs.h:188:
-   In file included from include/linux/bio.h:10:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/arm/include/asm/cacheflush.h:10:
-   In file included from include/linux/mm.h:2198:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/bcachefs/fs.c:248:60: error: too many arguments provided to function-like macro invocation
-     248 |         if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v), gfp)) {
-         |                                                                   ^
-   include/linux/compiler.h:77:10: note: macro 'unlikely' defined here
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |          ^
->> fs/bcachefs/fs.c:248:6: error: use of undeclared identifier 'unlikely'
-     248 |         if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v), gfp)) {
-         |             ^
->> fs/bcachefs/fs.c:261:60: error: use of undeclared identifier 'GFP_NOWARN'
-     261 |         struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
-         |                                                                   ^
-   1 warning and 3 errors generated.
-
-
-vim +248 fs/bcachefs/fs.c
-
-   233	
-   234	static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c, gfp_t gfp)
-   235	{
-   236		struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, gfp);
-   237		if (!inode)
-   238			return NULL;
-   239	
-   240		inode_init_once(&inode->v);
-   241		mutex_init(&inode->ei_update_lock);
-   242		two_state_lock_init(&inode->ei_pagecache_lock);
-   243		INIT_LIST_HEAD(&inode->ei_vfs_inode_list);
-   244		inode->ei_flags = 0;
-   245		mutex_init(&inode->ei_quota_lock);
-   246		memset(&inode->ei_devs_need_flush, 0, sizeof(inode->ei_devs_need_flush));
-   247	
- > 248		if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v), gfp)) {
-   249			kmem_cache_free(bch2_inode_cache, inode);
-   250			return NULL;
-   251		}
-   252	
-   253		return inode;
-   254	}
-   255	
-   256	/*
-   257	 * Allocate a new inode, dropping/retaking btree locks if necessary:
-   258	 */
-   259	static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
-   260	{
- > 261		struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
-   262	
-   263		if (unlikely(!inode)) {
-   264			int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c, GFP_NOFS)) ? 0 : -ENOMEM);
-   265			if (ret && inode) {
-   266				__destroy_inode(&inode->v);
-   267				kmem_cache_free(bch2_inode_cache, inode);
-   268			}
-   269			if (ret)
-   270				return ERR_PTR(ret);
-   271		}
-   272	
-   273		return inode;
-   274	}
-   275	
-
+diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+index 60eb64761392e..7629b6b44aa43 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+@@ -302,6 +302,16 @@ ldo5: LDO5 {
+ 			};
+ 		};
+ 	};
++
++	adp5585gpio: io-expander@34 {
++		compatible = "adi,adp5585-00", "adi,adp5585";
++		reg = <0x34>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-reserved-ranges = <5 1>;
++		#pwm-cells = <3>;
++	};
++
+ };
+ 
+ &lpi2c3 {
+@@ -310,6 +320,14 @@ &lpi2c3 {
+ 	pinctrl-0 = <&pinctrl_lpi2c3>;
+ 	status = "okay";
+ 
++	adp5585_isp: io-expander@34 {
++		compatible = "adi,adp5585-01", "adi,adp5585";
++		reg = <0x34>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		#pwm-cells = <3>;
++	};
++
+ 	ptn5110: tcpc@50 {
+ 		compatible = "nxp,ptn5110", "tcpci";
+ 		reg = <0x50>;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
