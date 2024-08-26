@@ -1,151 +1,233 @@
-Return-Path: <linux-kernel+bounces-300763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F2E95E80E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:44:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ED895E813
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F503B20D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F73B281881
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F110768EF;
-	Mon, 26 Aug 2024 05:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D835178C90;
+	Mon, 26 Aug 2024 05:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A3k8bNmH"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93EF2F2D;
-	Mon, 26 Aug 2024 05:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Wolf5tiu"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11A1443D;
+	Mon, 26 Aug 2024 05:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724651050; cv=none; b=bs0QDOxLnI8AM/aQg/U+w9zFlyUOXSY359oGtDH/lpYd8VH3akgTrZL/vESmfsVXKtR+rsDDNoOzjMPIlPAJMl56Y5bK8q5w0I82QQLY/vohBR39COvrPuYRHijCXVF54fpiPN+gH9nca5tVqTsccqRcSvhz0pAurtVgTUmmpYI=
+	t=1724651327; cv=none; b=rMbJhtJpvsud2PH7qWqrWEPMFBveJRPwJ+vEwv1niotMtxSUxNiaO2+qkVbdQgRNbI5ma2khnpDF76j7yuWjdBsVJuztSWRUEa1tQSi8GVTaeT6usuWgXz+X+jVEirT2Nyq5vQnwE1+PM5v4DnqxBkmAw10sd5USK+mBEI8eNnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724651050; c=relaxed/simple;
-	bh=a/DVxwbWhN6QKPaU3TDbkvhzlaB/K+gbTapmjkDgN54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Or0kRjpKf4RK2QQBZl43Sb/TTOywpdd9vL0Y0FHyDK6R1/OveohwDidDQkfGwevPPky5RlkVzCjQdyfNYgqrW9ob3nA2CnxzAuBi0SNsrjKLT7vFkMtxMSlun9/+xraeryoBhBzMKNK+8g6/qdA/6Afc1dmTsDX/jyLRrnh8DCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A3k8bNmH; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.75.183] (unknown [167.220.238.215])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4841620B7165;
-	Sun, 25 Aug 2024 22:44:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4841620B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724651048;
-	bh=oQCfduo1C8UnNc5vKeTZWL4Kfc7pwo8X6pgqfHOVdq8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A3k8bNmHHbWsxzWGzSif5qP21zb1ntghUaQ2guk3Vs4AV/nM9Ue/xeB4/o4bs/OOe
-	 6pi0bsOcjTaxyty02sfOHNmqWLZtd6F+1qqPG70dEfwvXf6xXZWLnAlH4dXxCnie0A
-	 Y+AfPmJoYXqt4QbBIM4N03dXiMTv7vbJK4vDlRH8=
-Message-ID: <b179947f-a37f-41ff-8893-84e9eea42462@linux.microsoft.com>
-Date: Mon, 26 Aug 2024 11:14:04 +0530
+	s=arc-20240116; t=1724651327; c=relaxed/simple;
+	bh=nQVe4pkTC4GGqwvv0hQiEOdQUahpl9ZfcNGHajNVUyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MfKfU8tOt2hNcE5hjL+eZ/7R3C6M3WO5DjRrgfBx9yDmnO8Xdb4xKt2DTjagbOntHOr4TOGM3haddYxG2d8sowETsjch5QtkYQ3Trx9oCiqwTvJYAJE4S08Fl3RObCBXpfmHGS6VVemjE9F4daLEXCS7pMrazY4FY0kdMU1qRpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Wolf5tiu; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724651319;
+	bh=LcnF3lEzDOs24/S93gLZ8vPRLn3bYdD6AON3DPimukw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Wolf5tiuyOuYdSFxnMWHFo/aH11Brfuolf/kJqXXe3Rl6XVqgxOKN6cDesI0ZPHSq
+	 Rc9dAI5pijHfhux5s7mxf9XnvuD+OvQl82sEyYakkXOqVXmDE4/QH4Jq9gh8m5EEIM
+	 75wecd8V9oW3yOy1sGTvHk87Vyaz1q2uLqLCcPro=
+X-QQ-mid: bizesmtp78t1724651296tfspfpab
+X-QQ-Originating-IP: v1Cbbgnlqo89WuZQdgXld1WIjaie1C4oGPQIMjd/6pA=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 26 Aug 2024 13:48:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7317953918435259740
+From: Dandan Zhang <zhangdandan@uniontech.com>
+To: pbonzini@redhat.com,
+	corbet@lwn.net,
+	zhaotianrui@loongson.cn,
+	maobibo@loongson.cn,
+	chenhuacai@kernel.org
+Cc: kernel@xen0n.name,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	wangyuli@uniontech.com,
+	baimingcong@uniontech.com,
+	Xianglai Li <lixianglai@loongson.cn>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Dandan Zhang <zhangdandan@uniontech.com>
+Subject: [PATCH v2] Loongarch: KVM: Add KVM hypercalls documentation for LoongArch
+Date: Mon, 26 Aug 2024 13:47:27 +0800
+Message-ID: <DE6B1B9EAC9BEF4C+20240826054727.24166-1-zhangdandan@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Saurabh Sengar <ssengar@linux.microsoft.com>
-References: <20240822110912.13735-1-namjain@linux.microsoft.com>
- <20240822110912.13735-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <a447911b-ef12-46de-ba01-13105e34b8fe@linux.microsoft.com>
- <SN6PR02MB415711F672364610BBE6861DD48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB415711F672364610BBE6861DD48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
 
+From: Bibo Mao <maobibo@loongson.cn>
 
+Add documentation topic for using pv_virt when running as a guest
+on KVM hypervisor.
 
-On 8/26/2024 11:10 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Sunday, August 25, 2024 10:32 PM
->>
->> On 8/25/2024 8:27 AM, Michael Kelley wrote:
->>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, August 22, 2024 4:09 AM
->>>>
->>>> Rescind offer handling relies on rescind callbacks for some of the
->>>> resources cleanup, if they are registered. It does not unregister
->>>> vmbus device for the primary channel closure, when callback is
->>>> registered.
->>>> Add logic to unregister vmbus for the primary channel in rescind callback
->>>> to ensure channel removal and relid release, and to ensure rescind flag
->>>> is false when driver probe happens again.
->>>>
->>>> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
->>>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->>>> ---
->>>>    drivers/hv/vmbus_drv.c       | 1 +
->>>>    drivers/uio/uio_hv_generic.c | 7 +++++++
->>>>    2 files changed, 8 insertions(+)
->>>>
->>>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->>>> index c857dc3975be..4bae382a3eb4 100644
->>>> --- a/drivers/hv/vmbus_drv.c
->>>> +++ b/drivers/hv/vmbus_drv.c
->>>> @@ -1952,6 +1952,7 @@ void vmbus_device_unregister(struct hv_device *device_obj)
->>>>    	 */
->>>>    	device_unregister(&device_obj->device);
->>>>    }
->>>> +EXPORT_SYMBOL_GPL(vmbus_device_unregister);
->>>>
->>>>    #ifdef CONFIG_ACPI
->>>>    /*
->>>> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
->>>> index c99890c16d29..ea26c0b460d6 100644
->>>> --- a/drivers/uio/uio_hv_generic.c
->>>> +++ b/drivers/uio/uio_hv_generic.c
->>>> @@ -121,6 +121,13 @@ static void hv_uio_rescind(struct vmbus_channel *channel)
->>>>
->>>>    	/* Wake up reader */
->>>>    	uio_event_notify(&pdata->info);
->>>> +
->>>> +	/*
->>>> +	 * With rescind callback registered, rescind path will not unregister the device
->>>> +	 * when the primary channel is rescinded. Without it, next onoffer msg does not come.
->>>> +	 */
->>>> +	if (!channel->primary_channel)
->>>> +		vmbus_device_unregister(channel->device_obj);
->>>
->>> When the rescind callback is *not* set, vmbus_onoffer_rescind() makes the
->>> call to vmbus_device_unregister(). But it does so bracketed with get_device()/
->>> put_device(). Your code here does not do the bracketing. Is there a reason for
->>> the difference? Frankly, I'm not sure why vmbus_onoffer_rescind() does the
->>> bracketing, and I can't definitively say if it is really needed. So I guess I'm
->>> just asking if you know. :-)
->>>
->>> Michael
->>
->> IMHO, we have already NULL checked channel->device_obj and other couple
->> of things to make sure we are safe to clean this up. At other places as
->> well, I don't see the use of put and get device. So I think its not
->> required. I am open to suggestions.
->>
->> Regards,
->> Naman
-> 
-> OK. I'm good with what you've said, and don't have any further suggestions.
-> Go with what your patch already has. :-)
-> 
-> Michael
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+Co-developed-by: Mingcong Bai <jeffbai@aosc.io>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+Link: https://lore.kernel.org/all/5c338084b1bcccc1d57dce9ddb1e7081@aosc.io/
+Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+---
+ Documentation/virt/kvm/index.rst              |  1 +
+ .../virt/kvm/loongarch/hypercalls.rst         | 86 +++++++++++++++++++
+ Documentation/virt/kvm/loongarch/index.rst    | 10 +++
+ MAINTAINERS                                   |  1 +
+ 4 files changed, 98 insertions(+)
+ create mode 100644 Documentation/virt/kvm/loongarch/hypercalls.rst
+ create mode 100644 Documentation/virt/kvm/loongarch/index.rst
 
-Thank you Michael. I'll wait for some time before posting v2, if there 
-are any more review comments.
+diff --git a/Documentation/virt/kvm/index.rst b/Documentation/virt/kvm/index.rst
+index ad13ec55ddfe..9ca5a45c2140 100644
+--- a/Documentation/virt/kvm/index.rst
++++ b/Documentation/virt/kvm/index.rst
+@@ -14,6 +14,7 @@ KVM
+    s390/index
+    ppc-pv
+    x86/index
++   loongarch/index
+ 
+    locking
+    vcpu-requests
+diff --git a/Documentation/virt/kvm/loongarch/hypercalls.rst b/Documentation/virt/kvm/loongarch/hypercalls.rst
+new file mode 100644
+index 000000000000..58168dc7166c
+--- /dev/null
++++ b/Documentation/virt/kvm/loongarch/hypercalls.rst
+@@ -0,0 +1,86 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++===================================
++The LoongArch paravirtual interface
++===================================
++
++KVM hypercalls use the HVCL instruction with code 0x100 and the hypercall
++number is put in a0. Up to five arguments may be placed in registers a1 - a5.
++The return value is placed in v0 (an alias of a0).
++
++Source code for this interface can be found in arch/loongarch/kvm*.
++
++Querying for existence
++======================
++
++To determine if the host is running on KVM, we can utilize the cpucfg()
++function at index CPUCFG_KVM_BASE (0x40000000).
++
++The CPUCPU_KVM_BASE range, spanning from 0x40000000 to 0x400000FF, The
++CPUCPU_KVM_BASE range between 0x40000000 - 0x400000FF is marked as reserved.
++Consequently, all current and future processors will not implement any
++feature within this range.
++
++On a KVM-virtualized Linux system, a read operation on cpucfg() at index
++CPUCFG_KVM_BASE (0x40000000) returns the magic string 'KVM\0'.
++
++Once you have determined that your host is running on a paravirtualization-
++capable KVM, you may now use hypercalls as described below.
++
++KVM hypercall ABI
++=================
++
++The KVM hypercall ABI is simple, with one scratch register a0 (v0) and at most
++five generic registers (a1 - a5) used as input parameters. The FP (Floating-
++point) and vector registers are not utilized as input registers and must
++remain unmodified during a hypercall.
++
++Hypercall functions can be inlined as it only uses one scratch register.
++
++The parameters are as follows:
++
++        ========	================	================
++	Register	IN			OUT
++        ========	================	================
++	a0		function number		Return code
++	a1		1st parameter		-
++	a2		2nd parameter		-
++	a3		3rd parameter		-
++	a4		4th parameter		-
++	a5		5th parameter		-
++        ========	================	================
++
++The return codes may be one of the following:
++
++	====		=========================
++	Code		Meaning
++	====		=========================
++	0		Success
++	-1		Hypercall not implemented
++	-2		Bad Hypercall parameter
++	====		=========================
++
++KVM Hypercalls Documentation
++============================
++
++The template for each hypercall is as follows:
++
++1. Hypercall name
++2. Purpose
++
++1. KVM_HCALL_FUNC_PV_IPI
++------------------------
++
++:Purpose: Send IPIs to multiple vCPUs.
++
++- a0: KVM_HCALL_FUNC_PV_IPI
++- a1: Lower part of the bitmap for destination physical CPUIDs
++- a2: Higher part of the bitmap for destination physical CPUIDs
++- a3: The lowest physical CPUID in the bitmap
++
++The hypercall lets a guest send multiple IPIs (Inter-Process Interrupts) with
++at most 128 destinations per hypercall.The destinations are represented in a
++bitmap contained in the first two input registers (a1 and a2).
++
++Bit 0 of a1 corresponds to the physical CPUID in the third input register (a3)
++and bit 1 corresponds to the physical CPUID in a3+1 (a4), and so on.
+diff --git a/Documentation/virt/kvm/loongarch/index.rst b/Documentation/virt/kvm/loongarch/index.rst
+new file mode 100644
+index 000000000000..83387b4c5345
+--- /dev/null
++++ b/Documentation/virt/kvm/loongarch/index.rst
+@@ -0,0 +1,10 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=========================
++KVM for LoongArch systems
++=========================
++
++.. toctree::
++   :maxdepth: 2
++
++   hypercalls.rst
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0c94ec0ca478..ae0fa8aa26f8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12294,6 +12294,7 @@ L:	kvm@vger.kernel.org
+ L:	loongarch@lists.linux.dev
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
++F:	Documentation/virt/kvm/loongarch/
+ F:	arch/loongarch/include/asm/kvm*
+ F:	arch/loongarch/include/uapi/asm/kvm*
+ F:	arch/loongarch/kvm/
+-- 
+2.43.4
 
-Regards,
-Naman
 
