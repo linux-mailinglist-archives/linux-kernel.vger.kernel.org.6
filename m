@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-301582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EED95F2DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85B795F2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C27B1C21EF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7546E2824E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED549187FEA;
-	Mon, 26 Aug 2024 13:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A922185B43;
+	Mon, 26 Aug 2024 13:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zp1vNc4D";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVBUGdIS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h1C/a36l"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6CF53373;
-	Mon, 26 Aug 2024 13:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18D82C95
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678697; cv=none; b=XCCOISY7lvPyIk1KomhMq4rpTAzOktnYHzYLVQ44DEZ51U+0HwGtKuqeIY0/JdVsWxubYkJLbs57bM6pkddyANGfTY+F5jpbjw54HPB1bXEzpPWMsMnMUL1Nc3y4mNrPZV1xuTl9PIuFxxTJjmeK8bccLydlWSEjDV8hiDqkF8A=
+	t=1724678741; cv=none; b=ovWSjNjXKibM7u8zfNnrJThuksLoWniNRVESK9MNjzmBhaJEMZr32S0Tb+kNEwLSIzGxLODJjDkAvTXuljN2DeDQVyo6uE0jUmZwZUep6yuS799SFz1aFxJ6zH++7yfrysj7DLjaEmSeBEnNav92J7QGH8k6OhBhlLDSN2wNZ2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678697; c=relaxed/simple;
-	bh=Ubjr3hAkVUCRKgP1YwCituDtTL+Aqxbg8Af289I9Ieo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=crHbEJsOJEcsMmPN7P1mgpJZ7tIZjsgcpLwgd6bjQizwC3KhAdNg5vdmbmNuSRfJCwHSDjnL8yZf3SEXiEUo67xRe8eYK54mA7NI1bi/C4hnGym+XiijGYERe88HirZycxP0jSzdW5LXs5pLRMdhRrmY8vaOMMpZus7xlQjOvjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zp1vNc4D; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVBUGdIS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724678693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JtERtJKi/CA36m/GEM8qvROm+v91KuIncw1OX4BkHbo=;
-	b=zp1vNc4DuEN5YGFJn0TnAQLg0tqSuVcJT1LF7fJXWGjIq9boLoE67t0jweEecdUb7sF4GH
-	GCQYB9HU/g83IdP8iePIB0ST+nfgjNktYKMIjUz3LlV/WiJcdqrTixPcGf8q5uk9fA4AJk
-	w6fD2O1Yn3O5X0dRndrBmcvUrBU9IQbcMRg2frAPJ2wSc4l2YQ1FFd73rJq1/y6Vj/xxgH
-	0esO02GAS3JjVqcgZix9NqNsLH/qRLm4AhSWJl3hwYmpMbN4YgqIT9Dr7UFLXgC7zxx7qp
-	lBn8E0DLeyhkRVJ4UXNT+sBw3oZUwmdUgkhGWPGAQ6TSpslNcaibuIH3xKyBgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724678693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JtERtJKi/CA36m/GEM8qvROm+v91KuIncw1OX4BkHbo=;
-	b=MVBUGdIS3uO0WmN8EGfXIZc+hb2K87xkQVti0VUBQTGVjM7a9DhmIGZGaQAw3NK+w8pyab
-	59i8js1pWL3G7UAg==
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, "Jason A. Donenfeld"
- <Jason@zx2c4.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Andy Lutomirski
- <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>, Arnd
- Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
-In-Reply-To: <51adbe91-3c3a-4baa-bb39-29df98a6eea5@csgroup.eu>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
- <Zsw3xMoX2EI5UUs1@zx2c4.com>
- <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
- <ZsxDssNPbLkcPetJ@zx2c4.com>
- <51adbe91-3c3a-4baa-bb39-29df98a6eea5@csgroup.eu>
-Date: Mon, 26 Aug 2024 15:24:52 +0200
-Message-ID: <87plpvct7f.ffs@tglx>
+	s=arc-20240116; t=1724678741; c=relaxed/simple;
+	bh=TDI7RHZmYPU1nDMJ8ga5MjvsFwqpGuSaA+HiyoDW2Ms=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gHo2J0C80BMaalINN7TQ/BzaahHJIFwuBSbvSdwnQ+DUiIReX9ytkg1+Vj9qlTcbtpnDwGJZ5A3+Pve2l4fsI5xLCFFn1BnBguggTKetCscVgSHAC3eWb/g8BiOZBTawtrjLt/ua7inwZsrRdjAOmIA6N+5VwYcS7AMPrZNBYMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h1C/a36l; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20202df1c2fso33880075ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:25:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724678739; x=1725283539; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iEG9QzXGotldnC0jKJGh8tD1wiLvFhSEoIACHY/bqXg=;
+        b=h1C/a36lx+vohIhcNxDlXvhIfJChDM9ZbAwY0/VGdM/DRKLOwBTx14xUYTKRjB2Ajh
+         r+eIGVhtksvD+FrJc+AcjS0YpuhS6NddnwZAbF2yuZEUfff/lz4fpsNFKChIxkL3kEPJ
+         80mErDUKJlkyw4hdOHQjNrO0WnO6175/SBp9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724678739; x=1725283539;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iEG9QzXGotldnC0jKJGh8tD1wiLvFhSEoIACHY/bqXg=;
+        b=ADezKCPxeQ7vwtDWzLFCz4VdF+2QSnEzYGvqyRxzplH0PnPNBFZYa1TuvRQ7Y2oDZh
+         9+IGx5kP55Lv+FrLeam4xwIJ8MnO+un3l+aehpbWiu1z6Y5zpBOZdiHG5vtBNbTGpB2f
+         TzfMqqrH17Bu2iRQjV8orB3xLr0Gt+VifrIzT691Q2t9fH2xam97ScS0o9n5cgTz0RwN
+         +9U/ue3cm/XUjTSKQrT6YphkF/GnjKFms5vAgu1Whe4kTWR4I6as/Hix12xtL/AY2792
+         0CWAC3f9RYRcjGTQzeSdWiWSLAg/+H8WAf4r6SAfsBdO4AURpQTScURQbMpitISeF1/L
+         frkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLFo7qJJ31Px0iP/E57vLe6URDcKlffEnAT0RDPETf0v6L8k6jqkzx7r6Qt/CwGBD0AOt+XbWINIvhHYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj55Jc2meMj916/+gzPqknU/1SOtCW4DJhHlwWPuJ95d0nw2KP
+	nznJNMb47YwSbJuhK+3K+dByJpI448dR2f+jHU+oKt7bXU56SgkH6O3p6osurc+XepGpJvF1aVk
+	=
+X-Google-Smtp-Source: AGHT+IELLqth869JaOFsGZgXKQzQs3FV9d2io/Bm71R3S9u9GDO3T9wymsvrvvpbaW/7vQOYK3sDtg==
+X-Received: by 2002:a17:903:298e:b0:204:d4a6:c68b with SMTP id d9443c01a7336-204d4a6c799mr23964805ad.16.1724678738867;
+        Mon, 26 Aug 2024 06:25:38 -0700 (PDT)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com. [209.85.214.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580f11sm67241505ad.109.2024.08.26.06.25.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 06:25:37 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2021c08b95cso39922645ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:25:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvkTPfON7cSgV/yVICsgRK8cSmYv+73W20eNeYH+r9B+IT0OzGnbZK1kJ2dGdkm8k5jePoKbMUG7mHyxw=@vger.kernel.org
+X-Received: by 2002:a17:902:c412:b0:1ff:5135:131f with SMTP id
+ d9443c01a7336-2039c509ec7mr168440465ad.25.1724678736416; Mon, 26 Aug 2024
+ 06:25:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240620145820.3910239-1-mstaudt@chromium.org>
+In-Reply-To: <20240620145820.3910239-1-mstaudt@chromium.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 26 Aug 2024 15:25:23 +0200
+X-Gmail-Original-Message-ID: <CANiDSCtF8SxmphDYkLwGiZxNE7ds2NyK8MRzD4=dg3W2oRhG7A@mail.gmail.com>
+Message-ID: <CANiDSCtF8SxmphDYkLwGiZxNE7ds2NyK8MRzD4=dg3W2oRhG7A@mail.gmail.com>
+Subject: Re: Fixing IPU3 IMGU warnings due to extraneous calls to s_stream()
+To: Max Staudt <mstaudt@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+	Tianshu Qiu <tian.shu.qiu@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 26 2024 at 12:45, Christophe Leroy wrote:
-> Le 26/08/2024 =C3=A0 10:58, Jason A. Donenfeld a =C3=A9crit=C2=A0:
->> On Mon, Aug 26, 2024 at 10:37:49AM +0200, Christophe Leroy wrote:
->>>
->>>
->>> Le 26/08/2024 =C3=A0 10:07, Jason A. Donenfeld a =C3=A9crit=C2=A0:
->>>> On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
->>>>>=20=20=20=20
->>>>> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
->>>>> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
->>>>
->>>> If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SI=
-ZE
->>>> instead of _PAGE_SIZE? But if that's the case, why not put the vdso
->>>> definition of PAGE_SIZE into some vdso header included by this file?
->>>
->>> It was working ok on powerpc but on x86 I got:
->>=20
->> Seems like there might be some more fiddling to do, then? Or did you
->> conclude it's impossible?
+Tried to get some images using a Google Pixelbook Go
+
+
+Tested-by: Ricardo Ribalda <ribalda@chromium.org>
+
+On Fri, 21 Jun 2024 at 06:46, Max Staudt <mstaudt@chromium.org> wrote:
 >
-> Maybe someone who knows x86 in details could helps but after a first=20
-> look I gave up because it looks very x86 specific, indeed that's=20
-> x86/asm/vdso/gettimeofday.h that pulls several x86/asm/ headers , and=20
-> the same type of issue might arise for any new architecture coming in.
+> Dear IPU3 driver maintainers,
+>
+> The Intel IPU3 IMGU driver no longer shuts down cleanly since v6.7,
+> because vb2 now complains if s_stream() is called multiple times on
+> the same object:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=009905ec50433259c05f474251000b040098564e
+>
+> This series attempts to fix this, but needs a review from someone more
+> intimate with IPU3 and its driver. Could you please have a look at this?
+>
+>
+> Thanks for your feedback,
+>
+> Max
+>
+>
+>  [PATCH v1 1/3] staging: media: ipu3: Drop superfluous check in
+>  [PATCH v1 2/3] staging: media: ipu3: Return buffers outside of
+>  [PATCH v1 3/3] staging: media: ipu3: Stop streaming in inverse order
 
-Of course :)
 
-> For me it looked cleaner to just do as commit cffaefd15a8f ("vdso: Use=20
-> CONFIG_PAGE_SHIFT in vdso/datapage.h") and not use PAGE_SIZE at all. But=
-=20
-> I didn't want to directly use (1UL << CONFIG_PAGE_SHIFT) and (~(1UL <<=20
-> (CONFIG_PAGE_SHIFT - 1))) in the code directly hence the new macros with=
-=20
-> a leading underscore to avoid any conflict with existing macros.
 
-#ifndef PAGE_SIZE
-# define
-#endif
-
-Perhaps?
-
-Thanks,
-
-        tglx
+-- 
+Ricardo Ribalda
 
