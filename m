@@ -1,142 +1,344 @@
-Return-Path: <linux-kernel+bounces-300632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF7095E655
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:35:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B03695E658
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D6E28134A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53A31F213C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9E15C96;
-	Mon, 26 Aug 2024 01:35:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB16FD3;
+	Mon, 26 Aug 2024 01:36:42 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DB6321D;
-	Mon, 26 Aug 2024 01:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F82443D;
+	Mon, 26 Aug 2024 01:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724636111; cv=none; b=VKYvHuPuendbJ24jjrJGDhhc07Kd3Jyew6+YMbSyVbocpKQ3Xc4ZYwjt4D23XRzc5bFmTeM/NU5l7j31zEzCb7jC2PJhlCHE0tR0LNvcI7VI3VL7WMMQS26x7JaBwo08cq7G6aHX+ElBxzW06SAC7jfQuYFlJL72nnl6eF+lIEY=
+	t=1724636201; cv=none; b=ZHtyBeMULuNdzZ7cwvQ1jTA+HNInhluoeAGtsOF6Jn24b4PF3hr3rTtMHYxjgM/b6LwXSxKVdN/R1CYi3ErMmnlDom8lmVDPq5pJ53XNOIgXpT6/ZKNwVLQsoax2doXtMUsqzSvyuJS/YSf2+eVVZD9lshgKxkqTjUeAJv+78Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724636111; c=relaxed/simple;
-	bh=NAdz+o1KoUVh3TWqM8oCFuY5xeLKFpsOQchgZ9FQIic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LohMPgpKoH/kkwPl4qK+TRtW0+Oj2964q7TWGgwLeqrofxhJ+6LmRKL/PNiwMtAAPtrvm91BVeaa+Ty3LpeO5HXM5Xhg/oluwMFGFfpz5gHKn64xHK/5g8hhuW3h5qjtIw8GkrGbgttVR4q4gU5dmA1Lzhswr8JIxA57EVmPD18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WsYBX28Vbz4f3kvs;
-	Mon, 26 Aug 2024 09:34:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id A287C1A058E;
-	Mon, 26 Aug 2024 09:34:59 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgBXu7nC28tmqvqOCg--.7987S2;
-	Mon, 26 Aug 2024 09:34:59 +0800 (CST)
-Message-ID: <bcbaeb36-ad90-47a0-b832-86eadefd3e6a@huaweicloud.com>
-Date: Mon, 26 Aug 2024 09:34:58 +0800
+	s=arc-20240116; t=1724636201; c=relaxed/simple;
+	bh=wd6zZUEd613VvgbUTb6iIUfcvaLsT1imtH42TS06iMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=budZQ7rP62XLqL+6ED5wvwoB80hwCs5SlZKmSrUfloqZreIaTMpfMVj4JBVd94sOo19OcuSYPnJrDJNopoIOzSIXnzSAYQPrP9pZ97rv420ldQeDvc5ZZtXPJ8nLl5f7qlbMLMzd59D2XsK0MeirKa71g+FbOXuyp4wRTy3PV38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Mon, 26 Aug 2024 01:36:35 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-binding: pinctrl: spacemit: add documents for
+ K1 SoC
+Message-ID: <20240826013230.GYA22924.dlan.gentoo>
+References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
+ <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
+ <d9a925da-2381-4203-a3b6-4cb892039d23@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 -next 10/11] cgroup/cpuset: guard cpuset-v1 code under
- CONFIG_CPUSETS_V1
-To: Waiman Long <longman@redhat.com>, tj@kernel.org, lizefan.x@bytedance.com,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240823100110.472120-1-chenridong@huawei.com>
- <20240823100110.472120-11-chenridong@huawei.com>
- <de64f686-fccb-4d33-99d8-b8b44dc534fa@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <de64f686-fccb-4d33-99d8-b8b44dc534fa@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBXu7nC28tmqvqOCg--.7987S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry5Kw1UuFW3ur17GF4Durg_yoW5WFWfpF
-	n7Gry8GrykJr1xG3yfXw1DAFyrtw48G3W7JryUJ3WUXw12yF1qvr1DXrn0gr1UJr48Gw1U
-	tF47uw4Y9ryUJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9a925da-2381-4203-a3b6-4cb892039d23@kernel.org>
 
+Hi Krzysztof: 
 
-
-On 2024/8/26 1:25, Waiman Long wrote:
-> On 8/23/24 06:01, Chen Ridong wrote:
->> This patch introduces CONFIG_CPUSETS_V1 and guard cpuset-v1 code under
->> CONFIG_CPUSETS_V1. The default value of CONFIG_CPUSETS_V1 is N, so that
->> user who adopted v2 don't have 'pay' for cpuset v1.
->> Besides, to make code succinct, rename '__cpuset_memory_pressure_bump()'
->> to 'cpuset_memory_pressure_bump()', and expose it to the world, which
->> takes place of the old mocro 'cpuset_memory_pressure_bump'.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   include/linux/cpuset.h          |  8 +-------
->>   init/Kconfig                    | 13 +++++++++++++
->>   kernel/cgroup/Makefile          |  3 ++-
->>   kernel/cgroup/cpuset-internal.h | 15 +++++++++++++++
->>   kernel/cgroup/cpuset-v1.c       | 10 ++++++----
->>   kernel/cgroup/cpuset.c          |  2 ++
->>   6 files changed, 39 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
->> index 2a6981eeebf8..f91f1f61f482 100644
->> --- a/include/linux/cpuset.h
->> +++ b/include/linux/cpuset.h
->> @@ -99,13 +99,7 @@ static inline bool cpuset_zone_allowed(struct zone 
->> *z, gfp_t gfp_mask)
->>   extern int cpuset_mems_allowed_intersects(const struct task_struct 
->> *tsk1,
->>                         const struct task_struct *tsk2);
->> -#define cpuset_memory_pressure_bump()                 \
->> -    do {                            \
->> -        if (cpuset_memory_pressure_enabled)        \
->> -            __cpuset_memory_pressure_bump();    \
->> -    } while (0)
->> -extern int cpuset_memory_pressure_enabled;
->> -extern void __cpuset_memory_pressure_bump(void);
->> +extern void cpuset_memory_pressure_bump(void);
->>   extern void cpuset_task_status_allowed(struct seq_file *m,
->>                       struct task_struct *task);
-> 
-> As you are introducing a new CONFIG_CPUSET_V1 kconfig option, you can 
-> use it to eliminate a useless function call if cgroup v1 isn't enabled. 
-> Not just this function, all the v1 specific functions should have a 
-> !CONFIG_CPUSET_V1 version that can be optimized out.
-> 
-> Cheers,
-> Longman
+On 15:48 Sun 25 Aug     , Krzysztof Kozlowski wrote:
+> On 25/08/2024 15:10, Yixun Lan wrote:
+> > Add dt-binding for the pinctrl driver of SpacemiT's K1 SoC.
 > 
 > 
-Hi, Longman, currently, we have only added one place to manage all the 
-functions whose are empty if !CONFIG_CPUSET_V1 is not defined , and the 
-caller does not need to care about using cpuset v1 or v2, which makes it 
-succinct.
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> 
+> It's "dt-bindings:"
+Ok, will fix in next version
 
-However, we have to add !CONFIG_CPUSET_V1 to many places to avoid 
-useless function calls. I am not opposed to do this if you thick it 'a 
-better implementation.
+> 
+> > 
+> > Two vendor specific properties are introduced here, As the pinctrl
+> > has dedicated slew rate enable control - bit[7], so we have
+> > spacemit,slew-rate-{enable,disable} for this. For the same reason,
+> > creating spacemit,strong-pull-up for the strong pull up control.
+> 
+> Huh, no, use generic properties. More on that below
+> 
+see my reply below
 
-Thanks,
-Ridong
+> 
+> 
+> > 
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > ---
+> >  .../bindings/pinctrl/spacemit,k1-pinctrl.yaml      | 134 +++++++++++++++++
+> >  include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h  | 161 +++++++++++++++++++++
+> >  2 files changed, 295 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> > new file mode 100644
+> > index 0000000000000..8adfc5ebbce37
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> > @@ -0,0 +1,134 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pinctrl/spacemit,k1-pinctrl.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: SpacemiT K1 SoC Pin Controller
+> > +
+> > +maintainers:
+> > +  - Yixun Lan <dlan@gentoo.org>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: spacemit,k1-pinctrl
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: pinctrl io memory base
+> > +
+> > +patternProperties:
+> > +  '-cfg$':
+> > +    type: object
+> > +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+> 
+Ok
+> > +      A pinctrl node should contain at least one subnode representing the
+> > +      pinctrl groups available on the machine.
+> > +
+> > +    additionalProperties: false
+> 
+> Keep it before description.
+Ok
+> 
+> > +
+> > +    patternProperties:
+> > +      '-pins$':
+> > +        type: object
+> > +        description: |
+> > +          Each subnode will list the pins it needs, and how they should
+> > +          be configured, with regard to muxer configuration, bias, input
+> > +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+> > +          slew-rate, drive strength, power source.
+> > +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> > +
+> > +        allOf:
+> > +          - $ref: pincfg-node.yaml#
+> > +          - $ref: pinmux-node.yaml#
+> 
+> You are duplicating refs.
+ok, will fix it
+> 
+> > +
+> > +        properties:
+> > +          pinmux:
+> > +            description: |
+> > +              The list of GPIOs and their mux settings that properties in the
+> > +              node apply to. This should be set using the K1_PADCONF macro to
+> > +              construct the value.
+> > +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pinmux
+> 
+> Hm why you need the ref?
+> 
+will drop it
+> > +
+> > +          bias-disable: true
+> > +
+> > +          bias-pull-up: true
+> > +
+> > +          bias-pull-down: true
+> > +
+> > +          drive-strength-microamp:
+> > +            description: |
+> > +              typical current when output high level, but in mA.
+> > +              1.8V output: 11, 21, 32, 42 (mA)
+> > +              3.3V output: 7, 10, 13, 16, 19, 23, 26, 29 (mA)
+> > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > +
+> > +          input-schmitt:
+> > +            description: |
+> > +              typical threshold for schmitt trigger.
+> > +              0: buffer mode
+> > +              1: trigger mode
+> > +              2, 3: trigger mode
+> > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > +            enum: [0, 1, 2, 3]
+> > +
+> > +          power-source:
+> > +            description: external power supplies at 1.8v or 3.3v.
+> > +            enum: [ 1800, 3300 ]
+> > +
+> > +          slew-rate:
+> > +            description: |
+> > +              slew rate for output buffer
+> > +              0, 1: Slow speed
+> 
+> Hm? Surprising, 0 is slow speed?
+> 
+from docs, section 3.3.2.2 MFPR Register Description
+0, 1 are same, both for slow speed
+https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned
 
+> > +              2: Medium speed
+> > +              3: Fast speed
+> > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > +            enum: [0, 1, 2, 3]
+> > +
+> > +          spacemit,slew-rate-enable:
+> > +            description: enable slew rate.
+> 
+> The presence of slew-rate enables it, doesn't it?
+> 
+yes, this should work, I will take this approach, thanks
+
+> > +            type: boolean
+> > +
+> > +          spacemit,slew-rate-disable:
+> > +            description: disable slew rate.
+> > +            type: boolean
+> 
+> Just use slew-rate, 0 disable, some value to match real slew-rate.
+> 
+sounds good to me, since 0, 1 indicate same meaning, can re-use 0 for
+disabling slew rate.
+
+> > +
+> > +          spacemit,strong-pull-up:
+> > +            description: enable strong pull up.
+> 
+> Do not duplicate the property name in description. You did not say
+> anything useful here. What is "strong"? bias-pull-up takes also an argument.
+> 
+there is a dedicated strong pull bit[3] for I2C, SD card kinds of pad
+I don't know how 'strong' it is if in ohms, will see if can get
+more info on this (may expand the description)
+
+I think using 'bias-pull-up' property with argument should also work,
+but it occur to me it's more intuitive to introduce a property here, which
+reflect the underlying hardware functionality. this is similar to starfive's jh7100
+bindings/pinctrl/starfive,jh7100-pinctrl.yaml:154
+(refer to exist code doesn't mean always correct, so I need advice here)
+
+I will keep this property unless there is objection, please let me know
+
+> > +            type: boolean
+> > +
+> > +        required:
+> > +          - pinmux
+> > +
+> > +        additionalProperties: false
+> 
+> This goes up, before description.
+> 
+Ok
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/pinctrl/spacemit,k1-pinctrl.h>
+> > +
+> > +    soc {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        pinctrl@d401e000 {
+> > +            compatible = "spacemit,k1-pinctrl";
+> > +            reg = <0x0 0xd401e000 0x0 0x400>;
+> > +            #pinctrl-cells = <2>;
+> > +            #gpio-range-cells = <3>;
+> 
+> This wasn't ever tested... :(
+> ...
+will drop it
+> 
+> > diff --git a/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> > new file mode 100644
+> > index 0000000000000..13ef4aa6c53a3
+> > --- /dev/null
+> > +++ b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> > @@ -0,0 +1,161 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> > +/*
+> > + * Copyright (c) 2022-2024 SpacemiT (Hangzhou) Technology Co. Ltd
+> > + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
+> > + *
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_PINCTRL_K1_H
+> > +#define _DT_BINDINGS_PINCTRL_K1_H
+> > +
+> > +#define PINMUX(pin, mux) \
+> > +	(((pin) & 0xffff) | (((mux) & 0xff) << 16))
+> > +
+> > +/* pin offset */
+> > +#define PINID(x)	((x) + 1)
+> > +
+> > +#define GPIO_INVAL  0
+> > +#define GPIO_00     PINID(0)
+> 
+> Not really, pin numbers are not bindings. Drop entire header.
+> 
+Ok, I will move them to dts folder, which should be file
+arch/riscv/boot/dts/spacemit/k1-pinctrl.h
+
+> ...
+> 
+> > +
+> > +#define SLEW_RATE_SLOW0		0
+> > +#define SLEW_RATE_SLOW1		1
+> > +#define SLEW_RATE_MEDIUM	2
+> > +#define SLEW_RATE_FAST		3
+> 
+> Not a binding, either. No usage in the driver.
+Ok, will drop it
+
+> 
+> > +
+> > +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+> 
+> Not a binding.
+> 
+same, move to dts
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
