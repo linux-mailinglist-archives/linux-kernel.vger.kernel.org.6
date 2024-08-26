@@ -1,177 +1,154 @@
-Return-Path: <linux-kernel+bounces-302067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E2F95F96D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD3095F96E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD29F1C2194E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BAC71C22133
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861AE199244;
-	Mon, 26 Aug 2024 19:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473361991CC;
+	Mon, 26 Aug 2024 19:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L3MhC03I"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UU2MMGTQ"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEEA1991CE
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89081990CD
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724699264; cv=none; b=HJCRd40UjnHDrtnH6AugDkmwbIif1XOIqymKsz3ec5ouoaVjzoi41AA+3z5DQfUYYJsuBl/v+mL8O/KUSnl/n3eAT9pN4rTHrNuTpO5wHnHrGFMRlfjk9HA2e+mxZgaNBGwYmF632Bk0KgJ6CpathxB2ff1fYzc2O/F/rcs5+wM=
+	t=1724699277; cv=none; b=dxsfajbw4eted4HMjVkNBHk9D8UIW+1CJHxG85bS/Ne1t2l3IebkSV6hXfFULp+v85T4Pg85RJEK1Fgi+YomhthMAQ9sJxDMVf5WCozfLdpU6KhQHiePdsMT5y0AskdksNVLR5/X3MwByqEXbkVaDCkhQp1ZdGLQvqKsPayn+f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724699264; c=relaxed/simple;
-	bh=38ksbkqPg4F5t2Xby7SXcmkHpHbZz5yoHQt/ZBK2iEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZO91DLuA2B8sFwG0MCHvRye0TnOHwpBoTis6GHpwZbgBpj2Xl98UiFzV8qzF1voZkLzPF6+NLrTvhzE8kUfF+BRxk4J7iGvAg0E3UuIARG/apsHqlfxR6JNTu3NPGg5ZJ1KXtQpbFGZy0D5ljXRQvApDNpgAre2PQbToq1BKVnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L3MhC03I; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4518d9fa2f4so62011cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:07:42 -0700 (PDT)
+	s=arc-20240116; t=1724699277; c=relaxed/simple;
+	bh=xEJ2cXYER4N3XCO2mOEMn9fSE+s/0OFNOWSEaGbzkp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jXdO3InqZV7x3VnEjv/DRKFXYF0PM0VGgJavH9oRJ02ngvZ0e0TZWGd1VxNFm7tCw5PMFXC4P8VZ1PlCyarP4YbQ4resZFW3sLKLHy5krsho861qj8nyUUcIlForamCIKUqyp4JNuJAAfbdVic03ec2ghgADyMaUKGgX8bIPxCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UU2MMGTQ; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86883231b4so606694966b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724699261; x=1725304061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7rPuT+GJsYPFao+5rq3DRvTvjZuIBMa12VKy3PtmhCY=;
-        b=L3MhC03IqGDeftsTTP/6tRP7ud+Ntsyoo01Lx2htWf46xHRIxYainDX9RPbpR4HLev
-         PSKYUOVgzzwQBwFKR84t0aw0MVc0MOq9LpVGGwqr/D9wAL3QYj8GaXmI0wsTvgJICbXl
-         67mXi33EjELAE2Oq+MJ+X2Kx9P1pL3VulUt3OFrOT67eTnZbiiKBW0Fq/C3j9+OXVPNu
-         vGVE1785TMPLNU8XlJL69Vxuzvsj98M7FAi70Ke0TPnRMO9SnNEqwDU7bYpO/ieomPv9
-         BqocU7dusihMn2b88hm1Y7qDB9RkEtICMKgeTflaG/wtYT66VjVmM5+4xSRunysYu5Lc
-         6SaA==
+        d=gmail.com; s=20230601; t=1724699274; x=1725304074; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tmtnEYFG7LM3Rww8xbnrxCDknQ7Ml6u6NmRWdx1EeJ0=;
+        b=UU2MMGTQbAH0Mkg99VvoS2PV1+KB4YeLY/KGjepU06548b8QcpRIQCwY8fLzrFlg9H
+         QaA3Y4XFMtJ31cx/nZQrggv5iVqPlnVp1gCNEFszKwadpEmSftd8JxE+kpmqS5EtDx/5
+         HURyj2fS5gqhTVBAe8QrIMh4gOK25O45gYeA1QBWGfLWYkEcvGjvfweXrsfTnB8C35bO
+         DxcINkJ6nApQbQL0iLMA19qwzjYD3tLKxiv9/IrFXR8fat7ZA5ZJVAkpl5hxVL2AQTIz
+         iYTrPCKBhTIhaKmxyDQa3GvHm4P6NjgBNi5sBLrIhw7HqGLwZ5Vk1OWAP91SuVIKf5ZZ
+         i/wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724699261; x=1725304061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7rPuT+GJsYPFao+5rq3DRvTvjZuIBMa12VKy3PtmhCY=;
-        b=wfCvmzyeZGCa26MUJ5/bg1DRrqWP7sBiYWjc1X11yWIxEj75VIDUz+QJ68jzy0W+F1
-         KLiFiUfvLf0IGTszTBwFTwYho2jezq0SBNfLCyG1vQ8EO5S+w39YQGCYYU+NVsg9AEuD
-         uyeeZ8kYMAIvQWfPtsXJgN6cwrpoZgP6ZXPCr9kvjKpd54f5+LwG/zBbYfNL19SFXZQq
-         0aHg6+zp6T9QCh2+8r/RRBpyWxOFZ07ElMSIFjYZkeka4aTtDNFUkOPaWNmGebK9uDWf
-         DydlkUOabfX7v6S2mKE5NfKB2CBM1xjaMFHVLKydICPlY6AfS2oQA/WlDCq93AflPh3s
-         Vk4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVCnkBfFtc95N5e3+aqs6evLzgA3E0vcTaMPvKLIMrFnHddzKEl/3ATnVwy8xWlvsvmx98GaKILmL8axQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOef09yjC7mN/PYGi4fkMOXK2hJ0W5wdkG1p+C843wgq/n7W75
-	Ii4Mv058Zz2dIeAyjcfHbyrVUg5Gbws9TYYhSnA9ztz/zdZust+XMNN/Zw64OWot5UFXltquE8j
-	fABMfLX2x1t2SKQVD8TvasJtUI++ihTPuhMaj
-X-Google-Smtp-Source: AGHT+IFw0j5SlfzJrOxUT+ehixWHMOE6ne2a3tGOBDku0BVzObIQKN02nnM2qnlMirn/Y4UEd44sY83CtZa0FIYA7k4=
-X-Received: by 2002:a05:622a:30f:b0:447:e0e1:2a7b with SMTP id
- d75a77b69052e-45661e33c0dmr320571cf.23.1724699260988; Mon, 26 Aug 2024
- 12:07:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724699274; x=1725304074;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tmtnEYFG7LM3Rww8xbnrxCDknQ7Ml6u6NmRWdx1EeJ0=;
+        b=gKo1vKgHp8010l25VMBQoYF8i9LrllKbjEWALNN4Void/hp3MUasHqWzMp4+NgSZqZ
+         aPO72CsS+R+JLvynLOK1FHKUl81wcZl1X+6MEd2sHFT3BAL4Bvw4uH/L3WorwaqZedpS
+         vnkQ8mU3tFwV3YpbjkLXfgJ6p/CFir6QU2KgVFPI/Y+huRGyH/ovB0fiCNPqMWvzPDM+
+         XVXhBeAc40OjdXd+2GOjwoBxo1xFQI7LzYmP19ZrZw4FnAEImnFkokCK98Dj/a7qxYzc
+         EM44ad6sUyh0ToSR+78UrYb+NZDZ/kfad48IKldkFBWtIu9dfoGv9EhbzxQrOY8Q0tzO
+         e7JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLolmNwbTmNbBwWjukFwCxx0tWBiRH5Cbp83azSiL3yiAZCuU2Sg2tbnsp1xb8bMCj9eE8gH0AoG36LRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw75Cad9nNTVX/6qpBVr56oaKzxkVKQZwUuQ1wgg+QQklNDgrWs
+	l+cDfczXBZRL0t8/jYq2Y3m/SRKpM7o8I+TXyxCDyR5KFlAPXybCc3OIXtRy
+X-Google-Smtp-Source: AGHT+IHKHKsFx9fhD9tunI7iX3r2A+7rNFND6+T/z9N90Q3ttvn7hbDydR2wPEnuEz4MjM5Whd/6XQ==
+X-Received: by 2002:a17:907:3f14:b0:a86:722c:1460 with SMTP id a640c23a62f3a-a86a51b4a11mr885047966b.18.1724699273782;
+        Mon, 26 Aug 2024 12:07:53 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8502:42e6:b0b2:a0bb:dc32? (p200300c78f2a850242e6b0b2a0bbdc32.dip0.t-ipconnect.de. [2003:c7:8f2a:8502:42e6:b0b2:a0bb:dc32])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549ff24sm9046666b.89.2024.08.26.12.07.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 12:07:53 -0700 (PDT)
+Message-ID: <e5c1cc1e-f43c-466b-9bcb-8a1c507cdd3f@gmail.com>
+Date: Mon, 26 Aug 2024 21:07:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aa6bde95-68e5-4d94-0ce4-c9a1d90fdcdc@linux.dev>
- <20240825163649.33294-1-hao.ge@linux.dev> <8e052e52-4c8e-279c-bcd4-3c4cd1325bdf@huawei.com>
-In-Reply-To: <8e052e52-4c8e-279c-bcd4-3c4cd1325bdf@huawei.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 26 Aug 2024 12:07:27 -0700
-Message-ID: <CAJuCfpHbgcygtc3j0bstuZbo1QjMkeZJoPBshvrv=6rQkK1WRg@mail.gmail.com>
-Subject: Re: [PATCH v2] codetag: debug: mark codetags for poisoned page as empty
-To: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Hao Ge <hao.ge@linux.dev>, akpm@linux-foundation.org, david@redhat.com, 
-	kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	nao.horiguchi@gmail.com, pasha.tatashin@soleen.com, Hao Ge <gehao@kylinos.cn>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: rtl8712: Fix style issues in rtl871x_io.c
+To: Manisha Singh <masingh.linux@gmail.com>,
+ florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240826185213.9445-2-masingh.linux@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240826185213.9445-2-masingh.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 25, 2024 at 11:32=E2=80=AFPM Miaohe Lin <linmiaohe@huawei.com> =
-wrote:
->
-> On 2024/8/26 0:36, Hao Ge wrote:
-> > From: Hao Ge <gehao@kylinos.cn>
-> >
-> > When PG_hwpoison pages are freed,they are treated differently in
-> > free_pages_prepare() and instead of being released they are isolated.
-> >
-> > Page allocation tag counters are decremented at this point since the
-> > page is considered not in use. Later on when such pages are released
-> > by unpoison_memory(), the allocation tag counters will be decremented
-> > again and the following warning gets reported:
-> >
-> > [  113.930443][ T3282] ------------[ cut here ]------------
-> > [  113.931105][ T3282] alloc_tag was not set
-> > [  113.931576][ T3282] WARNING: CPU: 2 PID: 3282 at ./include/linux/all=
-oc_tag.h:130 pgalloc_tag_sub.part.66+0x154/0x164
-> > [  113.932866][ T3282] Modules linked in: hwpoison_inject fuse ip6t_rpf=
-ilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebt=
-able_nat ebtable_broute ip6table_nat ip6table_man4
-> > [  113.941638][ T3282] CPU: 2 UID: 0 PID: 3282 Comm: madvise11 Kdump: l=
-oaded Tainted: G        W          6.11.0-rc4-dirty #18
-> > [  113.943003][ T3282] Tainted: [W]=3DWARN
-> > [  113.943453][ T3282] Hardware name: QEMU KVM Virtual Machine, BIOS un=
-known 2/2/2022
-> > [  113.944378][ T3282] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT =
--SSBS BTYPE=3D--)
-> > [  113.945319][ T3282] pc : pgalloc_tag_sub.part.66+0x154/0x164
-> > [  113.946016][ T3282] lr : pgalloc_tag_sub.part.66+0x154/0x164
-> > [  113.946706][ T3282] sp : ffff800087093a10
-> > [  113.947197][ T3282] x29: ffff800087093a10 x28: ffff0000d7a9d400 x27:=
- ffff80008249f0a0
-> > [  113.948165][ T3282] x26: 0000000000000000 x25: ffff80008249f2b0 x24:=
- 0000000000000000
-> > [  113.949134][ T3282] x23: 0000000000000001 x22: 0000000000000001 x21:=
- 0000000000000000
-> > [  113.950597][ T3282] x20: ffff0000c08fcad8 x19: ffff80008251e000 x18:=
- ffffffffffffffff
-> > [  113.952207][ T3282] x17: 0000000000000000 x16: 0000000000000000 x15:=
- ffff800081746210
-> > [  113.953161][ T3282] x14: 0000000000000000 x13: 205d323832335420 x12:=
- 5b5d353031313339
-> > [  113.954120][ T3282] x11: ffff800087093500 x10: 000000000000005d x9 :=
- 00000000ffffffd0
-> > [  113.955078][ T3282] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008236ba90 x6 :=
- c0000000ffff7fff
-> > [  113.956036][ T3282] x5 : ffff000b34bf4dc8 x4 : ffff8000820aba90 x3 :=
- 0000000000000001
-> > [  113.956994][ T3282] x2 : ffff800ab320f000 x1 : 841d1e35ac932e00 x0 :=
- 0000000000000000
-> > [  113.957962][ T3282] Call trace:
-> > [  113.958350][ T3282]  pgalloc_tag_sub.part.66+0x154/0x164
-> > [  113.959000][ T3282]  pgalloc_tag_sub+0x14/0x1c
-> > [  113.959539][ T3282]  free_unref_page+0xf4/0x4b8
-> > [  113.960096][ T3282]  __folio_put+0xd4/0x120
-> > [  113.960614][ T3282]  folio_put+0x24/0x50
-> > [  113.961103][ T3282]  unpoison_memory+0x4f0/0x5b0
-> > [  113.961678][ T3282]  hwpoison_unpoison+0x30/0x48 [hwpoison_inject]
-> > [  113.962436][ T3282]  simple_attr_write_xsigned.isra.34+0xec/0x1cc
-> > [  113.963183][ T3282]  simple_attr_write+0x38/0x48
-> > [  113.963750][ T3282]  debugfs_attr_write+0x54/0x80
-> > [  113.964330][ T3282]  full_proxy_write+0x68/0x98
-> > [  113.964880][ T3282]  vfs_write+0xdc/0x4d0
-> > [  113.965372][ T3282]  ksys_write+0x78/0x100
-> > [  113.965875][ T3282]  __arm64_sys_write+0x24/0x30
-> > [  113.966440][ T3282]  invoke_syscall+0x7c/0x104
-> > [  113.966984][ T3282]  el0_svc_common.constprop.1+0x88/0x104
-> > [  113.967652][ T3282]  do_el0_svc+0x2c/0x38
-> > [  113.968893][ T3282]  el0_svc+0x3c/0x1b8
-> > [  113.969379][ T3282]  el0t_64_sync_handler+0x98/0xbc
-> > [  113.969980][ T3282]  el0t_64_sync+0x19c/0x1a0
-> > [  113.970511][ T3282] ---[ end trace 0000000000000000 ]---
-> >
-> > To fix this, clear the page tag reference after the page got isolated
-> > and accounted for.
-> >
-> > Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages =
-as empty")
-> > Cc: stable@vger.kernel.org # v6.10
-> > Signed-off-by: Hao Ge <gehao@kylinos.cn>
->
-> Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
+On 8/26/24 20:52, Manisha Singh wrote:
+> This patch addresses style issues reported by checkpatch.pl in
+> drivers/staging/rtl8712/rtl871x_io.c:
+> 
+> 1. Avoid Multiple Assignments: The original line had multiple
+>     assignments in a single statement. This is generally discouraged
+>     for clarity and maintainability. The code has been refactored to
+>     use separate statements for each assignment.
+> 
+> 2. Prefer `sizeof(*pintf_hdl->pintfpriv)` Over
+>     `sizeof(struct intf_priv)`: Updated the memory allocation call to
+>     use `sizeof(*pintf_hdl->pintfpriv)` instead of
+>     `sizeof(struct intf_priv)`. This is considered better practice as it
+>     automatically adjusts if the type of `pintf_hdl->pintfpriv` changes,
+>     reducing the risk of mismatches and improving maintainability.
+> 
+Hi Manisha,
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+please do just one change at a time. The 1. and 2. indicates that you 
+are doing two different things.
 
->
-> Thanks.
-> .
+> Changes made:
+> - Replaced the original line with two separate lines for allocation and
+>    assignment.
+> - Updated `kmalloc` to use `sizeof(*pintf_hdl->pintfpriv)` for the
+>    allocation size.
+> 
+> These changes improve code readability and maintain consistency with
+> coding standards.
+
+Do not describe so much what you do. What you do can be seen in the 
+patch. The most important thing to describe is the __why__. When 
+possible just use 2-3 Lines in the description.
+
+> 
+> Signed-off-by: Manisha Singh <masingh.linux@gmail.com>
+> ---
+>   drivers/staging/rtl8712/rtl871x_io.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
+> index 6789a4c98564..b81e9b06725c 100644
+> --- a/drivers/staging/rtl8712/rtl871x_io.c
+> +++ b/drivers/staging/rtl8712/rtl871x_io.c
+> @@ -48,8 +48,8 @@ static uint _init_intf_hdl(struct _adapter *padapter,
+>   	set_intf_funs = &(r8712_usb_set_intf_funs);
+>   	set_intf_ops = &r8712_usb_set_intf_ops;
+>   	init_intf_priv = &r8712_usb_init_intf_priv;
+> -	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
+> -						    GFP_ATOMIC);
+> +	pintf_priv = kmalloc(sizeof(*pintf_hdl->pintfpriv), GFP_ATOMIC);
+> +	pintf_hdl->pintfpriv = pintf_priv;
+>   	if (!pintf_priv)
+>   		goto _init_intf_hdl_fail;
+>   	pintf_hdl->adapter = (u8 *)padapter;
+
+If you send in a second version of this patch please use a change 
+history. Description from Dan under:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+Thanks for your support.
+
+Bye Philipp
+
+
 
