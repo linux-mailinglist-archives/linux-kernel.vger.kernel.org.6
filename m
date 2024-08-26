@@ -1,336 +1,422 @@
-Return-Path: <linux-kernel+bounces-300722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC59295E797
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3732295E79C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83228281644
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E702816BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAEE3F9D5;
-	Mon, 26 Aug 2024 04:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C4F6BFC7;
+	Mon, 26 Aug 2024 04:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="bBRMavYG"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2069.outbound.protection.outlook.com [40.107.117.69])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="D6annGJQ"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2103.outbound.protection.outlook.com [40.92.42.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B2B63C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C03E29D1C;
+	Mon, 26 Aug 2024 04:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.103
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724645743; cv=fail; b=mfegQQeTM7aZ7IZfKKPiEn9TzDJpGXYdShmuMz1HqTmSgnJIA2Dj9thOBup/F/Cmjpz9SyMCDlZ8UvznrJeN9ndG2CcTYPjA39Vua01DnLylNoBdgRStJBkKEUwyJ4gWc2Z704OtRhjMcR6SuLBf/0TEgpm3Ypghd4EtVsEYz08=
+	t=1724646018; cv=fail; b=L3UGt3GiRNvMelEC0CN0tfI1TZstqM46tVP6afDgdAc4oRcdmkrk2weGf/4cbyHcPP5oDP9OiFj0+ePazp8YbbmCMhpHWlsooDxDI6SeZBXT+WoTGJho4/iviYlIaGjqSYzlUrpo0j/5uTHN7xxOydqNeCenaeUYRZR8Na4SON0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724645743; c=relaxed/simple;
-	bh=oSa9TiIO5ieFC0QDPXFI6YhIpjl/gFvsLkFsLBGNwfY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=r/OIi/aq8OG31z2MHDWDp2jmjTrYoQYMC8x25GuhWzvnU1FTCSi7cEFHvxNAsEObX1wA+Vom/o2grbdgc8e2F6IhDyYRRFWzFaZ0Uc7aBseefvmZfJzI0jjd+RytCpWqcjjialyZXU9OHOPzbvmoEXGY0CJmB4TmWK6lw7BjdoU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=bBRMavYG; arc=fail smtp.client-ip=40.107.117.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1724646018; c=relaxed/simple;
+	bh=4AacLi742qpBVqTABypB/sWRTOJcVTdfUnXZCbiDhto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LbsezirKnuwaYmIZvatkM+XeyYkxNTAK22kC8gEoIQFHEFv21hIlkv7xhdzNSV6Js1qvd5I34VcV6ygy+R6FISAlShIGq2usoHcGLOA2lxf9p/hxOeKZze1AVTUbEhpNboMm2lO8/o5Q6T+TxdTL/N9P1lX/5o0lBgUlOSnu4pc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=D6annGJQ; arc=fail smtp.client-ip=40.92.42.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iELGpS6Dud8Tma2+OOpeXYffPz9fKXleFgshfBkpAx2tV/mKutonVxICPvgxd6wHXr2b8BDDNJEdyqs2ROdyhh2mAm5qvPtK6BbElI+s3z6av2yu34+pQohO+Je0HMncFvm+v0qCtt0AvpUEp0w54cmNzcUGppoA+Zm5tcbCRDVzfDixoWmYLW2CoMo/sVwBGDloHVN/dt2c/h5chtXu3AJq2zEXCZJeMWlryrInHA1P98uvLcTQMGDN39vrF7qqdM5yDzKtJL/TxwhaWwPCxFyOf34MtfVvmvLyZjL41fBsJLqCt/0B3FFjtxMBrxKsCRykL0N2fE4gmvpfIm4atQ==
+ b=r1s4ndr+W8w9TWJacnx6HREKEwZfIjtvOkFwHHmO5mxJsNo/tC3SIu7pUZ6TAFCbPru4zURl6XNpXeEmHHB25GeWZICBp7ssC2JM6H+Uq7W2Ii+AjoXdMUiPR2Fn9uZ/JJDZIaq5IVHvjsh5aC5tlb1QFsP5C0/iha8c6GnUNa7sUvpCsU0wrKZ0CzHNd1VSA6hflOYvYP1UWXv4A/RtH760HiTuBtHO9lco4UcwLypCCwVGLM2A4wXqp3hm45pKbxFpQ0veb+Bh0rgc0rRXK/HAD983Z5MgnERUotJQAHDUXgOGdk0aUPUR5CLLBkECyiZ91aqPBkCcsLyD1TZhgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fty+S6sOpZLqAM30Aw+mzb/dI+fxel/mqyQKnkNLuVw=;
- b=MMPA1UQzQYWkCfF4BY/ZHF3eVOW58hbefdKnB2PtIKqcWOtS9zaFzCpCfYUZy8cFTUEGLGbwTcmDy0nLWq+kogtAQe9WwM4taiHbv/PrOd4BkPdoMtOTMHYO1mtdMO7X3gik6PPlwY/Bc/qgWoUo/gVX+wAt/zwtLuBgj6u3pBXHSsGAZxxVI7Dq+J1BnfheXfR0nFrVXzbiLqRtJ1SVmGM5Cz8Dqyshj/TdoIzo1CmBGhqKE898nxpbYY2GToocVjm6eoV/FJVemnlBKMAyF1Zx336MZ2RVmsc6sEwyH/o8Bot3MOhtG23ZJjv447yXYlMrf5SWk4gcM0wu7Z6cCQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ bh=tgv13swBROrvtt2K0/AmRRzN+36aQUlXboWJS2ADr/w=;
+ b=yC1L5wD6SGoq172CTxxS3loVbwcO+WjfWUtEmHT7Nh/yhkhZ+h4mzlI3UDItPcaShEpgOTEe/yLyuwTARXyWDEIr8ow8G59AXr3Febj6S78AOcM0jI0oL99b867IxVJzqb35Bsvn6oZTH/Bc0bu5mZUj9M9qL9wY1UK8UPTjwogdklS3Kg+xjsdfGyp3rjlk1jy9RN4J/CkC7EiqWVSNOEabuJuge69IvDbLPwWuBI6VM6dkVqvXpJV8se599q2ORccYrF3OUCjjkrtaP3bxjlinr8/c+9Pim/DaFzwRW4UNHZWzipNAAyx1+Gz3IaoNlslCY/t0vFHl+yTKQTGJuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fty+S6sOpZLqAM30Aw+mzb/dI+fxel/mqyQKnkNLuVw=;
- b=bBRMavYGJbO0lC7By7H53Jn3+V+DTFmHvnrooq9OTFmvSluAsv4QJbB4bNlPPQoUvneoSBmnQov+uMSYPe9SnrQW9KYL9X0jd9pHvboNOBns1zqR/PLHue2byR4JwCAkE67yAk3qn5eC+VwlYca2b9ddyH41K2CTLRaBaSps46KqPSxvuO+rCYuESXeIutXwsIFTRlFSHurcJ7ItHwa27jx13mLXQaSN/51piYgKROiUa+F2pZwXHMP2yHgrbpEYYOAUuYNx+Epu0OSBY8RSd0yUztl2s0UL+lfP0R8QZGW37nUiIk+a8WtJ/jNGrp3/onj8SoH6PiWHgTzG4+lMvg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEYPR06MB6252.apcprd06.prod.outlook.com (2603:1096:101:c5::14)
- by PUZPR06MB5498.apcprd06.prod.outlook.com (2603:1096:301:101::14) with
+ bh=tgv13swBROrvtt2K0/AmRRzN+36aQUlXboWJS2ADr/w=;
+ b=D6annGJQt+lfCAJPVQN0RWWaE18Mg1Pjqlnf/K9RKGaJ3V5VIz+vZS+LjQgjPUnOkRSO1EUtRBEvLOkBRFLS1Sw8GRQ6PIKxSGV9+oBdZ8e+XzVnWovWrDv0wqkFv6GB7AhLxJw5gKaztwtnp+ANg5m7a4YT4vUkxMexkSEEBgK0NsDjoSBvWtlqlTztSamgyP/Q4EbJKlTqiZLWx7gocovN6XBTZdb15szThYoTxLSUaZCpNDBDDRQ7shL6u4flPompDbfw296m5rwBQor7EFaUFXPi9Lhw/zs9f7PpcrYGLdUwHkY8/Tey/11oXTBPoPM364iF7czrsX5IUfv7bw==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by CH3PR20MB5601.namprd20.prod.outlook.com (2603:10b6:610:153::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 04:15:34 +0000
-Received: from SEYPR06MB6252.apcprd06.prod.outlook.com
- ([fe80::d2f1:960e:a2e7:406b]) by SEYPR06MB6252.apcprd06.prod.outlook.com
- ([fe80::d2f1:960e:a2e7:406b%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 04:15:34 +0000
-Message-ID: <a57b41ee-e2ee-42e7-9c2a-619202648fbb@vivo.com>
-Date: Mon, 26 Aug 2024 12:15:30 +0800
-User-Agent: Mozilla Thunderbird
-Reply-To: 11162571@vivo.com
-Subject: Re: [PATCH v3] fix up the misspellings
-To: Kenneth Feng <kenneth.feng@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240826025522.1474757-1-11162571@vivo.com>
-From: Yang Ruibin <11162571@vivo.com>
-In-Reply-To: <20240826025522.1474757-1-11162571@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0291.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c8::13) To SEYPR06MB6252.apcprd06.prod.outlook.com
- (2603:1096:101:c5::14)
+ 2024 04:20:14 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 04:20:14 +0000
+Date: Mon, 26 Aug 2024 12:19:12 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Yixun Lan <dlan@gentoo.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, Meng Zhang <zhangmeng.kevin@spacemit.com>, 
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-binding: pinctrl: spacemit: add documents for
+ K1 SoC
+Message-ID:
+ <IA1PR20MB49536CC76EFDC406497844D4BB8B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
+ <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
+ <d9a925da-2381-4203-a3b6-4cb892039d23@kernel.org>
+ <20240826013230.GYA22924.dlan.gentoo>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826013230.GYA22924.dlan.gentoo>
+X-TMN: [48Bz8OWHKZftLwFWRNw5Y31Cm+orL93KULuGo9xKN5I=]
+X-ClientProxiedBy: SI1PR02CA0057.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::10) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <tehvpxdjiujj4uv4lrnh3lqtallck6kwstvcgkdqf7snelofw3@ix3bmm7avc5c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR06MB6252:EE_|PUZPR06MB5498:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3c7feaa-9958-4dee-9ac8-08dcc585bb18
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|81742002;
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH3PR20MB5601:EE_
+X-MS-Office365-Filtering-Correlation-Id: da8649dc-f6a7-4c50-a708-08dcc58661d1
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|461199028|19110799003|5072599009|8060799006|1602099012|440099028|3412199025|4302099013|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RXZUUVp0QUZzMUNaMk1vWHJDamhPSHBFNXd4bGs1VEN0RENQSEpqSFBGVU9o?=
- =?utf-8?B?SDk0NHFScm5mQTQzck92Y1hXYldwRjRzYldXeEJNTy9lSVBnbWNja0VYOWFn?=
- =?utf-8?B?eTZtWHM1NlhFNXJKS1pkR3luNHhaTFRhZnk5ck8wbjFFU2xLdnBGZTBqek1q?=
- =?utf-8?B?aXRPSmZWN0dHNGZjUzYwTUdZV0FwMnoxZ2xXOWEvR1l6T1VTQnpFTVRJL3Yx?=
- =?utf-8?B?N3p5dm4vTzl5a3JyU2h1RHdDK0d3SDJ6VDhUa3dWcUlodHB5dUpxOHpUNTZt?=
- =?utf-8?B?aUI2em0xeXVyaHc2aTVGbXhxUW5nMGJNYlgxdXFyaEFDa1ExVlNaQjdtdTV5?=
- =?utf-8?B?THdDM2kxN1dxOHNqcjJvenFSV2pQcjZxeDg4d3NJZWUrRTVXMGZzZGFoZzd3?=
- =?utf-8?B?WjljQ3VsNHhIVFRIOTBVV1UrMG1adzRyV2htQWUvamNnekZZSkUwVGE2emIy?=
- =?utf-8?B?ZGx6NDJHN3ZmM2tIQTJGWEtQS1hvUkYvK2pkbXhCQjY4N0pMRHZZRTFseld3?=
- =?utf-8?B?RG5ZM2dXRlFVWDdQclpiRVR6VHAvVlhzOHljdXovSVpMdlFPQktnWTI4WTl5?=
- =?utf-8?B?VzltWFN2cmhDWG9jRmNuUTFDUDBlZVlTVWovNHArR2RoRDZ5dFU0REpaaFRJ?=
- =?utf-8?B?K3lZdnVCVVFEMlZkUnZpME9rb0lEdlFnZGF2Mk1xYUJnSG05a2Yyd2hhaFlm?=
- =?utf-8?B?WE1PMHArbjJabXdrUkp2dkJwTUFmOEU1YitsbVRxMmJlSHE4U2EwM0Ruc1NG?=
- =?utf-8?B?cEZVUS9zQ3pzT1IwUjlaTWFHTGloM05IUGVLWUFrem1oWEo1cmlVNy91cmlB?=
- =?utf-8?B?VmtwKzJBRUFzVUVCTjB2UGRxYXhyMXFFS3lZZWhEekNZOVVWaWduaW5OQWk4?=
- =?utf-8?B?SkJwWXcrTFZYR2NCRjFpSW9WMWRrdmgzREhQdS9lcTRhWmxJQVdIM2RrMTgz?=
- =?utf-8?B?eG80bXhUdmRVZUdnSHlrRE9wT3FFZldNZTFaYUN6MUZnV2cvMThOenVDUXlq?=
- =?utf-8?B?akVJdTZxcXE1bEFHb2k0a3NZUGRsUExaRHZGWjdMTG5qOHdYQUpjRHg5YTVU?=
- =?utf-8?B?NTZBdWJ5d2hneTZNZ2JBU2IwQUU4VEg1cFRaRklXK3poZTJaSW1YK1o5d2Nk?=
- =?utf-8?B?NlcxTGlONjdPclN4bmZUb3ExczNrcXkzdU9TeDFLZ0dOaFZPaHZ6YUlQZWdP?=
- =?utf-8?B?Y2lLeTdHTzYzdWxwd2ppRkJOUFBYb1FyMXEzM3R3VVVpQWdwY2pOOHN4Zmp4?=
- =?utf-8?B?OHUyWEJSNTVOSCtTbm5GZVNjWmNSQjdMN09WSFk3ZWpKMW9XelNPSmVRRnRW?=
- =?utf-8?B?MzdLakp5YlJTME1HQXlwbm1GOHJoR3NHNUY0VWVJYUNRT3JmK3F4N1p1U0g1?=
- =?utf-8?B?SHdmSmh1V2hYOEVvN1dIalQ1c3J6M2NsYUxkTEJ1SCtYQXlxeVVBWnQ5SGln?=
- =?utf-8?B?RDRpaEJwL2Y1UnRsaFB5c2RJZGlzYWlIMFlUblJsTkRiSjhGbDFqS0RDcTlF?=
- =?utf-8?B?SWVKa1lpaC9sb3pwQVZhYWQzZ1I1L0I4WkZCWW5ZcjhZclB3NEFFMVBKdkxJ?=
- =?utf-8?B?N3pldGRETkF6Q29SR0szVmVEZjkxTjY3Y1VMd1ZCcDVienViSkx4cHRzWUts?=
- =?utf-8?B?SWxUbUJ0T0UrZXVoQ1lmSW0rcXhCNTk0ZnNmWlBSZXl5Wi9CWFhNNE8xZHBi?=
- =?utf-8?B?czg5OXdNTXA4TEpUU1ArRU90eU0ya0FjL0NHQnJlSUdSdDFCUDVqME50VVdE?=
- =?utf-8?B?VFNTeElnQ012c2xjQjE0NFRkR1FiQWJEWTlVSlh6bncvMlZFcWhYaHZXblU5?=
- =?utf-8?B?b2V0ZXExQ3ZvalZGUTRYVGFSejF1NElibDhDWm0xb0F3OGtUeE85cnFvZFV1?=
- =?utf-8?B?Vm54T0J3WVJCNUNkWXF4eEs2SXlSK3RzYzJhL0IraTE5T2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(81742002);DIR:OUT;SFP:1101;
+	8hPmIElNXARasoSZyZ7QIXppIgsIK7O0CCbYBsdSUzIQvfBl3YMPxQubgeHRzi1xfzkCpGWcsK+i6QkMwHvKReDAG95XZkjL9hbJfCNy4qkpz8FW7eTlxertQrZT9MFSiNuOJ9spTc5CeIKfC6IKwHgVXghvHq9pbI3PX/FS6vHG+TxlmzJ0ZVV4FL186UTcnuhn83mg4cU8uqZVfFBjyAs5MOgTe+gGWeXNlUSmlSG0+mdERIaacw0bGW9+ITIyNxKWnYjmi1NoAJyDJAmCVGUW84+gypjf+NTV7R7f8qfvAsLWerwAuVkVLw1LvMljot3pf6G3AOXkBWDLPAJ1NdTEjjtapcYq7vOot8CafhFGKJCUfwBl1ftvUpV18kU1T7U64L9A2cJawb9v/aylcMaNDDg18Rmnztj1EO2xPft//6m9vwWAUTYLSQ/ivb5/1kHSf3Eq9rmMlIRegr5tGSKsg/bd9pODACuuuamIIGCizCWWqrD2y5hx9Y/P5R7uArpkpRHGxRgjX50JIszCpE5V3mnLX37r0GuOXNCxO1FppQJ3xoOzl8kIu0iohyh6jaM1yyIbR4xk67zf8u+NnJN9ohKv4oW7MqFZZHuf8WvI9UUkf6B0oneEgeuYbF1v/WCnAB6Hiqyu77YeTs99xc1I80kLomnDQ0K67jZgflRHUk0GooqZX6p7x1eOs/7gndUFDRReZQA5On5YKuAn1qIFkzssWoKWQ23LanuCdA1VeambiHbImnjE381srxhzAgDRFc/Hvw4ypSrQfhYrKlykWwvV0zPn0TYeBA5YzuzYIaR/5dGgSQP9BzEZFDqzjSxj85kLNIfK3DvzAki8HWpUtVJFsX6laCYeTg+4njE=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RVRmbDl6UkQ4dEhXNElLMThxVEFjMjYrdDRrU0tzZytCTzA5RlNKNWVNbXV0?=
- =?utf-8?B?UmJtM0FiNDNZMlZxVVIxTTVuSW1tQitxU0hpNDlJQ2VxV1RzTWZlT1kvMXM5?=
- =?utf-8?B?ckR0bWN1VFlmTGE3aXd0RHJLOFNFQy9mSm1TUm5qdDdHUnBsSEV6bE9tVm9Q?=
- =?utf-8?B?RVZFaTZNNUZ6cUtuUHFDckJoWjRvNkJnWkloYTdNdXJ1OWdCcFYrdjBwNCtH?=
- =?utf-8?B?NFF0L0Z0K0lndFAzT2llSlVNS2xYTGhXdFpDbXlLMGRPVXI4Tjl3YVBTbVVa?=
- =?utf-8?B?QXVSdERBVHUzZ2MzU0Q0V0ZOZkJiTTdxVzUyZTVWZ1lEaXJXMkU3amo5NW1F?=
- =?utf-8?B?VDM4U3RlTXVHVTN1dmFhNVBlQXk2ZmRlYUM2cHZWU1dmNnBsVW5FN1BpeTYw?=
- =?utf-8?B?c3cvU0JnU1VWVDUxaUN2ZjFBUWNEMVV2T1BjTFVyMlFYUGR0cFBwRm1wUUJN?=
- =?utf-8?B?bXVoZCt6UXlKRHROS0hHdkt1aDRuT0FDMy93T29uTmdyV09IVWdCdnEwZXZN?=
- =?utf-8?B?MmRYTUxraGZnL1NOeGFDaGpuQjVRajJGWHlkdnQxYkpOOVVxVDNQYmM0ZXJD?=
- =?utf-8?B?Sm9FaS9XVGNCTjFGT1NNeTE1c1RiZ3hSeGh0TmdwRlBpS2MyZm41b05KRGVF?=
- =?utf-8?B?Y0JXWEQzTjRneEdlZ29PMEQ0MWlXVmtoYWRwVVQ1VDNSRTBWRWxldGNYNEhv?=
- =?utf-8?B?Y00xRzNKMVh3VzdVVUFOaVJRdWhkWDMxT1Vva1Q3VC9RRG9yUjNiQVkwVDJQ?=
- =?utf-8?B?RXlkYlN3bCtEdUVLV3NYVnZKeUtBRGVpYXY2bVIyWjFJQmJOZGRrYUoxam5T?=
- =?utf-8?B?S3Y0aWJOT2JOWlRhNFNLNUgzTy9GbncyR21iK3dtZ2FvS1hUbE5YYVJmRVFU?=
- =?utf-8?B?ZU9wMXhEWVhReWVaTmhtVXV4WHNQZ3hFeWhHL3N6TE1KS1VkQWQwektVWHNz?=
- =?utf-8?B?clJEQXIvRnVmaG5XRkpBVXFnNnhPMWdaNERqYTV6R0NJQ3ZtQnkvaStHL3lm?=
- =?utf-8?B?ZHBXL0k4ZDdRMGlYYzFYdy9VOEJ2QWl2RUd4MndjSTVKZzI5SlA2bFVzZkky?=
- =?utf-8?B?RUNlK3VEUWl6VEd6REVEZ09PWjlOelA1VFEzYTRkc0VpTm9OcmswM3ExQXJL?=
- =?utf-8?B?UnZpZEFLTlpScnBmamsyMzhoZCt6TVZ5OXJmVkFKa2RQRnBNYXVNSVBWTGZK?=
- =?utf-8?B?VlFHU0JTVm95amZ3aTRNZUZodXd3L1dHVkI0UFBLMGhDM2t0bjBFdVRQY2xQ?=
- =?utf-8?B?aS9qZHpWYlNQaDVGc29WVDI2Nkx1OGFrejNuMGgvNFE0dWFnVllNZlZPcnVO?=
- =?utf-8?B?VFo2R05qQlZvb2lVMjZySzlISWdDRm95eVJRc0NwcDU0TEVzVmZ0dVhFd2Fy?=
- =?utf-8?B?aGFnb0VUcFRiWjVjTFBHaXhHcGlnV3MyampUalZOSVZJMDdNL2d5eStSVzZT?=
- =?utf-8?B?ejZKZmU0bklQZElMMVMzSm5HTDg1bkdSc3NGMStCR293MUZGYmJQNk9BNFdM?=
- =?utf-8?B?WkdEbGhzQmpqMytJcGhwZWNyMmdleXh0TlJMZDFPRjU0d3FxQlRjeXlKbmhX?=
- =?utf-8?B?bEQ0OGJ6Zk5icEZxQlJWVUdqM09iK3JKZmRERThvc2lIS2J4SUJJZFlXV2VZ?=
- =?utf-8?B?YlBVeW9JQzd6QkFQSXBBY1ZvR2lBMVY1NHpHYmdDWUsrZm43ZVFyN01IWUll?=
- =?utf-8?B?c3Urc0h4QnNSQ0FvOXdpc0g0ZkUyTjcwLy9Rb1JlY2NMVjRJQkY4TFBpUUJq?=
- =?utf-8?B?SVpqM3Zub0w1Y01ITjI4QXNLYlF1NUlUUWx6aGVRNEk4dXFQYTJYT0pmM1N6?=
- =?utf-8?B?ZGlLKzk5S0Fjb0lTcmtCUG9yRWY4R1JJZUxiQU5iWjd3WFRJeUd5SkRQMVdR?=
- =?utf-8?B?RmpDSHorc1NDVzB1U00zbit6QjFWWVlUUm5RSzFPU1ZSR2MxOTlhSVFkZzFB?=
- =?utf-8?B?cFcyWjNITFl6OGtkUjdRRVRtSnZtODRsWG5reW1WLy9iOXNwOTlHUW1NZnhz?=
- =?utf-8?B?amdZbldzVEgyajVGWDIra0YxQ0cyWEtUSTZSM2FOcHJYbXJ1N0NEUW9rd0FO?=
- =?utf-8?B?QkZwcGNhbTJPQktBeWhLaXc1N3htYVhCaFdDSFlVZGc3Y2ZzenJCbW1qNHFW?=
- =?utf-8?Q?uKwltoisQCFy/V1WYSkaWSgZL?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3c7feaa-9958-4dee-9ac8-08dcc585bb18
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6252.apcprd06.prod.outlook.com
+	=?us-ascii?Q?TQ567y7kYYAtf3umW/oXdIHl4EvL6mmsfY/zZtkqHAk5graCStBfNKx8hofC?=
+ =?us-ascii?Q?FUj+z8mCPsGAN9IrFPitctsDXd4usEIFp0AI6wT8p8A0/3lNfWCwBeytEswE?=
+ =?us-ascii?Q?YLRCl5gyYAcHm7mnK92VU4kxLu0OBlNuLerlBlCy9wuZTVGaJKL5C2zmJBLl?=
+ =?us-ascii?Q?F91/L3PFZAwsPLR28j7Ka3KePr5CbvyKrDigB/AJ5iOnepTV3naNw0OSRiqB?=
+ =?us-ascii?Q?mbo2z1+Z85MAROEgdIL6hKEOjk9DHOqLYsC/Y21XOk4fvVS3pRuxMxkVhKY6?=
+ =?us-ascii?Q?boSACaUznGjrbHCbdmjIyaZJtyeKQCK4ifULTkWeJcSOMZ88kzaKxQ9toMU8?=
+ =?us-ascii?Q?3j2EgXx/u2LrO/fKO7/o3dmuS41vX2t73xOS3VH7TMUUi+7cCf6YedtxNmQ1?=
+ =?us-ascii?Q?f7xosBBIZa8LW2IbAxGvtvB6WL8pcUU/idPvHVz03AICkq/KkaP4yVZSaJO2?=
+ =?us-ascii?Q?FD4NVnuJvLdkVB2Qqws+PP+PACotNzIqh8G03BkLHecjK+7wNLzk6n8FfHHA?=
+ =?us-ascii?Q?7HQuYdBBwZtTVNzcpmBLXVCnE/tkqPjTcpgCXdDakUaQDco0xWqgVYgwkUey?=
+ =?us-ascii?Q?ysU9ZIDFSpc1prczeJBxVwsAlMmNxzew5EN5NFtdJDBfb913NqnLExxM7YfK?=
+ =?us-ascii?Q?SuoMtIFivZ6hWlSJGepTICG808buouCm+FMhwagObJC2FeuLFjRBDwNGEKr6?=
+ =?us-ascii?Q?bQudUMs5HX3Rb7bQKKEL/pQSFsA36XmGeJeuBX2i7ztY+CVEx6bFU4iqzDf2?=
+ =?us-ascii?Q?7PVcmW/bytUuKQ0jW0++zRBYws/PKPj9kuu+Rc7B7hF0McJE7yZVzg+g3AhB?=
+ =?us-ascii?Q?fIwSZnw0N9OrhRopnUSPA8bWsmo76JAMgiPyHMAU7y4Ppw9V5BhNr0vkmGFu?=
+ =?us-ascii?Q?iEh/4YBSXLUoMozqeU9O8JZobVDYg2JHzLvh23iU2wNMFUUEIkLgb8HJYPv2?=
+ =?us-ascii?Q?9Hp8LO4c1vjdhy2nI3DwemCO4YvxSqVm0Ozl5KZ+bD3r8HGd+rpSxRUoR9aQ?=
+ =?us-ascii?Q?UW6TiFPE9yMJImHMlLEMcb4r/IZzM7/X2nDDueUd9We328IloyHRRPr+aFf9?=
+ =?us-ascii?Q?VVciOyHrtSrB5ebamMY3gLSmoruU3C+IHiifSGUnllbavbLYhlZdUVtmxxCz?=
+ =?us-ascii?Q?R33PE23Su63HjNm41MlqwneZOwWFWD6Olpn7fBF3WHHp6Dm22NMnkttPc7oE?=
+ =?us-ascii?Q?XDvLTUY2CIA2LSgg8t2aG3n39pyV4aYJvmDRsJP5hxT2prxHoJbAcc8zPl7L?=
+ =?us-ascii?Q?hCy7bFRT0FG7HeljX312?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da8649dc-f6a7-4c50-a708-08dcc58661d1
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 04:15:34.1641
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 04:20:14.1294
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CY9cA9FjMRStIZyTFHM8zGuJ4tMgocvJ/iZUxHvhZBECwY1hiaNF+o8MbTAeU8dkgFPOtdrAFebqgSPGESNdpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5498
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR20MB5601
 
-Sorry, please ignore this patch for now.  As the wrong subject line.  
-This patch will be updated later.
+On Mon, Aug 26, 2024 at 01:36:35AM GMT, Yixun Lan wrote:
+> Hi Krzysztof: 
+> 
+> On 15:48 Sun 25 Aug     , Krzysztof Kozlowski wrote:
+> > On 25/08/2024 15:10, Yixun Lan wrote:
+> > > Add dt-binding for the pinctrl driver of SpacemiT's K1 SoC.
+> > 
+> > 
+> > Please use subject prefixes matching the subsystem. You can get them for
+> > example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> > your patch is touching. For bindings, the preferred subjects are
+> > explained here:
+> > https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> > 
+> > It's "dt-bindings:"
+> Ok, will fix in next version
+> 
+> > 
+> > > 
+> > > Two vendor specific properties are introduced here, As the pinctrl
+> > > has dedicated slew rate enable control - bit[7], so we have
+> > > spacemit,slew-rate-{enable,disable} for this. For the same reason,
+> > > creating spacemit,strong-pull-up for the strong pull up control.
+> > 
+> > Huh, no, use generic properties. More on that below
+> > 
+> see my reply below
+> 
+> > 
+> > 
+> > > 
+> > > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > > ---
+> > >  .../bindings/pinctrl/spacemit,k1-pinctrl.yaml      | 134 +++++++++++++++++
+> > >  include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h  | 161 +++++++++++++++++++++
+> > >  2 files changed, 295 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> > > new file mode 100644
+> > > index 0000000000000..8adfc5ebbce37
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> > > @@ -0,0 +1,134 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pinctrl/spacemit,k1-pinctrl.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: SpacemiT K1 SoC Pin Controller
+> > > +
+> > > +maintainers:
+> > > +  - Yixun Lan <dlan@gentoo.org>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: spacemit,k1-pinctrl
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: pinctrl io memory base
+> > > +
+> > > +patternProperties:
+> > > +  '-cfg$':
+> > > +    type: object
+> > > +    description: |
+> > 
+> > Do not need '|' unless you need to preserve formatting.
+> > 
+> Ok
+> > > +      A pinctrl node should contain at least one subnode representing the
+> > > +      pinctrl groups available on the machine.
+> > > +
+> > > +    additionalProperties: false
+> > 
+> > Keep it before description.
+> Ok
+> > 
+> > > +
+> > > +    patternProperties:
+> > > +      '-pins$':
+> > > +        type: object
+> > > +        description: |
+> > > +          Each subnode will list the pins it needs, and how they should
+> > > +          be configured, with regard to muxer configuration, bias, input
+> > > +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+> > > +          slew-rate, drive strength, power source.
+> > > +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> > > +
+> > > +        allOf:
+> > > +          - $ref: pincfg-node.yaml#
+> > > +          - $ref: pinmux-node.yaml#
+> > 
+> > You are duplicating refs.
+> ok, will fix it
+> > 
+> > > +
+> > > +        properties:
+> > > +          pinmux:
+> > > +            description: |
+> > > +              The list of GPIOs and their mux settings that properties in the
+> > > +              node apply to. This should be set using the K1_PADCONF macro to
+> > > +              construct the value.
+> > > +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pinmux
+> > 
+> > Hm why you need the ref?
+> > 
+> will drop it
+> > > +
+> > > +          bias-disable: true
+> > > +
+> > > +          bias-pull-up: true
+> > > +
+> > > +          bias-pull-down: true
+> > > +
+> > > +          drive-strength-microamp:
+> > > +            description: |
+> > > +              typical current when output high level, but in mA.
+> > > +              1.8V output: 11, 21, 32, 42 (mA)
+> > > +              3.3V output: 7, 10, 13, 16, 19, 23, 26, 29 (mA)
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +
+> > > +          input-schmitt:
+> > > +            description: |
+> > > +              typical threshold for schmitt trigger.
+> > > +              0: buffer mode
+> > > +              1: trigger mode
+> > > +              2, 3: trigger mode
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            enum: [0, 1, 2, 3]
+> > > +
+> > > +          power-source:
+> > > +            description: external power supplies at 1.8v or 3.3v.
+> > > +            enum: [ 1800, 3300 ]
+> > > +
+> > > +          slew-rate:
+> > > +            description: |
+> > > +              slew rate for output buffer
+> > > +              0, 1: Slow speed
+> > 
+> > Hm? Surprising, 0 is slow speed?
+> > 
+> from docs, section 3.3.2.2 MFPR Register Description
+> 0, 1 are same, both for slow speed
+> https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned
+> 
 
-在 2024/8/26 10:55, Yang Ruibin 写道:
-> Hightest is a typo. It should be highest.Please ensure
-> the consistency of variable naming.
->
-> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> ---
-> Changes V3:
-> -Updated the ignored misspellings
-> ---
->   .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c    | 16 ++++++++--------
->   .../amd/pm/powerplay/smumgr/polaris10_smumgr.c   | 16 ++++++++--------
->   .../drm/amd/pm/powerplay/smumgr/vegam_smumgr.c   | 16 ++++++++--------
->   3 files changed, 24 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> index 5e43ad2b2956..e16efc44df88 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-> @@ -1014,7 +1014,7 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	struct SMU73_Discrete_GraphicsLevel *levels =
->   			smu_data->smc_state_table.GraphicsLevel;
->   	uint32_t i, max_entry;
-> -	uint8_t hightest_pcie_level_enabled = 0,
-> +	uint8_t highest_pcie_level_enabled = 0,
->   			lowest_pcie_level_enabled = 0,
->   			mid_pcie_level_enabled = 0,
->   			count = 0;
-> @@ -1054,27 +1054,27 @@ static int fiji_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	} else {
->   		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
-> -						(1 << (hightest_pcie_level_enabled + 1))) != 0))
-> -			hightest_pcie_level_enabled++;
-> +						(1 << (highest_pcie_level_enabled + 1))) != 0))
-> +			highest_pcie_level_enabled++;
->   
->   		while (data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << lowest_pcie_level_enabled)) == 0))
->   			lowest_pcie_level_enabled++;
->   
-> -		while ((count < hightest_pcie_level_enabled) &&
-> +		while ((count < highest_pcie_level_enabled) &&
->   				((data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
->   		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> +				highest_pcie_level_enabled ?
->   						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> +						highest_pcie_level_enabled;
->   
-> -		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +		/* set pcieDpmLevel to highest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
-> -			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-> +			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
->   
->   		/* set pcieDpmLevel to lowest_pcie_level_enabled */
->   		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> index ff6b563ecbf5..d785cc6468ef 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/polaris10_smumgr.c
-> @@ -1050,7 +1050,7 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	struct SMU74_Discrete_GraphicsLevel *levels =
->   			smu_data->smc_state_table.GraphicsLevel;
->   	uint32_t i, max_entry;
-> -	uint8_t hightest_pcie_level_enabled = 0,
-> +	uint8_t highest_pcie_level_enabled = 0,
->   		lowest_pcie_level_enabled = 0,
->   		mid_pcie_level_enabled = 0,
->   		count = 0;
-> @@ -1114,27 +1114,27 @@ static int polaris10_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	} else {
->   		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
-> -						(1 << (hightest_pcie_level_enabled + 1))) != 0))
-> -			hightest_pcie_level_enabled++;
-> +						(1 << (highest_pcie_level_enabled + 1))) != 0))
-> +			highest_pcie_level_enabled++;
->   
->   		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << lowest_pcie_level_enabled)) == 0))
->   			lowest_pcie_level_enabled++;
->   
-> -		while ((count < hightest_pcie_level_enabled) &&
-> +		while ((count < highest_pcie_level_enabled) &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
->   		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> +				highest_pcie_level_enabled ?
->   						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> +						highest_pcie_level_enabled;
->   
-> -		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +		/* set pcieDpmLevel to highest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
-> -			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-> +			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
->   
->   		/* set pcieDpmLevel to lowest_pcie_level_enabled */
->   		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
-> diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> index 34c9f59b889a..3e73f380a591 100644
-> --- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> +++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vegam_smumgr.c
-> @@ -878,7 +878,7 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	struct SMU75_Discrete_GraphicsLevel *levels =
->   			smu_data->smc_state_table.GraphicsLevel;
->   	uint32_t i, max_entry;
-> -	uint8_t hightest_pcie_level_enabled = 0,
-> +	uint8_t highest_pcie_level_enabled = 0,
->   		lowest_pcie_level_enabled = 0,
->   		mid_pcie_level_enabled = 0,
->   		count = 0;
-> @@ -925,27 +925,27 @@ static int vegam_populate_all_graphic_levels(struct pp_hwmgr *hwmgr)
->   	} else {
->   		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
-> -						(1 << (hightest_pcie_level_enabled + 1))) != 0))
-> -			hightest_pcie_level_enabled++;
-> +						(1 << (highest_pcie_level_enabled + 1))) != 0))
-> +			highest_pcie_level_enabled++;
->   
->   		while (hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << lowest_pcie_level_enabled)) == 0))
->   			lowest_pcie_level_enabled++;
->   
-> -		while ((count < hightest_pcie_level_enabled) &&
-> +		while ((count < highest_pcie_level_enabled) &&
->   				((hw_data->dpm_level_enable_mask.pcie_dpm_enable_mask &
->   						(1 << (lowest_pcie_level_enabled + 1 + count))) == 0))
->   			count++;
->   
->   		mid_pcie_level_enabled = (lowest_pcie_level_enabled + 1 + count) <
-> -				hightest_pcie_level_enabled ?
-> +				highest_pcie_level_enabled ?
->   						(lowest_pcie_level_enabled + 1 + count) :
-> -						hightest_pcie_level_enabled;
-> +						highest_pcie_level_enabled;
->   
-> -		/* set pcieDpmLevel to hightest_pcie_level_enabled */
-> +		/* set pcieDpmLevel to highest_pcie_level_enabled */
->   		for (i = 2; i < dpm_table->sclk_table.count; i++)
-> -			levels[i].pcieDpmLevel = hightest_pcie_level_enabled;
-> +			levels[i].pcieDpmLevel = highest_pcie_level_enabled;
->   
->   		/* set pcieDpmLevel to lowest_pcie_level_enabled */
->   		levels[0].pcieDpmLevel = lowest_pcie_level_enabled;
+I suspect this should not be set separately, but with the 
+drive-strength. The document shows that the DS field sets
+both drive strength and slew rate. This at least tell the
+value 0 and 1 may be different.
+
+> > > +              2: Medium speed
+> > > +              3: Fast speed
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            enum: [0, 1, 2, 3]
+> > > +
+> > > +          spacemit,slew-rate-enable:
+> > > +            description: enable slew rate.
+> > 
+> > The presence of slew-rate enables it, doesn't it?
+> > 
+> yes, this should work, I will take this approach, thanks
+> 
+> > > +            type: boolean
+> > > +
+> > > +          spacemit,slew-rate-disable:
+> > > +            description: disable slew rate.
+> > > +            type: boolean
+> > 
+> > Just use slew-rate, 0 disable, some value to match real slew-rate.
+> > 
+> sounds good to me, since 0, 1 indicate same meaning, can re-use 0 for
+> disabling slew rate.
+> 
+> > > +
+> > > +          spacemit,strong-pull-up:
+> > > +            description: enable strong pull up.
+> > 
+> > Do not duplicate the property name in description. You did not say
+> > anything useful here. What is "strong"? bias-pull-up takes also an argument.
+> > 
+> there is a dedicated strong pull bit[3] for I2C, SD card kinds of pad
+> I don't know how 'strong' it is if in ohms, will see if can get
+> more info on this (may expand the description)
+> 
+> I think using 'bias-pull-up' property with argument should also work,
+> but it occur to me it's more intuitive to introduce a property here, which
+> reflect the underlying hardware functionality. this is similar to starfive's jh7100
+> bindings/pinctrl/starfive,jh7100-pinctrl.yaml:154
+> (refer to exist code doesn't mean always correct, so I need advice here)
+> 
+> I will keep this property unless there is objection, please let me know
+> 
+> > > +            type: boolean
+> > > +
+> > > +        required:
+> > > +          - pinmux
+> > > +
+> > > +        additionalProperties: false
+> > 
+> > This goes up, before description.
+> > 
+> Ok
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/pinctrl/spacemit,k1-pinctrl.h>
+> > > +
+> > > +    soc {
+> > > +        #address-cells = <2>;
+> > > +        #size-cells = <2>;
+> > > +
+> > > +        pinctrl@d401e000 {
+> > > +            compatible = "spacemit,k1-pinctrl";
+> > > +            reg = <0x0 0xd401e000 0x0 0x400>;
+> > > +            #pinctrl-cells = <2>;
+> > > +            #gpio-range-cells = <3>;
+> > 
+> > This wasn't ever tested... :(
+> > ...
+> will drop it
+> > 
+> > > diff --git a/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> > > new file mode 100644
+> > > index 0000000000000..13ef4aa6c53a3
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> > > @@ -0,0 +1,161 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> > > +/*
+> > > + * Copyright (c) 2022-2024 SpacemiT (Hangzhou) Technology Co. Ltd
+> > > + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
+> > > + *
+> > > + */
+> > > +
+> > > +#ifndef _DT_BINDINGS_PINCTRL_K1_H
+> > > +#define _DT_BINDINGS_PINCTRL_K1_H
+> > > +
+> > > +#define PINMUX(pin, mux) \
+> > > +	(((pin) & 0xffff) | (((mux) & 0xff) << 16))
+> > > +
+> > > +/* pin offset */
+> > > +#define PINID(x)	((x) + 1)
+> > > +
+> > > +#define GPIO_INVAL  0
+> > > +#define GPIO_00     PINID(0)
+> > 
+> > Not really, pin numbers are not bindings. Drop entire header.
+> > 
+> Ok, I will move them to dts folder, which should be file
+> arch/riscv/boot/dts/spacemit/k1-pinctrl.h
+> 
+> > ...
+> > 
+> > > +
+> > > +#define SLEW_RATE_SLOW0		0
+> > > +#define SLEW_RATE_SLOW1		1
+> > > +#define SLEW_RATE_MEDIUM	2
+> > > +#define SLEW_RATE_FAST		3
+> > 
+> > Not a binding, either. No usage in the driver.
+> Ok, will drop it
+> 
+> > 
+> > > +
+> > > +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+> > 
+> > Not a binding.
+> > 
+> same, move to dts
+> 
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
 
