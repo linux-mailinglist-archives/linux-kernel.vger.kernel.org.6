@@ -1,184 +1,324 @@
-Return-Path: <linux-kernel+bounces-301760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C6095F536
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:33:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D522895F538
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7117CB218AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 058421C2119A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49546189514;
-	Mon, 26 Aug 2024 15:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8820193092;
+	Mon, 26 Aug 2024 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cH1i0d7V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgYmVTS1"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A03186298
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170473C17;
+	Mon, 26 Aug 2024 15:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686420; cv=none; b=HmeRLlpvBF704QRvWtCAWWsnz5ZYEyLO7ZT2HDgJh0GND6OoizIgpZhrHJt36CW2GXzqHiweJ3zzz14eAXg4VaWNZEGVnFKsCM4xKqKwTB7a6fiBk7V+h6rH44vOzyXHXzWK1SKyuBc2oMK6ly+P42BEn9UYOHXAQx59KR7VObE=
+	t=1724686507; cv=none; b=sPyZ1jgZwsgQPD7s2Ds13ouHLipVi7t2aNisXZLZARWg2qlAjwe+Fck9luhPgBvVYlHsdjvSC25wCF1w95MMh3E6lQnqDmwBO8xIwUbJswDbC7zrExJbE/vHX1vqctrkV+gvzyF9YQhj0KI1Kkiv6N0PBKig4Bkk+d3IAAXT9fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686420; c=relaxed/simple;
-	bh=KEosndWVrsw/517naVNGOqnpRxqUikWyC7LPyftVLaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1Qmq80YkeXTUeY/5mFtE0AD7hSrJkW0UiZAg4UVV5n3Jo7syc+iAQEAKJ5XMpNGYzZdLsIGfxpVACoPIqNfcp1YJG/pcrYAradnhRjQ9e/ZF8EbbTNXAOsyjf3/uplu4rmKTjJEEHJ4ltCH0obKsPXANCkPsrzCRjnSQJqJUcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cH1i0d7V; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724686417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fLHVmwuLAYPsFURDKjEb+NeYe5prtzLVT02SsD4UDUM=;
-	b=cH1i0d7Vsl6ePGvGVramWTlG0rCHcS6RwPDv+MOceklieeAk/2zP95EzqtHTLTUweDaJrY
-	2Ek/5jKvVQ8zueGx1AFSkRuaCYjKocL06AVGfhxP03hZQ/+j6P78/La6q1/kpiDoe2tWOF
-	6wWypMrwQk8pp2i3Hluy9YI1kzH7MYo=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-400-TE6dnMAyNequxvo5pk7iFQ-1; Mon, 26 Aug 2024 11:33:35 -0400
-X-MC-Unique: TE6dnMAyNequxvo5pk7iFQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-367990b4beeso2295909f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:33:35 -0700 (PDT)
+	s=arc-20240116; t=1724686507; c=relaxed/simple;
+	bh=xCkL+NVPujsi1fMWpxFmMtn1PKcz06zD3FT9sXn7hYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ay77jDC0Lr4wg+Q8Zrg6h+iMUgwFdQLZFP/wTMAZCJ+orR/FgaI0hyl4Wcj2j2acVu1ISBCEDbNQTXu5h96XG1fKE5+VZEONotv7t0GJRbR38WncSbY0snRmhKeaQkUopHOZZdioFjC39JnDol3PtOVtzRXBxxeRAfJyC+uC+OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgYmVTS1; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf7a2035d9so51531776d6.1;
+        Mon, 26 Aug 2024 08:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724686505; x=1725291305; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oNN1N6uaekOp0it7KVskr3r6SRMxa0eFZJz8mz6hKVw=;
+        b=QgYmVTS1HkX/LN/iPp6hs9RjGa5m2XcqSBQi7NYwC9nXnpnYPaLTCNOclQ/L98Evaw
+         WB360G585Avufu7F2zw1kOx7Mqb+BMM8f4KeedATfB1oMls5nJmXQ/tRLNbEfKvJiUa9
+         9qmFMMH8XzbZX8GFqmDgZ0KtghbD7M12VkSEtO/8Mv6kjOZddHoSHTf00Lh5iU5lgguM
+         32rA1FFroYHI7yt4vs7JBklrlcvG2MntsqzQNehH9dA/RnxxM0cCBTjzl0Kqh0cztmQy
+         2I0LpW3YBfi7YG6Qbn7qq9v256kElxL+M+lKZizYlJyxyQYxbVb4ugZFLOznyeuI3Pqq
+         n0/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686414; x=1725291214;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fLHVmwuLAYPsFURDKjEb+NeYe5prtzLVT02SsD4UDUM=;
-        b=emw2cL5E17ySk3BzPXOaRcZi2TtcXI61CXtM8Q2W6By9wgxxfYUlshyFgYQa8mkjOp
-         rNoUuuFblH4Jsx2+wFb7liy2tAUmYKasaw98tQm6JfK/H6H8pmu+sg33Idud8ZCJBSmo
-         lmhPPFi5hlwa5U3MVwqRN3PUr2qCwJUxMJAH38HdJZ4W2cJ0uYkdTqyZocelb4ypl911
-         /6/ijr3NYF/BTb+QlPudZIQZTsfjytOJ8tFRXLWYWaaYN0rKP0ry9IbYjBtHF487zeF6
-         yO816/X6ScmNQIzL9OAdip3dfZvGTjXX/wQH2XSTMBlfeD8tP9KfJSQGL96p+w7/KTsX
-         YWhQ==
-X-Gm-Message-State: AOJu0YyyKLuh+IrOQT/ac1TJowRGbqM8Gbu3WXzuO+hZzYNrZpRjpU/Z
-	z13pZe8Fr7RL75QtAODhoTNoq4LPwSs8YHif/xLuiZbI6unLcKYQzbnuVJB/GwveodD8FsmsmvK
-	RTSxZHFiWCsZogmvLDmWc8+Gyv4o3pLsy6Fu2y/F7NSVr0KOse8U8/DR5EQVJZw==
-X-Received: by 2002:a5d:58fb:0:b0:371:7dda:d7d9 with SMTP id ffacd0b85a97d-373118400c7mr7060069f8f.9.1724686414511;
-        Mon, 26 Aug 2024 08:33:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHytmu9SRRnL82xMRuRcaexgdIVoLY9mV2pWJmUW8w6VZNMmeRxH8CESB56unxuK81kkNwCqA==
-X-Received: by 2002:a5d:58fb:0:b0:371:7dda:d7d9 with SMTP id ffacd0b85a97d-373118400c7mr7060032f8f.9.1724686413712;
-        Mon, 26 Aug 2024 08:33:33 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff23ced.dip0.t-ipconnect.de. [79.242.60.237])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110436sm11025885f8f.11.2024.08.26.08.33.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:33:33 -0700 (PDT)
-Message-ID: <0b7ca0c2-7a64-4d0e-aa18-2fc4257c199e@redhat.com>
-Date: Mon, 26 Aug 2024 17:33:23 +0200
+        d=1e100.net; s=20230601; t=1724686505; x=1725291305;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oNN1N6uaekOp0it7KVskr3r6SRMxa0eFZJz8mz6hKVw=;
+        b=ZVHDqiDRtAZE7dGkKKShIlyWrRrk5mcXJuYmRYtDVtXXn65Vvzrk+aRMnrLCtqC1Df
+         6TWp6UZIw7eJ0vEl8pPFhk3In4xvmZu+8NPt2B31LtGT1sl9wqqeXwwk9kKvQ/eb0JIP
+         ZD13iIP3gZvBQKiCdbmKLiFtnMSdh1vuQPttSMXEY23jz31CU+10TgAdBtdfMAVnDuQU
+         KFRmNhicHvbGdw4nBFIAtT5ZMdrQQB1Ki92WooRUlRgqUQHFfdrFqbiJI+7dxeiC4NZg
+         mvmEKCAaYj2cvzh9MhtE+PHWLkr9YOp30AApg5lsZF1tiKACWryLHgwFNFXDBCVvhwYT
+         LjGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2pRZPBmkaxXXmfQHv7At0km78+IOg6CKfdgnIjVYoMAW6L+DeTiGARE2cU+A6KBhKZjUG3g1Wzg8C+K/GMRs=@vger.kernel.org, AJvYcCUds6X44Kthd5fSHv87VaQ8oU6B7+o1hAb3LMBmRs04gayUu6HCERklsZcYCs91uW5sQodFKf6fLMuZnVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQZxieUV2Fv16t0yAHuFOHZ/YLZjhucsNODpqkzbDnoi/Uc0B8
+	voO1pnq/ppwq4HNkyDmrSDxWv53UZzS0AZddLJZikw9a4MONf5+6uIiUlQ==
+X-Google-Smtp-Source: AGHT+IGIqAmaHeXIV44Lv+GUtdxK7ZRVXVsjoWAid5yUZrXWFMtKElgQtbvUeQMOpmkEyJqkqdxIMA==
+X-Received: by 2002:a05:6214:e4a:b0:6b7:923c:e0b7 with SMTP id 6a1803df08f44-6c160cae608mr270408406d6.21.1724686504719;
+        Mon, 26 Aug 2024 08:35:04 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162dcd3afsm47586206d6.111.2024.08.26.08.35.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 08:35:04 -0700 (PDT)
+Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 914D21200043;
+	Mon, 26 Aug 2024 11:35:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 26 Aug 2024 11:35:03 -0400
+X-ME-Sender: <xms:p6DMZrfBo7ARnFUDdqf8JfwKEPoJGa3hRScVYr7YKjCFRZw3cOLnKg>
+    <xme:p6DMZhMBbuSYBvGeap34LIrHbTC_4eo7MHNg-4C-9YugOPg1jPu7WdLDMKTXUQytx
+    StDydCq5FwYQapeVg>
+X-ME-Received: <xmr:p6DMZkjfsYaS1lormavU5-2wYM-Q3ThnVGeFuwoUykz7sj4VJ1nbYDTfLUtDlw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdefpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtg
+    homhdprhgtphhtthhopeguihhrkhdrsggvhhhmvgesuggvrdgsohhstghhrdgtohhmpdhr
+    tghpthhtoheplhihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhushhtqd
+    hfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepug
+    grkhhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrihhrlhhivggusehrvgguhhgr
+    thdrtghomhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtth
+    hopeifihhllheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:p6DMZs8tmrPLDTmvMUro96pawmFuZaGegY0vdiCp7Te3HDfAfdLEmA>
+    <xmx:p6DMZns_5faGEn8E2fx_BCuGt4P0mHN7X7nzbcDmspPkKKIqYRp8zA>
+    <xmx:p6DMZrEl78aKKVYh3s7dyZthQDM4yyrsTwX9iQWvc-bDhRdmZ9qnEA>
+    <xmx:p6DMZuOjeT-XBhBNZdercifYd-tFHgijtxR6lGSaOsqd6SoIBC-BXQ>
+    <xmx:p6DMZoOG_Ucgy0B11xWv-9uyEjY5MvYg6p-kcOjQ18vAwC4xcDjjklVO>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 Aug 2024 11:35:02 -0400 (EDT)
+Date: Mon, 26 Aug 2024 08:34:42 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, Lyude Paul <lyude@redhat.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Aakash Sen Sharma <aakashsensharma@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v3 1/3] rust: Introduce irq module
+Message-ID: <Zsygkunml0DHWIX7@boqun-archlinux>
+References: <20240802001452.464985-1-lyude@redhat.com>
+ <20240802001452.464985-2-lyude@redhat.com>
+ <3f6a5c86-8dc4-4a62-8308-5ca25f9e4aec@de.bosch.com>
+ <ZsyPezklN_tANFtQ@boqun-archlinux>
+ <afa6d33a-c933-4996-8cdf-e1677772d63e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/14] mm: khugepaged: __collapse_huge_page_swapin()
- use pte_offset_map_ro_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
- willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <2b7dceaa12da273c6decf92e3bf2ebc4f4e85ec5.1724310149.git.zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <2b7dceaa12da273c6decf92e3bf2ebc4f4e85ec5.1724310149.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afa6d33a-c933-4996-8cdf-e1677772d63e@gmail.com>
 
-On 22.08.24 09:13, Qi Zheng wrote:
-> In __collapse_huge_page_swapin(), we just use the ptl for pte_same() check
-> in do_swap_page(). In other places, we directly use pte_offset_map_lock(),
-> so convert it to using pte_offset_map_ro_nolock().
+On Mon, Aug 26, 2024 at 04:59:45PM +0200, Dirk Behme wrote:
+> Am 26.08.24 um 16:21 schrieb Boqun Feng:
+> > On Mon, Aug 26, 2024 at 01:21:17PM +0200, Dirk Behme wrote:
+> > > Hi Lyude,
+> > > 
+> > > On 02.08.2024 02:10, Lyude Paul wrote:
+> > > > This introduces a module for dealing with interrupt-disabled contexts,
+> > > > including the ability to enable and disable interrupts
+> > > > (with_irqs_disabled()) - along with the ability to annotate functions as
+> > > > expecting that IRQs are already disabled on the local CPU.
+> > > > 
+> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > ...
+> > > > diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+> > > > new file mode 100644
+> > > > index 0000000000000..b52f8073e5cd0
+> > > > --- /dev/null
+> > > > +++ b/rust/kernel/irq.rs
+> > > > @@ -0,0 +1,84 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +
+> > > > +//! Interrupt controls
+> > > > +//!
+> > > > +//! This module allows Rust code to control processor interrupts. [`with_irqs_disabled()`] may be
+> > > > +//! used for nested disables of interrupts, whereas [`IrqDisabled`] can be used for annotating code
+> > > > +//! that requires interrupts to be disabled.
+> > > > +
+> > > > +use bindings;
+> > > > +use core::marker::*;
+> > > > +
+> > > > +/// A token that is only available in contexts where IRQs are disabled.
+> > > > +///
+> > > > +/// [`IrqDisabled`] is marker made available when interrupts are not active. Certain functions take
+> > > > +/// an [`IrqDisabled`] in order to indicate that they may only be run in IRQ-free contexts.
+> > > > +///
+> > > > +/// This is a marker type; it has no size, and is simply used as a compile-time guarantee that
+> > > > +/// interrupts are disabled where required.
+> > > > +///
+> > > > +/// This token can be created by [`with_irqs_disabled`]. See [`with_irqs_disabled`] for examples and
+> > > > +/// further information.
+> > > > +#[derive(Copy, Clone, Debug, Ord, Eq, PartialOrd, PartialEq, Hash)]
+> > > > +pub struct IrqDisabled<'a>(PhantomData<(&'a (), *mut ())>);
+> > > > +
+> > > > +impl IrqDisabled<'_> {
+> > > > +    /// Create a new [`IrqDisabled`] without disabling interrupts.
+> > > > +    ///
+> > > > +    /// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
+> > > > +    /// without interrupts. If debug assertions are enabled, this function will assert that
+> > > > +    /// interrupts are disabled upon creation. Otherwise, it has no size or cost at runtime.
+> > > > +    ///
+> > > > +    /// # Panics
+> > > > +    ///
+> > > > +    /// If debug assertions are enabled, this function will panic if interrupts are not disabled
+> > > > +    /// upon creation.
+> > > > +    ///
+> > > > +    /// # Safety
+> > > > +    ///
+> > > > +    /// This function must only be called in contexts where it is already known that interrupts have
+> > > > +    /// been disabled for the current CPU, as the user is making a promise that they will remain
+> > > > +    /// disabled at least until this [`IrqDisabled`] is dropped.
+> > > > +    pub unsafe fn new() -> Self {
+> > > > +        // SAFETY: FFI call with no special requirements
+> > > > +        debug_assert!(unsafe { bindings::irqs_disabled() });
+> > > > +
+> > > > +        Self(PhantomData)
+> > > > +    }
+> > > > +}
+> > > 
+> > > I have some (understanding) questions for this IrqDisabled::new():
+> > > 
+> > > 1. It looks to me that both examples, below in this file irq.rs nor the
+> > > with_irqs_disabled() example in spinlock.rs in the 3rd patch seem to use
+> > > IrqDisabled::new()? At least some debug pr_info() added here doesn't print
+> > > anything.
+> > > 
+> > > What's the intended use case of IrqDisabled::new()? Do we have any example?
+> > > 
+> > > I 'simulated' an interrupt handler where we know the interrupts are
+> > > disabled:
+> > > 
+> > > let flags = unsafe { bindings::local_irq_save() }; // Simulate IRQ disable
+> > > of an interrupt handler
+> > > let mut g = foo.lock_with(unsafe {IrqDisabled::new() });
+> > > g.val = 42;
+> > > unsafe { bindings::local_irq_restore(flags) }; // Simulate IRQ re-enable of
+> > > an interrupt handler
+> > > 
+> > > Is this the intended use case?
+> > > 
+> > > 
+> > > 2. If the example above is what is intended here, is it intended that this
+> > > has to be called unsafe{}?
+> > > 
+> > > foo.lock_with(unsafe {IrqDisabled::new() });
+> > > 
+> > > 
+> > > 3. I somehow feel slightly uncomfortable with the debug_assert!().
+> > > 
+> > > I understood that this is intended to be not in production code and only
+> > > enabled with RUST_DEBUG_ASSERTIONS for performance reasons? But I have some
+> > > doubts how many people have RUST_DEBUG_ASSERTIONS enabled? And disable it
+> > > for the production build?
+> > > 
+> > > Wouldn't it be better to be on the safe side and have this check, always?
+> > 
+> > No, for example in your code example above, the IRQ is knon being
+> > disabled, so actually there's no point to check. The checking of course
+> > makes sense in a function where there is no IRQ	disable code, and you
+> > want to make sure it's only called when IRQ disabled. But that's
+> > something you want to make sure at development time rather than in the
+> > production.
 > 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->   mm/khugepaged.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
+> I think I'm thinking the other way around ;)
 > 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 4a83c40d90538..53bfa7f4b7f82 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1011,7 +1011,11 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
->   		};
->   
->   		if (!pte++) {
-> -			pte = pte_offset_map_nolock(mm, pmd, address, &ptl);
-> +			/*
-> +			 * Here the ptl is only used to check pte_same() in
-> +			 * do_swap_page(), so readonly version is enough.
-> +			 */
-> +			pte = pte_offset_map_ro_nolock(mm, pmd, address, &ptl);
->   			if (!pte) {
->   				mmap_read_unlock(mm);
->   				result = SCAN_PMD_NULL;
+> Make sure I get a warning if I'm (as the developer) have done anything wrong
+> in my assumption about the interrupt state my code is running with.
+> 
+> So cover the human failure case.
+> 
 
-Suboptimal that the pteval comparison + unmap is buried in 
-do_swap_page(). Moving that to the caller is also not significantly 
-better ...
+Again, if a developer wants to find whether the code is correct or now,
+that falls into the debugging catagory. If you want to know that, you
+just enable the debug_assert!().
 
-Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> > > Wouldn't a permanent if statement checking this be safer for all cases?
+> > 
+> > I don't think so, it's just a checking, even if we enable this in the
+> > production, the best it could do is just telling us the code is
+> > incorrect.
+> 
+> Yes, exactly, this is what I'm looking for. Isn't this what the C's
+> WARN_ONCE() & friends are about? Let the machine tell us that the programmer
+> has done something wrong :)
+> 
 
--- 
-Cheers,
+Not really, sometimes they are used to tell users that there are
+hardware issues. But moreover, they are used to catch unexpected cases,
+which as I mention above, not all the IRQ-disabled usages need this.
 
-David / dhildenb
+Regards,
+Boqun
 
+> 
+> > If one realy wants to make sure a function works in both IRQ
+> > disabled and enabled cases, he/she should check the irq status and
+> > handle it accordingly
+> 
+> No, this is not what I'm looking for. I'm just about noticing the
+> programming error case.
+> 
+> Best regards
+> 
+> Dirk
+> 
+> 
+> > e.g.
+> > 
+> > 	if (irqs_disabled()) {
+> > 		// irq is disabled, we can call it directly
+> > 		do_sth();
+> > 	} else {
+> > 		// Disable IRQ on our own.
+> > 		local_irq_disable();
+> > 		do_sth();
+> > 		local_irq_enabled();
+> > 	}
+> > 
+> > > Compare e.g. BUG_ON() or WARN_ONCE() or similar in the kernel's C code?
+> > > 
+> > > Or could we invent anything more clever?
+> > > 
+> > 
+> > I'm open to any new idea, but for the time being, I think the
+> > debug_assert!() makes more sense.
+> > 
+> > Regards,
+> > Boqun
+> > 
+> > > 
+> > [...]
+> > 
+> 
 
