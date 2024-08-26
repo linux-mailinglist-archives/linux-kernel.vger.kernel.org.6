@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-302039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFE495F907
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:35:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970D995F90A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDA283589
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECAADB22131
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A278D19342A;
-	Mon, 26 Aug 2024 18:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7DC194A68;
+	Mon, 26 Aug 2024 18:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9kNKGik"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU+Orevh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32D92C1AC;
-	Mon, 26 Aug 2024 18:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373C72C1AC;
+	Mon, 26 Aug 2024 18:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724697305; cv=none; b=A3oc1UkJFLAjwa/cPgl4lkwTeeRiTghvEQcDUvOP+jyChq0Xsb06s27P1PhAUDhU5LhKYi6BMZVEjG/wyYYsVylNVsoraYjF6sg8owMhnY+60vN9SDgQirhVSJaIB1flYCgI+62oLqE+W0PzBmn/KGeLmuv582+8qz9sOSO8wMo=
+	t=1724697345; cv=none; b=rIQt5DNbgyJ8IbAHgLVvquQYER5LYHykkb833eVD4mnLk3ez4WlvKyR3YmMJcwrV46qIDVpPNxeWD1RRmXcN3m5S5x3bkadifAAJVII1HPQP+pz3hQYqRvSWy+QGe6s0KJXtU1A0vQdWReEvEQQXCYkWsYQhfux1rMoawQfnIaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724697305; c=relaxed/simple;
-	bh=WJUAZ2Dnc20rY85yKNE4tfrmUEmCUGOXJQaQKBPAr9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPOUZJTjANCej56hPA9IceaD5QyJKDsn3DdIFtg7FrSb99w+UcXVl1aSvHVNph2Nvmh6ioLs8zrUdFszb/e13TNgMbSsnmRAVApaeoUyyiwH0/EklB9yifBZPu6l2BaBw8/5g1QIDrnAAfe2CQwSr0/uF2WGztE8Mx0qh+0br6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9kNKGik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED00C4DDF5;
-	Mon, 26 Aug 2024 18:35:04 +0000 (UTC)
+	s=arc-20240116; t=1724697345; c=relaxed/simple;
+	bh=uiz9Rtx8Hk7QAj5m6TJJAmxSW3fHU5X0XY4yHCbzD+U=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tqlWLUueJBHJxcAL3FVYezPfGetAQq57ifGiUtHVm2nUboLakUYqfD+hpER306/3I2wgFIQZ/5jZLjOZfpzA7fMc6Q6w6udVfGZ1IE0uYQXS6cFfaNLMXwlX9zmO8QtNd/4z5oEadtmiPVBrPyE49o2S1KX4DZ6xyGTxQe0sR60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU+Orevh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C26C4DE03;
+	Mon, 26 Aug 2024 18:35:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724697304;
-	bh=WJUAZ2Dnc20rY85yKNE4tfrmUEmCUGOXJQaQKBPAr9E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s9kNKGikqxa2n8dwiS0KYPv3mxnWfzvEtamLt2bCcvBMrVu0riREh5f9h7nO+MnOy
-	 EgJp6E6VI9dLYmWYOYwv1fx7J23oOqWmFbbG81eMF5JCe56UUH18cmd3e/pKPkD+zI
-	 kfYj0NE5LJ79JFD63oED2A8g32ucuPF6imZ57daUJJf8I/OKzeL+FNCOaKw9lDBr6b
-	 IJfRdLn/p4mgr0e4/toMcTlfJodHPAi/bKVnD0yXH/wa9hAo+FFWrIElsY33vmbJi7
-	 +Hzzp60KT6vyImJDzxyLFx2o8Sq6a8Hnf3EU/Cz9hPNropubo5BYFDwdG9cr6dMvPL
-	 ediOM5/42em0A==
-Date: Mon, 26 Aug 2024 08:35:03 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: void@manifault.com, peterz@infradead.org, mingo@redhat.com,
-	cgroups@vger.kernel.org, lizefan.x@bytedance.com,
-	hannes@cmpxchg.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, David Vernet <dvernet@meta.com>,
-	Josh Don <joshdon@google.com>, Hao Luo <haoluo@google.com>,
-	Barret Rhoden <brho@google.com>
-Subject: Re: [PATCH 1/7] cgroup: Implement cgroup_show_cftypes()
-Message-ID: <ZszK1zQJSjuEO4r5@slm.duckdns.org>
-References: <20240808002550.731248-1-tj@kernel.org>
- <20240808002550.731248-2-tj@kernel.org>
- <qsdgtsunxgbxb6lf7x7m5777jxmumddomsofuuimqenoyliabx@assdbc6zj2ag>
+	s=k20201202; t=1724697344;
+	bh=uiz9Rtx8Hk7QAj5m6TJJAmxSW3fHU5X0XY4yHCbzD+U=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=HU+OrevhAiyoh5RN5Q+28yH8zKif9sHT8wYEZ6NA0jhbngTn9JRWD9UJIF2zwsyQ4
+	 QCvfsalG41fopxdOXF1F+gXbj1ZCmBcA484bXZiDgxRnNgMnSlBmrdDvd3FdXnZMsN
+	 z0Xq7cHEd4B2xVqowu0MljhJWn+JUxCKAyLvhP3v0xztp3v7T7k6A7D2riWmnhb8ID
+	 18P60NenfqQbnyXTYJrExvlpsXGWX67y5NsBuTQNhfKimFyh4v2wwxzSvtZFLMxxCV
+	 0SvJqLrBq1D5lDTN5rvl06BWLRNBrse8Sr90vyTLaWxgUmkWDRFJY51OfOKOnRq+IS
+	 ovP30tYIJeq+A==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240825085745.21668-1-krzysztof.kozlowski@linaro.org>
+References: <20240825085745.21668-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: MAINTAINERS: Drop incorrect tlv320aic31xx.txt
+ path
+Message-Id: <172469734019.858128.1291012242968483621.b4-ty@kernel.org>
+Date: Mon, 26 Aug 2024 19:35:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <qsdgtsunxgbxb6lf7x7m5777jxmumddomsofuuimqenoyliabx@assdbc6zj2ag>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Hello, Michal.
-
-On Tue, Aug 20, 2024 at 04:38:40PM +0200, Michal Koutný wrote:
-> On Wed, Aug 07, 2024 at 02:25:23PM GMT, Tejun Heo <tj@kernel.org> wrote:
-> > +void cgroup_show_cftype(struct cftype *cft, bool show)
-> > +{
-> > +	struct cgroup_subsys *ss = cft->ss;
-> > +	struct cgroup *root = ss ? &ss->root->cgrp : &cgrp_dfl_root.cgrp;
+On Sun, 25 Aug 2024 10:57:45 +0200, Krzysztof Kozlowski wrote:
+> tlv320aic31xx.txt was converted to DT schema (YAML) and new file is
+> already matched by wildcard.  This fixes get_maintainers.pl self-test
+> warning:
 > 
-> Strictly speaking, this (v1) cgroup_root dereference should be guarded
-> with cgroup_mutex too (should be the root destroy concurrently).
+>   ./MAINTAINERS:22739: warning: no file matches	F:	Documentation/devicetree/bindings/sound/tlv320aic31xx.txt
+> 
+> 
+> [...]
 
-Ah, right. I think I might just drop this patch. Hiding and showing the
-interface files dynamically doesn't seem to work that well in practive (ie.
-it causes more production problems than it solves). Something a bit more
-boring like triggering a warning when a unimplemented feature is used is
-probably better here.
+Applied to
 
-Thanks.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-tejun
+Thanks!
+
+[1/1] ASoC: MAINTAINERS: Drop incorrect tlv320aic31xx.txt path
+      commit: 0225d3b9efe3daca332befaa0c4ce2f119297d5a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
