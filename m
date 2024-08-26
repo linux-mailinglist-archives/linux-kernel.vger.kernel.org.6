@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-301124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4202B95EC9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:04:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80DC395ECA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DC31F21EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C060B20D63
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD10C13AD3F;
-	Mon, 26 Aug 2024 09:04:15 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F6913D2A9;
+	Mon, 26 Aug 2024 09:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ayWo4hMk"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E35481741
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567EFEAFA
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663055; cv=none; b=E1BLiHXWB7OnCoEr9U3DgzRbynDlNPMZGZ3Gp3r5JY3mb0tsiCH0dhb0aMhCTTxEHbWOuf0AFjFqUoAYfmZ1kYCdW2KNK4WzaSLdxxeiOnKSzyjX1rDIetwTWI8GDg17imYNrmUGUFnGbIM6wwVK7unu9b7XVocsMR4I1l7+IPU=
+	t=1724663163; cv=none; b=gvBOEbvtaatRzq9toE+APSDZSHabTvzI9qRnvuTX5nsk3cTm6ILrwIICnoiMxfbDgUbpGm5e/xp1i/+7/DNNLEGN9rCiREoWvGbMw2AnjQnHVJIxfslP1lSuw9cfXP/LAg5a10euIwD/b7S8tnocrpEPbgCdWLDratkx1bQyAzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663055; c=relaxed/simple;
-	bh=X6oTBQ18A8CVtTZSU27ASfOb98LdqIea2rftawhxxwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LulbLkSQdE+Y3p+Y5QEZcJQNNePJO8V+webI/7MDE7vGw9yUrRjpfMUy9bv1VM7uptrUX/gQjnWxub+ZhibOXZ6gmVeBW/lEQeY7zhPHS+ngxpDNCoU6tiaBaASMGX/w+VJdts4d4cv50RwMuhjzUe3nIDbycJcA7kV9KbRPjFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wsl7D27nYzpTZH;
-	Mon, 26 Aug 2024 17:02:32 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 28A361401F0;
-	Mon, 26 Aug 2024 17:04:11 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 17:04:09 +0800
-Message-ID: <ab3c09e7-43cc-b946-0f7c-44ea7f4111f2@huawei.com>
-Date: Mon, 26 Aug 2024 17:04:09 +0800
+	s=arc-20240116; t=1724663163; c=relaxed/simple;
+	bh=qW8EijmVm1rza+kNNB97HdDBr7sQU1x4Yvhm4lOhCX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XkNIp4wZuKGrTAS0ABWgj/SlPkKjsXB8zeDmFXdH679jrbBK8r4Onj6lWE1D0ILR5Tn10YjPze/y11dghaI3yumgvBiKoRuLAbojEjEIb5+Nx3g/dErHtRmnT2/+q173FacAp3+XLHvp0fCLxvXud/ThG30UM2e20sl2uompyb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ayWo4hMk; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-533488ffaebso4598747e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724663159; x=1725267959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qW8EijmVm1rza+kNNB97HdDBr7sQU1x4Yvhm4lOhCX4=;
+        b=ayWo4hMk78fDPJG1y0DRcbXNx1kerwKllexBp1J0WdfUrBzF05Ne7jio2EPujnEkPM
+         5CkWiLjz0Uzodhy1ujjMlWPvzReQ1sMFjPkfJ9Yg54HV94BRW5UtMaLQt3UhK9w0N9Wv
+         VvuztZ7S3S3iHp1ULFiRj8yU8tczmMjzdqmYAiP1ra9nNqNi8o4gjdrb4jk3QaU9rtJO
+         c70rnmt59lBRMb+TLx3JXzD7vAIprWZBSPVbVmG0fc3HoiU3jXjHGBHwyx++WBIlIYy3
+         MhGGoph/Agb+xGyXpmRf2u1Qx106JoUdext/FG7iey21gJWXC78SHKy3YlLr86B+JkIT
+         8cBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724663159; x=1725267959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qW8EijmVm1rza+kNNB97HdDBr7sQU1x4Yvhm4lOhCX4=;
+        b=gvo1GsQ2I+2e3K+ZEbfgi9mdOfoXcaex8kQg4yFaAU2Ke4ely5wRt9CZDOnZgz0JEw
+         5HhzK71IdLFYXXvDZkmxwlUCr8CYlFQW3LtSt7KGaKjs2ftBhOfEijONKKk2Mq4qgGB5
+         8GMsqJwN9jPk6Q6hJU5y7EXYexh09xAYDG3We3ocg6guTFL1cSamqC9lf2oWf8IAvRum
+         /dhQUJaVfGEIGXdUNqCqGJPcVzEe9fJkbZPH0l5wk4Vz4ExtmLPicFf4c4wEhfQ8XAIA
+         nAMzCIDP0AdpDLfRtHI12M9gGxyscl2u58+O3+CC5kpZcRjMwTHOUYvMHTkXuxf2LyCJ
+         TmGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV47SdYRLA4RH985OlS1neqPGpZejGEbR4EV0JOT0NjSVbJ3xVnVG4T+dWwuArsgiOJVZB/EghIigEXmPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlNL2OHPqawVKlEGtgNbqULzYGWSr7Et+qzAc1wQEXkvPbj5mh
+	dUJyTX+diT4dPfurDM6PtX1BsmP8xIeyzxCCo3nKcmqM176g1yPPBXB0/ROfWqr6gIiFjFg/Z/L
+	KZEAVv58Ebi+b3botdj24VzqYZNrxnUYFCYgQHA==
+X-Google-Smtp-Source: AGHT+IF/3IUNaHnmorHMH5XepQP0dhFxmpJOrgPR3PtJ3vmSYH5kfLJ8JW9NGorL05eVqsfIP8s7xNubchE9N82j2mw=
+X-Received: by 2002:a05:6512:3987:b0:533:4e2b:62fd with SMTP id
+ 2adb3069b0e04-53438773badmr5857030e87.18.1724663159221; Mon, 26 Aug 2024
+ 02:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next 1/5] drm/rockchip: Use
- for_each_child_of_node_scoped()
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<krzk@kernel.org>, <jic23@kernel.org>
-References: <20240823092053.3170445-1-ruanjinjie@huawei.com>
- <20240823092053.3170445-2-ruanjinjie@huawei.com>
- <20240823123203.00002aac@Huawei.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240823123203.00002aac@Huawei.com>
+References: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
+In-Reply-To: <CAEwRq=qhHBh5jKdLGb1r2Qem0jia=xcVdevihYfjdrLSYiZuiA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Aug 2024 11:05:48 +0200
+Message-ID: <CACRpkdZFQSN_t-Vx7xOXq0aF6Vf-XvsZKGF6yNMn7_dCeaZi_w@mail.gmail.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Vincent Legoll <vincent.legoll@gmail.com>
+Cc: arnd@arndb.de, aaro.koskinen@iki.fi, alexandre.torgue@foss.st.com, 
+	Andrew Lunn <andrew@lunn.ch>, broonie@kernel.org, dmitry.torokhov@gmail.com, 
+	gregory.clement@bootlin.com, jeremy@jeremypeper.com, jmkrzyszt@gmail.com, 
+	kristoffer.ericson@gmail.com, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Linux Kernel ML <linux-kernel@vger.kernel.org>, 
+	Russell King - ARM Linux <linux@armlinux.org.uk>, Nicolas Pitre <nico@fluxnic.net>, nikita.shubin@maquefel.me, 
+	ramanara@nvidia.com, richard.earnshaw@arm.com, richard.sandiford@arm.com, 
+	robert.jarzmik@free.fr, sebastian.hesselbarth@gmail.com, tony@atomide.com, 
+	linux-mips@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 23, 2024 at 10:47=E2=80=AFPM Vincent Legoll
+<vincent.legoll@gmail.com> wrote:
 
+> It looks like the highmem feature is deemed for removal.
+>
+> I am investigating the loss of some available RAM on a GnuBee PC1 board.
+>
+> An highmem-enabled kernel can access a 64MB chunk of RAM that a
+> no-highmem can't. The board has 512 MB.
+>
+> That's more than 10% on a RAM-poor NAS-oriented board, probably worth
+> the hassle to get it back.
+>
+> I built & flashed a current OpenWRT snapshot, without any modifications,
+> wich gave the following output:
+(...)
+> The lost RAM is back usable.
+>
+> Is there an alternative to CONFIG_HIGHMEM to use that RAM chunk ?
 
-On 2024/8/23 19:32, Jonathan Cameron wrote:
-> On Fri, 23 Aug 2024 17:20:49 +0800
-> Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> 
->> Avoids the need for manual cleanup of_node_put() in early exits
->> from the loop.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> 
-> There is more to do here, and looking at the code, I'm far from
-> sure it isn't releasing references it never had.
-> 
->> ---
->>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 8 +++-----
->>  1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
->> index 9a01aa450741..f5b3f18794dd 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
->> @@ -548,7 +548,7 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->>  	struct drm_encoder *encoder;
->>  	struct drm_connector *connector;
->>  	struct device_node *remote = NULL;
->> -	struct device_node  *port, *endpoint;
-> 
-> Odd extra space before *port in original. Clean that up whilst here.
-> 
-> 
->> +	struct device_node  *port;
-> 
-> Use __free(device_node) for *port as well.
-> 
-> So where the current asignment is.
-> 	struct device_node *port = of_graph_get_port_by_id(dev->of_node, 1);
-> 
->>  	int ret = 0, child_count = 0;
->>  	const char *name;
->>  	u32 endpoint_id = 0;
->> @@ -560,15 +560,13 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
->>  			      "can't found port point, please init lvds panel port!\n");
->>  		return -EINVAL;
->>  	}
->> -	for_each_child_of_node(port, endpoint) {
->> +	for_each_child_of_node_scoped(port, endpoint) {
->>  		child_count++;
->>  		of_property_read_u32(endpoint, "reg", &endpoint_id);
->>  		ret = drm_of_find_panel_or_bridge(dev->of_node, 1, endpoint_id,
->>  						  &lvds->panel, &lvds->bridge);
->> -		if (!ret) {
->> -			of_node_put(endpoint);
->> +		if (!ret)
->>  			break;
-> 
-> This then can simply be
-> 			return dev_err_probe(dev, ret,
-> 					     "failed to find pannel and bridge node\n");
->> -		}
+Userspace can still use it right?
 
-Thank you! I'll resend and cleanup them.
+The approach we are taking on ARM32 (despite it's.... really hard) is
+to try to create
+separate address spaces for the kernel and userspace so that in kernel cont=
+ext
+the kernel can use 4GB of memory as it wants without the restriction of use=
+rpace
+taking up the low addresses.
 
-> 
-> Various other paths become direct returns as well.
-> 
->>  	}
-> 
-> The later code with remote looks suspect as not obvious who got the reference that
-> is being put but assuming that is correct, it's another possible place for __free based
-> cleanup.
-> 
-> 
->>  	if (!child_count) {
->>  		DRM_DEV_ERROR(dev, "lvds port does not have any children\n");
-> 
+This looks easy until you run into some kernel assumptions about memory bei=
+ng
+in a linear map at all times. Which I am wrestling with.
+
+Yours,
+Linus Walleij
 
