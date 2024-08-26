@@ -1,131 +1,290 @@
-Return-Path: <linux-kernel+bounces-301457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1390C95F12F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:20:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6ED95F139
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99151F22754
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B0B285861
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC316EBF6;
-	Mon, 26 Aug 2024 12:20:23 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9755016E886;
+	Mon, 26 Aug 2024 12:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="R8O+D19T"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2069.outbound.protection.outlook.com [40.107.117.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D341F140369;
-	Mon, 26 Aug 2024 12:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674823; cv=none; b=eYvbsnAINzLmCm0gTixfkB0cTpj2lpr0NHuEOx7zQwN2XYYea6NeHm5GUx3Q5KjOVkf6zpgyVjRYSCGYeOSuaZYYnwfxMFAC0bS0xnp7lOUXEsp6endbZbMNLG+SoDOUIFCzV+RBc6PcF5eERCS0K5cj4lCrleGr/J0X5bL1Jws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674823; c=relaxed/simple;
-	bh=s8/LKtlf80hdQy1KP55Ty+jBjJvYm+19p+cKHvb9fUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HiSy6sGx/h9y6s3p9yLL5nJMoqF7oQYycaJWnt9tVIVRjs66ZHjCJtCXlrJCTxqqL87I3KCxtN1IDXiiJhP6RJ0pbiy0A5kprS9/D7uPWU5SA9LwRsdpK5gj6GBiqK/qlfjOgDKdVZQK83Clanx7xkAULuNs9MTzNe2mZ7/1VEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e16582cb9f9so3124143276.0;
-        Mon, 26 Aug 2024 05:20:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724674820; x=1725279620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m2sv7gNgIdFAM718zIFKTqLRe+kVkpp1n3p96raF+ZM=;
-        b=BU8IAL3lHQDP8U81I0OOcwOhDqoj2e3s/49Wgk9/n/UZELAGn7Vdk1MWO25JBTqxjW
-         O0a0qMBaKbQV59Qv2A0/fywounvAZ/mhhoUwEepHikPAlvITQQHV1FpiKvftRigQiqXo
-         4TsV6vDNvqfMoEntLGqz9jHqsKQK214kaxTJFffE1xG8dzS8qZGwxml9NL137RzSvE7/
-         GVirgFZYamA9hdgKkK3dXVADqALyionf6vjp0ohSMtNVs/pkdy5QBJdJ/ZWwuY/QSdfN
-         UyXw0hONbrL4XXHHdopww6sxF6xQVKEzsk1qdM6UAjBiABj+dx+lnp39mR6eihyqn6L0
-         hicQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAxL6J0VX515Mtsoft0cOZwu/LBSZpewG5NebY9x5O5QrY6r+bS6qBsudII5kjtVKVqdyQjKGB3YJwFS6z@vger.kernel.org, AJvYcCVr7nySFOIQu3+K8VTZSvT0Vkr5VCiVAX0XuANBRHEbu4Ipl1FpZ9wOAvj0Rg1+aNxtInz6ycYRZOv+@vger.kernel.org, AJvYcCWlSVQh+lJByaF6oeAABahWsFHwfy7LlrqEy14gXcuWXMImTY83SO20Ta+ryk4/ace0pP7J7VHZNbMFX4rylyYqbPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfwfPD9td1KyDbIf4+146vU/bWK+onKXQDHDNZQvWFHt+hd00t
-	EMrOtPijoqkcqVoctd7cVMhjUFXHORYsMvXGdB1nqKHieLMRbR4bVNs7JxyE
-X-Google-Smtp-Source: AGHT+IF4eQx/3SXlFoEn5cwmlB/wTCHwUP8+hDAt5LPgnJUrjpybnvvOvgDyxw1MHlf/ibladFUVPg==
-X-Received: by 2002:a05:6902:1023:b0:e11:446b:d43b with SMTP id 3f1490d57ef6-e17a78e6048mr7752997276.16.1724674820064;
-        Mon, 26 Aug 2024 05:20:20 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e463e9csm1941701276.25.2024.08.26.05.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 05:20:19 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b3afc6cd01so40265307b3.1;
-        Mon, 26 Aug 2024 05:20:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAI+5FARNbbxBa/ewL9hFgHcUfN+StszGGc6MEO9wHtNSDWnxG/zCuETUyKzF56W927QDp+JN7yIl42ix4ShciWW8=@vger.kernel.org, AJvYcCUkg9SG4X4vgy9INZMzdakpxoU5eMzU5tiqzDW4A3pzAWRlLzPILzwbSFXFeBl+9o7TgxZlNZtnzoe+@vger.kernel.org, AJvYcCUvMfdZ6tDw7xz9fPUv88OGBfITNG5iMuSunCKbxuGv2I5UJRr8APxYIcrAyIarUP/sgnxRXjmv2h4rlVvA@vger.kernel.org
-X-Received: by 2002:a05:690c:630c:b0:6cf:4b85:5e69 with SMTP id
- 00721157ae682-6cf4b8560camr3216737b3.18.1724674819672; Mon, 26 Aug 2024
- 05:20:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD031714C1;
+	Mon, 26 Aug 2024 12:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724674937; cv=fail; b=k0/eD85/52m/iqGi7iQvGwWEJgU1QYroVWAhHvi2MTcBxyqd1fkxW3cHEG/Z/QBJbVJG/cKqtyBZfQUVCnvo0x3YRPHtoIIBpMbafTzW+7h7+nrwNr0G4zcsrUQ7xbYw1gEPGaUSnu6nDCKKnh4zYAKxw6Frp1bar4QUTP6uuWA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724674937; c=relaxed/simple;
+	bh=Zng9Dkq0VJmYiEQ5/mqoyz2BtOH/XgfxVEamIofta7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=r/zTRj38sZdngsGo3QX5kAzGgf58ubOKALfLyQ5mkxjWUvrmQy29N6j+gLbzk3AhgRH88+a1A+XdicZN8rEeGF+W7Biwjhmf231Mhm0ZdXBza7MWVoVg2BKOJ4ZbCqFj+OZip4aT/p3t+xIyS3F/YUtd2j8WhZ7B6yBssEvGN8c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=R8O+D19T; arc=fail smtp.client-ip=40.107.117.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TrQ0dDpxUxdZpbJ0Ti9aoZfBMIAbqK208epn9Gif5U/o26TNNMC/baMV7LVDSvkBXU/1StgKbOkBsL4C2cwuqARHY+S+o+DP4XbB/GyO768BZIsou+vCoPS71QIzj7VLNCzfOCxaEWK0VW63RZufiKemYMUvQ8tTusWR0A0pMFwKh7pz4MuRgOq3DfCj4uYGRQSyY65nG9ZeqwTYnl/r3XQJcg9xo7U1moniXXuqu2FgDbuzGga8zXxC/diVM1wMLXnOz/b3RJgI/bD448jM4LxZDqO9YIgVtUxO5jZg53cpjsgQd09CRekAov9pzDdI2Ydt4vZx+6hgpocchWCzhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B6FYtsFhEyMFGAEXQO/gNbqqqnQUPVCJE0i/0b/U9fk=;
+ b=tiFvTv1eV6BjKoGAB/y/rWZFA4y1RoYR7ldh6kNOMeHOG/1qsNssF9/Jsz78fRUvXp3ioNQDr4PAI/Mz2lP9a+bfeRaORk+dwQTN7Cqr+mdbzO9lV5EVjXjGZU2qkjTXkbph9eld8wGXP27t0Fa4EJKzqHqxc1TXM3tHH7c1JBFQ+GUW0lnoL2GAGSk9p+MS8JylleKYzLTn7T5ROCNR5eQ3zKxh+d51+TnQqVPZXiIJQQWbksH2nHetcLA8C8Sr3eQmuNKsKk+Yd3lcFV6BQHD3Ke9algh5xlyNvNDHTPyXhLBnFf1DAL6Ff3sXawo4qfeBYcwMzJH8O/cuqJRi3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B6FYtsFhEyMFGAEXQO/gNbqqqnQUPVCJE0i/0b/U9fk=;
+ b=R8O+D19T/IOoniWcrweNyBMnCpOGTvSlaUh+xzFjiSjvQtiaJqm9sFfQmgsmhjIZEytNToTkH4C/WXxm1m3WlSnr+jTL4Q3S5YpXG8DRcJf+YKgoYZdTEmthOwf8hAn1LBMAU+RX5ESM4WQTkfMVDob6vzpKUFeZvfzeQuyoGFBxoXF6EjdaiX+0iLs8SIe6yRHSDjDvBd1Q7hehqR6Mg1xG/oVi7zhBK0mG8xC+AIUqqRPrIXdpRB23N57r0a5tzR1mhqan0/R6wZ5yFEHEHq9EIQiu0CgU0CkV5ngIGMtlgYAMkA6b2hFFhvgehbBYbiTLMXkScavBHh71642u8g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEYPR06MB6904.apcprd06.prod.outlook.com (2603:1096:101:1e1::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 12:22:10 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 12:22:09 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v2 3/6] dma:imx-dma:Use devm_clk_get_enabled() helpers
+Date: Mon, 26 Aug 2024 20:21:56 +0800
+Message-Id: <20240826122156.27038-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240823101933.9517-4-liaoyuanhong@vivo.com>
+References: <20240823101933.9517-4-liaoyuanhong@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0168.jpnprd01.prod.outlook.com
+ (2603:1096:404:7e::36) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240821085644.240009-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Aug 2024 14:20:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVun6ZW95wRFo6wyZWAg9Y6KZ9Ot7j3Jo__uDtJFZDgdw@mail.gmail.com>
-Message-ID: <CAMuHMdVun6ZW95wRFo6wyZWAg9Y6KZ9Ot7j3Jo__uDtJFZDgdw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] arm64: dts: renesas: r9a09g057: Add SDHI0-SDHI2 nodes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEYPR06MB6904:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5374b087-7d75-4f2b-eb4e-08dcc5c9b4e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n7DJd0wyBHJLXZVkzYpT7jpjNcsQzDQpO0cMr+ftoosPOcvtWxjkk6G+6oTL?=
+ =?us-ascii?Q?IvdnsrvxvuZ2swXccHjxiE82BmNAriYl1IF8Rq/Hu2lUI4+ZDfNEi/u0tbuc?=
+ =?us-ascii?Q?r2KgdHpDwNFqjMcNPr9gXKX4S81YrOUAjYUPc2Zt7wi3+DEEgmD4Dj0/PWTB?=
+ =?us-ascii?Q?ePix0Fz+MGNtwwSVm5ROur43SQ94vfHX2TJ094FiyqjtYLE/YJ9O1ngX2SLm?=
+ =?us-ascii?Q?VYB2nXT3ZZuG22nYF/RWO/YhokolOLfkBrb8UnGdv+GaXkiAJRpGKwgkSLR1?=
+ =?us-ascii?Q?ApxHZZ6wmVXFtcLPmoKRKmdk5Yio70ZiqKPWSgsAAGDObHn3+Sv7QhDL30KM?=
+ =?us-ascii?Q?wN3ziXjIE4wAgHINTy4Ap2mcxKR7rYHDfbpTyub81M7H6Hhi306DcHFAX54s?=
+ =?us-ascii?Q?BXhY5d+/z38gGwjFjU7otPiv40Fa9Eig1dxFv6JyB6HFpR12bvIOeu+Rhpvq?=
+ =?us-ascii?Q?zQE8F2Sr2XvWMdH5FKh/eyO30ZjgJodXMHQfC6b5rWdTdAVvihUI/zNULVIm?=
+ =?us-ascii?Q?XwJ3KuoC5aEPZI0++WcrFSv3Ul4QqO8PE68ErQBM0OTQOShdKF6QGX2vgj0A?=
+ =?us-ascii?Q?svImNv26aM2eU2/RYHk+NYp6IVzY6jyfkM5n0t1cg9NwlKkaOb2DesBFJS2/?=
+ =?us-ascii?Q?4dnLSWQ6OGNzrdQOmN4oX4rp886uXQOi2Ws9uPU+ODw1glzMrJrnWByoxEho?=
+ =?us-ascii?Q?d4u2rL9nedgj4D47h+za8g6wrcPFbUI1Ph3eKtZnqVXOVSz9dNzTOoSK2DfC?=
+ =?us-ascii?Q?ap5hA0/eUd5B5Rc7KwWPu7n6FaOU3hG6uznLUOGCpS+MldUQVCRI0ugKTuz3?=
+ =?us-ascii?Q?6xtSXVM+iIaKTR0VChvV3yeWz0SjMRAY4iLlqhaqESpZDjuSt+iYHBQpJiRs?=
+ =?us-ascii?Q?a5FHg6jInBaO2IiSe45x36g52MlDiD2Esl2R5mZdqShVOWoztkUyPw+WOsjk?=
+ =?us-ascii?Q?lHv7akDYStCo6qV8qMtYWJ4Dj9+mu6saAIL47fgL1Zvuk+GqcRhd8iO9goJO?=
+ =?us-ascii?Q?SbFqmeKB3PN86v9jL1BTLdKYvalBQjPTgA7HYDAUeQ/2gQLU+bE5mFj8bsEI?=
+ =?us-ascii?Q?AlJkywcHAE9Abx30EjN36h/V7lHRjv8A4p8CNV5mkr1orjqSA8e00+69RCoE?=
+ =?us-ascii?Q?BSLk8cW6Jg5QsGUAR8I5k0EtOqYXENlfzTutp0y/eiVPk9MBOZxilAz6o5vV?=
+ =?us-ascii?Q?M8JQC/2VmwPcSrnUY0Etc2PB4LAIJCv1+S7xRAWsrthFG0Inf/TFQd+zWkV4?=
+ =?us-ascii?Q?2sJBDrDIO0w9BXu3HOWKtBImRtf0mpzio6cPuNsz9h6WJNWGrueDV51dHQL1?=
+ =?us-ascii?Q?HT125op2cM4tcPcqLBQH5hJhnvsE7UWuxdps7eGhjFXaO/x6Uyf1vkhl+mJg?=
+ =?us-ascii?Q?bp+tdj09nuywxUM9w4vhkhoI+O0pzgC0IvPUuKEsAi0T7oWcDA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QXVfpr+Q8oDmq+3gy7CSdT/ccPvcCbccIgCyHf/F5ShcNudjYNa7ntZBUX0w?=
+ =?us-ascii?Q?Z7x4sZCRwEyyj4gEYgtSHO4dN3ycEXDv/Ws0HMJ5W8rn3yWeuypEkKIFJx/7?=
+ =?us-ascii?Q?JLLv4X95ezj2aPp9ZVIefXFf02Qnx2fc7/gzw2HwA2MnTpBXvr82bC9nBfUl?=
+ =?us-ascii?Q?IYC3ReYRIA7mDEgeUvt5XRW977Q/3u675bqJ6sMOYhEfvLadUbEXeWYa+4sy?=
+ =?us-ascii?Q?gYjUU3u4adUXbLK47dTRlgPfT7zw63tLZFyYae7CyZc/MkXaB/4M+GUAT0bJ?=
+ =?us-ascii?Q?/AfRU50cwYXsJLEDPN97TAtPHWbqr0qaTCPlOKxI1giHpJv+n25VZbMqukuF?=
+ =?us-ascii?Q?JOZod3eguUGnMMsFFAV0yPsyiwiWzOY5F56kIAC8TleeVAwSS8yl63Q9rc/W?=
+ =?us-ascii?Q?pAvVS4tOjllTIlDpNkyl0xWD1ftVRY0Yl5kBz8NyS/xta6demE2aE0IAOUbq?=
+ =?us-ascii?Q?SD3FswE5UintNNhb+rDQAkXVYVfVrMQoDQYvbs2PJv0UHpazBbu3E8TZxt5V?=
+ =?us-ascii?Q?oL4dzDR5+y71PfEMfMJ5SuYzkhQc8+67Cx/EFRTyFqSqJSrB24c8Y6+Gsmzn?=
+ =?us-ascii?Q?KhudHKWJLppuv7kXnbi/6yo1pepEXwl5WkCnbqxZVA49RlTPUZnFKtByOHuU?=
+ =?us-ascii?Q?TuWIk1fsaHqYyTeyKT+jCOJg0sGnwt8VZtUoLvcf/o7wrgD5gIsxgIBhPFTW?=
+ =?us-ascii?Q?Uogc+N52u8m3UKO3+E/ett0wUlOFLuJuqRUIr30d6V1OpsfzJOB5s+1jWrJQ?=
+ =?us-ascii?Q?qhIfRnlSOdJtQXjcnaVkyo0vXcs6+ZkXIYEYQGYm0bsq1oz8kT/zLdlKLCA8?=
+ =?us-ascii?Q?w2hfyEaqBEvkL4oatV0b18NrRnHAb/N/VtDHcp21Q0o45g2pHoQfS3pCP+Ac?=
+ =?us-ascii?Q?p243rV5fO+8vXDuzHXt8NJ4BD2Tv+KFDklcmD8qYwn+yo0w2THj61ztCO1sy?=
+ =?us-ascii?Q?ilyv8vML6ZvnuFuNBYhruF9zwSJhloT9uiubhW/1BGJ6SqJAGX+ofERDIgS+?=
+ =?us-ascii?Q?gYu42JP589Yai0QmWJ5qKfHO1Dm6oSE03cnhxdsyiCO3G+evR431Fs9yGkKJ?=
+ =?us-ascii?Q?luUNez46Zkred+Fe13zUoXCg2lNgftQbfeP24wGytiCzkYjJJz7yFJ0sdiDD?=
+ =?us-ascii?Q?/PWZ+PtWbfvXqGJ96olPQ7ygJCOtLcxJJiW8VHv7jc0kopVw7K4NFpqMt0PS?=
+ =?us-ascii?Q?sr1mn5lCVn7boPWzgoep5Ner+AUnnFEhltLHh8ZSi3nYFFQ/ph8uOeie4559?=
+ =?us-ascii?Q?fNf3Z1ICr9o2p02g5oi5x5KNGd9LLHIJN/TfPFjV9IheOYb0WhNf6YHabHk2?=
+ =?us-ascii?Q?je0LSd3LBZ5z+5DnhDiFtLwpZyq1jh1hTRstS96Abr6ji4bzJMeQ79DvV0Id?=
+ =?us-ascii?Q?349kV/KPZNM4+Rubaz+sCEOqRbucK4jutRk3E0qYutReAWRicFomnNOlNbi0?=
+ =?us-ascii?Q?6Ib6+qkHMdt1OwxItuhNlC4043yhewwdINLCJohvQKcaEWAGHCOgnyXKILDB?=
+ =?us-ascii?Q?dwhqNPnbOghX17JFAONEf4sY6lcBnGgurK0Dhtz+Bzl8xXrGyyIcvHSEUfOg?=
+ =?us-ascii?Q?OlYbtMZ+qAHyPjKyuw4/t4//b9UTgmUSSCYQojm+?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5374b087-7d75-4f2b-eb4e-08dcc5c9b4e0
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 12:22:09.5789
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TwzzV2SJcQyzuPRuh5dnAwVOkY5m+kmz3yrqJ8VwBjBgbx2Z77U10+tg6PjSHchb/abeVYeiUjEKzzOizqYv7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6904
 
-Hi Prabhakar,
+Use devm_clk_get_enabled() instead of clk functions in imx-dma.
 
-On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add SDHI0-SDHI2 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+v2:use dev_err_probe() instead of warn msg and return value.
+---
+ drivers/dma/imx-dma.c | 59 +++++++++++++++----------------------------
+ 1 file changed, 20 insertions(+), 39 deletions(-)
 
-Thanks for your patch!
+diff --git a/drivers/dma/imx-dma.c b/drivers/dma/imx-dma.c
+index ebf7c115d553..a6ad50734f2a 100644
+--- a/drivers/dma/imx-dma.c
++++ b/drivers/dma/imx-dma.c
+@@ -1039,6 +1039,7 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 	struct imxdma_engine *imxdma;
+ 	int ret, i;
+ 	int irq, irq_err;
++	struct clk *dma_ahb, *dma_ipg;
+ 
+ 	imxdma = devm_kzalloc(&pdev->dev, sizeof(*imxdma), GFP_KERNEL);
+ 	if (!imxdma)
+@@ -1055,20 +1056,13 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
+ 
+-	imxdma->dma_ipg = devm_clk_get(&pdev->dev, "ipg");
+-	if (IS_ERR(imxdma->dma_ipg))
+-		return PTR_ERR(imxdma->dma_ipg);
++	dma_ipg = devm_clk_get_enabled(&pdev->dev, "ipg");
++	if (IS_ERR(dma_ipg))
++		return PTR_ERR(dma_ipg);
+ 
+-	imxdma->dma_ahb = devm_clk_get(&pdev->dev, "ahb");
+-	if (IS_ERR(imxdma->dma_ahb))
+-		return PTR_ERR(imxdma->dma_ahb);
+-
+-	ret = clk_prepare_enable(imxdma->dma_ipg);
+-	if (ret)
+-		return ret;
+-	ret = clk_prepare_enable(imxdma->dma_ahb);
+-	if (ret)
+-		goto disable_dma_ipg_clk;
++	dma_ahb = devm_clk_get_enabled(&pdev->dev, "ahb");
++	if (IS_ERR(dma_ahb))
++		return PTR_ERR(dma_ahb);
+ 
+ 	/* reset DMA module */
+ 	imx_dmav1_writel(imxdma, DCR_DRST, DMA_DCR);
+@@ -1076,24 +1070,22 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 	if (is_imx1_dma(imxdma)) {
+ 		ret = devm_request_irq(&pdev->dev, irq,
+ 				       dma_irq_handler, 0, "DMA", imxdma);
+-		if (ret) {
+-			dev_warn(imxdma->dev, "Can't register IRQ for DMA\n");
+-			goto disable_dma_ahb_clk;
+-		}
++		if (ret)
++			return dev_err_probe(imxdma->dev, ret, "Can't register IRQ for DMA\n");
++
+ 		imxdma->irq = irq;
+ 
+ 		irq_err = platform_get_irq(pdev, 1);
+ 		if (irq_err < 0) {
+ 			ret = irq_err;
+-			goto disable_dma_ahb_clk;
++			return ret;
+ 		}
+ 
+ 		ret = devm_request_irq(&pdev->dev, irq_err,
+ 				       imxdma_err_handler, 0, "DMA", imxdma);
+-		if (ret) {
+-			dev_warn(imxdma->dev, "Can't register ERRIRQ for DMA\n");
+-			goto disable_dma_ahb_clk;
+-		}
++		if (ret)
++			return dev_err_probe(imxdma->dev, ret, "Can't register ERRIRQ for DMA\n");
++
+ 		imxdma->irq_err = irq_err;
+ 	}
+ 
+@@ -1126,12 +1118,10 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 		if (!is_imx1_dma(imxdma)) {
+ 			ret = devm_request_irq(&pdev->dev, irq + i,
+ 					dma_irq_handler, 0, "DMA", imxdma);
+-			if (ret) {
+-				dev_warn(imxdma->dev, "Can't register IRQ %d "
+-					 "for DMA channel %d\n",
+-					 irq + i, i);
+-				goto disable_dma_ahb_clk;
+-			}
++			if (ret)
++				return dev_err_probe(imxdma->dev, ret,
++					"Can't register IRQ %d for DMA channel %d\n",
++					irq + i, i);
+ 
+ 			imxdmac->irq = irq + i;
+ 			timer_setup(&imxdmac->watchdog, imxdma_watchdog, 0);
+@@ -1172,10 +1162,8 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 	dma_set_max_seg_size(imxdma->dma_device.dev, 0xffffff);
+ 
+ 	ret = dma_async_device_register(&imxdma->dma_device);
+-	if (ret) {
+-		dev_err(&pdev->dev, "unable to register\n");
+-		goto disable_dma_ahb_clk;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "unable to register\n");
+ 
+ 	if (pdev->dev.of_node) {
+ 		ret = of_dma_controller_register(pdev->dev.of_node,
+@@ -1190,10 +1178,6 @@ static int __init imxdma_probe(struct platform_device *pdev)
+ 
+ err_of_dma_controller:
+ 	dma_async_device_unregister(&imxdma->dma_device);
+-disable_dma_ahb_clk:
+-	clk_disable_unprepare(imxdma->dma_ahb);
+-disable_dma_ipg_clk:
+-	clk_disable_unprepare(imxdma->dma_ipg);
+ 	return ret;
+ }
+ 
+@@ -1226,9 +1210,6 @@ static void imxdma_remove(struct platform_device *pdev)
+ 
+ 	if (pdev->dev.of_node)
+ 		of_dma_controller_free(pdev->dev.of_node);
+-
+-	clk_disable_unprepare(imxdma->dma_ipg);
+-	clk_disable_unprepare(imxdma->dma_ahb);
+ }
+ 
+ static struct platform_driver imxdma_driver = {
+-- 
+2.25.1
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> @@ -420,6 +420,51 @@ gic: interrupt-controller@14900000 {
->                         interrupt-controller;
->                         interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
->                 };
-> +
-> +               sdhi0: mmc@15c00000  {
-> +                       compatible =3D "renesas,sdhi-r9a09g057";
-> +                       reg =3D <0x0 0x15c00000 0 0x10000>;
-> +                       interrupts =3D <GIC_SPI 735 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 736 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&cpg CPG_MOD 163>,
-> +                                <&cpg CPG_MOD 165>,
-> +                                <&cpg CPG_MOD 164>,
-> +                                <&cpg CPG_MOD 166>;
-> +                       clock-names =3D "core", "clkh", "cd", "aclk";
-> +                       resets =3D <&cpg 167>;
-
-With all module clock and reset numbers HEXed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
