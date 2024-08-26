@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-301135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B442A95ECD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B93E95ECF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E655A1C21715
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6E41C2186B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FE8143723;
-	Mon, 26 Aug 2024 09:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD4E143C70;
+	Mon, 26 Aug 2024 09:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMqQu3GE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0A13F441;
-	Mon, 26 Aug 2024 09:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="n4wDlcQY"
+Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9328F13A88D;
+	Mon, 26 Aug 2024 09:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663600; cv=none; b=eO1or5xvMkMNQB3lRBIDA2PfQMeBhhh5+F0mf78SpERKIuyxDLqkQlsytsBxpda7WdYCn82RKZDonTtnvAreJz2ZaHUEnpvl+c/6axVynH5BsT5CIsw3PmSrOl9Ky/BNVDDWaaD+mT5Hre6oqNYuStQDt/urhG8hLghRB7mARS8=
+	t=1724663985; cv=none; b=kpVmUHCsv58okkILAv5Vjk7v1CVXRRnN3aXb0wvp/L11TgDJkOaUww6kKb5poH1H4UkgpX8wffAWpywpn04VI2XizLxK+YwARzOJHa7kJzijd2qSw1vdNOtj2BH7MUJAOIqszVKfI5P64ZCUY39EoB+0C834EHBpOo1Xl+r0gI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663600; c=relaxed/simple;
-	bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
+	s=arc-20240116; t=1724663985; c=relaxed/simple;
+	bh=0eRmK37KBjgcw2LNlR8+ezH5+oSLGu1OKO+3ua3wznQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPXOn8HRfCZgXmZkH5qoTjpYeX+arC8QZcMmhoCZsTZ57DHSSwt1dgGp1q3paWrkO7CE4kYNvR0OBYmaxrFJ6etbG3Tv/VFISjlysMwQRwR+qJkJctwUKirLugQswXZDAXpobIi4U8J+wKxGaqvCRMAXg7b4zptfo78C72DJa0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMqQu3GE; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724663599; x=1756199599;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
-  b=YMqQu3GE+SO+wcb5Rr20FBi1LawGEh2sWdvNzJFXpg7hDS2FH+Qe6U+H
-   tY3aDZi2FZ9z1Wb3EPcyyBYzOaTUMYk3vP02A5aN3Yqa6ZrRyEVsUwNXP
-   gVSvvCVEeVxulB7e8Hy8GIB2QHcrwCvBV0gJdn/cTNePyf6EKh+mXK0FG
-   ewE145e13oaOoWz9CI1R0EqnhMDfn4NcIWamYRY3xzjRnJJzrNmDoXBVE
-   H1F0yXTcmR1PN6puiK/sz76GavwDsdxsLzsoFwgr5d0AhfDn2Q3oH6dBp
-   LRCqr6Sst7OZnkV+t8FbHE4m33Vk/T8uFQzjgyFiYQuSQVGjCvoNN2+cV
-   w==;
-X-CSE-ConnectionGUID: VDTinndkQ+a7Czynw8oB4Q==
-X-CSE-MsgGUID: pe2uhRrUQSO2qFDj3THYKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="40544221"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="40544221"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:12:53 -0700
-X-CSE-ConnectionGUID: Nox2pa3eRfOZXOnsj0pspg==
-X-CSE-MsgGUID: yZyvcUs2SMG63Lg3QNqQZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62288980"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 02:12:51 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siVmK-000GoG-1W;
-	Mon, 26 Aug 2024 09:12:48 +0000
-Date: Mon, 26 Aug 2024 17:12:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: sergii.boryshchenko@globallogic.com, dushistov@mail.ru
-Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
-Subject: Re: [PATCH] ufs: Remove redundant inode number check from
- ufs_nfs_get_inode
-Message-ID: <202408261605.ARxTA9jX-lkp@intel.com>
-References: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qssAicm+HPTF+2v8OCj250QYHIB9E1TYuHXhxNXPxB/ErWerZi30LEIQOGtV5VneMVEH73LGNMgRagE1XnMBP9szk1eh1Tq/hrnK2dSKcoNAuMW1rMXM7Rxx93Ka8hGJaLaffL2Z4qnpQHIepLUwpKh32h9HU/QgIRJxwFFaV60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=n4wDlcQY; arc=none smtp.client-ip=198.44.140.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
+Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
+	id B2EF940438C0; Mon, 26 Aug 2024 09:12:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su B2EF940438C0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
+	s=default; t=1724663564;
+	bh=0eRmK37KBjgcw2LNlR8+ezH5+oSLGu1OKO+3ua3wznQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n4wDlcQYxBU2vjkLqN1bp2NG0trUyjeDqZffXUkVeS6SBAAy2XOBLB5Nrt3oPoXwz
+	 d7N3DrxYZ6JOND8Kp74SCWaWBSN1eiixSvZZgCanaH+8gnXvhI2CAgYK6TeeBvyim9
+	 GXc9S75FfWwAG+h4XBq7k3Dd2lHqBSSMlFseZveOXArD9xBDbR5VpBHZps8wmdZliJ
+	 tG0H0Sa6F9ohgH9ACPt9DerqKtfqLwxvWhIDerG7ThoICQ1q3aAdIIf9cuSTu0RFnp
+	 2MQhCgT6LDNa8N5TvKxFoOUF/qDiE/SCuhy3d6svvN9+7r5MaXHsfs3TapdJrq1OzO
+	 U9AlAO/+BDVxw==
+Date: Mon, 26 Aug 2024 09:12:44 +0000
+From: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
+To: m.plak@icloud.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	cnsztl@gmail.com
+Subject: Re: [PATCH v3 0/3] Add DTS for NanoPi R2S Plus
+Message-ID: <20240826091244.GA22141@ветеран.su>
+References: <20240814170048.23816-1-jin@mediatomb.cc>
+ <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
 Hi,
 
-kernel test robot noticed the following build warnings:
+On Sun, Aug 25, 2024 at 06:28:44PM +0200, m.plak@icloud.com wrote:
+> On 14 Aug 2024, at 19:00, Sergey Bostandzhyan <jin@mediatomb.cc> wrote:
+> > here is version 3 of the NanoPi R2S Plus patchset.
+> 
+> 
+> Thanks! I was just experimenting with a patch for that board.
+> 
+> 
+> eMMC:
+> 
+> A close cousin of that board, the NanoPi R2C Plus, similarly adds eMMC to 
+> its base version, R2C.
+> 
+> R2C Plus is already supported by rk3328-nanopi-r2c-plus.dts.
+> 
+> The r2c-plus DTS file differs slightly from your patch.
+> Would it not be better to use the same fragment for both r2s-plus and r2c-plus? 
+> Or even place the eMMC activation in a shared dtsi file?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on viro-vfs/for-next v6.11-rc5 next-20240823]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+thank you for the additional review and testing!
+If you followed the thread, then you probably know that I was way over my head
+here, as I operate soleley in user space :) I was building a Yocto image for this
+board for one of my clients and I figured I'll try to submit something that was 
+already present in the FriendlyElec repos and which worked for me and with the 
+help and guidance from Heiko and others we managed to get it in, which concluded 
+my kernel adventure.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/sergii-boryshchenko-globallogic-com/ufs-Remove-redundant-inode-number-check-from-ufs_nfs_get_inode/20240826-120030
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240822142610.129668-1-sergii.boryshchenko%40globallogic.com
-patch subject: [PATCH] ufs: Remove redundant inode number check from ufs_nfs_get_inode
-config: arc-randconfig-001-20240826 (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/reproduce)
+It'll be great if you or anyone else is willing to continue from this starting
+point if further improvements are needed, because I unfortunately do not have the
+capacity for it - I am happy if hardware "just works" and
+very much appreciate the abstraction APIs that the kernel provides to folks like
+me :)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408261605.ARxTA9jX-lkp@intel.com/
+> I’ve compared the two and the friendlyelec kernel (not u-boot) sources.
+>  your patch does not contain these lines from r2c-plus:
+>     vmmc-supply = <&vcc_io_33>;
+>     vqmmc-supply = <&vcc18_emmc>;
+>     mmc-ddr-1_8v;
+> 
+> your patch adds these lines that are not in r2c-plus:
+>     supports-emmc;
+>     disable-wp;
+>     num-slots = <1>;
+> 
+> r2c-plus has a line that is in rk3328.dtsi already:
+>     max-frequency = <150000000>; 
+> 
+> the friendlyelec kernel sources also add:
+>     no-sd;
+> 
+> 
+> From the description in the mmc-controller binding documentation, I believe
+> disable-wp should not be used. The description for no-sd  I find confusing.
+> Can't find num-slots and supports-emmc there.
+> 
+> The RK3288 datasheet does not mention support for DDR mode, so mmc-ddr-1_8v 
+> surprises me a bit. The datasheet does explicitly mention that HS400 is _not_ 
+> supported.
 
-All warnings (new ones prefixed by >>):
+The mmc-ddr-1_8v change was suggested during review and I was asked to test if it
+works and improves the eMMC speed (it did). Back then I have asked if someone who
+knows what they are doing could take over, because I honestly have no clue
+what these things do on hardware level and what the implications here are.
+I was not let off the hook though, so I have just followed the instructions
+of the reviewers. If it is not in the datasheed, then perhaps this line should
+be removed after all?
 
-   fs/ufs/super.c: In function 'ufs_nfs_get_inode':
->> fs/ufs/super.c:101:37: warning: unused variable 'uspi' [-Wunused-variable]
-     101 |         struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
-         |                                     ^~~~
+> USB:
+> 
+> Another change with the Plus version of the R2S is that the USB 2.0 port that 
+> used to be wired to the ethernet chip now is used for an external USB port. 
+> I don’t have the hardware here (yet), so can't test if that USB 2.0 and the 
+> USB 3.0 work independently or need to be explicitly separated.
 
+Good to know that there may be an issue, to be honest I did not test USB
+explicitly, but both ethernet ports work. I did not modify anything in that
+regard anyway, since the R2S (non Plus) version was in the kernel already and
+I just copy-pasted the eMMC lines from the FriendlyElec devicetree on top of that
+to get eMMC to show up.
 
-vim +/uspi +101 fs/ufs/super.c
+We only needed ethernet and eMMC to work on the R2S Plus, so we did not test
+anything besides that.
 
-^1da177e4c3f41 Linus Torvalds  2005-04-16   98  
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15   99  static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 generation)
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  100  {
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15 @101  	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  102  	struct inode *inode;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  103  
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  104  	inode = ufs_iget(sb, ino);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  105  	if (IS_ERR(inode))
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  106  		return ERR_CAST(inode);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  107  	if (generation && inode->i_generation != generation) {
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  108  		iput(inode);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  109  		return ERR_PTR(-ESTALE);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  110  	}
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  111  	return inode;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  112  }
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  113  
+I still have the hardware here, so I could quickly test a thing or two if
+needed, just please make sure to e-mail me directly as I have already unsubscribed
+from the mailing lists.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kind regards,
+Sergey
+
 
