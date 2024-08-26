@@ -1,162 +1,102 @@
-Return-Path: <linux-kernel+bounces-300920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F1395EA91
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:34:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D262C95EA8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7409EB21EE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40884B20B8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1243313774B;
-	Mon, 26 Aug 2024 07:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920A0548E1;
+	Mon, 26 Aug 2024 07:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RcZ8QGe4"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DBRZ6XWD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D8D376E6
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC401129A74;
+	Mon, 26 Aug 2024 07:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657642; cv=none; b=Md1hPpZMWzTgwa/l4+fUIvVCbPW8xUpjJ4TxzHhd+R4id8Jk/R+wI2TNY6MX9tpesnU+ZfFdQozlbNc/s/oSGeqXvejV/eBMUYH5fuzwjjJ8QRA7iX07ee/t/jhjfFIF/ALjO7pEhisK7ApR2I/GcU3VzOFw5jPd+Nu54cFDVnk=
+	t=1724657627; cv=none; b=SZ1cSw7Z0JSwIWNMFyfsEVx84jzbMTOBbwpL2agYboKCh0ZXkhmEf22lXK8l52zvGRtDmnCRsPMjcE5rcwUTauG5FmFP+FTQuRDor4McD0+mf9JusVGlS4ZwBAjYO6ejlZmYvLuMMZhbrTjmVekY0/lEhB0OxCVTfm96Y03v68U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657642; c=relaxed/simple;
-	bh=nDmwfZb3zAoHaIov3BpMiaPHaRy3b1QEPWCy5Od8fvk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=qzk+F06jOvRFQxaU5TpzV7/xA7M+hnF3qa9yt+Bi7BFkwRv5yoVBzrdVIjFiykDw34AQU0By9zlVFlcSrWWOmVAQTUeo5WhQEUro1VN95fCM5fmAw2QRl/uSbzzpQ3RTNpf5Q4t0qN0DEp7NmDcbzsd0MsIzMUhZBlmzTzTmidQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RcZ8QGe4; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724657637;
+	s=arc-20240116; t=1724657627; c=relaxed/simple;
+	bh=BZ+Ga7Yx1m5+I1PY9IeYzJ0V0bDr7hy73Wh0TQSBMsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jlf0iPqlUVJoq9mZ65ZTeRT4sPRmy1YRF70R70k0PiukOQQt2W3cbfOnAwAKKP+jCueGv73D0OS1JVSAonvD1VJj9zBd9TT4ND75e3BOJKwlw+J9SOazQlydTXShVvn93PlVOVEHmgaYs3EWRDZ3XUkHVzIqz8QK/9yJtVNljZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=DBRZ6XWD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C2BC8CDC1;
+	Mon, 26 Aug 2024 07:33:45 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DBRZ6XWD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724657623;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C9v9WEqDip3i21pJBqBZAVyHYygHv4sd7F9tl+2YhKg=;
-	b=RcZ8QGe4gpLFLi/AQ6FlHq/y8+D/aII/F31LemP17YUySU51i03x0tmyJZG3XnamaoetRi
-	Eo1BOh49ANslw/M2ZSJGt6MhKr0rO1d5CT4p8Xf65dVDNC9gOYvJ/EZbbvpYiRmeHonHRn
-	3+x+l+fVRGpBNAJXJ+edXY1V2HbLM2U=
+	bh=7352A08UdB7RMlKrf9ghuchmIx/aoSaJhuAqBuZsFcc=;
+	b=DBRZ6XWDvXjnYuYhxFXXFEdwYvgjA29BBUQVXRAglzQXZPgBoyT+pscRKjlI8wD1B6oehQ
+	eDbbUGzgcthjGXmofT3JoCTTGtGTgN59VX/jWtlqknExCrO9TPUYQcV1VqXc7cECI/ckoW
+	WbweiaFinCYbI/Owc4VJr6Cbd4DY0XY=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 35c98243 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:33:43 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:33:34 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 15/17] selftests: vdso: Fix build of test_vdso_chacha
+Message-ID: <Zswvzq11-0LARaR2@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <50cc36936b310d8dd6d7539c552cc8dd84052020.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 4/4] block: fix fix ordering between checking
- QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
-Date: Mon, 26 Aug 2024 15:33:18 +0800
-Cc: Ming Lei <ming.lei@redhat.com>,
- Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-5-songmuchun@bytedance.com> <ZshyPVEc9w4sqXJy@fedora>
- <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
-To: Muchun Song <songmuchun@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <50cc36936b310d8dd6d7539c552cc8dd84052020.1724309198.git.christophe.leroy@csgroup.eu>
+
+On Thu, Aug 22, 2024 at 09:13:23AM +0200, Christophe Leroy wrote:
+> Replace -isystem by -idirafter
+> 
+> But this implies that now tools/include/linux/linkage.h is
+> included instead of include/linux/linkage.h, so define a stub
+> for SYM_FUNC_START() and SYM_FUNC_END().
+
+Thanks! I got step 1, but didn't figure out step 2, and tried to do
+things the lazy way instead:
+
+-#include <sodium/crypto_stream_chacha20.h>
+ #include <sys/random.h>
+ #include <string.h>
+ #include <stdint.h>
+ #include "../kselftest.h"
+
+ extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
++extern int crypto_stream_chacha20(uint8_t *dst_bytes, uint64_t dst_len, const uint8_t *nonce, const uint8_t *key);
 
 
-
-> On Aug 26, 2024, at 15:06, Muchun Song <songmuchun@bytedance.com> =
-wrote:
->=20
-> On Fri, Aug 23, 2024 at 7:28=E2=80=AFPM Ming Lei <ming.lei@redhat.com> =
-wrote:
->>=20
->> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
->>> Supposing the following scenario.
->>>=20
->>> CPU0                                                                =
-CPU1
->>>=20
->>> blk_mq_request_issue_directly()                                     =
-blk_mq_unquiesce_queue()
->>>    if (blk_queue_quiesced())                                         =
-  blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
->>>        blk_mq_insert_request()                                       =
-  blk_mq_run_hw_queues()
->>>            /*                                                        =
-      blk_mq_run_hw_queue()
->>>             * Add request to dispatch list or set bitmap of          =
-          if (!blk_mq_hctx_has_pending())     4) load
->>>             * software queue.                  1) store              =
-              return
->>>             */
->>>        blk_mq_run_hw_queue()
->>>            if (blk_queue_quiesced())           2) load
->>>                return
->>>            blk_mq_sched_dispatch_requests()
->>>=20
->>> The full memory barrier should be inserted between 1) and 2), as =
-well as
->>> between 3) and 4) to make sure that either CPU0 sees =
-QUEUE_FLAG_QUIESCED is
->>> cleared or CPU1 sees dispatch list or setting of bitmap of software =
-queue.
->>> Otherwise, either CPU will not re-run the hardware queue causing =
-starvation.
->>=20
->> Memory barrier shouldn't serve as bug fix for two slow code paths.
->>=20
->> One simple fix is to add helper of blk_queue_quiesced_lock(), and
->> call the following check on CPU0:
->>=20
->>        if (blk_queue_quiesced_lock())
->>         blk_mq_run_hw_queue();
->=20
-> This only fixes blk_mq_request_issue_directly(), I think anywhere that
-> matching this
-> pattern (inserting a request to dispatch list and then running the
-> hardware queue)
-> should be fixed. And I think there are many places which match this
-> pattern (E.g.
-> blk_mq_submit_bio()). The above graph should be adjusted to the =
-following.
->=20
-> CPU0                                        CPU1
->=20
-> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-> blk_mq_run_hw_queue()
-> blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
->    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
->        return                                      =
-blk_mq_run_hw_queue()
->    blk_mq_sched_dispatch_requests()                    if
-> (!blk_mq_hctx_has_pending())     4) load
->                                                            return
-
-Sorry. There is something wrong with my email client. Resend the graph.
-
-CPU0                                        CPU1
-
-blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-blk_mq_run_hw_queue()                       =
-blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
-    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
-        return                                      =
-blk_mq_run_hw_queue()
-    blk_mq_sched_dispatch_requests()                    if =
-(!blk_mq_hctx_has_pending())     4) load
-                                                            return
-
->=20
-> So I think fixing blk_mq_run_hw_queue() could cover all of the =
-situations.
-> Maybe I thought wrongly. Please correct me.
->=20
-> Muchun,
-> Thanks.
-
-
+Yours is obviously much better, so I'll queue that up instead.
 
