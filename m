@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-301590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A564095F2F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:33:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A3895F2F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D840D1C21CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256A61C21C03
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AAD188017;
-	Mon, 26 Aug 2024 13:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4233185E7B;
+	Mon, 26 Aug 2024 13:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="MZG+zzd8"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mAKD5Sbq"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21194187FF5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8454253373;
+	Mon, 26 Aug 2024 13:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679171; cv=none; b=ctpIaY49FG/dxJQIrzzO5AOu7yiwkiSJg9MUFTyYGtbXH6jlzdTKWpKTeYEoZI6ao2zhldKEqmlC032UNDc5+xFZT/X7PVcMVmAzpyQsiFYI/wyDzrtQFohwaUi4E5sb9HCrA0JRXq5j8e1AIGoDra3B+mIlWrfydAqtyekUsOA=
+	t=1724679165; cv=none; b=gvIlarQV8hObjsu7NNY2mgDsOVtaa6/ovq8NkHz1csSw63gFCilTPhbXHpVSu8f+7jCizeGHwJ4Ag3sIAHUOcfmbl998CLn1Qpt+iyClZTFqXp2ITezDGncpNJizdP59PgW4PW78fOEejVf71SUZ2hEvMRtTpi73ooC6SFO8P2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679171; c=relaxed/simple;
-	bh=n0NPm7B6J7gVDk2ymDoWEA5zA8j5C6+nBCISk/lA5Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCZuLnPtTf4FebqNWCrDSWeoGx2XgnnhhmXKUQc3SvrrMqS/tfJsnAsXuN5apeuq4ICYhIrKOpTsVidGD87uFye//Vk7c09erRXgugoZ+6I43mTf4QFw3j7dJk69r0kqBmLw+bM7CRNz+ig28uo9rbASpZBIcUo/R/jYb5XDP08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=MZG+zzd8; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-102-154.bstnma.fios.verizon.net [173.48.102.154])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47QDW8j6004718
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 09:32:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1724679132; bh=Fri/kc3dR/ARb2zKFwI6CM6fhXpI4ReBwuWSC6P3TgM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=MZG+zzd8YoEYiH+pUWgnfqgM7vJoEyYa4aBt0CagAKr72sOkn/bVYrmB7osXKGjt1
-	 Qcg14P5902cyLz5kzCRuTLhMTjs3HwWE4iQu1VPFKpZZP3+bJABRXz2wgL8FvPOSuG
-	 /77RJZsWCamci5WSPnuE6kMjQNt2VR95u4rm/QHvtbtkn8nqnoRLw6+6sbe0dBjkqU
-	 UkusYmsZzm0g/ylujOXY5rxjCC1vbnhfnsc46E2Og9N4b89qhGb5d+3xOmGsSHgIfv
-	 8G9cpRxlV1Co1cnIsN5/LilcyFW0yJ2KqwsugOyQuyx9eGI8q7BslJrwyWGoztjtXV
-	 lwBZoaJyYA02A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 9C5FB15C02C1; Mon, 26 Aug 2024 09:32:08 -0400 (EDT)
-Date: Mon, 26 Aug 2024 09:32:08 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-Cc: syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com, jack@suse.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark@fasheh.com, ocfs2-devel@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com, ~lkcamp/discussion@lists.sr.ht
-Subject: Re: [syzbot] [ext4?] [ocfs2?] kernel BUG in jbd2_cleanup_journal_tail
-Message-ID: <20240826133208.GB424729@mit.edu>
-References: <00000000000070a66706204e7698@google.com>
- <d673f289-2385-4949-ac80-f3a502d4deb2@lkcamp.dev>
+	s=arc-20240116; t=1724679165; c=relaxed/simple;
+	bh=hMPEedZ7R8kQX2dAOqK1OinhKb8ITJnQhO+8RaFfET0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DDq73TCwwoCK6epaNeOFnwI87vv+Oyi4TiwgjxnwVq31ZEF4W+UA3lOrY1+0Ek++VSpJUdLBrbHwwgQfkl/EwR1JUjiXhyrFhpi0p4Pey3IypKYOeEnPd4OD7DF9MuxskvJKkqPA0DXFnzRIc2UDa9bvcYHEZDg/mNHVqeZUaX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mAKD5Sbq; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 052F4E0009;
+	Mon, 26 Aug 2024 13:32:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724679160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Fl/SRGdttN3lDqzZyvZSVzuNCB/OVFNgjawoVIbl+Rc=;
+	b=mAKD5SbqWGZ+7WygHA3/fj5+Ong7bLdaqJFsQI/caBjZPgcc1KMRxTA7PvLjpwVuUn7Mb/
+	ltilOywn2keIo4EsUSLcKZyX3v/lkZppfEDpnouD34TgFHe0Poz6Sr7PdbLcNe1CqAXxat
+	qbiECd7junX1KdKIcTM7unhWGhwuVLUObZXclr10JZJ/erYNzE/+PLCfVA5FvFxls+7mrt
+	/SW2VMbq5u8fRnThJp49pJAm2FLfzIdpAKEsEJ3jtYfLUVxJUYDAwX4yBW0n467rulnhZA
+	+NG8V92US7tgFZzxUHZyQ6G9jXIkfvM3r/Ls91CsbeazM0MI/awcbpeIA0JzYA==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Riku Voipio <riku.voipio@iki.fi>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: pca9532: Remove irrelevant error message
+Date: Mon, 26 Aug 2024 15:32:37 +0200
+Message-ID: <20240826133237.134604-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d673f289-2385-4949-ac80-f3a502d4deb2@lkcamp.dev>
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On Mon, Aug 26, 2024 at 01:22:54AM -0300, Vinicius Peixoto wrote:
-> Since the disk data is bogus, journal_reset fails with -EINVAL ("JBD2:
-> Journal too short (blocks 2-1024)"); this leaves journal->j_head == NULL.
-> However, jbd2_journal_load clears the JBD2_ABORT flag right before calling
-> journal_reset. This leads to a problem later when ofcs2_mount_volume tries
-> to flush the journal as part of the cleanup when aborting the mount
-> operation:
-> 
->   -> ofcs2_mount_volume (error; goto out_system_inodes)
->     -> ofcs2_journal_shutdown
->       -> jbd2_journal_flush
->         -> jbd2_cleanup_journal_tail (J_ASSERT fails)
-> ...
->
-> I confirmed that setting the JBD2_ABORT flag in journal_reset before
-> returning -EINVAL fixes the problem:
-> 
->         static int journal_reset(journal_t *journal)
->                         journal_fail_superblock(journal);
->         +               journal->j_flags |= JBD2_ABORT;
->                         return -EINVAL;
-> 
-> You can find a proper patch file + the syzbot re-test result in [1].
-> However, I'm not entirely sure whether this is the correct decision, and I
-> wanted to confirm that this is an appropriate solution before sending a
-> proper patch to the mailing list.
+The update_hw_blink() function prints an error message when hardware is
+not able to handle a blink configuration on its own. IMHO, this isn't a
+'real' error since the software fallback is used afterwards.
 
-The reason why this isn't an issue with ext4 is because the normal
-"right" way to do this is if jbd2_journal_load() returns an error, is
-to call jbd2_journal_destroy() to release the data structures with the
-journal --- and then don't try to use the journal afterwards.
+Remove the error messages to avoid flooding the logs with unnecessary
+messages.
 
-The weird thing is that there are two code paths in ocfs2 that calls
-jbd2_journal_load().  One is in ocfs2_replay_journal() which does what
-ext4 does.  The other is ocfs2_load_journal() which does *not* do
-this, and this is the one which you saw in the syzkaller reproducer.
-It looks like one codepath is used to replay the ocfs2 for some other
-node, and the is to load (and presumably later, replay) the journal
-for the mounting node.
+Cc: stable@vger.kernel.org
+Fixes: 48ca7f302cfc ("leds: pca9532: Use PWM1 for hardware blinking")
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+---
+ drivers/leds/leds-pca9532.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-There are also some other things which look very confusing, such as the fact that ocfs2_journal_shutdown calls igrab:
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index 9f3fac66a11c..bcc3063bd441 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -215,8 +215,7 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
+ 		if (other->state == PCA9532_PWM1) {
+ 			if (other->ldev.blink_delay_on != delay_on ||
+ 			    other->ldev.blink_delay_off != delay_off) {
+-				dev_err(&led->client->dev,
+-					"HW can handle only one blink configuration at a time\n");
++				/* HW can handle only one blink configuration at a time */
+ 				return -EINVAL;
+ 			}
+ 		}
+@@ -224,7 +223,7 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
+ 
+ 	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
+ 	if (psc > U8_MAX) {
+-		dev_err(&led->client->dev, "Blink period too long to be handled by hardware\n");
++		/* Blink period too long to be handled by hardware */
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.45.0
 
-	/* need to inc inode use count - jbd2_journal_destroy will iput. */
-	if (!igrab(inode))
-		BUG();
-
-... which is *weird*.  Normaly the journal inode refcount is expected
-to be bumped before calling jbd2_journal_init_inode() --- which
-normally is done by an iget() function, and is needed to make sure the
-journal inode isn't released out from under the jbd2 layer.  It looks
-like ocfs2 uses the journal inode for other stuff so get the journal
-inode without calling something like iget().  Which is OK, I guess,
-but it means that there are a whole bunch of places where it has to
-call !BUG_ON(igrab(journal->j_inode) before calling
-jbd2_journal_destroy().  It would seem like the *right* thing to do is
-to bump the refcount in ocfs2_journal_init(), and if for some reason
-the igrab fails, it can just return an error early, instead of having
-to resort to BUG_ON() later, and if you don't realize that you have to
-do this weird igrab() before calling jbd2_journal_destroy(), you'll
-end up leaking the journal inode.
-
-Anyway, I think the right thing to do is to restructure how ocfs2
-calls the jbd2 journal, but that's going to require a more careful
-examination of the code paths.  Your patch is a bit of a blunt force
-hack that should be harmless, but it's probably not the best way to
-fix the problem, although doing it "right" would be more
-complicated....
-
-					- Ted
 
