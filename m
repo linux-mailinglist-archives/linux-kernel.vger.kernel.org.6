@@ -1,151 +1,181 @@
-Return-Path: <linux-kernel+bounces-301127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E692795ECB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:07:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A7495EC93
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAB21F2185E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81651C213C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CB713DDCC;
-	Mon, 26 Aug 2024 09:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16386140363;
+	Mon, 26 Aug 2024 08:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IBu13QF7"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WAZsMFyC"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5269A84047;
-	Mon, 26 Aug 2024 09:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1E013D8B8
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663226; cv=none; b=CfzNfPPxcwypP0UTsoaZBthKvVBeBON61hCMNyv7YbA9NMqH2K/RWXZrO9CQXVx6XZ2T6wnejP0vksFOBhzzfIF/tWwRTcpfGauZRb31BKfzLaI6f5K6BYhTPmLifdT4KsxuZugeInvLAT6a5nB09DFE7fsnw+s8mOYm9HH2CZc=
+	t=1724662767; cv=none; b=pf+HWllf3PzJJq7OSln9Y5fTE+bI+HVnpSBsM9nwvbAoiZ0pVwRS48OZNehUpAEA0XIutTkzyX0f4kHMbVXl2TQJtDzUdNAHZG7aHLPEcEf9U43q1UnqdCMqoigH4alKr52nVis9vSzU33jIcX85My77pAxj1X7SlGLiVw1rCB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663226; c=relaxed/simple;
-	bh=t6E3YyEOBf2I57/ODAt4w7a2zijQZIz76U604qLgUMY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=JhNcoSYxYrLSQUGmE86EiNwSp32Gmmog9x+y96kUBd+c2LIwOe3gQoT3K64akiodngQu7WhfU4G8X4v1Is2wOuv32r5CfgwkX5eNSiLeCeAhgiwn4xIwCkGfLintSk9soZUAOL85FTlgRY90CcAOlHaFMD62cUtsNLRaOeIK5D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IBu13QF7; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724663212; bh=k3xkOZZAZTnOpfeg6oi7bd7/Sd8fmJuPwEsMntl666A=;
-	h=From:To:Cc:Subject:Date;
-	b=IBu13QF7AOChkMKbr8vaEpYcQbvEyVozEVzH2duHz+GjFyEOnX32/N435991eIBeU
-	 RyWicEkoIKje+Eia2AqHsxMU7HZHwObW/tE5QmcBOX+6ifo/Hkth83VLbppCUUW48Q
-	 oG/N8IotCGwBRsCuB8mtfM6mRPePwFN/47/11mk0=
-Received: from iZ2ze0ccts00nkjy9wuyo6Z.localdomain ([101.201.76.96])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id EA538643; Mon, 26 Aug 2024 16:58:37 +0800
-X-QQ-mid: xmsmtpt1724662717tlpv04lxd
-Message-ID: <tencent_13F0C81B16C09CC67E961B5E22F78CC72805@qq.com>
-X-QQ-XMAILINFO: MGJQUKeBeYZp2roOmIFYtI+BoU9OKKs64nMbZsBJuzJeeiPBtb738Cfrm+A6/N
-	 rcmEVG8H/6X+E9+8NYyPrTZ78Fd5mvCfAZvJ57jV0YlFtXtjwvs04y1XPFHFVc2YmDspKHll1hTL
-	 cxSf71xejKyDhn23SxIkk4eTBxfaN26CrbVf8pW66B/vNAJDrqw+7dQHXDw2G/4Vn9fQq39z58CF
-	 H0wlPTJA5NyPiAC6XhtJ4hfXcMuA5bcnCejQ58vrxaVzWWAJeJTmmfWQ54H8KzqvJlX6vhV2wTb8
-	 SRR8wsaIV8rURgxKuqqfSUih53MIOukBgSwhEfGmaugMqBGg3hIqyf4F9qNpOF0cbmlY/d4GJGhD
-	 cbq4s5W8ueqmVxonhqlKfMh1Bax1x8OBoSbx7ThRVV0edxCd4KgGsbXdkPoQs40Uy2UD6455WzWY
-	 S/6ylP02h90TEm4K5F6unHVs7CyF0SBlCcSGS5wAIdXSiY8jqtg59MNi1b7VNzkQHHwJQdqEkMjQ
-	 jrjfnSmOzM6J3/kX3vWlBraCztKeVNXN4dImiVxFu1+KmF/2NQUQOfnPjertnQQJp23BYdhx3Yla
-	 j5z4BQdiJIWre+ZhgfpD64AFa+qUTCR8khdHJOWo4lb4TKqJtmo7sG6koEXbfZUj+iyHRxrIUUlF
-	 MN77HX+DsEaY8Tyy/0idfF/UQZ56katFHzH82GNCxZP6Jst/TvLVy7igFLLZwNZB3ErmLZZlnUwD
-	 wlhJNAmrGdC/7hOiSqqaai5Zja4P2Azq3urm/j2yyxpIsWV6GjhcmZc/b1AZcIpDn566FoMyjgg6
-	 KtN8DyiI9cmGi2WGumt4C5dQOXI5McbbimphRFnpE2E+JCEHsLyFbk902yLCT31fAqM9cbFrv7xM
-	 FsO4yBNRrXxkJiOd8uk9jpS2pbwqIRxatWsKHveHKra2ivAPq2MGpFvTo9dTGgtvaICWy4++5iNB
-	 OFvu8jLTg+iMwKHCOaK5A65KIXaJbsY8VHiZzxGtI=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Yanhao Dong <570260087@qq.com>
-To: rafael@kernel.org
-Cc: daniel.lezcano@linaro.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	ysaydong@gmail.com
-Subject: [PATCH] Fixes: 496d0a648509 ("cpuidle: Fix guest_halt_poll_ns failed to take effect when setting guest_halt_poll_allow_shrink=N")
-Date: Mon, 26 Aug 2024 16:58:36 +0800
-X-OQ-MSGID: <20240826085836.530152-1-570260087@qq.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1724662767; c=relaxed/simple;
+	bh=pGUaHSOJJkMQt5BZYoMf0dGNN2Fjcxw7k0FILJR0kAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6CpCqvIaeYuQ4/d3VjOncQec89jMCbVK4CmoTmtQ2UrSaHAdDSuhkNaWBvCxCKFaPqTQslBdQUzEhlT+R00YwGP/FYRtWIkE/E3yI6hUXIqhaC268GqwTt17a0oZS9NVcob0/uJNaIRTBPeDPh4eml5ZtErgcPHavdHyyQIAsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WAZsMFyC; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5343eeb4973so2957746e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724662763; x=1725267563; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bd9B44Nl7+g1cM9bkfkjJX8JzbY1PgI3kG+ulDiEMdQ=;
+        b=WAZsMFyCcWnUtEY1WTevuZMkQvO289Xp6hho0yFIuZvq22aBTGlJ0cXibBS2i9/puF
+         aWcQO4atlofDUbpKsOAJ17jlWk/ukeQee2TpJuVb2b5cNJ2aLeL9Rf2KGd/gajVIbetJ
+         1C+qOxiaKX0/93kmgLd+T9tyzE3MQVnQm+T2H5Fs4bjrUL6BGuIyddPsSfwTAK+m6iI6
+         iCvTtRqabi0AkM4bjGQYHa0MhTmY3HBY/IEUAU5qwzrZsbIen7wsRTc8I2uTOTLW6gAS
+         A3mGHILVyHmxJlcwJohm61gaC0FSMcs+waTa1BNendWXcy5Hx8Jw+C8fC7C5h4tD3Svx
+         uS6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724662763; x=1725267563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bd9B44Nl7+g1cM9bkfkjJX8JzbY1PgI3kG+ulDiEMdQ=;
+        b=nAPxjzsBovdllUGnew0AwpCq4ezrvOsQUPnhwSClJCcRKPz2q2HNQ9+gJizF3ok7Ir
+         58P3lV8VkqjvCXx2osoTuqWfUItuIgjn2jH1zbDm+uYqRqo3lQpIq1IoBAUZJPPgjW0N
+         VT5yArvpltXEINPm9q5HCxgVs+LER+ae4p4ZjuSKJGglGvprNjvAbAWbzS2IMF3DY9JH
+         4puJU4/OnEEYf6HEa1oIFbTX/HHnNrgj1MparALFjUyD2NOoFGmmHl1R6UZTchI08sBz
+         MytU8PObZfC7pb274z171+RfI5nSZaBtWqFgaHi+aOVmKJOcKn7AJxee5ewV3lWSvPg4
+         V6+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVm35H7+cBdwCmhh/dIHpIUjuCF8tPu2YEIzixU6p/681l/1p5u8+B7oatdUke3elRwbH4DUItSXVlura0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytVDmd/7i7ggCtqA13bbX1rYNc3FRrWyDwXT9Xmaf/C0Xu1Bco
+	COgxBQjHGz5tMqqezBdrBANrWFuhaqTaFCkGxaHpCwexxeFWTs6XdStdUQuPlWLJ4QOIomXeKJa
+	SR2C97tdq8ZQI3l7JursE4zH3VAi8rHZL3lI+Bg==
+X-Google-Smtp-Source: AGHT+IGEft27gKfF8OCWFoAOuMh4QtyEh1Yp7uSkPeDiRCrZ0WKZup/kL/7F8F5+yru68H0HLntVGNBq/OYlJBg9wOw=
+X-Received: by 2002:ac2:4e07:0:b0:530:dfab:9315 with SMTP id
+ 2adb3069b0e04-5343883d65emr7564335e87.10.1724662763017; Mon, 26 Aug 2024
+ 01:59:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1724159867.git.andrea.porta@suse.com> <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Aug 2024 10:59:12 +0200
+Message-ID: <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
+Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio support
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Stefan Wahren <wahrenst@gmx.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: ysay <ysaydong@gmail.com>
+Hi Andrea,
 
-When guest_halt_poll_allow_shrink=N,setting guest_halt_poll_ns
-from a large value to 0 does not reset the CPU polling time,
-despite guest_halt_poll_ns being intended as a mandatory maximum
-time limit.
+thanks for your patch!
 
-The problem was situated in the adjust_poll_limit() within
-drivers/cpuidle/governors/haltpoll.c:79.
+On Tue, Aug 20, 2024 at 4:36=E2=80=AFPM Andrea della Porta
+<andrea.porta@suse.com> wrote:
 
-Specifically, when guest_halt_poll_allow_shrink was set to N,
-resetting guest_halt_poll_ns to zero did not lead to executing any
-section of code that adjusts dev->poll_limit_ns.
+> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> Add minimum support for the gpio only portion. The driver is in
+> pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> support where the gpio part can be seen as an addition.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+(...)
 
-The issue has been resolved by relocating the check and assignment for
-dev->poll_limit_ns outside of the conditional block.
-This ensures that every modification to guest_halt_poll_ns
-properly influences the CPU polling time.
+> +#include <linux/bitmap.h>
+> +#include <linux/bitops.h>
+(...)
 
-Signed-off-by: ysay <ysaydong@gmail.com>
----
- drivers/cpuidle/governors/haltpoll.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+> +static void rp1_pad_update(struct rp1_pin_info *pin, u32 clr, u32 set)
+> +{
+> +       u32 padctrl =3D readl(pin->pad);
+> +
+> +       padctrl &=3D ~clr;
+> +       padctrl |=3D set;
+> +
+> +       writel(padctrl, pin->pad);
+> +}
 
-diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/governors/haltpoll.c
-index 663b7f164..99c6260d7 100644
---- a/drivers/cpuidle/governors/haltpoll.c
-+++ b/drivers/cpuidle/governors/haltpoll.c
-@@ -78,26 +78,22 @@ static int haltpoll_select(struct cpuidle_driver *drv,
- 
- static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
- {
--	unsigned int val;
-+	unsigned int val = dev->poll_limit_ns;
- 
- 	/* Grow cpu_halt_poll_us if
- 	 * cpu_halt_poll_us < block_ns < guest_halt_poll_us
- 	 */
- 	if (block_ns > dev->poll_limit_ns && block_ns <= guest_halt_poll_ns) {
--		val = dev->poll_limit_ns * guest_halt_poll_grow;
-+		val *= guest_halt_poll_grow;
- 
- 		if (val < guest_halt_poll_grow_start)
- 			val = guest_halt_poll_grow_start;
--		if (val > guest_halt_poll_ns)
--			val = guest_halt_poll_ns;
- 
- 		trace_guest_halt_poll_ns_grow(val, dev->poll_limit_ns);
--		dev->poll_limit_ns = val;
- 	} else if (block_ns > guest_halt_poll_ns &&
- 		   guest_halt_poll_allow_shrink) {
- 		unsigned int shrink = guest_halt_poll_shrink;
- 
--		val = dev->poll_limit_ns;
- 		if (shrink == 0) {
- 			val = 0;
- 		} else {
-@@ -108,8 +104,12 @@ static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
- 		}
- 
- 		trace_guest_halt_poll_ns_shrink(val, dev->poll_limit_ns);
--		dev->poll_limit_ns = val;
- 	}
-+
-+	if (val > guest_halt_poll_ns)
-+		val = guest_halt_poll_ns;
-+
-+	dev->poll_limit_ns = val;
- }
- 
- /**
--- 
-2.43.5
+Looks a bit like a reimplementation of regmap-mmio? If you want to do
+this why not use regmap-mmio?
 
+> +static void rp1_set_dir(struct rp1_pin_info *pin, bool is_input)
+> +{
+> +       int offset =3D is_input ? RP1_CLR_OFFSET : RP1_SET_OFFSET;
+> +
+> +       writel(1 << pin->offset, pin->rio + RP1_RIO_OE + offset);
+
+If you include bitops.h what about:
+
+writel(BIT(pin->offset), pin->rio + RP1_RIO_OE + offset);
+
+> +static int rp1_get_value(struct rp1_pin_info *pin)
+> +{
+> +       return !!(readl(pin->rio + RP1_RIO_IN) & (1 << pin->offset));
+> +}
+
+Also here
+
+> +
+> +static void rp1_set_value(struct rp1_pin_info *pin, int value)
+> +{
+> +       /* Assume the pin is already an output */
+> +       writel(1 << pin->offset,
+> +              pin->rio + RP1_RIO_OUT + (value ? RP1_SET_OFFSET : RP1_CLR=
+_OFFSET));
+> +}
+
+And here
+
+> +static int rp1_gpio_set_config(struct gpio_chip *chip, unsigned int offs=
+et,
+> +                              unsigned long config)
+> +{
+> +       struct rp1_pin_info *pin =3D rp1_get_pin(chip, offset);
+> +       unsigned long configs[] =3D { config };
+> +
+> +       return rp1_pinconf_set(pin, offset, configs,
+> +                              ARRAY_SIZE(configs));
+> +}
+
+Nice that you implement this!
+
+> +static void rp1_gpio_irq_config(struct rp1_pin_info *pin, bool enable)
+> +{
+> +       writel(1 << pin->offset,
+> +              pin->inte + (enable ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
+
+BIT()
+
+Yours,
+Linus Walleij
 
