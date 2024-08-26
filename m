@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-301468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFFE95F15B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0662595F15E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE141C219AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F84F1C21163
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62201514F6;
-	Mon, 26 Aug 2024 12:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7B516F826;
+	Mon, 26 Aug 2024 12:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/UWShH+"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qNivducv"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FF622071
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B534122071
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724675693; cv=none; b=JzIqqX/qhQHndYh92Qmm+QHkjKN3ar9vYvKtZpkguls2d3SwLavcO2Te1fs6xQh/webs8QsF/uKGPgDb/+OiP1mlK44z115ndQaej0f1bhRQUw8pWe/WlJ1AhVQHQ+LLwGLWF7qzgDRJ1B95WXK3mgD8psTSaaUWIa2MTpZLUP4=
+	t=1724675741; cv=none; b=rGsty+ld6sfpBfUqj9nLcm4cSiAXKXJjFv4d7KMiGntS2ue1dbuz77Yom6RnCjVlnjdq0gWHHmpyp24aCRMmOIYZ1Fh/3Ts6+lYIxYWGB2dM/sMOChkj4Y9aEEE3QjEyoYoP0dRm36bluQ6BIJrL4Id0fu6aDKcgCA0rp8ktfXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724675693; c=relaxed/simple;
-	bh=D5yV+pWU0soMjkUxmsoXdYLZ7DySNZblVJ7OYZ2lfkU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=P1UmaTQTJ/yuG/lQxat+EaV7M0D0Hg53My3I91LucPe+E+KSSdZywP4RUeHrxBkq5tE+6ItHhRkdJ4z2sH6W4kE+B/Nbsl7ijNzkyL8AXhieqmGBUG3x8qXP8ZJ7azs4w2VR+UV05zcmp3O+jw0hp0lbE0PnoPUJtlJY3C+yhjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/UWShH+; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c1ed19b25fso33747707b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:34:51 -0700 (PDT)
+	s=arc-20240116; t=1724675741; c=relaxed/simple;
+	bh=DeKboTFaIRylI5cauzCxni28LIIe4ZjJTqGzGYlOr08=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nvgrp2oHauNiNYEAwjBZELQVTgtFtnaJmqJlJchhAsQYI61POp8aRE/OZPdcX9kWcF7BND+TAn5knTWi7ZVrRicx6j2bfZyExsKJcaSKNTi8/Zy3ldi95Ee34b5RF9dRQ4+drZY/w1irmqxZpzHo8ljMlhzVGiN5YxVxplHFa/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qNivducv; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4280772333eso6524785e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724675690; x=1725280490; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2hTGK/L/GSZPz5U8eA2D4ngEFX1RZ6RuzHzDbE5KYPE=;
-        b=A/UWShH+NQ+oLNvONAVCRDZTjyKojOf+Tw7bUYxZO21D2vSYSjtTg6hWsyQwi+/CjY
-         gPfateYz50S33bH4m0HRAMglUZOeG2eYnMLSfdzo0UzER3093nRTyymPR9E0Q6k1KQkl
-         ZHP9bJAAI1vRPOs7277SVweyaCqGcJB7OcAxdxcry2ImPPqweuXM/bj9iqwzoM/iRGV0
-         lNad+1LgPO+6p+9DACb1mldCvRk2zIBR2FGhS5f/Is2iXXCaz/hyDu2sD/1bUUrGTsj7
-         Tgl1vMHOuRabrZD1h2UI+UjRbWRJUnI5kGh+/1v8fuFN8/tfG+AZjNUAU4358IoF6c/6
-         ROZg==
+        d=linaro.org; s=google; t=1724675738; x=1725280538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjbU7iYaf5gNBv6BUFQzfjGHnybRTGE3Py8s/+lGcUY=;
+        b=qNivducvmpYCjxiwStmOrbsbCS6NuBarghvk+Pi+CPEt1zJ8qhxgSVIyT4C2D9YM8w
+         gghK2BwEoGlWU/1s9p9QD9Y76EemFKokOY3MPzff2mmDZY6/6FdEOagpxX57n1yujZ/g
+         SIa900s8y+PyfhE9NNSi6di9Ik86E+G0u+mcQ2UAAU76KWwFN4F+4HOsdt30bIGrjGu7
+         BxIGt5Zp90k6/u5+tmOB4t/gpbCxU7XyI3q8qr4JZbm7+cAcfDbC63uSNTvU+gx6gjll
+         tyI4Z/uzEXt33pvxjFySCUvTGcCgc8ewLbobqz/cjdalb0jgeezreONfmzSahYAuqyvN
+         4Wmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724675690; x=1725280490;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2hTGK/L/GSZPz5U8eA2D4ngEFX1RZ6RuzHzDbE5KYPE=;
-        b=dnMPa/0olUFhLyDgdTRbz54Hg2bx3q3G9ZtJn0zPZF9OrkBpzkWHwSOK2458YVzZ7Y
-         5hsdPRCBy+JxEC/+hAXTFmSRyJYO2uD12PMKXKmRVViLTxK3Y5RtbDdvBar8kBmDhVSV
-         Y3KEKyByV8qSO2eyCK73qN7LxGiAtvb8lfF0zQRPs1O6U3jWNn3uwA01tc/9qRpw58bw
-         283DpZ+PyBq+XaAW4bKNVt99SCf1VaplEzGDf1Xp+6zU+sfpEEaJVKiKsOvm2XyjoSJA
-         ZNrg5Yaj+wuY7BfiFo6ACKJoAyDP5brVSz11c80MpLV8DwuAeLw3gm6M0VsekSlgyg6w
-         CilA==
-X-Gm-Message-State: AOJu0YzAmLG8qxNq/tquROFsoM0l2L0ENaF/k/3sktgvHCWEVp2G7pKN
-	ksDPgzyiYb9JlwI9sgupWWd/tjtZe8VEjWSh6O+Zl0/TtOvRuVVo3DJ9lCIYO1r7P9B2Zcs0JRb
-	7Kijm5I864MFFHFlbJzkPDZ8NuQw/tMrL
-X-Google-Smtp-Source: AGHT+IG+Q5iwqAfvDa8O2jYWLtNP7ldhsIeZUBPR+5+FUF+9W+G8VhvCgvLElHc83hcd9AsSQdB/nn9lbKM3pkSprV8=
-X-Received: by 2002:a05:690c:dcd:b0:6bd:ed6c:b3c2 with SMTP id
- 00721157ae682-6c628a9e8ddmr89979027b3.36.1724675690362; Mon, 26 Aug 2024
- 05:34:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724675738; x=1725280538;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sjbU7iYaf5gNBv6BUFQzfjGHnybRTGE3Py8s/+lGcUY=;
+        b=k7FMCVrYVVrDiS9Jz42m1c0/G6A+DxzFMySQq9a6zUoEfvfun3d1+bhVxKSFGrI5Gd
+         /5KYajIG6oFAVim3Xl7U0p9OXa131LrVmJRySbTPuNu0Rf4UcIRflKW+mQN1XgvaBGpl
+         8TMBQ/ynxVEhG3GR95JH3VpYgtXyfuIg2PIDu+HjkH3hYNh8UE0mAJDktUKFuYiGNHLH
+         9jIT8WejH41c2kG9E3zDldiLVS/r9HKmdVU0NJE5iTtZCJZGmzKZR/ox1yPmKNulNEeB
+         Qj64/681qFMW8AYxfiiL5UaCZ27blI+E6N3sOfHps9Oc/jkDYPbrVhdrg2XsH5Zh4EbH
+         V32Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuaL0OwDBqjdtgFd/V3/t6PnBSl192nX4ELnL5u0otrpWPKDopuoaroM9uDrfz2czsUkIqIscL3cTheew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx75YOLzhQSMjSuPeBBlaZ0cMJf15asShSbULQXi3yMtKVgp+L5
+	dxhydgI+c7IZU9XjojXzUcuoDK4ANvpvcKr9wWnCVtVXQuoYymKcjkauGZbMp/Y=
+X-Google-Smtp-Source: AGHT+IGdjTP13X5IrWLlNDrXyTJ+ob2cRg1i3qlAQ9iN9q2w4Z2poHnIMKCtuwo9FYF2nia+vxYQ8A==
+X-Received: by 2002:a05:6000:402a:b0:367:95e3:e4c6 with SMTP id ffacd0b85a97d-373118310a2mr3659561f8f.1.1724675737954;
+        Mon, 26 Aug 2024 05:35:37 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730821a898sm10658048f8f.96.2024.08.26.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 05:35:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aakarsh Jain <aakarsh.jain@samsung.com>
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org, 
+ hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org, 
+ linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com, 
+ aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+In-Reply-To: <20240808134432.50073-1-aakarsh.jain@samsung.com>
+References: <CGME20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111@epcas5p3.samsung.com>
+ <20240808134432.50073-1-aakarsh.jain@samsung.com>
+Subject: Re: [PATCH v4] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
+ binding
+Message-Id: <172467573565.54173.12707172575604889412.b4-ty@linaro.org>
+Date: Mon, 26 Aug 2024 14:35:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Muni Sekhar <munisekharrms@gmail.com>
-Date: Mon, 26 Aug 2024 18:04:39 +0530
-Message-ID: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
-Subject: Query Regarding Stack-Out-of-Bounds Error
-To: kernelnewbies <kernelnewbies@kernelnewbies.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-
-Dear Linux Kernel Community,
-
-I am writing to seek clarification on a potential stack-out-of-bounds
-issue observed during the calls to for_each_set_bit function or
-find_first_bit function, specifically in the following code snippet:
-
-static struct cmd_info *find_cmd_entry_any_ring(struct intel_gvt *gvt,
-               unsigned int opcode, int rings)
-{
-        struct cmd_info *info = NULL;
-        unsigned int ring;
-        ...
-        for_each_set_bit(ring, (unsigned long *)&rings, I915_NUM_ENGINES) {
-
-In the above code, a 32-bit integer pointer (rings) is being cast to a
-64-bit unsigned long pointer, which leads to an extra 4 bytes being
-accessed. This raises a concern regarding a stack-out-of-bounds bug.
-
-My specific query is: While it is logically understandable that a
-write operation involving these extra 4 bytes could cause a kernel
-crash, in this case, it is a read operation that is occurring. Would
-such a read operation still be capable of crashing the kernel or
-resulting in unpredictable system behaviour? If so, could you please
-explain how that would happen?
-
-I appreciate your insights and look forward to your guidance on this issue.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
 
+On Thu, 08 Aug 2024 19:14:32 +0530, Aakarsh Jain wrote:
+> s5p-mfc bindings to json-schema is already merged with
+> this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
+> convert bindings to json-schema"). Remove s5p-mfc.txt
+> file.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+      https://git.kernel.org/krzk/linux/c/259f5082721f1d17b4e5b9dc2bb430821afd95aa
+
+Best regards,
 -- 
-Thanks,
-Sekhar
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
