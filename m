@@ -1,229 +1,166 @@
-Return-Path: <linux-kernel+bounces-302045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466D095F915
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CE395F918
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3841F24BEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4DA28335B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163C4194AEF;
-	Mon, 26 Aug 2024 18:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4007198E96;
+	Mon, 26 Aug 2024 18:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OJ2tGOYE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wipc4MzH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ev51snqR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iDzFHaEA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWTLl6Vb"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11BE18E058
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CDE2A1D8;
+	Mon, 26 Aug 2024 18:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724697602; cv=none; b=QRSmUlnYK5dzrLFevkkM8NEi8j/fyvh5CAW5imbJmXuwI4jE/Nhjw5ezvRNXAIRZVkrmrpcvqjQLqaGTAugtj7Wnj+JJO+m4KVT1LtbBetPL8JrRyOmTrMJosn1QebwmwD1Tgb1qm+We9LzXSyCeuwbGJj/CgQsIzAk02i6u01c=
+	t=1724697765; cv=none; b=WGYaHt+JldpLyZ8DMbqokdIOy8+T0J6B2vGQGvqaQwSo21fTPU/s2vL40RpZX8c6jAsAegWlUSWvjiWmsHyEUeWukcdJAAdeYL6ixp1wYnqXRegIUpJMStdhk/ocXTmTeMpG6grD8FDshsZRXPIZKqKnXC03asugmSSMWITonCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724697602; c=relaxed/simple;
-	bh=DTWMljbdyCE53PHkCs3mdAYqeFR46svgudowBBGcqm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bMHFpeavXTnoVmioV43VUy6/gljlUeZ/TPtdjCOS8HxLO2/oCWi6PVlImMpFs6Hx8z0ry0+W9+3NGvezrdMRHBCqATuYId8ZXCvCkagTbhd9O71XCVURmL2Pr+/QYSc3RfYIGubQ4IZA9kVJbgl+6MPr4YuyzugRkB8hDPg/IJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OJ2tGOYE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wipc4MzH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ev51snqR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iDzFHaEA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B0E261F8AA;
-	Mon, 26 Aug 2024 18:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724697598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SE1TtmM95UJs6Qa7iuOcGm/QhTraIb2VVUXmj+syeFk=;
-	b=OJ2tGOYEnxYB2MPuLyOaWi3oSZP51FdZkykB+dvExabfeKS9e8adcGIiVgE20NofdNRtf3
-	dyxiPM2RyhvLkOJkeSCQkuwxv/EWht7smwAeR3bzjVOv6Ew1rLZt3s19EvXQfAYsGjGLLn
-	5FZdW6Wo8hOQQODHsRjEfHj0pwXejAY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724697598;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SE1TtmM95UJs6Qa7iuOcGm/QhTraIb2VVUXmj+syeFk=;
-	b=Wipc4MzHsYayMyIegCNyp2ia0Bvt5DaA5/NXc0lKA9ZaP5+x1/kQS2ngxQMzaz1Zt0Cwqu
-	5xs0p/wqssytumDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ev51snqR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iDzFHaEA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724697596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SE1TtmM95UJs6Qa7iuOcGm/QhTraIb2VVUXmj+syeFk=;
-	b=Ev51snqRN2b2fv5gVjEirqVw660j6Hw95XtLVY3ujk1OyOdVgPKBFBNk9fC9wepJRPQzjB
-	tKIPJeczVN3bwX+qsilOzyb296bRj5QYFGG28AGpgJHWy1bS3NAjTG5JBW7YexvLfCJTNS
-	APiDUolxdXGwXDNjMGRxYQgFT+qTpz0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724697596;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SE1TtmM95UJs6Qa7iuOcGm/QhTraIb2VVUXmj+syeFk=;
-	b=iDzFHaEAi4+uXv3XJl01M4oloM8rC4qTnHSlk+ujjt8PAIw6OAoB/V4mduEw3o7ZvrSdlp
-	FRsDMMTpJJevc+BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9463513724;
-	Mon, 26 Aug 2024 18:39:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x74qI/zLzGZnJwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 26 Aug 2024 18:39:56 +0000
-Message-ID: <2b56938d-d999-4bad-a220-491aa29ef152@suse.cz>
-Date: Mon, 26 Aug 2024 20:39:56 +0200
+	s=arc-20240116; t=1724697765; c=relaxed/simple;
+	bh=66rvfT30Rd9jNR9KSXQ9M+fDaZbae70XyRnCK42iEJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ki16hoeFunPSUxbrg9NCO3v+oGEkp58LpVt07/QrnTMBN+akGd9uVejM+ONFHcPZlz1hkbz/YMVgBojLNcgBr6fZh44225aW/V9QU4oRRZBDy0ZmsJNU4lH0Ru3n7ingW68pHKs6HdAy648HHE4FziiJiN/ZN2XxgE7D0uLEx4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWTLl6Vb; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334adf7249so5561553e87.3;
+        Mon, 26 Aug 2024 11:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724697762; x=1725302562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OstNSp6UvnPgh3gsd2W7iC/ZExy1qK76QgotQhDcUX4=;
+        b=nWTLl6VbPh5Vi+ozOl0aWfPca8gK/4UE6W84mQZfN0gpJiMqYGFb0a1kPZ5oyNS6g4
+         wOHxcyBzV81ms3kYIg9GX+fZukB/tb/03zCVXJuCUjyXkAtFfiMN5DTrVIilvB7/smuI
+         hdESOfUvW8HefwfHCTj2cvwWXDjbSOsaY+K48RpN1ENjYx7RSVby24MiSsFal84TxQMP
+         MzHXEYzs8mzykMoViDgvv0lawlDVDKR6/K3Lfts3A9orhx1PY1hsDFC2gpNdFKJ55Uub
+         46z1GYHkUiXA7U0wuakvgQBb+r1U1VlSkDr1aqxk8NKeyyRcXXH2ZpJnpmkTBWhkwENE
+         SpOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724697762; x=1725302562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OstNSp6UvnPgh3gsd2W7iC/ZExy1qK76QgotQhDcUX4=;
+        b=X7sWQa/PVEWi23Vqs5ZYTU9R/vB3XmvYSnw5YFQ1GkS2uA0o5FnS0+mVLemMinJtI5
+         0szNWO6El8V3dhhmV+8jiOJuTkKpNOTMa7uYwfizC85y6U8GtczGMVMtHK4Sy3D2BPoo
+         cJ/3pgq0I3gABqlQhF2h3t8uzKhMQT9ZfFN2rhtJljB2+756TlBJ38hSTLuD8IrgQpgn
+         hrCPSKiSsCKDXgdpVSeHg/iUBUfXhLKIc99imC4WFNO9esZ6bdwhzTAV8VjUbKpN1/Ie
+         gW+cqM+TA1l8/vzwMNhf3yCHLkxc9idCdRqn4D+DAqgBNV7Rjqsnt0riPie+i9OiLWJJ
+         uCDg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4CVd9mEjq2ndDKY+2HYvK7lQ6Wd8+T8i62x2f3ckGdxOTLyi+uJVD9bU4LQ23WuM55rVZU9Zz0Dpy73se@vger.kernel.org, AJvYcCW3B5KmW1JGLrCc8Kb6AFff2F74mFU8+KX2vVZlKUG1HXBYnSst255bIjdjMigdWflPBLIa2X1zOw==@vger.kernel.org, AJvYcCX9sMaBpwdLYEvlPM0fEoGJtNhzw6YCZwvMSyLAUqrzWD55bVHrcS6H+lUrUNYM/rxY0TOWNtfNNrG6w8qT@vger.kernel.org, AJvYcCXd8K/n/Dsn60nbDz374p4q6oOk0aDbj5RaxLum4twsGcOWt222AKcHtjZqpdpcw3C+wCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx85jLkETPHHjYA0//UlEZcEUtOLAbj1C5ytmsSXP+ZLddaBRe+
+	O1dJWXcHdj/YclXUsCc3y9B8ZRBYj9TW9YpX1fbyDqJ1PJ2IJlcQs08y6cuUgxeiObvPin8cCFk
+	K1B7C26x2hps7KTnhWEjOS7s2JLA=
+X-Google-Smtp-Source: AGHT+IE72x4d64Ak9GFyGpL4jDAfhYU2+Jx1i1fyhoAeuCz7ZrO3f1pKyzrpacY0uOb6zDsOzEtHaHUcIJStByIQ1ZI=
+X-Received: by 2002:a05:6512:3a93:b0:52c:db0a:a550 with SMTP id
+ 2adb3069b0e04-5344e4fae12mr171802e87.42.1724697761812; Mon, 26 Aug 2024
+ 11:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm, slub: print CPU id (and its node) on slab OOM
-Content-Language: en-US
-To: Axel Rasmussen <axelrasmussen@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240814215037.1870645-1-axelrasmussen@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240814215037.1870645-1-axelrasmussen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B0E261F8AA
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.996];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[google.com,linux-foundation.org,linux.com,gmail.com,lge.com,kernel.org,linux.dev];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240820085950.200358-1-jirislaby@kernel.org> <ZsSpU5DqT3sRDzZy@krava>
+ <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org> <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
+ <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org> <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
+ <ZsdYGOS7Yg9pS2BJ@x1> <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org> <Zsy1blxRL9VV9DRg@x1>
+In-Reply-To: <Zsy1blxRL9VV9DRg@x1>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Mon, 26 Aug 2024 20:42:10 +0200
+Message-ID: <CA+icZUWMxzAFtr8vsUUQ9OCR68K=F6d6MANx8HMTQntq494roA@mail.gmail.com>
+Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org, 
+	Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, msuchanek@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/14/24 23:50, Axel Rasmussen wrote:
-> Depending on how remote_node_defrag_ratio is configured, allocations can
-> end up in this path as a result of the local node being OOM, despite the
-> allocation overall being unconstrained (node == -1).
-> 
-> When we print a warning, printing the current CPU makes that situation
-> more clear (i.e., you can immediately see which node's OOM status
-> matters for the allocation at hand).
-> 
-> Acked-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+On Mon, Aug 26, 2024 at 7:03=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Aug 26, 2024 at 10:57:22AM +0200, Jiri Slaby wrote:
+> > On 22. 08. 24, 17:24, Arnaldo Carvalho de Melo wrote:
+> > > On Thu, Aug 22, 2024 at 11:55:05AM +0800, Shung-Hsi Yu wrote:
+> > > I stumbled on this limitation as well when trying to build the kernel=
+ on
+> > > a Libre Computer rk3399-pc board with only 4GiB of RAM, there I just
+> > > created a swapfile and it managed to proceed, a bit slowly, but worke=
+d
+> > > as well.
+> >
+> > Here, it hits the VM space limit (3 G).
+>
+> right, in my case it was on a 64-bit system, so just not enough memory,
+> not address space.
+>
+> > > Please let me know if what is in the 'next' branch of:
+>
+> > > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+>
+> > > Works for you, that will be extra motivation to move it to the master
+> > > branch and cut 1.28.
+>
+> > on 64bit (-j1):
+> > * master: 3.706 GB
+> > (* master + my changes: 3.559 GB)
+> > * next: 3.157 GB
+>
+> > on 32bit:
+> >  * master-j1: 2.445 GB
+> >  * master-j16: 2.608 GB
+> >  * master-j32: 2.811 GB
+> >  * next-j1: 2.256 GB
+> >  * next-j16: 2.401 GB
+> >  * next-j32: 2.613 GB
+> >
+> > It's definitely better. So I think it could work now, if the thread cou=
+nt
+> > was limited to 1 on 32bit. As building with -j10, -j20 randomly fails o=
+n
+> > random machines (32bit processes only of course). Unlike -j1.
+>
+> Cool, I just merged a patch from Alan Maguire that should help with the
+> parallel case, would be able to test it? It is in the 'next' branch:
+>
+> =E2=AC=A2[acme@toolbox pahole]$ git log --oneline -5
+> f37212d1611673a2 (HEAD -> master) pahole: Teduce memory usage by smarter =
+deleting of CUs
+>
 
-Thanks, replaced v1 in the slab tree.
+*R*edzce? memory usage ...
 
-> ---
->  mm/slub.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c9d8a2497fd6..3088260bf75d 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3416,14 +3416,15 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
->  {
->  	static DEFINE_RATELIMIT_STATE(slub_oom_rs, DEFAULT_RATELIMIT_INTERVAL,
->  				      DEFAULT_RATELIMIT_BURST);
-> +	int cpu = raw_smp_processor_id();
->  	int node;
->  	struct kmem_cache_node *n;
->  
->  	if ((gfpflags & __GFP_NOWARN) || !__ratelimit(&slub_oom_rs))
->  		return;
->  
-> -	pr_warn("SLUB: Unable to allocate memory on node %d, gfp=%#x(%pGg)\n",
-> -		nid, gfpflags, &gfpflags);
-> +	pr_warn("SLUB: Unable to allocate memory on CPU %u (of node %d) on node %d, gfp=%#x(%pGg)\n",
-> +		cpu, cpu_to_node(cpu), nid, gfpflags, &gfpflags);
->  	pr_warn("  cache: %s, object size: %u, buffer size: %u, default order: %u, min order: %u\n",
->  		s->name, s->object_size, s->size, oo_order(s->oo),
->  		oo_order(s->min));
+-Sedat-
 
+> Excerpt of the above:
+>
+>     This leads to deleting ~90 CUs during parallel vmlinux BTF generation
+>     versus deleting just 1 prior to this change.
+>
+> c7ec9200caa7d485 btf_encoder: Add "distilled_base" BTF feature to split B=
+TF generation
+> bc4e6a9adfc72758 pahole: Sync with libbpf-1.5
+> 5e3ed3ec2947c69f pahole: Do --lang_exclude CU filtering earlier
+> c46455bb0379fa38 dwarf_loader: Allow filtering CUs early in loading
+> =E2=AC=A2[acme@toolbox pahole]$
+>
+> - Arnaldo
+>
 
