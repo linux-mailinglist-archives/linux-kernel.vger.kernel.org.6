@@ -1,129 +1,97 @@
-Return-Path: <linux-kernel+bounces-301614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733BB95F334
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:47:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7873795F332
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3B21F21F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:47:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3FC5B20B75
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23009188017;
-	Mon, 26 Aug 2024 13:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAbnp+yk"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBF417C99B;
+	Mon, 26 Aug 2024 13:47:23 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B89910F7;
-	Mon, 26 Aug 2024 13:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E6B10F7
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680048; cv=none; b=icXQXV4ysU1WMXAj3K+i0lhKFWxciqYGgcz5ICIMkMYiwWPQ2rdMjjUOPaHJrjhbACx9a70sX9FUVxdqwI123SqXLC1r2f1ZTFMYkC6WLRJTqqSAr5mVOb8+9EVoAuvSTmifA+pa9jBZN35vdnE3GUEC7IrRsnCuJkNaV5sOPGc=
+	t=1724680043; cv=none; b=ER0HKVhQ7+IM6Ke2N5SLrpDtFPRB4307+qAiciJ6nOytP+oHdHiKOKfONW7bcpiM/FNeRfvcqm670ydBYTKFAKg9L2hJJcv5UCkjfN3QMKaLRdtU+DhK+O3EmA21ABgRSzvQsSaa3KZhqixZ7rpunhCht1sojxvqzXQSvn0Oaeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680048; c=relaxed/simple;
-	bh=QJUO0ob26O4/AxkgYTmtRVDU74a8iup4xgwMtEIks74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X2KUjjZJ6uasf+No1s+8cjAw7tVrR1mNWNqVZDbjoB4ARJvVhYGVfO/uvC77dR31aT7sTIr2BX8Xr89sqnlXd6cDMSXH882gxgOR4WVrPX0dnOSyOkj+7Y8Z20M/t4n1dvePrvH9RuuyWbOmx++UMeZ7yAmfMVkZCeDYnxvxfo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAbnp+yk; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so3360538b3a.3;
-        Mon, 26 Aug 2024 06:47:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724680046; x=1725284846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uc/PKblA1vsid3XNP6gMO/vAjdYLIXY7Xs9okBM7Nng=;
-        b=GAbnp+ykHDIpmzaFulezcacDV36NZK7BMX0lhYyAem52f6ondDjDSi1CKXB1E7ibLn
-         q0rCVSpyaYeMT4f2iYmv3Rq/QjE9hGYD7UJQsq/35eXy61PE1mollcbY7U6t9z+Uu8vD
-         GfV5BW3+ZmnhPcuDMV/c13JcqZ6fRSHHW9mc4qPXF8mFELGt/RN+tAoVkFRvS06INrF1
-         Rq7etLzW5yNwczSfQNgjDh4Xl+ugarMExMHeg3FMQ5hzOzccky5Lb9l4ezda8/cxha0u
-         mMuq9i1P8+O2oH+zWxAGh3SF68/FbO24uyAwEf+FjFQyu3EzE1xjGWIpcnUun4tCch9e
-         Lm5g==
+	s=arc-20240116; t=1724680043; c=relaxed/simple;
+	bh=GrLK19NFTDZi0n7+WwEX7ZFQ7xccyFq2j2t2PaorsKo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gwqU24I9Vsn+GcB7U+jxB9YlmUpaPiNOtzil12Kiu/cSwh1//eFvNhp5t/DkWhyy6eE2dDOTdy6IFgdXPvEMeQgIlhgDEJoKGwVfCUB1zEw9BZ99cwe7OHDU5j5Vug4Qm0JaiNaIb/LUZTWQ5FiMv4VOtcW4OvG3Ai8MZNgyfsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2df2e561so55740605ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:47:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724680046; x=1725284846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uc/PKblA1vsid3XNP6gMO/vAjdYLIXY7Xs9okBM7Nng=;
-        b=lSUop+1sAo9GWaXcwIMPAiuLe2rEZDbKFhZkGa3G/k9yHWeJE7dgkVvtgRbBhjU7By
-         nMhRPfHX2qGn+1jhaW0Dr7+OK4vImAVH8Ku9aLIoboODXaUHabuUgOLVDcHBE8Y4Fg1p
-         4ZWC9e2a3+LeMtb9ijoZ+hAlWDm/jzsVwWSC9rCjSE8IHnpQDk47UBKOcnxVOtaX+leo
-         4t8MVZbCwMMq7Nwu2JsDkaTVJt3omopaMaYbZxnTmGWkHA7XdO/+wmcvAZgLEx9WMIHl
-         9J8zNVzUBgAohGALDtU4LvWvHz60H1kvGP2YvZ68pQsDHN3gmdpP2Bz/lEEfxlLpGI2L
-         E5Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi7mhxMupPsLPC9UUTRCcc4E2cHU3as3RjmanB2vFNvbHudVr5gzKmU+q630qA5XVtzdOsLpl7@vger.kernel.org, AJvYcCVWVmzisOoB19xwDzUjkvlpYhm0+gF8rDYN7E3p+TVCjmmfQlKsPMbEmGrN1/wa4JklhQTGFByKh1kXlb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFWNFf6P7i9CMP0ZTrMMFRVL0K/tnI1Y1HkhMB5wkLgttPhSnN
-	g9Azrr7PaMemDAQpBYs2pjqPrutFyx1RhiFmLUwqhBbDLzKCNd65
-X-Google-Smtp-Source: AGHT+IH8qpOey9XnUHQ5rX2SdKV4GiFlO2/vS6OpzdazIn7lYiiJzHnQcB08m9X1NwPNdvyCbMg0DQ==
-X-Received: by 2002:a05:6a21:6802:b0:1c2:a3c7:47dd with SMTP id adf61e73a8af0-1cc89edb8c1mr10889390637.42.1724680046005;
-        Mon, 26 Aug 2024 06:47:26 -0700 (PDT)
-Received: from diogo-jahchan-ASUS-TUF-Gaming-A15-FA507RM-FA507RM.. ([200.4.98.43])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434231147sm7036533b3a.34.2024.08.26.06.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 06:47:25 -0700 (PDT)
-From: Diogo Jahchan Koike <djahchankoike@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Diogo Jahchan Koike <djahchankoike@gmail.com>,
-	syzbot+c641161e97237326ea74@syzkaller.appspotmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [patch net-next v2] net: fix unreleased lock in cable test
-Date: Mon, 26 Aug 2024 10:45:46 -0300
-Message-ID: <20240826134656.94892-1-djahchankoike@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826121435.88756-1-djahchankoike@gmail.com>
-References: <20240826121435.88756-1-djahchankoike@gmail.com>
+        d=1e100.net; s=20230601; t=1724680041; x=1725284841;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4/v4DElyEzXK/XGFg6yIMB6qgM5jU/tl2EiZvQsE5kQ=;
+        b=Pbla8ttentkdMX4UbWAK8LpU4YyEj1XSqQU8yYGLTPUtK+2nVPiJEo6J3E4JTyZsXC
+         uzEt6/Ni1HSY4ORsfRsy+cFGn21DuIZi+DT+g2LneN6SZKiH7khgzp6mjvFKYfyc6siO
+         6d8LOZRKYpM62mgEgOAX0p8gp4ypr7SipjbJ/j/VeDbs4JoI1dBG/Xs5CdvmK+TyBO7P
+         2WGeU5HTXaxQQpfCFmtB2QnyRm+L2lZ1XcjsRBqNhEKajqmY+daakQdZfzM5B+mqT6x6
+         kj03dtrhS5QnAfK1VgwIRkeZXqBp4sMRcbA2ednsm1Y+wko6BLMk0wXc9Y7erxE/CnP+
+         ks3Q==
+X-Gm-Message-State: AOJu0YyJMqmGYlBxycF4DNVXfm0HQCG7mAUDXqJ5O8cixtRkL78ktJN8
+	m31oXGlZ+CMZdTRS1/iAYb+67vd2gzr6PvCiQzT+RBJaFF/9FYGwQBhxO5P7OtQ5naEXBsyD2kL
+	siztW5FYOAHD3DlP5qqBY4dFtJq7KEntfM7+1hkDHbJb1/YPUpokBvSs=
+X-Google-Smtp-Source: AGHT+IGOYYbt7z1oqdAjWn68/nHeAdcfKU+VkfNGz/d+8uKjbo6pu6GEM1SxmtobT+lrwQx7IbDOKVEGw53NaicXz2Ij6mBY8VRY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:216a:b0:39a:ea7d:2a9a with SMTP id
+ e9e14a558f8ab-39e3ca0d1c2mr6727295ab.6.1724680041185; Mon, 26 Aug 2024
+ 06:47:21 -0700 (PDT)
+Date: Mon, 26 Aug 2024 06:47:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000034d59d0620965db3@google.com>
+Subject: [syzbot] Monthly pm report (Aug 2024)
+From: syzbot <syzbot+listeb96f98dd6da9fc4b8b6@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-fix an unreleased lock in out_dev_put path by removing the (now)
-unnecessary path.
+Hello pm maintainers/developers,
 
-Reported-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c641161e97237326ea74
-Fixes: 3688ff3077d3 ("net: ethtool: cable-test: Target the command to the requested PHY")
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+This is a 31-day syzbot report for the pm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/pm
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 7 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 202     Yes   KASAN: use-after-free Read in netdev_unregister_kobject
+                  https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+<2> 2       Yes   possible deadlock in dpm_for_each_dev
+                  https://syzkaller.appspot.com/bug?extid=2a03726f1d4eff48b278
+<3> 1       No    WARNING in enable_work
+                  https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
+
 ---
- net/ethtool/cabletest.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/net/ethtool/cabletest.c b/net/ethtool/cabletest.c
-index 01db8f394869..8c5aa63cb1aa 100644
---- a/net/ethtool/cabletest.c
-+++ b/net/ethtool/cabletest.c
-@@ -77,7 +77,7 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
- 				      info->extack);
- 	if (IS_ERR_OR_NULL(phydev)) {
- 		ret = -EOPNOTSUPP;
--		goto out_dev_put;
-+		goto out_rtnl;
- 	}
- 
- 	ops = ethtool_phy_ops;
-@@ -99,7 +99,6 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
- 
- out_rtnl:
- 	rtnl_unlock();
--out_dev_put:
- 	ethnl_parse_header_dev_put(&req_info);
- 	return ret;
- }
--- 
-2.43.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
