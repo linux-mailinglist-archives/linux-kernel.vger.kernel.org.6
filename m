@@ -1,107 +1,269 @@
-Return-Path: <linux-kernel+bounces-301785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51C795F589
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:50:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FBA95F58D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDF51F223E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:50:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A72BB21899
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A393419412A;
-	Mon, 26 Aug 2024 15:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0D1194124;
+	Mon, 26 Aug 2024 15:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2iXpDqT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0de/vYF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CFD49631;
-	Mon, 26 Aug 2024 15:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA43A192B79;
+	Mon, 26 Aug 2024 15:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687412; cv=none; b=RCKUXmzUJoAz8YugfwW//FEOXT06a6ky39UFK06Vqt2XhU7oC0U2UnrEbyCiRDc9dnTORqStIj9qcpRw9SSrVc9MHoTM2rw1Cce0fejuytQxfzETvWcM7GpJXuiJYxT0foFVe51/MxM8Tc96hJiNajLsZUa+cljtKedVmZ+HeJM=
+	t=1724687438; cv=none; b=I6diQCD13qdLneseeYVlsujyUM6MZA6b28kW4GYO8AjFx4xg9NjCG4hnhMWVJy+GFeLrjWNtU1naSLeT+T3pYjdmviNq85pcEgHXHACCJvYeeOL0A7wK1k5jp0tOUDtjnpCXTPiH2e4D9ZOk4RJmGrXdbCuUpiStsvr3MK9LovY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687412; c=relaxed/simple;
-	bh=j6zLXif+ZPcktt6sG3QgwLXoxoeRpbwDnvlzyj8TG/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nHzMN2dJLAnNawlBuReIlxCkG4AUNcZI9mPghiSlURdmuawQwCcm9XLS2W4xb4wvFoZE6cD3QpNowqQPB6xl/251RN1uK4M20GIxSPO46UjErmB+llAxJZ8NoHMWaQo0aklIrSd/+FzHAMs5hT4Z3CpoLhaheLe3rDNmcPzf4K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2iXpDqT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E849C4FEFB;
-	Mon, 26 Aug 2024 15:50:11 +0000 (UTC)
+	s=arc-20240116; t=1724687438; c=relaxed/simple;
+	bh=ktxTLHI62m07O4aByHNtqdVU4NHYWDBoMv9Kczki3Rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbvsdVVZrJ9NudF0BPkb9ooCDiItGDhR6WI+YzE6F20Rstt+BFF6oArKrUOShqJHX/12obqRE+vl2+nWHXMiJ5xDd94Zeg2f76CaI4+7utvpT7yEIZ3KpEbnVzIhE6l2JYml6ytaRk7cx8VMcZ54JyJZlPhczmXl6hu250KeTR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0de/vYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF966C4FF57;
+	Mon, 26 Aug 2024 15:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724687411;
-	bh=j6zLXif+ZPcktt6sG3QgwLXoxoeRpbwDnvlzyj8TG/g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s2iXpDqTnZwWxlK7z+ORUlf5GtL/bAdkDSyB5vVYBy9bCwFec4uSd4OEWn7Gpe4bI
-	 p7IdigKEz9gWKhPJG0v0gR9Urq4f7w1PPrHkkwCIfBJgoW4CWkc+Y/OmeMDuLx0IQh
-	 i5+pGYGMdeSZ8dSshDeeap0FGdsU02op3FBFe6Jzl2TU0MBfK/Od0uLEI8IN11m3BV
-	 BnW7vxNgXyxGKE1gMDnZL7BR4JV4WuW3lkj+SBws/i2EMFOmrz/Y/YXui/Mg7oN2GQ
-	 YMxi3zKS4xfMLupMyqLGSv8JV8jOybOWxyR/3EDglIR/jTO53wzqmkgDqsB4uVa2a1
-	 jzG9yFrU7lxbg==
-Date: Mon, 26 Aug 2024 08:50:10 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH 1/1 V2] Selftests: net: Improve missing modules error
- message
-Message-ID: <20240826085010.27ff4377@kernel.org>
-In-Reply-To: <20240823054833.144612-1-david.hunter.linux@gmail.com>
-References: <20240823054833.144612-1-david.hunter.linux@gmail.com>
+	s=k20201202; t=1724687438;
+	bh=ktxTLHI62m07O4aByHNtqdVU4NHYWDBoMv9Kczki3Rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r0de/vYF8OEWJOWzCY7dYubWPfWUHk5m6z1Z/5T2AqlxcRxn39H+cl2W+d9TSlRqT
+	 V1Kt+welB3O3YMFUfE4Au9oon6Nlx40aZUi3skZF8XIZr/YiBRcq/Opoz0QM6xRk8h
+	 N0HCiuhDBPzTWKadM/uUYZwV3SH3ejXLpKq7wFqqYfTxql28ALtynebpplP323aJkZ
+	 znopSFVVGtjJgpO3q2VbkH0IXhY0v7jau3yv87nMGFZITaMC5LfEfheFQLS9y018aY
+	 1w+VoxyjJDFtzMoK4qiFLIg81MmjB/ADouNjejhsAl0mY2Lt6oDafHRXr9IrBYQTCz
+	 yo0yQ5W0PfH7A==
+Date: Mon, 26 Aug 2024 16:50:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Flora Fu <flora.fu@mediatek.com>,
+	Bear Wang <bear.wang@mediatek.com>,
+	Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Chris-qj chen <chris-qj.chen@mediatek.com>,
+	MediaTek Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: [PATCH] dt-bindings: mfd: mediatek,mt6357: Fixup reference to
+ pwrap node
+Message-ID: <20240826-slurp-earphone-0d5173923ae8@spud>
+References: <20240826065415.19641-1-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="50OsiPZgodBAcn76"
+Content-Disposition: inline
+In-Reply-To: <20240826065415.19641-1-macpaul.lin@mediatek.com>
 
-On Fri, 23 Aug 2024 01:48:30 -0400 David Hunter wrote:
-> Subject: [PATCH 1/1 V2] Selftests: net: Improve missing modules error message
 
-don't capitalize the prefix
+--50OsiPZgodBAcn76
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The error message descirbing the required modules is inaccurate.
+On Mon, Aug 26, 2024 at 02:54:15PM +0800, Macpaul Lin wrote:
+> The mt6357 is a subnode of pwrap node. Previously, the documentation
+> only included a note in the description of mt6357. This change adds the
+> appropriate $ref for pwrap to ensure clarity and correctness.
 
-spellcheck the commit message, please
+I think this change is wrong and the existing binding is fine.
+Adding the ref overcomplicates the binding completely, and stating that
+this is a child node of another device is sufficient.
 
-> Currently, only  "SKIP: Need act_mirred module" is printed when any of
-> the modules are missing. As a result, users might only include that
-> module; however, three modules are required.
+Instead, if anything, the pwrap binding should have a ref to /this/
+binding.
 
->  needed_mods="act_mirred cls_flower sch_ingress"
-> +mods_missing=""
-> +numb_mods_needed=0;
+Thanks,
+Conor.
 
-trailing semicolon
-
+>=20
+>   $ref: /schemas/soc/mediatek/mediatek,pwrap.yaml
+>=20
+> Additionally, the indentation for the pmic section has been adjusted
+> to match the corresponding structure.
+>=20
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  .../bindings/mfd/mediatek,mt6357.yaml         | 124 +++++++++---------
+>  1 file changed, 65 insertions(+), 59 deletions(-)
+>=20
+> Changes for v1:
+>  - This patch has been made based on linux-next/master branch.
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml b=
+/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> index b67fbe0..5f4f540 100644
+> --- a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> @@ -22,69 +22,75 @@ description: |
+> =20
+>    It is interfaced to host controller using SPI interface by a proprieta=
+ry hardware
+>    called PMIC wrapper or pwrap. This MFD is a child device of pwrap.
+> -  See the following for pwrap node definitions:
+> -  Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
+> =20
+>  properties:
+> -  compatible:
+> -    const: mediatek,mt6357
+> -
+> -  interrupts:
+> -    maxItems: 1
+> -
+> -  interrupt-controller: true
+> -
+> -  "#interrupt-cells":
+> -    const: 2
+> -
+> -  mediatek,hp-pull-down:
+> -    description:
+> -      Earphone driver positive output stage short to
+> -      the audio reference ground.
+> -    type: boolean
+> -
+> -  mediatek,micbias0-microvolt:
+> -    description: Selects MIC Bias 0 output voltage.
+> -    enum: [1700000, 1800000, 1900000, 2000000,
+> -           2100000, 2500000, 2600000, 2700000]
+> -    default: 1700000
+> -
+> -  mediatek,micbias1-microvolt:
+> -    description: Selects MIC Bias 1 output voltage.
+> -    enum: [1700000, 1800000, 1900000, 2000000,
+> -           2100000, 2500000, 2600000, 2700000]
+> -    default: 1700000
+> -
+> -  regulators:
+> -    type: object
+> -    $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
+> -    unevaluatedProperties: false
+> -    description:
+> -      List of MT6357 BUCKs and LDOs regulators.
+> -
+> -  rtc:
+> +  pwrap:
+>      type: object
+> -    $ref: /schemas/rtc/rtc.yaml#
+> -    unevaluatedProperties: false
+> -    description:
+> -      MT6357 Real Time Clock.
+> +    $ref: /schemas/soc/mediatek/mediatek,pwrap.yaml
+>      properties:
+> -      compatible:
+> -        const: mediatek,mt6357-rtc
+> -      start-year: true
+> -    required:
+> -      - compatible
+> -
+> -  keys:
+> -    type: object
+> -    $ref: /schemas/input/mediatek,pmic-keys.yaml
+> -    unevaluatedProperties: false
+> -    description:
+> -      MT6357 power and home keys.
+> -
+> -required:
+> -  - compatible
+> -  - regulators
+> +      pmic:
+> +        type: object
+> +        additionalProperties: false
+> +        properties:
+> +          compatible:
+> +            const: mediatek,mt6357
 > +
->  for mod in $needed_mods; do
-> -	modinfo $mod &>/dev/null || { echo "SKIP: Need act_mirred module"; exit $ksft_skip; }
-> +	modinfo $mod &>/dev/null ||
-> +	{ mods_missing="$mods_missing$mod " ; numb_mods_needed=$(expr $numb_mods_needed + 1);}
-
-this is getting too long, use a "&& continue" instead of ||
-
->  done
->  
-> +if [[ $numb_mods_needed>0 ]]; then
-
-no need to use [[]], -gt
-
-> +	echo "SKIP: $numb_mods_needed modules needed: $mods_missing" ; exit $ksft_skip;
-
-why single line with semicolons, it can be two lines
-
-> +fi
+> +          interrupts:
+> +            maxItems: 1
 > +
+> +          interrupt-controller: true
 > +
--- 
-pw-bot: cr
+> +          "#interrupt-cells":
+> +            const: 2
+> +
+> +          mediatek,hp-pull-down:
+> +            description:
+> +              Earphone driver positive output stage short to
+> +              the audio reference ground.
+> +            type: boolean
+> +
+> +          mediatek,micbias0-microvolt:
+> +            description: Selects MIC Bias 0 output voltage.
+> +            enum: [1700000, 1800000, 1900000, 2000000,
+> +                   2100000, 2500000, 2600000, 2700000]
+> +            default: 1700000
+> +
+> +          mediatek,micbias1-microvolt:
+> +            description: Selects MIC Bias 1 output voltage.
+> +            enum: [1700000, 1800000, 1900000, 2000000,
+> +                   2100000, 2500000, 2600000, 2700000]
+> +            default: 1700000
+> +
+> +          regulators:
+> +            type: object
+> +            $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
+> +            unevaluatedProperties: false
+> +            description:
+> +              List of MT6357 BUCKs and LDOs regulators.
+> +
+> +          rtc:
+> +            type: object
+> +            $ref: /schemas/rtc/rtc.yaml#
+> +            unevaluatedProperties: false
+> +            description:
+> +              MT6357 Real Time Clock.
+> +            properties:
+> +              compatible:
+> +                const: mediatek,mt6357-rtc
+> +              start-year: true
+> +            required:
+> +              - compatible
+> +
+> +          keys:
+> +            type: object
+> +            $ref: /schemas/input/mediatek,pmic-keys.yaml
+> +            unevaluatedProperties: false
+> +            description:
+> +              MT6357 power and home keys.
+> +
+> +        required:
+> +          - compatible
+> +          - regulators
+> =20
+>  additionalProperties: false
+> =20
+> --=20
+> 2.45.2
+>=20
+>=20
+
+--50OsiPZgodBAcn76
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsykSAAKCRB4tDGHoIJi
+0gYAAQCGfMBFaDP6ivfMJJBwfUboQER1rC8YTMNL4nNMsiTnyQD/baclX5aCHVJi
+8ubJmmeyqBJRPWK/Nw5vmepd5ePRKwg=
+=JZUq
+-----END PGP SIGNATURE-----
+
+--50OsiPZgodBAcn76--
 
