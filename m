@@ -1,162 +1,101 @@
-Return-Path: <linux-kernel+bounces-301693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F3D95F419
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:42:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F391C95F41B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386CE281D46
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:42:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325F61C21DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDD818D656;
-	Mon, 26 Aug 2024 14:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F8318D658;
+	Mon, 26 Aug 2024 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XjTRiORj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNr8ah+d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF4B18BBBF;
-	Mon, 26 Aug 2024 14:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429AD153BF0;
+	Mon, 26 Aug 2024 14:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683353; cv=none; b=C7YyvVcwFKxSzlPuFb4xLHUugi6DaISEm1gR8arGBcxJFgcBRmXPej0gDDEOjaWnqJ/O2/NdIT5DMBc12+/SS4SscY2hQ5KX0EPLXsAkL8T9W1BgUNMWQhea8C57Jb9pl+ItGO8MmXyLBR/H+z2nRzeW2LIZ7iEIqrhf8I1ruwM=
+	t=1724683440; cv=none; b=CFBYUA4BRGaoie6dI1aN44nO6s0ttr+op6m568jaoyWiDvskFcpoMlcPMeFNtO/iX4zT8DYFpvV+o+xqtL9F9hLsZ4/ShMKN/PAi1151DBvO7423sbgC7tyViko148lrTvlUT5lxeOrVh98JJ2cy6T082w4WVXQaWff0DgcWOxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683353; c=relaxed/simple;
-	bh=mLRqEiz2Ra552ccXEQ0FWVth+irOONPE1lR0vUZjlFc=;
+	s=arc-20240116; t=1724683440; c=relaxed/simple;
+	bh=O4VWrKxp1GWleAFRVAxqHzy0zSP81EZGnrExzVJHOAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTjZ+7Oe2hh74Xw4v2G21AwoxKrueYb9RwA1OIrS4mXhz5wSihe7DRAtDzGWbOW5IfigGqbRulyoK2isBToebiH/jlHihciS21v2rHW3lnONijQz8mG+s9nOG1/YP6J51fgIyKQ+3pDqAStGm5CnS4vQ19uDoD978DHBxidZj1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XjTRiORj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9576FC52FC1;
-	Mon, 26 Aug 2024 14:42:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVdHVlA904+etu6TplnShIdbgNVsZTtT+uxZDGhI/3cMv1sdrTsqAd6Bu8YrpzKOBejnhzv4zHOr8/9jVg0lAFGlB+QLCAX/iiatVRx89zu1jDdEshv3oQkEar5S+oiIVOUmYsfiV/0xcWdMvMio1z4BU7B2QMHwviJ8OhunkiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNr8ah+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85267C52FC5;
+	Mon, 26 Aug 2024 14:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724683352;
-	bh=mLRqEiz2Ra552ccXEQ0FWVth+irOONPE1lR0vUZjlFc=;
+	s=k20201202; t=1724683438;
+	bh=O4VWrKxp1GWleAFRVAxqHzy0zSP81EZGnrExzVJHOAc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XjTRiORjc/FFvnAm1NxyNxqpf1yn3CyHJ/jYPbH7OvmZsl6MyI6vp+A6VNFkjqJhF
-	 0p0UHxkR+GBKXcUYfuCc/rG1yMRSrWsCbPYj9l4fcvxiT9uKoZJympEtGEq/LnBxyd
-	 /Axh7GxRdUSgQRzuamfhj8HhcgeqMD7n1m6Ry+zwHgrew4/tC+h3nGRi3aX32YNBgr
-	 oM0KLbYq1IRv8Ib2cXKUUbZM1ZrTNLFRV0Bhl7r6uVenZKBQmw34V8VEk1x2V39j8i
-	 gck6QFYLBnEf02i33JLs5sOnd5Ze+HeyD0UvlW7a7rU9faG4YXZh6xlHmu7+hEATeG
-	 QguaV+2tQRavg==
-Date: Mon, 26 Aug 2024 11:42:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Eiichi Tsukata <eiichi.tsukata@nutanix.com>
-Cc: "peterz@infradead.org" <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"james.clark@linaro.org" <james.clark@linaro.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built
- with -O0
-Message-ID: <ZsyUVWXtzBmm-U_q@x1>
-References: <20240806061749.143072-1-eiichi.tsukata@nutanix.com>
- <4D19AE26-E1B4-44B6-A8C7-639EF2B69317@nutanix.com>
- <C00F1D39-9A12-4D1C-85BD-48A6D7C0290B@nutanix.com>
+	b=RNr8ah+d2rnHKo5ptAt7ViZdR6b97bEObIGd0mmnJnD8ey1SkGzYkkOHwG+MbfLUI
+	 HC5MPhHqZsodRItK8wh6rBH1gxQPBexlDFCEkpbQt6tLO4A5pmQ6IuhjfZe53GrR9W
+	 y6w/HhLO9RvXa3pmYvgxBdFEBdfhddMW5dpXTNWvq5a8Zu2reges2NnUhxTtoQVc9e
+	 FnXSrmy/bqjx7SrUhdPr1ORB2b9vpBQTKFWzTHOe4nWIxJHJOdvl8OnCOzg1FXBcKk
+	 e9044U/8LOsl9pigtAgpvSDPKNcG5Bnkid2ppKoCXdWVORJflx+OEJAKZx8rc1Cyin
+	 G87eByZIxc1KA==
+Date: Mon, 26 Aug 2024 15:43:54 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jens Reidel <adrian@travitia.xyz>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@mainlining.org
+Subject: Re: [PATCH 0/1] Add support for primary mi2s on SM8250
+Message-ID: <ZsyUqk0JcDxXzzgf@finisterre.sirena.org.uk>
+References: <20240826134920.55148-1-adrian@travitia.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2OhJqBqwzjud+qPO"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <C00F1D39-9A12-4D1C-85BD-48A6D7C0290B@nutanix.com>
+In-Reply-To: <20240826134920.55148-1-adrian@travitia.xyz>
+X-Cookie: Your love life will be... interesting.
 
-On Mon, Aug 26, 2024 at 03:04:12AM +0000, Eiichi Tsukata wrote:
-> Ping
 
-Tried, didn't work, can you please check on the tmp.perf-tools-next?
+--2OhJqBqwzjud+qPO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-⬢[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers 20240806061749.143072-1-eiichi.tsukata@nutanix.com
-Grabbing thread from lore.kernel.org/all/20240806061749.143072-1-eiichi.tsukata@nutanix.com/t.mbox.gz
-Analyzing 3 messages in the thread
-Looking for additional code-review trailers on lore.kernel.org
-Checking attestation on all messages, may take a moment...
----
-  ✓ [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built with -O0
-    + Link: https://lore.kernel.org/r/20240806061749.143072-1-eiichi.tsukata@nutanix.com
-    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-  ---
-  ✓ Signed: DKIM/nutanix.com
----
-Total patches: 1
----
- Link: https://lore.kernel.org/r/20240806061749.143072-1-eiichi.tsukata@nutanix.com
- Base: not specified
-       git am ./20240806_eiichi_tsukata_perf_test_use_wp_u_fortify_source_for_tests_built_with_o0.mbx
-⬢[acme@toolbox perf-tools-next]$        git am ./20240806_eiichi_tsukata_perf_test_use_wp_u_fortify_source_for_tests_built_with_o0.mbx
-Applying: perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built with -O0
-error: patch failed: tools/perf/tests/workloads/Build:7
-error: tools/perf/tests/workloads/Build: patch does not apply
-Patch failed at 0001 perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built with -O0
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort".
-hint: Disable this message with "git config advice.mergeConflict false"
-⬢[acme@toolbox perf-tools-next]$ git am --abort
-⬢[acme@toolbox perf-tools-next]$
- 
-> > On Aug 6, 2024, at 15:27, Eiichi Tsukata <eiichi.tsukata@nutanix.com> wrote:
-> > 
-> > Hi,
-> > 
-> > FYI: Fedora uses “RPM_OPT_FLAGS”  as “EXTRA_CFLAGS” to build perf.
-> > https://src.fedoraproject.org/rpms/kernel/blob/rawhide/f/kernel.spec#_2908
-> > 
-> > And on Fedora40,  it has “-Wp,-D_FORTIFY_SOURCE=3”.
-> > 
-> > [eiichi@t495 ~]$ rpm --showrc | grep RPM_OPT | head -n 1
-> >  RPM_OPT_FLAGS="%{optflags}"
-> > [eiichi@t495 ~]$ rpm --eval '%{optflags}'
-> > -O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mon-omit-leaf-frame-pointer
-> > 
-> > Best,
-> > Eiichi
-> > 
-> >> On Aug 6, 2024, at 15:17, Eiichi Tsukata <eiichi.tsukata@nutanix.com> wrote:
-> >> 
-> >> If EXTRA_CFLAGS has "-Wp,-D_FORTIFY_SOURCE=2", the build fails with:
-> >> 
-> >> error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]
-> >> 
-> >> Use "-Wp,-U_FORTIFY_SOURCE" instead of "-U_FORTIFY_SOURCE" for tests
-> >> built with -O0.
-> >> 
-> >> Signed-off-by: Eiichi Tsukata <eiichi.tsukata@nutanix.com>
-> >> ---
-> >> tools/perf/tests/workloads/Build | 8 ++++----
-> >> 1 file changed, 4 insertions(+), 4 deletions(-)
-> >> 
-> >> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
-> >> index 48bf0d3b0f3d..ec36c21e375e 100644
-> >> --- a/tools/perf/tests/workloads/Build
-> >> +++ b/tools/perf/tests/workloads/Build
-> >> @@ -7,7 +7,7 @@ perf-test-y += sqrtloop.o
-> >> perf-test-y += brstack.o
-> >> perf-test-y += datasym.o
-> >> 
-> >> -CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
-> >> -CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
-> >> -CFLAGS_brstack.o          = -g -O0 -fno-inline -U_FORTIFY_SOURCE
-> >> -CFLAGS_datasym.o          = -g -O0 -fno-inline -U_FORTIFY_SOURCE
-> >> +CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -Wp,-U_FORTIFY_SOURCE
-> >> +CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -Wp,-U_FORTIFY_SOURCE
-> >> +CFLAGS_brstack.o          = -g -O0 -fno-inline -Wp,-U_FORTIFY_SOURCE
-> >> +CFLAGS_datasym.o          = -g -O0 -fno-inline -Wp,-U_FORTIFY_SOURCE
-> >> -- 
-> >> 2.45.2
-> >> 
-> > 
-> 
+On Mon, Aug 26, 2024 at 03:49:19PM +0200, Jens Reidel wrote:
+> This patch adds support for the primary mi2s interface on devices using S=
+M8250
+> audio drivers. Tested on SM7150 (xiaomi-davinci). SM7150 sound is close to
+> SM8250 and we intend to use it as a fallback in the future.
+
+Please don't send cover letters for single patches, if there is anything
+that needs saying put it in the changelog of the patch or after the ---
+if it's administrative stuff.  This reduces mail volume and ensures that=20
+any important information is recorded in the changelog rather than being
+lost.=20
+
+--2OhJqBqwzjud+qPO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbMlKcACgkQJNaLcl1U
+h9BauQf/dE/c4FhAbkfP0xa3ksmISKFIrlSbZmMy8d1cWAT3qmTScAjvv9eMd7Zx
+Xkesa4LM25NfrDwsDY50GvPFB4h/y71WidUYl78t3av7ZSP/B90UsMuZ+0MtybWK
+TTPZP/oO3GzZ85qLU+zxHxGUJPB4trmKE+zCZRJ4ri23AFpQNIw8AQOjg080NGrw
+6yTuLYbvaG4VHMWJQn4yw83vCFpk0ms3Zw6JnCPb8fTJYokDUVAaeCbPYU4U7Gc/
+ugYbsGdCuXK8/eOdH2l927CnMcYlwhUMVEd0C0ZfI+yh0j3RjhYp3xVNs98N0Vh7
+Uyt0CEVxZph4bHWFA2HGiNI6YTpNtQ==
+=lS+U
+-----END PGP SIGNATURE-----
+
+--2OhJqBqwzjud+qPO--
 
