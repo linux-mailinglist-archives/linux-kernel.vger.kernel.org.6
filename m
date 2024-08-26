@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-301528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6C795F224
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8F995F246
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123AE1C22C94
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90DCB1F235CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE8E193406;
-	Mon, 26 Aug 2024 12:51:30 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9417A5A6;
+	Mon, 26 Aug 2024 13:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SmZu+7uw"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856E2192D96;
-	Mon, 26 Aug 2024 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B707E1;
+	Mon, 26 Aug 2024 13:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676689; cv=none; b=UJvaVao1m/CzIALfdoEhXxtNWZtZ4eFUgxTRJ6zxc+2o8UDc3BMq4CwnBpApQSM3WmQCgMsKFBRqUTCrgWu1ahdDVyyLBEYk/fnM3x06QLYUqaA/a2Mi0YRAVwzdq/kxwHXgM03JfzmLWbjH5hABuD+FvWzWx1Y/idYptXX3Pac=
+	t=1724677245; cv=none; b=s7mJYKhCmOkjxKPTYznNa2GIFSqRJq6fEupXtsH8Hi/38X3hpdUqEs42AQydxiUxpnR9w6QBqNxDonLpxS7jrygxcx1cD6+Qn9zE0JMM++/JeZiDuMUPwI0EP6naOjvwGQjbuYLgJ+DIpzkAv/AFjpGZXggJRBAtxW5vpE1eEBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676689; c=relaxed/simple;
-	bh=FClpLvEy+Sb/DUd1fFllUnLImDszQ3YId+MjUwXLA3Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sAY5XzjxdkA3N9g1usyj/uLMhoqwmg4Ax7vQUojUh6fiI/jLGaZlAvkXYxdPFNZzN+EFAngj9X8BqWyq4GTNHQfMhJFBqnOh+TvjlBS3xcNQz7ClUYBdnpq4IQ25JErh4CUy/zVjpJW6ZgZnQCxZ0LE9ye1kT3fbNXJmdHxBlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wsr8x2xfjzfZ39;
-	Mon, 26 Aug 2024 20:49:21 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5FDC21404FC;
-	Mon, 26 Aug 2024 20:51:24 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
- 2024 20:51:23 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 2/2] spi: atmel-quadspi: Simplify with dev_err_probe()
-Date: Mon, 26 Aug 2024 20:59:13 +0800
-Message-ID: <20240826125913.3434305-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240826125913.3434305-1-ruanjinjie@huawei.com>
-References: <20240826125913.3434305-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724677245; c=relaxed/simple;
+	bh=JhpyAnaD7dWNN1bTpxCG0QZu8qf2suEDnGrq4j97Agw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ets+S6vph4JAhzsXXISTCLWpmY+xK9MPMoMTgcOQkEVCnvRaaadNC6uhdAhN33LoB7y8+CrvAoJ0M9QwnWcP+jjgCCOiIKBCNjU/HFhcHuVoyPQ3fpYV+hcA9uULYYMQQSZYpk23GTvt+Txrf/VVd9/eu4kweB2wbeVx3a3GNW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SmZu+7uw; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724677231; x=1725282031; i=markus.elfring@web.de;
+	bh=L88uf0gBYffESaPDmIR258SiEhKps5DkIATA3tWCltI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SmZu+7uwQdRG/RqsJn2TqEHt6rc4BorLyaEsMBySlIuQkiNC0xaVE3+V5eN6j+89
+	 jQQZsIKuvwCfpAOjaZYXCQCYS9/H9oYGRwbN127PN2n/8pDM6dwxheeJ19+ZDlrir
+	 YT58JUZAa/psvkORUeN5JOJb//5Lguo7HIzmHWV4ROtA/hbCFAIjWSnxccEvZtkY4
+	 TdMbBF9VqOviPnYaH2N0fvmkojGb8//ohFmu3Vh1G4uhwmji+cjkOReZmU1aEV/gA
+	 TQN7z1lYnCGyD6DpnXjnxFseM/9Q0O1clS4rub6mrDlU977e1gt6cX022VBTQ5C9C
+	 OQnm09HGe/WwTEiOiA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLAVa-1sRS9d0vcg-00I3aZ; Mon, 26
+ Aug 2024 15:00:31 +0200
+Message-ID: <b96565ac-2052-44d0-aa9b-0f2d10b424b7@web.de>
+Date: Mon, 26 Aug 2024 15:00:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+To: Yan Zhen <yanzhen@vivo.com>, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, opensoure.kernel@vivo.com,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240826061717.2016126-1-yanzhen@vivo.com>
+Subject: Re: [PATCH v2] clk: qcom: Fix error checking for
+ devm_clk_hw_get_clk()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240826061717.2016126-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XwA4bHaeQfDr74DylbycT+tuFODVMxeUynR/jcYDiu3f6FrevyK
+ pIxu1tSVpFq4PXOaUTVmne87EXf4NLQUOMrZArglwEgNwu43+cKoXxWXXqXoQbewYu5u+Q9
+ uz9HDcJlsMrXgcUPfBDS4fpF4bRQIEsQqCo2+zCstsPBBpzDlZ71Hd+aHy4889z3ZqnS0vP
+ bAhkLMiAnpPJGhhJBXQmA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IDQt7LfK2gE=;7ihaKBDEgFsES1p/8cHXpATxkkX
+ V80ztt41giRpRr1E5N6Mv1DgrHQoA1f05nI+wFqt983nLbh/iDInpdVKgrTT5EWU1XziW9igp
+ SFgXg0e9le72OuCfQcqejpLTYESUhLVQkYQWE2Rgmhe9y+hy9T7yg2ihiGwtUqjo6gTN0QNJe
+ fWhxMvd9Kft4AWDTwrJoPP7vx8fBmDtGoO3vqhihQ/4zoV2TfCZnPXYx4ux9De4UoaWRDBfYs
+ Q+zbL8ijjBFLvh1tULFso0Z3mddqs3RMOPbLCZOGFj5CD0iDu6ttWcUjUDJcHbXAg538gzjss
+ cBIPH55py8ramdyMon5kqve4n/PzKA742nYlGxka73lKLf/yNVPeGdCdmHUXz1zMuOZfb+sgb
+ 11vnzHRR5Tk2l7q/TOdV40ReRWTZZoOTDMQKOup8skGc8a11pHnMomxE+izRxQaB8SbpyBT8I
+ 0rSRF38Gbcql9aJQuCwNMmhVHq8QJHEUZZiwQkVpQakB2xYecUGI++j5p1cSlhW9cyP02xaLg
+ UD5CVc/8JFDey1CZFQvaApd3z97wO+pamg5QBDDBHcExpFgabnp5fytWAAjqHOMUJeOIlb5aD
+ mJOrVfkteM+Bq5+vXyrKVE8yGmbkHTjM2p1NvwulaFBIUIzw2cc5xAO7WpMBUy2q/vK9q6fpE
+ Hv/Uvkqi66KQs4eltMd+mswir8zrlZ70Kz5LN1gFiG+OHolJHI4AvCGqS9YANn+26f2bH2zsk
+ LsSLc+xdHvwnTMF2MbDvwtVfU5N1pHFlovHik7MX96xBCHZYmuZISRoSk8shVMhc0X2P/GyvC
+ hmEEsj9gCcsNTfLRLYZJ/NxQ==
 
-Use the dev_err_probe() helper to simplify error handling during probe.
-This also handle scenario, when EDEFER is returned and useless error
-is printed.
+> The devm_clk_hw_get_clk() function returns error pointers.
+> It never returns NULL.  Update the check accordingly.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/spi/atmel-quadspi.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9C=
+Cc=E2=80=9D)?
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index 56dd8dcb86cb..936d57869493 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -602,18 +602,16 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 
- 	/* Map the registers */
- 	aq->regs = devm_platform_ioremap_resource_byname(pdev, "qspi_base");
--	if (IS_ERR(aq->regs)) {
--		dev_err(&pdev->dev, "missing registers\n");
--		return PTR_ERR(aq->regs);
--	}
-+	if (IS_ERR(aq->regs))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(aq->regs),
-+				     "missing registers\n");
- 
- 	/* Map the AHB memory */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qspi_mmap");
- 	aq->mem = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(aq->mem)) {
--		dev_err(&pdev->dev, "missing AHB memory\n");
--		return PTR_ERR(aq->mem);
--	}
-+	if (IS_ERR(aq->mem))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(aq->mem),
-+				     "missing AHB memory\n");
- 
- 	aq->mmap_size = resource_size(res);
- 
-@@ -622,17 +620,15 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	if (IS_ERR(aq->pclk))
- 		aq->pclk = devm_clk_get(&pdev->dev, NULL);
- 
--	if (IS_ERR(aq->pclk)) {
--		dev_err(&pdev->dev, "missing peripheral clock\n");
--		return PTR_ERR(aq->pclk);
--	}
-+	if (IS_ERR(aq->pclk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(aq->pclk),
-+				     "missing peripheral clock\n");
- 
- 	/* Enable the peripheral clock */
- 	err = clk_prepare_enable(aq->pclk);
--	if (err) {
--		dev_err(&pdev->dev, "failed to enable the peripheral clock\n");
--		return err;
--	}
-+	if (err)
-+		return dev_err_probe(&pdev->dev, err,
-+				     "failed to enable the peripheral clock\n");
- 
- 	aq->caps = of_device_get_match_data(&pdev->dev);
- 	if (!aq->caps) {
--- 
-2.34.1
-
+Regards,
+Markus
 
