@@ -1,160 +1,109 @@
-Return-Path: <linux-kernel+bounces-301814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D56B95F5F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CCF95F5FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD34281A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39051F226D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D719CCE7;
-	Mon, 26 Aug 2024 16:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D819754D;
+	Mon, 26 Aug 2024 16:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAarQ/kK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fdYHzePq"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE499195809;
-	Mon, 26 Aug 2024 16:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD2F1946C7;
+	Mon, 26 Aug 2024 16:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688016; cv=none; b=DZFvzd7znF5Rz1vLI4wjRdwUNsASWMElUAcIaBhV2p3Ds+xLoyz2Sn14mMNPpnksJ9SQPzGEJyfSyz1J9nTqvjggcyQIh35J+EO37DPNpxWPdDKVSSS6wB0BDAzXRVuyAW80FIWaz8SvdkNkYxL7DaQCe1kJ+gaLmaQxr0mEM2U=
+	t=1724688045; cv=none; b=U2llZVIY7MLjL0JrOAchyq+1SiQ5QUPS96kGaVtA0Tn1VHnlP5RA69SGBTLASwYf/U9RlW39HZouFFmOJhp01v8irDvWWfmD7fBFqtj5A5/2SZfH3422sZrqBsmWwz5nFPauai5O4khkasTHiErbvp5kmwptqp5z/41cSMNMy00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688016; c=relaxed/simple;
-	bh=bHzBRNjE/jIpOyHCtWJBqk8TBdXr/eJElLpmCO41czc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NSJXLU5B/VfSMLVQPRebbKu1dxkzNHptFdxaL8Mt0GO8pRQVNpGVG1o7tUuMZR/NBVisq25B0d0hajYRMLcGbu6Wsb9sEB7y08NJTgGzrSJNHCflYbkmdkkY9HJLSxa368g8yvsSIopKc0D7YsYahSOactorOqwThUnHfBiijS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAarQ/kK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFD1C4DDE5;
-	Mon, 26 Aug 2024 16:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724688016;
-	bh=bHzBRNjE/jIpOyHCtWJBqk8TBdXr/eJElLpmCO41czc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jAarQ/kK2nRoPLEndXOeMKwmWI5Taoj3piriwxpL2CO53/kkaFZdYYfxgceL+biy/
-	 DWxbYC+e52eCXTRiCLRO9k8BK6FVySkoJc8K83wlxChq32jiIYAezEl/x82Qj9ySsg
-	 35b/7DWwfZN+mq8hLZPVZaWNZZDJfoqMXrXVbC+niO7pME3tZzEdN3PT3lTakghTNp
-	 y/072SprndZdJ0TMqZaMtI32mHSHhuflVUqPeZc25NH36f8PRhcSXYYcuu22ib6qK0
-	 9KbywxF/oQF7OofsjND2U9DABCooyDMW2PEWqGWWB8b4yDaOBwbtkQ7wJer0XhhjUo
-	 9FggQUhmlsphA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 26 Aug 2024 17:59:14 +0200
-Subject: [PATCH net 15/15] selftests: mptcp: join: check re-re-adding ID 0
- signal
+	s=arc-20240116; t=1724688045; c=relaxed/simple;
+	bh=pQmu4ElY5V1dBele1C+TuAB66tczegHDgOzR4cWRx7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4Slww6QougvuT6sGbtBbtekdesxfjDo3Zife3nxSm9N1IatXBRCorlur1m8YpV5CioPc9NR8IJLC8wZHTfPBCzQRTe50hufu0dyQSUU0+Sv54imiG/M/I/XOTJ6iNU4+YFHQXiOc78Mc2+ziA57t5fPlMkipGpWZYnV06SdgcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fdYHzePq; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WswPg6P4Wz9t3B;
+	Mon, 26 Aug 2024 18:00:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1724688039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hs2FEQs7SvZY85QmycsK0mSJCJzhh58UBQngjClE5W0=;
+	b=fdYHzePqJeywx4IDDR6RgTkGCAMO+agf5joH1Mq00jn9CUA9nvP9M7MgTS7gtgcnvub8UQ
+	MtmAslltDamgS72YeTgNiNnDGZS8Oid3X9w20CXHqXcP4tDaH6FktZd6dDgoiyqILqg2C2
+	IZwFDIXveNo1ZnIFUBt1ugrEu+f2N9swUxaxAs2wSwmUp6ZrrEMqupRotZ9HA9iiMZp5bo
+	53AAQLn1I/FtXDrop0wWNA5WddJf1LDrtI/O+iQqQugZuviLcWKGGjswWQ3tJmYiAf9Ugi
+	sF8Lb6nv1C8CQJILDgKtjT4Q1MiuUwtkGburZRrDXtX1wYz3KrDWIjB/5ondZw==
+Date: Mon, 26 Aug 2024 16:00:37 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	kernel@pankajraghav.com
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20240826160037.zbo6lishqswibu3k@quentin>
+References: <20240826160109.12d97220@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-net-mptcp-more-pm-fix-v1-15-8cd6c87d1d6d@kernel.org>
-References: <20240826-net-mptcp-more-pm-fix-v1-0-8cd6c87d1d6d@kernel.org>
-In-Reply-To: <20240826-net-mptcp-more-pm-fix-v1-0-8cd6c87d1d6d@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Florian Westphal <fw@strlen.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2842; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=bHzBRNjE/jIpOyHCtWJBqk8TBdXr/eJElLpmCO41czc=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmzKZXWMyY/fkS5DCKZoeLUWw6g0fYZ4wI0QcAv
- A8jMi1SZu+JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZsymVwAKCRD2t4JPQmmg
- cx1tEADvDwVA9GsZcOLjwIw0BvEcxMpbeYFe+NxW8WXaCqNR5JOWGmjyboD7cajfW3pGCw9j5HA
- F5biWAN7x0w0PWym6oqgR0uzZEDXKe4hHN2PUUA7wFEDuvASErxkhFZtBbFmKKVeYC5FYJmxL+m
- 96uywOU0EOzT8Gbf11AIT5nm1gXKrq7DRpJnIT/zBarDHIIfh8/Kalxk/G5BNH7HARHlpiyG5gI
- bceRQHtAgymIN+DiHqQztIuC4D/eO67yq+oMu8iQ7YrUbO7GE0uFZ26kVjrIPhy4EWkr8Hhnq5p
- tagWd4vmOtlQjxe6v3iGYNroWgmRSo+aaaYs16JAcwxkUeDGtTpm+3IkSaK1fzLfjVTKF+IwB4H
- DBDDDHM30Zmo5pWAt81Rzq2JUkJqhlcGJPnqwrtsyXiltbr8yQMntsVgPm5Mqq3Rnqa0GgmwNX8
- kOiLwUGW8oHpJjAwcI2p2e06NL9AuXvV9Iu5+bz32D/voRfB8JQLP66pZsoRl7p2XBKbIIP447Q
- COXaGu8bzH82DFGOQLLHxHow5ni9OzFXLydec2awfBljNDbow6UxJJ/PKb5d6qilR0DBz7a0sbT
- fclXmEnM/EWRkTNt0VVe01GsxYd/uurmyB5l6LAWZ1YNKJtL356REJu2lcuhlCgE+FMePxNjxmg
- M9dWoTOPgr31GNg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826160109.12d97220@canb.auug.org.au>
+X-Rspamd-Queue-Id: 4WswPg6P4Wz9t3B
 
-This test extends "delete re-add signal" to validate the previous
-commit: when the 'signal' endpoint linked to the initial subflow (ID 0)
-is re-added multiple times, it will re-send the ADD_ADDR with id 0. The
-client should still be able to re-create this subflow, even if the
-add_addr_accepted limit has been reached as this special address is not
-considered as a new address.
+On Mon, Aug 26, 2024 at 04:01:09PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+> produced this warning:
+> 
+> include/linux/pagemap.h:480: warning: Function parameter or struct member 'index' not described in 'mapping_align_index'
+> 
+> Introduced by commit
+> 
+>   c104d25f8c49 ("filemap: allocate mapping_min_order folios in the page cache")
 
-The 'Fixes' tag here below is the same as the one from the previous
-commit: this patch here is not fixing anything wrong in the selftests,
-but it validates the previous fix for an issue introduced by this commit
-ID.
+Oops. That should be a trivial patch. I will send this fix along with
+the set_memory_ro() issue in powerpc once that is resolved.
 
-Fixes: d0876b2284cf ("mptcp: add the incoming RM_ADDR support")
-Cc: stable@vger.kernel.org
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_join.sh | 30 ++++++++++++++++---------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 55b254d951da7..6c0dde447c980 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -470,6 +470,7 @@ mapping_min_folio_nrpages(struct address_space *mapping)
+ /**
+  * mapping_align_index() - Align index for this mapping.
+  * @mapping: The address_space.
++ * @index: The page index.
+  *
+  * The index of a folio must be naturally aligned.  If you are adding a
+  * new folio to the page cache and need to know what index to give it,
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_join.sh b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-index 597bf928e8f9..47c89a16b6e1 100755
---- a/tools/testing/selftests/net/mptcp/mptcp_join.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-@@ -3720,7 +3720,17 @@ endpoint_tests()
- 
- 		pm_nl_add_endpoint $ns1 10.0.1.1 id 99 flags signal
- 		wait_mpj $ns2
--		chk_subflow_nr "after re-add" 3
-+		chk_subflow_nr "after re-add ID 0" 3
-+		chk_mptcp_info subflows 3 subflows 3
-+
-+		pm_nl_del_endpoint $ns1 99 10.0.1.1
-+		sleep 0.5
-+		chk_subflow_nr "after re-delete ID 0" 2
-+		chk_mptcp_info subflows 2 subflows 2
-+
-+		pm_nl_add_endpoint $ns1 10.0.1.1 id 88 flags signal
-+		wait_mpj $ns2
-+		chk_subflow_nr "after re-re-add ID 0" 3
- 		chk_mptcp_info subflows 3 subflows 3
- 		mptcp_lib_kill_wait $tests_pid
- 
-@@ -3730,19 +3740,19 @@ endpoint_tests()
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_ESTABLISHED 1
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_ANNOUNCED 0
- 		chk_evt_nr ns1 MPTCP_LIB_EVENT_REMOVED 0
--		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_ESTABLISHED 4
--		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_CLOSED 2
-+		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_ESTABLISHED 5
-+		chk_evt_nr ns1 MPTCP_LIB_EVENT_SUB_CLOSED 3
- 
- 		chk_evt_nr ns2 MPTCP_LIB_EVENT_CREATED 1
- 		chk_evt_nr ns2 MPTCP_LIB_EVENT_ESTABLISHED 1
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_ANNOUNCED 5
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_REMOVED 3
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_ESTABLISHED 4
--		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_CLOSED 2
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_ANNOUNCED 6
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_REMOVED 4
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_ESTABLISHED 5
-+		chk_evt_nr ns2 MPTCP_LIB_EVENT_SUB_CLOSED 3
- 
--		chk_join_nr 4 4 4
--		chk_add_nr 5 5
--		chk_rm_nr 3 2 invert
-+		chk_join_nr 5 5 5
-+		chk_add_nr 6 6
-+		chk_rm_nr 4 3 invert
- 	fi
- 
- 	# flush and re-add
+
 
 -- 
-2.45.2
-
+Pankaj Raghav
 
