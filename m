@@ -1,161 +1,173 @@
-Return-Path: <linux-kernel+bounces-301874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF80B95F6BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:38:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A9595F6C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F20B20C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:38:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56641C21DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA96195385;
-	Mon, 26 Aug 2024 16:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0888319755A;
+	Mon, 26 Aug 2024 16:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kxbYTWBz"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RMqvB5G5"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDF8143C7D;
-	Mon, 26 Aug 2024 16:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99D195FEA
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690249; cv=none; b=XWf1z89q10arTJWUKkUxb20OlDZxSwUIgRFR5h+pX24l+FU6Hoogiuqv79HQfmALuVcc3yw4Z31BH7Qi0rhKkA5Ath+I7i8u6moGM0y92Kko9jFvrrK4XYvylisoMs8TS5wPtm4GVd6zs0/n8qSnmwW9CELG9Ql1s8+tvDhPfGk=
+	t=1724690256; cv=none; b=KzMVJgfzAEf1iZUlxa1wFn0zXZ2GkxR+GcDF8iXSYWXxKCGi0q0x9bf5TeZ5u2G932O8D/Awh49gWHAzIRWxXcMfy8WAf2Fo8RQ7stZ0If2w47ef319ayfC0JO25CwUrROffqVZyIjiF3NpdlPRfn8K/a5QrN58P1udgh/obp28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690249; c=relaxed/simple;
-	bh=7YZKPwCtQxcL4xgnfnjvMt8lmgcWeXktoVDEPvRCGb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j5Z66PE1J0jvwtmEuHKFqIRmz18hivEkW0Ztk4AkTSl/tPuIOhIQs0alEZx1OjP+4i5Jvd7/VyjQnOIwmYltiir8ZzDP5YWFO04D9PdM8JiGTgsSANrPmZ9p2yN0fCSEdnIdkqvL0y9j5GzCt3G8geJLZwcXabsfNDnFv2epZNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kxbYTWBz; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id e4d1ef758a5236b4; Mon, 26 Aug 2024 18:37:25 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7E119921952;
-	Mon, 26 Aug 2024 18:37:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724690245;
-	bh=7YZKPwCtQxcL4xgnfnjvMt8lmgcWeXktoVDEPvRCGb4=;
-	h=From:Subject:Date;
-	b=kxbYTWBzzEOnfQ5iRA02urCV+HL3RrCNSldCKtYTh38kjmczu9V4sl3uFIOQOId6n
-	 VJe6fj5eoI4sRt2fYr9z64Ct7fg+OAyGu6zK2/2Yjq785uUNRThGk7dgPB54kUGzFx
-	 CA/lFis87rDBUp6Zap0vv4TdcqjeBKVCkxF+HB+4AMehkpZqfW0WDPKY9iy9QDReDa
-	 3pL87zzabqkdMQRrQ2A9WFSPoWJQVNlWTooVZXibTUwWQUGceVJyM8Fc7I0G0CGDGT
-	 xO9ICfDIreF4+8+8I288/rLoOSS0MikY7nCGOmIWQpkWuPsA4aK1cgCxlTghxfLa3R
-	 U8C9NMQF463Wg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Huisong Li <lihuisong@huawei.com>
-Subject: [PATCH v1 4/4] thermal: core: Drop thermal_zone_device_is_enabled()
-Date: Mon, 26 Aug 2024 18:37:16 +0200
-Message-ID: <9353673.CDJkKcVGEf@rjwysocki.net>
-In-Reply-To: <2979211.e9J7NaK4W3@rjwysocki.net>
-References: <2979211.e9J7NaK4W3@rjwysocki.net>
+	s=arc-20240116; t=1724690256; c=relaxed/simple;
+	bh=fyeFyDqNNIVGj6fp5uG8Z95yuv+rPVGeRsZrOgNM4DQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rj4rSVS8OYn1RtiPVp+l6IfosdnJ5EeCNgehzYveWdq0wh+fYRTDwPHyNSsGiXAdavyk2Yj9t285Ouy4gSt/zWCLyhvBF5w6WJb4sTRtlotTgi94DhAVg50I+w0W3vMt7GKLFC6JWMrJeVwtFmpHyS61rMjLFK0ekTPwAaURZSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RMqvB5G5; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201fed75b38so390635ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724690254; x=1725295054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6SOwwEak8HNUtFdi6w1IR3Fh7ui0CdwihCwbP/+t5tk=;
+        b=RMqvB5G5NpKnfwcmTk0n+rWG2u2EE4GnJmt3ndpaNGJfNBvYpw8cT2goOb+s8qxWsu
+         19JQE/bBT7lvKiiwjBtkTKupx8W62C/0G3CNOvTlrTTRhrgYDeHaD3YOohJtqcmZz9ah
+         f5kFRMu1ni2vDp5iDdE3daIsPNtlJn0J+D/NheRQSGqOyOhN41yp9WwZZLI+sxSBREfU
+         HAz6/iiXrbB5F24RKqTLvN/z4xj4WvrcXk+7BoYTMqVi9WpiFKXN0eIZzwrwbsPoOfRq
+         sP0nsuAJpeamoyd5IB524B1y6Go1qOm4NwqwQauwWbVVHHNHuZJ0Insxcv7QN2naIZ4S
+         MJng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724690254; x=1725295054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6SOwwEak8HNUtFdi6w1IR3Fh7ui0CdwihCwbP/+t5tk=;
+        b=C6epOfzjUxDHtxEoB9yWUPesRDklDu4hGaZK/o4IMmxL61YVPsqF42OLs27G1uKpTz
+         FOPkI1ILnYR9sRHv28VBmBw00oyBNi26sEhDT20OHrQInf4j8fmLKxGrUH/5ccJMY4+C
+         lPxb14IQgk5wXoI8utyBP23vRqFSM9BMhw0ncLdZihl7LBoIZEKx+KENCn7V/+rJnNZs
+         YhnmFzlA2LsA4GwYZnRa+h/dyKt+UVfoisBv20dNlznkpvRCKWjCkB5AQ354FptbPw10
+         Kvw5NdAqZI7BVb1+DPadJsNOS5BHcHvjwluKINngBbb795atsnEwl3ZnJWDaydhnyVjV
+         bHpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWB40qxRFfhloGYBU9YL3DFMlJfCGyusmJjpn3t9I+DEYQQSjiLq0MF7lv4LPYtWSs4FiGqE0S4wF53Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylRBPgtlHBJQEl9UTMCqrq8a35Ic17TKFOLKhctePk97wHCA99
+	l8/r3uFZQmL9k8xUMDksk/ahTWBH9V2hCC69C/wGcebNQOlA7trs5vJG80mReKwuB19ZpKou9DB
+	yoKecyjVZCgGymRO0mbudzGH1lV2RoB5RfoyF9843eUEkI9ARmKFE
+X-Google-Smtp-Source: AGHT+IHjcvh47kOzCIEwZsibkgNOi6co7AgGvdigUdHRaQeq4Gqe/7kb6PEt73qK+dAQhNoKQrBZvRkORDCtN96cUK8=
+X-Received: by 2002:a17:902:e84d:b0:1f9:d111:8a1e with SMTP id
+ d9443c01a7336-203b2c4867amr5232205ad.26.1724690253624; Mon, 26 Aug 2024
+ 09:37:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <f29f64e29c08427b95e3df30a5770056@honor.com> <ZsXho27uAbQ5rEgS@tiehlicka>
+ <CAGsJ_4zgQ0MBV-yucc0-7BcDgjMMdCUDWK330mrd7SS4ej6Q8Q@mail.gmail.com> <CAJuCfpE7qsbFPseGzcBp27uNDhwtKLypKiPnqebE5=T8WDTyEQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpE7qsbFPseGzcBp27uNDhwtKLypKiPnqebE5=T8WDTyEQ@mail.gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Mon, 26 Aug 2024 09:37:22 -0700
+Message-ID: <CA+EESO7BuywqjM9pk3KbgdfsYJerpU1-5d9AN20mBjA6e_97UQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
+To: Suren Baghdasaryan <surenb@google.com>, Nicolas Geoffray <ngeoffray@google.com>
+Cc: Barry Song <21cnbao@gmail.com>, Michal Hocko <mhocko@suse.com>, gaoxu <gaoxu2@honor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shaohua Li <shli@fb.com>, 
+	yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>, 
+	Kalesh Singh <kaleshsingh@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedguddtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
- rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks Suren for looping in
 
-There are only two callers of thermal_zone_device_is_enabled()
-and one of them call is under the zone lock and the other one uses
-lockdep_assert_held() on that lock.  Thus the lockdep_assert_held()
-in thermal_zone_device_is_enabled() is redundant and it could be
-dropped, but then the function would merely become a wrapper around
-a simple tz->mode check that is more convenient to do directly.
+On Fri, Aug 23, 2024 at 4:39=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Wed, Aug 21, 2024 at 2:47=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Wed, Aug 21, 2024 at 8:46=E2=80=AFPM Michal Hocko <mhocko@suse.com> =
+wrote:
+> > >
+> > > On Fri 16-08-24 07:48:01, gaoxu wrote:
+> > > > Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazy=
+free_fn:
+> > > > 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If i=
+t's
+> > > >    moved to the LRU tail, it allows for faster release lazy-free fo=
+lio and
+> > > >    reduces the impact on file refault.
+> > >
+> > > This has been discussed when MADV_FREE was introduced. The question w=
+as
+> > > whether this memory has a lower priority than other inactive memory t=
+hat
+> > > has been marked that way longer ago. Also consider several MADV_FREE
+> > > users should they be LIFO from the reclaim POV?
 
-Accordingly, drop thermal_zone_device_is_enabled() altogether and update
-its callers to check tz->mode directly as appropriate.
+Thinking from the user's perspective, it seems to me that FIFO within
+MADV_FREE'ed pages makes more sense. As a user I expect the longer a
+MADV_FREE'ed page hasn't been touched, the chances are higher that it
+may not be around anymore.
+> >
+> > The priority of this memory compared to other inactive memory that has =
+been
+> > marked for a longer time likely depends on the user's expectations - Ho=
+w soon
+> > do users expect MADV_FREE to be reclaimed compared with old file folios=
+.
+> >
+> > art guys moved to MADV_FREE from MADV_DONTNEED without any
+> > useful performance data and reason in the changelog:
+> > https://android-review.googlesource.com/c/platform/art/+/2633132
+> >
+> > Since art is the Android Java heap, it can be quite large. This increas=
+es the
+> > likelihood of packing the file LRU and reduces the chances of reclaimin=
+g
+> > anonymous memory, which could result in more file re-faults while helpi=
+ng
+> > anonymous folio persist longer in memory.
 
-While at it, combine the tz->mode and tz->suspended checks in
-__thermal_zone_device_update() because they are of a similar category
-and if any of them evaluates to "true", the outcome is the same.
+Individual heaps of android apps are not big, and even in there we
+don't call MADV_FREE on the entire heap.
+> >
+> > I am really curious why art guys have moved to MADV_FREE if we have
+> > an approach to reach them.
 
-No intentinal functional impact.
+Honestly, it makes little sense as a user that calling MADV_FREE on an
+anonymous mapping will impact file LRU. That was never the intention
+with our ART change.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c  |   12 +-----------
- drivers/thermal/thermal_core.h  |    3 ---
- drivers/thermal/thermal_sysfs.c |    2 +-
- 3 files changed, 2 insertions(+), 15 deletions(-)
+From our perspective, once a set of pages are MADV_FREE'ed, they are
+like a page-cache. It gives an opportunity, without hurting memory
+use, to avoid overhead of page-faults, which happen frequently after
+GC is done on running apps.
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -547,10 +547,7 @@ void __thermal_zone_device_update(struct
- 	int low = -INT_MAX, high = INT_MAX;
- 	int temp, ret;
- 
--	if (tz->suspended)
--		return;
--
--	if (!thermal_zone_device_is_enabled(tz))
-+	if (tz->suspended || tz->mode != THERMAL_DEVICE_ENABLED)
- 		return;
- 
- 	ret = __thermal_zone_get_temp(tz, &temp);
-@@ -652,13 +649,6 @@ int thermal_zone_device_disable(struct t
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_disable);
- 
--int thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
--{
--	lockdep_assert_held(&tz->lock);
--
--	return tz->mode == THERMAL_DEVICE_ENABLED;
--}
--
- static bool thermal_zone_is_present(struct thermal_zone_device *tz)
- {
- 	return !list_empty(&tz->node);
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -284,7 +284,4 @@ thermal_cooling_device_stats_update(stru
- 				    unsigned long new_state) {}
- #endif /* CONFIG_THERMAL_STATISTICS */
- 
--/* device tree support */
--int thermal_zone_device_is_enabled(struct thermal_zone_device *tz);
--
- #endif /* __THERMAL_CORE_H__ */
-Index: linux-pm/drivers/thermal/thermal_sysfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-+++ linux-pm/drivers/thermal/thermal_sysfs.c
-@@ -53,7 +53,7 @@ mode_show(struct device *dev, struct dev
- 	int enabled;
- 
- 	mutex_lock(&tz->lock);
--	enabled = thermal_zone_device_is_enabled(tz);
-+	enabled = tz->mode == THERMAL_DEVICE_ENABLED;
- 	mutex_unlock(&tz->lock);
- 
- 	return sprintf(buf, "%s\n", enabled ? "enabled" : "disabled");
+IMHO, within LRU_INACTIVE_FILE, MADV_FREE'ed pages should be
+prioritized for reclamation over file ones.
+>
+> Adding Lokesh.
+> Lokesh, could you please comment on the reasoning behind the above
+> mentioned change?
 
-
-
+Adding Nicolas as well, in case he wants to add something.
+>
+> >
+> > >
+> > > --
+> > > Michal Hocko
+> > > SUSE Labs
+> > >
+> >
+> > Thanks
+> > Barry
 
