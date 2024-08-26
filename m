@@ -1,81 +1,88 @@
-Return-Path: <linux-kernel+bounces-301573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B90295F2BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:20:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9184495F2C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC321F25477
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4840B20A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BC318595D;
-	Mon, 26 Aug 2024 13:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A026188915;
+	Mon, 26 Aug 2024 13:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eiNDr/eC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDdlMTYS"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D707E17ADFF;
-	Mon, 26 Aug 2024 13:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C275A185931;
+	Mon, 26 Aug 2024 13:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678410; cv=none; b=RMBUnqtIcAgeh8ud6RRupGOGCgra8d8Bpkf3oBOSc4b+veNwyIwEmhHUVS9d1KRHVje6Rquq7GzCYrddWGY/cbJeMhCYILk7SmL2XCm9HAbnJHwMN5eB+3l6XGgPUxkAlplwADpe7xkSkHO+JnrcEMhCZUh366iSQ/OnqV5QoA0=
+	t=1724678412; cv=none; b=EymA3MTgApelYrxPP0qUp2aXE4KO6OspAkC0UG38MgD7L2szZoFcodx1K1AIqJa2wYpE2bQBOBc5dC6xW2QjFPiZ0FLktoXdwbdoXGHBkQGkZWwsw2MSKlQL2UPHmx46n2jyKJIIvtMKjl7ZkeXllZrHuNuy7F/J/6NLRk0CHL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678410; c=relaxed/simple;
-	bh=L7ncuygwK7+Kr9c0J0XU++WFSpxV2mOazxQHlKpiK+o=;
+	s=arc-20240116; t=1724678412; c=relaxed/simple;
+	bh=E3jqWk0quNbd2DIIwzH2hsPPy6kfLMiKIT4k5BaQN9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7xZwvlxfUA1ILvwxs4KUzGd/B2TctVPLrV7z+iAD/4X2r4lGlRU/MUIeu0GqL9NRl6vg1SJdkgdKkcKZXEeKYKXak5H1jJ7NJdOeQXbr0+WHzoWihgQz3wX1pY4gy5jt3Dd8oyF5Zi66DcuTvVq5mSmd8FolTThQj8j1R0m4/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eiNDr/eC; arc=none smtp.client-ip=192.198.163.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=gx4iFsDeeYbXaoxqJKlkiH+HUQLbN7a+MYsMo0dscPOWXi2wH8HQExRblaActPyTXmLEg0yqrQ3XKypwrZ6LTdvyUBwQHFBNfQ5SnTEPkE+8WDRm2NRI+4UYOUWy2mAaMXIPbSjPu7La4zu5Om+74VcF06SPKHQvA+cCiyfT4Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDdlMTYS; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724678409; x=1756214409;
+  t=1724678411; x=1756214411;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=L7ncuygwK7+Kr9c0J0XU++WFSpxV2mOazxQHlKpiK+o=;
-  b=eiNDr/eCMuFL2ocUsfmNFGRlw7HhOAAA4DvgPsRQKIQiVNUJIyEeT07E
-   cj3MWkPcQOVAPmwUQghl4Ro2/nN/cZv6WG0wDRGYabGAy3S4X5nn2Avb/
-   8fizxPtDJOP/ybObBK7T7cjw+Z8abyJrfsTkEwwENxoKsRQDAeEKAvrWD
-   JXwC5bNJ0wLODy0/TPSocQdPGfSnI5XteXQuKHpHM7l5PFSgoS4flLyvA
-   MVaeRx5rWLVuD6ZTWkpWhGjmj9vyWifLnRm1zNrpzUnLiFd8M+5WdDW89
-   jTIiEAaNylTOcQp6+IW7m5Ru431m53rJBNMAjrrNgZCjxD0a5SdRWDrap
-   w==;
-X-CSE-ConnectionGUID: CtsKjvbESQeFHk5n4o+EEw==
-X-CSE-MsgGUID: mlxgfd3KT7OCu1DuKlt36w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23266490"
+  bh=E3jqWk0quNbd2DIIwzH2hsPPy6kfLMiKIT4k5BaQN9I=;
+  b=BDdlMTYSrbAdSIAZbPrLYbKe29DYXKM7yhNL1zqzak1+yKQ6f55caLU0
+   1wDrLtdtjDFJ8QX18QDd6RLzUvFsaoSqWwMjXgaLoTnIlAEGxJvEkBJGh
+   ZhllLEdFeyzvmI9aoJd3Ct2A7Tgdwa4QOZo8Qj7IiLHWYxY02NrPn0LT1
+   1giLXaksqM3ry4trM202DlxxIIWomMtEMT94ID7I186Toa3MJHOXOVrLW
+   wuaIf0CuMz8SFSUNDBAAV8j9Bg9KuajdSSnaZtcyw+aQiJ3Qg55Ks+Rsz
+   6sBp1D/tddxeV4uReZOQVS7/NKpzKlGPXlQAKWpL6bh13i0wk4HGv51kJ
+   A==;
+X-CSE-ConnectionGUID: ph89QIMgQjiPmUs+r8nZ+Q==
+X-CSE-MsgGUID: 6fXFDkHDQBCp94/VqLlGpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23266504"
 X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="23266490"
+   d="scan'208";a="23266504"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:20:08 -0700
-X-CSE-ConnectionGUID: JF/zFlvhQFeztm9udLuJrA==
-X-CSE-MsgGUID: THkbdf54S3G4yPuV3/ZMgA==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:20:10 -0700
+X-CSE-ConnectionGUID: pEF2z3PSSqO4UPPXQmj/yQ==
+X-CSE-MsgGUID: J7nWDYN7R/mm5vWIQnhyiQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="93233607"
+   d="scan'208";a="93233605"
 Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
   by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 06:20:05 -0700
 Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1siZdb-000H75-0W;
+	id 1siZdb-000H6x-0H;
 	Mon, 26 Aug 2024 13:20:03 +0000
-Date: Mon, 26 Aug 2024 21:19:14 +0800
+Date: Mon, 26 Aug 2024 21:19:15 +0800
 From: kernel test robot <lkp@intel.com>
-To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
-	Yiting Deng <yiting.deng@amlogic.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>
-Subject: Re: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
-Message-ID: <202408262106.tU1zTUfx-lkp@intel.com>
-References: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chen-Yu Tsai <wenst@chromium.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] regulator: Move OF-specific regulator lookup
+ code to of_regulator.c
+Message-ID: <202408262013.YYc4obi2-lkp@intel.com>
+References: <20240822092006.3134096-3-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,60 +91,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
+In-Reply-To: <20240822092006.3134096-3-wenst@chromium.org>
 
-Hi Xianwei,
+Hi Chen-Yu,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on dff71e5c6076314f3eefe700abd6af834c57bd64]
+[auto build test ERROR on broonie-regulator/for-next]
+[also build test ERROR on robh/for-next wsa/i2c/for-next linus/master v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xianwei-Zhao-via-B4-Relay/dt-bindings-rtc-Add-Amlogic-A311L2-and-A113X2-rtc/20240826-125504
-base:   dff71e5c6076314f3eefe700abd6af834c57bd64
-patch link:    https://lore.kernel.org/r/20240823-rtc-v1-2-6f70381da283%40amlogic.com
-patch subject: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
-config: arc-randconfig-002-20240826 (https://download.01.org/0day-ci/archive/20240826/202408262106.tU1zTUfx-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408262106.tU1zTUfx-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/of-dynamic-Add-of_changeset_update_prop_string/20240826-105737
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20240822092006.3134096-3-wenst%40chromium.org
+patch subject: [PATCH v5 02/10] regulator: Move OF-specific regulator lookup code to of_regulator.c
+config: i386-buildonly-randconfig-003-20240826 (https://download.01.org/0day-ci/archive/20240826/202408262013.YYc4obi2-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408262013.YYc4obi2-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408262106.tU1zTUfx-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408262013.YYc4obi2-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> drivers/rtc/rtc-amlogic.c:545:12: warning: 'aml_rtc_resume' defined but not used [-Wunused-function]
-     545 | static int aml_rtc_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~
->> drivers/rtc/rtc-amlogic.c:535:12: warning: 'aml_rtc_suspend' defined but not used [-Wunused-function]
-     535 | static int aml_rtc_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~
+   In file included from drivers/regulator/devres.c:15:
+>> drivers/regulator/internal.h:87:9: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct regulator_dev *' [-Wint-conversion]
+      87 |         return -ENODEV;
+         |                ^~~~~~~
+   1 error generated.
 
 
-vim +/aml_rtc_resume +545 drivers/rtc/rtc-amlogic.c
+vim +87 drivers/regulator/internal.h
 
-   534	
- > 535	static int aml_rtc_suspend(struct device *dev)
-   536	{
-   537		struct aml_rtc_data *rtc = dev_get_drvdata(dev);
-   538	
-   539		if (device_may_wakeup(dev))
-   540			enable_irq_wake(rtc->irq);
-   541	
-   542		return 0;
-   543	}
-   544	
- > 545	static int aml_rtc_resume(struct device *dev)
-   546	{
-   547		struct aml_rtc_data *rtc = dev_get_drvdata(dev);
-   548	
-   549		if (device_may_wakeup(dev))
-   550			disable_irq_wake(rtc->irq);
-   551	
-   552		return 0;
-   553	}
-   554	
+    82	
+    83	#else
+    84	static inline struct regulator_dev *of_regulator_dev_lookup(struct device *dev,
+    85								    const char *supply)
+    86	{
+  > 87		return -ENODEV;
+    88	}
+    89	
 
 -- 
 0-DAY CI Kernel Test Service
