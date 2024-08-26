@@ -1,161 +1,106 @@
-Return-Path: <linux-kernel+bounces-302209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C146295FB26
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8E795FB2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACC92884BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18C328510B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DD913CABC;
-	Mon, 26 Aug 2024 21:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636FE19AD9E;
+	Mon, 26 Aug 2024 21:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/If90jS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jM5zt9Uk"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE0628DC1;
-	Mon, 26 Aug 2024 21:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB7113A87A;
+	Mon, 26 Aug 2024 21:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724706019; cv=none; b=HleiojYlSA48exKcf8ULJirHsAkbCn6blZbkf6duCPW0GIqAp0w/XOYYidn1/um0OZHlHZJgRpQ5i1YBZJLkcpe9tQlqnCSUU1ff4yo97/9OQEppTqUkxuLb3Te1WbfM1r65uk09vlw4ayrr9eES1vwuPGRsY+pwIKo9l6Z/F3s=
+	t=1724706300; cv=none; b=X30MWgBZGtMcp7pQCStMJDOBQRjr4uqHJzTyWAXt4Orrb+Coi7ckmtI0Y40aFgnevWk8yBqLN5uKXYAHyCWb0d/2cWbVNf3Scp7bwiCeBo2VOtwfkciar/RfcPUhruQly/oHBJ4pRrHxi4yxvz4anxaCOxgEiLyK2vQVvGTw7K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724706019; c=relaxed/simple;
-	bh=ae6nXL4zmv4vTDHXa1H5uLnPJYnLtqT7NVV6lyTLXrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pGq9vfS7qJS+OZYmXFDmohRMSY5Ja8BR+51lmaZe30O9Fq8gwP8pZZayKTepwKaXwhOtARfk/tjEGJFt+WOMXfgBlK6fSzQYVL8si+sk0TVaNEsgKBSh7UNZAknoZqcnEQmq6JsLUIU5TWJRTQJxu508euw+PGWaHDW7ea+oC6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/If90jS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42816ca782dso41562595e9.2;
-        Mon, 26 Aug 2024 14:00:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724706016; x=1725310816; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q+K/X6YqDrxWE8WA9haO3ONaWPfQCU7jkPm8tQUrtw4=;
-        b=O/If90jS3EzhYeiKYNF/vY93ZAPuFjwm6YFSxtqA48lr0Sv5DWPPdodHcGWxxM1tI3
-         9pANE2aLjSdkR/SIvGrsNnMyYjpHk5fQvgyMywSZV/7dhbL40UseJIMPkeeAPd49txhE
-         9XmFG6MrqxhnQz+tW16ybJen1o8u1QBqPYxyQDZy3iu/9uXMO3dAlUedImkH6b+tWmPN
-         VstMtZQ06gf1Ekw+WOxLyCwMA3epOf6saHlLDEyc049giTfGk6ADIFADUHQp/C2BAhqS
-         xcPy2WI7+dp6HYjxTOYY7i0VU75SJfADwiRyjcyXxZSapQMjfzmxDiB7VM1ZiA4MGBBD
-         bnZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724706016; x=1725310816;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q+K/X6YqDrxWE8WA9haO3ONaWPfQCU7jkPm8tQUrtw4=;
-        b=uVt0SQW5VuW07VFz/dr5ebjvl8zUcM/C7eqzq4Y/NO72xkp72aAnRGnpRVUnUOtCRN
-         Tb95ej6C+mn3D2hkxe1aSwudihSTnmzT4uLsSA31uKPewJQ2GAFokQV6Xa0vpdQ8GRGe
-         tuTjMmxMY1h4eZoI6dXLf4SzoLeaVIUcG/AJlzrAW97p3iXw37GCa7C6HoQ7JoCDFv3T
-         FtFRZgGxC2ts5UwOphG4MEmHPHaGtCNLjkSFrD9l0IERyONEKKMrL7xNBhw1XtdG6Ext
-         a2FG4MRptIEQxkIvJJxTlPRl7ETiq+ByVJfuUxChATrphjd+ruQSTNPTReWbY7HBcF0F
-         5JeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXVH1Vwp0YL98TPOyZJkq1vQjgw1n9esHZU1ZR3Ua0hJnr7QfQYMpcj9E2UgPBG2N21yilXNFTRrN0UJNj@vger.kernel.org, AJvYcCWuotr1oC22pQw3nQQzpQrqMC3EdMkdHItNdjI8M3VrsuoKinz7f2/JRGtjdtx7Sr+N1pSavq+A0/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwESmLWt9rg+dym6GOGK25oZCGPH0thhF09wyoDOdOX1QOIx7bh
-	IUjOHgnCpRDpqA8MmNehkv686R0qlTYUU0ApX8l56Wi3gn574ra/Ohcfuvcu
-X-Google-Smtp-Source: AGHT+IHvo4aNhV61UXRKNmGdlU/GneWr8ZeoPl4Pe6b7lg2FN9IOF450ZcfDSy6E3fdjSXfvaFiYiQ==
-X-Received: by 2002:a5d:40c5:0:b0:368:4bc0:9210 with SMTP id ffacd0b85a97d-373118566d8mr6369089f8f.25.1724706015194;
-        Mon, 26 Aug 2024 14:00:15 -0700 (PDT)
-Received: from [192.168.1.127] ([151.95.157.179])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefd9cd1sm203379685e9.38.2024.08.26.14.00.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 14:00:14 -0700 (PDT)
-Message-ID: <1a8adbc3-e8b3-4133-a2dd-449d584d8e8d@gmail.com>
-Date: Mon, 26 Aug 2024 23:00:10 +0200
+	s=arc-20240116; t=1724706300; c=relaxed/simple;
+	bh=R9uLlhL/QJEfx9rXtl1B/tB/67HRfRDUS4gVLh6qgqY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OBuKRYo/zc5J5Qd7dhojK9c0BxAVXXOYx4c4XacW4DsHDeTGFGjqnuvaX/ztyRZ8HGLIImZxh6HvRJD/Mbhpj19WZifXwK/H1gtzvlUyawGZA88gMGZq7r+HG/gNYLjOg/OFd8s/53KOLieklIidiRjvTdcaTuUG2Gnn3WbrYA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jM5zt9Uk; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QL4tAC091840;
+	Mon, 26 Aug 2024 16:04:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724706295;
+	bh=/6K4TEyQTNUDOlIhMUrdVD+3bayAzvVcz0txO3nguNU=;
+	h=From:To:CC:Subject:Date;
+	b=jM5zt9Ukz49XUKoBBpTHyppEiHVOBpOymPjgc0qGpfpQTHBEBWkQ3CUlE+m7Zjx42
+	 NSzq31gvWQ2iukyb+3rHWCs4pnTkmn9bKApu+nd+nJiO0OqhVTw1/bQhu23QBrxXlW
+	 i0aX4h9EUkA4LGzbBS3wuvFkiBsiLVMs+XMQ46g4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QL4tc4027350
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 16:04:55 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 16:04:55 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 16:04:54 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QL4sZU089210;
+	Mon, 26 Aug 2024 16:04:54 -0500
+From: Judith Mendez <jm@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Adrian Hunter <adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] Add retry tuning sequence
+Date: Mon, 26 Aug 2024 16:04:52 -0500
+Message-ID: <20240826210454.3928033-1-jm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/1] iio: bmi323: have the peripheral consume less
- power
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jagath Jog J <jagathjog1996@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>,
- Jonathan LoBue <jlobue10@gmail.com>
-References: <20240823192921.7df291f8@jic23-huawei>
- <20240824141122.334620-1-benato.denis96@gmail.com>
- <20240826114129.71f417c5@jic23-huawei>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <20240826114129.71f417c5@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 26/08/24 12:41, Jonathan Cameron wrote:
-> On Sat, 24 Aug 2024 16:11:21 +0200
-> Denis Benato <benato.denis96@gmail.com> wrote:
-> 
->> The bmi323 chip is part of handhelds PCs that are run on battery.
->>
->> One of said PC is well-known for its short battery life, even in s2idle:
->> help mitigate that by putting the device in its lowest-consumption
->> state while the peripheral is unused.
->>
->> Have runtime-pm suspend callback save used configuration registers
->> and runtime-pm resume callback restore saved registers to restore
->> the previous state.
->>
-> For future reference, don't send new versions of a patch series
-> in reply to previous version. It's a good way to ensure your
-> code does not get reviewed as busy maintainers and reviewers
-> tend to start with latest threads and this style means
-> your patch ends up way off the top of the screen!
-> 
-> I don't know if other subsystems specifically ask for this style
-> of reply, but the ones that I interact with all specifically ask
-> people to not do what you have here.
-> 
-> Jonathan
-> 
-Hello Jonathan,
+Due to failures to find failing region issues seen on some
+boards, add retry tuning sequence to make the tuning algorithm
+more robust. The tuning algorithm will re-execute up to 10
+times if there is no failing or passing itapdly.
 
-Thanks for the heads up! I didn't know and now I do.
+Due to the same issue above, add prints to the tuning algorithm
+to make debugging these corner-cases easier.
 
-Thanks for your time, patience and guidance.
+Changes since v2:
+- Use do while loop instead of while in patch 1/2
+- Move initialization of tuning_loop to sdhci_am654_init
+- Separate error path in patch 1/2
+- Move struct *dev = mmc_dev() to patch 2/2
 
-Best regards,
-Denis
+link to v1:
+https://lore.kernel.org/linux-mmc/20240815201542.421653-1-jm@ti.com
+link to v2:
+https://lore.kernel.org/linux-mmc/20240821192435.1619271-1-jm@ti.com
 
->> Changelog:
->> - V2: patch 1:
->> 	+ change patch commit message
->> 	+ drop removal callbacks and use devm_add_action_or_reset
->> 	+ split bmi323_init in two functions
->> 	+ separate regs to save and relative value
->> 	+ drop unhelpful consts ptr modifiers
->> 	+ add a comment to explain why BMI323_FIFO_CTRL_REG is
->> 	  being used in runtime resume
->> - V3: patch 1:
->>   + drop a struct array and replace with an array of
->>     unsigned int: u8 was too small and it would have resulted
->>     in overflow of register addresses
->>   + use single-line comments where possible
->>   + drop useless comments
->>   + remove intermediate variables
->>   + remove blank lines
->>
->> Previous patches obsoleted:
->> https://lore.kernel.org/all/20240811161202.19818-1-benato.denis96@gmail.com
->> https://lore.kernel.org/all/20240818150923.20387-1-benato.denis96@gmail.com
->>
->> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
->>
->> Denis Benato (1):
->>   iio: bmi323: peripheral in lowest power state on suspend
->>
->>  drivers/iio/imu/bmi323/bmi323_core.c | 155 ++++++++++++++++++++++++++-
->>  1 file changed, 153 insertions(+), 2 deletions(-)
->>
-> 
+Judith Mendez (2):
+  mmc: sdhci_am654: Add retry tuning
+  mmc: sdhci_am654: Add prints to tuning algorithm
+
+ drivers/mmc/host/sdhci_am654.c | 54 +++++++++++++++++++++++++++-------
+ 1 file changed, 43 insertions(+), 11 deletions(-)
+
+
+base-commit: 538076ce6b8dfe5e8e8d9d250298030f165d8457
+-- 
+2.46.0
 
 
