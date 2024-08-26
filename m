@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-301325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC9495EF12
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C33B95EF17
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17051C22534
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263061F24C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5FF155C8E;
-	Mon, 26 Aug 2024 10:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzMhNFqN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A279B14A08D;
+	Mon, 26 Aug 2024 10:53:51 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013DB15099D;
-	Mon, 26 Aug 2024 10:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECF129A2;
+	Mon, 26 Aug 2024 10:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669561; cv=none; b=MfrNT2WNaZHGko4K0duiKgXTO05VQxNGC1IfRRGcQb4GSoqWiMwy8SKsfukX8v0AryRQJalYRCeQEbSnUVLtl/rCTq31tFFIsnAHGHaeWDgGDzINNQngRYURwsFBVFt8MqVyJMEwu9Wx8djHzZz7CzIfzQGp4aYX1IBwSa/Bl3I=
+	t=1724669631; cv=none; b=jCoitjs+T4ZA4/jx7/6WZXj/26elVXnqJ6GKmEFQJN92C/c3TfQPABdrAzsLshVibS8H4maborotPJ5GB4MpA4d2RDOhxFtV5udDEjcWqN1TvnuSjQQ7Ng81T6zQ07Ojv1wCzPBWX9Gslft77Wxn7FIYwgs53aU8Zeb9C29deak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669561; c=relaxed/simple;
-	bh=q02QQHNSPXQ2BpaRfA4j+Kddrd7KJZ3iKb/VL/LUe64=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OivXkzExIe7Ip+0fzgY/6quGz9tkNo3VQKcHuU7K7DQ7mSmPMDwaILnY+xpC1FmYZsFg2Sb0f8nli7JxTmjSq0itkbEhIFZHBW57Tl93K24ZgOrAaDqMh7uQaTm2KDnm3uwZtid7jCUkFmXxbeLFqDwtl9LbN+Y6pfE1oP0SbdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzMhNFqN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84929C51436;
-	Mon, 26 Aug 2024 10:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724669560;
-	bh=q02QQHNSPXQ2BpaRfA4j+Kddrd7KJZ3iKb/VL/LUe64=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RzMhNFqNTgXUW/aD9kPhiKSzQESHhFWTzKO1lsPgyvemBdgPR9ziewWG7UjeE0yvI
-	 3xjt1snY9VHSOPdIYNC31+xjKfkuYglTzzXEMy2dPFwQfMELn/hNZU7hy/rjle3Gql
-	 I2igg5bDZxyWH5fuY2XbEeWGcAz73rnGwLkChirACmu5pk1I195fiEfIQM+xz6vCdk
-	 qbHA1wLOJL2uo2tWg9/pb/zudA5M68xgphYHHyEXYKTX3G8qhvntGgG1/y47dac8IX
-	 xw3/8mAYnLLlI4AISai9aNq09yDclODd/kbTzDMKo/ayGrlSBhXgsT96BBQn0D9jEN
-	 Q4QfBlmjRl89w==
-Date: Mon, 26 Aug 2024 11:52:26 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Anand
- Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, Michal Simek
- <michal.simek@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel
- Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iio: adc: xilinx-ams: use device_* to iterate
- over device child nodes
-Message-ID: <20240826115226.43027f1b@jic23-huawei>
-In-Reply-To: <20240820-device_child_node_access-v3-1-1ee09bdedb9e@gmail.com>
-References: <20240820-device_child_node_access-v3-0-1ee09bdedb9e@gmail.com>
-	<20240820-device_child_node_access-v3-1-1ee09bdedb9e@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724669631; c=relaxed/simple;
+	bh=rbLDSLzqYVWDbIAJ0gQcb0pY+30c68c0iGZfrbxw1B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hpwid4d5GpjM2Ds7klO/et+9F8YMSOROKLcaNyFuSpQuIW8Ab84A65eMWaAPYvBWeHw66wSc4C+ajQZA7qETiuU3W8HuKqzWiNqmVzWfIiUApnllzM26E8dWigIQRRV+x/rjwANACxFDosN8JBopSmNXYvk5S17WkSG9F2FE8Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WsnYB2s0kzhXc8;
+	Mon, 26 Aug 2024 18:51:42 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FD851800A7;
+	Mon, 26 Aug 2024 18:53:45 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 26 Aug 2024 18:53:43 +0800
+Message-ID: <3e0ba029-d658-be41-77ac-6edec75762d1@huawei.com>
+Date: Mon, 26 Aug 2024 18:53:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
+ for_each_child_of_node_scoped()
+Content-Language: en-US
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <michal.simek@amd.com>, <richard@nod.at>, <vigneshr@ti.com>,
+	<liang.yang@amlogic.com>, <neil.armstrong@linaro.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <heiko@sntech.de>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>, <wens@csie.org>,
+	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
+	<gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
+	<u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
+	<christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
+	<christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
+	<jic23@kernel.org>
+References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
+ <20240826115213.389acaef@xps-13>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240826115213.389acaef@xps-13>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Tue, 20 Aug 2024 21:02:26 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> Use `device_for_each_child_node_scoped()` in `ams_parse_firmware()`
-> to explicitly state device child node access, and simplify the child
-> node handling as it is not required outside the loop.
+
+On 2024/8/26 17:52, Miquel Raynal wrote:
+> Hi Jinjie,
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Applied, but I would ideally still like one of the xilinx folk
-others familiar with this driver to take a look.  It'll be a
-few days before this ends up in next anyway as I need to rebase
-after Greg (hopefully) takes the pull request from last week.
-
-It would be lovely to get rid of the direct fwnode usage
-in here but I'm not 100% sure if there is a path that will land
-on a disabled fwnode.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/adc/xilinx-ams.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
+> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
 > 
-> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-> index f051358d6b50..ebc583b07e0c 100644
-> --- a/drivers/iio/adc/xilinx-ams.c
-> +++ b/drivers/iio/adc/xilinx-ams.c
-> @@ -1275,7 +1275,6 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
->  	struct ams *ams = iio_priv(indio_dev);
->  	struct iio_chan_spec *ams_channels, *dev_channels;
->  	struct device *dev = indio_dev->dev.parent;
-> -	struct fwnode_handle *child = NULL;
->  	struct fwnode_handle *fwnode = dev_fwnode(dev);
->  	size_t ams_size;
->  	int ret, ch_cnt = 0, i, rising_off, falling_off;
-> @@ -1297,16 +1296,12 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
->  		num_channels += ret;
->  	}
->  
-> -	fwnode_for_each_child_node(fwnode, child) {
-> -		if (fwnode_device_is_available(child)) {
-> -			ret = ams_init_module(indio_dev, child, ams_channels + num_channels);
-> -			if (ret < 0) {
-> -				fwnode_handle_put(child);
-> -				return ret;
-> -			}
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = ams_init_module(indio_dev, child, ams_channels + num_channels);
-> +		if (ret < 0)
-> +			return ret;
->  
-> -			num_channels += ret;
-> -		}
-> +		num_channels += ret;
->  	}
->  
->  	for (i = 0; i < num_channels; i++) {
+>> Use scoped for_each_available_child_of_node_scoped() when iterating over
+>> device nodes to make code a bit simpler.
 > 
+> Why is this a resend ? Did I miss a previous iteration?
 
+Hi Miquel,
+
+The previous cc list has missing some entries.
+
+> 
+> Thanks,
+> Miquèl
 
