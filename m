@@ -1,102 +1,150 @@
-Return-Path: <linux-kernel+bounces-301119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C1295EC8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DB695EC8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47A4281FE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:59:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD85CB23C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75AF145A1E;
-	Mon, 26 Aug 2024 08:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE72814374C;
+	Mon, 26 Aug 2024 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QcZNv2yU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="frkfBPTH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmSjRlJV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="frkfBPTH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NmSjRlJV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B8E13D8B8;
-	Mon, 26 Aug 2024 08:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662719; cv=none; b=lJstM1D57wypSuB1aiPmCYeF6Ot93eg+XY0Loa0L7rrC9UOHIcjyEBdMmrqTtWJXp0ZEq0u0FXLszSwfiJ9bvpqlfPl78XPlFhPb6/uZ/BRKORK9zXzdeVeTXvUrJOuUVDi+GJvHx3tB0hRprDpE9uf2JsNAKQuDDmW7HYJhs+s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662719; c=relaxed/simple;
-	bh=RHTdlRJLvh7TUVw6KkABioi08Cm9CNB4/CBIFd9tV9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3gCmIkD9vwuzxhnqy1WGflteh2qh2CGN7ufqXn7fSuOZdZcPRwRkqd2JpxvdU73jaSIbxHCehuI2lWhig0Gkm9Ai2IcCbdYlPoRjPXNTExe7C8erc+hcCunHbW8rXkEIdJhHu4c3AHJ56RsJ1wQgKmdUzDeEKuhUuelwp8n9CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=QcZNv2yU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB46C567C1;
-	Mon, 26 Aug 2024 08:58:36 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QcZNv2yU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724662715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ocYxyao+YeYVwZkJVZlNCDBZUEKM/vUAfandsZETTJ0=;
-	b=QcZNv2yUAl78MTanT1uEILVIG0Rwr7Gq5dxZIeMULB8F3+zNHLp+iJBBgbdma6WoOLSZZm
-	dyEAM4d4sn63r+0vrzUEc2Y/7Gvw6Sd+SX+9xw+3TQl5UNUPtgirmdTEW4ELU96hQQ2Ups
-	B1IIgm4VbXKEFP704+R3/GvFPvQLfh0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b99b8b23 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318A113D63D;
 	Mon, 26 Aug 2024 08:58:35 +0000 (UTC)
-Date: Mon, 26 Aug 2024 10:58:26 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
-Message-ID: <ZsxDssNPbLkcPetJ@zx2c4.com>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
- <Zsw3xMoX2EI5UUs1@zx2c4.com>
- <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724662717; cv=none; b=Mo6tPuozXl4d4krZFSpivemiQNqz5efjh3hgDVFdWnTv5rQdVXOKlZkaZaUVdv+Sn763VVuDOBljLKshB4b/h6ExZeDPtNPxVil9Ri4QSMyP1SE970KamWS5H+ZwjGljqL4PhXG/tD8W1PNwnkcuIASdio8KABSzroUO25iS6eY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724662717; c=relaxed/simple;
+	bh=Aenp2rgBj9WT97ObxXQqYib3Tjz4Qu5J2vkfyDlds8w=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nJ4Jz/RRU/E3Da+5uXStbJ5RwRjPWflafwQBan38gne5gTaFhgtq642q9BftBiyIh5Ad9jlkegiokmjkJIjznP25oREozvXEZCsEM5cYgmHMT7wVOdbbSgju3uhw5nIBaFyQE0OyBsbFs5Gd6idn/J6C/yW9+Q6EO/TCAxBWDYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=frkfBPTH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmSjRlJV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=frkfBPTH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NmSjRlJV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 42FC221A35;
+	Mon, 26 Aug 2024 08:58:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724662713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=LFldDIQ++8jqXOksKbyxggI0tviGzCPH46mPtl/Vd3g=;
+	b=frkfBPTHZsCyiejxSourA01rRgmszp5221pEDKXuqtJVw0UQD66z25mbUIIQ554f7zjYes
+	lr7mSvfa/JHAOrpS/R71Wzr3fkvsYpdDd3h6Aehk5AMuLgupEP6OUwOVgtcx+NWGVwG6NJ
+	Duhb+LQneTkMN5nazc3crWkSlB9ieyk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724662713;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=LFldDIQ++8jqXOksKbyxggI0tviGzCPH46mPtl/Vd3g=;
+	b=NmSjRlJVH5I4tQ4N0vPSwJtZ4Xc9oYMpPzNijvLM6981De2bsnHp9mnVXlCzwdRu4qG9sY
+	nP5e+DFhGLNsO8Aw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724662713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=LFldDIQ++8jqXOksKbyxggI0tviGzCPH46mPtl/Vd3g=;
+	b=frkfBPTHZsCyiejxSourA01rRgmszp5221pEDKXuqtJVw0UQD66z25mbUIIQ554f7zjYes
+	lr7mSvfa/JHAOrpS/R71Wzr3fkvsYpdDd3h6Aehk5AMuLgupEP6OUwOVgtcx+NWGVwG6NJ
+	Duhb+LQneTkMN5nazc3crWkSlB9ieyk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724662713;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=LFldDIQ++8jqXOksKbyxggI0tviGzCPH46mPtl/Vd3g=;
+	b=NmSjRlJVH5I4tQ4N0vPSwJtZ4Xc9oYMpPzNijvLM6981De2bsnHp9mnVXlCzwdRu4qG9sY
+	nP5e+DFhGLNsO8Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D5DF13724;
+	Mon, 26 Aug 2024 08:58:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bq/rCrlDzGa4ZQAAD6G6ig
+	(envelope-from <tbogendoerfer@suse.de>); Mon, 26 Aug 2024 08:58:33 +0000
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] ice: Fix NULL pointer access, if PF doesn't support SRIOV_LAG
+Date: Mon, 26 Aug 2024 10:58:30 +0200
+Message-Id: <20240826085830.28136-1-tbogendoerfer@suse.de>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Aug 26, 2024 at 10:37:49AM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 26/08/2024 à 10:07, Jason A. Donenfeld a écrit :
-> > On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
-> >>   
-> >> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
-> >> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
-> > 
-> > If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
-> > instead of _PAGE_SIZE? But if that's the case, why not put the vdso
-> > definition of PAGE_SIZE into some vdso header included by this file?
-> 
-> It was working ok on powerpc but on x86 I got:
+For PFs, which don't support SRIOV_LAG, there is no pf->lag struct
+allocated. So before accessing pf->lag a NULL pointer check is needed.
 
-Seems like there might be some more fiddling to do, then? Or did you
-conclude it's impossible?
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+---
+ drivers/net/ethernet/intel/ice/ice_lag.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_lag.c b/drivers/net/ethernet/intel/ice/ice_lag.c
+index 1ccb572ce285..916a16a379a8 100644
+--- a/drivers/net/ethernet/intel/ice/ice_lag.c
++++ b/drivers/net/ethernet/intel/ice/ice_lag.c
+@@ -704,7 +704,7 @@ void ice_lag_move_new_vf_nodes(struct ice_vf *vf)
+ 	lag = pf->lag;
+ 
+ 	mutex_lock(&pf->lag_mutex);
+-	if (!lag->bonded)
++	if (!lag || !lag->bonded)
+ 		goto new_vf_unlock;
+ 
+ 	pri_port = pf->hw.port_info->lport;
+-- 
+2.35.3
+
 
