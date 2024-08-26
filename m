@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-301051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2B995EBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FCC095EBDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F69B239BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEE71283FD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3265517BED8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92535180021;
 	Mon, 26 Aug 2024 08:21:07 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16EB155CBA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6854716BE14
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660466; cv=none; b=VHg2A0CaxbVduatdfZ5h/CWfJFb+FfnS3VJA92QbeNdEw3xAJdKvxHr0SiJyqhzKu+xNNtVp5RwesZ3zVe8fBGBrSIafTLT318Z++xapISokma46HDwuf9ALkrJOBYP1y478IxktRm+vUVAPWUYrdmM4UraQrIfIsU9yZvE+r68=
+	t=1724660467; cv=none; b=HS6PEbJo4+boAAmsq/5VuLIgKcOud8Et8BSbrzs4L9q7R4bWXBRxeHH312fUhdRD1wtz0mNoTUKB1HUVBFTtcNeLZOw1A3SaGwnH7TRNOz7kOd/UAWG0eIk+2URZdwETzcrc0ZSVR5dufwWAhmJePfWzWLpE5R1jfEcjkZP8TEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660466; c=relaxed/simple;
-	bh=0fEzRVJBNer7g/5p8A4HmoX7GUhsiSUN3gks6XZ4zaA=;
+	s=arc-20240116; t=1724660467; c=relaxed/simple;
+	bh=vfXewUwzPB6qhkRNaNZS04fN7FhU1/X/KK9wiyizDmI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hH+idb57GvD6Dxu6cwbKUVLHD2AmC6wJPgUeCPG+OGgJqUFL/2pXJ9OLvDG3ZH2edtWoxZOCXGlSFiq2WMixLKcUxdbiaciEkx+xW6ML/6bzA8lXXdONboyAdPh07/JFL7bBqH2AoUR27hHmC0ZK79WI0/i/XZ+54IkUBtxG8e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	 MIME-Version:Content-Type; b=ONTrfXN/ddq82eCkXOmYig9PQGhdYTwKAJ/4jKRZKEhLFN8hpW+PIkqthuYMzVugYStIMBpBVew+TYjIs3bHJpGefvJgWeTK27wjNkw8B0atgX6qpU4PGJWOtTKkkmvrmajewh5NjKq/ojqOfqYpjLWQvaP3i3wDVbvTnHc+t2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WskC947Kfz1S8qt;
-	Mon, 26 Aug 2024 16:20:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WskBq0NKJzyR4p;
+	Mon, 26 Aug 2024 16:20:35 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id BD3D81A0188;
-	Mon, 26 Aug 2024 16:21:02 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 1078E1800A5;
+	Mon, 26 Aug 2024 16:21:03 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
@@ -42,9 +42,9 @@ From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <lee@kernel.org>, <linux-kernel@vger.kernel.org>, <krzk@kernel.org>,
 	<jic23@kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 11/12] mtd: rawnand: stm32_fmc2: Use for_each_child_of_node_scoped()
-Date: Mon, 26 Aug 2024 16:28:46 +0800
-Message-ID: <20240826082847.2591036-12-ruanjinjie@huawei.com>
+Subject: [PATCH -next 12/12] mtd: rawnand: sunxi: Use for_each_child_of_node_scoped()
+Date: Mon, 26 Aug 2024 16:28:47 +0800
+Message-ID: <20240826082847.2591036-13-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240826082847.2591036-1-ruanjinjie@huawei.com>
 References: <20240826082847.2591036-1-ruanjinjie@huawei.com>
@@ -64,36 +64,28 @@ from the loop.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/mtd/nand/raw/stm32_fmc2_nand.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/mtd/nand/raw/sunxi_nand.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/stm32_fmc2_nand.c b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-index 264556939a00..0f67e96cc240 100644
---- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-+++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -1851,7 +1851,6 @@ static int stm32_fmc2_nfc_parse_child(struct stm32_fmc2_nfc *nfc,
- static int stm32_fmc2_nfc_parse_dt(struct stm32_fmc2_nfc *nfc)
+diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
+index 4ec17c8bce5a..c28634e20abf 100644
+--- a/drivers/mtd/nand/raw/sunxi_nand.c
++++ b/drivers/mtd/nand/raw/sunxi_nand.c
+@@ -2025,13 +2025,11 @@ static int sunxi_nand_chip_init(struct device *dev, struct sunxi_nfc *nfc,
+ static int sunxi_nand_chips_init(struct device *dev, struct sunxi_nfc *nfc)
  {
- 	struct device_node *dn = nfc->dev->of_node;
--	struct device_node *child;
- 	int nchips = of_get_child_count(dn);
- 	int ret = 0;
+ 	struct device_node *np = dev->of_node;
+-	struct device_node *nand_np;
+ 	int ret;
  
-@@ -1865,12 +1864,10 @@ static int stm32_fmc2_nfc_parse_dt(struct stm32_fmc2_nfc *nfc)
- 		return -EINVAL;
- 	}
- 
--	for_each_child_of_node(dn, child) {
-+	for_each_child_of_node_scoped(dn, child) {
- 		ret = stm32_fmc2_nfc_parse_child(nfc, child);
--		if (ret < 0) {
--			of_node_put(child);
-+		if (ret < 0)
+-	for_each_child_of_node(np, nand_np) {
++	for_each_child_of_node_scoped(np, nand_np) {
+ 		ret = sunxi_nand_chip_init(dev, nfc, nand_np);
+ 		if (ret) {
+-			of_node_put(nand_np);
+ 			sunxi_nand_chips_cleanup(nfc);
  			return ret;
--		}
- 	}
- 
- 	return ret;
+ 		}
 -- 
 2.34.1
 
