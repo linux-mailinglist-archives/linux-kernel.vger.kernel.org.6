@@ -1,77 +1,103 @@
-Return-Path: <linux-kernel+bounces-301295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F042295EEC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07B195EEC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8E3283A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462741F232A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB814D28A;
-	Mon, 26 Aug 2024 10:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B912814B06E;
+	Mon, 26 Aug 2024 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j29w2eCY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C8639ACC;
-	Mon, 26 Aug 2024 10:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0124C39ACC;
+	Mon, 26 Aug 2024 10:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669176; cv=none; b=YuoBw+3eYVNpHa9U4sP5ctGVE2jo52TSDIY/umZSv2cKr0DZXr03AurBvxxaNGuTfJ0XWXN1CdVFpTERt9rh0aVsixHH3VJ5+eDeIVFbqtHFD2W+fNnnlREI2JSbPFJguiKJFDPsaXenfBJiXqCTA2gSaX8ecK+vPLjiSHnIYuE=
+	t=1724669224; cv=none; b=aI7/Ov0ydPyq8uBGR6gWq4jODTKE1WkhVkp6+hJy4BOn8/0d5P4soEXM1p9dRb/5kRiMpuuK2s8XhGH/cqwSGttTdoSnjbvVqlD76HzkYoppa9YRuLeo083bFDAByrbzyB7rlwZa4Mp3qp4p+FyHCaa0ItStr7CIPmulCeeNuJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669176; c=relaxed/simple;
-	bh=XAj4Tq5MjaiO37oruDpqrEgc3uF2VimxxQHdGrtWnDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fI8hblSWxu3OFSiHiNMMeJPn2RS3z8HibO7BsBgmPXYJLgn6xEFU50HmpoNnIzCeJMKEro8AdZz+prEKvrijAWaRkC+a3mKCUxfGWAsVxBuvhpOYJJfQEbOPmBSM4HNTMqmodvZS6LVtZCtkJJ0dOams01Mb424JmV8GcBD8T4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9AFC51404;
-	Mon, 26 Aug 2024 10:46:10 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:46:19 +0300
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 16/19] arm64: Enable memory encrypt for Realms
-Message-ID: <Zsxc-wqGaQLpyO-W@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-17-steven.price@arm.com>
+	s=arc-20240116; t=1724669224; c=relaxed/simple;
+	bh=y+IbqtQ5QCYZMcw45OOPb7hw8NkfcAeEI7Ov2ra4hp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XQfH9LrsNZCexEqvFkL6jUrQn4NFSBxBpOAneNCYv5QGeT3xB2YIYTWu0v3IQKCPcFqX7m4Dp/dVwXZURqwvr8UMQHYO1JE70QhhbG7uUglwoG9ZkRFsecwOZv0nwCWhNC3rJYQ2OmtDnYB6I+OEPZ+HR4W9l94SjP2QXkuKWho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j29w2eCY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE44C51404;
+	Mon, 26 Aug 2024 10:46:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724669223;
+	bh=y+IbqtQ5QCYZMcw45OOPb7hw8NkfcAeEI7Ov2ra4hp8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j29w2eCYxulMG6QGJQlq2nwqea0QRnByUjJsvla3vgJuF2Nz3wTJy7A2FIH5vWnnO
+	 KSQoxSQ74SNly3ShTI+tMg5EuUWEvJo173LRXn2z3JTdCjGU4uqCuSNxB+heY9WOqL
+	 dOBKW0MznfSZtxlDw45tMNhfQnfAzqxS/QX8tyQJsqVbRDG3qAk+glGhvgOXJIICkM
+	 YCTF+Z6fgNnAxxBQwUndwIT0I1flv4KZDGVf/OTPFbj5GOAiB7Wyeq39NYncUkBf+z
+	 FU0enhqQcvGmepV+NaAYDDemMvYC/Aj3SSyTx3/YwDID3Q+iqhlkRnKThFi97k2Phb
+	 8OwhZHaon1dZQ==
+Date: Mon, 26 Aug 2024 11:46:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/4] iio: adc: ad4695: implement calibration support
+Message-ID: <20240826114650.7c006113@jic23-huawei>
+In-Reply-To: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
+References: <20240820-ad4695-gain-offset-v1-0-c8f6e3b47551@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819131924.372366-17-steven.price@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 02:19:21PM +0100, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Use the memory encryption APIs to trigger a RSI call to request a
-> transition between protected memory and shared memory (or vice versa)
-> and updating the kernel's linear map of modified pages to flip the top
-> bit of the IPA. This requires that block mappings are not used in the
-> direct map for realm guests.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Co-developed-by: Steven Price <steven.price@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On Tue, 20 Aug 2024 10:58:34 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> This series adds calibration support to the ad4695 driver.
+> 
+> This has the same "odd" gain and offset registers that are being used
+> for calibration as discussed recently in the ad4030 series [1]. So if
+> the ranges in the *_available attributes seem a bit big for calibration,
+> that is why. The official datasheet explanation for this feature is,
+> "The AD4695/AD4696 include offset and gain error correction
+> functionality to correct for first-order nonidealities in a full
+> [analog front end] signal chain."
+> 
+> [1]: https://lore.kernel.org/linux-iio/20240814193814.78fe45cc@jic23-huawei/
+Series LGTM
+Applied to the togreg branch of iio.git and pushed out as testing.
+Note I'll be rebasing after the previous pull request (hopefully)
+gets picked up by Greg.
+
+Jonathan
+
+> 
+> ---
+> David Lechner (4):
+>       iio: adc: ad4695: add 2nd regmap for 16-bit registers
+>       iio: adc: ad4695: implement calibration support
+>       doc: iio: ad4695: update for calibration support
+>       iio: ABI: document ad4695 new attributes
+> 
+>  Documentation/ABI/testing/sysfs-bus-iio |   3 +
+>  Documentation/iio/ad4695.rst            |   7 +-
+>  drivers/iio/adc/ad4695.c                | 242 +++++++++++++++++++++++++++++---
+>  3 files changed, 234 insertions(+), 18 deletions(-)
+> ---
+> base-commit: 0f718e10da81446df0909c9939dff2b77e3b4e95
+> change-id: 20240819-ad4695-gain-offset-c748d7addf27
+> 
+> Best regards,
+
 
