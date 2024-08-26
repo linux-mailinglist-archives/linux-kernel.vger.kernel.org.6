@@ -1,90 +1,139 @@
-Return-Path: <linux-kernel+bounces-301985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4C795F84E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:40:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320C895F84F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA892281A71
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC7F1F22012
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AC5198A2A;
-	Mon, 26 Aug 2024 17:40:15 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31628198A3D;
+	Mon, 26 Aug 2024 17:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="euz5BZ4s"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C330189904;
-	Mon, 26 Aug 2024 17:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D2019884C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724694014; cv=none; b=GsfC1JnuGjiQRWaUZ4io0QZenLbtv8U7XtfPOWaVdCiLGilJi+ix65tSrkqeDSdb+KRGJTAVPX2kDcXn6w0P5qQHUFuIh3qwd9uSn9oulPAl9PcmMe8/YsPWIVSVJsEP6Zmq4DCA3ylP9Gu7VPmrqd9CsFfFpceGmzGZmxLJznQ=
+	t=1724694054; cv=none; b=urucqhAzHBjQ5DkdUmFjbEzYf+FlUGc+kZ1gGzNTfrQCEzWA1Gw585mSVrIox6Zxe6Yu4ZltdXuXFIuLSMAF7ChTWM/UHs2ZajS6kTRRa2LFbuCuYdIh+UkN13fpTeiIwiPCg5HeZQXulSNeuqhwnsu9LkYtlI6x8UvFPlOErk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724694014; c=relaxed/simple;
-	bh=gwT6Ot10uOyvXraU6Qq6T/jgc+QSEpqw4P7mEwczYn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/HpR+FtVPXIcE1wPf763H14ajRji2TxKrHadB6xxvpokpvdqHbM5KR08+JS7278K7qC8n0zuNxcBi6k2nCNzCpt6O+2EkqateVo94J5LK9kFDIxRHDomxeqRFC3jsQ/J0/rtlTTQTJh0PLM/qTe3Bg8/cSVBiUxkONezop6hFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: KFYrbepxTVe8uo/oAiY//A==
-X-CSE-MsgGUID: UkNyfGasSXW+d1Ak45wOiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="27017228"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="27017228"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:40:13 -0700
-X-CSE-ConnectionGUID: G3LKR41ySiKW0wWVGeQ7kQ==
-X-CSE-MsgGUID: 0SrGY5CwTPunxvDqSNJ8sQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="66922061"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:40:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sidhH-000000021k5-3gDS;
-	Mon, 26 Aug 2024 20:40:07 +0300
-Date: Mon, 26 Aug 2024 20:40:07 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Lech Perczak <lech.perczak@camlingroup.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Krzysztof =?utf-8?Q?Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>,
-	Pawel Lenkow <p.lenkow@camlintechnologies.com>,
-	Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
-Subject: Re: [PATCH v4 0/3] serial: sc16is7xx: cosmetic cleanup
-Message-ID: <Zsy998mgOAyJa2xn@smile.fi.intel.com>
-References: <9c1f8fd4-a2a5-4f92-9e86-2cf0103b1908@camlingroup.com>
+	s=arc-20240116; t=1724694054; c=relaxed/simple;
+	bh=38RYpX0itHRcFlvcfwO20AY1tm82Tl6U3bOwLFm4DaM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uNpf+L28GhLsgWoZ9mI1orxmuGpw7rsymf5jN5Leogzwy5V3zqqpzq/+lT6Y0qA52Pd15GX1anHIaGMLmiKar2vTu3pb5kuR2WHIUf0VmeBwaja8LwUtLMqNNFFKfIoBo1sA7SkyZOOkb0C3eSQ6sHSniq091yr4uQvHtJXqxaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=euz5BZ4s; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e117634c516so8194881276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724694052; x=1725298852; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IRpbKT8eDTs2jbkcv3eRtpU9kxct2vnPfTcDOFQv4ew=;
+        b=euz5BZ4scNKSHoGCtSlVDrqDx8VVtRJwj96AUO7t96IIB/iWnUwzmG/RKfqCiNfygT
+         zsGR3LXLx9R4ut+BNjZrHa70OgFxfrlN1ly0+fuJo90n9KI/1sR9rjhEBEdFYnfXImtA
+         Y1d0PaDoz7nmB/s6q4V3T48CMNGAds2T62QRePZptmwG5eAB/Cc7abxwkt40GXSSBTnh
+         ptYCCLvn0Darm0QohULf08XquWfSp2UT9mnHjm/C3kbQXmAfo1jk22VSiF2O9PA5AeZk
+         OBmtvEldei1GoqMiebfOR4W2Jg7nrRBlCJFQoCb24OGAz70h3vkJpJCnJzQXqlqYl9n6
+         7KZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724694052; x=1725298852;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IRpbKT8eDTs2jbkcv3eRtpU9kxct2vnPfTcDOFQv4ew=;
+        b=mSwyoWmD+kQbBq3k0Jna1uBXQtFiaP4wnE9fGcatDOusWKCfcKxqHiUSi7ROAsbymO
+         5u58ZLwdrXwRoJFAj7d8YkuX8oTOF4vAZd+Qzg7QvCEYOAnfWghTH77h1gKO20S8vnsA
+         G0W3weD7wUA0qLJ0BYG4NZtmaUgY833oCSFJNnzCgrnAVr/E8YFE2B6KCRAwK3iwkPdB
+         6r2SOVBjiKDZG0JFaBeW6Hk7Fxwase0iJybt8ZG27iGzl8r8fp7krpHpgc4JHxRwLMmY
+         kJho6lHjnm3Q7nyuzwUyfpUjzsiCyTqA4dawTQaWyAo+TrjLa4bOtPpCrDW0UuwxstNo
+         rF0g==
+X-Gm-Message-State: AOJu0YxHKilfF0MNZHTxC8dA2MtZK9QKU7qFgobf+2TDtM+oTtoheFYj
+	yDUazCyyZBFa7SK4gX3HWI717MfqG8xazJbetKdfcr+K/IQsdzo1U7iKFcJKoENZ1UyJuII5e+Y
+	GHN1ti/aRL44X9DLin4qMdg==
+X-Google-Smtp-Source: AGHT+IFLZCvHUGimXlZ9eOrIm8DbE3Ww2SBM+aysI+wCSClXo8gNSrTZOIhqS+2PU6aHWHPOxJN8b0j1y3mqiL6SmQ==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:32a1:b0:e0b:bd79:3077 with
+ SMTP id 3f1490d57ef6-e17a8630eb5mr18971276.9.1724694051919; Mon, 26 Aug 2024
+ 10:40:51 -0700 (PDT)
+Date: Mon, 26 Aug 2024 10:40:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9c1f8fd4-a2a5-4f92-9e86-2cf0103b1908@camlingroup.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIACC+zGYC/yWN0QqCQBBFf0XmuYF1K9B+JSLW8aqDMcmsRCH+e
+ 0u9HDgv52yU4YpMl2ojx0uzPq1IfahIpmQjWPviFEM8hSYGzqubLB+e4YYHr54Ef947TyYTC4f Uno/opB9QUyktjkHfv8v1tu9ffCLlGXUAAAA=
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724694050; l=1750;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=38RYpX0itHRcFlvcfwO20AY1tm82Tl6U3bOwLFm4DaM=; b=32tkeynr+w56sMQwNB1tcARgQrlhZTXteUye/hSpgeKtvOHvrqN6XgA5kAqwRGXZOfaLNFjlS
+ 51LpAtw4U4DAT7JN8z2LQFtfXpDQBxQQDYAfrpEifJOGQgHXif6GjEO
+X-Mailer: b4 0.12.3
+Message-ID: <20240826-strncpy-kernel-trace-trace_branch-c-v1-1-b2c14f2e9e84@google.com>
+Subject: [PATCH] tracing: replace deprecated strncpy with strscpy
+From: Justin Stitt <justinstitt@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Aug 26, 2024 at 05:40:28PM +0200, Lech Perczak wrote:
-> When submitting previous, functional fixes, Tomasz Moń omitted those
-> two cosmetic patches, that kept lurking in our company tree - likely
-> by oversight. Let's submit them.
+strncpy() is deprecated for use on NUL-terminated destination strings
+[1] and as such we should prefer more robust and less ambiguous string
+interfaces.
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Both of these fields want to be NUL-terminated as per their use in
+printk:
 
-I haven't looked into the details of the changes, but feels good.
-What you can do to confirm is to run this via C preprocessor and
-show the diff here or assure that it's empty.
+    F_printk("%u:%s:%s (%u)%s",
+      __entry->line,
+      __entry->func, __entry->file, __entry->correct,
+      __entry->constant ? " CONSTANT" : "")
 
--- 
-With Best Regards,
-Andy Shevchenko
+Use strscpy() as it NUL-terminates the destination buffer, so it doesn't
+have to be done manually.
 
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+ kernel/trace/trace_branch.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/trace/trace_branch.c b/kernel/trace/trace_branch.c
+index e47fdb4c92fb..aa63548873c3 100644
+--- a/kernel/trace/trace_branch.c
++++ b/kernel/trace/trace_branch.c
+@@ -74,10 +74,8 @@ probe_likely_condition(struct ftrace_likely_data *f, int val, int expect)
+ 		p--;
+ 	p++;
+ 
+-	strncpy(entry->func, f->data.func, TRACE_FUNC_SIZE);
+-	strncpy(entry->file, p, TRACE_FILE_SIZE);
+-	entry->func[TRACE_FUNC_SIZE] = 0;
+-	entry->file[TRACE_FILE_SIZE] = 0;
++	strscpy(entry->func, f->data.func);
++	strscpy(entry->file, p);
+ 	entry->constant = f->constant;
+ 	entry->line = f->data.line;
+ 	entry->correct = val == expect;
+
+---
+base-commit: 521b1e7f4cf0b05a47995b103596978224b380a8
+change-id: 20240820-strncpy-kernel-trace-trace_branch-c-0a953ebcdfe1
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
 
