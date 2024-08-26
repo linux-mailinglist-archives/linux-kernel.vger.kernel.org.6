@@ -1,98 +1,108 @@
-Return-Path: <linux-kernel+bounces-301370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17AE95EFAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:26:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A9E95EFB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F356C1C2143C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:26:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429981C214BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA63B154BFF;
-	Mon, 26 Aug 2024 11:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E1C15533F;
+	Mon, 26 Aug 2024 11:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2G0fFHvP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyEH/Jfn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D770143C7D;
-	Mon, 26 Aug 2024 11:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4075A15530F;
+	Mon, 26 Aug 2024 11:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724671591; cv=none; b=ndWiJbmV6jwdLNewxaRNl4K+XO3Dz+Fs6W3ihZRNXHAKKPLwu1xVwLPZc1GWsEAZ+18cxa5g3ouPhhgp1DhlJVHeVsa5Mutbl71bmI4j7WcwIEm9bT8TY+5HQXuV1IH5bN6sjoWjk24YQ7jfw9DOi9aMWc2e7otHmD4DhmDlfa0=
+	t=1724671613; cv=none; b=jgJFuDXb+Izn6fA0S/Iz5bzPj2lAO2mG2AEbk2ws/GIY3CCutOLPBfi+SaSmFVqr8e6nN+zZ3DESMTTETCW8k5V540YBspTU0LyoaJhhMaqQqDv/h+pfR5LatMda2zWX/3cKd4gZKpgktZv0WUdjyqjqjFjx31f52yujxjG8tm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724671591; c=relaxed/simple;
-	bh=xgIrjbnPUK7X9li5k4Abk/lSMwv/fLyCRRwSRyE1oJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Obia63lCCo2IqwW/ECmeFl54WDzLYKnr5dYFNqUlkN1icXu0fX9Z/Ix2gmHhW40AIO4ZkURj6i/TSXIsM/P8effOMrdX76N8MQaDwQCkg7LPvMNVnpvHp8zVoD8VL0Ze0k6vnie+uapSMa73U+t/JI4SWpgNQoLiqPW41K40W9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2G0fFHvP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85294C4FF16;
-	Mon, 26 Aug 2024 11:26:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724671590;
-	bh=xgIrjbnPUK7X9li5k4Abk/lSMwv/fLyCRRwSRyE1oJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2G0fFHvPmBEga4ilx8TY4lRFxtHPS9EWme/8oo2iegDPfxy1pGnA02Uu0UXT9vmMP
-	 4pmeAaeaWbYS2xstzqWSsmTxZa4RS+VXjnqeimlqtJMfYCXeOrBsSFSTBbqxTlD/Gb
-	 dHFIjsZsZrk+6zeWcskiSgNoUPg48AkbgZE9iuDQ=
-Date: Mon, 26 Aug 2024 13:26:27 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, sergei.shtylyov@gmail.com,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V3] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in with
- usb_control_msg_recv
-Message-ID: <2024082631-upward-zips-f7b8@gregkh>
-References: <tencent_2C2C336C9E441B294BB21B6A2558BA34BB08@qq.com>
- <tencent_AAA2EDEACE4478EA6C9C2CA96E8095DCE80A@qq.com>
+	s=arc-20240116; t=1724671613; c=relaxed/simple;
+	bh=r00LN1PqLZDKXFjf8rfhrFzUtip5a5fFuozdHqUWlDo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=VkW/QoH0AvvpwT8LAYwT0BWKTl0e1nxpF7DsyZgqXnnkpLxO9aaEWh3BJbeBKW31dnlGsXWHxhN5cul+FdLtfmRzYPRwTjXXhi6SxNbqu2E/yIxhTtUc2w2VFFQ3Iqa5+MrO8EuMUHUP3dJ8E0DoxB5D5lSRDLrWgCh0yHezJ8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyEH/Jfn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8803EC4FF4B;
+	Mon, 26 Aug 2024 11:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724671612;
+	bh=r00LN1PqLZDKXFjf8rfhrFzUtip5a5fFuozdHqUWlDo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=uyEH/Jfn4Dh6ZgtAzNXKgKkV9A/qsGf8uDHHdfXANj7xiWFYQ0xBIc62M+9cSdVmW
+	 xtc7Ix+96NijchZXFupg6CTeRQl1BA5FyXuqPGt2/HTINkwmQTlVS5pNYn3xcAwsdw
+	 bi44aAZi5pW/niIIqcq0xqnHCUCeyYI3NxL1sbfLn0jTrQN/LbaBTkd2lbhmS2ODue
+	 a2/jrShopjAnVTO+1DbRa4+A9UUFSR9c3NVY4UI47yMIGpd5lnjxubYAW4TQR9TvVL
+	 SHnBrO5el8pBmyjpYFbTMkcRsLcDuAB04BPcI9pLR7MMG5/URB33NALbKgIq8nuELQ
+	 uq0yIhxsnqtwg==
+Date: Mon, 26 Aug 2024 06:26:50 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_AAA2EDEACE4478EA6C9C2CA96E8095DCE80A@qq.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: linux-sound@vger.kernel.org, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, patches@opensource.cirrus.com, 
+ David Rhodes <david.rhodes@cirrus.com>
+In-Reply-To: <20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me>
+References: <20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me>
+Message-Id: <172467161080.3913761.4311461906537952608.robh@kernel.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema
 
-On Mon, Aug 26, 2024 at 07:19:09PM +0800, Edward Adam Davis wrote:
-> ath6kl_usb_submit_ctrl_in() did not take into account the situation where
-> the length of the data read from the device is not equal to the len, and
-> such missing judgments will result in subsequent code using incorrect data.
+
+On Mon, 26 Aug 2024 12:53:08 +0300, Nikita Shubin wrote:
+> Convert the Cirrus Logic CS4271 audio CODEC bindings to DT schema.
 > 
-> usb_control_msg_recv() handles the abnormal length of the returned data,
-> so using it directly can fix this warning.
-> 
-> Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
+> Link: https://lore.kernel.org/all/20240715-ep93xx-v11-0-4e924efda795@maquefel.me
 > ---
-> V2 -> V3: Adjust indentation style
+> This is complementary patch to ep93xx DT conversion series.
 > 
->  drivers/net/wireless/ath/ath6kl/usb.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> Based on "ASoC: dt-bindings: cirrus,cs4270: Convert to dtschema" patch.
+> ---
+>  .../devicetree/bindings/sound/cirrus,cs4271.yaml   | 91 ++++++++++++++++++++++
+>  Documentation/devicetree/bindings/sound/cs4271.txt | 57 --------------
+>  2 files changed, 91 insertions(+), 57 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-> index 5220809841a6..5b1ce4f9ed54 100644
-> --- a/drivers/net/wireless/ath/ath6kl/usb.c
-> +++ b/drivers/net/wireless/ath/ath6kl/usb.c
-> @@ -1027,9 +1027,11 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
->  	int ret;
->  
->  	/* get response */
-> -	ret = ath6kl_usb_submit_ctrl_in(ar_usb,
-> -					ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
-> -					0, 0, buf, len);
 
-Again, please make this a patch series, with the second one removing
-ath6kl_usb_submit_ctrl_in() and moving to use usb_control_msg_recv() for
-that too.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-thanks,
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/sound/cirrus,cs4271.yaml:91:4: [error] no new line character at the end of file (new-line-at-end-of-file)
 
-greg k-h
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240826-cs4271-yaml-v1-1-dad3f0b041ef@maquefel.me
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
