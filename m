@@ -1,236 +1,540 @@
-Return-Path: <linux-kernel+bounces-302303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E4E95FC5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889D095FC60
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDB01F225BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4001F28696B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BCD19FA9F;
-	Mon, 26 Aug 2024 21:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A378F19D08F;
+	Mon, 26 Aug 2024 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="T7/prHdk"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2128.outbound.protection.outlook.com [40.107.100.128])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JCTC4DzS"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2052.outbound.protection.outlook.com [40.107.212.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5C719DF83;
-	Mon, 26 Aug 2024 21:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA40E199E9E;
+	Mon, 26 Aug 2024 22:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724709588; cv=fail; b=BzCerJmgON23JFkevgOn5d2YPnxv25QP4DhIH0qPqXfc6iHVwjnc9rMVJZT4ht9zpq8HvsBDvCwkZKUBnKYHHQGkj60cuIcwtUYupOXQhqTwpYoxmMf6/AVPf5ychqkPIvFGyceNi3RTDI1r4uXDhmfOIngC1FOn/b+LpXzcW7Y=
+	t=1724709623; cv=fail; b=PyJ3KF84C7o7fZDut5eopqW2Xv18E9MgLLX0IoIQ4u5xcgNcvTtCdZArZujHHmFJKKS1pW4kidViqTCd7TmLAu10I7md81/M28a0vskIZH0ByRpjc54ZnMIYhZTbuLs/GRgS3QvLUnCBa42zW84EZ0qhfRp9W5y4cQD1bjq604I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724709588; c=relaxed/simple;
-	bh=zLfpYm6AnS6Hsn18brml5iWARS++T/1F2ZR8u0PQsdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dYQYpBU1eFkd3bMEOtv+f/F21tmaCMv1NDZLMztwYTh9sSYZiXYS7NSr7HVdARgT71Y3LyCGjdmgVMWuTF8UYliX/mA4s9d1ar51En1NNxof2GMftQ83FEVBhQOl1/cCpTqpoNV2Xq5Z5fkVx487cXDYu5UNzD1uHZ4a5Wyf8C4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=T7/prHdk; arc=fail smtp.client-ip=40.107.100.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1724709623; c=relaxed/simple;
+	bh=Gl4J/XBf+faPVBuJyjucfT5tmd0bdSb1R+/Rc3sM6+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L3mGCv/X7u38ngLdOkuMzPLdDAn9ukJL2EvG/lRm+epUujduXxhjx1dyfI8VfLLCfcJl+509fXwO0okVExldS/YZIW3R3+Z0k2fXNSuo4Gs5qsHQebh5hIQ4sXSmvZ2ktqt3Kt07/yHJh/5NaHbEad2LXrJQ7SpZX29xRuBBKoY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JCTC4DzS; arc=fail smtp.client-ip=40.107.212.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NtD+jv6gUAliJlO3KIkhP1R6/Du1qJIXBuGZSnUiDRq+4CEkWhPDhQGMI2tObnCqWP6SBBiZpWTPCvai40JNOCzGcM3nY/tEgVb1ROa0mwVB74dYcxLr2BG38azHYNM+zUOYiRupJRbU4e/WbfaCSlX/fqdyQZIpshCIVOFY6B8ccAQpWEhuf0eDyfnisOVfpAerq4wgolIUFqzZ9/Flj98wWLhE/BIfRlTre/KrbdZluvHFkF5xyfQ6rA5UCVCRijf4NWx/CacTFsRMgeMP/QQHUmO9CC/yzC8rxLH3n/SpHJzyMuk0qg9a0P2xIDw1hbYS3lgipBIow6D1XL383g==
+ b=U1Us4G4CVw4JL0ewt0+S6E24i6mbHYk3rdMgZj70f2qG2O4LM8a/hNfLtez9yHyeNidVYyZuBcgMnz8knxhv8YDd78nowlVu5iqctrlFP8hirfYbnLZn5NwsYSnUJFY36BsUZACJQ7ItmJ8fXkkrdtZLRgH4YAQvT8JvGqLK9wfxorv+FLFN1utFX//AiLbCSXcqWQZ2mERMnMTILglPtbEHwFlQRlqPYUpdRlIqOopernEQYFrQwDqU1kKx43GPiBFtZ3NtECUPEkSs+3frb1mjWXTsHuIaBQgEjHTvwcspgl7EaCg1EisjinClVzxKw8mRJmndVVbBjhH9VIhkRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kPaioYXh5JegFva4DLUN+LPJLoJXuagoY0hT62RNGhI=;
- b=hUt3slcfe5m1cFZQdghQgKt7wUa7yJIDS2Ms7Bm9BwAivY0jcN13boQsXwxn19nVn9367Da112ma1Vz8zQBcnW2EVfjK2Hm6Vh1ywgstpeRLoa7CAlwUkapoybBFm/rxVoWe7F9dKuohTKE8gigt/zy6GDYvWLZLrLYRlknC3d6oDB4q5kNLRdEHVrMPElHlbziqDdQsdo27+0vat9JKT2igxIS6+I4G/imES6QlyOCuKhSXWgjml29plXjWIB+fXDQOh5ss78y4xsulV9fTi1m/2Gz9br7QbYkHiseOsdXyga5engKm3X5cpZikgahp3FFOrc69oBFqaBtvIyNMcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ bh=BGQKXscoKJXwr5zOqTTC0d5Au5j07QtpRyRzKuFSPXo=;
+ b=MslOiEU32cklYIS6k05mjP8kx9AHl2xtF19a2w/SJqsO8Eam87eUcQFXVIXw0zZ16jwxQRNJu/BC3iRyCPlWt1s+PBpVRY8M9i8Ov+F0VvmjPZjh2peM/EbV/bCKCGOCW0LIZ4B0fZtpWp5p4asmC1WPggXci6r1QGTQAoHjzBWwF18969hh6zSgK+qZhMZ7yNSvFksoenR8+soC5dyiweC31LoPF4Ry5SHEVaih/65nlCJVbIrwdkRYts4Fy7q8Bp9CmsNMSawD2ye5bF/mfFKsnqv7Emv04dN1KsRZFL/cQ8a1G80Hoa+hJJPywopZHVR+gAo8zZCsoWi2YYrZsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kPaioYXh5JegFva4DLUN+LPJLoJXuagoY0hT62RNGhI=;
- b=T7/prHdkogW5sO2ak76N30PKFzPXNDvN/ySaQqF9vXLqk4yoDwxEzCFryoeyARdQPOEzhJzAGM7yG2KkDHx63kOg895nEDVN3ttx/uV9MZX8llLPlJMldrqx3WNS3hTNPfGU10eox0+LXfaeCqmDDQGqeF76Tr4QX4ZfOkjhLtI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from LV2PR01MB7792.prod.exchangelabs.com (2603:10b6:408:14f::10) by
- SJ0PR01MB7480.prod.exchangelabs.com (2603:10b6:a03:3d6::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7897.25; Mon, 26 Aug 2024 21:59:41 +0000
-Received: from LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9]) by LV2PR01MB7792.prod.exchangelabs.com
- ([fe80::2349:ebe6:2948:adb9%6]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 21:59:41 +0000
-From: D Scott Phillips <scott@os.amperecomputing.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Cc: Besar Wicaksono <bwicaksono@nvidia.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Rob Herring <robh@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com
-Subject: [PATCH] arm64: errata: Enable the AC03_CPU_38 workaround for ampere1a
-Date: Mon, 26 Aug 2024 14:59:33 -0700
-Message-ID: <20240826215933.1263453-1-scott@os.amperecomputing.com>
-X-Mailer: git-send-email 2.46.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CP6P284CA0039.BRAP284.PROD.OUTLOOK.COM
- (2603:10d6:103:1ac::9) To LV2PR01MB7792.prod.exchangelabs.com
- (2603:10b6:408:14f::10)
+ bh=BGQKXscoKJXwr5zOqTTC0d5Au5j07QtpRyRzKuFSPXo=;
+ b=JCTC4DzSR9EK7PZc30aeplCXoeIDgZ6QkFmJqYKv5pq442OueOwhI/FhKv4YD1BHWQR9QGVYAVc/d4rBITAGEljEzkDe1WpDwvUA5wrw80VPfuHk/2I9I3r2YyOyKFl8V5w1e4fqnI8Awllsmj+Fr1Dblf9uyFu3qMaN6krqMTk=
+Received: from BYAPR08CA0068.namprd08.prod.outlook.com (2603:10b6:a03:117::45)
+ by BL1PR12MB5849.namprd12.prod.outlook.com (2603:10b6:208:384::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
+ 2024 22:00:16 +0000
+Received: from SJ5PEPF000001EA.namprd05.prod.outlook.com
+ (2603:10b6:a03:117:cafe::59) by BYAPR08CA0068.outlook.office365.com
+ (2603:10b6:a03:117::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
+ Transport; Mon, 26 Aug 2024 22:00:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001EA.mail.protection.outlook.com (10.167.242.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 22:00:15 +0000
+Received: from [10.236.30.198] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 Aug
+ 2024 17:00:11 -0500
+Message-ID: <7634bee3-7918-47bb-8bd6-b2ad85d1299c@amd.com>
+Date: Mon, 26 Aug 2024 17:00:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/9] KVM: selftests: Add a CoCo-specific test for
+ KVM_PRE_FAULT_MEMORY
+To: Tom Lendacky <thomas.lendacky@amd.com>, <kvm@vger.kernel.org>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <pgonda@google.com>,
+	<michael.roth@amd.com>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816192310.117456-1-pratikrajesh.sampat@amd.com>
+ <20240816192310.117456-9-pratikrajesh.sampat@amd.com>
+ <607e76c0-6e9a-4961-873b-0b952b51faff@amd.com>
+ <9079a7e7-17e6-72eb-3510-b07a60ce78df@amd.com>
+Content-Language: en-US
+From: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+In-Reply-To: <9079a7e7-17e6-72eb-3510-b07a60ce78df@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR01MB7792:EE_|SJ0PR01MB7480:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a1662bc-ef65-44c4-eeb3-08dcc61a62e7
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001EA:EE_|BL1PR12MB5849:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d74367a-1e2f-4cfd-39cf-08dcc61a77ae
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V6jAA7LFjs0D+5NLCODRttQLUnlXmGHqVMzoQ96diz77ziIxhNzCT/fEA1iX?=
- =?us-ascii?Q?iLrzj4Mh5Vn73+I9+/mfl2yVApCCRTiY+ssa8qfJh1AS2DPGlfvS29rRJa5+?=
- =?us-ascii?Q?3VCau4LSZnwe0yQnuKSm7xNKzA6imD0KmrfIFLTXvYS2kDlvBAcc1VIovc+j?=
- =?us-ascii?Q?F1Z5Wc0OPE0yxT/tBYAmaD+0CwNg6BnanQp3hRG/+YAEUMrvwTvWmgG1BIQp?=
- =?us-ascii?Q?ktGY/kfuQOJ/wuZKJ6/uhH3qjn9sGAsdEJiC2knvuyuiNNbq+i265vCw4cRh?=
- =?us-ascii?Q?pUiH1kkytSfsL7AiPgdn3vnbuciFfYWVuL3Z4uQUFIIZ3VB498wP8lMdW5Tp?=
- =?us-ascii?Q?TU7+ILzdTY5T44SlG/gtYwNwH2vC9CJuM8IbwJDd5ykLea9l0kjFUlgAOpzj?=
- =?us-ascii?Q?Cg4vaJE/iT2uWJgQoCyrDUY4lCVMXmTzxNyPOb3NSCWjqiUTtRC6JcIF3qaQ?=
- =?us-ascii?Q?aqZaCAEhxiVCWXaJDdLBRiEkGkvvS0+sHPxfMnu6hnmWMmJfkKN7SFlp/bsr?=
- =?us-ascii?Q?Lhq1sDaD4cavbuUdBOhJmcDF0y3PwTt8P4C0OzM4FdP9vVIwEBTt9PyCJXX/?=
- =?us-ascii?Q?/e+17ZeKilEjS4Uk409/ZE4WLtRsnmt3WVnAtpmiPql9tgsadeXMaH4Quhn6?=
- =?us-ascii?Q?q3K/ceDmNoZ6V6d7KwRSwqrrkj6i38bBRQG4qlDG7bsjKrLeODlvJ1+NIHKn?=
- =?us-ascii?Q?7OqY6W9qIbfT6MKjGNBnDJf/03fD2yTKeiZXd7rBJMvYhDTOPcr7mWGEXdHn?=
- =?us-ascii?Q?xaGlI1IZMCHLgzCosVKGOMPsP5cMG1OELzxeesLKG8kKr4yFEpUn4CR2ZYSQ?=
- =?us-ascii?Q?+gor5nW/yoftJbre98Ia9lQOpgCjDESR8OCqewDSVk0zwGwa03yKdd5wtEa7?=
- =?us-ascii?Q?ZdtxqI26dwN3EVLBr3Wu1dIFUS35hiZmlAZC2ZduDpmIzej+J34wXq+bWswr?=
- =?us-ascii?Q?yEFZmzX7pD/OCwmkMcQ8lAN2hEcZ1pa6eJwcO8ZH1AesEFXpyUrZ4Uh+UAg0?=
- =?us-ascii?Q?GTmGHuzV6GIOkvqBN3v4+pjo3ZU9YOgMB4WeO8RakJy0heA9aU7S0y9jlvJL?=
- =?us-ascii?Q?irbwLag6hlO9sKZmncyhgnhIePtWATo8IKv6EnuIe7U3HY5Qu20CrTrowTw/?=
- =?us-ascii?Q?uZsevGQ3MksMMM65bhjWSam0ndAmiyxT7DSsJeDEtLvIjC6o9oDV6/LaknTl?=
- =?us-ascii?Q?XAJQKL9LRjczyzvygiZB6EbPIKNXqlOd7Xy7qfhpLHpwiQHruyErMOaCdcKC?=
- =?us-ascii?Q?KpU/J0k6vY3uFpbistLt6BGKvd+MqgY8UnNN9jdzYcOsMTIq6ionCXLpxj3J?=
- =?us-ascii?Q?9clUADtQl5HKKJtFRkSTbyuPBUYxplZWdt+ymhOZNuUGYWUtgz5lPscA6OKl?=
- =?us-ascii?Q?831nz1lil+V1jiYuMRWI0p4Z4fRxvbGxlklxlCliTs3LriuFwQ=3D=3D?=
+	=?utf-8?B?SWlwOEk4M25oU29MM3FzOEloY250dGZjV3V1ZVM3SWRrUUMwbU1mMkZHTU9R?=
+ =?utf-8?B?Qm1QUEd5R0g3VWhVWHh1MSs5bWZFWXQ3eDdTYXFITFdiS3dXZjBWbXR3blNw?=
+ =?utf-8?B?aU1iMExScksyTFA2OGV4RDlqK0VHcUhvWDRJcTg1d2F1MlJOYVp0YWtEMUsy?=
+ =?utf-8?B?RmhMbnNxTnpuMDRIQzgvWnZPZUF4TTJQaUZ3ZmNURW8xUVdmRFFJSzF4Kzl2?=
+ =?utf-8?B?VXZWMEtIa0IzSmJWZnlCaXh6YzFKeEprUDVzcCtJMTdqWE5ZSDAwWUY3bEpn?=
+ =?utf-8?B?bXJRVUIrOFJneXhBT1JuUzJMS1YzcmkyV3dmend2NFJGRXY0ZlpHZ1h5V0V3?=
+ =?utf-8?B?ajN0VTVvUEloeXZRQzliUVgxd1QwK29iWHVCV3BkYlgzYW11VWY4dDR3dHha?=
+ =?utf-8?B?SVJQU1puM1hjTGFkbUp4MnB6cHAxanB3dmxYcTVybFFLQjRkZTd2WGhGOFo5?=
+ =?utf-8?B?K1BmTjJJV2VhRHA1MlFCMCtGbndVckltR1lGeVhZdEJESGVrazAzNkx1RDk4?=
+ =?utf-8?B?VTA4UEM2cndKS2MrTE02ZlBzUjRvVjRYYkdid0pmWE9iMVVIVW9VcmR1ZjN4?=
+ =?utf-8?B?MWJVazNsM011WkExeVduR3lORFdWcmtNeGlqa0NWMDNNeGNYLzdiZmhkV0Qv?=
+ =?utf-8?B?QmM4UC9wRzlPWnYrSnZ2QnkvRUNnWFgvQjZYV3RjV1VXRHBUR3ROOHJjUWlR?=
+ =?utf-8?B?ck9hWGc1eFFCMTF0YzJJV3dZMk5MY2tIcS9UYXN6VXJQQXk2NUNJZUNkbHla?=
+ =?utf-8?B?c3lFa3c1Y1UvK2xQdTU0L2tHcHpQRDRkaUN4MS9aUnBqb29JMWZqcGx1Vm9h?=
+ =?utf-8?B?K3RoaGd5N0FpUk14NU41VHFCQXVTWFJTb2pyazdCTWlHR2p5NjB5akpyekZq?=
+ =?utf-8?B?blZuTno2elcyQTV2UCswaG9zMzQ4dmttb0RGSDRoSWwzeURPeHNJRFNMVG1Z?=
+ =?utf-8?B?N2JZRjFIeSt2V1ByUHJIY1pPRUlsS1lYVTVVeXdXdGVwY3gwS3E5NDVLUHh2?=
+ =?utf-8?B?Sm8vREppRG9VZU12eWdDRmt2alQzNEl6MHZhcTZJYXpmcGc2SndONE90UVly?=
+ =?utf-8?B?NU81Z3psOHNJdmxnMUVYU1EzNjFyLzZScEFRZURmM1NSOTNDcWZwcmlDcUtn?=
+ =?utf-8?B?RVRiTVlLWWFTb2NBU1ZGMkxLclNjbWVOdG5jVUN4bHFEamN0OU0vazBkbVJU?=
+ =?utf-8?B?VEg3UmlLanZ5Z3doMlFKR3RjMS9ON20yZ3A5Yi9GSEtTSHhVanc0cjJtMWxI?=
+ =?utf-8?B?ZXpzblRMaUpGRHVNUDhTekMrQ3NtRXk4aE5aRlRqOGJReVFMVTk4eUhBUTFM?=
+ =?utf-8?B?Y2pqV0NDekN3amNPWmY5N3ZYNjFCNHE2WGtaZVZBQWlOaVo4RE85V3E3Wkdw?=
+ =?utf-8?B?SU1HUDNVYmJaWFNRVG5sQXBzRi9oZ0RHS2M3RXhKWUtlcnhmd2NLcVBwZ3pY?=
+ =?utf-8?B?VWtoN2JrTWNwN1JDbmE1SzMyT0JWS2FWR0hhL2ZDY2F6Vm1PdXJVRGR3OU8v?=
+ =?utf-8?B?SWFYUXRmR0NDT1dPOC9WeHRUY1NIMUFidkRLZmhtSlJzZVFmR0loTHVuWFlL?=
+ =?utf-8?B?R1RlZ2NOanhvcW84MFVzV3M0UmtTMnM4d1pUSEErQ0NzL3pDMmU0ZE1Dajc2?=
+ =?utf-8?B?VWpFaUM5eDh0Y0tjTHZ5dzVDYm81bHZuYzJTWmk5cEt3NjRvc2FFanhKWUhB?=
+ =?utf-8?B?T0pkS2RVU25uWWVyNkY1MnQxdG5zdTU0OE5tZWViQndhRVR0bm02UmxXd0Nv?=
+ =?utf-8?B?UU55N0VDSHhwcnRRczFwd1BnQ0RONkhpakphZTBjOTlsRVZpNFVsc1hzVlkz?=
+ =?utf-8?B?cEVESXpJNU9WZjRhNFJnVzF2QUJWR3RKYkZkMUxTdXRoejBKbUFzaElqc2ZK?=
+ =?utf-8?B?R1pWNnp3Wkg5MUpTSVJkL0JTZGorc0tCSXVhdHFCbVFNNU9zLyttbUg3Sm1r?=
+ =?utf-8?Q?PPhEynO3j65iH0waUd8vk/WnDAXx1PFy?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR01MB7792.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?e997wIoeUjC6M8LfXBSQuxNFVNdP1PENfGIX8hRWBgZOBmXkb2smBpRA3kbY?=
- =?us-ascii?Q?heqOqm6q2mlRkjOJeGKHNGJcWiJxjzn3Z4fGRT4de8Ssxwrvs+l4L6Wz9xsH?=
- =?us-ascii?Q?1kaYIl6upkuqN5nP5+Gadb2wjcF/c4XmiHf90aahQy5zqLEDgY0/OQ10MHal?=
- =?us-ascii?Q?M5oHVFwn7P1gsIEJVvTJm8aFuqrfO1oKN9wsgJxvxOTQXzsWSLtcZTVpO3wa?=
- =?us-ascii?Q?VriDgY5+z8EswYI0ddilzKXUegCey7GH+e8dI4JV+xI1hzahV4//pF6p3N2W?=
- =?us-ascii?Q?3ZuZB5HxW8sFoGeDpj4nJhIjCfhswJRJjZSQTaWNt+LuwCK7VhiG1HrrLEyU?=
- =?us-ascii?Q?DlxApmNQk0fgI7GPRuUhMrUJdGehcAN+8jUUUJpp9BelmJrZOg2WViOORyff?=
- =?us-ascii?Q?q0CeA2Bso/iHgkS6Y8wU9rGDapOu83hIGlX0Kj5eskzv+9sm3CkFV6a1h5kw?=
- =?us-ascii?Q?I0ucCfNx1p+FEwXljMbG3QHXm+zfnbO1eMv3AexU8M303htR+KApV6ozI+5e?=
- =?us-ascii?Q?/MRBzRb7cxZnvHnTWMzADj+L3xZutguGyVypktetef78ZBGD5ePiUBPQ68lO?=
- =?us-ascii?Q?LkqXmROAnEeeR/MoPUb7/OeGKPiL9l9qWsrbAFNl8AoQ166Trzfvx9f5dYoV?=
- =?us-ascii?Q?wH0Ln3dViXhr+cOXE3IfX8yZBAzH6nP5sTlhd/53KdEjMA3i2VnWIJVdwOE4?=
- =?us-ascii?Q?jxf2V1jDg8slKa3uf/pXB5vsBXl+0L3CNBad76B9DkNcFR6CI2L5actmWCqh?=
- =?us-ascii?Q?EDgEKFu4/vMJ1oGtvl8sLFxOp56O1RfBTphSnr55eJe3F53+gsbts+TaUMLH?=
- =?us-ascii?Q?cZUq9WhiZZd3zMKwtsNrA9nvkLNIAEUy+vwEy2eFKKCwHFVCi0CM/mjDrN+N?=
- =?us-ascii?Q?YVb8M31w0sbaPVWiv6vXqbtFkoHEH8IH7IdJgAOr1N560hqYhWRJg7BzgJ6k?=
- =?us-ascii?Q?UU/3anBDXFjheYLM9GlmFJbrVKwqueBb6PkiCpwBEWn3SNTuN2TtaN/eJrS/?=
- =?us-ascii?Q?/Qrd5j24et3yIRoL5bQQHWzam3afhpyyVVcVEgykHgZoIcocVwJcBUuaMyfU?=
- =?us-ascii?Q?7P6Yrrnxib7qKFAxD1FKfjLXUwajfZvff7P/RAqOIZbaL3A+C+Xcyyw10UDI?=
- =?us-ascii?Q?LoKzl0mX9OVCTOC4jxBT0GbkwZqeV7yQt7VZ9e0nnB9FzkZcFy62H1UIBbpP?=
- =?us-ascii?Q?aY5VFt7j+HKbPyHBF7oiT5q50vVAq9GhPpk/ilnni8NqdEqBwqY3Aw+adJUb?=
- =?us-ascii?Q?X3TxoiioLPVZn/6Vc5hKy1S22AwL3zPJmxuHySGGHS14IgH5Szvb9OLVd5uO?=
- =?us-ascii?Q?VGe7s9oeUyo1Q4QewbeKuXVTmtjNClhi41ncK+r0xLT8kLVvFltSLNV1aZVE?=
- =?us-ascii?Q?YvA5r5wwI1IJI2QIZ1NLZOvNnMzaR0H4/dXYcKa/V1AerCJeMxjJr68UEsVu?=
- =?us-ascii?Q?PucUtWzUaMzKv+SUwPIy613VEyDztdjI97TEiNpnARlmx9JkXjAJAsZBmVR7?=
- =?us-ascii?Q?+1i5+bDRNy6jUvN+THFAoQD+INaFHnYZUwqIR1ndUqMYPDi7q6jUXu2E10q4?=
- =?us-ascii?Q?n4m2T3f/gd4Ifopdalkw6yT9A+D9uBPkVcxNycBIEcyQnUK9oGpfSctEpfAx?=
- =?us-ascii?Q?g1ZqVrVGHrxFrP09Phfn7rE=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a1662bc-ef65-44c4-eeb3-08dcc61a62e7
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR01MB7792.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 21:59:41.4332
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 22:00:15.7561
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0+pX1F7mJApshDyPtNwcSqyCEStt27IV7Ijlh8S0vmlHhJRwKBMYo7Eiba8WPcUNWbUSSk0REj+mnKQRnbkmDKnj8FKlDE92IZXY02uCtbaG1PRtSzblMcF8GUFsshYH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB7480
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d74367a-1e2f-4cfd-39cf-08dcc61a77ae
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001EA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5849
 
-The ampere1a cpu is affected by erratum AC04_CPU_10 which is the same
-bug as AC03_CPU38. Add ampere1a to the AC03_CPU_38 workaround midr list.
 
-Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
----
- Documentation/arch/arm64/silicon-errata.rst | 2 ++
- arch/arm64/Kconfig                          | 2 +-
- arch/arm64/include/asm/cputype.h            | 2 ++
- arch/arm64/kernel/cpu_errata.c              | 1 +
- 4 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
-index 50327c05be8d1..39c52385f11fb 100644
---- a/Documentation/arch/arm64/silicon-errata.rst
-+++ b/Documentation/arch/arm64/silicon-errata.rst
-@@ -55,6 +55,8 @@ stable kernels.
- +----------------+-----------------+-----------------+-----------------------------+
- | Ampere         | AmpereOne       | AC03_CPU_38     | AMPERE_ERRATUM_AC03_CPU_38  |
- +----------------+-----------------+-----------------+-----------------------------+
-+| Ampere         | AmpereOne AC04  | AC04_CPU_10     | AMPERE_ERRATUM_AC03_CPU_38  |
-++----------------+-----------------+-----------------+-----------------------------+
- +----------------+-----------------+-----------------+-----------------------------+
- | ARM            | Cortex-A510     | #2457168        | ARM64_ERRATUM_2457168       |
- +----------------+-----------------+-----------------+-----------------------------+
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2f8ff354ca67..c8cba20a4d11b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -423,7 +423,7 @@ config AMPERE_ERRATUM_AC03_CPU_38
- 	default y
- 	help
- 	  This option adds an alternative code sequence to work around Ampere
--	  erratum AC03_CPU_38 on AmpereOne.
-+	  errata AC03_CPU_38 and AC04_CPU_10 on AmpereOne.
- 
- 	  The affected design reports FEAT_HAFDBS as not implemented in
- 	  ID_AA64MMFR1_EL1.HAFDBS, but (V)TCR_ELx.{HA,HD} are not RES0
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 5fd7caea44193..5a7dfeb8e8eb5 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -143,6 +143,7 @@
- #define APPLE_CPU_PART_M2_AVALANCHE_MAX	0x039
- 
- #define AMPERE_CPU_PART_AMPERE1		0xAC3
-+#define AMPERE_CPU_PART_AMPERE1A	0xAC4
- 
- #define MICROSOFT_CPU_PART_AZURE_COBALT_100	0xD49 /* Based on r0p0 of ARM Neoverse N2 */
- 
-@@ -212,6 +213,7 @@
- #define MIDR_APPLE_M2_BLIZZARD_MAX MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M2_BLIZZARD_MAX)
- #define MIDR_APPLE_M2_AVALANCHE_MAX MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M2_AVALANCHE_MAX)
- #define MIDR_AMPERE1 MIDR_CPU_MODEL(ARM_CPU_IMP_AMPERE, AMPERE_CPU_PART_AMPERE1)
-+#define MIDR_AMPERE1A MIDR_CPU_MODEL(ARM_CPU_IMP_AMPERE, AMPERE_CPU_PART_AMPERE1A)
- #define MIDR_MICROSOFT_AZURE_COBALT_100 MIDR_CPU_MODEL(ARM_CPU_IMP_MICROSOFT, MICROSOFT_CPU_PART_AZURE_COBALT_100)
- 
- /* Fujitsu Erratum 010001 affects A64FX 1.0 and 1.1, (v0r0 and v1r0) */
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index f6b6b45073571..748aa536446ae 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -773,6 +773,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 		.desc = "AmpereOne erratum AC03_CPU_38",
- 		.capability = ARM64_WORKAROUND_AMPERE_AC03_CPU_38,
- 		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1),
-+		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
- 	},
- #endif
- 	{
--- 
-2.46.0
+On 8/23/2024 5:16 PM, Tom Lendacky wrote:
+> On 8/23/24 15:23, Pratik R. Sampat wrote:
+>>
+>>
+>> On 8/16/2024 2:23 PM, Pratik R. Sampat wrote:
+>>> From: Michael Roth <michael.roth@amd.com>
+>>>
+>>> SEV, SEV-ES, and SNP have a few corner cases where there is potential
+>>> for KVM_PRE_FAULT_MEMORY to behave differently depending on when it is
+>>> issued during initial guest setup. Exercising these various paths
+>>> requires a bit more fine-grained control over when the
+>>> KVM_PRE_FAULT_MEMORY requests are issued while setting up the guests.
+>>>
+>>> Since these CoCo-specific events are likely to be architecture-specific
+>>> KST helpers, take the existing generic test in pre_fault_memory_test.c
+>>> as a starting template, and then introduce an x86-specific version of
+>>> it with expanded coverage for SEV, SEV-ES, and SNP.
+>>>
+>>> Since there's a reasonable chance that TDX could extend this for similar
+>>> testing of TDX, give it a "coco-" prefix rather than an SEV-specific
+>>> one.
+>>>
+>>> Signed-off-by: Michael Roth <michael.roth@amd.com>
+>>> Co-developed-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
+>>> Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
+>>> ---
+>>>  tools/testing/selftests/kvm/Makefile          |   1 +
+>>>  .../kvm/x86_64/coco_pre_fault_memory_test.c   | 314 ++++++++++++++++++
+>>>  2 files changed, 315 insertions(+)
+>>>  create mode 100644 tools/testing/selftests/kvm/x86_64/coco_pre_fault_memory_test.c
+>>>
+>>> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+>>> index 48d32c5aa3eb..65d19b277b06 100644
+>>> --- a/tools/testing/selftests/kvm/Makefile
+>>> +++ b/tools/testing/selftests/kvm/Makefile
+>>> @@ -129,6 +129,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/amx_test
+>>>  TEST_GEN_PROGS_x86_64 += x86_64/max_vcpuid_cap_test
+>>>  TEST_GEN_PROGS_x86_64 += x86_64/triple_fault_event_test
+>>>  TEST_GEN_PROGS_x86_64 += x86_64/recalc_apic_map_test
+>>> +TEST_GEN_PROGS_x86_64 += x86_64/coco_pre_fault_memory_test
+>>>  TEST_GEN_PROGS_x86_64 += access_tracking_perf_test
+>>>  TEST_GEN_PROGS_x86_64 += demand_paging_test
+>>>  TEST_GEN_PROGS_x86_64 += dirty_log_test
+>>> diff --git a/tools/testing/selftests/kvm/x86_64/coco_pre_fault_memory_test.c b/tools/testing/selftests/kvm/x86_64/coco_pre_fault_memory_test.c
+>>> new file mode 100644
+>>> index 000000000000..e16fe185fb5a
+>>> --- /dev/null
+>>> +++ b/tools/testing/selftests/kvm/x86_64/coco_pre_fault_memory_test.c
+>>> @@ -0,0 +1,314 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +#include <linux/sizes.h>
+>>> +
+>>> +#include <test_util.h>
+>>> +#include <kvm_util.h>
+>>> +#include <processor.h>
+>>> +#include "sev.h"
+>>> +
+>>> +/* Arbitrarily chosen values */
+>>> +#define TEST_SIZE		(SZ_2M + PAGE_SIZE)
+>>> +#define TEST_NPAGES		(TEST_SIZE / PAGE_SIZE)
+>>> +#define TEST_SLOT		10
+>>> +#define TEST_GPA		0x100000000ul
+>>> +#define TEST_GVA		0x100000000ul
+>>> +
+>>> +enum prefault_snp_test_type {
+>>> +	/* Skip pre-faulting tests. */
+>>> +	NO_PREFAULT_TYPE = 0,
+>>> +	/*
+>>> +	 * Issue KVM_PRE_FAULT_MEMORY for GFNs mapping non-private memory
+>>> +	 * before finalizing the initial guest contents (e.g. via
+>>> +	 * KVM_SEV_SNP_LAUNCH_FINISH for SNP guests).
+>>> +	 *
+>>> +	 * This should result in failure since KVM explicitly disallows
+>>> +	 * KVM_PRE_FAULT_MEMORY from being issued prior to finalizing the
+>>> +	 * initial guest contents.
+>>> +	 */
+>>> +	PREFAULT_SHARED_BEFORE_FINALIZING = 0,
+>>
+>> Just spotted that I have initialized both NO_PREFAULT_TYPE and
+>> PREFAULT_SHARED_BEFORE_FINALIZING to 0, effectively running the latter
+>> test type twice. I will fix in the next iteration that I post.
+> 
+> Enums start at 0, so you can just eliminate the assignments.
+> 
+
+Ack. I Will get rid of it here and the next patch as well.
+
+Thanks!
+
+> Thanks,
+> Tom
+> 
+>>
+>> Thanks!
+>> Pratik
+>>
+>>> +	/*
+>>> +	 * Issue KVM_PRE_FAULT_MEMORY for GFNs mapping private memory
+>>> +	 * before finalizing the initial guest contents (e.g. via
+>>> +	 * KVM_SEV_SNP_LAUNCH_FINISH for SNP guests).
+>>> +	 *
+>>> +	 * This should result in failure since KVM explicitly disallows
+>>> +	 * KVM_PRE_FAULT_MEMORY from being issued prior to finalizing the
+>>> +	 * initial guest contents.
+>>> +	 */
+>>> +	PREFAULT_PRIVATE_BEFORE_FINALIZING,
+>>> +	/*
+>>> +	 * Issue KVM_PRE_FAULT_MEMORY for GFNs mapping shared/private
+>>> +	 * memory after finalizing the initial guest contents
+>>> +	 * (e.g. via * KVM_SEV_SNP_LAUNCH_FINISH for SNP guests).
+>>> +	 *
+>>> +	 * This should succeed since pre-faulting is supported for both
+>>> +	 * non-private/private memory once the guest contents are finalized.
+>>> +	 */
+>>> +	PREFAULT_PRIVATE_SHARED_AFTER_FINALIZING
+>>> +};
+>>> +
+>>> +static void guest_code_sev(void)
+>>> +{
+>>> +	int i;
+>>> +
+>>> +	GUEST_ASSERT(rdmsr(MSR_AMD64_SEV) & MSR_AMD64_SEV_ENABLED);
+>>> +
+>>> +	for (i = 0; i < TEST_NPAGES; i++) {
+>>> +		uint64_t *src = (uint64_t *)(TEST_GVA + i * PAGE_SIZE);
+>>> +		uint64_t val = *src;
+>>> +
+>>> +		/* Validate the data stored in the pages */
+>>> +		if ((i < TEST_NPAGES / 2 && val != i + 1) ||
+>>> +		    (i >= TEST_NPAGES / 2 && val != 0)) {
+>>> +			GUEST_FAIL("Inconsistent view of memory values in guest");
+>>> +		}
+>>> +	}
+>>> +
+>>> +	if (rdmsr(MSR_AMD64_SEV) & MSR_AMD64_SEV_ES_ENABLED) {
+>>> +		wrmsr(MSR_AMD64_SEV_ES_GHCB, GHCB_MSR_TERM_REQ);
+>>> +		__asm__ __volatile__("rep; vmmcall");
+>>> +		GUEST_FAIL("This should be unreachable.");
+>>> +	}
+>>> +
+>>> +	GUEST_DONE();
+>>> +}
+>>> +
+>>> +static void __pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
+>>> +			       u64 left, bool expect_fail)
+>>> +{
+>>> +	struct kvm_pre_fault_memory range = {
+>>> +		.gpa = gpa,
+>>> +		.size = size,
+>>> +		.flags = 0,
+>>> +	};
+>>> +	int ret, save_errno;
+>>> +	u64 prev;
+>>> +
+>>> +	do {
+>>> +		prev = range.size;
+>>> +		ret = __vcpu_ioctl(vcpu, KVM_PRE_FAULT_MEMORY, &range);
+>>> +		save_errno = errno;
+>>> +		TEST_ASSERT((range.size < prev) ^ (ret < 0),
+>>> +			    "%sexpecting range.size to change on %s",
+>>> +			    ret < 0 ? "not " : "",
+>>> +			    ret < 0 ? "failure" : "success");
+>>> +	} while (ret >= 0 ? range.size : save_errno == EINTR);
+>>> +
+>>> +	TEST_ASSERT(expect_fail ? !(range.size == left) : (range.size == left),
+>>> +		    "[EXPECT %s] completed with %lld bytes left, expected %" PRId64,
+>>> +		    expect_fail ? "FAIL" : "PASS",
+>>> +		    range.size, left);
+>>> +
+>>> +	if (left == 0) {
+>>> +		TEST_ASSERT(expect_fail ? ret : !ret,
+>>> +			    "[EXPECT %s] KVM_PRE_FAULT_MEMORY",
+>>> +			    expect_fail ? "FAIL" : "PASS");
+>>> +	} else {
+>>> +		/*
+>>> +		 * For shared memory, no memory slot causes RET_PF_EMULATE. It
+>>> +		 * results in -ENOENT.
+>>> +		 *
+>>> +		 * For private memory, no memory slot is an error case returning
+>>> +		 * -EFAULT, but it also possible the only the GPA ranges backed
+>>> +		 *  by a slot are marked as private, in which case the noslot
+>>> +		 *  range will also result in -ENOENT.
+>>> +		 *
+>>> +		 *  So allow both errors for now, but in the future it would be
+>>> +		 *  good to distinguish between these cases to tighten up the
+>>> +		 *  error-checking.
+>>> +		 */
+>>> +		TEST_ASSERT(expect_fail ? !ret :
+>>> +			    (ret && (save_errno == EFAULT || save_errno == ENOENT)),
+>>> +			    "[EXPECT %s] KVM_PRE_FAULT_MEMORY",
+>>> +			    expect_fail ? "FAIL" : "PASS");
+>>> +	}
+>>> +}
+>>> +
+>>> +static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa,
+>>> +			     u64 size, u64 left)
+>>> +{
+>>> +	__pre_fault_memory(vcpu, gpa, size, left, false);
+>>> +}
+>>> +
+>>> +static void pre_fault_memory_negative(struct kvm_vcpu *vcpu, u64 gpa,
+>>> +				      u64 size, u64 left)
+>>> +{
+>>> +	__pre_fault_memory(vcpu, gpa, size, left, true);
+>>> +}
+>>> +
+>>> +static void pre_fault_memory_snp(struct kvm_vcpu *vcpu, struct kvm_vm *vm,
+>>> +				 bool private, enum prefault_snp_test_type p_type)
+>>> +{
+>>> +	if (p_type == PREFAULT_SHARED_BEFORE_FINALIZING)
+>>> +		pre_fault_memory_negative(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +
+>>> +	snp_vm_launch_start(vm, SNP_POLICY);
+>>> +
+>>> +	if (p_type == PREFAULT_SHARED_BEFORE_FINALIZING)
+>>> +		pre_fault_memory_negative(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +
+>>> +	if (private) {
+>>> +		/*
+>>> +		 * Make sure when pages are pre-faulted later after
+>>> +		 * finalization they are treated the same as a private
+>>> +		 * access by the guest so that the expected gmem
+>>> +		 * backing pages are used.
+>>> +		 */
+>>> +		vm_mem_set_private(vm, TEST_GPA, TEST_SIZE);
+>>> +		if (p_type == PREFAULT_PRIVATE_BEFORE_FINALIZING)
+>>> +			pre_fault_memory_negative(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	} else {
+>>> +		if (p_type == PREFAULT_SHARED_BEFORE_FINALIZING)
+>>> +			pre_fault_memory_negative(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	}
+>>> +
+>>> +	snp_vm_launch_update(vm);
+>>> +
+>>> +	if (p_type == PREFAULT_SHARED_BEFORE_FINALIZING)
+>>> +		pre_fault_memory_negative(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +
+>>> +	snp_vm_launch_finish(vm);
+>>> +
+>>> +	/*
+>>> +	 * After finalization, pre-faulting either private or shared
+>>> +	 * ranges should work regardless of whether the pages were
+>>> +	 * encrypted as part of setting up initial guest state.
+>>> +	 */
+>>> +	if (p_type == PREFAULT_PRIVATE_SHARED_AFTER_FINALIZING) {
+>>> +		pre_fault_memory(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +		pre_fault_memory(vcpu, TEST_GPA + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+>>> +		pre_fault_memory(vcpu, TEST_GPA + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
+>>> +	}
+>>> +}
+>>> +
+>>> +static void pre_fault_memory_sev(unsigned long vm_type, struct kvm_vcpu *vcpu,
+>>> +				 struct kvm_vm *vm)
+>>> +{
+>>> +	uint32_t policy = (vm_type == KVM_X86_SEV_ES_VM) ? SEV_POLICY_ES : 0;
+>>> +
+>>> +	pre_fault_memory(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
+>>> +
+>>> +	sev_vm_launch(vm, policy);
+>>> +
+>>> +	pre_fault_memory(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
+>>> +
+>>> +	sev_vm_launch_measure(vm, alloca(256));
+>>> +
+>>> +	pre_fault_memory(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
+>>> +
+>>> +	sev_vm_launch_finish(vm);
+>>> +
+>>> +	pre_fault_memory(vcpu, TEST_GPA, SZ_2M, 0);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
+>>> +	pre_fault_memory(vcpu, TEST_GPA + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
+>>> +}
+>>> +
+>>> +static void test_pre_fault_memory_sev(unsigned long vm_type, bool private,
+>>> +				      enum prefault_snp_test_type p_type)
+>>> +{
+>>> +	struct kvm_vcpu *vcpu;
+>>> +	struct kvm_vm *vm;
+>>> +	struct ucall uc;
+>>> +	int i;
+>>> +
+>>> +	vm = vm_sev_create_with_one_vcpu(vm_type, guest_code_sev, &vcpu);
+>>> +
+>>> +	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+>>> +				    TEST_GPA, TEST_SLOT, TEST_NPAGES,
+>>> +				    (vm_type == KVM_X86_SNP_VM) ? KVM_MEM_GUEST_MEMFD : 0);
+>>> +
+>>> +	/*
+>>> +	 * Make sure guest page table is in agreement with what pages will be
+>>> +	 * initially encrypted by the ASP.
+>>> +	 */
+>>> +	if (private)
+>>> +		vm_mem_set_protected(vm, TEST_SLOT, TEST_GPA, TEST_NPAGES);
+>>> +
+>>> +	virt_map(vm, TEST_GVA, TEST_GPA, TEST_NPAGES);
+>>> +
+>>> +	/*
+>>> +	 * Populate the pages to compare data read from the guest
+>>> +	 * Populate the first half with data and second half as all zeros.
+>>> +	 */
+>>> +	for (i = 0; i < TEST_NPAGES; i++) {
+>>> +		uint64_t *hva = addr_gva2hva(vm, TEST_GVA + i * PAGE_SIZE);
+>>> +
+>>> +		if (i < TEST_NPAGES / 2)
+>>> +			*hva = i + 1;
+>>> +		else
+>>> +			*hva = 0;
+>>> +	}
+>>> +
+>>> +	if (vm_type == KVM_X86_SNP_VM)
+>>> +		pre_fault_memory_snp(vcpu, vm, private, p_type);
+>>> +	else
+>>> +		pre_fault_memory_sev(vm_type, vcpu, vm);
+>>> +
+>>> +	vcpu_run(vcpu);
+>>> +
+>>> +	if (vm->type == KVM_X86_SEV_ES_VM || vm->type == KVM_X86_SNP_VM) {
+>>> +		TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_SYSTEM_EVENT,
+>>> +			    "Wanted SYSTEM_EVENT, got %s",
+>>> +			    exit_reason_str(vcpu->run->exit_reason));
+>>> +		TEST_ASSERT_EQ(vcpu->run->system_event.type, KVM_SYSTEM_EVENT_SEV_TERM);
+>>> +		TEST_ASSERT_EQ(vcpu->run->system_event.ndata, 1);
+>>> +		TEST_ASSERT_EQ(vcpu->run->system_event.data[0], GHCB_MSR_TERM_REQ);
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	switch (get_ucall(vcpu, &uc)) {
+>>> +	case UCALL_DONE:
+>>> +		break;
+>>> +	case UCALL_ABORT:
+>>> +		REPORT_GUEST_ASSERT(uc);
+>>> +	default:
+>>> +		TEST_FAIL("Unexpected exit: %s",
+>>> +			  exit_reason_str(vcpu->run->exit_reason));
+>>> +	}
+>>> +
+>>> +out:
+>>> +	kvm_vm_free(vm);
+>>> +}
+>>> +
+>>> +static void test_pre_fault_memory(unsigned long vm_type, bool private)
+>>> +{
+>>> +	int pt;
+>>> +
+>>> +	if (vm_type && !(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(vm_type))) {
+>>> +		pr_info("Skipping tests for vm_type 0x%lx\n", vm_type);
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	switch (vm_type) {
+>>> +	case KVM_X86_SEV_VM:
+>>> +	case KVM_X86_SEV_ES_VM:
+>>> +		test_pre_fault_memory_sev(vm_type, private, NO_PREFAULT_TYPE);
+>>> +		break;
+>>> +	case KVM_X86_SNP_VM:
+>>> +		for (pt = 0; pt <= PREFAULT_PRIVATE_SHARED_AFTER_FINALIZING; pt++)
+>>> +			test_pre_fault_memory_sev(vm_type, private, pt);
+>>> +		break;
+>>> +	default:
+>>> +		abort();
+>>> +	}
+>>> +}
+>>> +
+>>> +int main(int argc, char *argv[])
+>>> +{
+>>> +	TEST_REQUIRE(kvm_check_cap(KVM_CAP_PRE_FAULT_MEMORY));
+>>> +
+>>> +	test_pre_fault_memory(KVM_X86_SEV_VM, false);
+>>> +	test_pre_fault_memory(KVM_X86_SEV_VM, true);
+>>> +	test_pre_fault_memory(KVM_X86_SEV_ES_VM, false);
+>>> +	test_pre_fault_memory(KVM_X86_SEV_ES_VM, true);
+>>> +	test_pre_fault_memory(KVM_X86_SNP_VM, false);
+>>> +	test_pre_fault_memory(KVM_X86_SNP_VM, true);
+>>> +
+>>> +	return 0;
+>>> +}
+>>
 
 
