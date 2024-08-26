@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-300906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1441495EA59
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDE195EA5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5096286A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B9F286E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F8F136671;
-	Mon, 26 Aug 2024 07:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976D913213C;
+	Mon, 26 Aug 2024 07:27:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CACD12BEBE;
-	Mon, 26 Aug 2024 07:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD5312D773
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657214; cv=none; b=mMQ1Sq6W9sNAKgp6twW9C/f5AfzlZHM6tZ+jYxDWhAWitShKfik3NB/F6mOemoDUl4VQuVCRhd00WcwXi+zK40ENJSkmEpxVSzltbTu7J7mjoGWENIteS0wYDyQu/LVBremcac5K7cx4jPt7tykeW4CPYOkII8NM3Bg+vfN+8sg=
+	t=1724657232; cv=none; b=E5zo0j7uqMy+mEoEG69ETcj2D6w8x+veCUFBtt4E8W61yGu7nSQ+/Tmvh5GKT86DARUxaIFWrvdkCdlYerw3WU0sh47v/zvUD+z2glHveH0SriWwSGmn1AxqJhWuRbo/MmWLusfESQKjk3Fl8VRlnPVnMdwKjK503zX9v0GZyIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657214; c=relaxed/simple;
-	bh=OyH99wmO5mv066v8pAidbzidLzJx3ynfsY7lGCuhtNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEZz/okHFVg9dtt0wEtAuD/kr0NVIs6s1dHTFkrUgEqHesRiODLUHMToHywwNGBnNXETCF3zLTKQKUpwN2dw6IkfzxowVu8T+k+/mdQ3KQum+aGo+sPwk7KoWSrIno+h7bgADqBfH/kY+FtFY/zlWx+imjNdIZViyM8J4/4YJuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eYAnrPy3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2BEC4FDF3;
-	Mon, 26 Aug 2024 07:26:51 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724657210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w24dLA36c/d+xQ7ZOImOMWGl1II9pRfdgFurGBE0teA=;
-	b=eYAnrPy37tSdpNsOmLxnE9vtVohlmjxR65Olke78XoDNkBDbyRAPVZ8yVj5TfBfvzC93iz
-	U17fXHlJI9Qzp1HLsBACdsK6/LpPt0sDt6PMsbbcE1euKmR/4Icub25zv3gIElrlQ9wXEB
-	9UYlaBoAY1m9Yx1tf5dw5a/jQPgDNBY=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d127c021 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 26 Aug 2024 07:26:50 +0000 (UTC)
-Date: Mon, 26 Aug 2024 09:26:40 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 13/17] selftests: vdso: Don't hard-code location of
- vDSO sources
-Message-ID: <ZswuMITw0PLJJBuU@zx2c4.com>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724657232; c=relaxed/simple;
+	bh=RPce0U/YUpPYjEp4lRO4eYswbyRtkfoz8XO+AxXbLPw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QPFwrAQ5RA3CP1XRlAdUqIJcl8pa9DxZal248u948VwgFGE5E9c+sE6ijhg4e+RPZ5naxUu9GZi2EoeJh44w3zepo7cP4gA/LBX8aGSX332vVoHC3ycoENEePUJmPwrrvt09JtFWlqil3zZTT5Le1Cp7YBYNRSLCElHoXBKt4x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1siU7p-0005HP-SI; Mon, 26 Aug 2024 09:26:53 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1siU7p-0038Eo-1E; Mon, 26 Aug 2024 09:26:53 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1siU7o-000hSF-2y;
+	Mon, 26 Aug 2024 09:26:52 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Calvin Owens <calvin@wbinvd.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	David Lin <yu-hao.lin@nxp.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [RFC PATCH 0/4] mwifiex: add support for iw61x
+Date: Mon, 26 Aug 2024 09:26:44 +0200
+Message-Id: <20240826072648.167004-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2024 at 09:13:21AM +0200, Christophe Leroy wrote:
-> Architectures use different location for vDSO sources:
-> 	arch/mips/vdso
-> 	arch/sparc/vdso
-> 	arch/arm64/kernel/vdso
-> 	arch/riscv/kernel/vdso
-> 	arch/csky/kernel/vdso
-> 	arch/x86/um/vdso
-> 	arch/x86/entry/vdso
-> 	arch/powerpc/kernel/vdso
-> 	arch/arm/vdso
-> 	arch/loongarch/vdso
-> 
-> Don't hard-code vdso sources location in selftest Makefile,
-> instead create a vdso/ symbolic link in tools/arch/$arch/ and
-> update Makefile accordingly.
+This series adds support for the iw61x chips to the mwifiex driver.
+There are a few things to address, hence the RFC status. See the commit
+messages for details. The series is based on wireless-next/main.
 
-That seems like a good way of handling it. As archs add their
-implementations, they can just add the symlink and do no more work. It
-will also make review slightly easier: if I don't see the symlink added,
-I'll know the submitter didn't actually test their chacha :-P.
+I am sending this now since people requested it here [1], but as it's
+out now feel free to leave your comments to the issues mentioned (or
+others I haven't mentioned ;)
 
-I'll take this into my random.git tree now as a fix.
+[1] https://lore.kernel.org/all/20240809094533.1660-1-yu-hao.lin@nxp.com/
 
-Jason
+Sascha
+
+
+Sascha Hauer (4):
+  wifi: mwifiex: release firmware at remove time
+  wifi: mwifiex: handle VDLL
+  wifi: mwifiex: wait longer for SDIO card status
+  mwifiex: add iw61x support
+
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c | 86 +++++++++++++++++++
+ drivers/net/wireless/marvell/mwifiex/fw.h     | 16 ++++
+ drivers/net/wireless/marvell/mwifiex/main.c   |  9 +-
+ drivers/net/wireless/marvell/mwifiex/main.h   |  4 +
+ drivers/net/wireless/marvell/mwifiex/sdio.c   | 81 ++++++++++++++++-
+ drivers/net/wireless/marvell/mwifiex/sdio.h   |  3 +
+ .../net/wireless/marvell/mwifiex/sta_event.c  |  4 +
+ .../net/wireless/marvell/mwifiex/uap_event.c  |  4 +
+ include/linux/mmc/sdio_ids.h                  |  3 +
+ 9 files changed, 205 insertions(+), 5 deletions(-)
+
+-- 
+2.39.2
+
 
