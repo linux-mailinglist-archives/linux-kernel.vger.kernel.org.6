@@ -1,262 +1,161 @@
-Return-Path: <linux-kernel+bounces-302055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305B495F93E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:53:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BDD95F941
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552441C21DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168CA1F22CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F5E1991A9;
-	Mon, 26 Aug 2024 18:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68852194AEF;
+	Mon, 26 Aug 2024 18:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TDIuSUNO"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QYuuCf1m"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112CC768FD
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9390768FD
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724698408; cv=none; b=nl4FeGW3lHnho0Z7DkfZum/h+KFXrZMP2klTpD68TkB231HOdxUTSPo6mUxuUnH35WV9IE+Mzm61QwkuUDIWUdwUXN5+QaRB9OUF2NNgGKLXWUFnuT/ZNTDyr5XdDym6fW+9z1lVvYKHU7Jnf4t9tHJegMLXAMndMhTI1Vk0wUk=
+	t=1724698415; cv=none; b=NyjlTG620CbX+DcFWst+9SUK64OMOLeGX80lfkPc5z8mGU1HIkuPj7hiYNzzXIf6LLuXaAB+Zz7svMIzqGk9NJVd2JEAY/0FRgaRkpwiNyJgg1yGR1LpmoY25T797cqUB9ROuKrNzHKmljX7x/eA4ssnPbEPDN6QEvUnUHmrl7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724698408; c=relaxed/simple;
-	bh=t5/zB9BSuAxB1nO7r8cDk3j0lFCwrqEuE/UDhsWupEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CxnUnRor0oRKEO6HnFerWIAumbXFzh3+v2+h1H8LY0OznvxEwy12PVRrZnvuPl7K8S0l8uEewQ4ratZhHnvTmfIKlVsZMbL/47Z4kBBjwEb/deOwBCdfXhxkAtZLUUcVHknFFhYqdaA6K1rk+fvSa9llJqROIy6C6DHDu6knl0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TDIuSUNO; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d60f48a2ccso3840649a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:53:25 -0700 (PDT)
+	s=arc-20240116; t=1724698415; c=relaxed/simple;
+	bh=i6qfRNn3DtbAvgNjcU5HFkL3Poi4ANUM/xXdHtpLXI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tY3GK/zqYXpRHcnVWCXThO5glZjDEDn5Kwo+XMrAussEjn1QgBbPpvdUotOK5DuBD3bxVlAuQFGKvWo8bzs6+KKCviAWoXXLnZWJMDtEYCeKf8n4p+s5DtZYftama3ICyz6tGj6M1zoW6P+DwP72GaINaL7Nr/jMnLgp1YhMNuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QYuuCf1m; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4280ef642fbso5837305e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:53:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1724698405; x=1725303205; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1vPKu5kyckfAGlfhdEVa0KBQG1dFiWf+7mfGcbWhMwU=;
-        b=TDIuSUNOfyOit8WB54kDWtsUGgQ/c5QN6dJlmL33s+nJf+RCtsq3AZF8L5H10jmmAs
-         vANrP2xEVKuScRe8s+yzMKO5uLTa0x2ALyYRkci4+h9693zO+ynQ5xxUlDSjemntqkEN
-         HISsOl/gRqgT4cffY7aee5ZzKezTlP1yS+Kfk=
+        d=linaro.org; s=google; t=1724698412; x=1725303212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=e/9TXSfpmTtaW5kZL+zYy819SGf2q+CBCO3J61RxalY=;
+        b=QYuuCf1mQ/3yA4KjNQ6+NlHTrz6k3XJmyaVUb3fFWpQPHL14IZT/TXTDjWkd7xLohv
+         1b/O5iSPXhC3IkCBlHO1mIOl9adxsfIJXDZVTtAkyOmYMjH5CPOd+PXSQ/PAR8X8blxN
+         ZHd0+LxXP1N1UJDvDDhvJWJffbxEPHi31WtjX2Cq6UU4YXLye+G+a7DTmSpZ418fonTJ
+         Pbh3SLnPQJAqIxeZxFik2MekqGagR1Zt/aWWo5wgNLVl92lQQLlYLXSf+5DGN8Xsw8VD
+         AXM8WCShQZ/7jHNP7Pe4aZcsvp9xeB+B7h/2o0zZTDFCRzqxC0aAyT4Iqz9UC3p8ncQK
+         7a0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724698405; x=1725303205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1vPKu5kyckfAGlfhdEVa0KBQG1dFiWf+7mfGcbWhMwU=;
-        b=rFfBPi4OepfcKiqB52GAy9gG66xnCcW6P7wHFFI7uMFRHzpynSBbStlEgdb+lm+dMd
-         cj3DVANEIcuIansQjiJqzG/MVD8KjGzw1uqovg29qtwHiPt/4HTMm6iNAv6wnrQeqyqW
-         ASWo9Nsk/EB8wZo7g42clk8Rab7WszzTach+ZJQAd3zYc0tC9MOuzfNc8nYrbqqSh5H7
-         LtIPM1KyEynEi3HjgPApIBYN2rhIuvddpkG3ahvICenAOUsfYKc3WedvBiBJ1HXGpXGo
-         BycvrD7KEs0YDi9z9WYgnBx3zOp11AdxevvbB3cWnDtY3Nk+ZWfw8U9wbW/c/UD/jikB
-         hCOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdLbS6Gv5/g4Y62GUrtsHjBsuRW8sfqJPsNcD6uaWhWMnNlL0wTSDShE/y8rLfjrdVfgMmX5BJ17ktLg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqfUuAQbeW+yDXrGZfKzQvh7b8pNUnI4iPWQBgb8c1dOhI3MO5
-	yzAkR0omq2veHDsDcATEDgyhy86j0Pv8Rjt/zxa9ypNLBa5kXJhF/t1G7iG0OK/ueUw8oLSWhQC
-	UzYLNHTQGWvIueWyhJ9LPX2Ho2JkHk9fE6mx9
-X-Google-Smtp-Source: AGHT+IELe1qaUfmRGw8MR4uzHkXLikT+gDWeyOsCy/CEzW9EyaONPESoDrYYg0teDP/A3SCH2C2SXGzEd9PBAnpho8g=
-X-Received: by 2002:a17:90a:8983:b0:2cb:4f14:2a70 with SMTP id
- 98e67ed59e1d1-2d646d2483amr11893442a91.30.1724698405175; Mon, 26 Aug 2024
- 11:53:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724698412; x=1725303212;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e/9TXSfpmTtaW5kZL+zYy819SGf2q+CBCO3J61RxalY=;
+        b=AA4KgzcUnN5xgoQbkmO96vgNFUyjf/AYcHIIIRJMY2re6peYgnpwudAHg1x7HjEhiR
+         RZTgkTOv8jeDMjgbZnb3tGUnINs2UsZgFFnxCWAUQQ1BUu312FuwWKEjViXwAZCA9OtR
+         Eph8bivrWfi+38wQfT3f/mqeBb6tMusXLzOA+kksUkeS98qHhh50bEIIs0ePJiZUqUKg
+         Wn+/xc5CcCXGeqnQOCDGEfntreptkqHXa/csnpuT7OYQS5wIzB77GfcNd2San4SJ/a+U
+         BBEOn0ozRgKatHbmOMMdjXqfWJJbRopKqU7SbgbFEk0mAnBMajTE0SQ/hXzSga/xgO0p
+         s6jg==
+X-Forwarded-Encrypted: i=1; AJvYcCViVo+1ePfiNVCv52wnOPyZO2ZXxrmpfSNKzbFCDW3Qu8BEcvvydExk6kO0pIBeoW0+vb38umLtweap8B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcFnPpXEH5FO4GXlvZyOTlRbE+Kjcs7yITvXTxQEPxTtC5A6zj
+	tRotA9u8wAZCheyabdNnmzvEz3e/heMs8RUUppSTwMrrSbPitu3LwE9LZna8x6Q=
+X-Google-Smtp-Source: AGHT+IFUHMV4FAByIJjfomDTLhqhHajKCxcFOvwag7T+qZzkIc/8eivvYTqQz7fDI+F5sNfYpTxwoA==
+X-Received: by 2002:a05:600c:4445:b0:425:65b1:abb4 with SMTP id 5b1f17b1804b1-42acc8a7756mr46470165e9.0.1724698412073;
+        Mon, 26 Aug 2024 11:53:32 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730817a2f4sm11314083f8f.61.2024.08.26.11.53.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 11:53:31 -0700 (PDT)
+Message-ID: <93da058b-8d72-4f76-9ee7-f6837a1a4a9a@linaro.org>
+Date: Mon, 26 Aug 2024 20:53:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
- <20240814221818.2612484-4-jitendra.vegiraju@broadcom.com> <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
-In-Reply-To: <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
-From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-Date: Mon, 26 Aug 2024 11:53:13 -0700
-Message-ID: <CAMdnO-LDw0OZRfBWmh_4AEYuwbq6dmnh=W3PZwRe1766Ys2huA@mail.gmail.com>
-Subject: Re: [net-next v4 3/5] net: stmmac: Integrate dw25gmac into stmmac
- hwif handling
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	hawk@kernel.org, john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, 
-	ahalaney@redhat.com, xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, 
-	Jianheng.Zhang@synopsys.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
-	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+To: Jan Kiszka <jan.kiszka@siemens.com>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Bao Cheng Su <baocheng.su@siemens.com>, Hua Qian Li
+ <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, linux-pci@vger.kernel.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+References: <cover.1724694969.git.jan.kiszka@siemens.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <cover.1724694969.git.jan.kiszka@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Serge(y)
-Thank you for reviewing the patch.
+On 26/08/2024 19:56, Jan Kiszka wrote:
+> Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+> against DMA-based attacks of external PCI devices. The AM65 is without
+> an IOMMU, but it comes with something close to it: the Peripheral
+> Virtualization Unit (PVU).
+> 
+> The PVU was originally designed to establish static compartments via a
+> hypervisor, isolate those DMA-wise against each other and the host and
+> even allow remapping of guest-physical addresses. But it only provides
+> a static translation region, not page-granular mappings. Thus, it cannot
+> be handled transparently like an IOMMU.
 
-On Fri, Aug 23, 2024 at 6:49=E2=80=AFAM Serge Semin <fancer.lancer@gmail.co=
-m> wrote:
->
-> Hi Jitendra
->
-> On Wed, Aug 14, 2024 at 03:18:16PM -0700, jitendra.vegiraju@broadcom.com =
-wrote:
-> > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> >
-> > Integrate dw25gmac support into stmmac hardware interface handling.
-> > Added a new entry to the stmmac_hw table in hwif.c.
-> > Define new macros DW25GMAC_CORE_4_00 and DW25GMAC_ID to identify 25GMAC
-> > device.
-> > Since BCM8958x is an early adaptor device, the synopsis_id reported in =
-HW
-> > is 0x32 and device_id is DWXGMAC_ID. Provide override support by defini=
-ng
-> > synopsys_dev_id member in struct stmmac_priv so that driver specific se=
-tup
-> > functions can override the hardware reported values.
-> >
-> > Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/common.h |  2 ++
-> >  drivers/net/ethernet/stmicro/stmmac/hwif.c   | 25 ++++++++++++++++++--
-> >  drivers/net/ethernet/stmicro/stmmac/stmmac.h |  1 +
-> >  3 files changed, 26 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net=
-/ethernet/stmicro/stmmac/common.h
-> > index 684489156dce..46edbe73a124 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> > @@ -38,9 +38,11 @@
-> >  #define DWXGMAC_CORE_2_10    0x21
-> >  #define DWXGMAC_CORE_2_20    0x22
-> >  #define DWXLGMAC_CORE_2_00   0x20
-> > +#define DW25GMAC_CORE_4_00   0x40
-> >
-> >  /* Device ID */
-> >  #define DWXGMAC_ID           0x76
-> > +#define DW25GMAC_ID          0x55
-> >  #define DWXLGMAC_ID          0x27
-> >
-> >  #define STMMAC_CHAN0 0       /* Always supported and default for all c=
-hips */
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/e=
-thernet/stmicro/stmmac/hwif.c
-> > index 29367105df54..97e5594ddcda 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-> > @@ -278,6 +278,27 @@ static const struct stmmac_hwif_entry {
-> >               .est =3D &dwmac510_est_ops,
-> >               .setup =3D dwxlgmac2_setup,
-> >               .quirks =3D stmmac_dwxlgmac_quirks,
->
-> > +     }, {
-> > +             .gmac =3D false,
-> > +             .gmac4 =3D false,
-> > +             .xgmac =3D true,
-> > +             .min_id =3D DW25GMAC_CORE_4_00,
-> > +             .dev_id =3D DW25GMAC_ID,
-> > +             .regs =3D {
-> > +                     .ptp_off =3D PTP_XGMAC_OFFSET,
-> > +                     .mmc_off =3D MMC_XGMAC_OFFSET,
-> > +                     .est_off =3D EST_XGMAC_OFFSET,
-> > +             },
-> > +             .desc =3D &dwxgmac210_desc_ops,
-> > +             .dma =3D &dw25gmac400_dma_ops,
-> > +             .mac =3D &dwxgmac210_ops,
-> > +             .hwtimestamp =3D &stmmac_ptp,
-> > +             .mode =3D NULL,
-> > +             .tc =3D &dwmac510_tc_ops,
-> > +             .mmc =3D &dwxgmac_mmc_ops,
-> > +             .est =3D &dwmac510_est_ops,
-> > +             .setup =3D dwxgmac2_setup,
-> > +             .quirks =3D NULL,
-> >       },
->
-> This can be replaced with just:
->
-> +       }, {
-> +               .gmac =3D false,
-> +               .gmac4 =3D false,
-> +               .xgmac =3D true,
-> +               .min_id =3D DW25GMAC_CORE_4_00,
-> +               .dev_id =3D DWXGMAC_ID, /* Early DW 25GMAC IP-core had XG=
-MAC ID */
-> +               .regs =3D {
-> +                       .ptp_off =3D PTP_XGMAC_OFFSET,
-> +                       .mmc_off =3D MMC_XGMAC_OFFSET,
-> +                       .est_off =3D EST_XGMAC_OFFSET,
-> +               },
-> +               .desc =3D &dwxgmac210_desc_ops,
-> +               .dma =3D &dw25gmac400_dma_ops,
-> +               .mac =3D &dwxgmac210_ops,
-> +               .hwtimestamp =3D &stmmac_ptp,
-> +               .mode =3D NULL,
-> +               .tc =3D &dwmac510_tc_ops,
-> +               .mmc =3D &dwxgmac_mmc_ops,
-> +               .est =3D &dwmac510_est_ops,
-> +               .setup =3D dw25gmac_setup,
-> +               .quirks =3D NULL,
->         }
->
-> and you won't need to pre-define the setup() method in the
-> glue driver. Instead you can define a new dw25xgmac_setup() method in
-> the dwxgmac2_core.c as it's done for the DW XGMAC/LXGMAC IP-cores.
->
-> Note if your device is capable to work with up to 10Gbps speed, then
-> just set the plat_stmmacenet_data::max_speed field to SPEED_10000.
-> Alternatively if you really need to specify the exact MAC
-> capabilities, then you can implement what Russell suggested here
-> sometime ago:
-> https://lore.kernel.org/netdev/Zf3ifH%2FCjyHtmXE3@shell.armlinux.org.uk/
->
-I like your suggestion to add one stmmac_hw[] array entry (entry_a) for thi=
-s
-"early release" DW25GMAC IP and another entry (entry_b) for final DW25MAC
-IP, in the process eliminate the need for a new member variable in struct
-stmmac_priv.
+You keep developing on some old kernel. I noticed it on few patchsets
+last days. Please work on mainline.
 
-However, I would like to bring to your attention that this device requires
-special handling for both synopsys_id and dev_id.
-This device is reporting 0x32 for synopsys_id and 0x76(XGMAC) for dev_id.
-The final 25GMAC spec will have 0x40 for synopsys_id and 0x55(25GMAC) for
-dev_id.
+Best regards,
+Krzysztof
 
-So, in order to avoid falsely qualifying other XGMAC devices with
-synopsis_id >=3D0x32 as DW25GMAC, I am thinking we will have to overwrite t=
-he
-synopsys_id to 0x40 (DW25GMAC_CORE_4_00) in glue driver using existing
-glue driver override mechanism.
-
-We can implement dw25gmac_setup() in dwxgmac2_core.c for generic 25GMAC
-case. But, this glue driver will have to rely on its own setup function
-to override the synopsys_id as DW25GMAC_CORE_4_00.
-
-Do you think it looks reasonable?
-If yes, do you want me to add the generic 25GMAC stmmac_hw[] entry
-("entry_b") now or when
-such a device becomes available for testing?
-
-> If you also have a DW 25GMAC-based device with 0x55 device ID, then
-> just add another stmmac_hw[] array entry.
->
-
-> >  };
-> >
-> >       int hw_cap_support;
-> >       int synopsys_id;
->
-> > +     int synopsys_dev_id;
->
-> With the suggestion above implemented you won't need this.
-
-Got it. Thanks.
-
->
-> -Serge(y)
->
-> >       u32 msg_enable;
-> >       int wolopts;
-> >       int wol_irq;
-> > --
-> > 2.34.1
-> >
 
