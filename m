@@ -1,95 +1,90 @@
-Return-Path: <linux-kernel+bounces-300682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEB595E71E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:01:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCAC95E723
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D23C1C2124A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347E21C211F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AEF2D60C;
-	Mon, 26 Aug 2024 03:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C202AD14;
+	Mon, 26 Aug 2024 03:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EeRvKGYS"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2072.outbound.protection.outlook.com [40.92.41.72])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="YmUoev+Z"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2041.outbound.protection.outlook.com [40.92.41.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83262BA33;
-	Mon, 26 Aug 2024 03:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC782A1D5;
+	Mon, 26 Aug 2024 03:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724641285; cv=fail; b=msPPA5GHzTmgHALZxBd7Q/TYnobV5R0bs3lGxgBRGgRnvY+V/yZ14cXsMEN0pApvk/moERSpowBpuXGwFqKw/UIv24R1DkTUV+hGkCXE87lHtdKsQ2v7ESYiBivj/FHYc1Ny+85hQ2Au5C5sWVD5awoXoIVSZXMN7KuFpzEWku4=
+	t=1724641343; cv=fail; b=h735fffbziQxvLNtLidHaYx4jDkJv+4TSnLfeBG8dRZDl8J3uiKFuWbvto7U48hfIiRHCf2YRBl5X/M9nRvVYJVh3EiEiCcMSd4Eaj6pfDUn6uLSdwwV/4VxRB5b/amHZQkY0JWfXZcNy08mvhLkkQXCS8xdmb5kF4GFl4Nr1Tk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724641285; c=relaxed/simple;
-	bh=sQ3BrhffYade3bbaDqd3kIdo1KlaDLVhXu4WgOiJsKc=;
+	s=arc-20240116; t=1724641343; c=relaxed/simple;
+	bh=C+CyBwGdZBfwYbJ5oOBHu5U5vD8gY2ULKvayBXs/iws=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ju13z93/4oQ0Fyqyc5wUm8xlGNloxU9jKd/JLenntsv3JTO9XcUfNH+3Hs6e2WG/FV5ghNPBQAE+PL40wr9BTne99ozSAWyul+mRAC8CfSofJs2pcGfBZfhJ+xYKLQbofR1Rq5eIJB41Sve18nQdM3E7Z1Kwqw0W5j2mTj4bdu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EeRvKGYS; arc=fail smtp.client-ip=40.92.41.72
+	 Content-Type:MIME-Version; b=UWbcA4gcWbks5l9NWtBXyu7CS2z1AA09weSYHn2zfaBOQplWlojSe8Rr0QKzlUTrayGdikUL5+QV3w33fSUmwX1ZkB7V+QobXXdFqtK679oWU8z0mzRnbhnKzMl6H8B46/BESOVH9W4AGw8ZG1VNtuxoE7qDM+ilPN81LsKeZys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=YmUoev+Z; arc=fail smtp.client-ip=40.92.41.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uwgyGKE/oKo5U/m9kduJYEWmdKtge/mzGcTPYqZwmbUZn9Bg2AdwZ7Ax1w4z6F0oX9QTzQDzPs9tMWkYR6wq1mRvKUaLpDcuezqBANuG3LZ5Zud/G9aDuTZg8tmOnrTh7bj804cTw3ZpZoONSX9d9H3Gxl9NFmG5cSZ5zxxY5Cm520ZCPejVsodjNGs1m9kaxdzTBQkyAuEVxOZQ1JA6NIAkXMzOGWIxovwF0aKEiwej7teB3eKP07XR6QfV8j+w54ZJIkXsqye57vktnwduN68P/c4ZFcI/8kRrkSdhNEeSVb0Hn6zV9QDaYmy17rQUm3PeqwSRoAfwl0ZOEycBLQ==
+ b=RHiJR8RTJzW8RsXgOewwBvWxTCiAC1lojjM6gW5hfFOXHEbFJ4kfYEEyuuBi8UK0+vSyK/PPmyaRz+qOYVypbwpuMs+NrhTz9LwPpLVTXE1WxTT7PTrACK1dKNCJYNWQFzWb4tLCbM0oYfkOE7fXdHSngV07LW64zMUSSP1lWMB+HKBvXUa77ZU09Obc5h/drc1en3yNa4IiBTdv3M4yQAua0WA0p9Ps30VroMVgr6LFg1HNPo074yTODle+2dbxGiGmAJHjYELqsBtKCzFLupyge8tuk5SFJomicxSxFw8AqXinnLGcU5iw9DyvWO1YfXdFd6Au138Qph4FB9Yjdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MKlfbg99fqcV195mhNA3h4N1b2hCP3a1MuN7339vZPA=;
- b=ZYRxYedUdFVzz30WYKLEC7l2xNSdu8fMk0xHrtLZf0iYEcw3bV2AYVQb+LEbUiDVsDXJOv21uJG0GHxweXJhMX04qwZb+h7WUOC7bTXh7sy0Q6nCKG6JaapGr1gWja2mmqDB8B+8jziBMhYTlDAFOZ+NhU0kieuMAyXWa1V1QOsdfgx8GEE1zrSYO5F0YKhvQ+ZQetqeu0CcXLBPSHj9UE+X+yrZhuJBoFPcSH+2VAAQcfPv+ZZ+MQzfUInaRgIN0SsM7dQXUvk0JFyI88NCLnkgoGU2zGDxzH/CVQLXhUze5ZcJQNjg852IPdddUY6bZ0JyTQD5E6AY9StcFhnZTg==
+ bh=CJlmTkjK8Wsbnzwv7xVMiMH9q6GSUcb5i5dA5DqslxU=;
+ b=j8eFqZ1vfzaUHVWw6QeyjmTspybmkDdCYgpcnGagqbgMcvtg+lhqbChaKCDh3ysFsJvKhz4R6BoitxE8eYejQHsPazE7nAql1jxu7bJeQZn/Kw0/WZ2Gqho3uAhRib7kR7Fux1hhFD08mB5j3H5hwgz2nqc0Hp7FZll+zc4c066VftsIlGAnxcpy3REn/8iCxUUNVslzdK2Fv3uc5Yvg4bTsPkHzMGJ8ipMxkIs19uU6cHk4NZZoLYw6FSsA7shu87CMvOVzhRbjcgGdCUzoikHiH7rwlw2acjKd6nP9+Zx0jdaqm0G78e7b4TY6+77CS7jUImEyv6LuUGUCyedLzQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MKlfbg99fqcV195mhNA3h4N1b2hCP3a1MuN7339vZPA=;
- b=EeRvKGYSqgsP6gKLhLRR6tqtlPjAujZYvAFmL2yfB7FAnuhWt8Z6y4Lg+mIWzcDaDEit7Yszt1t+ZddmQFT2Vu3gwX2eCK1rtP8XysaphqdP491xcXI+QC23jJSzhyE+1PgIkclrUTSlEcjNiGPcVKvDuitXGaxPnu7BsUvbP3SsUfOCGQVEyEVhGBBlf2nqB+uuPF3KRQ4hfsoAaOJp18+Qq1EvTraq0BmwCx4Dv0dpgAgtakqJSCIISIkFwKe8/NAmpr1zXLRq781zhj0/AE+rXP4krpKPe/SjXQYvvqP9MpDyzNSXFTR/+LJFxZToujxvKoaMCrKT9CtF/CrX7A==
+ bh=CJlmTkjK8Wsbnzwv7xVMiMH9q6GSUcb5i5dA5DqslxU=;
+ b=YmUoev+ZgDTUXBJmNP/1k1d4Y6iol0uMwIaL6rMgcDz6k+9r4qTzWZNokpBOBCH8m1R1ZqbCXLdZFbRhmoQwRf5Ei8uWVrIjguRQSBb9+xCBY7hs6bP+Xphhemx98jUShXHzOHMLIn2a3pscsCHWuxg+ZgLBSB+rffDQ7e3Q8/P9rkQbGJSe9eG4qpkvYP5IE+Y/DtQonBvx+9utErfaYyaLdYlbJhcnPbDzhhCSVKW+V2I2n/YdnJndPDH4P/cIG+B3N09c9q/K7TpsXiiycsGAu3VGtm69p0hL5h5YhQdFgCxRGwLQxhSEA3IdBlSho4R99GcO9n/QDwN0Nm4y8g==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
  by MN0PR20MB4815.namprd20.prod.outlook.com (2603:10b6:208:3c5::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Mon, 26 Aug
- 2024 03:01:20 +0000
+ 2024 03:02:19 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 03:01:20 +0000
+ 03:02:19 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
-To: adrian.hunter@intel.com,
-	aou@eecs.berkeley.edu,
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	palmer@dabbelt.com,
+	unicorn_wang@outlook.com,
 	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	guoren@kernel.org,
 	chao.wei@sophgo.com,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	haijiao.liu@sophgo.com,
 	xiaoguang.xing@sophgo.com,
-	tingzhu.wang@sophgo.com,
 	Chen Wang <unicornxw@gmail.com>
-Cc: Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicorn_wang@outlook.com>
-Subject: Re: (subset) [PATCH v6 0/8] mmc: sdhci-of-dwcmshc: Add Sophgo SG2042 support
-Date: Mon, 26 Aug 2024 10:59:55 +0800
+Cc: Inochi Amaoto <inochiama@outlook.com>
+Subject: Re: [PATCH] riscv: sophgo: dts: add gpio controllers for SG2042 SoC
+Date: Mon, 26 Aug 2024 11:01:24 +0800
 Message-ID:
- <IA1PR20MB4953203989C56A5C98382192BB8B2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB49532B2B3A9AA3DCC8E4B876BB8B2@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1722847198.git.unicorn_wang@outlook.com>
-References: <cover.1722847198.git.unicorn_wang@outlook.com>
+In-Reply-To: <20240819080851.1954691-1-unicornxw@gmail.com>
+References: <20240819080851.1954691-1-unicornxw@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-TMN: [wcO1Nd59xEVUY9F1T8mJN4GjA4Usd42h9epYzcrCLqI=]
-X-ClientProxiedBy: TYCP286CA0110.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:29c::17) To IA1PR20MB4953.namprd20.prod.outlook.com
+X-TMN: [lmiG7uG/ZwCZJNGvkVGu95zdMkEVzH4J0Q12KOxTWWc=]
+X-ClientProxiedBy: TYCP301CA0032.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:380::15) To IA1PR20MB4953.namprd20.prod.outlook.com
  (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <172464118436.44458.2712433242169119862.b4-ty@outlook.com>
+ <172464127498.44663.11358842701383653392.b4-ty@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,47 +94,47 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MN0PR20MB4815:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9999be61-d72d-45bd-021f-08dcc57b5c5c
+X-MS-Office365-Filtering-Correlation-Id: 0abff582-f5a1-49e2-7c65-08dcc57b7fc0
 X-Microsoft-Antispam:
 	BCL:0;ARA:14566002|8060799006|461199028|19110799003|15080799006|5072599009|4302099013|440099028|3412199025|1602099012|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	V5NXpUWIF0RTzwJJxRqdHXXh/3V0DMRro0dpxOpVCj48s0QehMlKKPHxtto9VePbMeaLxI8R/6kbYoLA6jQihz14uSsSx53ATES6hwZ1OTfDT9vnUqPsGnj4yxEZrhREsYArK2dl+vcwN16FJxwZd8s2RIS5yVkT+HR76wNyfuAiIjQAwWEmQVw3HPwMTiqwC5UC4P+OznEWr8Be9eQVmsFASMwEpceB0RgWODlvhSBzvMO4qBYI8rBq3BhY98FI9+QR04VtBvvzSvdbtTb/8rTRsTiJV4eJYx4wY9jvKZcBenqcPGZln+sVkzMQRLexEvo60KjJ110+Hu+kPl+9DaElwOdVlwSA49QqrPywzEydtHPT3SXfUJqGzgN166CPeJ887x+l5ItqP6uAkbwuKaqUsc6OsAFCLPZDeMNBk5wvNGySB96BHQ4yqUSSPul2G+SrrZWt58z+TC/2uPi/NjJ/IfvZV014vPoWvbmNQMWMGyv+1KjBuaJnEBCJkz5s+DNXACCHLhidaMCQ2IHT9wsNdoffv4vj8Q+4sf9S1nC4uejx9y0Fg9fgvMUJSnLucJUnXKITBWKxVKTyqnqtDg7e3RiyBE8yTwrCm2xMRVNW+qAAIsqZv4VqQTKwkSXSD2WuLTNclaUb9qf2I9Nm6JCJ5L7C8RDvAPf6skjfp5/0Fwh2NNSjniTSj8CMmYb1s1Xs1UDCHZuC+6Zk/QEXj9pdjjz8a6bQaYkdTHfGOWyrrHLwxWzSCYzN0PIhdwsaQFMu0hIFNKV244cK70jbCh6qszjZ1ywmokflWBqblBUJnBqFMASS2gMESzrO72ghyjzGWT92vVwVKPW8bIOSiQ==
+	4oDkjDDmiennei/QpCny/iG4KdaM4aSvpyp83bh5ZRGv+CBsPaR2WZL4f3h3oONwY04jB/Jb1BKQG1bDcmZfaMklycIobNCf5+kaKEQD9volHjmo334wgigQr0Ws5QeJoXZ9kRSZhOH+ZW54WwSmXxY2KBQM6OWSk+susxye0RBQaXcEB1xzR+RnL2FlSiWScu2VIoAEfXri16KFiXUkyjpSmxT53xLufY2uUtEX5mC2jf0gsoUuP7QjQgLrS6fx1GZ9DT/ze2e8v5yp9e0NSdROvr9bYAvzjiryVhET+yoJZ9tAa8nQ2C9+0wKNLB7kRVdt7sedurmWLJ9Z+bIA2hDXWglkMWuDEcJhn92PJii1TxSqjOhUdVbEpnieoGZ1Alh8IFJDsWj0PkG98O2tSINi/W04fK64SsjjHCaC+FmSMXdzWqtgvb+V2KBfgCbHwgZvCxzlWSPUlLCHgYDS8FXCAeOGWLsqxp9SNrJxvqFG7q7ABdU5ArFtYTeHoYCKXeNgrtEK2g4oWrP65W2j2p0wyI2ZYhFbODnCMPWlYACEEZ1h1l96WWo9+P232VkrJOBd5XAFHgBKYVxIcyFndpiYBNzBmiXoe5wcT+yF9cz5Q8aSQgrCD2ycOkXL/dHQLHCU8xJdjddxix0qVx3lAc+pgp9ZtmTOqixURcaQplS6WTk2QswzZ1aArQnh+AxfihdAWvO0TMaMAxmrLxzDTV7EGSiPLpULIADAdft5UfIlE14W/kKc99iWWEtcin7/4x+kGHbpNQ5FZcEK8xkQx6Eylyu9GeENf9ZHC3amJgcGCegzPMdSTOba62WifJ6pbITobQVlztxfIJ7y0S5lOg==
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SStvNGNKNkZXUGVzWVp3d3hQczRKeWVpRG81ZmpidGtEM3dPdHg1bWljVEVM?=
- =?utf-8?B?UnpDckhmc1VGSVFLVGpqSHphMjI4RWUva3BSdmk2SWQ2elJkZTRMWTZBVzNj?=
- =?utf-8?B?R3ZELzhocGJ1c1o5M2MwZUNEVkhNUDhZdjBrNXp4TmRhaGxWV3NrTHJIR3RT?=
- =?utf-8?B?dFlRQUlySkdRcXkrMTUxWHhFVnBPWWc3eE9NY01VcTBiZjZxdGlwUmNLVXFp?=
- =?utf-8?B?MlFlSVZTVWVEdTRtRTJrQXNwNzBBM2NWN3lMcVhGUlBNZnM0L1pxSThnTTRl?=
- =?utf-8?B?alpNb2VQU1REci80TitiNUxZUTdiNFlRY3VQNnRZSDJPRno5bFJFc3JsQmlz?=
- =?utf-8?B?cjlJaUJBcmtQbDNXSi90S3pVa0hXZU9BSUh1MkVMVm45Q2NRTnRyS09SNGl5?=
- =?utf-8?B?eGVrVUNFbWxremgvb0w5M2xQUXcwY29hRTRUZTBQUEZ6OEQycTFHT2VZLzI3?=
- =?utf-8?B?SlQySmd6YzJVdlRtM0xWbHNJdHBtZmFkZGFwc0VVcllvUVN2V2NWWm43YS9W?=
- =?utf-8?B?ZnEvK2hUUjBIQTZFUFZxaEgvcGNoZzhHKzFCSm5pOVlGRkE3YjRDWVlaUEZ4?=
- =?utf-8?B?bzFxVm1BL3dvMjEvTzM5Z1NJdEFxWTBKRjdyQjBZbGpwK3Nydk5PYnFNcmdS?=
- =?utf-8?B?KytpMEVlVnlHSzd4aWNsZTM5QkhFKyt6N0Q3L3NIT1p5RmJxWDc3MlpnaDBI?=
- =?utf-8?B?cGxQM0hYczVyajM4Qnk5bmhjeTFFdTFyU0ZSeTd4UDlKWm92MVp4WHVzQVpP?=
- =?utf-8?B?TnNyTnFXcnJJOGhxMGswQ2RoZ3RvM2FrNGRPMHlJK0t0Z25VUlI2SXZHeFZH?=
- =?utf-8?B?Z2tzeS96ME1hYUJaUmcxYjJHdjM5Nng3QkFNb2xRZ2xxeTBFdUJ0QU9SSlN6?=
- =?utf-8?B?WkF1MUMzWFIzalo1T0R5ZzlicVpLMHJJRldtRSsvR25KRUFWQUVkb1U2N0Mw?=
- =?utf-8?B?YVpaLzNCaTJwdW10T0wrTmFRY1l2MTdMOG5KV0IraEVaSVd0ckdnZ2tmTWp2?=
- =?utf-8?B?M1RFU3huNFJDNSt1VW5Xam5UMnA0NjFyMTNuMFBRKy8xcjRsTmhuNDRpMXFB?=
- =?utf-8?B?RUk3NXB6bnZDQjBjYThtTXNlZ0lVQmdzZVZNNno3RGF3QXVCMlNFOUxxbVYy?=
- =?utf-8?B?VTZsNFNXUTJsS3RPSkFvWUZDQ1VTNmY1WXdQYmZlbXFUSEZiTCsvZ3RpVWlo?=
- =?utf-8?B?MFp6KzJqbGRPWVhseGhRSHliL1l6Wkx6S0hRSEhlYm05Vk9SMnQ4MHE5c3F4?=
- =?utf-8?B?b3FKWFd3S1NPWkJkbWszVmFzTVBFenZyeGYybFplbTFkZ0p2UnFYREhqdEd1?=
- =?utf-8?B?ZkMwSkNzbUZFTjJyWSt5a3lpM2t3cnJ2K2hrLzVuYUF4OE5wOTZyMGlLU0Nr?=
- =?utf-8?B?NnJVTEk4UmpyRGZHRi9HN2RGQUpQTTN3S2thbFFkd2JCcmFsVEYyd3NZaTlC?=
- =?utf-8?B?WlhuZnE2ekZaYkd0TEFBTG5PMmhWTGdNRnB3cTJ1NGFsb250cmhoQW4xWVF3?=
- =?utf-8?B?cnZZVk83TFZLNGx3U0tYUkJqOFJMN0JyL2o4a0RkYWJLV2dMYy9qVWNuUDZM?=
- =?utf-8?B?YnduZi84WnBpYmtFY0lsUzZOS0JnYUZpR0xXUkMyVGR6S2FLM21pL1NmN0lo?=
- =?utf-8?B?VVpVa21NU0p3M2swb1ZiS2VDVUVnRVZWMWpuSGJuMS9ZRFI3eGRwa044bzRj?=
- =?utf-8?Q?9P8KQ+cI+Bjn1F+lQRRC?=
+	=?utf-8?B?cUl0bUVLamh6ejYrZUNBWitrZ0E4SkJ6ZnRzODNTWmRwNWd4ZkJFMmJMbldm?=
+ =?utf-8?B?WXdXWVdqNHptZWZnTUtoUUpXd2MwV0taSnh3WDA5N09CN0F0Z3hpVzRsayt5?=
+ =?utf-8?B?VnBNWjh6cFl6ZnBzVnl3aUt6azJIeURjUUFwQ0tZUHBENEdtR0ZrTGpMeU1y?=
+ =?utf-8?B?bXJ5bUtFOW5DKzhsMUlIVlFOTmRBSXJweUJsYWhETTEwY0ZDNDhVVURNUDl3?=
+ =?utf-8?B?OGJJc3FFS3ZYRHc3NHFtNU5nTFhWK2NGa00xaWdZSFRyODRTNkZ0TkU5Snhu?=
+ =?utf-8?B?Mzk4bTFTbTR5ajNaSmV2OWhXNG1KajJwQmpKZ2JVZHlGM3I1TVAwQVF1UFpC?=
+ =?utf-8?B?V0p5OGMvbmZNL0M4ZERuQ3BGOC8veFlueDVJQnp0d2I3WHNEQUZTUEJUYzZv?=
+ =?utf-8?B?QXZZakFvR2V5TWFoaFF5OXJGbmhSUDl6SnRwdmM4Ny85SjExdXFmSUhKbThw?=
+ =?utf-8?B?L2lUMWVWUDRZcExMaUl4SzI4bXdBNndoKy81cFpXSmc1eHlGRExMTk9CU0xs?=
+ =?utf-8?B?TmZyL3NrcGU5bjZrMC9hMDFvaUQvY250MnBxV0ovNE15a3B6RFVsQVZUWFVt?=
+ =?utf-8?B?bGhyNVhscUFqZ0pJSStnMGdhcW1mdWw5VzFpbzI1TDBId1VxSTYrYnYwZTdN?=
+ =?utf-8?B?eTl6OFNWSVpnVDY3QnJsUWc3SGo3bDdnTWFPWHJUUVdBV05lYXBKTm1QMi9Y?=
+ =?utf-8?B?N3lZRjBXRHpsQlBjbzVDb0Y2RWsyMVpwY0lBbDk0eTAzMWRLa0VpYnpQYjJa?=
+ =?utf-8?B?REpsaklRc0xPaExBUHZZS0VhWFdYbVZtS1dJWHhUa2o2c0w4QUJPYmYyK0J5?=
+ =?utf-8?B?WTB0RmtJbHdJd1p3dlVCYVgrZ2R6MkM4MmV0VnNaaGFKc0ZFQnQyQSt4amVs?=
+ =?utf-8?B?N3A3Z3F2WVpJM1RwdEFXTjZ4aDA1S2FOMUszTjNvWmtIK0lRSUlCd1gvK2dT?=
+ =?utf-8?B?WnVVclJMV3laZEV1M3h4WEwxRFQ1aWRqSW5uczA3R0Q3bVFrZVNHZEZTVnk4?=
+ =?utf-8?B?OHJDNW04Sm9NeDFpUUVlUENGcWlsVkdxK1hJN0NKdTBHczVkOEFlampQUEdP?=
+ =?utf-8?B?aEZ4UklMOCtpMzRpQnQzMHhRb0hMMUJVK09xNC9ySlBxQkU1YjJIR2VYaWU4?=
+ =?utf-8?B?ZHJDUFcvcXB2cDNBRUZZVFVuTmpuV0VVeEtVK0JCZzE0MllpdkVFWmoxR1Ns?=
+ =?utf-8?B?VTZqMTZkZVFFdktOZUY4K3VKWGZUc1Z1R1d0TVlGN0IxRjRBcDBXRHdJU210?=
+ =?utf-8?B?YlMzMWxsUUU0R0dCR3V3VWpVZTJRNHpYSk0xSmtZcWJ1TU1kTzNnTDVRdlMr?=
+ =?utf-8?B?ei9NOWtUOGl5YS8rdWZXWURoU0hHSW55MTUyRDk2dHRvYW9ENXNqN3pRTGY1?=
+ =?utf-8?B?VnZXV2l0R0FFbitxYzZwRzNRU1lXWU5RVm5kSmVvR1Y0eFdIWU13YkZsRDZC?=
+ =?utf-8?B?Ky80d1BXeFlMdjdCcWFEb1ZHOTlhUldWQzhuRWdmVldNMVNLZzhSYzhQaEU2?=
+ =?utf-8?B?dGgweUFqOUQ0YVovcFBIUzZPWEhRSnI3WDg1d05IMWpzT0hhd2RuTU9rTnhm?=
+ =?utf-8?B?Nkx1TFQxeVZzZFlPMkdtMDErQk5xdzl0SUpIM1lXd3VYYkZaeXh4OXRhQlV3?=
+ =?utf-8?B?SWVGZW1JcTQ4OXg0VlMwQVVFRjJVbHYwc3RsS09kaDlqS1YwZ2ExMEdXb3Bz?=
+ =?utf-8?Q?TZmiVgSeDHFoXpdiuhMH?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9999be61-d72d-45bd-021f-08dcc57b5c5c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0abff582-f5a1-49e2-7c65-08dcc57b7fc0
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 03:01:20.2627
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 03:02:19.6307
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -147,23 +142,18 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR20MB4815
 
-On Mon, 5 Aug 2024 17:15:18 +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On Mon, 19 Aug 2024 16:08:51 +0800, Chen Wang wrote:
+> Add support for the GPIO controller of Sophgo SG2042.
 > 
-> This patchset is composed of two parts:
-> - one is the improvement of the sdhci-of-dwcmshc framework,
-> - the other is the support for sg2042 based on the improvement of the
->   framework.
-> The reason for merging the two parts into one patchset is mainly to
-> facilitate review, especially to facilitate viewing why we need to
-> improve the framework and what benefits it will bring to us.
+> SG2042 uses IP from Synopsys DesignWare APB GPIO and has
+> three GPIO controllers.
 > 
-> [...]
+> 
 
 Applied to sg2042/for-next, thanks!
 
-[8/8] riscv: sophgo: dts: add mmc controllers for SG2042 SoC
-      https://github.com/sophgo/linux/commit/06b2359ee13a0e8267c1777838ac8b66ca667237
+[1/1] riscv: sophgo: dts: add gpio controllers for SG2042 SoC
+      https://github.com/sophgo/linux/commit/8b5454ac54554b7389b7202213e77191e571c31b
 
 Thanks,
 Inochi
