@@ -1,102 +1,176 @@
-Return-Path: <linux-kernel+bounces-300919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D262C95EA8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5896095EAA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40884B20B8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071F7287456
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920A0548E1;
-	Mon, 26 Aug 2024 07:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2FD139CFC;
+	Mon, 26 Aug 2024 07:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DBRZ6XWD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="UssJl6wd"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC401129A74;
-	Mon, 26 Aug 2024 07:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BC8129A74;
+	Mon, 26 Aug 2024 07:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657627; cv=none; b=SZ1cSw7Z0JSwIWNMFyfsEVx84jzbMTOBbwpL2agYboKCh0ZXkhmEf22lXK8l52zvGRtDmnCRsPMjcE5rcwUTauG5FmFP+FTQuRDor4McD0+mf9JusVGlS4ZwBAjYO6ejlZmYvLuMMZhbrTjmVekY0/lEhB0OxCVTfm96Y03v68U=
+	t=1724657770; cv=none; b=Lxe+fTvKnMbN3B5EeWWeiKEqw729miqGb0EOX/cFPTphEmq+f5GuA4qPTSa4JASKlwqBEB6aMKjGaeVkUf0BvF7UtbfolV40LJ5DIMupUp6bFSbZ7RAYAASqYc5HFdAGmwnUytas/fiD0rUdpNyh7rf7DzLkFUYHCqNopmcrmMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657627; c=relaxed/simple;
-	bh=BZ+Ga7Yx1m5+I1PY9IeYzJ0V0bDr7hy73Wh0TQSBMsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jlf0iPqlUVJoq9mZ65ZTeRT4sPRmy1YRF70R70k0PiukOQQt2W3cbfOnAwAKKP+jCueGv73D0OS1JVSAonvD1VJj9zBd9TT4ND75e3BOJKwlw+J9SOazQlydTXShVvn93PlVOVEHmgaYs3EWRDZ3XUkHVzIqz8QK/9yJtVNljZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=DBRZ6XWD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C2BC8CDC1;
-	Mon, 26 Aug 2024 07:33:45 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DBRZ6XWD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724657623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7352A08UdB7RMlKrf9ghuchmIx/aoSaJhuAqBuZsFcc=;
-	b=DBRZ6XWDvXjnYuYhxFXXFEdwYvgjA29BBUQVXRAglzQXZPgBoyT+pscRKjlI8wD1B6oehQ
-	eDbbUGzgcthjGXmofT3JoCTTGtGTgN59VX/jWtlqknExCrO9TPUYQcV1VqXc7cECI/ckoW
-	WbweiaFinCYbI/Owc4VJr6Cbd4DY0XY=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 35c98243 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 26 Aug 2024 07:33:43 +0000 (UTC)
-Date: Mon, 26 Aug 2024 09:33:34 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 15/17] selftests: vdso: Fix build of test_vdso_chacha
-Message-ID: <Zswvzq11-0LARaR2@zx2c4.com>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <50cc36936b310d8dd6d7539c552cc8dd84052020.1724309198.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1724657770; c=relaxed/simple;
+	bh=gvY8AH4a88MP1lz2m4OgJjyz6KDbapZwsTzDMYuixg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q9e6f2b3jHBoAH8BpIvMHkHVknrXEDoBEKzh4pEzKhMVQSYALa6l3BR6Z/8N+97rFlIZ1Ye/kM6XUsvrACGrVjcKvfo+fxvW8prd31fqSImTI7l8yosWlSJtmbgqvBn6aMpcOxWj/HEMovetPnfs4nPx0vdXulDiDBBwwqJlCik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=UssJl6wd; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724657731;
+	bh=BHo9Isz2T8wnA4FQQqg3YttItu9Af8Lpgwwo2oZ48CY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UssJl6wdqsO8BmTIvBZeUKUjMZvAScE+J1fpkkKhc3KcYBXE1CLidqQaYCrrXC6dJ
+	 PxuIkgljjw98g6O3oIZH08/UNoDEf73Tt0zFkcinUs9ps/1izE8eogjm7jxtTTHMHc
+	 jA81Dhwu6qBchNh7DA0oIizcMSBHyj4+SewSbpjw=
+X-QQ-mid: bizesmtpsz1t1724657724t649sll
+X-QQ-Originating-IP: uwki6QKLS7//uyngcBsEu/Z1SrjmGyWbJZ5KjC6R5NM=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 26 Aug 2024 15:35:22 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16075421044122579621
+From: WangYuli <wangyuli@uniontech.com>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	tsbogend@alpha.franken.de
+Cc: linux-crypto@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	WangYuli <wangyuli@uniontech.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Guan Wentao <guanwentao@uniontech.com>
+Subject: [PATCH v2] MIPS: crypto: Clean up useless assignment operations
+Date: Mon, 26 Aug 2024 15:35:18 +0800
+Message-ID: <E77DE576D872065A+20240826073518.812454-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <50cc36936b310d8dd6d7539c552cc8dd84052020.1724309198.git.christophe.leroy@csgroup.eu>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Thu, Aug 22, 2024 at 09:13:23AM +0200, Christophe Leroy wrote:
-> Replace -isystem by -idirafter
-> 
-> But this implies that now tools/include/linux/linkage.h is
-> included instead of include/linux/linkage.h, so define a stub
-> for SYM_FUNC_START() and SYM_FUNC_END().
+When entering the "len & sizeof(u32)" branch, len must be less than 8.
+So after one operation, len must be less than 4.
+At this time, "len -= sizeof(u32)" is not necessary for 64-bit CPUs.
 
-Thanks! I got step 1, but didn't figure out step 2, and tried to do
-things the lazy way instead:
+After that, replace `while' loops with equivalent `for' to make the
+code structure a little bit better by the way.
 
--#include <sodium/crypto_stream_chacha20.h>
- #include <sys/random.h>
- #include <string.h>
- #include <stdint.h>
- #include "../kselftest.h"
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2406281713040.43454@angie.orcam.me.uk/
+Signed-off-by: Guan Wentao <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/crypto/crc32-mips.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
- extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+extern int crypto_stream_chacha20(uint8_t *dst_bytes, uint64_t dst_len, const uint8_t *nonce, const uint8_t *key);
+diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+index ec6d58008f8e..3a80b7576ec3 100644
+--- a/arch/mips/crypto/crc32-mips.c
++++ b/arch/mips/crypto/crc32-mips.c
+@@ -77,36 +77,29 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+ {
+ 	u32 crc = crc_;
+ 
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
++#if IS_ENABLED(CONFIG_64BIT)
++	for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+ 		u64 value = get_unaligned_le64(p);
+-
+ 		CRC32(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
+ 	}
+ 
+ 	if (len & sizeof(u32)) {
+ #else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
++	for (; len >= sizeof(u32); len -= sizeof(u32)) {
+ #endif
+ 		u32 value = get_unaligned_le32(p);
+-
+ 		CRC32(crc, value, w);
+ 		p += sizeof(u32);
+-		len -= sizeof(u32);
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+ 		u16 value = get_unaligned_le16(p);
+-
+ 		CRC32(crc, value, h);
+ 		p += sizeof(u16);
+ 	}
+ 
+ 	if (len & sizeof(u8)) {
+ 		u8 value = *p++;
+-
+ 		CRC32(crc, value, b);
+ 	}
+ 
+@@ -117,38 +110,32 @@ static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+ {
+ 	u32 crc = crc_;
+ 
+-#ifdef CONFIG_64BIT
+-	while (len >= sizeof(u64)) {
++#if IS_ENABLED(CONFIG_64BIT)
++	for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+ 		u64 value = get_unaligned_le64(p);
+-
+ 		CRC32C(crc, value, d);
+-		p += sizeof(u64);
+-		len -= sizeof(u64);
+ 	}
+ 
+ 	if (len & sizeof(u32)) {
+ #else /* !CONFIG_64BIT */
+-	while (len >= sizeof(u32)) {
++	for (; len >= sizeof(u32); len -= sizeof(u32)) {
+ #endif
+ 		u32 value = get_unaligned_le32(p);
+-
+ 		CRC32C(crc, value, w);
+ 		p += sizeof(u32);
+-		len -= sizeof(u32);
+ 	}
+ 
+ 	if (len & sizeof(u16)) {
+ 		u16 value = get_unaligned_le16(p);
+-
+ 		CRC32C(crc, value, h);
+ 		p += sizeof(u16);
+ 	}
+ 
+ 	if (len & sizeof(u8)) {
+ 		u8 value = *p++;
+-
+ 		CRC32C(crc, value, b);
+ 	}
++
+ 	return crc;
+ }
+ 
+-- 
+2.43.4
 
-
-Yours is obviously much better, so I'll queue that up instead.
 
