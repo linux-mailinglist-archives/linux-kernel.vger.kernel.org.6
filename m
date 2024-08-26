@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-302258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697C495FBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:36:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EDB95FBC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03533B222BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996B21C22681
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FDA19CCF4;
-	Mon, 26 Aug 2024 21:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59AC19D079;
+	Mon, 26 Aug 2024 21:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vn1Jk7c1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="GlHIqnnH"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F8619ADA3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC93519B3E3;
 	Mon, 26 Aug 2024 21:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724708148; cv=none; b=O9sTgILQWfkx10F/DO7HAd834Tl56Hsov79FDexT25MT2M2HHfGm3WU/nSxBd50GaQPJHoUkZJWfpo9vGXeL7KjjNmtWr0w9mpUjrdGo/9+xokTryuA5BDX5CwrElDxctJuA93uihm2k/TJF4zBIJHvk1IVNFwY+nDH0nvNYO90=
+	t=1724708150; cv=none; b=nzViuQBLH8t/KN1h0laeCrzOiMXDCv+RXy9kivH4IIx2OyxtUVUo9+fpigMGB8oikyieegkxs0dV2R6N7v2ZULIAWhZxosogwRNLDMSBxijW6JuzxDln6/jQtYOeEXlVFZVcBj4gZhoLJsFXsrKsBiiyrOH0f74zOWUfa5ljyzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724708148; c=relaxed/simple;
-	bh=B0lY7JXO7/K86cTfpzQwZAFYbZ1YOJWckC489Vcx160=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WoQG19jJcUP9NeUFYbAGNIh40RsbYheGKIBTT7v1ADBFaz2b0iahAC+LXMik9zZ16fHXuUtXF9b5OPemZ/Z6/BQL1WJuA9tKOMEhMZRaGbb1i99aNLRtVaDQ3FSGE/HpEGGCBQFeOfiLg9jFYlSxh0y1C5V7f7RHyj+etWZB1BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vn1Jk7c1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8AEC8B7BB;
+	s=arc-20240116; t=1724708150; c=relaxed/simple;
+	bh=KWFanSE7a5YD1qySSVxDMrsb9vLrSW3D7bdJrpj+tcE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KjzoXx0/sXuEhv59KH/znBtqPVTvp6Dc7Ik9/zuUGYJR9d+jk3wcwsKu1FxOF9akuHYFDJtQV2uNeA1CPhAFjRPGWrrsVbETg2nq0d1NpGWAizNUQxYCc6kOkObXtI1gtVT2pnZgO/dbYzTsE1ZLJdVePKyMmSE+lsLXW77PUvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=GlHIqnnH; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DA85645CC6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1724708148; bh=qqrB4CtT9Hw69RzlowOexS1vm29yAxh8AIkHouAVxWw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GlHIqnnH1C3iLtsC6/OA+z1r0SIN9p7mNfnFygC2Kl01fqr8sB7p3kPQv5Tmt2Lss
+	 br1wTld4pXrvyie1zmphj7CaWHHMy4VBqsdPZc7sh7/wwxjFuYAlIOPtpoheohYdTk
+	 PHnf8wIohO3v8I2kK07hyCVOVWHic04ErQzjdY5NOStG6YeD3XSHBeeLOpI3dJh2iO
+	 foDwGXPpj9NnM7s2EhS3RmHq8vOmYzQeANsDRpCymy+kKkywwAhPP9nsn4NQXyFoKB
+	 AMGaVjVAACSjH/ABmXhbZi4YBaVe1ltuwYJ0+XLPjFqR6Rph4nQ8smwREyf4JDJk1V
+	 y1Gbtbcu6x9wg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id DA85645CC6;
 	Mon, 26 Aug 2024 21:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724708148;
-	bh=B0lY7JXO7/K86cTfpzQwZAFYbZ1YOJWckC489Vcx160=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vn1Jk7c1QdFLGX+ungEU2HZI4dw2dl1VFfhj0V1/1my3FpIuUR6b9CrAhuv5dOQLK
-	 Tup4E4ftyXEissecXuSylOQ82b5/ht3g2K5nUUOFACh6q2+0RTuG58C8LuWfJCKhgJ
-	 ZkBnSJUsLaniVctABzrKT6nWFBVEgVmi/OQCfPdA8JWfuy8BBUFUbQ5ELeaDaYW42p
-	 RCQkPmZrSgpvkxPar3IsmgyfdZs99rIHNn7dEe/pNHktZWHJeC3FAUTz3LV4hkYDG1
-	 RWTbiGLipKC60O8yPeMz4TQPf3kQZD8JBoHIIlBRYcp+3EpUJSrEwNnxHTlTaD8YOa
-	 ancrPt9TYqQYQ==
-Date: Mon, 26 Aug 2024 14:35:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maksym Kutsevol <max@kutsevol.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Breno Leitao
- <leitao@debian.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
-Message-ID: <20240826143546.77669b47@kernel.org>
-In-Reply-To: <20240824215130.2134153-2-max@kutsevol.com>
-References: <20240824215130.2134153-1-max@kutsevol.com>
-	<20240824215130.2134153-2-max@kutsevol.com>
+From: Jonathan Corbet <corbet@lwn.net>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: regressions@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>, Petr
+ =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+Subject: Re: [PATCH v3] docs: bug-bisect: rewrite to better match the other
+ bisecting text
+In-Reply-To: <74dc0137dcc3e2c05648e885a7bc31ffd39a0890.1724312119.git.linux@leemhuis.info>
+References: <74dc0137dcc3e2c05648e885a7bc31ffd39a0890.1724312119.git.linux@leemhuis.info>
+Date: Mon, 26 Aug 2024 15:35:47 -0600
+Message-ID: <871q2b6k7g.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Sat, 24 Aug 2024 14:50:24 -0700 Maksym Kutsevol wrote:
-> Enhance observability of netconsole. UDP sends can fail. Start tracking at
+Thorsten Leemhuis <linux@leemhuis.info> writes:
 
-nit: "UDP sends" sounds a bit too much like it's using sockets
-maybe "packet sends"?
+> Rewrite the short document on bisecting kernel bugs. The new text
+> improves .config handling, brings a mention of 'git bisect skip', and
+> explains what to do after the bisection finished -- including trying a
+> revert to verify the result. The rewrite at the same time removes the
+> unrelated and outdated section on 'Devices not appearing' and replaces
+> some sentences about bug reporting with a pointer to the document
+> covering that topic in detail.
+>
+> This overall brings the approach close to the one in the recently added
+> text Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst.
+> As those two texts serve a similar purpose for different audiences,
+> mention that document in the head of this one and outline when the
+> other might be the better one to follow.
+>
+> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+> ---
+> v3: (this version)
+> - incorporate a few minor changes after review feedback from Petr
+>
+> v2: https://lore.kernel.org/all/fbeae4056ae8174f454c3865bc45633281bb1b31.1723997526.git.linux@leemhuis.info/
+> - incorporate review feedback from Jonathan
+> - rename to 'Bisecting a regression'
+>
+> v1: https://lore.kernel.org/all/10a565e4ebca5e03a2e7abb7ffe1893136471bf9.1722846343.git.linux@leemhuis.info/
+> - initial version
+> ---
+>  Documentation/admin-guide/bug-bisect.rst | 208 +++++++++++++++--------
+>  MAINTAINERS                              |   1 +
+>  2 files changed, 139 insertions(+), 70 deletions(-)
 
-> least two failure possibilities: ENOMEM and NET_XMIT_DROP for every target.
-> Stats are exposed via an additional attribute in CONFIGFS.
+I've applied this, thanks.
 
-Please provide a reference to another configfs user in the kernel which
-exposes stats. To help reviewers validate it's a legit use case.
-
-> +#ifdef CONFIG_NETCONSOLE_DYNAMIC
-> +struct netconsole_target_stats  {
-> +	size_t xmit_drop_count;
-> +	size_t enomem_count;
-> +};
-> +#endif
-
-Don't hide types under ifdefs
-In fact I'm not sure if hiding stats if DYNAMIC isn't enabled makes
-sense. They don't take up much space.
-
-> +static ssize_t stats_show(struct config_item *item, char *buf)
-> +{
-> +	struct netconsole_target *nt = to_target(item);
-> +
-> +	return sysfs_emit(buf, "xmit_drop: %lu enomem: %lu\n",
-> +		nt->stats.xmit_drop_count, nt->stats.enomem_count);
-
-does configfs require value per file like sysfs or this is okay?
-
->  /**
->   * send_ext_msg_udp - send extended log message to target
->   * @nt: target to send message to
-> @@ -1063,7 +1102,9 @@ static void send_ext_msg_udp(struct netconsole_target *nt, const char *msg,
->  					     "%s", userdata);
->  
->  		msg_ready = buf;
-> -		netpoll_send_udp(&nt->np, msg_ready, msg_len);
-> +		count_udp_send_stats(nt, netpoll_send_udp(&nt->np,
-> +							  msg_ready,
-> +							  msg_len));
-
-Please add a wrapper which calls netpoll_send_udp() and counts the
-stats. This sort of nested function calls are unlikely to meet kernel
-coding requirements.
--- 
-pw-bot: cr
+jon
 
