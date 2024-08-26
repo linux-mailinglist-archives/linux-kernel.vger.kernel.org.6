@@ -1,201 +1,107 @@
-Return-Path: <linux-kernel+bounces-301748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC6395F504
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:27:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A2395F506
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A5D3B215EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:27:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BAD2B22220
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05219193423;
-	Mon, 26 Aug 2024 15:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920B192D76;
+	Mon, 26 Aug 2024 15:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ppOXEFGH"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazolkn19010008.outbound.protection.outlook.com [52.103.20.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhdNq2w8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0991917DB;
-	Mon, 26 Aug 2024 15:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686056; cv=fail; b=u+kdLB+yq172Ivevww37NFK4F2OMeKrPzr+NLWeA4rKTiDAlANC0byI9yF2wUNOD+WlIoC+IKkBFdojorAl+tgBq7utyZlJxJoegH01U0rzRwB1NXFGvrLr5BceMi63DN39VrFUphi8tdGiZ1rNTt6dzcPkwnRfPzqPm7PzPYbk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686056; c=relaxed/simple;
-	bh=9mudKu77TYvx5Wc961AnAqTG5a0YjtyocFHB5JP0a8Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eY2OYWt9j3SkrEU2/3/yUCrSR4bog/OfYfjD9EDhrcYaEpyGtdW3vWgCs1Nuzbt18c4nhHT283NxvGDgsmNxMcID0z7FnurV/p/YeU+BOpRLxYTMq28YvWg5yD/MwCc5zoKJiwq/BzHzyUAS7AmjO0qNPVaj/MPbVX01Yn8hPFg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ppOXEFGH; arc=fail smtp.client-ip=52.103.20.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e9H1+DkuJGmGHZ/DYVqqWfwl9z5r8jNnprrkg4c6iq0JUwBtEjuyFxLozYvUULsbxyQATjTy9TZbR3iRsXGkB16rQ3MkYV0dgnn6OzAblHWuNHXoLPemY4qBdUso4+s2VRFVLhcdtibcTHEHcARn6QTf+DoMokJXfG6jlWQbZqSXlgVcj9AE75JKXCQ4/yVZJR8L/JtIfFNbEzC+HgzAXpVPrZs6JfYyTNtqPHLZbpAIEbuDwjgkTMm0V4dBOqBcdGVTiCG5T//umb5hQ9V2Dmvfk7dvwk4iS6QbcFNskqsm3rJgAfWJFH1/2Yt4lVTiRtmSdrDXoDaVFAkgBPdXNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9mudKu77TYvx5Wc961AnAqTG5a0YjtyocFHB5JP0a8Y=;
- b=ExFHqENbnnJNTaOXAjs1KJcXozIOrj2dAvWN4M1eh2ViwcmtNmFPS1Gg8QyDbJt+i0IkJoRbQfa9RvRAlRXulrMmBmnTrZAFw3mLUwJoW0dD38zkPTWjc86BikleBmBEUWiDnGefBXsXK0hCNQOpQO3XIyb11p3EtkMgtbpP4VeN2cL5Hb+enWfrOHvLCUSa0fhbi1gEawGcIhToPNxoQhD8zJGGKycfArAHpvGOWh18xyKusLcprvxZ1ZiePZwpocCclls+ozHpOFKcSU3NEH50JYW11t1JwHWP6NrMmLgkvhlQgRH/WVn8bHucMMaEPZYvAR7dahde5BwabvmPQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9mudKu77TYvx5Wc961AnAqTG5a0YjtyocFHB5JP0a8Y=;
- b=ppOXEFGHV3buaLu2/nLC4WFqLsojJNWM45+2Iuetxg3/8MyohhmxqabwihWCqLb27SxYCcGgst2pe8yvlQMXdY4EC09NL66P+xCHiYyywmRf6VvPuvmLtC7UtX34lBt/9un5OwvTpoig/SnUD1ttCq+AXJy5OHnkO4PAK8jE/5ZIGPkpgwsJmZvf+W2vyRi0TQMQArpPB8OhDT8OTUmwp9qvQJkgaEo4CdclWlZ7bwz+BGL6BR9TZ6dHojM3m1eRdphW9ciwytZDaAtcrOre0JrxMm6ePn0eH8IgNDGcisZ3FAES2A7MCn6frfFxUOm/FFAd3THOG4hgpQYsNtNmcQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB7397.namprd02.prod.outlook.com (2603:10b6:510:1d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
- 2024 15:27:30 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Mon, 26 Aug 2024
- 15:27:30 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: "kbusch@kernel.org" <kbusch@kernel.org>, "axboe@kernel.dk"
-	<axboe@kernel.dk>, "sagi@grimberg.me" <sagi@grimberg.me>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "m.szyprowski@samsung.com"
-	<m.szyprowski@samsung.com>, "petr@tesarici.cz" <petr@tesarici.cz>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
-Subject: RE: [RFC 0/7] Introduce swiotlb throttling
-Thread-Topic: [RFC 0/7] Introduce swiotlb throttling
-Thread-Index: AQHa9MJuV8zHlUlbFEOu4P5Y/AqjALI2EkUAgAOYOYA=
-Date: Mon, 26 Aug 2024 15:27:30 +0000
-Message-ID:
- <SN6PR02MB415753359387FBC8977A9598D48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
- <20240824081618.GB8527@lst.de>
-In-Reply-To: <20240824081618.GB8527@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [UtZ6MtBY5zmwwb3JLrbRfcbWjbAk8MCv]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7397:EE_
-x-ms-office365-filtering-correlation-id: a84d859a-14a9-4ec5-263a-08dcc5e399a6
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|19110799003|15080799006|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- WJglet5RGfQv8F13bmg4tfifFr9cwxwF3+HorjqEmA5D+1IbQA6sORsf/tZGpEXQ+ba+69R70PDLBL67LntHSXd6+WBIAC4KeurVYO5oThCpujGAloIjuLkunibp2P/L4MxIdW1GTfW59tsBCz2wwZpij8mUdIbYMaZM8kfvxssEBPvvWsY//OHcDP6s2cL5N78yIiWkP4v3r+LSRNwRFx58GLaTfT0+QpXPedZO2AjAZXWEL/9LageoMjXDfVtUa+UVI9bLo7gfl0fudbd6GlN39IdRrFPwWwXk8t1KXwzawZwUQgO25LV7Da4aK6xgbmUmVEeIqZcJLQc8HpJXlzRNhitBCL8uqoliYLK+DRrmlwbUiRgsjhAgoNgt13xYGpurGsWbUVfF3985l9sXcOuWxMkAETmx6BG+RJW6GaySG8uxeKaurXgKtAddH3FmVbfBSRbSzd1cjdAy78zZekx4HMvMdh9goYrPuVoflZ9vxgic8Tco0HAsFpRH2O5kZfry9c+HXTe0NFPh0kVVB86G2X9oD03h1M9XRMefC14kpJbfiSLW9iSN1G14Oek6kkmqKHXE01mxdaOJB0t9QJoyu8JSZrG8JQvoaR6ZxyZzRTWAf+LwYwTc4S2dnIYPe479FOSj5CZn+pp3AMd1pvykRWFElUgAcSuQdM3gq58drLalT+qKzu50rAj5LDUw
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?zVwWPjr7Xu3tar2V88mq5duC4vH9rcG7nn1CadxsEJY3DlmnrIgp+AvyB7G7?=
- =?us-ascii?Q?V5lFan8vnhaMTXBwHej5SzQLuGGUSmxskUUOVGo4QvhXKikvAWLxwoQpj2h4?=
- =?us-ascii?Q?UbRcglcJyljtb/cqdM+A/Ul9s81PGe0OYJyawxoyQvrm8bi9mulAY8sAFzCE?=
- =?us-ascii?Q?ELr+2cnfWVUB/CaYg9KixY20Pw7GdTS6eu46j3ROSl/89MZWh77Plh+NqvZ1?=
- =?us-ascii?Q?FrDMuCZvFm4gfqyCAy8OF9FDiQUKkABYRvYWM4J8yIWD5CwS9yUlNtXqAgOw?=
- =?us-ascii?Q?ZGHpgZEfWvThvU1D1eNo5khVt1eEm1vNSWxVumSp0zqf4RSSWXaGAA86Y+Vd?=
- =?us-ascii?Q?UvrdtMzT+GZzAA+nhL0R4pQ3Yyoyd2QuG49dBn4RZTkL+cVA1shT/NkYAo6e?=
- =?us-ascii?Q?clBD3nRTYl0S/DzB+ZjIILQmkVo+DDpL6A2tNSzEYNfeUF0nXnUfKHVSsW6L?=
- =?us-ascii?Q?nOjSl0haxN11s4ttrRAiCNH9lmCvRES7/rAMKzTyACe4ADeP7CO/6zTMW8BS?=
- =?us-ascii?Q?Qv5Qm1KjTyBte8hwxCCbAaLN+6VpOw7dv2ilrvGlV8IVZqpiHbiqt+EJTXuY?=
- =?us-ascii?Q?MkcEJ+w638dEq8d5wnbE5G8BzGLvIpbSbSm1j8EXbCY47kdWlxacUap/5pKZ?=
- =?us-ascii?Q?oCYivpiJEQg6ELgl7KTP3WH4U/AtNDbMggHNs8bSD7+Y0qloQNqMEcyJsV49?=
- =?us-ascii?Q?ULSbpMEoVTh3pGcTgsfX8cH3tiMk8unbCdyNSZ6NyyPo4DLnMkuyYD6JFcFW?=
- =?us-ascii?Q?BPz+hp74yNhd10jvCLjLA7kzjf8Y8aH3oL8J9LzT4Db0bEhmQuxzpBEqpMjH?=
- =?us-ascii?Q?d0bjQn0gPS2WNd5xd+PCrtgblQ71/Y50o1chBsVX/qNxqSxGD4UPTMG+29cN?=
- =?us-ascii?Q?edW6WPai7pzJbjxoiEs3sbMAwTwDAoEYEdMfwmB1AhYZIeVYaEd6yN079+wr?=
- =?us-ascii?Q?uyRA0r3Vk6mo6DVEH4qG/5BQYl+Y+gEFt3GW8lXCUZGLOsTM5w0Y+ccdTN0q?=
- =?us-ascii?Q?vSAeAsyd4lN0kso4MTpxdIJjUPfE77vNmGufd/dPv5M+6/Mp/BcrPDAqBlyq?=
- =?us-ascii?Q?gUclGKpDDnNEytJ6+Bpr53fhaSkvC9fVrabhJOnUNIJIaesYi7R8Pk3HkF1B?=
- =?us-ascii?Q?rjVegzRdPCzwmMrawCliDK7Im/L68DaMGAmj0xM1xVeor0/lszosAZy5f7Ft?=
- =?us-ascii?Q?6y/VRbZi37JItHLZl0KtNxYT9V8eDlys/9URo/1zwRiipdxOqlwEhH5Zzfs?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC231925AC
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724686077; cv=none; b=YUQFGwpCbOzFGjrR+JyqgLAD3FM1R++f1UM4QlHOYBH1NPJpW5gH+AytmDs+ftvu3J5gIjseRn9tYa9SH9U8p9XHGSCDyEcjYbvKI+O31/33EYMWhDJGZUY6ngyX5PyvHXebw3uOsvMbDAEHaVS7sGaLgo4IS8ENV9cURngHLOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724686077; c=relaxed/simple;
+	bh=PlDtwrmO67SXZSYso96R6JNkvkJPe+Hy8yQ+q3sdLRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hgcsS5wUC+w+WiL9pGMMEYUKuWITJOewTUCTeFnJlx6ssyKLU51Xcxap8gIa9VEWZTsWPj8Q+UEm5f6hL8Zlz13ZrqfvMKqc/BzObdU1YE8iLn/P9YqA5yr/VYHph0BhFjHLcw20qtR81l3OYhQmvskZGZ/iOquEk3MUjCSc0sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhdNq2w8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20353e5de9cso375985ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:27:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724686075; x=1725290875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PlDtwrmO67SXZSYso96R6JNkvkJPe+Hy8yQ+q3sdLRs=;
+        b=PhdNq2w8IFES8DNGV+4vvZlqRUFVbuCC4krQwtSDc6rW/7qQRI83ccH3pIJ6I3greK
+         kkeJ/j3y8V93z9UyPEmEEK8Bqh84sjwQ/STw9K3shhIixer+tvLDLodmRKZ99V33lV9R
+         kXasYLV2hXtUPIpQX7P4sG8I4yr4dSDx+6VCtjpPjzaQigOV3G7xC+vybXrUYv4mRHho
+         2wWSWFU0CzU2w8kQAn0PIh4qt/k8244R/Gi79BLynoc3LakzHa9ICo3XGWOCRiXcf3ww
+         boF+Hg+i0cnC0abB0niqYO+36k64745V4h8Z+CakNSXvSgs9z3Ydg/Ju0FAkVZTF6z9R
+         6daA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724686075; x=1725290875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PlDtwrmO67SXZSYso96R6JNkvkJPe+Hy8yQ+q3sdLRs=;
+        b=NTyrYEiwh6DLcJh01mCLPrNAFm3dcU3AwuI/t4dYk6YaiaQ6K2mxmjBh6eDISI4Qqg
+         8R1AAndDdGWHipLgTYRrRznDeTsqhWXXq237F/h0c/QOFOU3mqd8GaPkeeI+0O/S7l3j
+         urs/rWyMqgzr4GBiihrV6KyXvQ+bfqogS1oklzDl9odc849vrF1dKbNisb0OyqQnMHdh
+         5WateIvEKnbPrtZLo9Y7OabyLbsi9fZCMSen9Jq3ytNryqx6xb1DnlcdY2LN5/66IumM
+         rV0IDczVwsN53tyvqCE02O+7+VX03Z+Pu2DhoAPCE5dCXwIxr8o4UJjiz+sLGDHOJNh7
+         hxbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhyUpckOszoP/gOyna/dIS7Pv9Yk/ghyqFQ7rA6azkVoNF6+XGHiBkdzWXY/wZ7SZvXNo6elq6j7fmiE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+rQA4zvpU/357jYqsDxjbQ6NebGxVmHKBKXaNozjP/uw3eTy3
+	NNe1MdXAWHVIC2xLUp/1KMMAkV1Yu/5p1vFDtsI8e7qL9oGvLWdocrGCJEXUWG792RNqYhnPtnQ
+	Zhi75uJy+UD272NGG+IxZerOV5sxDrBIVKeKE9F0jPwC/TtHvhLYt
+X-Google-Smtp-Source: AGHT+IGN5DBP24a/7mKtrKEqJPn+N+T83aqJq5dqW7XBD+MjYknWEHtMVhWrRiyu7FJVUAAEzvhWCOIEtivgIaOV1DY=
+X-Received: by 2002:a17:902:d4c8:b0:202:51e0:92cf with SMTP id
+ d9443c01a7336-203b6c24ec6mr4628665ad.1.1724686074817; Mon, 26 Aug 2024
+ 08:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a84d859a-14a9-4ec5-263a-08dcc5e399a6
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2024 15:27:30.5339
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7397
+References: <20240813213651.1057362-1-ak@linux.intel.com> <Zstiry-K_v51oDC4@tassilo>
+ <ZsyR4eQr8X-q2X28@x1>
+In-Reply-To: <ZsyR4eQr8X-q2X28@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 26 Aug 2024 08:27:43 -0700
+Message-ID: <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/4] Create source symlink in perf object dir
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Christoph Hellwig <hch@lst.de> Sent: Saturday, August 24, 2024 1:16 A=
-M
->=20
-> On Thu, Aug 22, 2024 at 11:37:11AM -0700, mhkelley58@gmail.com wrote:
-> > Because it's not possible to detect at runtime whether a DMA map call
-> > is made in a context that can block, the calls in key device drivers
-> > must be updated with a MAY_BLOCK attribute, if appropriate. When this
-> > attribute is set and swiotlb memory usage is above a threshold, the
-> > swiotlb allocation code can serialize swiotlb memory usage to help
-> > ensure that it is not exhausted.
->=20
-> One thing I've been doing for a while but haven't gotten to due to
-> my lack of semantic patching skills is that we really want to split
-> the few flags useful for dma_map* from DMA_ATTR_* which largely
-> only applies to dma_alloc.
->=20
-> Only DMA_ATTR_WEAK_ORDERING (if we can't just kill it entirely)
-> and for now DMA_ATTR_NO_WARN is used for both.
->=20
-> DMA_ATTR_SKIP_CPU_SYNC and your new SLEEP/BLOCK attribute is only
-> useful for mapping, and the rest is for allocation only.
->=20
-> So I'd love to move to a DMA_MAP_* namespace for the mapping flags
-> before adding more on potentially widely used ones.
+On Mon, Aug 26, 2024 at 7:32=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Sun, Aug 25, 2024 at 09:58:23AM -0700, Andi Kleen wrote:
+> > Arnaldo,
+>
+> > can you please apply the patchkit? This fixes a regression.
+>
+> First one was applied, was letting the others to be out there for a
+> while, I thought there were concerns about it, but I see Namhyung's Ack,
+> so applied.
 
-OK, this makes sense to me. The DMA_ATTR_* symbols are currently
-defined as just values that are not part of an enum or any other higher
-level abstraction, and the "attrs" parameter to the dma_* functions is
-just "unsigned long". Are you thinking that the separate namespace is
-based only on the symbolic name (i.e., DMA_MAP_* vs DMA_ATTR_*),
-with the values being disjoint? That seems straightforward to me.
-Changing the "attrs" parameter to an enum is a much bigger change ....
+Can we not apply this? See comments on the thread. Basically we're
+committing to supporting hard coded metrics, aggregation and unusual
+period patterns in a way specifically for this feature and as attested
+by its brokenness nobody cares. The test ensures the feature can't go
+away. The feature should go away.
 
-For a transition period we can have both DMA_ATTR_SKIP_CPU_SYNC
-and DMA_MAP_SKIP_CPU_SYNC, and then work to change all
-occurrences of the former to the latter.
-
-I'll have to look more closely at WEAK_ORDERING and NO_WARN.
-
-There are also a couple of places where DMA_ATTR_NO_KERNEL_MAPPING
-is used for dma_map_* calls, but those are clearly bogus since that
-attribute is never tested in the map path.
-
->=20
-> With a little grace period we can then also phase out DMA_ATTR_NO_WARN
-> for allocations, as the gfp_t can control that much better.
->=20
-> > In general, storage device drivers can take advantage of the MAY_BLOCK
-> > option, while network device drivers cannot. The Linux block layer
-> > already allows storage requests to block when the BLK_MQ_F_BLOCKING
-> > flag is present on the request queue.
->=20
-> Note that this also in general involves changes to the block drivers
-> to set that flag, which is a bit annoying, but I guess there is not
-> easy way around it without paying the price for the BLK_MQ_F_BLOCKING
-> overhead everywhere.
-
-Agreed. I assumed there was some cost to BLK_MQ_F_BLOCKING since
-the default is !BLK_MQ_F_BLOCKING, but I don't really know what
-that is. Do you have a short summary, just for my education?
-
-Michael
-
+Thanks,
+Ian
 
