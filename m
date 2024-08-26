@@ -1,110 +1,198 @@
-Return-Path: <linux-kernel+bounces-300854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E11A95E94C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA83495E956
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECEA1F214AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475F31F21787
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F784A31;
-	Mon, 26 Aug 2024 06:55:04 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7709581742;
-	Mon, 26 Aug 2024 06:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AB386252;
+	Mon, 26 Aug 2024 06:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VRVsNonU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9137583A06
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655304; cv=none; b=OzKjDQBgvLWMHKFNAh0R7wRlb//OOZhnFJx/LousFxdewWb6nbhQrKN9+F2srD9tFOGP/RUkDmkpFwlYyyzl0yXvoqLqRUncXY/bowYz/CtqkDOVlXsQAx0vFpxuVQcwieIxOEMnA9JpwaWq3vIlKRDQ+5Edq8JM+NuaKU8XFBQ=
+	t=1724655333; cv=none; b=Ioo6xcKb+shXfbKzpebTbzb8SciE+s1PHcLIUS27pfKLPC8GiS9E2iLFYv1xt1InhtU3t3zEn3+qmFdMisT8c5grWPi5wAd96Y0w0Faf6lBlQXwZmYpJk6Kc7jeXBzwqq4nYtb2Zvaq/53AqDGNzL/uO5y1YKF2NOKuIbECd4os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655304; c=relaxed/simple;
-	bh=TNAB5I97eN+IOjitMnU+QdfY6Bt4DsWvWrLOVhlZJmw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=t4XbZqJzJLRGpJsylCvXt1ETwuktGBK28aUcJLql8tx7SgC2nq/s3m5sQMF7KOmNSK1hJZ8tLn4pCfv+mw4MvqQ7/HaXa0HEQpBOHCNm/J7T/z7E/yra9qQX5HpJCkW2DtkdAJbbGd+qWmod4kpay44p55Pu9b45Yroz1thZDQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8BxKurDJsxm3SMgAA--.908S3;
-	Mon, 26 Aug 2024 14:54:59 +0800 (CST)
-Received: from [10.20.4.132] (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMBxsuHDJsxmGq8iAA--.41059S2;
-	Mon, 26 Aug 2024 14:54:59 +0800 (CST)
-Message-ID: <fb0ddbe0-8613-40ac-a3fb-9e544c50088d@loongson.cn>
-Date: Mon, 26 Aug 2024 14:54:59 +0800
+	s=arc-20240116; t=1724655333; c=relaxed/simple;
+	bh=QYLmQ33xF9IhHkHlckYjtaDgAb8yn61cdSbD9bi4KjQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rE/GF7xZRS0bz0h20y+/4Zu04c4yDkKMyuNh5exPUOPCgTkGXn3hrcJqaaAdHll2N6crMJBACerAGNwklhW2aF9qmNOMV8z1MS4CHUg2hpH1KKMczK8fXg5JrmMjlLmglUOOGGR7EAemnsNWvt86pmXklefpfsxzxyij3kUS34s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VRVsNonU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724655330;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O2z2TGSU/AHVRPl6zHGllpDM2MIUry+mfdVEnD5XzqM=;
+	b=VRVsNonUPf69gF9USxt58NZ7PWjxfnXLzRkIKtJZ71Ne8E6JRbfdZrtBFEQyVeUljX0pe+
+	zIphCoMpeynUbCvC1vcd0G0BRmrnDge0+yuHCq5NWNTsXhUNLlsa0XJR/YRdTbgE9mvSxe
+	9tK1YH4To5BVfpB2KNeB0xzEewFGoZM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-4_t_Hv_LOC6PGSvM7RDmRg-1; Mon, 26 Aug 2024 02:55:27 -0400
+X-MC-Unique: 4_t_Hv_LOC6PGSvM7RDmRg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42b929d654bso9742585e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 23:55:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724655326; x=1725260126;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O2z2TGSU/AHVRPl6zHGllpDM2MIUry+mfdVEnD5XzqM=;
+        b=WR+Wu3TtucGspXbXPQruqIPqix/TR1szilDJx9UXpc8vmFIOZMFywYBeEQZRZkVJV3
+         /PiAPMg5ZfYwoHdvWWMpA1X/M6+1U0hN7ANbj8pNlOoWqo91nykf3GcPdTtF62oHy+9t
+         TUs6YS09jBA/FC+hdrR2dgMJx4RKdavGfU9o9avqXH90Co5nxY5qN74ISNmwQQiJc5J2
+         Hn5yPRIWx7wIGBA370iNufM7TRHDpoqEFRrUPt1vTpneUh/vOkT6gRZI9BbAeTrxxjmd
+         VXqGxIlT+4irpRxYbN8VXZXfg/52HjESI8ycGJjS9106SvzwJEN3UPobdxBetjqqKG8o
+         +wyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqGbMbWOtngGPD75P/WsdhelVhQQKp+KeRGfhKc/nXN1T8o3gRVBHfzfoKIlsC1JlhmvWDSjIMZcHdEOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiH1ow7ApiL8h2e99muYANr1so6twkSqu3ttegtzdsYOShv6/K
+	iM6sLLvktbUllRMpjiX7Dv4MmjIS4EIDXct0PRHnn6XFxDGjNhOb5dlCbdjO0piHEkjc9l2jd2o
+	KUCFYa3P/Mk4PFFB2KP11CZ2B2WM0BvjnxM/v1iE3JFh45oQkvu8AABSV/mF3vQ==
+X-Received: by 2002:a05:600c:3b05:b0:428:1d27:f3db with SMTP id 5b1f17b1804b1-42b8925903bmr48419615e9.35.1724655326195;
+        Sun, 25 Aug 2024 23:55:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDbFRllMEQMy18KUHdwX+H4HgEvRwxNEXxmAF22JEUYmhjpbjXAt/FXNy3VJHqD5ffhjLW9Q==
+X-Received: by 2002:a05:600c:3b05:b0:428:1d27:f3db with SMTP id 5b1f17b1804b1-42b8925903bmr48419155e9.35.1724655325664;
+        Sun, 25 Aug 2024 23:55:25 -0700 (PDT)
+Received: from dhcp-64-164.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef81777sm178404725e9.27.2024.08.25.23.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2024 23:55:25 -0700 (PDT)
+Message-ID: <23f1b79be57f1a4d6ce0806fa149d687c2c6d275.camel@redhat.com>
+Subject: Re: [PATCH v3 7/9] vdpa: solidrun: Fix UB bug with devres
+From: Philipp Stanner <pstanner@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: alexandre.torgue@foss.st.com, alvaro.karsz@solid-run.com,
+ andy@kernel.org,  axboe@kernel.dk, bhelgaas@google.com, brgl@bgdev.pl,
+ broonie@kernel.org,  corbet@lwn.net, davem@davemloft.net,
+ dlechner@baylibre.com, dlemoal@kernel.org,  edumazet@google.com,
+ eperezma@redhat.com, hao.wu@intel.com, hare@suse.de,  jasowang@redhat.com,
+ joabreu@synopsys.com, kch@nvidia.com, kuba@kernel.org, 
+ linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-block@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, mcoquelin.stm32@gmail.com, 
+ mdf@kernel.org, mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+ richardcochran@gmail.com, stable@vger.kernel.org, trix@redhat.com, 
+ u.kleine-koenig@pengutronix.de, virtualization@lists.linux.dev, 
+ xuanzhuo@linux.alibaba.com, yilun.xu@intel.com
+Date: Mon, 26 Aug 2024 08:55:22 +0200
+In-Reply-To: <81de3898-9af7-4ad1-80ef-68d1f60d4c28@wanadoo.fr>
+References: <20240822134744.44919-1-pstanner@redhat.com>
+	 <20240822134744.44919-8-pstanner@redhat.com>
+	 <81de3898-9af7-4ad1-80ef-68d1f60d4c28@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>
-Subject: Re: [PATCH v3 3/3] LoongArch: Update dts to support Loongson UART
- driver.
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, p.zabel@pengutronix.de, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- loongarch@lists.linux.dev
-References: <20240826024705.55474-1-zhenghaowei@loongson.cn>
- <20240826024705.55474-4-zhenghaowei@loongson.cn>
- <gtbaqcnk4g3f4achlyiixu2bbb2rxoxoitbltqxavexjoyqxlf@furbr4zsirkz>
-Content-Language: en-US
-In-Reply-To: <gtbaqcnk4g3f4achlyiixu2bbb2rxoxoitbltqxavexjoyqxlf@furbr4zsirkz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxsuHDJsxmGq8iAA--.41059S2
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEBBGbLHpsHPQAAsU
-X-Coremail-Antispam: 1Uk129KBj9xXoWrtw4rtF47ZFWruryxXrW8GrX_yoW3Zrc_KF
-	yDKw1qgw18GrWfXw4aq3W3Aa9Ig340y3Z5GrW0vw1S9343tr9Fkr4kAF95ua43WFZF9FWF
-	9r1rGw1UCr1fGosvyTuYvTs0mTUanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
-	WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
-	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2
-	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jz-eOUUUUU=
 
+On Thu, 2024-08-22 at 16:34 +0200, Christophe JAILLET wrote:
+> Le 22/08/2024 =C3=A0 15:47, Philipp Stanner a =C3=A9crit=C2=A0:
+> > In psnet_open_pf_bar() and snet_open_vf_bar() a string later passed
+> > to
+> > pcim_iomap_regions() is placed on the stack. Neither
+> > pcim_iomap_regions() nor the functions it calls copy that string.
+> >=20
+> > Should the string later ever be used, this, consequently, causes
+> > undefined behavior since the stack frame will by then have
+> > disappeared.
+> >=20
+> > Fix the bug by allocating the strings on the heap through
+> > devm_kasprintf().
+> >=20
+> > Cc: stable@vger.kernel.org	# v6.3
+> > Fixes: 51a8f9d7f587 ("virtio: vdpa: new SolidNET DPU driver.")
+> > Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > Closes:
+> > https://lore.kernel.org/all/74e9109a-ac59-49e2-9b1d-d825c9c9f891@wanado=
+o.fr/
+> > Suggested-by: Andy Shevchenko <andy@kernel.org>
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > ---
+> > =C2=A0 drivers/vdpa/solidrun/snet_main.c | 13 +++++++++----
+> > =C2=A0 1 file changed, 9 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/vdpa/solidrun/snet_main.c
+> > b/drivers/vdpa/solidrun/snet_main.c
+> > index 99428a04068d..67235f6190ef 100644
+> > --- a/drivers/vdpa/solidrun/snet_main.c
+> > +++ b/drivers/vdpa/solidrun/snet_main.c
+> > @@ -555,7 +555,7 @@ static const struct vdpa_config_ops
+> > snet_config_ops =3D {
+> > =C2=A0=20
+> > =C2=A0 static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet
+> > *psnet)
+> > =C2=A0 {
+> > -	char name[50];
+> > +	char *name;
+> > =C2=A0=C2=A0	int ret, i, mask =3D 0;
+> > =C2=A0=C2=A0	/* We don't know which BAR will be used to communicate..
+> > =C2=A0=C2=A0	 * We will map every bar with len > 0.
+> > @@ -573,7 +573,10 @@ static int psnet_open_pf_bar(struct pci_dev
+> > *pdev, struct psnet *psnet)
+> > =C2=A0=C2=A0		return -ENODEV;
+> > =C2=A0=C2=A0	}
+> > =C2=A0=20
+> > -	snprintf(name, sizeof(name), "psnet[%s]-bars",
+> > pci_name(pdev));
+> > +	name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-
+> > bars", pci_name(pdev));
+> > +	if (!name)
+> > +		return -ENOMEM;
+> > +
+> > =C2=A0=C2=A0	ret =3D pcim_iomap_regions(pdev, mask, name);
+> > =C2=A0=C2=A0	if (ret) {
+> > =C2=A0=C2=A0		SNET_ERR(pdev, "Failed to request and map PCI
+> > BARs\n");
+> > @@ -590,10 +593,12 @@ static int psnet_open_pf_bar(struct pci_dev
+> > *pdev, struct psnet *psnet)
+> > =C2=A0=20
+> > =C2=A0 static int snet_open_vf_bar(struct pci_dev *pdev, struct snet
+> > *snet)
+> > =C2=A0 {
+> > -	char name[50];
+> > +	char *name;
+> > =C2=A0=C2=A0	int ret;
+> > =C2=A0=20
+> > -	snprintf(name, sizeof(name), "snet[%s]-bar",
+> > pci_name(pdev));
+> > +	name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-
+> > bars", pci_name(pdev));
+>=20
+> s/psnet/snet/
 
-在 2024/8/26 14:00, Krzysztof Kozlowski 写道:
-> On Mon, Aug 26, 2024 at 10:47:05AM +0800,zhenghaowei@loongson.cn wrote:
->> From: Haowei Zheng<zhenghaowei@loongson.cn>
->>
->> Change to use the Loongson UART driver for Loongson-2K2000,
->> Loongson-2K1000 and Loongson-2K0500.
-> Why?
->
-> That's what commit msg should explain.  This is not bisectable and
-> breaks users without any reasonable need/explanation.
->
-> Best regards,
-> Krzysztof
+sharp eyes ;)
 
-I got it, and I will provide detailed explanations like this:
+Thx,
+P.
 
-We have provided separate UART drivers for ls2k0500,  ls2k1000, and
-
-ls2k2000, which solves the issue of the full-featured serial port being
-
-unusable. Additionally, we have implemented fractional division
-
-functionality for ls2k2000.
-
-
-Best regards,
-
-Haowei Zheng
+>=20
+> > +	if (!name)
+> > +		return -ENOMEM;
+> > =C2=A0=C2=A0	/* Request and map BAR */
+> > =C2=A0=C2=A0	ret =3D pcim_iomap_regions(pdev, BIT(snet->psnet-
+> > >cfg.vf_bar), name);
+> > =C2=A0=C2=A0	if (ret) {
+>=20
 
 
