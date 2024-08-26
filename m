@@ -1,246 +1,116 @@
-Return-Path: <linux-kernel+bounces-300844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7167A95E929
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:40:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA08D95E900
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53481F211C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 190181C21A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4324C84D12;
-	Mon, 26 Aug 2024 06:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05DF139D07;
+	Mon, 26 Aug 2024 06:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RntaQXJB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7Fq6KpsS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RntaQXJB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7Fq6KpsS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E6kGQxY4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA23E13BC35;
-	Mon, 26 Aug 2024 06:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424C13213C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724654281; cv=none; b=i7WHJ81wECCLUZJXcpUj14c/gq/zhsmSHsg9WDzs0VnJqonzTo4szmwDJmpm8vyu1Z7tmr8aQ2IC/Z9yJRq2X79ZCB6LmBOdVIUvdCVhzOKyDkWztQO74AujxO4GLwIuPmBZBVQfcoR4A2+dFDj/1+iGIquMojL1lucwCoj1vjc=
+	t=1724653955; cv=none; b=QX7maPbzhnekf3dzqTGEwYj6GM+nDaGikWD/e4hPbcsg61/Jozaw3a5JpHPRWqwKE/DAErxmFs/p/tM9CTzaEK1h02ZaH9eTG7/gw0TiiCaXJ2HkD8XWms3I/jpAA3arQKT3fyeGDmPZinFE2gMNPmKaxbFyAHJPOUj5A+bPP/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724654281; c=relaxed/simple;
-	bh=8YiS0NVbpntah7NlxqDrvjOjb4m/yskhqzU/Dcc31JQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nrF4mLB3MYkarSGyu4PeR8P+fUCxuaBZQmGZjSUtAcKAHBVBVx++2q3lbIg4zwB9f5Qlr78itbbOGXcUSoj8y0dUlIM/JleLn8EzLJxMPTj0Y8I/7M90zPQtq5oFqkfjL6aPMyw12eIZfs+Zk5VuDwN6sm0bP5lR+dBGYmlUvxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RntaQXJB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7Fq6KpsS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RntaQXJB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7Fq6KpsS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CDA2721A9F;
-	Mon, 26 Aug 2024 06:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724654277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	s=arc-20240116; t=1724653955; c=relaxed/simple;
+	bh=JESifInmWvZeQwWI8Jn8J0cYeIeDZ3prAXhvDlTsSj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=elWLXqx21V7lcoGoqTtXNkF7LKx1qlYSdLstCafI9ok+qhTJaEks56esFrpgcXBm4XjMpElOuHOKiOC+IJNHBIP3FxR9Xr5AOmEQU9kDn2O9o3tG6+YHh8QfZ3mRdhiMkYj6mnGhiKavdtyUXpK70+WDiUAYgbHEKyzBTRBAMf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E6kGQxY4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724653952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+ZDV6v6nuwIxH+xFPpK0scrQAAGNBkk5VdIq6lbCH+0=;
-	b=RntaQXJBBX+DVQyQCKn2+wVpQEsk0ZAhNxWvGhqKFtKbLcyef+dqrhyHuPXWs1zmfZ8M+x
-	zIk3J+uXZ6orS/q8t51eSuQ74i6Rd0+GWfhImaiJCQXApQrnCewgbSxr8ArmrXI7m+cfb4
-	V8hbX2usSoGSWzkor+WMknP/1i3GFso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724654277;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ZDV6v6nuwIxH+xFPpK0scrQAAGNBkk5VdIq6lbCH+0=;
-	b=7Fq6KpsSIq2jqNgoz+Zg7JBheXbHo97zLZHuoRHzxz4/L1VSHLccsc8C3AFgf5OTZCUK6M
-	MO3IThti+bZ34KBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724654277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ZDV6v6nuwIxH+xFPpK0scrQAAGNBkk5VdIq6lbCH+0=;
-	b=RntaQXJBBX+DVQyQCKn2+wVpQEsk0ZAhNxWvGhqKFtKbLcyef+dqrhyHuPXWs1zmfZ8M+x
-	zIk3J+uXZ6orS/q8t51eSuQ74i6Rd0+GWfhImaiJCQXApQrnCewgbSxr8ArmrXI7m+cfb4
-	V8hbX2usSoGSWzkor+WMknP/1i3GFso=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724654277;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ZDV6v6nuwIxH+xFPpK0scrQAAGNBkk5VdIq6lbCH+0=;
-	b=7Fq6KpsSIq2jqNgoz+Zg7JBheXbHo97zLZHuoRHzxz4/L1VSHLccsc8C3AFgf5OTZCUK6M
-	MO3IThti+bZ34KBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EE8713724;
-	Mon, 26 Aug 2024 06:37:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +pZxCcMizGZkOAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 26 Aug 2024 06:37:55 +0000
-From: NeilBrown <neilb@suse.de>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: [PATCH 7/7] Block: switch bd_prepare_to_claim to use wait_var_event_mutex()
-Date: Mon, 26 Aug 2024 16:31:04 +1000
-Message-ID: <20240826063659.15327-8-neilb@suse.de>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240826063659.15327-1-neilb@suse.de>
-References: <20240826063659.15327-1-neilb@suse.de>
+	bh=JESifInmWvZeQwWI8Jn8J0cYeIeDZ3prAXhvDlTsSj8=;
+	b=E6kGQxY4xYiApSOlxL+UwCD068R0rgW2rO3CvvjD0WWae/XH95I5/A3nD01OT3+h0l+NkD
+	QNOTW9GQ9Pt3Ocp3hGp60v3xX2RNiyAByuxWXnGSMz0pwOf/pgt/rfjZikGNGfdNq8KN5O
+	X0QK3iumZ6bIojjfODaFgcI3atBhU/k=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-2-PZ0onJcXOSWkVKq8E_tslQ-1; Mon, 26 Aug 2024 02:32:31 -0400
+X-MC-Unique: PZ0onJcXOSWkVKq8E_tslQ-1
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-498cdceda97so1701032137.3
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 23:32:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724653950; x=1725258750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JESifInmWvZeQwWI8Jn8J0cYeIeDZ3prAXhvDlTsSj8=;
+        b=JRF11z2vB83qdBKmxYO3vcHKbRQsIGkoVNhcMEUy+WCFXD3j+BtOqLU1TR5491nT1p
+         qT+uCVkbGrwn8CjApws9FBq3O6jo8i3b735tt1vcEmEfpJg18MC4PguF03YaRtkTPSkO
+         bmTiXGy94EP++OtoRX7YywM3j1Qn9FjB2WbLkHtQpXOkh4z1KDwtrgL3HHQ+BygOj86b
+         LMj5u8Ce3hjv+KVayugzskM8y6479CxuhhhUoTmxmT1b5Y1qR41XRDQj7XjZS5OMjz++
+         Jk2Y6BfKArpNDPTlCzMpflcvyUKBYWGJ4KeQyFvf5Ph/2GM7YDeIlDB/DF1XZmObHFSC
+         MAzA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5pSuPbWOuh3RGsLdO9wFPl3bk5jetWVDAe3GVF5hw7BGE1pJRbMGoNfNMobHQHk9kSwquJFbSvkQEToM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAnEz4oyO5/Iqdkc2e3roDdTPwCNy8r5GU+n4tEfjFDT8bf3aP
+	Blxa071jP1PQWUmAo7NupUL8oYCMUyNcVC6O7/4lpUfa9ihYwYbwBRFf52dwZdK3gvgaqZ7rZx/
+	PS3WZ+u24nKblHVXk8CV9BRgfrwQVPY/6iH9MrgDrQBRTPHz7RY3ZLrYWMDIP6KFRHB1NJccaQ7
+	jBAGndmvd6nUozFxOiyzvRb48opg8dPbloxyLR
+X-Received: by 2002:a05:6102:3f0f:b0:498:cca9:8b3 with SMTP id ada2fe7eead31-498f4768d98mr6498546137.31.1724653950683;
+        Sun, 25 Aug 2024 23:32:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwydcuFOVlgtFmwjWlxiF2u2xtiMO6UvY+/x7l/PEgUFs/udwBSaHF5gxdau0K58G8iWDDv631otNdoDoL8Rg=
+X-Received: by 2002:a05:6102:3f0f:b0:498:cca9:8b3 with SMTP id
+ ada2fe7eead31-498f4768d98mr6498530137.31.1724653950260; Sun, 25 Aug 2024
+ 23:32:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240824035817.1163502-1-hch@lst.de> <CACGkMEsK8k=yX2ZytMJQhdZi4PS9-7KLUYmf2oGLu-UvNEYzug@mail.gmail.com>
+ <CACGkMEu83MjTpkSS1mX02ar8RNDc5T4bsd4kkGHYhkH7LZY-wA@mail.gmail.com> <20240826063002.GA30266@lst.de>
+In-Reply-To: <20240826063002.GA30266@lst.de>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 26 Aug 2024 14:32:15 +0800
+Message-ID: <CACGkMEvB20-iwNKepBdJBNAvxN-5+MduxnX6XDbPFsVA4hNz5A@mail.gmail.com>
+Subject: Re: clearly mark DMA_OPS support as an architecture feasture
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, iommu@lists.linux.dev, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-media@vger.kernel.org, virtualization@lists.linux.dev, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-bd_prepare_to_claim() contains an open-coded version of the new
-wait_var_event_mutex().
-Change it to use that function and re-organise the code to benefit from
-this change.
+On Mon, Aug 26, 2024 at 2:30=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Mon, Aug 26, 2024 at 02:27:27PM +0800, Jason Wang wrote:
+> > Actually I meant, we can extend the virtio_config_ops to allow mapping
+> > ops there, then simulator and VDUSE can hook the map ops there.
+>
+> From a quick glance that feels like the right layer of abstraction,
+> although the config part of the name feels wrong at that point.
 
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- block/bdev.c | 49 +++++++++++++++++++------------------------------
- 1 file changed, 19 insertions(+), 30 deletions(-)
+Right, or we could have a dedicated map_ops instead of trying to use
+virtio_config_ops.
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 21e688fb6449..6e827ee02e7d 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -487,10 +487,10 @@ long nr_blockdev_pages(void)
-  * Test whether @bdev can be claimed by @holder.
-  *
-  * RETURNS:
-- * %true if @bdev can be claimed, %false otherwise.
-+ * %0 if @bdev can be claimed, %-EBUSY otherwise.
-  */
--static bool bd_may_claim(struct block_device *bdev, void *holder,
--		const struct blk_holder_ops *hops)
-+static int bd_may_claim(struct block_device *bdev, void *holder,
-+			const struct blk_holder_ops *hops)
- {
- 	struct block_device *whole = bdev_whole(bdev);
- 
-@@ -503,9 +503,9 @@ static bool bd_may_claim(struct block_device *bdev, void *holder,
- 		if (bdev->bd_holder == holder) {
- 			if (WARN_ON_ONCE(bdev->bd_holder_ops != hops))
- 				return false;
--			return true;
-+			return 0;
- 		}
--		return false;
-+		return -EBUSY;
- 	}
- 
- 	/*
-@@ -514,8 +514,8 @@ static bool bd_may_claim(struct block_device *bdev, void *holder,
- 	 */
- 	if (whole != bdev &&
- 	    whole->bd_holder && whole->bd_holder != bd_may_claim)
--		return false;
--	return true;
-+		return -EBUSY;
-+	return 0;
- }
- 
- /**
-@@ -535,43 +535,32 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
- 		const struct blk_holder_ops *hops)
- {
- 	struct block_device *whole = bdev_whole(bdev);
-+	int err = 0;
- 
- 	if (WARN_ON_ONCE(!holder))
- 		return -EINVAL;
--retry:
--	mutex_lock(&bdev_lock);
--	/* if someone else claimed, fail */
--	if (!bd_may_claim(bdev, holder, hops)) {
--		mutex_unlock(&bdev_lock);
--		return -EBUSY;
--	}
- 
--	/* if claiming is already in progress, wait for it to finish */
--	if (whole->bd_claiming) {
--		wait_queue_head_t *wq = __var_waitqueue(&whole->bd_claiming);
--		DEFINE_WAIT(wait);
--
--		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
--		mutex_unlock(&bdev_lock);
--		schedule();
--		finish_wait(wq, &wait);
--		goto retry;
--	}
-+	mutex_lock(&bdev_lock);
-+	wait_var_event_mutex(&whole->bd_claiming,
-+			     (err = bd_may_claim(bdev, holder, hops)) != 0 ||
-+			     whole->bd_claiming == NULL,
-+			     &bdev_lock);
- 
--	/* yay, all mine */
--	whole->bd_claiming = holder;
-+	/* if someone else claimed, fail */
-+	if (!err)
-+		/* yay, all mine */
-+		whole->bd_claiming = holder;
- 	mutex_unlock(&bdev_lock);
--	return 0;
-+	return err;
- }
- EXPORT_SYMBOL_GPL(bd_prepare_to_claim); /* only for the loop driver */
- 
- static void bd_clear_claiming(struct block_device *whole, void *holder)
- {
--	lockdep_assert_held(&bdev_lock);
- 	/* tell others that we're done */
- 	BUG_ON(whole->bd_claiming != holder);
- 	whole->bd_claiming = NULL;
--	wake_up_var(&whole->bd_claiming);
-+	wake_up_var_locked(&whole->bd_claiming, &bdev_lock);
- }
- 
- /**
--- 
-2.44.0
+Thanks
+
+>
 
 
