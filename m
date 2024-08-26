@@ -1,101 +1,92 @@
-Return-Path: <linux-kernel+bounces-300898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF3995EA3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D65C95EA44
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE045B20AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:20:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5B3B215A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A54F12C80F;
-	Mon, 26 Aug 2024 07:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7DD12DD90;
+	Mon, 26 Aug 2024 07:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nMhNPf4Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="T7JLAXHA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A49B84A5C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B190385260;
+	Mon, 26 Aug 2024 07:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724656836; cv=none; b=GeY7kUIdBABNrOm10FgEGuFWe0lv8Dx/rN8AP+rriTUDdInTKZFd5u7AMpiKfzC2g0udmd2h+jlRCSlo2Lcz7Gl6eU69UOEALbKCZkZtDfKM0uOuHlWWugu31ehaJ97C0M2vcTswtmb3xQTNI+3Gg5sKWHonjU2/R35lhQrNJQ0=
+	t=1724656861; cv=none; b=nEdhhwxfb0M4LBmYFIUqe9BaRGnHKq9fKHQsEX08DoPmyRVbPfDHWH31wgdd+HU+pFZDCGM+BMfqq42KDYhIDryeXOb6TwaFAbN92/MqBNpzdJfla5+hAgjodNTgoLOCCEH6Hwwo/Li4mIXMRn1avUPor/OkojXlqELsa9jCZV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724656836; c=relaxed/simple;
-	bh=IrUxmpZGow8T5FQL4KYV6iv1TAPKK39AEpAFrFRxsdc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NsyZ97q2XVshvp5jOP7XKkGCXKjLiGYg1pR7LutQzf/n6yuaJHeevPNBhDCbxZNDnEOAk0Z46Z7lKG0BFvfCcvcrF+YZfA81I4nYuWLn3Nh2Yg73QUk44NrQq5m+raoA9bnyIoUn3UexNS3WG/ZMpaOKiU38aExtA2bnNXRUJJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nMhNPf4Q; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724656835; x=1756192835;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IrUxmpZGow8T5FQL4KYV6iv1TAPKK39AEpAFrFRxsdc=;
-  b=nMhNPf4QKXjOV7IKnXmcKI7o5XhJxfK7sLvsiz2uv+xchwKL/zYqnT5s
-   TxH4h4Hsf4NCiNaYrLF0j0rt8Lcxce6qFr2U6kysmfv48fYJvmrkKDZUo
-   FmU90z3djLfKMa5w0Gigz7GP26d+2q6Suvp3U2BvlY6Jn0bjVmQBih5EW
-   PPgKNorJ4IcgtWqhDdgbD2sP6Z4qEEH6DmmIQ2J51V8k9O2Nh6FDhxRyz
-   d1+JwySiK3zYbDC1kvpb1KPZt5jYBVDMbtpr88HJ4h0RcfXM2uZiWy9iK
-   fwAkjDmHIJv+yXruxieFnHJk8V3imxbPtSvIlmATxBsX0RevFecNIpSxs
-   w==;
-X-CSE-ConnectionGUID: xLPjBTevSQqhFIIhEv6yZA==
-X-CSE-MsgGUID: EzI09nEURBmkOjQXJpS5yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="26940620"
-X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
-   d="scan'208";a="26940620"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 00:20:34 -0700
-X-CSE-ConnectionGUID: UD+BlqXWRi+ik+1ElQrRzw==
-X-CSE-MsgGUID: h8cJo7pwQdS9KVqzdY3FSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
-   d="scan'208";a="93146444"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 00:20:31 -0700
-Message-ID: <92ec8153-60db-4642-be1b-f7bba93d617d@linux.intel.com>
-Date: Mon, 26 Aug 2024 15:20:29 +0800
+	s=arc-20240116; t=1724656861; c=relaxed/simple;
+	bh=qcMCBtUBy484YxdwCvNqNqPvNuQV+qnC3pQD80jjxAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fLNnT3LIimwhJqSei7C4pkQRq5jo1dkQbgE7NS42UgU8D9iQbqCS/vMKjuxBjRBx91eG9Jd2pqLx7BXShsOB6qHZ9v+YKuZ81LUcm+vowdZGUBXoic69dzUw27fG1Q5uF5wbJ04mpDu0H8KhwmTgMC8vCXWFZ543YO/rTAD/6Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=T7JLAXHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09A4C4CC2E;
+	Mon, 26 Aug 2024 07:20:58 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="T7JLAXHA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724656857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cuB0YoGZhYs7TpZj24P+wVPnnaqDYDZ5SUiO+GVRr0s=;
+	b=T7JLAXHAyeqrOhp4YIVWiuAEzZrJfTb/4IQwceTEiw10dy3k75OG3jvzg0ui7cWI/QbD0a
+	mTgPEG086WEzE50bLMn0T16iVBfFqq0GVWR9/O3q5fwHIpbL8STnqrZcDmcRFM/aGrnu9s
+	ZvFsbaSZzLv7aqahzI7qzXfiP7ZSyqI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 80829940 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:20:57 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:20:48 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 01/17] asm-generic/unaligned.h: Extract common header
+ for vDSO
+Message-ID: <Zsws0AkFnFDYo5p6@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <a583352e8ae8f6a9a08f9b84a2c543fe43ef94db.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix incorrect domain ID in context flush
- helper
-To: Joerg Roedel <joro@8bytes.org>
-References: <20240815124857.70038-1-baolu.lu@linux.intel.com>
- <ZswrYlqb4U3Bq6b4@8bytes.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ZswrYlqb4U3Bq6b4@8bytes.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a583352e8ae8f6a9a08f9b84a2c543fe43ef94db.1724309198.git.christophe.leroy@csgroup.eu>
 
-On 2024/8/26 15:14, Joerg Roedel wrote:
-> On Thu, Aug 15, 2024 at 08:48:57PM +0800, Lu Baolu wrote:
->>   drivers/iommu/intel/iommu.h | 2 +-
->>   drivers/iommu/intel/iommu.c | 8 ++++++--
->>   drivers/iommu/intel/pasid.c | 7 ++++---
->>   3 files changed, 11 insertions(+), 6 deletions(-)
-> Applied for -rc, thanks.
-> 
-> Side note: Please send critical fixes as a pull request next time, as I
-> usually do not look deeply into patches for drivers which are actively
-> maintained.
+On Thu, Aug 22, 2024 at 09:13:09AM +0200, Christophe Leroy wrote:
+>  include/asm-generic/unaligned.h | 11 +----------
+>  include/vdso/unaligned.h        | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 10 deletions(-)
+>  create mode 100644 include/vdso/unaligned.h
 
-Yes, sure.
+Do you need to also adjust the `#include <asm/unaligned.h>` inside of
+lib/vdso/getrandom.c to instead read `#include <vdso/unaligned.h>`?
 
-Thanks,
-baolu
+Jason
 
