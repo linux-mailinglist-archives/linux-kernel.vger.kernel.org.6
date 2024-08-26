@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-300917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B8E95EA80
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D2895E9D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0597B1C21139
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F24E28157C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1531D13A258;
-	Mon, 26 Aug 2024 07:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5883A17;
+	Mon, 26 Aug 2024 07:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="Hqw5WX4a"
-Received: from omr08.pc5.atmailcloud.com (omr08.pc5.atmailcloud.com [54.252.57.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7Ec7lIq"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102DE548E1;
-	Mon, 26 Aug 2024 07:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.252.57.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E33E85260
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657561; cv=none; b=NnV8Spukg9MhwuoHMim6KjY5dt6AcAOo+LwnysBW++0Ps8gSmWOKHzOCTJvXyspHj3I6XgsbdQqwy6L3NPhOMEVtr47haKyDU/ao1Z7qRVGUvuog4U+o1j9yH1n3HgLSm45LiJJcuFJdOS1YOMwcbyDlkAglW+EzgIhZdnU9jbo=
+	t=1724655711; cv=none; b=l/be/EuVsKgp7t/KgBmWIotPc0r9D0bsh+6ZozlwJSNwDQ1lQCNuyA8oMpTR4Yq4YyWo3t6jHpVP314vowf0sL4ApKfkZIGAZ9RtM6gGSk5XdXbhnGOU1b8tCBpS4URXOm3FuMKMbM+qpC9qFkE8AaCsE1WhP/90oBey2IRuu7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657561; c=relaxed/simple;
-	bh=iojfrvhf57dCDTJPpOzKfz8icNONcLHcWrQbweA/6EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXwGnMYU/3NI53DMzElrR7eCU2IzLA/l60uoq+lCOVlBihv2XUDJEo0nz7YGDiDpXHgMNgcqyaHUjl3f1hqCWorceRi/tkn3CT1r/5tvVU2vacv4d4a6UbWFVq14e+dVC6GyumYAg0yglVhuwsE17VHpZwy8O564b8/XZbBMJJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=Hqw5WX4a; arc=none smtp.client-ip=54.252.57.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=6tTKEaM8sdRBiX5y2fo+cH7GFaEbUFd+8Q0elSOPc0A=; b=Hqw5WX4asG6LLE
-	qMnfahpCSjBz9bCq2gLidqsBim9VUx1ErvMMazAhWX4PV0mZ86iRV1d58GQTBaGplo+tR0SXfI2TH
-	g2IAb4I0aTdMDsICR3QpbHUaktggeu/dVrEyvvOqptB/0a9fmOAjMlaiFIVmqqENZKGGbuqxn8+Dm
-	zIzG5KEk2A1Uzys7WRu6E8pCMX8XrMFQs199TU7lBRKlZ2FM4as5aCIvfvl1Jb4DdmhGpGB/Hl6YW
-	eu3X4eSRD6jA58iRx32QYJ5NDPLybBIGSqIoMYyn9n4KI+/ReonLE7TNQO/zTkwhPehjI0mS58zw6
-	gQckQNzVVtLLUFntZ83g==;
-Received: from CMR-KAKADU04.i-041f7649e5739ea40
-	 by OMR.i-0e5869b43dfedcea0 with esmtps
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1siTi5-0000xB-Sa;
-	Mon, 26 Aug 2024 07:00:17 +0000
-Received: from [202.125.30.52] (helo=[192.168.0.22])
-	 by CMR-KAKADU04.i-041f7649e5739ea40 with esmtpsa
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1siTi5-0004jR-0q;
-	Mon, 26 Aug 2024 07:00:17 +0000
-Message-ID: <aa4af643-47d3-4c26-8537-d86c1f73af68@westnet.com.au>
-Date: Mon, 26 Aug 2024 17:00:13 +1000
+	s=arc-20240116; t=1724655711; c=relaxed/simple;
+	bh=soBUuYI6ZLm71P7WLh4LC31KMgg0Qjo9i4sEGfUmChc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVgvX+q+17a7GdS0dRUlNPkhipgl1BxbmZNB0kO3tlkAzoDMzoPuIFTHwwmhQwKSO4Th4N6QHIesD3wmPdqHv7o0Cxatl/vE2ivYfQshA0twiMVBeh/U/niQKiCdnjc7rmHdY0MxqpRpTr88hoKSpSQbdsUsGRx0QiRrpLXlDpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o7Ec7lIq; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so3261424b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724655709; x=1725260509; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VG/saQQ5iHGoFIIQv7ApO+CzdPsxdfU6dBnZhjjs/f4=;
+        b=o7Ec7lIquOEvqPIzZ95AyG5/7QiGC25CZ7qBrMStxrSHPgon69j3GJCZUkKM/RH2lz
+         H/vMUq3jKW4b3s9azQBPVGQ8j6jOw20V5JR+bEmmlALtCifk9pHZlfqNa/MVHXeQv6FW
+         b3iCfRQgjUTKA0g5ncUk3ThRsPw8dYqysJhif6Fl2UGg/yYgG38zFn8nsc0v9KhVKwHG
+         z31Lpd1QZnIrxphL5BJ2cxu5tbWVNkRCvc0S7PXP+8hGEja+VTA+X8iGb8pHTUHOKII3
+         ESJ2MV7TNCEBjzeXjle1AhkZ0blbXj4XIVeEmPv60YdNNOdKv/b05Kc2cYPwuj+S7yMs
+         r6Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724655709; x=1725260509;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VG/saQQ5iHGoFIIQv7ApO+CzdPsxdfU6dBnZhjjs/f4=;
+        b=YH65T/v5DEMBGQHmxvITN5FBQBpHpCCUVdh85v0G4QppghR4+9SINZcOOilD2Z608m
+         imxq3BqZToBt9ep777FfqKuplpeA1n2ikleZIktLQE6qmbvXpaGmw8aRFdtbkDAxONew
+         Nv4Q+eCvaTT9wXfMCXtNrc2zOzRWNhGMS1pRbR0SiycNGofJ0E/eIXG8n4hpB6QQUBmU
+         OWFwN5d+wkV/q5ra0pabrTwQfSbwoyTqfFvKFvHdWrf3Nxu+pcjFWY2pLqbnb9vONWzW
+         ZU7lwnphFMR87ggP0tL7zDWP+9PeTiYRKH6mPpt3MkwZV12jeFtzuZd06jfYELnbaN1z
+         xoGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeY3I0kA1STuKHJWBBjk/RwuRge3bDX1a+F7NmmVS2v/vf+Ip9P534exexp0cd0VByfixSQQmigyMO1CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEin9yyWCN0oE+RwVtHlyxBAXvzszYDRVqE1x0qjjT5NwQh2KD
+	sjhCulEspNYeuQx3MXmS9Kbz1KPGAjw8ojKzoSmYwD+fmEiKSWfpvkHOGOM4yQ==
+X-Google-Smtp-Source: AGHT+IFGIR6y4xQ2gR1n7QV7ZGej510G4EA/KhOh+F8qAhhrMZfBhUIO3179V98yc6fCEadsR5WUKg==
+X-Received: by 2002:a05:6a00:918b:b0:70d:2b95:d9cd with SMTP id d2e1a72fcca58-714457d35c7mr9989372b3a.16.1724655707102;
+        Mon, 26 Aug 2024 00:01:47 -0700 (PDT)
+Received: from thinkpad ([220.158.156.53])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434230696sm6740544b3a.10.2024.08.26.00.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 00:01:46 -0700 (PDT)
+Date: Mon, 26 Aug 2024 12:31:43 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: kvalo@kernel.org, jjohnson@kernel.org, linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] wifi: ath11k: Set IRQ affinity hint after requesting
+ all shared IRQs
+Message-ID: <20240826070143.ejd6vuorseogmdfe@thinkpad>
+References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
+ <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
+ <d3ceaead-5619-4413-acce-64567c08fb27@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix AUXV size calculation when
- ELF_HWCAP2 is defined
-To: Max Filippov <jcmvbkbc@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- stable@vger.kernel.org
-References: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
-Content-Language: en-US
-From: Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Atmail-Id: gregungerer@westnet.com.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=H9/dwfYi c=1 sm=1 tr=0 ts=66cc2801 a=7K0UZV/HFv9j2j1oDe/kdQ==:117 a=7K0UZV/HFv9j2j1oDe/kdQ==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=VwQbUJbxAAAA:8 a=8-D65JXZAAAA:8 a=pGLkceISAAAA:8 a=IAVgKGYuzIukzJpoevsA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-Cm-Envelope: MS4xfAEQRyZOM7Ozk2Q30aT2s8+z5DSkcoTMnkpPaNgnkdmyxjHDCcOXh/ehMGleTLiP+Ky4uEwbkGP5ldYJHOzoQ/6yNr65xYwz4W4DbXCnREQN+zb3rj2c Qd64FsCwD8ebrOp90dVjYxlWAzbKDeZwfBftLayC7ZN8re8eamhmSdKAmGM/exVui2lf1wMiZYH5lw==
-X-atmailcloud-route: unknown
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3ceaead-5619-4413-acce-64567c08fb27@quicinc.com>
 
-Hi Max,
-
-On 26/8/24 13:27, Max Filippov wrote:
-> create_elf_fdpic_tables() does not correctly account the space for the
-> AUX vector when an architecture has ELF_HWCAP2 defined. Prior to the
-> commit 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv") it
-> resulted in the last entry of the AUX vector being set to zero, but with
-> that change it results in a kernel BUG.
+On Mon, Aug 26, 2024 at 11:04:41AM +0800, Baochen Qiang wrote:
 > 
-> Fix that by adding one to the number of AUXV entries (nitems) when
-> ELF_HWCAP2 is defined.
 > 
-> Fixes: 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv")
-> Cc: stable@vger.kernel.org
-> Reported-by: Greg Ungerer <gregungerer@westnet.com.au>
+> On 8/23/2024 11:55 PM, Manivannan Sadhasivam wrote:
 
-Feel free to use my gerg@kernel.org email for this.
+[...]
 
-
-> Closes: https://lore.kernel.org/lkml/5b51975f-6d0b-413c-8b38-39a6a45e8821@westnet.com.au/
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-
-Certainly fixes it for all my failing test cases, so:
-
-Tested-by: Greg Ungerer <gerg@kernel.org>
-
-Thanks for looking into it and the fix.
-
-Regards
-Greg
-
-
-> ---
->   fs/binfmt_elf_fdpic.c | 3 +++
->   1 file changed, 3 insertions(+)
+> > The warning is due to not clearing the affinity hint before freeing the
+> > IRQ.
+> > 
+> > So to fix this, let's set the IRQ affinity hint after requesting all the
+> > shared IRQ. This will make sure that the affinity hint gets cleared in the
+> > error path before freeing the IRQ.
+> if you check 39564b475ac5 ("wifi: ath11k: fix boot failure with one MSI vector") you would see that the hint is set before requesting any IRQ for a purpose.
 > 
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index c11289e1301b..a5cb45cb30c8 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -594,6 +594,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->   
->   	if (bprm->have_execfd)
->   		nitems++;
-> +#ifdef ELF_HWCAP2
-> +	nitems++;
-> +#endif
->   
->   	csp = sp;
->   	sp -= nitems * 2 * sizeof(unsigned long);
+
+Ok, thanks for sharing the history. However, commit 39564b475ac5 looks confusing
+to me. It asserts that changing the IRQ affinity changes the MSI vector
+programmed to the device, but I've never heard of that behavior. IRQ affinity
+change is supposed to only change the CPU mask for the IRQ.
+
+For confirming my suspicion, I added the debug print in pci_write_msg_msi() and
+I can see that it is only getting called once during pci_alloc_irq_vectors().
+
+Moreover with my series, WLAN is working fine on QCA6390 with a shared vector:
+
+213:       6766          0          0          0          0          0          0          0   PCI-MSI 524288 Edge      bhi, mhi, mhi, ce0, ce1, ce2, ce3, ce5, ce7, ce8, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EX
+T_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ
+
+So I think the issue fixed by 39564b475ac5 should be reinvestigated.
+
+- Mani
+
+> > 
+> > Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
+> > 
+> > Cc: Baochen Qiang <quic_bqiang@quicinc.com>
+> > Fixes: e94b07493da3 ("ath11k: Set IRQ affinity to CPU0 in case of one MSI vector")
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/net/wireless/ath/ath11k/pci.c | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+> > index 8d63b84d1261..0c22e18e65c7 100644
+> > --- a/drivers/net/wireless/ath/ath11k/pci.c
+> > +++ b/drivers/net/wireless/ath/ath11k/pci.c
+> > @@ -886,16 +886,10 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+> >  	if (ret)
+> >  		goto err_pci_disable_msi;
+> >  
+> > -	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+> > -	if (ret) {
+> > -		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+> > -		goto err_pci_disable_msi;
+> > -	}
+> > -
+> >  	ret = ath11k_mhi_register(ab_pci);
+> >  	if (ret) {
+> >  		ath11k_err(ab, "failed to register mhi: %d\n", ret);
+> > -		goto err_irq_affinity_cleanup;
+> > +		goto err_pci_disable_msi;
+> >  	}
+> >  
+> >  	ret = ath11k_hal_srng_init(ab);
+> > @@ -916,6 +910,12 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+> >  		goto err_ce_free;
+> >  	}
+> >  
+> > +	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+> > +	if (ret) {
+> > +		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+> > +		goto err_free_irq;
+> > +	}
+> > +
+> >  	/* kernel may allocate a dummy vector before request_irq and
+> >  	 * then allocate a real vector when request_irq is called.
+> >  	 * So get msi_data here again to avoid spurious interrupt
+> > @@ -924,17 +924,20 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+> >  	ret = ath11k_pci_config_msi_data(ab_pci);
+> >  	if (ret) {
+> >  		ath11k_err(ab, "failed to config msi_data: %d\n", ret);
+> > -		goto err_free_irq;
+> > +		goto err_irq_affinity_cleanup;
+> >  	}
+> >  
+> >  	ret = ath11k_core_init(ab);
+> >  	if (ret) {
+> >  		ath11k_err(ab, "failed to init core: %d\n", ret);
+> > -		goto err_free_irq;
+> > +		goto err_irq_affinity_cleanup;
+> >  	}
+> >  	ath11k_qmi_fwreset_from_cold_boot(ab);
+> >  	return 0;
+> >  
+> > +err_irq_affinity_cleanup:
+> > +	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+> > +
+> >  err_free_irq:
+> >  	ath11k_pcic_free_irq(ab);
+> >  
+> > @@ -947,9 +950,6 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+> >  err_mhi_unregister:
+> >  	ath11k_mhi_unregister(ab_pci);
+> >  
+> > -err_irq_affinity_cleanup:
+> > -	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+> > -
+> >  err_pci_disable_msi:
+> >  	ath11k_pci_free_msi(ab_pci);
+> >  
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
