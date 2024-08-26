@@ -1,193 +1,104 @@
-Return-Path: <linux-kernel+bounces-302061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D5095F951
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:02:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576D095F953
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84889283FEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A23F1C221D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39FB19923D;
-	Mon, 26 Aug 2024 19:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60EB19AA41;
+	Mon, 26 Aug 2024 19:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NPhetXZS"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dlNqMpg/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21331198E81
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3B6199FB0
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724698889; cv=none; b=q5R6XfTjW2rDLYWQaGGufB2GGUeJJD3kjW99A6dJo0KP+J1pUDgwaoo8HnBLmsnLq/FNiLEIz2t/EtkqyQw9jLtpCgmXOBX9k25xkVzFbvaFnkivuwiGshKqfYS+IEHm5GxdUWTEFpjZ0A6cV2EZdlkQRk+0UQwIzxk+5QFkKNA=
+	t=1724698893; cv=none; b=bInA/S1nCd7A0mECd4FWBTiZwKI8Zi3tI8jvTr9XNHrZemOiD6z60UaLbNwdMJ58SPuc0Md9+KyD8vYBfICPzetgEfOfXh1sWB74sgo+UulkguoWG3pPk8LyEIcthnYQQtUXzi0hlxuNBm0hmN6/iPBG6XY9LkrD5FvhFePvqL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724698889; c=relaxed/simple;
-	bh=Lk53fKPoiIBMswuBHQk1iCnTGbDOOstP2qQpL1OIsUI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ULOXG8mE3HpenzeoqJf7veEggrGvSLqzxq1qvcOhMWvNTnm3WkQQBAVxu+Lnk3l2z6kFZPLX4IoVd6VrPncjnj3N+XlgEdizF9HmAzKUps9pA9+Zxepr5DoDrQbIc56l0pdWWmzUMeqn3CDoNv7a0DGAa8hHTi13FFOTo4jjzJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NPhetXZS; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e164ceba5ffso7783029276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:01:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724698887; x=1725303687; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=wlfMvk8YP/kQvzhrtnMiI9Fgfb/TBne1V0LIqcoAt2M=;
-        b=NPhetXZSynFxAM425vnGM2I3fircKnodtaPlREK1cFYXm8VkYZ6xIgqi/wai2M3LuC
-         /iVK34TFwAn1DKHry+LPTWj6/EeepiqAmiBzfuG5mQo8U2uMeimA6xyiFawCMSGKh+Cp
-         WB3aynb59QgIM7fN8cb4WbbWo9fb/DExtEykCSNJFxk5OhS7Yx/ZE8ZGtRxGmJp2jbHa
-         fROgvXdL1QLrg21n0kKXB8AAYaTQrrp+BxMn/6elHH7z3I2OC0PC24qxkv5c4yygQ3eG
-         95qBBq/yh80M2UCuQ75R1e5Q9Ga9mPz5U+cfyyppvrhsYqo3JVZuTSwPz3rQ0KD5vcd/
-         XX7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724698887; x=1725303687;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wlfMvk8YP/kQvzhrtnMiI9Fgfb/TBne1V0LIqcoAt2M=;
-        b=mLd7d7Kh24uUs9j8wijoYHjuWtcs5WbVxQZe1fPXzQ/HgDhOlpMAYDd8X71Ql23snc
-         USp3K74k7J8jIS1XMyi9CY2B5sLOFLBq1Hr8sZa7U90Wur83H8VVXvmxQcbzzlaVAOAQ
-         EwigqvEUwxoTAULm/0eDWJ8qPlLFYz4NDYbFzFFc6ZQJY04+sl85kss4ZL5cg4+8lMJW
-         GKhgjONK9JpMq67tl88dVXwpUtOUOoBKnnSWFRjbXtwJtSIBviktq12qjdUY0Q5nkz83
-         arSRKALF2NOOfDSU2L2hkV2AE28ofRt82VhpomGVY9HKvQpqDFUR1dw9TufnJYTxkAcc
-         EqBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK29/Ur4BrmQBNvUD9x/ZeqWXoCPqzXyskdV1zC/mLYqmx8jgP7FLWkwMf8OLNPNMTDY3zGyZ00Xkc4lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSb3x+mgut08O+WwjtemRRiPCNMQMP1mLhHsatOJqlo+lJG2zq
-	42kbquTEqzYe89JdoId9kAGq3Hr8YZVBp8VjZTSaWG6X2QSmJcSxAreogqsdYlYU8ZwvmWn1n24
-	vrQ==
-X-Google-Smtp-Source: AGHT+IEBA6sQPWzAdi8CzCDBzNF24Q7LCGUPm+EBp+JckJEMXbI5RjdBt7EA/qQscaFI/JvHbD6L23p5ztg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:fc0d:0:b0:e0b:f69b:da30 with SMTP id
- 3f1490d57ef6-e1a2a9430d2mr615276.9.1724698887108; Mon, 26 Aug 2024 12:01:27
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 26 Aug 2024 12:01:16 -0700
-In-Reply-To: <20240826190116.145945-1-seanjc@google.com>
+	s=arc-20240116; t=1724698893; c=relaxed/simple;
+	bh=RHjKSB/ygYXyjzR13aC6A+xJI3HGP7aMqOez4Yd74Kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ac7NA2f5GtlV00dvIVr4fawQDfd5uqLmcDi97ABCnVj0gFRppeeP05lDwIRINpfGyNMTxCDDQUPj6REk2IYgVL0IJ7LGlZlon1Xf3O0MpqK6JafJ0jrNmA8MUPIo610HKXoU040z84vV2MW1o+Vjmj8bdYtMc9NIW/AimzNFQLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dlNqMpg/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724698890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ffl8OWKNM3UswhIKWAH58Ldi8KXDbvr9GP1qx7dNHBs=;
+	b=dlNqMpg/zHtdemkP5bfvFoH8T7cH71Q1bEAu8coGiAkyRbRn/AHrgBTN6J6bqsVeN565pi
+	/z4vitahumnaRuLWyWdrGlIXms4i9xEFZIqv5H51Al5m5NoRjPh7CL6pzuBTtDq2caHHLu
+	5quwdMo5LVELgA5VdQ79GGzbuxg0hpM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-450-d8yCGcivOfe6CpDXcG1zSQ-1; Mon,
+ 26 Aug 2024 15:01:26 -0400
+X-MC-Unique: d8yCGcivOfe6CpDXcG1zSQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 048721955BF9;
+	Mon, 26 Aug 2024 19:01:24 +0000 (UTC)
+Received: from [10.2.16.157] (unknown [10.2.16.157])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E74FD1956053;
+	Mon, 26 Aug 2024 19:01:21 +0000 (UTC)
+Message-ID: <ce01caf5-e576-4614-b6b8-0206da1a7c49@redhat.com>
+Date: Mon, 26 Aug 2024 15:01:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240826190116.145945-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240826190116.145945-4-seanjc@google.com>
-Subject: [PATCH 3/3] KVM: selftests: Override ARCH for x86_64 instead of using ARCH_DIR
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Sean Christopherson <seanjc@google.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup 0/2] cgroup/cpuset: Account for boot time isolated
+ CPUs
+To: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240820195536.202066-1-longman@redhat.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240820195536.202066-1-longman@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Now that KVM selftests uses the kernel's canonical arch paths, directly
-override ARCH to 'x86' when targeting x86_64 instead of defining ARCH_DIR
-to redirect to appropriate paths.  ARCH_DIR was originally added to deal
-with KVM selftests using the target triple ARCH for directories, e.g.
-s390x and aarch64; keeping it around just to deal with the one-off alias
-from x86_64=>x86 is unnecessary and confusing.
+On 8/20/24 15:55, Waiman Long wrote:
+> The current cpuset code and test_cpuset_prs.sh test have not fully
+> account for the possibility of pre-isolated CPUs added by the "isolcpus"
+> boot command line parameter. This patch series modifies them to do the
+> right thing whether or not "isolcpus" is present or not.
+>
+> The updated test_cpuset_prs.sh was run successfully with or without the
+> "isolcpus" option.
+>
+> Waiman Long (2):
+>    cgroup/cpuset: Account for boot time isolated CPUs
+>    selftest/cgroup: Make test_cpuset_prs.sh deal with pre-isolated CPUs
+>
+>   kernel/cgroup/cpuset.c                        | 23 +++++++---
+>   .../selftests/cgroup/test_cpuset_prs.sh       | 44 ++++++++++++++-----
+>   2 files changed, 51 insertions(+), 16 deletions(-)
+>
+Ping! Any comment on these patches?
 
-Note, even when selftests are built from the top-level Makefile, ARCH is
-scoped to KVM's makefiles, i.e. overriding ARCH won't trip up some other
-selftests that (somehow) expects x86_64 and can't work with x86.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/Makefile     |  4 +---
- tools/testing/selftests/kvm/Makefile.kvm | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 13 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index a9c1d85905d8..30b1a88aea2e 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -6,9 +6,7 @@ ARCH            ?= $(SUBARCH)
- ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
- # Top-level selftests allows ARCH=x86_64 :-(
- ifeq ($(ARCH),x86_64)
--	ARCH_DIR := x86
--else
--	ARCH_DIR := $(ARCH)
-+	ARCH := x86
- endif
- include Makefile.kvm
- else
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 27f4e100c6ac..c8bfd0815a57 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -197,10 +197,10 @@ TEST_GEN_PROGS_riscv += steal_time
- SPLIT_TESTS += arch_timer
- SPLIT_TESTS += get-reg-list
- 
--TEST_PROGS += $(TEST_PROGS_$(ARCH_DIR))
--TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(ARCH_DIR))
--TEST_GEN_PROGS_EXTENDED += $(TEST_GEN_PROGS_EXTENDED_$(ARCH_DIR))
--LIBKVM += $(LIBKVM_$(ARCH_DIR))
-+TEST_PROGS += $(TEST_PROGS_$(ARCH))
-+TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(ARCH))
-+TEST_GEN_PROGS_EXTENDED += $(TEST_GEN_PROGS_EXTENDED_$(ARCH))
-+LIBKVM += $(LIBKVM_$(ARCH))
- 
- OVERRIDE_TARGETS = 1
- 
-@@ -212,14 +212,14 @@ include ../lib.mk
- INSTALL_HDR_PATH = $(top_srcdir)/usr
- LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
- LINUX_TOOL_INCLUDE = $(top_srcdir)/tools/include
--LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH_DIR)/include
-+LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH)/include
- CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
- 	-Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT \
- 	-fno-builtin-memcmp -fno-builtin-memcpy \
- 	-fno-builtin-memset -fno-builtin-strnlen \
- 	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
- 	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
--	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
-+	-I$(<D) -Iinclude/$(ARCH) -I ../rseq -I.. $(EXTRA_CFLAGS) \
- 	$(KHDR_INCLUDES)
- ifeq ($(ARCH),s390)
- 	CFLAGS += -march=z10
-@@ -258,7 +258,7 @@ LIBKVM_S_OBJ := $(patsubst %.S, $(OUTPUT)/%.o, $(LIBKVM_S))
- LIBKVM_STRING_OBJ := $(patsubst %.c, $(OUTPUT)/%.o, $(LIBKVM_STRING))
- LIBKVM_OBJS = $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ) $(LIBKVM_STRING_OBJ)
- SPLIT_TEST_GEN_PROGS := $(patsubst %, $(OUTPUT)/%, $(SPLIT_TESTS))
--SPLIT_TEST_GEN_OBJ := $(patsubst %, $(OUTPUT)/$(ARCH_DIR)/%.o, $(SPLIT_TESTS))
-+SPLIT_TEST_GEN_OBJ := $(patsubst %, $(OUTPUT)/$(ARCH)/%.o, $(SPLIT_TESTS))
- 
- TEST_GEN_OBJ = $(patsubst %, %.o, $(TEST_GEN_PROGS))
- TEST_GEN_OBJ += $(patsubst %, %.o, $(TEST_GEN_PROGS_EXTENDED))
-@@ -267,7 +267,7 @@ TEST_DEP_FILES += $(patsubst %.o, %.d, $(LIBKVM_OBJS))
- TEST_DEP_FILES += $(patsubst %.o, %.d, $(SPLIT_TEST_GEN_OBJ))
- -include $(TEST_DEP_FILES)
- 
--$(shell mkdir -p $(sort $(OUTPUT)/$(ARCH_DIR) $(dir $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ))))
-+$(shell mkdir -p $(sort $(OUTPUT)/$(ARCH) $(dir $(LIBKVM_C_OBJ) $(LIBKVM_S_OBJ))))
- 
- $(filter-out $(SPLIT_TEST_GEN_PROGS), $(TEST_GEN_PROGS)) \
- $(TEST_GEN_PROGS_EXTENDED): %: %.o
-@@ -275,9 +275,9 @@ $(TEST_GEN_PROGS_EXTENDED): %: %.o
- $(TEST_GEN_OBJ): $(OUTPUT)/%.o: %.c
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
- 
--$(SPLIT_TEST_GEN_PROGS): $(OUTPUT)/%: $(OUTPUT)/%.o $(OUTPUT)/$(ARCH_DIR)/%.o
-+$(SPLIT_TEST_GEN_PROGS): $(OUTPUT)/%: $(OUTPUT)/%.o $(OUTPUT)/$(ARCH)/%.o
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ $(LDLIBS) -o $@
--$(SPLIT_TEST_GEN_OBJ): $(OUTPUT)/$(ARCH_DIR)/%.o: $(ARCH_DIR)/%.c
-+$(SPLIT_TEST_GEN_OBJ): $(OUTPUT)/$(ARCH)/%.o: $(ARCH)/%.c
- 	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $< -o $@
- 
- EXTRA_CLEAN += $(GEN_HDRS) \
--- 
-2.46.0.295.g3b9ea8a38a-goog
+Thanks,
+Longman
 
 
