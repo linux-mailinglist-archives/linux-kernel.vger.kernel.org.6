@@ -1,174 +1,94 @@
-Return-Path: <linux-kernel+bounces-302099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730D695F9CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F32C695F9D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F844282DD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0C1282DCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E518A1993B4;
-	Mon, 26 Aug 2024 19:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA88A199E9C;
+	Mon, 26 Aug 2024 19:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="ca0roMD4"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V8cvKRlV"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3FD1990AD;
-	Mon, 26 Aug 2024 19:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701196; cv=pass; b=eA6nnB9zI9PbDpS0A5BVlxXOeM5jHXxfkDR+7VsCCdzI4nzhfgckXQVbEDNmDuGCbb0HK/t5Y74F15HRCil+1uo9i77YvXndTfZyWlgaXsVh0XtVE6/VPyR7Kj2T4l6W3AqdCM2jboGfDOx41pQmWipslQYmY6HrdqbvCoWGZi0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701196; c=relaxed/simple;
-	bh=od6fy+3S+nzYLljRoQHr8oqNUdaDpZC207RnMbTjVc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EXxqDCon0UhLF+lFnkSgmrcsxuXvJijYvE36sUfHRRDBhgWTWcZ0D7wImrSjRGLGFW/Zyqst9eRYQIQAijC5//IhzJ3REbLckeD0R/BbWilC7o994mQ8BERUbtiVmYbp6M3OSOa2rV8QOavk9hkxPSD81AU93bUrQiUBL8dNByA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=ca0roMD4; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724701104; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Y8CvhF/MJMpIU8xUcXwDaR/0I/ZSweEEmXPq80aazFOnaFJYtKwl4bAoircq8YmuV6hXbjY/LG7ggwynibvQhGHfnA3ZxeJcjwFUFCvznyYbFk7aW61rIiOqUerkxcHHMLSrs42ET9t8PNTNaKsv5xPHKyWqwnZ6a6qTKIkYIe0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724701104; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=o/g/+7cY7f/H3JMgXb+3Ce2wa+YsyQzpWO4kehk64OE=; 
-	b=MUqYc1cFentcZXmMJg9AdlCdo8ojnSpq+vXAcb2Dy54wHiwWIOuJtTW6vVH4gpcV7uwcxMqELFKzkobFHCCb5EQOSXAiE16kMmMVa2SpQ7ZwzZfhgDdL75k4Q6T+BeMWw6EJYM/LEBPkdYRHZYc9FRT7i9Z7tpBAymCig84p9kg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724701104;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=o/g/+7cY7f/H3JMgXb+3Ce2wa+YsyQzpWO4kehk64OE=;
-	b=ca0roMD4CCh2C6YxOlrU6DoQDhY/6r1S4aQEcvOV4tFUBCMSGleXec7uvWP4kkRv
-	3tCHEJS1EM6ENk3vDrDuiM8rdiwTt9v6/9xC9v7IICGYmXiIINAfTSOzJBk3Dql+Dvd
-	Cuvg2in63RexEjBhe2pp9MOB8TUQpI9kWJ45Y4VQ=
-Received: by mx.zohomail.com with SMTPS id 1724701102774210.66353128633466;
-	Mon, 26 Aug 2024 12:38:22 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: airlied@gmail.com, alchark@gmail.com, amadeus@jmu.edu.cn,
- andi.shyti@kernel.org, andyshrk@163.com, broonie@kernel.org,
- cl@rock-chips.com, conor+dt@kernel.org, daniel@ffwll.ch,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dsimic@manjaro.org, efectn@protonmail.com, finley.xiao@rock-chips.com,
- gregkh@linuxfoundation.org, heiko@sntech.de, honyuenkwun@gmail.com,
- jagan@edgeble.ai, jamie@jamieiles.com, jic23@kernel.org,
- jirislaby@kernel.org, jonas@kwiboo.se, jszhang@kernel.org,
- kernel@collabora.com, krzk+dt@kernel.org, lars@metafoo.de, lee@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux@roeck-us.net,
- maarten.lankhorst@linux.intel.com, macromorgan@hotmail.com, megi@xff.cz,
- michael.riesch@wolfvision.net, mripard@kernel.org, robh@kernel.org,
- tim@feathertop.org, tzimmermann@suse.de, ulf.hansson@linaro.org,
- wim@linux-watchdog.org
-Subject:
- Re: [PATCH v2 12/12] arm64: dts: rockchip: Add rk3576-armsom-sige5 board
-Date: Mon, 26 Aug 2024 15:38:18 -0400
-Message-ID: <2622447.Lt9SDvczpP@bootstrap>
-In-Reply-To: <20240825142509.201943-1-amadeus@jmu.edu.cn>
-References:
- <4367745.ejJDZkT8p0@trenzalore> <20240825142509.201943-1-amadeus@jmu.edu.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C5C1991AF
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724701197; cv=none; b=bWmxjliaVzfXxyg2Gl6Ef4df95aD3UXmmw8YLXRy8AKemgOnf3YnaGuxJ/xROxDo2ZjcVGO8LDpVQklumPWiEQFoN4aEvA48IRSH40X51P9B/zj11QH0aRnVFeH8CEx6MdG9xWmI1EP7fkIKpn5Ze1xvDM+47Ql1Zy9YG8VC8Ak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724701197; c=relaxed/simple;
+	bh=XEulr65+yh66N3PPWR+wg8huhyytrpHFe0zJ+ZFzCnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXUZTHYsQrz2i4wwnJXePDEFHvJu9zswtouRGwU2wi2In3QoB1V+kgi3aNd0UbIGhiGoDgwjiHyY35c66W3v3+WnBLs3GFF2XazuMwK5WZGgaEaKxW4eBFcT9FITLIgyZ0aeIx6qFOpK+whg3c1vfy0IF/nknuIe20ApcHx2HX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V8cvKRlV; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 15:39:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724701193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8E/6L+ulNsRyaHYOTIlLjfcvhy62fxlcDeAIHJ8v4Ks=;
+	b=V8cvKRlVtBhQKeYuIHdYYCUBDHWBs7l5h7bwYMUlck2FF7vO0I70RWpj0RHO9D1SxfpY/R
+	aOaZ+6ve08kYIPyePAQplsSQyHKdzdyPJjqJpH8sea54fRE8DsES3fVtNbNeYK1C5R627I
+	HJLBFnfng6C5djJJ8e4kAR/ovwX0ymE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Chukun,
-
-On Sunday, 25 August 2024 10:25:09 EDT Chukun Pan wrote:
-> Hi,
+On Mon, Aug 26, 2024 at 10:47:12AM GMT, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> > ...
-> > +	leds: leds {
-> > +		compatible = "gpio-leds";
+> bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> allocation fails it will drop locks and use GFP_NOFS allocation context.
 > 
-> Maybe there should be a blank line.
+> We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> dangerous to use if the caller doesn't control the full call chain with
+> this flag set. E.g. if any of the function down the chain needed
+> GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> cause unexpected failure.
 > 
-> > +		work_led: work-led {
-> > +			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> > +			linux,default-trigger = "heartbeat";
-> > +		};
-> > +	};
-> 
-> Is the color missing?
+> While this is not the case in this particular case using the scoped gfp
+> semantic is not really needed bacause we can easily pus the allocation
+> context down the chain without too much clutter.
 
-Actually, after rechecking, this is wrong. There are 2 LEDs on &gpio4:
- - PB2: Green
- - PB1: Red
+yeah, eesh, nack.
 
-I can set the green one as heartbeat and the red one as default-on.
+Given the amount of plumbing required here, it's clear that passing gfp
+flags is the less safe way of doing it, and this really does belong in
+the allocation context.
 
-> > ...
-> > +	vcc_3v3_rtc_s5: regulator-vcc-3v3-rtc-s5 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "vcc_3v3_rtc_s5";
-> > +		regulator-boot-on;
-> > +		regulator-always-on;
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +		vin-supply = <&vcc_5v0_sys>;
-> > +	};
-> 
-> Missing blank line.
-> 
-> > +	vcc_1v8_s0: regulator-vcc-1v8-s0 {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "vcc_1v8_s0";
-> > +		regulator-boot-on;
-> > +		regulator-always-on;
-> > +		regulator-min-microvolt = <1800000>;
-> > +		regulator-max-microvolt = <1800000>;
-> > +		vin-supply = <&vcc_1v8_s3>;
-> > +	};
-> > ...
-> > +&gmac0 {
-> > +	phy-mode = "rgmii-rxid";
-> 
-> Can we use "rgmii-id" and remove tx_delay here?
-
-Indeed, that's better.
-
-> > ...
-> > +&sdmmc {
-> > +	bus-width = <4>;
-> > +	cap-mmc-highspeed;
-> > +	cap-sd-highspeed;
-> > +	disable-wp;
-> > +	max-frequency = <200000000>;
-> > +	no-sdio;
-> > +	no-mmc;
-> > +	non-removable;
-> > +	sd-uhs-sdr104;
-> > +        vmmc-supply = <&vcc_3v3_s3>;
-> 
-> Indentation error.
-> 
-> > +	vqmmc-supply = <&vccio_sd_s0>;
-> > +	status = "okay";
-> > +};
-> > ...
-> 
-> Thanks,
-> Chukun
-
-
-
-
+Failure to pass gfp flags correctly (which we know is something that
+happens today, e.g. vmalloc -> pte allocation) means you're introducing
+a deadlock.
 
