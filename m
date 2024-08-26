@@ -1,155 +1,198 @@
-Return-Path: <linux-kernel+bounces-300878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8198495E9EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:07:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D326A95E9E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B518F1C21385
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:07:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49543B20BA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94A4770E5;
-	Mon, 26 Aug 2024 07:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0718563E;
+	Mon, 26 Aug 2024 07:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lJe1qhzj"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="p5346Xhl"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2075.outbound.protection.outlook.com [40.107.215.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACD418C36
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724656018; cv=none; b=ubX2mnBDZ062BmHR4U/lx+W2ObdyytISG0qurJ7xsFRIvFWKmf2ZCjsupN5TOqbw7MOXu1qWdCTGCCxMGAnwDVZAm0ivhNyPogjbehttg3jomUMPiW1/sD/C245pLSQ5WOxo1KY0KsP78ZXq61qBNOqjMXSmRyvELScquShSBs0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724656018; c=relaxed/simple;
-	bh=SNFRIgBjVGxWaU8ivtlCUq9fNoElyookR1hHqJENiVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7vd4KP39OgjYvWwZTv/8ZuXZ6GtsLHrkYR7tdiYBxL8U4UTQMqPmZtAGEecBXFUekYMDqNSZufv90q/da86OrKvNIwznEaFceyFz6BXHr+fDtZ6+KAlUSo2sMvjJPxPONPLvVuOq3sdOJo7RrFMIKPC0Wh2NU3RttHv/y9ouA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lJe1qhzj; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-371893dd249so2204523f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:06:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724656015; x=1725260815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cou5hke/PmBsaGSWYmEtI+A/77Tv+wsmqhvz0fRoOco=;
-        b=lJe1qhzjlRugjNqoEn3AlnIhUpOYbBqPrdJEKubcFYASZ7LBhT52O7KsBUmbuLaCIt
-         BaYoCP1mKasBm2KOT1qtQ6eTkuM8Q6LpLTG16Yoj6Xk7jSLru6a/K+u/Gp5Zb/dbEHE/
-         B+i6jLI5c7r4Jcpn3MJ6eT42wUc34ZY1fSQ1WQlhE6YboIE/HZGm3FU1CZgbYZoqbrwd
-         YuYBL+sJolGnIKiYwrdUaxSf5RwbA/nbP/H1hs8DEDL4InyFX1oYY3oDv34dHL9yGTbX
-         mR4p0c+BX6GzHXuKm3rricfEM6bDH7U+W9004s2QgYm/QvfgCaXdYS7F3bxJFUlaokI7
-         uKyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724656015; x=1725260815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cou5hke/PmBsaGSWYmEtI+A/77Tv+wsmqhvz0fRoOco=;
-        b=MOS9md+bHcZ53CMTULdMRTVdvd7OFPbE7LZ0TBWxOBuyr+r+rw8l03fwmEr5MKGgPN
-         ZmrMuomrHueHf9ZG+FXpBjo3ABoN/bcTrUeilXCpMQh6ERY9acmBOZVP+rxNKBZUPLdh
-         n24oAChB3iV9jNAvsXt5X+DOhVFXjgGtnzUCynOieasGvwyJL+Wd2hmJrL/5O4iGGDMY
-         PiSFKDkEvROEmiIPIlU7u5j6gSLKN/vijyQxzdI8/cIDO+oq2lf4ynvh0hPp6vonpRoQ
-         dI9YJJ/JDQ4CEjtojFCdscKvkODjU6TrDuSx2LPkTKSanWPDIpZJGHeCz1aAwo3odSSu
-         JnVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEKBxXaXEZyw0NVDCW6t4BVoxYEIA86byx8J89Q8ttNCtFncrBvUMb173dZDG8++PBTEpfIJTqII8NzTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7zm5R1ng8d6sUq0wMUYSnqLfgttSqjlZhYvRWdTGr7fuX6eMK
-	JFpwk0ojFhdCaG6RvJdcGju2yJIG1eFrFkr1XqlXSNDDr+eyahQdH5d0jt9lPaU/ui6rdp5pilv
-	H7rqRBeuz1dtNyUDHma272B1QoVNTqAypf+xVIg==
-X-Google-Smtp-Source: AGHT+IH0yjPV9DOuSzxG5nR7SIxFbQUEOfD/AQ3YPBP4CCB95G07H3GrdBQdq+CphyFDEtYdwCNVbzC3/qRbcDo9HGE=
-X-Received: by 2002:a5d:66c1:0:b0:371:882d:ce9d with SMTP id
- ffacd0b85a97d-373118643dbmr5639415f8f.36.1724656015242; Mon, 26 Aug 2024
- 00:06:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33A2770E5;
+	Mon, 26 Aug 2024 07:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724656000; cv=fail; b=eZpDNtBkUaboWm3FcBsjk2QZ1j8c1+PBcwRqgGA8WIPplQ7undZ7wuiaVV6A7mF4z7Wz7KmbHmjDFROdK3fjAzdb/6BpakbWRA/HxflNpVqTa4ckJojS8m0SDL39KDALBanykMuomHuXID6BhStwamaKte9qK4A+7RQN3dIUiAI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724656000; c=relaxed/simple;
+	bh=u0+n1GQwDE7rBJX44eooamoelPv0ctmTtYeBw6eHikI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=q7OzkFDFoLGW53GA+4G1sf3PQGSxyOwTZdHf8DgvPBNVaUqJdZHCzJ60g+DRe0Fb+pr9V+30zgLQj/Q9hTFulgkdnmOFWGI1ub8+HswS1gLOsgP8uRx0fEfEfCpAUmP1rlyvggwTY7VAe2khMTuf8RnWyg2eLx635Wt2Nvc2uvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=p5346Xhl; arc=fail smtp.client-ip=40.107.215.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=koEFL6X/ynvCfoT60WytssfEQWhlTJvYKeg79KMW2wF5XYzn4+Qz5UHx7wLcHb3KvbkCx3avYNSDe+Hwz7PJmuYHowZ7YlkXULYLQ9c4MQZeaeTAALIToDHWV3DthXcM4IvaKM1u0Hny3ul8GXTxaooOMu68HnMvywos5xzormCRP/H7ADlaKaFx1yxqF5eq8vUSenW9UJVLJuG973ID+hxNwUh8lNwFYkgyVi2a0VZ80q8jILz7a/S2V4gyLP/QGqxVw+3/URWmtIO3PbspQ7bqWAJLiDrandlNNxXoMrAkMdZttXV/75mvvLDCOq7iscxaXI9/uPwW/V7W1BwxBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hCqA1B0nQSFfKg/8VT5mteK6iwf47eBKT6V7sKALC78=;
+ b=W4a2NY/InC7OqOKn4/UJNx05cl4w5lKpNSsTh+qaeftIhe5VQJsYmlg4WaFMbcOin3tDlHv8sgs2I5FlGchMCKMNmQdA45S0FwJUrgG4JWtsFyx8jqPJXJy9l+zEqz6JJK4facaBPDDmzV0AP7FfMLeEohqSdkEX26ks03wo+Uogk2gM8kUDVx1hNvLXvPwoKKmFztJR9XU+8yjyzvdy0sm+nMlM3+Vs25HcxxC2Cx4A0ArRnsLgPqHpxuOPzB5QKFSM0t1jL7dnee/sfm02N4asIuKtLsDz+QBo7z1GXSq6hXo8bMWHh57wxv+xEsCz7bUAUcoMpkOb86ML1zI/7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hCqA1B0nQSFfKg/8VT5mteK6iwf47eBKT6V7sKALC78=;
+ b=p5346XhlSaEaBDWUEUovMSGbsZnxk5bPyTB9V7csyiGEEd+UQdrs8InREaB7mKfAYLKVXao2RomOm8ITUV/jr29HE/hba8OBugaGAhFY2JSJIgRg3w2C6MZ3gfDRYd9x73rZYZSbfSB0PZmivX5j3Z2sx7MJoClzl+JE04wFl07pHeRKAIhlGrm+uqoCcAYYOPycxMX81hCqF5Ox2Zru3w0gV3t+Yu4biIvOhEvyVKX8R1rgsDKluxLLfdiGTU72fQkw8hWatl3A23oQkFQ+V8iSL/RO761J/HJlkzqSluygtlvXY+mW/9OVo8AfNRRupLiU3m17oO6OdadEXIF9RA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5624.apcprd06.prod.outlook.com (2603:1096:101:c8::14)
+ by PUZPR06MB6055.apcprd06.prod.outlook.com (2603:1096:301:106::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 07:06:35 +0000
+Received: from SEZPR06MB5624.apcprd06.prod.outlook.com
+ ([fe80::e837:10e3:818e:bdfd]) by SEZPR06MB5624.apcprd06.prod.outlook.com
+ ([fe80::e837:10e3:818e:bdfd%5]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 07:06:35 +0000
+From: Lei Liu <liulei.rjpt@vivo.com>
+To: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Lei Liu <liulei.rjpt@vivo.com>
+Subject: [PATCH v2 2/5] usb: pxa27x_udc: Use devm_clk_get_enabled() helpers
+Date: Mon, 26 Aug 2024 15:06:23 +0800
+Message-Id: <20240826070624.1891-1-liulei.rjpt@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR02CA0062.apcprd02.prod.outlook.com
+ (2603:1096:404:e2::26) To SEZPR06MB5624.apcprd06.prod.outlook.com
+ (2603:1096:101:c8::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-5-songmuchun@bytedance.com> <ZshyPVEc9w4sqXJy@fedora>
-In-Reply-To: <ZshyPVEc9w4sqXJy@fedora>
-From: Muchun Song <songmuchun@bytedance.com>
-Date: Mon, 26 Aug 2024 15:06:18 +0800
-Message-ID: <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
-Subject: Re: Re: [PATCH 4/4] block: fix fix ordering between checking
- QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, "open list:BLOCK LAYER" <linux-block@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, muchun.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5624:EE_|PUZPR06MB6055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 417bc7dd-8643-43d7-44e2-08dcc59d9f1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014|41080700001;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x1MAVraWJq7/Z9u6HhKz4CtTncCGPUZEBFga9khaWeM7/buGh5kvUt4Ew3CN?=
+ =?us-ascii?Q?SUnaHswHUNAVChX9a/hx5sPLZWZcns6/sU8xD7lhvpUU7t5L2QaPIvphXpuw?=
+ =?us-ascii?Q?uJRCaChqCW4z8Tnys8FRjKtFh832Q1PWDKISZBMaWj9yGrtDVeP06+yW9Bvn?=
+ =?us-ascii?Q?aQ5L/H42gy+p9/1wpF5J5obnNTWI7TRQNsr2FqJLQjAj0P+U8kt/kLpi7B8+?=
+ =?us-ascii?Q?c6ISbyJickwjmJ5wlbcbc431xiZF0EN4FcMpUEoPAxfnJbsoO4wgJ8wrCjMi?=
+ =?us-ascii?Q?TBUATYtILoGAnAav/8QnPPDcLlmlj6DgHmOZbQl5xxJDnpRLg6Gw5hqLnrQO?=
+ =?us-ascii?Q?1yNvbVw/yl2+dFA7M/DggEnS9Y452yzoXBMzkf/T5ueh8UNB1a6mEWxo7OUU?=
+ =?us-ascii?Q?ayODF4LdebgV7CBkpDlL5v/blXYSwg41qa5gKeJSThvIQow1xWJdoCkmak2K?=
+ =?us-ascii?Q?XL515/du545SH7qCDfgyEUhIk0ZkQQh5+9c4d+OSCb4JPQb0Jb4comCp45Uh?=
+ =?us-ascii?Q?ofQsqxSfQXqOdGS2zePXdrsVsm2kAs10thN2OBex3utfGO+C06o/UXMjWKqZ?=
+ =?us-ascii?Q?emtNtd1GbMSmQbnCE1TnJzuDXr/LySkQitZm5sHDsvFtmK72b7g1Rh6GysU/?=
+ =?us-ascii?Q?P7MFGqHIa/vFIOC3xc0vbqJYN+g1WnlCPM6sBH5HpB/d6Q1t53KdvhPytmbH?=
+ =?us-ascii?Q?cOGBtC+j4awABqGPDlxYQhncY9PaCN9tRhGo+GRvZoBr90o12DrG5zIg4oxz?=
+ =?us-ascii?Q?5FXduHIfhq3vpYM5SJgJTIR2TZx7HYAqECu3NaJJJw9hVawg0SQPCuH/0ZZ5?=
+ =?us-ascii?Q?CH2ksTfWTLYst/p/J2Royy1PgZCGbtBNGQ+M2Zt9rVY4Z6hMnU1dBo4BuOrJ?=
+ =?us-ascii?Q?fWST6TWRxq2USvcduHE0iD0uStKibvyP+wNdeQdO5xwmmefC9XlDak+ONm/9?=
+ =?us-ascii?Q?pVyBcQKL3k/le6JU6yCbODeHA8rygPUA4HBCkVAwCt2Xg3aCZO7HYXKsnZl/?=
+ =?us-ascii?Q?54ik8HapHSMaR3Adc7Z05zhvONijpA2sO8duc4tScN82ILvg3NN/u645/Xu4?=
+ =?us-ascii?Q?LoDsRIKt8q72u3RW5y61n6dZ5YSbyAJG6bDZC2iRiEqUyVE3rH95zYI0lnft?=
+ =?us-ascii?Q?4rI35ee4WUK57k8Qop3tht/5wT2cExHPOTC/Sf/+IQDOJz9m/Xjg5pb9nvzd?=
+ =?us-ascii?Q?IsdX/VUCeDKK/KM4O7zbu9GDV+JYxg0VDYXcPyiHf4DBEN2ONQheU4XQ5diu?=
+ =?us-ascii?Q?MJy6UBt8xTfu+mHCKhRQgP/DGHc356teFltNbK/CN5AphgF+wmEp2LYaO/nT?=
+ =?us-ascii?Q?U7BGBSrLXjAy2qOmEUxCcZ5FFdzFzkd+/AQdBfs3BXDcb3NnfzkoEW/Lyl/F?=
+ =?us-ascii?Q?EqQcwRzIfYfhr+zbFp4rUFTzQ6YxRt1UWRyhz4vtL2x/PV2Obna5yUf09x0t?=
+ =?us-ascii?Q?lu0OWnT1bUK4FbdpoLBaTOePFsGSI7S5?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5624.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014)(41080700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UZOphrMFMUV39/0e1/pEhfIcKoTKBg2IyO1g6wijOXT6YI98utt5MBiJhBq1?=
+ =?us-ascii?Q?EvslTWBN1duVkUfmgfic/eKYgAcyxL+8RRPaIJOz9+noUq2g4RrXnLLasc3x?=
+ =?us-ascii?Q?p6LouTCYhI6nD8SiAfVjRF4eVSu5sDFxRuNH58PSHhU334wNnhZTFCHqdnN0?=
+ =?us-ascii?Q?HFY316IfWcEaggnu+db3Qx1Mk0ztT9XfvZpFkSNAGQgZtMCamCG/1owUWlro?=
+ =?us-ascii?Q?N3u4LDH8tErmRPzQt7mzlqfExDyQChLBwhtqhmEdYEOS5F4ONwa3e/meYMnG?=
+ =?us-ascii?Q?ouTG6GGw7l5rtGU+wNHkTUCTbqBXTIqtUkNa9VcQtMe+1bjt7ewpU5lWOBob?=
+ =?us-ascii?Q?OzEsiV9H5h+cDZocVC+QwEbSHFPK4CGWaRILmlU2cwMwJdzJUwdySbjid2l4?=
+ =?us-ascii?Q?DJxAow+U46zLm9Pa7uaSpgHu5TBpgjq3EwZPVwBLeJkCTJR55zN/KEENZ6k0?=
+ =?us-ascii?Q?h/f8nJds3K+6ATJ2/0z0zPROAlGE5BCvr6UgHxIxhcuydCrYocRa/QqyAYi9?=
+ =?us-ascii?Q?ELkbdtlliCYFAEXmA2ZuQFC7Cz0jAuhzz191lkWeUdSILdss1JwNsrzp09W1?=
+ =?us-ascii?Q?gdzCmMnlW0EjCZ0xg7BpuDPZs2+ZXA2HeU6xWVSw3Kb1YUGZpd2B5VNd2Fw8?=
+ =?us-ascii?Q?DNCIckrX+5FcUvyG8I0sx+CIch6LE88Fh9Wu2HXyFhtD/WdQf1R8MYQCGM7t?=
+ =?us-ascii?Q?HvuK0X3JpA3JuP/T3V2td/5jPSESJf7aw5vMFmm3WlPgpm6zZHVM5uWV4mjo?=
+ =?us-ascii?Q?KQ8IlHpVvu2kLarXfKu6g+LH92GpXHr5pg9eNtG6Gixnf6RSsNMu40vxTEQl?=
+ =?us-ascii?Q?araW0bm2NSNbTUiPaA2xhdclw8AeWlc77E6TnzeA8yl81rdsa2DrFRwIvCh0?=
+ =?us-ascii?Q?Z0KK47Qh+q+fI65Ev+iHxhbRklL1+8aZC6e47uL0vCfmM8xeWjQrue8E0P9f?=
+ =?us-ascii?Q?0UJn8vtgtxs/Hg1hhKpjLctripbP/rIPRNJRIilgRDNOMBzCUfTyCIlba/Q5?=
+ =?us-ascii?Q?TVgmumxt+D346ugyeyJA+93q2F2ZhdCdpa1SnZB5yIzHLP+u44oc2x4tDhtj?=
+ =?us-ascii?Q?snLA1s7hKLXih4+K4sd3S8QA+nfsJg10vIBzAzN9PMnedjGvbCAoTcRQWzY6?=
+ =?us-ascii?Q?Tc/oN5t5TfgNJGceO6whFg8Ccos8Ewx/e2Ot91WyJ8dQ5LU2ZKWLUOkRnOD9?=
+ =?us-ascii?Q?p01JLwT2VNoGfp9YR7Rv6ISA/4XEkQpsN1qMSzkqiRmOZSSNVhPUGSDxJENk?=
+ =?us-ascii?Q?BX9LcE5aVNWoLB6HtPXSQxLxx8f/F6KJCpuvwd7ObaXfsk0dEV8yfBECTvE7?=
+ =?us-ascii?Q?UZYtRRZ5mE8LeEzGY7dD8ySHsLuh54IVjkinx5KyBmHhY7z2FV6Xi98XtrGN?=
+ =?us-ascii?Q?+ZQy3aWhiY1NRnc/8H6UVRET0H1UCd2pSFBYPZkl9J/jWikxcnsfDQbQVfII?=
+ =?us-ascii?Q?BLwrM47/HCkNBM+Lmups4KUhA6JE72dL0ZmhYZkj4pHRk+FoFGDridTqLfr3?=
+ =?us-ascii?Q?z4/pSganZJ4a+kqLtDwcIYQwLLjJ4ofjCaFmK4rmdRooRZFGpOgD4M++tW3f?=
+ =?us-ascii?Q?yj5XelVMu1dRGorYt0TzN5oa4FZvg7MsKtWNSocw?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 417bc7dd-8643-43d7-44e2-08dcc59d9f1f
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5624.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 07:06:35.2841
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uPsRQxGsz6CDOXwGJXbPmrl/e3i1dixRFs3lKyyRqwvJzh813r8fTe/MWqBrmHpd9QDzE476EcfH2PYmXwvDbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6055
 
-On Fri, Aug 23, 2024 at 7:28=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
-> > Supposing the following scenario.
-> >
-> > CPU0                                                                CPU=
-1
-> >
-> > blk_mq_request_issue_directly()                                     blk=
-_mq_unquiesce_queue()
-> >     if (blk_queue_quiesced())                                          =
- blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
-> >         blk_mq_insert_request()                                        =
- blk_mq_run_hw_queues()
-> >             /*                                                         =
-     blk_mq_run_hw_queue()
-> >              * Add request to dispatch list or set bitmap of           =
-         if (!blk_mq_hctx_has_pending())     4) load
-> >              * software queue.                  1) store               =
-             return
-> >              */
-> >         blk_mq_run_hw_queue()
-> >             if (blk_queue_quiesced())           2) load
-> >                 return
-> >             blk_mq_sched_dispatch_requests()
-> >
-> > The full memory barrier should be inserted between 1) and 2), as well a=
-s
-> > between 3) and 4) to make sure that either CPU0 sees QUEUE_FLAG_QUIESCE=
-D is
-> > cleared or CPU1 sees dispatch list or setting of bitmap of software que=
-ue.
-> > Otherwise, either CPU will not re-run the hardware queue causing starva=
-tion.
->
-> Memory barrier shouldn't serve as bug fix for two slow code paths.
->
-> One simple fix is to add helper of blk_queue_quiesced_lock(), and
-> call the following check on CPU0:
->
->         if (blk_queue_quiesced_lock())
->          blk_mq_run_hw_queue();
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-This only fixes blk_mq_request_issue_directly(), I think anywhere that
-matching this
-pattern (inserting a request to dispatch list and then running the
-hardware queue)
-should be fixed. And I think there are many places which match this
-pattern (E.g.
-blk_mq_submit_bio()). The above graph should be adjusted to the following.
+This simplifies the code and avoids calls to clk_disable_unprepare().
 
-CPU0                                        CPU1
+---
+v1 -> v2
+Incorrect usage of clk_prepare_enable() should be
+corrected to devm_clk_get_enabled().
 
-blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
-blk_mq_run_hw_queue()
-blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
-    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
-        return                                      blk_mq_run_hw_queue()
-    blk_mq_sched_dispatch_requests()                    if
-(!blk_mq_hctx_has_pending())     4) load
-                                                            return
+Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
+---
+ drivers/usb/gadget/udc/pxa27x_udc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-So I think fixing blk_mq_run_hw_queue() could cover all of the situations.
-Maybe I thought wrongly. Please correct me.
+diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
+index 1a6317e4b2a3..0619507d187e 100644
+--- a/drivers/usb/gadget/udc/pxa27x_udc.c
++++ b/drivers/usb/gadget/udc/pxa27x_udc.c
+@@ -2398,14 +2398,10 @@ static int pxa_udc_probe(struct platform_device *pdev)
+ 	if (udc->gpiod)
+ 		gpiod_direction_output(udc->gpiod, 0);
+ 
+-	udc->clk = devm_clk_get(&pdev->dev, NULL);
++	udc->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(udc->clk))
+ 		return PTR_ERR(udc->clk);
+ 
+-	retval = clk_prepare(udc->clk);
+-	if (retval)
+-		return retval;
+-
+ 	udc->vbus_sensed = 0;
+ 
+ 	the_controller = udc;
+-- 
+2.34.1
 
-Muchun,
-Thanks.
 
