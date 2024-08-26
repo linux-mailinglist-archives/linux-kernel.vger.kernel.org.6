@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-302395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E65895FDBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:22:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C82195FDC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFCD2818B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90545B21AA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313A319D88C;
-	Mon, 26 Aug 2024 23:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F207A19B3ED;
+	Mon, 26 Aug 2024 23:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rc/zL9Tk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Nz4aLsgm"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E8580027;
-	Mon, 26 Aug 2024 23:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478F813DB90
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724714511; cv=none; b=AlM0nXkEEiNiZOCKrebv+U5yuY3lqpVk8rbc2AJUG1U3fhR+fa/hiu5xFjeervvXgEggkJEAyerW3wxddt7fgM3IdfG6QJQJ5BvrEFjQiQytB+NPTegFCH+ETdUQRb4PZxp4ii7vwvfIZ7C2WGqPMMKb/T5w2QMwS6XRnKSidYY=
+	t=1724714644; cv=none; b=tnqQ27j5VhE0RQOWN+gZud+Qgy7Ehi7MysviHZq5TRpPYQVuGaxCCJlk+ILw1NSTR+4gwuKzLs1g/bp15Ev1JXsbUXfcGB7GmvNGDVigasQw0iPKfrVx0wFS6ntEyRbCBWL7CGDnufMETUIkB3Z/qayVduuzJZpy94xAuhvWKa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724714511; c=relaxed/simple;
-	bh=nrxAK3cZ51QgoEX/irFEk03z6aVmYQZR0sYAle5hMGw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hzyw23Xr3Vfl72VZc+aKvgI8VMUMG+Eb4faLY7aFN/vtaD7jmDcLKEERp8nRbtOiknZs+qZWMdQCwR8/yaLZlYeebDRPo0mRH4GVttAk7d/37rp6ryuymEWsrftDnkvqQZnKBXjXsOypRrO0af50M8iWlFZyzfdFwo0M6BTL8EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rc/zL9Tk; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724714509; x=1756250509;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=nrxAK3cZ51QgoEX/irFEk03z6aVmYQZR0sYAle5hMGw=;
-  b=Rc/zL9TkX1FkFV1LGUuDGY9+nJgQa6RCQ5R2vSrsOrNjMVcMMuJ/PJb0
-   q6OMs7LqFlr2ZQCLV64w4JhDRmrhyydsCvA41RYStbJyLtXcqpo/5hZtH
-   Tm3sD6PsnzZKCRSB+luPj22Uv0/63wOBEeFkNUUZrN1PgBuTdkXIcIc0I
-   vERc2vGRsNxWhPWYJMCngUQkTCAT1EcYdOtwWc4vV9rkbTsuIZKB496pQ
-   qf/pAm+PGStCzHI8xmMDzxKMovm1WSWH/qX/Q0kDqZ6SUIhedxSFIL5Kd
-   3Ay339sXZxiPS02+iqQI3l2nRWnpFzCAGTTiB2ZEwsm9d7whsY8tNfw33
-   Q==;
-X-CSE-ConnectionGUID: 3bSVQ4xoQpSMhXPHeYDbGQ==
-X-CSE-MsgGUID: ynkT5hOuSVKSFv61LHiLsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26959489"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="26959489"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:21:49 -0700
-X-CSE-ConnectionGUID: tbt0GUXcQrKwymXuya3qsA==
-X-CSE-MsgGUID: 6P5uqhX1QtmCh0b9VhOttg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62982573"
-Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:21:46 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 16/16] overlayfs: Remove ovl_override_creds_light()
-In-Reply-To: <CAJfpegt+M3RAQbWgfos=rk1iMu7CRhVS1Z5jHSHFpndTOb4Lgw@mail.gmail.com>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-17-vinicius.gomes@intel.com>
- <CAJfpegt+M3RAQbWgfos=rk1iMu7CRhVS1Z5jHSHFpndTOb4Lgw@mail.gmail.com>
-Date: Mon, 26 Aug 2024 16:21:42 -0700
-Message-ID: <87jzg2kgzd.fsf@intel.com>
+	s=arc-20240116; t=1724714644; c=relaxed/simple;
+	bh=IrnZKj7bKoT/emq2wfML03dDliUODz1gsmIyDXuGV/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8XVQ2ISe0lbEBb0AVj/0Bd59GgaswCW85Zh+Z/Be6JH2fL+UHhD4eRzhri3M0TbSJuE4LsDzCALsOBlajhbXTHTOBHPSKxKBC8bl9CHMfDwoTFMuY7+KlnYxZMCvNyw4bHm+6fadr7xRL8tGS+A84u/kHmYPg+a9MjxIivYY74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Nz4aLsgm; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 16:23:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724714640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s6utSXoLOnJ8vChXECY5Wtvo0Ej0aSPRXGraJkv73B4=;
+	b=Nz4aLsgm4Wwd8OIFVJufwbtRddwG4VougUS3TM5wDlT4zuSZ6etoSRIDEfzwYEIqBSOrGs
+	7bBjIQG+qNWOVBR/lfCnZ9sP8PDG8eA3s0ftFT/pJFDUU/RZxeKvqQNimZW3QRjHwOlvc/
+	JmIqf1rvsTxVC5chgoidyVgMylPRWaY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: D Scott Phillips <scott@os.amperecomputing.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Rob Herring <robh@kernel.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-kernel@vger.kernel.org, patches@amperecomputing.com
+Subject: Re: [PATCH] arm64: errata: Enable the AC03_CPU_38 workaround for
+ ampere1a
+Message-ID: <Zs0OelXKn_-6jtqN@linux.dev>
+References: <20240826215933.1263453-1-scott@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826215933.1263453-1-scott@os.amperecomputing.com>
+X-Migadu-Flow: FLOW_OUT
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
+Hi D Scott,
 
-> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Remove the declaration of this unsafe helper.
->>
->> As the GUARD() helper guarantees that the cleanup will run, it is less
->> error prone.
->
-> This statement is somewhat dubious.
->
-> I suggest that unless and until the goto issue can be fixed the
-> conversion to guards is postponed.
+On Mon, Aug 26, 2024 at 02:59:33PM -0700, D Scott Phillips wrote:
+> The ampere1a cpu is affected by erratum AC04_CPU_10 which is the same
+> bug as AC03_CPU38. Add ampere1a to the AC03_CPU_38 workaround midr list.
+> 
+> Signed-off-by: D Scott Phillips <scott@os.amperecomputing.com>
+> ---
+>  Documentation/arch/arm64/silicon-errata.rst | 2 ++
+>  arch/arm64/Kconfig                          | 2 +-
+>  arch/arm64/include/asm/cputype.h            | 2 ++
+>  arch/arm64/kernel/cpu_errata.c              | 1 +
+>  4 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
+> index 50327c05be8d1..39c52385f11fb 100644
+> --- a/Documentation/arch/arm64/silicon-errata.rst
+> +++ b/Documentation/arch/arm64/silicon-errata.rst
+> @@ -55,6 +55,8 @@ stable kernels.
+>  +----------------+-----------------+-----------------+-----------------------------+
+>  | Ampere         | AmpereOne       | AC03_CPU_38     | AMPERE_ERRATUM_AC03_CPU_38  |
+>  +----------------+-----------------+-----------------+-----------------------------+
+> +| Ampere         | AmpereOne AC04  | AC04_CPU_10     | AMPERE_ERRATUM_AC03_CPU_38  |
+> ++----------------+-----------------+-----------------+-----------------------------+
 
-That's a good point. I just want to point out that the issue is only
-with the combination of the "plain" (not scoped) GUARD() statements and
-'goto'.
+We tend to stick the marketing term for a part in the second column so
+it is more recognizable for the user. Is this a placeholder for something
+different from "ampere1a"?
 
-But I would be happy to postpone that, if the trouble is not worth it.
-As all the performance gains come from the conversion to the _light()
-helpers.
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index f6b6b45073571..748aa536446ae 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -773,6 +773,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+>  		.desc = "AmpereOne erratum AC03_CPU_38",
+>  		.capability = ARM64_WORKAROUND_AMPERE_AC03_CPU_38,
+>  		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1),
+> +		ERRATA_MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
 
->
-> Thanks,
-> Miklos
+This will break the workaround on AC03, since the second macro reassigns
+::midr_range.
 
-Cheers,
+You'll want to use ERRATA_MIDR_RANGE_LIST() instead w/ an array of
+affected MIDRs.
+
 -- 
-Vinicius
+Thanks,
+Oliver
 
