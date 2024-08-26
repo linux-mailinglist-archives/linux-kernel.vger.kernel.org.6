@@ -1,300 +1,93 @@
-Return-Path: <linux-kernel+bounces-301023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C65C95EBA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA72895EBC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9D0B23C86
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B5E28114B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641C213C8F0;
-	Mon, 26 Aug 2024 08:19:42 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C55D13DBA2;
+	Mon, 26 Aug 2024 08:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jpXMBJMf"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCA013C3E4;
-	Mon, 26 Aug 2024 08:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FAB13D2A9
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660381; cv=none; b=AeZ8NPdPcKwNqtZ7c8vB2BBfcs7CVNjIW9kaBIcuvIswqlPCHEArWAAJoBGt7WFZzcmCpA8VdwC3ecZ7S23YJlIfl96bpd3PGebcwuWETa2TgZmutoqJN3FK4itrXclIhwVLYZ+itd7WkVcYhSvmXmmfE9LPZeU5XxquvwqgbUo=
+	t=1724660458; cv=none; b=ZRJ7NQ+8WiWh8HDWDO5Z88Z9l8zZf46lBddmKVpYTo2HXIdNCyelqZ6subf2EoAd/W5sdC2aim1RwLQ2if7ClxPpkgnhWaWadhis4oDjTQ7m9vOnzdP1a6BFoSXaERS+TTaauP/hxmKQnJcUDiXZfFweYC7/IOQk53gaGOGsQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660381; c=relaxed/simple;
-	bh=Jf9Ae2phRTV3sVfO6X9nkfAGTrbR2PsA5Php2IyE0/M=;
+	s=arc-20240116; t=1724660458; c=relaxed/simple;
+	bh=K1YnpBkT+cVoB8PBEXPGLg6Moqbes66MYtr3X2fBdU0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5tZjpbntPqMtUdgAwEDHN7E+WLRlpjqq8jrpkITFEvGyU++l+aoCtDo+rcgOz9f7HbKoTyEkwi8oTI7vhQGejSl+xQzFN1h76Z8mkN2VZL8vNLZN2TFJDB98l0/Fm95dgR6n8gV03yYr4zePEf/828dUDWnP9zF6Y5LoLW9f4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.53] (ip5f5aead7.dynamic.kabel-deutschland.de [95.90.234.215])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AC03E61E64862;
-	Mon, 26 Aug 2024 10:19:18 +0200 (CEST)
-Message-ID: <9eaf862f-0c00-4d58-994a-bd1b3c6f1518@molgen.mpg.de>
-Date: Mon, 26 Aug 2024 10:19:17 +0200
+	 In-Reply-To:Content-Type; b=G8Tg/uUcv8nXWB2IZxvo0IjEcUtlkURAZtuDqbH2QKi2EKWSFeGYyFVdYXV2hpg/vG32NU53V7QRA0gMgOGoZUxVHhhRS+gX3C2XTKWkc9qiE+++75KZOs8Whafdr16kyvXG9naMW8JZ/Xcrpfit1X+LRz/lMC4aL1CXgdep/uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jpXMBJMf; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f5fc71f8-5b14-4cb6-b0ae-cc4ef333526b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724660454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xOp17d0+ZaLcKHAp00iycdUMgC7QEulIPpmusZTNMuM=;
+	b=jpXMBJMf1L1y+LNyINwQlLjK9R7nioqlXARPLUqU+LIu5dtuKQelGrOfUdkdYzSzc2o7/L
+	svLTv7nTaib6hdAODPCjyw+tICLuNlFbj5Ky1p5adoPAPEtkD7LB6hxyRXHLUCB8l2zYFM
+	3jsENQfsssXSPLmoS2uScr/RIxB8ldQ=
+Date: Mon, 26 Aug 2024 16:20:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH md-6.12] md: remove flush handling
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, Li Nan <linan122@huawei.com>
-References: <20240826074843.1575099-1-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH] amba: make amba_bustype constant
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux@armlinux.org.uk, krzk@kernel.org, andi.shyti@kernel.org,
+ robh@kernel.org, gregkh@linuxfoundation.org, suzuki.poulose@arm.com,
+ rmk+kernel@armlinux.org.uk, linux-kernel@vger.kernel.org,
+ Kunwu Chan <chentao@kylinos.cn>
+References: <20240823064203.119284-1-kunwu.chan@linux.dev>
+ <ZsiTPjtnZZIW-K4k@smile.fi.intel.com>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240826074843.1575099-1-yukuai1@huaweicloud.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <ZsiTPjtnZZIW-K4k@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Dear Kuai,
+Thanks for the reply.
+On 2024/8/23 21:48, Andy Shevchenko wrote:
+> On Fri, Aug 23, 2024 at 02:42:03PM +0800, Kunwu Chan wrote:
+>> From: Kunwu Chan <chentao@kylinos.cn>
+>>
+>> Since commit d492cc2573a0 ("driver core: device.h: make struct
+>> bus_type a const *"), the driver core can properly handle constant
+>> struct bus_type, move the amba_bustype variable to be a constant
+>> structure as well, placing it into read-only memory which can not be
+>> modified at runtime.
+> ...
+>
+>> -extern struct bus_type amba_bustype;
+>> +extern const struct bus_type amba_bustype;
+> Can we actually hide this from the outside, i.e. make it static in the C file,
+> and introduce the dev_is_amba() helper instead?
+Sure, i've find the patch  series 
+(https://lore.kernel.org/all/20240528102708.1451343-2-andy.shevchenko@gmail.com/)
+> P.S. You may look at the PNP bus case (some of the latest patches there).
+>
+I'll change it as PNP bus in v2.
 
+-- 
+Thanks,
+   Kunwu.Chan
 
-Thank you for your patch.
-
-
-Am 26.08.24 um 09:48 schrieb Yu Kuai:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> For flush request, md has a special flush handling to merge concurrent
-> flush request into single one, however, the whole mechanism is based on
-> a disk level spin_lock 'mddev->lock'. And fsync can be called quite
-> often in some user cases, for consequence, spin lock from IO fast path can
-> cause performance degration.
-> 
-> Fortunately, the block layer already have flush handling to merge
-
-s/have/has/
-
-> concurrent flush request, and it only acquire hctx level spin lock(see
-
-1.  acquire*s*
-2.  Please add a space before the (.
-
-> details in blk-flush.c).
-> 
-> This patch remove the flush handling in md, and convert to use general
-> block layer flush handling in underlying disks.
-
-remove*s*, convert*s*
-
-> Flush test for 4 nvme raid10:
-> start 128 threads to do fsync 100000 times, on arm64, see how long it
-> takes.
-
-Please share the script, so it’s easier to reproduce?
-
-> Test result: about 10 times faster for high concurrency.
-> Before this patch: 50943374 microseconds
-> After this patch:  5096347  microseconds
-> 
-> BTW, this patch can fix the same problem as commit 611d5cbc0b35 ("md: fix
-> deadlock between mddev_suspend and flush bio").
-
-So, should that be reverted? (Cc: +Li Nan)
-
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md.c | 137 ++++--------------------------------------------
->   drivers/md/md.h |  10 ----
->   2 files changed, 11 insertions(+), 136 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index a38981de8901..4d675f7cc2a7 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -546,137 +546,23 @@ static int mddev_set_closing_and_sync_blockdev(struct mddev *mddev, int opener_n
->   	return 0;
->   }
->   
-> -/*
-> - * Generic flush handling for md
-> - */
-> -
-> -static void md_end_flush(struct bio *bio)
-> -{
-> -	struct md_rdev *rdev = bio->bi_private;
-> -	struct mddev *mddev = rdev->mddev;
-> -
-> -	bio_put(bio);
-> -
-> -	rdev_dec_pending(rdev, mddev);
-> -
-> -	if (atomic_dec_and_test(&mddev->flush_pending))
-> -		/* The pre-request flush has finished */
-> -		queue_work(md_wq, &mddev->flush_work);
-> -}
-> -
-> -static void md_submit_flush_data(struct work_struct *ws);
-> -
-> -static void submit_flushes(struct work_struct *ws)
-> +bool md_flush_request(struct mddev *mddev, struct bio *bio)
->   {
-> -	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
->   	struct md_rdev *rdev;
-> +	struct bio *new;
->   
-> -	mddev->start_flush = ktime_get_boottime();
-> -	INIT_WORK(&mddev->flush_work, md_submit_flush_data);
-> -	atomic_set(&mddev->flush_pending, 1);
-> -	rcu_read_lock();
-> -	rdev_for_each_rcu(rdev, mddev)
-> -		if (rdev->raid_disk >= 0 &&
-> -		    !test_bit(Faulty, &rdev->flags)) {
-> -			struct bio *bi;
-> -
-> -			atomic_inc(&rdev->nr_pending);
-> -			rcu_read_unlock();
-> -			bi = bio_alloc_bioset(rdev->bdev, 0,
-> -					      REQ_OP_WRITE | REQ_PREFLUSH,
-> -					      GFP_NOIO, &mddev->bio_set);
-> -			bi->bi_end_io = md_end_flush;
-> -			bi->bi_private = rdev;
-> -			atomic_inc(&mddev->flush_pending);
-> -			submit_bio(bi);
-> -			rcu_read_lock();
-> -		}
-> -	rcu_read_unlock();
-> -	if (atomic_dec_and_test(&mddev->flush_pending))
-> -		queue_work(md_wq, &mddev->flush_work);
-> -}
-> -
-> -static void md_submit_flush_data(struct work_struct *ws)
-> -{
-> -	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
-> -	struct bio *bio = mddev->flush_bio;
-> -
-> -	/*
-> -	 * must reset flush_bio before calling into md_handle_request to avoid a
-> -	 * deadlock, because other bios passed md_handle_request suspend check
-> -	 * could wait for this and below md_handle_request could wait for those
-> -	 * bios because of suspend check
-> -	 */
-> -	spin_lock_irq(&mddev->lock);
-> -	mddev->prev_flush_start = mddev->start_flush;
-> -	mddev->flush_bio = NULL;
-> -	spin_unlock_irq(&mddev->lock);
-> -	wake_up(&mddev->sb_wait);
-> -
-> -	if (bio->bi_iter.bi_size == 0) {
-> -		/* an empty barrier - all done */
-> -		bio_endio(bio);
-> -	} else {
-> -		bio->bi_opf &= ~REQ_PREFLUSH;
-> -
-> -		/*
-> -		 * make_requst() will never return error here, it only
-> -		 * returns error in raid5_make_request() by dm-raid.
-> -		 * Since dm always splits data and flush operation into
-> -		 * two separate io, io size of flush submitted by dm
-> -		 * always is 0, make_request() will not be called here.
-> -		 */
-> -		if (WARN_ON_ONCE(!mddev->pers->make_request(mddev, bio)))
-> -			bio_io_error(bio);
-> -	}
-> -
-> -	/* The pair is percpu_ref_get() from md_flush_request() */
-> -	percpu_ref_put(&mddev->active_io);
-> -}
-> +	rdev_for_each(rdev, mddev) {
-> +		if (rdev->raid_disk < 0 || test_bit(Faulty, &rdev->flags))
-> +			continue;
->   
-> -/*
-> - * Manages consolidation of flushes and submitting any flushes needed for
-> - * a bio with REQ_PREFLUSH.  Returns true if the bio is finished or is
-> - * being finished in another context.  Returns false if the flushing is
-> - * complete but still needs the I/O portion of the bio to be processed.
-> - */
-> -bool md_flush_request(struct mddev *mddev, struct bio *bio)
-> -{
-> -	ktime_t req_start = ktime_get_boottime();
-> -	spin_lock_irq(&mddev->lock);
-> -	/* flush requests wait until ongoing flush completes,
-> -	 * hence coalescing all the pending requests.
-> -	 */
-> -	wait_event_lock_irq(mddev->sb_wait,
-> -			    !mddev->flush_bio ||
-> -			    ktime_before(req_start, mddev->prev_flush_start),
-> -			    mddev->lock);
-> -	/* new request after previous flush is completed */
-> -	if (ktime_after(req_start, mddev->prev_flush_start)) {
-> -		WARN_ON(mddev->flush_bio);
-> -		/*
-> -		 * Grab a reference to make sure mddev_suspend() will wait for
-> -		 * this flush to be done.
-> -		 *
-> -		 * md_flush_reqeust() is called under md_handle_request() and
-> -		 * 'active_io' is already grabbed, hence percpu_ref_is_zero()
-> -		 * won't pass, percpu_ref_tryget_live() can't be used because
-> -		 * percpu_ref_kill() can be called by mddev_suspend()
-> -		 * concurrently.
-> -		 */
-> -		WARN_ON(percpu_ref_is_zero(&mddev->active_io));
-> -		percpu_ref_get(&mddev->active_io);
-> -		mddev->flush_bio = bio;
-> -		spin_unlock_irq(&mddev->lock);
-> -		INIT_WORK(&mddev->flush_work, submit_flushes);
-> -		queue_work(md_wq, &mddev->flush_work);
-> -		return true;
-> +		new = bio_alloc_bioset(rdev->bdev, 0,
-> +				       REQ_OP_WRITE | REQ_PREFLUSH, GFP_NOIO,
-> +				       &mddev->bio_set);
-> +		bio_chain(new, bio);
-> +		submit_bio(new);
->   	}
->   
-> -	/* flush was performed for some other bio while we waited. */
-> -	spin_unlock_irq(&mddev->lock);
-> -	if (bio->bi_iter.bi_size == 0) {
-> -		/* pure flush without data - all done */
-> +	if (bio_sectors(bio) == 0) {
->   		bio_endio(bio);
->   		return true;
->   	}
-> @@ -763,7 +649,6 @@ int mddev_init(struct mddev *mddev)
->   	atomic_set(&mddev->openers, 0);
->   	atomic_set(&mddev->sync_seq, 0);
->   	spin_lock_init(&mddev->lock);
-> -	atomic_set(&mddev->flush_pending, 0);
->   	init_waitqueue_head(&mddev->sb_wait);
->   	init_waitqueue_head(&mddev->recovery_wait);
->   	mddev->reshape_position = MaxSector;
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 1c6a5f41adca..5d2e6bd58e4d 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -572,16 +572,6 @@ struct mddev {
->   						   */
->   	struct bio_set			io_clone_set;
->   
-> -	/* Generic flush handling.
-> -	 * The last to finish preflush schedules a worker to submit
-> -	 * the rest of the request (without the REQ_PREFLUSH flag).
-> -	 */
-> -	struct bio *flush_bio;
-> -	atomic_t flush_pending;
-> -	ktime_t start_flush, prev_flush_start; /* prev_flush_start is when the previous completed
-> -						* flush was started.
-> -						*/
-> -	struct work_struct flush_work;
->   	struct work_struct event_work;	/* used by dm to report failure event */
->   	mempool_t *serial_info_pool;
->   	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
-
-Code removal is always nice to see.
-
-
-Kind regards,
-
-Paul
 
