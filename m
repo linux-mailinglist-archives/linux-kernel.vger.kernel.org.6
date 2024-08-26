@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-301823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F95795F61C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:10:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A9695F621
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A5D1F23460
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:10:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45891B20EE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414FD1946A9;
-	Mon, 26 Aug 2024 16:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A1194A45;
+	Mon, 26 Aug 2024 16:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6Qzr18S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nasRoOMJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7894A153812;
-	Mon, 26 Aug 2024 16:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CDD18858E;
+	Mon, 26 Aug 2024 16:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688590; cv=none; b=rQXt+u5ajr1FNkGLeIPHsF2woiY83swEtV5O+1OytFPGbYNabxDNDmISiWmpSeQAqaibBXh+LHf1cOV9HLbJAWnXKboyt2QajX7EajgWN28d1BJCX/pWxQ1neivG95dS9AeuKznXhODojgABndjTmWEqmgLqzCKa7U8615sAFt8=
+	t=1724688632; cv=none; b=Ilj+fUMiYlqFSrTCwngyz0/JpAEOhMuUuS/sXtq+Ybez6/tnjw7KdTBI3WZCeMxFC8AOeZ7qLL6JfMare3x50GiIPv0P6SZpjvFhYsyLkFoHaLqebkAOuwjRvcDkB9h8rPDfDJm3e4+54Y7C9T3ZEB+fSkncscfRRBj23r/kG7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688590; c=relaxed/simple;
-	bh=PgVuv+2ugVeGTH07IgetYbovxINZB9KbgAWUegNwC2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDw90NAEJGmylkEGPHPK0ugEE0DG6fBkakcFHyvVIOZ4Fm7IXXtW5zo/FZwheXflZ+Llr5YuxqW/0YbtzRc8xoQBJHBSnareSI7O8gZ074oEOIE1WAtjj8clBbufWrV17Ao3BwGt1jD1aLi2uNB2R3mHd+Fx+r52vstWaUZqmMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6Qzr18S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE29DC52FC1;
-	Mon, 26 Aug 2024 16:09:45 +0000 (UTC)
+	s=arc-20240116; t=1724688632; c=relaxed/simple;
+	bh=Gtmt/VyuBoYN4UaJVCGTPSHAav6dtM1HQ0ut3XXbVJ8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cINRwsyyFcfuzlJtDPLh2Dl1+oZE37nF/UIlUM+irJs7PM1NqEnD3UFAdsUOwrIjz7007zEzB5kd/xsHnSN1Vj5zTW7goX5ZxRc94CWPx5CyfjQvhTJLkRG7MjyA1o0D8fQeSUg6PDaqVqb4em8Nq9GiDVk+uZjnlsCGfrndKRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nasRoOMJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36313C52FC2;
+	Mon, 26 Aug 2024 16:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724688590;
-	bh=PgVuv+2ugVeGTH07IgetYbovxINZB9KbgAWUegNwC2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b6Qzr18ST56e+ZIkNrKXLmV9BBHjlh82KJr9E5OOI/86EGF9gml8uPYnZnw7rIZ2N
-	 uQ0Dafk4rwC/2Fc7HsUC0ncaGxD+QreYUc6nElo1zGhSuvpBFOgkwNHLGRBmDQhMMs
-	 61IAGvFe9NCNiNceBHFBfjvU19CnWf2r63ed8Jl8lKszZiE2I3Vhh6zo5kM1cBaVCb
-	 JZuhkHPJwI1qnxSDCPHVLXaWlqpBhKktrwtu+t1KTejkdgYwNG2NpHT0em0b07KdZf
-	 rNMDePdjavcn8mu7cr7YfE15Z8ImlswG5K20o7Yc2EB+rAhiGmlPLb/KTlMWRcGF5D
-	 RGh99qNKNGSeQ==
-Date: Mon, 26 Aug 2024 17:09:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: lorforlinux@beagleboard.org, jkridner@beagleboard.org,
-	robertcnelson@beagleboard.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	greybus-dev@lists.linaro.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: net: ti,cc1352p7: Add
- bootloader-backdoor-gpios
-Message-ID: <20240826-pristine-domelike-d995db6f2561@spud>
-References: <20240825-beagleplay_fw_upgrade-v3-0-8f424a9de9f6@beagleboard.org>
- <20240825-beagleplay_fw_upgrade-v3-1-8f424a9de9f6@beagleboard.org>
+	s=k20201202; t=1724688630;
+	bh=Gtmt/VyuBoYN4UaJVCGTPSHAav6dtM1HQ0ut3XXbVJ8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nasRoOMJCNbQxE/OB45ox9bSNZJvI08gCmfS6Qe1gtyapxgYp/+QukwkspVFS7v/u
+	 DCYnFAl0n0MB+M0a/EHIXMgZNIuIFkMMciX0+3Nir9fI6cgpVRsJ++zHVIyylhpGag
+	 saKtogYjwpBX5tmaYExo70aCqtSIQvgp+oJIvkIxtiVU9nZgP2eSqV6inwKfvsMjM6
+	 C/puQ0FIshlIDQz3nQ0eb6OXeungwhP+duUIO4mJYKi/rKsP6i98T1YJ+wt2Wl9DrO
+	 WqetV3WDfmXpiecaKXtPxbkVD5vXGbATLqB/JkvxReXdqYB9awuVqeUu2dhU8OnrgO
+	 v+JCZMmSeuoAg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CB93822D6D;
+	Mon, 26 Aug 2024 16:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/DPLpm0pp++ZNJeN"
-Content-Disposition: inline
-In-Reply-To: <20240825-beagleplay_fw_upgrade-v3-1-8f424a9de9f6@beagleboard.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/1 V2] Selftests: net: Set executable bit for shell script
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172468862999.56156.11380462339088608226.git-patchwork-notify@kernel.org>
+Date: Mon, 26 Aug 2024 16:10:29 +0000
+References: <20240824143837.228874-1-david.hunter.linux@gmail.com>
+In-Reply-To: <20240824143837.228874-1-david.hunter.linux@gmail.com>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, javier.carrasco.cruz@gmail.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ shuah@kernel.org
+
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Martin KaFai Lau <martin.lau@kernel.org>:
+
+On Sat, 24 Aug 2024 10:38:37 -0400 you wrote:
+> Turn on the execution bit for the shell script file. The test is skipped
+> when downloaded from the linux_mainline source files.
+> 
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
+> V1 --> V2
+> 	- Split the patch into two separate patches (one for each issue)
+> 	- Included subject prefixes
+> 
+> [...]
+
+Here is the summary with links:
+  - [1/1,V2] Selftests: net: Set executable bit for shell script
+    https://git.kernel.org/netdev/net-next/c/39e8111ce5ce
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---/DPLpm0pp++ZNJeN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Aug 25, 2024 at 10:17:05PM +0530, Ayush Singh wrote:
-> bootloader-backdoor-gpio (along with reset-gpio) is used to enable
-> bootloader backdoor for flashing new firmware.
->=20
-> The pin and pin level to enable bootloader backdoor is configured using
-> the following CCFG variables in cc1352p7:
-> - SET_CCFG_BL_CONFIG_BL_PIN_NO
-> - SET_CCFG_BL_CONFIG_BL_LEVEL
->=20
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---/DPLpm0pp++ZNJeN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsyoxwAKCRB4tDGHoIJi
-0thAAQDPuuwJz0rQ4CLBxjUEwzs+xJQjaSdCxpCtp2ypSXeDfgD/QDkE2GTbcD51
-HY+44h0CGH+wJznOESsbSYLni8+60wM=
-=7Rz+
------END PGP SIGNATURE-----
-
---/DPLpm0pp++ZNJeN--
 
