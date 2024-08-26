@@ -1,90 +1,121 @@
-Return-Path: <linux-kernel+bounces-301776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B4C95F571
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6C695F575
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFAA1F22458
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1051C21668
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA41A194124;
-	Mon, 26 Aug 2024 15:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD291946A0;
+	Mon, 26 Aug 2024 15:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X+7HGJhG"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cb1+8UtZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x77DAFfu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F37D192D72
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920D619413C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687182; cv=none; b=K+M/kmgkgYF8dgvTWQ6ujYAYEFPYTjd6gEfZsMYleTTIL6BaS2VA/yXjK3otJPPh7ZaaF///71fiRblCn85gcyKRRE270Uhmvr+DMIpLZH5hCXAuKItnY2seE4RzoWOlCoRvmziJ7sJAtlsf4vWuF6lM3rX/92IO4bRmbwmBn80=
+	t=1724687199; cv=none; b=qJ+1w+FMYo0mlWY1RDy3xQmduz+8++PhU/MscUutHUv/n7DyEm6EBX5f5BYyFUR6QoBGdiBveQY0BQyM1OW75IPUDw2s5zIkw+Hh5n0a4kRLor0zdr8aBZZd5vgV3FrgmOMsObAUMyzUZsPx7x63EgQUXCk2pK665X5FJrpmi0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687182; c=relaxed/simple;
-	bh=rijYHIP0Ao4lvCJLZaabkuQiGBKAVts2w69Ma/szZjQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=en3FAVQCuWIogLPoqm2hPsnxTWMIFUYCFGCvdav5zu/lB0uxV8crGFJ5C0tx0fziTNbzTcPoUEoPDrfU4GywTJ8LXxQI4Omj1K9SFGZ38cP1MD3P1MQCf+31VYW/C8HkHCX5LDKrf8MkNSu04JBXUrMhkyj2OqeMlHnESnSQ15Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X+7HGJhG; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=ewcidbvko5enbggt7fhozxovdy.protonmail; t=1724687177; x=1724946377;
-	bh=1S2zdt5fhwBL6dRleG9sKZYBdZBYfRqGJChdpr7OXPg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=X+7HGJhGLPHX1+IPTRM1q+GrUynyMCtOkS7+gafxmPJtqPDa9ifCxgOW1Ga4oSGpy
-	 leDnLCiFYCgudimQW6MX8lkDHV7KkhUDd8BVB2H06KpgzuQDpt5NHWjuSL89P7lFbw
-	 Tvz8IRHhd6IyuNrzpSvX5Nsr92djm9JCIN2aNhD2qGT21FTDVUfw3zh1rZLTYeyhGa
-	 /EGaTxdhJBqDFfkk4xKVbxKSD9FE0qpZTqXO0k7W0vurUl8+pEZg8aU9Zg+dzNB37+
-	 uS71jDlgpeJDQm3EpNcqtIh1qdaiOts93d6X/iUYETMIilJLT5WupVHdeY37TbIZ2p
-	 nW8F4KYQNYdMA==
-Date: Mon, 26 Aug 2024 15:46:12 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: add global lock support
-Message-ID: <91ce9f9a-5def-4f5a-ab9d-9bde4736cca0@proton.me>
-In-Reply-To: <CAH5fLgjtSVMcKL4aMrNT=zJPGvzAPJt3qAUMYdB-+3=s80FNKQ@mail.gmail.com>
-References: <20240826-static-mutex-v1-1-a14ee71561f3@google.com> <9feb41cc-cb1c-4d0d-a3df-09298e69af69@proton.me> <CAH5fLgjtSVMcKL4aMrNT=zJPGvzAPJt3qAUMYdB-+3=s80FNKQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 40ae1f2bb1268bc8d502447b32524023b018a751
+	s=arc-20240116; t=1724687199; c=relaxed/simple;
+	bh=r+qgaJdA25fP8sjeQbqNaN1kAi25iEv2HpFZFZB3KPo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UbsPPzDK+/qavgXbnH4Q5mjU8bOpbzJkOwe/9tGM9YYEF34roRn4tu1gOi+rbfwz25RxL9KujMe6ckdJDHT6wAAOSwPCNv1djFWJg5DMAlxlAkZxxtyR3sWSU92aAK4duhoqV2sqoUdcrGxELUT1NnBqhnjlIujXHTy0ZktffKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cb1+8UtZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x77DAFfu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724687195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XInPgjKWrwpXT2yotO6xYZIrSGsVmYztBJiO4xMkrNU=;
+	b=cb1+8UtZFmdD7nijYZbx8l6iz/mY4BQna5B22dk9O5Ezd2pN4lJbTwTGySZqByrpzWHPJD
+	ybMtYCvnSSUrqbLzPBLcWpGnUbKvdXQFsso4AEcPp+y22VJ3jSecjmo3bfSadLg02rTcIE
+	G+NVAFwsbgmMFlW5FYqWQJXS5wRUWB1RLib6pk3wmj8ceotoRGyS3FspPLMgc5nmG7KF2c
+	eQgWKeT0ecgX6LzF3DJxEPUFilTmih90nqosi6T/UadrIy6NtqtPjI8eGs+HZQPZl8WSU7
+	kwvgl+HofLxfpM/orFow8LCVWE87ORuqU5jStSFidVM2owEPxhPvKCWNhOgpew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724687195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XInPgjKWrwpXT2yotO6xYZIrSGsVmYztBJiO4xMkrNU=;
+	b=x77DAFfu+C4Nd1cANZtGoEpBxU0x9OFFHGAOltQJeGOvTtLmar1omEfWE0K/HagGQAm+yU
+	YPAFxMWwLe1HsrBQ==
+To: takakura@valinux.co.jp, pmladek@suse.com
+Cc: akpm@linux-foundation.org, bhe@redhat.com, feng.tang@intel.com,
+ j.granados@samsung.com, linux-kernel@vger.kernel.org, lukas@wunner.de,
+ nishimura@valinux.co.jp, rostedt@goodmis.org, senozhatsky@chromium.org,
+ stephen.s.brennan@oracle.com, taka@valinux.co.jp, takakura@valinux.co.jp,
+ ubizjak@gmail.com, wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v3 2/2] Handle flushing of CPU backtraces during panic
+In-Reply-To: <20240821050254.69853-1-takakura@valinux.co.jp>
+References: <87y14sjp0d.fsf@jogness.linutronix.de>
+ <20240821050254.69853-1-takakura@valinux.co.jp>
+Date: Mon, 26 Aug 2024 17:52:34 +0206
+Message-ID: <877cc38exx.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On 26.08.24 17:31, Alice Ryhl wrote:
-> On Mon, Aug 26, 2024 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->> On 26.08.24 17:27, Alice Ryhl wrote:
->>> +    /// Initialize a global lock.
->>> +    ///
->>> +    /// # Safety
->>> +    ///
->>> +    /// * This lock must have been created with [`unsafe_const_new`].
->>> +    /// * This lock must be pinned.
+On 2024-08-21, takakura@valinux.co.jp wrote:
+>>> /**
+>>>  * console_try_or_trigger_flush - try to flush consoles directly when
+>>>  *   safe or the trigger deferred flush.
+>>>  *
+>>>  * Context: Any
+>>>  */
+>>> void console_try_or_trigger_flush(void)
+>>> {
+>>>      if (!is_printk_legacy_deferred() && console_trylock())
+>>>              console_unlock();
+>>>      else
+>>>              defer_console_output();
+>>> }
+>>>
+>>> and use it instead of printk_trigger_flush() in
+>>> nmi_trigger_cpumask_backtrace().
 >>
->> You could also ask for `self: Pin<&Self>` and remove this constraint, or
->> is that not possible in your use-case?
->=20
-> The value is going to be in a static, and it's inconvenient to have to
-> use Pin::new_unchecked when calling this initializer. Not sure much
-> value is gained.
+>> Just to be clear, you are talking about removing
+>> printk_trigger_flush() entirely and instead provide the new
+>> console_try_or_trigger_flush()?  Which then also involves updating
+>> the call sites:
+>>
+>> lib/nmi_backtrace.c:nmi_trigger_cpumask_backtrace()
+>> arch/powerpc/kernel/watchdog.c:watchdog_timer_interrupt()
+>>
+>
+> Taking a look at [0], in addition to the mentioned call sites, 
+> nbcon_device_release() will also be calling printk_trigger_flush()?
+> For nbcon_device_release(), I thought its better not to be replaced as 
+> it calles for @legacy_off, in which case printk_trigger_flush() seems 
+> more suitable as it always defers printing.
 
-Can't you use `Pin::static_ref` [1]?
+The @legacy_off logic would be within console_try_or_trigger_flush(),
+so the result would be the same.
 
-[1]: https://doc.rust-lang.org/std/pin/struct.Pin.html#method.static_ref
+> Also taking a look at the [1], for nmi_trigger_cpumask_backtrace(), 
+> I thought that it will not comply with the syncing of 
+> legacy_allow_panic_sync. I believe it will allow flushing of legacy consoles 
+> before printk_legacy_allow_panic_sync() which is out of sync.
 
----
-Cheers,
-Benno
+But isn't your patch also causing that violation?
 
+printk_legacy_allow_panic_sync() performs a trylock/unlock. Isn't that
+good enough?
+
+John
 
