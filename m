@@ -1,246 +1,174 @@
-Return-Path: <linux-kernel+bounces-301782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8275295F581
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700EE95F583
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33873282A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 253EC282A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B004C194C6C;
-	Mon, 26 Aug 2024 15:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2B61946A0;
+	Mon, 26 Aug 2024 15:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBzGZtah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="rgBQImOf"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D0519413C;
-	Mon, 26 Aug 2024 15:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E27A1940A1;
+	Mon, 26 Aug 2024 15:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687295; cv=none; b=o7dGr6btvMGENsuvSby1ivwGZS92U1SV+FU6x7EN/8Dmuae0nHkZvntD31t7UG+0zmZ00WA5t1hWtF7VhY4tSHkYUrP+OLJGnLHBJPsb4h07w3zFOE4NrBVH+pLcYihaMaEt8AWFAt3Xf1cd/YgKLLQ/67ekA7Q5Y+ypG1EpQoI=
+	t=1724687307; cv=none; b=UqJ1ZeEwpj1dQP219O29hU74nGWsPMwo377/SL+XI9dyinRmYwDYRatMypkrdAbHtSnJTvRQE4QvTVEvDZM6IlOLRTiCbn5do3uuisJ9GVJ/v4ulFQAcz2HNtIIF7BlpjlWBiGlE7u1a69htI/n6khqJmakT70Ybn7Dyjf6/JWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687295; c=relaxed/simple;
-	bh=G+InZdEellA5Fa695AuPGLjSD3WzX7SNoLqRZFTlhq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ErQv4M4MW2PxE/cms/FG8FImey18XY2uAmYS4jLcJp5P3Ze1gvnKjUWcjIhDCl/q4lPBO51jotmXWg0y3rpdQHNFYArlsEBpj+j3SnvxIwl+aZ8Aj4zb87DFbzCRMl6bibvQxrNurg8CeFx9yYEdwus/TRme1goWlbN0RVIfCMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBzGZtah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D306FC4FDE1;
-	Mon, 26 Aug 2024 15:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724687294;
-	bh=G+InZdEellA5Fa695AuPGLjSD3WzX7SNoLqRZFTlhq8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JBzGZtah3mr2YchvudG8OhPBm6GaQB7SQOHXdqhGi7HAZlGZSU9qTO/64JPYM9bQo
-	 lCy20ebSkJJnRVIJ23JCkMUywBcekNhzWxUVd/PlkL1MrfQgR8GHKj4kalKooaIBQu
-	 y5HfkjSbwKbYkS4gCT7+tDWk62YdGyWSh2f/J4EI5vG2svaUkjPsDbAxwKh9EYxCCy
-	 qZIKJeqxSQaOlR2Wr8GHY4frPzHlrm7IHSdRhap+Sn8wNUaFCfDYiqdVeTMNuUJA2d
-	 qc5BGPlbfkyRwKgTdPauDojRRZkOX1s/GyrzLQ5X75xLPIBG9t7Xk/0jaaCpfwxUfY
-	 YXe/jz+iNGsCw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Tue, 27 Aug 2024 00:47:53 +0900
-Subject: [PATCH v4 3/3] selftests/hid: Add HIDIOCREVOKE tests
+	s=arc-20240116; t=1724687307; c=relaxed/simple;
+	bh=40+1HJAs57zHmxddWhfU/SLht1G5b37MeQwbTmJOtV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVJbHYxV2MiKoL+rhZdgydvrEA+b1prPz6mXGWPDuNSml7DwBzSWFfgRMyHu/dLLM8xFgUU6PwKpOHuwhg5tmVSljJIHC2iqiq3lhG4iqklYlcIf/s0Tudc6lOa8pl3AK0TBqzsITl2BjY0+PNdOj0x6F4TydXXpk5W86iR+tOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=rgBQImOf; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Wsw7T529Sz9sGf;
+	Mon, 26 Aug 2024 17:48:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1724687301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eRydv55gNXaJ5A8ZeAWT2zJk1Y3fP0tRUqT2W8LViaQ=;
+	b=rgBQImOf5dPh+IqVFwGUy/Fy+wyfsnvuDcxC2DsTW9GyK4gN24SVBdHRVFxPL/jGLJfqUU
+	tcwEtQ0oHfegOUFWzbGhtarvaE2iAjcnExlQIo9xMCwM0yZYk1VAi/j2bDGoBT5qA6uxQB
+	t3FxMM+Yd+g8ztHqidEBk1O3Xh2w21fAYi1r6Mk6Rt++euWDs0q+mT8mmkiYtoB7qDFCaG
+	gyHVUub6eB2MIvbCflrOpmeDeTC923hg//FDmAIvoqLbxn4Phdzlyon9YEv2diTpLYGk60
+	JutJBd+r02CK7OlgeCgo1FHk0Lo3p3Iei5lwdSpqo7bkp/ZHV2WPk2juA2ZcNA==
+Date: Mon, 26 Aug 2024 15:48:18 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	djwong@kernel.org, ritesh.list@gmail.com,
+	linuxppc-dev@lists.ozlabs.org, christophe.leroy@csgroup.eu
+Subject: Re: linux-next: boot warning after merge of the vfs-brauner tree
+Message-ID: <20240826154818.hzqnvofdmaxvuwrh@quentin>
+References: <20240826175931.1989f99e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240827-hidraw-revoke-v4-3-88c6795bf867@kernel.org>
-References: <20240827-hidraw-revoke-v4-0-88c6795bf867@kernel.org>
-In-Reply-To: <20240827-hidraw-revoke-v4-0-88c6795bf867@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724687286; l=4826;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=G+InZdEellA5Fa695AuPGLjSD3WzX7SNoLqRZFTlhq8=;
- b=sdiGNtpL7TBXwpcAzrS32Zag0wy6xlF9x6XmngbEI8pih4rSjZV9ynYdcOR3pa73vcIISh4s+
- xnhY2q3YlkzBjcUIAM5tGVft08d+xOx03SnJ2iHJis2W0RMwVkLKf5k
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826175931.1989f99e@canb.auug.org.au>
 
-Add 4 tests for the new revoke ioctl, for read/write/ioctl and poll.
+On Mon, Aug 26, 2024 at 05:59:31PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the vfs-brauner tree, today's linux-next boot test (powerpc
+> pseries_le_defconfig) produced this warning:
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+iomap dio calls set_memory_ro() on the page that is used for sub block
+zeroing.
 
----
+But looking at powerpc code, they don't support set_memory_ro() for
+memory region that belongs to the kernel(LINEAR_MAP_REGION_ID).
 
-new in v4
----
- tools/testing/selftests/hid/hidraw.c | 143 +++++++++++++++++++++++++++++++++++
- 1 file changed, 143 insertions(+)
+/*
+ * On hash, the linear mapping is not in the Linux page table so
+ * apply_to_existing_page_range() will have no effect. If in the future
+ * the set_memory_* functions are used on the linear map this will need
+ * to be updated.
+ */
+if (!radix_enabled()) {
+        int region = get_region_id(addr);
 
-diff --git a/tools/testing/selftests/hid/hidraw.c b/tools/testing/selftests/hid/hidraw.c
-index f8c933476dcd..669eada8886b 100644
---- a/tools/testing/selftests/hid/hidraw.c
-+++ b/tools/testing/selftests/hid/hidraw.c
-@@ -19,6 +19,11 @@
- 	__typeof__(b) _b = (b); \
- 	_a < _b ? _a : _b; })
+        if (WARN_ON_ONCE(region != VMALLOC_REGION_ID && region != IO_REGION_ID))
+                return -EINVAL;
+}
+
+We call set_memory_ro() on the zero page as a extra security measure.
+I don't know much about powerpc, but looking at the comment, is it just
+adding the following to support it in powerpc:
+
+diff --git a/arch/powerpc/mm/pageattr.c b/arch/powerpc/mm/pageattr.c
+index ac22bf28086fa..e6e0b40ba6db4 100644
+--- a/arch/powerpc/mm/pageattr.c
++++ b/arch/powerpc/mm/pageattr.c
+@@ -94,7 +94,9 @@ int change_memory_attr(unsigned long addr, int numpages, long action)
+        if (!radix_enabled()) {
+                int region = get_region_id(addr);
  
-+/* for older kernels */
-+#ifndef HIDIOCREVOKE
-+#define HIDIOCREVOKE	      _IOW('H', 0x0D, int) /* Revoke device access */
-+#endif /* HIDIOCREVOKE */
-+
- static unsigned char rdesc[] = {
- 	0x06, 0x00, 0xff,	/* Usage Page (Vendor Defined Page 1) */
- 	0x09, 0x21,		/* Usage (Vendor Usage 0x21) */
-@@ -516,6 +521,144 @@ TEST_F(hidraw, raw_event)
- 	ASSERT_EQ(buf[1], 42);
- }
- 
-+/*
-+ * After initial opening/checks of hidraw, revoke the hidraw
-+ * node and check that we can not read any more data.
-+ */
-+TEST_F(hidraw, raw_event_revoked)
-+{
-+	__u8 buf[10] = {0};
-+	int err;
-+
-+	/* inject one event */
-+	buf[0] = 1;
-+	buf[1] = 42;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	/* read the data from hidraw */
-+	memset(buf, 0, sizeof(buf));
-+	err = read(self->hidraw_fd, buf, sizeof(buf));
-+	ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
-+	ASSERT_EQ(buf[0], 1);
-+	ASSERT_EQ(buf[1], 42);
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* inject one other event */
-+	buf[0] = 1;
-+	buf[1] = 43;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	/* read the data from hidraw */
-+	memset(buf, 0, sizeof(buf));
-+	err = read(self->hidraw_fd, buf, sizeof(buf));
-+	ASSERT_EQ(err, -1) TH_LOG("read_hidraw");
-+}
-+
-+/*
-+ * Revoke the hidraw node and check that we can not do any ioctl.
-+ */
-+TEST_F(hidraw, ioctl_revoked)
-+{
-+	int err, desc_size = 0;
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* do an ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCGRDESCSIZE, &desc_size);
-+	ASSERT_EQ(err, -1) TH_LOG("read_hidraw");
-+}
-+
-+/*
-+ * Setup polling of the fd, and check that revoke works properly.
-+ */
-+TEST_F(hidraw, poll_revoked)
-+{
-+	struct pollfd pfds[1];
-+	__u8 buf[10] = {0};
-+	int err, ready;
-+
-+	/* setup polling */
-+	pfds[0].fd = self->hidraw_fd;
-+	pfds[0].events = POLLIN;
-+
-+	/* inject one event */
-+	buf[0] = 1;
-+	buf[1] = 42;
-+	uhid_send_event(_metadata, self->uhid_fd, buf, 6);
-+
-+	while (true) {
-+		ready = poll(pfds, 1, 5000);
-+		ASSERT_EQ(ready, 1) TH_LOG("poll return value");
-+
-+		if (pfds[0].revents & POLLIN) {
-+			memset(buf, 0, sizeof(buf));
-+			err = read(self->hidraw_fd, buf, sizeof(buf));
-+			ASSERT_EQ(err, 6) TH_LOG("read_hidraw");
-+			ASSERT_EQ(buf[0], 1);
-+			ASSERT_EQ(buf[1], 42);
-+
-+			/* call the revoke ioctl */
-+			err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+			ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+		} else {
-+			break;
-+		}
-+	}
-+
-+	ASSERT_TRUE(pfds[0].revents & POLLHUP);
-+}
-+
-+/*
-+ * After initial opening/checks of hidraw, revoke the hidraw
-+ * node and check that we can not read any more data.
-+ */
-+TEST_F(hidraw, write_event_revoked)
-+{
-+	struct timespec time_to_wait;
-+	__u8 buf[10] = {0};
-+	int err;
-+
-+	/* inject one event from hidraw */
-+	buf[0] = 1; /* report ID */
-+	buf[1] = 2;
-+	buf[2] = 42;
-+
-+	pthread_mutex_lock(&uhid_output_mtx);
-+
-+	memset(output_report, 0, sizeof(output_report));
-+	clock_gettime(CLOCK_REALTIME, &time_to_wait);
-+	time_to_wait.tv_sec += 2;
-+
-+	err = write(self->hidraw_fd, buf, 3);
-+	ASSERT_EQ(err, 3) TH_LOG("unexpected error while writing to hidraw node: %d", err);
-+
-+	err = pthread_cond_timedwait(&uhid_output_cond, &uhid_output_mtx, &time_to_wait);
-+	ASSERT_OK(err) TH_LOG("error while calling waiting for the condition");
-+
-+	ASSERT_EQ(output_report[0], 1);
-+	ASSERT_EQ(output_report[1], 2);
-+	ASSERT_EQ(output_report[2], 42);
-+
-+	/* call the revoke ioctl */
-+	err = ioctl(self->hidraw_fd, HIDIOCREVOKE, NULL);
-+	ASSERT_OK(err) TH_LOG("couldn't revoke the hidraw fd");
-+
-+	/* inject one other event */
-+	buf[0] = 1;
-+	buf[1] = 43;
-+	err = write(self->hidraw_fd, buf, 3);
-+	ASSERT_LT(err, 0) TH_LOG("unexpected success while writing to hidraw node: %d", err);
-+	ASSERT_EQ(errno, 19) TH_LOG("unexpected error code while writing to hidraw node: %d",
-+				    errno);
-+
-+	pthread_mutex_unlock(&uhid_output_mtx);
-+}
-+
- int main(int argc, char **argv)
- {
- 	return test_harness_run(argc, argv);
+-               if (WARN_ON_ONCE(region != VMALLOC_REGION_ID && region != IO_REGION_ID))
++               if (WARN_ON_ONCE(region != VMALLOC_REGION_ID &&
++                                region != IO_REGION_ID &&
++                                region != LINEAR_MAP_REGION_ID))
+                        return -EINVAL;
+        }
+ #endif
+
+ If it involves changing more things and this feature will be added to
+ powerpc in the future, we could drop the set_memory_ro() call from
+ iomap.
+
+ CC: Darrick(as he suggested set_memory_ro() on zero page), Leroy,
+ Ritesh, ppc list
+
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1 at arch/powerpc/mm/pageattr.c:97 change_memory_attr+0xbc/0x150
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5-06731-g66e0882fba22 #1
+> Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200 0xf000004 of:SLOF,HEAD pSeries
+> NIP:  c00000000008a1ac LR: c00000000008a14c CTR: 0000000000000000
+> REGS: c0000000049b7930 TRAP: 0700   Not tainted  (6.11.0-rc5-06731-g66e0882fba22)
+> MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 84000482  XER: 00000000
+> CFAR: c00000000008a218 IRQMASK: 0 
+> GPR00: c00000000008a14c c0000000049b7bd0 c00000000167b100 0000000000000000 
+> GPR04: 0000000000000001 0000000000000000 0000000000000200 c000000002b10878 
+> GPR08: 000000007da60000 c007ffffffffffff ffffffffffffffff 0000000084000482 
+> GPR12: 0000000000000180 c000000002b90000 c00000000001110c 0000000000000000 
+> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+> GPR20: 0000000000000000 0000000000000000 0000000000000000 c000000001562288 
+> GPR24: c000000002003e6c c000000001632418 000000000000018c c0000000020c1058 
+> GPR28: 0000000000000000 0000000000000000 c000000006330000 0000000000000001 
+> NIP [c00000000008a1ac] change_memory_attr+0xbc/0x150
+> LR [c00000000008a14c] change_memory_attr+0x5c/0x150
+> Call Trace:
+> [c0000000049b7bd0] [000000000000018c] 0x18c (unreliable)
+> [c0000000049b7c10] [c00000000206bf70] iomap_dio_init+0x64/0x88
+> [c0000000049b7c30] [c000000000010d98] do_one_initcall+0x80/0x2f8
+> [c0000000049b7d00] [c000000002005c9c] kernel_init_freeable+0x32c/0x520
+> [c0000000049b7de0] [c000000000011138] kernel_init+0x34/0x26c
+> [c0000000049b7e50] [c00000000000debc] ret_from_kernel_user_thread+0x14/0x1c
+> --- interrupt: 0 at 0x0
+> Code: 60000000 e8010050 eba10028 7c6307b4 ebc10030 38210040 ebe1fff8 7c0803a6 4e800020 7bc92720 2c29000c 41820058 <0fe00000> 4800002c 60000000 60000000 
+> ---[ end trace 0000000000000000 ]---
+> 
+> Bisected to commit
+> 
+>   d940b3b7b76b ("iomap: fix iomap_dio_zero() for fs bs > system page size")
+> 
+> I have reverted commit
+> 
+>   9b0ebbc72358 ("Merge patch series "enable bs > ps in XFS"")
+> 
+> for today.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
 
 -- 
-2.46.0
-
+Pankaj Raghav
 
