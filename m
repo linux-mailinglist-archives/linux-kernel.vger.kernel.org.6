@@ -1,344 +1,132 @@
-Return-Path: <linux-kernel+bounces-300633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B03695E658
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:36:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33D195E65A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53A31F213C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:36:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DAC11F21245
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB16FD3;
-	Mon, 26 Aug 2024 01:36:42 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7889879E1;
+	Mon, 26 Aug 2024 01:37:08 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F82443D;
-	Mon, 26 Aug 2024 01:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FF146BA;
+	Mon, 26 Aug 2024 01:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724636201; cv=none; b=ZHtyBeMULuNdzZ7cwvQ1jTA+HNInhluoeAGtsOF6Jn24b4PF3hr3rTtMHYxjgM/b6LwXSxKVdN/R1CYi3ErMmnlDom8lmVDPq5pJ53XNOIgXpT6/ZKNwVLQsoax2doXtMUsqzSvyuJS/YSf2+eVVZD9lshgKxkqTjUeAJv+78Ag=
+	t=1724636228; cv=none; b=HBSUOElaIzEyd2fntpoz8K3AdCZ+My5pqguW/c9AVD0QDF6OwTHTNR0BmSBzS2KOVZpJaN59tRKPk0rnbXEcDO/G1qOm/TpCaa/IUbkbrUEIxRuYHeQKwxeVjBZM8uGIqJhjOjSJ29pRPXaRkL6LyyV34PZkFUl5pxlWO6Ol9Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724636201; c=relaxed/simple;
-	bh=wd6zZUEd613VvgbUTb6iIUfcvaLsT1imtH42TS06iMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=budZQ7rP62XLqL+6ED5wvwoB80hwCs5SlZKmSrUfloqZreIaTMpfMVj4JBVd94sOo19OcuSYPnJrDJNopoIOzSIXnzSAYQPrP9pZ97rv420ldQeDvc5ZZtXPJ8nLl5f7qlbMLMzd59D2XsK0MeirKa71g+FbOXuyp4wRTy3PV38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Mon, 26 Aug 2024 01:36:35 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-binding: pinctrl: spacemit: add documents for
- K1 SoC
-Message-ID: <20240826013230.GYA22924.dlan.gentoo>
-References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
- <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
- <d9a925da-2381-4203-a3b6-4cb892039d23@kernel.org>
+	s=arc-20240116; t=1724636228; c=relaxed/simple;
+	bh=EBjWHjEKR4e+UpG33k5Fm9SLYq4gbv5Jp9fncEdu2gE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d3AGA9bA9XT8VcSTEi5w1X5R7TdtDJguWJLyXypltb5xS7s6rIoYc2u0djLwLwkt4F4vWZpiBk3cehtyO841sIBKP3hFEk+9Q0Fhihsv6HWUcVj7HpNzjKAGBmjbbnPZO38fjcwme9ZjhMDDliBPt0MfOgQ1S3qrKgYPiFa7Y1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WsYDX54KtzyR2T;
+	Mon, 26 Aug 2024 09:36:28 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 66D301402CA;
+	Mon, 26 Aug 2024 09:36:56 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
+ 2024 09:36:55 +0800
+Message-ID: <96d8bd54-e390-40c8-a649-02ba7dafbf47@huawei.com>
+Date: Mon, 26 Aug 2024 09:36:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9a925da-2381-4203-a3b6-4cb892039d23@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 -next 00/11] cgroup:cpuset:separate legacy cgroup v1
+ code and put under config option
+To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240823100110.472120-1-chenridong@huawei.com>
+ <6dde95a0-2cad-4ca8-9ea3-2b4c6e70db93@redhat.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <6dde95a0-2cad-4ca8-9ea3-2b4c6e70db93@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Hi Krzysztof: 
 
-On 15:48 Sun 25 Aug     , Krzysztof Kozlowski wrote:
-> On 25/08/2024 15:10, Yixun Lan wrote:
-> > Add dt-binding for the pinctrl driver of SpacemiT's K1 SoC.
-> 
-> 
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-> 
-> It's "dt-bindings:"
-Ok, will fix in next version
 
+On 2024/8/26 1:20, Waiman Long wrote:
+> On 8/23/24 06:00, Chen Ridong wrote:
+>> Cgroups v2 have been around for a while and many users have fully adopted
+>> them, so they never use cgroups v1 features and functionality. Yet they
+>> have to "pay" for the cgroup v1 support anyway:
+>> 1) the kernel binary contains an unused cgroup v1 code,
+>> 2) some code paths have additional checks which are not needed,
+>> 3) some common structures like task_struct and mem_cgroup contain unused
+>>     cgroup v1-specific members.
+>>
+>> Cgroup memory controller has already separated legacy code to
+>> memory-v1.c. So it is time to do the same thing for cpuset controller.
+>>
+>> This patchset aims to do:
+>> 1) moving cgroup v1-specific cpuset code to the new cpuset-v1.c file,
+>> 2) putting definitions shared by cpuset.c and cpuset-v1.c into the
+>>     cpuset-internal.h header,
+>> 3) introducing the CONFIG_CPUSETS_V1 config option, turned off by 
+>> default,
+>> 4) making cpuset-v1.c to compile only if CONFIG_CPUSETS_V1 is set.
+>>
+>> This patchset is based on -next commit c79c85875f1a ("Add linux-next
+>> specific files for 20240823") and assumes that "Some optimizations about
+>> cpuset" series are merged, which are applied to cgroup/for-6.12.
+>>
+>>
+>> Chen Ridong (11):
+>>    cgroup/cpuset: introduce cpuset-v1.c
+>>    cgroup/cpuset: move common code to cpuset-internal.h
+>>    cgroup/cpuset: move memory_pressure to cpuset-v1.c
+>>    cgroup/cpuset: move relax_domain_level to cpuset-v1.c
+>>    cgroup/cpuset: move memory_spread to cpuset-v1.c
+>>    cgroup/cpuset: add callback_lock helper
+>>    cgroup/cpuset: move legacy hotplug update to cpuset-v1.c
+>>    cgroup/cpuset: move validate_change_legacy to cpuset-v1.c
+>>    cgroup/cpuset: move v1 interfaces to cpuset-v1.c
+>>    cgroup/cpuset: guard cpuset-v1 code under CONFIG_CPUSETS_V1
+>>    cgroup/cpuset: add sefltest for cpuset v1
+>>
+>>   MAINTAINERS                                   |   3 +
+>>   include/linux/cpuset.h                        |   8 +-
+>>   init/Kconfig                                  |  13 +
+>>   kernel/cgroup/Makefile                        |   1 +
+>>   kernel/cgroup/cpuset-internal.h               | 307 +++++++
+>>   kernel/cgroup/cpuset-v1.c                     | 565 ++++++++++++
+>>   kernel/cgroup/cpuset.c                        | 850 +-----------------
+>>   .../selftests/cgroup/test_cpuset_v1_base.sh   |  77 ++
+>>   8 files changed, 987 insertions(+), 837 deletions(-)
+>>   create mode 100644 kernel/cgroup/cpuset-internal.h
+>>   create mode 100644 kernel/cgroup/cpuset-v1.c
+>>   create mode 100755 
+>> tools/testing/selftests/cgroup/test_cpuset_v1_base.sh
+>>
+> Patch 2 doesn't apply to the latest cgroup/for-6.12 branch of the cgroup 
+> tree. You will have to update the patch series.
 > 
-> > 
-> > Two vendor specific properties are introduced here, As the pinctrl
-> > has dedicated slew rate enable control - bit[7], so we have
-> > spacemit,slew-rate-{enable,disable} for this. For the same reason,
-> > creating spacemit,strong-pull-up for the strong pull up control.
+> Cheers,
+> Longman
 > 
-> Huh, no, use generic properties. More on that below
 > 
-see my reply below
 
-> 
-> 
-> > 
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> > ---
-> >  .../bindings/pinctrl/spacemit,k1-pinctrl.yaml      | 134 +++++++++++++++++
-> >  include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h  | 161 +++++++++++++++++++++
-> >  2 files changed, 295 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
-> > new file mode 100644
-> > index 0000000000000..8adfc5ebbce37
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
-> > @@ -0,0 +1,134 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/spacemit,k1-pinctrl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: SpacemiT K1 SoC Pin Controller
-> > +
-> > +maintainers:
-> > +  - Yixun Lan <dlan@gentoo.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: spacemit,k1-pinctrl
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: pinctrl io memory base
-> > +
-> > +patternProperties:
-> > +  '-cfg$':
-> > +    type: object
-> > +    description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-Ok
-> > +      A pinctrl node should contain at least one subnode representing the
-> > +      pinctrl groups available on the machine.
-> > +
-> > +    additionalProperties: false
-> 
-> Keep it before description.
-Ok
-> 
-> > +
-> > +    patternProperties:
-> > +      '-pins$':
-> > +        type: object
-> > +        description: |
-> > +          Each subnode will list the pins it needs, and how they should
-> > +          be configured, with regard to muxer configuration, bias, input
-> > +          enable/disable, input schmitt trigger, slew-rate enable/disable,
-> > +          slew-rate, drive strength, power source.
-> > +        $ref: /schemas/pinctrl/pincfg-node.yaml
-> > +
-> > +        allOf:
-> > +          - $ref: pincfg-node.yaml#
-> > +          - $ref: pinmux-node.yaml#
-> 
-> You are duplicating refs.
-ok, will fix it
-> 
-> > +
-> > +        properties:
-> > +          pinmux:
-> > +            description: |
-> > +              The list of GPIOs and their mux settings that properties in the
-> > +              node apply to. This should be set using the K1_PADCONF macro to
-> > +              construct the value.
-> > +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pinmux
-> 
-> Hm why you need the ref?
-> 
-will drop it
-> > +
-> > +          bias-disable: true
-> > +
-> > +          bias-pull-up: true
-> > +
-> > +          bias-pull-down: true
-> > +
-> > +          drive-strength-microamp:
-> > +            description: |
-> > +              typical current when output high level, but in mA.
-> > +              1.8V output: 11, 21, 32, 42 (mA)
-> > +              3.3V output: 7, 10, 13, 16, 19, 23, 26, 29 (mA)
-> > +            $ref: /schemas/types.yaml#/definitions/uint32
-> > +
-> > +          input-schmitt:
-> > +            description: |
-> > +              typical threshold for schmitt trigger.
-> > +              0: buffer mode
-> > +              1: trigger mode
-> > +              2, 3: trigger mode
-> > +            $ref: /schemas/types.yaml#/definitions/uint32
-> > +            enum: [0, 1, 2, 3]
-> > +
-> > +          power-source:
-> > +            description: external power supplies at 1.8v or 3.3v.
-> > +            enum: [ 1800, 3300 ]
-> > +
-> > +          slew-rate:
-> > +            description: |
-> > +              slew rate for output buffer
-> > +              0, 1: Slow speed
-> 
-> Hm? Surprising, 0 is slow speed?
-> 
-from docs, section 3.3.2.2 MFPR Register Description
-0, 1 are same, both for slow speed
-https://developer.spacemit.com/documentation?token=An1vwTwKaigaXRkYfwmcznTXned
+Thanks, I will update soon.
 
-> > +              2: Medium speed
-> > +              3: Fast speed
-> > +            $ref: /schemas/types.yaml#/definitions/uint32
-> > +            enum: [0, 1, 2, 3]
-> > +
-> > +          spacemit,slew-rate-enable:
-> > +            description: enable slew rate.
-> 
-> The presence of slew-rate enables it, doesn't it?
-> 
-yes, this should work, I will take this approach, thanks
-
-> > +            type: boolean
-> > +
-> > +          spacemit,slew-rate-disable:
-> > +            description: disable slew rate.
-> > +            type: boolean
-> 
-> Just use slew-rate, 0 disable, some value to match real slew-rate.
-> 
-sounds good to me, since 0, 1 indicate same meaning, can re-use 0 for
-disabling slew rate.
-
-> > +
-> > +          spacemit,strong-pull-up:
-> > +            description: enable strong pull up.
-> 
-> Do not duplicate the property name in description. You did not say
-> anything useful here. What is "strong"? bias-pull-up takes also an argument.
-> 
-there is a dedicated strong pull bit[3] for I2C, SD card kinds of pad
-I don't know how 'strong' it is if in ohms, will see if can get
-more info on this (may expand the description)
-
-I think using 'bias-pull-up' property with argument should also work,
-but it occur to me it's more intuitive to introduce a property here, which
-reflect the underlying hardware functionality. this is similar to starfive's jh7100
-bindings/pinctrl/starfive,jh7100-pinctrl.yaml:154
-(refer to exist code doesn't mean always correct, so I need advice here)
-
-I will keep this property unless there is objection, please let me know
-
-> > +            type: boolean
-> > +
-> > +        required:
-> > +          - pinmux
-> > +
-> > +        additionalProperties: false
-> 
-> This goes up, before description.
-> 
-Ok
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/pinctrl/spacemit,k1-pinctrl.h>
-> > +
-> > +    soc {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        pinctrl@d401e000 {
-> > +            compatible = "spacemit,k1-pinctrl";
-> > +            reg = <0x0 0xd401e000 0x0 0x400>;
-> > +            #pinctrl-cells = <2>;
-> > +            #gpio-range-cells = <3>;
-> 
-> This wasn't ever tested... :(
-> ...
-will drop it
-> 
-> > diff --git a/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
-> > new file mode 100644
-> > index 0000000000000..13ef4aa6c53a3
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
-> > @@ -0,0 +1,161 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> > +/*
-> > + * Copyright (c) 2022-2024 SpacemiT (Hangzhou) Technology Co. Ltd
-> > + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
-> > + *
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_PINCTRL_K1_H
-> > +#define _DT_BINDINGS_PINCTRL_K1_H
-> > +
-> > +#define PINMUX(pin, mux) \
-> > +	(((pin) & 0xffff) | (((mux) & 0xff) << 16))
-> > +
-> > +/* pin offset */
-> > +#define PINID(x)	((x) + 1)
-> > +
-> > +#define GPIO_INVAL  0
-> > +#define GPIO_00     PINID(0)
-> 
-> Not really, pin numbers are not bindings. Drop entire header.
-> 
-Ok, I will move them to dts folder, which should be file
-arch/riscv/boot/dts/spacemit/k1-pinctrl.h
-
-> ...
-> 
-> > +
-> > +#define SLEW_RATE_SLOW0		0
-> > +#define SLEW_RATE_SLOW1		1
-> > +#define SLEW_RATE_MEDIUM	2
-> > +#define SLEW_RATE_FAST		3
-> 
-> Not a binding, either. No usage in the driver.
-Ok, will drop it
-
-> 
-> > +
-> > +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
-> 
-> Not a binding.
-> 
-same, move to dts
-
-> 
-> 
-> Best regards,
-> Krzysztof
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Thanks,
+Ridong
 
