@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-300857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854C995E963
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE8A95E9CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7FEA1C21091
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52914280FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8383C84A4E;
-	Mon, 26 Aug 2024 06:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KKqu/9h5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5C0823AC;
+	Mon, 26 Aug 2024 07:00:32 +0000 (UTC)
+Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80C68289E;
-	Mon, 26 Aug 2024 06:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420ED3FE4;
+	Mon, 26 Aug 2024 07:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655370; cv=none; b=KCEfWpp0ei/BEtloOhjqoBWEmNZA12At/R62BoqtK67DNC/RsxCC/Kv3NTyCMT95r1KaEYLtKdIw8ZeAQ3GfiRLVpLxEoJJGeNjLOA6v5T8TolI2w2u26Si4g2BSjaqAeilxO97+lPAIZTwvwTm6RjGQ1szlntS/I9v667AFTrE=
+	t=1724655632; cv=none; b=lejHzyvh2pLs8rzfP07gS0rFdZqRll6kivBgsDMjv3W8lcFL8qjy09A4ETpPZ3UJi0+szv8XdDKrFGKl5UppBaKFT1L+tCTa/shC5llMr7gQ6K0p16V40oV+ei7fID1f4Z30dYWc0826awX2Q86vVn3o95XuYbo2p5pkSVS9PcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655370; c=relaxed/simple;
-	bh=Ru9+XhmubHdpIfS1dyFow9oErhNFqhxAQFaNGVviT5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bhO9yajmZ6cgTC/aCczO1wLdIx4jvndyeiKb8s0gNwFd/4bPIwQ6fHIDRaz9Jkr1VNYwZQA89ZXqsxD5ijhgpc83Fn2gh75Oqhh56Cd5sO4tNIwUFGRpFfYFgkTeFDgviWKTfjPzqZuT4/fcjgeCpzu1787E1jcyimAV+X3Q+fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KKqu/9h5; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724655369; x=1756191369;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ru9+XhmubHdpIfS1dyFow9oErhNFqhxAQFaNGVviT5o=;
-  b=KKqu/9h5unhvIaFrAZ5J0BJ5gUj6D7B/VFjrxHTLmurdyaAQm4MPzaGG
-   JHEyAt7B3KTKADdp1jUXnZlEfwJuiLxUfWKk80ls8EHHMvPVPlR8Pefju
-   wEZVZWgadhG1RmghuO2NEEA84X040pR34sIj0yjITex+/BTXteimvgEXa
-   oXw7Z2xoQCyRSVVhHGlHd04FQvobk/0LE9/9nm36kziPKAn4bJ3qhQ/np
-   ATR63F6nNH9B7WJX4HfI3Hcb9xCV8d2C0fWBJyxSNMTitUxBJcH3ZW7pQ
-   kZyM80UQSfq20VWErROZwwsqex+ObeaRWC78XjWCOgnoFR9szPVmBBYKa
-   Q==;
-X-CSE-ConnectionGUID: s/RVCZngS16haCyG/YOjUQ==
-X-CSE-MsgGUID: Jdn9mIpXSRWP0xkIPWAEXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22866968"
-X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
-   d="scan'208";a="22866968"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 23:56:08 -0700
-X-CSE-ConnectionGUID: ochtj1rVSveqIgjB9HFk4Q==
-X-CSE-MsgGUID: 5U5U7NhDR1ev5eRUw5Cuwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
-   d="scan'208";a="62252536"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 23:56:05 -0700
-Message-ID: <cea61aab-3feb-4008-adb9-2f2645589714@linux.intel.com>
-Date: Mon, 26 Aug 2024 14:56:02 +0800
+	s=arc-20240116; t=1724655632; c=relaxed/simple;
+	bh=QbvLGkorMs2YBMtwGD1hxtKV6N4yNkWIvtA+plxFoHw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hWbbm3zOzkUi2HEsf5LUOzkhi512iMTibeefjHAzUtUL0Z0grRmM9+yhB6+wK3ftA+cYUPRDOfrL+YDlHwfSMjwJbgcUo2IQc/nuCIBiufhaP8gmkek744BQmYQ86KQLstvhE28DwuxriR6wWVkJlYgjijFkHiFg7zk7Bki3Cpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
+Received: from spam.asrmicro.com (localhost [127.0.0.2] (may be forged))
+	by spam.asrmicro.com with ESMTP id 47Q6uP35067674;
+	Mon, 26 Aug 2024 14:56:25 +0800 (GMT-8)
+	(envelope-from feilv@asrmicro.com)
+Received: from mail2012.asrmicro.com (mail2012.asrmicro.com [10.1.24.123])
+	by spam.asrmicro.com with ESMTPS id 47Q6u9Jq067648
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 14:56:09 +0800 (GMT-8)
+	(envelope-from feilv@asrmicro.com)
+Received: from exch01.asrmicro.com (10.1.24.121) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 26 Aug
+ 2024 14:56:11 +0800
+Received: from exch01.asrmicro.com ([::1]) by exch01.asrmicro.com ([::1]) with
+ mapi id 15.00.0847.030; Mon, 26 Aug 2024 14:56:11 +0800
+From: =?utf-8?B?THYgRmVp77yI5ZCV6aOe77yJ?= <feilv@asrmicro.com>
+To: Amir Goldstein <amir73il@gmail.com>
+CC: "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "linux-unionfs@vger.kernel.org"
+	<linux-unionfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        =?utf-8?B?WHUgTGlhbmdode+8iOW+kOiJr+iZju+8iQ==?= <lianghuxu@asrmicro.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggVjJdIG92bDogZnN5bmMgYWZ0ZXIgbWV0YWRhdGEg?=
+ =?utf-8?Q?copy-up_via_mount_option_"fsync=3Dstrict"?=
+Thread-Topic: [PATCH V2] ovl: fsync after metadata copy-up via mount option
+ "fsync=strict"
+Thread-Index: AQHa9UIlKsA9M1EjHk6g0E/n5Hdt2rI0MnmAgATs23A=
+Date: Mon, 26 Aug 2024 06:56:10 +0000
+Message-ID: <5be64ae3b75e413fa47c9ecb2c4a359a@exch01.asrmicro.com>
+References: <20240722101443.10768-1-feilv@asrmicro.com>
+ <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+ <CAOQ4uxgbbadOC_LCYRk-muFKYH3QNVnD+ZEH+si-V1i3En66Bw@mail.gmail.com>
+ <CAOQ4uxiDokEQ0ZET+adP_CpvvTCRRLTcVb9d5mYAmM1q7y2PnQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiDokEQ0ZET+adP_CpvvTCRRLTcVb9d5mYAmM1q7y2PnQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v5 06/18] x86: pmu: Add asserts to warn inconsistent fixed
- events and counters
-To: Jim Mattson <jmattson@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>,
- Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang
- <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
- Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240703095712.64202-1-dapeng1.mi@linux.intel.com>
- <20240703095712.64202-7-dapeng1.mi@linux.intel.com>
- <CALMp9eSEuA70itad7oQUo=Ak6MVJYLo4kG4zJwEXkiUG6MgdnA@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CALMp9eSEuA70itad7oQUo=Ak6MVJYLo4kG4zJwEXkiUG6MgdnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam.asrmicro.com 47Q6uP35067674
 
-
-On 8/23/2024 2:22 AM, Jim Mattson wrote:
-> On Tue, Jul 2, 2024 at 7:12 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->> Current PMU code deosn't check whether PMU fixed counter number is
->> larger than pre-defined fixed events. If so, it would cause memory
->> access out of range.
->>
->> So add assert to warn this invalid case.
->>
->> Reviewed-by: Mingwei Zhang <mizhang@google.com>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  x86/pmu.c | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/x86/pmu.c b/x86/pmu.c
->> index b4de2680..3e0bf3a2 100644
->> --- a/x86/pmu.c
->> +++ b/x86/pmu.c
->> @@ -113,8 +113,12 @@ static struct pmu_event* get_counter_event(pmu_counter_t *cnt)
->>                 for (i = 0; i < gp_events_size; i++)
->>                         if (gp_events[i].unit_sel == (cnt->config & 0xffff))
->>                                 return &gp_events[i];
->> -       } else
->> -               return &fixed_events[cnt->ctr - MSR_CORE_PERF_FIXED_CTR0];
->> +       } else {
->> +               unsigned int idx = cnt->ctr - MSR_CORE_PERF_FIXED_CTR0;
->> +
->> +               assert(idx < ARRAY_SIZE(fixed_events));
-> Won't this assertion result in a failure on bare metal, for CPUs
-> supporting fixed counter 3?
-
-Yes, this is intended use. Currently KVM vPMU still doesn't support fixed
-counter 3. If it's supported in KVM vPMU one day but forget to add
-corresponding support in this pmu test, this assert would remind this.
-
-
->
->> +               return &fixed_events[idx];
->> +       }
->>
->>         return (void*)0;
->>  }
->> @@ -740,6 +744,8 @@ int main(int ac, char **av)
->>         printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
->>         printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
->>
->> +       assert(pmu.nr_fixed_counters <= ARRAY_SIZE(fixed_events));
->> +
-> And this one as well?
->
->>         apic_write(APIC_LVTPC, PMI_VECTOR);
->>
->>         check_counters();
->> --
->> 2.40.1
->>
+DQoNCj4g5Y+R5Lu25Lq6OiBBbWlyIEdvbGRzdGVpbiBbbWFpbHRvOmFtaXI3M2lsQGdtYWlsLmNv
+bV0gDQo+IOWPkemAgeaXtumXtDogMjAyNOW5tDjmnIgyM+aXpSAxOTo0Mw0KPiDmlLbku7bkuro6
+IEx2IEZlae+8iOWQlemjnu+8iSA8ZmVpbHZAYXNybWljcm8uY29tPg0KPiDmioTpgIE6IG1pa2xv
+c0BzemVyZWRpLmh1OyBsaW51eC11bmlvbmZzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZzsgWHUgTGlhbmdode+8iOW+kOiJr+iZju+8iSA8bGlhbmdodXh1QGFz
+cm1pY3JvLj4gY29tPg0KPiDkuLvpopg6IFJlOiBbUEFUQ0ggVjJdIG92bDogZnN5bmMgYWZ0ZXIg
+bWV0YWRhdGEgY29weS11cCB2aWEgbW91bnQgb3B0aW9uICJmc3luYz1zdHJpY3QiDQo+IA0KPiBP
+biBGcmksIEF1ZyAyMywgMjAyNCBhdCAxMTo1MeKAr0FNIEFtaXIgR29sZHN0ZWluIDxhbWlyNzNp
+bEBnbWFpbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gT24gTW9uLCBKdWwgMjIsIDIwMjQgYXQgMzo1
+NuKAr1BNIEFtaXIgR29sZHN0ZWluIDxhbWlyNzNpbEBnbWFpbC5jb20+IHdyb3RlOg0KPiA+ID4N
+Cj4gPiA+IE9uIE1vbiwgSnVsIDIyLCAyMDI0IGF0IDE6MTTigK9QTSBGZWkgTHYgPGZlaWx2QGFz
+cm1pY3JvLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IEZvciB1cHBlciBmaWxlc3lzdGVt
+IHdoaWNoIGRvZXMgbm90IGVuZm9yY2Ugb3JkZXJpbmcgb24gc3RvcmluZyBvZiANCj4gPiA+ID4g
+bWV0YWRhdGEgY2hhbmdlcyhlLmcuIHViaWZzKSwgd2hlbiBvdmVybGF5ZnMgZmlsZSBpcyBtb2Rp
+ZmllZCBmb3IgDQo+ID4gPiA+IHRoZSBmaXJzdCB0aW1lLCBjb3B5IHVwIHdpbGwgY3JlYXRlIGEg
+Y29weSBvZiB0aGUgbG93ZXIgZmlsZSBhbmQgDQo+ID4gPiA+IGl0cyBwYXJlbnQgZGlyZWN0b3Jp
+ZXMgaW4gdGhlIHVwcGVyIGxheWVyLiBQZXJtaXNzaW9uIGxvc3Qgb2YgdGhlIA0KPiA+ID4gPiBu
+ZXcgdXBwZXIgcGFyZW50IGRpcmVjdG9yeSB3YXMgb2JzZXJ2ZWQgZHVyaW5nIHBvd2VyLWN1dCBz
+dHJlc3MgdGVzdC4NCj4gPiA+ID4NCj4gPiA+ID4gRml4IGJ5IGFkZGluZyBuZXcgbW91bnQgb3Bp
+b24gImZzeW5jPXN0cmljdCIsIG1ha2Ugc3VyZSANCg0KVGhlcmUgaXMgYSB0eXBvIGhlcmUsICJv
+cGlvbiIgc2hvdWxkIGJlICJvcHRpb24iLCBwbGVhc2UgaGVscCBjb3JyZWN0IGJlZm9yZSBtZXJn
+ZS4NCg0KPiA+ID4gPiBkYXRhL21ldGFkYXRhIG9mIGNvcGllZCB1cCBkaXJlY3Rvcnkgd3JpdHRl
+biB0byBkaXNrIGJlZm9yZSANCj4gPiA+ID4gcmVuYW1pbmcgZnJvbSB0bXAgdG8gZmluYWwgZGVz
+dGluYXRpb24uDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEZlaSBMdiA8ZmVpbHZA
+YXNybWljcm8uY29tPg0KPiA+ID4NCj4gPiA+IFJldmlld2VkLWJ5OiBBbWlyIEdvbGRzdGVpbiA8
+YW1pcjczaWxAZ21haWwuY29tPg0KPiA+ID4NCj4gPiA+IGJ1dCBJJ2QgYWxzbyBsaWtlIHRvIHdh
+aXQgZm9yIGFuIEFDSyBmcm9tIE1pa2xvcyBvbiB0aGlzIGZlYXR1cmUuDQo+ID4gPg0KPiA+ID4g
+QXMgZm9yIHRpbWluZywgd2UgYXJlIGluIHRoZSBtaWRkbGUgb2YgdGhlIG1lcmdlIHdpbmRvdyBm
+b3IgDQo+ID4gPiA2LjExLXJjMSwgc28gd2UgaGF2ZSBzb21lIHRpbWUgYmVmb3JlIHRoaXMgY2Fu
+IGJlIGNvbnNpZGVyZWQgZm9yIDYuMTIuDQo+ID4gPiBJIHdpbGwgYmUgb24gdmFjYXRpb24gZm9y
+IG1vc3Qgb2YgdGhpcyBkZXZlbG9wbWVudCBjeWNsZSwgc28gZWl0aGVyIA0KPiA+ID4gTWlrbG9z
+IHdpbGwgYmUgYWJsZSB0byBxdWV1ZSBpdCBmb3IgNi4xMiBvciBJIG1heSBiZSBhYmxlIHRvIGRv
+IG5lYXIgDQo+ID4gPiB0aGUgZW5kIG9mIHRoZSA2LjExIGN5Y2xlLg0KPiA+ID4NCj4gPg0KPiA+
+IE1pa2xvcywNCj4gPg0KPiA+IFBsZWFzZSBsZXQgbWUga25vdyB3aGF0IHlvdSB0aGluayBvZiB0
+aGlzIGFwcHJvYWNoIHRvIGhhbmRsZSB1YmlmcyB1cHBlci4NCj4gPiBJZiB5b3UgbGlrZSBpdCwg
+SSBjYW4gcXVldWUgdGhpcyB1cCBmb3IgdjYuMTIuDQo+ID4NCj4gPiBUaGFua3MsDQo+ID4gQW1p
+ci4NCj4gPg0KPiA+ID4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+IFYxIC0+IFYyOg0KPiA+ID4gPiAg
+MS4gY2hhbmdlIG9wZW4gZmxhZ3MgZnJvbSAiT19MQVJHRUZJTEUgfCBPX1dST05MWSIgdG8gIk9f
+UkRPTkxZIi4NCj4gPiA+ID4gIDIuIGNoYW5nZSBtb3VudCBvcHRpb24gdG8gImZzeW5jPW9yZGVy
+ZWQvc3RyaWN0L3ZvbGF0aWxlIi4NCj4gPiA+ID4gIDMuIG92bF9zaG91bGRfc3luY19zdHJpY3Qo
+KSBpbXBsaWVzIG92bF9zaG91bGRfc3luYygpLg0KPiA+ID4gPiAgNC4gcmVtb3ZlIHJlZHVuZGFu
+dCBvdmxfc2hvdWxkX3N5bmNfc3RyaWN0IGZyb20gb3ZsX2NvcHlfdXBfbWV0YV9pbm9kZV9kYXRh
+Lg0KPiA+ID4gPiAgNS4gdXBkYXRlIGNvbW1pdCBsb2cuDQo+ID4gPiA+ICA2LiB1cGRhdGUgZG9j
+dW1lbnRhdGlvbiBvdmVybGF5ZnMucnN0Lg0KPiA+ID4gPg0KPiANCj4gSGkgRmVpLA0KPiANCj4g
+SSBzdGFydGVkIHRvIHRlc3QgdGhpcyBwYXRjaCBhbmQgaXQgb2NjdXJlZCB0byBtZSB0aGF0IHdl
+IGhhdmUgbm8gdGVzdCBjb3ZlcmFnZSBmb3IgdGhlICJ2b2xhdGlsZSIgZmVhdHVyZS4NCj4gDQo+
+IEZpbGVzeXN0ZW0gZHVyYWJpbGl0eSB0ZXN0cyBhcmUgbm90IGVhc3kgdG8gd3JpdGUgYW5kIEkg
+a25vdyB0aGF0IHlvdSB0ZXN0ZWQgeW91ciBvd24gdXNlIGNhc2UsIHNvIEkgd2lsbCBub3QgYXNr
+IHlvdSB0byB3cml0ZSBhIHJlZ3Jlc3Npb24gdGVzdCBhcyBhIGNvbmRpdGlvbiBmb3IgbWVyZ2Us
+IGJ1dCBpZiB5b3UgYXJlIHdpbGxpbmcgdG8gaGVscCwgaXQgd291bGQgYmUgdmVyeSBuaWNlIHRv
+IGFkZCB0aGlzIHRlc3QgY292ZXJhZ2UuDQoNCk9LLCBJIGNhbiBoYXZlIGEgdHJ5LCBuZWVkIHNv
+bWUgdGltZSB0byBzdHVkeSB0ZXN0IHN1aXRlLiBUaGlzIGlzIGEgbmV3IHRoaW5nIGZvciBtZS4N
+Cg0KPiANCj4gVGhlcmUgaXMgYWxyZWFkeSBvbmUgb3ZlcmxheWZzIHRlc3QgaW4gZnN0ZXN0cyAo
+b3ZlcmxheS8wNzgpIHdoaWNoIHRlc3RzIGJlaGF2aW9yIG9mIG92ZXJsYXlmcyBjb3B5IHVwIGR1
+cmluZyBwb3dlciBjdXQgKGEuay5hIHNodXRkb3duKS4NCg0KRG8geW91IG1lYW4gb3ZlcmxheS8w
+NzggaW4ga2VybmVsL2dpdC9icmF1bmVyL3hmc3Rlc3RzLWRldi5naXQgPw0KDQo+IA0KPiBPbmUg
+dGhpbmcgdGhhdCBJIGRvIHJlcXVlc3QgaXMgdGhhdCB5b3UgY29uZmlybSB0aGF0IHlvdSB0ZXN0
+ZWQgdGhhdCB0aGUgbGVnYWN5ICJ2b2xhdGlsZSIgbW91bnQgb3B0aW9uIHN0aWxsIHdvcmtzIGFz
+IGJlZm9yZS4NCg0KWWVzLCBJIHRlc3RlZCBiYXNpYyBmdW5jdGlvbiBvZiAidm9sYXRpbGUiIG1v
+dW50IG9wdGlvbiB3aXRoIHRoaXMgcGF0Y2guDQoNCj4gSSBzYXcgdGhhdCB5b3UgdG9vayBjYXJl
+IG9mIHByZXNlcnZpbmcgdGhlIGxlZ2FjeSBtb3VudCBvcHRpb24gaW4gZGlzcGxheSwgd2hpY2gg
+aXMgZ29vZCBwcmFjdGljZS4NCj4gDQo+IFRoYW5rcywNCj4gQW1pci4NCg0KVGhhbmtzLA0KRmVp
+DQo=
 
