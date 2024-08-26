@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-301108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E4D95EC73
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:54:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F1595EC51
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813952815AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170F81F210A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD08D14431C;
-	Mon, 26 Aug 2024 08:54:00 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83B13D276;
+	Mon, 26 Aug 2024 08:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q8zbRTMK"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED282D7F;
-	Mon, 26 Aug 2024 08:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C989F13A26B
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662440; cv=none; b=Y7B+4Q3MsET7XPCg0XwSviCKbjReVWCNmaHmbjOddS2CmCa1sM0tmcZIRq19TMAG9lpwdebGPlY2Nu2x2jj/RbSe5Tt9Xgf0+r910wmzLQhgR6agxjnDDfLq66Q+9i5XHiOMXN3e2x+u/YBYdQTMdLHqPWEtxHe8SWQaRppPFm4=
+	t=1724662110; cv=none; b=FsIs/0RnMGcOzVmXsYg26RMbqdo6GxSbXQp30KW/Lw1q4G5jPJHaMMhlnZGQ0uYCTOPId5Yhj5SIFFS8yH8B96cVw4Dab9R+XMcwzNtnE0JF2s4zFOuduDn+hzgb/Do9sNgreKEDxW1DI/qDYlD0T377uUf+aHKNmMkz0EQhLXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662440; c=relaxed/simple;
-	bh=GuuW1WL+3o/YlrQrEDV2HHdlgrpjkOAllVC8EiRa6m0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=avLa3gnM9QNwVWzDSUOXuyVCud5houlk7QRQTA14PBXqGd/5KcGEAqKX67sC4DaO+w1XdvrUFwz8ta+6y98vsEciaI9dWu2KJtgOYPLVRfRIWrRKWUopXg/28u2XE+kSURYvSzA6QMv6Fd16mPLVdzmk8ALBeOBqhssosx7Wv2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so8145687a12.0;
-        Mon, 26 Aug 2024 01:53:58 -0700 (PDT)
+	s=arc-20240116; t=1724662110; c=relaxed/simple;
+	bh=2hnjvVAoZ7bwbquiwr7BPEkR48jyp3TjmuaLIQPgQ/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myIiqY7Nk+TY1QvP3kIVE4cKw1DZhUGAoRWV48lE3NAIAXx8uAVqwoO+OF1Bvfr4prFudsD+CbXzRyq2KLeWXW2bqulQJnvZ7Q7yUNUD8RGyOSOuid32J7+o2RtZfwdSFN87FbduVPqJOon5JshLCWIJ3/4tNVCxjhzawZyV/hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q8zbRTMK; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533496017f8so5428225e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724662107; x=1725266907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2hnjvVAoZ7bwbquiwr7BPEkR48jyp3TjmuaLIQPgQ/o=;
+        b=Q8zbRTMKK45g+Q34lEp4ykV3Sa4Y7y/pGePjQ8RYhH8TkY7r+lBUni9BIt1SffNvQL
+         CIcTULPIK9PUdqXI6ufkrn7RiQHaiDXVyFPn9AEj/afiTmCG3PIU+X1ueg6mvtqE6M7E
+         26pjj5uGgIT+AoLFk/1F4PKdPPOQHoghYXIkS8U2xhvxCBAz00TCkCiI6uLacbBaHBwM
+         O2G1JdFy4jm8bplgkEBfHPn4O3qWII5b0Jqa09gVCb06oBgwU359HrG962qPpoQ9QOoL
+         3dOZxm2IZT+p0y/cBPpEVAJWELPYWNO4UNU/U4Y7eA7j/9I1F7/u1MA8giVNjZxfD/Mz
+         P8Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724662437; x=1725267237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724662107; x=1725266907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E4kEvuNqKI0xTjj6I4wqTHJS1sNMpYcp7Dr6Uq95pto=;
-        b=IdCikk2emG+PWI0q1jcm03OzfrlnwITsbXVZ31CTCm7eIyRpeNqwlRX9EPW81867/i
-         gS9153ZCKwgO6hfrXeetkgogGjMQoD5eoX7U+Fck2b1gj0I5ufVv7hLk/8muomOrRviu
-         QVYY5hkoXkvq3MroKLxc8+A7oHpVhBBTMcJHTy11hbD9ipbL0p2V89NiHGHo8ObDIQ+u
-         zUUqBzTmjviZjcQZfXVeqPuM/lF3nhOJjNVlC6pvfK+Gce+QGUpiTC1jAx8FvZqAOpD4
-         tfQas+QNg2NLx37pfR08uYUbhxMce0UBDVZt9WCp2LRyvcNJS0KaFl3EbSqmIYIear7m
-         weLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIdyYbSANelapFh4QTlyg5Yzw6NGJPCroZL3QnloTxmRz7zr4w1OE9WeZTXcTj4ZVFUpmRKPCdfkFtdCym8Q==@vger.kernel.org, AJvYcCV9rsLteeQsiW0l5Y/ZPM7a7qg0IC71rht42Xeuv2J9+Utlk8TIdHv4U09dv4tDMRyj45F+G7/DkQSsj6AE@vger.kernel.org, AJvYcCX74Ar/o8KcMLn5Ryc4wgS0Py9KWrHCc2KTYQFwRZJat/5YSnQYcuDT0mAiASG3/I6eAW4nH5rlyI9X1NNBlEDzxmqcE1TO@vger.kernel.org, AJvYcCXCKN393U5jKXaOf5mR5ZK7CY8bzcOMvyDto1XY3XVg6Lv19nRs6ZkSuFQUVTUF4ZefXlP+uD105E7m+tF7ug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhZ92FqSF8Vvl64R/BsxOglZMGu6adMamb73PTPXvKwInGgeR3
-	t4bk8i6Yr6tdNVPsZePyyE2FNwlndAfpzzAV+e95f8vzPx8gsIpL
-X-Google-Smtp-Source: AGHT+IF1fJpfy3mPNIRs30Wnajmd99gCu+0+b/DeTT6aTwMVnETwc04A+X+3AnJTgxAHcIGYmfyZ+g==
-X-Received: by 2002:a17:907:1c8e:b0:a75:7a8:d70c with SMTP id a640c23a62f3a-a86a2f14394mr1133364766b.4.1724662436552;
-        Mon, 26 Aug 2024 01:53:56 -0700 (PDT)
-Received: from localhost.localdomain ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f21fe18sm630636866b.29.2024.08.26.01.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 01:53:56 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
-Date: Mon, 26 Aug 2024 10:47:13 +0200
-Message-ID: <20240826085347.1152675-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826085347.1152675-1-mhocko@kernel.org>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
+        bh=2hnjvVAoZ7bwbquiwr7BPEkR48jyp3TjmuaLIQPgQ/o=;
+        b=dpToM35U/s29kX6nnWNwCgrpwgVWJu5fS/S/b6mizla0L7buf294amEsFA6KUMEhSo
+         8PdAev3Efq1rk/r6SIaiDErDOn0hxBYGRTeeerxlVhWDAkb+9oz1z4N/wqLcmXgvP6/H
+         sxnkeRPKWrrNsI+DemgnzDber6rzv0wNDXv4GU4CrOkZ1QnEv6FaukQG0adKrTuopENA
+         Anzdk+s+EBXIn6by7+Nf2U6VbPMVxahQKKoAcoIl3mKZZ1w7FZOX5uN3IAJnSWPuPKc3
+         5LmobqDFdNDL0Jd0EKTelm/Gtd7uZlFwfZL3Te6shCekvoXLTcQQJTWzMAOWiYE9YVMk
+         w0vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlssIoi+CG3ftaHSg8IEQw1AL6MMwvCdQ8DPscEgHqxQ8jKejWxxFjWBjjVY5+sUA6uNeRQM6iNnETpRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7ESjGWc2Yjf77orY0uWH7q9+m19kIGeR6gmvB4PIRBUloNrz5
+	5wpWaXn/AGXRF74Tybsh3g8GDYqIdmJKFveR4a7CJljM73XsAKSz8UJu9kMU5bP4ckeep3oGX5C
+	U/lHm5pVmjDPcGJZg2BzFE9UKX+CVbkkQGVE2iA==
+X-Google-Smtp-Source: AGHT+IFZerPWDOgr4c1WuohxSQ3+JvT1ubVNndAVMth/RrtYH7UChyTMrjQo7sPYZVdcATBDZ05y/rcKJPj98SHVq10=
+X-Received: by 2002:a05:6512:3088:b0:52c:9e82:a971 with SMTP id
+ 2adb3069b0e04-5343882d1ccmr6349398e87.7.1724662106426; Mon, 26 Aug 2024
+ 01:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240823105421.50017-1-shenlichuan@vivo.com>
+In-Reply-To: <20240823105421.50017-1-shenlichuan@vivo.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Aug 2024 10:48:15 +0200
+Message-ID: <CACRpkdb+kfRZE-tJWpxsmYFCzLhnJvCjVtmwrBCAFHbaXVFHXw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: freescale: imx-scmi: Use kmemdup_array
+ instead of kmemdup for multiple allocation
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, 
+	ping.bai@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	opensource.kerenl@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Michal Hocko <mhocko@suse.com>
+On Fri, Aug 23, 2024 at 12:55=E2=80=AFPM Shen Lichuan <shenlichuan@vivo.com=
+> wrote:
 
-There is no existing user of the flag and the flag is dangerous because
-a nested allocation context can use GFP_NOFAIL which could cause
-unexpected failure. Such a code would be hard to maintain because it
-could be deeper in the call chain.
+> Let the kmemdup_array() take care about multiplication
+> and possible overflows.
+>
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
-that such a allocation contex is inherently unsafe if the context
-doesn't fully control all allocations called from this context.
+Patch applied.
 
-[1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- include/linux/sched.h    | 1 -
- include/linux/sched/mm.h | 7 ++-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f8d150343d42..72dad3a6317a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1657,7 +1657,6 @@ extern struct pid *cad_pid;
- 						 * I am cleaning dirty pages from some other bdi. */
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
--#define PF_MEMALLOC_NORECLAIM	0x00800000	/* All allocation requests will clear __GFP_DIRECT_RECLAIM */
- #define PF_MEMALLOC_NOWARN	0x01000000	/* All allocation requests will inherit __GFP_NOWARN */
- #define PF__HOLE__02000000	0x02000000
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 91546493c43d..c49f2b24acb9 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -260,16 +260,13 @@ static inline gfp_t current_gfp_context(gfp_t flags)
- 
- 	if (unlikely(pflags & (PF_MEMALLOC_NOIO |
- 			       PF_MEMALLOC_NOFS |
--			       PF_MEMALLOC_NORECLAIM |
- 			       PF_MEMALLOC_NOWARN |
- 			       PF_MEMALLOC_PIN))) {
- 		/*
- 		 * Stronger flags before weaker flags:
--		 * NORECLAIM implies NOIO, which in turn implies NOFS
-+		 * NOIO implies NOFS
- 		 */
--		if (pflags & PF_MEMALLOC_NORECLAIM)
--			flags &= ~__GFP_DIRECT_RECLAIM;
--		else if (pflags & PF_MEMALLOC_NOIO)
-+		if (pflags & PF_MEMALLOC_NOIO)
- 			flags &= ~(__GFP_IO | __GFP_FS);
- 		else if (pflags & PF_MEMALLOC_NOFS)
- 			flags &= ~__GFP_FS;
--- 
-2.46.0
-
+Yours,
+Linus Walleij
 
