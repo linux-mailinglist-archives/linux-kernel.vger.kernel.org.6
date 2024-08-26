@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-301521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C364F95F215
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4914195F217
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C6D1F23FBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056F4283D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206C8188A07;
-	Mon, 26 Aug 2024 12:49:59 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217A418BB8D;
+	Mon, 26 Aug 2024 12:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BI1vchag"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE7717BEC0;
-	Mon, 26 Aug 2024 12:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A4217C9AD;
+	Mon, 26 Aug 2024 12:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676598; cv=none; b=FfUvEp5ZWmOnWm5SSB1ErRxspg4hdqLMgp6/he0eYX9GfwOBlTYjuNl8t69o2Cqp39T9cwR5vRFimhCJn/cWQhLSBzGU7s93Jlixbsws6oZJWDjsGlae8/thShquBhf1N4ze+FFB/aqpNv+U5owciWlIe7AE9m7A22eZ/NsVZbE=
+	t=1724676614; cv=none; b=lRnAUEaYYiCTpBDkVf+9aWJvUwti6sgv3hTPqs91Z1HoLlWczMxmtYjzRogrSd6+rlUo5e5WYNO3TB3JFIN3INl/FMsdeX9tNnljoXlbThtxSoh72Omrix4FtLW2q0BIu3bQR4EoC2FGYmhwej9XlNjPvDWIn/dhhX7BNQbeMSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676598; c=relaxed/simple;
-	bh=U5d9f4V/3go4eQ+5yKorX5gfhmyk6wN2Wq5U9RPsxn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pcn3n9BQhWW+7nW7Aa/6wE2uCpfvtVrXreafnrLHKxIe8NCCmT3VnzPrFbcJNiv/M6mOJfP7Fq7pv8dPrcMcKGrjrjJjemXdbmIHRXbFWndy75ovXvaBYl5n2T/yUiA8sbFNO0X5GUVxnnVQwu1frTSlXCma+At5vcKq86Q7QjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6b4432b541aso37662757b3.1;
-        Mon, 26 Aug 2024 05:49:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724676595; x=1725281395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fNKaoBwiLKxyI1/6ZL98h5nDfWVTkc6MIAIcVX0VupA=;
-        b=FBNDsYrW6rmcC93wcjM2qoQx8WqS9kDh7SQtpGMjKBNOjE1+Ypqb9JaxYHu70pPwg/
-         tkQFjegWuankG7n8+BzevDaffMfqy72+j8uyT+80909PI+5nLWnqmUP+EM9pNN0Gvskh
-         PLvJ97xP3eChPe28vx6GwwjDL1FNIHDtAr0ux52wjwwb8bHHxwOi+HPpF7+5ZEMve/hT
-         sqNR2Ww5yzhLsLzsMmLr9XDmpx5kXrKC6atKwsGiME9VkBbv0+vv7ZHB2JVjSe3miWnc
-         zH86ztNNNlzEMzPOiW3i2C/k47nt8VdJ+DrEjsu2I9NiD5zPDO7jOOfoywTICnGQULDl
-         o4vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWG6c4fc9NhOjQb9qjGdVExLR5A1A86Czt8kUHot8ZVQW9wvWcXl3k8vb5DvDiJVG/FCl1WejrbF5qifbdtg4QfP+8=@vger.kernel.org, AJvYcCXS1/RdV+PQBEM7ToSMZ6mWp+A2ss7HLvlFltd/OBiQPjYtgiVBCuHX8jGqYed6KCgG+s0MWQ/ZQwgc@vger.kernel.org, AJvYcCXSg7dZ6aNKg0g2+LtqX0CpZHAgt/JfrrebnfypzdoNiVxpiQVYGA3va2tDqx1I3Txcld8jIMTxVkgdJsSB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1UznnXadDUL5KFZm1YA1/XC0uFe9SOldWv3hgrMXQCXHkPYh3
-	NDmG3OijQ9udPmgskEoj47YnXcwOTMfft2tud2ZvI4PhTts/ZxCt3aacC/I5
-X-Google-Smtp-Source: AGHT+IGwbKXwkNP2TgAFJUWSN4ml6WC6Nhe4oky562mjIrqDl608Wxor3GqniBr12Kz1MkJAsBWuuA==
-X-Received: by 2002:a05:690c:d91:b0:64a:f237:e0b0 with SMTP id 00721157ae682-6c6246036cemr116548157b3.5.1724676595122;
-        Mon, 26 Aug 2024 05:49:55 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c399cb503asm15103757b3.17.2024.08.26.05.49.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 05:49:54 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6c0adbbf2eeso34492477b3.0;
-        Mon, 26 Aug 2024 05:49:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHThF6t30tHkf16lHdLocXP4yV+rn6b91VKr8RswB0XcvF6KDV8RiaxhQVdchEsU8TRwDEDprgq0j8yPaa@vger.kernel.org, AJvYcCVVldGhbRqpaHV3wLeEGZyhrhdSY6LfUAQXfqA8/qlKsPgCnw3h2pJ5iqWWhrnnWpXYGuOIM0iXdbmJw6Y/XNQ9rdo=@vger.kernel.org, AJvYcCWA/QNmu6loI5wpwEGs3pxEUbjgub0tuDI3gRMP4fuRe9c0LKZlPWkowCDC2phJs4A+i3vFDoThg+X+@vger.kernel.org
-X-Received: by 2002:a05:690c:97:b0:6ad:deb1:c8e0 with SMTP id
- 00721157ae682-6c625861730mr125379867b3.18.1724676594353; Mon, 26 Aug 2024
- 05:49:54 -0700 (PDT)
+	s=arc-20240116; t=1724676614; c=relaxed/simple;
+	bh=prYIWJaLE5/Qq2KKOubfaUeUSPV4xft6OYJnGcbmNsE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NMy9L4NqGMI9KYQc3kOLpS+rQGFZefQnE50kGY4dQfk9zXyvCOmqB6/fIGnqwQQOz06WrxfDKahGONuJ8g3DVODRbOQLenS6MEm4rdFIqBEjQS9ZdzBdploOVYdHRShf4fMf6sj6TdElyHO4OM3Yz88MxX06szbMasch1g8Snd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BI1vchag; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D35DC4FEEB;
+	Mon, 26 Aug 2024 12:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724676614;
+	bh=prYIWJaLE5/Qq2KKOubfaUeUSPV4xft6OYJnGcbmNsE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BI1vchagXe2NjQOkTPPylHDYKbSLbLCprOCDm6/auZ7cLhlh1erYmIUM+p/nI8N2K
+	 5QxUzSuQEx5LZk2ukxFeTtgbHHnW68MCNOASqRcCHhXthINogv/ipaAYehR4NC6PlQ
+	 Pc3k/RiZ+UORizn10QMM2AvuypUdCwkdkjz8hjCU4VzqQ5lDIm6tqYPExxxIqdi0lp
+	 hbqaM+b/8x7FOCeHctcxc9qQAOHy2eKy9NA6IKx4eBk3S9+9Hp6QrTg7Rcf0Yk6HRP
+	 6c/7azGm9dcPQmX36tk+0RepOdGOnK2WbMiNY4KjO59l3x+JLEZovd7Anx+7MgHBWW
+	 yjU+p69/O4Ipw==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/3] nfsd: callback debugging improvements
+Date: Mon, 26 Aug 2024 08:50:10 -0400
+Message-Id: <20240826-nfsd-cb-v1-0-82d3a4e5913b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240821085644.240009-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Aug 2024 14:49:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUyW_8ma++zP8bRLMh120mysSD7206On0euRG7+S-081A@mail.gmail.com>
-Message-ID: <CAMuHMdUyW_8ma++zP8bRLMh120mysSD7206On0euRG7+S-081A@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
- OSTM, I2C, and SDHI
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAJ6zGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyNT3by04hTd5CRdw6REY3PzxJREM6MUJaDqgqLUtMwKsEnRsbW1AB/
+ p01ZZAAAA
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=858; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=prYIWJaLE5/Qq2KKOubfaUeUSPV4xft6OYJnGcbmNsE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzHoEpi55/jV7Q/eiJNQ6rnRi68MNdc0sWYTig
+ Gm7rq/mulqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsx6BAAKCRAADmhBGVaC
+ FW8uD/4rKw8iRtvNj3zEoGbk4vD/Je2XDtwT0Uh5PVOMFgKmRydxpynxrgrDQvlsH9+83mb30fO
+ oZXfmgFecfKZET4XL+luWweHGUj3cRjvLG62eBQKDZK/sSEGLbGenz1kDqfuBFev/w67g9q/xhw
+ pcpm3L9IpXEq8EYc2lxnUHWcV1y/CID5b8FNHJDLgXTPs8mGxySvCQOap8iig7k01YDu9cLzPiq
+ 0MuxX6s6R8FlE1yaQ/80MJSHZS5UeKLL19ewWhpp7+s+hxbWeL0MNkxQXT86KhqUkbHxoruCfWk
+ GWZFTJXxzgVwoEF3jeV8EPky/RsJtvgpGHLaoU5Fe+sBuyu4gbuxdrkeB/P7OabmFkSlyEaC02n
+ 8PidHtK8c+ON0RW8TE7XJv3A8c1e159cxI7AHzyoXHqcZCsV7KJEoK8CuxJLp4OlpjkvNsooOfz
+ /dUpJmWAdf3vPQR5+DGnsiPMyfBYfNl4sD3mHYgqM6PTpcpKUlNYjKp8bXAWZsKufeml5IZFw8n
+ jz+7GUqLW2/S+RT17sgsE/R2lRCKf4tj7YOtVYHKrN+XhkvlhAYu4amN+Ow3cTUzajKyZvZpdPb
+ 4+APnW6VqpoQhVNksWbQQMQoG2lR12DpU8Kl+ANs4fWwL9/o5Kik+SJZyh5dd+H+QvZVlmWRtKh
+ uPOGcLuM7WHTRmw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Hi Prabhakar,
+While working on the delstid patches, I had a couple of bugs that caused
+problems during the callback handling. They're now fixed, but these
+patches helped me sort out the problems.
 
-On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable OSTM0-OSTM7, RIIC{0,1,2,3,6,7,8}, and SDHI1 (available on the SD2
-> connector) on the RZ/V2H GP-EVK platform.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (3):
+      nfsd: add more info to WARN_ON_ONCE on failed callbacks
+      nfsd: track the main opcode for callbacks
+      nfsd: add more nfsd_cb tracepoints
 
-Thanks for your patch!
+ fs/nfsd/nfs4callback.c |  8 +++++++-
+ fs/nfsd/nfs4layouts.c  |  1 +
+ fs/nfsd/nfs4proc.c     |  3 ++-
+ fs/nfsd/nfs4state.c    |  7 +++++++
+ fs/nfsd/state.h        |  1 +
+ fs/nfsd/trace.h        | 27 +++++++++++++++++++++++----
+ 6 files changed, 41 insertions(+), 6 deletions(-)
+---
+base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+change-id: 20240825-nfsd-cb-1ba377ada62d
 
-> ---
-> note, for i2c nodes we are defaulting the clock-frequency and this
-> will be updated when slave nodes are enabled.
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-This causes lots of "'clock-frequency' is a required property" warnings
-from "make dtbs".  Moreover, what if I run i2cdetect on any of these
-buses? Could it run the bus faster than the board wiring allows?
-Hence I think you should add "clock-frequency" properties to all
-enabled I2C bus nodes.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
