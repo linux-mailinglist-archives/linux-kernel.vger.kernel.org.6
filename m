@@ -1,146 +1,136 @@
-Return-Path: <linux-kernel+bounces-302133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E882895FA58
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8FD95FA5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932741F21DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0422817FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60BE199EA8;
-	Mon, 26 Aug 2024 20:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE53199E84;
+	Mon, 26 Aug 2024 20:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7rny3nI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cMPDm5it"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A0811E2;
-	Mon, 26 Aug 2024 20:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBA612DD88
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702679; cv=none; b=qb4AhDJnvo+4sP0Bf8MweamYvIZZ9i91T8XYgDv8+2rsME/rBtDLuDauXdLr8ey9s9nPydhcHPngQjRVWtXWFsZmZWV9Pz1IUm0vqt7lkv807Uu/EUm1U3T9fo58RbqIluQj3tPUdV5tV00g89uP/y9Y0XmYln1Z/0c48kxlavs=
+	t=1724702751; cv=none; b=NA5xaoIW9IoVbC3C1NIBOjiwf3QuH6VTWS20TYZqf/QHy2DNQoIjX8a8OF2gY43MqZaEkgJzO54fvOoRQ4W9W0FWJbXd9xkTlrP5gFtFoM/IA9D0olhuLWn7QzitUsQoo7citjbe/lLILvkFhwZ21b+REJa/eU2Dx+mocgtqn7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702679; c=relaxed/simple;
-	bh=AkihPQS8bQoOGzU1lf5ytFhEOS/7IsKOwAe50NQNpj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayuUPZS0ujzhq5QZDo5g43OUaNBeX1cPAzvLG5f48zabT47+8krkn6AI66zEmcXiS28J009PFjD44hq1AQ/iOqIV7ZwcSB0OsImvQohUwByW3kTgRD0wr/MSP9hWfl6EOkriMdDMGC9yEIvfVBv622KcG6SnKjOPZdIKfpnQlAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7rny3nI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19A7C4FF0E;
-	Mon, 26 Aug 2024 20:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724702678;
-	bh=AkihPQS8bQoOGzU1lf5ytFhEOS/7IsKOwAe50NQNpj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B7rny3nIJQ9zu5civdgfC7uSj83r3D2A6ZU5dsdSkoHtSyQ2WIm1B1tOKOP5OXK63
-	 QKddcND3JDfmYIxjGfoz5dNx3kHim9VQ5J0NXEJ8/BMW3PNg3WdfgUZQtgdnlFM875
-	 r3p9xyKeDGuvkHt6iCusYk1Db8VV6X7CFdWsae4t6hFjSrVNcroFCWoDYrfHPfCxnr
-	 kzbKKujvkvGXrgWgye1Bb3+9fXnEzLTamvFjwatBmAgTYvQoAxMrA1Xt9qaXdcRuTj
-	 H6g+KNuMKQRlo6utDjOIgGCgoKjfLTG654GBsxvHbxEXQ7q6mA858969MUP+HzW8sI
-	 g4X1tUbV0EzTQ==
-Date: Mon, 26 Aug 2024 17:04:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Phil Auld <pauld@redhat.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, Jiri Slaby <jirislaby@kernel.org>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org,
-	Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, linux-kbuild@vger.kernel.org,
-	bpf@vger.kernel.org, msuchanek@suse.com
-Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
-Message-ID: <Zszf0_5DKuscmDWi@x1>
-References: <ZsSpU5DqT3sRDzZy@krava>
- <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org>
- <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
- <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
- <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
- <ZsdYGOS7Yg9pS2BJ@x1>
- <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org>
- <Zsy1blxRL9VV9DRg@x1>
- <CA+icZUWMxzAFtr8vsUUQ9OCR68K=F6d6MANx8HMTQntq494roA@mail.gmail.com>
- <20240826184818.GC117125@pauld.westford.csb>
+	s=arc-20240116; t=1724702751; c=relaxed/simple;
+	bh=IUpfP3Sgeq5oBNkk/3ORO0MyKxei7eyBm40BHBM5L4g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Tc5mc/CSd6toT3lLThocfmMe8B+pGh2GQJLcWqO/SPqTr9VLUvqjTlMtVTG4oHuRT0+G3o3qIoTEBrZVt1yM+I6rInq5yOttaDARX10eJG+KxnRB9kz2Bh/24nSKGgoOLKW1kMMdxLmGa1qyByhpeVSi7C99asSExvEptU+GbUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cMPDm5it; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b4eda2f2f5so69571747b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724702748; x=1725307548; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnxIhNbH4Gch2W3JBVVv+gBN+5BkAO7Ys6CmFB2+1ug=;
+        b=cMPDm5itG+idQUTB+/oQRYuTrd5UeEVzxxDpp5M6ii5jhzv6RXDD+oyZ5S+BH2yJ5r
+         j4O4gBTRb5MX00k8suLA+pykgUpK25HBlMSFXOZH1nouS0EThspLzvOofrROup+S+pb8
+         HTYuepGFIHFxVcLhfMxRtulP4xPCW2Q9hlGAoeuUNGOaNjXzuvwR4VZtqF7FBx6/yB+3
+         ijWcCWtjVYdpQ9tmSaXTRIQZYOKy0x+v6FF81HF55TIIGYFgthMEFt2g1pmdARPjvd8M
+         0klFl3g/xLRBs/HhhZcnldoF23y0kUX1VcgE7qK0hBdCwdSHo2QQBEu0mWU/t7bF0vQr
+         1k0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724702748; x=1725307548;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnxIhNbH4Gch2W3JBVVv+gBN+5BkAO7Ys6CmFB2+1ug=;
+        b=SWmuWEpTkyf3AdSZTIsBo02H7xLQEyvBS21+8jxqoCjOJtH8hnM3amZITDcFXUiPxy
+         AFHOi3mT53e0uGSV8JmJKYXTu4vA1ZCqnk3Isk2gRAHyBLfsj5tJcDKc3+hP/hqhRkqX
+         mwtnynjRIFRunaR6jfSrIkgfyBVkmV2+23SH5NBaoavDAjIkH8A9qMhlaa24C83IG2FX
+         SyqjuI1nfpdLO88eYU5Zk/Cf5ACTV7vDZ5XEKtLbY9+NJRQgj+5YeD9QpBHHn098w2J+
+         tvwdzLx+VgU/sAC1L0+DFXNty1hpNyCta7SUbwReJi8vj/zqMSHpZtAqBeTwJbQQ66pa
+         cowA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuZY5q4Aca+TvMoTHqJiqdzue8Y5BoBFp9kVhF1ORoNxdgBjWF8vz/+AlVlFomnLZ7JQC5wtTOq5aOGLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBu04aXw6oCRg5GPxn8D7a1ZuKSI7WgLevozO+TXgi0vWKDXoN
+	pR7KsnkGazmNRFURF5z7Kecj3kSJrnL9S5DAuWpwJx8KyysC5A14m1EYW4qRIz3krdi5tiWYonv
+	RuQ==
+X-Google-Smtp-Source: AGHT+IGLSh4YWTamDhAv9x2uzuZdYhGakrF4oXP91GrZ+B9R3joQTi/ORWEEJKAfgGtk+l47h8Mnz0Jd94s=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:2188:0:b0:e16:55e7:5138 with SMTP id
+ 3f1490d57ef6-e17a80075e1mr22228276.0.1724702748409; Mon, 26 Aug 2024 13:05:48
+ -0700 (PDT)
+Date: Mon, 26 Aug 2024 13:05:47 -0700
+In-Reply-To: <096cdf1b-bc79-4e88-8ae9-99a373245ef8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240826184818.GC117125@pauld.westford.csb>
+Mime-Version: 1.0
+References: <20240822202226.862398-1-sohil.mehta@intel.com>
+ <ZsfJUT0AWFhoONWf@google.com> <096cdf1b-bc79-4e88-8ae9-99a373245ef8@intel.com>
+Message-ID: <ZszgGxZLDQYIEJpX@google.com>
+Subject: Re: [RFC PATCH] x86/cpufeature: Add feature dependency checks
+From: Sean Christopherson <seanjc@google.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	Tony Luck <tony.luck@intel.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Aug 26, 2024 at 02:48:18PM -0400, Phil Auld wrote:
-> On Mon, Aug 26, 2024 at 08:42:10PM +0200 Sedat Dilek wrote:
-> > On Mon, Aug 26, 2024 at 7:03 PM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Mon, Aug 26, 2024 at 10:57:22AM +0200, Jiri Slaby wrote:
-> > > > On 22. 08. 24, 17:24, Arnaldo Carvalho de Melo wrote:
-> > > > > On Thu, Aug 22, 2024 at 11:55:05AM +0800, Shung-Hsi Yu wrote:
-> > > > > I stumbled on this limitation as well when trying to build the kernel on
-> > > > > a Libre Computer rk3399-pc board with only 4GiB of RAM, there I just
-> > > > > created a swapfile and it managed to proceed, a bit slowly, but worked
-> > > > > as well.
-> > > >
-> > > > Here, it hits the VM space limit (3 G).
-> > >
-> > > right, in my case it was on a 64-bit system, so just not enough memory,
-> > > not address space.
-> > >
-> > > > > Please let me know if what is in the 'next' branch of:
-> > >
-> > > > > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
-> > >
-> > > > > Works for you, that will be extra motivation to move it to the master
-> > > > > branch and cut 1.28.
-> > >
-> > > > on 64bit (-j1):
-> > > > * master: 3.706 GB
-> > > > (* master + my changes: 3.559 GB)
-> > > > * next: 3.157 GB
-> > >
-> > > > on 32bit:
-> > > >  * master-j1: 2.445 GB
-> > > >  * master-j16: 2.608 GB
-> > > >  * master-j32: 2.811 GB
-> > > >  * next-j1: 2.256 GB
-> > > >  * next-j16: 2.401 GB
-> > > >  * next-j32: 2.613 GB
-> > > >
-> > > > It's definitely better. So I think it could work now, if the thread count
-> > > > was limited to 1 on 32bit. As building with -j10, -j20 randomly fails on
-> > > > random machines (32bit processes only of course). Unlike -j1.
-> > >
-> > > Cool, I just merged a patch from Alan Maguire that should help with the
-> > > parallel case, would be able to test it? It is in the 'next' branch:
-> > >
-> > > ⬢[acme@toolbox pahole]$ git log --oneline -5
-> > > f37212d1611673a2 (HEAD -> master) pahole: Teduce memory usage by smarter deleting of CUs
-> > >
+On Fri, Aug 23, 2024, Sohil Mehta wrote:
+> On 8/22/2024 4:27 PM, Sean Christopherson wrote:
+> > On Thu, Aug 22, 2024, Sohil Mehta wrote:
+> >> Arguably, this situation should only happen on broken hardware and it may not
+> >> make sense to add such a check to the kernel. OTOH, this can be viewed as a
+> >> safety mechanism to make failures more graceful on such configurations in real
+> >> or virtual environments.
 > > 
-> > *R*edzce? memory usage ...
-> >
+> > And goofy Kconfigs.   But yeah, lack of any meaningful fallout is why my version
+> > didn't go anywhere.
+> > 
 > 
-> If you meant that further typo it's golden, and if not the irony is rich :)
+> By fallout do you mean that the observed behavior when the kernel runs
+> into such a misconfiguration
+
+This.
+
+> or just the general lack of such
+> misconfigured hardware/guest?
 > 
-> Either way this is my favorite email of the day!
+> I tried experimenting with the behavior for the last entry on the
+> cpuid_deps[] table:
+> { X86_FEATURE_FRED,                     X86_FEATURE_WRMSRNS   },
+> 
+> In this case, even if WRMSRNS is not present, the kernel would go ahead
+> and enable FRED, which would cause a panic when wrmsrns() is exercised
+> in update_task_stack().
+> 
+> I agree to the second part that such conditions are more likely to
+> happen in pre-production environments.
 
-Hahaha, I went to uppercase what comes after the colon and introduced
-that typo ;-)
+And in VMs, e.g. unless the SDM explicitly says FRED implies WRMSRNS, it will be
+architecturally legal, if unusual, to advertise FRED with WRMSRNS to a guest.
 
-Faxing it....
+> But I still feel that for the rare case when something like this seeps
+> through it would be better to disable the feature upfront than run in a
+> kernel panic or some other unexpected behavior.
 
-- Arnaldo
+Agreed.
+
+> > https://lore.kernel.org/all/20221203003745.1475584-2-seanjc@google.com
+> > 
+> 
+> The code is very similar to the one I proposed. If we do take this
+> forward, would it be fine if I add a Originally-by tag from you?
+
+No need, you came up with the code independently.
 
