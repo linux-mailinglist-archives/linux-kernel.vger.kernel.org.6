@@ -1,265 +1,198 @@
-Return-Path: <linux-kernel+bounces-301767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE8695F552
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D5195F553
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D087E1C218CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C385B21719
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24678193433;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E476193430;
 	Mon, 26 Aug 2024 15:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ch3t2Uw/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b="FydNOSwp"
+Received: from eu-smtp-delivery-197.mimecast.com (eu-smtp-delivery-197.mimecast.com [185.58.86.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B278193406
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CD4189509
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686843; cv=none; b=H+q2njkzSoYEPNxVhNX0JDz273/9YL5L0695VhFxtaJU0JiqEIOtNTBy+fBWAFQvh4UpqPEmEGbVEzaLcWzsLDAI5wuuSnOxSh8syAJQO177JM1ev1fW0jfMmlEmkl0r3iCbLSj+VINZY26CaSFn5aMSTUU86JUkS00PMX2qKPY=
+	t=1724686843; cv=none; b=jCZGuVLfDoZsag+TG/eJhenggs5yn+xC0rseiKvM9zId4X0CmUp+o5FV+KnEt152x3ZOnY30xc+gInNxc/NUi1XsKHxBIdbm5nwi7qxJk/BfsBA0zFlTFXEjXQTtKezAuWtxk7dWQALcLRMjUZUU+g6vWWUqLUCql+bX97OCCq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724686843; c=relaxed/simple;
-	bh=v6aBNEgkD+yCxRyLqlLsqt9Me9mghklxGM1HvPv9Lb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W4TjhIBZbVLMFuar+S5Dnw6eCGEQ81OZdFXg0+d6QS37hFEk8MQc3stjqDum3+7+TFAhgp2OwxZojheMoYQPTUlRVbPUOY2rct0wGWaEUIEa3/voYede3J1NEKSU0V2m13vk5TCzp+H6vCGN8uZVqbNcpVWhElJD2iF3fH7zt5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ch3t2Uw/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724686840;
+	bh=yYY+MkVum/mgf8ScKM6FEHNFcqOg4GHLmlQnUF2A6H4=;
+	h=Message-ID:Date:From:Subject:To:CC:MIME-Version:Content-Type; b=Om+du2edTzbtT0aKqXRwPjgQIZm+gyyqMg+z3ZFTp4TMClUTjbrC51/TuKIFl14eiPsQcxDOrlzMyEWZjAWQqyQABWxcRfSErS/gc9RvGr7mUmk/bDTiF3181AM7gIfXczqGGPtHYaT3N356gjwne9yiLkwYJfco1CoOA3T1Ltw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com; spf=pass smtp.mailfrom=camlingroup.com; dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b=FydNOSwp; arc=none smtp.client-ip=185.58.86.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=camlingroup.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=camlingroup.com;
+	s=mimecast20210310; t=1724686833;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=27eVj2Z6RNgb00mecDqw/aDsuiUwWuk/YVU/+hWWgVg=;
-	b=Ch3t2Uw/SsWdNfusO/l9grp9A1IP2+LP1XaqKzu78eyePZ8Ubh4A4Sv27xY5zsxosJSqfX
-	yUqnuw439LUEtIyV+2kHj9BTpSAGNHXdoioUbVwwmZaMH5GF7XEBnqkeoIcSGXIKQpfDp+
-	KvgeD0Pam/h3RF1S8kV6lDKIapHBNBI=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-fNm2Ds4cOX-6-pwogNic_A-1; Mon, 26 Aug 2024 11:40:36 -0400
-X-MC-Unique: fNm2Ds4cOX-6-pwogNic_A-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6b1adbdbec9so86734457b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:40:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686835; x=1725291635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=27eVj2Z6RNgb00mecDqw/aDsuiUwWuk/YVU/+hWWgVg=;
-        b=JqsBKnol5KQQUDse5ysTkq0yhkyUp/SGKDQG5FBTpueMMlWveJyOI6A4KbhhRR2AtV
-         X8T84Ia+Itc4c8tIUfx/e6uIyk2QSN7Jfu3rUjvggo2SIHgGTBofUB2XEcdZsqT14Xhd
-         UTWI10XVHACoQq+Dr+lBvMwOQIuYHf9bZp8Pw8ZAApdAqLh4+DLWElhTA8fAjGr4EJ3W
-         GKywPPZsuuhRkXvQYEaUf9yTtrOcclor7IbUQkGujYXnLrsAQNcT1f+/b36kW36y+SRo
-         i7A8d8wesefGtQ2McQtVExVr9qkVdL0c7IW2OZ4sPgbwVBDs7IqIn5RDYr+NoZjyZdPf
-         tsvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZJW8z2UEUgAdQkdRrCrtJFeU4QWwfyCROmVfXbezm1SILG03+EHhkWBy0uU3+8ozy7VTbmA21bdHccJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym2NMNhdLi++Ca26tmXZLuBNgdaXt1Xpoz4mVSnBdqcUHIS/wA
-	94gfq2Cy6IrvaBlpVGuvWjl4ekeOSylzuPItacLNbnmKFOJqpBhxByQU0YoVH3kOGFQq3qqh9UD
-	ReH8AXHt9dqdBKYx5Sne93Zoj5JgzjhLPzmKsySrXMlgGRqAIIziTeNDVlyFM2oyJqVDOCSCwaV
-	aClZcOeoQfdXym3Ko+Osy8J06ic/lU9upXzVUM
-X-Received: by 2002:a05:690c:ecb:b0:6ae:1e27:c994 with SMTP id 00721157ae682-6c6248e8e21mr102812537b3.3.1724686835471;
-        Mon, 26 Aug 2024 08:40:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHo5xy1tCcPATzjwKv562swJ8qdcQ3hXU/FJ7I5SxAT5TQe0vT7bwPymRwDqoI/eR5G7ezSBJ8+GTy4PeNLRU=
-X-Received: by 2002:a05:690c:ecb:b0:6ae:1e27:c994 with SMTP id
- 00721157ae682-6c6248e8e21mr102812327b3.3.1724686835153; Mon, 26 Aug 2024
- 08:40:35 -0700 (PDT)
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mI2LOjmi14onsWWfDo43NtnPS8cWarwfRKBC2q+k+z0=;
+	b=FydNOSwp15g7qz/Xb0Hz7vBQZuZo3uKyF32ziVkfuNMeLgohRSDYETJWlybwXADCYQRXzB
+	Ea+wPPpu99sHM0oqna/n75RqN5pnbK8wvT+kQGcl2kLmfbLMdjRHLvtd+wMtzs8J5337rc
+	ERsHXaYwJ082TvlIsMwgx7/yuUEt2eM=
+Received: from GBR01-LO4-obe.outbound.protection.outlook.com
+ (mail-lo4gbr01lp2105.outbound.protection.outlook.com [104.47.85.105]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ uk-mta-75-AmDJ0nVhOu2580Zfp_rBDA-1; Mon, 26 Aug 2024 16:40:32 +0100
+X-MC-Unique: AmDJ0nVhOu2580Zfp_rBDA-1
+Received: from CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:142::9)
+ by CWXP123MB6192.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:1aa::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 15:40:30 +0000
+Received: from CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::f866:62f9:716e:ca4f]) by CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::f866:62f9:716e:ca4f%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 15:40:30 +0000
+Message-ID: <9c1f8fd4-a2a5-4f92-9e86-2cf0103b1908@camlingroup.com>
+Date: Mon, 26 Aug 2024 17:40:28 +0200
+User-Agent: Mozilla Thunderbird
+From: Lech Perczak <lech.perczak@camlingroup.com>
+Subject: [PATCH v4 0/3] serial: sc16is7xx: cosmetic cleanup
+To: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>, Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>,
+ Pawel Lenkow <p.lenkow@camlintechnologies.com>,
+ Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
+X-ClientProxiedBy: WA2P291CA0020.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1e::9) To CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:142::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729222727.64319-1-npache@redhat.com> <72320F9D-9B6A-4ABA-9B18-E59B8382A262@nvidia.com>
- <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
-In-Reply-To: <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
-From: Nico Pache <npache@redhat.com>
-Date: Mon, 26 Aug 2024 09:40:09 -0600
-Message-ID: <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
-Subject: Re: [RFC 0/2] mm: introduce THP deferred setting
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, Barry Song <baohua@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Lance Yang <ioworker0@gmail.com>, Peter Xu <peterx@redhat.com>, 
-	Rafael Aquini <aquini@redhat.com>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Zi Yan <ziy@nvidia.com>, usamaarif642@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWXP123MB5267:EE_|CWXP123MB6192:EE_
+X-MS-Office365-Filtering-Correlation-Id: 151bd377-7fc0-4307-d0f9-08dcc5e56a6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?azQ383iqhYwuWfYyF76UqClN2WvDsoZpolJMbGuIU5flW8n7qJr3nnKmnS2K?=
+ =?us-ascii?Q?U9J7RBAAjq7KpktXukukQmUl93fiLmvXHu5VEOABtFZXRvJpqqz1kCk8ULZi?=
+ =?us-ascii?Q?DSbvsRgXWg0CWS9cBeQnYYWsugWltEe7M32ut4FLSmJafQWUhws/ZNl5QOHC?=
+ =?us-ascii?Q?nwqKYh6759zUtg4y4/iLY64i2tp9xYbUscHlE/YgMiniuTgwrzRFbXlWXXle?=
+ =?us-ascii?Q?TBExIxMy1h93zLjsL5OruMcxL3wAQl1Ybbv6i5vrQbFvbKLp67n9lvxL175P?=
+ =?us-ascii?Q?mga0Cq5G7mCGv0EdFpPWh1ikfeN0i2HI/fCvNJMUf77erVBN5XnNUNd7cjJm?=
+ =?us-ascii?Q?amNVa120FccK+YWSu0QiJAkzFV7x1ZTF4Jmfeekj9KkxHZ62wpbDLqIZJQ6F?=
+ =?us-ascii?Q?s2wy0BGv5A4v210kOGtiAP0RBt/QSkIdPaZ+D/T0yf4wU3enmO1pU12lNlD6?=
+ =?us-ascii?Q?cgDclIeNbJ2F72IGockpW/dVcmEtDHsWUwoGDD9VqOOx9ouS+HfOakf5Z5qe?=
+ =?us-ascii?Q?RfDuv0JCWAkmXNG0KvHAEbIcNtjRwKIw1/1p5lc7VVhOEDJZ11NI4fAceZlj?=
+ =?us-ascii?Q?FhWLL146KuOjouHlDiRtTWYU2TZAnxgLfi1Lfqs9zfB49YQDi6LoyF7oU3uu?=
+ =?us-ascii?Q?7Lw2bIcN2i3XDPNW2oIK/fld3Rr2Rf2kpc/HGjJ1ha7bnEDKX+NlxtCYu34R?=
+ =?us-ascii?Q?8YI4musY3dmFj6evJVv7YF+hprI6Fky7HuxPVpKMSSxiyhWL/tNrRZgG/m0p?=
+ =?us-ascii?Q?7pgVi3eBvclwmRDB3lsV3OhWL7Y8HIu3QsvufuTAnIbxVqWKVu56GiLIBh+Z?=
+ =?us-ascii?Q?1p1wV9piZgyc8KkBjt5EQt9ruHNdwrIsVYnBj7FOJLF6sPlKK0JNLiFScSMX?=
+ =?us-ascii?Q?7dysT5gi+XiXGq7XmnjmwD+T69zaChilN+ovA/ogpOPcJR4KZFAa1r6xmqBM?=
+ =?us-ascii?Q?lFrRDesgy27x+geGgg/Se13loc8MahM5GlBjkzlFMXTetCAZ2iHDMi0N9DlK?=
+ =?us-ascii?Q?CRHBxVIcaG/8cfrkf9ugBhXESOHcN5yGPQEBKU/cNyfMT3pIwnk0GKEtY8ph?=
+ =?us-ascii?Q?tHkmeIe8a1/RfNJg/HmUqMdgyY6i0LdtiJjmbZdUPIzITg+W/ZPYOPWXOtHR?=
+ =?us-ascii?Q?yZtyh6Y7JCsamZoODSHzBQzP8tH7r9qRsW6FKI8tozcg7Wv0eW/mdccJlSUx?=
+ =?us-ascii?Q?FIy05owlpzqWKcBMPskiIEIJ3owM7AG+/Rm09j2uL8hhYqt1MnwNTGiFwl7Z?=
+ =?us-ascii?Q?DBb70epJHMoz8Ofleb6Z8pjNcnvWupOu4Et5DV7XCUR/sJD1ttTEQX5ym7WK?=
+ =?us-ascii?Q?saAo9O84xPRZCieKc+WzNMazSV70wDcYhOKzfZIBH2bW9g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mzLzIwHkEGDDIyfaX6AjpgdqmKC8nUOSQByRvIhuEuUXDDCOFwRXLD+hg7CJ?=
+ =?us-ascii?Q?uRmY0/4rckL9B2xEYPpW2dc4jc0adgHsHse5vrkcv48iiFN9DNTOWH3gYyhW?=
+ =?us-ascii?Q?2SA4ccHBEn8bUOy3weiJD5cVIxklPYtfh1uP9OWwjO/2kzK/Rie7/VNoYeM2?=
+ =?us-ascii?Q?5CVpwKVzNeh5goGgA4vTn9NdYrx+mFP1ydEBZN4dKZ5xf+3uWrX7H3Wa+bG5?=
+ =?us-ascii?Q?p6a2lVxpyZ+TIemXVFMoofbO0p/74H1r+bWFLF6zNSAhXolb5T0KVsaeYLBj?=
+ =?us-ascii?Q?yARVh0oiYtEjyGESdopt1wA5o0awQaLz0ElE3Tun1Sa9Pg+4SxYdi0rXSFhu?=
+ =?us-ascii?Q?Yo3G7i55DXgyLK71dHxy05ZUZFk+/p/kNYVBtcy9C3ZfPqpEJ0lLxCRoviVL?=
+ =?us-ascii?Q?Ap6jurh5HDIJsIP0WdzDXR7Ljwycmf5BR4MK15HsXBq675HQ0Q0A73714S+0?=
+ =?us-ascii?Q?mGcLc906opnxomgYnGjj1vGTIorbkW6+oDAn7PHR5hbPgzzz+hsoI3pGF/Jh?=
+ =?us-ascii?Q?dhUNBzA17+0JRGTYUDpIqD/RJ5ZSyhY3hfUjDc7zUQwUXXOJgXM6PN9ezt7a?=
+ =?us-ascii?Q?j6L8Mk8yxnDbRpVeLFCDoRh39qH5ONCyoam4a9mPwMOhP2r1+8SPc0wGFPpw?=
+ =?us-ascii?Q?DBoT80kOkejTX7T8VU3QaNNjBqqzLPXvwbNsxJG3IcofeYUuemT4Loq4Esr0?=
+ =?us-ascii?Q?IfGyJPOydIQeQhM/k8CUGCX3NBJdlcU1XQmweuoY87CqEIvKsL/ZXJOlOmHo?=
+ =?us-ascii?Q?T4ZSp3NYbicI9AA+KNTEME0xHp+YYns4NPtPySEAUYDOTCrZRGOy300VV5fZ?=
+ =?us-ascii?Q?U5zetMbhZdjaindQfhBFFeyY7vnwLHhKA+cRdTlauNzH6L1rQkwn21AXLpiS?=
+ =?us-ascii?Q?NqYk5okzs4rK9uOkztJ2M3YV0EeO7/ma8lY7PSL2dxyo2zZuAbhiczyWs+PX?=
+ =?us-ascii?Q?U6dNjb4vzfNK5P7eqJikU8XXcIaMab3j9m5oY2GkMn0vUmZwmvTdpwYh/vR2?=
+ =?us-ascii?Q?+gXG6BfQa38tA3mLRhTmFFTC5M/XWXhc6K5BqngLnPcHbCcq8Zq8CsKzavRx?=
+ =?us-ascii?Q?bkJFFbHz2NUACiYuOj98ooqH1OXg7jSTNyWjEEXDDMXlWsBEhJVqvcogxsPH?=
+ =?us-ascii?Q?vCZJ6zpQecb3mONRGl3Nx5GDWMPwSnqvsdkfvy9alnoYeSezj2TU6QPsrPEs?=
+ =?us-ascii?Q?+IHM7h6l513qdlbbs1ecEIIEcl+NRlj5s0Ib+7ZRuQnk45AIapGR8BcuKs+s?=
+ =?us-ascii?Q?TaeAUjSYyXzx4poRiTpuv3ov+ThUl4mQfy7scc1GL+dScJrTP2CaXub24UwO?=
+ =?us-ascii?Q?t/DofB54yaY1JAdfmCS3BqKsz6tAkKkywbenqWFxRpChNo0sIYYX1wOLWu6f?=
+ =?us-ascii?Q?SWiRaMOc+d/QGAB3PRtSQz+KrwMtokJNMeZr4kRmWoDrHNaBNa49Akq4cXO4?=
+ =?us-ascii?Q?+LBdmhdhi5c8yiTCV81lYdA1YV5KlZJsPFd+Gu6CIzgcGGia8tPY2KQl4Tow?=
+ =?us-ascii?Q?F/+q27qdIeRspzxRrm/LKXYkNWdfoddW04TeL4MWPXvDJA2rZ4YvhMN+pIIT?=
+ =?us-ascii?Q?VeSWwEhjtEM9SlGhanxBNlQhXvDtqVVZ33yLtVZIeH5lpwbEokd+N4eOk3cl?=
+ =?us-ascii?Q?dQ=3D=3D?=
+X-OriginatorOrg: camlingroup.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 151bd377-7fc0-4307-d0f9-08dcc5e56a6e
+X-MS-Exchange-CrossTenant-AuthSource: CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 15:40:30.4989
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fd4b1729-b18d-46d2-9ba0-2717b852b252
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: y8WvEftucCrzXpFL4Wy7kyYvNcMULQRroEYj5S4mKGV4+QJODLejx1vbnIRsSNVMLKxAAQ9jFF5yv9uT8hqSI3+nAu7wsopN8j/+GVkCOn8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP123MB6192
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: camlingroup.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 4:37=E2=80=AFPM Nico Pache <npache@redhat.com> wrot=
-e:
->
-> Hi Zi Yan,
-> On Mon, Jul 29, 2024 at 7:26=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
-> >
-> > +Kirill
-> >
-> > On 29 Jul 2024, at 18:27, Nico Pache wrote:
-> >
-> > > We've seen cases were customers switching from RHEL7 to RHEL8 see a
-> > > significant increase in the memory footprint for the same workloads.
-> > >
-> > > Through our investigations we found that a large contributing factor =
-to
-> > > the increase in RSS was an increase in THP usage.
-> >
-> > Any knob is changed from RHEL7 to RHEL8 to cause more THP usage?
-> IIRC, most of the systems tuning is the same. We attributed the
-> increase in THP usage to a combination of improvements in the kernel,
-> and improvements in the libraries (better alignments). That allowed
-> THP allocations to succeed at a higher rate. I can go back and confirm
-> this tomorrow though.
-> >
-> > >
-> > > For workloads like MySQL, or when using allocators like jemalloc, it =
-is
-> > > often recommended to set /transparent_hugepages/enabled=3Dnever. This=
- is
-> > > in part due to performance degradations and increased memory waste.
-> > >
-> > > This series introduces enabled=3Ddefer, this setting acts as a middle
-> > > ground between always and madvise. If the mapping is MADV_HUGEPAGE, t=
-he
-> > > page fault handler will act normally, making a hugepage if possible. =
-If
-> > > the allocation is not MADV_HUGEPAGE, then the page fault handler will
-> > > default to the base size allocation. The caveat is that khugepaged ca=
-n
-> > > still operate on pages thats not MADV_HUGEPAGE.
-> >
-> > Why? If user does not explicitly want huge page, why bother providing h=
-uge
-> > pages? Wouldn't it increase memory footprint?
->
-> So we have "always", which will always try to allocate a THP when it
-> can. This setting gives good performance in a lot of conditions, but
-> tends to waste memory. Additionally applications DON'T need to be
-> modified to take advantage of THPs.
->
-> We have "madvise" which will only satisfy allocations that are
-> MADV_HUGEPAGE, this gives you granular control, and a lot of times
-> these madvises come from libraries. Unlike "always" you DO need to
-> modify your application if you want to use THPs.
->
-> Then we have "never", which of course, never allocates THPs.
->
-> Ok. back to your question, like "madvise", "defer" gives you the
-> benefits of THPs when you specifically know you want them
-> (madv_hugepage), but also benefits applications that dont specifically
-> ask for them (or cant be modified to ask for them), like "always"
-> does. The applications that dont ask for THPs must wait for khugepaged
-> to get them (avoid insertions at PF time)-- this curbs a lot of memory
-> waste, and gives an increased tunability over "always". Another added
-> benefit is that khugepaged will most likely not operate on short lived
-> allocations, meaning that only longstanding memory will be collapsed
-> to THPs.
->
-> The memory waste can be tuned with max_ptes_none... lets say you want
-> ~90% of your PMD to be full before collapsing into a huge page. simply
-> set max_ptes_none=3D64. or no waste, set max_ptes_none=3D0, requiring the
-> 512 pages to be present before being collapsed.
->
-> >
-> > >
-> > > This allows for two things... one, applications specifically designed=
- to
-> > > use hugepages will get them, and two, applications that don't use
-> > > hugepages can still benefit from them without aggressively inserting
-> > > THPs at every possible chance. This curbs the memory waste, and defer=
-s
-> > > the use of hugepages to khugepaged. Khugepaged can then scan the memo=
-ry
-> > > for eligible collapsing.
-> >
-> > khugepaged would replace application memory with huge pages without spe=
-cific
-> > goal. Why not use a user space agent with process_madvise() to collapse
-> > huge pages? Admin might have more knobs to tweak than khugepaged.
->
-> The benefits of "always" are that no userspace agent is needed, and
-> applications dont have to be modified to use madvise(MADV_HUGEPAGE) to
-> benefit from THPs. This setting hopes to gain some of the same
-> benefits without the significant waste of memory and an increased
-> tunability.
->
-> future changes I have in the works are to make khugepaged more
-> "smart". Moving it away from the round robin fashion it currently
-> operates in, to instead make smart and informed decisions of what
-> memory to collapse (and potentially split).
->
-> Hopefully that helped explain the motivation for this new setting!
+When submitting previous, functional fixes, Tomasz Mo=C5=84 omitted those
+two cosmetic patches, that kept lurking in our company tree - likely
+by oversight. Let's submit them.
 
-Any last comments before I resend this?
+Signed-off-by: Lech Perczak <lech.perczak@camlingroup.com>
+---
+v4:
+No changes to patch 1 and 2.
+- Fix typo in commit message in patch 3.
+- Revert interrupt source constants back to numerical representation.
+- Add a line break to SC16IS7XX_LSR_BRK_ERROR_MASK definition.
 
-Ive been made aware of
-https://lore.kernel.org/all/20240730125346.1580150-1-usamaarif642@gmail.com=
-/T/#u
-which introduces THP splitting. These are both trying to achieve the
-same thing through different means. Our approach leverages khugepaged
-to promote pages, while Usama's uses the reclaim path to demote
-hugepages and shrink the underlying memory.
+v3:
+No code changes in patches 1 and 2.
+- Pick up Reviewed-by from Andy in patch 1
+- Adjust commit message in patch 2
+- Perform further cleanup in bit constants,
+  use GENMASK for SC16IS7XX_IIR_* and reuse bit definitions in
+  SC16IS7XX_LSR_BRK_ERROR_MASK in patch 3.
 
-I will leave it up to reviewers to determine which is better; However,
-we can't have both, as we'd be introducing trashing conditions.
+v2:
+- Converted bitmask definitions to use BIT macro
+  (thanks Jiri Slaby for the idea)
+- Removed redundant comments in patch 2 altogether
+- Fixed commit messages (thanks Andy Shevchenko for
+  thorough review)
 
-Cheers,
--- Nico
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>
+Cc: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+
+Lech Perczak (3):
+  serial: sc16is7xx: remove SC16IS7XX_MSR_DELTA_MASK
+  serial: sc16is7xx: fix copy-paste errors in EFR_SWFLOWx_BIT constants
+  serial: sc16is7xx: convert bitmask definitions to use BIT() macro
+
+ drivers/tty/serial/sc16is7xx.c | 183 +++++++++++++++++----------------
+ 1 file changed, 94 insertions(+), 89 deletions(-)
 
 
-
-
-
->
-> Cheer!
-> -- Nico
-> >
-> > >
-> > > Admins may want to lower max_ptes_none, if not, khugepaged may
-> > > aggressively collapse single allocations into hugepages.
-> > >
-> > > RFC note
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > Im not sure if im missing anything related to the mTHP
-> > > changes. I think now that we have hugepage_pmd_enabled in
-> > > commit 00f58104202c ("mm: fix khugepaged activation policy") everythi=
-ng
-> > > should work as expected.
-> > >
-> > > Nico Pache (2):
-> > >   mm: defer THP insertion to khugepaged
-> > >   mm: document transparent_hugepage=3Ddefer usage
-> > >
-> > >  Documentation/admin-guide/mm/transhuge.rst | 18 ++++++++++---
-> > >  include/linux/huge_mm.h                    | 15 +++++++++--
-> > >  mm/huge_memory.c                           | 31 +++++++++++++++++++-=
---
-> > >  3 files changed, 55 insertions(+), 9 deletions(-)
-> > >
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: David Hildenbrand <david@redhat.com>
-> > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > Cc: Barry Song <baohua@kernel.org>
-> > > Cc: Ryan Roberts <ryan.roberts@arm.com>
-> > > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > > Cc: Lance Yang <ioworker0@gmail.com>
-> > > Cc: Peter Xu <peterx@redhat.com>
-> > > Cc: Zi Yan <ziy@nvidia.com>
-> > > Cc: Rafael Aquini <aquini@redhat.com>
-> > > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > --
-> > > 2.45.2
-> >
-> > --
-> > Best Regards,
-> > Yan, Zi
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+--=20
+2.34.1
 
 
