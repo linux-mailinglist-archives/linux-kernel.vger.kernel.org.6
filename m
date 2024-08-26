@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-300895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4656995EA37
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:18:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF5595EA3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DDC1C212AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:18:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A451F2188A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D0A12FF71;
-	Mon, 26 Aug 2024 07:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA16E12CDAE;
+	Mon, 26 Aug 2024 07:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UXcf/bD9"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="j1IJS+MS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3513C13BC35
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F72980611;
+	Mon, 26 Aug 2024 07:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724656628; cv=none; b=shWFbEVwWY5eutvuniBje1x6pgGWENxbgN7ZXRogFG198C1MPqLV72fUBU0Rqc1qlFmxrtHrcp8d66c9Yu8eXDpaEWNGD1SuP3pj2yrL2UPN+a5fyPmdfwG0F69twwvJyvHAdPS3lTUo14G1fhsdfx9qDRbmqQHcCZudsq2Ltt4=
+	t=1724656776; cv=none; b=iptdJjJwvkjQ2XJcucF43bDjd5G+UZq+hs3ckCRQ6M7D0/B1KRltTh9OU5uGYnu9MZA6Nf5r3FXsBlzq4F7hg63+kCy9O1yyxKNy3Z/j/jF9ozJeODSLqy2HoIBZ30QNm88b224Upa9h6FEYLQ+Ic58i1foviJya1Rvd2vS1Dg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724656628; c=relaxed/simple;
-	bh=MZZj2SAvpagdGOtXPGGnDmJg+RAzKw+H3OQrffzD+8w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ee4GhZduI6CXyM+zGUzqe6hoTATFiGmD7r5Ksi6ukkF5jlcdx/8MNmo89BNDX+jGyO/j5rJJQ/JYOiydQkhdjaXXhdDDk6vR2ddFwrmWoviQau9c6HHIru39p4ypS3K7oLzf73aClh8/+sEdUsASn/Xv54kDdHeNWUbWH2J2hs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UXcf/bD9; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1159159528so6747520276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:17:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724656626; x=1725261426; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=glhE4wUH8upwh3h840zUvzyaLndPAI9WWeySK76KAe4=;
-        b=UXcf/bD9d6JZBbxuUTzPYT8zpr4pYMPLj8VX0tGZHpyA2VbKkuvrmS2um2l/mwJDeH
-         Leay1xl6dfAHMzrW1HnFf77Qh3jjMOuUtJzp3kEF57furKynJzGY1TZqdzITq+s1AFHa
-         IJW8QwuMv5JXbTDt7ZAUT82FGnE/NjcbyUUI/sBu9zPjh7QAKCrABhCxV2zJKXq8PsBR
-         iDybzlVeBNuO5T4rAYcenFqVKAerfMfW8J0zybLT5qdmq19ijebqhLQPEvrQ/XdPdUQ3
-         RmAiTlM4nrQvvJgm4ejxgJaVl6Ie26IH5DUBtHdRBUvQbPeoJ1afszizfzDT0tDMNHVT
-         h2aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724656626; x=1725261426;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=glhE4wUH8upwh3h840zUvzyaLndPAI9WWeySK76KAe4=;
-        b=XpT6t0oJk/wk3AykEQ9CLQe5mMe+/GdMXlpT7Z4rChp2uqB9umHD83rGZhlY9UG9L/
-         qD7uBm+QTUgdFfOV2qjN2dSkSDVQWA06WjgldUPptG1Jk5a+r1OB3Pl0gYOF/wncuMNr
-         Dtkdmzv5wleKLjNu6IIBGIVSYoNrqzYRKsVGsQAM4j5DpSD9J1b0dqNt34U21bBQNGPr
-         ZNu6xqAcERbItIMm46l9EJEY5GG3nKFQNxp1cKdBA4Lx7QIljdKfcz8lMIFUoXb/LQox
-         mjrBd28KRlGg+YLDWRtNVnJMG/TSY7qYUXiq9O2gxe3tJf8p62B7Y07m75S5VSpMEgME
-         AQ7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aUGzN+cwz4jsH8wOfv4o0/tN+aBSl5RHUGEMIArgZHqd0awJHvs19UAHJMSNybABjIAVUk6yfMb2EBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5po8JhuHDf29ZEczzbxaxMHj3K9fMhcHjsejvmoIfd3fKtqU/
-	jMb6dJPCBsueHueAbcYcjpvq6h3IDYu3Us+TSBdzS3tdll25l/z0ERX7THBbuCOYLbFVkA+D4hS
-	BnsyxHwvyDfvMOA+0GA==
-X-Google-Smtp-Source: AGHT+IHNO2NOT8z5pjPX4FeBdIeAVLHmjqUYd3PJJUwIcYAFNDV3F2bzyhnKkfV2wlyMcU549dbh9KtZHmBsNHWt
-X-Received: from manojvishy.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:413f])
- (user=manojvishy job=sendgmr) by 2002:a25:aa85:0:b0:e11:593b:b8e7 with SMTP
- id 3f1490d57ef6-e17a7a6905amr147799276.3.1724656626199; Mon, 26 Aug 2024
- 00:17:06 -0700 (PDT)
-Date: Mon, 26 Aug 2024 07:16:41 +0000
-In-Reply-To: <20240826071641.2691374-1-manojvishy@google.com>
+	s=arc-20240116; t=1724656776; c=relaxed/simple;
+	bh=5mnxkRlBDghVp+jV0qHPEpLxDRs2U12I4ncTzaWP+rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERd825Rg148OQfsn+yGI5bdQw1VUbuR6j4+31hyxAegbEcFcNrhdK4QNycCMGHtGjsDaAaPDOnKRhvPlMR2PO/kcaK/1rc3r36oNMGP2U1ncmhMd0cG9H9h1Ky1G5DVaVu2WbdSa6fK8G0+wGnLkHmGS9JZ05bIskfVDzSI9iSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=j1IJS+MS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53143C8CDCE;
+	Mon, 26 Aug 2024 07:19:33 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="j1IJS+MS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724656771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5mnxkRlBDghVp+jV0qHPEpLxDRs2U12I4ncTzaWP+rA=;
+	b=j1IJS+MSiGszC/AZy4D3uJ/andjVajwkIyrQoUshcUHxGJMb2WL2259Af5/W64kkm2vxcD
+	jF7007HPkvb2yHXa5A2ZPmhxrqe20+doeNB8UTbSMckIY4tAtJ5hFuP4KW3z7N4l7UroHd
+	BfKpnFUeAB/F62oewuRJdbaVwBTyfGM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 746e735a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:19:31 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:19:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] Wire up getrandom() vDSO implementation on
+ powerpc
+Message-ID: <Zswsennpw6fvigVh@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240826071641.2691374-1-manojvishy@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240826071641.2691374-5-manojvishy@google.com>
-Subject: [PATCH v1 4/4] vfio/type1: Add support for VFIO_DMA_MAP_FLAG_SYS_CACHE
-From: Manoj Vishwanathan <manojvishy@google.com>
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Alex Williamson <alex.williamson@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org
-Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	David Dillow <dillow@google.com>, Manoj Vishwanathan <manojvishy@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 
-Introducing the VFIO_DMA_MAP_FLAG_SYS_CACHE flag to control
-whether mapped DMA regions are cached in the system cache.
+Hi Christophe,
 
-Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
----
- drivers/vfio/vfio_iommu_type1.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks for this series. There are quite a few preliminary patches in it,
+before you get to the PPC part, which fix up general build system or test
+harness correctness issues. Since some of those affect all architectures
+that are adding vDSO getrandom() support for 6.12, I'm going to take
+those into my random.git tree as a fix for 6.11 now, in hopes that the
+new archs can mostly go into arch trees without too many tree
+interdependencies.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 0960699e7554..c84bb6c8b12f 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1562,7 +1562,8 @@ static int vfio_dma_do_map(struct vfio_iommu *iommu,
- 		prot |= IOMMU_WRITE;
- 	if (map->flags & VFIO_DMA_MAP_FLAG_READ)
- 		prot |= IOMMU_READ;
--
-+	if (map->flags & VFIO_DMA_MAP_FLAG_SYS_CACHE)
-+		prot |= IOMMU_SYS_CACHE;
- 	if ((prot && set_vaddr) || (!prot && !set_vaddr))
- 		return -EINVAL;
- 
-@@ -2815,7 +2816,7 @@ static int vfio_iommu_type1_map_dma(struct vfio_iommu *iommu,
- 	struct vfio_iommu_type1_dma_map map;
- 	unsigned long minsz;
- 	uint32_t mask = VFIO_DMA_MAP_FLAG_READ | VFIO_DMA_MAP_FLAG_WRITE |
--			VFIO_DMA_MAP_FLAG_VADDR;
-+			VFIO_DMA_MAP_FLAG_SYS_CACHE | VFIO_DMA_MAP_FLAG_VADDR;
- 
- 	minsz = offsetofend(struct vfio_iommu_type1_dma_map, size);
- 
--- 
-2.46.0.295.g3b9ea8a38a-goog
+So I'll reply to individual patches for that, mentioning which ones I
+extract.
 
+Jason
 
