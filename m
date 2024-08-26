@@ -1,162 +1,297 @@
-Return-Path: <linux-kernel+bounces-302042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A35B95F90F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC2995F912
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE30B223D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:37:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6627B224E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0504E198845;
-	Mon, 26 Aug 2024 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA2C19538D;
+	Mon, 26 Aug 2024 18:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZL9Uahdq"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/hOvenj"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB4D18A95E
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584482C1AC;
+	Mon, 26 Aug 2024 18:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724697423; cv=none; b=n5Q2tASI7wrF6m9BlNyQxqIgAFEb0MUqHXhtIpmuCssD1yQMdl021NZrLnr/XYuRS3EpPzYLMymM/HNbV1hvpAvLZmW4/qrCYw++nN3AinC5igq2Q3j1wjQ7W6JAhGzlBYgznLHxRmLh+0cgcrvE8EMUED6c699KBgej5tVkIcY=
+	t=1724697457; cv=none; b=LnitN6m1lfqiLsmLdrUtHY82iOTEoNr46ea9AmIN1XDEZOlz0XTDIVeSip72dAaVhpZ3txfdN5UMl46I3nlisfFGDOLmezqQzEaanhwD+q8994PsM1bH0hrS8vH+bsBIVwaE/r15Hw56zE0HZdcde1ivOFCum4NEwwW0WLUh7Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724697423; c=relaxed/simple;
-	bh=F2bGAIq/SyQpHRmW+WdYNDuv2v4vSNVtj2Hj/PYXPP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQRHE7AHgVvr/LCNwEKRpuaea84zYz8CusnKmsdEvo2Kf6t2woSQEWqyuXg+vrx5OlmagAvk18yMWWtn7VFw/P7dVIqrdceJXkDepRdJYlTpUUaxwQLFw7q3Vq45avWEO/c8KL2XqDte+SueT67d8A+iM1XkwarwvjVqFT6Ydt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZL9Uahdq; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44fee2bfd28so45651cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:37:01 -0700 (PDT)
+	s=arc-20240116; t=1724697457; c=relaxed/simple;
+	bh=e5WsJ9SveDMx1GjU3BfJ1oX05BQajfs88sYA8RMKnBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPJw/UemdCGHIO7lvY6ek3d66K4i1OODl7hdNwJWzFXfxXx+QfoXStgqA9LdAQifF5IuxM+VqJEWMPJWrhol9BmhMVUiTVyW6P3oj5cariwcZwxcdi8dfOxg7MYRJfcHb4rAYxZsiEEF1gQUfDMvpRcTPngDFLrU2b5vepUTxGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/hOvenj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2021c03c13aso34605485ad.1;
+        Mon, 26 Aug 2024 11:37:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724697420; x=1725302220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vURFcU6ADDOTmVhDKyrAk3cPd0Fm2lk/LqgZ0w5nVng=;
-        b=ZL9UahdqL+r2tCJMhQBmjrauvFKd6Z57+wLWz8/4LokwHR6PoG+2RY1eKlyle7E94B
-         4y0alcS5nW/0xOYwdZ2fCKq5wpfMHBKEGh5aHuhxUHQk5lPqkuhBFXIOMiR8+28wXnC3
-         bdu31NcPa6UeqiIoUYE/O6Dz2Nx9+Y755HXKgkSWRDvTFbd/QsIJ18p2DwL2px91iDBw
-         DVhdBL+WIsiHI4eF0ravWgosJUueg0fD7YD9JrXpgVLZw5YvQdPTdfenFt3heTi5gLkW
-         Os35DD+qFureawAcPD3REGXh1sRcJW3UlDmwwGdEJjgCdIVF2kLikUli1qRQ5/+O12Ae
-         BXgA==
+        d=gmail.com; s=20230601; t=1724697454; x=1725302254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7FfGnllErnCJMhQQS8mSV7mT663rh6zbGx5snnhHvo0=;
+        b=f/hOvenjiMcoG85XjUXKzDjRWok+fxDLYdQo4/7SfbeBa0JmPYTX3pmZOr3/t7RhUT
+         HaG7TjKx1BT+LU3bKslSTvwI7dOuxE1f+4hgPj+ij01K1GSjyaVhTc7uzvrKgozue1xb
+         2CUJnQWddRn3JU3HkoEuEshN+YIQXr0NuCKoDUAWanRWEiZSA3mhz5pEHT9WFlGG0MA+
+         g0ROnZSM+pZY4cZ99hoFHkzBs8+pMBuEIpbXlZNWB4Amen6Ct9fpwOewU47DOEBqZA0v
+         4nqS+MtnGj5xHP7ZWg2P3LeXactHJ3Eckw2+CDklceNHUAoHQdkFMIAHlNZhvEJwvagD
+         BPOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724697420; x=1725302220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vURFcU6ADDOTmVhDKyrAk3cPd0Fm2lk/LqgZ0w5nVng=;
-        b=AAc5UkAdUboZBI4KFCBFK2kOcHdwSGNsl6+5QR2i7n0U0ii6FHdH8xl33Z7TzGf4pp
-         3sJgkSOqzIJSDB1CyVwPKumwq8IwQanhvmiQIubPSSkQ/tG+kiAgW8jOrAuRo5PieDGW
-         8F1qsxjopDFlLo82slsb/Bnyl8akARXwkALRlMiZVLBSP6xr+lVBPXgL3bC02G5Uqsp/
-         tbCvn5/8WBdFuCb637jr/o97eS2bhQYCRppi6rQhJrtyhntx3QF07MKkLZtKU++F9r+q
-         unJ3aqToBKaX0fI25s1JpFZZYVc+fmygAluY2NC5X65gk4bG2IQaItrVcsra1ifDPtBQ
-         aT8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWxHStKjYPh2DC1hb56W2y4G1JgKYKsPbn69pit8FZimtdCCoAiA4dJmxeOTVRWYnNN8J8rTS20YODNQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrc/eEkDmEmm/QFvAndv5YtX21LkjeVlOros/lTjxCItD4n+DK
-	L9g13LWiO+YcnFb9zwToDn6yazdJtexNeRwQNKnWg4FOi+HABYj85vPx11ISzt0bYgO6Ie1b9Xu
-	Eid39gffwjkd5PPtxutji3OwPgEMFjTxIna45
-X-Google-Smtp-Source: AGHT+IF3dJs7l5g9ShNm59a0pA4JxT8pFbJ2+vwM3A3c1BJbeVOik5qd+MFiTJHOsSiPTXA6CyLZz9k3PDK+gUlIZdE=
-X-Received: by 2002:a05:622a:53ce:b0:447:d555:7035 with SMTP id
- d75a77b69052e-45661e10d73mr281211cf.13.1724697420350; Mon, 26 Aug 2024
- 11:37:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724697454; x=1725302254;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7FfGnllErnCJMhQQS8mSV7mT663rh6zbGx5snnhHvo0=;
+        b=jgjhLDxu7vjUPl7EIm11C8IaN3yJExNrh+hOK4diPL7EkRipT2JQLq9LfEnmh7sOdF
+         fuGTZlXMLSSkK/NQnJR/MIpda6U6bYGSlCK/cGImpA6PtZDSwU0NDyPiFHCaltnD0/2Q
+         2QFNxEYU8Zx3M2NENM44ylXIXMIlpkCHlFzd01FP8Fk/erRU7mLYTSFHG886hFsUgCoe
+         1ssVL2VmUs0bhtRa+Qw/a7LtQ9hUv+Kei8gsP48FBIbdd8yFSzEdHVv+dkOpXEzDV43n
+         FRAy8Oy/DOJHczMSVJqTAnYN/xadz1QCxtmzL9xv16/VDYoxdeuLbXFCDxfqD6XekryA
+         GIAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaOYjhzQVpgOO4X32BYCehyNS+jVpKiQ4ua8WjCbNiv/DgMmo9wuBqLM+PwUJAkEU8CbeC/3X3aclduQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkZaWLUz5HFSS20T0JAv6hyJ3JOFb/+C9hVjMffVotYdPDp3ZG
+	DHs5VMM4CyIaa7moLJJYPnOD90KwHI5A1Al/WcvQPSjaNRpnvFaC
+X-Google-Smtp-Source: AGHT+IHQW8B1+ShrZqD//notznG/ecwoKpFLELILDUUEOFUPyGNB0oOZdUJrz3Y56cGYvVWvI+hw7Q==
+X-Received: by 2002:a17:903:120d:b0:1fb:a38b:c5b7 with SMTP id d9443c01a7336-204ddcba3c2mr9099955ad.1.1724697454321;
+        Mon, 26 Aug 2024 11:37:34 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560e3e8sm69940645ad.219.2024.08.26.11.37.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 11:37:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <790f67c3-84f4-441b-bd80-0c11f002af5b@roeck-us.net>
+Date: Mon, 26 Aug 2024 11:37:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703095712.64202-1-dapeng1.mi@linux.intel.com>
- <20240703095712.64202-7-dapeng1.mi@linux.intel.com> <CALMp9eSEuA70itad7oQUo=Ak6MVJYLo4kG4zJwEXkiUG6MgdnA@mail.gmail.com>
- <cea61aab-3feb-4008-adb9-2f2645589714@linux.intel.com>
-In-Reply-To: <cea61aab-3feb-4008-adb9-2f2645589714@linux.intel.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 26 Aug 2024 11:36:49 -0700
-Message-ID: <CALMp9eT2pc0qDaySuyNcHr5+tO4gfvrqmYo=a3Ay-0=rfhiksg@mail.gmail.com>
-Subject: Re: [Patch v5 06/18] x86: pmu: Add asserts to warn inconsistent fixed
- events and counters
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] hwmon: (sht4x): add heater support
+To: Antoni Pokusinski <apokusinski01@gmail.com>, jdelvare@suse.com
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20240826125803.71970-1-apokusinski01@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240826125803.71970-1-apokusinski01@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 25, 2024 at 11:56=E2=80=AFPM Mi, Dapeng <dapeng1.mi@linux.intel=
-.com> wrote:
->
->
-> On 8/23/2024 2:22 AM, Jim Mattson wrote:
-> > On Tue, Jul 2, 2024 at 7:12=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.inte=
-l.com> wrote:
-> >> Current PMU code deosn't check whether PMU fixed counter number is
-> >> larger than pre-defined fixed events. If so, it would cause memory
-> >> access out of range.
-> >>
-> >> So add assert to warn this invalid case.
-> >>
-> >> Reviewed-by: Mingwei Zhang <mizhang@google.com>
-> >> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> >> ---
-> >>  x86/pmu.c | 10 ++++++++--
-> >>  1 file changed, 8 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/x86/pmu.c b/x86/pmu.c
-> >> index b4de2680..3e0bf3a2 100644
-> >> --- a/x86/pmu.c
-> >> +++ b/x86/pmu.c
-> >> @@ -113,8 +113,12 @@ static struct pmu_event* get_counter_event(pmu_co=
-unter_t *cnt)
-> >>                 for (i =3D 0; i < gp_events_size; i++)
-> >>                         if (gp_events[i].unit_sel =3D=3D (cnt->config =
-& 0xffff))
-> >>                                 return &gp_events[i];
-> >> -       } else
-> >> -               return &fixed_events[cnt->ctr - MSR_CORE_PERF_FIXED_CT=
-R0];
-> >> +       } else {
-> >> +               unsigned int idx =3D cnt->ctr - MSR_CORE_PERF_FIXED_CT=
-R0;
-> >> +
-> >> +               assert(idx < ARRAY_SIZE(fixed_events));
-> > Won't this assertion result in a failure on bare metal, for CPUs
-> > supporting fixed counter 3?
->
-> Yes, this is intended use. Currently KVM vPMU still doesn't support fixed
-> counter 3. If it's supported in KVM vPMU one day but forget to add
-> corresponding support in this pmu test, this assert would remind this.
+On 8/26/24 05:58, Antoni Pokusinski wrote:
+> Add support for manipulating the internal heater of sht4x devices.
+> Enabling the heater removes condensed water from the sensor surface
+> which disturbs the relative humidity measurements.
+> 
+> The heater can operate at three heating levels (20, 110 or 200
+> milliwatts). Also, two heating durations may be selected (0.1 or 1s).
+> Once the heating time elapses the heater is automatically switched off.
+> 
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> ---
+> Hello Guenter,
+> 
+> Thanks for the review.
+> I'm not sure if this short patch description above is now ok or shall I
+> be even more detailed.
+> The problem that I was facing was that when I was using the sensor for
+> relative humidity measurements the results were always ~100% even though
+> the correct value should be ~60%. Enabling the heater in periodic pulses
+> to remove the condensation fixed the issue and the measurements were
+> correct after that.
+> Thus, I'm not sure if I should include that detailed arguments in the
+> patch description or leave it as it is right now.
+> 
+> Regards,
+> Antoni Pokusinski
+> 
+> --
+> Changes since v2:
+> * heater_enable_store: remove unnecessary if
+> * Documentation: remove incorrect info about turning off the heater
+> * be more specific in the patch description
+> 
+> Changes since v1:
+> * explain the use case of the new attributes set
+> * heater_enable attr: make it write-only
+> * heater_enable_store: define cmd as u8 instead of u8*
+> * heater_enable_store: remove unreachable data path
+> * heater_enable_store: remove unnecessary lock
+> * heater_enable_store: call i2c_master_send only if status==true
+> * define attributes as DEVICE_ATTR_* instead of SENSOR_DEVICE_ATTR_*
+> ---
+>   Documentation/hwmon/sht4x.rst |  10 +++
+>   drivers/hwmon/sht4x.c         | 126 +++++++++++++++++++++++++++++++++-
+>   2 files changed, 135 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/hwmon/sht4x.rst b/Documentation/hwmon/sht4x.rst
+> index daf21e763425..0b17f89fa1ab 100644
+> --- a/Documentation/hwmon/sht4x.rst
+> +++ b/Documentation/hwmon/sht4x.rst
+> @@ -42,4 +42,14 @@ humidity1_input Measured humidity in %H
+>   update_interval The minimum interval for polling the sensor,
+>                   in milliseconds. Writable. Must be at least
+>                   2000.
+> +heater_power	The requested heater power, in milliwatts.
+> +		Available values: 20, 110, 200 (default: 200).
+> +heater_time	The requested operating time of the heater,
+> +		in milliseconds.
+> +		Available values: 100, 1000 (default 1000).
+> +heater_enable	Enable the heater with the selected power
+> +		and for the selected time in order to remove
+> +		condensed water from the sensor surface. Write-only.
+> +
+> +			- 1: turn on
+>   =============== ============================================
+> diff --git a/drivers/hwmon/sht4x.c b/drivers/hwmon/sht4x.c
+> index b8916d2735b5..20b50f7feac0 100644
+> --- a/drivers/hwmon/sht4x.c
+> +++ b/drivers/hwmon/sht4x.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/crc8.h>
+>   #include <linux/delay.h>
+>   #include <linux/hwmon.h>
+> +#include <linux/hwmon-sysfs.h>
+>   #include <linux/i2c.h>
+>   #include <linux/jiffies.h>
+>   #include <linux/module.h>
+> @@ -31,6 +32,12 @@
+>    */
+>   #define SHT4X_CMD_MEASURE_HPM	0b11111101
+>   #define SHT4X_CMD_RESET		0b10010100
+> +#define SHT4X_CMD_HEATER_20_1	0b00011110
+> +#define SHT4X_CMD_HEATER_20_01	0b00010101
+> +#define SHT4X_CMD_HEATER_110_1	0b00101111
+> +#define SHT4X_CMD_HEATER_110_01	0b00100100
+> +#define SHT4X_CMD_HEATER_200_1	0b00111001
+> +#define SHT4X_CMD_HEATER_200_01 0b00110010
+>   
+>   #define SHT4X_CMD_LEN		1
+>   #define SHT4X_CRC8_LEN		1
+> @@ -54,6 +61,8 @@ DECLARE_CRC8_TABLE(sht4x_crc8_table);
+>    * @last_updated: the previous time that the SHT4X was polled
+>    * @temperature: the latest temperature value received from the SHT4X
+>    * @humidity: the latest humidity value received from the SHT4X
+> + * @heater_power: the power at which the heater will be started
+> + * @heater_time: the time for which the heater will remain turned on
+>    */
+>   struct sht4x_data {
+>   	struct i2c_client	*client;
+> @@ -63,6 +72,8 @@ struct sht4x_data {
+>   	long			last_updated;	/* in jiffies */
+>   	s32			temperature;
+>   	s32			humidity;
+> +	u32			heater_power;	/* in milli-watts */
+> +	u32			heater_time;	/* in milli-seconds */
+>   };
+>   
+>   /**
+> @@ -215,6 +226,117 @@ static int sht4x_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
+>   	}
+>   }
+>   
+> +static ssize_t heater_enable_store(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   const char *buf,
+> +				   size_t count)
+> +{
+> +	struct sht4x_data *data = dev_get_drvdata(dev);
+> +	bool status;
+> +	ssize_t ret;
+> +	u8 cmd;
+> +
+> +	ret = kstrtobool(buf, &status);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (status) {
+> +		if (data->heater_power == 20) {
+> +			if (data->heater_time == 100)
+> +				cmd = SHT4X_CMD_HEATER_20_01;
+> +			else /* data->heater_time == 1000 */
+> +				cmd = SHT4X_CMD_HEATER_20_1;
+> +		} else if (data->heater_power == 110) {
+> +			if (data->heater_time == 100)
+> +				cmd = SHT4X_CMD_HEATER_110_01;
+> +			else /* data->heater_time == 1000 */
+> +				cmd = SHT4X_CMD_HEATER_110_1;
+> +		} else { /* data->heater_power == 200 */
+> +			if (data->heater_time == 100)
+> +				cmd = SHT4X_CMD_HEATER_200_01;
+> +			else /* data->heater_time == 1000 */
+> +				cmd = SHT4X_CMD_HEATER_200_1;
+> +		}
+> +
+> +		ret = i2c_master_send(data->client, &cmd, SHT4X_CMD_LEN);
+> +	}
 
-These tests are supposed to run (and pass) on bare metal. Hence, they
-should not be dependent on a non-architectural quirk of the KVM
-implementation.
+This still accepts (and ignores) writing "0" or "false".
 
-Perhaps a warning would serve as a reminder?
+On top of that, unless I misunderstand the chip documentation, attempts
+to read the humidity before the "turn on heater" command completes will
+result in a NACK from the chip. This is not currently handled by the driver.
 
->
-> >
-> >> +               return &fixed_events[idx];
-> >> +       }
-> >>
-> >>         return (void*)0;
-> >>  }
-> >> @@ -740,6 +744,8 @@ int main(int ac, char **av)
-> >>         printf("Fixed counters:      %d\n", pmu.nr_fixed_counters);
-> >>         printf("Fixed counter width: %d\n", pmu.fixed_counter_width);
-> >>
-> >> +       assert(pmu.nr_fixed_counters <=3D ARRAY_SIZE(fixed_events));
-> >> +
-> > And this one as well?
-> >
-> >>         apic_write(APIC_LVTPC, PMI_VECTOR);
-> >>
-> >>         check_counters();
-> >> --
-> >> 2.40.1
-> >>
+Also, the datasheet states that a high precision measurement is done
+before the heater is turned off. That measurement is currently ignored.
+
+I am not entirely sure how to handle all this, but based on the information
+in the datasheet I can not accept your current solution. At the very least,
+you'll need to make sure that an attempt to read the humidity immediately after
+turning on the heater does not result in an error message.
+
+Thanks,
+Guenter
+
 
