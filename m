@@ -1,368 +1,175 @@
-Return-Path: <linux-kernel+bounces-301703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D094895F44A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:47:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D1C95F453
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB831F22EC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7FC282E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700B18D639;
-	Mon, 26 Aug 2024 14:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF3119148F;
+	Mon, 26 Aug 2024 14:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjGQ4Zg8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cpl7VHqP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228BA3CF5E;
-	Mon, 26 Aug 2024 14:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D83146D45
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683669; cv=none; b=M3a614vaKnRYUekqGow7YglVLS7odQcxqwsZgWCJZrhL//D8pBHI95bJkyjXIP9WOChWqzudnBhgJawyaDEM91xtpGWb9dWnakrAvr5CZj+RTp+0dXjzRAkVX7aH9x2z0luw08OCPPSqhQHa+XpCD9rsvA9eRYKGlB/ZFAfP6f4=
+	t=1724683742; cv=none; b=cRvw3Sn+0fAakPEG6dQ4ODcvrdLx+v7uJ5LEqj+AYoOy9VaIePbsHaLNkLjXNbBXIVv5zyPUpQcGCczRDawNsRKwyuQUbaka8pGqcluZG1p8/TyHfSOEugijjwvb5C8tupEMY0TCpqtSnVrpzRxvDwrOQIsOMth2U4ISdTbYSY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683669; c=relaxed/simple;
-	bh=ULOjgHOPkS0IzetTExPjZJ18oyAZmnOeN73ZCYL7UIY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GHowVNvD7CE0eGWRPU06Ev/dWrLYjgG2rP/c2PcnkhG0I3UqwkT3pW8qvD5u3nBhoqexaqJR0h+FOs9uVaPyN+u5hXtS+irjurkqsFwhVxLPdEtYe+zYpKA7mP8CI75jkJnZI+qAUmu6cozRsPf6qTsLldgMe6JwfvQc4DoMJO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjGQ4Zg8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D3AC52FC0;
-	Mon, 26 Aug 2024 14:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724683668;
-	bh=ULOjgHOPkS0IzetTExPjZJ18oyAZmnOeN73ZCYL7UIY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=NjGQ4Zg8c61KVff0irp6Yolkynez2OjGIijXmdvVv4p7my9W4omFgTZI/1vVw6kiS
-	 OIrC81m+aDQlqkT+01WF5UMOrC78rn89BlYjdqfrrzipdonwuYiADlkaahD4kY5SpH
-	 5FP5Zf6nd66dd38tdmOxv8CZ+vB1FEVDoSJEEXA9D9+K1cxtjcAAkiC8pIEluGa+J6
-	 9XmVdqulzZ6qY2+bUitqqqyU5Tu8m0JkPIony/c1P4E0WjlISy4oaChxwCytBtSDWU
-	 R5BqUaz7o3jClH3fRaO0PSDz36dbGNiravKoCVWlYtgF1QT4azmv8rJedT7kIbe9t3
-	 nEsqz7NwRYfZQ==
-Message-ID: <bd1beb5d5d6862827336aa25a09c2ae16597cc47.camel@kernel.org>
-Subject: Re: [PATCH 0/2] nfsd: CB_GETATTR fixes
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neilb@suse.de>, Chuck Lever <chuck.lever@oracle.com>
-Cc: Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <dai.ngo@oracle.com>, Tom
- Talpey <tom@talpey.com>, "linux-nfs@vger.kernel.org"
- <linux-nfs@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Date: Mon, 26 Aug 2024 10:47:46 -0400
-In-Reply-To: <227e2d809951caa485e8ea03978afea515e89464.camel@kernel.org>
-References: <20240823-nfsd-fixes-v1-0-fc99aa16f6a0@kernel.org>
-	 , <Zsoe/D24xvLfKClT@tissot.1015granger.net>
-	 <172462816214.6062.16988455872478253419@noble.neil.brown.name>
-	 <227e2d809951caa485e8ea03978afea515e89464.camel@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=arc-20240116; t=1724683742; c=relaxed/simple;
+	bh=HyX0Ze5QaXmxGELMZYgDFfeGjg2lC9muxsWXetl7eUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZgeMpMEFwihYW1aZ4EoiP6xopn19m9LGlaooyhPBFe7gYs8kHmlz6YvNwMRmpSYP7JZYjJk6tal/NGayTRJ1Q1O2w24otHIInHi8+pkBnP3b2XvL2crqKMcCyuhwgBkwXvHkaRJWf9NPmM+0ST6ZVuwYyKXoKyzX5g3lnw9KimQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cpl7VHqP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724683740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UHaPjQf82fzJdve1/EL5HTCFbbWYrAUYnTsv/W9AQv4=;
+	b=cpl7VHqPXPQeht93whyN2FJ79/b4XsP1Wkw9ahuIlhN4rwUAi8WJY2sSTwZlqZRPoWHnb7
+	ZAvv4Cr9vrBpALVD7H9m1bvrF/avwsn73etDP9o8Xb62rAW7TKERlfUDV/uxBFqJE5ytdr
+	gyLq35CIOfH4QChNxn5RMpy8WjJvsQk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-Vwcv-COkMs2gR781e2wmrg-1; Mon, 26 Aug 2024 10:48:57 -0400
+X-MC-Unique: Vwcv-COkMs2gR781e2wmrg-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a864097e296so505173166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:48:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724683736; x=1725288536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHaPjQf82fzJdve1/EL5HTCFbbWYrAUYnTsv/W9AQv4=;
+        b=BZmOyKbsQan4IYP3wibS/+TfZWv+K8EwhXzqQvFOgTFOutYczTMirqUOefTaeEJhPg
+         VjbE+dL5E7ZBvyRnV7iL99SqrZddcsEz8kKxjw0zFnx/sM7RCSL+4V/a2qWhKDmgi0AW
+         tdWZlOUQiV9Jm6+GanMaGdwTWFsrWGLMBcuQmkNOjgMuPDyLru+9hsMD68vM21QD1VBK
+         aggJeGY7sTsspBuM6mXhTZFrb3GQbp8jRI20XMv7ETI4risjUmddPGFOEtBIeuGuXNYI
+         1jdCuxr+vhoVEnUdtDBmw39xkr5wwBGHBQy/S/+fJi0z5CKm5xUF2frOUrMQ7stJTf1c
+         Osxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLEtv9gVhq+kjgikBbAmIY95yED+c2KyTiZw1+wqPtzOEqbQldscA718lEB+86cux0TTMJywwlzMzwqkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6OvDRg4jmofierj+i0L3fiiSIUEO2HbORiRgMtsgRTJRyhZSn
+	w7mgdWiXZs1Rv7gRJl+RezAUBYSQmjvpEpEsybc0xtao8WwkLLTa7zmf0Nq2h29FM2v0CX/9Ma6
+	L7Nv+RHJXTfBy8EnY4+T2ab/KDLv65xBfSoP3JJJ7XqgtuNS9RmrT7HAkYGnBwQ==
+X-Received: by 2002:a17:906:f5a8:b0:a7d:a00a:a9fe with SMTP id a640c23a62f3a-a86a52b5d88mr747021866b.17.1724683736469;
+        Mon, 26 Aug 2024 07:48:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQ3oqNtMuoPDoeje2TW7QJXT5PrJA7ZTz1Cf6GJ/Y8fhh9JelE55xJ8f5WD2PBSFo7uTddTQ==
+X-Received: by 2002:a17:906:f5a8:b0:a7d:a00a:a9fe with SMTP id a640c23a62f3a-a86a52b5d88mr747020166b.17.1724683735978;
+        Mon, 26 Aug 2024 07:48:55 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4378f3sm675503066b.132.2024.08.26.07.48.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 07:48:55 -0700 (PDT)
+Message-ID: <8c568307-06f8-46a6-812c-407d7b1dd695@redhat.com>
+Date: Mon, 26 Aug 2024 16:48:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86/intel-uncore-freq: Do not present
+ separate package-die domain
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240820204558.1296319-1-srinivas.pandruvada@linux.intel.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240820204558.1296319-1-srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-08-26 at 10:37 -0400, Jeff Layton wrote:
-> On Mon, 2024-08-26 at 09:22 +1000, NeilBrown wrote:
-> > On Sun, 25 Aug 2024, Chuck Lever wrote:
-> > > On Fri, Aug 23, 2024 at 06:27:37PM -0400, Jeff Layton wrote:
-> > > > Fixes for a couple of CB_GETATTR bugs I found while working on the
-> > > > delstid set. Mostly this just ensures that we hold references to th=
-e
-> > > > delegation while working with it.
-> > > >=20
-> > > >=20
-> > >=20
-> > > Applied to nfsd-fixes for v6.11-rc, thanks!
-> > >=20
-> > > [1/2] nfsd: hold reference to delegation when updating it for cb_geta=
-ttr
-> > >       commit: 8fceb5f6636bbbf803fe29fff59f138206559964
-> > > [2/2] nfsd: fix potential UAF in nfsd4_cb_getattr_release
-> > >       commit: 8bc97f9b84c8852fcc56be2382f5115c518de785
-> > >=20
-> > > --=20
-> > > Chuck Lever
-> > >=20
-> >=20
-> > Maybe the following can tidy up that code.  I can split this into
-> > a few separate patches if you like.
-> > Thoughts?
-> >=20
-> > Note that the patch is easier to review if you apply it then use "git
-> > diff -b".
-> >=20
-> > NeilBrown
-> >=20
-> >=20
-> > From: NeilBrown <neilb@suse.de>
-> > Subject: [PATCH] nfsd: untangle code in nfsd4_deleg_getattr_conflict()
-> >=20
-> > The code in nfsd4_deleg_getattr_conflict() is convoluted and buggy.
-> >=20
-> > With this patch we:
-> >  - properly handle non-nfsd leases.  We must not assume flc_owner is a
-> >     delegation unless fl_lmops =3D=3D &nfsd_lease_mng_ops
->=20
-> AFAICT, non-nfsd leases are already properly handled (though I do agree
-> that the "flow" of this code is awkward). What case do you see that's
-> wrong?
->=20
+Hi,
 
-Doh! Nevermind -- I see it now. It looks like the break_lease tag is
-just in the wrong place. We should definitely fix that.
+On 8/20/24 10:45 PM, Srinivas Pandruvada wrote:
+> The scope of uncore control is per power domain with TPMI.
+> 
+> There are two types of processor topologies can be presented by CPUID
+> extended topology leaf irrespective of the hardware architecture:
+> 
+> 1. A die is not enumerated in CPUID. In this case there is only one die
+> in a package is visible. In this case there can be multiple power domains
+> in a single die.
+> 2. A power domain in a package is enumerated as a die in CPUID. So
+> there is one power domain per die.
+> 
+> To allow die level controls, the current implementation creates a root
+> domain and aggregates all information from power domains in it. This
+> is well suited for configuration 1 above.
+> 
+> But for configuration 2 above, the root domain will present the same
+> information as present by power domain. So, no use of aggregating. To
+> check the configuration, call topology_max_dies_per_package(). If it is
+> more than one, avoid creating root domain.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+> This is a forward looking change as TPMI is architectural and should
+> support all topologies.
 
-In any case, your patch looks reasonable to me, but I couldn't get it
-to apply. Care to send a real PATCH instead? It's fine if you want to
-drop my patch and just replace it with yours.
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
 
-> >  - move the main code out of the for loop
-> >  - have a single exit which calls nfs4_put_stid()
-> >    (and other exits which don't need to call that)
-> >=20
-> > Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegati=
-on")
-> > Signed-off-by: NeilBrown <neilb@suse.de>
-> > ---
-> >  fs/nfsd/nfs4state.c | 130 ++++++++++++++++++++++----------------------
-> >  1 file changed, 65 insertions(+), 65 deletions(-)
-> >=20
-> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > index 2c4b9a22b2bb..7672fa7a70f3 100644
-> > --- a/fs/nfsd/nfs4state.c
-> > +++ b/fs/nfsd/nfs4state.c
-> > @@ -8837,6 +8837,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqs=
-tp, struct dentry *dentry,
-> >  	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp), nfsd_net_id);
-> >  	struct inode *inode =3D d_inode(dentry);
-> >  	struct file_lock_context *ctx;
-> > +	struct nfs4_delegation *dp =3D NULL;
-> >  	struct nfs4_cb_fattr *ncf;
-> >  	struct file_lease *fl;
-> >  	struct iattr attrs;
-> > @@ -8845,77 +8846,76 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *r=
-qstp, struct dentry *dentry,
-> >  	ctx =3D locks_inode_context(inode);
-> >  	if (!ctx)
-> >  		return 0;
-> > +
-> > +#define NON_NFSD_LEASE ((void*)1)
-> > +
-> >  	spin_lock(&ctx->flc_lock);
-> >  	for_each_file_lock(fl, &ctx->flc_lease) {
-> > -		unsigned char type =3D fl->c.flc_type;
-> > -
-> >  		if (fl->c.flc_flags =3D=3D FL_LAYOUT)
-> >  			continue;
-> > -		if (fl->fl_lmops !=3D &nfsd_lease_mng_ops) {
-> > -			/*
-> > -			 * non-nfs lease, if it's a lease with F_RDLCK then
-> > -			 * we are done; there isn't any write delegation
-> > -			 * on this inode
-> > -			 */
-> > -			if (type =3D=3D F_RDLCK)
-> > -				break;
-> > -			goto break_lease;
-> > -		}
-> > -		if (type =3D=3D F_WRLCK) {
-> > -			struct nfs4_delegation *dp =3D fl->c.flc_owner;
-> > -
-> > -			if (dp->dl_recall.cb_clp =3D=3D *(rqstp->rq_lease_breaker)) {
-> > -				spin_unlock(&ctx->flc_lock);
-> > -				return 0;
-> > -			}
-> > -break_lease:
-> > -			nfsd_stats_wdeleg_getattr_inc(nn);
-> > -			dp =3D fl->c.flc_owner;
-> > -			refcount_inc(&dp->dl_stid.sc_count);
-> > -			ncf =3D &dp->dl_cb_fattr;
-> > -			nfs4_cb_getattr(&dp->dl_cb_fattr);
-> > -			spin_unlock(&ctx->flc_lock);
-> > -			wait_on_bit_timeout(&ncf->ncf_cb_flags, CB_GETATTR_BUSY,
-> > -					TASK_INTERRUPTIBLE, NFSD_CB_GETATTR_TIMEOUT);
-> > -			if (ncf->ncf_cb_status) {
-> > -				/* Recall delegation only if client didn't respond */
-> > -				status =3D nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> > -				if (status !=3D nfserr_jukebox ||
-> > -						!nfsd_wait_for_delegreturn(rqstp, inode)) {
-> > -					nfs4_put_stid(&dp->dl_stid);
-> > -					return status;
-> > -				}
-> > -			}
-> > -			if (!ncf->ncf_file_modified &&
-> > -					(ncf->ncf_initial_cinfo !=3D ncf->ncf_cb_change ||
-> > -					ncf->ncf_cur_fsize !=3D ncf->ncf_cb_fsize))
-> > -				ncf->ncf_file_modified =3D true;
-> > -			if (ncf->ncf_file_modified) {
-> > -				int err;
-> > -
-> > -				/*
-> > -				 * Per section 10.4.3 of RFC 8881, the server would
-> > -				 * not update the file's metadata with the client's
-> > -				 * modified size
-> > -				 */
-> > -				attrs.ia_mtime =3D attrs.ia_ctime =3D current_time(inode);
-> > -				attrs.ia_valid =3D ATTR_MTIME | ATTR_CTIME | ATTR_DELEG;
-> > -				inode_lock(inode);
-> > -				err =3D notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
-> > -				inode_unlock(inode);
-> > -				if (err) {
-> > -					nfs4_put_stid(&dp->dl_stid);
-> > -					return nfserrno(err);
-> > -				}
-> > -				ncf->ncf_cur_fsize =3D ncf->ncf_cb_fsize;
-> > -				*size =3D ncf->ncf_cur_fsize;
-> > -				*modified =3D true;
-> > -			}
-> > -			nfs4_put_stid(&dp->dl_stid);
-> > -			return 0;
-> > +		if (fl->c.flc_type =3D=3D F_WRLCK) {
-> > +			if (fl->fl_lmops =3D=3D &nfsd_lease_mng_ops)
-> > +				dp =3D fl->c.flc_owner;
-> > +			else
-> > +				dp =3D NON_NFSD_LEASE;
-> >  		}
-> >  		break;
-> >  	}
-> > +	if (dp =3D=3D NULL || dp =3D=3D NON_NFSD_LEASE ||
-> > +	    dp->dl_recall.cb_clp =3D=3D *(rqstp->rq_lease_breaker)) {
-> > +		spin_unlock(&ctx->flc_lock);
-> > +		if (dp =3D=3D NON_NFSD_LEASE) {
-> > +			status =3D nfserrno(nfsd_open_break_lease(inode,
-> > +								NFSD_MAY_READ));
-> > +			if (status !=3D nfserr_jukebox ||
-> > +			    !nfsd_wait_for_delegreturn(rqstp, inode))
-> > +				return status;
-> > +		}
-> > +		return 0;
-> > +	}
-> > +
-> > +	nfsd_stats_wdeleg_getattr_inc(nn);
-> > +	refcount_inc(&dp->dl_stid.sc_count);
-> > +	ncf =3D &dp->dl_cb_fattr;
-> > +	nfs4_cb_getattr(&dp->dl_cb_fattr);
-> >  	spin_unlock(&ctx->flc_lock);
-> > -	return 0;
-> > +
-> > +	wait_on_bit_timeout(&ncf->ncf_cb_flags, CB_GETATTR_BUSY,
-> > +			    TASK_INTERRUPTIBLE, NFSD_CB_GETATTR_TIMEOUT);
-> > +	if (ncf->ncf_cb_status) {
-> > +		/* Recall delegation only if client didn't respond */
-> > +		status =3D nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> > +		if (status !=3D nfserr_jukebox ||
-> > +		    !nfsd_wait_for_delegreturn(rqstp, inode))
-> > +			goto out_status;
-> > +	}
-> > +	if (!ncf->ncf_file_modified &&
-> > +	    (ncf->ncf_initial_cinfo !=3D ncf->ncf_cb_change ||
-> > +	     ncf->ncf_cur_fsize !=3D ncf->ncf_cb_fsize))
-> > +		ncf->ncf_file_modified =3D true;
-> > +	if (ncf->ncf_file_modified) {
-> > +		int err;
-> > +
-> > +		/*
-> > +		 * Per section 10.4.3 of RFC 8881, the server would
-> > +		 * not update the file's metadata with the client's
-> > +		 * modified size
-> > +		 */
-> > +		attrs.ia_mtime =3D attrs.ia_ctime =3D current_time(inode);
-> > +		attrs.ia_valid =3D ATTR_MTIME | ATTR_CTIME | ATTR_DELEG;
-> > +		inode_lock(inode);
-> > +		err =3D notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
-> > +		inode_unlock(inode);
-> > +		if (err) {
-> > +			status =3D nfserrno(err);
-> > +			goto out_status;
-> > +		}
-> > +		ncf->ncf_cur_fsize =3D ncf->ncf_cb_fsize;
-> > +		*size =3D ncf->ncf_cur_fsize;
-> > +		*modified =3D true;
-> > +	}
-> > +	status =3D 0;
-> > +out_status:
-> > +	nfs4_put_stid(&dp->dl_stid);
-> > +	return status;
-> >  }
->=20
-> Patch looks like a nice cleanup, but I don't think the Fixes tag is
-> appropriate here.
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+
+> 
+> v2
+> Updated commit description as suggested.
+> 
+>  .../x86/intel/uncore-frequency/uncore-frequency-tpmi.c     | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> index 2016acf44f6a..e6047fbbea76 100644
+> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> @@ -557,6 +557,9 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+>  
+>  	auxiliary_set_drvdata(auxdev, tpmi_uncore);
+>  
+> +	if (topology_max_dies_per_package() > 1)
+> +		return 0;
+> +
+>  	tpmi_uncore->root_cluster.root_domain = true;
+>  	tpmi_uncore->root_cluster.uncore_root = tpmi_uncore;
+>  
+> @@ -580,7 +583,9 @@ static void uncore_remove(struct auxiliary_device *auxdev)
+>  {
+>  	struct tpmi_uncore_struct *tpmi_uncore = auxiliary_get_drvdata(auxdev);
+>  
+> -	uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
+> +	if (tpmi_uncore->root_cluster.root_domain)
+> +		uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
+> +
+>  	remove_cluster_entries(tpmi_uncore);
+>  
+>  	uncore_freq_common_exit();
+
 
