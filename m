@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-301400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C8E95F00B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:44:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE8A95F00F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56CE1F22D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B7F1C219F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE0215534E;
-	Mon, 26 Aug 2024 11:43:55 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0141715534E;
+	Mon, 26 Aug 2024 11:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eBKhC4eJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E486D153812
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEBF1514F6;
+	Mon, 26 Aug 2024 11:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672635; cv=none; b=om4lg34rnDokQeBmWZZhIy5ZFltOIHiYtwTSK0KcjxMWd+UPo9ihRIovLQzktTJZeDzqiwTF+f3hEpoio/ngEqJiDcpkffCexd/gUZ+Ky0VD60E+YAsMcrigzTgbwzN9sV4uXnXK5n2EGewgmiRonCC2KfZUZIfH7phlQe3eVk0=
+	t=1724672648; cv=none; b=Bzj9w+jqennWLj0nyvQcygpLUKJMTGy9UwGuY+26KynYeU3+MsBpzfcS0HURK1iCnJbsByKyYLSdePLkZbl9igEJGeRqq9p+FapLLQiA91LgNlZyCrdB7cu+nUwnpt0YaYpoOSV5T+vBG+b35FX+dEb0eYVYHZ/GZYu4FtDMw8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672635; c=relaxed/simple;
-	bh=gAgLGhH0c1qS/1as8iF/YImRBgA4ftq9SxtWH9B9jVo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qdf1VuEWpPE7aD4PIL60QN/Co6uT2hXNlPjPjW63i5wmrMByxkhmKeyV22gUDeR2aRJJcQrEvtnusK6FHeGuCsAfX6i4zRQk75zJE86N5QJwKwVY1POwuvYdb+U5kPbTEE42rB5KmPxqnWZ3IWPza0fq3sNxynmsFDCA1ryU3NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8252a16781eso450909339f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:43:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724672633; x=1725277433;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o72OovsvlTwhfLWm5kNbPKdV3i2/eOsUb9KJYvKPqdI=;
-        b=IijVhonLEFF014TflwAaXteDoH17sQcOwVSqCExvoWETHXsXCDaXChg3yZIJrPmgch
-         8OF3ym+jjO+tn9HrLnEfc/87upooiigiAmR8DjL6JDqMkibF4zGCaC8M55FwEwLsklqE
-         qMaSMXwDqjEF9HK+g4OmvPdIZ6p0QNfmqOOA3Uukpjtqp62ydwAqvXs73cO5VfEpG8Wg
-         ui6Tf/TAAaXP5PyXW5m1cIX6c9s6IzspBHy7laqMMt8MhzUYLyBjD2HSSCck4t+hcDRQ
-         80nctUNwitsRkwblFyOyCoANP/fm92XCSryWfIhX0bNxaBs99l9CbuOFsO9vabfzLRhU
-         45Ew==
-X-Gm-Message-State: AOJu0YxeVOg7X0kk5BeAT3BBJ6a2QdsXPGzupek+TEFqjjj+LSFhVGop
-	phz+91PJ02s2LCxZTzsdC93jLO4Fnfho3El5vuqUEZ9a6/mHhaSmpIE+mRo9KXuXdxMvAzWi7dd
-	e7MFRNp9MgR9NmVAWUBMK94VAGcpZT4cJyfHGOQxGe3Ewqm5F3ty6q18=
-X-Google-Smtp-Source: AGHT+IF0nLQM3UDyGBMAuQsNaPi7083hm0z1p9AipRpB9/MX+mH3XdjOnVKZMd+cmrulMCjzcZ3WMoT2Ks7Oya+XNF+shXUQMjQS
+	s=arc-20240116; t=1724672648; c=relaxed/simple;
+	bh=lXAtLG8ATP3RkXvAe63qleJe9gcAHgbYkMGPFMzlK+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PZkuWr92Ciuoz1IYPVJWUpyw80QddfIugVV9c84jLnFUHKgfuWz9DXu0uPznkLjl7x1oM7ryPpRaVJJfcjaKrtJz4/V9G+yirxlMidl+DBpf1EvxZY2JMawXzR+hUgrSpJV2VZvZt5l6U+bCJpEi1RUHL3J5X65dsiAy99psKRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eBKhC4eJ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724672646; x=1756208646;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=lXAtLG8ATP3RkXvAe63qleJe9gcAHgbYkMGPFMzlK+E=;
+  b=eBKhC4eJmAxMC+TvughW7jtZlXxxI6z0FAlg2TUDRToNzRERyaNQLDes
+   IR07vKcxQSqu6mQS5qiPeDKSqdsYK/hj65d/HBhFJVlMxf5WE2u7giztb
+   QSAHOmhase+/5DTEiOo1Dil9g/dona8iGz0k4aIH4cTMW2KYaZsMWFmMX
+   dO58e4BU0E7sszkrlOMoDnGVUpy+/g7sRWOnzlsXrh6bQt8fDcN/QveMA
+   KOGajPnFWQnAsPrHFsCAw04yP5ZWkIVZkFkXPkEOWYIs7TLIH93hWnJ9c
+   DTLXwzNWhFtsLYN4baPnlOX9ER8Fvvtq4gyEofr1J/LREn/orl/T0q69J
+   Q==;
+X-CSE-ConnectionGUID: BPXk9LHNSCOKA0l6mHZFkA==
+X-CSE-MsgGUID: xkwRgvefTgWrTOwv0cxviQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="22611114"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="22611114"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 04:44:05 -0700
+X-CSE-ConnectionGUID: lIm5DtRkTjy4VguqPColtQ==
+X-CSE-MsgGUID: 192hwr2OQECo7LCNaSbCEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="85667412"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.174])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 04:44:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Mathieu Fenniak <mathieu@fenniak.net>
+Cc: Corentin Chary <corentin.chary@gmail.com>, 
+ "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240823135630.128447-1-mathieu@fenniak.net>
+References: <45764fd3-f715-c461-1f6f-071bad742460@linux.intel.com>
+ <20240823135630.128447-1-mathieu@fenniak.net>
+Subject: Re: [PATCH v2] platform/x86: asus-wmi: Fix spurious rfkill on
+ UX8406MA
+Message-Id: <172467263739.1877.1744107740712485288.b4-ty@linux.intel.com>
+Date: Mon, 26 Aug 2024 14:43:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8909:b0:4c2:7179:ce03 with SMTP id
- 8926c6da1cb9f-4ce82868885mr370115173.2.1724672632924; Mon, 26 Aug 2024
- 04:43:52 -0700 (PDT)
-Date: Mon, 26 Aug 2024 04:43:52 -0700
-In-Reply-To: <00000000000045769206209237db@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a3bc54062094a3a9@google.com>
-Subject: Re: [syzbot] WARNING: lock held when returning to user space in ethnl_act_cable_test
-From: syzbot <syzbot+c641161e97237326ea74@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, 23 Aug 2024 15:56:28 +0200, Mathieu Fenniak wrote:
 
-***
+> The Asus Zenbook Duo (UX8406MA) has a keyboard which can be
+> placed on the laptop to connect it via USB, or can be removed from the
+> laptop to reveal a hidden secondary display in which case the keyboard
+> operates via Bluetooth.
+> 
+> When it is placed on the secondary display to connect via USB, it emits
+> a keypress for a wireless disable. This causes the rfkill system to be
+> activated disconnecting the current wifi connection, which doesn't
+> reflect the user's true intention.
+> 
+> [...]
 
-Subject: WARNING: lock held when returning to user space in ethnl_act_cable_test
-Author: djahchankoike@gmail.com
 
-#syz test
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
 
-Fix an unreleased lock when taking the out_dev_put path.
+The list of commits applied:
+[1/1] platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA
+      commit: 9286dfd5735b9cceb6a14bdf15e13400ccb60fe7
 
-Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
----
-I'm not entirely sure why are there two labels
-when all paths should release the lock, maybe
-remove out_dev_put and out_rtnl for a simpler
-out? I've kept it just in case, but I can make
-the change if needed.
----
- net/ethtool/cabletest.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/ethtool/cabletest.c b/net/ethtool/cabletest.c
-index 01db8f394869..c6ca1107c470 100644
---- a/net/ethtool/cabletest.c
-+++ b/net/ethtool/cabletest.c
-@@ -77,6 +77,7 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
- 				      info->extack);
- 	if (IS_ERR_OR_NULL(phydev)) {
- 		ret = -EOPNOTSUPP;
-+		rtnl_unlock();
- 		goto out_dev_put;
- 	}
- 
--- 
-2.43.0
+--
+ i.
 
 
