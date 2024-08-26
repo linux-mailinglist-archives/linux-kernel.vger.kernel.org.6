@@ -1,185 +1,113 @@
-Return-Path: <linux-kernel+bounces-302240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38B095FB81
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C6F95FB84
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139FB1C21CDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:18:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55F81C21C74
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB1119AA58;
-	Mon, 26 Aug 2024 21:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6526619ADBA;
+	Mon, 26 Aug 2024 21:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=utexas.edu header.i=@utexas.edu header.b="WqLVXRNM"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+dwtiMZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SukSGpuF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2357B1991BA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6536D19A285;
+	Mon, 26 Aug 2024 21:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707032; cv=none; b=O3djTK62AYKT50qSLiYc2sYFOwghVKKhfk/vJBaKutlj9utt7kuVpcBfZzawzYKzpyXqX+sve0jMg9BQx3L/HTx+yCIct9RAPIa0CvInP2LG6vHgePln5fwrM1KAjWqBJGTYRiIskBsCB2K9lSpowK4qniZRnZ8AkVl0LUtaFeo=
+	t=1724707045; cv=none; b=oLFFO5/U4WjZaDeH3MObf34tHPm6i4QG7aJee3dU3MfumONLEIKx5IAWhWH/+PE0QzOXOK/Gjl/k6mr2n6dVontSIUJ+UblK2QCH/GB/BW99EO2xwSpf360NfFgRD2we/6PWV6SY1nvdGfosLJ2Dc+z9CHLEKa+96YcQ0w/0SDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707032; c=relaxed/simple;
-	bh=FhTzidoSUYLZDObr2WcvQXGjHBAI1n6yUzxAH0d1kww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mEatezBkGF9mXOlKZDec4Axt8u/OWryOYimuby5O6xIWh0FXXJGTldR28RBevSjMXna9P7wTh12yAp16aBPh4IpZiGjV4GyUhoQpUhPy4lLZ0ykaN+p0T5R9SuSMV6MrGfQDpXk0b4HwsAw840nw4ndQLcft6JK02ncvomGYRjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utexas.edu; spf=pass smtp.mailfrom=utexas.edu; dkim=pass (2048-bit key) header.d=utexas.edu header.i=@utexas.edu header.b=WqLVXRNM; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utexas.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=utexas.edu
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-27012aa4a74so3150295fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=utexas.edu; s=google; t=1724707029; x=1725311829; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6wjHzAlh5dkBjrNMWPUKIDb8/9mZDWF/BmOsPcKItXk=;
-        b=WqLVXRNM2L4zJZc80Zpzd7QNCr5/3T/WcBpNtTeOptbvriVoEb3qOkDPgNh1ti2swj
-         VFsEUtEWs6IQ6DklLDCzAzR5p3lpko+d/Ds9veb0h2ZS9/ClXDaa7a3Tpaiet8cffDmG
-         lHEPxqOD004CzbMPTYgbEmkYD/Ptw3rDH9P8H3ITfwCf6in4SJBbA/vZsh8Zhgj3fnHF
-         OFJOzbVf+/OwFXhdhgfkbdca7KqVAWIbM6qTgUPwYh1uGvIpKb5mOebhr1rn7OIas+KR
-         qLyD7EEVnqDVa4Wb9YCpd2jvxY5QQ2Wv6CWxgymEZkbq5tCtnTUcubuNNHw2ynEL4tfH
-         nKzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724707029; x=1725311829;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wjHzAlh5dkBjrNMWPUKIDb8/9mZDWF/BmOsPcKItXk=;
-        b=tuaP3FhusXfP+f8helvd9qHRFugAv2OzltP0Jvryixw+3UEM7vchDqiUSABAY1CjK6
-         or2oR22420khI/HM//61YsA57kPjKvnf67x+cjsEzGsbx2V5ZvPoh0JARJvqbvJWqNN5
-         GmgGRlB+G3T7hzetl6hRB2/PyPeHIE1scYlZyNtwT32z5Zb6JEI2BcyYjg1Apx1aA8Hm
-         Db9B1puM7um6oO3UZqvvL62Ieigy7QreT/0T9pVmrHXksso/ajraCZw+79MCBuOVMyPS
-         uGdQ4EFfyLxv6lLsUhXeywW2eqZ2ctcL5wNa0a4UJmL4FxK5IEl82EBSvmaumWZg/jf+
-         rDiw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1YYmO66lOqZnHi8mRPDqkq19fXZ125gkdGE4/D8C8idVEwdrJ4cPNjzZ4X86kBHBsvFLnPCdoD3sc42Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzuZhI7eTHX3wxkmlBtsawGt/ACSQpUSnDRyIky6EDGdvCWtBC
-	6cisr2ZVc5+cjWjQjRHNw/mj4WxsAACAmH/PYQscAMyAWG8xGV5bBvh4hyowWR8=
-X-Google-Smtp-Source: AGHT+IE+VqIT7vTmF8ezn+F1ZGxsArBTbxlssPG2IpR2sbFySryxvu3aXD+F6VGAslKGkRyTzyn/DA==
-X-Received: by 2002:a05:6870:82a1:b0:270:735:96e with SMTP id 586e51a60fabf-273e6465ed4mr12975071fac.12.1724707029195;
-        Mon, 26 Aug 2024 14:17:09 -0700 (PDT)
-Received: from [192.168.86.42] ([136.62.208.201])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-273ce99851fsm2666949fac.10.2024.08.26.14.17.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 14:17:08 -0700 (PDT)
-Message-ID: <6fa4f5e5-7f7b-495a-a95a-82d7b105d2d7@utexas.edu>
-Date: Mon, 26 Aug 2024 16:17:07 -0500
+	s=arc-20240116; t=1724707045; c=relaxed/simple;
+	bh=Wr96xlHde4Iq/q86Pq81lXt/DBJWo0l413IAUdj5WSM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UUVa6JiT/cYZUW6h4W51G4E0Ec7weoq8N+NrywGQBWGRiZsSk4bEbOkZTZpGLVxqn2PG02STLzkSHtWka/xmxP2Gjx9tSPRuKbZEQ3r+9W2iW+zA7BaQ42HkiGhM390/udN5FgbYF/GqOhfMlYp9UPw5FPv5V8RtnvUpbrjJtNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+dwtiMZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SukSGpuF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724707041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43rARpIabmoF/X4nl2L65kxlo3pcBgpwUNSnL7OF7ag=;
+	b=f+dwtiMZsAypPINdPYjJMSxRgqTYYkRX8/ijDCkQoPWJ6wCDNuvx/uJBedUE8MdqIizpaW
+	+ZvQkcpLq2EeLwe0n7+8+6nBpIlb37VvRw0BGg6VbLv3/TFfOkuSw3rDzL/GHCPAt4dGVM
+	BpcDb5jbzqkvlc2LyidGKMP9Y/3pbPqzRITxCECELeSY5iCO3IWvgZz6qgJSyHhqQeLlj/
+	vR9aVou0rW9G+a0AHY0ts5BGt9szTX/5GCABfbiR1OSlFuljxNlnyzBkJUU7p14T39I67m
+	jO0jpSZXLqjYHuIFE+mo/WAeZpv5nyUxPYntSviUx32hXz79XZ1pUxDhl1a70A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724707041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=43rARpIabmoF/X4nl2L65kxlo3pcBgpwUNSnL7OF7ag=;
+	b=SukSGpuFtbwIxx+NKHCHDL12zE+JC0KFepVFOj288ZMYr7Gjw3F/W6yQ7GQ9sQxNW/LIH4
+	rx+3Wq+dLNzvGhDQ==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Sunil V L
+ <sunilvl@ventanamicro.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Will Deacon <will@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Len Brown
+ <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Anup Patel
+ <anup@brainfault.org>, Samuel Holland <samuel.holland@sifive.com>, Robert
+ Moore <robert.moore@intel.com>, Conor Dooley <conor.dooley@microchip.com>,
+ Haibo Xu <haibo1.xu@intel.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Atish Kumar Patra <atishp@rivosinc.com>, Drew Fustini
+ <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt
+ controller support
+In-Reply-To: <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
+References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
+ <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx>
+ <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
+ <Zsy3o_N8hvc6GfTp@sunil-laptop>
+ <CAJZ5v0hxoT9tBjm3xRPU4fHx3MgHfYAx_Vyf4oe2toa3GWAN+Q@mail.gmail.com>
+Date: Mon, 26 Aug 2024 23:17:20 +0200
+Message-ID: <87jzg3c7bz.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am64* Disable ethernet by default
- at SoC level
-To: Daniel Schultz <d.schultz@phytec.de>
-Cc: Josua Mayer <josua@solid-run.com>, Wadim Egorov <w.egorov@phytec.de>,
- linux@ew.tq-group.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
- Nishanth Menon <nm@ti.com>
-References: <20240809135753.1186-1-logan.bristol@utexas.edu>
- <4e884c6c-ec82-4229-a2a4-55da66cc284f@phytec.de>
-Content-Language: en-US
-From: Logan Bristol <logan.bristol@utexas.edu>
-In-Reply-To: <4e884c6c-ec82-4229-a2a4-55da66cc284f@phytec.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+On Mon, Aug 26 2024 at 19:27, Rafael J. Wysocki wrote:
+> On Mon, Aug 26, 2024 at 7:22=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.c=
+om> wrote:
+>> There will be a conflict in PLIC irqchip driver due to a recent patch [1=
+].
+>> This patch is not in latest RC5 release but in linux-next. I usually bas=
+e the
+>> series on latest RC release. Should I rebase to linux-next in this case
+>> and send the next revision of the series resolving the conflict?
+>
+> No, please don't.
+>
+> That will be resolved at the merge time.
 
-On 8/26/2024 12:29 AM, Daniel Schultz wrote:
-> Hey Logan,
-> 
-> my feedback is similar to Josua's.
-> 
-> On 09.08.24 15:57, Logan Bristol wrote:
->> External interfaces should be disabled at the SoC DTSI level, since
->> the node is incomplete. Disable Ethernet switch and ports in SoC DTSI
->> and enable them in the board DTS. If the board DTS includes a SoM DTSI
->> that completes the node description, enable the Ethernet switch and ports
->> in SoM DTSI.
->>
->> Reflect this change in SoM DTSIs by removing ethernet port disable.
->>
->> Signed-off-by: Logan Bristol <logan.bristol@utexas.edu>
->> ---
->> Changes since v1:
->> - Enabled cpsw3g and cpsw_port1 in SoM DTSI instead of board DTS
->> if board DTS included SoM DTSI
->> ---
->>   arch/arm64/boot/dts/ti/k3-am64-main.dtsi               | 3 +++
->>   arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi        | 6 ++----
->>   arch/arm64/boot/dts/ti/k3-am642-evm.dts                | 3 +++
->>   arch/arm64/boot/dts/ti/k3-am642-sk.dts                 | 3 +++
->>   arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi            | 6 ++----
->>   arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts | 6 ++----
->>   6 files changed, 15 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/ 
->> boot/dts/ti/k3-am64-main.dtsi
->> index f8370dd03350..69c5af58b727 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
->> @@ -677,6 +677,7 @@ cpsw3g: ethernet@8000000 {
->>           assigned-clock-parents = <&k3_clks 13 9>;
->>           clock-names = "fck";
->>           power-domains = <&k3_pds 13 TI_SCI_PD_EXCLUSIVE>;
->> +        status = "disabled";
->>           dmas = <&main_pktdma 0xC500 15>,
->>                  <&main_pktdma 0xC501 15>,
->> @@ -701,6 +702,7 @@ cpsw_port1: port@1 {
->>                   phys = <&phy_gmii_sel 1>;
->>                   mac-address = [00 00 00 00 00 00];
->>                   ti,syscon-efuse = <&main_conf 0x200>;
->> +                status = "disabled";
->>               };
->>               cpsw_port2: port@2 {
->> @@ -709,6 +711,7 @@ cpsw_port2: port@2 {
->>                   label = "port2";
->>                   phys = <&phy_gmii_sel 2>;
->>                   mac-address = [00 00 00 00 00 00];
->> +                status = "disabled";
->>               };
->>           };
->> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/ 
->> arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->> index ea7c58fb67e2..6bece2fb4e95 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->> @@ -185,6 +185,7 @@ AM64X_IOPAD(0x0278, PIN_INPUT, 7)    /* (C19) 
->> EXTINTn.GPIO1_70 */
->>   &cpsw3g {
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&cpsw_rgmii1_pins_default>;
->> +    status = "okay";
->>   };
->>   &cpsw3g_mdio {
->> @@ -208,10 +209,7 @@ cpsw3g_phy1: ethernet-phy@1 {
->>   &cpsw_port1 {
->>       phy-mode = "rgmii-rxid";
->>       phy-handle = <&cpsw3g_phy1>;
-> The connected phy is located on the SOM and should be enabled by default.
->> -};
->> -
->> -&cpsw_port2 {
->> -    status = "disabled";
->> +    status = "okay";
->>   };
-> 
-> This port is routed to the carrier-board. Please drop this node.
+Alternatively you can pull
 
-I replied similarly to Josua's comments, but if cpsw_port1 is to be 
-enabled and cpsw_port2 should be dropped from this DTSI, isn't that 
-shown in this diff?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024=
+-08-25
 
-Thank you,
-Logan Bristol
+which I'm about to send to Linus latest tomorrow morning. That contains
+the conflicting change.
 
+Thanks,
+
+        tglx
 
