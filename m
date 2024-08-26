@@ -1,231 +1,157 @@
-Return-Path: <linux-kernel+bounces-301902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2631B95F71D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B168B95F71F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D155A282917
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F72827C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73687197558;
-	Mon, 26 Aug 2024 16:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C0C197A66;
+	Mon, 26 Aug 2024 16:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Sk7Ar+v6"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXe1oUta"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77753196D8F
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6411946BB;
+	Mon, 26 Aug 2024 16:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690970; cv=none; b=gP7T5lHJVUJB8OKxetmYZTWDHxAThQ+OGWm3HamCFk/+CqwU3mET38bhgVgFjWYDGlxmBcGojQ8PgSN9ky1wAgpwarJt8j/mpyuhQGDRSiWySXkAkT/qMMFjIfWXvsOM8juyA62x/MX6RaMtSyJgzL8H/Az0L2h5hUOfDr9gyaY=
+	t=1724691011; cv=none; b=ZocSJITdWxSCKiNODw17sbilMIZc7Q1mHQJh2E7AOnnhofowEgez3TGRv7qTDhGAL3caut5zSB5G7dLY0TeJIRnm3/R6Do6rxH9+BV8M2DJZDMa28leipikDDo5tjI7hxJsxilDe/SRoAxrU3OkJHUJtnIR9U3Xfylc7tLUPOTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690970; c=relaxed/simple;
-	bh=9RSKHY8JbH28EoEm+lorkKgJk2cKAVL75gA4qL79VwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MvuGgWZv3AXfVUMRFrlpSAOxNz0weH88z+fS1Y9bUOXFhaCRMAZIx9awBo+8tYSy53NBSRa1r748QkdSz4b2nxXFHj/REnarSOucjS++bGfH0OTL4kjdCqQOVQnLFI8tVVkPTP9fN6unnkoRf/nv8/yTBX12YdHD42KcQYmgPeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Sk7Ar+v6; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E32371BF205;
-	Mon, 26 Aug 2024 16:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724690965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xb7NN4dIVxALfBJ3uh32jtsuXIAT1jz8saqQJe2YaLw=;
-	b=Sk7Ar+v6x2luniJW3LSxrLXYH0SxyKzHyH1rd9gMiU957GbEICPB3kJ6/MKs9PAolEqC3S
-	CQ54J6ROyzNE+mvYQYZBKwvMV8uFPEhs24yWwM+0e5RO1OdLpyBEsl6kFRddtYMH4GkY6S
-	/okZI6iCKxQRbdiAo5MDO2QOCbQKlEfD7oVcIH8CyQR1fmngx1dJ3CaVBr2Z/i77qiPits
-	BS5Mt+i0Zxnz6iK2Y1fFuD6SZItsu2iEleQOCpw4lgDhJLiS4x/3vymH8Cs/ILbQsEnoGm
-	jaLv1mGwWuupSpi2+AUE976/ayJB6HzAMouLb41E6cowPugcJuuP+hzMoOV96g==
-Date: Mon, 26 Aug 2024 18:49:24 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
- <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
- <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
- <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 03/11] i3c: master: Extend address status bit to 4
- and add I3C_ADDR_SLOT_EXT_INIT
-Message-ID: <20240826184924.53b48861@xps-13>
-In-Reply-To: <Zsylya9TN4mVFL79@lizhi-Precision-Tower-5810>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
-	<20240819-i3c_fix-v3-3-7d69f7b0a05e@nxp.com>
-	<20240823180426.056ac093@xps-13>
-	<ZsjNA9JV0UKONV32@lizhi-Precision-Tower-5810>
-	<20240826100430.33194702@xps-13>
-	<Zsylya9TN4mVFL79@lizhi-Precision-Tower-5810>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724691011; c=relaxed/simple;
+	bh=+bSiQCgkSSf2Bt5tZ1n6E54Te1fmnG/10wPmdS+RUZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gzhbJfCatNdD50oY2tBY9ctMZ52q8Coq8yN8YDasKQU6hI7rCVHzxevjRn0n15478BGztbObHScQE/v3O47v3qu17OFjhxz7irjSytuPKuesecOaYTjb6yzVfTbjhx3vC02MW8M642bNYS8JZskO3UO4BpyistXff1B96YOpH/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXe1oUta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D6DDC52FCA;
+	Mon, 26 Aug 2024 16:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724691010;
+	bh=+bSiQCgkSSf2Bt5tZ1n6E54Te1fmnG/10wPmdS+RUZg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eXe1oUtaQt3VO2Ldz6qdX+Mpmt0ynJavqWqvT7Y5u/tPO2OgvGkIw0qb1rN98JZmw
+	 lsAWhJ6X7cVRp8cSFVpuCYPHab6KSy2RF0Wh9XCPeA5JnchaX0mE65bkcVYnq77okX
+	 QZejc8XEp0VHzikBV3rU2bQxBKPbdXfgRU5q+h+MaWzDU2dFn8qB4FSIYBsVdKUHcu
+	 dPO8y/VU8A/QYVm9XIJ820nuENZKVDKy+91Q83zYCIMH3qTDqyUxZ47ytKjuMm8a4K
+	 LV79LEQsRk5b7g/Nd6OuNlc/j1J9iX8auzbDcJpToKtmoo3d4lInkpMFXATc14i4FI
+	 u0YkmIzfoVSQw==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-270263932d5so3296444fac.2;
+        Mon, 26 Aug 2024 09:50:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfesuaOpUaL1+MZuzbC+xcBeaPyWrXwLOmmtU0wf0O+JwMdWxe22BBIMils7kcTM6ii9eGUNx1xRlZZpuH@vger.kernel.org, AJvYcCXFs7o1/+3YuRH4G8lCvSvRP4alAfAsMD0QlmThUV08xyRVWPRye11HiH3HFfim9Ku0pwcG05Vofffh@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxsy6TaY2jOyRJrQvt0HworpUOuRobIIbSmPkfRaYmP5EqJXRN
+	wqUd8BXWvP1E7VdVFcJraqEIHAWNJ8esJ2MQT3Llah2sXSRtR6sX/zjwGFJEDHontxqkuAQWMfb
+	Xv2lU5lxyNBJ3ZV57eWraVPnIHX8=
+X-Google-Smtp-Source: AGHT+IHbPIpEyvQGKVKc17VK9W7zgLw6+BUdZie7rM6oL1uiHZABkTRmUtL+J955p+cRpamAc21CRH0pJ76oV2wjrWw=
+X-Received: by 2002:a05:6870:c698:b0:25d:8d4:68ab with SMTP id
+ 586e51a60fabf-273e6667a3bmr12197675fac.40.1724691009897; Mon, 26 Aug 2024
+ 09:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240805103531.1230635-1-zhiquan1.li@intel.com>
+In-Reply-To: <20240805103531.1230635-1-zhiquan1.li@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 26 Aug 2024 18:49:58 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j-rEioP-BMYJwDYKeT_M_5FBP25UA6GHvRpzxd6oiqTg@mail.gmail.com>
+Message-ID: <CAJZ5v0j-rEioP-BMYJwDYKeT_M_5FBP25UA6GHvRpzxd6oiqTg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v4] x86/acpi: fix panic while AP online later with
+ kernel parameter maxcpus=1
+To: Zhiquan Li <zhiquan1.li@intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, kirill.shutemov@linux.intel.com, x86@kernel.org, 
+	rafael@kernel.org, hpa@zytor.com, kai.huang@intel.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Frank,
+On Mon, Aug 5, 2024 at 12:03=E2=80=AFPM Zhiquan Li <zhiquan1.li@intel.com> =
+wrote:
+>
+> The issue was found on the platform that using "Multiprocessor Wakeup
+> Structure"[1] to startup secondary CPU, which is usually used by
+> encrypted guest.  Before waking up the APs, BSP should memremap() the
+> physical address of the MP Wakeup Structure mailbox to the variable
+> acpi_mp_wake_mailbox, which holds the virtual address of mailbox.  When
+> BSP needs to wake up the APs, it writes the APIC ID of APs, wakeup
+> vector, and the ACPI_MP_WAKE_COMMAND_WAKEUP command into the mailbox.
+>
+> Current implementation doesn't consider the case that restricts boot
+> time CPU to 1 with the kernel parameter "maxcpus=3D1" and brings other
+> CPUs online later, the variable acpi_mp_wake_mailbox will be set as
+> read-only after init.  So when the first AP gets online after init, the
+> attempt to update the variable results in panic.
+>
+> The memremap() call that initializes the variable cannot be moved into
+> acpi_parse_mp_wake() because memremap() is not functional at that point
+> in the boot process.  Moreover, the APs might never be brought up, keep
+> the memremap() call in acpi_wakeup_cpu() so that the operation only
+> takes place on demand.
+>
+> [1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
+>     the "Multiprocessor Wakeup Structure" section.
+>
+> Fixes: 24dd05da8c79 ("x86/apic: Mark acpi_mp_wake_* variables as __ro_aft=
+er_init")
+> Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Frank.li@nxp.com wrote on Mon, 26 Aug 2024 11:56:57 -0400:
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On Mon, Aug 26, 2024 at 10:04:30AM +0200, Miquel Raynal wrote:
-> > Hi Frank,
-> >
-> > Frank.li@nxp.com wrote on Fri, 23 Aug 2024 13:55:15 -0400:
-> > =20
-> > > On Fri, Aug 23, 2024 at 06:04:26PM +0200, Miquel Raynal wrote: =20
-> > > > Hi Frank,
-> > > >
-> > > > =20
-> > > > >  static bool i3c_bus_dev_addr_is_avail(struct i3c_bus *bus, u8 ad=
-dr)
-> > > > >  {
-> > > > >  	enum i3c_addr_slot_status status;
-> > > > > @@ -388,6 +405,14 @@ static int i3c_bus_get_free_addr(struct i3c_=
-bus *bus, u8 start_addr)
-> > > > >  	enum i3c_addr_slot_status status;
-> > > > >  	u8 addr;
-> > > > >
-> > > > > +	/* try find an address, which have not pre-allocated by assigne=
-d-address */ =20
-> > > >
-> > > > 	Try	to find			has   been
-> > > >
-> > > > pre-allocated?
-> > > > =20
-> > > > > +	for (addr =3D start_addr; addr < I3C_MAX_ADDR; addr++) {
-> > > > > +		status =3D i3c_bus_get_addr_slot_status_ext(bus, addr);
-> > > > > +		if (status =3D=3D I3C_ADDR_SLOT_FREE)
-> > > > > +			return addr;
-> > > > > +	}
-> > > > > +
-> > > > > +	/* use pre-allocoated by assigned-address because such device w=
-as removed at bus*/ =20
-> > > >
-> > > > 	  Use      allocated
-> > > >
-> > > > pre-allocated or assigned?
-> > > >
-> > > > I guess the logic should be:
-> > > > - try the assigned-address
-> > > > - look for a free slot
-> > > > - look for an already in use slot that must concern a disconnected
-> > > >   device
-> > > >
-> > > > But the comments are not precise enough IMHO. Can you rephrase them=
-? =20
-> > >
-> > > How about:
-> > >
-> > > Follow the steps below to obtain the I3C dynamic address:
-> > >
-> > > 1. Retrieve the assigned-address from the device tree (DT). =20
-> >
-> > I guess here you mean that you try to pick that address, unless if
-> > already in use on the bus, right?
-> > =20
->=20
-> Sorry, It should be typo. See below
->=20
->=20
-> > > 2. Look for an available slot address. =20
-> >
-> > "available address slot"?
-> > =20
-> > > 3. Look for an address that is pre-reserved by another device with
-> > > assigned-address in DT, but where the device is currently offline. =20
-> >
-> > I don't think this part is precise enough. You don't look for addresses
-> > "pre-reserved" but rather more for busy address slots, which might no
-> > longer be in-use because the device is currently offline. The fact that
-> > the slot might have been pre-reserved in the DT is a detail that may,
-> > in some cases, not be true. And as far as I understand your changes,
-> > you're not checking the DT addresses but rather more the addresses that
-> > have been allocated live (which is anyway better, because i3c might
-> > very well be used on a !OF platform).
-> >
-> > Once we settle on a description, maybe this can be part of the kdoc for
-> > the main function searching for the best dynamic address? =20
->=20
-> I am not sure I understand what's your means here. The current framework
-> is
->=20
-> 1. Get a free address first, the get more infromation from devices, like
-> BCR, DCR ...
-> 2. Check if it is old device, or dt node have assigned-address property.
-> 3. if it is old device, switch to use old address (if old address is free)
-> according to i3c spec. If dt pre-reserved address is free, switch to use
-> dt pre-reserved address.
->=20
-> To match 3's requirement as much as possible, when 1 return address, which
-> should avoid return dt's assigned-address.
->=20
->=20
-> /*
->  * I3C Framework Address Assignment Flow:
-
-	 f	   a	   a	      f
-
->  * 1 Initial Address Assignment: Attempt to obtain a free address first,
-
-     1.	       a       a
-
-> then gather additional information such as PID, BCR, and DRCR
->  * 2 Address switch:
-
-     2.
-
->        - 2a: Check if this target device is appeared before. Switch
-> to use prevous address of this device.
-
-	 the previous	for
-
->  *     - 2b: Check if this target device have assigned-address property i=
-n dt,
-
-				    has a preferred address based on
-				    firmware data (DT). Switch to it if
-				    it is the case and the address is
-				    free.
-
-Today it's the DT, maybe not tomorrow. You take these values from the
-firmware on the board, that feels more generic than talking about a DT
-property name.
-
-> switch to this address if it is free.
->  *
-> In step 1, i3c_bus_get_free_addr() is called. To optimize for step 2b, th=
-is
-> function should return an address that is not pre-reserved by any target
-> device with an assigned address in the device tree (DT).
-
-This does not make sense, if you want to optimize for 2b, why not
-selecting the assigned-address property in the first place if it's
-available? Also, I don't understand why you would care to specifically
-*not* return an address that might be the default one for another
-device in the first place. Changing to a free slot (if possible) not
-reserved by another device might be done in 2b, which makes operation 1
-much more simple, so you put all the complexity at the same time. Even
-if you are proceeding with two devices asking the DAA at the same time,
-the procedure should work in a way which does not impact the fact that
-the second device will get its desired address if the first can take
-another one.
-
-> If no such address
-> is available, it can return an address that was pre-reserved by a target
-> device that is currently offline.
-
-Thanks,
-Miqu=C3=A8l
+> ---
+>
+> V4 RESEND note:
+> - No changes on this, just rebasing as v6.11-rc1 is out.
+>
+> V3: https://lore.kernel.org/all/20240702005800.622910-1-zhiquan1.li@intel=
+.com/
+>
+> Changes since V3:
+> - Add Fixes tag for the commit found by Kai.
+> - Extend the commit message for the root cause and solution.
+>
+> V2: https://lore.kernel.org/all/20240628082119.357735-1-zhiquan1.li@intel=
+.com/
+>
+> Changes since V2:
+> - Modify the commit log as suggested by Kirill.
+> - Add Kirill's Reviewed-by tag.
+>
+> V1: https://lore.kernel.org/all/20240626073920.176471-1-zhiquan1.li@intel=
+.com/
+>
+> Changes since V1:
+> - Amend the commit message as per Kirill's comments.
+> - Remove the oops message.
+> ---
+>  arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/ma=
+dt_wakeup.c
+> index 6cfe762be28b..d5ef6215583b 100644
+> --- a/arch/x86/kernel/acpi/madt_wakeup.c
+> +++ b/arch/x86/kernel/acpi/madt_wakeup.c
+> @@ -19,7 +19,7 @@
+>  static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
+>
+>  /* Virtual address of the Multiprocessor Wakeup Structure mailbox */
+> -static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox _=
+_ro_after_init;
+> +static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
+>
+>  static u64 acpi_mp_pgd __ro_after_init;
+>  static u64 acpi_mp_reset_vector_paddr __ro_after_init;
+>
+> base-commit: 435dfff07e5b71ceecc35954645740ab91090fbb
+> --
+> 2.25.1
+>
 
