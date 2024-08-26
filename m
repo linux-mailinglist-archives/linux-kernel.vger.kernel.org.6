@@ -1,99 +1,150 @@
-Return-Path: <linux-kernel+bounces-301539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8F995F246
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:00:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4668995F247
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90DCB1F235CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:00:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B571F232F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9417A5A6;
-	Mon, 26 Aug 2024 13:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4116C84B;
+	Mon, 26 Aug 2024 13:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SmZu+7uw"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RBxlJI9C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B707E1;
-	Mon, 26 Aug 2024 13:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E181487E3
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677245; cv=none; b=s7mJYKhCmOkjxKPTYznNa2GIFSqRJq6fEupXtsH8Hi/38X3hpdUqEs42AQydxiUxpnR9w6QBqNxDonLpxS7jrygxcx1cD6+Qn9zE0JMM++/JeZiDuMUPwI0EP6naOjvwGQjbuYLgJ+DIpzkAv/AFjpGZXggJRBAtxW5vpE1eEBo=
+	t=1724677303; cv=none; b=JijWbhUPypDj81MrHhReciTBhPJup58UD6k0m1dPolrO98wG4Cu65GtPVPj89EcQNeUjsO5STPYKNTbWwser+bSTYqFu1BU+5JevpV0HIxSpvrc5nF0TMmIBfE80rKyRAxjGFNg5ej2ZOE7FBalPiOUB+i/EoPId0mtVWvPL0A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677245; c=relaxed/simple;
-	bh=JhpyAnaD7dWNN1bTpxCG0QZu8qf2suEDnGrq4j97Agw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ets+S6vph4JAhzsXXISTCLWpmY+xK9MPMoMTgcOQkEVCnvRaaadNC6uhdAhN33LoB7y8+CrvAoJ0M9QwnWcP+jjgCCOiIKBCNjU/HFhcHuVoyPQ3fpYV+hcA9uULYYMQQSZYpk23GTvt+Txrf/VVd9/eu4kweB2wbeVx3a3GNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SmZu+7uw; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724677231; x=1725282031; i=markus.elfring@web.de;
-	bh=L88uf0gBYffESaPDmIR258SiEhKps5DkIATA3tWCltI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SmZu+7uwQdRG/RqsJn2TqEHt6rc4BorLyaEsMBySlIuQkiNC0xaVE3+V5eN6j+89
-	 jQQZsIKuvwCfpAOjaZYXCQCYS9/H9oYGRwbN127PN2n/8pDM6dwxheeJ19+ZDlrir
-	 YT58JUZAa/psvkORUeN5JOJb//5Lguo7HIzmHWV4ROtA/hbCFAIjWSnxccEvZtkY4
-	 TdMbBF9VqOviPnYaH2N0fvmkojGb8//ohFmu3Vh1G4uhwmji+cjkOReZmU1aEV/gA
-	 TQN7z1lYnCGyD6DpnXjnxFseM/9Q0O1clS4rub6mrDlU977e1gt6cX022VBTQ5C9C
-	 OQnm09HGe/WwTEiOiA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLAVa-1sRS9d0vcg-00I3aZ; Mon, 26
- Aug 2024 15:00:31 +0200
-Message-ID: <b96565ac-2052-44d0-aa9b-0f2d10b424b7@web.de>
-Date: Mon, 26 Aug 2024 15:00:28 +0200
+	s=arc-20240116; t=1724677303; c=relaxed/simple;
+	bh=2Opw6vNFqtAowmYwHyECODo2kqem1ugNhw4ntDm8Jjw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pu8e9LQ0GXwApZLyJ6MBCWTCHYeRZ7/xy2T2BRZs9TgUpSdS6D17Wa+t26BIZxRh8BfyRqGTJN2fN6jwDNV9FC5FqrET16bj3pL4ag/8w11N4T08p1vs+edDCbHLRFfBJXLADvhKQkjFeJ/mxrUzRVliGahenTTcw84sLZ+cBJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RBxlJI9C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724677299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PtUuKStDI/TrqAejzoVfdWdlirHG5pbXKKxkB5GlHAY=;
+	b=RBxlJI9C5gJfvjPjskNjnu+TF2K/1a6eIsB89sfuHeprWJXLP6oEq425OeOAhHHCTVlWxI
+	2rWCpea9dF/JM5+70nXvmJxcdEL0oy9HjONMItvYKh784hAdhq7gh8qYF588fkO8HmzQR9
+	7dhSGQZ/1lVs92KhrlRuHfx6hqJuUNY=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-bQS3ul0GM4WUq_bVKLCtAA-1; Mon, 26 Aug 2024 09:01:38 -0400
+X-MC-Unique: bQS3ul0GM4WUq_bVKLCtAA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a8691010836so404387666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:01:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724677297; x=1725282097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PtUuKStDI/TrqAejzoVfdWdlirHG5pbXKKxkB5GlHAY=;
+        b=Fig4FlzZPRwoyzNosP9YUkS+9gIRoJGdqk+Wta+nIinTVXXcXnJ3wJKSSxRCBX1B6w
+         SjwZiQmbBsDEZU1yVfrxKs51+wK+7g/XyUaI3GDp8espDFHiqCfX/9KEOVu2PoU+nZYt
+         a3RbnZpXO22Egxy+Zj1YV7V5iuyyZHkoidLwzY/TFs9r6YcuQApaez43SRA2YU5Sc2N4
+         1h688oTh1/lY9WINJWAXmNEJekbwlCkJdOtblpDlJKIU/y0w8nbguzuzvvPYDXpGaz1F
+         yUryO3nz9xtZwWprlCcO83otp3ifli6AXKDrUFroS/GDUBPek5PLcD67/GeTfIJOsP92
+         FX7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMiw/JCLeQFjAsCsi7Jpvq2S3Fv3jTZZ3RBW2iyY9E91IY/DOwJ6cVx1bV9JHoj1sDJ1dyJteci73UnYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJTcuCRh5kuwwQCJCIYaLc1f7PXnWnKLR1URkwySzLZ0PW9Nxb
+	u1t7rKTp+wWpTb5QrcuBqlglb906e7GKhyMrL9ZLbkDYpwkPweuvBnKhiQJ5e2Vf3dQOv7TM01u
+	BXqqC7yY7rk0rhCGfxXAp38cDTvPenumVKyEzZ9URl2SBzjeRb5/KG+Or5UMx2BC/GJuZ8lojJ4
+	mvIqD1zsgL2pdjVe9zn3EwITmXt9DOQ7K6HXkb
+X-Received: by 2002:a17:907:dac:b0:a86:b727:3f27 with SMTP id a640c23a62f3a-a86b727424dmr392976266b.52.1724677296768;
+        Mon, 26 Aug 2024 06:01:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG53fvNxGfjMtYsvqkzmA0t0VlDbb1UXlcCb0hnV4Mk6ey39DNiK7UN5zFZsZLnqKxLsPGZy+PWs1LiyX/NUfc=
+X-Received: by 2002:a17:907:dac:b0:a86:b727:3f27 with SMTP id
+ a640c23a62f3a-a86b727424dmr392969866b.52.1724677295454; Mon, 26 Aug 2024
+ 06:01:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yan Zhen <yanzhen@vivo.com>, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, opensoure.kernel@vivo.com,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240826061717.2016126-1-yanzhen@vivo.com>
-Subject: Re: [PATCH v2] clk: qcom: Fix error checking for
- devm_clk_hw_get_clk()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240826061717.2016126-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240820130001.124768-1-tglozar@redhat.com> <20240823125426.404f2705@gandalf.local.home>
+ <20240823145211.34ccda61@gandalf.local.home>
+In-Reply-To: <20240823145211.34ccda61@gandalf.local.home>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 26 Aug 2024 15:01:24 +0200
+Message-ID: <CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in timerlat_fd_release
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jkacur@redhat.com, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XwA4bHaeQfDr74DylbycT+tuFODVMxeUynR/jcYDiu3f6FrevyK
- pIxu1tSVpFq4PXOaUTVmne87EXf4NLQUOMrZArglwEgNwu43+cKoXxWXXqXoQbewYu5u+Q9
- uz9HDcJlsMrXgcUPfBDS4fpF4bRQIEsQqCo2+zCstsPBBpzDlZ71Hd+aHy4889z3ZqnS0vP
- bAhkLMiAnpPJGhhJBXQmA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IDQt7LfK2gE=;7ihaKBDEgFsES1p/8cHXpATxkkX
- V80ztt41giRpRr1E5N6Mv1DgrHQoA1f05nI+wFqt983nLbh/iDInpdVKgrTT5EWU1XziW9igp
- SFgXg0e9le72OuCfQcqejpLTYESUhLVQkYQWE2Rgmhe9y+hy9T7yg2ihiGwtUqjo6gTN0QNJe
- fWhxMvd9Kft4AWDTwrJoPP7vx8fBmDtGoO3vqhihQ/4zoV2TfCZnPXYx4ux9De4UoaWRDBfYs
- Q+zbL8ijjBFLvh1tULFso0Z3mddqs3RMOPbLCZOGFj5CD0iDu6ttWcUjUDJcHbXAg538gzjss
- cBIPH55py8ramdyMon5kqve4n/PzKA742nYlGxka73lKLf/yNVPeGdCdmHUXz1zMuOZfb+sgb
- 11vnzHRR5Tk2l7q/TOdV40ReRWTZZoOTDMQKOup8skGc8a11pHnMomxE+izRxQaB8SbpyBT8I
- 0rSRF38Gbcql9aJQuCwNMmhVHq8QJHEUZZiwQkVpQakB2xYecUGI++j5p1cSlhW9cyP02xaLg
- UD5CVc/8JFDey1CZFQvaApd3z97wO+pamg5QBDDBHcExpFgabnp5fytWAAjqHOMUJeOIlb5aD
- mJOrVfkteM+Bq5+vXyrKVE8yGmbkHTjM2p1NvwulaFBIUIzw2cc5xAO7WpMBUy2q/vK9q6fpE
- Hv/Uvkqi66KQs4eltMd+mswir8zrlZ70Kz5LN1gFiG+OHolJHI4AvCGqS9YANn+26f2bH2zsk
- LsSLc+xdHvwnTMF2MbDvwtVfU5N1pHFlovHik7MX96xBCHZYmuZISRoSk8shVMhc0X2P/GyvC
- hmEEsj9gCcsNTfLRLYZJ/NxQ==
 
-> The devm_clk_hw_get_clk() function returns error pointers.
-> It never returns NULL.  Update the check accordingly.
+p=C3=A1 23. 8. 2024 v 20:51 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis=
+.org> napsal:
+>
+> Egad, I don't think this is even good enough. I noticed this in the trace
+> (adding kthread to the memset trace_printk):
+>
+>            <...>-916     [003] .....   134.227044: osnoise_workload_start=
+: memset ffff88823c435b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227046: osnoise_workload_start=
+: memset ffff88823c4b5b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227048: osnoise_workload_start=
+: memset ffff88823c535b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227049: osnoise_workload_start=
+: memset ffff88823c5b5b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227051: osnoise_workload_start=
+: memset ffff88823c635b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227052: osnoise_workload_start=
+: memset ffff88823c6b5b28 for 0000000000000000
+>            <...>-916     [003] .....   134.227054: osnoise_workload_start=
+: memset ffff88823c735b28 for ffff888108205640
+>            <...>-916     [003] .....   134.227055: osnoise_workload_start=
+: memset ffff88823c7b5b28 for 0000000000000000
+>
+> Before the reset, all but one of the tlat->kthread is NULL. Then it dawne=
+d
+> on me that this is a global per CPU variable. It gets initialized when th=
+e
+> tracer starts. If another program is has the timerlat fd open when the
+> tracer ends, the tracer starts again, and you close the fd, it will cance=
+l
+> the hrtimer for the new task.
+>
+> I think there needs to be some ref counting here, that keeps the tracer
+> from starting again if there's still files opened.
+>
 
-Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9C=
-Cc=E2=80=9D)?
+The timerlat fd is not supposed to be open when the tracer ends/starts
+again, since osnoise_workload_stop() calls stop_kthread(), which in
+turn calls kill_pid() to SIGKILL the user workload, which will also
+close the file descriptor. Only one PID per CPU should have the
+timerlat fd open at one moment, since timerlat_fd_open() will refuse
+to open if tlat->pid is set. It appears that this is somehow bypassed
+and osnoise_workload_start() happens before closing the fd, not sure
+why.
 
-Regards,
-Markus
+> This looks to be a bigger problem than I have time to work on it for now.
+> I'll just apply the mutex patch for the kthreads, but this bug is going t=
+o
+> take a bit more work in solving.
+>
+
+Yeah, unfortunately the issue looks more complicated now after looking
+at the traces you posted, I will probably have to do more tracing to
+see what is actually happening here. Thank you again for helping us
+with this and also for the patch for the mutex.
+
+Tomas
+
 
