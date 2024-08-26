@@ -1,126 +1,192 @@
-Return-Path: <linux-kernel+bounces-302187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 866F895FAF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063A495FAF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E653DB22600
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE2A1F24342
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A743A19AD73;
-	Mon, 26 Aug 2024 20:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A0019CD01;
+	Mon, 26 Aug 2024 20:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="y+MJuduu"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J7nfFFY+"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F529EAC7
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0B137775
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705335; cv=none; b=b+q2pUQcjAs/eMC9WqGcGgp5ZgyD0YAtEOUqKaIN1GD3uRJxnXOly6+l83Sn6JKNk/TXf88VIe2b3mdgbCJNY+NrzDBAlI9GZTkUUSnsTdi0Ly1p80Mwe1D+SJzMFJNbJyN9TXtI4CdsQO2r/NRkCE8x5CIjR0E7ypwNxQUOvCE=
+	t=1724705392; cv=none; b=SG40984AaWWMr/9SbDRO5pEjtyAslCPzYpXT5kC2um37SGOJXpJmuH71en3jecTOBeXV/A8038wfy8voEupqDi/io9+OWsRnpe0msf0owuHHGq8qEAv8DLI2HLyDynCdfckEkDh30tAJavKG2nnhAdXl9qVdsNBeQ93RVfcktGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705335; c=relaxed/simple;
-	bh=EhuGWj0FdQ6Y5ZHeFjg4yfpc364FW13L+Ifwl2Budao=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=hU1lOTTr+l3W7nH1CBWPuE2sZk2XZ1SxiccRTTWuu+rDMud6/ehovLVAW/MQ/1pxMse5qWzpIvjckegagun2UvcGj+lWa5Zb3ITt93OpwqEvICyBmRJ+FgElEfVCg+UHProEA++l6fizwdcg5fIyKpQPpQMOi6j7L8EtGl3eok8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=y+MJuduu; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5334b61b6beso772788e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724705332; x=1725310132; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXLB9zkEdo/4dH8derdyK4VwB9yZuo2dG39pnlUjD2g=;
-        b=y+MJuduubw6VB3t5MJD1bMg9NGEFNj/Qd7gQq8pG7sOrrZunXTrMthphPwW4rpFxRv
-         wDHWlPTEvJsKYUuC6dUuP5Q2d4ZGeUhUsn8H+nkY0Y5pnVugXiDGBrgh3mw2v/Kl0YRo
-         QmQNld6E1yjHqgYFU/Hgct3s9DHYWX++kUCBNTLVuDDkD9Akw9Zb4JwHX0Wl1n/2iMx/
-         x+uqP5LnVzh4jqy85WrVgrI8DrPyE3UYkCZ2DfAYAejtle+5aJlP1PHwyQ/L9Br2c249
-         h/IZRLyf6+JHAfHpbwbP0LOrBLCRYg+4sgtU+oJWEf1rfnQE98KqCwK80Und5P15K5sm
-         fzrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724705332; x=1725310132;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aXLB9zkEdo/4dH8derdyK4VwB9yZuo2dG39pnlUjD2g=;
-        b=mbsYkGFQqPjDq8QqK4a5EJiA/KiY8R1IBBcRPBwjs6dm+Kp+XdPl3p5Ko7moVjfsBG
-         9Yc0LkXSFTu4197+3c8O1kgE9kklSgXImtXr1uHDQCk5hmagMs09EuFhRNEnPk3ZXKn+
-         7VAjkdPbDRtp0Dp1hHe+0F2tu2qpeZ7BlFB/gfGdbULqdWS6OwI+Sn25UKKbd6jjs25B
-         CXcK0ZVeobfBWPtN3BNC7DFaB2wPgoKqIbJhsy5mQQsX3vTlwmGsxZzx3gsUFzX+Evwx
-         GSBoXiAodTeFCP1rEk8ns9Q90flHlnAnRi679bhQV/UV/gWQYcwz8F/mjDjUNkSEPzhS
-         iwSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkHM55kmSkM7P9gbIbrYCWZfbuRqtbAonNd8Am7BrqMull829dyIF6Yz0BHx6n8R8JqKI738zOSW7tOjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya+08IxoPBQEFr+YIfEW4WnwKxZg7tP4hja5CzCQQqq1HzA6TV
-	jx69tihlXvgGnb6Gldh8JRge+TUpVbiigXMVoXHrkf6M4VxT6igjk7IyBDjRUg0=
-X-Google-Smtp-Source: AGHT+IFh7iDNHL3zLwfm2HC+viRd+9tBqo6FndoMyhmB3E5TI9dHA3hsphEOU6Shuce0HutNHgqW3w==
-X-Received: by 2002:a05:6512:b8d:b0:52e:ccf4:c222 with SMTP id 2adb3069b0e04-534387c4d10mr4745357e87.9.1724705331999;
-        Mon, 26 Aug 2024 13:48:51 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:1050:bb01:8cae:d35d:b93e:b368])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e582d6b3sm18675766b.105.2024.08.26.13.48.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2024 13:48:51 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1724705392; c=relaxed/simple;
+	bh=7CwGDAI4+fDUbBMkZSzTE7nNHqjO0muqXNuxv74F2Ng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=N+nZ2PUXGICsBi0amTOkdqU4gFO+VxWTvtAgpS/bLar55WXhNzZgC+g8MPYJGanrOtRvTb1FDhHo2dJWISrpaDe0whI4ADMEpOpgfpGrsNCFpknBxEoFhjCK0tE9rVDo9KK2f31bQ8d9eOQH/qGbREdNV8/+tvxUOp7x4BIAkfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J7nfFFY+; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240826204948euoutp0221a70bda30703366d23c2dde10209cc6~vYmm3iL4_0672606726euoutp02A
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:49:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240826204948euoutp0221a70bda30703366d23c2dde10209cc6~vYmm3iL4_0672606726euoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724705388;
+	bh=4rebIsHgGpe9kjnkdd2isgLAS+T1XfSGDMjRcmic9Iw=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=J7nfFFY++U7ersfvpQKsiGvI+XD44S4VbJllaKj+oaMHLqoza9c7IgiRbTwkYWW1q
+	 u0aYmVAkaQ+6qiwagoPzwtR94keBIiMgW5an9ellz45SfjK+xW5RE1cDjdXabCoA+W
+	 dkXIItnO463XZFZx4xomutsfOEhLkRe34XBiGMCg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240826204947eucas1p2ca45b0683afb530c6bf3559f690b3604~vYmmMF54M0153901539eucas1p2v;
+	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id B9.ED.09624.B6AECC66; Mon, 26
+	Aug 2024 21:49:47 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240826204947eucas1p2f648781e2a641fef11d61f55e777c708~vYmlijHxe0150201502eucas1p2p;
+	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240826204947eusmtrp28267c42beacf04153164872f0848c566~vYmlh8z2e0801108011eusmtrp2G;
+	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-ea-66ccea6b9da6
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C3.6B.08810.A6AECC66; Mon, 26
+	Aug 2024 21:49:46 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240826204946eusmtip1e907729c0ac54601310fd3d59378378f~vYmktAT171021410214eusmtip1N;
+	Mon, 26 Aug 2024 20:49:46 +0000 (GMT)
+Message-ID: <0e710ff1-4ff4-403a-b85d-b1e51c03378a@samsung.com>
+Date: Mon, 26 Aug 2024 22:49:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] affs: Remove unused struct members in affs_root_head
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <202408261307.F7D2AD650@keescook>
-Date: Mon, 26 Aug 2024 22:48:40 +0200
-Cc: dsterba@suse.com,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <9EB1D6D7-DD1F-433D-BF6D-7DAC53EE4BAF@toblux.com>
-References: <20240826142735.64490-2-thorsten.blum@toblux.com>
- <202408261307.F7D2AD650@keescook>
-To: Kees Cook <kees@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] thermal/of: Use the .should_bind() thermal
+ zone callback
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Daniel
+	Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>,
+	Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Linux Samsung SOC
+	<linux-samsung-soc@vger.kernel.org>, Mateusz Majewski
+	<m.majewski2@samsung.com>, linux-amlogic@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAJZ5v0gOqNi+-Hi8uyeEJ9dHzhwU6GyL6t_7Xjt5Knf2yJmH-w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djP87rZr86kGez4rWkx77Osxd7XW9kt
+	Fszmtri8aw6bxefeI4wWM87vY7JY2NTCbjHx2GRmi7lfpjJbnDl9idXiycM+NgdujzXz1jB6
+	LN7zkslj06pONo871/aweWxeUu+x5Wo7i0ffllWMHp83yQVwRHHZpKTmZJalFunbJXBlvGr1
+	LpgoVrHz5D7GBsZ2oS5GTg4JAROJ3k3P2bsYuTiEBFYwSky4cokNwvnCKNFy/CwThPOZUeL0
+	2xmMMC3vJu1khUgsZ5SY+rwbquUjo0TP/PssIFW8AnYS++f+YgexWQRUJXZfeA8VF5Q4OfMJ
+	mC0qIC9x/9YMsBphgQiJFY8msoHYIgLaEksWXWUGGcossJZZYs+vjWANzALiEreezGcCsdkE
+	DCW63naBNXAKBEpMfjyLEaJGXqJ562ywZgmBdk6J9V8+AjVwADkuEv/nykC8ICzx6vgWdghb
+	RuL/zvlMUPWMEgt+34dyJjBKNDy/BfW0tcSdc7/YQAYxC2hKrN+lDxF2lOg6dJQZYj6fxI23
+	ghA38ElM2jYdKswr0dEGDWw1iVnH18GtPXjhEvMERqVZSMEyC8mXs5B8Mwth7wJGllWM4qml
+	xbnpqcWGeanlesWJucWleel6yfm5mxiBSez0v+OfdjDOffVR7xAjEwfjIUYJDmYlEV65yyfT
+	hHhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGphULv5Z1fFr
+	66oinpArhjEOxVM+7xVmsaiIzJC5dWidaeOjLdzTmb+72U5q/vSfsenBxF8bo/0b1iy5+fZH
+	696pbfNPbIy7MP/n1ethZgv+KrrZ7WLa5195/oDldo55rNvq1F64zdk5a/8e5cMxPZEdM29s
+	tzCfu1d+x39WN/1/PZLZvHtWOrdERHXZiW78/XGd+vJjUbc1j2ZFNPfEb/y0dP9xyaCeFrVw
+	v4OtKZliVTku9fpiHb42vlXXWYK/NS36sP7lsu2Tj12a+4shaKbA2Z9d9Vu+N/V5n71haSqd
+	f/RvcNtJ+dc1Aln6RvNXN9Uef+m6Zzdn7pxVFf/sYmR+SorkyM9QLpvt/jt52o2HSizFGYmG
+	WsxFxYkAm1Q7kNEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7pZr86kGcxpt7CY91nWYu/rrewW
+	C2ZzW1zeNYfN4nPvEUaLGef3MVksbGpht5h4bDKzxdwvU5ktzpy+xGrx5GEfmwO3x5p5axg9
+	Fu95yeSxaVUnm8eda3vYPDYvqffYcrWdxaNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0t
+	jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyXrV6F0wUq9h5ch9jA2O7UBcjJ4eE
+	gInEu0k7WbsYuTiEBJYySvz/38EIkZCRODmtgRXCFpb4c62LDaLoPaNEy4YuFpAEr4CdxP65
+	v9hBbBYBVYndF95DxQUlTs58AmaLCshL3L81A6xGWCBCov1tM1hcREBbYsmiq8wgNrPAWmaJ
+	Bdv4IRYsZpLo//qJCSIhLnHryXwwm03AUKLrLcgVnBycAoESkx/PYoSoMZPo2toFZctLNG+d
+	zTyBUWgWkjtmIRk1C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG7bZjPzfv
+	YJz36qPeIUYmDsZDjBIczEoivHKXT6YJ8aYkVlalFuXHF5XmpBYfYjQFBsZEZinR5Hxg2sgr
+	iTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamCSOdqxfKbTpJA9zrrv
+	bz0+KPOrqvf7uYyJ/oJM+wV+Bdu7Kd3XTDtlmJD83aaoRN/5Zmn+C42cWRq77ydOsoqtSPqb
+	Wlhq/0N23iT2v7GFK/rsdXZcXJ7gbP3+hH5+o/oJpi2d2fuy0+LnpVSpSyzb5M+bbcDz753C
+	o1VRvzufKrS2zdUpMos++4FhW6vDw0s9lyT3qT9SuPIxi8m/Q6Ql83bXvLdvltbPztZ3qnfe
+	vunv87KHLz1MLn9be1L9v6LRiqg93P0bHP+pH2OY87T1Znzi/3/Vvf0XMt2kszOeVfYKH9iX
+	e/DPR3nRWTpn1TYYMKUW/C/wfnj9Mbe3EtO9GJEflm0KVrcKDjjN6VdiKc5INNRiLipOBABb
+	MTeTYwMAAA==
+X-CMS-MailID: 20240826204947eucas1p2f648781e2a641fef11d61f55e777c708
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
+References: <2205737.irdbgypaU6@rjwysocki.net>
+	<CGME20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5@eucas1p1.samsung.com>
+	<2236794.NgBsaNRSFp@rjwysocki.net>
+	<ef729a47-b7f9-48b6-a14d-692565ef1d38@samsung.com>
+	<CAJZ5v0gOqNi+-Hi8uyeEJ9dHzhwU6GyL6t_7Xjt5Knf2yJmH-w@mail.gmail.com>
 
-On 26. Aug 2024, at 22:08, Kees Cook <kees@kernel.org> wrote:
-> On Mon, Aug 26, 2024 at 04:27:36PM +0200, Thorsten Blum wrote:
->> Only ptype is actually used. Remove the other struct members.
->> 
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->> ---
->> fs/affs/amigaffs.h | 6 ------
->> 1 file changed, 6 deletions(-)
->> 
->> diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
->> index 1b973a669d23..9b40ae618852 100644
->> --- a/fs/affs/amigaffs.h
->> +++ b/fs/affs/amigaffs.h
->> @@ -49,12 +49,6 @@ struct affs_short_date {
->> 
->> struct affs_root_head {
->> __be32 ptype;
->> - __be32 spare1;
->> - __be32 spare2;
->> - __be32 hash_size;
->> - __be32 spare3;
->> - __be32 checksum;
->> - __be32 hashtable[1];
->> };
-> 
-> This is removing documentation, in a way. Since I suspect you were
-> looking at this due to hashtable, maybe just change that to [] and note
-> that it (and the other fields) aren't used, but they're kept around to
-> help document the format.
+On 26.08.2024 14:14, Rafael J. Wysocki wrote:
+> On Mon, Aug 26, 2024 at 1:32 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 19.08.2024 18:30, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> Make the thermal_of driver use the .should_bind() thermal zone callback
+>>> to provide the thermal core with the information on whether or not to
+>>> bind the given cooling device to the given trip point in the given
+>>> thermal zone.  If it returns 'true', the thermal core will bind the
+>>> cooling device to the trip and the corresponding unbinding will be
+>>> taken care of automatically by the core on the removal of the involved
+>>> thermal zone or cooling device.
+>>>
+>>> This replaces the .bind() and .unbind() thermal zone callbacks which
+>>> assumed the same trip points ordering in the driver and in the thermal
+>>> core (that may not be true any more in the future).  The .bind()
+>>> callback would walk the given thermal zone's cooling maps to find all
+>>> of the valid trip point combinations with the given cooling device and
+>>> it would call thermal_zone_bind_cooling_device() for all of them using
+>>> trip point indices reflecting the ordering of the trips in the DT.
+>>>
+>>> The .should_bind() callback still walks the thermal zone's cooling maps,
+>>> but it can use the trip object passed to it by the thermal core to find
+>>> the trip in question in the first place and then it uses the
+>>> corresponding 'cooling-device' entries to look up the given cooling
+>>> device.  To be able to match the trip object provided by the thermal
+>>> core to a specific device node, the driver sets the 'priv' field of each
+>>> trip to the corresponding device node pointer during initialization.
+>>>
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> This patch landed recently in linux-next as commit 6d71d55c3b12
+>> ("thermal/of: Use the .should_bind() thermal zone callback")
+> It has been fixed since and it is commit  94c6110b0b13c6416146 now.
 
-Yes, I was looking at hashtable. I'll submit a v2.
 
-Thanks,
-Thorsten
+Confirmed. Thanks for fixing it and sorry for the noise.
+
+
+> Bottom line is that it was calling of_node_put() too many times due to
+> a coding mistake.
+>
+>> In my tests I found that it breaks booting some on my test boars: Exynos-based
+>> (OdroidXU4 with ARM32 bit kernel from multi_v7_defconfig) and Amlogic
+>> Meson based boards (OdroidC4, VIM3 with ARM64 defconfig+some debug
+>> options). Reverting $subject on top of next-20240823 together with
+>> c1ee6e1f68f5 ("thermal: core: Clean up trip bind/unbind functions") and
+>> 526954900465 ("thermal: core: Drop unused bind/unbind functions and
+>> callbacks") due to compile dependencies fixes the issue.
+> Thanks for the report!
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
