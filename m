@@ -1,89 +1,77 @@
-Return-Path: <linux-kernel+bounces-302331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122EE95FCAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:21:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A799395FCB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97CECB21D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6356D2836F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A600419D095;
-	Mon, 26 Aug 2024 22:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3805919D896;
+	Mon, 26 Aug 2024 22:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hlGOFiIe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QDJbzEGR"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14919CD12
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E1619CD1D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 22:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710861; cv=none; b=PTWYfnozdjwBhYlxc6arggUU6pBCP7P65a/Cj2k10HCQNCk5xeIQ0iTbatGL7baLbDyRSdYt3HPCiheAwtNB4jjYhZgUjEHFFEbouPZEv3JRw+NvdfjMjpGGDDdrifwdbgyeHalyE6K8TP+5LFM1SLY82rGZF8HFC3VD2qvwLdE=
+	t=1724711243; cv=none; b=R+88VENxTbHuey7RQ7SZHHuCs7m6rUKx0zLZ25+2QYHAnnp+0lLBibh3WX2diiBGG3dTti7D2H2MZVYj7J4YEgslnrXP+ECBW03oMT83m8pi+E4Z9XGmHNGiz/Zm08p7jkNJfxF1ldmEbNKaEae/T5HYtE2Gr5WNwWCWHIx8Rco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710861; c=relaxed/simple;
-	bh=o5inbK5k5jJkCSFBq8jKV4/XzEa4ReX37kh9WGWKFkM=;
+	s=arc-20240116; t=1724711243; c=relaxed/simple;
+	bh=7knaidMnlelJb7eQ1hfz+yPYhdm4IjSTzrkXIedXWEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E05EFQCaATJzz7eRYr3PWtQ3sqji7ewmcDVk6JeM6m9qd7f7vgMLXTfr0ym4L2pouizC53kvKoUdFXAE+BwpuL3I4+aZt8n9NMrRTiV8JAHzkJkmpz3Sb4A9OSzVggEV6jhYVmNgPfDDuZ789Q2uNT47JP/OIpV2UxS+9dhmlKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hlGOFiIe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724710859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVnGMUXouwLWzh2JPfjWaejU7vTfrT6N/vmKgxEOM5c=;
-	b=hlGOFiIeGy1bTTGS2gQ3Zvd8MjmDQNJq6USMeIZs8OG7CybL5NI7++9SatWgDuXz5FxkEF
-	s2jjd4xKUTVIqhhFs7dqgpyycDv1pqpTvrm1tVx+uFNgbnFZS7/zQEfU/0yVwmmE9giySE
-	Cm/VUz/QNDU5EqwZnPmZK8VKz69PPew=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-EGbfh6xQPk66inZH3dhDuA-1; Mon, 26 Aug 2024 18:20:48 -0400
-X-MC-Unique: EGbfh6xQPk66inZH3dhDuA-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6b3825748c2so95756797b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:20:28 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XDfytYat28ZrwSwv1/jCWLOQERJ6iUAXkL5nvDk/urc957hVsn5vWIumHERhldkSd3CwkD6yQgJOZwhhn43P8fGhnelTW0H9lRiMmvSLQt53lwM3t+6FR41NeVOkCvpQIb0AYFkzDG7EM9LtUNA4A0/55IIbbuAKTsZ9zMz5FR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QDJbzEGR; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-27032e6dbf2so3199255fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724711241; x=1725316041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSaDBvyq/bFcO3OcsC5ci/zFSviUd1t2kxCPPZcFB+8=;
+        b=QDJbzEGRfUIkge9/E+fpTfpBRRZWgnA9rNab97DhRMaPhjeXKd4YUea6mNere7Wj/Y
+         02z5hChMEPSguKTjhdQBCbhDsK88s9avRBiuqc2+33Ku9mQSqEjiJ+CRSXchku8NOuMI
+         LSbCW6GjufziFy9zvDGEvh8ETihsJZeU45GHE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724710827; x=1725315627;
+        d=1e100.net; s=20230601; t=1724711241; x=1725316041;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uVnGMUXouwLWzh2JPfjWaejU7vTfrT6N/vmKgxEOM5c=;
-        b=bIXPRHN2KODRA2HEcuA18wBI+9EhFHVroJ20m/Kbk0d+Oxn6hXgr5c/TsLR52zfvy+
-         ovzXfnxgpTIMqij2RUMJehJUNr0uLrmCpAIvahEwm8sbZPL5gPSFsoi55nLa8BQru2lf
-         mIpHAs35g1NFkRe1LzHkJABBmYUDhnLeAErQjf5Oi/Oh6hMVqHnQhFu3cFxbBaF59HYd
-         WhqBfZ+10EY2o3q+7USTo6OYQbYYO+apnWoC3TBUdkctEeHSsXV7shqymkVgE2npfhBN
-         xttaJUtDBkA54jXbA2qU7W9dF4YwspW3OnaCbTVBnrgpd+3yabuZjNEI/yUE3gBm8QCF
-         WTvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaKTHTNByNDSZr1bv4FK2l0wtndp0iQZIWHPk8auUmE9NQnArpIPw1IYa6BNUobGqc5sp4eY19vUMLLzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz52Lo1bw2K3Ixw3xWtcsxFNy7qRTCAxTgQMKfGpe8ElIkXrHVD
-	Z0Kpu7QXp4Dh7kJJxDS2jhEirqf7enOW81WaSIS8rCYX17BRBXLz/K6KLe45xoEntxoN4Sbyvo9
-	8AtVZD83ghRcqlKp0ukPAJRsP7+Aa2BF6ypbrZvE1AwnNnAggzUMd6uSyJGKAtw==
-X-Received: by 2002:a05:690c:480a:b0:64a:4161:4f94 with SMTP id 00721157ae682-6cfb9ebbdadmr12189097b3.20.1724710827527;
-        Mon, 26 Aug 2024 15:20:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCt7ATrJ76cUPLhlo5TYvGQOosCLkwO2wXQz1V6PkjoZ9BpjTuprffh0hZuR28QBnONhXgbQ==
-X-Received: by 2002:a05:690c:480a:b0:64a:4161:4f94 with SMTP id 00721157ae682-6cfb9ebbdadmr12188837b3.20.1724710827121;
-        Mon, 26 Aug 2024 15:20:27 -0700 (PDT)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39b007461sm16730287b3.64.2024.08.26.15.20.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 15:20:26 -0700 (PDT)
-Date: Mon, 26 Aug 2024 18:20:25 -0400
-From: Eric Chanudet <echanude@redhat.com>
-To: "Kumar, Udit" <u-kumar1@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, J Keerthi <j-keerthy@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Halaney <ahalaney@redhat.com>
-Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: align watchdog clocks
-Message-ID: <xlmi5cm4lcnohz3glzzxqtffrbletvsos2i2l2ytr55yjnwl33@fae24t7xvzj7>
-References: <20240805174330.2132717-2-echanude@redhat.com>
- <wiyw7h7hkc7u2brehi6zgxykesajtqmwwajo7tpwwvayjtcykw@w7rcmojs62vi>
- <f42f092f-2199-4cbd-8cad-96ccf4f100d0@ti.com>
+        bh=TSaDBvyq/bFcO3OcsC5ci/zFSviUd1t2kxCPPZcFB+8=;
+        b=M9vW37hibjnjvSdDg4N0lrV+52ODFGp0zAlzi0l8K96ePBjz/9vuMOKNW10TY11zpM
+         W02zj9mpwdWMNbCgGU9l/HkK9d5RABmXcAn3sqDKrcI9II8ImaUakXpU3kSb8MQRSmIh
+         81mmSvalnJEDMDkc3MY3icU/6Rbiclk5zE3SK35BW5ZCPD1tLod7IFum5gzV3WNwLGjT
+         6M0yE+BZrqfXI0p+jF3vMt5lFxD2n74GiDCEBzVjRKuAXTjrX5537Y3snu0Bnru3hf8M
+         nMWQze5Xmheju+Qwqwql9Ir1xb1bEPlHEY5bIrDtbCROLVZpWt7hgau/TrX2OMJ/duRf
+         ecsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+fFs9O7VOWof6wOYS6KrI147bQmXqlZV4om+HuVJzKnuWRfPKg5ETWg2OXVGCmTIsX9LvtCyjE8BevGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyADM7gUG9D4IqSuTdzGclFkmYSw8BAaWyg0Wz2uQTnsshpcMvg
+	2K7KNqasCu59HNuQeuV+evwcEFIFz0iarr4m5B++1/57Bq3u+f2KNaHCEfWOtw==
+X-Google-Smtp-Source: AGHT+IFUHF3HtJhxNyKdeJjkwJ+tECgitLmEFbmHNSQGwUUS7HccdzeehXGx7JgW5MXroG3lwlDQqQ==
+X-Received: by 2002:a05:6870:2108:b0:260:df8a:52bf with SMTP id 586e51a60fabf-273e64697eamr11748626fac.2.1724711240763;
+        Mon, 26 Aug 2024 15:27:20 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:7e40:430b:848a:1da6])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7cd9acddb57sm8107858a12.54.2024.08.26.15.27.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 15:27:20 -0700 (PDT)
+Date: Mon, 26 Aug 2024 15:27:18 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Jon Lin <jon.lin@rock-chips.com>
+Cc: broonie@kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: rockchip: Avoid redundant clock disable in pm
+ operation
+Message-ID: <Zs0BRsNdZdI69aXM@google.com>
+References: <20240825035422.900370-1-jon.lin@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,95 +80,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f42f092f-2199-4cbd-8cad-96ccf4f100d0@ti.com>
+In-Reply-To: <20240825035422.900370-1-jon.lin@rock-chips.com>
 
-On Mon, Aug 26, 2024 at 11:53:56PM GMT, Kumar, Udit wrote:
-> Hello Eric
+(NB: I have several nearly identical copies of this email. I'm replying
+to the latest one I see.)
+
+Hi Jon,
+
+On Sun, Aug 25, 2024 at 11:54:22AM +0800, Jon Lin wrote:
+> Fix WARN_ON:
+> [   22.869352][ T1885] clk_spi0 already unprepared
+> [   22.869379][ T1885] WARNING: CPU: 3 PID: 1885 at drivers/clk/clk.c:813 clk_core_unprepare+0xbc4
+> [   22.869380][ T1885] Modules linked in: bcmdhd dhd_static_buf
+> [   22.869391][ T1885] CPU: 3 PID: 1885 Comm: Binder:355_2 Tainted: G        W         5.10.66 #59
+> [   22.869393][ T1885] Hardware name: Rockchip RK3588 EVB1 LP4 V10 Board (DT)
+> [   22.869397][ T1885] pstate: 60400009 (nZCv daif +PAN -UAO -TCO BTYPE=--)
+> [   22.869401][ T1885] pc : clk_core_unprepare+0xbc/0x214
+> [   22.869404][ T1885] lr : clk_core_unprepare+0xbc/0x214
+
+I appreciate the snippet of a WARNING trace, but I'd also appreciate
+some actual explanation of what the problem is, and why you're solving
+it this way.
+
+> Fixes: e882575efc77 ("spi: rockchip: Suspend and resume the bus during NOIRQ_SYSTEM_SLEEP_PM ops")
+> Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+> ---
 > 
-> On 8/21/2024 3:31 AM, Eric Chanudet wrote:
-> > On Mon, Aug 05, 2024 at 01:42:51PM GMT, Eric Chanudet wrote:
-> > > ---
-> > > I could not get the watchdog to do more than reporting 0x32 in
-> > > RTIWDSTATUS. Setting RTIWWDRXCTRL[0:3] to generate a reset instead of an
-> > > interrupt (0x5) didn't trigger a reset either when the window expired.
-> > Re-testing using u-boot from the BSP (2023.04) has the board reset as
-> > expected when the watchdog expires and WDIOC_GETTIMELEFT report the time
-> > left coherently with this patch until that happens.
-> > 
-> > I initially had a u-boot with a DT lacking:
-> > 	"mcu_esm: esm@40800000"
-> > and I could reproduce the board not resetting by commenting in its
-> > description:
-> > 	"ti,esm-pins = <95>;"
-> > 
-> > I don't understand why that is on the other hand. The TRM says ESM0
-> > ERR_O drives the SOC_SAFETY_ERRORn pin, which goes to the PMIC GPIO3 on
-> > the schematic _and_ to MCU_ESM0 as an error input event. The tps6594-esm
-> > module is probing successfully and it sets both ESM_SOC_EN|ESM_SOC_ENDRV
-> > and ESM_SOC_START, so I would expect the PMIC to reset the board without
-> > MCU_ESM0 being described or configured by u-boot.
+>  drivers/spi/spi-rockchip.c | 57 +++++++++++++++++---------------------
+>  1 file changed, 26 insertions(+), 31 deletions(-)
 > 
-> AFAIK, Keerthy correct me. GPIO-7 of PMIC should reset the boards.
+> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
+> index e1ecd96c7858..043a7739c330 100644
+> --- a/drivers/spi/spi-rockchip.c
+> +++ b/drivers/spi/spi-rockchip.c
 
-That is what I'm seeing too, MCU_ESM0 is able to reset the board.
+> +#ifdef CONFIG_PM_SLEEP
+> +static int rockchip_spi_suspend(struct device *dev)
+>  {
+> +	int ret;
+>  	struct spi_controller *ctlr = dev_get_drvdata(dev);
+> -	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
+>  
+> -	clk_disable_unprepare(rs->spiclk);
+> -	clk_disable_unprepare(rs->apb_pclk);
+> +	ret = spi_controller_suspend(ctlr);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Avoid redundant clock disable */
+> +	if (!pm_runtime_status_suspended(dev))
+> +		rockchip_spi_runtime_suspend(dev);
 
-> If you see figure 5-27 of TRM then SOC_SAFETY_ERRORn goes to GPIO-3 of
-> PMIC (schematic)
-> 
-> Same time this is cascaded to MCU-ESM and WKUP-ESM to generate
-> MCU_SAFETY_ERRORn (from Wkup_ESM)
-> 
-> and MCU_SAFETY_ERRORn is connected to GPIO-7.
+It seems like you'd really be served well by
+pm_runtime_force_{suspend,resume}() here, and in fact, that's what this
+driver used to use before the breaking change (commit
+e882575efc77). Why aren't you just going back to using it? (This is the
+kind of thing I might expect in your commit message -- reasoning as to
+why you're doing what you're doing.)
 
-Agreed (Figure 5-25, in TRM "SPRUJ52" for J784S4).
+And in fact, I already submitted a patch that resolves the above problem
+and does exactly that:
 
-> Unlike other device J721E (for reference)
-> 
-> SOC_SAFETY_ERRORn is generated by Main ESM and MCU_SAFETY_ERRORn can be
-> generated by WKUP_ESM and main_ESM.
-> 
-> Please look at schematic of J721E SOM [0], both SOC_SAFETY_ERRZ and
-> MCU_SAFETY_ERRZ both are connected to GPIO-7 of PMIC.
-> 
-> So on this device and board, only main ESM configuration is working for us.
-> 
-> [0] https://www.ti.com/tool/J721EXSOMXEVM#tech-docs
+https://lore.kernel.org/all/20240823214235.1718769-1-briannorris@chromium.org/
+[PATCH] spi: rockchip: Resolve unbalanced runtime PM / system PM handling
 
-Sure, but I am using J784S4[1] and the schematic of that board
-(PROC141E4(001)_SCH) shows SOC_SAFETY_ERRZ going to PMIC GPIO3.
+Do you see any problem with it?
 
-So when u-boot _does not_ configure MCU_ESM0 chaining through pin95, I
-would still expect the board to reboot, because ESM0 raised
-SOC_SAFETY_ERRORn on TPS6594 GPIO3 which should reset the board. Yet
-that does not seem to happen.
+Thanks,
+Brian
 
-[1] https://www.ti.com/tool/J784S4XEVM#tech-docs
-
-On Mon, Aug 26, 2024 at 11:48:34AM GMT, Andrew Halaney wrote:
-> rti0 ---> ESM0 pin 688 --SOC_SAFETY_ERRORn--> TPS6594 GPIO3
-> 				|
-> 				|
-> 				--> MCU_ESM0 pin 95 --> WKUP_ESM0 pin 63 --MCU_SAFETY_ERRORn--> TPS6584 GPIO7
-
-Using Andrew's drawing as it matches my understanding as well. So the
-PMIC should reset the board even if MCU_ESM0 isn't configured with pin95
-to chain SOC_SAFETY_ERRORn.
-
-Am I misunderstanding this?
-
-As well, since it is mentioned in Andrew's reply:
-
-On Mon, Aug 26, 2024 at 11:48:34AM GMT, Andrew Halaney wrote:
-> did you ensure that ESM0 was programmed in this test? Right now if
-> you're using upstream u-boot and upstream linux, nobody seems to be
-> configured by default to do that
-
-I am using the BSP u-boot (2023.04-f9b966c674) for this test, which has
-CONFIG_ESM_K3=y and esm@700000's description with pin688.
-
-Best,
-
--- 
-Eric Chanudet
-
+> +	pinctrl_pm_select_sleep_state(dev);
+>  
+>  	return 0;
+>  }
 
