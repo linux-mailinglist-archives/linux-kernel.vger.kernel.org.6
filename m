@@ -1,90 +1,62 @@
-Return-Path: <linux-kernel+bounces-302251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB15995FBA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C895095FBA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585E81F238A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B3E1F22F95
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DADD19AA58;
-	Mon, 26 Aug 2024 21:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2771E1993BE;
+	Mon, 26 Aug 2024 21:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YJwdP/tN"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2068.outbound.protection.outlook.com [40.107.100.68])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rnKPUDLT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA44A19A288;
-	Mon, 26 Aug 2024 21:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707617; cv=fail; b=aMa2bq4MBAbW46yX1xyOuXEPg3VTsymzKBNdknSzGp62gvZKXSbsT2Z8ibMC2DbqCovhZhPg9/0P/o+lycSBkHOIhy9ItxGBlWrWYlImk2M1zOZXZ4q1QK4pr1Q1szMcwC/iD2K9ccVm9h5SscMSrNJnxdslURIQkURRZ3CFNXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707617; c=relaxed/simple;
-	bh=wpQXg9Di62OGh+wnzeEq5dTmWbpdd3smlJtZWSh/rBI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8985AhCQftiNKE+gqUujQRjaxb/Bx8L1sljrO0A4EL6cFp2f+ww7/SghhsannBPhFCMbLY8QPpZqKEcqBTflYyTCL+6Tr3D9TVMEunjPYS4hUoBo+xOX9O389IX4mtWHhpNTNUPxycXFxz1aV36WiCOZ9MY+6VxzbX836HL55w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YJwdP/tN; arc=fail smtp.client-ip=40.107.100.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cr9eViEUPNO6Kb5I7K6rHCicAnihX21q64i2LuZ9kujSiNl7rqZvxz+a+ZuLVGHw3BW15wdvQNnbvmqecCOUkxeYucV7ByCh24UfB3mTzqlRHd0zioYM2i5xtlJiC+fY2mjPMBpu9ZUX3mpuOJw/6L7F71UppRBYT2dUWAhbKzC3g64IotH4r79bTsbA0Tp6nqhc5nnp3wngCpUzdMNfFvLDCDSieagQQJeVZocLx8+Cr8MGARrQW5PzdL8Uh5YcVEjAN4KysjzyUJcZTZf8c71ucEvBx0nve01414J/K1S/UQbYPHeCSMdIOtkuaZssQWtRT+3fmU/mqWkQUDrpZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o6JeckLYSKOR1pLvB/LxAC2tq7Nu4l3LA1pDgNUAMug=;
- b=v0C9AJENATwpLrbJB7BMHWEscpHPxNtNtnNrK7DvJD7H8Hu6hNi5NimOjB5XhbSLnZ4rtCWm5ZNvt/M71Rhm46aGLRFA8+Ka6H/1M1svjXCyu7nNQyefKWL6od6svzWpf4X6KPMAOCG7GQTwLv7RwAJ4RDOVni7H7FjmvHA1lVbygb+IA6cHB+gjExbKdZ5re5kha4c+scjpbzXMBS4ex/o9CxReTdsaILKFlW67zeMkmv43BJARY2mfE5V0iKz5Y/9HnBo9RlJXEarAnN/qLTk82yPV0iEWw/rY00HGmR+s/xmFWUMAP/3M/TT1bfU1Qo9pj+PTen7Zhrl8mvjyrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o6JeckLYSKOR1pLvB/LxAC2tq7Nu4l3LA1pDgNUAMug=;
- b=YJwdP/tNB04KUerop0fpk8OVW9TR+sivdmgbSmcjZO9fO9CwW6JVLjguLTdtsX0S2z6IhlxPqINgB6x/0AfTLHz5m4HzC+HEGAkdio34+5QbOpt4uRihcgIUY2JEtmck53bNsmKjTyZAfsKtvJCoPGcI83yCZBbxeo0dOW7JWjUBDPlYlfZ7pXwR3LQyj4VtM3jwE2TxNjzMFzS/Jj8xsU7/O/3zSaBF8DhXMjVn7oJUV+YmYMUsZHV+1a45iELSaqAXjPb4sorPmId5FQmkCHHhKkwN1LZhbvxlrMC3Hg7HaXYYljuFA84nlUp8URrHeNqACLnAJmirjRWNXcBzEw==
-Received: from CH0PR03CA0201.namprd03.prod.outlook.com (2603:10b6:610:e4::26)
- by SA1PR12MB5613.namprd12.prod.outlook.com (2603:10b6:806:22b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Mon, 26 Aug
- 2024 21:26:50 +0000
-Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
- (2603:10b6:610:e4:cafe::18) by CH0PR03CA0201.outlook.office365.com
- (2603:10b6:610:e4::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
- Transport; Mon, 26 Aug 2024 21:26:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 21:26:49 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 26 Aug
- 2024 14:26:33 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 26 Aug
- 2024 14:26:32 -0700
-Received: from vdi.nvidia.com (10.127.8.12) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Mon, 26 Aug
- 2024 14:26:31 -0700
-From: Liming Sun <limings@nvidia.com>
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, David Thompson <davthompson@nvidia.com>
-CC: Liming Sun <limings@nvidia.com>, <linux-mmc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 1/1] mmc: sdhci-of-dwcmshc: Add hw_reset() support for BlueField-3 SoC
-Date: Mon, 26 Aug 2024 17:26:27 -0400
-Message-ID: <73703c853e36f3cd61114e4ac815926d94a1a802.1724695127.git.limings@nvidia.com>
-X-Mailer: git-send-email 2.30.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65BF19ADA3;
+	Mon, 26 Aug 2024 21:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724707598; cv=none; b=nR7BxBX6YjttUD4biNdK9vtI7LYB+slK2jkZVPgNpWLVzShyOQBDR4gBU0Rz2zuPiVPPHxhCSvnt3CAk5mYY+qG1kKpd3xHAodUmhhAPm/v/lxJj6+Vf2Lh4Ptz91WgNrjFZfkYM9SyOZb5r43STP8/H0OAiMODRD7vAKNaJt2w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724707598; c=relaxed/simple;
+	bh=qvjmJJgQtPjDMtqfjIJxK67KBl7YtXuc3OFHRtr+ipI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAOkMXPAJrA0IhDDI9Rh5clXhW3uhAxyunD9/2YJDWr9U0oGF8ITuD5X6c8e252HkMZHJaMoCVrscNmyVvRZgXZtkdo5PW3HzAlyKPYT+jQMLThyOf+0Zu5okm3zR8SVYDp9FN2xdgn/5kmMS+DH8c1/ClrQqfxfZaNk5Ygid1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rnKPUDLT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=vrbgItIhFVp8VTRThY9P9Y/8Xr6th1Cf9KBboFPHivY=; b=rnKPUDLTNuraOAPRCJswh1PbCb
+	dHrd40I5m2qa3JXEupzea/d31NSfO9/veACmGAJpk0DSua1FpoGoy/N2wbs+C2nalavz6TAZjeqfA
+	ykJ+kTpHjbcKAyFDnVwjmzAuSfOlpvTrERuKD0pNsNbta78R45KjUjWHPQb1SvWp4QqHDUHYz/hz2
+	Dh8qXPlNlkGO+ySzzqDNZAQUCjpr8b10XtH6riT3iLo3+BZuwmfkr4QWdekbCI/oUGAoI9HRD1qsf
+	CIUOiI1usitL0os7pglyu9FLTr2IIPwZToshM1HoCHUb/8snc+n5/id6aOuY/mb0D0aIWnUznGfq2
+	v9tOMR4w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sihEP-00000008nxy-3pAV;
+	Mon, 26 Aug 2024 21:26:33 +0000
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: brauner@kernel.org,
+	djwong@kernel.org,
+	sfr@canb.auug.org.au
+Cc: p.raghav@samsung.com,
+	dchinner@redhat.com,
+	mcgrof@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-next@vger.kernel.org
+Subject: [PATCH] iomap: remove set_memor_ro() on zero page
+Date: Mon, 26 Aug 2024 14:26:32 -0700
+Message-ID: <20240826212632.2098685-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,120 +64,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|SA1PR12MB5613:EE_
-X-MS-Office365-Filtering-Correlation-Id: 510c8bb9-546a-4cec-75bd-08dcc615cbd2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iGza6bZmEL82Z6NcrhQfYRBtV6g5iXKhC4FyPkDy9xEZVPBBthCN6hSzqlry?=
- =?us-ascii?Q?uQFmzI+v3U2sEAvciT2IATE7lJ6fG0U+PbhG0F9vIgm89S4kEsmezulNsUka?=
- =?us-ascii?Q?2AbaKHryCclr2/MUwmx9SOf1sUvWPBrcGBUn1Sa1MwOeWD8KsaQwTyQlVyZc?=
- =?us-ascii?Q?uXjvKcTSI2e3PA0anwWeaJQKZ2M+FpPPtj3TnhgwQ0zN0OrKUC25w7wb7qf6?=
- =?us-ascii?Q?4RAPmvhG/+vnqaIb5LbFCigvKxvEEnSpQ6+H7itGdIiJ71D2K8ZK9Y5xqs+6?=
- =?us-ascii?Q?M6IKMTyy16Gxy1m6vrfkGLROZ7NOe0vth+QbOjBHpbLqjsWFsegnO7m9Tb1e?=
- =?us-ascii?Q?2MFwnW9yEGTiWpLCd8QTNucEDS/U1i3HesbngqBrCdcrP2ETA7t7bQbCfUi7?=
- =?us-ascii?Q?xiXjR43cCnvotFnWbM09edJPELP3pcpTq5b+D0ZQl/r3KGM0E0iLhzauQtnQ?=
- =?us-ascii?Q?13pgTZgLHOaVPB0OIFgj11hCL9LfD5R18LFqaicVTnqWmGp4oAtplTYtaoSH?=
- =?us-ascii?Q?Y3qQ8XNnQRXNl2uu4kmuiIR2zzTWWqt8lE+mIbUPAOVF6lWGT+Cg7MKO0wUh?=
- =?us-ascii?Q?CHLYQFo2HvffK+wFOetKvwfhDd8GOfQd+hV/b/l5fNIqQFHcXcBPtGtGFchU?=
- =?us-ascii?Q?yb+WjtErNg9wGSH/30Nf1xIqa+waOqN5GmEha84rJ3Q7+P0PhBzOIV2sBHaZ?=
- =?us-ascii?Q?qpTNjbcfNNXpV2yfVGgVbAsCPR05r5WkVVPrLKW3CPRIYAWpXAiHwGKOaiCX?=
- =?us-ascii?Q?xMg82HEu3aIVuHPeN1RxE/h5ra0/R0jt8NiBnFrTHV0xuCmAEJSvE9PK0QDO?=
- =?us-ascii?Q?dxAJNlF4xXHaXetBZ/KIQpG3UZYi1eZkDHirnwP0EaMiRftQUjTW8bFrSpw0?=
- =?us-ascii?Q?guM712Gt1rUWxkcxJDohCk8HqP7+z9XWI9BgfXGdTPn1crEsVygRXXdJ12iS?=
- =?us-ascii?Q?IE8HMSx1EYe0/QbRujJZtCoqKsTZmredL0BRDiHakJ3QT5h5ZS1Xx2LsMfOm?=
- =?us-ascii?Q?7yQMRIzwRD/dXk8Pf4M2yxxZA4EIp6hJoxzMnsfoDNF7h3FW9jzPVwe6aqkX?=
- =?us-ascii?Q?PIl7gcQbUiqCXZbVlJC5uy01prTJJ1tRqguFbkJOzmV+Rpx10P/Vu/jSzrnc?=
- =?us-ascii?Q?3hiyHwcskK8AJ4wC9sjjQLy6DpOr4V0Bg1ai1drEPIZURp1uTa6PzXlncMZs?=
- =?us-ascii?Q?wiCoK9jfJKLfzOTyufjCe37qpDRnRV3ZECmIE3FcD16lFYgDJ5qcbjK8k6hv?=
- =?us-ascii?Q?lo3VwAGkF2RuM48hqJq5n335J+QC4BQqsJOATV+20IMXXZTNAUAqwXLfbzc9?=
- =?us-ascii?Q?gsFwzKDIQMYtoZGf4Qy+uqlzhLQDfy3PRauFLgMVKuAdaLR0xN32t4tlhXl+?=
- =?us-ascii?Q?2/BZm7KwdN+LdeLZheE2wwBtdQ31xCxuHytQRyOUKAFaE4sL3i5ZWNpUoFEF?=
- =?us-ascii?Q?K4jTK/7qr2SLkif2lAL1IFZ8exBFxeJy?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 21:26:49.4229
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 510c8bb9-546a-4cec-75bd-08dcc615cbd2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37C.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5613
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-The eMMC RST_N register is implemented as secure register on
-the BlueField-3 SoC and controlled by TF-A. This commit adds the
-hw_reset() support which sends an SMC call to TF-A for the eMMC
-HW reset.
+Stephen reported a boot failure on ppc power8 system where
+set_memor_ro() on the new zero page failed [0]. Christophe Leroy
+further clarifies we can't use this on on linear memory on ppc, and
+so instead of special casing this just for PowerPC [2] remove the
+call as suggested by Darrick.
 
-Reviewed-by: David Thompson <davthompson@nvidia.com>
-Signed-off-by: Liming Sun <limings@nvidia.com>
+[0] https://lore.kernel.org/all/20240826175931.1989f99e@canb.auug.org.au/T/#u
+[1] https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@csgroup.eu/
+[2] https://lore.kernel.org/all/ZszrJkFOpiy5rCma@bombadil.infradead.org/
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Suggested-by: "Darrick J. Wong" <djwong@kernel.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/mmc/host/sdhci-of-dwcmshc.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-index ba8960d8b2d4..3c763e67e4ac 100644
---- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-+++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-@@ -8,6 +8,7 @@
-  */
+This applies to the vfs.blocksize branch on the vfs tree.
+
+ fs/iomap/direct-io.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index c02b266bba52..f637aa0706a3 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -11,7 +11,6 @@
+ #include <linux/iomap.h>
+ #include <linux/backing-dev.h>
+ #include <linux/uio.h>
+-#include <linux/set_memory.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include "trace.h"
  
- #include <linux/acpi.h>
-+#include <linux/arm-smccc.h>
- #include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/dma-mapping.h>
-@@ -201,6 +202,9 @@
- 					 SDHCI_TRNS_BLK_CNT_EN | \
- 					 SDHCI_TRNS_DMA)
+@@ -781,8 +780,6 @@ static int __init iomap_dio_init(void)
+ 	if (!zero_page)
+ 		return -ENOMEM;
  
-+/* SMC call for BlueField-3 eMMC RST_N */
-+#define BLUEFIELD_SMC_SET_EMMC_RST_N	0x82000007
-+
- enum dwcmshc_rk_type {
- 	DWCMSHC_RK3568,
- 	DWCMSHC_RK3588,
-@@ -1111,6 +1115,29 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
- 	.irq			= dwcmshc_cqe_irq_handler,
- };
- 
-+#ifdef CONFIG_ACPI
-+static void dwcmshc_bf3_hw_reset(struct sdhci_host *host)
-+{
-+	struct arm_smccc_res res = { 0 };
-+
-+	arm_smccc_smc(BLUEFIELD_SMC_SET_EMMC_RST_N, 0, 0, 0, 0, 0, 0, 0, &res);
-+
-+	if (res.a0)
-+		pr_err("%s: RST_N failed.\n", mmc_hostname(host->mmc));
-+}
-+
-+static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
-+	.set_clock		= sdhci_set_clock,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
-+	.get_max_clock		= dwcmshc_get_max_clock,
-+	.reset			= sdhci_reset,
-+	.adma_write_desc	= dwcmshc_adma_write_desc,
-+	.irq			= dwcmshc_cqe_irq_handler,
-+	.hw_reset		= dwcmshc_bf3_hw_reset,
-+};
-+#endif
-+
- static const struct sdhci_ops sdhci_dwcmshc_rk35xx_ops = {
- 	.set_clock		= dwcmshc_rk3568_set_clock,
- 	.set_bus_width		= sdhci_set_bus_width,
+-	set_memory_ro((unsigned long)page_address(zero_page),
+-		      1U << IOMAP_ZERO_PAGE_ORDER);
+ 	return 0;
+ }
+ fs_initcall(iomap_dio_init);
 -- 
-2.18.4
+2.43.0
 
 
