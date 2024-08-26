@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-301002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E459595EB73
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:09:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D766995EB75
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12E0284729
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5339EB24854
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C44413BAE4;
-	Mon, 26 Aug 2024 08:08:53 +0000 (UTC)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCA813C676;
+	Mon, 26 Aug 2024 08:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GmGF9aFj"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CCE13AD3F
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D534312D773
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659733; cv=none; b=KFiHxtX+w2PwEfWpP7GeOg3drTqzbH5a2/SSsvepg1PQkob5ToAfypThbLur/0yIA5ACp8GblECGbCYyJlA4PVLMMPzYNHLxguiveyCFEku/dIdWIAFJBD8j/NgIY+Kma6wTisFuLOL0TCJ8wYTqdUMftSvg7+xmeCL3gsDGta8=
+	t=1724659735; cv=none; b=vBRez4pFwTJdIzZ498hw8591Ww3AC6kt6MSLPZTitFlJH+96oN9kzW3yB2kJeLsq7UtJZq6P1vJsRKlp0QebfTtHFUBjpRc73kE+702Zzx8uRrc0sVIC0kRInVxSbMvrrSeeYxT5k5kNAq6RqlbaMPrOQqYYQK4DSATt4KjrTF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659733; c=relaxed/simple;
-	bh=rSJrgsmfUsElrCODWDV1oJPTLGA/DsgUQ52abwDQqcE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SKSkmAq4sNyDc9tEpCH3ivISPafAmv5PUc/vIQFhdBAydL0b0ER9Whh/joY++uCL+nTo37Kft/5khHoTrn6630fzu9iBQS83nCvHuNFNA/JAE1BorZKjVJwrx4mSCU1CoFB0RjCb2XWIwh9qfNFyfR3GxIDcLp7JN/3NXkidUiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:344c:fc9f:aaa5:f9d2])
-	by albert.telenet-ops.be with cmsmtp
-	id 4Y8h2D00N3GuYDE06Y8hia; Mon, 26 Aug 2024 10:08:41 +0200
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1siUmH-0011af-He;
-	Mon, 26 Aug 2024 10:08:41 +0200
-Date: Mon, 26 Aug 2024 10:08:41 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-cc: Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] dm-integrity: introduce the Inline mode
-In-Reply-To: <c994d5e-cc3d-d7f5-ce3-fd2cf91e850@redhat.com>
-Message-ID: <512a07c-d41a-27c4-b1f9-8fe19352d1f@linux-m68k.org>
-References: <c994d5e-cc3d-d7f5-ce3-fd2cf91e850@redhat.com>
+	s=arc-20240116; t=1724659735; c=relaxed/simple;
+	bh=tn40YMUaCAQ/DJXVR3dqBFaS1otGQJ2t9f0pbYl/a40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gn6pzlIKf9xxNatikjuxnaNKNAtiFWvL8BZHaYoRxdTvJMWpkdWRP00feHFMWaZ8xbxTFxLGSC6GJ/BO+utqxKKSgwXc8u6kOW2KZUpyd4OVF+cB1JaBzwWwKS5GCvmaieY6lAt2XP7oUd3pj+hvmbMLkPcEOe97lNQHoDbv+6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GmGF9aFj; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so1425586a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724659732; x=1725264532; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fRo/wbfsDbFv4vokRUxbdhRpSy0+71+5/8aUqsQl01E=;
+        b=GmGF9aFj7M1veonCxx7P8sntJ546JXFe8Gd6R/z3vAB6gs2eFyavy5xwowRnqIVon1
+         afUGJYWhe9MsZItLTn4CZf8vUhZcN2UuReBtsgOzkYDI6FSUKTJh8uxjZ0/B6a51JIJy
+         wkNY2dnjvKuykBmsLXS7RkkxXRyounjSG5DRf8nqGyPYpCtb7uK6EGJi3vA2VQbaFtLh
+         3uWu6dTbL84LWHMGb8IjtNNdKlTlGrOVKCzMcE/QJfgxG+heq1Pvunkzt9QTw2ZQVnha
+         Jvs8ZzFZgSd3HGkC9LzF2+FTJ0HjQU/WZPZyetDnWYYlVzgVfkzUKm/QAZ3PFq8wJb7c
+         kPXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724659732; x=1725264532;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fRo/wbfsDbFv4vokRUxbdhRpSy0+71+5/8aUqsQl01E=;
+        b=LzqzSUk9Cg4YDEnlpI7uKe3h2slbuASR+M/fVNdnYZtamQi2Tt2lCwTGWU6Tcuf5ix
+         q+/kW71Gd6Jg5UHHTUFUpcDN6C2reFBV69+iyONfnrQmZfhEOCSb7WrLrf6whNph8fAa
+         DRBq9XLrP+c+Be/W7nu6rPvAXJabyVj4Ej6lGVQQ5zGOWwxv2fxyDsPlsjV5Ijzwen3V
+         ptCTuR51fiStXnGZOFmeyaEFli2srpgWtOzekNGxC4tpBXJUowpX6116b5ds/U41w41F
+         74IoxmrIQnDJ1mZPYqsaXAZxymMRo6iAn1hEmMHmAmAvpcC8fJCqJLOqs5UUOiVj92P8
+         DV9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW95tV7/ueq1a9f7/xlgV/MPn8m7SD2VkOdV9ZpDllyKo8LWoYx3AvFGKpiyyHrREUcoSpcW4y2mZz8VDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsyLoOWir/RtEWSRCALHez6k1W7YRc3t+QtYhiJoZQvjWhR2aP
+	2LN2FFMNRtF3juYqh++GVNXoyEObjUD34TuUaKxcOAfdJWJeaGTg7r39row8UA==
+X-Google-Smtp-Source: AGHT+IF2FFGTkmSkhB3/aVaJKTxyAcidVgGCFapnxd1Gkrhhq7h1CAVaWdUOnm3UG/ERQdcmfDBKVA==
+X-Received: by 2002:a17:90a:eb11:b0:2d3:ad41:4d7a with SMTP id 98e67ed59e1d1-2d644777e33mr15743472a91.4.1724659732042;
+        Mon, 26 Aug 2024 01:08:52 -0700 (PDT)
+Received: from thinkpad ([220.158.156.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6136fef1bsm9115774a91.4.2024.08.26.01.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 01:08:51 -0700 (PDT)
+Date: Mon, 26 Aug 2024 13:38:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: gregkh@linuxfoundation.org, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: [PATCH] bus: mhi: host: make mhi_bus_type const
+Message-ID: <20240826080848.vcj7yjdoovnnpvvd@thinkpad>
+References: <20240823031129.49010-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240823031129.49010-1-kunwu.chan@linux.dev>
 
- 	Hi Mikulas,
+On Fri, Aug 23, 2024 at 11:11:28AM +0800, Kunwu Chan wrote:
+> From: Kunwu Chan <chentao@kylinos.cn>
+> 
+> Now that the driver core can properly handle constant struct bus_type,
+> move the mhi_bus_type variable to be a constant structure as well,
+> placing it into read-only memory which can not be modified at runtime.
+> 
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 
-On Tue, 25 Jun 2024, Mikulas Patocka wrote:
-> This commit introduces a new 'I' mode for dm-integrity.
->
-> The 'I' mode may be selected if the underlying device has non-power-of-2
-> sector size. In this mode, dm-integrity will store integrity data
-> directly in device's sectors and it will not use journal.
->
-> This mode improves performance and reduces flash wear because there would
-> be no journal writes.
->
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Thanks for your patch, which is now commit fb0987682c629c1d
-("dm-integrity: introduce the Inline mode") in v6.11-rc1.
+- Mani
 
-> @@ -4433,9 +4737,12 @@ static int dm_integrity_ctr(struct dm_ta
-> 		ti->error = "Block size doesn't match the information in superblock";
-> 		goto bad;
-> 	}
-> -	if (!le32_to_cpu(ic->sb->journal_sections)) {
-> +	if (!le32_to_cpu(ic->sb->journal_sections) != (ic->mode == 'I')) {
+> ---
+>  drivers/bus/mhi/host/init.c     | 2 +-
+>  drivers/bus/mhi/host/internal.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
+> index ce7d2e62c2f1..a9b1f8beee7b 100644
+> --- a/drivers/bus/mhi/host/init.c
+> +++ b/drivers/bus/mhi/host/init.c
+> @@ -1464,7 +1464,7 @@ static int mhi_match(struct device *dev, const struct device_driver *drv)
+>  	return 0;
+>  };
+>  
+> -struct bus_type mhi_bus_type = {
+> +const struct bus_type mhi_bus_type = {
+>  	.name = "mhi",
+>  	.dev_name = "mhi",
+>  	.match = mhi_match,
+> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
+> index aaad40a07f69..d057e877932e 100644
+> --- a/drivers/bus/mhi/host/internal.h
+> +++ b/drivers/bus/mhi/host/internal.h
+> @@ -9,7 +9,7 @@
+>  
+>  #include "../common.h"
+>  
+> -extern struct bus_type mhi_bus_type;
+> +extern const struct bus_type mhi_bus_type;
+>  
+>  /* Host request register */
+>  #define MHI_SOC_RESET_REQ_OFFSET			0xb0
+> -- 
+> 2.41.0
+> 
 
-As reporting before in e.g. [1], this is causing build failures with
-gcc-5 and -Werror:
-
-     drivers/md/dm-integrity.c:4718:52: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]
-       if (!le32_to_cpu(ic->sb->journal_sections) != (ic->mode == 'I')) {
- 							^
-
-I could reproduce the issue with gcc-5(Ubuntu 5.5.0-12ubuntu1) on x86 .
-
-The condition indeed looks hard to read. Perhaps it should be rewritten as
-"le32_to_cpu(ic->sb->journal_sections) == (ic->mode == 'I')"?
-
-> 		r = -EINVAL;
-> -		ti->error = "Corrupted superblock, journal_sections is 0";
-> +		if (ic->mode != 'I')
-> +			ti->error = "Corrupted superblock, journal_sections is 0";
-> +		else
-> +			ti->error = "Corrupted superblock, journal_sections is not 0";
-> 		goto bad;
-> 	}
-> 	/* make sure that ti->max_io_len doesn't overflow */
-
-[1] https://lore.kernel.org/20240729092807.2235937-1-geert@linux-m68k.org
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+-- 
+மணிவண்ணன் சதாசிவம்
 
