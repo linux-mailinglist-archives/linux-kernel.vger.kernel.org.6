@@ -1,70 +1,94 @@
-Return-Path: <linux-kernel+bounces-302081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35BF95F998
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CD395F99A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8D22B21A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17522807DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3E71991D2;
-	Mon, 26 Aug 2024 19:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3519923D;
+	Mon, 26 Aug 2024 19:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="QoLu3gs3"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MTGTiZMT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QvuIgZcJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0pD82QY1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HSUANrxq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3333E1991CA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BAA198845
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724700183; cv=none; b=Qb21u7fHhETsJDcyHG939DEP6l9MI9dHcLpFGqE+irzvTWMlZR5Qlfm94DAUWUUVsrt2MNbTN4MX3wG2CdxvA7nLmCElxTPoP1wJFoM9ApSogFitF2rkb5knkn4ZjpgQQDSjdESU3GascZuxLosNoiJpneyNjKnd8Cix7pToQXk=
+	t=1724700196; cv=none; b=ThpTutsOeB1c3oOcxNvhu7+aJNH+M8x2FdGRdWpLHzN2SfHVjhRJZCy7KlN/76MGnpfrMsYflEowdf9sljk7XtZAKPUxWS1N1/YmhOCzfEhB6aCURas6/z+29qcVwkCX3rDybBt3ng8ISrfvF+S/0ZeydGUQby122KZfIsM7fWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724700183; c=relaxed/simple;
-	bh=tDJNUr27zxTQ4SUunjdZ0ylIYlgXCyM8c00NYRgGDuw=;
+	s=arc-20240116; t=1724700196; c=relaxed/simple;
+	bh=sXe6x9QWcYBRutlGvhIe+hMW+xkv0mU6zdjyelxtd4I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=plQpIu+1UJx0Cq1e/Zko38ALme4ohd0kd7V4D64w81XyKrbOVbg7ephIYUnZrfUB1MlWL/6+JEck7R/419Hc0zw4y0yM+k5CxksNhnNndtVo7ERo5WnxrYZXrm+CWoomC+88eAiv7OGhIRfR+dPqKRWpOPqZQQl06yY1nUd6ER0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=QoLu3gs3; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e13e11b23faso4679559276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1724700179; x=1725304979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F6LqBt/cgf5saFNqougCditEz5JCrr5uJaPi0WKZXWo=;
-        b=QoLu3gs3omZpy7j6KkBNyUm3+qvqE79ETW/WoWzgFM8DpjcC/stY01owVBqrrG06R/
-         yazR1E8Rqfcixds5QsYgnvSLwJzTyPsIggAjENAfUqBaEGfrXmOOkqOzw5ZPsNAx64rL
-         W6dHYp2+kE2q8Ax+/bEvzlIYDX27IUqWBJKkA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724700179; x=1725304979;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6LqBt/cgf5saFNqougCditEz5JCrr5uJaPi0WKZXWo=;
-        b=CugjEwkPsoA1ksDokSnQNOHX6Pcp4UcG7W+N7WL1nGdlrk2sD+CYljsawg5+ptc6L3
-         WNMny2jc/WzqzCe03MVnIJYdKBcb7wyqOTuQznB+tHQXFjTBowLatzakCtWR99ejVZJT
-         ked/+ltRqRhrp7wYjshjB5eu3dCGHlMcKenQBPpqj9RDtbAeNHlypSX7DPBG75IPqn+Y
-         391lDj/dkCNbEZ4y0JTEhZpS4lonfPQp7Py35x8Kp53KgbUixDiPUkosK/onaEqdG6QV
-         r2rxsRUZCstbIaKHatzvxwqxgWl52mUOQbe2sN7WE78N6R/w7weMIPF4XMBMB12a3gdf
-         jlSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWQvILBb7Z47Fj0UAodgK1TdkMQUBCRwn1qjJx81nJTCqTjsePVqgUm63BzbDOQcCKI8ds2/XC3ITG58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjx/5cvH4SKspe/6Jhp/66uj/OC3h/i4qB57jNIu3D8QgAkBrO
-	I413yGozooID1Zu98Zsu3VT3MGSoErgUSDLStxTQUPhQVjOK2mk/vPtl+9FMcs4=
-X-Google-Smtp-Source: AGHT+IENvO39dZD8SM8XQUS6jkNMVVXZUu4Li0XJ01QpUNqrH5VA9EYbqM15qZGvjmYzMuTP3QTLBw==
-X-Received: by 2002:a05:690c:1d:b0:664:5957:f7a with SMTP id 00721157ae682-6c624dca095mr146931867b3.15.1724700179081;
-        Mon, 26 Aug 2024 12:22:59 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:45f:f211:3a7c:9377? ([2603:8080:7400:36da:45f:f211:3a7c:9377])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9a93sm16400567b3.89.2024.08.26.12.22.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 12:22:58 -0700 (PDT)
-Message-ID: <1cb17652-3437-472e-b8d5-8078ba232d60@digitalocean.com>
-Date: Mon, 26 Aug 2024 14:22:57 -0500
+	 In-Reply-To:Content-Type; b=SoObhQcsEiMOdH51DMPfVRR++byT6snKycmFve5zm8Ab+HHPjQj6reUt6ta93qB53ulUOvbXEfgIHqByNoGF+bhYLe1kr5Jj96Lrzm4f1m9WelHtXpYt0iWeVj9jZ4tEixshtpjlnlAoNt7miBExstnvAfBp1YAda019lJ++obI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MTGTiZMT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QvuIgZcJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0pD82QY1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HSUANrxq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 53FC31F8AE;
+	Mon, 26 Aug 2024 19:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724700192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V+ZlFdFEs5Wp7EXUYl77vMxh5e9vNYaA6k9u+nZ7HP0=;
+	b=MTGTiZMTZh8gzoLMOjCr8F8xsXvRbG53nHV+YcbQHyag6fvS60BEDLNhx5sD8+VppJOZRx
+	V7ZhrLkFuL+DVq4DzCiWtPTCingrsNiFI93lxY5v5R4AX20u0LBfrwBEpN/ev7pSSUqoBs
+	r6dif9zhRjCt4+l+0AGU7+bBtsgw+zY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724700192;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V+ZlFdFEs5Wp7EXUYl77vMxh5e9vNYaA6k9u+nZ7HP0=;
+	b=QvuIgZcJaNVAbFEz0kiBygqTykjswPWCDBzdHq0G1cq/cOjilcRtpa+d1wie3c5ldZlvVl
+	Nzn9SAwLWIcwhLBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724700191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V+ZlFdFEs5Wp7EXUYl77vMxh5e9vNYaA6k9u+nZ7HP0=;
+	b=0pD82QY1isWmRmU3cBjsIjdcAo2eKGYExTF5EPEEq5wKVJrwb2J75XRWqe3n3uT3LG+toN
+	O7CdhqWdMQEKLSv2sA91uvKL25s3HpKXjcet9yJBcAcv3PB2RHQfauF9O7gsM1uhXmNoZk
+	j8itxvqhijgTicGki6x2ZsepQZ0pQCY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724700191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V+ZlFdFEs5Wp7EXUYl77vMxh5e9vNYaA6k9u+nZ7HP0=;
+	b=HSUANrxq/dG15/wSPKu5s3gEx/deEJ4Q8PeMerUvcm4UwMqkj1rWkKLMnolBSmp+yi3gX1
+	fe2l0mVdfsBCdYCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36E891398D;
+	Mon, 26 Aug 2024 19:23:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wsi6DB/WzGawNAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 26 Aug 2024 19:23:11 +0000
+Message-ID: <6e5f3c82-a18a-4c20-858f-058f44e90ced@suse.cz>
+Date: Mon, 26 Aug 2024 21:23:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,158 +96,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Why is set_config not supported in mlx5_vnet?
-To: Dragos Tatulea <dtatulea@nvidia.com>, eli@mellanox.com, mst@redhat.com,
- jasowang@redhat.com, xuanzhuo@linux.alibaba.com
-Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, eperezma@redhat.com,
- sashal@kernel.org, yuehaibing@huawei.com, steven.sistare@oracle.com
-References: <33feec1a-2c5d-46eb-8d66-baa802130d7f@digitalocean.com>
- <afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com>
- <8a15a46a-2744-4474-8add-7f6fb35552b3@digitalocean.com>
- <2a1a4dfb-aef1-47c1-81ce-b29ed302c923@nvidia.com>
+Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
 Content-Language: en-US
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-In-Reply-To: <2a1a4dfb-aef1-47c1-81ce-b29ed302c923@nvidia.com>
+To: Pedro Falcato <pedro.falcato@gmail.com>,
+ David Rientjes <rientjes@google.com>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
+ <cdfc5a08-c0ee-30a3-d6c5-22d4cfddc3a4@google.com>
+ <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
+ <aab45188-d34c-93c6-cfab-3c0cd1326a53@google.com>
+ <CAKbZUD293X0hOaqHRKpERpmsMKvvOLqRcQoKyB9mssg41Dhxtw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAKbZUD293X0hOaqHRKpERpmsMKvvOLqRcQoKyB9mssg41Dhxtw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,google.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.com,kernel.org,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hello,
-
-On 8/26/24 10:53 AM, Dragos Tatulea wrote:
->
-> On 26.08.24 16:26, Carlos Bilbao wrote:
->> Hello Dragos,
+On 8/16/24 14:17, Pedro Falcato wrote:
+> On Mon, Aug 12, 2024 at 1:55 AM David Rientjes <rientjes@google.com> wrote:
 >>
->> On 8/26/24 4:06 AM, Dragos Tatulea wrote:
->>> On 23.08.24 18:54, Carlos Bilbao wrote:
->>>> Hello,
->>>>
->>>> I'm debugging my vDPA setup, and when using ioctl to retrieve the
->>>> configuration, I noticed that it's running in half duplex mode:
->>>>
->>>> Configuration data (24 bytes):
->>>>   MAC address: (Mac address)
->>>>   Status: 0x0001
->>>>   Max virtqueue pairs: 8
->>>>   MTU: 1500
->>>>   Speed: 0 Mb
->>>>   Duplex: Half Duplex
->>>>   RSS max key size: 0
->>>>   RSS max indirection table length: 0
->>>>   Supported hash types: 0x00000000
->>>>
->>>> I believe this might be contributing to the underperformance of vDPA.
->>> mlx5_vdpa vDPA devicess currently do not support the VIRTIO_NET_F_SPEED_DUPLEX
->>> feature which reports speed and duplex. You can check the state on the
->>> PF.
+>> On Sun, 11 Aug 2024, Pedro Falcato wrote:
+>> > > > +     if (kmem_cache_is_duplicate_name(name)) {
+>> > > > +             /* Duplicate names will confuse slabtop, et al */
+>> > > > +             pr_warn("%s: name %s already exists as a cache\n", __func__, name);
+>> > >
+>> > >
+>> > > Shouldn't this be a full WARN_ON() instead of pr_warn()?  I assume we'll
+>> > > be interested in who is adding the cache when the name already exists.
+>> >
+>> > panic_on_warn? :)
+>> >
 >>
->> According to ethtool, all my devices are running at full duplex. I assume I
->> can disregard this configuration output from the module then.
+>> Would get the problem fixed up pretty fast, no? :)
 >>
-> Yep.
->
->>>> While looking into how to change this option for Mellanox, I read the following
->>>> kernel code in mlx5_vnet.c:
->>>>
->>>> static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
->>>>                  unsigned int len)
->>>> {
->>>>     /* not supported */
->>>> }
->>>>
->>>> I was wondering why this is the case.
->>> TBH, I don't know why it was not added. But in general, the control VQ is the
->>> better way as it's dynamic.
->>>
->>>> Is there another way for me to change
->>>> these configuration settings?
->>>>
->>> The configuration is done using control VQ for most things (MTU, MAC, VQs,
->>> etc). Make sure that you have the CTRL_VQ feature set (should be on by
->>> default). It should appear in `vdpa mgmtdev show` and `vdpa dev config
->>> show`.
+>> > Personally I don't have anything against WARN_ON, but we've seen that
+>> > panic_on_warn is a real thing on real systems, and DEBUG_VM is also
+>> > set on real prod configs (like Fedora does/used to do). I've sent out
+>> > one or two loose patches for problems I did find in my own testing
+>> > around, but there may be many more (e.g some drivers may call
+>> > kmem_cache_create repeatedly in some sort of callback, like 9pfs was
+>> > doing when mounting; this is not greppable). And I'd guess grepping
+>> > for cache names tends to be easy enough?
+>> >
 >>
->> I see that CTRL_VQ is indeed enabled. Is there any documentation on how to
->> use the control VQ to get/set vDPA configuration values?
->>
->>
-> You are most likely using it already through through qemu. You can check
-> if the CTR_VQ feature also shows up in the output of `vdpa dev config show`.
->
-> What values are you trying to configure btw?
+>> Can we add a dump_stack() to make this way easier instead of hiding who is
+>> creating the duplicate name?
+> 
+> 
+> Bah, sorry for the delay.
+> 
+> I'm fully in favour of adding a dump_stack(), but it seems like hand
+> coding WARN_ON a bit. Oh well.
 
+After some pondering I've decided we should just go with WARN_ON and not do
+a hand coded workaround for hypothetical people who run CONFIG_DEBUG_VM
+together with panic_on_warn, so I've updated the commit in the slab tree
+accordingly.
 
-Yes, CTRL_VQ also shows up in vdpa dev config show. There isn't a specific
-value I want to configure ATM, but my vDPA isn't performing as expected, so
-I'm investigating potential issues. Below is the code I used to retrieve
-the configuration from the driver; I'd be happy to send it as a patch if
-you or someone else reviews it.
-
-
->
-> Thanks,
-> Dragos
-
-
-Thanks,
-Carlos
-
----
-
-From ab6ea66c926eaf1e95eb5d73bc23183e0021ee27 Mon Sep 17 00:00:00 2001
-From: Carlos Bilbao <bilbao@vt.edu>
-Date: Sat, 24 Aug 2024 00:24:56 +0000
-Subject: [PATCH] mlx5: Add support to update the vDPA configuration
-
-This is needed for VHOST_VDPA_SET_CONFIG.
-
-Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
----
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index b56aae3f7be3..da31c743b2b9 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -2909,14 +2909,32 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
-     struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
-     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
-
--    if (offset + len <= sizeof(struct virtio_net_config))
-+    if (offset + len <= sizeof(struct virtio_net_config)) {
-         memcpy(buf, (u8 *)&ndev->config + offset, len);
-+        }
-+        else
-+        {
-+            printk(KERN_ERR "%s: Offset and length out of bounds\n",
-+            __func__);
-+        }
-+
- }
-
- static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
-                  unsigned int len)
- {
--    /* not supported */
-+    struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
-+    struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
-+
-+    if (offset + len <= sizeof(struct virtio_net_config))
-+    {
-+        memcpy((u8 *)&ndev->config + offset, buf, len);
-+    }
-+    else
-+    {
-+        printk(KERN_ERR "%s: Offset and length out of bounds\n",
-+        __func__);
-+    }
- }
-
- static u32 mlx5_vdpa_get_generation(struct vdpa_device *vdev)
---
-2.34.1
-
+> If y'all agree, please squash this in (praying gmail doesn't mangle
+> this diff, in any case it's a trivial change):
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 1abe6a577d52..d183655e4b1b 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -111,6 +111,7 @@ static int kmem_cache_sanity_check(const char
+> *name, unsigned int size)
+>        if (kmem_cache_is_duplicate_name(name)) {
+>                /* Duplicate names will confuse slabtop, et al */
+>                pr_warn("%s: name %s already exists as a cache\n",
+> __func__, name);
+> +               dump_stack_lvl(KERN_WARNING);
+>        }
+> 
+>        WARN_ON(strchr(name, ' '));     /* It confuses parsers */
 
 
