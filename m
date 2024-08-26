@@ -1,130 +1,98 @@
-Return-Path: <linux-kernel+bounces-302219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5DC95FB42
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070EB95FB47
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35555B22D6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2821C21AEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8937F13B58F;
-	Mon, 26 Aug 2024 21:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D85C19AA63;
+	Mon, 26 Aug 2024 21:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeNyOaDL"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B4x3oswD"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ACD19AA63
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1636013C9A9
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724706575; cv=none; b=G0WzUxmAo1VJK2U+XkUiXXuRKMDdReZ8REfANqRd3AwHpw3SiqBN+izbXPgzw5AEHPIbRVPa/GqlxRbd8BBKT7mftqJBxBgr4MqekjNVLeAbK6CRei4UMA7JbgHtpn0eWrq5rj3Gsv3S3hHn54A5XD9XCm3lWkjrJCqLw+y9+7I=
+	t=1724706638; cv=none; b=so0/WogBZDfa8hy/AeVIP5QT4ekGActgY0jYCqZbQZS3HjSToeQ/q1rYzDqSqLGo3ngycS09+iBlR5uYbz3BXDO/3HELX7qu/Wrw8nKM6BdYe0u6mNUERn4MVcVACkRLVcmnRJhxkiWLS2RcoS2IPFpYJS57zX7s5YgecsSSXBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724706575; c=relaxed/simple;
-	bh=vAw0jhnjl/TBb3fjv71HUyK8CMWWWW9nwcU1zAgdAQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BN+CTm0gMkKJBh0M0KDF65Aoz6ptEBeCdOiFkRrZbcYRuP5lKJyWV2gw8yFh05LUKhsIKDo+8toGQq7dHi9s48MEcSPcBhZy/lgdp2J8PrTaC6S0SrMp7XOQEzLIWNxvdbf2AI8+RedVidMVbTQltVCR6c6RJb0zhzP7b20owkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SeNyOaDL; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so5617898a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:09:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724706573; x=1725311373; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=maYmRQ8BUA18ToixsUnE3Tx/VOkcQJLLFkI/iV7swC4=;
-        b=SeNyOaDL0RyPMu1iBrmnK3rRVNkdWvNzygKHlPknj1MUaMLU7pztYwIkhPyoJ/oBY7
-         XepCN8EVPfygjWJxLHEUzdXWl19ebm1JLxIj2wOjgD/XJa7TKC5sIeV5Z+sJSNJoMWlu
-         PNhcPQJpKgjlF5Hh+jdWmkq3n3gRAsqEzm95ugH16TGaZMEPMNwDbaCtivSLzuRHHMLN
-         epE3Gp5jo5f1BGjPehkURkp7hTwcAspBIF30t2HYC96LJtp9D7nPH7CB9wNh80vsNcLv
-         O1moe62WxVndLGfCuO1JZiRWBzjzTTH+PtX1pQ3nq+f8emfWT9vtO5X6Ktrt69K5zmk3
-         SCvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724706573; x=1725311373;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=maYmRQ8BUA18ToixsUnE3Tx/VOkcQJLLFkI/iV7swC4=;
-        b=E0Nsw5LO1TK4aRrWcPYoLAKrrHYlni2u3E6XAwZqciptiSfcH4nM1T+lQZwZdNz+Te
-         fUcMQrvK9kIS9zPPNebdRQbFFUK1N8eWTwzi5wU7miHilO4eT42+jMV2x7Mo4sdg4IwP
-         hjhERjuw3peV0exSRpcfNjT62JvYvS3FWOVep7tRdcxgHlHQUB+/5g1GT9ncCUgunUDZ
-         fah2/bmfpLQGjMObcY/JkUXFraqhx3pMHQbSIRVXVfH1LsvY6gJbBOnOYM/fvqLYJRbh
-         dsygEVQC39i0rTKQZY6pRKzuuJtQRPAFTw6QuCNVl9gYigkSz9CbB0sS6E+LowoJ/fBt
-         Oebw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2CADnSWDwy/VLYUW8av9SQ9ySu3ysctNooVImuovRXnEZmGN9l1i6QRImtUBC9pd4eyfC0tEzZt4V+I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhnnNAc/uIp6ZJ8+LF5gaBY3IwkzpX84oJG7RoO4nzR0tYd65/
-	APNoN+pqDt0sxVJZZfHfR57sq3/CGwRQ55jHZhF0gyv6PeI/K6TF
-X-Google-Smtp-Source: AGHT+IG+7yLIOwVvVVsGb2VMIvAi7E4PP/ggkMHJBEXY9FiKZ7RaG6OiSVf44W72QVjbLF6feq6mkw==
-X-Received: by 2002:a05:6402:524f:b0:5c0:ab6f:652a with SMTP id 4fb4d7f45d1cf-5c0ab6f6697mr2751761a12.3.1724706572335;
-        Mon, 26 Aug 2024 14:09:32 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8502:42e6:b0b2:a0bb:dc32? (p200300c78f2a850242e6b0b2a0bbdc32.dip0.t-ipconnect.de. [2003:c7:8f2a:8502:42e6:b0b2:a0bb:dc32])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb21399bsm195339a12.50.2024.08.26.14.09.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 14:09:32 -0700 (PDT)
-Message-ID: <16df34b2-4d9e-43d4-9176-dea31d58ce2d@gmail.com>
-Date: Mon, 26 Aug 2024 23:09:31 +0200
+	s=arc-20240116; t=1724706638; c=relaxed/simple;
+	bh=/YtAljW6FyyCqwibkLo/DqUDbvDheWGWuWNA6OLT48c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITjbiCBY16uTHHjh9IN6uq92UYfwTIAcEuhJCKMoBJqa9VUxoxD3a9vEqzTzB9aaPdy80rvkctwZLVXSb7yud0IRwVMMq8TeQK83XsHdOipU3GdwpQb57GikvGg5a9Z5DFyoa0nZOYhsy7E2xUSChdXRllCRo/gMXJstKqo8BfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B4x3oswD; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 17:10:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724706635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaC8aYnnshYDuXB3xkqDStpn4QcjqPwT2qzAlFZm4bw=;
+	b=B4x3oswDfTQKT5G32KZlZvBiJs4+mierzENSMOLxZqtGz0ZXwgY7VcpSr8oJ8+4GIfGY0I
+	zzu5vsDPI7Q6k46Dg5g4e4evPMhvcTMFBUTOmJLNS7cGeefTjJSh9dXrWB0qlWlNwPG0or
+	Mh9AbSxrs2fzaatiW0LPKlxSx+sYluM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <jf6dh7icf4vt4dgt4o2h6xvvdlyjewa5wmtn6brumh2tqzlrts@lb7xxthxh7uc>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <ZszeUAMgGkGNz8H9@tiehlicka>
+ <d5zorhk2dmgjjjta2zyqpyaly66ykzsnje4n4j4t5gjxzt57ty@km5j4jktn7fh>
+ <ZszlQEqdDl4vt43M@tiehlicka>
+ <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: rtl8192e: Fix parenthesis alignment in
- rtl_core.c:325
-To: Gabriel Tassinari <gabrieldtassinari@gmail.com>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ~lkcamp/patches@lists.sr.ht
-References: <20240826195915.8494-1-gabrieldtassinari@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240826195915.8494-1-gabrieldtassinari@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ut5zfyvpkigjqev43kttxhxmpgnbkfs4vdqhe4dpxr6wnsx6ct@qmrazzu3fxyx>
+X-Migadu-Flow: FLOW_OUT
 
-On 8/26/24 21:58, Gabriel Tassinari wrote:
-> fix parenthesis alignment in _rtl92e_qos_handle_probe_response to
-> silence checkpatch warning:
+On Mon, Aug 26, 2024 at 04:44:01PM GMT, Kent Overstreet wrote:
+> No, I explained why GFP_NORECLAIM/PF_MEMALLOC_NORECLAIM can absolutely
+> apply to a context, not a callsite, and why vmalloc() and kvmalloc()
+> ignoring gfp flags is a much more serious issue.
 > 
-> CHECK: Alignment should match open parenthesis
+> If you want to do something useful, figure out what we're going to do
+> about _that_. If you really don't want PF_MEMALLOC_NORECLAIM to exist,
+> then see if Linus will let you plumb gfp flags down to pte allocation -
+> and beware, that's arch code that you'll have to fix.
 > 
-> Signed-off-by: Gabriel Tassinari <gabrieldtassinari@gmail.com>
-> ---
-> v2: Include the modified file in commit message
-> ---
->   drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Reminder: kvmalloc() is a thing, and it's steadily seeing wider use.
 > 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> index ad21263e725f..18739583f579 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> @@ -322,7 +322,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
->   
->   	if (network->flags & NETWORK_HAS_QOS_MASK) {
->   		if (active_network &&
-> -				(network->flags & NETWORK_HAS_QOS_PARAMETERS))
-> +		   (network->flags & NETWORK_HAS_QOS_PARAMETERS))
->   			network->qos_data.active = network->qos_data.supported;
->   
->   		if ((network->qos_data.active == 1) && (active_network == 1) &&
+> Otherwise, PF_MEMALLOC_NORECLAIM needs to stay; and thank you for
+> bringing this to my attention, because it's made me realize all the
+> other places in bcachefs that use gfp flags for allocating memory with
+> btree locks held need to be switch to memalloc_flags_do().
 
-Hi Gabriel,
+Additionally: plumbing gfp flags to pte allocation is something we do
+need to do. I proposed it before kvmalloc() was a thing, but now it's
+become much more of a lurking landmine.
 
-I would do the indentation one space deeper to show that it is included 
-in the if (
--                  (network->flags & NETWORK_HAS_QOS_PARAMETERS))
-+                   (network->flags & NETWORK_HAS_QOS_PARAMETERS))
-
-You can ask the question why I did not tell you earlier... sorry I 
-missed that and I wonder why checkpatch did not catch that.
-
-Thanks for your support.
-
-Bye Philipp
+Even with that I'd still be against this series, though. GFP_NOFAIL
+interacting badly with other gfp/memalloc flags is going to continue to
+be an issue, and I think the only answer to that is stricter runtime
+checks (which, thank you mm guys for adding recently).
 
