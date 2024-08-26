@@ -1,205 +1,154 @@
-Return-Path: <linux-kernel+bounces-300983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D17E95EB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:02:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4592395EB3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80CBB1C21C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:02:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4FA1F2507E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6DC13AA26;
-	Mon, 26 Aug 2024 07:55:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C933146593;
+	Mon, 26 Aug 2024 07:56:01 +0000 (UTC)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD42D052;
-	Mon, 26 Aug 2024 07:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0749513AA31
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724658914; cv=none; b=C8RB2WqBgvtGzw9cajE4ObpkChubjypLLvg4sg/lCDG0fM8elENxk74x9q0zVDJumh6HH90HbbdIJwgH/Wm8k0fsjCbQpFEFhck97ARybm8t3SepQcPDMz2Dt2YF8KkxVZIf+oTZS6dP0eB7AtXl+lS93Su3WczSf6qoL7LCcsU=
+	t=1724658960; cv=none; b=WVHo6ZHu/KaTxbyQdDmmIwW/VOrByIHn0TxfwvNT0TfHNOsKgUN0suaIdO0UnTA70Gx7nzEvtRt5NqMSbwC/VJa9O1S1lewqX5+R5k0PYUxqsCF8/BkdSvaHE4KK43vwsPelZbF6ZHz5EQgRnWBmk3wZmOWoTh8lsvaB55keX34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724658914; c=relaxed/simple;
-	bh=jJiYC1g7DDJ2SI7n4ZqSQeOupm9HEWP+pCn4FZGr1Vc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ErCntOiqEDbJBMQqsFdRvevLdtLUZIUn7FEItOXB5+J3hBcRGcZj+WfTpX784R4JeAGXiGBWaPULiSZGXsOT4iV3x2jgo9zCk86Q6gVdcTUoI6kyLVCi5kfnNW10jBo6cRVg1npCFYO8W/qxAkf4jTw2QbeYxRq2mOHmXqC1+uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4CFC8CDD4;
-	Mon, 26 Aug 2024 07:55:08 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:25:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-Cc: agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-	mani@kernel.org, quic_msarkar@quicinc.com,
-	quic_kraravin@quicinc.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] PCI: qcom: Add equalization settings for 16 GT/s
-Message-ID: <20240826075505.zg3tr7abs5rotkjo@thinkpad>
-References: <20240821170917.21018-1-quic_schintav@quicinc.com>
- <20240821170917.21018-3-quic_schintav@quicinc.com>
+	s=arc-20240116; t=1724658960; c=relaxed/simple;
+	bh=KaYeslifxKzbF8Y7UMB+7VIYFGMZJ9rteYiBHrdYu2g=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HHKoGkw2KiRAYuKXtt67XhjMtifwRGHob/rZljzVqYMDrrdFEfscxVbeDITYfoOJcf5p1CyqRtdex0ZeK/TabP7oPJt6eGJWOzdx8XGWreB7nHaIE1a5xYDcNKxgmo4AXX0g+AvUvasS9QwAByYKO8MXHeivZqm/pvT1kV8/goU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:344c:fc9f:aaa5:f9d2])
+	by xavier.telenet-ops.be with cmsmtp
+	id 4Xvq2D0063GuYDE01XvqBW; Mon, 26 Aug 2024 09:55:50 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1siUZn-0011Sa-BA
+	for linux-kernel@vger.kernel.org;
+	Mon, 26 Aug 2024 09:55:50 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1siUZq-00ABdw-2P
+	for linux-kernel@vger.kernel.org;
+	Mon, 26 Aug 2024 09:55:50 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v6.11-rc5
+Date: Mon, 26 Aug 2024 09:55:50 +0200
+Message-Id: <20240826075550.2428029-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAHk-=wh599movdAyCHfVmYakq8rqKQD9wCvUAgBqbF3znEu_2g@mail.gmail.com>
+References: <CAHk-=wh599movdAyCHfVmYakq8rqKQD9wCvUAgBqbF3znEu_2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240821170917.21018-3-quic_schintav@quicinc.com>
 
-On Wed, Aug 21, 2024 at 10:08:43AM -0700, Shashank Babu Chinta Venkata wrote:
-> During high data transmission rates such as 16 GT/s , there is an
-> increased risk of signal loss due to poor channel quality and
-> interference. This can impact receiver's ability to capture signals
-> accurately. Hence, signal compensation is achieved through appropriate
-> lane equalization settings at both transmitter and receiver. This will
-> result in increased PCIe signal strength.
-> 
-> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.h  | 12 ++++++
->  drivers/pci/controller/dwc/pcie-qcom-common.c | 37 +++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-qcom-common.h |  1 +
->  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  3 ++
->  drivers/pci/controller/dwc/pcie-qcom.c        |  3 ++
->  5 files changed, 56 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 53c4c8f399c8..50265a2fbb9f 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -126,6 +126,18 @@
->  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT	24
->  #define GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK	GENMASK(25, 24)
->  
-> +#define GEN3_EQ_CONTROL_OFF			0x8a8
-> +#define GEN3_EQ_CONTROL_OFF_FB_MODE		GENMASK(3, 0)
-> +#define GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE	BIT(4)
-> +#define GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC	GENMASK(23, 8)
-> +#define GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL	BIT(24)
-> +
-> +#define GEN3_EQ_FB_MODE_DIR_CHANGE_OFF          0x8ac
-> +#define GEN3_EQ_FMDC_T_MIN_PHASE23		GENMASK(4, 0)
-> +#define GEN3_EQ_FMDC_N_EVALS			GENMASK(9, 5)
-> +#define GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA	GENMASK(13, 10)
-> +#define GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA	GENMASK(17, 14)
-> +
->  #define PCIE_PORT_MULTI_LANE_CTRL	0x8C0
->  #define PORT_MLTI_UPCFG_SUPPORT		BIT(7)
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.c b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> index 1d8992147bba..e085075557cd 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-common.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.c
-> @@ -15,6 +15,43 @@
->  #include "pcie-designware.h"
->  #include "pcie-qcom-common.h"
->  
-> +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci)
-> +{
-> +	u32 reg;
-> +
-> +	/*
-> +	 * GEN3_RELATED_OFF register is repurposed to apply equalization
-> +	 * settings at various data transmission rates through registers
-> +	 * namely GEN3_EQ_*. RATE_SHADOW_SEL bit field of GEN3_RELATED_OFF
-> +	 * determines data rate for which this equalization settings are
-> +	 * applied.
-> +	 */
-> +	reg = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
-> +	reg &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
-> +	reg &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
-> +	reg |= FIELD_PREP(GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK, 0x1);
-> +	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, reg);
-> +
-> +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF);
-> +	reg &= ~(GEN3_EQ_FMDC_T_MIN_PHASE23 |
-> +		GEN3_EQ_FMDC_N_EVALS |
-> +		GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA |
-> +		GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA);
-> +	reg |= FIELD_PREP(GEN3_EQ_FMDC_T_MIN_PHASE23, 0x1) |
-> +		FIELD_PREP(GEN3_EQ_FMDC_N_EVALS, 0xd) |
-> +		FIELD_PREP(GEN3_EQ_FMDC_MAX_PRE_CUSROR_DELTA, 0x5) |
-> +		FIELD_PREP(GEN3_EQ_FMDC_MAX_POST_CUSROR_DELTA, 0x5);
-> +	dw_pcie_writel_dbi(pci, GEN3_EQ_FB_MODE_DIR_CHANGE_OFF, reg);
-> +
-> +	reg = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
-> +	reg &= ~(GEN3_EQ_CONTROL_OFF_FB_MODE |
-> +		GEN3_EQ_CONTROL_OFF_PHASE23_EXIT_MODE |
-> +		GEN3_EQ_CONTROL_OFF_FOM_INC_INITIAL_EVAL |
-> +		GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC);
-> +	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, reg);
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_pcie_common_set_16gt_eq_settings);
-> +
->  struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
->  {
->  	struct icc_path *icc_p;
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-common.h b/drivers/pci/controller/dwc/pcie-qcom-common.h
-> index 897fa18e618a..c281582de12c 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-common.h
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-common.h
-> @@ -13,3 +13,4 @@
->  struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path);
->  int qcom_pcie_common_icc_init(struct dw_pcie *pci, struct icc_path *icc_mem, u32 bandwidth);
->  void qcom_pcie_common_icc_update(struct dw_pcie *pci, struct icc_path *icc_mem);
-> +void qcom_pcie_common_set_16gt_eq_settings(struct dw_pcie *pci);
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index e1860026e134..823e33a4d745 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -455,6 +455,9 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
->  		goto err_disable_resources;
->  	}
->  
-> +	if (pcie_link_speed[pci->link_gen] == PCIE_SPEED_16_0GT)
+Below is the list of build error/warning regressions/improvements in
+v6.11-rc5[1] compared to v6.10[2].
 
-Abel reported that 'pci->link_gen' is not updated unless the 'max-link-speed'
-property is set in DT on his platform. I fixed that issue locally and this
-series will depend on those patches.
+Summarized:
+  - build errors: +5/-21
+  - build warnings: +2/-19
 
-Provided that you are having issues with your build environment as discussed
-offline, I'd like to take over the series to combine my patches and address the
-review comments. Let me know if you are OK with this or not.
+JFYI, when comparing v6.11-rc5[1] to v6.11-rc4[3], the summaries are:
+  - build errors: +0/-6
+  - build warnings: +0/-0
 
-- Mani
+Note that there may be false regressions, as some logs are incomplete.
+Still, they're build errors/warnings.
 
-> +		qcom_pcie_common_set_16gt_eq_settings(pci);
-> +
->  	/*
->  	 * The physical address of the MMIO region which is exposed as the BAR
->  	 * should be written to MHI BASE registers.
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ee32590f1506..829b34391af1 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -280,6 +280,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
->  {
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->  
-> +	if (pcie_link_speed[pci->link_gen] == PCIE_SPEED_16_0GT)
-> +		qcom_pcie_common_set_16gt_eq_settings(pci);
-> +
->  	/* Enable Link Training state machine */
->  	if (pcie->cfg->ops->ltssm_enable)
->  		pcie->cfg->ops->ltssm_enable(pcie);
-> -- 
-> 2.46.0
-> 
+Happy fixing! ;-)
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/5be63fc19fcaa4c236b307420483578a56986a37/ (131 out of 132 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/0c3836482481200ead7b416ca80c68a29cfdaabd/ (all 132 configs)
+[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/47ac09b91befbb6a235ab620c32af719f8208399/ (all 132 configs)
+
+
+*** ERRORS ***
+
+5 error regressions:
+  + /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]:  => 4718:45
+  + /kisskb/src/kernel/fork.c: error: #warning clone3() entry point is missing, please fix [-Werror=cpp]:  => 3091:2
+  + {standard input}: Error: displacement to undefined symbol .L142 overflows 8-bit field :  => 1070
+  + {standard input}: Error: displacement to undefined symbol .L161 overflows 8-bit field :  => 1075
+  + {standard input}: Error: unknown pseudo-op: `.l18':  => 1111
+
+21 error improvements:
+  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sparc_floppy_irq' [-Werror=missing-prototypes]: 200:13 => 
+  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sun_pci_fd_dma_callback' [-Werror=missing-prototypes]: 437:6 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'pfn_is_nosave' [-Werror=missing-prototypes]: 22:5 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'restore_processor_state' [-Werror=missing-prototypes]: 35:6 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'save_processor_state' [-Werror=missing-prototypes]: 30:6 => 
+  - /kisskb/src/arch/sparc/prom/misc_64.c: error: no previous prototype for 'prom_get_mmu_ihandle' [-Werror=missing-prototypes]: 165:5 => 
+  - /kisskb/src/arch/sparc/prom/p1275.c: error: no previous prototype for 'prom_cif_init' [-Werror=missing-prototypes]: 52:6 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c: error: unknown option after '#pragma GCC diagnostic' kind [-Werror=pragmas]: 16:9 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h: error: 'gen7_0_0_external_core_regs' defined but not used [-Werror=unused-variable]: 924:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h: error: 'gen7_2_0_external_core_regs' defined but not used [-Werror=unused-variable]: 748:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_external_core_regs' defined but not used [-Werror=unused-variable]: 1438:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_sptp_clusters' defined but not used [-Werror=unused-variable]: 1188:43 => 
+  - /kisskb/src/fs/bcachefs/data_update.c: error: the frame size of 1028 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]: 338:1 => 
+  - error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0xc), (.fixup+0x4) => 
+  - error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0x20), (.fixup+0x10), (.fixup+0x18), (.fixup+0x0), (.fixup+0x8) => 
+  - error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text': (.head.text+0x5100), (.head.text+0x5040) => 
+  - error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o: (.init.text+0xa4) => 
+  - {standard input}: Error: displacement to undefined symbol .L137 overflows 8-bit field : 1031, 1105 => 
+  - {standard input}: Error: displacement to undefined symbol .L158 overflows 8-bit field : 1110 => 
+  - {standard input}: Error: pcrel too far: 1021, 1255, 1096, 1022, 1126, 1095, 1074, 1020, 1254 => 1059, 1061, 1060, 1397
+  - {standard input}: Error: unknown pseudo-op: `.al': 1270 => 
+
+
+*** WARNINGS ***
+
+2 warning regressions:
+  + /kisskb/src/fs/btrfs/fiemap.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 822:19
+  + /kisskb/src/kernel/fork.c: warning: #warning clone3() entry point is missing, please fix [-Wcpp]:  => 3091:2
+
+19 warning improvements:
+  - ./.config.32r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
+  - ./.config.32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
+  - ./.config.32r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 95 => 
+  - ./.config.64r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
+  - ./.config.64r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
+  - ./.config.64r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 98 => 
+  - ./.config.micro32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 94 => 
+  - .config: warning: override: ARCH_RV32I changes choice state: 6414 => 
+  - .config: warning: override: CPU_BIG_ENDIAN changes choice state: 97, 92, 94, 95, 93 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_init' [-Wmissing-prototypes]: 113:13 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_interrupt' [-Wmissing-prototypes]: 89:6 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_init' [-Wmissing-prototypes]: 398:12 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_set_64bit' [-Wmissing-prototypes]: 249:6 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-time.c: warning: no previous prototype for 'indy_8254timer_irq' [-Wmissing-prototypes]: 119:18 => 
+  - /kisskb/src/arch/sparc/prom/misc_64.c: warning: no previous prototype for 'prom_get_mmu_ihandle' [-Wmissing-prototypes]: 165:5 => 
+  - /kisskb/src/arch/sparc/prom/p1275.c: warning: no previous prototype for 'prom_cif_init' [-Wmissing-prototypes]: 52:6 => 
+  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_index' is used uninitialized [-Wuninitialized]: 113:23 => 
+  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_last' is used uninitialized [-Wuninitialized]: 113:36 => 
+  - /kisskb/src/fs/btrfs/extent_io.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]: 3285:19 => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
