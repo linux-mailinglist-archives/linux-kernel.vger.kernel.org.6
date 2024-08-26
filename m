@@ -1,250 +1,395 @@
-Return-Path: <linux-kernel+bounces-300686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F8295E72D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C074B95E732
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1362819B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BE22819F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BC82E400;
-	Mon, 26 Aug 2024 03:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PW4Z4JtH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4522E419;
+	Mon, 26 Aug 2024 03:09:45 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FB618C36;
-	Mon, 26 Aug 2024 03:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9CC1373;
+	Mon, 26 Aug 2024 03:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724641502; cv=none; b=VW/bGPTHiZdQmqxZy/TQNTKHjUQGLzKqGM0Dh+i3hyBY3T+XWwxhRzkKxpdxbVlhsAoYh4s6geUP1qsAcoW5dpLxjcIl/JAVEgjs8lv5w3PN0ar1DCO6BLTHhVnhR6S3QAyTXx2Ib2QMPm+ghpwk879tdHhy1oDCPh7jKkdVjpY=
+	t=1724641785; cv=none; b=XLS329Jdx73gGd2gcXWmxN4B8aoPCfjIH9gAY5F4xz6LCddxzSoWqmRe5lVzhhUXomQa/Qi1Yc4ZKYne2AT4FPxOUnOMfoWCvwQfvyL5pT26q1wZgtrxciBk8ci4gyndz/ACjjb5OKh2phWjI5XGDo8G8hVphgsa74B2nyYUXA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724641502; c=relaxed/simple;
-	bh=vNScu6jJTCQXpVIQSsaj1iqFQ9TuTkIvMclsz22HBUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qdI0E2e2jsFlHYAuO+3hjivG75mUGQlq0XLyQX8ZT45TRQ1VOg5Rpdz9mvTm30a1mYFLo63kPsaAh+WZhGooqc8tE/yOFORZZrLxencgPC/HyoUyiJJU/e5US7Ux5LLMO+fqUMrKOPHb1zn+lmNjtisPURINZHt8mvZXsErIo1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PW4Z4JtH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47PNdsPH027007;
-	Mon, 26 Aug 2024 03:04:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aizQnuz/qzViwPkiNWxfqvDhyuY/B2cAggz0wcFedkU=; b=PW4Z4JtHyi891lXn
-	Cd1oWAjES0EpLhKS32XYlAxOPxForjC8/VUrVuDydKde/XR3Q7RkDRJbBVq6g6ud
-	eaJUbghVvuxt2+JvNFZ0qf9xvVbwHFttTJt8J+uyScwR3iAuJMuW6faUtK9P904H
-	JXCAefViEPhqNezUpRQPX5zKTwDBU1jJ7yDmdu7eVDbSZEpdVLhmTt/rlsc0t9Cv
-	04G5NBS7ecxevv3t6sRv797ZTq8yXOuvYN65wiZ6qCkWFNkiZlXUtXFBhlE7ag1v
-	Zv5YHB0uNyySWrVemde1OcEnkXQPJ5Zm8Kje7/nGxNtWlTPDtwSls0PW8F11QT7J
-	DvhQQg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41796kt9sg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 03:04:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q34jo5009812
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 03:04:45 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 25 Aug
- 2024 20:04:43 -0700
-Message-ID: <d3ceaead-5619-4413-acce-64567c08fb27@quicinc.com>
-Date: Mon, 26 Aug 2024 11:04:41 +0800
+	s=arc-20240116; t=1724641785; c=relaxed/simple;
+	bh=F6/ZTly055eWO2i/XHPxfw4Grpop7nRNFNqh5dBx06w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxUawnuJNfICSJZ0JEtpL+XIW8wavzT6Rh0qp1C9pJGYXAJ56vSCceQ/ZOAMUjMs+6UCGn2+JCDw1XghMzB3FDYmpGXWptSmPG9yXrmMh4bw2JWpeTHZaF4U7YqLr+DYCXlIn0AFB1rrxtjSbdzCDXq2K92VZz7U4eh/ocMLfBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Mon, 26 Aug 2024 03:09:39 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
+Cc: Yangyu Chen <cyy@cyyself.name>, Jesse Taube <jesse@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-binding: pinctrl: spacemit: add documents for
+ K1 SoC
+Message-ID: <20240826030939.GYB22924.dlan.gentoo>
+References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
+ <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] wifi: ath11k: Set IRQ affinity hint after requesting
- all shared IRQs
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <kvalo@kernel.org>, <jjohnson@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
- <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l7ApslopMnCS61v-ZRsFfZUBR7eAYbFx
-X-Proofpoint-ORIG-GUID: l7ApslopMnCS61v-ZRsFfZUBR7eAYbFx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-25_20,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
- spamscore=0 clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408260023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
 
 
-
-On 8/23/2024 11:55 PM, Manivannan Sadhasivam wrote:
-> If a shared IRQ is used by the driver due to platform limitation, then the
-> IRQ affinity hint is set right after the allocation of IRQ vectors in
-> ath11k_pci_alloc_msi(). This does no harm unless one of the functions
-> requesting the IRQ fails and attempt to free the IRQ. This results in the
-> below warning:
+On 13:10 Sun 25 Aug     , Yixun Lan wrote:
+> Add dt-binding for the pinctrl driver of SpacemiT's K1 SoC.
 > 
-> [   29.804276] ath11k_pci 0000:01:00.0: failed to power up mhi: -110
-> [   29.810564] ath11k_pci 0000:01:00.0: failed to start mhi: -110
-> [   29.816566] ath11k_pci 0000:01:00.0: failed to power up :-110
-> [   29.847202] ath11k_pci 0000:01:00.0: failed to create soc core: -110
-> [   29.853735] ath11k_pci 0000:01:00.0: failed to init core: -110
-> [   29.859745] ------------[ cut here ]------------
-> [   29.864486] WARNING: CPU: 7 PID: 349 at kernel/irq/manage.c:1929 free_irq+0x278/0x29c
-> [   29.872529] Modules linked in: snd_soc_hdmi_codec ath11k_pci(+) venus_dec venus_enc ath11k videobuf2_dma_contig videobuf2_memops nb7vpq904m lontium_lt9611uxc mcp251xfd mac80211 can_dev libarc4 hci_uart
->  btqca btbcm ax88179_178a usbnet option leds_qcom_lpg usb_wwan led_class_multicolor usbserial crct10dif_ce qcom_pmic_tcpm tcpm venus_core aux_hpd_bridge qcom_spmi_adc_tm5 v4l2_mem2mem qcom_pon qcom_spmi_a
-> dc5 videobuf2_v4l2 bluetooth videobuf2_common msm qcom_spmi_temp_alarm rtc_pm8xxx qcom_vadc_common ocmem snd_soc_sm8250 gpu_sched snd_soc_qcom_sdw videodev drm_exec phy_qcom_qmp_combo drm_display_helper s
-> nd_soc_qcom_common qcom_stats mc i2c_qcom_geni llcc_qcom spi_geni_qcom drm_dp_aux_bus aux_bridge icc_bwmon typec qcom_rng coresight_stm coresight_tmc coresight_replicator stm_core coresight_funnel soundwi
-> re_qcom qrtr pci_pwrctl_pwrseq qcrypto pci_pwrctl_core soundwire_bus snd_soc_lpass_va_macro pinctrl_sm8250_lpass_lpi snd_soc_lpass_wsa_macro authenc lpass_gfm_sm8250 coresight slimbus pinctrl_lpass_lpi
-> [   29.872610]  snd_soc_lpass_macro_common qcom_q6v5_pas libdes qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common pwrseq_qcom_wcn qcom_glink_smem mdt_loader pwrseq_core icc_osm_l3 qmi_helpers qcom_wdt socin
-> fo display_connector drm_kms_helper cfg80211 rfkill fuse drm backlight ip_tables x_tables ipv6
-> [   29.990067] CPU: 7 UID: 0 PID: 349 Comm: (udev-worker) Not tainted 6.11-rc4 #50
-> [   29.997564] Hardware name: Qualcomm Technologies, Inc. Robotics RB5 (DT)
-> [   30.004446] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [   30.011591] pc : free_irq+0x278/0x29c
-> [   30.015355] lr : free_irq+0xb4/0x29c
-> [   30.019030] sp : ffff800081f236e0
-> [   30.022441] x29: ffff800081f236e0 x28: ffff64630d260000 x27: ffffd8d89a8c3458
-> [   30.029764] x26: ffff64630d26ac00 x25: 00000000000000d6 x24: ffff6463029c58dc
-> [   30.037086] x23: ffff6463029c5990 x22: ffff64630d261c58 x21: 0000000000000000
-> [   30.044408] x20: ffff646301431c00 x19: ffff6463029c5800 x18: 0000000000000010
-> [   30.051730] x17: 0000000000010108 x16: ffffd8d8f1d8b840 x15: 0763072007740769
-> [   30.059051] x14: 000000000000030d x13: ffff646306b35ae8 x12: ffffd8d8f3852b80
-> [   30.066374] x11: ffff646306b356c0 x10: 0000000000000000 x9 : 00000000000000d6
-> [   30.073696] x8 : 000000000000000f x7 : 1fffec8c605626a1 x6 : ffffd8d8f2e602b8
-> [   30.081017] x5 : 0000000000000030 x4 : ffff646302b13580 x3 : ffff646301431c98
-> [   30.088339] x2 : 0000000000200880 x1 : ffff646301431c00 x0 : ffffd8d8f2b2c1b8
-> [   30.095662] Call trace:
-> [   30.098183]  free_irq+0x278/0x29c
-> [   30.101595]  ath11k_pcic_free_irq+0x70/0x10c [ath11k]
-> [   30.106800]  ath11k_pci_probe+0x800/0x820 [ath11k_pci]
-> [   30.112081]  local_pci_probe+0x40/0xbc
-> [   30.115934]  pci_device_probe+0x1d4/0x1e8
-> [   30.120049]  really_probe+0xbc/0x268
-> [   30.123727]  __driver_probe_device+0x78/0x12c
-> [   30.128204]  driver_probe_device+0x40/0x11c
-> [   30.132505]  __driver_attach+0x74/0x124
-> [   30.136445]  bus_for_each_dev+0x78/0xe0
-> [   30.140383]  driver_attach+0x24/0x30
-> [   30.144059]  bus_add_driver+0xe4/0x208
-> [   30.147910]  driver_register+0x60/0x128
-> [   30.151849]  __pci_register_driver+0x44/0x50
-> [   30.156238]  ath11k_pci_init+0x2c/0x6c [ath11k_pci]
-> [   30.161242]  do_one_initcall+0x70/0x1b8
-> [   30.165182]  do_init_module+0x5c/0x1f0
-> [   30.169034]  load_module+0x19f0/0x1abc
-> [   30.172884]  init_module_from_file+0x88/0xc8
-> [   30.177273]  __arm64_sys_finit_module+0x1c4/0x2b0
-> [   30.182102]  invoke_syscall+0x44/0x100
-> [   30.185953]  el0_svc_common.constprop.0+0xc0/0xe0
-> [   30.190783]  do_el0_svc+0x1c/0x28
-> [   30.194196]  el0_svc+0x34/0xdc
-> [   30.197335]  el0t_64_sync_handler+0xc0/0xc4
-> [   30.201635]  el0t_64_sync+0x190/0x194
-> [   30.205399] ---[ end trace 0000000000000000 ]---
-> [   30.432731] ath11k_pci 0000:01:00.0: probe with driver ath11k_pci failed with error -110
+> Two vendor specific properties are introduced here, As the pinctrl
+> has dedicated slew rate enable control - bit[7], so we have
+> spacemit,slew-rate-{enable,disable} for this. For the same reason,
+> creating spacemit,strong-pull-up for the strong pull up control.
 > 
-> The warning is due to not clearing the affinity hint before freeing the
-> IRQ.
-> 
-> So to fix this, let's set the IRQ affinity hint after requesting all the
-> shared IRQ. This will make sure that the affinity hint gets cleared in the
-> error path before freeing the IRQ.
-if you check 39564b475ac5 ("wifi: ath11k: fix boot failure with one MSI vector") you would see that the hint is set before requesting any IRQ for a purpose.
-
-> 
-> Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
-> 
-> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
-> Fixes: e94b07493da3 ("ath11k: Set IRQ affinity to CPU0 in case of one MSI vector")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > ---
->  drivers/net/wireless/ath/ath11k/pci.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+>  .../bindings/pinctrl/spacemit,k1-pinctrl.yaml      | 134 +++++++++++++++++
+>  include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h  | 161 +++++++++++++++++++++
+>  2 files changed, 295 insertions(+)
 > 
-> diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
-> index 8d63b84d1261..0c22e18e65c7 100644
-> --- a/drivers/net/wireless/ath/ath11k/pci.c
-> +++ b/drivers/net/wireless/ath/ath11k/pci.c
-> @@ -886,16 +886,10 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
->  	if (ret)
->  		goto err_pci_disable_msi;
->  
-> -	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
-> -	if (ret) {
-> -		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
-> -		goto err_pci_disable_msi;
-> -	}
-> -
->  	ret = ath11k_mhi_register(ab_pci);
->  	if (ret) {
->  		ath11k_err(ab, "failed to register mhi: %d\n", ret);
-> -		goto err_irq_affinity_cleanup;
-> +		goto err_pci_disable_msi;
->  	}
->  
->  	ret = ath11k_hal_srng_init(ab);
-> @@ -916,6 +910,12 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
->  		goto err_ce_free;
->  	}
->  
-> +	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
-> +	if (ret) {
-> +		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
-> +		goto err_free_irq;
-> +	}
+> diff --git a/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> new file mode 100644
+> index 0000000000000..8adfc5ebbce37
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/spacemit,k1-pinctrl.yaml
+> @@ -0,0 +1,134 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/spacemit,k1-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  	/* kernel may allocate a dummy vector before request_irq and
->  	 * then allocate a real vector when request_irq is called.
->  	 * So get msi_data here again to avoid spurious interrupt
-> @@ -924,17 +924,20 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
->  	ret = ath11k_pci_config_msi_data(ab_pci);
->  	if (ret) {
->  		ath11k_err(ab, "failed to config msi_data: %d\n", ret);
-> -		goto err_free_irq;
-> +		goto err_irq_affinity_cleanup;
->  	}
->  
->  	ret = ath11k_core_init(ab);
->  	if (ret) {
->  		ath11k_err(ab, "failed to init core: %d\n", ret);
-> -		goto err_free_irq;
-> +		goto err_irq_affinity_cleanup;
->  	}
->  	ath11k_qmi_fwreset_from_cold_boot(ab);
->  	return 0;
->  
-> +err_irq_affinity_cleanup:
-> +	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+> +title: SpacemiT K1 SoC Pin Controller
 > +
->  err_free_irq:
->  	ath11k_pcic_free_irq(ab);
->  
-> @@ -947,9 +950,6 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
->  err_mhi_unregister:
->  	ath11k_mhi_unregister(ab_pci);
->  
-> -err_irq_affinity_cleanup:
-> -	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
-> -
->  err_pci_disable_msi:
->  	ath11k_pci_free_msi(ab_pci);
->  
+> +maintainers:
+> +  - Yixun Lan <dlan@gentoo.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: spacemit,k1-pinctrl
+> +
+> +  reg:
+> +    items:
+> +      - description: pinctrl io memory base
+> +
+> +patternProperties:
+> +  '-cfg$':
+> +    type: object
+> +    description: |
+> +      A pinctrl node should contain at least one subnode representing the
+> +      pinctrl groups available on the machine.
+> +
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '-pins$':
+> +        type: object
+> +        description: |
+> +          Each subnode will list the pins it needs, and how they should
+> +          be configured, with regard to muxer configuration, bias, input
+> +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+> +          slew-rate, drive strength, power source.
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> +
+> +        allOf:
+> +          - $ref: pincfg-node.yaml#
+> +          - $ref: pinmux-node.yaml#
+> +
+> +        properties:
+> +          pinmux:
+> +            description: |
+> +              The list of GPIOs and their mux settings that properties in the
+> +              node apply to. This should be set using the K1_PADCONF macro to
+> +              construct the value.
+> +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pinmux
+> +
+> +          bias-disable: true
+> +
+> +          bias-pull-up: true
+> +
+> +          bias-pull-down: true
+> +
+> +          drive-strength-microamp:
+just realise here should use 'drive-strength' which will comply to hw
+will fix in next version
+
+> +            description: |
+> +              typical current when output high level, but in mA.
+> +              1.8V output: 11, 21, 32, 42 (mA)
+> +              3.3V output: 7, 10, 13, 16, 19, 23, 26, 29 (mA)
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +          input-schmitt:
+> +            description: |
+> +              typical threshold for schmitt trigger.
+> +              0: buffer mode
+> +              1: trigger mode
+> +              2, 3: trigger mode
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1, 2, 3]
+> +
+> +          power-source:
+> +            description: external power supplies at 1.8v or 3.3v.
+> +            enum: [ 1800, 3300 ]
+> +
+> +          slew-rate:
+> +            description: |
+> +              slew rate for output buffer
+> +              0, 1: Slow speed
+> +              2: Medium speed
+> +              3: Fast speed
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1, 2, 3]
+> +
+> +          spacemit,slew-rate-enable:
+> +            description: enable slew rate.
+> +            type: boolean
+> +
+> +          spacemit,slew-rate-disable:
+> +            description: disable slew rate.
+> +            type: boolean
+> +
+> +          spacemit,strong-pull-up:
+> +            description: enable strong pull up.
+> +            type: boolean
+> +
+> +        required:
+> +          - pinmux
+> +
+> +        additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/pinctrl/spacemit,k1-pinctrl.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        pinctrl@d401e000 {
+> +            compatible = "spacemit,k1-pinctrl";
+> +            reg = <0x0 0xd401e000 0x0 0x400>;
+> +            #pinctrl-cells = <2>;
+> +            #gpio-range-cells = <3>;
+> +
+> +            uart0_2_cfg: uart0-2-cfg {
+> +                uart0-2-pins {
+> +                    pinmux = <K1_PADCONF(GPIO_68, 2)>,
+> +                             <K1_PADCONF(GPIO_69, 2)>;
+> +                    bias-pull-up;
+> +                    drive-strength-microamp = <32>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> new file mode 100644
+> index 0000000000000..13ef4aa6c53a3
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/spacemit,k1-pinctrl.h
+> @@ -0,0 +1,161 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) 2022-2024 SpacemiT (Hangzhou) Technology Co. Ltd
+> + * Copyright (c) 2024 Yixun Lan <dlan@gentoo.org>
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_PINCTRL_K1_H
+> +#define _DT_BINDINGS_PINCTRL_K1_H
+> +
+> +#define PINMUX(pin, mux) \
+> +	(((pin) & 0xffff) | (((mux) & 0xff) << 16))
+> +
+> +/* pin offset */
+> +#define PINID(x)	((x) + 1)
+> +
+> +#define GPIO_INVAL  0
+> +#define GPIO_00     PINID(0)
+> +#define GPIO_01     PINID(1)
+> +#define GPIO_02     PINID(2)
+> +#define GPIO_03     PINID(3)
+> +#define GPIO_04     PINID(4)
+> +#define GPIO_05     PINID(5)
+> +#define GPIO_06     PINID(6)
+> +#define GPIO_07     PINID(7)
+> +#define GPIO_08     PINID(8)
+> +#define GPIO_09     PINID(9)
+> +#define GPIO_10     PINID(10)
+> +#define GPIO_11     PINID(11)
+> +#define GPIO_12     PINID(12)
+> +#define GPIO_13     PINID(13)
+> +#define GPIO_14     PINID(14)
+> +#define GPIO_15     PINID(15)
+> +#define GPIO_16     PINID(16)
+> +#define GPIO_17     PINID(17)
+> +#define GPIO_18     PINID(18)
+> +#define GPIO_19     PINID(19)
+> +#define GPIO_20     PINID(20)
+> +#define GPIO_21     PINID(21)
+> +#define GPIO_22     PINID(22)
+> +#define GPIO_23     PINID(23)
+> +#define GPIO_24     PINID(24)
+> +#define GPIO_25     PINID(25)
+> +#define GPIO_26     PINID(26)
+> +#define GPIO_27     PINID(27)
+> +#define GPIO_28     PINID(28)
+> +#define GPIO_29     PINID(29)
+> +#define GPIO_30     PINID(30)
+> +#define GPIO_31     PINID(31)
+> +
+> +#define GPIO_32     PINID(32)
+> +#define GPIO_33     PINID(33)
+> +#define GPIO_34     PINID(34)
+> +#define GPIO_35     PINID(35)
+> +#define GPIO_36     PINID(36)
+> +#define GPIO_37     PINID(37)
+> +#define GPIO_38     PINID(38)
+> +#define GPIO_39     PINID(39)
+> +#define GPIO_40     PINID(40)
+> +#define GPIO_41     PINID(41)
+> +#define GPIO_42     PINID(42)
+> +#define GPIO_43     PINID(43)
+> +#define GPIO_44     PINID(44)
+> +#define GPIO_45     PINID(45)
+> +#define GPIO_46     PINID(46)
+> +#define GPIO_47     PINID(47)
+> +#define GPIO_48     PINID(48)
+> +#define GPIO_49     PINID(49)
+> +#define GPIO_50     PINID(50)
+> +#define GPIO_51     PINID(51)
+> +#define GPIO_52     PINID(52)
+> +#define GPIO_53     PINID(53)
+> +#define GPIO_54     PINID(54)
+> +#define GPIO_55     PINID(55)
+> +#define GPIO_56     PINID(56)
+> +#define GPIO_57     PINID(57)
+> +#define GPIO_58     PINID(58)
+> +#define GPIO_59     PINID(59)
+> +#define GPIO_60     PINID(60)
+> +#define GPIO_61     PINID(61)
+> +#define GPIO_62     PINID(62)
+> +#define GPIO_63     PINID(63)
+> +
+> +#define GPIO_64     PINID(64)
+> +#define GPIO_65     PINID(65)
+> +#define GPIO_66     PINID(66)
+> +#define GPIO_67     PINID(67)
+> +#define GPIO_68     PINID(68)
+> +#define GPIO_69     PINID(69)
+> +#define GPIO_70     PINID(70)
+> +#define GPIO_71     PINID(71)
+> +#define GPIO_72     PINID(72)
+> +#define GPIO_73     PINID(73)
+> +#define GPIO_74     PINID(74)
+> +#define GPIO_75     PINID(75)
+> +#define GPIO_76     PINID(76)
+> +#define GPIO_77     PINID(77)
+> +#define GPIO_78     PINID(78)
+> +#define GPIO_79     PINID(79)
+> +#define GPIO_80     PINID(80)
+> +#define GPIO_81     PINID(81)
+> +#define GPIO_82     PINID(82)
+> +#define GPIO_83     PINID(83)
+> +#define GPIO_84     PINID(84)
+> +#define GPIO_85     PINID(85)
+> +
+> +#define GPIO_101    PINID(89)
+> +#define GPIO_100    PINID(90)
+> +#define GPIO_99     PINID(91)
+> +#define GPIO_98     PINID(92)
+> +#define GPIO_103    PINID(93)
+> +#define GPIO_102    PINID(94)
+> +
+> +#define GPIO_104    PINID(109)
+> +#define GPIO_105    PINID(110)
+> +#define GPIO_106    PINID(111)
+> +#define GPIO_107    PINID(112)
+> +#define GPIO_108    PINID(113)
+> +#define GPIO_109    PINID(114)
+> +#define GPIO_110    PINID(115)
+> +
+> +#define GPIO_93     PINID(116)
+> +#define GPIO_94     PINID(117)
+> +#define GPIO_95     PINID(118)
+> +#define GPIO_96     PINID(119)
+> +#define GPIO_97     PINID(120)
+> +
+> +#define GPIO_86     PINID(122)
+> +#define GPIO_87     PINID(123)
+> +#define GPIO_88     PINID(124)
+> +#define GPIO_89     PINID(125)
+> +#define GPIO_90     PINID(126)
+> +#define GPIO_91     PINID(127)
+> +#define GPIO_92     PINID(128)
+> +
+> +#define GPIO_111    PINID(130)
+> +#define GPIO_112    PINID(131)
+> +#define GPIO_113    PINID(132)
+> +#define GPIO_114    PINID(133)
+> +#define GPIO_115    PINID(134)
+> +#define GPIO_116    PINID(135)
+> +#define GPIO_117    PINID(136)
+> +#define GPIO_118    PINID(137)
+> +#define GPIO_119    PINID(138)
+> +#define GPIO_120    PINID(139)
+> +#define GPIO_121    PINID(140)
+> +#define GPIO_122    PINID(141)
+> +#define GPIO_123    PINID(142)
+> +#define GPIO_124    PINID(143)
+> +#define GPIO_125    PINID(144)
+> +#define GPIO_126    PINID(145)
+> +#define GPIO_127    PINID(146)
+> +
+> +#define SLEW_RATE_SLOW0		0
+> +#define SLEW_RATE_SLOW1		1
+> +#define SLEW_RATE_MEDIUM	2
+> +#define SLEW_RATE_FAST		3
+> +
+> +#define K1_PADCONF(pin, func) (((pin) << 16) | (func))
+> +
+> +#endif /* _DT_BINDINGS_PINCTRL_K1_H */
+> 
+> -- 
+> 2.45.2
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
