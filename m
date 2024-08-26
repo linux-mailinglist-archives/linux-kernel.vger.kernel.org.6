@@ -1,205 +1,119 @@
-Return-Path: <linux-kernel+bounces-301249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F97795EE33
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451F95EE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF251F22B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC880284F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D202A146D5A;
-	Mon, 26 Aug 2024 10:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A70146D6F;
+	Mon, 26 Aug 2024 10:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="pGLX0jLe"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dT11bOid"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C61146A61
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AE5146A71;
+	Mon, 26 Aug 2024 10:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724667230; cv=none; b=BXpWPlfCPJWVk85Vv/Do6EarMu9f6J7B73Sfrx0P59DSde3z7S73UvM2NLeNbqJnEEpe4ku/8UtNgfDWpVw5ds+s1C6hPoVwyk2Rln4ztkWySA3a05QHTPr60uri7luxB4HsH0PnzR7rxcoYU0t/bOKc3zcoReiLxXnx7zAkFfU=
+	t=1724667178; cv=none; b=k4+ahsY43v5j8IonwrGTT/zzXwgJ630jDAaATjA2NUM5QrkGFoPgtrey5ejDt8A4Uo4oT3H9CsIhJ6tcj+gnRRm8YAbBOXh2Phs9IctSs+U1gL647//2zmaD+IkZeIjzdSjLyGpUEhJK8S7Fj2Lm0gP/6lsh84wLvK+yXBiSNYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724667230; c=relaxed/simple;
-	bh=TGI1HK/OW56cEnj1JPUc1WJBzzzkwO+nvRTtcy4SLXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uw+in29XIzP/gsKGucGzgA0AVA5OGUqT2gn222pJL+pky8pY89xAgHhI6ertP+bq6k3ILBVGNjNJBMONZJYVZq9oplCB8JWMTut1YJXCxCS15RsT8UciyimjoX4Q+3q00YPnO0eeAuHdw4Yor/wLeKWNvNT64IOjUzapny+aUsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=pGLX0jLe; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bece5b572eso657950a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724667226; x=1725272026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z07gjud24oTcgbqCvuKd+VAijUebGTMd0Q7+OuaVxsw=;
-        b=pGLX0jLeapZsQoMYDZN9EpWZqYUQfS/fj7wbqyuzMmvBFyZqlqXjwNPh4+Nq85vxkR
-         /j2XngqhiHobVnXA+EQ0UKRGv7I8T8Ev6NRDH3UWbAH/ka5/Con7u/J8Q/C3zM5lR5kL
-         L6FfPkLvR5HmVbRStVbji9eKJV9/Uk00nqps7h/PtB4gGUOX7lwauzDsuXLicKzsprKF
-         9nV/u4FIZ7BmixnVsFFsxaNGAfwlEF4ssOWBkO0smKnTUZLjkUbZkYm17yLxF9N5M6np
-         3eNEuXEASy4nKC+uxqjB/0nSZTYEh0Uxymmx+NfkbBc9q6tuHDbd4jGb7OIe2J0Yyr9/
-         94Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724667226; x=1725272026;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z07gjud24oTcgbqCvuKd+VAijUebGTMd0Q7+OuaVxsw=;
-        b=uMcuzkedr8Nr3Ee1ytOQ6HjqwUOVG8bzGy5UZRjM7uOP4xNrHOlU6XnjbaUml3eXPF
-         3b7Siv/swnA/jaKYSrjV/fXzHkW2cKZn2bpUP5L1yIG1pzti7P9IGY+h1o+AbiP+M6Jd
-         yT9IxGa1/PCmf92z77OcnZENWr/xgp60gw2FgebHnYnF5TLBvfhg4+wLQPIJw3C1r0g8
-         jBkJeFfh/XLdUH0REQx6PucSGcdEKmG2jQj64RD6XPEJYv3SMJjEX99t/4HJ4IGpKdu0
-         WqGtV7FyZdRObIN0+WPZB+Yu5Ona7vGEyay+GvTUmuPK5IB2GhSnaxNxwXUJdCOgmwfR
-         6Pjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFHHZ2F6EKH8G351FXHVCHWKmPMokXaJKwhn+ZDcLzhPbkd1C8VHMimRF5ysZC6vgw20+LDne6iICwryc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4RL7hKELTStuPys7t0jchkp8iR+OekmrTV/33m8f83RA6Lue4
-	ORRCqW3knMrIOwCya7X64/Ltaw1GOnfBDJzWyZkypas/s3PpUg+uVF5WK7w3YTo=
-X-Google-Smtp-Source: AGHT+IEV9jpKoiiBYyVHlySZz6WD5j5YMWpJxDl5FvTQKGNhudF6LglyA82Hxz6x4bVSQON8qEJw5g==
-X-Received: by 2002:a17:906:6a28:b0:a86:8000:be46 with SMTP id a640c23a62f3a-a86a52b3672mr416511666b.3.1724667226265;
-        Mon, 26 Aug 2024 03:13:46 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f459asm643856266b.198.2024.08.26.03.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 03:13:45 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: kent.overstreet@linux.dev,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH v2] bcachefs: Annotate bch_replicas_entry_{v0,v1} with __counted_by()
-Date: Mon, 26 Aug 2024 12:11:36 +0200
-Message-ID: <20240826101135.31482-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724667178; c=relaxed/simple;
+	bh=Um2oUufsq5SYlu4nyvLw6FGEmfUYMQ4wO8GqEDGg98o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1CII05eN4YDo/OsO97r0fZo8BPETyxzKXf7ov0Cpb1F9LO8ZaV/Bm2izp62y211HYEU5bpdKLQ3DtDhXFVzd3Ab2lTsMfbcBjwJTiNqD2AZWuG4nyFFzPdDp8Kk2xk65JViOZZIvLp6h31ZP+ROnhV1MNzVCu2eXzovUUy0BtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dT11bOid; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724667176; x=1756203176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Um2oUufsq5SYlu4nyvLw6FGEmfUYMQ4wO8GqEDGg98o=;
+  b=dT11bOidNbP8M9/p8UUa287IqRJELWvUpCE1WO0PCPydgKC/T7UswU7O
+   1ZrCpBd5kCVjIn/PltcYJ92TH6Nf1DrbVAnc93jV01BGhzdyrnljYjuKH
+   5BrhqqwllKjCyqMd6lmLCzu9FjE6tPu7ihTtaYLifpYQs8BiE1CF0dCiz
+   bYjxwSCgjwqixU8QPjk6KI4tIOVLs0AmugAIFhd1I9f3mt08Bfk7mdfa2
+   DpoP65EuiZr7HDdUwBZERtmsX3pW5evihM9DnDwcnqhTR5pLuvCsXzNNH
+   ZCMynms3WCzMu8onQZuUGnyWPbFf8tmsz5CtURAKDLNp2SilKG/uxI0ZF
+   A==;
+X-CSE-ConnectionGUID: 4LYggGndT2u80+ZrZP8PpA==
+X-CSE-MsgGUID: yURbHQM7Q3qWk6tn1I7GUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="26844542"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="26844542"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:12:56 -0700
+X-CSE-ConnectionGUID: nw9oOquMQYG540OfJTKHcA==
+X-CSE-MsgGUID: +clD/V5tS2iJW4gq63RHzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62769318"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:12:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1siWiN-00000001pOS-3Geq;
+	Mon, 26 Aug 2024 13:12:47 +0300
+Date: Mon, 26 Aug 2024 13:12:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] iio: pressure: bmp280: Remove config error check
+ for IIR filter updates
+Message-ID: <ZsxVH3TG2vs38Brw@smile.fi.intel.com>
+References: <20240823181714.64545-1-vassilisamir@gmail.com>
+ <20240823181714.64545-4-vassilisamir@gmail.com>
+ <Zsjf0bVLZyPqBxru@smile.fi.intel.com>
+ <20240824111806.GC9644@vamoiridPC>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824111806.GC9644@vamoiridPC>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add the __counted_by compiler attribute to the flexible array members
-devs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Sat, Aug 24, 2024 at 01:18:06PM +0200, Vasileios Amoiridis wrote:
+> On Fri, Aug 23, 2024 at 10:15:29PM +0300, Andy Shevchenko wrote:
+> > On Fri, Aug 23, 2024 at 08:17:10PM +0200, Vasileios Amoiridis wrote:
 
-Increment nr_devs before adding a new device to the devs array and
-adjust the array indexes accordingly. Add a helper macro for adding a
-new device.
+...
 
-In bch2_journal_read(), explicitly set nr_devs to 0.
+> > > +	ret = regmap_update_bits(data->regmap, BMP580_REG_DSP_IIR,
+> > > +				 BMP580_DSP_IIR_PRESS_MASK |
+> > > +				 BMP580_DSP_IIR_TEMP_MASK, reg_val);
+> > 
+> > Better to split on logical bounds
+> > 
+> > 	ret = regmap_update_bits(data->regmap, BMP580_REG_DSP_IIR,
+> > 				 BMP580_DSP_IIR_PRESS_MASK | BMP580_DSP_IIR_TEMP_MASK,
+> > 				 reg_val);
+> 
+> This goes beyond the 80 char limit. I know that there is the relaxed
+> limit of 100 chars but I didn't feel it was more readable like this.
+> I could definitely use it though, thanks!
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/bcachefs/buckets.c         | 2 +-
- fs/bcachefs/journal_io.c      | 3 ++-
- fs/bcachefs/replicas.c        | 6 +++---
- fs/bcachefs/replicas_format.h | 9 +++++++--
- 4 files changed, 13 insertions(+), 7 deletions(-)
+The readability has a priority over that limit. That's even mentioned in
+the documentation besides the relaxed limit.
 
-diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
-index be2bbd248631..eda397c562f5 100644
---- a/fs/bcachefs/buckets.c
-+++ b/fs/bcachefs/buckets.c
-@@ -740,7 +740,7 @@ static int __trigger_extent(struct btree_trans *trans,
- 				return ret;
- 		} else if (!p.has_ec) {
- 			replicas_sectors       += disk_sectors;
--			acc_replicas_key.replicas.devs[acc_replicas_key.replicas.nr_devs++] = p.ptr.dev;
-+			replicas_entry_add_dev(&acc_replicas_key.replicas, p.ptr.dev);
- 		} else {
- 			ret = bch2_trigger_stripe_ptr(trans, k, p, data_type, disk_sectors, flags);
- 			if (ret)
-diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-index 32b886feb2ca..30460bce04be 100644
---- a/fs/bcachefs/journal_io.c
-+++ b/fs/bcachefs/journal_io.c
-@@ -1353,6 +1353,7 @@ int bch2_journal_read(struct bch_fs *c,
- 	genradix_for_each(&c->journal_entries, radix_iter, _i) {
- 		struct bch_replicas_padded replicas = {
- 			.e.data_type = BCH_DATA_journal,
-+			.e.nr_devs = 0,
- 			.e.nr_required = 1,
- 		};
- 
-@@ -1379,7 +1380,7 @@ int bch2_journal_read(struct bch_fs *c,
- 			goto err;
- 
- 		darray_for_each(i->ptrs, ptr)
--			replicas.e.devs[replicas.e.nr_devs++] = ptr->dev;
-+			replicas_entry_add_dev(&replicas.e, ptr->dev);
- 
- 		bch2_replicas_entry_sort(&replicas.e);
- 
-diff --git a/fs/bcachefs/replicas.c b/fs/bcachefs/replicas.c
-index 12b1d28b7eb4..e0880cb79345 100644
---- a/fs/bcachefs/replicas.c
-+++ b/fs/bcachefs/replicas.c
-@@ -122,7 +122,7 @@ static void extent_to_replicas(struct bkey_s_c k,
- 			continue;
- 
- 		if (!p.has_ec)
--			r->devs[r->nr_devs++] = p.ptr.dev;
-+			replicas_entry_add_dev(r, p.ptr.dev);
- 		else
- 			r->nr_required = 0;
- 	}
-@@ -139,7 +139,7 @@ static void stripe_to_replicas(struct bkey_s_c k,
- 	for (ptr = s.v->ptrs;
- 	     ptr < s.v->ptrs + s.v->nr_blocks;
- 	     ptr++)
--		r->devs[r->nr_devs++] = ptr->dev;
-+		replicas_entry_add_dev(r, ptr->dev);
- }
- 
- void bch2_bkey_to_replicas(struct bch_replicas_entry_v1 *e,
-@@ -180,7 +180,7 @@ void bch2_devlist_to_replicas(struct bch_replicas_entry_v1 *e,
- 	e->nr_required	= 1;
- 
- 	darray_for_each(devs, i)
--		e->devs[e->nr_devs++] = *i;
-+		replicas_entry_add_dev(e, *i);
- 
- 	bch2_replicas_entry_sort(e);
- }
-diff --git a/fs/bcachefs/replicas_format.h b/fs/bcachefs/replicas_format.h
-index b97208195d06..b7eff904acdb 100644
---- a/fs/bcachefs/replicas_format.h
-+++ b/fs/bcachefs/replicas_format.h
-@@ -5,7 +5,7 @@
- struct bch_replicas_entry_v0 {
- 	__u8			data_type;
- 	__u8			nr_devs;
--	__u8			devs[];
-+	__u8			devs[] __counted_by(nr_devs);
- } __packed;
- 
- struct bch_sb_field_replicas_v0 {
-@@ -17,7 +17,7 @@ struct bch_replicas_entry_v1 {
- 	__u8			data_type;
- 	__u8			nr_devs;
- 	__u8			nr_required;
--	__u8			devs[];
-+	__u8			devs[] __counted_by(nr_devs);
- } __packed;
- 
- struct bch_sb_field_replicas {
-@@ -28,4 +28,9 @@ struct bch_sb_field_replicas {
- #define replicas_entry_bytes(_i)					\
- 	(offsetof(typeof(*(_i)), devs) + (_i)->nr_devs)
- 
-+#define replicas_entry_add_dev(e, d) ({					\
-+	(e)->nr_devs++;							\
-+	(e)->devs[(e)->nr_devs - 1] = (d);				\
-+})
-+
- #endif /* _BCACHEFS_REPLICAS_FORMAT_H */
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
