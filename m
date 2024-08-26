@@ -1,97 +1,133 @@
-Return-Path: <linux-kernel+bounces-301613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7873795F332
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C0795F339
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3FC5B20B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450981C215F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBF417C99B;
-	Mon, 26 Aug 2024 13:47:23 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13C2186608;
+	Mon, 26 Aug 2024 13:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if/p2FAD"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E6B10F7
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EDD15CD52;
+	Mon, 26 Aug 2024 13:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680043; cv=none; b=ER0HKVhQ7+IM6Ke2N5SLrpDtFPRB4307+qAiciJ6nOytP+oHdHiKOKfONW7bcpiM/FNeRfvcqm670ydBYTKFAKg9L2hJJcv5UCkjfN3QMKaLRdtU+DhK+O3EmA21ABgRSzvQsSaa3KZhqixZ7rpunhCht1sojxvqzXQSvn0Oaeo=
+	t=1724680153; cv=none; b=vGV6k82VE9VywVEDoOKRiZGuC54lwiWvW0eV1RTQMDli5feL+TpOI7JYwmJzH0HzgIKkCHEVmJe5WoGl/IBtJiel2ls7KRMwxMrHKUBvVKSpaxN+vryQWQ5qB16WRElLQFFguIKM8Sx4tkHJrqdrWUwPomGa5P3Ke4TafacH5ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680043; c=relaxed/simple;
-	bh=GrLK19NFTDZi0n7+WwEX7ZFQ7xccyFq2j2t2PaorsKo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gwqU24I9Vsn+GcB7U+jxB9YlmUpaPiNOtzil12Kiu/cSwh1//eFvNhp5t/DkWhyy6eE2dDOTdy6IFgdXPvEMeQgIlhgDEJoKGwVfCUB1zEw9BZ99cwe7OHDU5j5Vug4Qm0JaiNaIb/LUZTWQ5FiMv4VOtcW4OvG3Ai8MZNgyfsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d2df2e561so55740605ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:47:21 -0700 (PDT)
+	s=arc-20240116; t=1724680153; c=relaxed/simple;
+	bh=AHXgbLM7oRnPm5/UkiMs59q0RJBlaAsbhTbSHfilH5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dGPacY/FHDU9HJOZXvwFBB6/7JwqMbgsEeyv/iu1VedywF1OcJe82e3v+jXt0Rhy4U4eN45fUwMJ56+ZFVAv4qcDJIzRrr/hwQaoJUfSEUAstqak0mPySD1xXwMSsyDEp5louIS9KrJgJAMmG5OxRAkE+VKLGeIZ4kF7wrHhKxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if/p2FAD; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf6721aae5so21468356d6.2;
+        Mon, 26 Aug 2024 06:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724680150; x=1725284950; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gMZYUnIgKkaD/MfzkLUl+wvAmEY2GmZ1AF06Oeo2Zdw=;
+        b=if/p2FAD+/QUQpKHXKyyieHjUYrbNFQYq2UwC5fCIs5fTFHulIkZTYKWoZe36spyWF
+         Do+GTKpgzGTvAWQZRcZ13Md0EUeaflCzMOI5+UI83+y9ABtRKTfVdr8aR+4rlkhhr9vr
+         UuVVNxxIOFftm0PlivGuwQVZqiK+Flgpj+HB+h0NCjdAA/h/EDTir7bUiouy4zC5D8FD
+         7RWLTfWp1tDmMUdbP2TIb2mj/Vy/Eu8+TM4PrapnGOD5RfTD41LmbNO5GfCCrWF7onNV
+         Zb/1pqMCnhiHlLL03b8lZCPwN+NlQMmTiEJL7QjODqqMCCSk7U+AF7+0mShCp3CzlsfY
+         YF9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724680041; x=1725284841;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4/v4DElyEzXK/XGFg6yIMB6qgM5jU/tl2EiZvQsE5kQ=;
-        b=Pbla8ttentkdMX4UbWAK8LpU4YyEj1XSqQU8yYGLTPUtK+2nVPiJEo6J3E4JTyZsXC
-         uzEt6/Ni1HSY4ORsfRsy+cFGn21DuIZi+DT+g2LneN6SZKiH7khgzp6mjvFKYfyc6siO
-         6d8LOZRKYpM62mgEgOAX0p8gp4ypr7SipjbJ/j/VeDbs4JoI1dBG/Xs5CdvmK+TyBO7P
-         2WGeU5HTXaxQQpfCFmtB2QnyRm+L2lZ1XcjsRBqNhEKajqmY+daakQdZfzM5B+mqT6x6
-         kj03dtrhS5QnAfK1VgwIRkeZXqBp4sMRcbA2ednsm1Y+wko6BLMk0wXc9Y7erxE/CnP+
-         ks3Q==
-X-Gm-Message-State: AOJu0YyJMqmGYlBxycF4DNVXfm0HQCG7mAUDXqJ5O8cixtRkL78ktJN8
-	m31oXGlZ+CMZdTRS1/iAYb+67vd2gzr6PvCiQzT+RBJaFF/9FYGwQBhxO5P7OtQ5naEXBsyD2kL
-	siztW5FYOAHD3DlP5qqBY4dFtJq7KEntfM7+1hkDHbJb1/YPUpokBvSs=
-X-Google-Smtp-Source: AGHT+IGOYYbt7z1oqdAjWn68/nHeAdcfKU+VkfNGz/d+8uKjbo6pu6GEM1SxmtobT+lrwQx7IbDOKVEGw53NaicXz2Ij6mBY8VRY
+        d=1e100.net; s=20230601; t=1724680150; x=1725284950;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gMZYUnIgKkaD/MfzkLUl+wvAmEY2GmZ1AF06Oeo2Zdw=;
+        b=tLMFUX6mHqc9nfnPfHdPzHzM+FQ5p6OalM9jqZfboAs1l7HEJHC8MgbtanlF/n7zFm
+         0IBn0U3Aq0gne0360L708OT8uXl1RyM7ojC10H5bMzAe0t1lcNDlJRVyHCCr73/wTA52
+         pdehH4OqfHZPCqTooKJdmbcYaUQpnTJRv8zLFO+ahni9QavDQsBaJ+idYXh6ROgqbw5f
+         2JqKE+RF+o1uc6cEVC8CL0b1tRWJC/A4NRMtXrRmSGzWWHhCb3T+o1NB4quVbukNh4DB
+         vX2sCyfEglJErt1h54ww8TflcqjE1lRUlNPPSNpD8MioSLFG+1U0IS2bjHm8SM7uCEkF
+         R9iA==
+X-Forwarded-Encrypted: i=1; AJvYcCU35dotnP7b0IHRud+kbqW5M4Kk5SuxSKnjjkAphY6GI9OngcFuHfESPKEinqsc+aaNcXqhqBWxqddhQqv7@vger.kernel.org, AJvYcCVxJfZZAAVC4RFaRk2DdoCqzHjjvP1TemNf3Cd8hPdl7sA0pbfhXe/jusR/BDOHIcj59rIRNppvhkerozHBU8bDUcetZ1wh@vger.kernel.org, AJvYcCWccEOK7KuYW6uAVsjf6yBSbECFOkoN24sH4jO4miu2SkbFsD3YZaBibCu174nYGeB3ehQFbxDT3BtwDsqRMw==@vger.kernel.org, AJvYcCXWFtI6tNf68Z/uakpLlA01ZBzaxHq5haRFzZxlnXIUkKD2OUPNKok+hxVtFGvQj/hoIGdrnqTOCh3GJJvHZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvywONcXWeR2N7hSYUqhyfJakNezJCCfB5HrE3WCar6g0PhXYj
+	Kjeb1ZX+PfMrpdS1diTzY7cuJCC4pjoi7qHaMedy9oimIclK4yF/PdiA6M+uJGkiswd2KpwWleM
+	csLiNPYoX5yGgQt8q7VGEU72seiI=
+X-Google-Smtp-Source: AGHT+IHhatENG6fs2WRBlGagcLBUJVyB1UfWCUwlHlPUXJUhhWRHTDmi04wsvYcpBCIgnGxGVRbqKLCBbwHEGJFWnWM=
+X-Received: by 2002:a05:6214:311a:b0:6bd:9622:4972 with SMTP id
+ 6a1803df08f44-6c16dc39d7fmr113979446d6.14.1724680150391; Mon, 26 Aug 2024
+ 06:49:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216a:b0:39a:ea7d:2a9a with SMTP id
- e9e14a558f8ab-39e3ca0d1c2mr6727295ab.6.1724680041185; Mon, 26 Aug 2024
- 06:47:21 -0700 (PDT)
-Date: Mon, 26 Aug 2024 06:47:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000034d59d0620965db3@google.com>
-Subject: [syzbot] Monthly pm report (Aug 2024)
-From: syzbot <syzbot+listeb96f98dd6da9fc4b8b6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240826085347.1152675-1-mhocko@kernel.org> <20240826085347.1152675-3-mhocko@kernel.org>
+In-Reply-To: <20240826085347.1152675-3-mhocko@kernel.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 26 Aug 2024 21:48:34 +0800
+Message-ID: <CALOAHbAU6XwN9ti0A1_KywpPqzgKxykWTxHYcYPQOywJo7FePQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello pm maintainers/developers,
+On Mon, Aug 26, 2024 at 4:53=E2=80=AFPM Michal Hocko <mhocko@kernel.org> wr=
+ote:
+>
+> From: Michal Hocko <mhocko@suse.com>
+>
+> There is no existing user of the flag and the flag is dangerous because
+> a nested allocation context can use GFP_NOFAIL which could cause
+> unexpected failure. Such a code would be hard to maintain because it
+> could be deeper in the call chain.
+>
+> PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+> that such a allocation contex is inherently unsafe if the context
+> doesn't fully control all allocations called from this context.
+>
+> [1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
+>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  include/linux/sched.h    | 1 -
+>  include/linux/sched/mm.h | 7 ++-----
+>  2 files changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index f8d150343d42..72dad3a6317a 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1657,7 +1657,6 @@ extern struct pid *cad_pid;
+>                                                  * I am cleaning dirty pa=
+ges from some other bdi. */
+>  #define PF_KTHREAD             0x00200000      /* I am a kernel thread *=
+/
+>  #define PF_RANDOMIZE           0x00400000      /* Randomize virtual addr=
+ess space */
+> -#define PF_MEMALLOC_NORECLAIM  0x00800000      /* All allocation request=
+s will clear __GFP_DIRECT_RECLAIM */
 
-This is a 31-day syzbot report for the pm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/pm
+To maintain consistency with the other unused bits, it would be better
+to define PF__HOLE__00800000 instead.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 7 have been fixed so far.
+--
+Regards
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 202     Yes   KASAN: use-after-free Read in netdev_unregister_kobject
-                  https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
-<2> 2       Yes   possible deadlock in dpm_for_each_dev
-                  https://syzkaller.appspot.com/bug?extid=2a03726f1d4eff48b278
-<3> 1       No    WARNING in enable_work
-                  https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Yafang
 
