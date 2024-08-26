@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-302120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C504195FA1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE8795FA2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81200284A81
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9BC9284ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C960199E80;
-	Mon, 26 Aug 2024 19:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965B194AF9;
+	Mon, 26 Aug 2024 19:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXaV5LWE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="yMt3jDjC"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47E54648;
-	Mon, 26 Aug 2024 19:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAD81990DB
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702161; cv=none; b=TpTKgn3BxD5JIFevZLTFfEUrYZWg/hoKOnE7+T0I0nnx43Gt/EZMbwPrf/dMJ8yYvlR8sRu+Hy59KZvHuZ6Rr2qNaYQN20W13dDRWUaOitUB/GTJEP5lyxtUuc71GXl/AJUsvbRAYB1s386x9CK1XBRCH5tROOGJLiL1SVA98Jk=
+	t=1724702212; cv=none; b=KDoiSJHiKr5IHJjLI6UweniSZpU/WUEk6ZHMPcZybSPr+ulJ3oCEujLEXB8rQyduyFUB5TfXXMo6VgAOnUVL829fGCvv87Cn34ZNcc89FIiiPE8enRuowXy9wfOCV6YIyxFhyyVem+Ex68vn6O20+pW2ilQgLE3TBgjsfnc+WA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702161; c=relaxed/simple;
-	bh=wGxjIAFTwaejtggHWXZuDgCwxLBZTkCB+uUES7gFwb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MQaDNyKY2/KVdUgNu4RDJIi1QTmzGADTdmymP0kQwU2fcX2EFVQmrlGXrgjgGd4T4ITwow+IZzxTiDADiiwBvfvy1ZQSIpXDTkYE460fTS0QF7sb5NEpr+A3CY6g7ghViZPT/+6wKTH9QTLwxP12iFYKqCQayitDjgkrOjwr3Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXaV5LWE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7F3C4FE89;
-	Mon, 26 Aug 2024 19:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724702161;
-	bh=wGxjIAFTwaejtggHWXZuDgCwxLBZTkCB+uUES7gFwb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HXaV5LWEmT/LQFxPV7jriO64KkTHVHIDB+Kh84aqyOUbOqdBKinLhWxW7v30qsDfi
-	 T1XDZPsseN1rThL7/E6jaosenWAA941LR77fR1KqQSBL7C6sy9olEfqnDDVUBND/Xu
-	 qbtrUfkB/B0RVU5r96622EogXGyMd6kHDIdGGPCWKXmiK3hz8J83yXiG+m+CLsF0IO
-	 fHMMNJUru2Lzj0DGZKkW71Pt0K+Z4XHFz1qG079OoRWkmU2EzpPlbQnUR2g+nB2mnX
-	 sYPXL7gCe9ZdWxuDBNve0okHBMc7z9hIGnFaPMOXnULU1tNDg1eMBG5GM4mZ24K9jZ
-	 P/ZDbLRuoCqQw==
-Date: Mon, 26 Aug 2024 12:56:00 -0700
-From: Kees Cook <kees@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org,
-	ysato@users.sourceforge.jp, dalias@libc.org,
-	glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	j.granados@samsung.com, willy@infradead.org,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com,
-	trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
-	jlayton@kernel.org, neilb@suse.de, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	paul@paul-moore.com, jmorris@namei.org, linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH -next 12/15] fs: dcache: move the sysctl into its own file
-Message-ID: <202408261253.D155EA0@keescook>
-References: <20240826120449.1666461-1-yukaixiong@huawei.com>
- <20240826120449.1666461-13-yukaixiong@huawei.com>
+	s=arc-20240116; t=1724702212; c=relaxed/simple;
+	bh=f44u1tmOhjyUpYSb/IUGjf0UFDthWX1iuarJYnkxt8E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=omrd3C55HAeDmAgJEDMwGUvz6MdJdq8R7hchoafLyg6l4nqfrOba/yKPiy4mu/gUf5FZ/1nkiN0Tdsm62IMgo2qjm2+IEc7adkBQd7STuvFnBw9RMhAZftgB9nBzBpV2KGRjja3CuEmu3DGp+maWtCBFDNttmZt/2gzNKsL32nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=yMt3jDjC; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826120449.1666461-13-yukaixiong@huawei.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1724702208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lSNB16YmTmGtSszFku9OEpzxCSlM3sSnGKMEEle5Jqc=;
+	b=yMt3jDjCx/B0z6xC082cVw0HQY4Me/FagDvE50oGlZZXCMF5Jq6LNhf+2Qxm6GxDSPpGhy
+	osQCkmyACysyLu+u650VEqjzcGGEzFWl7uD9cGiG2uKMLG+neaKZVbHPdqs4NgFfV9kN36
+	F6RecMyRzzHf5tUuKzWLlXy6Zq2aaUrO4Nqz767HIHttvZPw1xfRvEvz1/LRgm5SKRKgW5
+	e98Q7S61cpPqJ69fgCnm4wfemUXqHoZmqLDjo7EW4Gn5fu5LKSLz7FsFpc5L1IqLMoKSNw
+	zVNkFcO6HzXLN8irNUWL94mMo90EcrTYmktZgOLYwgwJL0BRUy5LS22/0nNbVQ==
+Content-Type: multipart/signed;
+ boundary=128cfb0fa1f91e2aae272ffecd950e1f386b558b6f3d91eca48fb6bdbb70;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Mon, 26 Aug 2024 21:56:34 +0200
+Message-Id: <D3Q3WI8AHRJ1.3B8E985JAVVC2@cknow.org>
+Cc: <airlied@gmail.com>, <alchark@gmail.com>, <andi.shyti@kernel.org>,
+ <andyshrk@163.com>, <broonie@kernel.org>, <cl@rock-chips.com>,
+ <conor+dt@kernel.org>, <daniel@ffwll.ch>, <devicetree@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dsimic@manjaro.org>,
+ <efectn@protonmail.com>, <finley.xiao@rock-chips.com>,
+ <gregkh@linuxfoundation.org>, <heiko@sntech.de>, <honyuenkwun@gmail.com>,
+ <jagan@edgeble.ai>, <jamie@jamieiles.com>, <jic23@kernel.org>,
+ <jirislaby@kernel.org>, <jonas@kwiboo.se>, <jszhang@kernel.org>,
+ <kernel@collabora.com>, <krzk+dt@kernel.org>, <lars@metafoo.de>,
+ <lee@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-i2c@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-serial@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+ <linux@roeck-us.net>, <maarten.lankhorst@linux.intel.com>,
+ <macromorgan@hotmail.com>, <megi@xff.cz>, <michael.riesch@wolfvision.net>,
+ <mripard@kernel.org>, <robh@kernel.org>, <tim@feathertop.org>,
+ <tzimmermann@suse.de>, <ulf.hansson@linaro.org>, <wim@linux-watchdog.org>
+Subject: Re: [PATCH v2 11/12] arm64: dts: rockchip: Add rk3576 SoC base DT
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Detlev Casanova" <detlev.casanova@collabora.com>, "Chukun Pan"
+ <amadeus@jmu.edu.cn>
+References: <23624422.6Emhk5qWAg@trenzalore>
+ <20240825140824.200453-1-amadeus@jmu.edu.cn>
+ <22403959.EfDdHjke4D@bootstrap>
+In-Reply-To: <22403959.EfDdHjke4D@bootstrap>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 26, 2024 at 08:04:46PM +0800, Kaixiong Yu wrote:
-> The sysctl_vfs_cache_pressure belongs to fs/dcache.c, move it to
-> its own file from kernel/sysctl.c. As a part of fs/dcache.c cleaning,
-> sysctl_vfs_cache_pressure is changed to a static variable, and export
-> vfs_pressure_ratio with EXPORT_SYMBOL_GPL to be used by other files.
-> And move the unneeded include(linux/dcache.h).
-> 
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> ---
->  fs/dcache.c            | 21 +++++++++++++++++++--
->  include/linux/dcache.h |  7 +------
->  kernel/sysctl.c        |  9 ---------
->  3 files changed, 20 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 1af75fa68638..8717d5026cda 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -73,8 +73,13 @@
->   * If no ancestor relationship:
->   * arbitrary, since it's serialized on rename_lock
->   */
-> -int sysctl_vfs_cache_pressure __read_mostly = 100;
-> -EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
-> +static int sysctl_vfs_cache_pressure __read_mostly = 100;
-> +
-> +unsigned long vfs_pressure_ratio(unsigned long val)
-> +{
-> +	return mult_frac(val, sysctl_vfs_cache_pressure, 100);
-> +}
-> +EXPORT_SYMBOL_GPL(vfs_pressure_ratio);
+--128cfb0fa1f91e2aae272ffecd950e1f386b558b6f3d91eca48fb6bdbb70
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-This was a static inline, but AFAICT it's only called through
-alloc_super() which is hardly "fast path". If this series gets another
-version it may be worth calling out this inline->out-of-line change in
-the commit log.
+On Mon Aug 26, 2024 at 8:28 PM CEST, Detlev Casanova wrote:
+> On Sunday, 25 August 2024 10:08:24 EDT Chukun Pan wrote:
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> > > ...
+> > > +		opp-1416000000 {
+> > > +			opp-hz =3D /bits/ 64 <1416000000>;
+> > > +			opp-microvolt =3D <725000 725000 950000>;
+> > > +			opp-microvolt-L1 =3D <712500 712500 950000>;
+> > > +			opp-microvolt-L2 =3D <700000 700000 950000>;
+> > > +			opp-microvolt-L3 =3D <700000 700000 950000>;
+> > > +			opp-microvolt-L4 =3D <700000 700000 950000>;
+> > > +			opp-microvolt-L5 =3D <700000 700000 950000>;
+> > > +			clock-latency-ns =3D <40000>;
+> > > +		};
+> > > ...
+> >=20
+> > I'm curious if these frequencies work properly. On the bsp kernel,
+> > 'opp-microvolt-L<name>' is used by the PVTM driver, I don't know
+> > if it works on the upstream kernel.
+>
+> Which seems to correspond to the set opp-hz value. As mentionned by Alexe=
+y,=20
+> the opp-microvolt-L.* values are not used by the driver.
+>
+> I also have not tested any cpufreq settings/driver on this board yet. I c=
+an=20
+> remove the opp-microvolt-L.* for now.
 
-I don't think it's a blocker, but I'm not a VFS maintainer. :)
+If you run this command on the upstream kernel:
+``grep -r "opp-microvolt" arch/arm64/boot/dts/rockchip/``
 
--- 
-Kees Cook
+you'll see it doesn't use the opp-microvolt-LN variants anywhere,
+so this is indeed a downstream/BSP only thing.
+
+--128cfb0fa1f91e2aae272ffecd950e1f386b558b6f3d91eca48fb6bdbb70
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZszd+QAKCRDXblvOeH7b
+bsPMAP9CORw/HV6VNrTduOL78GjAIEpWxM/M9+0BOgYkBHnzpQEAjK8fuZpW3HrN
+ri8LuinsuvlO+D0OMT9SEJJAE8prZQE=
+=pQv4
+-----END PGP SIGNATURE-----
+
+--128cfb0fa1f91e2aae272ffecd950e1f386b558b6f3d91eca48fb6bdbb70--
 
