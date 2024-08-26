@@ -1,260 +1,162 @@
-Return-Path: <linux-kernel+bounces-302153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC9195FAA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256F995FAA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7526A1F21A6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2092827A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D84619AD87;
-	Mon, 26 Aug 2024 20:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BE219B3C4;
+	Mon, 26 Aug 2024 20:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jmJlRpsq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PxwtNCbz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jmJlRpsq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PxwtNCbz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IjyR2HMR"
+Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF7619AD6C;
-	Mon, 26 Aug 2024 20:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8874B19A298;
+	Mon, 26 Aug 2024 20:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724704074; cv=none; b=hRjYLJo6KDZqD53HHWzb6N59Kyct/GEwBdWV/e2iA77b2jN9+v3iyum6BFwoqhtK/+Ln4yNsZmwbE/ff7k4xhdNXy9y5n9FsreiEo0MPWYGluPuVX0wNWMUpSV83IBAJBjj3hWdSHyfgwH5Lam/0ccFFT9+0JrVinhGS/p6wHto=
+	t=1724704080; cv=none; b=oxyo24PpA7xlAVWiPyTNqmLkQJEg9Y+irzGkYWhqaMB6brCueo2H3H2LUldxVG7SW8hVk8fdx3t9NJF9v4qPGoNnXIZMbg2aG0K3Z8Z0/l9JplMmDj30UYN0u13A27zi+DkVgmNgdULZ79c11VxAngCcdQUfvKfV9/FQJ85TBPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724704074; c=relaxed/simple;
-	bh=0wcXTV/rFVMkp/cDt/kf4UlES21XY1MVv5gfdtAo1Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxT3kevs9T7qIIXqrBxbXSAN5Qf+QZh24Ppslia6AsszI1+F/V/dxv4NgO7Zza5b/4XIK42KgV+WpzImn0OZmR52j8Glfa240ekke6ZO3jLNOD911v6wOxeqxHpG0gvC4Uo4pkBCMTjEckLH5VZXUlNyTAcvgJEukLy3xC12c9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jmJlRpsq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PxwtNCbz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jmJlRpsq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PxwtNCbz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 007E821983;
-	Mon, 26 Aug 2024 20:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724704071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fDfujjrqBau35mEB6CAXbc5x49uJ7qFsUYMgdTp555g=;
-	b=jmJlRpsq+LNMq0McnonRjlIW3Du4G2BK6GwitozgTE7iayGUbOqkNIe4eXlFNjZSLR0REE
-	uHMuEw8Qj+Ea1VE6POSvg51EN3XP1Xr0l5L/PnLlT6QT4Qv9p1J0ElHvU1ieJjNlEKGywg
-	BdbyyQYaDNTBLy3NabQ7J8VSFbSHKjY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724704071;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fDfujjrqBau35mEB6CAXbc5x49uJ7qFsUYMgdTp555g=;
-	b=PxwtNCbzIyLm9egcWYR+d6Y0RoUGc8Pze3MeRje+I9Am0X/CFINY8V7Zt4vDRPxehaAJjS
-	En3ubBQGixgHTyDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jmJlRpsq;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=PxwtNCbz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724704071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fDfujjrqBau35mEB6CAXbc5x49uJ7qFsUYMgdTp555g=;
-	b=jmJlRpsq+LNMq0McnonRjlIW3Du4G2BK6GwitozgTE7iayGUbOqkNIe4eXlFNjZSLR0REE
-	uHMuEw8Qj+Ea1VE6POSvg51EN3XP1Xr0l5L/PnLlT6QT4Qv9p1J0ElHvU1ieJjNlEKGywg
-	BdbyyQYaDNTBLy3NabQ7J8VSFbSHKjY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724704071;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fDfujjrqBau35mEB6CAXbc5x49uJ7qFsUYMgdTp555g=;
-	b=PxwtNCbzIyLm9egcWYR+d6Y0RoUGc8Pze3MeRje+I9Am0X/CFINY8V7Zt4vDRPxehaAJjS
-	En3ubBQGixgHTyDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA7A713724;
-	Mon, 26 Aug 2024 20:27:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SbM8OUblzGaJRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 26 Aug 2024 20:27:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8D1E7A0965; Mon, 26 Aug 2024 22:27:46 +0200 (CEST)
-Date: Mon, 26 Aug 2024 22:27:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	jlayton@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: drop one lock trip in evict()
-Message-ID: <20240826202746.ipovnb5hfom7jkmb@quack3>
-References: <20240813143626.1573445-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1724704080; c=relaxed/simple;
+	bh=fsxxXapyT+kN9sqKbfBs4Ozj/9S7FVRHQDjVHvsXIUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ad5A0CBIyfpmQL4ImwGkJfTPx4lmurUNgvv9CShzjXL7Hn/H15q/og8GyyV91bcOZTUKkqLDmajm9VtsZSnthJ799SWqrxYv9qRc5T9JQOT2RiMt67NO4zfNmvdo70n4atLNA8kR97hc51Uxo/D5Us7+ziAup3Y/blJm7+a1wow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IjyR2HMR; arc=none smtp.client-ip=80.12.242.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id igJYs8xhgQYYuigJYsIi3k; Mon, 26 Aug 2024 22:27:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724704070;
+	bh=xTXKc9zNFiZkOYEs4rj07ohFdGVs1EqSkxzdXB/HFAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=IjyR2HMRJuSOw1YXGzf9JnsaiIgS6oYSDqlJhZ7WMUBn36/+PPhGwYwH9lDUOyotB
+	 cOaX4+CSgHvjpKOstiGYjkxy+O88tzRaq4cZYDEW9EMs/pA/qbpzuVUJbwVN/pKfKA
+	 Et9CUdL8CR9L8Ar5TvNib/qVLWps7/abkLr+E1w5RpC8kGfjSmvkBVWFr2U2UbcC1n
+	 Y4f01nCib6wWX7ryhOkD23rtiONWS0vYeVk8EZiRDNKWyYrOLkzOpNkC7owJchjTJd
+	 9JH5Yv5U5mHslxqtMDMote5gFnDyCkfpdaiKgE19Mjr/S/PgFN/1XGrGDmeUaX2gGv
+	 Swhst51rMvQaw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 26 Aug 2024 22:27:50 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <b439b38a-a37a-4734-afd8-736ce047b5d7@wanadoo.fr>
+Date: Mon, 26 Aug 2024 22:27:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
-X-Rspamd-Queue-Id: 007E821983
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] usb: r8a66597-udc: Use devm_clk_get_enabled()
+ helpers
+To: liulei.rjpt@vivo.com
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, opensource.kernel@vivo.com,
+ u.kleine-koenig@pengutronix.de
+References: <20240826081900.2284-1-liulei.rjpt@vivo.com>
+ <20240826082334.2351-1-liulei.rjpt@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240826082334.2351-1-liulei.rjpt@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 13-08-24 16:36:26, Mateusz Guzik wrote:
-> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
-> kernel takes a back-to-back relock trip to check for them.
+Le 26/08/2024 à 10:23, Lei Liu a écrit :
+> The devm_clk_get_enabled() helpers:
+>      - call devm_clk_get()
+>      - call clk_prepare_enable() and register what is needed in order to
+>       call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> It probably can be avoided altogether, but for now massage things back
-> to just one lock acquire.
+> This simplifies the code and avoids calls to clk_disable_unprepare().
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Back from vacation so not sure if this is still actual but the patch looks
-good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Lei Liu <liulei.rjpt-DGpbCiVdSXo@public.gmane.org>
 > ---
+>   drivers/usb/gadget/udc/r8a66597-udc.c | 16 ++++------------
+>   1 file changed, 4 insertions(+), 12 deletions(-)
 > 
-> there are smp_mb's in the area I'm going to look at removing at some
-> point(tm), in the meantime I think this is an easy cleanup
-> 
-> has a side effect of whacking a inode_wait_for_writeback which was only
-> there to deal with not holding the lock
-> 
->  fs/fs-writeback.c | 17 +++--------------
->  fs/inode.c        |  5 +++--
->  2 files changed, 6 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 4451ecff37c4..1a5006329f6f 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struct writeback_control *wbc)
->   * Wait for writeback on an inode to complete. Called with i_lock held.
->   * Caller must make sure inode cannot go away when we drop i_lock.
->   */
-> -static void __inode_wait_for_writeback(struct inode *inode)
-> -	__releases(inode->i_lock)
-> -	__acquires(inode->i_lock)
-> +void inode_wait_for_writeback(struct inode *inode)
->  {
->  	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
->  	wait_queue_head_t *wqh;
->  
-> +	lockdep_assert_held(&inode->i_lock);
->  	wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
->  	while (inode->i_state & I_SYNC) {
->  		spin_unlock(&inode->i_lock);
-> @@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inode *inode)
->  	}
->  }
->  
-> -/*
-> - * Wait for writeback on an inode to complete. Caller must have inode pinned.
-> - */
-> -void inode_wait_for_writeback(struct inode *inode)
-> -{
-> -	spin_lock(&inode->i_lock);
-> -	__inode_wait_for_writeback(inode);
-> -	spin_unlock(&inode->i_lock);
-> -}
+> diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
+> index db4a10a979f9..bdbe5ead741e 100644
+> --- a/drivers/usb/gadget/udc/r8a66597-udc.c
+> +++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+> @@ -1812,10 +1812,6 @@ static void r8a66597_remove(struct platform_device *pdev)
+>   	usb_del_gadget_udc(&r8a66597->gadget);
+>   	del_timer_sync(&r8a66597->timer);
+>   	r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
 > -
->  /*
->   * Sleep until I_SYNC is cleared. This function must be called with i_lock
->   * held and drops it. It is aimed for callers not holding any inode reference
-> @@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *inode,
->  		 */
->  		if (wbc->sync_mode != WB_SYNC_ALL)
->  			goto out;
-> -		__inode_wait_for_writeback(inode);
-> +		inode_wait_for_writeback(inode);
->  	}
->  	WARN_ON(inode->i_state & I_SYNC);
->  	/*
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 73183a499b1c..d48d29d39cd2 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
->  
->  static void inode_wait_for_lru_isolating(struct inode *inode)
->  {
-> -	spin_lock(&inode->i_lock);
-> +	lockdep_assert_held(&inode->i_lock);
->  	if (inode->i_state & I_LRU_ISOLATING) {
->  		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
->  		wait_queue_head_t *wqh;
-> @@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
->  		spin_lock(&inode->i_lock);
->  		WARN_ON(inode->i_state & I_LRU_ISOLATING);
->  	}
-> -	spin_unlock(&inode->i_lock);
->  }
->  
->  /**
-> @@ -765,6 +764,7 @@ static void evict(struct inode *inode)
->  
->  	inode_sb_list_del(inode);
->  
-> +	spin_lock(&inode->i_lock);
->  	inode_wait_for_lru_isolating(inode);
->  
->  	/*
-> @@ -774,6 +774,7 @@ static void evict(struct inode *inode)
->  	 * the inode.  We just have to wait for running writeback to finish.
->  	 */
->  	inode_wait_for_writeback(inode);
-> +	spin_unlock(&inode->i_lock);
->  
->  	if (op->evict_inode) {
->  		op->evict_inode(inode);
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> -	if (r8a66597->pdata->on_chip) {
+> -		clk_disable_unprepare(r8a66597->clk);
+> -	}
+>   }
+>   
+>   static void nop_completion(struct usb_ep *ep, struct usb_request *r)
+> @@ -1876,18 +1872,17 @@ static int r8a66597_probe(struct platform_device *pdev)
+>   
+>   	if (r8a66597->pdata->on_chip) {
+>   		snprintf(clk_name, sizeof(clk_name), "usb%d", pdev->id);
+> -		r8a66597->clk = devm_clk_get(dev, clk_name);
+> +		r8a66597->clk = devm_clk_get_enabled(dev, clk_name);
+>   		if (IS_ERR(r8a66597->clk)) {
+>   			dev_err(dev, "cannot get clock \"%s\"\n", clk_name);
+>   			return PTR_ERR(r8a66597->clk);
+>   		}
+> -		clk_prepare_enable(r8a66597->clk);
+>   	}
+>   
+>   	if (r8a66597->pdata->sudmac) {
+>   		ret = r8a66597_sudmac_ioremap(r8a66597, pdev);
+>   		if (ret < 0)
+> -			goto clean_up2;
+> +			goto err_add_udc;
+
+Hi,
+
+Here and below, now we have an additional r8a66597_free_request() in the 
+error handling path, even if r8a66597_alloc_request() was not called 
+yet. + see my other comment below.
+
+>   	}
+>   
+>   	disable_controller(r8a66597); /* make sure controller is disabled */
+> @@ -1896,7 +1891,7 @@ static int r8a66597_probe(struct platform_device *pdev)
+>   			       udc_name, r8a66597);
+>   	if (ret < 0) {
+>   		dev_err(dev, "request_irq error (%d)\n", ret);
+> -		goto clean_up2;
+> +		goto err_add_udc;
+>   	}
+>   
+>   	INIT_LIST_HEAD(&r8a66597->gadget.ep_list);
+> @@ -1939,7 +1934,7 @@ static int r8a66597_probe(struct platform_device *pdev)
+>   							GFP_KERNEL);
+>   	if (r8a66597->ep0_req == NULL) {
+>   		ret = -ENOMEM;
+> -		goto clean_up2;
+> +		goto err_add_udc;
+>   	}
+>   	r8a66597->ep0_req->complete = nop_completion;
+>   
+> @@ -1952,9 +1947,6 @@ static int r8a66597_probe(struct platform_device *pdev)
+>   
+>   err_add_udc:
+>   	r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+> -clean_up2:
+> -	if (r8a66597->pdata->on_chip)
+> -		clk_disable_unprepare(r8a66597->clk);
+>   
+>   	if (r8a66597->ep0_req)
+>   		r8a66597_free_request(&r8a66597->ep[0].ep, r8a66597->ep0_req);
+
+This error handling path looks broken.
+r8a66597_free_request() is called twice with the same arguments.
+
+CJ
 
