@@ -1,128 +1,89 @@
-Return-Path: <linux-kernel+bounces-302035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C6D95F8FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:31:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7274495F903
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2AA1F23F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:31:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A645C1C21B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DEF194A4C;
-	Mon, 26 Aug 2024 18:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84469194A4C;
+	Mon, 26 Aug 2024 18:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DjHeUdV9"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcxbJS2X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930662B9B0
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DAF18BC38
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724697100; cv=none; b=fZbCJQA4kJsY7v8oHTYeJaDF+sOo2Bs2X694IM2GCJvEZPbYdp1JZ1TMHrwaXyPiP+cQ6KEaL5O07L4bTyWsCM2VWXVCb2/7grPs3zcvMxamFexp4CxP4fq2wRwA/Lzx1kMHLWGKda3sa/3ABzpRjH5Fk3OaxbX3d3QkcYHdlOE=
+	t=1724697124; cv=none; b=NptsGy0llU5OXWjQ7R53gBlc/mlyHLypFP0nR7ZrGxLHo6IYENqCWfcXRMhaQ9mW+WDGboxjq2T3nstU2rydR+6KJ3uOZTQTBifYJVXEpTYfKSR1QmiswT5kVbcCcA55Haq86OPTAI0tMb7VSuWm/Yu5IZ5RLWt37P3UayPv728=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724697100; c=relaxed/simple;
-	bh=mLy1vgHmE/jdzt3VgHm2OHzYuPjcX8WTmOb+o6YMWp8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Cg3Y30yQQ4XempEcU+Ssc34Ent9MOUNe0SlAvP1QBGIgAEiv8EaK5+YgUgnm15Gh+qbtRJOFyUyaRYPgzJBsiykuR2YtcDHA5nuv2Ti/qFt4M2WYMc7ZaPG3Rlt3DtKHJYdU596byQnf7AbmsUPJ0TELBJQQVaP1ryRjEzKG4Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DjHeUdV9; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6af8f7a30dbso100803307b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724697097; x=1725301897; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYs4/XGahzBT4qBo/4ZIs3WQHA47MKX2vPkz30h9+7Q=;
-        b=DjHeUdV9FoT3RQpj4W+uwfk/mC4nFHRZu3MSPfjKvYp+DWkV4YLCYL9GB1QsxOlcmG
-         +HI0UsVVvBarrOKwtsgZcYbIE7DmCOZ8gRPlt0sKlHOQID+5kxljDV5famgWcVML8JLr
-         f6KhvcM4NIHzryBrvclanMzx3NPmBuNo6zzyaIjaxMZdnf6lZ88rkjh+koKMyZjeQWWr
-         b0M6O0DK4HXPkMuJPlFIvj3iG9H3Ed/tLup/CXjjDY34uK8siz5VCdLArbbZaFp+a2io
-         JognSKEHd8T0eFn4DPakVZUp5lCfp/QUF5qxxRiqnEih2X0SCeCTjBzbA5Hwza7lr0Lz
-         E7zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724697097; x=1725301897;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYs4/XGahzBT4qBo/4ZIs3WQHA47MKX2vPkz30h9+7Q=;
-        b=N4TSHbUzNfcC7loneOtDmHxw+wubWd+NOP5TaZR3PNUDXbTplWPuESpiaQF0zvkg4T
-         iJMDcAU/K192NewI03XXJkN5N9eeY/wZlmMgz3t2JnVo5YYFNVDbfgI/1WJ+botoMXwd
-         AyjUzoqmjx0oy1m4OpQe0t10hZArG0xrDG/wAyjEWwP/uPsavxYhc5/NzkBM5bTH6/4w
-         nRn12zKD1q3F5b+z+YVoJXtwz3q9E0ax8AcLxrOPfZWWeFMAVFVWmKvfhA56GsfmeNdk
-         jjDQbu9c0YCtn7DmjpV5qtCdLx8Uzn0pn5u72Y2PMdsg7fCEbbbd0OL0F43viKShQY9c
-         G1Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5bZEG9YO0cUNNsbHD9E7cqz1MZWDph0PlmcxeYujS5YJswMWmFb8Ec6d4YhN1DUEOZOD0phPxiqMam2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGOlbhmc6wM2B8jldGaHPObk8u+M0U8DgZLWIZ80UByxBTMu0U
-	nhES3M1f0wnfS2bqPQMdBSC1M70tKg09GicK/fZECU3rCwhYZ8zC7VbDJAJAYfl5TIf6heom7aH
-	CVg==
-X-Google-Smtp-Source: AGHT+IEZVzpeG0G0tHxTLIM7OwZkYTrzg2NvTEAhQlUNRbdJi8Gn+6CbL5ryMGABFu9BH/rPP+zE67W44Ts=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:3617:0:b0:e13:c772:5c18 with SMTP id
- 3f1490d57ef6-e17a866a769mr18546276.12.1724697097393; Mon, 26 Aug 2024
- 11:31:37 -0700 (PDT)
-Date: Mon, 26 Aug 2024 11:31:36 -0700
-In-Reply-To: <5fe11dfb-2a33-4b52-8181-c82bc326b968@amd.com>
+	s=arc-20240116; t=1724697124; c=relaxed/simple;
+	bh=vc0JmngRsZKXBHdkhwWGWQ6Qprj+zKH/xMHH2tqTvc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ax3jNOuBXqwvvWCG5zKpX4z9ibZAOsGRK/bKJM9/bcZKJvOdP1ytundF57i0CXfLcDgWDDGhYMQ0TNX/p92F764fuqwlUY4hCNYLfyIRCPVV1cnTkr50fZvuOjDCo7ZyLAoMcsgRsDzEt2WmTbTWdEBwgbeMMr3l359g2OG/DZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcxbJS2X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F17CC8B7C9;
+	Mon, 26 Aug 2024 18:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724697124;
+	bh=vc0JmngRsZKXBHdkhwWGWQ6Qprj+zKH/xMHH2tqTvc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BcxbJS2XzALYp++nfpwj0T1C7pW7jZqHx6koBHZUqEqov+2iU2vaz6yRRtGFqrjnF
+	 SdH2b6JCL0Ms+BXZrAKNRlIMEmUyWbCEV9Y6FXIqnLRvwFxVKlNb2oWfxTfnxcY4e4
+	 Djm28TPDKTleuzIo2Th94Qs7DDSphnqyMg8wcENDNRFoIf1Ben3TNvFeoAI5zpsVXZ
+	 KEloq/N5+CRVtTDUtSYP3ce5eDsB1uBV3J6SpnUuKFTEjdD0YTG7kRxJhMQYcI1De5
+	 o73KS/WbriLhtVV4fow0LLASaF8GaBFXICO/tvtxXsh4bC6LXVa6s6U6kLQXeZOTr2
+	 80lNKXVHurstw==
+Date: Mon, 26 Aug 2024 08:32:03 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: void@manifault.com, linux-kernel@vger.kernel.org
+Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU Hotplug
+Message-ID: <ZszKI2GA-8yparh_@slm.duckdns.org>
+References: <8cd0ec0c4c7c1bc0119e61fbef0bee9d5e24022d.camel@linux.ibm.com>
+ <Zo3PgETt43iFersn@slm.duckdns.org>
+ <dde4b09001da2641f9679b9409727e2147c5e9a6.camel@linux.ibm.com>
+ <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
+ <Zq1NksrG9blyN-KR@slm.duckdns.org>
+ <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
+ <Zru5_UmEmWhNaPyo@slm.duckdns.org>
+ <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
+ <ZsTwoWJQcnsJhYbe@slm.duckdns.org>
+ <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240808062937.1149-1-ravi.bangoria@amd.com> <20240808062937.1149-5-ravi.bangoria@amd.com>
- <Zr_rIrJpWmuipInQ@google.com> <372d5a95-bce5-4c5c-8c74-6b4cc5ab6943@amd.com> <5fe11dfb-2a33-4b52-8181-c82bc326b968@amd.com>
-Message-ID: <ZszKCCXE7yT4zCEd@google.com>
-Subject: Re: [PATCH v4 4/4] KVM: SVM: Add Bus Lock Detect support
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, pbonzini@redhat.com, thomas.lendacky@amd.com, 
-	jmattson@google.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk, 
-	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com, 
-	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn, 
-	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, santosh.shukla@amd.com, ananth.narayan@amd.com, 
-	sandipan.das@amd.com, manali.shukla@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
 
-On Wed, Aug 21, 2024, Ravi Bangoria wrote:
-> On 21-Aug-24 11:06 AM, Ravi Bangoria wrote:
-> >>> @@ -3158,6 +3159,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
-> >>>  		if (data & DEBUGCTL_RESERVED_BITS)
-> >>
-> >> Not your code, but why does DEBUGCTL_RESERVED_BITS = ~0x3f!?!?  That means the
-> >> introduction of the below check, which is architecturally correct, has the
-> >> potential to break guests.  *sigh*
-> >>
-> >> I doubt it will cause a problem, but it's something to look out for.
-> > This dates back to 2008: https://git.kernel.org/torvalds/c/24e09cbf480a7
-> > 
-> > The legacy definition[1] of DEBUGCTL MSR is:
-> > 
-> >   5:2   PB: performance monitor pin control. Read-write. Reset: 0h.
-> >         This field does not control any hardware.
+Hello,
 
-Uh, what?  So the CPU provided 4 bits of scratch space?  Or is that saying that
-5:2 controlled some perfmon stuff on older CPUs, but that Zen deprecated those
-bits?
-
-> >   1     BTF. Read-write. Reset: 0. 1=Enable branch single step.
-> >   0     LBR. Read-write. Reset: 0. 1=Enable last branch record.
-> > 
-> > [1]: https://bugzilla.kernel.org/attachment.cgi?id=287389
+On Fri, Aug 23, 2024 at 02:50:01PM +0530, Aboorva Devarajan wrote:
+...
+> I applied this patch to the almost latest sched-ext (for-6.12) branch upto
+> commit 89909296a51e792 ("sched_ext: Don't use double locking to migrate
+> tasks across CPUs") and let the test run for over 20 hours, and it completed
+> without any hangs on both x86 and PowerPC.
 > 
-> How about adding cpu_feature_enabled() check:
+> So, indeed, making sure that both scx_fork_rwsem and cpu_hotplug_lock (read)
+> are only held together simulataneously when they can both be acquired seems
+> to be resolving the deadlock.
 
-That doesn't fix anything, KVM will still break, just on a smaller set of CPUs.
+Thanks a lot for confirming. Let me think it over a bit re. what should be
+applied.
 
-The only way to avoid breaking guests is to ignore bits 5:2, though we could
-quirk that so that userspace can effectively enable what is now the architectural
-behavior.
+Thanks.
 
-Though I'm very tempted to just add a prep patch to disallow setting bits 5:2 and
-see if anyone complains.  If they do, then we can add a quirk.  And if no one
-complains, yay.
+-- 
+tejun
 
