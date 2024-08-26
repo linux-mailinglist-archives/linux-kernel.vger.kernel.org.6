@@ -1,224 +1,139 @@
-Return-Path: <linux-kernel+bounces-301064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D703695EBF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:30:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFA595EBF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFD11F210DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE9280E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265EE14D6ED;
-	Mon, 26 Aug 2024 08:27:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEB5144D35;
+	Mon, 26 Aug 2024 08:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5FoIFx9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720A314BFB0;
-	Mon, 26 Aug 2024 08:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485F214430E;
+	Mon, 26 Aug 2024 08:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660849; cv=none; b=Ab/tDA9DjbD1ETi6ylYwHxD3MWa5SaqGlYTPB9mvB/+9HVfIMwuOPb7jqpEOnFwLV/bYm4hBZc9WJEjNkTX/DMf4IN16X3jkveTvdcTGz4hTRKkP8b/3qJdK35iFx3Q4Ga/vCgYTQtATZTlK+AQxsq0Pn8ipMvlPtb2WUZlStxc=
+	t=1724660893; cv=none; b=hZrkl90NgoPDy3dCQd+rRsEjcSnDU4DjcnLGESnsKuGiFPbYG1+jSh7a7c60bf1anfDbX1JJxEJ3hF6xuBfGJhbgEmekeZgw4iZEX0PduC653CRrmNwOVitPfQErsL5E4/69cpZuWqBPIQz0CLUq/T/v8CwF/+EV5Dks1UgJjFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660849; c=relaxed/simple;
-	bh=3mPy++LZVuJNjQa+/M9RvhCVINEq4ZckXWcx8buqjQI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KjWwR1RwqjrI0xyVQ/2RJICyJXXFeEzf0yJLBS+0qx/pXMrDUMit7v2ZTp2jKplUlWDN3g3yuNrqORsTYfPVTGHbPlL221HbR1W4jsbJzWGhxWfqlisvmIBxLRDaWxE3VsqCfoBSLTH8kEazNm9Q9/otXm7ZwBKQ90qDCIvQFIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WskLN6Wq6z4f3lVb;
-	Mon, 26 Aug 2024 16:27:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 448761A0359;
-	Mon, 26 Aug 2024 16:27:24 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAXPoRrPMxmEuAGCw--.22714S3;
-	Mon, 26 Aug 2024 16:27:24 +0800 (CST)
-Subject: Re: [PATCH md-6.12 v2 29/42] md/md-bitmap: mrege
- md_bitmap_cond_end_sync() into bitmap_operations
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@linux.intel.com, xni@redhat.com, song@kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
- <20240826074452.1490072-30-yukuai1@huaweicloud.com>
- <dedf0d3b-bc45-4d04-a987-9df498f51661@molgen.mpg.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <816ded2c-148f-d282-0943-50a9556d10c3@huaweicloud.com>
-Date: Mon, 26 Aug 2024 16:27:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724660893; c=relaxed/simple;
+	bh=7Qq82oZd6o//DLFgkm7qZCVzpy7uvlZ7P8q3GhGE8ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SmrcdCzJx6Q5Lzm8rKNs/CC/HskhEUvm7H+HoegoFlHUiHL+OPFN1GgSfIQFDPuf03fvp0EGivHOELzl51/6Zb+zvDncZGHp1ngJr5hgYDjtDugjevvpSZDzWItZkkQYyQ/gMgbeLuhYtfw79K6AyW3yNuHACzTADvXbyBPZb1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5FoIFx9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1997C8CDC3;
+	Mon, 26 Aug 2024 08:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724660892;
+	bh=7Qq82oZd6o//DLFgkm7qZCVzpy7uvlZ7P8q3GhGE8ww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a5FoIFx9E3aTrtdwnwfPTfW77rc0TEeQmUIayNtsCUFWpFWyChUjQ4erfBksI+pYj
+	 +k4gsI+eoWklq3NlL509oJoI+c5xhCSDG2Jqa4x41eitd3HrrzVDTyJ3dOKsq9kmmA
+	 H9Kgr1fNQYVAEZ8N0ZceK1hVOA5pb3/LDe2n34yu+hdOh+0I3U5Xn/20CcSbiwhusw
+	 IZVXsHodBfHoT5iArSwlhBZN07j9shqHc0by1tqYhoxRXH+v6VRijtfv07Sz1iDNRV
+	 6R2QmQyP/ItWbgBkUqO7WMlG8E+vqvd2KAHkI1PmEh4A38OdvLppPA9G7qf7kxc7by
+	 oESIIdR3XFV/g==
+Message-ID: <4b79fb7e-7ff6-499b-b615-e1bd69a46d0b@kernel.org>
+Date: Mon, 26 Aug 2024 10:28:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <dedf0d3b-bc45-4d04-a987-9df498f51661@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXPoRrPMxmEuAGCw--.22714S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3XF1xtFyDXw15XryrGFWxZwb_yoWxJF15pr
-	4kJFy3G345GrZ5X34UAryDCFyrA3s7t3srtr18Wa4fGr1UJr1qgF48WF1jgF1UJF4fJF1U
-	tw1UJr45ur17Xr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
+To: xianwei.zhao@amlogic.com, Yiting Deng <yiting.deng@amlogic.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
+ <20240823-rtc-v1-3-6f70381da283@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240823-rtc-v1-3-6f70381da283@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 23/08/2024 11:19, Xianwei Zhao via B4 Relay wrote:
+> From: Yiting Deng <yiting.deng@amlogic.com>
+> 
+> Add Amlogic RTC entry to MAINTAINERS to clarify the maintainers
+> 
+> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 42decde38320..672290dddaaa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2481,6 +2481,14 @@ F:	drivers/irqchip/irq-mvebu-*
+>  F:	drivers/pinctrl/mvebu/
+>  F:	drivers/rtc/rtc-armada38x.c
+>  
+> +ARM/Amlogic RTC Driver
 
-在 2024/08/26 16:09, Paul Menzel 写道:
-> Dear Kuai,
-> 
-> 
-> Thank you for your patch. (I am still confused, what your given and 
-> surname is.)
-> 
-> Am 26.08.24 um 09:44 schrieb Yu Kuai:
->> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> There is a typo in the summary: mrege → merge.
+"ARM" is for Soc entries, not individual drivers. Drop. Place it
+correctly and use capital letters.
 
-Got it!.
-> 
->> So that the implementation won't be exposed, and it'll be possible
->> to invent a new bitmap by replacing bitmap_operations.
->>
->> Also change the parameter from bitmap to mddev, to avoid access
->> bitmap outside md-bitmap.c as much as possible.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/md-bitmap.c | 6 ++++--
->>   drivers/md/md-bitmap.h | 2 +-
->>   drivers/md/raid1.c     | 6 +++---
->>   drivers/md/raid10.c    | 2 +-
->>   drivers/md/raid5.c     | 2 +-
->>   5 files changed, 10 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
->> index e1dceff2d9a5..2d9d9689f721 100644
->> --- a/drivers/md/md-bitmap.c
->> +++ b/drivers/md/md-bitmap.c
->> @@ -1690,10 +1690,12 @@ static void bitmap_close_sync(struct mddev 
->> *mddev)
->>       }
->>   }
->> -void md_bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector, 
->> bool force)
->> +static void bitmap_cond_end_sync(struct mddev *mddev, sector_t sector,
->> +                 bool force)
->>   {
->>       sector_t s = 0;
->>       sector_t blocks;
->> +    struct bitmap *bitmap = mddev->bitmap;
->>       if (!bitmap)
->>           return;
->> @@ -1718,7 +1720,6 @@ void md_bitmap_cond_end_sync(struct bitmap 
->> *bitmap, sector_t sector, bool force)
->>       bitmap->last_end_sync = jiffies;
->>       sysfs_notify_dirent_safe(bitmap->mddev->sysfs_completed);
->>   }
->> -EXPORT_SYMBOL(md_bitmap_cond_end_sync);
->>   void md_bitmap_sync_with_cluster(struct mddev *mddev,
->>                     sector_t old_lo, sector_t old_hi,
->> @@ -2747,6 +2748,7 @@ static struct bitmap_operations bitmap_ops = {
->>       .endwrite        = bitmap_endwrite,
->>       .start_sync        = bitmap_start_sync,
->>       .end_sync        = bitmap_end_sync,
->> +    .cond_end_sync        = bitmap_cond_end_sync,
->>       .close_sync        = bitmap_close_sync,
->>       .update_sb        = bitmap_update_sb,
->> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
->> index 5d919b530317..027de097f96a 100644
->> --- a/drivers/md/md-bitmap.h
->> +++ b/drivers/md/md-bitmap.h
->> @@ -262,6 +262,7 @@ struct bitmap_operations {
->>       bool (*start_sync)(struct mddev *mddev, sector_t offset,
->>                  sector_t *blocks, bool degraded);
->>       void (*end_sync)(struct mddev *mddev, sector_t offset, sector_t 
->> *blocks);
->> +    void (*cond_end_sync)(struct mddev *mddev, sector_t sector, bool 
->> force);
->>       void (*close_sync)(struct mddev *mddev);
->>       void (*update_sb)(struct bitmap *bitmap);
->> @@ -272,7 +273,6 @@ struct bitmap_operations {
->>   void mddev_set_bitmap_ops(struct mddev *mddev);
->>   /* these are exported */
->> -void md_bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector, 
->> bool force);
->>   void md_bitmap_sync_with_cluster(struct mddev *mddev,
->>                    sector_t old_lo, sector_t old_hi,
->>                    sector_t new_lo, sector_t new_hi);
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 52ca5619d9b4..00174cacb1f4 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2828,9 +2828,9 @@ static sector_t raid1_sync_request(struct mddev 
->> *mddev, sector_t sector_nr,
->>        * sector_nr + two times RESYNC_SECTORS
->>        */
->> -    md_bitmap_cond_end_sync(mddev->bitmap, sector_nr,
->> -        mddev_is_clustered(mddev) && (sector_nr + 2 * RESYNC_SECTORS 
->> > conf->cluster_sync_high));
->> -
->> +    mddev->bitmap_ops->cond_end_sync(mddev, sector_nr,
->> +        mddev_is_clustered(mddev) &&
->> +        (sector_nr + 2 * RESYNC_SECTORS > conf->cluster_sync_high));
->>       if (raise_barrier(conf, sector_nr))
->>           return 0;
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index 5b1c86c368b1..5a7b19f48c45 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -3543,7 +3543,7 @@ static sector_t raid10_sync_request(struct mddev 
->> *mddev, sector_t sector_nr,
->>            * safety reason, which ensures curr_resync_completed is
->>            * updated in bitmap_cond_end_sync.
->>            */
->> -        md_bitmap_cond_end_sync(mddev->bitmap, sector_nr,
->> +        mddev->bitmap_ops->cond_end_sync(mddev, sector_nr,
->>                       mddev_is_clustered(mddev) &&
->>                       (sector_nr + 2 * RESYNC_SECTORS > 
->> conf->cluster_sync_high));
->> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
->> index d2b8d2517abf..87b8d19ab601 100644
->> --- a/drivers/md/raid5.c
->> +++ b/drivers/md/raid5.c
->> @@ -6540,7 +6540,7 @@ static inline sector_t raid5_sync_request(struct 
->> mddev *mddev, sector_t sector_n
->>           return sync_blocks * RAID5_STRIPE_SECTORS(conf);
->>       }
->> -    md_bitmap_cond_end_sync(mddev->bitmap, sector_nr, false);
->> +    mddev->bitmap_ops->cond_end_sync(mddev, sector_nr, false);
->>       sh = raid5_get_active_stripe(conf, NULL, sector_nr,
->>                        R5_GAS_NOBLOCK);
-> 
-> The diff looks good to me.
-> 
-> 
-> Kind regards,
 
-Thanks for the review!.
-Kuai
 
-> 
-> Paul
-> .
-> 
+Best regards,
+Krzysztof
 
 
