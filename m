@@ -1,109 +1,229 @@
-Return-Path: <linux-kernel+bounces-301578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28D795F2CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E532595F2D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 406B1B20A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 528ACB20D4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D9418595D;
-	Mon, 26 Aug 2024 13:21:30 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9545185943;
+	Mon, 26 Aug 2024 13:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TdV4VBs1"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0A17C98A;
-	Mon, 26 Aug 2024 13:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2066F2C95;
+	Mon, 26 Aug 2024 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678490; cv=none; b=KnMz99mHCVpgXPSDhBm3XdKuVZVf3FoDOzmJMKPij59ItnrIkh1HfrPo9hKVxbNBqXHjRJT85fNq/tPe70P4Q/j6vsCLosD3tH3OmYOKdATXCZtBRPax+fT64z9+SeAeWmwEaGxzKGUWY5fUQ9Y92OZahCX3FoXF3KBR1DTTJE4=
+	t=1724678604; cv=none; b=h4lQ0dIVzykSuT+FtXD3OOLrfxDOohX9rOyZcL8icMUsr5rdFa/4Witr6kouytY0sUWNKz15EQlmSf8+J20rZrwVhhigP+09KrY8FLxkgA5iQq4fppBBQlOL26ZTz11jt5qliXRhED4zKC/O9pxMRHABQO5x8AdnPBtgPrJnDrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678490; c=relaxed/simple;
-	bh=Bqmj0LWAu7nxKIyNnrmh16NBDF6e9R1urZjvixULDF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YoaISBQdFQFxnkkA4HnrB3457XU73rf/T4oAITFGkyN/357fsMdjq002JewRm6/IPes8TqqJWekqZq/iCvW2i/eQLaEQN/JD9VaKueIreSM5VFLuN8u6n594I79kjMV/Sa7l2QcRPAv0YktJPr0D9pzwmJBLO+gAoc0tD5B6jWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wsrsm1cJ1z2Cnbw;
-	Mon, 26 Aug 2024 21:21:16 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 185221A016C;
-	Mon, 26 Aug 2024 21:21:25 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 Aug 2024 21:21:24 +0800
-Message-ID: <5d93095a-06f4-53d8-e92b-3a21e7667975@hisilicon.com>
-Date: Mon, 26 Aug 2024 21:21:24 +0800
+	s=arc-20240116; t=1724678604; c=relaxed/simple;
+	bh=GbV+WAfO3JB6oghcXvIU5S0StFkQzn46kXQWFa4f63Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBrdx/QPFt8SWV3V4B7Rh76iIuVOGYOoDPkoM/SJd6Xwz78yp6EpnPyzfP6S0U5HwGksJQWfu5CR8RBPuI2InRqRHIPHTfCIu/SPD45wM1J9HGben9llz6zWBQYJZ35ATbOA5MTzG498Z5qw+Zu2j6+Eq97I8OsxMmn9YlreMM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TdV4VBs1; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QDNDDZ011649;
+	Mon, 26 Aug 2024 08:23:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724678593;
+	bh=aOnuZ4gIbxyKADOVNuvc7Mf4s0W7nDrMfwLmmTs1qtc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=TdV4VBs1D9gViXRIdiehBbAZ92dC4so7Jo0tI4xL1J8JbFt9znRnk6d/Gev0GzgZm
+	 yCWGAcRAj+a1Qt3Bqu0rDw83GHshdF9HfmIeW3YrzYAhHp4e8K3xNRDJFD+wIOcLzQ
+	 qaZAOTu/alrK2LB+oZoBiR4wGPZbp0TawQwZmC2o=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QDNDZ2124974
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 08:23:13 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 08:23:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 08:23:12 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QDNCLP106421;
+	Mon, 26 Aug 2024 08:23:12 -0500
+Date: Mon, 26 Aug 2024 18:53:11 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] arm64: dts: ti: k3-am62p: add opp frequencies
+Message-ID: <20240826132311.igliqicrydtifp2s@lcpd911>
+References: <20240823-opp-v2-0-e2f67b37c299@ti.com>
+ <20240823-opp-v2-3-e2f67b37c299@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH v2 for-next 1/3] RDMA/core: Provide
- rdma_user_mmap_disassociate() to disassociate mmap pages
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240812125640.1003948-1-huangjunxian6@hisilicon.com>
- <20240812125640.1003948-2-huangjunxian6@hisilicon.com>
- <20240823152501.GB2342875@nvidia.com>
- <29b2b4a5-7cdb-4e08-3503-02e4d1123a66@hisilicon.com>
- <20240826131635.GJ3773488@nvidia.com>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240826131635.GJ3773488@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240823-opp-v2-3-e2f67b37c299@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Bryan,
 
+On Aug 23, 2024 at 16:54:30 -0500, Bryan Brattlof wrote:
+> ONe power management technique available to the Cortex-A53s is their
 
-On 2024/8/26 21:16, Jason Gunthorpe wrote:
-> On Mon, Aug 26, 2024 at 09:12:33PM +0800, Junxian Huang wrote:
+s/ONe/One
+
+> ability to dynamically scale their frequency across the device's
+> Operating Performance Points (OPP)
+> 
+> The OPPs available for the Cortex-A53s on the AM62Px can vary based on
+> the silicon variant used. The SoC variant is encoded into the
+> WKUP_MMR0_WKUP0_CTRL_MMR0_JTAG_USER_ID register which is used to limit
+> the OPP entries the SoC supports. A table of all these variants can be
+> found in its data sheet[0] for the AM62Px processor family.
+
+Error 404! Not found [0] ;)
+
+> 
+> Add the OPP table into the SoC's ftdi file along with the syscon node to
+
+What is ftdi?
+
+> describe the WKUP_MMR0_WKUP0_CTRL_MMR0_JTAG_USER_ID register to detect
+> the SoC variant.
+> 
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
+> ---
+>  .../boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi  |  5 +++
+>  arch/arm64/boot/dts/ti/k3-am62p5.dtsi              | 47 ++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> index 315d0092e7366..6f32135f00a55 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> @@ -20,6 +20,11 @@ chipid: chipid@14 {
+>  			bootph-all;
+>  		};
 >  
->> diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
->> index 821d93c8f712..05b589aad5ef 100644
->> --- a/drivers/infiniband/core/uverbs.h
->> +++ b/drivers/infiniband/core/uverbs.h
->> @@ -160,6 +160,9 @@ struct ib_uverbs_file {
->>         struct page *disassociate_page;
->>
->>         struct xarray           idr;
->> +
->> +       struct mutex disassociation_lock;
->> +       bool disassociated;
->>  };
->>
->>  struct ib_uverbs_event {
->> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
->> index 6b4d5a660a2f..6503f9a23211 100644
->> --- a/drivers/infiniband/core/uverbs_main.c
->> +++ b/drivers/infiniband/core/uverbs_main.c
->> @@ -722,12 +722,12 @@ static void rdma_umap_open(struct vm_area_struct *vma)
->>                 return;
->>
->>         /* We are racing with disassociation */
->> -       if (!down_read_trylock(&ufile->hw_destroy_rwsem))
->> +       if (!mutex_trylock(&ufile->disassociation_lock))
->>                 goto out_zap;
-> 
-> Nonon, don't touch this stuff! It is fine as is
-> 
-> The extra lock should be in the mmap zap functions only
-> 
-> Jason
+> +		opp_efuse_table: syscon@18 {
+> +			compatible = "ti,am62-opp-efuse-table", "syscon";
 
-Okay, I got it. Thanks
+Huh, curious why I don't see this particular compatible in am62 itself..
+Also, I am still not clear where this discussion got left off: (If it's
+related)
+https://lore.kernel.org/all/5chxjwybmsxq73pagtlw4zr2asbtxov7ezrpn5j37cr77bmepa@fejdlxomfgae/
 
-Junxian
+In AM625, I see
+k3-am625.dtsi:111: col 14: syscon = <&wkup_conf>;
+
+But the approach you've used here seems different. Is there a
+justification given on which one should be used/why somewhere that I can
+refer?
+
+> +			reg = <0x18 0x4>;
+> +		};
+> +
+>  		cpsw_mac_syscon: ethernet-mac-syscon@200 {
+>  			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
+>  			reg = <0x200 0x8>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> index 41f479dca4555..140587d02e88e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> @@ -47,6 +47,7 @@ cpu0: cpu@0 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&l2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+>  			clocks = <&k3_clks 135 0>;
+>  		};
+>  
+> @@ -62,6 +63,7 @@ cpu1: cpu@1 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&l2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+>  			clocks = <&k3_clks 136 0>;
+>  		};
+>  
+> @@ -77,6 +79,7 @@ cpu2: cpu@2 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&l2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+>  			clocks = <&k3_clks 137 0>;
+>  		};
+>  
+> @@ -92,10 +95,54 @@ cpu3: cpu@3 {
+>  			d-cache-line-size = <64>;
+>  			d-cache-sets = <128>;
+>  			next-level-cache = <&l2_0>;
+> +			operating-points-v2 = <&a53_opp_table>;
+>  			clocks = <&k3_clks 138 0>;
+>  		};
+>  	};
+>  
+> +	a53_opp_table: opp-table {
+> +		compatible = "operating-points-v2-ti-cpu";
+> +		opp-shared;
+> +		syscon = <&opp_efuse_table>;
+> +
+> +		opp-200000000 {
+> +			opp-hz = /bits/ 64 <200000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-400000000 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-800000000 {
+> +			opp-hz = /bits/ 64 <800000000>;
+> +			opp-supported-hw = <0x01 0x0007>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-1000000000 {
+> +			opp-hz = /bits/ 64 <1000000000>;
+> +			opp-supported-hw = <0x01 0x0006>;
+> +			clock-latency-ns = <6000000>;
+> +		};
+> +
+> +		opp-1250000000 {
+> +			opp-hz = /bits/ 64 <1250000000>;
+> +			opp-supported-hw = <0x01 0x0004>;
+> +			clock-latency-ns = <6000000>;
+> +			opp-suspend;
+> +		};
+> +	};
+> +
+
+-- 
+Best regards,
+Dhruva
 
