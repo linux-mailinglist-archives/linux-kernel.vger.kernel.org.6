@@ -1,146 +1,296 @@
-Return-Path: <linux-kernel+bounces-302342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D76695FCD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:38:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1754D95FD16
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D079B1C21656
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3372823B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B0519D09B;
-	Mon, 26 Aug 2024 22:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C2719F475;
+	Mon, 26 Aug 2024 22:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hm857V9Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ODcBlg6x"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F48219B5B2;
-	Mon, 26 Aug 2024 22:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE99319DF98;
+	Mon, 26 Aug 2024 22:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724711917; cv=none; b=WLSOVuYAKHlWsAN2426CBoniZ3R/fBBHgP1205tqiyIxYvBKSRCqYZlHGsd6qQfQKS9DvbATERbugJMtguv6j5mH3xt1mWMmt6teRWcW/qqVSYVCBlVJ9h1B7+TY9Xu+YXFCTfgG3WmtxDHF4MEZBQO2KrLFqSJWKWCWo6nhdvs=
+	t=1724712188; cv=none; b=FZw7DuzgvvzoHdA96WNKjfRoI7lWS2kDVg6xTRxItRSDbNGDI+tOnp12sLmjdxg8faFa+7z5+e6LtGIpPjvvWI5nOUH72owrXhECjfLRpEuqsoeU1HnARbXsYr2ZSGpcD1J6uRXjCE19pG884NdqVQGSS+ND7wv0DIlvD+lzzm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724711917; c=relaxed/simple;
-	bh=sGYNWyOH1CghbLg8bcfIII/QyfEhcnZ+2s06PiUOs2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uY5HIryZkISN/FVlMcHOt4UDO9vAU2MZDSJCz1AK+sAfL34nZVio7APtK8l97r85VXR+ZX+bt3cmMLGuWc7Oj3H11T145fN18TQnTPGVOiD7kk8IhgETZLvFfUc4Hj9IG/aOEUxuJp9VlSbwBSGOJWSJLf60gbP0Q4NSgUJIsc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hm857V9Q; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724711916; x=1756247916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sGYNWyOH1CghbLg8bcfIII/QyfEhcnZ+2s06PiUOs2g=;
-  b=hm857V9QWSyYSwDD69TZ7ZcjHWJFfkCOhnpak+cgFJXVpj/4jsud1qme
-   Vt/u7NdoB8cwovBXllaGiq/moS15vqzYo/QT7HOXxgzpFrfSQ3pVew4Sc
-   oiR63xMKfu4BdstNE989fBfl+V0XxGElsgRfhBsJmHkHT95zMzmkDqhnx
-   9Ju1bTv7kVTrGgNGGHNtKmJkSy0YnukI7tTXkFizJONrkSiB92prdNYX/
-   YDd14Go9vhHpNaJhyu7BAr3hWJhiIbanvHbDplJFOS58pPeLBKOObQ/3k
-   S45+Ot1FoPBoDu5p3bCamF/SC+xh2jSpLf+u5wlNvWkfL9A382UBXhHs9
-   g==;
-X-CSE-ConnectionGUID: 8MqRhYasSC+hQ4Ic+VfFug==
-X-CSE-MsgGUID: WuuMUm9mQ1G3yZIRQgVztg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="26956214"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="26956214"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:38:36 -0700
-X-CSE-ConnectionGUID: 90MxcbMcS7mFHJJdrZE2Yw==
-X-CSE-MsgGUID: /PRYL0HGSLSOnHw4npvl3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="63382602"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 26 Aug 2024 15:38:32 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siiM1-000HfK-39;
-	Mon, 26 Aug 2024 22:38:30 +0000
-Date: Tue, 27 Aug 2024 06:38:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matthew Rosato <mjrosato@linux.ibm.com>, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com,
-	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
-Cc: oe-kbuild-all@lists.linux.dev, jgg@ziepe.ca, baolu.lu@linux.intel.com,
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-	svens@linux.ibm.com, jroedel@suse.de, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3] iommu/s390: Implement blocking domain
-Message-ID: <202408270611.sr21RBzy-lkp@intel.com>
-References: <20240823203108.304054-1-mjrosato@linux.ibm.com>
+	s=arc-20240116; t=1724712188; c=relaxed/simple;
+	bh=6GtdjQrdzw9Crj3vaUeGB+3TQlYa1JQoTEk01wZ19qg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tNLBGwzzH45KfgpdGDYcNsXccYXXxm0J3CkWgM5iBPHjl65wqeAU1bKD5VUkD++iw0y8W0BmrkXM/Zkm8ae4WeE1L2S8un9dV970FBS14aORFh6ZzyJb1S/TfJs6qiTx2Ri1JtdgPECHN1/HZsB6Ud/usuEmt3vDiuV/Wkbn08A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ODcBlg6x; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QKtVcO029301;
+	Mon, 26 Aug 2024 22:42:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=L
+	mzFyvYIrFhBMZ9e6bqv2hQQc3XKAa6B5d8w6PoR91A=; b=ODcBlg6xQUJMMoVPl
+	Wy2UBapucoYAxpWx8FD1mobwm2J7LU3Fq+SMGfXfXp0HS9Y9J5Rn68NYGDHN+E8Q
+	hB9GdftivNE2e7K8EhYiG7ok9GP9A/By8EXtR/6rZldmjRdnHDBHMil3TVXszpF9
+	xYOZ2CIi3TR+3h/o1J/jjTq36Tslbkde0FRxywrYLR+YgbdYnH85xbs9oXANZQFg
+	Q7Sul0UJiQ340RHjd+0WhwzoCPLgzPJvYZwaZGJEucuFG3N1NWWksIynO/4rJCUq
+	l4ZYOp1MYqdR+XbX8Eq+jeDHVRQnJyaxM2Y41msHsFleX4xhrhEWilBkf5GprNQK
+	NBg0g==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177ksv7qp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 26 Aug 2024 22:42:39 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47QKXval034855;
+	Mon, 26 Aug 2024 22:42:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4189ss8fdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 26 Aug 2024 22:42:38 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47QMgcLw024125;
+	Mon, 26 Aug 2024 22:42:38 GMT
+Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4189ss8fce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 26 Aug 2024 22:42:37 +0000
+From: Ross Philipson <ross.philipson@oracle.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
+        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+        trenchboot-devel@googlegroups.com
+Subject: [PATCH v10 11/20] x86: Secure Launch SMP bringup support
+Date: Mon, 26 Aug 2024 15:38:26 -0700
+Message-Id: <20240826223835.3928819-12-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240826223835.3928819-1-ross.philipson@oracle.com>
+References: <20240826223835.3928819-1-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240823203108.304054-1-mjrosato@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_16,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408260174
+X-Proofpoint-ORIG-GUID: qHgTQlbKPmaFIVB_AblRJ9CI-F4Q3JJ5
+X-Proofpoint-GUID: qHgTQlbKPmaFIVB_AblRJ9CI-F4Q3JJ5
 
-Hi Matthew,
+On Intel, the APs are left in a well documented state after TXT performs
+the late launch. Specifically they cannot have #INIT asserted on them so
+a standard startup via INIT/SIPI/SIPI cannot be performed. Instead the
+early SL stub code uses MONITOR and MWAIT to park the APs. The realmode/init.c
+code updates the jump address for the waiting APs with the location of the
+Secure Launch entry point in the RM piggy after it is loaded and fixed up.
+As the APs are woken up by writing the monitor, the APs jump to the Secure
+Launch entry point in the RM piggy which mimics what the real mode code would
+do then jumps to the standard RM piggy protected mode entry point.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/include/asm/realmode.h      |  3 ++
+ arch/x86/kernel/smpboot.c            | 43 ++++++++++++++++++++++++++--
+ arch/x86/realmode/init.c             |  3 ++
+ arch/x86/realmode/rm/header.S        |  3 ++
+ arch/x86/realmode/rm/trampoline_64.S | 32 +++++++++++++++++++++
+ 5 files changed, 82 insertions(+), 2 deletions(-)
 
-[auto build test ERROR on s390/features]
-[also build test ERROR on linus/master v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Rosato/iommu-s390-Implement-blocking-domain/20240826-163744
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
-patch link:    https://lore.kernel.org/r/20240823203108.304054-1-mjrosato%40linux.ibm.com
-patch subject: [PATCH v3] iommu/s390: Implement blocking domain
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240827/202408270611.sr21RBzy-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270611.sr21RBzy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270611.sr21RBzy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/bug.h:5,
-                    from include/linux/fortify-string.h:6,
-                    from include/linux/string.h:374,
-                    from include/linux/uuid.h:11,
-                    from include/linux/mod_devicetable.h:14,
-                    from include/linux/pci.h:27,
-                    from drivers/iommu/s390-iommu.c:9:
-   drivers/iommu/s390-iommu.c: In function 'zpci_get_iommu_ctrs':
->> include/linux/lockdep.h:252:61: error: invalid type argument of '->' (have 'spinlock_t' {aka 'struct spinlock'})
-     252 | #define lockdep_is_held(lock)           lock_is_held(&(lock)->dep_map)
-         |                                                             ^~
-   arch/s390/include/asm/bug.h:54:32: note: in definition of macro 'WARN_ON'
-      54 |         int __ret_warn_on = !!(x);                      \
-         |                                ^
-   include/linux/lockdep.h:285:9: note: in expansion of macro 'lockdep_assert'
-     285 |         lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
-         |         ^~~~~~~~~~~~~~
-   include/linux/lockdep.h:285:24: note: in expansion of macro 'lockdep_is_held'
-     285 |         lockdep_assert(lockdep_is_held(l) != LOCK_STATE_NOT_HELD)
-         |                        ^~~~~~~~~~~~~~~
-   drivers/iommu/s390-iommu.c:707:9: note: in expansion of macro 'lockdep_assert_held'
-     707 |         lockdep_assert_held(zdev->dom_lock);
-         |         ^~~~~~~~~~~~~~~~~~~
-
-
-vim +252 include/linux/lockdep.h
-
-f607c668577481 Peter Zijlstra 2009-07-20  251  
-f8319483f57f1c Peter Zijlstra 2016-11-30 @252  #define lockdep_is_held(lock)		lock_is_held(&(lock)->dep_map)
-f8319483f57f1c Peter Zijlstra 2016-11-30  253  #define lockdep_is_held_type(lock, r)	lock_is_held_type(&(lock)->dep_map, (r))
-f607c668577481 Peter Zijlstra 2009-07-20  254  
-
+diff --git a/arch/x86/include/asm/realmode.h b/arch/x86/include/asm/realmode.h
+index 87e5482acd0d..339b48e2543d 100644
+--- a/arch/x86/include/asm/realmode.h
++++ b/arch/x86/include/asm/realmode.h
+@@ -38,6 +38,9 @@ struct real_mode_header {
+ #ifdef CONFIG_X86_64
+ 	u32	machine_real_restart_seg;
+ #endif
++#ifdef CONFIG_SECURE_LAUNCH
++	u32	sl_trampoline_start32;
++#endif
+ };
+ 
+ /* This must match data at realmode/rm/trampoline_{32,64}.S */
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 0c35207320cb..0c915e105a9b 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -60,6 +60,7 @@
+ #include <linux/stackprotector.h>
+ #include <linux/cpuhotplug.h>
+ #include <linux/mc146818rtc.h>
++#include <linux/slaunch.h>
+ 
+ #include <asm/acpi.h>
+ #include <asm/cacheinfo.h>
+@@ -868,6 +869,41 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_SECURE_LAUNCH
++
++/*
++ * TXT AP startup is quite different than normal. The APs cannot have #INIT
++ * asserted on them or receive SIPIs. The early Secure Launch code has parked
++ * the APs using monitor/mwait. This will wake the APs by writing the monitor
++ * and have them jump to the protected mode code in the rmpiggy where the rest
++ * of the SMP boot of the AP will proceed normally.
++ */
++static void slaunch_wakeup_cpu_from_txt(int cpu, int apicid)
++{
++	struct sl_ap_stack_and_monitor *stack_monitor;
++	struct sl_ap_wake_info *ap_wake_info;
++
++	ap_wake_info = slaunch_get_ap_wake_info();
++
++	stack_monitor = (struct sl_ap_stack_and_monitor *)__va(ap_wake_info->ap_wake_block +
++							       ap_wake_info->ap_stacks_offset);
++
++	for (unsigned int i = TXT_MAX_CPUS - 1; i >= 0; i--) {
++		if (stack_monitor[i].apicid == apicid) {
++			stack_monitor[i].monitor = 1;
++			break;
++		}
++	}
++}
++
++#else
++
++static inline void slaunch_wakeup_cpu_from_txt(int cpu, int apicid)
++{
++}
++
++#endif  /* !CONFIG_SECURE_LAUNCH */
++
+ /*
+  * NOTE - on most systems this is a PHYSICAL apic ID, but on multiquad
+  * (ie clustered apic addressing mode), this is a LOGICAL apic ID.
+@@ -877,7 +913,7 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+ static int do_boot_cpu(u32 apicid, int cpu, struct task_struct *idle)
+ {
+ 	unsigned long start_ip = real_mode_header->trampoline_start;
+-	int ret;
++	int ret = 0;
+ 
+ #ifdef CONFIG_X86_64
+ 	/* If 64-bit wakeup method exists, use the 64-bit mode trampoline IP */
+@@ -922,12 +958,15 @@ static int do_boot_cpu(u32 apicid, int cpu, struct task_struct *idle)
+ 
+ 	/*
+ 	 * Wake up a CPU in difference cases:
++	 * - Intel TXT DRTM launch uses its own method to wake the APs
+ 	 * - Use a method from the APIC driver if one defined, with wakeup
+ 	 *   straight to 64-bit mode preferred over wakeup to RM.
+ 	 * Otherwise,
+ 	 * - Use an INIT boot APIC message
+ 	 */
+-	if (apic->wakeup_secondary_cpu_64)
++	if (slaunch_is_txt_launch())
++		slaunch_wakeup_cpu_from_txt(cpu, apicid);
++	else if (apic->wakeup_secondary_cpu_64)
+ 		ret = apic->wakeup_secondary_cpu_64(apicid, start_ip);
+ 	else if (apic->wakeup_secondary_cpu)
+ 		ret = apic->wakeup_secondary_cpu(apicid, start_ip);
+diff --git a/arch/x86/realmode/init.c b/arch/x86/realmode/init.c
+index f9bc444a3064..d95776cb30d3 100644
+--- a/arch/x86/realmode/init.c
++++ b/arch/x86/realmode/init.c
+@@ -4,6 +4,7 @@
+ #include <linux/memblock.h>
+ #include <linux/cc_platform.h>
+ #include <linux/pgtable.h>
++#include <linux/slaunch.h>
+ 
+ #include <asm/set_memory.h>
+ #include <asm/realmode.h>
+@@ -210,6 +211,8 @@ void __init init_real_mode(void)
+ 
+ 	setup_real_mode();
+ 	set_real_mode_permissions();
++
++	slaunch_fixup_jump_vector();
+ }
+ 
+ static int __init do_init_real_mode(void)
+diff --git a/arch/x86/realmode/rm/header.S b/arch/x86/realmode/rm/header.S
+index 2eb62be6d256..3b5cbcbbfc90 100644
+--- a/arch/x86/realmode/rm/header.S
++++ b/arch/x86/realmode/rm/header.S
+@@ -37,6 +37,9 @@ SYM_DATA_START(real_mode_header)
+ #ifdef CONFIG_X86_64
+ 	.long	__KERNEL32_CS
+ #endif
++#ifdef CONFIG_SECURE_LAUNCH
++	.long	pa_sl_trampoline_start32
++#endif
+ SYM_DATA_END(real_mode_header)
+ 
+ 	/* End signature, used to verify integrity */
+diff --git a/arch/x86/realmode/rm/trampoline_64.S b/arch/x86/realmode/rm/trampoline_64.S
+index 14d9c7daf90f..b0ce6205d7ea 100644
+--- a/arch/x86/realmode/rm/trampoline_64.S
++++ b/arch/x86/realmode/rm/trampoline_64.S
+@@ -122,6 +122,38 @@ SYM_CODE_END(sev_es_trampoline_start)
+ 
+ 	.section ".text32","ax"
+ 	.code32
++#ifdef CONFIG_SECURE_LAUNCH
++	.balign 4
++SYM_CODE_START(sl_trampoline_start32)
++	/*
++	 * The early secure launch stub AP wakeup code has taken care of all
++	 * the vagaries of launching out of TXT. This bit just mimics what the
++	 * 16b entry code does and jumps off to the real startup_32.
++	 */
++	cli
++	wbinvd
++
++	/*
++	 * The %ebx provided is not terribly useful since it is the physical
++	 * address of tb_trampoline_start and not the base of the image.
++	 * Use pa_real_mode_base, which is fixed up, to get a run time
++	 * base register to use for offsets to location that do not have
++	 * pa_ symbols.
++	 */
++	movl    $pa_real_mode_base, %ebx
++
++	LOCK_AND_LOAD_REALMODE_ESP lock_pa=1
++
++	lgdt    tr_gdt(%ebx)
++	lidt    tr_idt(%ebx)
++
++	movw	$__KERNEL_DS, %dx	# Data segment descriptor
++
++	/* Jump to where the 16b code would have jumped */
++	ljmpl	$__KERNEL32_CS, $pa_startup_32
++SYM_CODE_END(sl_trampoline_start32)
++#endif
++
+ 	.balign 4
+ SYM_CODE_START(startup_32)
+ 	movl	%edx, %ss
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3
+
 
