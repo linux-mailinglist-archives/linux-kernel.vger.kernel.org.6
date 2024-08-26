@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-301681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8FE95F3F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:35:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C59C95F3F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A152B1C21E19
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FC71F21437
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1366143C70;
-	Mon, 26 Aug 2024 14:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ASjHTVpI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C74D18BC01;
+	Mon, 26 Aug 2024 14:34:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8635A1917E6
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D499F17C9B9;
+	Mon, 26 Aug 2024 14:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682888; cv=none; b=XF+FOrkJ7Y7K+FQqYz1UHW4aFZrPtEEaW2j2Zuz+gn37CXNsz/qiTNiGU41+49AuJIl1caVQ0c6hamt4zZg8ATByemxXu8XIhlTYXNxO38q3T9szwXtpC7sPGwlgtwCjHtQoyDQjy67d/xIxOwxcqzoXoyG4IC8JQd4OyFURxdo=
+	t=1724682883; cv=none; b=p8HkEGCurL2tAoFRD28/Ya9lHsIwf7LKybWcQHc9RotlRQX7u74OrKV2taFII86TtrxKJq2Uj45CIAY+brSdhrnSHvCrIUqD0TfhClDanDS63hFktRMjfnxjsSrbcbf4Hzi4X2lcN/21ZeIgYkhMSOFMM0c1B96fqkXxnpcuLFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724682888; c=relaxed/simple;
-	bh=8HhpJlOGt2+/dYbwaoVj3byzmwVR3VEmwanL2/m8idU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cyVUkwYxUcM/IGSZTr5E9V2uOCiPPCPXXkbm5f3r547sT++towXKLolDP6gEgO2VbySPI+bES+JFMlTXrO5vSSfXTuT6cNGywD8kMil1ZyYFXaEl55HH97jZp8HIhCnU4ME9LMjVky1hg+wJuNJyuL+hhmm0hjHImDWyq5YiG3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ASjHTVpI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724682885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VW+HIHEhMAo3/O8qS6yn7a/M9Jq5ewUkNW1oEWQ5L3A=;
-	b=ASjHTVpIeCTSeGgid4jlaNZjwZpjL+AIUsYYQe5rFo8Ccg1aVGo926oYYaCdf0NLoixEKc
-	7nJW68+t/lfkrJ5qwRyVujGWSaIuHl4rVe2qa18knxDIAmm3VlpJ6JdyDhxFpxtI6sOPAw
-	Tk7UNpy+kRTmOh1n7vfE+og5BBon4fE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-R9kT6izQNnOxEQJTNyI4Og-1; Mon, 26 Aug 2024 10:34:44 -0400
-X-MC-Unique: R9kT6izQNnOxEQJTNyI4Og-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6bf788e4692so52487256d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724682884; x=1725287684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VW+HIHEhMAo3/O8qS6yn7a/M9Jq5ewUkNW1oEWQ5L3A=;
-        b=hfTX+hy8eSdKowr5X9r/8eohHwizCnmiK3zAbm5A63e2u8eZ+IjWDOJqKZ/kuvjLWo
-         elvSLt0AFJ+5jNHdZ7ufUl2RxXr5ef4Cbeus5p1koFS1uRPwVzODOMLNU9ZVQ+MiJgg+
-         X1bhyWbrNudYLFElBsDsG5149GwcYSaRhq/+5h2DnB/oWshkSg0kBZO+qSowwYCjCKzL
-         o8bWXGdO3bPdoOhzY8YJUXHvaU+bmhv02HmdBfqBQuIzF468+rx4I2yiA5vVPrUr3GBu
-         vjaCiALn73MDOYFZ95XuYAikiH0cd4gPMyYfwrHO/yknR0EyZAEyskuQ72uSPI4DEkB7
-         +CKg==
-X-Gm-Message-State: AOJu0YwLnsPNzADU9/3o6Se3MGiLwfZYmnVTB+ei1CK24uXxrHPefEdM
-	BaZ9PkVi+NvTGJQnVM+rxD7ahT71fAfXmvmk5LaLapCnwfAxPdVaD+8wGmHAvInllgnSnMEXgD+
-	4oOMyKQ+Nni638SdUlFGYXZhvrLbWpQJ4IYBCho2t0cFAFACqLSuWghH5zDfRbA==
-X-Received: by 2002:a05:6214:4304:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c16dcb7b2amr123089116d6.38.1724682883714;
-        Mon, 26 Aug 2024 07:34:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJyXhGmqDSVXXp1D+XITrKt9Uq9T5JuT4lUbtmj8ua5Df7FPqa8sCBxKyCSdGvctdo+BxBQQ==
-X-Received: by 2002:a05:6214:4304:b0:6bb:a16d:279f with SMTP id 6a1803df08f44-6c16dcb7b2amr123088766d6.38.1724682883376;
-        Mon, 26 Aug 2024 07:34:43 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c184ce9034sm10939096d6.73.2024.08.26.07.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 07:34:42 -0700 (PDT)
-Date: Mon, 26 Aug 2024 10:34:39 -0400
-From: Peter Xu <peterx@redhat.com>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, "x86@kernel.org" <x86@kernel.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>
-Subject: Re: [PATCH RFC 2/6] mm: PGTABLE_HAS_P[MU]D_LEAVES config options
-Message-ID: <ZsySf2F9djR5YVOr@x1n>
-References: <20240717220219.3743374-1-peterx@redhat.com>
- <20240717220219.3743374-3-peterx@redhat.com>
- <dcdde9fc-7e7c-45a8-8dc7-7f7ed13b81ec@cs-soprasteria.com>
- <ZseOp7M9AmZtW4jw@x1n>
- <d3e4256f-253a-4a61-a83b-93f50ebabed8@cs-soprasteria.com>
+	s=arc-20240116; t=1724682883; c=relaxed/simple;
+	bh=U5LDB0DqKnVqpxM8vC5MqT2aN5xIplfxjFDGDBwe9YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QhHAIdNpUu2Ald6M0D/GQ3DLTR4mn7/NjBfWgyvM52cf0TOg/uV9PgYs7Ml/IMcLHMbEcSu0B8X4KB5WewOsnq4lLlkMLkiMafA6vm+bY0VCEqma9k1QieMHMDa0pgYa8HLxGhoRBFj6D1RbJVPyZsYmyAD6kvYNUcGI+WfEHdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C16E2C4FDE5;
+	Mon, 26 Aug 2024 14:34:42 +0000 (UTC)
+Date: Mon, 26 Aug 2024 10:35:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Zheng Yejian <zhengyejian@huaweicloud.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Mitigate possible softlockup in
+ __tracing_open()
+Message-ID: <20240826103522.390faa85@gandalf.local.home>
+In-Reply-To: <20240824030343.3218618-1-zhengyejian@huaweicloud.com>
+References: <20240824030343.3218618-1-zhengyejian@huaweicloud.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d3e4256f-253a-4a61-a83b-93f50ebabed8@cs-soprasteria.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 06:19:52AM +0000, LEROY Christophe wrote:
-> Why is an option needed for that ? If pmd_leaf() returns always false, 
-> it means the arch doesn't support pmd mappings and if properly used all 
-> related code should fold away without a config option, shouldn't it ?
+On Sat, 24 Aug 2024 11:03:43 +0800
+Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
 
-It's not always easy to leverage an "if" clause there, IIUC.  Take the case
-of when a driver wants to inject a pmd pfnmap, we may want something like:
+> In __tracing_open(), when max latency tracers took place on the cpu,
+> the time start of its buffer would be updated, then event entries with
+> timestamps being earlier than start of the buffer would be skipped
+> (see tracing_iter_reset()).
+> 
+> Softlockup will occur if the kernel is non-preemptible and too many
+> entries were skipped in the loop that reset every cpu buffer, so add
+> cond_resched() to avoid it.
+> 
+> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
+> ---
+>  kernel/trace/trace.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index ebe7ce2f5f4a..88faa95b457b 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -4706,6 +4706,15 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
+>  		for_each_tracing_cpu(cpu) {
+>  			ring_buffer_read_start(iter->buffer_iter[cpu]);
+>  			tracing_iter_reset(iter, cpu);
+> +			/*
+> +			 * When max latency tracers took place on the cpu, the time start
+> +			 * of its buffer would be updated, then event entries with timestamps
+> +			 * being earlier than start of the buffer would be skipped
+> +			 * (see tracing_iter_reset()). Softlockup will occur if the kernel
+> +			 * is non-preemptible and too many entries were skipped in the loop,
+> +			 * so add cond_resched() to mitigate it.
+> +			 */
+> +			cond_resched();
 
-  if (pmd_leaf_supported())
-      inject_pmd_leaf(&pmd);
+This is the wrong place to put this. If the problem is with
+tracing_iter_reset(), then add it there.
 
-We don't have a pmd entry to reference at the point of pmd_leaf_supported()
-when making the decision.
+	while (ring_buffer_iter_peek(buf_iter, &ts)) {
+		if (ts >= iter->array_buffer->time_start)
+			break;
+		entries++;
+		ring_buffer_iter_advance(buf_iter);
+		/* This could be a big loop */
+		cond_resched();
+	}
 
-Thanks,
+-- Steve
 
--- 
-Peter Xu
+
+
+>  		}
+>  	} else {
+>  		cpu = iter->cpu_file;
 
 
