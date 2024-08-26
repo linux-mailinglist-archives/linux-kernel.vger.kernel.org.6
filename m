@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-301144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B93E95ECF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:19:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB5595ECD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6E41C2186B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:19:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F10B5B20F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD4E143C70;
-	Mon, 26 Aug 2024 09:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5331422B8;
+	Mon, 26 Aug 2024 09:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="n4wDlcQY"
-Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9328F13A88D;
-	Mon, 26 Aug 2024 09:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIbUgswR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083DA81741;
+	Mon, 26 Aug 2024 09:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663985; cv=none; b=kpVmUHCsv58okkILAv5Vjk7v1CVXRRnN3aXb0wvp/L11TgDJkOaUww6kKb5poH1H4UkgpX8wffAWpywpn04VI2XizLxK+YwARzOJHa7kJzijd2qSw1vdNOtj2BH7MUJAOIqszVKfI5P64ZCUY39EoB+0C834EHBpOo1Xl+r0gI4=
+	t=1724663589; cv=none; b=BnFqK2n6IqsHdwliwKzcGRPN9FvWvlCZe3ejK+yy3r6TFPe9wpf+5Sme634/esqgXqObLZ9UlAvdlyNY0+BF+mhK7479pvBkfblcHuXK1fr6to4NB4t5RUxr+WmrwuOvsclHiQfuL8tTcnlcKY4NV+T7BVIAg+iX+1Vn7WC+864=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663985; c=relaxed/simple;
-	bh=0eRmK37KBjgcw2LNlR8+ezH5+oSLGu1OKO+3ua3wznQ=;
+	s=arc-20240116; t=1724663589; c=relaxed/simple;
+	bh=a6WJnA2f0U1PEyQ6t4Zt7CqfzEq0TRdO1xLeccCNoeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qssAicm+HPTF+2v8OCj250QYHIB9E1TYuHXhxNXPxB/ErWerZi30LEIQOGtV5VneMVEH73LGNMgRagE1XnMBP9szk1eh1Tq/hrnK2dSKcoNAuMW1rMXM7Rxx93Ka8hGJaLaffL2Z4qnpQHIepLUwpKh32h9HU/QgIRJxwFFaV60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=n4wDlcQY; arc=none smtp.client-ip=198.44.140.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
-Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
-	id B2EF940438C0; Mon, 26 Aug 2024 09:12:44 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su B2EF940438C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
-	s=default; t=1724663564;
-	bh=0eRmK37KBjgcw2LNlR8+ezH5+oSLGu1OKO+3ua3wznQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=oEtFEMpG15zbUWjQGJJPA+QshIYmenX/34ereHssvanxKWFsrWKnZEgLqKqiqrykqswjc34NKIFlXox7VhUnb4mYoIO6LGSS2Q66+3Vl2Q+dBk7/vttb9IjzALEfpgVtMB9xetpYC6gluGuYpvUP4tkQ7GWQXTO7X8YyYu4I1Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIbUgswR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65D4C4DDF1;
+	Mon, 26 Aug 2024 09:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724663588;
+	bh=a6WJnA2f0U1PEyQ6t4Zt7CqfzEq0TRdO1xLeccCNoeg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4wDlcQYxBU2vjkLqN1bp2NG0trUyjeDqZffXUkVeS6SBAAy2XOBLB5Nrt3oPoXwz
-	 d7N3DrxYZ6JOND8Kp74SCWaWBSN1eiixSvZZgCanaH+8gnXvhI2CAgYK6TeeBvyim9
-	 GXc9S75FfWwAG+h4XBq7k3Dd2lHqBSSMlFseZveOXArD9xBDbR5VpBHZps8wmdZliJ
-	 tG0H0Sa6F9ohgH9ACPt9DerqKtfqLwxvWhIDerG7ThoICQ1q3aAdIIf9cuSTu0RFnp
-	 2MQhCgT6LDNa8N5TvKxFoOUF/qDiE/SCuhy3d6svvN9+7r5MaXHsfs3TapdJrq1OzO
-	 U9AlAO/+BDVxw==
-Date: Mon, 26 Aug 2024 09:12:44 +0000
-From: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
-To: m.plak@icloud.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	cnsztl@gmail.com
-Subject: Re: [PATCH v3 0/3] Add DTS for NanoPi R2S Plus
-Message-ID: <20240826091244.GA22141@ветеран.su>
-References: <20240814170048.23816-1-jin@mediatomb.cc>
- <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
+	b=tIbUgswRPLJnS015P5G2FjbNzvN+4bsEKsQo5akaaXs7F/7KLBc2hA4EzD9leJMYV
+	 8rgMbn1L4kAu+H5rIwOm8PCi+R0dqTYymYCts+OWn9l+Z+q4eMKqMsQFABSehNspeg
+	 cj1S9xDXHtJ/OMmesOsOe58LaKA1qd6KqFGzGkSUeWIiREveH06n6FPDV5PgITbWJU
+	 y33ouC4JoyegtKNZh/mjLjTZrMJXmExL1z8IIS0Hb6MHqVqNFPMcLxDFok8gF4wV5G
+	 CubtzkDE8HRlhFRmrB43SvO3VCjXEN1Hlx7rJYES9vkepvgxPvJwnhyPItQ1DyjFcG
+	 lrHiw5TkTiVYw==
+Date: Mon, 26 Aug 2024 11:13:04 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] firmware_loader: Block path traversal
+Message-ID: <ZsxHIO33o9CYRgxq@pollux>
+References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+ <Zskp364_oYM4T8BQ@pollux>
+ <CAG48ez3A=NZ9GqkQv9U6871ciNc+Yy=AvPfm3UgeXfMyh=0+oQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,99 +63,83 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <39753BDF-DC8C-4AA7-8BBC-621324BF75F3@icloud.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAG48ez3A=NZ9GqkQv9U6871ciNc+Yy=AvPfm3UgeXfMyh=0+oQ@mail.gmail.com>
 
-Hi,
+On Sat, Aug 24, 2024 at 03:34:20AM +0200, Jann Horn wrote:
+> On Sat, Aug 24, 2024 at 2:31 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> > On Fri, Aug 23, 2024 at 08:38:55PM +0200, Jann Horn wrote:
+> > > Fix it by rejecting any firmware names containing ".." path components.
+> [...]
+> > > +/*
+> > > + * Reject firmware file names with ".." path components.
+> > > + * There are drivers that construct firmware file names from device-supplied
+> > > + * strings, and we don't want some device to be able to tell us "I would like to
+> > > + * be sent my firmware from ../../../etc/shadow, please".
+> > > + *
+> > > + * Search for ".." surrounded by either '/' or start/end of string.
+> > > + *
+> > > + * This intentionally only looks at the firmware name, not at the firmware base
+> > > + * directory or at symlink contents.
+> > > + */
+> > > +static bool name_contains_dotdot(const char *name)
+> > > +{
+> > > +     size_t name_len = strlen(name);
+> > > +     size_t i;
+> > > +
+> > > +     if (name_len < 2)
+> > > +             return false;
+> > > +     for (i = 0; i < name_len - 1; i++) {
+> > > +             /* do we see a ".." sequence? */
+> > > +             if (name[i] != '.' || name[i+1] != '.')
+> > > +                     continue;
+> > > +
+> > > +             /* is it a path component? */
+> > > +             if ((i == 0 || name[i-1] == '/') &&
+> > > +                 (i == name_len - 2 || name[i+2] == '/'))
+> > > +                     return true;
+> > > +     }
+> > > +     return false;
+> > > +}
+> >
+> > Why do you open code it, instead of using strstr() and strncmp() like you did
+> > in v1? I think your approach from v1 read way better.
+> 
+> The code in v1 was kinda sloppy - it was probably good enough for this
+> check, but not good enough to put in a function called
+> name_contains_dotdot() that is documented to exactly search for any
+> ".." components.
+> 
+> Basically, the precise regex we have to search for is something like
+> /(^|/)\.\.($|/)/
+> 
+> To implement that by searching for substrings like in v1, we'd have to
+> search for each possible combination of the capture groups in the
+> regex, which gives the following four (pow(2,2)) patterns:
+> 
+> <start>..<end>
+> <start>../
+> /..<end>
+> /../
 
-On Sun, Aug 25, 2024 at 06:28:44PM +0200, m.plak@icloud.com wrote:
-> On 14 Aug 2024, at 19:00, Sergey Bostandzhyan <jin@mediatomb.cc> wrote:
-> > here is version 3 of the NanoPi R2S Plus patchset.
-> 
-> 
-> Thanks! I was just experimenting with a patch for that board.
-> 
-> 
-> eMMC:
-> 
-> A close cousin of that board, the NanoPi R2C Plus, similarly adds eMMC to 
-> its base version, R2C.
-> 
-> R2C Plus is already supported by rk3328-nanopi-r2c-plus.dts.
-> 
-> The r2c-plus DTS file differs slightly from your patch.
-> Would it not be better to use the same fragment for both r2s-plus and r2c-plus? 
-> Or even place the eMMC activation in a shared dtsi file?
+I see.
 
-thank you for the additional review and testing!
-If you followed the thread, then you probably know that I was way over my head
-here, as I operate soleley in user space :) I was building a Yocto image for this
-board for one of my clients and I figured I'll try to submit something that was 
-already present in the FriendlyElec repos and which worked for me and with the 
-help and guidance from Heiko and others we managed to get it in, which concluded 
-my kernel adventure.
-
-It'll be great if you or anyone else is willing to continue from this starting
-point if further improvements are needed, because I unfortunately do not have the
-capacity for it - I am happy if hardware "just works" and
-very much appreciate the abstraction APIs that the kernel provides to folks like
-me :)
-
-> I’ve compared the two and the friendlyelec kernel (not u-boot) sources.
->  your patch does not contain these lines from r2c-plus:
->     vmmc-supply = <&vcc_io_33>;
->     vqmmc-supply = <&vcc18_emmc>;
->     mmc-ddr-1_8v;
 > 
-> your patch adds these lines that are not in r2c-plus:
->     supports-emmc;
->     disable-wp;
->     num-slots = <1>;
+> So written like in v1, that'd look something like:
 > 
-> r2c-plus has a line that is in rk3328.dtsi already:
->     max-frequency = <150000000>; 
+> if (strcmp(name, "..") == 0 || strncmp(name, "../", 3) == 0 ||
+> strstr(name, "/../") != NULL || (name_len >= 3 &&
+> strcmp(name+name_len-3, "/..") == 0)))
+>   return true;
+
+I think I still slightly prefer this variant, but I think either one is fine.
+
+With one or the other and dev_warn() fixed,
+
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+
 > 
-> the friendlyelec kernel sources also add:
->     no-sd;
+> Compared to that, I prefer the code I wrote in v2, since it is less
+> repetitive. But if you want, I can change it to the expression I wrote
+> just now.
 > 
-> 
-> From the description in the mmc-controller binding documentation, I believe
-> disable-wp should not be used. The description for no-sd  I find confusing.
-> Can't find num-slots and supports-emmc there.
-> 
-> The RK3288 datasheet does not mention support for DDR mode, so mmc-ddr-1_8v 
-> surprises me a bit. The datasheet does explicitly mention that HS400 is _not_ 
-> supported.
-
-The mmc-ddr-1_8v change was suggested during review and I was asked to test if it
-works and improves the eMMC speed (it did). Back then I have asked if someone who
-knows what they are doing could take over, because I honestly have no clue
-what these things do on hardware level and what the implications here are.
-I was not let off the hook though, so I have just followed the instructions
-of the reviewers. If it is not in the datasheed, then perhaps this line should
-be removed after all?
-
-> USB:
-> 
-> Another change with the Plus version of the R2S is that the USB 2.0 port that 
-> used to be wired to the ethernet chip now is used for an external USB port. 
-> I don’t have the hardware here (yet), so can't test if that USB 2.0 and the 
-> USB 3.0 work independently or need to be explicitly separated.
-
-Good to know that there may be an issue, to be honest I did not test USB
-explicitly, but both ethernet ports work. I did not modify anything in that
-regard anyway, since the R2S (non Plus) version was in the kernel already and
-I just copy-pasted the eMMC lines from the FriendlyElec devicetree on top of that
-to get eMMC to show up.
-
-We only needed ethernet and eMMC to work on the R2S Plus, so we did not test
-anything besides that.
-
-I still have the hardware here, so I could quickly test a thing or two if
-needed, just please make sure to e-mail me directly as I have already unsubscribed
-from the mailing lists.
-
-Kind regards,
-Sergey
-
 
