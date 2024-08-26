@@ -1,469 +1,150 @@
-Return-Path: <linux-kernel+bounces-301205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B3F95EDB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A9395EDAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E94E1C2176B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12DA11C216C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BD9140363;
-	Mon, 26 Aug 2024 09:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AE8145FF9;
+	Mon, 26 Aug 2024 09:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQQ3kK9N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jpetuzTo"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64CC1465AE;
-	Mon, 26 Aug 2024 09:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC4C78C98;
+	Mon, 26 Aug 2024 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724665807; cv=none; b=iDAcYT1BeoapZ+ZwWbRlnH0FNCwtZKQXbWYAC+lRGW/ctGV3p+8eRtuATAHNFCnqejIShTi+4k3Dh2QCFnfKPbUKLWhLkqDMGg+RFUfmGuhP3VStRLSRIYuIhRn+81lIm5PhzGppA06m62vOov3b+f5RqW5LshRgD9JxVEd4yNE=
+	t=1724665796; cv=none; b=mti6CtemJd5159mOLYnxg4ylVrJE6Prm2uDyUUnNklZv0bSOAvvsMg9cd8oAq0T+J0HTW0Eakuby+NqOAKKrEa3FguyLfNt7nZZMpo9i2cyICbrAku4eR/D4nythmuIDqVClZD1BcX3jQ0IN9Kb4Gw7gajd0RRls6bcEPh2JZ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724665807; c=relaxed/simple;
-	bh=X4XtTIQ4M47FVIdcgJule4UXJUzrtFvBwfomuOxhSNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNVDooQbPCdJwRk5Nup1OOu9gIAIK6gYpRL5wmdR3Rnk/dC89X4ZD/EXlg53b3u2FajQIZTwCoBFCFWJQzFLgPnPhzfn2qjy0FJqIDUPUGSuMFUbSjJxgOU/wpX8nq/2ovt/MAQROZRq6nMwrV1GOPFFkOhE3nQ9zEFmmoJiSTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQQ3kK9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B5FC4FE00;
-	Mon, 26 Aug 2024 09:50:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724665806;
-	bh=X4XtTIQ4M47FVIdcgJule4UXJUzrtFvBwfomuOxhSNY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nQQ3kK9N+iwDLbwezr69Ra9UmNixoWdrH1kXvvkP6/x6o9Q/tysOt6phcbc2AymHg
-	 nBFgYKoq2+r8qCM5gUF/yNEUv02H2zahX07DaCKhyQsdHRQjOpW0xflpZu5n7/f/X9
-	 RGPVYav3U0dL/J82Zi00UTLLNCvKDb5jN66B5sklFL0sYmsfHEejNQOMlo2OqpbDtN
-	 dHHd+Y7jzubpc5s2AYxGSmB9mXamhW8zcVRWoZUYd6VXs1Z5Hhtuv0sZNDiGNim1rJ
-	 qMlYyHPz8MPIW7b2QV3xCIh5qVmT3drmreQsWukeK1apYpCmP7G1ksskuRseDgQ1mp
-	 KiNwVygSdjYpg==
-Date: Mon, 26 Aug 2024 10:49:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Li, Hua Qian" <HuaQian.Li@siemens.com>
-Cc: "Zeng, Chao" <chao.zeng@siemens.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "conor@kernel.org" <conor@kernel.org>, "Su, Bao Cheng"
- <baocheng.su@siemens.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kiszka,
- Jan" <jan.kiszka@siemens.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "Lopes Ivo, Diogo Miguel" <diogo.ivo@siemens.com>
-Subject: Re: [PATCH 2/3] dt-bindings: iio: Add everlight pm16d17 binding
-Message-ID: <20240826104947.61613a3c@jic23-huawei>
-In-Reply-To: <18528634e39eec1307777a0fed5eda7324e78575.camel@siemens.com>
-References: <cover.1723527641.git.jan.kiszka@siemens.com>
-	<f6476e06cd8d1cf3aff6563530612c536cd45716.1723527641.git.jan.kiszka@siemens.com>
-	<20240813-captivity-spellbind-d36ca0f31e22@spud>
-	<a458a2cbc96a23c0a2ef89327e1f8bcd2e2777e6.camel@siemens.com>
-	<20240817144215.1b2e9db3@jic23-huawei>
-	<18528634e39eec1307777a0fed5eda7324e78575.camel@siemens.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724665796; c=relaxed/simple;
+	bh=5iA5k46fL5uSOMx85+P9za1OlnUFhudV1CuRxjH1Y6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Khnvbz8iW+aNlQkSDB+cUaE/h0S7jIY+4C4ovgiRvP5kR22twUdraCIhO3qV/nZtFVQSgdVmPMdzuZX4WYqO0MI6ncusETx6J0xO3yKNc4g1yGsq7azSWEBA1m6On+MW3VBasPwilWRfz2Pgulyj3M/1UvA7OlD4GvtA/rt56iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jpetuzTo; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 642CD480;
+	Mon, 26 Aug 2024 11:48:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724665727;
+	bh=5iA5k46fL5uSOMx85+P9za1OlnUFhudV1CuRxjH1Y6g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jpetuzToyGX8G6dJ2OI4suQ5IFBsWH1SqNgJ2GFL9AUKXQm2LGIUvDatkDzAyJ3Xb
+	 sdhauvDV6SpC2yPuOq38EJHvxewjon84dZ/v6d5vt027Sm2DMf++osn32LJbbCAOt7
+	 XspEQrql4lidryVaEyOF/6kzYtDKtvjV0Bz40nnk=
+Message-ID: <ad8ecccc-76dc-4072-9ecc-ecc48330267d@ideasonboard.com>
+Date: Mon, 26 Aug 2024 12:49:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240626055108.GA10453@pendragon.ideasonboard.com>
+ <CA+V-a8tcWVTzDgBMhn8aQaX934MKwOePp3PhMF4TcXqBK2nhAA@mail.gmail.com>
+ <20240823150054.GP26098@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240823150054.GP26098@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Aug 2024 07:12:53 +0000
-"Li, Hua Qian" <HuaQian.Li@siemens.com> wrote:
+Hi,
 
-> On Sat, 2024-08-17 at 14:42 +0100, Jonathan Cameron wrote:
-> > On Fri, 16 Aug 2024 01:48:36 +0000
-> > "Li, Hua Qian" <HuaQian.Li@siemens.com> wrote:
-> >  
-> > > On Tue, 2024-08-13 at 16:52 +0100, Conor Dooley wrote:  
-> > > > On Tue, Aug 13, 2024 at 07:40:41AM +0200, Jan Kiszka wrote:  
-> > > > > From: Chao Zeng <chao.zeng@siemens.com>
-> > > > >
-> > > > > Add the binding document for the everlight pm16d17 sensor.
-> > > > >
-> > > > > Signed-off-by: Chao Zeng <chao.zeng@siemens.com>
-> > > > > Co-developed-by: Baocheng Su <baocheng.su@siemens.com>
-> > > > > Signed-off-by: Baocheng Su <baocheng.su@siemens.com>  
-> > > >
-> > > > Ditto here Jan.
-> > > >  
-> > > > > ---
-> > > > >  .../iio/proximity/everlight,pm16d17.yaml      | 95
-> > > > > +++++++++++++++++++
-> > > > >  1 file changed, 95 insertions(+)
-> > > > >  create mode 100644
-> > > > > Documentation/devicetree/bindings/iio/proximity/everlight,pm16d
-> > > > > 17.y
-> > > > > aml
-> > > > >
-> > > > > diff --git
-> > > > > a/Documentation/devicetree/bindings/iio/proximity/everlight,pm1
-> > > > > 6d17
-> > > > > .yaml
-> > > > > b/Documentation/devicetree/bindings/iio/proximity/everlight,pm1
-> > > > > 6d17
-> > > > > .yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..fadc3075181a
-> > > > > --- /dev/null
-> > > > > +++
-> > > > > b/Documentation/devicetree/bindings/iio/proximity/everlight,pm1
-> > > > > 6d17
-> > > > > .yaml
-> > > > > @@ -0,0 +1,95 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id:
-> > > > > http://devicetree.org/schemas/iio/proximity/everlight,pm16d17.yaml#
-> > > > > +$schema:
-> > > > > http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Everlight PM-16D17 Ambient Light & Proximity Sensor
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Chao Zeng <chao.zeng@siemens.com>
-> > > > > +
-> > > > > +description: |
-> > > > > +  This sensor uses standard I2C interface. Interrupt function
-> > > > > is
-> > > > > not covered.  
-> > > >
-> > > > Bindings should be complete, even if software doesn't use the
-> > > > interrupts. Can you document them please.
-> > > >  
-> > > > > +  Datasheet:
-> > > > > https://en.everlight.com/sensor/category-proximity_sensor/digital_proximity_sensor/
-> > > > >  
-> > > >
-> > > > Do you have a link to a datasheet? The link to the pm16d17 here
-> > > > 404s
-> > > > for
-> > > > me.
-> > > >  
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    enum:
-> > > > > +      - everlight,pm16d17
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  ps-gain:
-> > > > > +    description: Receiver gain of proximity sensor
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > > +    enum: [1, 2, 4, 8]
-> > > > > +    default: 1
-> > > > > +  
-> How about using `in_proximity0_hw_gain` as a userspace interface here?
-
-hwgain is used for cases where the gain does not affect the singal
-reported (so things like brightness on a time of flight sensor).
-If this directly affects the output values for proximity then
-it should be scale. If there are multiple things affecting the scale
-it is up to the driver to figure out the 'right' combination to satisfy the
-user request.
-
-> > > > > +  ps-itime:  
-> > > >
-> > > > How did you get itime from conversion time? To the layman (like
-> > > > me!)
-> > > > conversion-time would make more sense...
-> > > >
-> > > > Also, "ps"? The whole thing is a proxy sensor, so why have that
-> > > > prefix
-> > > > on properties. What is missing however is a vendor prefix.  
-> How about using `in_proximity0_conversion_time` as a userspace
-> interface here?
-
-See if you can use standard ABI.  New ABI is effectively ABI that
-is unused by all existing software and unlikely to be adopted by
-anything generic in future.
-
-We have various controls this might map to.  integration_time
-for the amount of exposure time for a given sensor, sampling_frequency
-covers the rate at which the overall process occurs (1/sampling period).
-That covers the majority of cases.  If it's something else that
-can't be mapped to these interfaces I want to fully understand
-why userspace would choose to change it.
-
-> > > >  
-> > > > > +    description: Conversion time for proximity sensor [ms]
-> > > > > +    $ref: /schemas/types.yaml#/definitions/string  
-> > > >
-> > > > Instead of a string, please use the -us suffix, and put this in
-> > > > microseconds instead.
-> > > >
-> > > > In total, that would be s/ps-itime/everlight,conversion-time-us/.
-> > > >
-> > > > I would, however, like to know why this is a property of the
-> > > > hardware.
-> > > > What factors do you have to consider when determining what value
-> > > > to
-> > > > put
-> > > > in here?
-> > > >  
-> > > > > +    enum:
-> > > > > +      - "0.4"
-> > > > > +      - "0.8"
-> > > > > +      - "1.6"
-> > > > > +      - "3.2"
-> > > > > +      - "6.3"
-> > > > > +      - "12.6"
-> > > > > +      - "25.2"
-> > > > > +    default: "0.4"
-> > > > > +
-> > > > > +  ps-wtime:
-> > > > > +    description: Waiting time for proximity sensor [ms]
-> > > > > +    $ref: /schemas/types.yaml#/definitions/string  
-> > > >
-> > > > All of the same comments apply here. E.g. why "wtime" isntead of
-> > > > "waiting-time" and so on.
-> > > > I would really like to know why these things are properties of
-> > > > the
-> > > > hardware, rather than something that software should control.
-> > > >  
-> How about using `in_proximity0_wait_time` as a userspace interface
-> here?
-Again, if you add new ABI, it will be unused.
-So basically do not do so.  Work out how to map to existing ABI.
-
-Superficially seems like sampling_frequency = 1/(wait_time + conversion_time)
-And 'maybe' conversion time is close at least to 'integration_time'.
-
-It is sometimes a pain to map to standard ABI for hardware that chooses
-different control schemes, but it is necessary to do so if you want to be
-able to use normal software / scripts etc.
-
-If there is something we can't represent and a strong usecase for
-why userspace will want to directly tune it (rather than it being
-one element of the hardware controls that back a single userspace
-control) then it is fine to propose new userspace ABI along with
-documentation.  We'll consider it, but it will be much more challenging
-to get accepted than using standard ABI.
-
-> > > > > +    enum:
-> > > > > +      - "12.5"
-> > > > > +      - "25"
-> > > > > +      - "50"
-> > > > > +      - "100"
-> > > > > +      - "200"
-> > > > > +      - "400"
-> > > > > +      - "800"
-> > > > > +      - "1600"
-> > > > > +    default: "12.5"
-> > > > > +
-> > > > > +  ps-ir-led-pulse-count:
-> > > > > +    description: IR LED drive pulse count
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32  
-> > > >
-> > > > All custom properties require a vendor prefix, not "ps". Again,
-> > > > what
-> > > > makes this a property of the hardware, rather than something that
-> > > > software should control?
-> > > >  
-> How about using `in_proximity0_pulse_count` as a userspace interface
-> here?
-This one is unsual, so I want to understand what it actually means
-for a user.  Why would they control pulse count? What does it do?
-- Increase gain / sensitivity?
-- Reduce noise?
-
-> > > > > +    minimum: 1
-> > > > > +    maximum: 256
-> > > > > +    default: 1
-> > > > > +
-> > > > > +  ps-offset-cancel:
-> > > > > +    description: |
-> > > > > +      When PS offset cancel function is enabled, the result of
-> > > > > subtracting any
-> > > > > +      value specified by the PS offset cancel register from
-> > > > > the
-> > > > > internal PS
-> > > > > +      output data is written to the PS output data register.  
-> > > >  
-> How about using `in_proximity0_offset_cancel` as a userspace interface
-> here?
-
-This seems likely to be calibbias or offset.  The cancel or not
-is just whether the offset value is 0 or not.
-
-> > > > Again, what makes this a property of the hardware? What hardware
-> > > > related
-> > > > factors determine that value that you put in here?
-> > > >
-> > > > Thanks,
-> > > > Conor.  
-> > >
-> > > Certain parameters such as conversion time, wait time, or sampling
-> > > rate
-> > > are directly tied to the physical characteristics and capabilities
-> > > of
-> > > the sensor.  
-> >
-> > Ah. I think I'd missed this uses an external LED (rather than it
-> > being
-> > in package).  In that case, the characteristics that 'work' for
-> > proximity sensing are somewhat dependent on the system design
-> > (simplifying heavily, led output for a given current, optical filter
-> >  on that LED etc).
-> >
-> > For the sensor specific side, it should be just from the compatible,
-> > but
-> > when another part is involved, DT binding based tuning may make sense
-> > as long as it is 'per consumer device / board' not per specific
-> > instance.
-> >
-> >
-> >
-> >  
-> > > These parameters are typically determined by the sensor
-> > > specifications, and the datasheet usually provides recommended
-> > > values
-> > > for these parameters. Below is an excerpt from the datasheet:
-> > >
-> > > /*
-> > > +-----------------------+-------+------+------+------+-----+-------
-> > > ---+  
-> > > > Parameter             | Symbol| Min  | Typ  | Max  | Unit|
-> > > > Condition|  
-> > > +-----------------------+-------+------+------+------+-----+-------
-> > > ---+  
-> > > > PS A/D conversion time| TPS   | 21.4 | 25.2 | 28.9 | ms  | PS  
-> > > A/DC=16bit  |  
-> > > > PS wait time setting  | TPSWAIT| 10.6| 12.5 | 14.3 | ms  | 12.5ms  
-> > > setting |
-> > > +-----------------------+-------+------+------+------+-----+-------
-> > > ---+
-> > > */  
-> >
-> > Doesn't apply to everything you have here though. wtime / wait time
-> > is about how often you get a reading not the physical device.  How is
-> > that affected by the physical device?
-> >
-> > I 'think' the table above is giving precision of the value for a
-> > particular
-> > control setting. If you set wtime to 12.5msec (value 0 in register)
-> > then it will actually be between 10.6 and 14.3 msec, not that you
-> > should
-> > set it to 12.5msec.
-> >
-> > There are 3 controls related to gain that you could argue for
-> > defaults
-> > for in DT (maybe) but given proximity sensing is also about the
-> > target, not just the measurement device, there won't be a right
-> > answer
-> > unless your proximity sensor is being used for a fixed purpose (e.g.
-> > WIFI signal strength limiting or a button type control).  
-> > >
-> > >
-> > > However, there are some similar cases in the kernel, as follows:
-> > >
-> > > Documentation/devicetree/bindings/iio/proximity/devantech-
-> > > srf04.yaml
-> > >     - startup-time-ms  
-> > That's after a resume and I think depends one exactly what the
-> > circuitry
-> > is (in this case the device is more of a reference design than a
-> > single
-> > device).
-> >  
-> > > Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml
-> > > Documentation/devicetree/bindings/iio/proximity/semtech,sx9324.yaml
-> > > Documentation/devicetree/bindings/iio/proximity/semtech,sx9360.yaml
-> > >     - semtech,avg-pos-strength
-> > >     - semtech,ph01-resolution
-> > >     - semtech,input-analog-gain  
-> > These are SAR sensors I think, so the sensor element is external to
-> > the device.  In theory we could have described the sensing element
-> > and used that to work out the right values of these, but in practice
-> > it was easier to just provide the parameters from some 'per design'
-> > tuning.
-> >  
-> > >     - ...
-> > > Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yam
-> > > l
-> > >     - vishay,led-current-microamp  
-> >
-> > I think this is about whether you can burn the external LED out or
-> > not.
-> > On the datasheet I'm looking at for this device, only value 000 is
-> > specified in this 3bit field so I guess it's not controllable?
-> >
-> > Pulse counts are less likely to be relevant to the LED burning out,
-> > but
-> > maybe(?)
-> >
-> > Anyhow, it's not entirely obvious to me that it makes sense to
-> > control
-> > so much in DT for this device.  Better to put it in userspace control
-> > and rely on udev etc setting things right for a given device +
-> > application.
-> >
-> > Jonathan
-> >  
-> I agree with your comments, we'll modify the DT to allow userspace
-> control as introduced above. Consequently, all the dt properites will
-> be removed.
-
-That's good, but do focus on how to fit existing ABI as that's
-what existing userspace is aware of.
-
-Jonathan
-
+On 23/08/2024 18:00, Laurent Pinchart wrote:
+> On Fri, Aug 23, 2024 at 02:33:49PM +0100, Lad, Prabhakar wrote:
+>> On Wed, Jun 26, 2024 at 6:51 AM Laurent Pinchart wrote:
+>>> On Tue, Jun 25, 2024 at 01:32:44PM +0100, Prabhakar wrote:
+>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>>
+>>>> All the RZ/G2L DU specific components are located under the rz-du folder,
+>>>> so it makes sense to move the RZ/G2L MIPI DSI driver there instead of
+>>>> keeping it in the rcar-du folder. This change improves the organization
+>>>> and modularity of the driver configuration by grouping related settings together.
+>>>
+>>> I was thinking the same the other day. Thanks for beating me at sending
+>>> a patch :-)
+>>>
+>>> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>>
+>>> Do you or Biju has committer rights to drm-misc to push this patch ?
+>>
+>> We dont, can you please queue this patch via your tree?
 > 
-> 
-> Thanks,
-> Hua Qian
-> >
-> >
-> >  
-> > >
-> > > This is why we are leveraging the hardware properties.
-> > >
-> > > Thanks,
-> > > Hua Qian
-> > >  
-> > > >  
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > > +    default: 0
-> > > > > +    maximum: 65535
-> > > > > +
-> > > > > +required:
-> > > > > +  - compatible
-> > > > > +  - reg
-> > > > > +
-> > > > > +unevaluatedProperties: false
-> > > > > +
-> > > > > +examples:
-> > > > > +  - |
-> > > > > +    i2c {
-> > > > > +        #address-cells = <1>;
-> > > > > +        #size-cells = <0>;
-> > > > > +
-> > > > > +        lightsensor: pm16d17@44 {
-> > > > > +            compatible = "everlight,pm16d17";
-> > > > > +            reg = <0x44>;
-> > > > > +
-> > > > > +            ps-gain = <1>;
-> > > > > +            ps-itime = "0.4";
-> > > > > +            ps-wtime = "12.5";
-> > > > > +            ps-ir-led-pulse-count = <1>;
-> > > > > +            ps-offset-cancel = <280>;
-> > > > > +        };
-> > > > > +    };
-> > > > > --
-> > > > > 2.43.0
-> > > > >  
-> > >  
-> >  
-> 
-> --
-> Hua Qian Li
-> Siemens AG
-> http://www.siemens.com/
+> I don't have other pending patches for DRM at the moment. Tomi, could
+> you push this to drm-misc ?
+
+I have pushed this.
+
+Should the DSI driver depend on the DU driver in the kconfig? It 
+compiles fine without the DU, but can it ever be used alone?
+
+  Tomi
 
 
