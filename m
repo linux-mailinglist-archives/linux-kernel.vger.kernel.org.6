@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-302112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B11D95F9EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:47:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF05995F9F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F34B22B77
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69571284679
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E2D199244;
-	Mon, 26 Aug 2024 19:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00DD132121;
+	Mon, 26 Aug 2024 19:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n0VnPxq1"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OF+SCS3v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AB8130ADA;
-	Mon, 26 Aug 2024 19:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596D12C80F
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701630; cv=none; b=IitgZV6IYpbm+e3HBq8Wj3KXdOc0xw2C8z0zB/ivkokkkCyavXMjH3B59WdcimyWkby4VLQMmrtUWc7g6dGQSP0hCWxWXHMicvTHqFInKITr+sVNQ7lRf8Omkh7vhTQDvvxaJUiH+e9VwKChyZ1nUgvAtKqRs/7x5WVgYSdGeEo=
+	t=1724701641; cv=none; b=YMBnbq73CJAB9E0xUuRV+ZjRXdfQsr2DJcIZmZuvZAKX4Lnpz2BfUfJ7ASZH0Cyzny/Pp4jKFgQEz7oQdYLuEcHL/7WPE/roUsOcBZ2uP7hURGmMM/htDDjEyv1sHYJtlZA51Z8BgadISPdI2o130Dthafmb9Bpvm+GZ1OQCAkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701630; c=relaxed/simple;
-	bh=1l+UcRRihFinCeQkAhh3WeCzdyaLBGa7D12uLhRQgvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLz3dAXviHMIGac6dkGZ9fne7qeXi6HHM2/8f6u1zk0GvF5OoLk6P/8qJeWveekoGfrweFy+HehN1DX8eWv+OegpeDQkfg5L/yX+kVwlzgNCXUgXQCXny14PR9TuOfAecMLRjz8VjvuO6PQ9Ct+N4VVmvfCqNlr4evhAa4G5ZLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n0VnPxq1; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hBFh3cA2kmH2dkDFxpJSjKEkaQyWfxc4ceQWYnieJHc=; b=n0VnPxq1/cHl3id8AuHRGWQFSz
-	LfIfWHT4xoCyQ1o6oc5Ezn0NtdfxljghXB/BT2xy8DNoKM4K1iOSAACgo43JnBexawiQkax3ePXWs
-	fWLn7C3ET0FeAqipbn3R5uUNKM1Z8sUDXRz8K6B2xi304aGgPDVRhmk3pVcLFWw6UNshrWE3Aq+bC
-	zbELhyb7tZ0sLvIz8JKLR17ynZcG88rPjYM2+voXAPi+FzNbV833syhi/su7xlhy05Qrpt58+vFlT
-	lJhObAZhGcns6yUUgH1dyBkIPgXICIgWwcCwuVaaijFDaaZP5o7bmt6zSBRZYjrV7VU3q3qpVxwGv
-	7vWb5Jsg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sifg8-0000000Fw1N-097R;
-	Mon, 26 Aug 2024 19:47:04 +0000
-Date: Mon, 26 Aug 2024 20:47:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zszbt8M5mUPZjbFq@casper.infradead.org>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
- <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
- <Zszado75SnObVKG5@casper.infradead.org>
- <rwqusvtkwzbr2pc2hwmt2lkpffzivrlaw3xfrnrqxze6wmpsex@s3eavvieveld>
+	s=arc-20240116; t=1724701641; c=relaxed/simple;
+	bh=k+9W/nw17jlBjjtfac2axE2lhU/IXbWLpg+gT0rR8JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=spZ9fq+sL5gQmJZeMZR6KDinZlvi5Knb9lfM0/oMD5cbuN6Mucbkb/5GNMdAs7/D6GHq2rU0Ok9y+PYe6J/LQz5qvFVmjQDd1e6/jAB0hrD02dKztfNx78rMhceyZE6BlArPfMBwP3jp537dZBwMM0CkDtJg6yQc/FV5fOM+JH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OF+SCS3v; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724701638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+qhWVNvkXNJ4Pj/gRvSvQxzHwZIu1ZYnGi5nOysGGjk=;
+	b=OF+SCS3vmEPGKokMRsClp/U0/Gv4hraoYX4x1zsj6UnLiP1V9WY46VJKULJ2X3KnX1vZwJ
+	123I2pS5NQiOwpgyoALv7cS1wnFj1jrYDD/3ZcaytmGVJAe0ZywnUXr+7Z8uhEP8TY5zY7
+	MfHwg3QNn9Sg+b5LIsqqjBYCLPBjoyw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-hAwK9ZWPPzyDKeQ5KdUDlQ-1; Mon,
+ 26 Aug 2024 15:47:13 -0400
+X-MC-Unique: hAwK9ZWPPzyDKeQ5KdUDlQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E3C81955BF4;
+	Mon, 26 Aug 2024 19:47:09 +0000 (UTC)
+Received: from [10.2.16.157] (unknown [10.2.16.157])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0862C300019C;
+	Mon, 26 Aug 2024 19:47:06 +0000 (UTC)
+Message-ID: <9793ce0d-842a-4876-860a-9b7b8d538e45@redhat.com>
+Date: Mon, 26 Aug 2024 15:47:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rwqusvtkwzbr2pc2hwmt2lkpffzivrlaw3xfrnrqxze6wmpsex@s3eavvieveld>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 -next 09/11] cgroup/cpuset: move v1 interfaces to
+ cpuset-v1.c
+To: Tejun Heo <tj@kernel.org>
+Cc: Chen Ridong <chenridong@huawei.com>, lizefan.x@bytedance.com,
+ hannes@cmpxchg.org, adityakali@google.com, sergeh@kernel.org,
+ mkoutny@suse.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chenridong@huaweicloud.com
+References: <20240826132703.558956-1-chenridong@huawei.com>
+ <20240826132703.558956-10-chenridong@huawei.com>
+ <eaef1faf-c3f3-4664-ae7d-5cca611925e4@redhat.com>
+ <ZszaJFzcmBskojVS@slm.duckdns.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZszaJFzcmBskojVS@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Aug 26, 2024 at 03:42:59PM -0400, Kent Overstreet wrote:
-> On Mon, Aug 26, 2024 at 08:41:42PM GMT, Matthew Wilcox wrote:
-> > On Mon, Aug 26, 2024 at 03:39:47PM -0400, Kent Overstreet wrote:
-> > > Given the amount of plumbing required here, it's clear that passing gfp
-> > > flags is the less safe way of doing it, and this really does belong in
-> > > the allocation context.
-> > > 
-> > > Failure to pass gfp flags correctly (which we know is something that
-> > > happens today, e.g. vmalloc -> pte allocation) means you're introducing
-> > > a deadlock.
-> > 
-> > The problem with vmalloc is that the page table allocation _doesn't_
-> > take a GFP parameter.
-> 
-> yeah, I know. I posted patches to plumb it through, which were nacked by
-> Linus.
-> 
-> And we're trying to get away from passing gfp flags directly, are we
-> not? I just don't buy the GFP_NOFAIL unsafety argument.
 
-The problem with the giant invasive change of "getting away from passing
-GFP flags directly" is that you need to build consensus for what it
-looks like and convince everyone that you have a solution that solves
-all the problems, or at least doesn't make any of those problems worse.
-You haven't done that, you've just committed code that the MM people hate
-(indeed already rejected), and set back the idea.
+On 8/26/24 15:40, Tejun Heo wrote:
+> On Mon, Aug 26, 2024 at 03:30:14PM -0400, Waiman Long wrote:
+> ...
+>> Another alternative is to include cpuset-v1.c directly into cpuset.c like
+>>
+>> #ifdef CONFIG_CPUSETS_V1
+>> #include "cpuset-v1.c"
+>> #else
+>>     ....
+>> #endif
+>>
+>> Then you don't need to change the names and will not need cpuset-internal.h.
+>> It is up to you to decide what you want to do.
+> FWIW, I'd prefer to have cpuset1_ prefixed functions declared in cpuset1.h
+> or something rather than including .c file.
 
-Look, it's not your job to fix it, but if you want to do it, do it
-properly.
+Sure. Let's have "cpuset1_" prefix if it is v1 specific and "cpuset_" 
+prefix if it is used by both v1 and v2. That applies only to newly 
+exposed names.
+
+Cheers,
+Longman
+
 
