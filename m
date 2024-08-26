@@ -1,87 +1,110 @@
-Return-Path: <linux-kernel+bounces-301545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0056F95F25A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E9495F25C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9541F21F39
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD93281D20
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3209017ADF7;
-	Mon, 26 Aug 2024 13:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="37cOTXWI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E0A17BEB7;
+	Mon, 26 Aug 2024 13:07:12 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2581E519
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64215176AC7;
+	Mon, 26 Aug 2024 13:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677554; cv=none; b=dIwpBq2VpcXeYrLrYuAah2+IhUKZ0L3LmOuMzHlt7Ah1IWDQGGF1NHUdx0kTrHhdwp1jayLPXCaYzdZwqurFL6DtdhRM35g4ky5Dpv7E5Iv07vcgZ8x1cNKZMe5R/3k5dhZzng0132hpHsTrFSGQRoYSB+UgXXicc9hK558e//A=
+	t=1724677632; cv=none; b=H8IyApUveV/34OWP8YHe2eE2C0dA4/RBpX6BLxDZyW584iW1Bm0HyTaq/83snS2drHVAa2mCWSFDpwaSl6NbUcpSAB9MgcRRo14oEt4Xw/K/Udz/MsdfZXDo4kbfI7nL4rPOePgXNNLxMbg3KC7NS6+gJFGGVzi82Xmeqsh/gNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677554; c=relaxed/simple;
-	bh=tD25NcdVWs3hlMpBUgKjPkntJrW9TCFnXdRsnM4/Ulo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjDBGE6o7xxRRpEXFbo4wCrhP/+VgXKy9jRWhIAZLs9y+lCZf1enmO/CPLe4GovtLl8E81yJIoQIYBDC85jDPdzxXCFDgXWuML9p1lDwXni0+6kwuZiyjM00T6bjsL/+UlbtAuK2Wzabiyp3Wh2eRizMlhUTruOsa2XmKYsFKIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=37cOTXWI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BEP1Es6ym6Gqo8W4vOk1XZ9s/WrHy6ypMYPkbGwH5Qc=; b=37cOTXWIcoFI7JC3MpJF6+xCfr
-	UHphNExENf7V7JQe03mgreYASCbWgUkLEZ96Q12Vt4htIEyt1rdMfRYZhWV+HAduNCZbUhdzUILj9
-	ozMC9YmYMh8pY9SgjiUeVo1cOdQeXXpImWm/8DFYVxFHfhZU6nQSqtf4DfHG0rtzxtLI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1siZPe-005i4a-TS; Mon, 26 Aug 2024 15:05:38 +0200
-Date: Mon, 26 Aug 2024 15:05:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Diogo Jahchan Koike <djahchankoike@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, maxime.chevallier@bootlin.com,
-	christophe.leroy@csgroup.eu, linux@treblig.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
-Subject: Re: [PATCH] net: fix unreleased lock in ethnl_act_cable_test
-Message-ID: <9ac272e6-b956-434b-a90b-60be6a5ad106@lunn.ch>
-References: <20240826121435.88756-1-djahchankoike@gmail.com>
+	s=arc-20240116; t=1724677632; c=relaxed/simple;
+	bh=u2GU0B7E0+MJoDtNYBcEJmfsGvNZQLNwW+EI0SzgLdQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lvTyMDbUFSoLy5GWDSrdIrdDY0/4t96/ChZxbzhwqfGJSoUbSluL8Ro4Td8c1rwIuBoprhNOKnUoHY+VsHetgAFWj/3czzdalK+p9xeeSOazLeIbtb3doX8+NE88mX69UtP1ZrYqhRMEmap2EBYACJxrVdVYBzUjehYbaWRyyxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WsrYD4BKSz2CnZX;
+	Mon, 26 Aug 2024 21:06:56 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6ED001A0170;
+	Mon, 26 Aug 2024 21:07:05 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
+ 2024 21:07:04 +0800
+From: yangyun <yangyun50@huawei.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lixiaokeng@huawei.com>
+Subject: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
+Date: Mon, 26 Aug 2024 21:06:12 +0800
+Message-ID: <20240826130612.2641750-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826121435.88756-1-djahchankoike@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Mon, Aug 26, 2024 at 09:14:15AM -0300, Diogo Jahchan Koike wrote:
-> fix an unreleased lock in out_dev_put path and substitute
-> both labels (out_rtnl and out_dev_put) for a simpler out.
+Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
+for FOPEN_DIRECT_IO") gave the async direct IO code path in the
+fuse_direct_read_iter() and fuse_direct_write_iter(). But since
+these two functions are only called under FOPEN_DIRECT_IO is set,
+it seems that we can also use the async direct IO even the flag
+IOCB_DIRECT is not set to enjoy the async direct IO method. Also
+move the definition of fuse_io_priv to where it is used in fuse_
+direct_write_iter.
 
-Hi Diogo
-
-We try to keep fixes simple. I would of changed the out_dev_put to
-out_rtnl, and then removed the unused out_dev_put. That makes the
-change smaller, more obviously correct.
-
-As far as i can see, 3688ff3077d3 is only in net-next, not an -rc
-kernel. As such, we want this patch added to net-next. You indicate
-this in the patch Subject: [path net-next v2].
-
-Thanks
-
-    Andrew
-
+Signed-off-by: yangyun <yangyun50@huawei.com>
 ---
-pw-bot: cr
+ fs/fuse/file.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f39456c65ed7..03809ecc23ec 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1649,7 +1649,7 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	ssize_t res;
+ 
+-	if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
++	if (!is_sync_kiocb(iocb)) {
+ 		res = fuse_direct_IO(iocb, to);
+ 	} else {
+ 		struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+@@ -1663,7 +1663,6 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+-	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+ 	ssize_t res;
+ 	bool exclusive;
+ 
+@@ -1671,9 +1670,11 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	res = generic_write_checks(iocb, from);
+ 	if (res > 0) {
+ 		task_io_account_write(res);
+-		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
++		if (!is_sync_kiocb(iocb)) {
+ 			res = fuse_direct_IO(iocb, from);
+ 		} else {
++			struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
++
+ 			res = fuse_direct_io(&io, from, &iocb->ki_pos,
+ 					     FUSE_DIO_WRITE);
+ 			fuse_write_update_attr(inode, iocb->ki_pos, res);
+-- 
+2.33.0
+
 
