@@ -1,110 +1,88 @@
-Return-Path: <linux-kernel+bounces-302309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D095FC71
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:09:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292A595FC73
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6AF1C227ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE61A2850C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464D119CD16;
-	Mon, 26 Aug 2024 22:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F1919CD0F;
+	Mon, 26 Aug 2024 22:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hEEwDleI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="A4BiUbdQ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB32811E2;
-	Mon, 26 Aug 2024 22:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F376811E2;
+	Mon, 26 Aug 2024 22:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710180; cv=none; b=CKic6W5xGyB7Yv6Lp1/pmpLPqenT5LzdP9T8CHkXoK0NBI8qmrye1+QJITJbMA3/M/dyRzvnlDwTQoa6goKBCsUAY5LzYGAjeCg7dTHMnoaOoT25rFokcHohA0BPSHeY6cXThOz8zfVa7vNaCD4KyBOO9Kv18Z+4ee432uT3ASw=
+	t=1724710233; cv=none; b=Ih/JpqNsfgKBxYiF+8ZTO+o4b2xaMnla+NGpVZsVhgXCEKbPDWN3+07JHIHqwOrXMUHH1JH7XCQyBGAvbCmZlEdjE3oDSRBjzwn64xIBgrke8swlMTzLSeSa5hnntsrT3yioU4Miz1lw9CY4BDhObOCMqB+L7IbtmEOgFdFFyHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710180; c=relaxed/simple;
-	bh=iXUMEO2LJ7lEeyDkYRfdM/Mdx7Nx6xnj0tYf8DxvM5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U2qn7VVCY6oGQvYOpu87mD5FV2tBPigY85OcmdbOuhfEGwsA6R6s1j/fojYhgPOU9WxdiguAhNChVu99zG6OaHCf2f+cdRCEU6nX7Px3E1i4x5AJFF2oCgk83N4pKBKtMxHiHZsvgPSqL/iFcsAJGIqL0vv6hZftnkF/inkQ9pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hEEwDleI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724710167;
-	bh=2KgYkzXzRg/IqZY0KZ2sPiIGCzH6DP+9PjoysDaqX24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hEEwDleId2skf3U50DRN/qOzMPwAkVzpKb71cELrArXSZCdFEUEIvtbKdT9WFLe4G
-	 6mFqJ4Hj7Opk3oVdCMAr0EHTpwl7ezK5pK3RoDM0tfqWGMW9Qj01xcmgb3soRD8HE1
-	 QxZG+tDjgiPQAdzUrsRnpOG1laMVLrXCG0NCx8WV4lMUD6Otp4RWO5Vmg/Q60i4how
-	 49IkoIaQ7XkRTBshyLpGymrZf5iLq17ps9jX4EgsIbocYJ1U7xKtVTT07uO20kBiCa
-	 cBlO27Y/C7GAPEUWOKcdl2oyV8USWDYYGME5ad5S2WBY38Zt8nEGnCabgVAhuXhn4C
-	 2cf6rdUQrReQQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1724710233; c=relaxed/simple;
+	bh=+fhME1anNiXFk9cxwp5HDp73kiuOhd3OZWYnm6kJPZM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h5dRJsouKIDwUQ1yj/j1jxEl0uKpVCNVgKV17cQNP7BV7Y/bg7qXJuGVCqYi8XNnVDAb8nBHNrxZgXvN4xg+8DjvAt+DO4lzZxL8Yk6zB/BLhmBDlReJK3HcoSg9XN2cT1/ri9dBryeTaSoxqz53wVcYNI3Xm3wUPV8zYZHOxxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=A4BiUbdQ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2E1B642D39
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1724710230; bh=bfUnONFBgHJRpBjL0TK+9yVaRb23+Uddx47+9YN6HUU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=A4BiUbdQotp8Y4IrP97JHP4ZmNl79ktngT3xiZU0VbSDyogi4fXDo8BXhFxb+MU8M
+	 pKB+XV5NU9h1opNWmlgyFqi2lJReBBdpptrQZ7AT/ZGH65vZgc+GHjSrSSr2CejGXQ
+	 Cv8LjP6V/OM/Y46zCOHfPhwmJwgCvrighzhfQuaCqw26fk0fgGuiYGzZqH9HE9HCwP
+	 MR7W8Tma+rw1+yAVBO3GY3gFF5JZ/lwxtlShWdzhmoC9gYzy06qOCS3c8drRQtz50f
+	 E3DOVwYyhiyQUcv1A8MuTqL51TZqd11P0Sv9uqjr8aVL4D1Ct/nhuXRjQoJPNDNYxU
+	 OHaLc2AYtn4hQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wt4bB3qZFz4wnt;
-	Tue, 27 Aug 2024 08:09:26 +1000 (AEST)
-Date: Tue, 27 Aug 2024 08:09:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>, Chen Yufan <chenyufan@vivo.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20240827080925.32a7aec4@canb.auug.org.au>
-In-Reply-To: <8734mremla.ffs@tglx>
-References: <20240826130137.631e5e31@canb.auug.org.au>
-	<8734mremla.ffs@tglx>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2E1B642D39;
+	Mon, 26 Aug 2024 22:10:30 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Jani Nikula <jani.nikula@intel.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Cc: jani.nikula@intel.com, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 1/2] get_maintainer: add --bug option to print bug
+ reporting info
+In-Reply-To: <20240815113450.3397499-1-jani.nikula@intel.com>
+References: <20240815113450.3397499-1-jani.nikula@intel.com>
+Date: Mon, 26 Aug 2024 16:10:29 -0600
+Message-ID: <87h6b75416.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8sNs2mys+T2Xx6iogQD+6Y8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/8sNs2mys+T2Xx6iogQD+6Y8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Jani Nikula <jani.nikula@intel.com> writes:
 
-Hi Thomas,
-
-On Mon, 26 Aug 2024 10:04:49 +0200 Thomas Gleixner <tglx@linutronix.de> wro=
-te:
+> For example Documentation/adming-guide/bug-hunting.rst suggest using
+> get_maintainer.pl to get a list of maintainers and mailing lists to
+> report bugs to, while a number of subsystems and drivers explicitly use
+> the "B:" MAINTAINERS entry to direct bug reports at issue trackers
+> instead of mailing lists and people.
 >
-> On Mon, Aug 26 2024 at 13:01, Stephen Rothwell wrote:
-> > kernel/time/timekeeping.c: In function 'timekeeping_check_update':
-> > include/linux/typecheck.h:12:25: error: comparison of distinct pointer =
-types lacks a cast [-Werror]
-> >    12 |         (void)(&__dummy =3D=3D &__dummy2); \ =20
->=20
-> Offending commit has been removed.
+> Add the --bug option to get_maintainer.pl to print the bug reporting
+> URIs, if any.
+>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+>  scripts/get_maintainer.pl | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
 
-That commit is still in the tip tree this morning.
+I've applied both patches, thanks.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8sNs2mys+T2Xx6iogQD+6Y8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbM/RUACgkQAVBC80lX
-0GyC3Af/bpg3Tyrp2CRavuZoNbubG9BegJwy4CV6SzIOr2dUYh1AkGsa7HM/hpzL
-yJsN4oo7B7Jj9+XF/mIPV9ijY3PcUKPn7JX8JiZdTRGSSTa8rbGzVcfkac/QCCOT
-DP6o/4dtbGVYgCFd4rNVOUUZ+veOfBPtQdVSQ2j+R4s/4bPTypyPHW8aTNIXe8AL
-i3FhMnDF9ntMJ+03Ku2P0XwrC1FZK/gM9r/u9FFGp+824oejctzPsFly1Q4Sf7HW
-VQBvRtduo5q0Ps+SNCOHU1T2mJrTRrB4Qe6Tyx8x8urh7Z300wuFxy9+9BBLnA2B
-9kcHNacsVsFOXbA+jfIswOATZ0smJg==
-=fGdh
------END PGP SIGNATURE-----
-
---Sig_/8sNs2mys+T2Xx6iogQD+6Y8--
+jon
 
