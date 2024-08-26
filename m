@@ -1,188 +1,143 @@
-Return-Path: <linux-kernel+bounces-302281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F9195FC14
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D31995FC1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A271F282EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09A41C22BE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9401419CD0E;
-	Mon, 26 Aug 2024 21:49:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C13519D09D;
+	Mon, 26 Aug 2024 21:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="Wti7N4Ad"
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19B919B3F9
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA0319342A
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724708997; cv=none; b=bSOqyNDqU6lfKsrTv1c33jsDgEvBSuE8yEKRfyvhrHOc3+sSFILw0E6x3v69UKQElfdixzUqX5JVmQxfgn+LjefYHOMGeRvnG8ITv3BaUCWz9FcpooSQD2AytJY2SUSjEAYcRKxa8EhtRNtZy5KpVZ+xZfx6+BNXxC1WxAhf3pM=
+	t=1724709014; cv=none; b=KBgiIc6p6hS+RmYPN1x02/1+T+/7x5tjhVMVFT2PNRC/M6lA2XP4bUTXh1QQ0gxkj9lxqwtyGPik8lHX32HhlQxX+EyphQu+2NFhsetwgVgsMLozQgYwSou/Qa0Gf6Hb2WnW6SC/miagp+bL1j7fYDB+9gHgjvM8hw5p5KkRfAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724708997; c=relaxed/simple;
-	bh=YJ3tRDhtDoPbJA9n+5dj1xKdtRMfYbLpSbQxBnF0Q0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r12hrgBHKJssWQBH6AC8EdpvuRFrgT+NGncGK12l9OAQ1yWATDWoLWW8tdCcN82uiGGTPypWPmXFWLiqwM0g7DXC727ELQoWE12he+0ohpFRTOcD0caJMiUPqJaX5YIOFJPmr3c99SClXcG+33GE7iY6li76W81bRL2W5xJ4Z/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sihau-0001Gp-Gu; Mon, 26 Aug 2024 23:49:48 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sihau-003HKY-35; Mon, 26 Aug 2024 23:49:48 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sihat-007ByZ-38;
-	Mon, 26 Aug 2024 23:49:47 +0200
-Date: Mon, 26 Aug 2024 23:49:47 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: andrzej.p@collabora.com, asmadeus@codewreck.org, corbet@lwn.net,
-	ericvh@kernel.org, gregkh@linuxfoundation.org,
-	kernel@pengutronix.de, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net, v9fs@lists.linux.dev
-Subject: Re: [PATCH v9 1/3] usb: gadget: function: move u_f.h to
- include/linux/usb/func_utils.h
-Message-ID: <Zsz4e0RUZ9M1OT7v@pengutronix.de>
-References: <20240116-ml-topic-u9p-v9-0-93d73f47b76b@pengutronix.de>
- <20240116-ml-topic-u9p-v9-1-93d73f47b76b@pengutronix.de>
- <5fce67e8-5687-4fde-b6ee-b564a335283e@wanadoo.fr>
+	s=arc-20240116; t=1724709014; c=relaxed/simple;
+	bh=xRH2SBL9rPAA3HtVA6CJmamhJCAFjwAVi6kfCWDQvRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s5ROyYR8vbohImfSi5SWfrWKjac6mNt/iw0AG396YyRYxvI5d7m+ru9kOONzuu29aTPK2YD0mX8XvE4TiTNG0vSOfcRWvDHUTUwHaJVS3b8E2JEdIlgHv99LKS4i0unoCY/vIhDk7DJ4x/WWXrWKSgLfSn8EPkiJefitycqm82E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=Wti7N4Ad; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202408262150083e78d6ac419e7195ee
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 26 Aug 2024 23:50:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=yEquUkxoJfM5uHJg6dzTgpywJBY3hEgVM110Ob7YRJ4=;
+ b=Wti7N4AdRaTl0Z3SMs1qgbFFMQmYdLYcRPJE83SPhZZkBF8GoBQrc/XztOqtGhu4OPJh6S
+ 29SehBjo/jWQcbjwC+k+ulnwCoam5xLqvrh+5qLihohQyg5aPRshIwscqSB25g2B8r83Uxxa
+ vYbNAIZuX5pSkxcEidkCox9yPp/gS6281uRP4u3mbEUriII0aUayNVRTfPE9dv+qvKQMHN8Z
+ EYOWCGRoH7IgnTQTimti+fMdsKLlQ8243tcUnLeFErU2DqokC1DRrEZBbtJZeUlZbGwhRLIm
+ BChH6mExyohk5A7wqU7kYAJzRE8INfWNvkFV4bvOwAfr5lWliBIVwl4A==;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Hua Qian Li <huaqian.li@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: [PATCH v2 0/6] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+Date: Mon, 26 Aug 2024 23:50:01 +0200
+Message-ID: <cover.1724709007.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x4m+YBvvTd+UQ/49"
-Content-Disposition: inline
-In-Reply-To: <5fce67e8-5687-4fde-b6ee-b564a335283e@wanadoo.fr>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
+Changes in v2:
+ - fix dt_bindings_check issues (patch 1)
+ - address first review comments (patch 2)
+ - extend ti,am65-pci-host bindings for PVU (new patch 3)
 
---x4m+YBvvTd+UQ/49
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+against DMA-based attacks of external PCI devices. The AM65 is without
+an IOMMU, but it comes with something close to it: the Peripheral
+Virtualization Unit (PVU).
 
-On Fri, Aug 23, 2024 at 10:30:09AM +0200, Christophe JAILLET wrote:
->Le 23/08/2024 =E0 09:36, Michael Grzeschik a =E9crit=A0:
->>We move the func_utils.h header to include/linux/usb to be
->>able to compile function drivers outside of the
->>drivers/usb/gadget/function directory.
->>
->>Signed-off-by: Michael Grzeschik <m.grzeschik-bIcnvbaLZ9MEGnE8C9+IrQ@publ=
-ic.gmane.org>
->>
->>---
->>v8 -> v9: -
->>v7 -> v8: -
->>v6 -> v7: -
->>v5 -> v6: -
->>v4 -> v5:
->>   - renamed to func_utils.h
->>v3 -> v4: -
->>v2 -> v3: -
->>v1 -> v2:
->>   - new introduced patch
->>---
->>  drivers/usb/gadget/configfs.c                              | 2 +-
->>  drivers/usb/gadget/function/f_fs.c                         | 2 +-
->>  drivers/usb/gadget/function/f_hid.c                        | 2 +-
->>  drivers/usb/gadget/function/f_loopback.c                   | 2 +-
->>  drivers/usb/gadget/function/f_midi.c                       | 2 +-
->>  drivers/usb/gadget/function/f_midi2.c                      | 2 +-
->>  drivers/usb/gadget/function/f_sourcesink.c                 | 2 +-
->>  drivers/usb/gadget/u_f.c                                   | 2 +-
->>  drivers/usb/gadget/u_f.h =3D> include/linux/usb/func_utils.h | 2 +-
->>  9 files changed, 9 insertions(+), 9 deletions(-)
->>
->>diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
->>index 0e7c1e947c0a0..0f8553795a8ed 100644
->>--- a/drivers/usb/gadget/configfs.c
->>+++ b/drivers/usb/gadget/configfs.c
->>@@ -8,8 +8,8 @@
->>  #include <linux/usb/composite.h>
->>  #include <linux/usb/gadget_configfs.h>
->>  #include <linux/usb/webusb.h>
->>+#include <linux/usb/func_utils.h>
->
->Hi,
->
->Here and in the other files, maybe, keep alphabetic order?
->(even if it is not already completely sorted)
->
->>  #include "configfs.h"
->>-#include "u_f.h"
->>  #include "u_os_desc.h"
->>  int check_user_usb_string(const char *name,
->
->...
->
->>rename from drivers/usb/gadget/u_f.h
->>rename to include/linux/usb/func_utils.h
->>index e313c3b8dcb19..9f2a32c765260 100644
->>--- a/drivers/usb/gadget/u_f.h
->>+++ b/include/linux/usb/func_utils.h
->>@@ -1,6 +1,6 @@
->>  // SPDX-License-Identifier: GPL-2.0
->>  /*
->>- * u_f.h
->>+ * usbf_utils.h
->>   *
->>   * Utility definitions for USB functions
->>   *
->>
->
->Maybe the include guard could be updated as-well?
->
+The PVU was originally designed to establish static compartments via a
+hypervisor, isolate those DMA-wise against each other and the host and
+even allow remapping of guest-physical addresses. But it only provides
+a static translation region, not page-granular mappings. Thus, it cannot
+be handled transparently like an IOMMU.
 
-I reworked it in v10:
+Now, to use the PVU for the purpose of isolated PCI devices from the
+Linux host, this series takes a different approach. It defines a
+restricted-dma-pool for the PCI host, using swiotlb to map all DMA
+buffers from a static memory carve-out. And to enforce that the devices
+actually follow this, a special PVU soc driver is introduced. The driver
+permits access to the GIC ITS and otherwise waits for other drivers that
+detect devices with constrained DMA to register pools with the PVU.
 
-https://lore.kernel.org/all/20240116-ml-topic-u9p-v10-0-a85fdeac2c52@pengut=
-ronix.de/
+For the AM65, the first (and possibly only) driver where this is
+introduced is the pci-keystone host controller. Finally, this series
+configures the IOT2050 devices (all have MiniPCIe or M.2 extension
+slots) to make use of this protection scheme.
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Due to the cross-cutting nature of these changes, multiple subsystems
+are affected. However, I wanted to present the whole thing in one series
+to allow everyone to review with the complete picture in hands. If
+preferred, I can also split the series up, of course.
 
---x4m+YBvvTd+UQ/49
-Content-Type: application/pgp-signature; name="signature.asc"
+Jan
 
------BEGIN PGP SIGNATURE-----
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: "Krzysztof Wilczyński" <kw@linux.com>
+CC: linux-pci@vger.kernel.org
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
 
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbM+HsACgkQC+njFXoe
-LGQESg/+KuIbwRo818qLCBM8owS/IjkRfm9s/NM5VBCHQW3B0SdIadvD4dsoXlnt
-S99xcOXKzm4zLqbHGej3cHSgUkefTBEfm/1ipbbPRo4Tcppn8EmcA7cwFkkz3SIt
-0tFSaLScIAvOnVAC8dTZTyGSfQH9WfEdzlBxzs/Zv1mHPYMLHIY+zPsNAANqmvrS
-fFGZiohGwv7AkEgrcJ1iWCyFcJqDInQDeriMdMTdy26HX2N1ptbUAM2r1Bxhb/FW
-+yO4H8cRU8WVEpgxY7S3ppy6fAyvQjBdlMUHpJlb0GHeJlwx+KmgLWhSI7Yxw+gC
-cOLqnZruuO3DAge9dv6Y73xj5WZeTG50AeER37ih9AYc4YEFeSG6U/z+OCATRZJD
-6JEd/UZu5W89PTRoyq4nnN8/98td/B2YVGHVrDYSXXqBUrxsFU/GQ3Y+H2w394qz
-GXMCNg0JJOFAv4dxNfW7w/cTEB5EzjiFuaEsJ+G1s1AhSh+2khDGfnAIupXAhnAT
-FiwgY9+bxZFlGZtmuaDXWzcr6NZvFkUB5XW7HSTv0FWI+hjvNk/GTVWucq+T5nF3
-eeINgs0Sq4yxG4j4wQ4o8idnEBkr32la3XROqVWRTN8383O9pRyEwjuMGU9vB6S1
-Eo74RD0JJJ+5cQpWkazz9Tpur+3c5+YCf4sU/cJMpJPqqn+uk2I=
-=QduD
------END PGP SIGNATURE-----
+Jan Kiszka (6):
+  dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+  soc: ti: Add IOMPU-like PVU driver
+  dt-bindings: PCI: ti,am65: Extend for use with PVU
+  arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+  PCI: keystone: Add supported for PVU-based DMA isolation on AM654
+  arm64: dts: ti: iot2050: Enforce DMA isolation for devices behind PCI
+    RC
 
---x4m+YBvvTd+UQ/49--
+ .../bindings/pci/ti,am65-pci-host.yaml        |  13 +-
+ .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
+ .../boot/dts/ti/k3-am65-iot2050-common.dtsi   |  32 ++
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  18 +-
+ drivers/pci/controller/dwc/pci-keystone.c     | 101 ++++
+ drivers/soc/ti/Kconfig                        |   4 +
+ drivers/soc/ti/Makefile                       |   1 +
+ drivers/soc/ti/ti-pvu.c                       | 487 ++++++++++++++++++
+ include/linux/ti-pvu.h                        |  16 +
+ 9 files changed, 716 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+ create mode 100644 drivers/soc/ti/ti-pvu.c
+ create mode 100644 include/linux/ti-pvu.h
+
+-- 
+2.43.0
+
 
