@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-301835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0167995F646
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:18:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30B295F64C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEB01F24E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50C12B20DAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B964A194AE6;
-	Mon, 26 Aug 2024 16:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB59194ACD;
+	Mon, 26 Aug 2024 16:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evCIvVgt"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpGKZ71G"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E5119412A;
-	Mon, 26 Aug 2024 16:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93002194A6C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724689094; cv=none; b=jAQ4BqbkjiZa0guVZRSJ2rcOV360q8YTB0YUb0YWfJInNGjUpH5f6VNp6n/qslAQQ1wvarxWQlyKQvX8LTpPIfqJNGQT5i2rvvUwzlr1aDdv09wS/MS52pzzcIBBEJtzEGVkTxaChmKXbEkoOrD8iiHUC297Z7gjeLviYRAq9Vk=
+	t=1724689137; cv=none; b=eQ1j9N4Kz9+8uKTXQONkWBGK8mPrqyi/2FzGLQ74TT7kJO3QfmwHLSGpdbym1AyQ+U8jqBbOeF16RdbDHBJdm19v97CfdISc7SQPoaijOxyKACDLnpvkKVFmSucJqrDzCXhaNWnxETpVYdqGrwjPKiyQLljOX4bFrsuUSG5nN/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724689094; c=relaxed/simple;
-	bh=rHfc3tUO0PlXoEJaAEGPazJsuKQe7Tx6BQoOTkHo4QY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZt0Q8t9GkHfZLCBsQvmBxy4qwOOJ2s099/L0zuZBed5H5v7SjbNovsjIwMWmGzTefKY7qLLz244WJgWriM/OOLP10+FKkLrF8DeU2+CTLZ2kRzCIqcMcRL/1Fp0wRCIB4dcv82RmEtwgZSMcpj8bD+Dg4MezgDdb+MCXLCILBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evCIvVgt; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso3470563a91.2;
-        Mon, 26 Aug 2024 09:18:12 -0700 (PDT)
+	s=arc-20240116; t=1724689137; c=relaxed/simple;
+	bh=qDC390bCNSJIhRfsWLE0LOccZRGOiv+AJDEaZGB6mzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAg2NtnwNNsdE3e6MG8xMJsxFKPJgjPGyBNqqhhgSnETitvUdlYQq8D3zgTN/32xouCK6isd3vzNXrxH1stZjHz/TYYL1pLuy69HJKevZxlhaqEgTSJ/8LFxf9nT1oFSoLCeTTD2n2vOVS45XzVhU1X30Wi2VHZXmsQjaWcaFh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fpGKZ71G; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-371a939dab9so553260f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:18:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724689092; x=1725293892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lxRlPyW1oHXAOOQ1Sj4I0wIP7vxw0OFPP0mCZsrFZrU=;
-        b=evCIvVgt1k3/t/wB0Gj+BjlcdMqDb5M8vJb6RZoZN0njai4PPikNOpMh6io0pPmtyX
-         4Clr3buIeUNoMZ+by+vUcKW3AZxuTHPN8HAUoqj4WPKiej4OF9rMwCVEYl611ISl7yAM
-         0k1LIfsrvbZ0BZArCG86bdEMMd42Q6RW53L20lLHF+/21iVOak9+i52eqok06OEMuv5D
-         ro3LPDpwKUwouiRo0+3RC09RhtZYc3ziyhG8agB/gkP/d+6Q6OpD4BcWSyvI82oY2IJy
-         gvJHWJ2aNef8I/SmfMLo4QE9tmMBfzAmb1yNL3yBaYUIsV3Rq5xAkQrqpW8s+3ITr6Ah
-         tHUg==
+        d=linaro.org; s=google; t=1724689134; x=1725293934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=thAMzPWe3GOIIK6BaNzqQ9nzGU0UzdwEDyQShp+gYiA=;
+        b=fpGKZ71GJBwEyWF8DD4QKnvoMmKa3LaXAaNBVQlRl3HrinfVByFDhADOTMr+Eg2Oik
+         uY5G2Q1gv6KU/qJFMUxb5AW97HT1z47HS1aY8ty4rm2qLcHeSaOaiYa81cw+sv90u2Jd
+         EdLqSo1N8Tu1l79GMgI1KuEwgNaWdrGu4BKWYFP/X5btjqfVzGb7Br7PqRQM+WO8BMi8
+         zrCBoBLiPEcjCFLY2Q8NmoMpEwoFDTZ3M/1XaM9pWv1Nsb83g5XdOFD2g92cjBqALB1E
+         lXfPbQstkSPi7udpWieRb6teNpC3oOVDXdrV5Acwo/v5FqyK8JnabDn9Sq8jvQkna+Bp
+         0DZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724689092; x=1725293892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lxRlPyW1oHXAOOQ1Sj4I0wIP7vxw0OFPP0mCZsrFZrU=;
-        b=vtH8HN52q0nBBRJqwBaQKsKueuq/2wEYPC6N7kcX6u2JGA6w86f76agFX1bnyPPDt8
-         at164vSxeQxTwifBzfFC3lpuWN5NAnAS7ylbF1NoJ+lCJxKRI4A2U7fZ8mwfsFm/MObM
-         kWkIOFwHCMK+i902JImXPKQRBfaq/ji9u98nW420xcXTQhxLYaKyDaLdX6/zLrkJbfl9
-         mqxzfnxBP0dTnjpgTPUwp63r2u+6wAcyyTnWEcjOpCXibmvjfNoqj/CzUs8WoZrkTNY0
-         rJY3JegXcpVeDFMnvdNcknyLRQHO3kKkAsmVgdbmx/EsxNkYvgUnMlJeZHt9BrriKI92
-         9IKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtMPqCgl1OWnUbN7OxNFlpvCx6rcy0fwr1/iXD9qDEKEi8jJw8S38koPu/EhwGjActsmc=@vger.kernel.org, AJvYcCVz3O3ZkKl6xhI1lIy9g4G/2iDVuBrq1m9pZ4U+O5XdYMNWvsbECJ1NKEZI148jKhZo8N6qgIzX/oqFNnB7@vger.kernel.org, AJvYcCW89FTY2khSHwctRvNb/v6cJKpJczsF7D/FMStpYUS7HLT1aacxR5sn7cTD2tEShCabM32sa8p3mwFCfKeOb+kjctg7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLGjyn5K02jAeTaJxTbI/AD8AqenFcVQ4Cj0qQ9ht5rWXTxSLF
-	N1PYyG/UvcLRind3ksBnSxdTwPEPs2Qw6Q3VuR/odoeXINKnapPfhlanvlNh+UvLGyQMf7w5QlL
-	ZOZC9Xd79PFhMOOe8amRYIr4J6rE=
-X-Google-Smtp-Source: AGHT+IGRORuD5KXx1BI1X9UTnYM6Ctxz/wPpGOqICBOnAnMjMwqqox1Omxa/T6kOEq975iQJ2a7W/qEE2j/UGSD5nw4=
-X-Received: by 2002:a17:90b:1b0a:b0:2c9:80cd:86b4 with SMTP id
- 98e67ed59e1d1-2d646bf64c2mr9713580a91.11.1724689091970; Mon, 26 Aug 2024
- 09:18:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724689134; x=1725293934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=thAMzPWe3GOIIK6BaNzqQ9nzGU0UzdwEDyQShp+gYiA=;
+        b=ma2FiU6AP3SHsWHSXGYzhLPS78+NUET47s2YiakrW5rGgmKn3B0SOtpOtSPW/a9kXs
+         1m5SSzDoI46efZEIkM4xfBA9FKngS01YRGVah78BQzfdCJYt0wAXpZlxCCsmDxlGzt6Z
+         4Ndx45XrhQaga0nsqU5Lj5tcji4ouh5dxeTrs5FOXDFff3k+ccJ2hEDOyCPREZDFkO9y
+         Cmtycam+3gbg9OBwegXV+VUSHYUfy8bONkg6uUFpU9n/ePwBR84IQCDUCAwLqchClYka
+         AdrncK+V5MtAQTHTjihZ0gFfRAYHfnw6wvfVg3MB6m0+j5jwbLj1WrQoyZ6zxKTLZudM
+         SkpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoSx7ew/UQpW7znsgtP/O1OkcJvsPxETYLyD1pdKh156sK4qRlTqc60V77YpECMGdZ63rhn/7OgSDsQLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaHH6YmZ0W9sd0c4jaiJENZzybih0TxasNL0NDqUGGBgk2aXMd
+	KIKBaELr2jUBKQM7CHxUbuUudCWcJEM4X6kX2NzqVpuqkv81NdBCWsQXrXJUD80=
+X-Google-Smtp-Source: AGHT+IG6yyYlNT9PwtS/u4zRyTAnpTgCPff3pX7qqpX1bUBS/93bzpOzeXEaMUmjlbTHHDazjgdbDg==
+X-Received: by 2002:a05:6000:154f:b0:368:4c5:12ec with SMTP id ffacd0b85a97d-3731191d5c5mr4107077f8f.8.1724689133822;
+        Mon, 26 Aug 2024 09:18:53 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c459sm10983794f8f.27.2024.08.26.09.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 09:18:53 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] gpio: kerneldoc fixes for excess members
+Date: Mon, 26 Aug 2024 18:18:50 +0200
+Message-ID: <20240826161850.74447-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809192357.4061484-1-andrii@kernel.org> <20240813223014.1a5093ede1a5046aaedea34a@kernel.org>
- <20240813154055.GA7423@redhat.com> <20240825191512.98a6ea20b4783345f4d5ba1b@kernel.org>
-In-Reply-To: <20240825191512.98a6ea20b4783345f4d5ba1b@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 26 Aug 2024 09:17:59 -0700
-Message-ID: <CAEf4BzZgu4-aosJqjVZQCX27v1Y67GUT0UOvDUOn2EB2fJDvSQ@mail.gmail.com>
-Subject: Re: [PATCH v2] uprobes: make trace_uprobe->nhit counter a per-CPU one
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, peterz@infradead.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 25, 2024 at 3:15=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Tue, 13 Aug 2024 17:41:04 +0200
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > On 08/13, Masami Hiramatsu wrote:
-> > >
-> > > > @@ -62,7 +63,7 @@ struct trace_uprobe {
-> > > >   struct uprobe                   *uprobe;
-> > >
-> > > BTW, what is this change? I couldn't cleanly apply this to the v6.11-=
-rc3.
-> > > Which tree would you working on? (I missed something?)
-> >
-> > tip/perf/core
-> >
-> > See https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/diff/ke=
-rnel/trace/trace_uprobe.c?h=3Dperf/core&id=3D3c83a9ad0295eb63bdeb81d821b8c3=
-b9417fbcac
->
-> OK, let me consider to rebase on tip/perf/core.
->
+Drop kerneldoc descriptions of struct members which do not exist to fix
+W=1 warnings:
 
-Hey Masami,
+  drivers/gpio/gpio-pch.c:101: warning: Excess struct member 'lock' description in 'pch_gpio'
+  drivers/gpio/gpio-syscon.c:46: warning: Excess struct member 'compatible' description in 'syscon_gpio_data'
 
-I've posted v3 rebased onto linux-trace/probes/for-next, so you
-shouldn't need to rebase anything just for this. See [0] for the
-latest revision.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/gpio/gpio-pch.c    | 1 -
+ drivers/gpio/gpio-syscon.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-  [0] https://lore.kernel.org/linux-trace-kernel/20240813203409.3985398-1-a=
-ndrii@kernel.org/
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index ee37ecb615cb..63f25c72eac2 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -84,7 +84,6 @@ struct pch_gpio_reg_data {
+  * @gpio:			Data for GPIO infrastructure.
+  * @pch_gpio_reg:		Memory mapped Register data is saved here
+  *				when suspend.
+- * @lock:			Used for register access protection
+  * @irq_base:		Save base of IRQ number for interrupt
+  * @ioh:		IOH ID
+  * @spinlock:		Used for register access protection
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 3a90a3a1caea..5ab394ec81e6 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -23,7 +23,6 @@
+ 
+ /**
+  * struct syscon_gpio_data - Configuration for the device.
+- * @compatible:		SYSCON driver compatible string.
+  * @flags:		Set of GPIO_SYSCON_FEAT_ flags:
+  *			GPIO_SYSCON_FEAT_IN:	GPIOs supports input,
+  *			GPIO_SYSCON_FEAT_OUT:	GPIOs supports output,
+-- 
+2.43.0
 
-> Thank you,
->
-> >
-> > Oleg.
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
