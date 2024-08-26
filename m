@@ -1,164 +1,302 @@
-Return-Path: <linux-kernel+bounces-301268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC89595EE6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205CB95EE6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7C31C218C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E431F23021
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50B1148826;
-	Mon, 26 Aug 2024 10:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDB61487D6;
+	Mon, 26 Aug 2024 10:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b="Pt88V1SG"
-Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWVQI8OX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E981482F5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA781482F5;
+	Mon, 26 Aug 2024 10:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724667824; cv=none; b=gxUFcQPpRPVJi+UMU7V9BCjO+qcCHBgZbxylE0YiUbpvYE3gyEb/GNiU+CsPVLSAL8xkO/btvLmOjREMwBB4Wjbf+YQ1caTyIPB5ONMoMFasHNxaWuNL9l6I4eU4TCls6jNht3rg/8wFsomisixX3negvpaGgf7NyhxEzm28gYw=
+	t=1724667828; cv=none; b=NZmdBHkeHlj/fm/aAbaDZQllvc/76rWfcU7lS3hWUY2hBHallFKvUwTPKq7vTgNgCG+bvH61c4o/u4Rc1cRRAKyvCYqpB+OhvfhQCnFTdaJ2uScciWoS13cmhbstsKOqEvuv/4c9Qveca3jrPOy6HLEJcUQxSVG+ko4SFSVYwJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724667824; c=relaxed/simple;
-	bh=JpYMm2QPAmJNwfer4lrcZGTpUEZVHPaSngMPsKiDXRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tRMAHyeUWOTvS8OJItojGrh5SBiIk65tKIkemw0UHVP0JzO5f8x5n1Ae7gqjP2Z2uU9FHMBTnxTW2XVKLd0i8s5kwolrByAms0B2OJWgGcMP5Kag2EL2HOEmVxkPhR5ynG1csoQNX8VvFIovUWO23WfQ8ponY+gNLD+z8za6DPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me; spf=pass smtp.mailfrom=kuroa.me; dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b=Pt88V1SG; arc=none smtp.client-ip=17.58.6.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kuroa.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kuroa.me; s=sig1;
-	t=1724667822; bh=OSXhgW8ZM5QC6cBJ+Hnw5KZOozXWvB4XmuwlJjC7fbM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=Pt88V1SGm6TSk6ekv13NPCdpU9Ycy9f33eC4FEYdlfIdKyl1QhbRgUIij6QAc+e0e
-	 rzIvr58TPFwJSf9uZybYKkUmrUQYNYRL6/K+YMztR6gE4mUeNHvsfEk3iln7ypbS3c
-	 pXizcuxNwKZvCVrqhB+aeL1/dymYLpWTqa6TrR88jFYNPDLoQPDmRZ+095RSq1AV/W
-	 St0dtSRzrCwlXz141m91VYRcL6wLWWI8/BLTkMbiVklciy5WRqs0vgK9u4sQNsMYbh
-	 iFqjAv+zW5aIQJGJMEQbGMAazDEfhE0ceuEiThXnMdMCcvCX21/ueMvSf9xkMgexHp
-	 nXUWf0xfnlwtQ==
-Received: from tora.kuroa.me (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 3536B68033F;
-	Mon, 26 Aug 2024 10:23:33 +0000 (UTC)
-From: Xueming Feng <kuro@kuroa.me>
-To: "David S . Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Lorenzo Colitti <lorenzo@google.com>,
-	Jason Xing <kerneljasonxing@gmail.com>
-Cc: Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Yuchung Cheng <ycheng@google.com>,
-	Soheil Hassas Yeganeh <soheil@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Xueming Feng <kuro@kuroa.me>
-Subject: [PATCH net,v3] tcp: fix forever orphan socket caused by tcp_abort
-Date: Mon, 26 Aug 2024 18:23:27 +0800
-Message-Id: <20240826102327.1461482-1-kuro@kuroa.me>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724667828; c=relaxed/simple;
+	bh=OILafryTW4ruNfaPEeEMXBE9q03CMHc6dUIyo/58e5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tbuSDh4cdmXn0zpbm70WyaCQBObMCdMr1daYoDaBcf54An+mbsS8hIFjZEaI6DjAt5Sq4pPpXQyPaBDIotPAirsI+bvVF2FKFsMO1lzwKoAOCVe3j83aEeDbsGZNImMkY2wl4pEGc5OWC+6ZuwIFktcE0d/ex8msfaYNC1+nXnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWVQI8OX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45BE4C58302;
+	Mon, 26 Aug 2024 10:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724667827;
+	bh=OILafryTW4ruNfaPEeEMXBE9q03CMHc6dUIyo/58e5c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KWVQI8OXsXXRSM/nD+yL+m4JJhdNFp8Pl6rMQOCeE8pNH/oSz6eFXvG6XFRb6vw/8
+	 GpjW1MSaHElji9kM2SK37FG2KHD0BsKuORZR1Iv7n+hMfiJPZ99Qw/fQLJwTU8MFrD
+	 uvbUW+NoV3aozZFKb/6lzJEb5MC7WjFiOTzq9CEQmULtd+yQHyxkyp3SnSVL9zmnRZ
+	 ibulZd/Ot9+UhqxG1a5McIAvdhyMnmcvVwoZY4iDmZC8sYyGtLH4t1f5xHIhwnEb2p
+	 B07mSQudP5ZJYUaTXBhG4P0/pvPzmzUsoXYiwtGTUUNLWdDCRfVcTd1hsvwgxjthZ9
+	 zZLFU6eHQtREA==
+Date: Mon, 26 Aug 2024 11:23:36 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: Jagath Jog J <jagathjog1996@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Luke D . Jones" <luke@ljones.dev>, Jonathan LoBue <jlobue10@gmail.com>
+Subject: Re: [PATCH v3 1/1] iio: bmi323: peripheral in lowest power state on
+ suspend
+Message-ID: <20240826112336.5d9dcb93@jic23-huawei>
+In-Reply-To: <20240824141122.334620-2-benato.denis96@gmail.com>
+References: <20240823192921.7df291f8@jic23-huawei>
+	<20240824141122.334620-1-benato.denis96@gmail.com>
+	<20240824141122.334620-2-benato.denis96@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 4P1gZyMk_hqAtjqS-p-jAa2JOO-jzEji
-X-Proofpoint-ORIG-GUID: 4P1gZyMk_hqAtjqS-p-jAa2JOO-jzEji
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_07,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0
- mlxlogscore=846 phishscore=0 malwarescore=0 bulkscore=0 clxscore=1030
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408260081
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-We have some problem closing zero-window fin-wait-1 tcp sockets in our 
-environment. This patch come from the investigation.
+On Sat, 24 Aug 2024 16:11:22 +0200
+Denis Benato <benato.denis96@gmail.com> wrote:
 
-Previously tcp_abort only sends out reset and calls tcp_done when the 
-socket is not SOCK_DEAD, aka orphan. For orphan socket, it will only 
-purging the write queue, but not close the socket and left it to the 
-timer.
+> The bmi323 is mounted on some devices that are powered
+> by an internal battery: help in reducing system overall power drain
+> while the system is in s2idle or the imu driver is not loaded
+> by resetting it in its lowest power draining state.
+> 
+> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+Applied with some whitespace tweaks.
 
-While purging the write queue, tp->packets_out and sk->sk_write_queue 
-is cleared along the way. However tcp_retransmit_timer have early 
-return based on !tp->packets_out and tcp_probe_timer have early 
-return based on !sk->sk_write_queue.
+> ---
+>  drivers/iio/imu/bmi323/bmi323_core.c | 155 ++++++++++++++++++++++++++-
+>  1 file changed, 153 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+> index 4b2b211a3e88..57be22c97cb9 100644
+> --- a/drivers/iio/imu/bmi323/bmi323_core.c
+> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
+> @@ -118,6 +118,38 @@ static const struct bmi323_hw bmi323_hw[2] = {
+>  	},
+>  };
+>  
+> +static const unsigned int bmi323_reg_savestate[] = {
+> +	BMI323_INT_MAP1_REG,
+> +	BMI323_INT_MAP2_REG,
+> +	BMI323_IO_INT_CTR_REG,
+> +	BMI323_IO_INT_CONF_REG,
+> +	BMI323_ACC_CONF_REG,
+> +	BMI323_GYRO_CONF_REG,
+> +	BMI323_FEAT_IO0_REG,
+> +	BMI323_FIFO_WTRMRK_REG,
+> +	BMI323_FIFO_CONF_REG
+> +};
+> +
+> +static const unsigned int bmi323_ext_reg_savestate[] = {
+> +	BMI323_GEN_SET1_REG,
+> +	BMI323_TAP1_REG,
+> +	BMI323_TAP2_REG,
+> +	BMI323_TAP3_REG,
+> +	BMI323_FEAT_IO0_S_TAP_MSK,
+> +	BMI323_STEP_SC1_REG,
+> +	BMI323_ANYMO1_REG,
+> +	BMI323_NOMO1_REG,
+> +	BMI323_ANYMO1_REG + BMI323_MO2_OFFSET,
+> +	BMI323_NOMO1_REG + BMI323_MO2_OFFSET,
+> +	BMI323_ANYMO1_REG + BMI323_MO3_OFFSET,
+> +	BMI323_NOMO1_REG + BMI323_MO3_OFFSET
+> +};
+> +
+> +struct bmi323_regs_runtime_pm {
+> +	unsigned int reg_settings[ARRAY_SIZE(bmi323_reg_savestate)];
+> +	unsigned int ext_reg_settings[ARRAY_SIZE(bmi323_ext_reg_savestate)];
+> +};
+> +
+>  struct bmi323_data {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+> @@ -130,6 +162,7 @@ struct bmi323_data {
+>  	u32 odrns[BMI323_SENSORS_CNT];
+>  	u32 odrhz[BMI323_SENSORS_CNT];
+>  	unsigned int feature_events;
+> +	struct bmi323_regs_runtime_pm runtime_pm_status;
+>  
+>  	/*
+>  	 * Lock to protect the members of device's private data from concurrent
+> @@ -1972,6 +2005,11 @@ static void bmi323_disable(void *data_ptr)
+>  
+>  	bmi323_set_mode(data, BMI323_ACCEL, ACC_GYRO_MODE_DISABLE);
+>  	bmi323_set_mode(data, BMI323_GYRO, ACC_GYRO_MODE_DISABLE);
+> +
+> +	/*
+> +	 * Place the peripheral in its lowest power consuming state.
+> +	 */
+> +	regmap_write(data->regmap, BMI323_CMD_REG, BMI323_RST_VAL);
+>  }
+>  
+>  static int bmi323_set_bw(struct bmi323_data *data,
+> @@ -2030,6 +2068,13 @@ static int bmi323_init(struct bmi323_data *data)
+>  		return dev_err_probe(data->dev, -EINVAL,
+>  				     "Sensor power error = 0x%x\n", val);
+>  
+> +	return 0;
+> +}
+> +
+> +static int bmi323_init_reset(struct bmi323_data *data)
+> +{
+> +	int ret;
+> +
+>  	/*
+>  	 * Set the Bandwidth coefficient which defines the 3 dB cutoff
+>  	 * frequency in relation to the ODR.
+> @@ -2078,12 +2123,18 @@ int bmi323_core_probe(struct device *dev)
+>  	data = iio_priv(indio_dev);
+>  	data->dev = dev;
+>  	data->regmap = regmap;
+> +	data->irq_pin = BMI323_IRQ_DISABLED;
+> +	data->state = BMI323_IDLE;
+>  	mutex_init(&data->mutex);
+>  
+>  	ret = bmi323_init(data);
+>  	if (ret)
+>  		return -EINVAL;
+>  
+> +	ret = bmi323_init_reset(data);
+> +	if (ret)
+> +		return -EINVAL;
+> +
+>  	if (!iio_read_acpi_mount_matrix(dev, &data->orientation, "ROTM")) {
+>  		ret = iio_read_mount_matrix(dev, &data->orientation);
+>  		if (ret)
+> @@ -2117,7 +2168,7 @@ int bmi323_core_probe(struct device *dev)
+>  		return dev_err_probe(data->dev, ret,
+>  				     "Unable to register iio device\n");
+>  
+> -	return 0;
+> +	return bmi323_fifo_disable(data);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(bmi323_core_probe, IIO_BMI323);
+>  
+> @@ -2125,13 +2176,113 @@ EXPORT_SYMBOL_NS_GPL(bmi323_core_probe, IIO_BMI323);
+>  static int bmi323_core_runtime_suspend(struct device *dev)
+>  {
+>  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct bmi323_data *data = iio_priv(indio_dev);
+> +	struct bmi323_regs_runtime_pm *savestate = &data->runtime_pm_status;
+> +	int ret;
+> +
+> +	guard(mutex)(&data->mutex);
+> +
+> +	ret = iio_device_suspend_triggering(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Save registers meant to be restored by resume pm callback. */
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_reg_savestate); i++) {
+> +		ret = regmap_read(data->regmap, bmi323_reg_savestate[i],
+> +			   &savestate->reg_settings[i]);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error reading bmi323 reg 0x%x: %d\n",
+> +				  bmi323_reg_savestate[i], ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
+> +		ret = bmi323_read_ext_reg(data, bmi323_reg_savestate[i],
+> +			   &savestate->reg_settings[i]);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error reading bmi323 external reg 0x%x: %d\n",
+> +				  bmi323_reg_savestate[i], ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* Perform soft reset to place the device in its lowest power state. */
+> +	ret = regmap_write(data->regmap, BMI323_CMD_REG, BMI323_RST_VAL);
+> +	if (ret)
+> +		return ret;
+>  
+> -	return iio_device_suspend_triggering(indio_dev);
+> +	return 0;
+>  }
+>  
+>  static int bmi323_core_runtime_resume(struct device *dev)
+>  {
+>  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct bmi323_data *data = iio_priv(indio_dev);
+> +	struct bmi323_regs_runtime_pm *savestate = &data->runtime_pm_status;
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	guard(mutex)(&data->mutex);
+> +
+> +	/*
+> +	 * Perform the device power-on and initial setup once again
+> +	 * after being reset in the lower power state by runtime-pm.
+> +	 */
+> +	ret = bmi323_init(data);
+> +	if (!ret)
+> +		return ret;
+> +
+> +	/* Register must be cleared before changing an active config */
+> +	ret = regmap_write(data->regmap, BMI323_FEAT_IO0_REG, 0);
+> +	if (ret) {
+> +		dev_err(data->dev, "Error stopping feature engine\n");
+> +		return ret;
+> +	}
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
+> +		ret = bmi323_write_ext_reg(data, bmi323_reg_savestate[i],
+> +			  savestate->reg_settings[i]);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error writing bmi323 external reg 0x%x: %d\n",
+> +				  bmi323_reg_savestate[i], ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_reg_savestate); i++) {
+> +		ret = regmap_write(data->regmap, bmi323_reg_savestate[i],
+> +			  savestate->reg_settings[i]);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error writing bmi323 reg 0x%x: %d\n",
+> +				  bmi323_reg_savestate[i], ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Clear old FIFO samples that might be generated before suspend
+> +	 * or generated from a peripheral state not equal to the saved one.
+> +	 */
+> +	if (data->state == BMI323_BUFFER_FIFO) {
+> +		ret = regmap_write(data->regmap, BMI323_FIFO_CTRL_REG,
+> +			   BMI323_FIFO_FLUSH_MSK);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error flushing FIFO buffer: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = regmap_read(data->regmap, BMI323_ERR_REG, &val);
+> +	if (ret) {
+> +		dev_err(data->dev, "Error reading bmi323 error register: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (val) {
+> +		dev_err(data->dev, "Sensor power error in PM = 0x%x\n", val);
+> +		return -EINVAL;
+> +	}
+>  
+>  	return iio_device_resume_triggering(indio_dev);
+>  }
 
-This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched 
-and socket not being killed by the timers, converting a zero-windowed
-orphan into a forever orphan.
-
-This patch removes the SOCK_DEAD check in tcp_abort, making it send 
-reset to peer and close the socket accordingly. Preventing the 
-timer-less orphan from happening.
-
-According to Lorenzo's email in the v1 thread, the check was there to
-prevent force-closing the same socket twice. That situation is handled
-by testing for TCP_CLOSE inside lock, and returning -ENOENT if it is
-already closed.
-
-The -ENOENT code comes from the associate patch Lorenzo made for 
-iproute2-ss; link attached below, which also conform to RFC 9293.
-
-At the end of the patch, tcp_write_queue_purge(sk) is removed because it 
-was already called in tcp_done_with_error().
-
-p.s. This is the same patch with v2. Resent due to mis-labeled "changes 
-requested" on patchwork.kernel.org.
-
-Link: https://patchwork.ozlabs.org/project/netdev/patch/1450773094-7978-3-git-send-email-lorenzo@google.com/
-Fixes: c1e64e298b8c ("net: diag: Support destroying TCP sockets.")
-Signed-off-by: Xueming Feng <kuro@kuroa.me>
-Tested-by: Lorenzo Colitti <lorenzo@google.com>
-Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
----
- net/ipv4/tcp.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index e03a342c9162..831a18dc7aa6 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -4637,6 +4637,13 @@ int tcp_abort(struct sock *sk, int err)
- 		/* Don't race with userspace socket closes such as tcp_close. */
- 		lock_sock(sk);
- 
-+	/* Avoid closing the same socket twice. */
-+	if (sk->sk_state == TCP_CLOSE) {
-+		if (!has_current_bpf_ctx())
-+			release_sock(sk);
-+		return -ENOENT;
-+	}
-+
- 	if (sk->sk_state == TCP_LISTEN) {
- 		tcp_set_state(sk, TCP_CLOSE);
- 		inet_csk_listen_stop(sk);
-@@ -4646,16 +4653,13 @@ int tcp_abort(struct sock *sk, int err)
- 	local_bh_disable();
- 	bh_lock_sock(sk);
- 
--	if (!sock_flag(sk, SOCK_DEAD)) {
--		if (tcp_need_reset(sk->sk_state))
--			tcp_send_active_reset(sk, GFP_ATOMIC,
--					      SK_RST_REASON_NOT_SPECIFIED);
--		tcp_done_with_error(sk, err);
--	}
-+	if (tcp_need_reset(sk->sk_state))
-+		tcp_send_active_reset(sk, GFP_ATOMIC,
-+				      SK_RST_REASON_NOT_SPECIFIED);
-+	tcp_done_with_error(sk, err);
- 
- 	bh_unlock_sock(sk);
- 	local_bh_enable();
--	tcp_write_queue_purge(sk);
- 	if (!has_current_bpf_ctx())
- 		release_sock(sk);
- 	return 0;
--- 
 
