@@ -1,273 +1,268 @@
-Return-Path: <linux-kernel+bounces-302032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE5C95F8FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CA695F8FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59849283493
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93031F23D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A9E823DF;
-	Mon, 26 Aug 2024 18:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B68718FC83;
+	Mon, 26 Aug 2024 18:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QV6HdLMx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lg6+5Wi6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E2FB677;
-	Mon, 26 Aug 2024 18:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60ED32B9B0
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 18:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724696990; cv=none; b=Ogvu4t5TjCpISnNc2UPMBvqOaayJt/3w9b6TbENMd5V5kc7JtUmmpXWyIV/R4m37tQtBJ7VBUFBjsPYHoP/mXhvC5CWkzLLApJN+7BudEJ+7WdPqyuWFjAT0FFMqkEyeFNyOwjR4uxJidRAdtAltLt7pjr+yjKD/8Lyj2CTU7wg=
+	t=1724697028; cv=none; b=sebbOokyWqwhATfgAEyW+OLpLXUGgk0lFLlOskkc5ArYxRmMWYs0byViOyZTYYRMM6b9a0f84S/hXAVKRBtAcUF3HgeGYSk/FTLPr9F1xjOKp4kVSBrv3c9AIoKLGaBbihmNGv3dX0h5s0AE+sMVki/lB8jnkC5iaLvpT6tdkhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724696990; c=relaxed/simple;
-	bh=DoqSWBVRDMY9nAZiN+3zetnRbsIkRgSSX511Rab4zDk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWHC3FRJTsPcObBImCBcApddxxKTn+52TJZsNx54gYAmk62x5+x3oGKc6j6+LDK84WrvJs3CmVqMO8/35sZgUPoX585BiLFzx38WsHWx7czC2fYKxqiF6k21VSgE6WwtevJprvyt5NJcljIIj0WGG/iZGZNyVR92F5wEMjbj03A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QV6HdLMx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QGjvZX014445;
-	Mon, 26 Aug 2024 18:29:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	msHYl9Xj4RS1OPrJlrsccFKr/fThyPbI4ZRc5QLXCo4=; b=QV6HdLMxyIctrgGR
-	7lz7VoZEatuUThWWBnELhCuNFL74btoCP0O+2SknJ8rfgU3Z40s0BXaVQi4WC5Tg
-	e1FbDzGcH8zuLDRLfrP4+VjfudCjn9aqW8myrqRUD7ak3V01DF6Njn11ZXZ7ig2R
-	AR9Eegc4hPSgeU73mfvXOWYhVRg40f3BwnlOsmtMxsRrVwi70wI4Tqc3Yp4Z2HMQ
-	Ik9tX2CHmj4cLoAgJWCO22fOBcJx8ScSPvJTtBWzv16jz03KdqDyoqARY85Tf+hK
-	EPSvEwxsMyE+zrAFQJVUK7F1lRlFSTv6dBuYNKoqVV7eSrlWDFq13OKkmDo5I0jg
-	PecNsg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417993mgan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 18:29:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47QITVRS029932
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 18:29:31 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 26 Aug 2024 11:29:26 -0700
-Date: Mon, 26 Aug 2024 23:59:22 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>, Mostafa Saleh <smostafa@google.com>,
-        "Will
- Deacon" <will@kernel.org>, Rob Clark <robdclark@chromium.org>,
-        Sean Paul
-	<sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVER
- for Qualcomm Adreno GPUs" <dri-devel@lists.freedesktop.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 4/4] drm/msm: Extend gpu devcore dumps with pgtbl info
-Message-ID: <20240826182922.wxxx3bwflxga2dlr@hu-akhilpo-hyd.qualcomm.com>
-References: <20240820171652.145673-1-robdclark@gmail.com>
- <20240820171652.145673-5-robdclark@gmail.com>
- <20240822203401.odfmdlqto6lsqefz@hu-akhilpo-hyd.qualcomm.com>
- <CAF6AEGtGCT=TSp2XRmPaqb23dk42V_ic06OCB+JLEp6f5Y4tNg@mail.gmail.com>
+	s=arc-20240116; t=1724697028; c=relaxed/simple;
+	bh=YhILNgjvH1xXf9u1639tG8k06076wywNcYFQG/t363M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=q43fFjrdcfbRVMiw847yr8BtJhf7U/zn1vCJMtDR4EgjZzkRX2R3zF04UEkpTD3oOlJ6kEiz4CmOY23v05OOO7V0iRSbJBtSbdyoo0Ngm87G+6WQcVeQRaYCRspUghAxamNCrfzxGAqyEpoAZuXrZ2PXJh88G1OgsyXhf19zomE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lg6+5Wi6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724697026; x=1756233026;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=YhILNgjvH1xXf9u1639tG8k06076wywNcYFQG/t363M=;
+  b=lg6+5Wi6HfKGRVFXhhCpNFBGoLVtYivIU83515eBOxOTmNOtSS6EaqKj
+   xgnBl03+AUchjFY/qXBSKyhQ4AnYBRJ64GJw+cWGSYkHrSJEomLVRdbJ4
+   VIeSPckhrgVi7GojXfBNHzMPmrs+zpPawXigKFTZJ5qOO2KOhUeG8F2GM
+   vX2pUVoQBjuJ8RUCB63KV6u1E4driTC/6psp8ppfBe+2G7H9vK1TFUD3N
+   S0ZxkEMsVZmN/lcUKAqBkSH45gSrDa1c1VFY/P6WQWpZxDM+LHrEO2cK+
+   fLjYn3G+dwrWT1JUCpWQfl5UnlaBjkK2guRIVSkEgrA3g07b8jqxLlFTP
+   w==;
+X-CSE-ConnectionGUID: jKa3AptkSli3GtCffWM5hg==
+X-CSE-MsgGUID: 23/3psI6QKeOa9c0sgj6hQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33707563"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="33707563"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 11:30:25 -0700
+X-CSE-ConnectionGUID: taVlwo3JRaWN6W0nhqJ4xA==
+X-CSE-MsgGUID: uPrZwXlhTOaN7MhPkDyZVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="62911020"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 26 Aug 2024 11:30:23 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sieTs-000HTu-2v;
+	Mon, 26 Aug 2024 18:30:20 +0000
+Date: Tue, 27 Aug 2024 02:29:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [tip:irq/core 60/61] kernel/irq/manage.c:230:47: error: section
+ attribute cannot be specified for local variables
+Message-ID: <202408270209.9VfZ8muh-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGtGCT=TSp2XRmPaqb23dk42V_ic06OCB+JLEp6f5Y4tNg@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4iY9OrKCU8OH8cKCTPCe6d5xiAVpZivz
-X-Proofpoint-ORIG-GUID: 4iY9OrKCU8OH8cKCTPCe6d5xiAVpZivz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_13,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 mlxscore=0 clxscore=1015
- phishscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408260140
 
-On Thu, Aug 22, 2024 at 04:15:24PM -0700, Rob Clark wrote:
-> On Thu, Aug 22, 2024 at 1:34 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
-> >
-> > On Tue, Aug 20, 2024 at 10:16:47AM -0700, Rob Clark wrote: > From: Rob Clark <robdclark@chromium.org>
-> > >
-> > > In the case of iova fault triggered devcore dumps, include additional
-> > > debug information based on what we think is the current page tables,
-> > > including the TTBR0 value (which should match what we have in
-> > > adreno_smmu_fault_info unless things have gone horribly wrong), and
-> > > the pagetable entries traversed in the process of resolving the
-> > > faulting iova.
-> > >
-> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
-> > >  drivers/gpu/drm/msm/msm_gpu.c           |  9 +++++++++
-> > >  drivers/gpu/drm/msm/msm_gpu.h           |  8 ++++++++
-> > >  drivers/gpu/drm/msm/msm_iommu.c         | 22 ++++++++++++++++++++++
-> > >  drivers/gpu/drm/msm/msm_mmu.h           |  3 ++-
-> > >  5 files changed, 51 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > > index 1c6626747b98..3848b5a64351 100644
-> > > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > > @@ -864,6 +864,16 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
-> > >               drm_printf(p, "  - dir=%s\n", info->flags & IOMMU_FAULT_WRITE ? "WRITE" : "READ");
-> > >               drm_printf(p, "  - type=%s\n", info->type);
-> > >               drm_printf(p, "  - source=%s\n", info->block);
-> > > +
-> > > +             /* Information extracted from what we think are the current
-> > > +              * pgtables.  Hopefully the TTBR0 matches what we've extracted
-> > > +              * from the SMMU registers in smmu_info!
-> > > +              */
-> > > +             drm_puts(p, "pgtable-fault-info:\n");
-> > > +             drm_printf(p, "  - ttbr0: %.16llx\n", (u64)info->pgtbl_ttbr0);
-> >
-> > "0x" prefix? Otherwise, it is a bit confusing when the below one is
-> > decimal.
-> 
-> mixed feelings, the extra 0x is annoying when pasting into calc which
-> is a simple way to get binary decoding
-> 
-> OTOH none of this is machine decoded so I guess we could change it
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+head:   0b39441eaab8bedcba1129776ec85178d4d0d9fb
+commit: 6c70d79f363c0c9a712e107b9c4d3644ca8c7490 [60/61] genirq: Get rid of global lock in irq_do_set_affinity()
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240827/202408270209.9VfZ8muh-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270209.9VfZ8muh-lkp@intel.com/reproduce)
 
-On second thought, I think it is fine as this is an address. Probably,
-it is helpful for the pte values below.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408270209.9VfZ8muh-lkp@intel.com/
 
-> 
-> > > +             drm_printf(p, "  - asid: %d\n", info->asid);
-> > > +             drm_printf(p, "  - ptes: %.16llx %.16llx %.16llx %.16llx\n",
-> > > +                        info->ptes[0], info->ptes[1], info->ptes[2], info->ptes[3]);
-> >
-> > Does crashdec decodes this?
-> 
-> No, it just passed thru for human eyeballs
-> 
-> crashdec _does_ have some logic to flag buffers that are "near" the
-> faulting iova to help identify if the fault is an underflow/overflow
-> (which has been, along with the pte trail, useful to debug some
-> issues)
+All errors (new ones prefixed by >>):
 
-Alright.
+   In file included from include/asm-generic/percpu.h:7,
+                    from arch/s390/include/asm/percpu.h:183,
+                    from include/linux/irqflags.h:19,
+                    from include/linux/spinlock.h:59,
+                    from include/linux/irq.h:14,
+                    from kernel/irq/manage.c:11:
+   kernel/irq/manage.c: In function 'irq_do_set_affinity':
+   include/linux/percpu-defs.h:92:40: error: section attribute cannot be specified for local variables
+      92 |         extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;            \
+         |                                        ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:115:9: note: in expansion of macro 'DEFINE_PER_CPU_SECTION'
+     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:93:33: error: section attribute cannot be specified for local variables
+      93 |         __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;                   \
+         |                                 ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:115:9: note: in expansion of macro 'DEFINE_PER_CPU_SECTION'
+     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+>> include/linux/percpu-defs.h:93:33: error: declaration of '__pcpu_unique___tmp_mask' with no linkage follows extern declaration
+      93 |         __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;                   \
+         |                                 ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:115:9: note: in expansion of macro 'DEFINE_PER_CPU_SECTION'
+     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:92:40: note: previous declaration of '__pcpu_unique___tmp_mask' with type 'char'
+      92 |         extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;            \
+         |                                        ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:115:9: note: in expansion of macro 'DEFINE_PER_CPU_SECTION'
+     115 |         DEFINE_PER_CPU_SECTION(type, name, "")
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+>> kernel/irq/manage.c:230:47: error: section attribute cannot be specified for local variables
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                                               ^~~~~~~~~~
+   include/linux/percpu-defs.h:94:51: note: in definition of macro 'DEFINE_PER_CPU_SECTION'
+      94 |         extern __PCPU_ATTRS(sec) __typeof__(type) name;                 \
+         |                                                   ^~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+>> kernel/irq/manage.c:230:47: error: section attribute cannot be specified for local variables
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                                               ^~~~~~~~~~
+   include/linux/percpu-defs.h:95:51: note: in definition of macro 'DEFINE_PER_CPU_SECTION'
+      95 |         __PCPU_ATTRS(sec) __weak __typeof__(type) name
+         |                                                   ^~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+>> kernel/irq/manage.c:230:47: error: weak declaration of '__tmp_mask' must be public
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                                               ^~~~~~~~~~
+   include/linux/percpu-defs.h:95:51: note: in definition of macro 'DEFINE_PER_CPU_SECTION'
+      95 |         __PCPU_ATTRS(sec) __weak __typeof__(type) name
+         |                                                   ^~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+>> kernel/irq/manage.c:230:47: error: declaration of '__tmp_mask' with no linkage follows extern declaration
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                                               ^~~~~~~~~~
+   include/linux/percpu-defs.h:95:51: note: in definition of macro 'DEFINE_PER_CPU_SECTION'
+      95 |         __PCPU_ATTRS(sec) __weak __typeof__(type) name
+         |                                                   ^~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
+   kernel/irq/manage.c:230:47: note: previous declaration of '__tmp_mask' with type 'struct cpumask'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                                               ^~~~~~~~~~
+   include/linux/percpu-defs.h:94:51: note: in definition of macro 'DEFINE_PER_CPU_SECTION'
+      94 |         extern __PCPU_ATTRS(sec) __typeof__(type) name;                 \
+         |                                                   ^~~~
+   kernel/irq/manage.c:230:16: note: in expansion of macro 'DEFINE_PER_CPU'
+     230 |         static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+         |                ^~~~~~~~~~~~~~
 
-Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
--Akhil.
-> 
-> BR,
-> -R
-> 
-> > -Akhil.
-> >
-> > >       }
-> > >
-> > >       drm_printf(p, "rbbm-status: 0x%08x\n", state->rbbm_status);
-> > > diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-> > > index 3666b42b4ecd..bf2f8b2a7ccc 100644
-> > > --- a/drivers/gpu/drm/msm/msm_gpu.c
-> > > +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> > > @@ -281,6 +281,15 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
-> > >       if (submit) {
-> > >               int i;
-> > >
-> > > +             if (state->fault_info.ttbr0) {
-> > > +                     struct msm_gpu_fault_info *info = &state->fault_info;
-> > > +                     struct msm_mmu *mmu = submit->aspace->mmu;
-> > > +
-> > > +                     msm_iommu_pagetable_params(mmu, &info->pgtbl_ttbr0,
-> > > +                                                &info->asid);
-> > > +                     msm_iommu_pagetable_walk(mmu, info->iova, info->ptes);
-> > > +             }
-> > > +
-> > >               state->bos = kcalloc(submit->nr_bos,
-> > >                       sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-> > > index 1f02bb9956be..82e838ba8c80 100644
-> > > --- a/drivers/gpu/drm/msm/msm_gpu.h
-> > > +++ b/drivers/gpu/drm/msm/msm_gpu.h
-> > > @@ -101,6 +101,14 @@ struct msm_gpu_fault_info {
-> > >       int flags;
-> > >       const char *type;
-> > >       const char *block;
-> > > +
-> > > +     /* Information about what we think/expect is the current SMMU state,
-> > > +      * for example expected_ttbr0 should match smmu_info.ttbr0 which
-> > > +      * was read back from SMMU registers.
-> > > +      */
-> > > +     phys_addr_t pgtbl_ttbr0;
-> > > +     u64 ptes[4];
-> > > +     int asid;
-> > >  };
-> > >
-> > >  /**
-> > > diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-> > > index 2a94e82316f9..3e692818ba1f 100644
-> > > --- a/drivers/gpu/drm/msm/msm_iommu.c
-> > > +++ b/drivers/gpu/drm/msm/msm_iommu.c
-> > > @@ -195,6 +195,28 @@ struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu)
-> > >       return &iommu->domain->geometry;
-> > >  }
-> > >
-> > > +int
-> > > +msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, uint64_t ptes[4])
-> > > +{
-> > > +     struct msm_iommu_pagetable *pagetable;
-> > > +     struct arm_lpae_io_pgtable_walk_data wd = {};
-> > > +
-> > > +     if (mmu->type != MSM_MMU_IOMMU_PAGETABLE)
-> > > +             return -EINVAL;
-> > > +
-> > > +     pagetable = to_pagetable(mmu);
-> > > +
-> > > +     if (!pagetable->pgtbl_ops->pgtable_walk)
-> > > +             return -EINVAL;
-> > > +
-> > > +     pagetable->pgtbl_ops->pgtable_walk(pagetable->pgtbl_ops, iova, &wd);
-> > > +
-> > > +     for (int i = 0; i < ARRAY_SIZE(wd.ptes); i++)
-> > > +             ptes[i] = wd.ptes[i];
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > >  static const struct msm_mmu_funcs pagetable_funcs = {
-> > >               .map = msm_iommu_pagetable_map,
-> > >               .unmap = msm_iommu_pagetable_unmap,
-> > > diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
-> > > index 88af4f490881..96e509bd96a6 100644
-> > > --- a/drivers/gpu/drm/msm/msm_mmu.h
-> > > +++ b/drivers/gpu/drm/msm/msm_mmu.h
-> > > @@ -53,7 +53,8 @@ static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
-> > >  struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent);
-> > >
-> > >  int msm_iommu_pagetable_params(struct msm_mmu *mmu, phys_addr_t *ttbr,
-> > > -             int *asid);
-> > > +                            int *asid);
-> > > +int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova, uint64_t ptes[4]);
-> > >  struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu);
-> > >
-> > >  #endif /* __MSM_MMU_H__ */
-> > > --
-> > > 2.46.0
-> > >
+vim +230 kernel/irq/manage.c
+
+   220	
+   221	int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+   222				bool force)
+   223	{
+   224		struct irq_desc *desc = irq_data_to_desc(data);
+   225		struct irq_chip *chip = irq_data_get_irq_chip(data);
+   226		const struct cpumask  *prog_mask;
+   227		struct cpumask *tmp_mask;
+   228		int ret;
+   229	
+ > 230		static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
+   231	
+   232		if (!chip || !chip->irq_set_affinity)
+   233			return -EINVAL;
+   234	
+   235		tmp_mask = this_cpu_ptr(&__tmp_mask);
+   236	
+   237		/*
+   238		 * If this is a managed interrupt and housekeeping is enabled on
+   239		 * it check whether the requested affinity mask intersects with
+   240		 * a housekeeping CPU. If so, then remove the isolated CPUs from
+   241		 * the mask and just keep the housekeeping CPU(s). This prevents
+   242		 * the affinity setter from routing the interrupt to an isolated
+   243		 * CPU to avoid that I/O submitted from a housekeeping CPU causes
+   244		 * interrupts on an isolated one.
+   245		 *
+   246		 * If the masks do not intersect or include online CPU(s) then
+   247		 * keep the requested mask. The isolated target CPUs are only
+   248		 * receiving interrupts when the I/O operation was submitted
+   249		 * directly from them.
+   250		 *
+   251		 * If all housekeeping CPUs in the affinity mask are offline, the
+   252		 * interrupt will be migrated by the CPU hotplug code once a
+   253		 * housekeeping CPU which belongs to the affinity mask comes
+   254		 * online.
+   255		 */
+   256		if (irqd_affinity_is_managed(data) &&
+   257		    housekeeping_enabled(HK_TYPE_MANAGED_IRQ)) {
+   258			const struct cpumask *hk_mask;
+   259	
+   260			hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
+   261	
+   262			cpumask_and(tmp_mask, mask, hk_mask);
+   263			if (!cpumask_intersects(tmp_mask, cpu_online_mask))
+   264				prog_mask = mask;
+   265			else
+   266				prog_mask = tmp_mask;
+   267		} else {
+   268			prog_mask = mask;
+   269		}
+   270	
+   271		/*
+   272		 * Make sure we only provide online CPUs to the irqchip,
+   273		 * unless we are being asked to force the affinity (in which
+   274		 * case we do as we are told).
+   275		 */
+   276		cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
+   277		if (!force && !cpumask_empty(tmp_mask))
+   278			ret = chip->irq_set_affinity(data, tmp_mask, force);
+   279		else if (force)
+   280			ret = chip->irq_set_affinity(data, mask, force);
+   281		else
+   282			ret = -EINVAL;
+   283	
+   284		switch (ret) {
+   285		case IRQ_SET_MASK_OK:
+   286		case IRQ_SET_MASK_OK_DONE:
+   287			cpumask_copy(desc->irq_common_data.affinity, mask);
+   288			fallthrough;
+   289		case IRQ_SET_MASK_OK_NOCOPY:
+   290			irq_validate_effective_affinity(data);
+   291			irq_set_thread_affinity(desc);
+   292			ret = 0;
+   293		}
+   294	
+   295		return ret;
+   296	}
+   297	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
