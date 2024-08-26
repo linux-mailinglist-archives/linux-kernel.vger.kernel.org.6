@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-302064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FFA95F95B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2906495F963
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F998B22C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6BF01F22D8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE83A1991A9;
-	Mon, 26 Aug 2024 19:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D804A2B9A1;
+	Mon, 26 Aug 2024 19:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R+cGw2Tp"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qscm7fiN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E147A2B9A1
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D38F191473;
+	Mon, 26 Aug 2024 19:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724699075; cv=none; b=joqDEim/vMV4GQVxmTC7SBNY9/F1QpirHJA7+utxbEi90crIbCbGWt5L/LOVi7IUefQT8HjY3pQzxshGBRs0zUQPiF3XO46CU8XYi5ZQQALHw343oRk11jepcm95DOdKSf2hjKXJeaLtxSFgdXwcXu9BMfVxsdID0GrERbC4fFc=
+	t=1724699150; cv=none; b=tDDV+MVgCvMpi+NcgUe/fGWQGSCHvJHPcyB72GMH+sewttYPQh6+CaoO+H+t8zQ1ttEOOhx4fUqIkJJlzhnOLBHhUEAqunCp8T6xQga+zPIbuiSZboxwwwSm7EQH9UP/5p6mU/x2NxckQmapfrFkNLZw6clGfdGVLxaJ7xlGfjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724699075; c=relaxed/simple;
-	bh=LbA+6N21gTi0f62vFD35gocwERgw9HNhgHdKfmklcG8=;
+	s=arc-20240116; t=1724699150; c=relaxed/simple;
+	bh=kodZH7iyjh6N0lyHFBZoDBvoPNAYhvcixfEOgSEJ9AQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmzU8F9YgrsmUVbvCet1GDO08Rfk4J3b0nqGi4kF7SuuwhoGga/MFahupxrqHrvH7wAf+cUgEBWeumXN/r5eB5qjeiGici92VOUElvAyKfIrKkQ4DtOEcQ5HLOYp5FDiwqm+NYZ2QXsg6740VPfRD19CVve3wmefkX+h5IZb64M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R+cGw2Tp; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 26 Aug 2024 15:04:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724699070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q4Ic9Fq8l/YRsMsbrKHAvIEYDvZrJ7Rz8RzOxpo/lhI=;
-	b=R+cGw2TpUaJ84nERzAZm5TNmUYh7XrjcjIzhqMaWFPsw+ctPzCjwwcJhwJ7as4GwRQwOlS
-	qR3JJ7MXwbLIpzIePIZRY5zfJ4VItwn1yj8RXDs7aFM2gP2EtGGX++FAMuv3bwLSvzAFc3
-	UAH+oBwr1sZn5+0OygfTSiLdlPrRnPI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
-Message-ID: <dertpwh33crhjpghdsn5n3svrwhrv7cv446hyrqdblc3wcw3pp@a7ds4wsgvehg>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-3-mhocko@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qp0e/+2OFhxye/k4bgax0t2NgY1w/z8HeGvsUwW+to4+INi5296w013lODz4uIUeL9iRwExqmijj5WvaBUngxu5v0aYUkx+Vw/JDtm4VXNn07dAtBc6jHBxsyN7gz2SrSugKtWYDPTiL7FrHt5nRCePNJxXIf4CEXDwql13Ac5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qscm7fiN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946B8C8B7B3;
+	Mon, 26 Aug 2024 19:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724699149;
+	bh=kodZH7iyjh6N0lyHFBZoDBvoPNAYhvcixfEOgSEJ9AQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qscm7fiND2ORGP7AwoYHBumFm4vbL8RzSSU34z7aMchPb+xR/GBM0E4aoJfsaSPaf
+	 aM6JI34+6A4gBmhG8JpucuZZr7ZldCTvKRxeFbDTws2LlaF2ZfleeVVg05eeqwbY5c
+	 QJH77ZYeeG6YD9OiL6Yf9PMqCEA7TfipcBoEfJBMnccoqDucCjcs9SFz7Qp/eCjk2T
+	 cvijSLqVUu8jemsrupz/voAqEIy3M8coZ+4b8teEmtU2xzCmkokEojWtF7B+VZnq3D
+	 tXZAMntpSqRwbhTgYn25JPhBKjQD79ub+kADJKr4Ij3SMLSmZibiHBKfGjmsGYIpBr
+	 dmP0jsebscfqw==
+Date: Mon, 26 Aug 2024 09:05:48 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH-cgroup 0/2] cgroup/cpuset: Account for boot time isolated
+ CPUs
+Message-ID: <ZszSDG7GlvKQTydh@slm.duckdns.org>
+References: <20240820195536.202066-1-longman@redhat.com>
+ <ce01caf5-e576-4614-b6b8-0206da1a7c49@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,28 +61,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826085347.1152675-3-mhocko@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ce01caf5-e576-4614-b6b8-0206da1a7c49@redhat.com>
 
-On Mon, Aug 26, 2024 at 10:47:13AM GMT, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> There is no existing user of the flag and the flag is dangerous because
-> a nested allocation context can use GFP_NOFAIL which could cause
-> unexpected failure. Such a code would be hard to maintain because it
-> could be deeper in the call chain.
-> 
-> PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
-> that such a allocation contex is inherently unsafe if the context
-> doesn't fully control all allocations called from this context.
+Hello, Waiman.
 
-I don't really buy the unsafety argument; if it applies to anything, it
-applies to GFP_NOFAIL - but we recently grew warnings about unsafe uses
-for it, so I don't see it as a great concern.
+On Mon, Aug 26, 2024 at 03:01:21PM -0400, Waiman Long wrote:
+> Ping! Any comment on these patches?
 
-GFP_NORECLAIM is frequently desirable as a hint about the latency
-requirements of a codepath; "don't try too hard, I've got fallbacks and
-I'm in a codepath where I don't want to block too long".
+cgroup side looks fine to me. Ping isol people?
 
-I expect PF_MEMALLOC_NORECLAIM will find legitimate uses.
+Thanks.
+
+-- 
+tejun
 
