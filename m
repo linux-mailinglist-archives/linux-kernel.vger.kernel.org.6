@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-302372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CCD95FD75
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 629BF95FD7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9A52810B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:51:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F62D280F9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DB319EEBD;
-	Mon, 26 Aug 2024 22:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C5C19DF61;
+	Mon, 26 Aug 2024 22:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ff7TDC5i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twrNSgRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854DE19D07B;
-	Mon, 26 Aug 2024 22:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AA319AA75;
+	Mon, 26 Aug 2024 22:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724712496; cv=none; b=CqtauFbdZu9O0X254n7oEDpW/u5ZuLWYFFcsLnKUrLxmMkaYGiz9H4e6v2DWgiHp6bHIcXY7kihssw9+BtlDTHokFqocGXv4U4Q8VFw9lJ/t1xpAUsJ56ocnrlTW3mGTbFisKRzs2JU9G98L8Ev/7MMGDLbvf3/51Tcz42RzaBg=
+	t=1724712555; cv=none; b=amGxA8KQz6u56p1hhuVi3Lf4FFKCdWgIo8XMqiHs6OEt14VNId+rCI74etlt08LD5c/qGqEw3Vrm6P9HwDShnbyCfouv+f4Q3nRn0BjKdiT0xYyuAJV0FX++u4oyMZ4pKm5Rqq5Ts6zaH0FDOP6tLuceL+Z4kAokiEzhK398KcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724712496; c=relaxed/simple;
-	bh=x1hjh95k0wxaveZBrA+vEUT6erVcu1eYnkXU9yxB4Gg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a80/yYixh3ljkYYDzSvXzFYR7JdbOscsV/VPJNCERJvOrFKF/o60L/38RdqWDy4Xjd7V5aUKrQOM3dYDvzRp40dvY+42raCe8QqUb5AOd5CbL+D7VSweyGUqaNJC84P1Yy2dMsPTBkjbGq4sDh8aRH56AJ21UvULFb5+fq3HSLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ff7TDC5i; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724712495; x=1756248495;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=x1hjh95k0wxaveZBrA+vEUT6erVcu1eYnkXU9yxB4Gg=;
-  b=ff7TDC5iyKLf0y19udb2Y01IPpcUrF4ZvFHWMBO39tywc+FHhB6vFqIn
-   ZrQUp7SjfOcJ4cHF9Xvr8SO5sHaW6+3+a1RWSQAKQcO3pQkwXBX2OyG17
-   UMd6lApXrQ8ReGLPPCDKAxBUtpgdcckary88YHcC+sa3HXj3Py9MlV49q
-   BR9BDiIQWEtSx3guCT3TMvs1akL4JGMiqg8TSQ9UZg0tPj6eaYCu3J5r/
-   rVsCLwlE2QvgTvVUvcvGlkBX6Jyr8OAxzrQZh8AjxnUtUAG14LaVYB9p7
-   eIknopSEd9DKnm7aQ8/xWzZzgtYfV/uPIZtwjyKOtqiohuANn8wsBioo9
-   w==;
-X-CSE-ConnectionGUID: FIUFE4RUTQusfzdwh9JIfQ==
-X-CSE-MsgGUID: k0YRAnUYTKetC9C9LTHtvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="13225200"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="13225200"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:48:14 -0700
-X-CSE-ConnectionGUID: OlW0FGS6T1Sc4Z+Gg1PEvw==
-X-CSE-MsgGUID: kAJuRAjTQquHVlYP0FTDJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62972252"
-Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:48:11 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-In-Reply-To: <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
-Date: Mon, 26 Aug 2024 15:48:07 -0700
-Message-ID: <87wmk2lx3s.fsf@intel.com>
+	s=arc-20240116; t=1724712555; c=relaxed/simple;
+	bh=grnn+0X0Pv3NMfzAZs3RQzlylVqbv+q8SRYJqfAZiq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qa+JUpxLw0kl3fBmVNrVM+Ky3kuQ0CYDW4TdCrjVKLQgSFqPauKp6Vfh9NjKBF19y2JR/4nhB/8RDd2fNcymWCz+dAx10O5lLa1T/nloRnp4sMM6DfxthI3UqhsyPCGcDRK4MQGVnrZ5yksboAWLLD5wvpN7CzsnXxJfmOTJ7CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twrNSgRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBA3C8B7A4;
+	Mon, 26 Aug 2024 22:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724712554;
+	bh=grnn+0X0Pv3NMfzAZs3RQzlylVqbv+q8SRYJqfAZiq8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=twrNSgRRSQB0VBfhAlkkOthBteBjUdBTZO1/6b5u3dWnNEtqub1ex/Tf7WnyRXjnN
+	 kZTfGhQn4fWAQq/dGM0irikvWrrSLx7yloXFbm0pcAS8AGeOfQse4Z/4W4Nxb+hhvJ
+	 b0Tar1VRHH/Hyg/Ts61+r4n/u+WsSZiqO8Xv72lLYJiUd7Yy7xxB7WgfcuIhPPmRqi
+	 LJrjgu9YAd6es2vYadWXZGtgx+5NDYkw0Rn+GEDJlvYLSL35LUhaVnsQuPW/MDkv1s
+	 71KxiTy15zh7RY+lv3x7EwJmlAi9aCx1Nln7ch7gYWmiMri0gMggq3GLT30WDpI1TJ
+	 yDJfdn48+7o7Q==
+Date: Mon, 26 Aug 2024 15:49:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+Cc: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, Jonathan.Cameron@huawei.com, helgaas@kernel.org,
+ corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, alex.williamson@redhat.com, michael.chan@broadcom.com,
+ ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
+ manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+ vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+ bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
+ jing2.liu@intel.com
+Subject: Re: [PATCH V4 11/12] bnxt_en: Add TPH support in BNXT driver
+Message-ID: <20240826154912.6a85e654@kernel.org>
+In-Reply-To: <ZszsBNC8HhCfFnhL@C02YVCJELVCG>
+References: <20240822204120.3634-1-wei.huang2@amd.com>
+	<20240822204120.3634-12-wei.huang2@amd.com>
+	<20240826132213.4c8039c0@kernel.org>
+	<ZszsBNC8HhCfFnhL@C02YVCJELVCG>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
+On Mon, 26 Aug 2024 16:56:36 -0400 Andy Gospodarek wrote:
+> We plan to replace these calls with calls to stop and start only that
+> ring via netdev_rx_queue_restart as soon as these calls all land in
+> the same tree.  Since this set is [presumably] coming through
+> linux-pci we didn't think we could do that yet.
+> 
+> Thoughts?
 
-> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Add a comment to these operations that cannot use the _light version
->> of override_creds()/revert_creds(), because during the critical
->> section the struct cred .usage counter might be modified.
->
-> Why is it a problem if the usage counter is modified?  Why is the
-> counter modified in each of these cases?
->
+The merge window is in 3 weeks or so, so this can wait.
+I'm worried we'll find out later that the current queue reset
+implementation in bnxt turns out to be insufficient. And we'll
+be stuck with yet another close/open in this driver.
 
-Working on getting some logs from the crash that I get when I convert
-the remaining cases to use the _light() functions.
-
-Perhaps I was wrong on my interpretation of the crash.
-
-Thanks for raising this, I should have added more information about this.
-
-
-Cheers,
--- 
-Vinicius
+While we talk about affinity settings in bnxt -- it'd be great
+if it maintained the mapping and XPS settings across reconfiguration 
+(like queue count changes or attaching XDP).
 
