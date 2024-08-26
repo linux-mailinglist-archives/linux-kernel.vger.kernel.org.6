@@ -1,136 +1,237 @@
-Return-Path: <linux-kernel+bounces-301289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EE195EEB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:42:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F9C95EEB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B81B1F230FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:42:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EAC5B22797
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AAA14B06E;
-	Mon, 26 Aug 2024 10:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74DE149DE8;
+	Mon, 26 Aug 2024 10:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a4eiOgzW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r9Ikr3Ct";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BAxxJn6a";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r9Ikr3Ct";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BAxxJn6a"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB9D1482F5;
-	Mon, 26 Aug 2024 10:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60328149E1A;
+	Mon, 26 Aug 2024 10:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724668969; cv=none; b=Zvk2Xp4095MLf7mYmX/GUcxXGy9LG+FcEAMVf1LPv+HOZHPVZ9Tua43r4Xx/qoZidb691x9WHZdQyRTYCDwDyGc6pbiR04lmB3fAZ6G8BQsVm+GOv794NgE6bcFrtczXzmyVO8EHM2m8oRqdpkKltU2owy9eY+r+8olRwqLnxPw=
+	t=1724668984; cv=none; b=cr+J7tjkxjAcuI/02aq4z2SB5qObObdMsTeHkGwVVRrwR2ERFBF1decMAD0aB7Ks0MFa0itMBvfgUeIH5YytZWNWqBWJQdzqqXKQvhYCXA9FbTw1lADQxziqoOtKVsWD9XY4V2OlvCb7k99xfm+qnPbX7APGgPYEILXd9BMmTCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724668969; c=relaxed/simple;
-	bh=9dh5giGN/NKD5kz5JVWSuqtsglWlEf+AhSpHcdrDvo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKeZDeKW6oh67fN7aZgMOI20eOub4wUFizq+7RupjSP5OtR9LTeJWrTJd7SG0cGy1Q6ixMmcf22ZCHhz6t6lfN7N3trPHEwML2QxAYjB9WNU5QYG6mUmEERlfFKXwXN7hBR4DY/UidxnxMuS4z8Gn841EWhMESsfE8/0MHQh1AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a4eiOgzW; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724668967; x=1756204967;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9dh5giGN/NKD5kz5JVWSuqtsglWlEf+AhSpHcdrDvo4=;
-  b=a4eiOgzWSPsuRgotOZ7Oqm4qMa9tAdaKpyI3I7g4Z92YMYLhbG93XpO4
-   d5SKT70YIMUzgDGR+x1tXVOWmB6SiyYR4oJ91g5/gqPWidgQVwZsTxU2n
-   xQbQh+oYrRkGNjKLQkZw5kGSLL28/RjJHT4H3TI3j9yaMzCZufUlkztYb
-   MJUs59/mTQYqbxyOxaUqd4TyeP/l085cmErApYfaAMd/N6cQseZM2rvq7
-   Z1Kh4rMdgx5atx+/5UrPrA0mXvgKlflLSfinviUENJvlMKg/YcxQTPgYg
-   JTuZ1k7rKe7m08iHKkUZySce4joYt1i2+l5vuZGm0hQaufrhCpDczkMrs
-   A==;
-X-CSE-ConnectionGUID: 47LDJakaSB+HjwOa8HPMgQ==
-X-CSE-MsgGUID: pA+aHIfIS06u6fLILVAokA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="40588730"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="40588730"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:42:46 -0700
-X-CSE-ConnectionGUID: sXCb1H7PRaCzD7fBLgSJow==
-X-CSE-MsgGUID: Y9Qaky/tTGOdfRzCXeP2UA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62624159"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:42:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1siXBG-00000001psm-47Zf;
-	Mon, 26 Aug 2024 13:42:38 +0300
-Date: Mon, 26 Aug 2024 13:42:38 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Albrieux <jonathan.albrieux@gmail.com>,
-	Gwendal Grignou <gwendal@chromium.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux@mainlining.org
-Subject: Re: [PATCH v4 1/4] iio: magnetometer: ak8975: Relax failure on
- unknown id
-Message-ID: <ZsxcHv9RzzKkadoa@smile.fi.intel.com>
-References: <20240819-ak09918-v4-0-f0734d14cfb9@mainlining.org>
- <20240819-ak09918-v4-1-f0734d14cfb9@mainlining.org>
- <20240823193203.7772a6b0@jic23-huawei>
- <Zsje0_gd41N1P0eE@black.fi.intel.com>
- <20240826113920.092d9ec7@jic23-huawei>
+	s=arc-20240116; t=1724668984; c=relaxed/simple;
+	bh=1brX3O7x4wkvzi0J22DQwcBg4eRs8a8tbYnzdpvAW6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PpNEgpQ4ahAOlXzIPJFawhXBDS9xIEi0xZQR+Bjg/XUvpmBigT+g0T1om0SiBcUIbBXyHsI8RC0ovWdd0/PKUIs6y8Fs95A/NuBcOMQzzjvIFutGpgyVxo7mqFn/jUgsWpQm37WsdYPSsyRb8EzXwt7EkB+Xfr3ha7jGcd5hwc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r9Ikr3Ct; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BAxxJn6a; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r9Ikr3Ct; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BAxxJn6a; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 79D571F84E;
+	Mon, 26 Aug 2024 10:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724668981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8o4dfymYY/wib3L9jCOJLwWWj+pNHwBE6TGr3wDvdME=;
+	b=r9Ikr3CtvlxgOUbCPsfQeCAbOIBv38TZPe1XteitqhFoxmQFbd7aY8yAqEbCEEh2xRsqdn
+	XjBdeutawKH9OAHU24L0HCpbEsVig3SnmX4zEqQv2ePmulPDNQEUXOxOYhXmVBJ8ls79cA
+	gXnn6AF9qisy5csGzxngcARJn+/5Lms=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724668981;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8o4dfymYY/wib3L9jCOJLwWWj+pNHwBE6TGr3wDvdME=;
+	b=BAxxJn6acrcSse7W9zFjVxOgvP07ZnpIBhIEIAT6a9MoK7oeO65KrSPjWVYXjcrbysp7Qs
+	3Z94xHXKroT5a6Bw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=r9Ikr3Ct;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BAxxJn6a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724668981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8o4dfymYY/wib3L9jCOJLwWWj+pNHwBE6TGr3wDvdME=;
+	b=r9Ikr3CtvlxgOUbCPsfQeCAbOIBv38TZPe1XteitqhFoxmQFbd7aY8yAqEbCEEh2xRsqdn
+	XjBdeutawKH9OAHU24L0HCpbEsVig3SnmX4zEqQv2ePmulPDNQEUXOxOYhXmVBJ8ls79cA
+	gXnn6AF9qisy5csGzxngcARJn+/5Lms=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724668981;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8o4dfymYY/wib3L9jCOJLwWWj+pNHwBE6TGr3wDvdME=;
+	b=BAxxJn6acrcSse7W9zFjVxOgvP07ZnpIBhIEIAT6a9MoK7oeO65KrSPjWVYXjcrbysp7Qs
+	3Z94xHXKroT5a6Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8378C13724;
+	Mon, 26 Aug 2024 10:43:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2UOBHTRczGaJCAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 26 Aug 2024 10:43:00 +0000
+Message-ID: <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de>
+Date: Mon, 26 Aug 2024 13:42:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240826113920.092d9ec7@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Jim Quinlan <james.quinlan@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com>
+ <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+ <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de>
+ <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
+ <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de>
+ <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 79D571F84E
+X-Spam-Score: -6.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,google.com,arm.com,debian.org,linaro.org,broadcom.com,gmail.com,linux.com,pengutronix.de,lists.infradead.org];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Aug 26, 2024 at 11:39:20AM +0100, Jonathan Cameron wrote:
-> On Fri, 23 Aug 2024 22:11:15 +0300
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> > On Fri, Aug 23, 2024 at 07:32:03PM +0100, Jonathan Cameron wrote:
-> > > On Mon, 19 Aug 2024 00:29:39 +0200
-> > > Barnabás Czémán <barnabas.czeman@mainlining.org> wrote:  
+Hi Jim,
 
-...
+<cut>
 
-> > > > +	/* Let driver to probe on unknown id for support more register  
-> > > Comment style wrong, I'll fix it up.
-> > > 
-> > > With that tweak applied to the togreg branch of iio.git
-
-> > > > +	 * compatible variants.
-> > > > +	 */  
-> > 
-> > There is another one also wrong.
-> > 
-> > +	[AK09918] = {
-> > +		/* ak09918 is register compatible with ak09912 this is for avoid
-> > +		 * unknown id messages.
-> > +		 */
 > 
-> I think unrelated to this series, but nice to cleanup.
-> Patches welcome :)
+> Hi Stan,
+> 
+> Most of the clocks on the STB chips come up active so one does not
+> have to turn them on and off to have the device function.  It helps
+> power savings to do this although I'm not sure it is significant.
+>>
+>>>
+>>> Perhaps you don't see the dependence on the PCIe clocks if the 2712
+>>> does not give the PCIe node a clock property and instead keeps its
+>>> clocks on all of the time.  In that case I would think that your
+>>> solution would be fine.
+>>
+>> What you mean by my solution? The one where avoiding assert of
+>> bridge_reset at link [1] bellow?
+> 
+> Yes.
+>>
+>> If so, I still cannot understand the relation between bridge_reset and
+>> rescal as the comment mentions:
+>>
+>> "Shutting down this bridge on pcie1 means accesses to rescal block will
+>> hang the chip if another RC wants to assert/deassert rescal".
+> 
+> I was just describing my observations; this should not be happening.
+> I would say it is a HW bug for the 2712.  I can file a bug against the
+> 2712 but that will not help us right now.  From what I was told by HW,
+> asserting the PCIe1 bridge reset does not affect the rescal settings,
+> but it does freeze access to the rescal registers, and that is game
+> over for the other PCIe controllers accessing the rescal registers.
 
-Sure, but I leave this to newbies to have a material to exercise on.
+Good findings, thank you.
 
-> Or it I get bored, I might do a scrub of the full subsystem to get everything
-> in the same style and not provide incorrect choices to cut and paste.
+The problem comes from this snippet from brcm_pcie_probe() :
 
-:-)
+	ret = pci_host_probe(bridge);
+	if (!ret && !brcm_pcie_link_up(pcie))
+		ret = -ENODEV;
 
-I believe we still have more interesting cases, than white space cleanups.
+	if (ret) {
+		brcm_pcie_remove(pdev);
+		return ret;
+	}
 
--- 
-With Best Regards,
-Andy Shevchenko
+Even when pci_host_probe() is successful the .probe will fail if there
+are no endpoint devices on this root port bus. This is the case when
+probing pcie1 port which is the one with external connector. Cause the
+probe is failing we call reset_control_rearm(rescal) from
+brcm_pcie_remove(), after that during .probe of pcie2 (the root port
+where RP1 south-bridge is attached) reset_control_reset(rescal) will
+issue rescal reset thus rescal-reset driver will stuck on read/write
+registers.
 
+I think we have to drop this link-up check and allow the probe to finish
+successfully. Even that there no PCI devices attached to bus we want the
+root port to be visible by lspci tool. This will solve partially the
+issue with accessing rescal reset-controller registers after asserting
+bridge_reset. The other part of the problem will be solved by remove the
+invocation of reset_control_rearm(rescal) from __brcm_pcie_remove().
+That way only the first probed root port will issue rescal reset and
+every next probe will not try to reset rescal because we do not call
+_rearm(rescal).
 
+What do you think?
+
+~Stan
 
