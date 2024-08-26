@@ -1,98 +1,126 @@
-Return-Path: <linux-kernel+bounces-301611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA1695F32D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFE395F362
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCFD1C21EF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF0F1C21990
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E31186619;
-	Mon, 26 Aug 2024 13:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E05189BA8;
+	Mon, 26 Aug 2024 13:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFk8WCMV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ejKdB4G1"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03918454D;
-	Mon, 26 Aug 2024 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA1D17C989;
+	Mon, 26 Aug 2024 13:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679850; cv=none; b=VUE+eRpV1x8xIil4RQ6M0W1x0LHjyG76/yjwlMISMaRLLXxjIdDeITYW2KVycSiODKR5+GeFhayhaz28mLNoawNiPyf/OL1hNj0S5lDzprF4XuliHFscjl496qKlXuxyh0pp9fnCjm+J2AsRm1oFau4zCtNGOlZ5w9Nd6L8QU08=
+	t=1724680671; cv=none; b=lmOTAVBGcRJXmIqUm5UTYK7B/jMpRnX/EQ2gTnf/mI9LKS7iNlypHDsdVqXkT0zOShRL+Z08rQ1zB+hG0zZdezYmXFY12AfuNeNFcAXMGKrnN+SZ9+WvNHOAs+SW8KhMGuNrkzL3mUgAihmRL6H1fFMx7kFyuVenZLyq0yEqNhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679850; c=relaxed/simple;
-	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GlwR1aCLiXnB3L/o5Z6Sd/9MQ23xRO+CCrH7tyEAFX9zCYAvD2u2pcYcvPXL+YHPwD0WJn/sEDfTLtY/OtsnGANEnp7XJIIGnf+JuRYheh9RkijnZl4KDvzsrtNuzqIBLZLDJ3DVmUDcDIO8pR4B+0n4sOoGM05OZmiDBpC1e/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFk8WCMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7DDC52FC2;
-	Mon, 26 Aug 2024 13:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724679849;
-	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JFk8WCMVWijA3Eie5EdyLmE3IkYEvHZrlDdIQUWjE1RCD96nkdJSNruqZZPG97YBZ
-	 ELhU9cxN2tLeniRrlriq56kxkvoePYE4KWhqGFqScG9lIOX4NAwfJ+L+JwRCUmv2w9
-	 nE3tloughjwoRo4eVzM+ls/7mZxnMCEKVgqJkDlRg8CZgtm919zl06wWUpQRsUg2s1
-	 MF1Gs5vZB3EskGH0VAG1PdOSTNC02v6yqy62ef40LE8LwLufQ4SS3AW4g21SPVMdvE
-	 efJrO1V48ROywlJob7YtYa2qCfe5yyWXRjDDu+fg5DUb6oQOmGXt1/Jb85viy7u8hY
-	 n9OW9wD6eR/3Q==
-Message-ID: <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
-Date: Mon, 26 Aug 2024 15:44:02 +0200
+	s=arc-20240116; t=1724680671; c=relaxed/simple;
+	bh=vr7oofwZgZfct6HqlKWNzT6ycYxBI0n+s7zmMjcpi4M=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=hU85ou+HtI5Ge9fIU/jIuBsIBuw3uZcnAC5oVqiWRIv8D9LQ1EbDJ3MxXkgEp5xL8cvX0Ta7UyjMR6iIpcfvPZajT3eCkDTjQtWfzHcny5bxRqsIRoVb19ma2313i5XR2ODwKNMi/Tq+NBlcP0RM2IJgqin+LNKowH8en+zvKmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ejKdB4G1; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724680663; bh=OHgRLzSenWLbC5JQpgLz4xtY6cHLHbUrK3U66N3AWaM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ejKdB4G13RzIjs6bAOrBphKmkZ7gSfgleilYyM6Gb+gbeKk3YcrbUApIQ0MJb2EMm
+	 DFWsL+Ra5pCravZJVExP85JwZRqForjuNl99DVmved16gW3H/bseB4+I2yvMf6+lOi
+	 8Q5FYS19zd+iVr2Cy3fYABm+2I3mBCZ6NDVSZcwM=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id B12B340A; Mon, 26 Aug 2024 21:44:18 +0800
+X-QQ-mid: xmsmtpt1724679858tld28qu36
+Message-ID: <tencent_A2DE92DC864D89B92ECBAEF2CC8FE7F4C606@qq.com>
+X-QQ-XMAILINFO: MW5hkHoBpWXyI09Aq4gwR2uQtgcCQR4idHhfNGBGz3Iiy0PEFTPLCT8Ve7kUlB
+	 J3emttFsrfj7eSzFRWc8gbM+fXuFNF1fRgMwh+qRAysAxuLsLDgJl2XSsRxhA5UreLLdPTujQtXV
+	 nQijk9n1Jv8PFDio6NTz7dS15so4EvTpfB9HOryeWKqx+n0hmx7HjOh7FP1vz+M1n7gDFZ8HC7B4
+	 M4eyRY9Bu9PZggcntTYT4+Vo/3IfUYgxfsZ+n4h2ue+ZYhR5LyNH8/il0QMdGXbmd9cXc8F5DY0a
+	 MR/dHTGlYL/qqlAful5Z9j4XNaPglB/nNJQrXbtaGxYA1j4mLY4UMpfVa5i90q8YtYUE3S5kta7D
+	 VCWCaZFdgMkHYfJaCNXQ4pQnP4LlAs9zAUxvSaDflmbFpkPeuZPmCG3Akj1LXVKwtFWNiEmVfmBY
+	 4GjVepYFiXcaAXrRFtGxmldhUzETVALTZIonuq20fDXEQxVqWF9L07uETBjWLjg21PF/6huGeovl
+	 AgXxxl6h5NwQcCbRZUZJIFMNC01Ui/p+BX2AKBZzEnoGmoQezqE/fPsPJGecRmSNyzPDzWywwKwM
+	 VmEzy8rPWvlSw3Hp4USDlJ7MOh03emUzN0uLVlbje52AqBNNLnzW5S/SDnz71OCf0ndC4C1YdRK/
+	 0Ll8vtcCrMniWesPuNnikOAJtLmxn89PABDzGL6PimrsZCQSx0wwvS4nnxefIyzt0EH++pipNtwa
+	 CL0CjK2Qploo6tLYinew63Es0FP8uYpIeVyuI2dn99KYr3H+SPzQneDQxQKe2txtSGga3XpSachX
+	 GBC/5dMqWcj8ip+wnWh3oVB0j2JQl92HM8oDjWvFRFE75eTPJ7AzUoUXMFHTpm4pM30+tNvppjdS
+	 VyPmT4TutSaXMNKynOz5lb3YdfNFL3MVUc4a6Tf6mar17Yy5GsCOdS0jqJQPeENF2s5+eFKfnMz8
+	 DAXPWcalud/1iyQESt4Xk6DiDEoY3pIjHZBdywSmEbAJnlKDeHMecTubXR+ePo
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: gregkh@linuxfoundation.org
+Cc: eadavis@qq.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	sergei.shtylyov@gmail.com,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V5 1/2] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in with usb_control_msg_recv
+Date: Mon, 26 Aug 2024 21:44:19 +0800
+X-OQ-MSGID: <20240826134418.2744882-3-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <2024082607-foothold-boss-c693@gregkh>
+References: <2024082607-foothold-boss-c693@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
- QUPs
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23.08.2024 2:58 PM, Bryan O'Donoghue wrote:
-> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
-> need to be parked when switching frequency. A side-effect in parking to a
-> lower frequency can be a momentary invalid clock driven on an in-use serial
-> peripheral.
-> 
-> This can cause "junk" to spewed out of a UART as a low-impact example. On
-> the x1e80100-crd this serial port junk can be observed on linux-next.
-> 
-> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
-> 
-> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
-> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
-> I ran into some junk on the x1e80100 serial port and asked around to see if
-> someone had already found and fixed.
-> 
-> Neil pointed me at Stephen's fix for sm8550 which I found is also required
-> to fix the same thing x1e80100.
-> ---
+ath6kl_usb_submit_ctrl_in() did not take into account the situation where
+the length of the data read from the device is not equal to the len, and
+such missing judgments will result in subsequent code using incorrect data.
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+usb_control_msg_recv() handles the abnormal length of the returned data,
+so using it directly can fix "target's targ_info doesn't match the host's
+targ_info" warning in ath6kl_bmi_get_target_info.
 
-Mind also fixing up 8650 that seems to have this issue?
+Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+V1: If the data length returned by the device is 0 return failure
+V2: Directly using USB functions
+V3: Adjust indentation style
+V4: Adjust indentation style
+V5: Update comments, add warning info
 
-Konrad
+ drivers/net/wireless/ath/ath6kl/usb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 5220809841a6..0458b5a078e1 100644
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@ -1027,9 +1027,10 @@ static int ath6kl_usb_bmi_read(struct ath6kl *ar, u8 *buf, u32 len)
+ 	int ret;
+ 
+ 	/* get response */
+-	ret = ath6kl_usb_submit_ctrl_in(ar_usb,
+-					ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
+-					0, 0, buf, len);
++	ret = usb_control_msg_recv(ar_usb->udev, 0,
++				   ATH6KL_USB_CONTROL_REQ_RECV_BMI_RESP,
++				   USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++				   0, 0, buf, len, 2000, GFP_KERNEL);
+ 	if (ret) {
+ 		ath6kl_err("Unable to read the bmi data from the device: %d\n",
+ 			   ret);
+-- 
+2.43.0
+
+
 
