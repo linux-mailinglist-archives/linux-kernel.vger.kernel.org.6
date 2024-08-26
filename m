@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-301958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3317095F7FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:25:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C57C95F7FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3821F2357B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B56283482
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFBC199238;
-	Mon, 26 Aug 2024 17:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C297E19992B;
+	Mon, 26 Aug 2024 17:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j11SZ68A";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ROEf8hRC"
-Received: from a7-46.smtp-out.eu-west-1.amazonses.com (a7-46.smtp-out.eu-west-1.amazonses.com [54.240.7.46])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CCe11pr6";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="IJNBUtaj"
+Received: from a7-30.smtp-out.eu-west-1.amazonses.com (a7-30.smtp-out.eu-west-1.amazonses.com [54.240.7.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE26F18D63F;
-	Mon, 26 Aug 2024 17:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E11064A;
+	Mon, 26 Aug 2024 17:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693052; cv=none; b=d7bb+/XHPTBDBtAX8nyawSmNS9G8AzmHrXi4jDLMgJG0NnbkJZF/qBlgXcOXAfOVE7lqLFa9PeqAZEy6KPFkvxQdEzxlhr3V9dXo9NOY80oYW2DBs/IIDcYGHMyMz/jop+HmiM/lark+QGXVuIdgoNIcoIYYDHRRuGNxk4iB6Oo=
+	t=1724693054; cv=none; b=og+42a5seL4W++xL/J3Fplz4KT5h+eSlzDfHmCQ27ruLhNt+4TxzN1jzcMHlfVc2Fler2yCNDOBaRIRvbRptym7ME0JUrMeZMf9osT9HDaDbX/9aKmAaerKbB3xSDwCqhd3JHckvCvw7uhsG2Ce9+DQv2l4aXq13tP2g8XHSLbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693052; c=relaxed/simple;
-	bh=8R4802nAp5qJBbZHSqGnPC3d8ZjzB9snyqv/D0YL6jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FGsJo0AH90T4ZBlZ4N2mNXoK7Y9GR+/OoyGLmCDfSZN0sp6HWG/jkmRAz6B8wEr5Vte8YcrGB22Z7VLqVZyj1WJ9V5OAVxY5HtB1Kzf++s2tNkwn2SjQmZYoMJy62UihzBKPBTg1lnnf4j6N75m/uVb1AIjHiheELEsXCF3+t8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j11SZ68A; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=ROEf8hRC; arc=none smtp.client-ip=54.240.7.46
+	s=arc-20240116; t=1724693054; c=relaxed/simple;
+	bh=etTr18PVUbyD9sH0upSXvlXDIQwDCIKkQLfctpu+WIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZAewdbyAfzx5Xo9xptcxSXZRUGviz2c9B9BZ33KtwpCo7kNMpTZxAI/KtYDmW2uzwbHheO78BNpBdF6F6pfDbE130NxrwTzBMKM5DO/B42ihKa3JIfFlGgjx2xUbpPwZye/vQx4cnkjBt7HHd/kCn2COvau3SsLh7JWZR2DwlSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CCe11pr6; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=IJNBUtaj; arc=none smtp.client-ip=54.240.7.30
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724693049;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
-	bh=8R4802nAp5qJBbZHSqGnPC3d8ZjzB9snyqv/D0YL6jc=;
-	b=j11SZ68A42peyxL6Nr/T/J1TRUB0Ql6BmVqWlqkdl+fbBofdt5LuAp7JaxuzKqP6
-	Wu/64v639isB+lrtK4bsirYsPXFkiP4cNFQQAiaLg1caBeNDpOKHmkO7lpwyA6cP+aB
-	DKibaiwUHlGWD4DGqxg7AQRz6uhfnI4PBNmAiZNXOBGi5qbhVXugS8kYWoYeSXC33Tq
-	7YS7O2qbuF5CGmtyQT33dLqSyVqouCDSGNpjKqCr0ggZgDZdvZQESfVJ6biLF1qHb8C
-	NeDOV8c7mPraoRgHpn9VNgtG9Sw7MjTz8Z61aqCYF11qWAgKQtd/xqo7Ir9PdDZ7xwl
-	qAMUflpWdQ==
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724693050;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=etTr18PVUbyD9sH0upSXvlXDIQwDCIKkQLfctpu+WIM=;
+	b=CCe11pr6qOy961/sWNVUMH6KKouTy/tOjExkTfT2L+8KDU8TzEFeUAXBuf7DPHhh
+	xKSmoKi7ylUV4vwdY/z/lQPB0QnSDieugfPWooL2O7lNTJsRIOWJ9PHsmJrXmZLTAzA
+	8V5ClmdQQVJbqNvlVho6cciT6j8qJiL3Vu8FMXLxLU/7qlgeHa3dWVQMYtDLafn/SFa
+	2c9DGBIn35M7JdGhMtZ4+LbAqV4n63cm4gMiwhEJsnjjYnEbAmYpUeDTpt5jMhO2bKs
+	iIqbM2NPqzfxAMV/3O8mxI29gN91GpixK7/1tXMdyD4xCn4M5LnVwWj6dSRbDMGbyeH
+	QwWac6451w==
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724693049;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=8R4802nAp5qJBbZHSqGnPC3d8ZjzB9snyqv/D0YL6jc=;
-	b=ROEf8hRCiaNFBReBuOpwikHScj4jPbtM5KUO6BIifMcH/uQwiFPFJeh3SUxRmAon
-	KAgQv19OoV/PQ0Vx1LzkFokfyr9RvVcGgCfim+kKOUMZ21IJCcKBsyJwNxpGAbOPPZz
-	6EuMTWPSpcGW4v04SxdSCiHSmB9GH4QWqaLf2Lxs=
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724693050;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=etTr18PVUbyD9sH0upSXvlXDIQwDCIKkQLfctpu+WIM=;
+	b=IJNBUtajuE12ye6IkYE7m+mee4d0+VJDF+NehKONNLoVgKTBsikexRUoLLiGVJz/
+	0lbZF/0JhtX3sIS7iEcJCxEamB5WTOw6lJqcZm6w57s2ipG0UAt6BobQ+m5LtJTh4m4
+	5wPa1zr8cbvDW+/prx8x/YHw/9kbmXJACHE0JDpM=
 From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 To: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar, 
 	hverkuil-cisco@xs4all.nl
 Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
 	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v7 0/3] Enumerate all pixels formats
-Date: Mon, 26 Aug 2024 17:24:09 +0000
-Message-ID: <010201918fb76f7a-650dc960-4911-48d7-8e82-8f18243c4b71-000000@eu-west-1.amazonses.com>
+Subject: [PATCH v7 2/3] media: test-drivers: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
+Date: Mon, 26 Aug 2024 17:24:10 +0000
+Message-ID: <010201918fb772f4-51d41cc7-a573-4d49-b75c-3e6b37839901-000000@eu-west-1.amazonses.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240826172407.140538-1-benjamin.gaignard@collabora.com>
+References: <20240826172407.140538-1-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,51 +68,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.08.26-54.240.7.46
+X-SES-Outgoing: 2024.08.26-54.240.7.30
 
-The goal of this series is to help userspace applications, like Gstreamer
-or Chromium, to categorize decoders and so avoid trying to use decoder
-that can't do the require task because it won't support the needed pixel
-format.
-As example, in today implementation we need to simulate 10 bit header
-control to know if the driver support 10 bits pixel formats. With this
-new flag it will simpler for userspace applications know if driver
-support 10 bit pixel formats and if it is supported by userspace.
+Since the V4L2_FMTDESC_FLAG_ENUM_ALL flag mostly targets stateless
+decoder pixel-format enumeration, update visl test driver to use it.
+When V4L2_FMTDESC_FLAG_ENUM_ALL flag is set let the driver returns
+one more pixel format.
 
-An example of how it can be used in GStreamer to discover the
-supported pixels formats for stateless decoders is available here:
-https://gitlab.freedesktop.org/benjamin.gaignard1/gstreamer/-/commits/v4l2codecs_enum_all_supported_formats?ref_type=heads
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+---
+ drivers/media/test-drivers/visl/visl-video.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-v4l2-compliance test of this flag:
-https://gitlab.collabora.com/benjamin.gaignard/v4l-utils/-/commits/enum_all_formats_v4
-
-change in version 7:
-- Rework documentation about which drivers should use the flag
-
-change in version 6:
-- Change flag name.
-- Improve documentation.
-- Improve visl driver to enumerate one more pixel format when the flag
-  is used.
-
-changes in version 5:
-- Reset the proposal to follow Hans's advices
-- Add new flag to be used with index field.
-- Make vicodec and visl test driver use the new flag
-- Doing the same for Verisilicon driver.
+diff --git a/drivers/media/test-drivers/visl/visl-video.c b/drivers/media/test-drivers/visl/visl-video.c
+index f8d970319764..677a8564de03 100644
+--- a/drivers/media/test-drivers/visl/visl-video.c
++++ b/drivers/media/test-drivers/visl/visl-video.c
+@@ -136,6 +136,12 @@ static const u32 visl_decoded_fmts[] = {
+ 	V4L2_PIX_FMT_YUV420,
+ };
  
-Benjamin Gaignard (3):
-  media: videodev2: Add flag to unconditionally enumerate pixel formats
-  media: test-drivers: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
-  media: verisilicon: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
-
- .../media/v4l/vidioc-enum-fmt.rst             | 18 ++++++++++++++++-
- .../media/videodev2.h.rst.exceptions          |  1 +
- .../media/platform/verisilicon/hantro_v4l2.c  | 18 ++++++++++++-----
- drivers/media/test-drivers/visl/visl-video.c  | 20 +++++++++++++++++--
- include/uapi/linux/videodev2.h                |  3 +++
- 5 files changed, 52 insertions(+), 8 deletions(-)
-
++static const u32 visl_extended_decoded_fmts[] = {
++	V4L2_PIX_FMT_NV12,
++	V4L2_PIX_FMT_YUV420,
++	V4L2_PIX_FMT_P010,
++};
++
+ const struct visl_coded_format_desc visl_coded_fmts[] = {
+ 	{
+ 		.pixelformat = V4L2_PIX_FMT_FWHT_STATELESS,
+@@ -341,11 +347,21 @@ static int visl_enum_fmt_vid_cap(struct file *file, void *priv,
+ 				 struct v4l2_fmtdesc *f)
+ {
+ 	struct visl_ctx *ctx = visl_file_to_ctx(file);
++	u32 index = f->index & ~V4L2_FMTDESC_FLAG_ENUM_ALL;
++	int max_fmts = ctx->coded_format_desc->num_decoded_fmts;
++	const u32 *decoded_fmts = ctx->coded_format_desc->decoded_fmts;
++
++	if (f->index & V4L2_FMTDESC_FLAG_ENUM_ALL) {
++		max_fmts = ARRAY_SIZE(visl_extended_decoded_fmts);
++		decoded_fmts = visl_extended_decoded_fmts;
++	}
++
++	f->index = index;
+ 
+-	if (f->index >= ctx->coded_format_desc->num_decoded_fmts)
++	if (index >= max_fmts)
+ 		return -EINVAL;
+ 
+-	f->pixelformat = ctx->coded_format_desc->decoded_fmts[f->index];
++	f->pixelformat = decoded_fmts[index];
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
