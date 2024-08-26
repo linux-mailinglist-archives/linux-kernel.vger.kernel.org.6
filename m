@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-301976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5866795F830
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:32:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A10A95F832
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A461F237AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:32:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35461B22776
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35D1990A5;
-	Mon, 26 Aug 2024 17:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GlqAxXBR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SqSvGkEU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2748919884C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AE61991AB;
+	Mon, 26 Aug 2024 17:32:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E284D8BB;
+	Mon, 26 Aug 2024 17:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693514; cv=none; b=bd5tn8f84sDNOyU1xc441s8X/9oVJmevCxw1xKs9EXPVIj4ay+RFetomFbJ8iDoFXuebxWZWDs/jQU4vAPO5xet4uOpAu4MhanmZV93E91LphLWYzda9aamaWQNR/WTXDDe7KOyuPRPc65paNUE1hBsx7VG+QgIjGqtf6TzXXw8=
+	t=1724693539; cv=none; b=LP141YcqvMozxQ3jRdLXNip53/whThx4ymsJyKVtEXymKcSAYnym0zdv3SZBDZ0nD6zTUMlma6xkCy888znHmAxRRVdsPCI9T1ssSaufdTiiu25L5uM1gclQ+pAPG3r5x29km5NS8OfZm/ce3n6WbEOfcnyBFjXv30lfurGq3ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693514; c=relaxed/simple;
-	bh=rqrE37Ymk/6DIySLGlwXDHCbwP2tm2cJNWIAq724c8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmeDJSniWHBsCW9Oj5I793ltnK6ix2OdlSiDonHqVRaIGcGGkydkwNQwiMDZ32w+82dBCYSCM3vjpuHscIf6v7gpSWy5nGPdH3MXC9wSRKtciC7JCqM3YJ83zMEiG4Jvwg8tpVRDZbALxLgKk/5LeyTQrUJmPX+GUaDIzetauhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GlqAxXBR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SqSvGkEU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 Aug 2024 19:31:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724693511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AkZcASK4ZhVjM72PRr7wbPEwfXLYJAc1hlsf/gSb5Wg=;
-	b=GlqAxXBRPQBeqRIdp7YEFkKGSYyjuJ95hzkSmIq8lVdpmRgSdpDAHvFFHTphEHIF7FHTDM
-	5PSz07IXyHDeDZ+Y2o6QF5z6Y+A9eOCKTlRVTYuvpDCxqslD/1ocwKqQCh+Ot66v2HcfEN
-	PbuRXrTyzdJSOiCfA7xVbFpUW+TXGmFG5s/1d3+R0BWB6DRAovv3+ZvIPBSQFu/VTTu96g
-	QGoPH9I73b7kwAlLkRk0xk0o4j3dNIPj9nbGr0jY7yJuxyh3iUl2ELSfIC1IIP7y5st4dw
-	dMFt/Ke/hDrZSr1oc/Wnv+oC+Vg/OHokmAw8mrlbwSPRGfibdNx0eJdwDq/qFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724693511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AkZcASK4ZhVjM72PRr7wbPEwfXLYJAc1hlsf/gSb5Wg=;
-	b=SqSvGkEU6QOjP5krxwFS/EKg/yysjqLKhkJPWnYHRP++vjK9SQmcVSs4lwYF4azefHCQPb
-	dw2acvrVcW6ZA7CQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -fixes] drivers: perf: Fix smp_processor_id() use in
- preemptible code
-Message-ID: <20240826173143.CxUkM4j0@linutronix.de>
-References: <20240826165210.124696-1-alexghiti@rivosinc.com>
+	s=arc-20240116; t=1724693539; c=relaxed/simple;
+	bh=oSMsu/JL7mgDWCxRlDA/vsIQF1ic1KWhYBBfR69F1mE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ki+FRcdd9BVLg6whxNQ2ILoiIHMNRRp5ybKS0rDzTmEwr8T0KwLLCc7Ntuh1I++NWE55Qn6Ptsx44xZlUsh0ILnj7wLrO5BxzRgOdrQ7b5K0GhojO37snt4r0j3HGD7A/4TZUWIYRTi0d1z1+BNA8zG7ad/OX1YyaaRaTwMZig0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3536DA7;
+	Mon, 26 Aug 2024 10:32:42 -0700 (PDT)
+Received: from [10.57.48.129] (unknown [10.57.48.129])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 212DC3F66E;
+	Mon, 26 Aug 2024 10:32:11 -0700 (PDT)
+Message-ID: <a93c34a9-7fcf-4bb9-9c67-20202e2f6e59@arm.com>
+Date: Mon, 26 Aug 2024 18:32:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826165210.124696-1-alexghiti@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+To: Bart Van Assche <bvanassche@acm.org>,
+ MANISH PANDEY <quic_mapa@quicinc.com>, Sandeep Dhavale <dhavale@google.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>, axboe@kernel.dk, mingo@kernel.org,
+ peterz@infradead.org, vincent.guittot@linaro.org,
+ linux-block@vger.kernel.org, sudeep.holla@arm.com,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+ kailash@google.com, tkjos@google.com, bvanassche@google.com,
+ quic_nitirawa@quicinc.com, quic_cang@quicinc.com, quic_rampraka@quicinc.com,
+ quic_narepall@quicinc.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
+ <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
+ <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
+ <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
+ <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
+ <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
+ <ca78ada8-d68b-4759-a068-ac8f66c51b72@quicinc.com>
+ <12a6f001-813e-4bc4-90c2-9f9ef7dc72e6@acm.org>
+ <688ead11-c1c0-48b2-b4d1-feeb1278c692@quicinc.com>
+ <1a95a60c-730a-4bb7-80c9-98b8a70f6521@acm.org>
+ <66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com>
+ <3d37e8ba-25a8-45c2-93a3-02888dad2c9e@arm.com>
+ <22d1bd64-934f-49f1-bb82-1367f4a43f40@quicinc.com>
+ <340f156b-0dbb-45d2-a6dd-31e468ead846@acm.org>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <340f156b-0dbb-45d2-a6dd-31e468ead846@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 06:52:10PM +0200, Alexandre Ghiti wrote:
-> As reported in [1], the use of smp_processor_id() in
-> pmu_sbi_device_probe() must be protected by disabling the preemption, so
-> simple use get_cpu()/put_cpu() instead.
+On 8/23/24 15:12, Bart Van Assche wrote:
+> On 8/23/24 6:49 AM, MANISH PANDEY wrote:
+>> while making the patch, i figured out that queue_flags is unsigned long type and we already reached up to 32 flags as of now.
 > 
-> Reported-by: Nam Cao <namcao@linutronix.de>
-> Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Really? In Linus' master branch I see 13 queue flags. This is less than
+> half of 32. From include/linux/blkdev.h:
 
-Tested-by: Nam Cao <namcao@linutronix.de>
+@Manish:
+See recent (6.11) cleanup
+https://lore.kernel.org/linux-block/20240719112912.3830443-1-john.g.garry@oracle.com/
 
-I think this also needs:
-Fixes: a8625217a054 ("drivers/perf: riscv: Implement SBI PMU snapshot function")
+> 
+> enum {
+>     QUEUE_FLAG_DYING,        /* queue being torn down */
+>     QUEUE_FLAG_NOMERGES,        /* disable merge attempts */
+>     QUEUE_FLAG_SAME_COMP,        /* complete on same CPU-group */
+>     QUEUE_FLAG_FAIL_IO,        /* fake timeout */
+>     QUEUE_FLAG_NOXMERGES,        /* No extended merges */
+>     QUEUE_FLAG_SAME_FORCE,        /* force complete on same CPU */
+>     QUEUE_FLAG_INIT_DONE,        /* queue is initialized */
+>     QUEUE_FLAG_STATS,        /* track IO start and completion times */
+>     QUEUE_FLAG_REGISTERED,        /* queue has been registered to a disk */
+>     QUEUE_FLAG_QUIESCED,        /* queue has been quiesced */
+>     QUEUE_FLAG_RQ_ALLOC_TIME,    /* record rq->alloc_time_ns */
+>     QUEUE_FLAG_HCTX_ACTIVE,        /* at least one blk-mq hctx is active */
+>     QUEUE_FLAG_SQ_SCHED,        /* single queue style io dispatch */
+>     QUEUE_FLAG_MAX
+> };
+> 
+> Bart.
+> 
 
-Best regards,
-Nam
 
