@@ -1,101 +1,162 @@
-Return-Path: <linux-kernel+bounces-300918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C1695EA86
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:33:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F1395EA91
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3EE281A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:33:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7409EB21EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F26A13B7A3;
-	Mon, 26 Aug 2024 07:32:56 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1243313774B;
+	Mon, 26 Aug 2024 07:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RcZ8QGe4"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5F7376E6;
-	Mon, 26 Aug 2024 07:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D8D376E6
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657575; cv=none; b=ZnWL03rQqpRFTzUHMudmUJXk0sCeCmGy4urvOY7I5Q/0R+KOZ+cWoPl1erdMYmikjyLxerRaTilUqTaFyQe1fbzh9AB8VEw09Tsm98y6ozKsJgEWJM3V1LUwjPHtyScl6jaABQwp4GE6+TB//HZ5FBBLmuoJ67K5E4cLne/Jn98=
+	t=1724657642; cv=none; b=Md1hPpZMWzTgwa/l4+fUIvVCbPW8xUpjJ4TxzHhd+R4id8Jk/R+wI2TNY6MX9tpesnU+ZfFdQozlbNc/s/oSGeqXvejV/eBMUYH5fuzwjjJ8QRA7iX07ee/t/jhjfFIF/ALjO7pEhisK7ApR2I/GcU3VzOFw5jPd+Nu54cFDVnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657575; c=relaxed/simple;
-	bh=36FMxZsO1AVMWxx3BrlXfstysZmT2oIchtgmdHRtehI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdzpKU0bqyOjBzxqNNIfa7yw5aH/8Ju+5ac676Q3tRk1SVM4/5uEj8oVBomc34Zg1bkkiRvV/+eQHdtZ2FCVhL+Q+7rSi3UHCumrSy02Mzh4LH5xcBhljSj+5UBT3kAvpeBhCS02r932CoiYWUlP7M1gxsDm0DL73AsG05nPg74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wsj7f1sMnz9sRr;
-	Mon, 26 Aug 2024 09:32:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id zJY02ESYjtRG; Mon, 26 Aug 2024 09:32:46 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wsj7f0yXmz9sRk;
-	Mon, 26 Aug 2024 09:32:46 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0EC928B76C;
-	Mon, 26 Aug 2024 09:32:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id bh1CtcFXx0CH; Mon, 26 Aug 2024 09:32:45 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B745C8B763;
-	Mon, 26 Aug 2024 09:32:45 +0200 (CEST)
-Message-ID: <a8b4c72d-07bd-4d14-aaa9-44fa332fd13e@csgroup.eu>
-Date: Mon, 26 Aug 2024 09:32:45 +0200
+	s=arc-20240116; t=1724657642; c=relaxed/simple;
+	bh=nDmwfZb3zAoHaIov3BpMiaPHaRy3b1QEPWCy5Od8fvk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qzk+F06jOvRFQxaU5TpzV7/xA7M+hnF3qa9yt+Bi7BFkwRv5yoVBzrdVIjFiykDw34AQU0By9zlVFlcSrWWOmVAQTUeo5WhQEUro1VN95fCM5fmAw2QRl/uSbzzpQ3RTNpf5Q4t0qN0DEp7NmDcbzsd0MsIzMUhZBlmzTzTmidQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RcZ8QGe4; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724657637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C9v9WEqDip3i21pJBqBZAVyHYygHv4sd7F9tl+2YhKg=;
+	b=RcZ8QGe4gpLFLi/AQ6FlHq/y8+D/aII/F31LemP17YUySU51i03x0tmyJZG3XnamaoetRi
+	Eo1BOh49ANslw/M2ZSJGt6MhKr0rO1d5CT4p8Xf65dVDNC9gOYvJ/EZbbvpYiRmeHonHRn
+	3+x+l+fVRGpBNAJXJ+edXY1V2HbLM2U=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/17] asm-generic/unaligned.h: Extract common header
- for vDSO
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <a583352e8ae8f6a9a08f9b84a2c543fe43ef94db.1724309198.git.christophe.leroy@csgroup.eu>
- <Zsws0AkFnFDYo5p6@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Zsws0AkFnFDYo5p6@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 4/4] block: fix fix ordering between checking
+ QUEUE_FLAG_QUIESCED and adding requests to hctx->dispatch
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
+Date: Mon, 26 Aug 2024 15:33:18 +0800
+Cc: Ming Lei <ming.lei@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <45A22FCE-10FA-485C-8624-F1F22086B5E9@linux.dev>
+References: <20240811101921.4031-1-songmuchun@bytedance.com>
+ <20240811101921.4031-5-songmuchun@bytedance.com> <ZshyPVEc9w4sqXJy@fedora>
+ <CAMZfGtW-AG9gBD2f=FwNAZqxoFZwoEECbS0+4eurnSoxN5AhRg@mail.gmail.com>
+To: Muchun Song <songmuchun@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
 
 
-Le 26/08/2024 à 09:20, Jason A. Donenfeld a écrit :
-> On Thu, Aug 22, 2024 at 09:13:09AM +0200, Christophe Leroy wrote:
->>   include/asm-generic/unaligned.h | 11 +----------
->>   include/vdso/unaligned.h        | 15 +++++++++++++++
->>   2 files changed, 16 insertions(+), 10 deletions(-)
->>   create mode 100644 include/vdso/unaligned.h
-> 
-> Do you need to also adjust the `#include <asm/unaligned.h>` inside of
-> lib/vdso/getrandom.c to instead read `#include <vdso/unaligned.h>`?
+> On Aug 26, 2024, at 15:06, Muchun Song <songmuchun@bytedance.com> =
+wrote:
+>=20
+> On Fri, Aug 23, 2024 at 7:28=E2=80=AFPM Ming Lei <ming.lei@redhat.com> =
+wrote:
+>>=20
+>> On Sun, Aug 11, 2024 at 06:19:21 PM +0800, Muchun Song wrote:
+>>> Supposing the following scenario.
+>>>=20
+>>> CPU0                                                                =
+CPU1
+>>>=20
+>>> blk_mq_request_issue_directly()                                     =
+blk_mq_unquiesce_queue()
+>>>    if (blk_queue_quiesced())                                         =
+  blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)   3) store
+>>>        blk_mq_insert_request()                                       =
+  blk_mq_run_hw_queues()
+>>>            /*                                                        =
+      blk_mq_run_hw_queue()
+>>>             * Add request to dispatch list or set bitmap of          =
+          if (!blk_mq_hctx_has_pending())     4) load
+>>>             * software queue.                  1) store              =
+              return
+>>>             */
+>>>        blk_mq_run_hw_queue()
+>>>            if (blk_queue_quiesced())           2) load
+>>>                return
+>>>            blk_mq_sched_dispatch_requests()
+>>>=20
+>>> The full memory barrier should be inserted between 1) and 2), as =
+well as
+>>> between 3) and 4) to make sure that either CPU0 sees =
+QUEUE_FLAG_QUIESCED is
+>>> cleared or CPU1 sees dispatch list or setting of bitmap of software =
+queue.
+>>> Otherwise, either CPU will not re-run the hardware queue causing =
+starvation.
+>>=20
+>> Memory barrier shouldn't serve as bug fix for two slow code paths.
+>>=20
+>> One simple fix is to add helper of blk_queue_quiesced_lock(), and
+>> call the following check on CPU0:
+>>=20
+>>        if (blk_queue_quiesced_lock())
+>>         blk_mq_run_hw_queue();
+>=20
+> This only fixes blk_mq_request_issue_directly(), I think anywhere that
+> matching this
+> pattern (inserting a request to dispatch list and then running the
+> hardware queue)
+> should be fixed. And I think there are many places which match this
+> pattern (E.g.
+> blk_mq_submit_bio()). The above graph should be adjusted to the =
+following.
+>=20
+> CPU0                                        CPU1
+>=20
+> blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
+> blk_mq_run_hw_queue()
+> blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
+>    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
+>        return                                      =
+blk_mq_run_hw_queue()
+>    blk_mq_sched_dispatch_requests()                    if
+> (!blk_mq_hctx_has_pending())     4) load
+>                                                            return
 
-Yes, all adjustments to lib/vdso/getrandom.c are in patch 2.
+Sorry. There is something wrong with my email client. Resend the graph.
 
-Christophe
+CPU0                                        CPU1
+
+blk_mq_insert_request()         1) store    blk_mq_unquiesce_queue()
+blk_mq_run_hw_queue()                       =
+blk_queue_flag_clear(QUEUE_FLAG_QUIESCED)       3) store
+    if (blk_queue_quiesced())   2) load         blk_mq_run_hw_queues()
+        return                                      =
+blk_mq_run_hw_queue()
+    blk_mq_sched_dispatch_requests()                    if =
+(!blk_mq_hctx_has_pending())     4) load
+                                                            return
+
+>=20
+> So I think fixing blk_mq_run_hw_queue() could cover all of the =
+situations.
+> Maybe I thought wrongly. Please correct me.
+>=20
+> Muchun,
+> Thanks.
+
+
 
