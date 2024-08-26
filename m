@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-301762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B1895F53B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13B395F545
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158641F216E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910F5282401
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4853E193061;
-	Mon, 26 Aug 2024 15:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26C3193417;
+	Mon, 26 Aug 2024 15:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKVKhWXH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UrMMyaLz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E277D3C17
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E50153812;
+	Mon, 26 Aug 2024 15:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686570; cv=none; b=pFntFZmsmC1xnzyPg6a3Rdljv7GLGSxQxhCJA19Uszxv98gMz8pOWa/oRsMYEclcL5OqxufNGJMKG5xA3tXx3+83Ia++nWfNwfgifzxKCqG0CY0KdCwNBDODMqQlVygwjXvP9kFmp5J3HRuh0ub+ae3mVs0GkGdmlBM5NQ9cZKs=
+	t=1724686723; cv=none; b=fuYeKXVk0jR9RuH5fGoQG9O4Fv4ydM5RBWeJHx3tXtUgeWcZpO4CoZ73vjQYB+oSK4UP4M6vLQN/2K+yOye6gLrjNMXKiWDyi8jkdpGBGpYAQ9vSH+KWhOPPLZ02sJmLqqSe40NUPPPRyEATH4V6l4Ip0DgNIn+3sCfAhB27XhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686570; c=relaxed/simple;
-	bh=Ul1Bom9UwcbRxnnItH93xcNf283MQTpJap9H12O/nIA=;
+	s=arc-20240116; t=1724686723; c=relaxed/simple;
+	bh=reqE2nlzaPtBX5zRYpjXeyzr7y7rrdXASpCd2pGylKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4g+qVaxLYeSNX52izSMS5tUSMZ2JkWuuwSpqvr9TzcVqv2hHFZTMFH4VMc3tAHaj3uxrwqbOWaRMnWX8M2nyh0MteTUjondSJH0EJKXjbGqbSQJN518oWmtBqcO8k/oQz0tza6epQ2cIIMz0HIn298GT7bxRyEqpfaNWT0cE7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKVKhWXH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724686567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cESSHXskD+sJaZuUdSBNbOIwRU9Ta6x+vqFCdK1xES8=;
-	b=TKVKhWXHz0sQK+VMuJ7S14Wnp+MYR4sez8jRsth5Pk7ORLbl8YU4eb51S2lSwrKQq7tab8
-	VNjQo1J0Sl3Qgvqy3RCAAZrL6xiJadd0eY9t/aeoD49x5cLYjW4igZaXE6rLwkg9qx+x+R
-	LGmN8inwHLi7hT/A6f6Rm0uSa2Z7Dxg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-531-tTzmeWlmNaOfK2zd8Eb67Q-1; Mon, 26 Aug 2024 11:36:06 -0400
-X-MC-Unique: tTzmeWlmNaOfK2zd8Eb67Q-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-533406f2970so4752911e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:36:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686565; x=1725291365;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cESSHXskD+sJaZuUdSBNbOIwRU9Ta6x+vqFCdK1xES8=;
-        b=aaLWxj6z3nruIWtMUPx8V8jQPZuGSuDmO4aDL0gRqsVuZnqESmrhggWOcze03J7B4s
-         ChtVA27kitxPfVCl5RbUgibakZQl6TjQlS9v6py6S7Bvp2WKB9cY59Lvp6jXTGJl0fx0
-         /0EcZCDzFZX0vk0wT0uq5bN9VNNavCE09RO9S2uS8vKaFtNjUUn3uWhYtW3BVYMuxi0e
-         Zyci5P/6zLE8TUm926n9Y/sHMOIxGuzpZjSAoN3zSmHc+U3v85mjMX2L9WFIs9tQsp8p
-         pm99x6Mbh9u1ZlLMOfe4LyDQ6g57aSy6EOzv+GljSS62tjp9ichqPcfCXQw//OHUDqa3
-         oZVA==
-X-Gm-Message-State: AOJu0YytjGfEVUQKVbzTQ07Lp2gLBxciOuRw8ajfCb9bmDmEw3NB6vth
-	74yeYxvCFYk0QMqKOnfapn5BL15s75lpv6Y2zE6Ds9tDL9f5LagZlG4cu96IaqnBNFugLzcYoxB
-	8IaRAPRTsURdtwOuI5Z1/S8c42Z80qfgv9RgbEwsotgujhdYH6QRR+6kz4VWjbQ==
-X-Received: by 2002:a05:6512:10d6:b0:533:44e7:1b1a with SMTP id 2adb3069b0e04-5343877a8d9mr6634915e87.17.1724686564875;
-        Mon, 26 Aug 2024 08:36:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHLKIdG1QGRZKHQzLqypoACO2tglz779OzDLGfOoDxl4cCYZ/EqNiXufYNBYiqr6Gj/OyhEXw==
-X-Received: by 2002:a05:6512:10d6:b0:533:44e7:1b1a with SMTP id 2adb3069b0e04-5343877a8d9mr6634868e87.17.1724686563811;
-        Mon, 26 Aug 2024 08:36:03 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c737:1900:16b0:8dc:77e:31af? (p200300cbc737190016b008dc077e31af.dip0.t-ipconnect.de. [2003:cb:c737:1900:16b0:8dc:77e:31af])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea360a9sm1500768e87.63.2024.08.26.08.36.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:36:03 -0700 (PDT)
-Message-ID: <ea518cf0-890d-4292-b775-dd3880c85bc6@redhat.com>
-Date: Mon, 26 Aug 2024 17:36:00 +0200
+	 In-Reply-To:Content-Type; b=QGT1YFJY7D0olSYfaCfhUHg+S+xdVo4OBUI7pXXxlGl6VGsFagDvHjLTJ3OKFWxOkRutDjmhXsDZGh0ywcyRN0ymD7bnHhqd3+Bc7W86QAxx/Rr26xUmbVoKBwjaxOrMFbUdX060dmi/p+MwKh3mVekMjMNqvXP9br8vuUzdVFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UrMMyaLz; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724686721; x=1756222721;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=reqE2nlzaPtBX5zRYpjXeyzr7y7rrdXASpCd2pGylKs=;
+  b=UrMMyaLztBMBy2MxIVAysBrtLe+I+zYVIXSf61a33+O9omK2rf4S88Ha
+   p4GLo4IVXOsIEV6/WULOEaTR4QHav1YsypxGVhD2sktTEwcZtMvG5J4VB
+   cA+d+GzoVVE7jBZIktp/q834ixqGt/kf7yFTQagPPpi83UuJnYB1UgMba
+   daJUGk0X5WYmJWcNHDfnXpsaaf4ndBVQVN0rLkPcladh6e0PLHx+C2U0g
+   Z4dm+VRqEMMnWxyvROYQCqYEMQBD2MXJSkabXvZrxOuYYKQv8n40EZVeF
+   nTJUlq+jKs4AapOxv3xpR6OxhQxsqulBPbxcBITdgSIrfPjXD6K6/r4/Y
+   w==;
+X-CSE-ConnectionGUID: zTQ37vPoQ7G7zCt5Vz9uBg==
+X-CSE-MsgGUID: aq6UloJ+Q96MS7DbX7ioxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="34275443"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="34275443"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 08:38:41 -0700
+X-CSE-ConnectionGUID: W6pplc1lSGKmzafFv+bB0w==
+X-CSE-MsgGUID: n5D4oaD2SBCYw6yCXYgRqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62542822"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 08:38:34 -0700
+Message-ID: <a107b067-861d-43f4-86b5-29271cb93dad@intel.com>
+Date: Mon, 26 Aug 2024 18:38:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,120 +66,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] mm: handle_pte_fault() use
- pte_offset_map_rw_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
- willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <5acabedfae7ded01b075960b4a91f2e15b4d76b5.1724310149.git.zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 02/10] x86/virt/tdx: Unbind global metadata read with
+ 'struct tdx_tdmr_sysinfo'
+To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave"
+ <dave.hansen@intel.com>, "seanjc@google.com" <seanjc@google.com>,
+ "bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org"
+ <peterz@infradead.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>
+Cc: "Gao, Chao" <chao.gao@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "Yamahata, Isaku"
+ <isaku.yamahata@intel.com>
+References: <cover.1721186590.git.kai.huang@intel.com>
+ <7af2b06ec26e2964d8d5da21e2e9fa412e4ed6f8.1721186590.git.kai.huang@intel.com>
+ <66b16121c48f4_4fc729424@dwillia2-xfh.jf.intel.com.notmuch>
+ <7b65b317-397d-4a72-beac-6b0140b1d8dd@intel.com>
+ <66b178d4cfae4_4fc72944b@dwillia2-xfh.jf.intel.com.notmuch>
+ <96c248b790907b14efcb0885c78e4000ba5b9694.camel@intel.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <5acabedfae7ded01b075960b4a91f2e15b4d76b5.1724310149.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <96c248b790907b14efcb0885c78e4000ba5b9694.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22.08.24 09:13, Qi Zheng wrote:
-> In handle_pte_fault(), we may modify the vmf->pte after acquiring the
-> vmf->ptl, so convert it to using pte_offset_map_rw_nolock(). But since we
-> will do the pte_same() check, so there is no need to get pmdval to do
-> pmd_same() check, just pass a dummy variable to it.
+On 7/08/24 15:09, Huang, Kai wrote:
+> On Mon, 2024-08-05 at 18:13 -0700, Dan Williams wrote:
+>> Huang, Kai wrote:
+>> [..]
+>>>> The unrolled loop is the same amount of work as maintaining @fields.
+>>>
+>>> Hi Dan,
+>>>
+>>> Thanks for the feedback.
+>>>
+>>> AFAICT Dave didn't like this way:
+>>>
+>>> https://lore.kernel.org/lkml/cover.1699527082.git.kai.huang@intel.com/T/#me6f615d7845215c278753b57a0bce1162960209d
+>>
+>> I agree with Dave that the original was unreadable. However, I also
+>> think he glossed over the loss of type-safety and the silliness of
+>> defining an array to precisely map fields only to turn around and do a
+>> runtime check that the statically defined array was filled out
+>> correctly. So I think lets solve the readability problem *and* make the
+>> array definition identical in appearance to unrolled type-safe
+>> execution, something like (UNTESTED!):
+>>
+>>
+> [...]
 > 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->   mm/memory.c | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
+>> +/*
+>> + * Assumes locally defined @ret and @ts to convey the error code and the
+>> + * 'struct tdx_tdmr_sysinfo' instance to fill out
+>> + */
+>> +#define TD_SYSINFO_MAP(_field_id, _offset)                              \
+>> +	({                                                              \
+>> +		if (ret == 0)                                           \
+>> +			ret = read_sys_metadata_field16(                \
+>> +				MD_FIELD_ID_##_field_id, &ts->_offset); \
+>> +	})
+>> +
 > 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 93c0c25433d02..7b6071a0e21e2 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5499,14 +5499,22 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
->   		vmf->pte = NULL;
->   		vmf->flags &= ~FAULT_FLAG_ORIG_PTE_VALID;
->   	} else {
-> +		pmd_t dummy_pmdval;
-> +
->   		/*
->   		 * A regular pmd is established and it can't morph into a huge
->   		 * pmd by anon khugepaged, since that takes mmap_lock in write
->   		 * mode; but shmem or file collapse to THP could still morph
->   		 * it into a huge pmd: just retry later if so.
-> +		 *
-> +		 * Use the maywrite version to indicate that vmf->pte will be
-> +		 * modified, but since we will use pte_same() to detect the
-> +		 * change of the pte entry, there is no need to get pmdval, so
-> +		 * just pass a dummy variable to it.
->   		 */
-> -		vmf->pte = pte_offset_map_nolock(vmf->vma->vm_mm, vmf->pmd,
-> -						 vmf->address, &vmf->ptl);
-> +		vmf->pte = pte_offset_map_rw_nolock(vmf->vma->vm_mm, vmf->pmd,
-> +						    vmf->address, &dummy_pmdval,
-> +						    &vmf->ptl);
->   		if (unlikely(!vmf->pte))
->   			return 0;
->   		vmf->orig_pte = ptep_get_lockless(vmf->pte);
+> We need to support u16/u32/u64 metadata field sizes, but not just u16.
+> 
+> E.g.:
+> 
+> struct tdx_sysinfo_module_info {                                        
+>         u32 sys_attributes;                                             
+>         u64 tdx_features0;                                              
+> };
+> 
+> has both u32 and u64 in one structure.
+> 
+> To achieve type-safety for all field sizes, I think we need one helper
+> for each field size.  E.g.,
+> 
+> #define READ_SYSMD_FIELD_FUNC(_size)                            \
+> static inline int                                               \
+> read_sys_metadata_field##_size(u64 field_id, u##_size *data)    \
+> {                                                               \
+>         u64 tmp;                                                \
+>         int ret;                                                \
+>                                                                 \
+>         ret = read_sys_metadata_field(field_id, &tmp);          \
+>         if (ret)                                                \
+>                 return ret;                                     \
+>                                                                 \
+>         *data = tmp;                                            \
+>         return 0;                                               \
+> }                                                                       
+> 
+> /* For now only u16/u32/u64 are needed */
+> READ_SYSMD_FIELD_FUNC(16)                                               
+> READ_SYSMD_FIELD_FUNC(32)                                               
+> READ_SYSMD_FIELD_FUNC(64)                                               
+> 
+> Is this what you were thinking?
+> 
+> (Btw, I recall that I tried this before for internal review, but AFAICT
+> Dave didn't like this.)
+> 
+> For the build time check as you replied to the next patch, I agree it's
+> better than the runtime warning check as done in the current code.
+> 
+> If we still use the type-less 'void *stbuf' function to read metadata
+> fields for all sizes, then I think we can do below:
+> 
+> /*
+>  * Read one global metadata field and store the data to a location of a 
+>  * given buffer specified by the offset and size (in bytes).            
+>  */
+> static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
+>                                   int size)                             
+> {       
+>         void *member = stbuf + offset;                                  
+>         u64 tmp;                                                        
+>         int ret;                                                        
+> 
+>         ret = read_sys_metadata_field(field_id, &tmp);                  
+>         if (ret)
+>                 return ret;                                             
+>         
+>         memcpy(member, &tmp, size);                                     
+>         
+>         return 0;                                                       
+> }                                                                       
+> 
+> /* Wrapper to read one metadata field to u8/u16/u32/u64 */              
+> #define stbuf_read_sysmd_single(_field_id, _pdata)      \
+>         stbuf_read_sysmd_field(_field_id, _pdata, 0, 	\
+> 		sizeof(typeof(*(_pdata)))) 
+> 
+> #define CHECK_MD_FIELD_SIZE(_field_id, _st, _member)    \
+>         BUILD_BUG_ON(MD_FIELD_ELE_SIZE(MD_FIELD_ID_##_field_id) != \
+>                         sizeof(_st->_member))
+> 
+> #define TD_SYSINFO_MAP_TEST(_field_id, _st, _member)                    \
+>         ({                                                              \
+>                 if (ret) {                                              \
+>                         CHECK_MD_FIELD_SIZE(_field_id, _st, _member);   \
+>                         ret = stbuf_read_sysmd_single(                  \
+>                                         MD_FIELD_ID_##_field_id,        \
+>                                         &_st->_member);                 \
+>                 }                                                       \
+>          })
+> 
+> static int get_tdx_module_info(struct tdx_sysinfo_module_info *modinfo)
+> {
+>         int ret = 0;
+> 
+> #define TD_SYSINFO_MAP_MOD_INFO(_field_id, _member)     \
+>         TD_SYSINFO_MAP_TEST(_field_id, modinfo, _member)
+> 
+>         TD_SYSINFO_MAP_MOD_INFO(SYS_ATTRIBUTES, sys_attributes);
+>         TD_SYSINFO_MAP_MOD_INFO(TDX_FEATURES0,  tdx_features0);
+> 
+>         return ret;
+> }
+> 
+> With the build time check above, I think it's OK to lose the type-safe
+> inside the stbuf_read_sysmd_field(), and the code is simpler IMHO.
+> 
+> Any comments?
 
-No I understand why we don't need the PMD val in these cases ... the PTE 
-would also be pte_none() at the point the page table is freed, so we 
-would detect the change as well.
+BUILD_BUG_ON() requires a function, but it is still
+be possible to add a build time check in TD_SYSINFO_MAP
+e.g.
 
-I do enjoy documenting why we use a dummy value, though. Likely without 
-that, new users will just pass NULL and call it a day.
+#define TD_SYSINFO_CHECK_SIZE(_field_id, _size)			\
+	__builtin_choose_expr(MD_FIELD_ELE_SIZE(_field_id) == _size, _size, (void)0)
 
-Acked-by: David Hildenbrand <david@redhat.com>
+#define _TD_SYSINFO_MAP(_field_id, _offset, _size)		\
+	{ .field_id = _field_id,				\
+	  .offset   = _offset,					\
+	  .size	    = TD_SYSINFO_CHECK_SIZE(_field_id, _size) }
 
--- 
-Cheers,
+#define TD_SYSINFO_MAP(_field_id, _struct, _member)		\
+	_TD_SYSINFO_MAP(MD_FIELD_ID_##_field_id,		\
+			offsetof(_struct, _member),		\
+			sizeof(typeof(((_struct *)0)->_member)))
 
-David / dhildenb
 
 
