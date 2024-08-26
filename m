@@ -1,157 +1,207 @@
-Return-Path: <linux-kernel+bounces-301079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62DA95EC16
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:35:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DF295EC19
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8331F280ED3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:35:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124481F210CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89333140E37;
-	Mon, 26 Aug 2024 08:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84DC558B6;
+	Mon, 26 Aug 2024 08:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bh4IoI9J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WIcU3A9a"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C3613C9A2;
-	Mon, 26 Aug 2024 08:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD3A1373
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661226; cv=none; b=PAFwr+DWGu7fQaxXTRrEykgwFRZC6BQCCrwL1zSqM/X6kXeKXKKZW3uETynXSJ0fEqTZ1XbBpiPMmISlK/raLLWe72i91re6jILBURwdxmCXBWvUoacDXkEAJsTkETulI3xbPRyKQW+TzR6rbgQHmH8e5BimqQeQnV8SBiJ0rXs=
+	t=1724661356; cv=none; b=VBz35ne5Uhi7lcUUgd2WzV9lUhMqk+LHvJ7GADkXcUDk0Sqnghz/tol9sKTZYENo7VCU/ff02uezX7NOtjbhIh4ZhKiku6l9QVC9ZUtL7xiuyKof6Z5ngWNl8mwO42XYUJ6ftoJRFsRU36Wg9bIu9UfkQVkCWmODEoAcgCE/HPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661226; c=relaxed/simple;
-	bh=U1tJ1/ULEzBvcZ47ZFvB/rVYnyeyMrzi27GGYRy1N2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBExTBrae21v9OeUJ6RGnt3Bxz/RndPp4VI+J3pE8i5NGYwhtGx2T0cpn8e4LL7zXMC8Gbl95dZDMwb1L9tbSzB57ZMShal2fqyg5xPY9A2xUOBU0lS9zGW2XGqw4SPqjgb7FT+E+M6iSO9k566w3Y6rK6AlSqwHkLjfwDXRC3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bh4IoI9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF89C567C3;
-	Mon, 26 Aug 2024 08:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724661226;
-	bh=U1tJ1/ULEzBvcZ47ZFvB/rVYnyeyMrzi27GGYRy1N2k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bh4IoI9J/w8IFTdTXrdD1sDrWDbvyXf7/Jo2QjABGam5mCuOGg6AiFHB2etNFndJi
-	 +v88wG4ATTA/C8yE0cTqxmRameI1L9QG/CugVOrrLpmm9gBOWFVeBwSG+vkx3F7ud5
-	 HKrmt31Vpbvp6E3sEj8WpE04x++r47itJsprVY2+T+exmIphAPqtyF+REgkLhsK7Sy
-	 Fn6sJaFU0L8xWT/7Mo2oHe2JFfpLS3Au0tXS394S4dMgQa0qkmFhXdPZg/O+unswoG
-	 n/A56xvKx8sX4HeIX72y6hUWNWCJogPhYH4k+udSw5FcKUDAmptE0KCSbqMcZ5QFg4
-	 ewY8LB1Hmu7tQ==
-Message-ID: <9537c866-cddc-4958-86a8-d097982067cd@kernel.org>
-Date: Mon, 26 Aug 2024 10:33:39 +0200
+	s=arc-20240116; t=1724661356; c=relaxed/simple;
+	bh=ASkUA2gyjsQc9oRS8REr46kHFwqkoT5Z7dP8U5l6How=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Q5AZ5SmyBD+dp8gS3VihR18f1Qp0oLlht9AOc4kjeTDkhWrSpdJ2FBlKoJe0aBkqUG0QL7J+68LBzkK0hIXcBML4AdvwRUbyL5najYsCQPlgF0vrJmyA9V103nkxM5GAqmuR4OMbUQyWe7AUTP9kO/4hyVkiGQjLynSsM0qSwZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WIcU3A9a; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724661352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zYZBH0XywWgti9APWEcZS82Uqa8SY9jUUWio2WtUyEk=;
+	b=WIcU3A9a+Fs6xRBDxl/2dkcSD/dLO36yPbPJQU6cUjH68jF3RJrD75oIjRHdV4IKZaotfn
+	9Y8HP+37eSdw+je0jNV5DI65yQzMLHmbkUNxkku9pkj9y9WuYNw+KtbmkxBKytcu/jhIq9
+	sw4aNXo6YTKpThRPIJUQRjxpwgALTto=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] dt-bindings: arm: rockchip: Add Relfor Saib
-To: karthikeyan <karthikeyan@linumiz.com>, Conor Dooley <conor@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- heiko@sntech.de, alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-References: <20240823153528.3863993-1-karthikeyan@linumiz.com>
- <20240823153528.3863993-8-karthikeyan@linumiz.com>
- <20240823-lark-regime-0d3ab4215d69@spud>
- <a5d4f421-5120-4421-944e-d39d67e482bb@linumiz.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a5d4f421-5120-4421-944e-d39d67e482bb@linumiz.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
+ and adding requests to hctx->dispatch
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
+Date: Mon, 26 Aug 2024 16:35:07 +0800
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ Ming Lei <ming.lei@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "yukuai (C)" <yukuai3@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3AC15539-1B9B-4996-A150-8CAB214159E5@linux.dev>
+References: <20240811101921.4031-1-songmuchun@bytedance.com>
+ <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
+ <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
+ <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 24/08/2024 14:48, karthikeyan wrote:
-> On 8/23/24 21:51, Conor Dooley wrote:
->> On Fri, Aug 23, 2024 at 09:05:27PM +0530, Karthikeyan Krishnasamy wrote:
->>> Add devicetree binding documentation for Relfor Saib
->>> board which uses Rockchip RV1109 SoC
->>>
->>> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
->>> ---
->>>   Documentation/devicetree/bindings/arm/rockchip.yaml | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
->>> index 1ef09fbfdfaf..29f7e09ae443 100644
->>> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
->>> @@ -848,6 +848,12 @@ properties:
->>>                 - radxa,zero-3w
->>>             - const: rockchip,rk3566
->>>   
->>> +      - description: Relfor SAIB board
->>> +        items:
->>> +          - const: relfor,saib
->>> +          - enum:
->>> +              - rockchip,rv1109
->>
->> This does not make sense to me. Why do you have an enum for the SoC
->> model, implying that this SAIB board would have more than one possible
->> SoC? I'd expect to see - const: rockvhip,rv1109
->>
-> There is an upcoming version of SAIB board based on Rockchip RV1103.
 
-Still wrong form multiple points of view:
-1. Not logical, we never expect such entry in top level bindings,
-2. Same board or different? If same, how is it possible to have two
-different SoCs (not modules!) in the same board? These are different
-boards. Or maybe this uses some SoM, but your commit msg explained
-nothing about this.
 
-You have entire commit msg to explain the hardware. Use it, so you don't
-get such questions.
+> On Aug 22, 2024, at 11:54, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>=20
+> Hi,
+>=20
+> =E5=9C=A8 2024/08/19 11:49, Muchun Song =E5=86=99=E9=81=93:
+>> On Mon, Aug 19, 2024 at 10:28=E2=80=AFAM Ming Lei =
+<ming.lei@redhat.com> wrote:
+>>>=20
+>>> Hi Muchun,
+>>>=20
+>>> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
+>>>> Supposing the following scenario with a virtio_blk driver.
+>>>>=20
+>>>> CPU0                                                                =
+CPU1
+>>>>=20
+>>>> blk_mq_try_issue_directly()
+>>>>     __blk_mq_issue_directly()
+>>>>         q->mq_ops->queue_rq()
+>>>>             virtio_queue_rq()
+>>>>                 blk_mq_stop_hw_queue()
+>>>>                                                                     =
+virtblk_done()
+>>>>     blk_mq_request_bypass_insert()                                  =
+    blk_mq_start_stopped_hw_queues()
+>>>>         /* Add IO request to dispatch list */   1) store            =
+        blk_mq_start_stopped_hw_queue()
+>>>>                                                                     =
+            clear_bit(BLK_MQ_S_STOPPED)                 3) store
+>>>>     blk_mq_run_hw_queue()                                           =
+            blk_mq_run_hw_queue()
+>>>>         if (!blk_mq_hctx_has_pending())                             =
+                if (!blk_mq_hctx_has_pending())         4) load
+>>>>             return                                                  =
+                    return
+>>>>         blk_mq_sched_dispatch_requests()                            =
+                blk_mq_sched_dispatch_requests()
+>>>>             if (blk_mq_hctx_stopped())          2) load             =
+                    if (blk_mq_hctx_stopped())
+>>>>                 return                                              =
+                        return
+>>>>             __blk_mq_sched_dispatch_requests()                      =
+                    __blk_mq_sched_dispatch_requests()
+>>>>=20
+>>>> The full memory barrier should be inserted between 1) and 2), as =
+well as between
+>>>> 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is =
+cleared or CPU1
+>>>> sees dispatch list or setting of bitmap of software queue. =
+Otherwise, either CPU
+>>>> will not re-run the hardware queue causing starvation.
+>>>=20
+>>> Yeah, it is one kind of race which is triggered when adding request =
+into
+>>> ->dispatch list after returning STS_RESOURCE. We were troubled by =
+lots of
+>>> such kind of race.
+>> Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
+>>>=20
+>>> stopping queue is used in very less drivers, and its only purpose =
+should
+>>> be for throttling hw queue in case that low level queue is busy. =
+There seems
+>>> more uses of blk_mq_stop_hw_queues(), but most of them should be =
+replaced
+>>> with blk_mq_quiesce_queue().
+>>>=20
+>>> IMO, fixing this kind of issue via memory barrier is too tricky to
+>>> maintain cause WRITE/READ dependency is very hard to follow. I'd =
+suggest to
+>>> make memory barrier solution as the last resort, and we can try to =
+figure
+>>> out other easier & more reliable way first.
+>> I do agree it is hard to maintain the dependencies in the future. We =
+should
+>> propose an easy-maintainable solution. But I thought it is a =
+long-term issue
+>> throughout different stable linux distros. Adding a mb is the easy =
+way to fix
+>> the problem (the code footprint is really small), so it will be very
+>> easy for others
+>> to backport those bug fixes to different stable linux distros. =
+Therefore, mb
+>> should be an interim solution. Then, we could improve it based on the =
+solution
+>> you've proposed below. What do you think?
+>=20
+> I'll agree with Ming, let's figure out a better fix first. Easy to =
+backport to stables is not first consideration.
 
-The code above: NAK
+Hi Kuai,
 
-Best regards,
-Krzysztof
+All right. I usually focus on MM, it seems there is a gap between MM and =
+BLock.
+Anyway, let's figure out if there is any good solution.
+
+>> Thanks,
+>> Muchun.
+>>>=20
+>>> One idea I thought of is to call blk_mq_request_bypass_insert()(or =
+rename
+>>> & export it) before calling blk_mq_stop_hw_queue() in driver, then
+>>> return new status code STS_STOP_DISPATCH for notifying blk-mq to =
+stop
+>>> dispatch simply.
+>=20
+> New status code look good to me, however, I wonder can we just remove
+> the problematic blk_mq_stop_hw_queue(), and replace it by handling the
+> new status from block layer?
+>=20
+> - Passing the new status to blk_mq_run_dispatch_ops, and quiesce with
+
+I didn't fully understand your suggestion. Let me ask some questions.
+blk_mq_stop_hw_queue() is usually called in blk_mq_ops->queue_rq path,
+it'll be easy for this case to pass the new status to =
+blk_mq_run_dispatch_ops.
+Should we remove blk_mq_stop_hw_queues() as well? How to pass the new
+status to blk_mq_run_dispatch_ops in this case?
+
+> the new status, if no request is inflight, unquiesce immediately;
+
+Actually, I didn't understand how to avoid the above race. May you =
+elaborate
+the scenario?
+
+Muhcun,
+Thanks.
+
+> - unquiesce is any IO is done afterwards;
+
+
+
 
 
