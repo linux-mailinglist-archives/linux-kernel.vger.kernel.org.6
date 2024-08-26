@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-302387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4B095FDA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A9595FDB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70BE1C2243F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE8281810
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8796519A28F;
-	Mon, 26 Aug 2024 23:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70919CCF4;
+	Mon, 26 Aug 2024 23:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZKEdDZ7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDmTCPkf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BAE487A5;
-	Mon, 26 Aug 2024 23:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C19A199392;
+	Mon, 26 Aug 2024 23:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724713247; cv=none; b=CsPHOWdW10TWyG6Ay1lmqDQKMTtyEv6yFF4O/rfs9lwpiiLVJmeZMcZlksltuN2mstXY8yB/9BTpZYtyNYq9BIomqLGXCnrQFYqKFU5Als7DWvG9tu36CSb1F6PNwbkBeJcerisUKIfBqEeqCwWmIfd3pqGxHksiKOAdUAhFjfI=
+	t=1724713982; cv=none; b=eB78nZYGr4itq3opEYLM0IMJ+kXHsBLJ24a1HFqDX4yrc2KfHJpefPl3pPMzYC0JdY1priVn/53UW3vRIh7iAqgCU8Hj46yFh8L+wJlMZO+DQ9M4FSLt0Oql96C9xVYvpLVFezrtZ0Dk1PkzIlhQAU/C+fm4Y5jxhjWWnDo3y6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724713247; c=relaxed/simple;
-	bh=rsW3FuTSU9Hd0/Ixqri1uU9UjBMBX0oRwPSLiLLbOss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwyVVogj2VtMh+66Amj61eMVB7bVefrpXlw6nDEgBdLSgw4/+vmlweUFbSf+1UdjzLJpDaQgbaLQbiMe7xC9QMdhjQSgyBPgXqPGYp/BAIvfEa80lDgLFjHiqlJUR9jQb28TTKgy2en5ksFpAKzWkHGLWkDeDpbMsGUVz9rUXjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZKEdDZ7; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1724713982; c=relaxed/simple;
+	bh=7XwBAUfGnZtL6nJVvm5SlBN+15gz4hx3z3sZy495raE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YRFD2/ZAWfbFVBG/08nNBnziyncMblB0gYH6L4qtAvsAWboBbF9b+r3xeGnxN1Y04JOMs6TW6bKVQZvnmX1Ze2NkqhYZZl0Tvy9GAoqqgI2+Ql8N5OL5zmdH5QqvdsN7rhgBrMetFCYlTssH2eYHbJGXvV7g9zVDqAXysbn2FjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDmTCPkf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724713246; x=1756249246;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rsW3FuTSU9Hd0/Ixqri1uU9UjBMBX0oRwPSLiLLbOss=;
-  b=FZKEdDZ7bKIVxEzVYX0bNDTzVxwL4Wuq/3Qw5axvrAMNwtrqR1Ndx6gR
-   aMMOlaKEcGiRGTsIOW0V9vO59+lNYdPJBaj5lf9AUlNeC8epF4pi3uU6X
-   ZFtNSk+cdY3KLotkcUqjuznl5ZCJCkmz4ttSZZ+IIqEaHiUlcNVpqt4qI
-   5vBGfByShpXqilfTNKjuXrSS/e3BjF650a2TvnyYd3Cjz+QmO6go+qTa+
-   0vgqAiBPYVtE0J2W3dA94oZXg68weldUM3qhub2cTOc0Eh/zhhmoOvVu7
-   7Rvjh8zjKFbvmksaxyFPriuJbOnDdpGaAM6ExJ5LT3O2iG1zxpm/PKgW+
-   g==;
-X-CSE-ConnectionGUID: H1RdixpURNy13sd7WzYyAA==
-X-CSE-MsgGUID: NByRm+TETtGgjltalqQcKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23047280"
+  t=1724713980; x=1756249980;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=7XwBAUfGnZtL6nJVvm5SlBN+15gz4hx3z3sZy495raE=;
+  b=LDmTCPkfca0iI2aDYhMHPi9scExcZqTRwqkf7bGvhmRTsUpGs14tQtfr
+   mgFLiEYfZ+3wMie7AqD0QLmn81Mrft29/ccuGYGmpZy8/ARSugT21vx6g
+   RKQh77riLnFMDsNx1VldwXNm6RULT1IX7vB7keueDQ0ZR/IOYJbj6G3Ae
+   rEGNMCU3/Ma3EGo16Vroyw+BuKiM1yVKkhBxMo9o4FayZrd07COmRGcaK
+   SRMEhQ+8I6VqeevvnuojDuYTUW+cViXZ0bx8CCgSOvBW6pzlI6eF8xehr
+   xEOa8ZygX0931Clc6EZsZIUlLbbAELgIteJ8KTDJrTECD8yrTOIJyh7kA
+   w==;
+X-CSE-ConnectionGUID: cSFXfE5FRjC/Jq/CqMQbHA==
+X-CSE-MsgGUID: Yl0P4CczRfiaZyC90Vz+rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="13225919"
 X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23047280"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:00:46 -0700
-X-CSE-ConnectionGUID: 45HimrjyQhqOeQ2kHp3hLg==
-X-CSE-MsgGUID: gXJDuSo7SB6UOk1KYgOYOw==
+   d="scan'208";a="13225919"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:12:58 -0700
+X-CSE-ConnectionGUID: puOaTtgaQcW2cSkKQRpJlg==
+X-CSE-MsgGUID: WLwHcCqZS6uGwMl6CnJWLQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="93454540"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:00:45 -0700
-Date: Mon, 26 Aug 2024 16:07:42 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	Tim Chen <tim.c.chen@intel.com>
-Subject: Re: [PATCH v2 3/3] cpufreq: intel_pstate: Set asymmetric CPU
- capacity on hybrid systems
-Message-ID: <20240826230742.GA7773@ranerica-svr.sc.intel.com>
-References: <4941491.31r3eYUQgx@rjwysocki.net>
- <3311190.44csPzL39Z@rjwysocki.net>
+   d="scan'208";a="67478376"
+Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:12:56 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
+ malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/16] overlayfs/file: Convert to cred_guard()
+In-Reply-To: <CAJfpegsq5NruDeL6HRgkpj=QvdOKdnqOwZiRS0VY092=h0RSkg@mail.gmail.com>
+References: <20240822012523.141846-1-vinicius.gomes@intel.com>
+ <20240822012523.141846-11-vinicius.gomes@intel.com>
+ <CAJfpegsq5NruDeL6HRgkpj=QvdOKdnqOwZiRS0VY092=h0RSkg@mail.gmail.com>
+Date: Mon, 26 Aug 2024 16:12:52 -0700
+Message-ID: <87v7zmkhe3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3311190.44csPzL39Z@rjwysocki.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 
-On Mon, Aug 12, 2024 at 02:44:30PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-[...]
-> @@ -3143,6 +3341,20 @@ static int intel_pstate_register_driver(
->  
->  	global.min_perf_pct = min_perf_pct_min();
->  
-> +	/*
-> +	 * On hybrid systems, use asym capacity instead of ITMT, but because
-> +	 * the capacity of SMT threads is not deterministic even approximately,
-> +	 * do not do that when SMT is in use.
-> +	 */
-> +	if (hwp_is_hybrid && !sched_smt_active() &&
-> +	    arch_enable_hybrid_capacity_scale()) {
-> +		sched_clear_itmt_support();
-> +
-> +		hybrid_init_cpu_scaling();
-> +
-> +		arch_rebuild_sched_domains();
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-sched_clear_itmt_support() also calls arch_rebuild_sched_domains(). The
-latter is also called earlier via sched_set_itmt_support(), totaling 3
-calls, two of which are wasted.
+> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+>>
+>> Replace the override_creds_light()/revert_creds_light() pairs of
+>> operations with cred_guard()/cred_scoped_guard().
+>>
+>> Only ovl_copyfile() and ovl_fallocate() use cred_scoped_guard(),
+>> because of 'goto', which can cause the cleanup flow to run on garbage
+>> memory.
+>
+> This doesn't sound good.  Is this a compiler bug or a limitation of guards?
+>
 
-Perhaps at minimum hybrid_init_cpu_scaling() can be before
-sched_clear_itmt_support(). The changes made by these two functions will
-be picked up in a single call of arch_rebuild_sched_domains().
+This is a gcc bug, that it accepts invalid code: i.e. with a goto you
+can skip the declaration of a variable and as the cleanup is inserted by
+the compiler unconditionally, the cleanup will run with garbage value.
+clang refuses to compile and emits an error.
 
-Moreover, ITMT can be not enabled at all if so we wish. By the time
-intel_pstate_set_itmt_prio() is called, the value of hwp_is_hybrid is
-already known.
+Link to a simpler version of the bug I am seeing:
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
+
+>> @@ -211,9 +208,8 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+>>         ovl_inode_lock(inode);
+>>         real.file->f_pos = file->f_pos;
+>>
+>> -       old_cred = ovl_override_creds_light(inode->i_sb);
+>> +       cred_guard(ovl_creds(inode->i_sb));
+>>         ret = vfs_llseek(real.file, offset, whence);
+>> -       revert_creds_light(old_cred);
+>
+> Why not use scoped guard, like in fallocate?
+
+No reason. I was only under the impression that cred_guard() was
+preferred over cred_scoped_guard(). 
+
+>
+>> @@ -398,9 +393,8 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>>
+>>         /* Don't sync lower file for fear of receiving EROFS error */
+>>         if (file_inode(real.file) == ovl_inode_upper(file_inode(file))) {
+>> -               old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
+>> +               cred_guard(ovl_creds(file_inode(file)->i_sb));
+>>                 ret = vfs_fsync_range(real.file, start, end, datasync);
+>> -               revert_creds_light(old_cred);
+>
+> Same here.
+>
+
+Will keep it consistent whatever version is chosen.
+
+>> @@ -584,9 +571,8 @@ static int ovl_flush(struct file *file, fl_owner_t id)
+>>                 return err;
+>>
+>>         if (real.file->f_op->flush) {
+>> -               old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
+>> +               cred_guard(ovl_creds(file_inode(file)->i_sb));
+>
+> What's the scope of this?  The function or the inner block?
+>
+
+As far as I understand, the inner block.
+
+> Thanks,
+> Miklos
+
+
+Cheers,
+-- 
+Vinicius
 
