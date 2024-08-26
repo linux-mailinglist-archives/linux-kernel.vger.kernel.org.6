@@ -1,251 +1,204 @@
-Return-Path: <linux-kernel+bounces-301774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15E895F56C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A8495F56F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B301F222E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA6E282347
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6344D194152;
-	Mon, 26 Aug 2024 15:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29CB192D72;
+	Mon, 26 Aug 2024 15:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Vh8H+ftH"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htMdAFLs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E0F194085
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4CF1741C0;
+	Mon, 26 Aug 2024 15:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686986; cv=none; b=dbuOT/cVeecwuQbTZDDEqB2eJIZwtySSjJilcg3YeKAThsUCD9OhaAZINPgDa9EHHSN158yWWYBs0lABEWYW2zEandGi/v/Fo9UspQNmJ3wMHVafZlb6VZti+UrlJ65FxGLXvb5kTtTHtZGyO7RBEbxX/tyJpmav3unRJvewQeI=
+	t=1724687125; cv=none; b=kQ7kgOsvsCojZzCrntRvTccxE20jNIck84PK2l+RtQoR4/XX/fQELW5fTN1cmG4gfWDQ6Mxh+y/cKVDcpVgk+cjnA8rUc2/W28i2278jXfY3zOz5BbC+K0+eJLVHwAwZnBqO5c45dJlXRATdQlNm08Yf9NHgHfjLV+o6IuutQGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686986; c=relaxed/simple;
-	bh=Y1MWjJgVWPA3HWnRpA5bjVr87aPr6F48YDVRmpaPeaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTcRGptwFV3wTqHBj4z4C2AMJ+BBNQ2nqBjKe11TiEn0TyErb4+8Weqc2g/wI6K8sZgu5PiyAJwKqmxPBck0fDKGCgbn1mx7jbn7ubO/3e6Gb54OsfnUFgdw5bSocD2w9CLRSjf0G1Q7qIFkQG5KHbvxeX4Zt2/7zVUAGoHufFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Vh8H+ftH; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44febbc323fso22504661cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1724686983; x=1725291783; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yP4Fw/lMMClOSx02WHfgPFt+EBlGP0U2oDKxLWoWZtU=;
-        b=Vh8H+ftHwSpEbe2JD75yP831cv+/rUHoB/2xuhwpL9zkJ3RmXzNbBfInz+OY2s/616
-         F17BxAwYFL/gFMAY2H3jdrvGwYkmDYJkHoMtKqUiUXduMI5bMANXHQn1Qq/Euy9sHiEv
-         mmFe1M1CIU207kBvicBQay1LKg8WQR3E+fLD9oyRCwNiqIKO/2FmGWDgV6gRMZ3GFJ2c
-         F4vktV6IWNxEF1LnpKS8wdsD1cg1qOB2EcMKmTuWy+uIdcg8yFKc9Q7CYbpb/3y2C1qt
-         NAMv+mvLrPf1lORlXaWeXCKo1InSr4NApIWnm/lIOylojRqFzWAl0bxFlL7IO0A88/FY
-         RoSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686983; x=1725291783;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yP4Fw/lMMClOSx02WHfgPFt+EBlGP0U2oDKxLWoWZtU=;
-        b=ZWx0ALCpGrLuIPkmv4XWCb10aPq2mWwCQh0XH8oFEtLP9zZFYuXRLrPtU6UJ+PMpP1
-         X4AYlSFD405+ft6n4QIy/o/WanspmRnhu+QV11wcC2Q4WhJOA7eBnvvtAjQlfip34Qdf
-         7DqpGr7XugalmpqSVAsavOevZznEq1f0hURVywmaEejT0rBFq2hkecft76OnTV3sA0VX
-         NiceGLLjeMf493aPBVct8SbSVdOBsGL9of/BBzUmLvj9MLnoJD+RG/KgzfD4yAPJgF9I
-         6n1pA3EIHpwLnlbokr8IAdVbwEYdDhTM3wkSPrWSsqtFzry9D2kBIMPvqLu6CBPgRh21
-         vLgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEQRNobLdgj13x+ThWLxO0mn4xLR/2QJOcZX+ljX5hSqH6xuEULGtrRDSgESLF7zZwipWHIoIhBFfO7A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiRVpreBhKzcTmeVbZDnYJsDHEEoXuUX3Oqlj8cuamSFFsn58T
-	NAtcgR1Hw+iVf0k4hzV57+PC8vkFryMSQBf5JaRMhXRmC/Q9Dj12KVkpZfBusQ==
-X-Google-Smtp-Source: AGHT+IFwV8p413g5+5hIWLDjV4l8fIiqXTk+f4Q0QVc5D9QSE14Dcyc4aw1/2HSLEYL592tN+kGS3Q==
-X-Received: by 2002:a05:622a:1bac:b0:454:e80f:1457 with SMTP id d75a77b69052e-455095f1c4dmr105372841cf.12.1724686983166;
-        Mon, 26 Aug 2024 08:43:03 -0700 (PDT)
-Received: from rowland.harvard.edu (wrls-249-137-9.wrls-client.fas.harvard.edu. [140.247.12.9])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-454fdfc097csm44414501cf.12.2024.08.26.08.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 08:43:02 -0700 (PDT)
-Date: Mon, 26 Aug 2024 11:42:59 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: WangYuli <wangyuli@uniontech.com>, leoliu-oc@zhaoxin.com,
-	dlemoal@kernel.org, arnd@kernel.org, schnelle@linux.ibm.com,
-	WeitaoWang-oc@zhaoxin.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mathias.nyman@linux.intel.com,
-	ulf.hansson@linaro.org, vkoul@kernel.org, hslester96@gmail.com,
-	Carsten_Schmid@mentor.com, efremov@linux.com, tonywwang@zhaoxin.com,
-	weitaowang@zhaoxin.com, CobeChen@zhaoxin.com, TimGuo@zhaoxin.com,
-	wwt8723@163.com, alex.williamson@redhat.com,
-	guanwentao@uniontech.com, xuerpeng@uniontech.com
-Subject: Re: [PATCH v2] USB: Fix kernel NULL pointer when unbind UHCI form
- vfio-pci
-Message-ID: <88f2c959-7b88-4d97-81a4-11902dddd19a@rowland.harvard.edu>
-References: <42A38D045199FD79+20240826085455.1525536-1-wangyuli@uniontech.com>
- <2024082631-resort-stays-b065@gregkh>
+	s=arc-20240116; t=1724687125; c=relaxed/simple;
+	bh=CfjXIIFwVytbq3DboLG6ZBWEAA+dSeHjisriqW8r0BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vDN0mmpRzXgY0U1GxEJvyBpq2ZbZ0wVaqK6K70iOWIxInba3fTGGiCns2070xK4/S1Y2mvwmK+un18NQ2CsDnvQa+6SV2CSYB5lA7Rlc3kq4ippTKhAm/SewIlk/fUxy8YOQyAgPnoFPTOHHQyGmZkF6RkfMB/hsOiLv1NtjlnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htMdAFLs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C43C52FC6;
+	Mon, 26 Aug 2024 15:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724687124;
+	bh=CfjXIIFwVytbq3DboLG6ZBWEAA+dSeHjisriqW8r0BE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=htMdAFLsy/VWzrv7KZVdB83Fj8TsnzeXUCuS9+1biIW6Kz7P8Dh4rwbfWNSqJJqre
+	 Q1MZP6OCv9ymTfXGiisyVBc+61y6NAxzsv6wDxYFf5QOVk3E6F1SdlnZlTgnLyvLUk
+	 xGhaNHFVHg41UQPJVCIlCt9x7T8c8vEm6euiuW1Ji+u2wjGKZj5Z1k6YJKd8iilFou
+	 5mWQxV/v0ThrpnBGxODG0RJYZn8GV2MSa4PwDuybSumLl0NoB9uxXYUWMGxjeBCins
+	 b3mdgVqy03FfugQveIMy1T9NJUxZZFqEhPXLI8ecrU6Pea4SGSpIWZOmz7VUrzxLkd
+	 hGAtk1fD1/VbQ==
+Message-ID: <39a2971d-8776-4e5f-8d72-ae447ea88362@kernel.org>
+Date: Mon, 26 Aug 2024 17:45:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024082631-resort-stays-b065@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: mediatek,mt6357: Fixup reference to
+ pwrap node
+To: Macpaul Lin <macpaul.lin@mediatek.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Alexandre Mergnat <amergnat@baylibre.com>, Flora Fu <flora.fu@mediatek.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
+ Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20240826065415.19641-1-macpaul.lin@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240826065415.19641-1-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-All right, I see what's going on...
+On 26/08/2024 08:54, Macpaul Lin wrote:
+> The mt6357 is a subnode of pwrap node. Previously, the documentation
+> only included a note in the description of mt6357. This change adds the
+> appropriate $ref for pwrap to ensure clarity and correctness.
 
-On Mon, Aug 26, 2024 at 11:30:14AM +0200, Greg KH wrote:
-> On Mon, Aug 26, 2024 at 04:54:55PM +0800, WangYuli wrote:
-> > From: leoliu-oc <leoliu-oc@zhaoxin.com>
-> > 
-> > This bug is found in Zhaoxin platform, but it's a commom code bug.
+Heh? The schema described mt6357, not pwrap. Why are you changing it?
+
 > 
-> To be fair, this is not a normal "common" code path at all :)
+>   $ref: /schemas/soc/mediatek/mediatek,pwrap.yaml
 > 
-> > 
-> > Fail sequence:
-> > step1: Unbind UHCI controller from native driver;
+> Additionally, the indentation for the pmic section has been adjusted
+> to match the corresponding structure.
 > 
-> First off, you all know this is really an "unsupported" thing to do.  I
-> love it how the vfio people abuse this interface for their main code
-> path, but remember that is NEVER what it was designed for at all.  The
-> fact that it could possibly work at all is a miracle and everyone gets
-> lucky if nothing dies when they attempt to manually do the gyrations you
-> are doing here.
-
-Still, it would be good to support this properly.
-
-The big assumption in hcd-pci.c has always been that if a UHCI device is 
-bound to a driver, then that driver must be uhci-hcd.  That assumption 
-is no longer true here, because now the driver could be vfio-pci 
-instead.
-
-> > step2: Bind UHCI controller to vfio-pci, which will put UHCI controller in
-> > 	   one vfio group's device list and set UHCI's dev->driver_data to
-> > 	   struct vfio-pci(for UHCI)
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  .../bindings/mfd/mediatek,mt6357.yaml         | 124 +++++++++---------
+>  1 file changed, 65 insertions(+), 59 deletions(-)
 > 
-> Who sets the driver_data here?
-
-The vfio-pci driver does.  Since it's a PCI virtualization driver, it 
-doesn't behave like a normal USB host controller driver and it doesn't 
-set the drvdata to point to the hcd structure.
-
-> > step3: Unbind EHCI controller from native driver, will try to tell UHCI
-> > 	   native driver that "I'm removed by set
-> > 	   companion_hcd->self.hs_companion to NULL. However, companion_hcd
-> > 	   get from UHCI's dev->driver_data that has modified by vfio-pci
-> > 	   already. So, the vfio-pci structure will be damaged!
+> Changes for v1:
+>  - This patch has been made based on linux-next/master branch.
 > 
-> Damaged how?  Attempting to assign random PCI drivers to the vfio-pci
-> driver is again, really really not supported (despite what the vfio
-> authors think), so again, it's amazing this works, as you are finding
-> out.
+> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> index b67fbe0..5f4f540 100644
+> --- a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
+> @@ -22,69 +22,75 @@ description: |
+>  
+>    It is interfaced to host controller using SPI interface by a proprietary hardware
+>    called PMIC wrapper or pwrap. This MFD is a child device of pwrap.
+> -  See the following for pwrap node definitions:
+> -  Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
+>  
+>  properties:
+> -  compatible:
+> -    const: mediatek,mt6357
 
-A partial workaround for this problem might be to do steps 2 and 3 in 
-the opposite order: unbind both controllers (UHCI, then EHCI) and 
-afterwards bind both controllers (EHCI, then UHCI).  Then nothing would 
-get damaged.
+How does this schema is being selected without compatible?
 
-> > step4: Bind EHCI controller to vfio-pci driver, which will put EHCI
-> > 	   controller in the same vfio group as UHCI controller;
-> >        ... ...
-> > step5: Unbind UHCI controller from vfio-pci, which will delete UHCI from
-> > 	   vfio group device list that has been damaged in step 3. So, delete
-> > 	   operation can random result into a NULL pointer dereference with
-> > 	   the below stack dump.
-> > step6: Bind UHCI controller to native driver;
-> > step7: Unbind EHCI controller from vfio-pci, which will try to remove EHCI
-> > 	   controller from the vfio group;
-> > step8: Bind EHCI controller to native driver;
+> -
+> -  interrupts:
+> -    maxItems: 1
+> -
+> -  interrupt-controller: true
+> -
+> -  "#interrupt-cells":
+> -    const: 2
+> -
+> -  mediatek,hp-pull-down:
+> -    description:
+> -      Earphone driver positive output stage short to
+> -      the audio reference ground.
+> -    type: boolean
+> -
+> -  mediatek,micbias0-microvolt:
+> -    description: Selects MIC Bias 0 output voltage.
+> -    enum: [1700000, 1800000, 1900000, 2000000,
+> -           2100000, 2500000, 2600000, 2700000]
+> -    default: 1700000
+> -
+> -  mediatek,micbias1-microvolt:
+> -    description: Selects MIC Bias 1 output voltage.
+> -    enum: [1700000, 1800000, 1900000, 2000000,
+> -           2100000, 2500000, 2600000, 2700000]
+> -    default: 1700000
+> -
+> -  regulators:
+> -    type: object
+> -    $ref: /schemas/regulator/mediatek,mt6357-regulator.yaml
+> -    unevaluatedProperties: false
+> -    description:
+> -      List of MT6357 BUCKs and LDOs regulators.
+> -
+> -  rtc:
+> +  pwrap:
 
-Likewise, do both unbind operations first and afterwards do both the 
-bind operations.  However, that might not be enough to solve the problem 
-here.
+With the diff it is tricky to say what you are doing, but it feels
+wrong. I don't understand the rationale, the problem being fixed here,
+and considering unusual diff, this just looks wrong approach.
 
-> That's crazy, why would you be doing all of that in the first place?  Is
-> it common to add host controller drivers to virtual machines like this?
-> Why not just use usbip instead?
-> 
-> > [  929.114641] uhci_hcd 0000:00:10.0: remove, state 1
-> > [  929.114652] usb usb1: USB disconnect, device number 1
-> > [  929.114655] usb 1-1: USB disconnect, device number 2
-> > [  929.270313] usb 1-2: USB disconnect, device number 3
-> > [  929.318404] uhci_hcd 0000:00:10.0: USB bus 1 deregistered
-> > [  929.343029] uhci_hcd 0000:00:10.1: remove, state 4
-> > [  929.343045] usb usb3: USB disconnect, device number 1
-> > [  929.343685] uhci_hcd 0000:00:10.1: USB bus 3 deregistered
-> > [  929.369087] ehci-pci 0000:00:10.7: remove, state 4
-> > [  929.369102] usb usb4: USB disconnect, device number 1
-> > [  929.370325] ehci-pci 0000:00:10.7: USB bus 4 deregistered
-> > [  932.398494] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> > [  932.398496] PGD 42a67d067 P4D 42a67d067 PUD 42a65f067 PMD 0
-> > [  932.398502] Oops: 0002 [#2] SMP NOPTI
-> > [  932.398505] CPU: 2 PID: 7824 Comm: vfio_unbind.sh Tainted: P   D  4.19.65-2020051917-rainos #1
-> 
-> Note, this is a very old kernel, and one that has closed source in it
-> making it such that none of us can debug it at all.
-> 
-> And are you sure this happens on 6.10?
-> 
-> > diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
-> > index a08f3f228e6d..5a63d7a772ae 100644
-> > --- a/drivers/usb/core/hcd-pci.c
-> > +++ b/drivers/usb/core/hcd-pci.c
-> > @@ -48,6 +48,7 @@ static void for_each_companion(struct pci_dev *pdev, struct usb_hcd *hcd,
-> >  	struct pci_dev		*companion;
-> >  	struct usb_hcd		*companion_hcd;
-> >  	unsigned int		slot = PCI_SLOT(pdev->devfn);
-> > +	struct pci_driver	*drv;
-> >  
-> >  	/*
-> >  	 * Iterate through other PCI functions in the same slot.
-> > @@ -60,6 +61,13 @@ static void for_each_companion(struct pci_dev *pdev, struct usb_hcd *hcd,
-> >  				PCI_SLOT(companion->devfn) != slot)
-> >  			continue;
-> >  
-> > +		drv = companion->driver;
-> > +		if (drv &&
-> > +		    strncmp(drv->name, "uhci_hcd", sizeof("uhci_hcd") - 1) &&
-> > +		    strncmp(drv->name, "ohci-pci", sizeof("ohci-pci") - 1) &&
-> > +		    strncmp(drv->name, "ehci-pci", sizeof("ehci-pci") - 1))
-> 
-> Attempting to rely on kernel module names within kernel code just is not
-> going to work, sorry.
-> 
-> What exactly are you trying to do here?  Please at least comment it.
+Bindings do not work like that - you do not reference the parent inside
+the child. There is nowhere example for that, so I have no clue how did
+you come up with it.
 
-It definitely should be commented.  The idea here is to verify the 
-assumption mentioned earlier, namely, to find out whether the driver 
-bound to this UHCI device really is uhci-hcd.  Testing the driver's 
-name is a pretty ad-hoc way of doing it, but I can't think of anything 
-better.
+Best regards,
+Krzysztof
 
-However, this check really should be done later, after determining 
-whether the companion device is a UHCI, OHCI, or EHCI host controller.  
-Then only one comparison would be needed in each case.
-
-> > +			continue;
-> 
-> Do you just want to fail the binding?  If so, why?  And what is
-> precenting a driver to be bound after you do the check?
-
-This won't cause the binding to fail; it will merely skip calling the 
-notification function.
-
-Races are prevented by the companions_rwsem in hcd-pci.c.  It is held 
-whenever for_each_companion() gets called.
-
-> > +
-> >  		/*
-> >  		 * Companion device should be either UHCI,OHCI or EHCI host
-> >  		 * controller, otherwise skip.
-> 
-> Why doesn't this check suffice?
-
-The question WangYuli wants to answer isn't whether the companion device 
-is UHCI, OHCI, or EHCI.  Rather, it is whether the companion device is 
-bound to the uhci-hcd (or ohci-pci or ehci-pci) driver -- as opposed to 
-the vfio-pci driver.
-
-Alan Stern
 
