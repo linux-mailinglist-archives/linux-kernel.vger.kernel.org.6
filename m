@@ -1,87 +1,161 @@
-Return-Path: <linux-kernel+bounces-301640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66D695F385
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:06:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0820B95F394
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F3828348E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5EA1C2194D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5E11885AB;
-	Mon, 26 Aug 2024 14:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF3C189500;
+	Mon, 26 Aug 2024 14:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YS8eh5ZL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Lv3hQkmY"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E102A17C985;
-	Mon, 26 Aug 2024 14:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE9C17E01E;
+	Mon, 26 Aug 2024 14:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724681183; cv=none; b=DsGNrrGmKasZYns/LDSw2wHqbRepX3tD0pV+K+2zBcvqXPybV5mcP0puvV91V2icbvOOhJwuaHKEnRaucjcjtHyoOyOWH8uh4sXIVcbL2akc2hP7rfrxCPN5WX6c/iv06eFAGU+dfqQgOaYxIS5Km2V1OZROquL5GQg5ZyOOKNQ=
+	t=1724681276; cv=none; b=rjFYTFa+gqQ1Ff/m+Bp+IJFEX4BZtAEYeNTiCFpAdH6+2OwiqtPIZTEw/fU0AzXD/AGYc7qsxzCQj+Pq3x5XwTqIaPI/z1gjPqmMqabYDBzvyuTtPDZILGcHQw6Ae7C8QBtBe6cAtlnBt9bh93c/3XldyT2VYWg1QHRJX/0rHZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724681183; c=relaxed/simple;
-	bh=nAAVfa7mSkXdmo3jBmgCqJilsC6QcXimOq312imTzjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rrvuin5XqvdwELGiUoordESvZAW7l+kXfzr17TzSal92x325Q7J5Px4KpLUidoqbQPEaervW9MXws7UneK+LqgmjLyetC6EgT9BtQGaUpTKjLY6uHalLIDz4w1ZCuGRgJPuLCQHG6lbjvDw+uapI+oMqPLu86IFboWJaBsb4BN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YS8eh5ZL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gGnGeY9k2zZfUreWZoSXEECewK8gyUkmlB9Momxm5dk=; b=YS8eh5ZLhlziCaNOUXOLiI/Irr
-	jTrZnkIwcL+nK3rql1heJR9kSccH44GmMxJW+jgmpwispn606cnQ5Q7uQnV83gj9WopBBy7kopsrW
-	7H3aVl7MpcDvo19CuJ5P1DNAKxFHNsl/+7Y0qMy3riOvQzbrHofGEOsSvQpsiYFeEiA4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1siaMI-005iLm-N9; Mon, 26 Aug 2024 16:06:14 +0200
-Date: Mon, 26 Aug 2024 16:06:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-Message-ID: <ac1436fd-f80b-4571-b10b-171104273272@lunn.ch>
-References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
- <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1724681276; c=relaxed/simple;
+	bh=xOgBRZPXDCPk/4kGTj33xlReBqvcCW/HiawLg1Vxuww=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=hqkBxlaqWaIZyosnz9jQUE4joQRnYk2ztQ+WmVV6JttzaQzosm2lBXNvv62D7KEhbG4N/LUu2vVghJLEh8m1oby2Ad1NiZFLREBH59rMWeKL0EOknICio9e76QzI/xT/vHFxgAV+xHMo2CjtGQjVBm6UbxYS+3jDCq19YiJceCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Lv3hQkmY; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1724681270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U7u0W5LEnkH2sOZAmNO6zvSkVtZ3dx2voJoTAm3CKcA=;
+	b=Lv3hQkmYGvuYXN9u4Feb//n8y/X8fQ8+7IjGikFSRN2GITBI4A51wFxRxvusbItAi1ANzR
+	hcQtZDPR48ipibhiEKTtqBmOFIT7yzCeE8LBBfUCJjH6TplQ7fXJx+KiWFO2j+9oK0PckK
+	hbEBoCMEB5AuPTOgswitAkUy2mp4my4abNHxWSPG5dQcbrAizx01SgcTuMBYnESx2ZmwvA
+	Mb6tIfySWTjzhdQBDc3aIho8JflI1rp/8dxcWhrBzDqAnPczZDmJiIq+SBOgAym7l3ZO0Q
+	W4W+bHqzV73jVcTutQDJyTrXAs+UdN77LwevsssYvieOZkW0Tlb3O1uQcZ9CFA==
+Date: Mon, 26 Aug 2024 16:07:49 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Jaehoon
+ Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
+In-Reply-To: <5808226.DvuYhMxLoT@trenzalore>
+References: <20240822212418.982927-1-detlev.casanova@collabora.com>
+ <20240822212418.982927-5-detlev.casanova@collabora.com>
+ <26fe259f390a8015c3f08c6dc027711c@manjaro.org>
+ <5808226.DvuYhMxLoT@trenzalore>
+Message-ID: <dc77f6dbdfc68369d02005763143cdea@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-> +static inline int siul2_get_gpio_pinspec(struct platform_device *pdev,
-> +					 struct of_phandle_args *pinspec,
-> +					 unsigned int range_index)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +
-> +	return of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
-> +						range_index, pinspec);
-> +}
+Hello Detlev,
 
-In general, inline should be avoided. The compiler is better at
-deciding than humans.
+On 2024-08-23 15:20, Detlev Casanova wrote:
+> On Friday, 23 August 2024 03:00:57 EDT Dragan Simic wrote:
+>> Hello Detlev,
+>> 
+>> Please see a comment below.
+>> 
+>> On 2024-08-22 23:15, Detlev Casanova wrote:
+>> > On rk3576 the tunable clocks are inside the controller itself, removing
+>> > the need for the "ciu-drive" and "ciu-sample" clocks.
+>> >
+>> > That makes it a new type of controller that has its own dt_parse
+>> > function.
+>> >
+>> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>> > ---
+>> >
+>> >  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
+>> >  1 file changed, 43 insertions(+), 5 deletions(-)
+>> >
+>> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
+>> > b/drivers/mmc/host/dw_mmc-rockchip.c
+>> > index 1458cb5fd5c7..7c8ccf5e71bc 100644
+>> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
+>> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> [...]
+>> > @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci
+>> > *host)
+>> >
+>> >  	if (IS_ERR(priv->sample_clk))
+>> >
+>> >  		dev_dbg(host->dev, "ciu-sample not available\n");
+>> >
+>> > -	host->priv = priv;
+>> > -
+>> >
+>> >  	priv->internal_phase = false;
+>> >
+>> >  	return 0;
+>> >
+>> >  }
+>> >
+>> > +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
+>> > +{
+>> > +	struct dw_mci_rockchip_priv_data *priv;
+>> > +	int err = dw_mci_common_parse_dt(host);
+>> > +	if (err)
+>> > +		return err;
+>> > +
+>> > +	priv = host->priv;
+>> > +
+>> > +	priv->internal_phase = true;
+>> 
+>> Defining priv, assigning it and using it seems rather redundant,
+>> when all that's needed is simple "host->priv->internal_phase = true"
+>> assignment instead.
+> 
+> Yes, that's what I did at first, but host->priv is declared as void*, 
+> which
+> means it needs to be cast to struct dw_mci_rockchip_priv_data * and I 
+> felt
+> that
+> 
+> ((struct dw_mci_rockchip_priv_data *)host->priv)->internal_phase = 
+> true;
+> 
+> is not very pretty and harder to read.
 
-	Andrew
+Ah, you're right, and I somehow managed to ignore that.
+
+I agree with your conclusions, although I'd suggest something like
+this, for slightly improved readability:
+
+  +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
+  +{
+  +	struct dw_mci_rockchip_priv_data *priv = host->priv;
+  +	int err;
+  +
+  +	err = dw_mci_common_parse_dt(host);
+  +	if (err)
+  +		return err;
+  +
+  +	priv->internal_phase = true;
+  +
+  +	return 0;
+  +}
 
