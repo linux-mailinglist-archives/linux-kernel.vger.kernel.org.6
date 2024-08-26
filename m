@@ -1,191 +1,127 @@
-Return-Path: <linux-kernel+bounces-300758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A933495E7FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE5E95E802
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C4D1F21915
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF41B1C21226
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE0E7442F;
-	Mon, 26 Aug 2024 05:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A78768FD;
+	Mon, 26 Aug 2024 05:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HoboMzIn"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010012.outbound.protection.outlook.com [52.103.11.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZCaiuLts"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B188C11;
-	Mon, 26 Aug 2024 05:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724650841; cv=fail; b=AWGqL0mJ/W15KXIH1/FSEflRi9CDmf+R4E0gMQYrbAJ8wKiiIsi0hwxuRPR0XMVw32nRj5FjNBLkf+8LWZOe/TikxT2DElVDje2SXVWN0PtypxL4KRxrOnTXd1LLuwMa6OQYqG85fW9SjxF4JtsjTWZGYi6cSj/sSKml8KPbp98=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724650841; c=relaxed/simple;
-	bh=l7AXVg6ZKgNLxk6BLSig8iGZtVEmFbH5T8Fp6d9384k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QuhcHjoc5/VHFc6jG5CvBUe6IBOHbnW11x1T4874n0ZBX5t4un3jmoHy8/7mNcnSzNaA/35TSmdP6W6FHsry4XxHeugnjxaw16+KKSTeIhSZJvhR0wdP8GELnMqiDdT8YmQd8r3nfhGeGwSLFDl0rj4hWt/dKFglRvTV49GMcIs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HoboMzIn; arc=fail smtp.client-ip=52.103.11.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WL3jfrT9XGmfVbLRUzZ7s1Now/7Xe0JUF56YYAwJLVQS3Vs+w0Igg48qK5guKTwAyOF8pXNdHm55ltNCBZWkz+WC2XGExd52JI4CrJmAKffkNJRsegpG1rkOV0PkmVXiCM/eTBhv3SY3SQpOt0SxAdP/6OcMvrgQ5vIYHHj8I4oYpXdjx8o9Twn+p0NiXIRJwQy5WiNdtWEhO+kb1z+xwEoBDfUAVzTwkk/E5EH0bcpBGjSuJzl75E2ve1JAKRIHoL7V3/UpxpbXI64LjkH7kKtDji1lPwX2N98N05hUD+JSHE6Fs0EwoSJaVGXA331NLFT4aOnPpNi/dJJao1sYoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l7AXVg6ZKgNLxk6BLSig8iGZtVEmFbH5T8Fp6d9384k=;
- b=aj/28WfsFGgKIg+QdZI5jvdaYuqUolxun5ClvUolLkyj9dgE3w8wny94+A0Xl2a6NE/8KZeqn28qtDvKApYzC3BgG9rlhXTi3LT+pbl1w4y4uKjsufuE05YRcGwFXZGcsugly61ddMXDAKHIN5Erq2XR1P1VgBe+sXxWIBA5D1+VmDBJruVCZ9QqdnMQbEz7kS2/mz8LyL13Wq75DcwF7eyfUw71hCp0zZXZTLZeFYAN72ki5gctgKQs7MjEVwh696ZW3yrOAtMhE/bpI7hpAkwCgrTEEBMlYdAbVpCB4Uhmi7XNn/KBFIHhoKhqMjhUFxsLKvai6R1H1ihWAS7jNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l7AXVg6ZKgNLxk6BLSig8iGZtVEmFbH5T8Fp6d9384k=;
- b=HoboMzInFJu5I8kYOAJJxReugJ0VZ47zdYOvmRbiDdmjPIbRcvM6AbHXum+RDqQ1uMk9qb4St6LS8DpTj9xKSHmwiqcxh8JNsb1vymA3wzPSoDj92sMp9g8s5CveRaAP12nDgsmTAQPXFaU/OCVGrcy1Mh4eefsUradMEA1HAm3uyU0t23y7VM1iVRuCDAbRfq6aYsQw9QMkqf4r7ExBQvswj4EhBxokn+teN3zQZhptsJNDZM81fdeDcluHxgKRtRK3trGr/rZ2Req2dNxk9Y+2KrAIFSOR1XS/BttDRJ7FYeX6LYZJvxkk8NE8ZzMaVgOjwGXlvjw45HyU1q8xjw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH2PR02MB6582.namprd02.prod.outlook.com (2603:10b6:610:78::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 05:40:37 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Mon, 26 Aug 2024
- 05:40:37 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Stephen Hemminger <stephen@networkplumber.org>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Saurabh Sengar
-	<ssengar@linux.microsoft.com>
-Subject: RE: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-Thread-Topic: [PATCH 2/2] Drivers: hv: vmbus: Fix rescind handling in
- uio_hv_generic
-Thread-Index: AQHa9IPP2ZEuiKarEkiNA338VE6Og7I3SmgwgAG/A4CAAAG7YA==
-Date: Mon, 26 Aug 2024 05:40:37 +0000
-Message-ID:
- <SN6PR02MB415711F672364610BBE6861DD48B2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822110912.13735-1-namjain@linux.microsoft.com>
- <20240822110912.13735-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157FB898345A1A8B88D1F4DD48A2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <a447911b-ef12-46de-ba01-13105e34b8fe@linux.microsoft.com>
-In-Reply-To: <a447911b-ef12-46de-ba01-13105e34b8fe@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [XExJh9RKSlcvKOzVjU9Y5N/63tBP0lTu]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH2PR02MB6582:EE_
-x-ms-office365-filtering-correlation-id: 7a14b9d8-967d-4091-8f77-08dcc5919cd7
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|15080799006|19110799003|461199028|440099028|3412199025|102099032|56899033;
-x-microsoft-antispam-message-info:
- ljZtMV0lwX1Fw1OHJLnWV121G/jYr2r580K+hOKHnp5UTi3tDs4F1ZcUOcWXk439z4OEBDyXTHN/gvMsh9IbdnkzP7qQr6Xz6vEM26OAuIzgFasKJ+k+l0Q+alnWzE550wtbtiz47VLrZ9v9Djh11GHzqaY013mbxv8g/x4a5QQSTTY7q0DhmH19V7zl0J0pzoHKASAcn5O26++T1mZge1bAWlX/7Gmx9V6jccaGvFtmqONVJEtSRqI+VecU/WVKAV9oAc6CRYn43vNFQ2bVELiC7mKziOhHty/UrH8ePQXVMUHwdnKJLgUWNyGB3nlRzxm5mRcUQU9RT27Qc4nv66g5LViw29s8QSTPo4EbWWjKmVjZPsFz+GbzbxmV9cVh3SalHyxOqafy5LuNK4qEdd1gVsNDJS3L3mtYbVwDv9+iTj20QN5/iqVq3o8372UiFn2lQoPdoet2anpggzPOVN4/l70FYB0VeFU6RQ17DUQ3aauvV2d1s7drKEUSG5CuHZOL9QVbDrpmkAfJypYZOhTTQKjKScuKcivPAP1QZzfivEOY/F7TajXb7yJGJA8Ozl8by6akxmFI3OZwLDZ0K85RgEgulZLcIysGqH/WGhziwZhNqpKXFPoLI+lqi4eAuPqPCkAbmHt4h4zZMuaiyePzk1+WU3bsBnThLHfysLx0CCZN3zqT8hX1Y3ZS61Li
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VlRjTWk3UTh1WmZtSUZxTURPWUZHQnRHQVhPRXY4eHBFMlNyOGs3MEczTGpw?=
- =?utf-8?B?V2drTmtOZDhobFlnRytQdS9ZbHZJN3p4TmFLcDNUMEVCOVMzNG14YTZFZWdF?=
- =?utf-8?B?OElhSWcvall5MmFWR0pwSUV2QW1pUitpSFBBY1NnK0VXcDN0VVpoWWtZRmwr?=
- =?utf-8?B?Y1Npb3NJK1I3R2RYS0ltR09xb1loUTluNDh0dDVIZEY3bzdPdTRpbEtENm9z?=
- =?utf-8?B?RkJXM0h6bTVieDFzTVFoa0lWVkthcFFFWEh6eGFQR2htREh2S21nM2M2T3kv?=
- =?utf-8?B?azU5eGdBZ2FIc3RQTEQ5dzg1NHRlcnlsQVZDb3NZRWdxRHlxMS96QjlxNkVh?=
- =?utf-8?B?VWQwOC9HNlZTR2RiMHlpUE1leGJBcCtaU2pOY1dGWUtoMFVxeGZvRkdrWVlQ?=
- =?utf-8?B?ZFBJRFFaTlhtbnhkcWNIM2JteGRqNmNuNkIzSkJwcnFMTUthZWZCOFM2SzQx?=
- =?utf-8?B?V2JURXZ0VHZ3cktzWWd3anFYZ3NYdFJGU3FWN3FybTZZWTNrVUc1UEROeUxW?=
- =?utf-8?B?ZFNrMVBVa0tnWWI4ZG9waGZDayt2WHRKUGpXRzdObndmMGdmVTYyYUZScHdQ?=
- =?utf-8?B?MHB3UGN6VGFTc21kdXNHR1NwdW1LQVhvSklDRHQ1d0dNWFRNcXphQTdHOGU5?=
- =?utf-8?B?TDdMeEp1SUFMNklpbVAvMmZlYlBmSnpwZ0JVdmR0eUQ1UUltTUJMWFVrS0hp?=
- =?utf-8?B?aiszeW1jTVJvbGo5N2hudVlrMTdxNFNsRUR2NEp1WFJkcnJVVEpVZUxkV2dV?=
- =?utf-8?B?NFpHQzBCaklTajZNaXh6eDFHWlZhSUQyZWtHdm1QUmxvT3FhUE5uUEdCVGp0?=
- =?utf-8?B?NDZ6U1JQTHlySjFTb0tQd3p5TGI4TkViSHNNMXZOK09YVkN1a1BzeVhGQzBI?=
- =?utf-8?B?dGg0bHAyK1J3M2tQYzBiVk03VXBMQm5uWmVoRTZNSVdNcm56aVF6bUxQak5z?=
- =?utf-8?B?SmNSNklITWtpRlh3ZXAyZUtjMk5vSXhVQ0RWdis4T2QwVHZkYy9JeUd4ZkRK?=
- =?utf-8?B?ODlGZWdCUmJ2Vjd3WnM4UHpIQVZPcXN3eVlsaWxMSG0yZXA2cVZnbmVYUDRD?=
- =?utf-8?B?S1N0MFlsQmNEMFZDVVBnZzVYTHRtalNRVU1sc1o4a3k4MmJra2p6SWR1MXA4?=
- =?utf-8?B?ZGR6YnR4dXF3OWRlamR3ZkpuNTBqY2FvREV2Tm5yN0NtRGRtc1BrTkJPWFJr?=
- =?utf-8?B?SVplMFhJQk5pNXN1RzJVdnEyRHJrM1V6ZmQ3U0tudkJBV0drYy9SbWxqWW81?=
- =?utf-8?B?VGdqd1NyU25PVUliVU9Sb2YybmJmSHJOakEzTkVFREdyalhaUmU4RExkTmw2?=
- =?utf-8?B?ZkY2OFNjVlFGeEhOTjlqQmsrRmU3aTViZnovOU1tOWNiYmJWVjVMbFNtQkM1?=
- =?utf-8?B?UG9OK1FKc0tMNnpxNnAyQmFZVFIvd2ZRbnI5NGNlbWEwLzdSeGJjeDZvR2tC?=
- =?utf-8?B?UVhHK0tIeXMxR1FwTEtMQTBVYWVjSzFCKzNRcHVkcG9iUG52MUVvcS92bEQr?=
- =?utf-8?B?ciswdGRBeHZJaEVIWWh1ckNaaVBXUkpWNUExYW91YUFYNHBkdjVreVZwekdV?=
- =?utf-8?B?aHRDOVpUN3dlcTZsVWh1VEx6T0lXeEJKYkw1cVk1aW55U1RkOXpkVEJZak9L?=
- =?utf-8?Q?Ce85F7MJpFJIl89jE1W5WbK6QtBSCTqSxEMHgByQJ/Rg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092FC8C11;
+	Mon, 26 Aug 2024 05:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724650870; cv=none; b=APLVVfjE676nXOsNZ+D0m73akViCGM4KIrI4qbvlhtXs3zRdQGvzwcasnrL3EdJcIFOsNHOeIPpAp6e+0utIoghlE+1GdqDN1DF/IK0YWrdxufP0SMgbnM2WleEqtMyCDKatDZFUOZ6P9zh6Kg0LHI98RimHt1UWg+rmVBTkgls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724650870; c=relaxed/simple;
+	bh=ZgjdB7aPaO1sypANcAKJaeJod4EofF9iB1KGwas0yWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tadFPCfJqushYAMBYyK6otGC+9SD7FldNop9K3krIstQKxWUCiotfITe246FgwUVF4y/68mtdcLuXyNvXuhMLbfOBGglP97L4A5dg0Dk52lK5K9Vs5ONyiFUVq7O4vg80LDWFSbPfyr8LdNPRhfQu+4iwUgWtYzhj66HQlq6SVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZCaiuLts; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724650868; x=1756186868;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZgjdB7aPaO1sypANcAKJaeJod4EofF9iB1KGwas0yWg=;
+  b=ZCaiuLtskpRtBy7+FFycH8lqrxxvkUPEsOKskyRGERX2zkHo9+ABUOCL
+   DyjZwi/OWEUhHWvpD/wC9JDhqpwTFVSOJF5pezrROIcUnuWx66v1e3o9h
+   x4eFGVM45cYs2IJq6qPPMluI4sYULJ/CDohXpMMefCK8wzYFbxuKvTDi3
+   gCm2RA39EtGLK/ijqqRfn+iQpPbniG+QyOhvMD2bLLoQll5WIDM0eqhvS
+   BGVc9kvOXYAZaZ/GRE6mV09KSLDACQjdCXHk6Zt9F23OHnwk3Blv3cxHY
+   rGB8pcb7e68XoxBoddyLXeKshSEw+mzN7kkuikLvSxhdnQYFLThMbFS8s
+   g==;
+X-CSE-ConnectionGUID: fC82BljUQWSbj9qr8RSkWQ==
+X-CSE-MsgGUID: Antjn2j2SsWlJbAGT7kdww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="40562237"
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="40562237"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2024 22:41:07 -0700
+X-CSE-ConnectionGUID: rLXI0cuYQyWoNSIeCC2JIA==
+X-CSE-MsgGUID: 1u0SR9TsRjybyBfIM1YaOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,176,1719903600"; 
+   d="scan'208";a="85585990"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 25 Aug 2024 22:41:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 18106444; Mon, 26 Aug 2024 08:41:03 +0300 (EEST)
+Date: Mon, 26 Aug 2024 08:41:03 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Esther Shimanovich <eshimanovich@chromium.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <20240826054103.GO1532424@black.fi.intel.com>
+References: <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
+ <ZkUcihZR_ZUUEsZp@wunner.de>
+ <20240516083017.GA1421138@black.fi.intel.com>
+ <20240516100315.GC1421138@black.fi.intel.com>
+ <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
+ <ZnvWTo1M_z0Am1QC@wunner.de>
+ <20240626085945.GA1532424@black.fi.intel.com>
+ <ZqZmleIHv1q3WvsO@wunner.de>
+ <20240729080441.GG1532424@black.fi.intel.com>
+ <Zss_zqsJOZKes1Dp@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a14b9d8-967d-4091-8f77-08dcc5919cd7
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2024 05:40:37.1779
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6582
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zss_zqsJOZKes1Dp@wunner.de>
 
-RnJvbTogTmFtYW4gSmFpbiA8bmFtamFpbkBsaW51eC5taWNyb3NvZnQuY29tPiBTZW50OiBTdW5k
-YXksIEF1Z3VzdCAyNSwgMjAyNCAxMDozMiBQTQ0KPiANCj4gT24gOC8yNS8yMDI0IDg6MjcgQU0s
-IE1pY2hhZWwgS2VsbGV5IHdyb3RlOg0KPiA+IEZyb206IE5hbWFuIEphaW4gPG5hbWphaW5AbGlu
-dXgubWljcm9zb2Z0LmNvbT4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCAyMiwgMjAyNCA0OjA5IEFN
-DQo+ID4+DQo+ID4+IFJlc2NpbmQgb2ZmZXIgaGFuZGxpbmcgcmVsaWVzIG9uIHJlc2NpbmQgY2Fs
-bGJhY2tzIGZvciBzb21lIG9mIHRoZQ0KPiA+PiByZXNvdXJjZXMgY2xlYW51cCwgaWYgdGhleSBh
-cmUgcmVnaXN0ZXJlZC4gSXQgZG9lcyBub3QgdW5yZWdpc3Rlcg0KPiA+PiB2bWJ1cyBkZXZpY2Ug
-Zm9yIHRoZSBwcmltYXJ5IGNoYW5uZWwgY2xvc3VyZSwgd2hlbiBjYWxsYmFjayBpcw0KPiA+PiBy
-ZWdpc3RlcmVkLg0KPiA+PiBBZGQgbG9naWMgdG8gdW5yZWdpc3RlciB2bWJ1cyBmb3IgdGhlIHBy
-aW1hcnkgY2hhbm5lbCBpbiByZXNjaW5kIGNhbGxiYWNrDQo+ID4+IHRvIGVuc3VyZSBjaGFubmVs
-IHJlbW92YWwgYW5kIHJlbGlkIHJlbGVhc2UsIGFuZCB0byBlbnN1cmUgcmVzY2luZCBmbGFnDQo+
-ID4+IGlzIGZhbHNlIHdoZW4gZHJpdmVyIHByb2JlIGhhcHBlbnMgYWdhaW4uDQo+ID4+DQo+ID4+
-IEZpeGVzOiBjYTNjZGE2ZmNmMWUgKCJ1aW9faHZfZ2VuZXJpYzogYWRkIHJlc2NpbmQgc3VwcG9y
-dCIpDQo+ID4+IFNpZ25lZC1vZmYtYnk6IE5hbWFuIEphaW4gPG5hbWphaW5AbGludXgubWljcm9z
-b2Z0LmNvbT4NCj4gPj4gLS0tDQo+ID4+ICAgZHJpdmVycy9odi92bWJ1c19kcnYuYyAgICAgICB8
-IDEgKw0KPiA+PiAgIGRyaXZlcnMvdWlvL3Vpb19odl9nZW5lcmljLmMgfCA3ICsrKysrKysNCj4g
-Pj4gICAyIGZpbGVzIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQ0KPiA+Pg0KPiA+PiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9odi92bWJ1c19kcnYuYyBiL2RyaXZlcnMvaHYvdm1idXNfZHJ2LmMNCj4g
-Pj4gaW5kZXggYzg1N2RjMzk3NWJlLi40YmFlMzgyYTNlYjQgMTAwNjQ0DQo+ID4+IC0tLSBhL2Ry
-aXZlcnMvaHYvdm1idXNfZHJ2LmMNCj4gPj4gKysrIGIvZHJpdmVycy9odi92bWJ1c19kcnYuYw0K
-PiA+PiBAQCAtMTk1Miw2ICsxOTUyLDcgQEAgdm9pZCB2bWJ1c19kZXZpY2VfdW5yZWdpc3Rlcihz
-dHJ1Y3QgaHZfZGV2aWNlICpkZXZpY2Vfb2JqKQ0KPiA+PiAgIAkgKi8NCj4gPj4gICAJZGV2aWNl
-X3VucmVnaXN0ZXIoJmRldmljZV9vYmotPmRldmljZSk7DQo+ID4+ICAgfQ0KPiA+PiArRVhQT1JU
-X1NZTUJPTF9HUEwodm1idXNfZGV2aWNlX3VucmVnaXN0ZXIpOw0KPiA+Pg0KPiA+PiAgICNpZmRl
-ZiBDT05GSUdfQUNQSQ0KPiA+PiAgIC8qDQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Vpby91
-aW9faHZfZ2VuZXJpYy5jIGIvZHJpdmVycy91aW8vdWlvX2h2X2dlbmVyaWMuYw0KPiA+PiBpbmRl
-eCBjOTk4OTBjMTZkMjkuLmVhMjZjMGI0NjBkNiAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVycy91
-aW8vdWlvX2h2X2dlbmVyaWMuYw0KPiA+PiArKysgYi9kcml2ZXJzL3Vpby91aW9faHZfZ2VuZXJp
-Yy5jDQo+ID4+IEBAIC0xMjEsNiArMTIxLDEzIEBAIHN0YXRpYyB2b2lkIGh2X3Vpb19yZXNjaW5k
-KHN0cnVjdCB2bWJ1c19jaGFubmVsICpjaGFubmVsKQ0KPiA+Pg0KPiA+PiAgIAkvKiBXYWtlIHVw
-IHJlYWRlciAqLw0KPiA+PiAgIAl1aW9fZXZlbnRfbm90aWZ5KCZwZGF0YS0+aW5mbyk7DQo+ID4+
-ICsNCj4gPj4gKwkvKg0KPiA+PiArCSAqIFdpdGggcmVzY2luZCBjYWxsYmFjayByZWdpc3RlcmVk
-LCByZXNjaW5kIHBhdGggd2lsbCBub3QgdW5yZWdpc3RlciB0aGUgZGV2aWNlDQo+ID4+ICsJICog
-d2hlbiB0aGUgcHJpbWFyeSBjaGFubmVsIGlzIHJlc2NpbmRlZC4gV2l0aG91dCBpdCwgbmV4dCBv
-bm9mZmVyIG1zZyBkb2VzIG5vdCBjb21lLg0KPiA+PiArCSAqLw0KPiA+PiArCWlmICghY2hhbm5l
-bC0+cHJpbWFyeV9jaGFubmVsKQ0KPiA+PiArCQl2bWJ1c19kZXZpY2VfdW5yZWdpc3RlcihjaGFu
-bmVsLT5kZXZpY2Vfb2JqKTsNCj4gPg0KPiA+IFdoZW4gdGhlIHJlc2NpbmQgY2FsbGJhY2sgaXMg
-Km5vdCogc2V0LCB2bWJ1c19vbm9mZmVyX3Jlc2NpbmQoKSBtYWtlcyB0aGUNCj4gPiBjYWxsIHRv
-IHZtYnVzX2RldmljZV91bnJlZ2lzdGVyKCkuIEJ1dCBpdCBkb2VzIHNvIGJyYWNrZXRlZCB3aXRo
-IGdldF9kZXZpY2UoKS8NCj4gPiBwdXRfZGV2aWNlKCkuIFlvdXIgY29kZSBoZXJlIGRvZXMgbm90
-IGRvIHRoZSBicmFja2V0aW5nLiBJcyB0aGVyZSBhIHJlYXNvbiBmb3INCj4gPiB0aGUgZGlmZmVy
-ZW5jZT8gRnJhbmtseSwgSSdtIG5vdCBzdXJlIHdoeSB2bWJ1c19vbm9mZmVyX3Jlc2NpbmQoKSBk
-b2VzIHRoZQ0KPiA+IGJyYWNrZXRpbmcsIGFuZCBJIGNhbid0IGRlZmluaXRpdmVseSBzYXkgaWYg
-aXQgaXMgcmVhbGx5IG5lZWRlZC4gU28gSSBndWVzcyBJJ20NCj4gPiBqdXN0IGFza2luZyBpZiB5
-b3Uga25vdy4gOi0pDQo+ID4NCj4gPiBNaWNoYWVsDQo+IA0KPiBJTUhPLCB3ZSBoYXZlIGFscmVh
-ZHkgTlVMTCBjaGVja2VkIGNoYW5uZWwtPmRldmljZV9vYmogYW5kIG90aGVyIGNvdXBsZQ0KPiBv
-ZiB0aGluZ3MgdG8gbWFrZSBzdXJlIHdlIGFyZSBzYWZlIHRvIGNsZWFuIHRoaXMgdXAuIEF0IG90
-aGVyIHBsYWNlcyBhcw0KPiB3ZWxsLCBJIGRvbid0IHNlZSB0aGUgdXNlIG9mIHB1dCBhbmQgZ2V0
-IGRldmljZS4gU28gSSB0aGluayBpdHMgbm90DQo+IHJlcXVpcmVkLiBJIGFtIG9wZW4gdG8gc3Vn
-Z2VzdGlvbnMuDQo+IA0KPiBSZWdhcmRzLA0KPiBOYW1hbg0KDQpPSy4gSSdtIGdvb2Qgd2l0aCB3
-aGF0IHlvdSd2ZSBzYWlkLCBhbmQgZG9uJ3QgaGF2ZSBhbnkgZnVydGhlciBzdWdnZXN0aW9ucy4N
-CkdvIHdpdGggd2hhdCB5b3VyIHBhdGNoIGFscmVhZHkgaGFzLiA6LSkNCg0KTWljaGFlbA0K
+Hi Lukas,
+
+On Sun, Aug 25, 2024 at 04:29:34PM +0200, Lukas Wunner wrote:
+> On Mon, Jul 29, 2024 at 11:04:41AM +0300, Mika Westerberg wrote:
+> > On Sun, Jul 28, 2024 at 05:41:09PM +0200, Lukas Wunner wrote:
+> > > Do the DROMs on ICM root switches generally lack PCIe Upstream and
+> > > Downstream Adapter Entries?
+> > 
+> > My guess is that they are not populated for ICM host router DROM
+> > entries. These are pretty much Apple stuff and USB4 dropped them
+> > completely in favour of the router operations.
+> 
+> I note that Microsoft specifies a "usb4-port-number" for PCIe Downstream
+> Adapters as well as DP and USB ports:
+> 
+> https://learn.microsoft.com/en-us/windows-hardware/drivers/pci/dsd-for-pcie-root-ports#mapping-native-protocols-pcie-displayport-tunneled-through-usb4-to-usb4-host-routers
+> 
+> Presumably the "usb4-port-number" allows for associating a
+> pci_dev with a tb_port.  So that's a third way to do that,
+> on top of DROM entries and the USB4 router operation.
+
+It matches the "USB4 port" number of the host router.
+
+> What I don't quite understand is whether the "usb4-port-number"
+> is only present on PCIe Adapters of the Host Router or whether
+> it can also exist on PCIe Adapters of Device Routers?
+
+It is is only present on host router and only for PCIe and USB ports
+(I'ven not seen it been used with DisplayPort).
+
+> I would also like to know whether "usb4-port-number" is set on
+> the machines that Esther's quirk seeks to fix?
+
+This is only present in USB4 software connection manager systems so not
+on any of those as far as I can tell.
 
