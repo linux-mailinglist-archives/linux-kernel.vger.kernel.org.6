@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-300625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F61295E635
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:18:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA1E95E63D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CEA1C208EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4D91F2133B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9263524C;
-	Mon, 26 Aug 2024 01:17:49 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A5933D5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91A31FBA;
+	Mon, 26 Aug 2024 01:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="LKEek1ya"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61B733EC;
+	Mon, 26 Aug 2024 01:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724635069; cv=none; b=W6MuA6orfFZI6hu+p7SUWRzP2LOVuK3UPU2YcbI8tkTVk1ZB6kjNrUcBO1479r7Lg4zkmZdhIXLYJvJ86dy2ugpfPrZE6mPNCmnhU7W4OFkqBdrArZRyVQLN1zFMICi/VSZU3+z1CyVFZfnmyGiMS4X2cA1CjtD+5aZpTxfFgD0=
+	t=1724635460; cv=none; b=LviDB21gwSVt3R2LMy6fMPMNz4kcTNWMTjOqUfvld/BuCXEQQqKtwxL+USvRcGA+eXJPp6UTj1ZT4XgJCa/jLoNBpk9vCd/gbnSmCg/HlW6NNxUaLablmZg52iusZVCCgCexDw2mbfApabbCt6DrtrNaWe1ulHgDLhXGnAdYwwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724635069; c=relaxed/simple;
-	bh=WGXREo+pSglzNAmtzH6t1B7+ZyGVSAsDCYsmLWxmDhE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NYwDHdEwv7wP+eyXtqpX+Np/TwdyfQgw703yCtGnEmIKKhA8QCdJWBrSr7SAWE+XbZ4XYh6vSWA/W7h33McLPebWHIzIRtM+iRwxHCSdCY5kIPfsK6T7anzNXNG2qrP8iZdslfcScN0DhLDtWSSEp0J1ELDy/g65xFLjXNrJVlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WsXn201RKzpSwx;
-	Mon, 26 Aug 2024 09:16:05 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5DA7E1800A5;
-	Mon, 26 Aug 2024 09:17:44 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 26 Aug 2024 09:17:43 +0800
-Subject: Re: [PATCH] mtd: ubi: remove unused parameter 'pnum' from
- add_volume()
-To: Wang Zhaolong <wangzhaolong1@huawei.com>, <richard@nod.at>,
-	<miquel.raynal@bootlin.com>, <vigneshr@ti.com>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<yi.zhang@huawei.com>
-References: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <7ef4f6c2-feae-e98b-cc85-a9f92eadaa67@huawei.com>
-Date: Mon, 26 Aug 2024 09:17:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1724635460; c=relaxed/simple;
+	bh=2lhZOhnyTlMgqD2SrXiAJZIq3W7WNtFgPBl1dA/44rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcjXJm0ZwBfRTnm3XxLJrllsjb3rhH6rjVfNRLKp8tqL/VYH6l6NSh7A/FLtGYtRj4hwdDUhuX6+q6cFdiTtTouDRH+wRhNqkin1fm3wvv8l6deaaTG6/LtJd9kdwrj66aP4O2niyItjobJBqyXrALmT65nZJTrWqrPSAPgbqD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=LKEek1ya; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C959314C1E1;
+	Mon, 26 Aug 2024 03:19:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1724635146;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J+QcNhh0VWoV5otdU1nJZBsnrM5AKjg1RiGKnZhNWAU=;
+	b=LKEek1yaWqoDk84IfnpqG0lhZ37tuLeMPuKXe+WPDcZP8odwd4NHtDjlk725lR12m4ipgc
+	TGvPNDbEQ4bGYQbqCYGPt9B2ecQskBMKhEuS/kAR5lO3ms5/EDkwAPXmcYPb42NJm956Me
+	su6g+JeDlUPuI4ZuvpaZE1Nq0m5SsWIOIY7B2TNcNfvZq23BgSV3YIVCKFL0Jy7xNoHGW+
+	5on+AjCi8ph0vtnAqyJYCnJr8mwa42YNkDwQHt4Pkd3knoJbCZCpNTZJS1w/+Crwx6OdLG
+	cKlOepP+fIBVcAayYGnX85svwu5j6ZtxsViwNIPjxwvZRZ4n1Tlxf3hXaFwYzg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ca8414c2;
+	Mon, 26 Aug 2024 01:19:02 +0000 (UTC)
+Date: Mon, 26 Aug 2024 10:18:47 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Docs/filesystems/9p: Convert a goo.gl URL to
+ original one
+Message-ID: <ZsvX90dovlI52Ohd@codewreck.org>
+References: <20240826010949.78305-1-sj@kernel.org>
+ <20240826010949.78305-3-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240826010949.78305-3-sj@kernel.org>
 
-ÔÚ 2024/8/25 16:35, Wang Zhaolong Ð´µÀ:
-> The parameter 'pnum' in the function add_volume() is not used inside the
-> function body. This patch removes this unused parameter to clean up the
-> code and improve readability.
+SeongJae Park wrote on Sun, Aug 25, 2024 at 06:09:49PM -0700:
+> Google URL shortner will be unavailable soon[1].  Replace a shortened
+> URL on 9p.rst with its original one.
 > 
-> This change does not affect the functionality of add_volume() or any other
-> part of the UBI subsystem, as the removed parameter is not utilized.
+> [1] https://developers.googleblog.com/en/google-url-shortener-links-will-no-longer-be-available/
 > 
-> Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
-> ---
->   drivers/mtd/ubi/attach.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
-> index ae5abe492b52..fe9784c90ea4 100644
-> --- a/drivers/mtd/ubi/attach.c
-> +++ b/drivers/mtd/ubi/attach.c
-> @@ -393,8 +393,7 @@ static int validate_vid_hdr(const struct ubi_device *ubi,
->    * to the allocated "av" object in case of success and a negative error code in
->    * case of failure.
->    */
-> -static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai,
-> -					  int vol_id, int pnum,
-> +static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai, int vol_id,
->   					  const struct ubi_vid_hdr *vid_hdr)
->   {
->   	struct ubi_ainf_volume *av;
-> @@ -576,7 +575,7 @@ int ubi_add_to_av(struct ubi_device *ubi, struct ubi_attach_info *ai, int pnum,
->   	dbg_bld("PEB %d, LEB %d:%d, EC %d, sqnum %llu, bitflips %d",
->   		pnum, vol_id, lnum, ec, sqnum, bitflips);
->   
-> -	av = add_volume(ai, vol_id, pnum, vid_hdr);
-> +	av = add_volume(ai, vol_id, vid_hdr);
->   	if (IS_ERR(av))
->   		return PTR_ERR(av);
->   
-> 
+Sorry, we (9p maintainers) slacked on this one - there's been a better
+patch for this one:
+https://lkml.kernel.org/r/20240725180041.80862-1-linux@treblig.org
 
+The sciweavers link doesn't actually work, so it doesn't make sense to
+replace as is.
+(although you could argue that it's probably been broken forever an
+nobody noticed, so it could just as well be removed...)
+
+There's no patch queued for 9p, so if you (Jonathan) want to take the
+other patch please feel free to.
+If it goes through the 9p tree it'll get in the next time we send
+something as I don't feel the need to send Linus a PR just for this, so
+that might be a couple of months further down.
+(I don't like patch series where folks are added in Cc on individual
+patches because it's never clear who is expected to grab the patch in
+the end...)
+
+
+Thanks,
+-- 
+Dominique
 
