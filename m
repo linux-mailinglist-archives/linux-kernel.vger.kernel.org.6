@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-301833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4E295F63C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:15:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AA895F642
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E79282C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5FE1F24E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59577194AEB;
-	Mon, 26 Aug 2024 16:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC9C194A6C;
+	Mon, 26 Aug 2024 16:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYWABbd0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O1qvXrow"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987B44374;
-	Mon, 26 Aug 2024 16:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BD244374;
+	Mon, 26 Aug 2024 16:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688930; cv=none; b=mPIywsxa/zY1JPoOA6DuRdQyXzMrbj6DWYMRGNkWg1Lzhf6xnhTnyaRTV7TygeOEVLpNzN/+SUTrVaF+L6jLMi+wB8nDgBAp8lsX6vhGo4z+F5wzyLULYOU2fRybVrYh48FUWWL/NXZHA1Y5YR3zpPWea0uJprw9VQ+Gy0piPNk=
+	t=1724689022; cv=none; b=satYa1qzMccJYeQIMYMKFWKEW1qOByUV2tACkTSJwSBAVaVGcKO4SuGMCVUK7QXFjxFfiwxywIYVEZoMw8qvw99ECetehJpFZY+P/kIztYM94mimMB0oijfls+TWkLh6NZYeYjLxVa9TYvbteGNQMR+ZQP2OkMSF1AK88Lco2Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688930; c=relaxed/simple;
-	bh=jkqzvuLSKjk6lxkGNGUcsw4Ig8szieDjSx37poI+59o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kysOt7e+BPTbVGfC1Lr7I0xgC1ySTtarFdgs0hTvfXdZY+HXnRzv+WuBoUTvJVzHvlWmJ7M+Ai7T4botpUHd3FTSB3iC6PTGMct2lDB+KkHaBv1jtN7itq1Z1RE+efWcGFqfRv8mNDkOHcgBFOOwwwPDIJJP/vGVSoXga7zFpEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYWABbd0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE00C52FC6;
-	Mon, 26 Aug 2024 16:15:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724688930;
-	bh=jkqzvuLSKjk6lxkGNGUcsw4Ig8szieDjSx37poI+59o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NYWABbd0U6yyuZqn5kmSmh7Xdk00XRb45Dx7+od8kmc/pBgSbzMmA4k5NDBVX2wYI
-	 5iJB/R9LzPZ6f5xCvUyJIXel4a+kYx6vhDtNmtl6Xj21jyiXxOe6qIo7uReIXrv0U2
-	 F+M9qmx/R4K0bPMU1mSFNJFVApkx9rQ9jIvpqMqPKLU9E60rqVNW2O2X2nlh9/A8XC
-	 UD6NzLGtFDvo0O92r7YhbEc/ge4S16B0nZ8viWUeReSOHHgRqogx3TZkk0BYqvR17X
-	 b9hUpRe7laTZBx8dtKx8QUujAaTqLeNA4U+72f5NFg3PMezMyuNq/ubMbJ1jtw0oeN
-	 vSDudxbd3Cijw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-27032e6dbf2so2927846fac.1;
-        Mon, 26 Aug 2024 09:15:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8cOdiTTO4/OnP9JU+0Q3eEaVb3u5sEDk1DzjKK1IJ34WpvfJRaf4W/B9kIA/dKaCq+wMw8Y4rws6Y@vger.kernel.org, AJvYcCUUTB6AlSMTWui6uaFyD/lRp3VYm5hgCSZw05FoB10pVVBegQZtS89eyURodjHn5CdoaBNhn+J7zTSA/mzs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzitKuHFV9J+FjFRFuqOD6FM7BI2mJijb+zugwxH+Uu6SyA+CH5
-	IUHqZni9J98XQDYYH0wevrWVex+CJnVpWYkJuXZ9Bu5aUiVruH2yUEyCPEV12e+4l+ufYFkaBKu
-	K0vGBYCTamT+l7iKxIjL2O0B8mCc=
-X-Google-Smtp-Source: AGHT+IFp1BTLSWH4mpHphZAC/nONYYceOu5PBYhd0g/XSqLewTat+1/1B6joUdncVGCUq66DbIYrXTslw/vMXVK62fc=
-X-Received: by 2002:a05:6871:7419:b0:270:2879:e349 with SMTP id
- 586e51a60fabf-273e6552ce8mr11105378fac.23.1724688929326; Mon, 26 Aug 2024
- 09:15:29 -0700 (PDT)
+	s=arc-20240116; t=1724689022; c=relaxed/simple;
+	bh=r/Y1mfScW9UcQbiPaDA37XL4lBiWZnftoXaKnR1sy4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iMihJFmsOcWk4eakH6Q4BLDU1REnlTHo6k1GcHRGOihVkG8d3pYhBB7yUTtsetoS+bbyyCJo4nND16VzmBCCYCrCh8BTfcT6p4ilKumoXTaGhHsB4cUMLgbGEKCcgu+cK5AIaX/sYguXGuzB9Ia1pJpT4wEGKVO5FHd4fPoNVd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O1qvXrow; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D21EE1C0004;
+	Mon, 26 Aug 2024 16:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724689013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hK8ZLclc1jMdr3Pd0ZxN4ypyAtL2rWb7tLyHxbrERAU=;
+	b=O1qvXrowUMp156WbWlhQfXQQn4ikT936Sj3mKQVoKz4Qe+geU48L95VvCiRKZqHEpEHGg9
+	B+je9keGRJvKOYLC0+prZlt11vVrRPTrdMhgv2iBoHNzhaD5V/tkUll7z2TeRLmUwI/zbQ
+	KtRBEW+MRJb/wZLYbE/R7DdyLlUEBPtLJkROQlUW9vMRlWNf60SUpG6KfSw4xwAo29cAg8
+	1dzpz9HJq1/nU0MeNPQ1cpm3//pMcnrw1AKv5LHk3PrfIQr8ETvwvHARtObZ8HvDRReyD9
+	5C7P9KWWTQroB9eH9v159/Y5//qo61aH0uqhqn1OV5PO0ez2gtHFwDUw8GuJuw==
+Date: Mon, 26 Aug 2024 18:16:50 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Diogo Jahchan Koike <djahchankoike@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ syzbot+c641161e97237326ea74@syzkaller.appspotmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [patch net-next v2] net: fix unreleased lock in cable test
+Message-ID: <20240826181650.46a8fda8@fedora-3.home>
+In-Reply-To: <20240826134656.94892-1-djahchankoike@gmail.com>
+References: <20240826121435.88756-1-djahchankoike@gmail.com>
+	<20240826134656.94892-1-djahchankoike@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
- <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx>
-In-Reply-To: <87mskzcnmf.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 18:15:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
-Message-ID: <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sunil V L <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Mon, Aug 26, 2024 at 5:25=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Mon, Aug 12 2024 at 06:37, Sunil V. L. wrote:
-> > On Mon, Aug 12, 2024 at 06:29:12AM +0530, Sunil V L wrote:
-> >> This series adds support for the below ECR approved by ASWG.
-> >> 1) MADT - https://drive.google.com/file/d/1oMGPyOD58JaPgMl1pKasT-VKsIK=
-ia7zR/view?usp=3Dsharing
-> >>
-> >> The series primarily enables irqchip drivers for RISC-V ACPI based
-> >> platforms.
-> >
-> > This series has spent quite a bit of time now on the list. As you are
-> > aware, few clarifications like _PIC codes are also done now. There is
-> > no major change after you had agreed for the design. So, can this be
-> > considered for the next release please?
->
-> Rafael, if you want to take it through the ACPI tree, then for the
-> irqchip parts please add:
->
->   Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Hi,
 
-Yes, I'm going ro do this.
+Thanks for addressing this, I was unavailable in the past hours to
+quicky respond to the issue so your help is welcome :)
 
-Thank you!
+On Mon, 26 Aug 2024 10:45:46 -0300
+Diogo Jahchan Koike <djahchankoike@gmail.com> wrote:
+
+> fix an unreleased lock in out_dev_put path by removing the (now)
+> unnecessary path.
+> 
+> Reported-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c641161e97237326ea74
+> Fixes: 3688ff3077d3 ("net: ethtool: cable-test: Target the command to the requested PHY")
+> Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
