@@ -1,156 +1,84 @@
-Return-Path: <linux-kernel+bounces-301638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7366695F381
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A434895F37E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90DF1F2126D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9071F21BC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BF018BB84;
-	Mon, 26 Aug 2024 14:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DF2187FF5;
+	Mon, 26 Aug 2024 14:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjEs2Pum"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvCiD4bj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B4E54645;
-	Mon, 26 Aug 2024 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7902FC08;
+	Mon, 26 Aug 2024 14:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724681102; cv=none; b=e3g8nRLkCdnta6ZqKrgL3wzlOF75fcZDVFHH0HuH8r9/sN/j2kEP4Ztn3fjqCm8Zzt4rjkPvKk1ZhO4IlQec2+/FCD5mBQg3+yot3oEqD45SM1N/oQCYitLpcBqavTSMv5pFINAKav42yKCFejpOfbdh+8f4Bgn3tBSuSNVQ+aw=
+	t=1724681097; cv=none; b=dI0F+ud0ny1CAoEla3+dl7wTTdx2vqbvggMcL9jsU7ooZFCBcGicDT0nzjBu0wEN1+CW6c13kdkid8Q/5YfrBDt2xyahb61LLYAc207Cww0cJrfgOeTDMzXhyjCz0KfMj01NG+e5H/Rj3a1Oq0MTGv1RzJ3Cq6GsstTQpnUS9Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724681102; c=relaxed/simple;
-	bh=FsQDFO6YHkpjn8TRzg2jG8CBkSy03DRoXak0/KlbMwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gkn4NoAcIczWywjFNREZ8+kHESqWufec+6TLnuCk8PfGnLcuuIvay5BRzdnNMxB5LN//4XXGBLx7hPtH6Y6RPV11ut8j/ouAAL4bUkTWHIVYpazHqzetNturq+pSOFTI2ks5oEasGv/4Rb+KJFB2rE5QqCs4nNVgG5/qfouFOh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjEs2Pum; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3D39C52FC8;
-	Mon, 26 Aug 2024 14:04:56 +0000 (UTC)
+	s=arc-20240116; t=1724681097; c=relaxed/simple;
+	bh=RqshmThvQvVFQmKHaMRsvx7fi4Gt/PX+vtUtT3n8hhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n9+/LvV7F2dd8gCVoydw2sMrnVyq9KM/D4MiyEWf1mx9yL2+Qo0OQt4FVckVqoGh4277qOfGnstRTSm7JlnWKzD4DlhOCKH0SAaA6iAP0OQgdh2CLp/yAzQn8to7SH7MeV+u0kR8n1ikPJpIHjkNI0Ts5UzhsvIWL9vP4bSj7+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvCiD4bj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9DD6C52FC0;
+	Mon, 26 Aug 2024 14:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724681102;
-	bh=FsQDFO6YHkpjn8TRzg2jG8CBkSy03DRoXak0/KlbMwY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pjEs2PumxmaTGHheC2lEU/YQRPrAXhCFJLe1k0Y5l3vX4GfQYdyBX6YXWsr8IRKzK
-	 NZtH8buHbjZYAWzEpFaBWa3on7+ts+2Q3ttXhOnZ31P00QkQBotdilv4PV0XSbIR1f
-	 j4Gm2Cg+9nimGS9pFcUjDmuoR5BOVookb4pkKyMsmTcYakSItIh6lly/GQan7zcSCx
-	 tbV6KrGS3Abwzv/lVe19QcAL6hgmIiWnyFVrI9UH2Stlgo3MTEuXDZJwyBWEC1yJAZ
-	 D9lT6zrTITrZ/NdUwRQwonm8P7PLc0TdaH9JoEYvGFM0WJ6GYHhfbydHP2GXgqg8S3
-	 hnklK754hiMmQ==
-Message-ID: <5d2fe7b0-f465-4f86-8cc9-5d413dba656b@kernel.org>
-Date: Mon, 26 Aug 2024 16:04:53 +0200
+	s=k20201202; t=1724681096;
+	bh=RqshmThvQvVFQmKHaMRsvx7fi4Gt/PX+vtUtT3n8hhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mvCiD4bjExmwQq/7sVm+i0PbrFCH03O0/69NSbeGxeuOKNtOzgyQ1QvDnfYM5Efo1
+	 9UBXTew3j8D+AVWWBQOo30740MLZGyoShdnlTDsy1rxk+9iQ2my0LJB/CEcFwaPSEd
+	 7OLvwvbogMnAJgl/3moIBET9kmvXdbDzWEYbSTDrtYpTL9j5x34G9lZtBoxUBrtThD
+	 4b8nkq1ZBDI6IJeCat0GVpjZyFa+C9GXZfKCLxWRmz2w7QRwgAjpW6T/gZpP4gCr7n
+	 Mb8HJs75ZE9EaN3+3Pda4dWTL2pCmA6L8qMWUQCBVLxw+mVfClQE+rrS6w68rNJfkF
+	 BHfgUgpQIl0rQ==
+Date: Mon, 26 Aug 2024 09:04:53 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	imx@lists.linux.dev, linux-pci@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/1] dt-bindings: PCI: layerscape-pci: Add deprecated
+ property 'num-viewport'
+Message-ID: <172468109227.92699.12972235014145037669.robh@kernel.org>
+References: <20240823185855.776904-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drivers: gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>,
- Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240826084214.2368673-1-andrei.stefanescu@oss.nxp.com>
- <20240826084214.2368673-3-andrei.stefanescu@oss.nxp.com>
- <fd18295c-6544-4da6-aab0-6d6b9c12581a@kernel.org>
- <974b2f66-e855-4322-99ba-23cecd45c2c5@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <974b2f66-e855-4322-99ba-23cecd45c2c5@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823185855.776904-1-Frank.Li@nxp.com>
 
-On 26/08/2024 16:03, Andrei Stefanescu wrote:
-> Hi Krzysztof,
-> 
-> On 26/08/2024 12:10, Krzysztof Kozlowski wrote:
->> On 26/08/2024 10:42, Andrei Stefanescu wrote:
-> 
-> Thank you for the quick review!
-> 
->>> +	raw_spin_lock_init(&gpio_dev->lock);
->>
->> Why do you use raw spin? Are you sure you need it (some people just
->> replace it thinking this will help them in PREEMPT_RT without actually
->> thinking if it is needed). IOW, do you have here irqchip anywhere?
-> 
-> I don't have an irqchip in this current patch series. There are, however,
-> other patches which add support for interrupts and implementations for
-> power management callbacks. I thought it would be easier for review if I
-> sent those after the current series gets merged.
 
-power management callbacks do not need raw spinlock.
-
+On Fri, 23 Aug 2024 14:58:54 -0400, Frank Li wrote:
+> Copy the 'num-viewport' property from snps,dw-pcie-common.yaml to
+> fsl,layerscape-pcie.yaml to address the below warning. This is necessary
+> due to historical reasons where fsl,layerscape-pcie.yaml does not
+> directly reference snps,dw-pcie-common.yaml.
 > 
->>> +
->>> +static const struct of_device_id siul2_gpio_dt_ids[] = {
->>> +	{ .compatible = "nxp,s32g2-siul2-gpio", .data = &s32g2_device_data },
->>
->> Why do you have match data? There are no other variants.
+> /arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: pcie@3400000: Unevaluated properties are not allowed ('num-viewport' was unexpected)
 > 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/pci/fsl,layerscape-pcie.yaml      | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> We do have another match data in our downstream version. Could I keep it
-> here or should I remove it?
 
-If you already work on new version and you are going to send it soon,
-then it is fine. Otherwise you will add matchdata once there is such need.
-
-Best regards,
-Krzysztof
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
