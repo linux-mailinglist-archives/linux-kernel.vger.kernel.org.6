@@ -1,225 +1,207 @@
-Return-Path: <linux-kernel+bounces-301656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9094495F3B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:18:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9AF95F3B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF810B21E24
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20789281DFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E64189503;
-	Mon, 26 Aug 2024 14:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DF018BBA3;
+	Mon, 26 Aug 2024 14:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CUkhnYIZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="xluqtBuL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Pb0j8WMO"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4161E864
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33D67BB15;
+	Mon, 26 Aug 2024 14:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724681908; cv=none; b=en090cH0EZKUfhcZ7Ec7mUxnYRNtbP9lKJq0JBVXaeNVAdFzU4qFKRauR6l6rkkEEP7Dro4Xe6tVDpDSa9yfvdcgLyeM+dbqlphwWDx6wLJauq7L5e3BByrZ+5+eIT34gIpgqTgfKcJ2BENXx5C2CQwSN1tCFr8vdYZ0DVlFkSU=
+	t=1724682129; cv=none; b=cU9bmz1iRfaT1HKZRV6CWs0eiMNNhlBfYVlo0laLBC0u88zczuI5yfkTHHCYYndRI3cw6n9OVoXAcxkkUMNP4N4xFf+idxU45Tj13YsD+YmTxcKSf+2a0pZQ2L/4rbWjQsJ7X7lyWOSScK3zhoog7heOGQlbxKRVKy6E7NNk874=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724681908; c=relaxed/simple;
-	bh=53R3qtA2DB+9v4U+hc88fR8XKEtW2edB3+GQ9O1Vn6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jxkQm/nO6SfFY1hP3eKsdOTR4sWzwRx9TR7z6w1cRdM8tk65w6bQzxWKnF7hFX1Gv98TMRVSzMQNVsAT+Ynqif27WfP+TDZidmYYCqrRwdcY4CLklX+xuRXU1soJIREekhrRgDEwBh+1Y3ar8znq5CjHy+HhGj1jLzZHGrTEjto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CUkhnYIZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724681905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=epejtgmZ6P+cnuAUKGDMtJ1Zom6Sbo3EnXXkkIT7RGo=;
-	b=CUkhnYIZG97xzha8KOPp3QU5KpnPIDFdPFA6/kqpuBAFNyM2d96Ux9gSEVssg8RKA2U8/s
-	Rf374vOPZ29XyMuxJ3MaBegbSwMpiEK6/JW+n0tdLQaIVn7JR0g39xBmHc7s48Khet71HT
-	AKSz3j5kwbwFKJ/4KMGQqAO+bUTzcW0=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-112-BtETrKljPca1hhJYu_jt8w-1; Mon, 26 Aug 2024 10:18:24 -0400
-X-MC-Unique: BtETrKljPca1hhJYu_jt8w-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2f508065daeso12106151fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:18:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724681903; x=1725286703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=epejtgmZ6P+cnuAUKGDMtJ1Zom6Sbo3EnXXkkIT7RGo=;
-        b=wob8lRTjicXPHXL5IFUxF1p7a/BaK1Wi0oEx7R33NqDydO/fvDegDVOaZJGS1UaR7U
-         +lE4TdVuLe/MEVTahwk3qd7SSasNOA/GjGVIXF27ku4MHXud9jphsUjpO9gPE1f/NkeK
-         lcu/fDJWIZCrAmX1HeyvH1StWWR0mzjlXLlOFHAli4QQnA1MC+1xUVQT+r8Ze3YColzw
-         WHJ8yYHFTR3uu1k/h8dfah614wSIGL/fPv6S7D898MydxlDoPekbNmGZmTcb/OoWbaVL
-         yQJ9qY4uhr1Gi67Z1eIinEI7glpIxK4D2EO9qQzy4L1T/eYVpXV6NJCn+oC/iKusP8w0
-         BfOg==
-X-Gm-Message-State: AOJu0Yws1zeKtX6wMoc8EsFZQa2T8IyYzQ2zbLS4NFk1h7qJQvxJhH5g
-	AgU45kprfIAjPo5Inu3gyCRZUAdBpeSrhNSx8qAFwqRQMeHWRHwIIHImyjdcljFsXDa3scKYg7J
-	FioCU/9FfFXn8OpIF4IwmRuutZqJD7/n8/ZtVzBRIzE7+AY3z17qyExTumioicVlpR/EW/xZHuu
-	0c/xiY7+tVUF0tcEI6e5dV1faDrlXv07GF5RFP
-X-Received: by 2002:a2e:a543:0:b0:2f1:6108:3f00 with SMTP id 38308e7fff4ca-2f4f4743664mr26815261fa.0.1724681903017;
-        Mon, 26 Aug 2024 07:18:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAZYY5jdtpgdgXWZ7zNtGCuEM+zlPT/j+eVCg3rTngipWDx2Xz2dHTuB+p5Bj7qVhnNUS2aqr4ZKB7Tk3FRc4=
-X-Received: by 2002:a2e:a543:0:b0:2f1:6108:3f00 with SMTP id
- 38308e7fff4ca-2f4f4743664mr26815101fa.0.1724681902401; Mon, 26 Aug 2024
- 07:18:22 -0700 (PDT)
+	s=arc-20240116; t=1724682129; c=relaxed/simple;
+	bh=CYbj1j7FjoELrxn0RAajPNibHiZ38GUK7VqfvUgDIA0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=tg1/s04ppuuM85UOo+GcyQFAqjVllfKOSTRcM0oRKdHsgrldAqY7fYUV3KgGilWAVp8Vrkw6BDTZYtpYxDrU7CBnyvgxEorGxSXmAQfmaOaetHIAPrv0jjF0wDpOdejpGJeZ6q7zpIKPyXOMLC2qjRA+CcsISzKt8+NTFbRCVDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=xluqtBuL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Pb0j8WMO; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E41BE1151AA9;
+	Mon, 26 Aug 2024 10:22:06 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Mon, 26 Aug 2024 10:22:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1724682126;
+	 x=1724768526; bh=ASEjOFtcIjkhF5bkMjqXjN8mcsXwNaXpIL2eHm4tIjc=; b=
+	xluqtBuLZNvJPbpIJabYMEVgvEfIecBY4topuzyZssk2Nui0A6zlN+klU4ZuN9Hr
+	s1yVM1NV3JLa8Y+wKwiwc3rrChbmhFwqy0txAmd8OkAEziDAH/6cAoEQEdOLoIe3
+	RNqi678ccIp22JpdtcA6Vi3pjzs4HNKFVdJS38JcMiD3ZPgHv7tq1ewX6Oi97B0Q
+	aRf3JJL/ta1cMgsFf4Ql81pKtPOhU3s2e5Cr509ZmUlP+7dsIevWqPtY6BnIac8E
+	M51+UaOlKk8fhR1B4plsyUDzhzDvHQdI4v7Bf/lntO0hc0/ZAj1NnHlqP6T+UNio
+	wIWxpfGcyFQgt9W6BXE/aA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724682126; x=
+	1724768526; bh=ASEjOFtcIjkhF5bkMjqXjN8mcsXwNaXpIL2eHm4tIjc=; b=P
+	b0j8WMOdX6tFGg8l80rhzOBXm7rDlvBicl5TITD54lAbSGS6EeVUzllm8l/hfO3H
+	jfqXvR1SWqMcEowXHinKftY3jStGR//ueM451Do3Yrb0VqzHhbh6qNbvDSNIIJEp
+	RMOYCZKWfmGo6cLbKRyOuGORu/RQbWoin71pVo0PnrxXl6Guh6N1lhKzp+hEQbl6
+	HhGjGvIeNDiz425JAJgUEzTWDEzp4lCr81s6pzjmdDa1b67Uz+yaDchYAvx3fSzC
+	qeQGT+iaxddg4XLbIaVhK1DkLM6PfJQEn6GU0Ig9zHXLJoUHvT9n9l+HTm1TcVib
+	3DY8wuRpMldLjBSJXk1QQ==
+X-ME-Sender: <xms:jo_MZpD4PeXsE4--zX3DCy-u5tHZuReh8Zx2CqClDVr65o7d4N2jlw>
+    <xme:jo_MZnhRapWA_MVjce7TAT1nGhvt9IbWZOe25kpsiGI2t2NxjB_kDw0zSZpFOQ19R
+    jwq73KypojjuQqb5uI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
+    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
+    ejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsrghrrghvrghnrghksehgohho
+    ghhlvgdrtghomhdprhgtphhtthhopegvnhhkvghrvgifphhosehhohhtmhgrihhlrdgtoh
+    hmpdhrtghpthhtoheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhoohhnghgrrhgthh
+    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopeguvghvihgtvghtrhgvvges
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:jo_MZknYdkUJWPqqIP9gEcWj82_PWzUPxQMRUhfa58PFFA16zwtPyA>
+    <xmx:jo_MZjwZG1A-AGUiecrxmEUZNe3Bgw7BM4VR5D9NRQXFT_r6vEUfsA>
+    <xmx:jo_MZuRqyfuD-f4Bm1HhLcqiGCc6eHhsZ7MT3Mz2Z_xYHB0N9apcgw>
+    <xmx:jo_MZmb34e0yCBDZ27D0U1ng0LjAVaDxK6OWSwvnJP8jMS8w0wYlKQ>
+    <xmx:jo_MZtGhWv3rhutNT_PjpC3QXJyuO6sU2kVYh-90OtIFyLVZ9wGIxHkn>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 794AB1C20064; Mon, 26 Aug 2024 10:22:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821123115.2068812-1-david@redhat.com> <CAMXpfWsoTooEEpgyUvNFNo0tMLmPNO9bfAu_A+rq2+Ri6YbV9Q@mail.gmail.com>
-In-Reply-To: <CAMXpfWsoTooEEpgyUvNFNo0tMLmPNO9bfAu_A+rq2+Ri6YbV9Q@mail.gmail.com>
-From: Mario Casquero <mcasquer@redhat.com>
-Date: Mon, 26 Aug 2024 16:18:11 +0200
-Message-ID: <CAMXpfWuMZJqDndoNX7no4vJm9d0RwkV=OQ3XqQHqkj1YfvsmVw@mail.gmail.com>
-Subject: Re: [PATCH v1] selftests/mm: fix charge_reserved_hugetlb.sh test
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
-	Mina Almasry <almasrymina@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 26 Aug 2024 15:21:45 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Rob Herring" <robh@kernel.org>
+Cc: "Saravana Kannan" <saravanak@google.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Kevin Wheatfox" <enkerewpo@hotmail.com>
+Message-Id: <c0df4919-21b4-4526-8861-f74234ffd390@app.fastmail.com>
+In-Reply-To: 
+ <CAL_JsqLeVPBz4mEedXEm=rb6ghWwROB7jr-PDw3qVsNRz20Z_A@mail.gmail.com>
+References: <20240821-save_resv_name-v1-1-b9c17f103ffb@flygoat.com>
+ <CAL_JsqLeVPBz4mEedXEm=rb6ghWwROB7jr-PDw3qVsNRz20Z_A@mail.gmail.com>
+Subject: Re: [PATCH] of_reserved_mem: Save region name string into struct reserved_mem
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Missing the hyphen :)
-Tested-by: Mario Casquero <mcasquer@redhat.com>
 
-On Mon, Aug 26, 2024 at 4:16=E2=80=AFPM Mario Casquero <mcasquer@redhat.com=
-> wrote:
->
-> This patch has been successfully tested. All hugetlb kernel selftests pas=
-s now.
-> # SUMMARY: PASS=3D12 SKIP=3D0 FAIL=3D0
->
-> Tested by: Mario Casquero <mcasquer@redhat.com>
->
->
-> On Wed, Aug 21, 2024 at 2:31=E2=80=AFPM David Hildenbrand <david@redhat.c=
-om> wrote:
-> >
-> > Currently, running the charge_reserved_hugetlb.sh selftest we can
-> > sometimes observe something like:
-> >
-> >   $ ./charge_reserved_hugetlb.sh -cgroup-v2
-> >   ...
-> >   write_result is 0
-> >   After write:
-> >   hugetlb_usage=3D0
-> >   reserved_usage=3D10485760
-> >   killing write_to_hugetlbfs
-> >   Received 2.
-> >   Deleting the memory
-> >   Detach failure: Invalid argument
-> >   umount: /mnt/huge: target is busy.
-> >
-> > Both cases are issues in the test.
-> >
-> > While the unmount error seems to be racy, it will make the test fail:
-> >         $ ./run_vmtests.sh -t hugetlb
-> >         ...
-> >         # [FAIL]
-> >         not ok 10 charge_reserved_hugetlb.sh -cgroup-v2 # exit=3D32
-> >
-> > The issue is that we are not waiting for the write_to_hugetlbfs process
-> > to quit. So it might still have a hugetlbfs file open, about which
-> > umount is not happy. Fix that by making "killall" wait for the process
-> > to quit.
-> >
-> > The other error ("Detach failure: Invalid argument") does not seem to
-> > result in a test error, but is misleading. Turns out write_to_hugetlbfs=
-.c
-> > unconditionally tries to cleanup using shmdt(), even when we only
-> > mmap()'ed a hugetlb file. Even worse, shmaddr is never even set for the
-> > SHM case. Fix that as well.
-> >
-> > With this change it seems to work as expected.
-> >
-> > Fixes: 29750f71a9b4 ("hugetlb_cgroup: add hugetlb_cgroup reservation te=
-sts")
-> > Reported-by: Mario Casquero <mcasquer@redhat.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Shuah Khan <shuah@kernel.org>
-> > Cc: Muchun Song <muchun.song@linux.dev>
-> > Cc: Mina Almasry <almasrymina@google.com>
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > ---
-> >  .../selftests/mm/charge_reserved_hugetlb.sh   |  2 +-
-> >  .../testing/selftests/mm/write_to_hugetlbfs.c | 21 +++++++++++--------
-> >  2 files changed, 13 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/mm/charge_reserved_hugetlb.sh b/to=
-ols/testing/selftests/mm/charge_reserved_hugetlb.sh
-> > index d680c00d2853a..67df7b47087f0 100755
-> > --- a/tools/testing/selftests/mm/charge_reserved_hugetlb.sh
-> > +++ b/tools/testing/selftests/mm/charge_reserved_hugetlb.sh
-> > @@ -254,7 +254,7 @@ function cleanup_hugetlb_memory() {
-> >    local cgroup=3D"$1"
-> >    if [[ "$(pgrep -f write_to_hugetlbfs)" !=3D "" ]]; then
-> >      echo killing write_to_hugetlbfs
-> > -    killall -2 write_to_hugetlbfs
-> > +    killall -2 --wait write_to_hugetlbfs
-> >      wait_for_hugetlb_memory_to_get_depleted $cgroup
-> >    fi
-> >    set -e
-> > diff --git a/tools/testing/selftests/mm/write_to_hugetlbfs.c b/tools/te=
-sting/selftests/mm/write_to_hugetlbfs.c
-> > index 6a2caba19ee1d..1289d311efd70 100644
-> > --- a/tools/testing/selftests/mm/write_to_hugetlbfs.c
-> > +++ b/tools/testing/selftests/mm/write_to_hugetlbfs.c
-> > @@ -28,7 +28,7 @@ enum method {
-> >
-> >  /* Global variables. */
-> >  static const char *self;
-> > -static char *shmaddr;
-> > +static int *shmaddr;
-> >  static int shmid;
-> >
-> >  /*
-> > @@ -47,15 +47,17 @@ void sig_handler(int signo)
-> >  {
-> >         printf("Received %d.\n", signo);
-> >         if (signo =3D=3D SIGINT) {
-> > -               printf("Deleting the memory\n");
-> > -               if (shmdt((const void *)shmaddr) !=3D 0) {
-> > -                       perror("Detach failure");
-> > +               if (shmaddr) {
-> > +                       printf("Deleting the memory\n");
-> > +                       if (shmdt((const void *)shmaddr) !=3D 0) {
-> > +                               perror("Detach failure");
-> > +                               shmctl(shmid, IPC_RMID, NULL);
-> > +                               exit(4);
-> > +                       }
-> > +
-> >                         shmctl(shmid, IPC_RMID, NULL);
-> > -                       exit(4);
-> > +                       printf("Done deleting the memory\n");
-> >                 }
-> > -
-> > -               shmctl(shmid, IPC_RMID, NULL);
-> > -               printf("Done deleting the memory\n");
-> >         }
-> >         exit(2);
-> >  }
-> > @@ -211,7 +213,8 @@ int main(int argc, char **argv)
-> >                         shmctl(shmid, IPC_RMID, NULL);
-> >                         exit(2);
-> >                 }
-> > -               printf("shmaddr: %p\n", ptr);
-> > +               shmaddr =3D ptr;
-> > +               printf("shmaddr: %p\n", shmaddr);
-> >
-> >                 break;
-> >         default:
-> > --
-> > 2.46.0
-> >
 
+=E5=9C=A82024=E5=B9=B48=E6=9C=8826=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
+=8D=883:09=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Aug 21, 2024 at 8:51=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
+at.com> wrote:
+>>
+>> Previously only a pointer to fdt string pool is saved to struct
+>> reserved_mem as region name.
+>>
+>> As on some architectures booting FDT will be wiped at later initialis=
+ation
+>> stages, this is breaking reserved_mem users.
+>
+> What architectures? Be specific.
+
+It's LoongArch and MIPS, I'll expand commit message.
+
+FDT might be placed in .init sections or memory not managed by kernel, t=
+hus
+it may be wiped out.
+
+>
+> Why is the FDT wiped? It should be preserved and you need it later to
+> implement kexec.
+
+So KEXEC is using kernel's self copy of FDT created by unflatten_and_cop=
+y_device_tree(),
+while reserved-mem scan is performed before copy to ensure that reserved=
+ memory
+are being tracked by memblock before possible memblock_alloc in unflatte=
+n_and_copy_device_tree().
+
+Thanks
+- Jiaxun
+
+>
+>>
+>> Copy and save the whole string into struct reserved_mem to avoid
+>> FDT lifecycle problem.
+>>
+>> Reported-by: Kevin Wheatfox <enkerewpo@hotmail.com>
+>> Closes: https://lore.kernel.org/loongarch/ME4P282MB1397447C3C094554C7=
+AF2E37B58E2@ME4P282MB1397.AUSP282.PROD.OUTLOOK.COM/
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  drivers/of/of_reserved_mem.c    | 2 +-
+>>  include/linux/of_reserved_mem.h | 4 +++-
+>>  2 files changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_me=
+m.c
+>> index 46e1c3fbc769..22841599cd83 100644
+>> --- a/drivers/of/of_reserved_mem.c
+>> +++ b/drivers/of/of_reserved_mem.c
+>> @@ -70,7 +70,7 @@ static void __init fdt_reserved_mem_save_node(unsig=
+ned long node, const char *un
+>>         }
+>>
+>>         rmem->fdt_node =3D node;
+>> -       rmem->name =3D uname;
+>> +       strscpy(rmem->name, uname, RESERVED_MEM_NAME_LEN);
+>>         rmem->base =3D base;
+>>         rmem->size =3D size;
+>>
+>> diff --git a/include/linux/of_reserved_mem.h b/include/linux/of_reser=
+ved_mem.h
+>> index e338282da652..ed9de36c9cc9 100644
+>> --- a/include/linux/of_reserved_mem.h
+>> +++ b/include/linux/of_reserved_mem.h
+>> @@ -8,8 +8,10 @@
+>>  struct of_phandle_args;
+>>  struct reserved_mem_ops;
+>>
+>> +#define RESERVED_MEM_NAME_LEN  128
+>> +
+>>  struct reserved_mem {
+>> -       const char                      *name;
+>> +       char                            name[RESERVED_MEM_NAME_LEN];
+>>         unsigned long                   fdt_node;
+>>         const struct reserved_mem_ops   *ops;
+>>         phys_addr_t                     base;
+>>
+>> ---
+>> base-commit: bb1b0acdcd66e0d8eedee3570d249e076b89ab32
+>> change-id: 20240821-save_resv_name-4f2e2cb8883b
+>>
+>> Best regards,
+>> --
+>> Jiaxun Yang <jiaxun.yang@flygoat.com>
+>>
+
+--=20
+- Jiaxun
 
