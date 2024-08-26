@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-301537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A33695F23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E7795F1AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2EA1C2352B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:57:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984EF1F21264
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60D617623F;
-	Mon, 26 Aug 2024 12:57:06 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1012D188920;
+	Mon, 26 Aug 2024 12:41:22 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C6E155727;
-	Mon, 26 Aug 2024 12:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4CD186603;
+	Mon, 26 Aug 2024 12:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677026; cv=none; b=MyA5KSEgK/g2pl9i62MrrB7LG6Eg+X+cwc79VX7yd1uWS1zXpd155kKNSdf8v90JCUKLB+WFJWg2d4kaMjRdh6sR81bf6rrs+g36K6gAKQ58hFc60z4/F8RMTNdtTwxwlJtsJyL8RhBHrfe5yrJ/QTYnjgRE2IEJDVvFTaxYHpM=
+	t=1724676081; cv=none; b=cfnGG2GHqlZAYfdZIATfucuxS36zF6nR1TPlnj9bXqIrebrOty333vq/9eb268tL2I6sDSEe3R31AiKwUGONsEn4VqO5g0nVN+B1PSip9P825ub2NZcJSEbvn32bs5tBxnEfllc0w8fJ9r/LpP04192gy4vkQt20ZVaxyql7kbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677026; c=relaxed/simple;
-	bh=/5B8H7qfi9GW2W9Wpi79TnVvt5efYx3P5wIeU8M22XM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PnV47JYOGta45F8xaZnL48EN46ZBWQs/O2DU5Tam6i+cbbCShEQ2WwsOAFmWPh4R0ESY7G0eq/e4A669jWceAbNdxcVW2HwFTphd1GzKmMCjW7HGWgpsz59bOTpden68cun8IG+IPFv6dB9dq5Ud2RpeABw3s+wUzgj49vZEu5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	s=arc-20240116; t=1724676081; c=relaxed/simple;
+	bh=MFLXzHhzQtmaPzcBgKiOFv643ZaWNpRNcho6FTTbIsE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H5pwao97bUDlcipS31tIO/dOKO7BzqZa3xSKgf8sUetWoLNgP72evw22ccRjC4NStSv+GscOfWz9ixPcT7VF+4CaZwRBE/O2lXkVBwzPBFPiiv9Ct3ct/iaecsLhJVQc70eESbGhOp0fs8lH/d37IU1O8f78Vo2uULrt36T4Lf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WsrJx2GScz146qY;
-	Mon, 26 Aug 2024 20:56:17 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id F069818006C;
-	Mon, 26 Aug 2024 20:57:02 +0800 (CST)
-Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
- (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 26 Aug
- 2024 20:57:02 +0800
-From: Liao Chen <liaochen4@huawei.com>
-To: <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-	<linux-mmc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wsqxj1w3QzpTfX;
+	Mon, 26 Aug 2024 20:39:37 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 489931800A5;
+	Mon, 26 Aug 2024 20:41:16 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
+ 2024 20:41:15 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <william.zhang@broadcom.com>, <kursad.oney@broadcom.com>,
+	<jonas.gorski@gmail.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<broonie@kernel.org>, <anand.gore@broadcom.com>,
+	<florian.fainelli@broadcom.com>, <rafal@milecki.pl>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-CC: <andrew@codeconstruct.com.au>, <adrian.hunter@intel.com>,
-	<ulf.hansson@linaro.org>, <joel@jms.id.au>
-Subject: [PATCH -next] mmc: sdhci-of-aspeed: fix module autoloading
-Date: Mon, 26 Aug 2024 12:48:51 +0000
-Message-ID: <20240826124851.379759-1-liaochen4@huawei.com>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next 0/2] spi: bcmbca-hsspi: Fix missing pm_runtime_disable()
+Date: Mon, 26 Aug 2024 20:49:01 +0800
+Message-ID: <20240826124903.3429235-1-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,29 +57,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-based on the alias from of_device_id table.
+Fix missing pm_runtime_disable().
 
-Signed-off-by: Liao Chen <liaochen4@huawei.com>
----
- drivers/mmc/host/sdhci-of-aspeed.c | 1 +
- 1 file changed, 1 insertion(+)
+Jinjie Ruan (2):
+  spi: bcmbca-hsspi: Fix missing pm_runtime_disable()
+  spi: bcmbca-hsspi: Use devm_spi_alloc_host()
 
-diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
-index 430c1f90037b..37240895ffaa 100644
---- a/drivers/mmc/host/sdhci-of-aspeed.c
-+++ b/drivers/mmc/host/sdhci-of-aspeed.c
-@@ -510,6 +510,7 @@ static const struct of_device_id aspeed_sdhci_of_match[] = {
- 	{ .compatible = "aspeed,ast2600-sdhci", .data = &ast2600_sdhci_pdata, },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, aspeed_sdhci_of_match);
- 
- static struct platform_driver aspeed_sdhci_driver = {
- 	.driver		= {
+ drivers/spi/spi-bcmbca-hsspi.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
 -- 
 2.34.1
 
