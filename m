@@ -1,435 +1,179 @@
-Return-Path: <linux-kernel+bounces-301199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA0895ED9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:45:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCB295EDA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5941F21E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:45:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F1D1F21EA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EA014658C;
-	Mon, 26 Aug 2024 09:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567AB145FE8;
+	Mon, 26 Aug 2024 09:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jIr7X3Zs"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ciBCQ1Pi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5046F335B5;
-	Mon, 26 Aug 2024 09:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A49629A2;
+	Mon, 26 Aug 2024 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724665525; cv=none; b=ERDmYh/hs9XfAuPKsS+DiU7jXp2H9X71sqnAJ6UASBpYyWs1VbLxmlqU3G3jMtTVRmB8n8jkSYr4dykjnRw8VGvQ0ER/RWLxd53P+vl84iJLmxGAUIRTUTVHNVNh1ep1tiJH1B6PbaMe+ZEcDF5ZQzCPEAftpBdgZwj5twRTJJ8=
+	t=1724665619; cv=none; b=Y65irh3oDHirxGYirmkQinskOgcrvxpOyYA90E5h4s6YIZXR3UNS08tZesjx4WxiXsPbcEQZpc9seVLmswbwQ0uD0d8InR+g/FOeQMT9DfPdMmDHQZi4LS1L/7w+b7dLrG5cjMkJ4FZ9fUtEmCvC9F8npn7+rxSWf6UamG/OPbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724665525; c=relaxed/simple;
-	bh=PhNJCnEqWAf5tOQ3VBj/FIzLFFYPizMxoaqPArGK5Ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyE2hS6llbg/y2H0DQfWKnZIEhKPRo7nEcb5j9zWVx0Fed+LLKWfToGW7ie10uU2ptse8rKwSdrm7sSXiJuIbwU50a1eBSOxtgGWRWWQo0w49ldWp/vwSi+DtsJXcgmrIGShVeQrAuP6hGO1VD9TLe1jtI0BExozHq9kXgDQPiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jIr7X3Zs; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3FE78240005;
-	Mon, 26 Aug 2024 09:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724665520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cm7pTcmop+B8Zg+nbYiYBBLjbkVuEU6sN7SIS3TJIAQ=;
-	b=jIr7X3ZsNbaWgwn/2FZVB/qWjVAkCNv627YiNOV9EtsFgJ8rbmPK83G6X0KIU1OgmkTBur
-	QOGMoEcVVWOc3XLyLft0yKn1L6Xzrs9ZBtfLa9MCBT4MZ/N3+cNM/U4TUAzwXxYr/6v6+R
-	wOYm6+42QY4/T1cVe9afQNPxJr1L32STAD0qG2QvZCEzfOAzajcaK9U3PX8wson2RfEtKj
-	+DtDByZNvPGY1KibzpEPyiinuXufj2Af/DkPLu2QPDiNKcVe75KY88EAqM+eWezH968g7v
-	4FN/h768YMHUa+PUsP3MwlTSeqCJXw3wlrfDfiZJfwElYnd/jLyDKyixJ/KKjg==
-Date: Mon, 26 Aug 2024 11:45:19 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: xianwei.zhao@amlogic.com
-Cc: Yiting Deng <yiting.deng@amlogic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
-Message-ID: <2024082609451907fd19e2@mail.local>
-References: <20240823-rtc-v1-0-6f70381da283@amlogic.com>
- <20240823-rtc-v1-2-6f70381da283@amlogic.com>
+	s=arc-20240116; t=1724665619; c=relaxed/simple;
+	bh=mCXIn7qsNRE20+tOnqqQbOI6naJ2PK9DJLRExbHkxXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IK9xXOKWFEYZTeP68DSdWekqJcJmGR1Mus0f3gm19CoWa8rhv7XYwrzrNxd4sPBhvkg2FSndYySEXXAwjPdL/TZ/aygl3nofYh+m/tFoXcwBrWwTOuhORSaAAa7pAvD/90NHzOmRWc38Ili+GkUul/LyhIs91TDediKqVzb6Dm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ciBCQ1Pi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724665610;
+	bh=I/OcPAIhAo/+/MJKv9T9G17d+Q2/Hwz2KsPesi4T8nU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ciBCQ1Pil0X+TE2iSscNdfQ14CCuqyHfPDujxvumWvJGRWJghMyRZDNrn3fkJOQzo
+	 DnMedAgY5qoH8giM98Frag/wDP4Xmo5qzhE5OWaWPvteTQiGSwoqXzdTdbFtDmkKiw
+	 4lsffe0tzQMm/TCVOIIzcw2mwlRuwpJ2BwcZsylgZWcXKpnP5vDPYx4GkG2dtR40Vw
+	 91wNtb21/oK1W1IQRlUoXDIP2ue9ofr0+JUWCD7g57OWF2kz2RHDxxdKxNuWWB+/QH
+	 urj93rPDjDnXqBaJzISQZrRogBz2R+6VrNfbJbLw3oqTOUoz3ZCJVkXGhjaNINQWRe
+	 Ym9tbFsY3dVRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wsm6L47L6z4wbr;
+	Mon, 26 Aug 2024 19:46:50 +1000 (AEST)
+Date: Mon, 26 Aug 2024 19:46:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Zhiguo Jiang <justinjiang@vivo.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: boot warning after merge of the mm tree
+Message-ID: <20240826194648.407fdf58@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: multipart/signed; boundary="Sig_/679xP.HeWYbJhl=NG=mSkoa";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 23/08/2024 17:19:45+0800, Xianwei Zhao via B4 Relay wrote:
-> From: Yiting Deng <yiting.deng@amlogic.com>
-> 
-> Support for the on-chip RTC found in some of Amlogic's SoCs such as the
-> A113L2 and A113X2.
-> 
-> Signed-off-by: Yiting Deng <yiting.deng@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  drivers/rtc/Kconfig       |  12 +
->  drivers/rtc/Makefile      |   1 +
->  drivers/rtc/rtc-amlogic.c | 589 ++++++++++++++++++++++++++++++++++++++++++++++
+--Sig_/679xP.HeWYbJhl=NG=mSkoa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As pointed out, this is the third amlogic driver so the name of the file
-must be more specific.
+Hi all,
 
-> +static void aml_set_time(struct aml_rtc_data *rtc, u32 time_sec)
+After merging the mm tree, today's linux-next boot test (powerpc
+pseries_le_defconfig) produced many warnings like this:
 
-Is indirection necessary, this function is used only once
+Run /init as init process
+mount (55) used greatest stack depth: 28240 bytes left
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at mm/rmap.c:443 unlink_anon_vmas+0x23c/0x358
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc5-06732-g133a683d26fd =
+#14
+Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200=
+ 0xf000004 of:SLOF,HEAD pSeries
+NIP:  c0000000004d0208 LR: c0000000004d0158 CTR: c00000000121d230
+REGS: c0000000049bf550 TRAP: 0700   Not tainted  (6.11.0-rc5-06732-g133a683=
+d26fd)
+MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 44004222  XER=
+: 20000000
+CFAR: c0000000004d019c IRQMASK: 0=20
+GPR00: c0000000004d0158 c0000000049bf7f0 c00000000167b100 c000000008b5e2b0=
+=20
+GPR04: c000000008b5e300 0000000000000006 c00000000445a108 0000000000000000=
+=20
+GPR08: 0000000000000000 0000000000000001 ffffffffffffffff c0000000013550d8=
+=20
+GPR12: 0000000000000000 c000000002b90000 0000000000000000 0000000000000000=
+=20
+GPR16: 0000000000000000 c000000006cea000 c00000000405e3c0 c000000006556500=
+=20
+GPR20: c000000006ce5000 c000000002a30308 0000000000000000 c000000008ba8398=
+=20
+GPR24: c000000008ba8388 c000000008b60310 c000000002acb790 5deadbeef0000100=
+=20
+GPR28: c000000008ba8398 5deadbeef0000122 c000000008ba8388 c000000008b60300=
+=20
+NIP [c0000000004d0208] unlink_anon_vmas+0x23c/0x358
+LR [c0000000004d0158] unlink_anon_vmas+0x18c/0x358
+Call Trace:
+[c0000000049bf7f0] [c0000000004d00f0] unlink_anon_vmas+0x124/0x358 (unrelia=
+ble)
+[c0000000049bf860] [c0000000004a7eec] free_pgtables+0x1d0/0x368
+[c0000000049bf930] [c0000000004bce20] exit_mmap+0x1c0/0x578
+[c0000000049bfa70] [c000000000151f80] __mmput+0x60/0x1e0
+[c0000000049bfaa0] [c0000000005a6980] begin_new_exec+0x6e0/0xed0
+[c0000000049bfb20] [c0000000006405a8] load_elf_binary+0x460/0x1b68
+[c0000000049bfc70] [c0000000005a4088] bprm_execve+0x2ac/0x754
+[c0000000049bfd40] [c0000000005a5de0] do_execveat_common+0x188/0x250
+[c0000000049bfde0] [c0000000005a71c4] sys_execve+0x54/0x6c
+[c0000000049bfe10] [c000000000030980] system_call_exception+0x120/0x310
+[c0000000049bfe50] [c00000000000d6a0] system_call_common+0x160/0x2c4
+--- interrupt: c00 at 0x7fff98ea1638
+NIP:  00007fff98ea1638 LR: 000000001004a12c CTR: 0000000000000000
+REGS: c0000000049bfe80 TRAP: 0c00   Not tainted  (6.11.0-rc5-06732-g133a683=
+d26fd)
+MSR:  800000000280f033 <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 22002824  =
+XER: 00000000
+IRQMASK: 0=20
+GPR00: 000000000000000b 00007fffcec19410 00007fff98f79900 000001001dc20410=
+=20
+GPR04: 000001001dc20440 000001001dc20450 0000000000000000 0000000000000000=
+=20
+GPR08: 000001001dc20410 0000000000000000 0000000000000000 0000000000000000=
+=20
+GPR12: 0000000000000000 00007fff98ffa9a0 0000000000000000 0000000000000000=
+=20
+GPR16: 0000000000000000 0000000000000000 0000000000000000 00000000100b8fd0=
+=20
+GPR20: 00000000100d03a2 00000000100b8f90 0000000000000000 0000000000000000=
+=20
+GPR24: 0000000000000000 00000000100e77b8 00000000100b8700 00000000100d03e6=
+=20
+GPR28: 000001001dc20450 00000000100d03e6 000001001dc20410 000001001dc20440=
+=20
+NIP [00007fff98ea1638] 0x7fff98ea1638
+LR [000000001004a12c] 0x1004a12c
+--- interrupt: c00
+Code: fbbf0018 7fdff378 48033221 60000000 ebd90000 7c39e040 3bdefff0 418200=
+a8 e87f0008 e9430038 312affff 7d295110 <0b090000> e9430040 312affff 7d29511=
+0=20
+---[ end trace 0000000000000000 ]---
+mkdir (59) used greatest stack depth: 28176 bytes left
 
-> +{
-> +	if (rtc->config->gray_stored)
-> +		time_sec = binary_to_gray(time_sec);
-> +	regmap_write(rtc->map, RTC_COUNTER_REG, time_sec);
-> +}
-> +
-> +static u32 aml_read_time(struct aml_rtc_data *rtc)
-Ditto
+Bisected to commit
 
-> +{
-> +	u32 time_sec;
-> +
-> +	regmap_read(rtc->map, RTC_REAL_TIME, &time_sec);
-> +	if (rtc->config->gray_stored)
-> +		time_sec = gray_to_binary(time_sec);
-> +	return time_sec;
-> +}
-> +
-> +static u32 aml_read_alarm(struct aml_rtc_data *rtc)
-Ditto
+  1cd7eb306a54 ("vma remove the unneeded avc bound with non-CoWed folio")
 
-> +{
-> +	u32 alarm_sec;
-> +
-> +	regmap_read(rtc->map, RTC_ALARM0_REG, &alarm_sec);
-> +	if (rtc->config->gray_stored)
-> +		alarm_sec = gray_to_binary(alarm_sec);
-> +	return alarm_sec;
-> +}
-> +
-> +static void aml_set_alarm(struct aml_rtc_data *rtc, u32 alarm_sec)
-Ditto
+I have reverted that commit for today.
 
-> +{
-> +	if (rtc->config->gray_stored)
-> +		alarm_sec = binary_to_gray(alarm_sec);
-> +	regmap_write(rtc->map, RTC_ALARM0_REG, alarm_sec);
-> +}
-> +
-> +static int aml_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev);
-> +	time64_t alarm_sec;
-> +
-> +	if (alarm->enabled) {
+--=20
+Cheers,
+Stephen Rothwell
 
-Why aren't you setting the alarm when it is not enabled?
+--Sig_/679xP.HeWYbJhl=NG=mSkoa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> +		regmap_update_bits(rtc->map, RTC_CTRL,
-> +				   RTC_ALRM0_EN, RTC_ALRM0_EN);
-> +		regmap_update_bits(rtc->map, RTC_INT_MASK,
-> +				   RTC_ALRM0_IRQ_MSK, 0);
-> +
-> +		alarm_sec = rtc_tm_to_time64(&alarm->time);
-> +		if (alarm_sec > U32_MAX) {
+-----BEGIN PGP SIGNATURE-----
 
-This is never going to happen, the test and error message are not
-necessary.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMTwgACgkQAVBC80lX
+0Gz7Hgf/SkPRykVm+r9mUMVwXAytiICg8PYztU5H3Pth1yvSI/EHdAgD2GkYIgj7
+fsOOVkSuEQvmyZ17HY0hmD8jQQmvf5BfWc7hA2VX/kPdwv2OtQp9VXYog5anMxz3
+Rw/PEcnSNyHEfsPSFG95AFj36FjWq06rR+g30BxDRjPu36DWNKCXuTLmQ7iq84dM
+KoXoWYOFZEnLFY02G69lLhrH355qlrWaPCzFdRSQL3MQ+PIG8QVQPSTZTvolBAq+
+gCGcZAuE9dpLspZzL8VtleK/QM4vH2eishGzXMQBtB9RCOW7QC8WO4PZm6VJLU6I
+emvcjTW0eUxJ3esgEp6CRTZ8FYFGvw==
+=BD+p
+-----END PGP SIGNATURE-----
 
-> +			dev_err(dev, "alarm value invalid!\n");
-> +			return -EINVAL;
-> +		}
-> +		aml_set_alarm(rtc, alarm_sec);
-> +	}
-> +	dev_dbg(dev, "%s: alarm->enabled=%d alarm_set=%llds\n", __func__,
-> +		alarm->enabled, alarm_sec);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aml_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev);
-> +	u32 alarm_sec;
-> +	u32 reg_val;
-> +	int alarm_enable, alarm_mask;
-> +
-> +	alarm_sec = aml_read_alarm(rtc);
-> +	rtc_time64_to_tm(alarm_sec, &alarm->time);
-> +
-> +	regmap_read(rtc->map, RTC_CTRL, &reg_val);
-> +	alarm_enable = FIELD_GET(RTC_ALRM0_EN, reg_val);
-> +
-> +	regmap_read(rtc->map, RTC_INT_MASK, &reg_val);
-> +	alarm_mask = FIELD_GET(RTC_ALRM0_IRQ_MSK, reg_val);
-> +
-> +	alarm->enabled = (alarm_enable && !alarm_mask) ? 1 : 0;
-> +	dev_dbg(dev, "%s: alarm->enabled=%d alarm=%us\n", __func__,
-> +		alarm->enabled, alarm_sec);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t aml_rtc_handler(int irq, void *data)
-> +{
-> +	struct aml_rtc_data *rtc = (struct aml_rtc_data *)data;
-> +
-> +	regmap_write(rtc->map, RTC_ALARM0_REG, 0);
-> +	regmap_update_bits(rtc->map, RTC_INT_CLR,
-> +			   RTC_ALRM0_IRQ_STATUS, RTC_ALRM0_IRQ_STATUS);
-
-Are you sure regmap_update_bits is necessary here?
-
-> +
-> +	rtc_update_irq(rtc->rtc_dev, 1, RTC_AF | RTC_IRQF);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-
-
-> +static int aml_rtc_adjust_sec(struct device *dev, u32 match_counter,
-> +			      int ops, int enable)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev->parent);
-> +	u32 reg_val;
-> +
-> +	if (!FIELD_FIT(RTC_MATCH_COUNTER, match_counter)) {
-> +		pr_err("%s: invalid match_counter\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	reg_val = FIELD_PREP(RTC_SEC_ADJUST_CTRL, ops)
-> +		  | FIELD_PREP(RTC_MATCH_COUNTER, match_counter)
-> +		  | FIELD_PREP(RTC_ADJ_VALID, enable);
-> +	/* Set sec_adjust_ctrl, match_counter and Valid adjust */
-> +	regmap_write(rtc->map, RTC_SEC_ADJUST_REG, reg_val);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aml_rtc_set_calibration(struct device *dev, u32 calibration)
-> +{
-> +	int cal_ops, enable, match_counter;
-> +	int ret;
-> +
-> +	match_counter = FIELD_GET(RTC_MATCH_COUNTER, calibration);
-> +	cal_ops = FIELD_GET(RTC_SEC_ADJUST_CTRL, calibration);
-> +	enable = FIELD_GET(RTC_ADJ_VALID, calibration);
-> +
-> +	ret = aml_rtc_adjust_sec(dev, match_counter, cal_ops, enable);
-> +	dev_dbg(dev, "%s: Success to store RTC calibration attribute\n",
-> +		__func__);
-> +
-> +	return ret;
-> +}
-> +
-> +static int aml_rtc_get_calibration(struct device *dev, u32 *calibration)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev->parent);
-> +	u32 reg_val;
-> +
-> +	regmap_read(rtc->map, RTC_SEC_ADJUST_REG, &reg_val);
-> +	*calibration = FIELD_GET(RTC_SEC_ADJUST_CTRL | RTC_MATCH_COUNTER, reg_val);
-> +	/* BIT is only UL defined，and GENMASK has no type, its' donot used together */
-> +	*calibration |= FIELD_PREP(RTC_ADJ_VALID, FIELD_GET(RTC_ADJ_VALID, reg_val));
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * The calibration value transferred from buf takes bit[18:0] to represent
-> + * match_counter, while takes bit[20:19] to represent sec_adjust_ctrl, bit[23]
-> + * to represent adj_valid. enable/disable sec_adjust_ctrl and match_counter.
-> + * @buf: Separate buf to match_counter, sec_adjust_ctrl and adj_valid
-> + *	 match_counter: bit[18:0], value is 0 ~ 0x7fff
-> + *	 sec_adjust_ctrl: bit[20:19], value is 0 ~ 2. 3 to insert a second once every
-> + *	 match_counter+1 seconds, 2 to swallow a second once every match_counter+1 seconds
-> + *	 0 or 1 to no adjustment
-> + *	 adj_valid: bit[23], value is 0 or 1, 0 to disable sec_adjust_ctrl and
-> + *	 match_counter, and 1 to enable them.
-> + */
-> +static ssize_t rtc_calibration_store(struct device *dev,
-> +				     struct device_attribute *attr,
-> +				     const char *buf, size_t count)
-> +{
-> +	int retval;
-> +	int calibration = 0;
-> +
-> +	if (sscanf(buf, " %i ", &calibration) != 1) {
-> +		dev_err(dev, "Failed to store RTC calibration attribute\n");
-> +		return -EINVAL;
-> +	}
-> +	retval = aml_rtc_set_calibration(dev, calibration);
-> +
-> +	return retval ? retval : count;
-> +}
-> +
-> +static ssize_t rtc_calibration_show(struct device *dev,
-> +				    struct device_attribute *attr, char *buf)
-> +{
-> +	int  retval = 0;
-> +	u32  calibration = 0;
-> +
-> +	retval = aml_rtc_get_calibration(dev, &calibration);
-> +	if (retval < 0) {
-> +		dev_err(dev, "Failed to read RTC calibration attribute\n");
-> +		sprintf(buf, "0\n");
-> +		return retval;
-> +	}
-> +
-> +	return sprintf(buf, "0x%x\n", calibration);
-> +}
-> +static DEVICE_ATTR_RW(rtc_calibration);
-> +
-> +static int rtc_set_div256_adjust(struct device *dev, u32 *value)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev->parent);
-> +	u32 div256_adj;
-> +
-> +	div256_adj = FIELD_PREP(RTC_DIV256_ADJ_DSR | RTC_DIV256_ADJ_VAL, *value);
-> +	/*
-> +	 * AO_RTC_SEC_ADJUST_REG bit 24 insert/remove(1/0) a div256 cycle,
-> +	 * bit 25 valid/invalid(1/0) div256_adj_val
-> +	 */
-> +	regmap_write_bits(rtc->map, RTC_SEC_ADJUST_REG,
-> +			  RTC_DIV256_ADJ_DSR | RTC_DIV256_ADJ_VAL, div256_adj);
-> +	/* rtc need about 30ms to adjust its time after written */
-> +	mdelay(30);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rtc_get_div256_adjust(struct device *dev, u32 *value)
-> +{
-> +	struct aml_rtc_data *rtc = dev_get_drvdata(dev->parent);
-> +	u32 reg_val;
-> +
-> +	regmap_read(rtc->map, RTC_SEC_ADJUST_REG, &reg_val);
-> +	*value = FIELD_GET(RTC_DIV256_ADJ_DSR | RTC_DIV256_ADJ_VAL, reg_val);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * div256 adjust function is controlled using bit[24] and bit[25].
-> + * transferred buf takes bit[0] to represent div256 adj val, bit[1]
-> + * to represent div256 adj enable/disable. div256 cycle means that adjust
-> + * 1/32768/256 once by written once, it's val is equal to 1/128s
-> + * @buf: 3: enable div256 adjust and insert a div256 cycle
-> + *	 2: enable div256 adjust and remove a div256 cycle
-> + *	 1 or 0: disable div256 adjust
-> + */
-> +static ssize_t rtc_div256_adjust_store(struct device *dev,
-> +				       struct device_attribute *attr,
-> +				       const char *buf, size_t count)
-> +{
-> +	int retval;
-> +	u32 value = 0;
-> +
-> +	if (sscanf(buf, " %i ", &value) != 1) {
-> +		dev_err(dev, "Failed to store RTC div256 adjust attribute\n");
-> +		return -EINVAL;
-> +	}
-> +	retval = rtc_set_div256_adjust(dev, &value);
-> +
-> +	return retval ? retval : count;
-> +}
-> +
-> +static ssize_t rtc_div256_adjust_show(struct device *dev,
-> +				      struct device_attribute *attr, char *buf)
-> +{
-> +	int retval = 0;
-> +	u32 value = 0;
-> +
-> +	retval = rtc_get_div256_adjust(dev, &value);
-> +	if (retval < 0) {
-> +		dev_err(dev, "Failed to read RTC div256 adjust attribute\n");
-> +		sprintf(buf, "0\n");
-> +		return retval;
-> +	}
-> +
-> +	return sprintf(buf, "0x%x\n", value);
-> +}
-> +static DEVICE_ATTR_RW(rtc_div256_adjust);
-> +
-> +static struct attribute *aml_rtc_attrs[] = {
-> +	&dev_attr_rtc_calibration.attr,
-> +	&dev_attr_rtc_div256_adjust.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group aml_rtc_sysfs_files = {
-> +	.attrs	= aml_rtc_attrs,
-> +};
-> +
-
-You must use the standard RTC API to handle calibration, see
-.read_offset and .set_offset
-
-> +static void aml_rtc_init(struct device *dev, struct aml_rtc_data *rtc)
-> +{
-> +	u32 reg_val;
-> +	u32 rtc_enable;
-> +
-> +	regmap_read(rtc->map, RTC_CTRL, &reg_val);
-> +	rtc_enable = FIELD_GET(RTC_ENABLE, reg_val);
-> +	if (!rtc_enable) {
-> +		if (clk_get_rate(rtc->sclk) == OSC_24M) {
-> +			/* select 24M oscillator */
-> +			regmap_update_bits(rtc->map, RTC_CTRL, RTC_OSC_SEL, RTC_OSC_SEL);
-> +
-> +			/*
-> +			 * Set RTC oscillator to freq_out to freq_in/((N0*M0+N1*M1)/(M0+M1))
-> +			 * Enable clock_in gate of oscillator 24MHz
-> +			 * Set N0 to 733, N1 to 732
-> +			 */
-> +			reg_val = FIELD_PREP(RTC_OSCIN_IN_EN, 1)
-> +				  | FIELD_PREP(RTC_OSCIN_OUT_CFG, 1)
-> +				  | FIELD_PREP(RTC_OSCIN_OUT_N0M0, RTC_OSCIN_OUT_32K_N0)
-> +				  | FIELD_PREP(RTC_OSCIN_OUT_N1M1, RTC_OSCIN_OUT_32K_N1);
-> +			regmap_write_bits(rtc->map, RTC_OSCIN_CTRL0, RTC_OSCIN_IN_EN
-> +					  | RTC_OSCIN_OUT_CFG | RTC_OSCIN_OUT_N0M0
-> +					  | RTC_OSCIN_OUT_N1M1, reg_val);
-> +
-> +			/* Set M0 to 2, M1 to 3, so freq_out = 32768 Hz*/
-> +			reg_val = FIELD_PREP(RTC_OSCIN_OUT_N0M0, RTC_OSCIN_OUT_32K_M0)
-> +				  | FIELD_PREP(RTC_OSCIN_OUT_N1M1, RTC_OSCIN_OUT_32K_M1);
-> +			regmap_write_bits(rtc->map, RTC_OSCIN_CTRL1, RTC_OSCIN_OUT_N0M0
-> +					  | RTC_OSCIN_OUT_N1M1, reg_val);
-> +		} else {
-> +			/* select 32K oscillator */
-> +			regmap_write_bits(rtc->map, RTC_CTRL, RTC_OSC_SEL, 0);
-> +		}
-> +		/* Enable RTC */
-> +		regmap_write_bits(rtc->map, RTC_CTRL, RTC_ENABLE, RTC_ENABLE);
-
-		This must not be done at probe time, else you loose the
-		important information taht the time has never been set. Instead,
-		it should only be enabled on the first .set_time invocation do
-		you could now in .read_time that the time is currently invalid.
-
-> +		usleep_range(100, 200);
-> +	}
-> +	regmap_write_bits(rtc->map, RTC_INT_MASK,
-> +			  RTC_ALRM0_IRQ_MSK, RTC_ALRM0_IRQ_MSK);
-> +	regmap_write_bits(rtc->map, RTC_CTRL, RTC_ALRM0_EN, 0);
-> +}
-> +
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--Sig_/679xP.HeWYbJhl=NG=mSkoa--
 
