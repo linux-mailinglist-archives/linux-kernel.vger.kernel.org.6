@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-300808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A529A95E8B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:28:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424D695E8B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B026B211B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7DA281553
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5093E12BF24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591D513EFF3;
 	Mon, 26 Aug 2024 06:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="JPO1baus"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2050.outbound.protection.outlook.com [40.107.215.50])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="y9PzwNaK"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2065.outbound.protection.outlook.com [40.107.255.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5F213DB8D;
-	Mon, 26 Aug 2024 06:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A0D13DBB7;
+	Mon, 26 Aug 2024 06:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724653541; cv=fail; b=kIEOV0GigPUx7NS0DSg8e+kqP8p+Ki6W1dkLaRKIagDm6INcGsM1KPiI3UdlL172SiIFyTOHfnF4cJap4mnRGs25R8lEEWH4czb5RPcoLgokX6/H5on+QwYp3h7rNma1WfN+klkyGDS6R6RjfBqYEY9d3FSPCkhLGUe0SXiZHSM=
+	t=1724653541; cv=fail; b=mWNGOVsVilAHKft5lUSQP/TFRmnRjj/c3krb9T9+csvyjkhvM4KWvzqLFCKe4PC/0bTANazwEJhhbgMvLhD23oo6PLu+IUZAPYydyLZWh8FqsEDf7E/xVNceQKWWU8fQ6JbbZpkC3CjEOhGKpZMdaQR2KHZlNBJ4FukgJvmDvjM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724653541; c=relaxed/simple;
-	bh=W1y+C4sXnox4wumSSdh7WwUCooTgolgBiJuZYNS8v0o=;
+	bh=IjUBTAVCU5Y6ChjiBa/OvcgHFZFxyyiZfGefmSk6xyg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cwz7ROWnQfZS6jzYIbWvVlgIQg/x9RDw7sAwa1oxmy2A+0Rvpb5If3sXvB1zpDJrsFPFb9t3RCYFgTPwEVm+h63YI+t4BSIFYDGrKO/HnJ5+7didWf9l8rk2KL95i/MPdi35Im/B/r94diELH2xUPolSf6GxEzGQxq2q2/pbRQ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=JPO1baus; arc=fail smtp.client-ip=40.107.215.50
+	 MIME-Version:Content-Type; b=dyJYd/fXz9XeVSmUUUU1571K7bssxkAgwTwTUqXsM+5/Pfjq+XPlA7PVuuuVDOA8bHjTifgz0XuVaJkh3ttOtqG2NJA3SRRhkWU4IcZH7WyaaMWbBj6Npak3/SWHcLHYPG/To9k2iXyIlq8ggBZISIM4FpDEJhXpmh/eapuUovQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=y9PzwNaK; arc=fail smtp.client-ip=40.107.255.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cWTrJgqKVrqWM0XFUnjF6Piumosv0PiA/ThrHAkpIJKF6iTfodzO1wTL75eDoFX7WPYjdpeBil2g1MA394MULOqiEZqZWbrElzVAxWKDDChRWITBlzVafr1ILMT+kq8CDxQGsPNQO/HrdtFVeoIJ2QBEAJ+w2/v8V1AaO2KfTjoA6ZP0P0wAXgeOwewY7tSgY9AGKDGyMEei8XelB9un40hJOO/040cOXag17kOb8PAHsLNycSGrTlYEzZ3qBhQZEpRjCy6oa9EOw8oBlfvGBjcswOKnJuTXhIf7qGVuLYVhMfUtdqik3MsC0JdC68aEEwVIQPQcEYHqVSY5tePBsw==
+ b=pGe+CFPRqj0P0x6ZICXZphOATrv6z8bSA3JZIPlserZcCjqC4j5RSEMsXoI1aXebeWV1NZ1gSc2ddeJeQYZQhAcOs7h0bEmge4wThIA09zSGpeReuS+KxartdqCP3MR+eVEIBgVJ/7AkxOwPuONTQISCNm6miz/CVRzhus/IIFHrsArw2D9ZbXdu7KwZugvzgkijcYOfeovsyHiE/g4ST93zCRlhnIEd32NtTS4q2KFI3ovj5gmP+Gcfhn4N2WYKIW0Wk5zq2Us8D3H0bE6ILTIiB1OTS1OzsIE87JwG1MqR6Tdt9QW4zXjueZpTYKCUhlw5N/rwgBMnnzhsal0/qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/a3fmLxoiZoHer3nbvtXCi+p9e6DuNqkqeX2BgsIrCA=;
- b=KGpqaNEq4LqtFodFBAjcVtBIQXQpDFa/CVYM6Ve9R+nAPg1YXiR2QF6j+pGm+7AMnIbO3rQlkA99fFhQ2uoH22LfvGGfy+7fZNT2wsTre/yy1CYXh6NHuMVmL5ttyuHcC6buZpe07Ptb5zJW6lpTlzYupRunJKK33F07zTZtRx71oY3F91rOwtBY2taL6rIaAT8Ho315AgErlTgGhWpwy0eWCQH+E9o/9bjAeUWksF6HVC91c0AU0aAuAdEhWIc/Hez7PVu9fWEeQWX7wFk6MtnhLOL1gJdSF2Ydl6yDgJW91Kk0PumbNOlL3DRU+FpQ1kYW1CEtCQuuYjisF5R56A==
+ bh=hgFXoaC/5DtSawXO9Z49kR8+2OHTKZslFpSvIDp6jkY=;
+ b=B+6Qbb1mzSnWzV0jkNPhwo128PD7jvMzzU7s5SS0P23uk5w8f5AG3UCTjVTjd5HYRVWk4hDwTvfWlB1cjEYh1KvM4oqFSNMpOMRM2heFYlwuT3JHGlmiofikIsUT9D0YF7Q+Sr6FFYl1ZQ3Y3jWftVPc51dS4Fh0yy3+EHvTodRZKZU1cH2ODdiCz1085dBh2D/q9tbHSzMoxPxb0sgMKv5vEArrJvLyB9XDxvKnWfX5hzrn+IKRJSHzO3bLUEbZS56DohSzLC/YFEtn3UeuGjsXkCuuISJSOtDGjqLBOTInZqYYEQR4Dm8Xus0GqAam4oWMwjQG/wDHDc0OQdnoAg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
  (p=quarantine sp=quarantine pct=100) action=quarantine
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/a3fmLxoiZoHer3nbvtXCi+p9e6DuNqkqeX2BgsIrCA=;
- b=JPO1baus3OwJRXrKZR2YbB4oRlwaoyE1rp42ZrxxSUv/R0AfJEqC3JlAwHdhrYIx8S4+XgYdhGIuo2hATGtCjeeIbsAC8cpFIJySDl8OVO8VPEfXS8UJXBu3W8VOwQjHykc56SQwRqxTCyhhlvvpiHDyuR9ExLw4xR6TeHDzQZbm7aAhYTlI3Jm0iwRxK4mQwVk5BEWopx7/lRhNdku4GqPrM97G6sQ6elMgXdJflfglqCueGcC7cjbqI9gAITGn3yHn/+u95q+QbHrRuxMAK7ZcxjveLPaGvNvLqyr72z3gULiRY1rT5WE0q/28igeZvgr/cjzW7gOB6iA94SVKSA==
-Received: from PS1PR03CA0004.apcprd03.prod.outlook.com (2603:1096:803:3d::16)
- by KL1PR04MB7212.apcprd04.prod.outlook.com (2603:1096:820:f5::5) with
+ bh=hgFXoaC/5DtSawXO9Z49kR8+2OHTKZslFpSvIDp6jkY=;
+ b=y9PzwNaKrqzniQpcsJp+tcf3a8pm1l5LWxJQgUSzIFDQNWSUaqfSvFK5nn9/FDJDcRJo2sHpXv7auG8o31wdIpPH2inUx75p7OxNHTLS2LjGEZz9fJfyC/+e4/i0txYO1AsMwmNqBLHDc5NkpszyNAiFV233jhIjkcbgkavdMuuyZuAb8QzjPx9/YTz6iD6YGj6pHAE8HcT0sWeOSK/SC2zd2ZnhLmQiR1Da0IW6vw9vK2QEgaZ9dJvQwr3fmsrNNwhtk7IlYzJy8z1/LhbyVMW1d12WqDcdBoxvkLKrK6w6Tgq103OY6YnSCxj4psI6z1gmu/eaq1v6RdkfxJHCVg==
+Received: from PS1PR03CA0008.apcprd03.prod.outlook.com (2603:1096:803:3d::20)
+ by TYUPR04MB6762.apcprd04.prod.outlook.com (2603:1096:400:359::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 26 Aug
- 2024 06:25:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
+ 2024 06:25:33 +0000
 Received: from HK2PEPF00006FB0.apcprd02.prod.outlook.com
- (2603:1096:803:3d:cafe::7f) by PS1PR03CA0004.outlook.office365.com
- (2603:1096:803:3d::16) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:1096:803:3d:cafe::9b) by PS1PR03CA0008.outlook.office365.com
+ (2603:1096:803:3d::20) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14 via Frontend
- Transport; Mon, 26 Aug 2024 06:25:27 +0000
+ Transport; Mon, 26 Aug 2024 06:25:33 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
  smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
@@ -64,7 +64,7 @@ Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
  client-ip=211.20.1.79; helo=localhost.localdomain;
 Received: from localhost.localdomain (211.20.1.79) by
  HK2PEPF00006FB0.mail.protection.outlook.com (10.167.8.6) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 06:25:27
+ Server id 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 06:25:33
  +0000
 From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 To: patrick@stwcx.xyz,
@@ -78,9 +78,9 @@ Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v14 16/31] ARM: dts: aspeed: yosemite4: Initialize bmc gpio state
-Date: Mon, 26 Aug 2024 14:23:50 +0800
-Message-Id: <20240826062408.2885174-17-Delphine_CC_Chiu@wiwynn.com>
+Subject: [PATCH v14 17/31] ARM: dts: aspeed: yosemite4: Revise mx31790 fan tach config
+Date: Mon, 26 Aug 2024 14:23:51 +0800
+Message-Id: <20240826062408.2885174-18-Delphine_CC_Chiu@wiwynn.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240826062408.2885174-1-Delphine_CC_Chiu@wiwynn.com>
 References: <20240826062408.2885174-1-Delphine_CC_Chiu@wiwynn.com>
@@ -93,302 +93,144 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB0:EE_|KL1PR04MB7212:EE_
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB0:EE_|TYUPR04MB6762:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 3d58a348-be9f-4d50-7ce6-08dcc597e045
+X-MS-Office365-Filtering-Correlation-Id: 5392848a-dcbe-4c7a-3d85-08dcc597e3d4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?APckJpJhfkoy8OugOkyymcnt51pKA074xPp34CoGLSv2tIWOrQ4QqhrkPJrj?=
- =?us-ascii?Q?2x8+O2o3/QxbZ99vzGfhyZn4AclkOilpnKxhppIrXEW7GZbQvgbkO+nCjHnI?=
- =?us-ascii?Q?WFCC5TRbD9H53kvunFKRnFGyCL/GKF7wdC01OgN0OEDjYWr9pK3CFCzP/D3H?=
- =?us-ascii?Q?88KGWEd31khvCB8qfuDgHQHwej6nS7M/7OM7N/3yjUt7jy9VQy0nYHnfkJ9o?=
- =?us-ascii?Q?DBrUpNNZRXfPTGgC3i3qr8W8nzmBWyepQYsBIxZw6ll7Xayx7kcILJReDo+u?=
- =?us-ascii?Q?w0jMn58RCSUoWEI5O4W8rJEgUGiCrU6JTU4S/U5RnRjy7jKWw3fqgkxA5T7U?=
- =?us-ascii?Q?AAxErT0lE8+Zhn4DBUEEy5zSqoqogNvfsoEGAFEmgJb+8pRtkZbJXjBjEys9?=
- =?us-ascii?Q?NOhP21T6Bzhd96V86kN6jekuC+jsOTEVQjFBwvoDLQoRDd1OxCzQZ+oFLWnq?=
- =?us-ascii?Q?JnMU/0LCaP1awmK8bi65Tad/XmOe+6QdAZTcznXGxV5jIXKG0wyRQaWiHE57?=
- =?us-ascii?Q?syCKmiwd73z5Mj2EJGvFGUa8NscFE90S7m147b2PGzoin+xYwxMA+AxPzvtd?=
- =?us-ascii?Q?lvieG8WZZyHe25gwYIbz21ksdnwXXh6qAJ1qYOLg8OwMXacgfW+A8g80yx3L?=
- =?us-ascii?Q?DcP6ceKciItzT8QkPbW1mRySBs3s47VUFv/ub8qTh09XJfZ0CODX3gEgoCUJ?=
- =?us-ascii?Q?zvKq8VMmK2V1W2KjXcDLMnftt5h5DthgJfg4P1ZGsKcrMrpC1ILxbCXSmdYu?=
- =?us-ascii?Q?bMypO5ZgYZzs2BQUVpyMaSL/cr1d6wEilj4tCEJwnqtvpHfp5PY2r9r6IFFl?=
- =?us-ascii?Q?CxX1H0tK//xAnmPeJ+XI7c0PFJ3hRu9jejXZzLsD23SV7HFutRk7ZElW6H+B?=
- =?us-ascii?Q?jfMKXC228b9X9BvlHzC4tGg5OXP9jhcuHhgfbzgRMstzy/B9QxljjRSf9u+Y?=
- =?us-ascii?Q?RqjrnFpXzGWz9vfWCFSK3IHRN+P6YvpdzszCxPn2Yi/MRSgP9dQ5bxbySs3j?=
- =?us-ascii?Q?5Fecshaxcv0fbi3jXMp8SAiV3iX8TX88w4eyK0MNJ9I6vjfcUWG8EGhzyzDi?=
- =?us-ascii?Q?Sorbfpx6tVrTnVJYrOUWbziUP7bJSxucQ9/MX86JQ4OSOP00cLJrWlv9buMK?=
- =?us-ascii?Q?ulvRawOs8p1FiuyJRncatObN5dixDvhq8+9uUbcgA+/Gtt+bIFWY6vfzLw7e?=
- =?us-ascii?Q?uubDOc/Xfsmp87nmIcpFz7W9xCY++6JLvPBDYkWx25Sk8znaVsh5IWGMZtwi?=
- =?us-ascii?Q?TTogMlHI3/7FMuL19Dc8JwwVZFRg2g6fysbxmtVN8KjrSdJmMhKWaFIUGHYQ?=
- =?us-ascii?Q?WSHAYP+NL+Mf6GKjMjSeN/HuPHgXeS2WODhEPQ6/NsrT0eQR5xf3OjBMao4B?=
- =?us-ascii?Q?AVG0SxVYtmzqHw4m/utvlBmUR1H3E4lD8eiINlRaFP4FDXWwKphosvc6zWBW?=
- =?us-ascii?Q?RgYWhVhx3PVYYxZPm+4JDoeC0FX+Lt7X?=
+	=?us-ascii?Q?GECzBovjanqY2iN8+pr7d8glJQSgpeL3Bp99U/ayjjbM5K+BMLdBNMWaatzv?=
+ =?us-ascii?Q?iFv5ESgXVio7SxL88vksa9HBQW3QoeVHd1sNm/q6x3xsqmFHgZjKTVFA29vk?=
+ =?us-ascii?Q?pPR/HBKxi6SCZgcuy94tylLYYyn1zPAKuWAtC40y4SYO8rFIPapC3YPQo/GP?=
+ =?us-ascii?Q?emUFweYRHL5TGXxPQxGIs2NYnyDDlSBM2Sw6+LoCyPptZbDgswenKqPoUDYo?=
+ =?us-ascii?Q?poXIxwBHRuWOnrUs6OFRueXynQnret8sRZ8ivtcrDhtwZmk2+k9Q6mwiie2g?=
+ =?us-ascii?Q?9b8zr9+pypji+b3NjrO/PaxCScskAO2nq0XveWhsc6qRGPpVYz9crCF+XsF3?=
+ =?us-ascii?Q?HwA6I3jGPISsMvtdiL7CuMd9Zj2HVrUj3f83P8FwYMYg8+elqZX82ByfOBi6?=
+ =?us-ascii?Q?hJEke4WwPYLKFCDcvhp+6mbCdpRSu11safuVK7NTiiccUOauyi1jdgKUPbZg?=
+ =?us-ascii?Q?fCfqNuBHVfM8zuv+Qh9zxTL7Kwt+dZTvg6cWe1ztBJhIfiB4pNU+1JyHfDSB?=
+ =?us-ascii?Q?t/0zAH37q0qJqTBcyeHET71w57SJchP802pCz8EVIKvEP2d0Iv4LP9dZAXaf?=
+ =?us-ascii?Q?XFRvE5+ICRbQaWEECXzZB39RpNyINzFdfmZdJzZB9vcMqMAaGgujyeje+KF1?=
+ =?us-ascii?Q?UKLS17YudSI0oJEqrYi06/KY/FZDJVnR+9kPsEVYvvM2ThQudFjUTzB0j0TV?=
+ =?us-ascii?Q?KYBqvg22Cg+5vPzWc1Mbqh3vIS5cn1rvuAggaDshfEF/JZa8GJRhnBhf1xMo?=
+ =?us-ascii?Q?IRG0nePATvme6Fr6HO55ZP80n4YEAtm8ucD9twNea44cuzlN9PMXhsuKZjQ+?=
+ =?us-ascii?Q?UUySpGkUMhzKeLqB4xPDy18GI8hUB/LN1jrIf/gtBJtkfzM7HTmRe3ntMtK8?=
+ =?us-ascii?Q?2XJx0pv1sIIB8d33Nr4bwM/x4xMC0sGnLgpJdUOmtxnIxJcqElJsyTkrGiyl?=
+ =?us-ascii?Q?y9mrUaj+tJj8DhDDI3KlG35E3LF7vw4ZjBjewGGolS0XtFczJPcG0QipbUng?=
+ =?us-ascii?Q?XrfVc95B94YeWGcnhtix/Sv3moLIroPAEVUsvZOdMqPYsedGbTzyyHBI8w7e?=
+ =?us-ascii?Q?HEUsn5v4HEBZQlbtbf22eWT4JLYAuPRDmsYI/mdYvigK/QE6tXyd8W7UAD2+?=
+ =?us-ascii?Q?EpKJPbFx3zrOSQGOq8XTzR5zH/pA29UkF9AL0+Y5za613PNhWCCYBbjr5ODe?=
+ =?us-ascii?Q?CQcsGMFcgqpoPaWhwBouQDnpiiJuYY4zRQyueVfoIYSyk+IOKCcvhzbMG/gD?=
+ =?us-ascii?Q?piSeW2VIodefbT8RPWYBJaaDD/EHQayX91R5rqNwQ2H1CBowVFnfDFcRJCFw?=
+ =?us-ascii?Q?BrlB78RozOs778yQMa+sjK2VKcQ0zhf7vIW2+CEkqxcFoVN8RHnFc0lSofm0?=
+ =?us-ascii?Q?mAXEMTKwCc+0oi6GtoYWJKLDlt/azBiCGawSECDyCVll3v+5XYdgxZHuQKj5?=
+ =?us-ascii?Q?gtBg+JWs/3XFMeESnNOksj79HD906fzL?=
 X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 06:25:27.0964
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 06:25:33.0338
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d58a348-be9f-4d50-7ce6-08dcc597e045
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5392848a-dcbe-4c7a-3d85-08dcc597e3d4
 X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB0.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB7212
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR04MB6762
 
-Initialize bmc gpio state
+Revise fan tach config for max31790 driver change
 
 Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 ---
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 234 ++++++++++++++++++
- 1 file changed, 234 insertions(+)
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 48 +++++++++++++++++--
+ 1 file changed, 44 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index c0497a1aa93e..60743f9829a5 100644
+index 60743f9829a5..b46a0b9940e2 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -1304,3 +1304,237 @@ &ehci1 {
- &uhci {
- 	status = "okay";
- };
+@@ -1103,8 +1103,18 @@ adc@1f {
+ 
+ 			pwm@20{
+ 				compatible = "maxim,max31790";
+-				pwm-as-tach = <4 5>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				reg = <0x20>;
++				channel@4 {
++					reg = <4>;
++					sensor-type = "TACH";
++				};
 +
-+&sgpiom0 {
-+	status = "okay";
-+	ngpios = <128>;
-+	bus-frequency = <48000>;
-+};
++				channel@5 {
++					reg = <5>;
++					sensor-type = "TACH";
++				};
+ 			};
+ 
+ 			gpio@22{
+@@ -1116,8 +1126,18 @@ gpio@22{
+ 
+ 			pwm@2f{
+ 				compatible = "maxim,max31790";
+-				pwm-as-tach = <4 5>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				reg = <0x2f>;
++				channel@4 {
++					reg = <4>;
++					sensor-type = "TACH";
++				};
 +
-+&pinctrl {
-+	pinctrl_gpio0_unbiased: gpio0_unbiased {
-+		/* GPIOB0, GPIOB1 */
-+		pins = "J26", "K23";
-+		bias-disable;
-+	};
-+	pinctrl_gpio2_unbiased: gpio2_unbiased {
-+		/* GPIOI5, GPIOI6, GPIOI7,
-+		   GPIOL6 */
-+		pins = "E16", "B16", "A15", "B14";
-+		bias-disable;
-+	};
-+	pinctrl_gpio3_unbiased: gpio3_unbiased {
-+		/* GPIOM2, GPIOM3, GPIOM4, GPIOM5,
-+		   GPION0, GPION1, GPION2, GPION3, GPION5,
-+		   GPIOO0, GPIOO1, GPIOO2, GPIOO3,
-+		   GPIOP0, GPIOP1, GPIOP2, GPIOP3, GPIOP4, GPIOP5, GPIOP6 */
-+		pins = "A12", "E14", "B12", "C12", "P25", "N23", "N25", "N24", "M23", "AD26", "AD22", "AD23", "AD24", "AB22", "W24", "AA23", "AA24", "W23", "AB23", "AB24";
-+		bias-disable;
-+	};
-+	pinctrl_gpio4_unbiased: gpio4_unbiased {
-+		/* GPIOR0, GPIOR1, GPIOR2, GPIOR3, GPIOR4, GPIOR5, GPIOR6, GPIOR7
-+		   GPIOS0, GPIOS1, GPIOS2, GPIOS3, GPIOS5, GPIOS6, GPIOS7 */
-+		pins = "V25", "U24", "V24", "V26", "U25", "T23", "W26", "U26", "R23", "T25", "T26", "R24", "P24", "P23", "T24";
-+		bias-disable;
-+	};
-+	pinctrl_gpio5_unbiased: gpio5_unbiased {
-+		/* GPIOV0, GPIOV1, GPIOV2, GPIOV3, GPIOV4, GPIOV5, GPIOV6, GPIOV7
-+		   GPIOX1, GPIOX2 */
-+		pins = "AB15", "AF14", "AD14", "AC15", "AE15", "AE14", "AD15", "AF15", "AA9", "AC9";
-+		bias-disable;
-+	};
-+	pinctrl_gpio6_unbiased: gpio6_unbiased {
-+		/* GPIOY2, GPIOY5, GPIOY6
-+		   GPIOZ0, GPIOZ1, GPIOZ3, GPIOZ4 */
-+		pins = "AE11", "AF12", "AC12", "AC10", "AD10", "AB11", "AC11";
-+		bias-disable;
-+	};
-+};
++				channel@5 {
++					reg = <5>;
++					sensor-type = "TACH";
++				};
+ 			};
+ 
+ 			adc@33 {
+@@ -1153,8 +1173,18 @@ adc@1f {
+ 
+ 			pwm@20{
+ 				compatible = "maxim,max31790";
+-				pwm-as-tach = <4 5>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				reg = <0x20>;
++				channel@4 {
++					reg = <4>;
++					sensor-type = "TACH";
++				};
 +
-+&gpio0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpiu2_default &pinctrl_gpiu3_default
-+		     &pinctrl_gpiu4_default &pinctrl_gpiu6_default
-+		     &pinctrl_gpio0_unbiased &pinctrl_gpio2_unbiased
-+		     &pinctrl_gpio3_unbiased &pinctrl_gpio4_unbiased
-+		     &pinctrl_gpio5_unbiased &pinctrl_gpio6_unbiased>;
-+	gpio-line-names =
-+	/*A0-A7*/       "","","","","","","","",
-+	/*B0-B7*/       "FLT_HSC_SERVER_SLOT8_N","AC_ON_OFF_BTN_CPLD_SLOT5_N",
-+			"PWRGD_SLOT1_STBY","PWRGD_SLOT2_STBY",
-+			"PWRGD_SLOT3_STBY","PWRGD_SLOT4_STBY","","",
-+	/*C0-C7*/       "","","","","FM_NIC0_WAKE_N",
-+			"FM_NIC1_WAKE_N","","RST_PCIE_SLOT2_N",
-+	/*D0-D7*/       "","","","","","","","",
-+	/*E0-E7*/       "PRSNT_NIC1_N","PRSNT_NIC2_N","","RST_PCIE_SLOT1_N",
-+			"","","","",
-+	/*F0-F7*/       "FM_RESBTN_SLOT1_BMC_N","FM_RESBTN_SLOT2_BMC_N",
-+			"FM_RESBTN_SLOT3_BMC_N","FM_RESBTN_SLOT4_BMC_N",
-+			"PRSNT_SB_SLOT1_N","PRSNT_SB_SLOT2_N",
-+			"PRSNT_SB_SLOT3_N","PRSNT_SB_SLOT4_N",
-+	/*G0-G7*/       "","","","","","","","",
-+	/*H0-H7*/       "","","","","","","","",
-+	/*I0-I7*/       "","","","","","ALT_MEDUSA_ADC_N",
-+			"ALT_SMB_BMC_CPLD2_N",
-+			"INT_SPIDER_ADC_R_N",
-+	/*J0-J7*/       "","","","","","","","",
-+	/*K0-K7*/       "","","","","","","","",
-+	/*L0-L7*/       "","","","","","","ALT_MEDUSA_P12V_EFUSE_N","",
-+	/*M0-M7*/       "EN_NIC0_POWER_BMC_R","EN_NIC1_POWER_BMC_R",
-+			"INT_MEDUSA_IOEXP_TEMP_N","PRSNT_NIC3_N",
-+			"INT_SMB_BMC_SLOT1_4_BMC_N",
-+			"AC_ON_OFF_BTN_CPLD_SLOT6_N","","",
-+	/*N0-N7*/       "FLT_HSC_SERVER_SLOT1_N","FLT_HSC_SERVER_SLOT2_N",
-+			"FLT_HSC_SERVER_SLOT3_N","FLT_HSC_SERVER_SLOT4_N",
-+			"FM_BMC_READY_R2","RST_SMB_NIC0_R_N","","",
-+	/*O0-O7*/       "AC_ON_OFF_BTN_CPLD_SLOT8_N","RST_SMB_NIC1_R_N",
-+			"RST_SMB_NIC2_R_N","RST_SMB_NIC3_R_N",
-+			"","","","",
-+	/*P0-P7*/       "ALT_SMB_BMC_CPLD1_N","BTN_BMC_R2_N",
-+			"EN_P3V_BAT_SCALED_R","PWRGD_P5V_USB_BMC",
-+			"FM_BMC_RTCRST_R","RST_USB_HUB_R_N",
-+			"FLAG_P5V_USB_BMC_N","",
-+	/*Q0-Q7*/       "AC_ON_OFF_BTN_CPLD_SLOT1_N","AC_ON_OFF_BTN_CPLD_SLOT2_N",
-+			"AC_ON_OFF_BTN_CPLD_SLOT3_N","AC_ON_OFF_BTN_CPLD_SLOT4_N",
-+			"PRSNT_SB_SLOT5_N","PRSNT_SB_SLOT6_N",
-+			"PRSNT_SB_SLOT7_N","PRSNT_SB_SLOT8_N",
-+	/*R0-R7*/       "AC_ON_OFF_BTN_CPLD_SLOT7_N","INT_SMB_BMC_SLOT5_8_BMC_N",
-+			"FM_PWRBRK_NIC_BMC_R2","RST_PCIE_SLOT4_N",
-+			"RST_PCIE_SLOT5_N","RST_PCIE_SLOT6_N",
-+			"RST_PCIE_SLOT7_N","RST_PCIE_SLOT8_N",
-+	/*S0-S7*/       "FM_NIC2_WAKE_N","FM_NIC3_WAKE_N",
-+			"EN_NIC3_POWER_BMC_R","SEL_BMC_JTAG_MUX_R",
-+			"","ALT_P12V_AUX_N","FAST_PROCHOT_N",
-+			"SPI_WP_DISABLE_STATUS_R_N",
-+	/*T0-T7*/       "","","","","","","","",
-+	/*U0-U7*/       "","","RST_PCIE_SLOT3_N","",
-+			"","PRSNT_NIC0_N","","",
-+	/*V0-V7*/       "FM_RESBTN_SLOT5_BMC_N","FM_RESBTN_SLOT6_BMC_N",
-+			"FM_RESBTN_SLOT7_BMC_N","FM_RESBTN_SLOT8_BMC_N",
-+			"","","","",
-+	/*W0-W7*/       "PRSNT_TPM_BMC_N","PRSNT_OCP_DEBUG_BMC_N","ALT_TEMP_BMC_N","ALT_RTC_BMC_N",
-+			"","","","",
-+	/*X0-X7*/       "","LT_HSC_SERVER_SLOT6_N","FLT_HSC_SERVER_SLOT7_N","","","",
-+			"PWRGD_SLOT5_STBY","PWRGD_SLOT6_STBY",
-+	/*Y0-Y7*/       "","","SPI_LOCK_REQ_BMC_N","PWRGD_SLOT7_STBY",
-+			"","","EN_NIC2_POWER_BMC_R","",
-+	/*Z0-Z7*/       "EN_P5V_USB_CPLD_R","FLT_HSC_SERVER_SLOT5_N",
-+			"PWRGD_SLOT8_STBY","","","","","";
++				channel@5 {
++					reg = <5>;
++					sensor-type = "TACH";
++				};
+ 			};
+ 
+ 			gpio@22{
+@@ -1166,8 +1196,18 @@ gpio@22{
+ 
+ 			pwm@2f{
+ 				compatible = "maxim,max31790";
+-				pwm-as-tach = <4 5>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				reg = <0x2f>;
++				channel@4 {
++					reg = <4>;
++					sensor-type = "TACH";
++				};
 +
-+	pin_gpio_b4 {
-+		gpios = <ASPEED_GPIO(B, 4) GPIO_ACTIVE_HIGH>;
-+		input;
-+	};
-+	pin_gpio_b5 {
-+		gpios = <ASPEED_GPIO(B, 5) GPIO_ACTIVE_HIGH>;
-+		input;
-+	};
-+	pin_gpio_f0 {
-+		gpios = <ASPEED_GPIO(F, 0) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f1 {
-+		gpios = <ASPEED_GPIO(F, 1) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f2 {
-+		gpios = <ASPEED_GPIO(F, 2) GPIO_ACTIVE_LOW>;
-+		input;
-+		};
-+	pin_gpio_f3 {
-+		gpios = <ASPEED_GPIO(F, 3) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f4 {
-+		gpios = <ASPEED_GPIO(F, 4) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f5 {
-+		gpios = <ASPEED_GPIO(F, 5) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f6 {
-+		gpios = <ASPEED_GPIO(F, 6) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_f7 {
-+		gpios = <ASPEED_GPIO(F, 7) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_l6 {
-+		gpios = <ASPEED_GPIO(L, 6) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_l7 {
-+		gpios = <ASPEED_GPIO(L, 7) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_s0 {
-+		gpios = <ASPEED_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_s1 {
-+		gpios = <ASPEED_GPIO(S, 1) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_v0 {
-+		gpios = <ASPEED_GPIO(V, 0) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_v1 {
-+		gpios = <ASPEED_GPIO(V, 1) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_v2 {
-+		gpios = <ASPEED_GPIO(V, 2) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_v3 {
-+		gpios = <ASPEED_GPIO(V, 3) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w0 {
-+		gpios = <ASPEED_GPIO(W, 0) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w1 {
-+		gpios = <ASPEED_GPIO(W, 1) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w2 {
-+		gpios = <ASPEED_GPIO(W, 2) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w3 {
-+		gpios = <ASPEED_GPIO(W, 3) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w4 {
-+		gpios = <ASPEED_GPIO(W, 4) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w5 {
-+		gpios = <ASPEED_GPIO(W, 5) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w6 {
-+		gpios = <ASPEED_GPIO(W, 6) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_w7 {
-+		gpios = <ASPEED_GPIO(W, 7) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_z3 {
-+		gpios = <ASPEED_GPIO(Z, 3) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_z4 {
-+		gpios = <ASPEED_GPIO(Z, 4) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+	pin_gpio_z5 {
-+		gpios = <ASPEED_GPIO(Z, 5) GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+};
++				channel@5 {
++					reg = <5>;
++					sensor-type = "TACH";
++				};
+ 			};
+ 
+ 			adc@33 {
 -- 
 2.25.1
 
