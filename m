@@ -1,99 +1,88 @@
-Return-Path: <linux-kernel+bounces-302069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B22295F974
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:13:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C0995F975
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A09281D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F071F22D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48B2199234;
-	Mon, 26 Aug 2024 19:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1D71991BA;
+	Mon, 26 Aug 2024 19:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fBD2qIrM"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfmbDiJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F6018E058
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675AA18E058
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724699575; cv=none; b=N0Vlrv6eSnBAqDDSrlCPu3RhGf9J8ZrWaxsCxFIb4kJaNaavwMQxqabrhHJII2mkIb9YclVh8KFnBr8qgVMS5VeW9eUudu+eZHyMwnyi6k9tfzrkg0HP6nA0esPoeZXYrbU/HhAWwgvkE/CcfR3IUFg7GXdnffU+f3nYvP7P3LY=
+	t=1724699598; cv=none; b=FgTX9UoNImxI7ogh2W60TrVkboMlt2GN23JbQaK1r85vzAb66u4M3EgIcXjn8Z2vDvqr5ADhUVJgr8xWW3inGzksjCbTW7WueGNfc861beLZE8d9VCJo4LBtVP85wrIcjceQ2AZS8g5tRMGoGvvvDCuqsVgw4jmo5nnbcIk4wOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724699575; c=relaxed/simple;
-	bh=mnb6zYJ54fx22cuDC27883ytXeWKR6BtVeg16VP3ZcY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YhFMrxprmytqLIOc6gSEk73JvlQvIx+EusPo9FEDWIuNXIl2QySvDmVXHNT6qMyGVUVrlEy2OJhgRFtES8uHRU3RW6FvoU7WvrZlcBgz9RwE20EqfcJvdE7ffwSXQS3toFesOrLiHuwoAuf8ifOoCYmKYrhQ3SbyZ9ZMLT93Ibk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=fBD2qIrM; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e115eb44752so5023490276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724699572; x=1725304372; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnb6zYJ54fx22cuDC27883ytXeWKR6BtVeg16VP3ZcY=;
-        b=fBD2qIrMHJ1Lq4HMx99nVDqXs/Mh/oOvCcSGGZDbSvDB0wKCO0NUtteOpr+7cbK82A
-         0zkzs01yrgKrjX3LQcDdPLzODhIyMsWWMEHonfsN3pDhL53GU0nAUI01DAlzpTWdet2u
-         JjAy0qtl41bWWLqfADC80lIHJPYMWFoX/QsDM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724699572; x=1725304372;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mnb6zYJ54fx22cuDC27883ytXeWKR6BtVeg16VP3ZcY=;
-        b=S7i2AKZckyUMFdiPjNSBo6UYWTlGbML2q/pijvSiY8B3FlFPrBM3TjO4INIInNuh+g
-         IcOtDWECFvu3sS6aDft3tjAmDbKQMVGWDhHKFN7exlGkCa8VzX7Myf5byqDdOlHcX80t
-         LJP07/hjYBEghwXH98gLrGXWOPwQRUQuWws218CuZbOfn5ukqw+lgjQbZgwCW+nmWsBF
-         dPwwXDvNjDdUInKsVGLTIQIS/gQUlWfSxjidjOjcg+iRsBMVy+gjva8YfZJ686muUAYB
-         fDTSMjEylQR24L7o1HMjUKg+vlB0AVaB4dk618yTcXGNJVpsaJUrLOtrX98S5k4oUN8A
-         pcVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUqf34EaptB8tEnYaI8LY0udvJl0IbAxM/OOHsD67N78wKBropIhUxBZgMIHa1knzqshUh7ooTX7ymoIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlc6Q0NeBRS2ghTI5k2f/xzsMZZtk8aPdLyRIft3KltgvJIVYb
-	FV0/pYY/h8Ap9Zz47CJvklgSvqB0c1XvHL+UzlsHw3Che4a9HgKcNIrE6bQqpDc0cNRCH2HpbNI
-	hZjHSsyag87+IQF7YSKlNSU89m8e66+ud11TYvg==
-X-Google-Smtp-Source: AGHT+IGcz/kL7YCWV8ANb6vSB+u/NezOQdfZ0aDRNCl/94cnJqHv66LSwxNl0PlziLNZvLCEpJpKCF0l1e69GaSVMGE=
-X-Received: by 2002:a05:690c:ec8:b0:631:78a1:baf with SMTP id
- 00721157ae682-6c624fb6b9emr123189377b3.6.1724699571754; Mon, 26 Aug 2024
- 12:12:51 -0700 (PDT)
+	s=arc-20240116; t=1724699598; c=relaxed/simple;
+	bh=jzfVwV+qAA5RAstlTnwawRr7jscEqIss+6fByV8Ic9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jvu+k2VCgaW6UE/I/NdWAyXVuzI8vmQeL9E6bVeFJSZWnoBrwVbZwSNEbLdDCjChr1j99z3yrcN7TqSfJSKPKoCXVG+pbNMdQwgcxSqjuS3JD4BxwsRe6rhMoE8ttbxV5sR3gqp7ePeFvac1UfBh2qUav8JupfIq/pglWuyONng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfmbDiJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F1CC4AF67;
+	Mon, 26 Aug 2024 19:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724699598;
+	bh=jzfVwV+qAA5RAstlTnwawRr7jscEqIss+6fByV8Ic9M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qfmbDiJUO0VnlvzXrvZZhT5/1nsU+5x8PYkfb1Iaz0d61Yf9fpJTc7aICRPc6Qgrw
+	 FcRcMkQCGPTv0Voaz+fUYbEL3QQF3ZuhOa+R5bQsC3oVIR6HibMnRqHxkLsQ/PjmgA
+	 oOre8xPm69ePVm2S45u6cqwETI4yDRzGGK9UUwTk3ZUE/2k5B10OjCr9rz2vDBiyUS
+	 9he+0KBJFK7V9AT8GV3JqXA2l3R8vFtR/oEg6Mup2lJmSdxVFBBHt0tLTIsjnR020Q
+	 gzqD8hQnUz2c5ArozdxIX9/rPlfyq5QnWEftBG99rEBJzGNWCBhC0ZEbJDWfftD3ni
+	 OJGByOrEJT4Nw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: tc3589x: Drop vendorless compatible string from match table
+Date: Mon, 26 Aug 2024 14:13:00 -0500
+Message-ID: <20240826191300.1410222-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826130612.2641750-1-yangyun50@huawei.com>
-In-Reply-To: <20240826130612.2641750-1-yangyun50@huawei.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 26 Aug 2024 21:12:39 +0200
-Message-ID: <CAJfpegt_P=Dj-CXnbZYK+XZW8ZwNH0_Str30q9vub0o00UMuWQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-To: yangyun <yangyun50@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lixiaokeng@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Aug 2024 at 15:07, yangyun <yangyun50@huawei.com> wrote:
->
-> Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-> for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-> fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-> these two functions are only called under FOPEN_DIRECT_IO is set,
-> it seems that we can also use the async direct IO even the flag
-> IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-> move the definition of fuse_io_priv to where it is used in fuse_
-> direct_write_iter.
+There's no need to list "tc3589x" in the DT match table. The I2C core
+will strip any vendor prefix and match against the i2c_device_id table
+which has an "tc3589x" entry.
 
-I'm interested in the motivation for this patch.
+Probably "tc3589x" and TC3589X_UNKNOWN could be removed altogether.
+Use of that compatible was only on some STE platforms and was dropped
+in 2013. There were ABI breaks in 2014 claiming no DTs in the wild. See
+commit 1637d480f873 ("pinctrl: nomadik: force-convert to generic config
+bindings").
 
-There's a minor risk of regressions when introducing such a behavior
-change, so there should also be a strong supporting argument, which
-seems to be missing in this case.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/mfd/tc3589x.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-Miklos
+diff --git a/drivers/mfd/tc3589x.c b/drivers/mfd/tc3589x.c
+index db28eb0c8995..ef953ee73145 100644
+--- a/drivers/mfd/tc3589x.c
++++ b/drivers/mfd/tc3589x.c
+@@ -312,8 +312,6 @@ static int tc3589x_device_init(struct tc3589x *tc3589x)
+ }
+ 
+ static const struct of_device_id tc3589x_match[] = {
+-	/* Legacy compatible string */
+-	{ .compatible = "tc3589x", .data = (void *) TC3589X_UNKNOWN },
+ 	{ .compatible = "toshiba,tc35890", .data = (void *) TC3589X_TC35890 },
+ 	{ .compatible = "toshiba,tc35892", .data = (void *) TC3589X_TC35892 },
+ 	{ .compatible = "toshiba,tc35893", .data = (void *) TC3589X_TC35893 },
+-- 
+2.43.0
+
 
