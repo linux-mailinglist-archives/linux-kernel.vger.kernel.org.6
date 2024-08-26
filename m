@@ -1,142 +1,87 @@
-Return-Path: <linux-kernel+bounces-301544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D90995F253
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0056F95F25A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06A61C219EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9541F21F39
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6086017ADF7;
-	Mon, 26 Aug 2024 13:04:18 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3209017ADF7;
+	Mon, 26 Aug 2024 13:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="37cOTXWI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC1B1E519;
-	Mon, 26 Aug 2024 13:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2581E519
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677457; cv=none; b=YscEtUpfwYG9ekf4rSRfv3avkfgAAVqjdORlcklkPZoyZtcTyXOFC7Rx6YHYYuABf4slueD2aWtk0OMh2gaMvHg3eapwtdwWdpfRNI1AheiAUf4LA46HPSHNEWg1GfFZIP1dHXg3p6jXA+fXYKHX4a8gn38KLja9y3m9HcjaRK0=
+	t=1724677554; cv=none; b=dIwpBq2VpcXeYrLrYuAah2+IhUKZ0L3LmOuMzHlt7Ah1IWDQGGF1NHUdx0kTrHhdwp1jayLPXCaYzdZwqurFL6DtdhRM35g4ky5Dpv7E5Iv07vcgZ8x1cNKZMe5R/3k5dhZzng0132hpHsTrFSGQRoYSB+UgXXicc9hK558e//A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677457; c=relaxed/simple;
-	bh=gj4Tzqn1OcjqzZlEGWvDUsJAJQPhP/T8FGUFq6YceBU=;
+	s=arc-20240116; t=1724677554; c=relaxed/simple;
+	bh=tD25NcdVWs3hlMpBUgKjPkntJrW9TCFnXdRsnM4/Ulo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMbiDq2Qz9rrElbK0rfcVoKlz0fPSrE+jstRGNUO9AZPMmmH3EBMdlP28S2lg2uIJLbFhIPXMg/xc6Ewod78a+2KmC685mtx5BdAfXPnxOhS1deVVttA3U6zAKqvijWzOj2z0gPIrptG1pkXdgW1SLJB2ajd5b8wlTDAP8CVk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: hUZfdjo7Spa1gionn4S1eQ==
-X-CSE-MsgGUID: Y40tbUgJRBqesioVmuM7Fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23253083"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="23253083"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:04:16 -0700
-X-CSE-ConnectionGUID: 6ETm3d4uQKGkdJFPsjxMDA==
-X-CSE-MsgGUID: Jt00UD+yQSiXqCiLCaQ6sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="63219181"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:04:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1siZOE-00000001w2F-3zxC;
-	Mon, 26 Aug 2024 16:04:10 +0300
-Date: Mon, 26 Aug 2024 16:04:10 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Lech Perczak <lech.perczak@camlingroup.com>
-Cc: linux-serial@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Krzysztof =?utf-8?Q?Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>,
-	=?utf-8?B?UGF3ZcWC?= Lenkow <pawel.lenkow@camlingroup.com>,
-	Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
-Subject: Re: [PATCH v3 3/3] serial: sc16is7xx: convert bitmask definitions to
- use BIT() macro
-Message-ID: <Zsx9SqoWIkAyo7cD@smile.fi.intel.com>
-References: <7deb753f-bf86-47ce-89bf-8277aca4293e@camlingroup.com>
- <fbd8debf-46ab-407a-beda-43e083bffee7@camlingroup.com>
- <CAHp75VeqOV7GEqMs6fMi2Fax-97zt+ykEXaptng=pi_BDKU5Bg@mail.gmail.com>
- <5d1f5d01-c7ab-49f9-b754-1c32043668c5@camlingroup.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjDBGE6o7xxRRpEXFbo4wCrhP/+VgXKy9jRWhIAZLs9y+lCZf1enmO/CPLe4GovtLl8E81yJIoQIYBDC85jDPdzxXCFDgXWuML9p1lDwXni0+6kwuZiyjM00T6bjsL/+UlbtAuK2Wzabiyp3Wh2eRizMlhUTruOsa2XmKYsFKIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=37cOTXWI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=BEP1Es6ym6Gqo8W4vOk1XZ9s/WrHy6ypMYPkbGwH5Qc=; b=37cOTXWIcoFI7JC3MpJF6+xCfr
+	UHphNExENf7V7JQe03mgreYASCbWgUkLEZ96Q12Vt4htIEyt1rdMfRYZhWV+HAduNCZbUhdzUILj9
+	ozMC9YmYMh8pY9SgjiUeVo1cOdQeXXpImWm/8DFYVxFHfhZU6nQSqtf4DfHG0rtzxtLI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1siZPe-005i4a-TS; Mon, 26 Aug 2024 15:05:38 +0200
+Date: Mon, 26 Aug 2024 15:05:38 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Diogo Jahchan Koike <djahchankoike@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, maxime.chevallier@bootlin.com,
+	christophe.leroy@csgroup.eu, linux@treblig.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
+Subject: Re: [PATCH] net: fix unreleased lock in ethnl_act_cable_test
+Message-ID: <9ac272e6-b956-434b-a90b-60be6a5ad106@lunn.ch>
+References: <20240826121435.88756-1-djahchankoike@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5d1f5d01-c7ab-49f9-b754-1c32043668c5@camlingroup.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240826121435.88756-1-djahchankoike@gmail.com>
 
-On Mon, Aug 26, 2024 at 02:35:37PM +0200, Lech Perczak wrote:
-> W dniu 23.08.2024 o 19:58, Andy Shevchenko pisze:
-> > On Fri, Aug 23, 2024 at 7:55 PM Lech Perczak
-> > <lech.perczak@camlingroup.com> wrote:
+On Mon, Aug 26, 2024 at 09:14:15AM -0300, Diogo Jahchan Koike wrote:
+> fix an unreleased lock in out_dev_put path and substitute
+> both labels (out_rtnl and out_dev_put) for a simpler out.
 
-...
+Hi Diogo
 
-> >>  /* IIR register bits */
-> >> -#define SC16IS7XX_IIR_NO_INT_BIT       (1 << 0) /* No interrupts pending */
-> >> -#define SC16IS7XX_IIR_ID_MASK          0x3e     /* Mask for the interrupt ID */
-> >> -#define SC16IS7XX_IIR_THRI_SRC         0x02     /* TX holding register empty */
-> >> -#define SC16IS7XX_IIR_RDI_SRC          0x04     /* RX data interrupt */
-> >> -#define SC16IS7XX_IIR_RLSE_SRC         0x06     /* RX line status error */
-> >> -#define SC16IS7XX_IIR_RTOI_SRC         0x0c     /* RX time-out interrupt */
-> >> -#define SC16IS7XX_IIR_MSI_SRC          0x00     /* Modem status interrupt
-> >> -                                                 * - only on 75x/76x
-> >> -                                                 */
-> >> -#define SC16IS7XX_IIR_INPIN_SRC                0x30     /* Input pin change of state
-> >> -                                                 * - only on 75x/76x
-> >> -                                                 */
-> >> -#define SC16IS7XX_IIR_XOFFI_SRC                0x10     /* Received Xoff */
-> >> -#define SC16IS7XX_IIR_CTSRTS_SRC       0x20     /* nCTS,nRTS change of state
-> >> -                                                 * from active (LOW)
-> >> -                                                 * to inactive (HIGH)
-> >> -                                                 */
-> >> +#define SC16IS7XX_IIR_NO_INT_BIT       BIT(0)          /* No interrupts pending */
+We try to keep fixes simple. I would of changed the out_dev_put to
+out_rtnl, and then removed the unused out_dev_put. That makes the
+change smaller, more obviously correct.
 
-> >> +#define SC16IS7XX_IIR_ID_MASK          GENMASK(5,1)    /* Mask for the interrupt ID */
+As far as i can see, 3688ff3077d3 is only in net-next, not an -rc
+kernel. As such, we want this patch added to net-next. You indicate
+this in the patch Subject: [path net-next v2].
 
-This is the only change (one definition / line) makes sense in this block.
+Thanks
 
-> > This is okay, but the rest of the bit combinations are better to have
-> > to be plain numbers as usually they are listed in this way in the
-> > datasheets. Note as well that 0x00 is a valid value which you can't
-> > express using BIT() or GENMASK() (and this is usually the main point
-> > to *not* convert them to these macros).
-> > 
-> >> +#define SC16IS7XX_IIR_THRI_SRC         BIT(1)          /* TX holding register empty */
-> >> +#define SC16IS7XX_IIR_RDI_SRC          BIT(2)          /* RX data interrupt */
-> >> +#define SC16IS7XX_IIR_RLSE_SRC         GENMASK(2,1)    /* RX line status error */
-> >> +#define SC16IS7XX_IIR_RTOI_SRC         GENMASK(3,2)    /* RX time-out interrupt */
-> >> +#define SC16IS7XX_IIR_MSI_SRC          0x00            /* Modem status interrupt
-> >> +                                                        * - only on 75x/76x
-> >> +                                                        */
-> >> +#define SC16IS7XX_IIR_INPIN_SRC                GENMASK(5,4)    /* Input pin change of state
-> >> +                                                        * - only on 75x/76x
-> >> +                                                        */
-> >> +#define SC16IS7XX_IIR_XOFFI_SRC                BIT(4)          /* Received Xoff */
-> >> +#define SC16IS7XX_IIR_CTSRTS_SRC       BIT(5)          /* nCTS,nRTS change of state
-> >> +                                                        * from active (LOW)
-> >> +                                                        * to inactive (HIGH)
-> >> +                                                        */
-> >
-> Before I send out v4, do I get it right, that I should convert back SC16IS7XX_*_SRC
-> (i.e. interrupt source constants), and leave the rest as in v3?
+    Andrew
 
-See above. I.o.w. change only _MASK and leave the rest as is.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+---
+pw-bot: cr
 
