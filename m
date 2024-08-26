@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-301951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EEA95F7E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E141495F7E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1F81C22119
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 032911C21E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54061991B1;
-	Mon, 26 Aug 2024 17:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3CA198A35;
+	Mon, 26 Aug 2024 17:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJNTUzTI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bwXcABFH"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B28198E6F;
-	Mon, 26 Aug 2024 17:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9295E18BC02;
+	Mon, 26 Aug 2024 17:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692942; cv=none; b=u3jLsYTnKLxWBy3cpaKs6s/mdfXW4WtB5UpjFbNkBkUlfLqkWJbpscaCZ572+US4N23CQhrIKq+jXyue5qhFXS8etgNxQA6DQyzJxPYHkZ1+4uLEZXAAjZ6iO9B/la9nQESRckvmvADJdx4q2fNT87fSbSMsA/urpR2LPTQFa80=
+	t=1724692941; cv=none; b=fg/e9j0IdyWscuG3AJ4oKs0zjuJdsG2S1Qi1hOYK+cSjnHZBKdzdcYIkvVxWvjJ3jjVEDR+7076XW6q4y/UG9Ym+JFDgNHb8CUbwSivCxO9Fh+2A1DTX69igsQx+xlm9FAN/avza7NdsCek2wLyS+WXgRZXEsMmaEaqdQAqLPkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692942; c=relaxed/simple;
-	bh=Sw38NxgEBd0FI0cz03ax43Gc8YUQhNKE+vphoIaIiO8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SyOYwn7rNahYKZ03BqO90zKBkvOTLpQqWRMwy5XfRnaWN2LAv134ZxZSHQz20JZpoGxcHSowWNf+j/Bo1R5ok+b/nvb9iArBal26o4ZE6foJJnltL+f9r4nmV4vC7bDk2XUokeiRIcHsgH0JSCC31fS4veAE9z+JZBfFcVs+2TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJNTUzTI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6388BC4CA57;
-	Mon, 26 Aug 2024 17:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724692941;
-	bh=Sw38NxgEBd0FI0cz03ax43Gc8YUQhNKE+vphoIaIiO8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PJNTUzTIicWFpI7+JiPAoIt8R3Ge6k1Zu3cvh24JMfUi6fEoSK2mGVByJtFQNCniK
-	 AguEU+bT9agZf/kxDQD0n686Ecj9mhJYWThUJWLGZsLIWPDWv8LaFa+a6mrpVKLjcQ
-	 z40h3gt+BROneZ1hXC3HaLeKE/2qtXENDWhoB4ttiJynFg67awqaOdW0sw2+W2Jj6C
-	 Hcn7NVq3q5Z9HfUIxr70/30gJ9oOHAqVQZkr7f8ZT9IzwemmlKEQEfeLPtpdvxQD4W
-	 uqO9PTHPxrBRGTA277K4txv8d6jGAvON1FcryFPG9qljAS1BUvyDOlFACC+OR3xOhC
-	 alboczShMY9QQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8DDC5321D;
-	Mon, 26 Aug 2024 17:22:21 +0000 (UTC)
-From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
-Date: Mon, 26 Aug 2024 18:22:03 +0100
-Subject: [PATCH RESEND v11 3/3] dt-bindings: input: pure gpio support for
- adp5588
+	s=arc-20240116; t=1724692941; c=relaxed/simple;
+	bh=5AlIZ5ChdGTTQySLQ5G4iJCun/+9P+Lr7uBKemC+iKU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=tXBa40bHh3ybxG+0cIsY1N0cF6tmK7TTuIb5M8jDOz7AQxrV6ALkFeb9I14m8gYtHuUdPdmHd6hHn4onOMmrgXggql9PNN11cUYn/ffsk7tmKfu2OVKipMjoVmOyfyFxaK94JV65XF05AmFoL+eHu53/YhUI1+KWc2+1jfM3t0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bwXcABFH; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QHMB43002001;
+	Mon, 26 Aug 2024 12:22:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724692931;
+	bh=cGPhM47hcO+w8j6makPIfRMkzG53vnbBNLqX0pFGFdk=;
+	h=From:Subject:Date:To:CC;
+	b=bwXcABFHEYZo83pGKCv4l38LQXlypBuDogVE8o/T3VwExh1RWSW4ej60NHa1liLRw
+	 lL6G2O1PvAG8j830khhZjFYXYWwBmw+BGuWmkaH46ufId/pQG545r1ik6d1Sw8SqDS
+	 2YT2ReqIzD1efjpJDTkBT3eRRqSrOtXMxo2wqVKg=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QHMBNT073204
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 12:22:11 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 12:22:11 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 12:22:11 -0500
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QHMB95123042;
+	Mon, 26 Aug 2024 12:22:11 -0500
+From: Bryan Brattlof <bb@ti.com>
+Subject: [PATCH v3 0/4] arm64: dts: ti: k3-am62{a,p}x-sk: add opp
+ frequencies
+Date: Mon, 26 Aug 2024 12:22:06 -0500
+Message-ID: <20240826-opp-v3-0-0934f8309e13@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,129 +67,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-adp5588_gpio_support-v11-3-3e5ac2bd31b7@analog.com>
-References: <20240826-adp5588_gpio_support-v11-0-3e5ac2bd31b7@analog.com>
-In-Reply-To: <20240826-adp5588_gpio_support-v11-0-3e5ac2bd31b7@analog.com>
-To: Utsav Agarwal <utsav.agarwal@analog.com>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Arturs Artamonovs <arturs.artamonovs@analog.com>, 
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
- Oliver Gaskell <oliver.gaskell@analog.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724692968; l=2847;
- i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
- bh=6COPIRO0bw4RfEE2lJUqSvRth5I5w5rGF5z/Z1lH4ik=;
- b=IjWudUKa7aKS1rr/siLsgaP4s7mxSufAJhsuS61xlwozYgJkTayIUxIYehIzoqa9MvvhxzKWQ
- 31bsvJ0nRK7CYp023fSA9aSD9GabAgm2nyMwqwKqbwzOclCPwF1xrRF
-X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
- pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
-X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
- auth_id=178
-X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
-Reply-To: utsav.agarwal@analog.com
+X-B4-Tracking: v=1; b=H4sIAL65zGYC/1XNwQrCMAwG4FcZOVvpUllXT76HeJg1dTm4jnYUZ
+ ezdzSaIXgJ/yPdnhkyJKcOxmiFR4cxxkGB2Ffi+G+6k+CYZUONBt9qpOI7KhtpY7EJjrQe5HBM
+ Ffm4t54vknvMU02srLfW6/felVloF6lqSEVxjThPvfXzAigv+ADQfgAII5eHVWI/OfcGyLG+Xm
+ oklxAAAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bryan Brattlof <bb@ti.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1515; i=bb@ti.com;
+ h=from:subject:message-id; bh=5AlIZ5ChdGTTQySLQ5G4iJCun/+9P+Lr7uBKemC+iKU=;
+ b=owNCWmg5MUFZJlNZEPKqGwAAY////v/Pt+n5/32bkP+xedb3ZxF/6+2mHN+//67v/t/Jn/SwA
+ RsYGJBoPUBo0PUaADRoAAGgD1A0AAaAGgAA9QAAaBkPKA0Gmj0jaanqekYZQ5AHqMEADTRk0Bo0
+ 0Gh6hoaNAAAZGg9TQMgaNNGQaeoZpBkZD0gAZAaBmp6mQhkek0ZMmQxDQDQ0A00YEDRoNMgaAA0
+ xGEyYgxDRggaaA00GJkMQGgAyAADcDDDocKi/Y2eFidjE+BjsmJgz5EOzlHGkL6pcbFYx0AFn5l
+ eQo52DQd4L8+QJ/FQlkoqMOKVOjYpOkunq/P6+LYfPNtfMuBfecuYt1RDqEMNQSBs+rt3h3gRzd
+ LO2dK6bQw0l7fUd7/0PGJaBBmgiKbZY/vWRoSxFwr9VlmseIaq8ALxO2jRy4apG5tjJ3Ma4Wj7I
+ Xc/W4SQee6RrACrmSTQgAArPu10wCxXDH2+czifCQeOZdiJp/Pe0JlSAkisOWmS+Mn3LHGZ5oRw
+ KVGIuTob4IsxayVe0YmAQrIfbd06C1PwHmr7QFDssFn94eSXtoV1uj3l/JAL0pmpeV26vPKQSBm
+ DhdijEAlH8gvwKykbAmNk2O+X+VCAQFsoMIai8uoAyaLTLBEibDnGtRzkwcS+BjJf0HZzjTcM4a
+ pVf4u5IpwoSAh5VQ2A=
+X-Developer-Key: i=bb@ti.com; a=openpgp;
+ fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Utsav Agarwal <utsav.agarwal@analog.com>
+Hello everyone
 
-Adding software support for enabling the pure gpio capability of the
-device - which allows all I/O to be used as GPIO. Previously, I/O
-configuration was limited by software to partial GPIO support only.
+This series adds in the OPPs for the Cortex-A53s on the AM62Ax and 
+AM62Px SoC families along with the defining the 
+WKUP_MMR0_WKUP0_CTRL_MMR0_JTAG_USER_ID which we can use to to properly 
+limit the OPPs available for that variant.
 
-When working in a pure gpio mode, the device does not require the
-certain properties and hence, the following are now made optional:
-	- interrupts
-	- keypad,num-rows
-	- keypad,num-columns
-	- linux,keymap
+Happy reviewing
+~Bryan
 
-However, note that the above are required to be specified when
-configuring the device as a keypad, for which dependencies have been added
-such that specifying either one requires the remaining as well.
-
-Also, note that interrupts are made optional, but required when the device
-has either been configured in keypad mode or as an interrupt controller.
-This has been done since they may not necessarily be used when leveraging
-the device purely for GPIO.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+Signed-off-by: Bryan Brattlof <bb@ti.com>
 ---
- .../devicetree/bindings/input/adi,adp5588.yaml     | 38 +++++++++++++++++++---
- 1 file changed, 33 insertions(+), 5 deletions(-)
+Changes in v3:
+- Miscellaneous spelling fixes in commit body
+- Link to v2: https://lore.kernel.org/r/20240823-opp-v2-0-e2f67b37c299@ti.com
 
-diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-index 26ea66834ae2..336bc352579a 100644
---- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-+++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-@@ -49,7 +49,10 @@ properties:
-   interrupt-controller:
-     description:
-       This property applies if either keypad,num-rows lower than 8 or
--      keypad,num-columns lower than 10.
-+      keypad,num-columns lower than 10. This property is optional if
-+      keypad,num-rows or keypad,num-columns are not specified as the
-+      device is then configured to be used purely for gpio during which
-+      interrupts may or may not be utilized.
- 
-   '#interrupt-cells':
-     const: 2
-@@ -65,13 +68,23 @@ properties:
-     minItems: 1
-     maxItems: 2
- 
-+dependencies:
-+  keypad,num-rows:
-+    - linux,keymap
-+    - keypad,num-columns
-+  keypad,num-columns:
-+    - linux,keymap
-+    - keypad,num-rows
-+  linux,keymap:
-+    - keypad,num-rows
-+    - keypad,num-columns
-+    - interrupts
-+  interrupt-controller:
-+    - interrupts
-+
- required:
-   - compatible
-   - reg
--  - interrupts
--  - keypad,num-rows
--  - keypad,num-columns
--  - linux,keymap
- 
- unevaluatedProperties: false
- 
-@@ -108,4 +121,19 @@ examples:
-             >;
-         };
-     };
-+
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        gpio@34 {
-+            compatible = "adi,adp5588";
-+            reg = <0x34>;
-+
-+            #gpio-cells = <2>;
-+            gpio-controller;
-+        };
-+    };
-+
- ...
+Changes in v2:
+- Expanded on commit descriptions
+- Split board file and SoC fdt changes into different patches
+- Link to v1: https://lore.kernel.org/r/20240809-opp-v1-0-fea8efeaf963@ti.com
 
+---
+Bryan Brattlof (4):
+      arm64: dts: ti: k3-am62a: add opp frequencies
+      arm64: dts: ti: k3-am62a7-sk: add 1.4ghz opp entry
+      arm64: dts: ti: k3-am62p: add opp frequencies
+      arm64: dts: ti: k3-am62p5-sk: add 1.4ghz opp entry
+
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi        |  5 +++
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts            |  9 ++++
+ arch/arm64/boot/dts/ti/k3-am62a7.dtsi              | 51 ++++++++++++++++++++++
+ .../boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi  |  5 +++
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts            |  9 ++++
+ arch/arm64/boot/dts/ti/k3-am62p5.dtsi              | 47 ++++++++++++++++++++
+ 6 files changed, 126 insertions(+)
+---
+base-commit: 182a862560097dec7adf774af58076984cd6c1ed
+change-id: 20240809-opp-7f1372af677c
+
+Best regards,
 -- 
-2.34.1
-
+Bryan Brattlof <bb@ti.com>
 
 
