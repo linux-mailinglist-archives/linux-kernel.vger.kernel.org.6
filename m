@@ -1,295 +1,141 @@
-Return-Path: <linux-kernel+bounces-301322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CE295EEFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B301095EF05
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68DE1C225FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DAEF1F24652
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23B0184525;
-	Mon, 26 Aug 2024 10:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D27187554;
+	Mon, 26 Aug 2024 10:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWjfcoYu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bfAGM7FD"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4E4155320;
-	Mon, 26 Aug 2024 10:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AC7186E40;
+	Mon, 26 Aug 2024 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669466; cv=none; b=eAbesUoFCA1VIS0Tj0EfBflBxCwIL+hW6HNYJrqhL1Ru/HotiFbOrBEdnigQM2FBRkVt1sit92yuFEPJD+ZbjvpuuZU8w5HMgI6YMJHhjVP2vToJLln3He/T6rDyeYpv9L+Pb09e69Lkte0XkmDlFGLdrTDzXxhz/KC4q+uTt/c=
+	t=1724669483; cv=none; b=s0dcIgD2fxVQTJltej2vYY+MjvDMUJh7iP6AoIlpJmWK3gpB4ob/0xpJ9C979L9MaextLzp6RqIJQPhFm29HZXvHFx34IF77moqr/JNvAKJdj8NPoe6FS6RzdSr+UAG3YE0Q7R3AD3EnBBqh1bzR10ZdvQNaftY7X9DpEvWNu5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669466; c=relaxed/simple;
-	bh=9XyQq7hdN4dGzn1MtGZZojRBMFR+oodXbd34LMBXDIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sCmdHmkb4vj0nqkIUW/4vfQ5ruBYYxVIX9kCUPLP5CThOXOLFhqPLPzAClVpGqJs1BoMMvf0vJUNxDSIxj6Wdc2ZLfqe6d740phAhAhWXghFVZNBiOtRMEL+RCrAXvAVgtXXJCwvdKq8aG7zdcjCe8MmaHq+jusDTwQQpI5rfIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWjfcoYu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CCCC51430;
-	Mon, 26 Aug 2024 10:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724669466;
-	bh=9XyQq7hdN4dGzn1MtGZZojRBMFR+oodXbd34LMBXDIs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gWjfcoYu6ixbrHVQjLtZOWbTPo6MCryVZBz1KT7SPK5k6+TpmPBvO7SM1R02ax7Pl
-	 V510tLNe9PxYcP9LzKn2LM1ke2JGrPYH+ou84VYZ7sK+VjChmQ4Vgy6BByYvEntBf2
-	 pxZ7zIPJ/sOpcp1gpBewrUZtbrFTNGm8u752zo/laS10FVwzcx+HwVLdi3U7NjIGpD
-	 AhKilOM9ZfLjrxuFgHew4Ajq0vpoel6s/cLpGgf47aftDOvoMQn4VxzpkfPuDpkBKP
-	 L6uJfmeoU4ACyca19YVlXBwuNS4EDaB2APqGBfiF82yFK8rso7soDEaKTNe2uhZf8o
-	 +5pbD9fTbgMTw==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27012aa4a74so2655667fac.0;
-        Mon, 26 Aug 2024 03:51:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7/DkG5BuLoai2Vf44BD3iygXAtSdfYf4v6KNrpgLGR9UaMKonBLt+eXSEueA7iZK6oV72rQF50jrPzCY=@vger.kernel.org, AJvYcCVhGCChZEcKYK7312S+7BdgFqf0UjlzByqXPrH36USKKsPqabcmR7PfsRqihr8dGDRyy5mi9TtBin0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuyNVkVipBxiHeDHhh7v5n8mRZaEfr4U+ZesTrw4RlzTG0b1gT
-	qW4AqfKOydyaTyUawPGJrQy+DBNTHGxDteZYeFGoy3C/Y/egDMa5lNoAoO2oN/vJhjlg3loT8rj
-	xTf0PMjJgPva4TYgNpWBwjMNJSEM=
-X-Google-Smtp-Source: AGHT+IG/B0nHhfbw6Kn8YVjXqkuGvBovBzk1DNUWe6U/NOEIulbu0M6i4Zl+zEUFYMMQFsI53zmuwal55fsqTrOwINk=
-X-Received: by 2002:a05:6870:700f:b0:25d:f0ba:eab7 with SMTP id
- 586e51a60fabf-273e6472850mr11131650fac.18.1724669465070; Mon, 26 Aug 2024
- 03:51:05 -0700 (PDT)
+	s=arc-20240116; t=1724669483; c=relaxed/simple;
+	bh=WdHE5XNtr7z+xsQwvBKiZd4K93n2CNswyZieBtNIAn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qg6/YUyfk8fr2U46vYfo9dvT9yTp9XybDchCfsyZQr0SFy1PiFiAr4a+i++ppnhz8gpqEW/XhiRpanLL6AYV2Ja3ASzhU5+tUHTfA6nS9j5n6rCOldu9MfvvWyylgFdM8QUTtrNFlOf4o6bsoXA/DDxdoGrzMbVXbIPqlikLNSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bfAGM7FD; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QApFh2099595;
+	Mon, 26 Aug 2024 05:51:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724669475;
+	bh=Rvq2ct4Moc9Ce/57oqN5CygPi0v+qZNmXjSDiXW5OUA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=bfAGM7FDGJR4/810DEuVfY2T1OkSvPCrg82LAFy9KOGZctK1I2XLYPYl/JVXF6BB/
+	 XB9m9n0BmTudgRzXnTfgrNjjSYYfLrZNEmq2aFgRtSb20WBOKSWe+kpZB/7CUeCVI4
+	 rcjilP5dA7vdqED+GwvSSgz/Jd/KC+W19Ga9a9J4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QApEsV039050
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 05:51:14 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 05:51:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 05:51:14 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QApAhS065986;
+	Mon, 26 Aug 2024 05:51:10 -0500
+Message-ID: <7926115d-6111-4ea4-af04-3cc51c89c5f8@ti.com>
+Date: Mon, 26 Aug 2024 16:21:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823154245.1553458-1-daniel.lezcano@linaro.org>
-In-Reply-To: <20240823154245.1553458-1-daniel.lezcano@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 Aug 2024 12:50:53 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ikXJrKyHm-texq1ZnWSBqSdi-bi0NCRQ2jPTu8mJ8izA@mail.gmail.com>
-Message-ID: <CAJZ5v0ikXJrKyHm-texq1ZnWSBqSdi-bi0NCRQ2jPTu8mJ8izA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] thermal/core: Use thermal_zone_device_param
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org, 
-	=?UTF-8?B?SsOpcsOpbWllIEdhcmNpYQ==?= <jgarcia@baylibre.com>, 
-	Alexandre Bailon <abailon@baylibre.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] arm64: dts: ti: k3-j722s: Change timer nodes
+ status to reserved
+To: "Kumar, Udit" <u-kumar1@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <tony@atomide.com>, <bb@ti.com>, <d-gole@ti.com>, <afd@ti.com>,
+        <hnagalla@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816073908.2343650-1-b-padhi@ti.com>
+ <20240816073908.2343650-6-b-padhi@ti.com>
+ <3f0002df-7ff0-4fd8-b8df-105ae9a5b051@ti.com>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <3f0002df-7ff0-4fd8-b8df-105ae9a5b051@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Aug 23, 2024 at 5:43=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+
+On 26/08/24 10:30, Kumar, Udit wrote:
 >
-> The function thermal_zone_device_register_*() have now a significant
-> number of parameters.
-
-Which may or may not be regarded as a problem.
-
-To me, there are two arguments for doing a change like this:
-
-(a) A struct initialization is less error-prone than passing a long
-list of arguments to a function.  In the particular case of
-thermal_zone_device_register_with_trips(), the last two arguments are
-easy to mishandle because they are of the same type and similar
-meaning.
-
-(b) It gets rid of multiline function invocations that are hard to read.
-
-> Simplify the parameters by extending the thermal_zone_device_param
-> structure with the parameters usually used when registering the
-> thermal zone.
+> On 8/16/2024 1:09 PM, Beleswar Padhi wrote:
+>> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
+>> use timers. Therefore, change the status of the timer nodes to
+>> "reserved" to avoid any clash. Usage is described as below:
+>>
+>>     +===================+=============+
+>>     |  Remoteproc Node  | Timer Node  |
+>>     +===================+=============+
+>>     | main_r5fss0_core0 | main_timer0 |
+>>     +-------------------+-------------+
+>>     | c7x_0             | main_timer1 |
+>>     +-------------------+-------------+
+>>     | c7x_1             | main_timer2 |
+>>     +-------------------+-------------+
+>>
+>> Fixes: 29075cc09f43 ("arm64: dts: ti: Introduce AM62P5 family of SoCs")
+>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 13 +++++++++++++
+>>   1 file changed, 13 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts 
+>> b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> index dd3b5f7039d7..e03beb0b5aad 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> @@ -566,3 +566,16 @@ &mcasp1 {
+>>              0 0 0 0
+>>       >;
+>>   };
+>> +
+>> +/* Timers are used by Remoteproc firmware */
+>> +&main_timer0 {
+>> +    status = "reserved";
+>> +};
+>> +
+>> +&main_timer1 {
+>> +    status = "reserved";
+>> +};
+>> +
+>> +&main_timer2 {
+>> +    status = "reserved";
+>> +};
 >
-> With that change we have a simpler function:
 >
->      thermal_zone_device_register()
+> Since IPC is not up-streamed for J722S , So I suggest to drop this 
+> patch from this series
+Thanks for catching this! I have dropped this patch in v4 revision of 
+this series.
 >
-> which can be reused in the different drivers and replace the
-> duplicate thermal_zone_device_register_with_trips() and
-> thermal_zone_device_register_tripless() functions.
-
-I actually think that having a special helper for registering a
-tripless zone is useful because it makes it super easy to find the
-code paths doing that.
-
-> Cc: J=C3=A9r=C3=A9mie Garcia <jgarcia@baylibre.com>
-> Cc: Alexandre Bailon <abailon@baylibre.com>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/thermal/thermal_core.c |  9 +++++++
->  include/linux/thermal.h        | 43 ++++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
+> and include this when you upstream IPC support for J722S board .
 >
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_cor=
-e.c
-> index e6669aeda1ff..5869562caf9e 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -1390,6 +1390,15 @@ int thermal_zone_get_crit_temp(struct thermal_zone=
-_device *tz, int *temp)
->  }
->  EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
->
-> +struct thermal_zone_device *thermal_zone_device_register(const char *typ=
-e,
-> +                                                        const struct the=
-rmal_zone_params *tzp)
-> +{
-> +       return thermal_zone_device_register_with_trips(type, tzp->trips, =
-tzp->num_trips,
-> +                                                      tzp->devdata, tzp-=
->ops,
-> +                                                      tzp, tzp->passive_=
-delay,
-> +                                                      tzp->polling_delay=
-);
-
-My basic concern with this approach is the copying of pointers that
-may become invalid going forward to tzp.
-
-Generally speaking, it is less than useful to hold on to copies of all
-data that is only used during thermal zone registration (like a
-pointer to the trips table for one example).
-
-I would define a new struct type to hold all of the current
-thermal_zone_device_register_with_trips() parameters:
-
-struct thermal_zone_data {
-        const char *type,
-        const struct thermal_trip *trips;
-        int num_trips;
-        void *devdata;
-        const struct thermal_zone_device_ops *ops,
-        const struct thermal_zone_params *tzp;
-        unsigned int passive_delay;
-        unsigned int polling_delay;
-};
-
-and pass that to a wrapper function:
-
-int thermal_zone_register(struct thermal_zone_data *tzdata)
-{
-        return thermal_zone_device_register_with_trips(tzdata->type,
-tzdata->trips, tzdata->num_trips,
-
-              tzdata->devdata, tzdata->ops, tzdata->tzp,
-
-              tzdata->passiva_delay, tzdata->polling_delay);
-}
-
-BTW, I don't think that the "device" part of the function name adds
-any value, so I wouldn't use it.
-
-A similar thing can be done for the tripless case:
-
-struct thermal_tripless_zone_data {
-        const char *type,
-        void *devdata;
-        const struct thermal_zone_device_ops *ops,
-        bool no_hwmon;
-};
-
-int thermal_tripless_zone_register(thermal_tripless_zone_data *tzdata)
-{
-        struct thermal_zone_params tzp =3D { .no_hwmon =3D tzdata->no_hwmon=
- };
-
-        return thermal_zone_device_register_with_trips(tzdata->type, NULL, =
-0,
-
-              tzdata->devdata, tzdata->ops, &tzp,
-
-              0, 0);
-
-}
-
-And yes, I would do it so that the users of tripless thermal zones
-don't need to use a full struct thermal_zone_params just in order to
-pass the no_hwmon value.
-
-> +}
-> +
->  /**
->   * thermal_zone_device_register_with_trips() - register a new thermal zo=
-ne device
->   * @type:      the thermal zone device type
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index b86ddca46b9e..1681b9ddd890 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -174,11 +174,45 @@ struct thermal_zone_params {
->          *              Used by thermal zone drivers.
->          */
->         int slope;
-> +
->         /*
->          * @offset:     offset of a linear temperature adjustment curve.
->          *              Used by thermal zone drivers (default 0).
->          */
->         int offset;
-> +
-> +       /*
-> +        * @trips:      a pointer to an array of thermal trips
-> +        */
-> +       const struct thermal_trip *trips;
-> +
-> +       /*
-> +        * @num_trips:  the number of trip points the thermal zone suppor=
-t
-> +        */
-> +       int num_trips;
-> +
-> +       /*
-> +        * @devdata:    private device data
-> +        */
-> +       void *devdata;
-> +
-> +       /*
-> +        * @ops:        standard thermal zone device callbacks
-> +        */
-> +       const struct thermal_zone_device_ops *ops;
-> +
-> +       /*
-> +        * @passive_delay:      number of milliseconds to wait between po=
-lls when
-> +        *                      performing passive cooling
-> +        */
-> +       unsigned int passive_delay;
-> +
-> +       /*
-> +        * @polling_delay:      number of milliseconds to wait between po=
-lls when checking
-> +        *                      whether trip points have been crossed (0 =
-for interrupt
-> +        *                      driven systems)
-> +        */
-> +       unsigned int polling_delay;
->  };
->
->  /* Function declarations */
-> @@ -218,6 +252,10 @@ void thermal_zone_set_trip_temp(struct thermal_zone_=
-device *tz,
->  int thermal_zone_get_crit_temp(struct thermal_zone_device *tz, int *temp=
-);
->
->  #ifdef CONFIG_THERMAL
-> +
-> +struct thermal_zone_device *thermal_zone_device_register(const char *typ=
-e,
-> +                                                        const struct the=
-rmal_zone_params *tzp);
-> +
->  struct thermal_zone_device *thermal_zone_device_register_with_trips(
->                                         const char *type,
->                                         const struct thermal_trip *trips,
-> @@ -281,6 +319,11 @@ int thermal_zone_device_enable(struct thermal_zone_d=
-evice *tz);
->  int thermal_zone_device_disable(struct thermal_zone_device *tz);
->  void thermal_zone_device_critical(struct thermal_zone_device *tz);
->  #else
-> +static inline struct thermal_zone_device *thermal_zone_device_register(
-> +       const char *type,
-> +       const struct thermal_zone_params *tzp)
-> +{ return ERR_PTR(-ENODEV); }
-> +
->  static inline struct thermal_zone_device *thermal_zone_device_register_w=
-ith_trips(
->                                         const char *type,
->                                         const struct thermal_trip *trips,
-> --
-> 2.43.0
 >
 
