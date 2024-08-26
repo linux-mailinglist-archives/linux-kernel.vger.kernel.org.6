@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-301964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A14595F808
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:26:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C5595F80B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE99F1C22353
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C95DB222F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65931991B6;
-	Mon, 26 Aug 2024 17:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8F51993B4;
+	Mon, 26 Aug 2024 17:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iXhPfBpP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kd3iHAtK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSUneqW/"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ED61990B7;
-	Mon, 26 Aug 2024 17:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EE11991CB;
+	Mon, 26 Aug 2024 17:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693129; cv=none; b=ZpfCgRywU3Z3xI56vjlCgZoIVgYKEQC6JC5nfts5QUZF2ltnDaqbIhSPBTIaliz40OR3AJ7QMPwzXWYQIKkfstJX/RC9EvbSrsRjuNG3InZ3gWJ1TZHnfVzEOQtCVFe/vaWM2hmI7Qn+gL+ggELDTEoGEruXUsxb/f3nBuHDKV4=
+	t=1724693151; cv=none; b=dlr5fJxDktNB3yRSB9Q50bolkVrQf0e0tegp+JpjWMPXA1cFpTZAcwgBk9/RhNKgE7CnVG0oMXN6weoo/myCpg+pSyvBIhz3vop/lNKPoyyKnC1gRP4BaaYbv4AyuDzYwDeU4cic4kTk7ipE7uF/Lkzk8kQBNrM17kGv6lHO+Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693129; c=relaxed/simple;
-	bh=bycceD6Sq3X8h7aj7Xz2NeR99SoTYzobcBZPvCA+e2o=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Y89giwP/OguZIT6LqgKGXakQAXpq4LWMX8kYK+Mp9dVBFEmxyw0c0cEHk7anqc1y+85z1o4MzSdDd5YihxnnlEPhcMecgSjRgk408Z/45ZcU5uSC88QklOKb5d8wJ2gGVk+Vf9DUcaEIPVGXj4LQjseJnvIKWU0x+Qf3R3A5Qr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iXhPfBpP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kd3iHAtK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 Aug 2024 17:25:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724693124;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=j5h0WpF7s0MWkaPvokJ1ZrffLzhCYljqkZkHQaGieFA=;
-	b=iXhPfBpPTWjEp8vtUd9rBwFJ9vaFvey3smUe79xZsizCY4ZMnhWEtIWfMOAcKLJJoAxv1N
-	9z80vDK641aZ2lkad4bQsRVlh9frKhkylufUzn0DLO5qC9eOUPthvm4a+aMfSh4avZ/N8N
-	1c0EClzblT/39kYtnY4supP69uE0+9UMsKKfAuWqVbWGGAgsS0MQN3uG3u13gm+KqEU0FV
-	2XFP3bMUZFdte25N973NdASLcjQV1YNuk4cousQtf7K71ydZmG41b/om/zsngBajGR1her
-	KQiDf8twBO1tCaDf6IN8D+2uOjZuD+3MRe26j8evzkf+F67N7vNECSYQmqIeOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724693124;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=j5h0WpF7s0MWkaPvokJ1ZrffLzhCYljqkZkHQaGieFA=;
-	b=kd3iHAtKdnloCrS7XQ5qlAvkO3onttdfYy0jS4pzbdcg4FBiqxVsX9yxpebD13XwZoGMDi
-	u4MpT0Bd2moCVKBA==
-From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/tdx: Fix data leak in mmio_read()
-Cc: Sean Christopherson <seanjc@google.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1724693151; c=relaxed/simple;
+	bh=zMx9DQpEyABpNYvNRs/EdOnvUvRhyl4vlyhO1uOi5Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gt1DRQQ3qb+hM4qBilv1e08zjPOE+BPElTUgt6ZVHWGUW8zYB4uCk2Gw8OUe+/vV9HMHT0Ionjq3k08dFDaJKS2LOi/Nf5jQ9GNm3TMgS/+bUk58H7GiQC04/uell7WCRMSAxLs2cau/I59GXHYpN69DMfmlKND/fMS7h6PbVhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSUneqW/; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-714287e4083so4131841b3a.2;
+        Mon, 26 Aug 2024 10:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724693149; x=1725297949; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZ6cwNGA6JD/Q8yMQgG51cdzPFq4ZNF3ohZgEXIKCD4=;
+        b=kSUneqW/Zq+aOXb4XfoqJjz+pd1kya3IRutfyJCiFYCn2UTtkXtGm2/RJitVMr/BBr
+         aVotmCNUwgRFXgNDEvf/xUyjdZmmFyL9rjWy32s6aIvw4HB/Ykay1DObkhejVmH9wDP9
+         lCgNfg2SuPBssS1Sd6KSAf2/Ct1qyy2/bRUYC8iIJaLeXc6qzReTU0b52rAH2H4H+a2l
+         TMp/d0WcNfIGIb60wMpuTr/KQ4nI08UuYQzx4Aco1XjxGXhwDUA665Z8ZdVbWuGRBu1E
+         pir2e8tjEjeoP6GOj6j1PQixzakotg+6VVyfYg8SwLqnFiV+Bou7wyK2x8LGJgXSWXkt
+         0HvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724693149; x=1725297949;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nZ6cwNGA6JD/Q8yMQgG51cdzPFq4ZNF3ohZgEXIKCD4=;
+        b=IRKDqmWa+958y3mID5+OYzIzphwQFbVbkz5wleyagPRfYG6AHoGchAooBcK79ixXnX
+         HwqjefSHEOPJu0Ox3iCxkw+ZyNvUIj6LEs0jRcKXFHasW8T7Qz4GZRcNV39RJxI6i3/S
+         08lwQfbYYSfV+wtMSP3eCIW9cx66jLXtutKGKNk6zxaUdrGBMiAtEQKp5us1sNeEKSeW
+         qIkJ5WpKuq8js5Fv9+Nf+mE3y14N+4I1qK+CA/pk8GPUkB6z1s5ttcO1BMroMrGZNfoN
+         P85hYtLZ4feFCbP2etvs8pT0N2JMWDOW9EYTbkA8SEcS5ZQASFBl+UpGaNunrT0uqTrp
+         YWOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxcmnDXSSqhyvOS00tOrDh08kI8IJZqM8lIlf79IBSIvujeOe0wyVmqd2Ga24iQCSvC6eHAvUXV/XLGMug@vger.kernel.org, AJvYcCXZEzpsIyMocqTMN5F0USFXmMAwluupxlN2vTlomQ+szmtNVR9M6sXo/aWjHLFlRaPUKfFl08hVJ5Y9fg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnggfd9MLmALSapTE0jHCI2UAJD3eqhgWZBZ6GgCvIYzpRAE6l
+	UZlOQ3ROz6X9qZ3KKSpuhEkq1/XwN03fHicQrThBq8wEFV95o14y
+X-Google-Smtp-Source: AGHT+IFbUoJ9U+jx1tAVdojTiAkiaT4wP/hkaipngH3TzXRNWC+SXQsNo9MXNIwqll6sfrVpUmJQaw==
+X-Received: by 2002:a05:6a20:c6c1:b0:1c3:b61c:57cb with SMTP id adf61e73a8af0-1cc8b63e7admr14162486637.53.1724693149286;
+        Mon, 26 Aug 2024 10:25:49 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855e1826sm69658605ad.122.2024.08.26.10.25.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 10:25:48 -0700 (PDT)
+Date: Mon, 26 Aug 2024 10:25:46 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: mitr@volny.cz, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] Input: wistron_btns - use kmemdup_array instead of
+ kmemdup for multiple allocation
+Message-ID: <Zsy6mvOkn7PkrUuv@google.com>
+References: <20240826045253.3503-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172469312398.2215.16151331896868835414.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826045253.3503-1-shenlichuan@vivo.com>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Aug 26, 2024 at 12:52:53PM +0800, Shen Lichuan wrote:
+> Let the kmemdup_array() take care about multiplication
+> and possible overflows.
+> 
+> Using kmemdup_array() is more appropriate and makes the code
+> easier to audit.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
 
-Commit-ID:     eb786ee1390b8fbba633c01a971709c6906fd8bf
-Gitweb:        https://git.kernel.org/tip/eb786ee1390b8fbba633c01a971709c6906fd8bf
-Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Mon, 26 Aug 2024 15:53:04 +03:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Mon, 26 Aug 2024 07:04:09 -07:00
+Applied, thank you.
 
-x86/tdx: Fix data leak in mmio_read()
-
-The mmio_read() function makes a TDVMCALL to retrieve MMIO data for an
-address from the VMM.
-
-Sean noticed that mmio_read() unintentionally exposes the value of an
-initialized variable on the stack to the VMM.
-
-Do not send the original value of *val to the VMM.
-
-Fixes: 31d58c4e557d ("x86/tdx: Handle in-kernel MMIO")
-Reported-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc:stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20240826125304.1566719-1-kirill.shutemov%40linux.intel.com
----
- arch/x86/coco/tdx/tdx.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
-index 078e2ba..da8b66d 100644
---- a/arch/x86/coco/tdx/tdx.c
-+++ b/arch/x86/coco/tdx/tdx.c
-@@ -389,7 +389,6 @@ static bool mmio_read(int size, unsigned long addr, unsigned long *val)
- 		.r12 = size,
- 		.r13 = EPT_READ,
- 		.r14 = addr,
--		.r15 = *val,
- 	};
- 
- 	if (__tdx_hypercall(&args))
+-- 
+Dmitry
 
