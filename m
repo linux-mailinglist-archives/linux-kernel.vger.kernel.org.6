@@ -1,73 +1,140 @@
-Return-Path: <linux-kernel+bounces-301689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3D895F40E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:39:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8610D95F417
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4F02839E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:39:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A011F22529
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3E31917DB;
-	Mon, 26 Aug 2024 14:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7488B18FDDC;
+	Mon, 26 Aug 2024 14:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efm049mD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e93xdW4l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAD718BBBF;
-	Mon, 26 Aug 2024 14:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B200C18D65F;
+	Mon, 26 Aug 2024 14:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683148; cv=none; b=Rf1CV5Yd2ZVOOzTufQ8x6xwzGmCKuSXqM1R43mKi9zgWpeZpBiHzN3z4cFxDT5k4jyvDS3dUZJobGN71h8bFUG3mq+9e/I98WRTzV1cJVSe+6T7W6LVW1U5hzOf9iYRV1WYXDGiFWngdohfwhsRm1hrNVRBUkfu0VodjjkDWoZY=
+	t=1724683204; cv=none; b=aIh9CZkAZk+wBTCIJS4OCtgvHB7HBBEjoRiJPC7GhftrviOCw+BMn0Xy62zUxMy3wF4Tc7QucQgftorbay+Q7bFJ4qqIYGIVxXkJRvyRQxfml9arSikv33pGa+AnA1LKJV9KPXRwOSji8fO5c2U6oyl6dyWqqMHWirldiMsjne0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683148; c=relaxed/simple;
-	bh=Q9cvkCm+QmO1/pKn33PAu1ov/cyn+nHAhRP/EgZb/io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTNKFghpfk6mIXoWeXXYBO71mMUAWXT3TgzyrGG4+LgINHtX4HELDfjfGBrcjTces8nkMgfBpAnz8hu3fhLnMfhVRrxYHiYwsP1r+GA0Edb5LLWBkTru23x4Hhx7sbxl1m+tVIoeqTNkzy4eZR6ZNGy5VtIMNowW1ZOWqUlaGDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efm049mD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93147C4FEEB;
-	Mon, 26 Aug 2024 14:39:07 +0000 (UTC)
+	s=arc-20240116; t=1724683204; c=relaxed/simple;
+	bh=Ctct7FhOs5kvIU3l+geYiyju1k7Vdf2JX22/VaOv1s0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kXxLdq9fVGfiO/RimaL5Diq3wCW1oTkh/kkJWxZk59cB/P333yrGnyvlEAZUC2S9V02Uljmm8bTF2PXpzbnRupGUAl4Ff/LWToSYbRU0rUrak+Zuq2ofgu3TDsSIZ0AaZP23eI/cb8n7QTGs5nGgZrhBXDF55m6PzFGZmpEhhzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e93xdW4l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFD8C4FEEA;
+	Mon, 26 Aug 2024 14:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724683148;
-	bh=Q9cvkCm+QmO1/pKn33PAu1ov/cyn+nHAhRP/EgZb/io=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=efm049mD2kZwjY0XKiloGnyNBxieWW7od3YFciHShVzKzoWWrAwPvboJiSKLIDWOD
-	 3XSLIqeVluPjQuJ0i09ks34OCls2YpPrB81nSqMIDkvFFvQjtL8qT0A2R9vEKi/K+O
-	 hegx/5mnHutGnd0GyfU6SvGpETGn3rqBjnSa4iS6iAcTxcn6waqeASZ0V0W4XJkJCP
-	 zV2LrMCe04cFZ1Gh9oSwAxGZP4qKD9tlS9MyzGQ6JEXOOLZ9Ke55y4QiiqyBP3gTnY
-	 A0fQ7yosjfw2lKkeXj4HYK6fzQcYaRstIk47xVEQsLPxESUVTREPxucpazTzx9SQFB
-	 dGvWbkBfBoDqg==
-Date: Mon, 26 Aug 2024 11:39:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] perf tools: Print lost samples due to BPF filter
-Message-ID: <ZsyTiEmr8_OsSnup@x1>
-References: <20240820154504.128923-1-namhyung@kernel.org>
- <20240820154504.128923-2-namhyung@kernel.org>
+	s=k20201202; t=1724683204;
+	bh=Ctct7FhOs5kvIU3l+geYiyju1k7Vdf2JX22/VaOv1s0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e93xdW4lf/xARfE/fKOh1ecqWXkiWjWHpeT485k2IxR50E8Ew79/4Ox56K7w0LknY
+	 dqggeO2X/rgdsxvNi4JQywdJpxPtjODsmro7RyQuCRZPrR3NPB7/AuzF5bP3K/jR6M
+	 WQVv/vhCdeSRZJFY1lODVfuO450ih5bY45dUwqR2pMlQo05yRLhfytu8JzF+6Nx9lt
+	 c027X1eU3DVhNjXFqxonEe6dHfoctc4CUppxIpkcY/Ax0Ocent09oF3BVWnq8hyxW7
+	 LYo4X2l7H3bIHknXRvp7s3If7jOD4wNcRdOwZ9ZnSnJHD40z/FWuexR0r/ATc0nRPY
+	 Wze390frhtcRg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53343bf5eddso5822439e87.1;
+        Mon, 26 Aug 2024 07:40:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWIetJaDqMQaiRE4JU8Y1Li0LmaWHvtYc+6WN7kMbP3QK9TUGg+AhSCWeVo0QN9rz8aPT/EpuWrJOM=@vger.kernel.org, AJvYcCXEgHgIY6znXNvC+EHBH57WAJKhFTwgxpuglS4HKy71/I+JHf6//2UrCLc4Sw96R/47aRul25Ay1QoRNKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWU4AdNX+4V3lq7+0c1WG+Y1zbKtlQ6LZyrgKmrged2e+/cvZU
+	q/w88679KA+61+0nGN/36O1g14DjGnv57Z5hYxp8RUvBb9JCb8B7+SeDbxZy1CKukBbODHWKkKH
+	HWGLmaIWW0Z64Jh8x5To1xw3bOCs=
+X-Google-Smtp-Source: AGHT+IHkY48E2J1ziCxSk4TW9jvAO3h5i0fOHdu6Vfipe6wUWjDPVLV6c7P4ja0mzcQlVn8KnOjsmpNBxG4FBueFISs=
+X-Received: by 2002:a05:6512:3ca4:b0:52e:767a:ada3 with SMTP id
+ 2adb3069b0e04-534387be485mr6059328e87.47.1724683202677; Mon, 26 Aug 2024
+ 07:40:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820154504.128923-2-namhyung@kernel.org>
+References: <20240705060650.243497-1-chenhuacai@loongson.cn>
+ <20240705060650.243497-3-chenhuacai@loongson.cn> <4ad634a1b16285b4d83e7c320a5657b548fd6e22.camel@xry111.site>
+In-Reply-To: <4ad634a1b16285b4d83e7c320a5657b548fd6e22.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 26 Aug 2024 22:39:50 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6W7PdxsnPzgd=C3=RVRr-4RefZXiXDNt4TJLsd7Ktf0Q@mail.gmail.com>
+Message-ID: <CAAhV-H6W7PdxsnPzgd=C3=RVRr-4RefZXiXDNt4TJLsd7Ktf0Q@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, loongarch@lists.linux.dev, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 08:45:03AM -0700, Namhyung Kim wrote:
-> Print the actual dropped sample count in the event stat.
+Hi, Ruoyao,
 
-Thanks, applied the series.
+On Fri, Aug 23, 2024 at 2:34=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Fri, 2024-07-05 at 14:06 +0800, Huacai Chen wrote:
+> > Some of LoongArch processors (Loongson-3 series) support DVFS, their
+> > IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
+> > the package called SMC (System Management Controller), which can be
+> > used to detect temperature, control fans, scale frequency and voltage,
+> > etc.
+> >
+> > The Loongson-3 CPUFreq driver is very simple now, it communicate with
+> > SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
+> >
+> > There is a command list to interact with SMC, widely-used commands in
+> > the CPUFreq driver include:
+> >
+> > CMD_GET_VERSION: Get SMC firmware version.
+> >
+> > CMD_GET_FEATURE: Get enabled SMC features.
+> >
+> > CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
+> >
+> > CMD_GET_FREQ_LEVEL_NUM: Get the number of all frequency levels.
+> >
+> > CMD_GET_FREQ_BOOST_LEVEL: Get the first boost frequency level.
+> >
+> > CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
+> >
+> > CMD_GET_FREQ_INFO: Get the current frequency.
+> >
+> > CMD_SET_FREQ_INFO: Set the target frequency.
+> >
+> > In future we will add automatic frequency scaling, which is similar to
+> > Intel's HWP (HardWare P-State).
+> >
+> > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn
+>
+> Hi Huacai,
+>
+> I got some error with the driver enabled:
+>
+> [    6.650403] BUG: using smp_processor_id() in preemptible [00000000] co=
+de: (udev-worker)/208
+> [    6.658719] caller is loongson3_cpufreq_probe+0x5c/0x250 [loongson3_cp=
+ufreq]
+>
+> and the driver failed to probe.
+>
+> It seems the caller of smp_processor_id is actually do_service_request,
+> which is inlined into loongson3_cpufreq_probe.
+Emm, it seems we should use raw_smp_processor_id() instead of
+smp_processor_id(), but I don't know why we haven't met this problem.
 
-- Arnaldo
+
+Huacai
+>
+> The .config file is attached.
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
