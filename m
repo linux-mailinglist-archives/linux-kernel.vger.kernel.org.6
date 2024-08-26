@@ -1,188 +1,192 @@
-Return-Path: <linux-kernel+bounces-301678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B6395F3F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099E295F3F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 244631F22529
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B487B2820F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8A218BC01;
-	Mon, 26 Aug 2024 14:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812D818F2FF;
+	Mon, 26 Aug 2024 14:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKV6M+99"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LQYuqpY1"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1DC143C70
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E28143C70
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682845; cv=none; b=gM2/7YZdiKf1DCltP0TNNmh76pctVC1MQlZMk2hU97S04j9YKVJpIKeKU3i7oJmS7KY/Nmjj0y4G0DUmmMUPfKKUfw4uFEOcff85EH1vEhfp9DVMwoqRXoYofNsXsp9pRd73uCGSNPx2y5o1UHBgtEIL1JwZyUSupE4FnJ+tOaE=
+	t=1724682884; cv=none; b=HCoXE6Y4ff9rKfZnGOkCx4C/kAAHdsUMWDcoSNl8ddklVBTg0hJgl4jboN8OU/F0wG4jQ7Ldb51xxWCLwb+Vanfo48ZNMg5gWA+cElTRIqDMa8UvwfHAsDYyO0LrXaCqp/ECq6FjNYtAE2+y0cbQTyJyPuYLb9jwmicrcR6xT9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724682845; c=relaxed/simple;
-	bh=iBji9l3Mq5YlFk7xqpjOu4g46H0DO+fbEUaOKCGqD5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORWbgbfBe7Hbb4TRecRTb5Z+gEMqPjyjLz0Mk2zxQC4bijZwXSr6O2NXCKqvu6b8z/TPHeBjieegiHMGgg14dzQdtbIt3fi2Zokzd3ZRi9AxJaL3oddmRTmnbp8Byv0V2jkW7OzOuSR0ET5KteB5miX2Z3dQQMlMg4N5MM058bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKV6M+99; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3c071d276so2889154a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:04 -0700 (PDT)
+	s=arc-20240116; t=1724682884; c=relaxed/simple;
+	bh=NKmENQZd/I0OamIT6Wd0ddl1rtdBoHe6puFACr/5d84=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TSkYqJy6wDB/+7vDJ0WyGtEbgfIpNRuRwXjgZs+lL2g4YM7xqXQ6HjYnVGTlPdmm34XVO6SDpUr0/W45BgpKK/Gw8HSx+igSTgBpk3QxmTVIrHEwORN0gzavj16xMQiEIMWTHa4MV4zrQlPz15RibOaGGOWkvL6US5mO4hlgWWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LQYuqpY1; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690404fd230so73856047b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724682843; x=1725287643; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAtqRu/b0jhdd68hvf5beb85uHO+b3KNcBWcH7+HYbA=;
-        b=KKV6M+993cnxHjAIqLrFjASvq1utr10rECCHF6Sfks/m0/yC8UjjO2ePCBan9vLgw3
-         XPGbwdLAc30Khm9t9DMzkkqemOE597f+fOkJG0fxdQ6TAxBLwUVLkaUeskgKZnKg4tp1
-         j/m+bLdychSN1Dsc1YOLzowyiHYVA2YJftMoYIMPanKnmIgZeFZcfVFOdo92CSTknTDO
-         ujMEI8nNC2/0W0pF1f2yIlfgXTrkvGTimHhGqpBvC+3bRsBnC6AZ8pRWWgQGF/zGt8o6
-         DKvFJy0la1ijvBHRGzUQvoDMSwIylq1L5qeTbAvnVX5wzTXQ2f6kPdsFtbqntMJr9EEe
-         rD+g==
+        d=google.com; s=20230601; t=1724682882; x=1725287682; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9XweLBpKE263oEy5QxtTcmCCOjmArflFgXe8Eq5cViM=;
+        b=LQYuqpY1A3BGslGgQNVcstrBUQbjetJeTaOjUrd3waH8l7iVX2/Zjk2OjC2nKcQvxd
+         SwR4SJs7K7sTYx5flLvTpSk8vQ5SAvHWk1NsuQnXW9b7+HU7ha5wQOQ2Wxo/S6QGHPRn
+         fB8iiZUdFysDyGY4qgJqKK6TK97phIiQ6pg/0icpNKxr3kq3SPtMTj4X/LXBy9b7xtz+
+         NHnuEw5AucgAe2s2T5ytIgjbcRMae6cbYKXnQ47u9daNbx0OrJWRRQAVLAGl5fhPK1/v
+         Ss/JlrXLiSg6Fuhf7Bt2oVVVdVULMorHCnzeuxCQRl7hdP6j7MJFs0v5jeT1SMjgnL64
+         GBCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724682843; x=1725287643;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NAtqRu/b0jhdd68hvf5beb85uHO+b3KNcBWcH7+HYbA=;
-        b=SPyi8KXuTKkDyi/W37PHUeK2Wawt7f5BShAXnxE7VAHsX23hB18bVV/0MWijQdYEmp
-         CyHWclJU6Gjx+3x4pTkdF/oZB+XjD5Yj3yDVDXxaEKQnOQNE1wnD2ECztwnu1sYOsUan
-         vzA9UNsSt7gZzEGCRnFQcsCpd9qp2WOKiqLhM756XZNHq9iki7MjYVFAxY87WPxfUIX4
-         DA5UPgLryWRw7agz8piv90F1SMEotHNjaqkIhM1piFhZrM5ahhWH6/SdsEtnsrY8LaKO
-         WqcHFuGUDYSjveUSOwrCr2AIz7vLvMoiIoHAev46aYN7Jgh5q0NrVR9ytTPyfh4pguLV
-         aysA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlRIBKqn7/QZzy5Ar5qCob3s/xwcmqHG2VpdC5y1IWsiBMIFb1IwiMU0KdZxC8GrkRYrenMXoISVR873o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRJQW3CrBfgC0s7Mzs9HKo0v45XavhLfLkQ8DH4z82TPQKwyb4
-	viW7v/c6Df/YdPBjYbY3Tp3+HmoWNiQq4y7US+9TxXAM5wepNhoUoPSf/vRIqsOMyphNKO5N+68
-	edSbsd8tTXO+QxDPmXnWFKq/LtYY=
-X-Google-Smtp-Source: AGHT+IHGswmu4skCSJTV0utPI/Jjq8Beu87ivVDe/S41pb2YNsrW0F54bj3C8C2XPPfoOu3Cyfsxm1RuQtIteMKHkZA=
-X-Received: by 2002:a17:90b:b0c:b0:2c9:e0d3:1100 with SMTP id
- 98e67ed59e1d1-2d646be07c3mr8467021a91.19.1724682843343; Mon, 26 Aug 2024
- 07:34:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724682882; x=1725287682;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9XweLBpKE263oEy5QxtTcmCCOjmArflFgXe8Eq5cViM=;
+        b=Yp+GEBjikBs6ymgPSBvLBNEM8p62kdCOpUGDj42fVyboXwDrCTpq9wkPPlYF4iu647
+         jjz6fmTicRFyhIZdAtCZZ0WcJYQe0Qc7dFJYU0bsEcsAOe+dTSGj8e+LykeijN6lejwR
+         VEiby658+1x81SQHsqLf5b4R++LM+QKCn97viIjVYeUs9JpbvNsDF3eMRit/V1+hYMxx
+         ofGt6yzFm0B8Wsha9ZLQyTvX9j7UeiBmwAIsvqbwm6gCr69rq58v2iWStovy6CM7AxHy
+         IA/0tmg2Skun7ZQrC20wbjoG72bxxDGUyfhN1RbrlPbjyyHvgFDw+I9zGUnNhDAY86PV
+         5TmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsD1zQThKEly6dVmnUy8uYHJ4rHvbgvPHSZ5vH0LYBgudbAvkc7fDk5zgVg7y16eMGgf7x4RJBP5ZLI9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBJN8x8mgrIBTXbyVFmZOVgt4qcsSFfwnfaFX8g3XtUHQLj9Ls
+	m9S1jfmuVm0CP27XgJNv6EL7OPvagf3vLG3QGbDuR9h97E1lRCgPoB1UpZPDCqwX2en0BGrLKKO
+	Aag==
+X-Google-Smtp-Source: AGHT+IF7LGVXL0BPqXys0c3S7QqlhU4D6PhBJbKwSJrijGqoCE6ICdmlx3a4u+ubcgJD9HeDtU/MHyRVAvU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3309:b0:6b0:d571:3540 with SMTP id
+ 00721157ae682-6c6289a64a5mr620947b3.6.1724682882008; Mon, 26 Aug 2024
+ 07:34:42 -0700 (PDT)
+Date: Mon, 26 Aug 2024 07:34:35 -0700
+In-Reply-To: <20240823223800.GB678289.vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240825121452.363342-1-sui.jingfeng@linux.dev>
-In-Reply-To: <20240825121452.363342-1-sui.jingfeng@linux.dev>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Mon, 26 Aug 2024 16:33:52 +0200
-Message-ID: <CAH9NwWf-BODALL3dPgERY6i-KzeghbsWR_zHFv_BPjkiLQbQhw@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: Fix missing mutex_destroy()
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-3-vipinsh@google.com>
+ <Zr_i3caXmIZgQL0t@google.com> <20240819173453.GB2210585.vipinsh@google.com>
+ <ZsPDWqOiv_g7Wh_H@google.com> <20240823223800.GB678289.vipinsh@google.com>
+Message-ID: <ZsySe8tpDyZAvb6l@google.com>
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
+ MMU under MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Am So., 25. Aug. 2024 um 14:15 Uhr schrieb Sui Jingfeng
-<sui.jingfeng@linux.dev>:
->
-> Currently, the calling of mutex_destroy() is ignored on error handling
-> code path. It is safe for now, since mutex_destroy() actually does
-> nothing in non-debug builds. But the mutex_destroy() is used to mark
-> the mutex uninitialized on debug builds, and any subsequent use of the
-> mutex is forbidden.
->
-> It also could lead to problems if mutex_destroy() gets extended, add
-> missing mutex_destroy() to eliminate potential concerns.
->
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+On Fri, Aug 23, 2024, Vipin Sharma wrote:
+> On 2024-08-19 15:12:42, Sean Christopherson wrote:
+> > On Mon, Aug 19, 2024, Vipin Sharma wrote:
+> > Huh.  Actually, after a lot of fiddling and staring, there's a simpler solution,
+> > and it would force us to comment/document an existing race that's subly ok.
+> > 
+> > For the dirty logging case, the result of kvm_mmu_sp_dirty_logging_enabled() is
+> > visible to the NX recovery thread before the memslot update task is guaranteed
+> > to finish (or even start) kvm_mmu_zap_collapsible_sptes().  I.e. KVM could
+> > unaccount an NX shadow page before it is zapped, and that could lead to a vCPU
+> > replacing the shadow page with an NX huge page.
+> > 
+> > Functionally, that's a-ok, because the accounting doesn't provide protection
+> > against iTLB multi-hit bug, it's there purely to prevent KVM from bouncing a gfn
+> > between an NX hugepage and an execute small page.  The only downside to the vCPU
+> > doing the replacement is that the vCPU will get saddle with tearing down all the
+> > child SPTEs.  But this should be a very rare race, so I can't imagine that would
+> > be problematic in practice.
+> 
+> I am worried that whenever this happens it might cause guest jitter
+> which we are trying to avoid as handle_changed_spte() might be keep a
+> vCPU busy for sometime.
 
-Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
+That race already exists today, and your series already extends the ways in which
+the race can be hit.  My suggestion is to (a) explicit document that race and (b)
+expand the window in which it can occur to also apply to dirty logging being off.
 
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c | 3 +++
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c    | 1 +
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c    | 1 +
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.c    | 5 +++++
->  drivers/gpu/drm/etnaviv/etnaviv_mmu.c    | 2 +-
->  5 files changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c b/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> index 721d633aece9..1edc02022be4 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> @@ -79,6 +79,9 @@ void etnaviv_cmdbuf_suballoc_destroy(struct etnaviv_cmdbuf_suballoc *suballoc)
->  {
->         dma_free_wc(suballoc->dev, SUBALLOC_SIZE, suballoc->vaddr,
->                     suballoc->paddr);
-> +
-> +       mutex_destroy(&suballoc->lock);
-> +
->         kfree(suballoc);
->  }
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index 6500f3999c5f..7844cd961a29 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -564,6 +564,7 @@ static int etnaviv_bind(struct device *dev)
->  out_destroy_suballoc:
->         etnaviv_cmdbuf_suballoc_destroy(priv->cmdbuf_suballoc);
->  out_free_priv:
-> +       mutex_destroy(&priv->gem_lock);
->         kfree(priv);
->  out_put:
->         drm_dev_put(drm);
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index fe665ca20c02..b68e3b235a7d 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -515,6 +515,7 @@ void etnaviv_gem_free_object(struct drm_gem_object *obj)
->         etnaviv_obj->ops->release(etnaviv_obj);
->         drm_gem_object_release(obj);
->
-> +       mutex_destroy(&etnaviv_obj->lock);
->         kfree(etnaviv_obj);
->  }
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> index af52922ff494..d6acc4c68102 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -1929,8 +1929,13 @@ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
->
->  static void etnaviv_gpu_platform_remove(struct platform_device *pdev)
->  {
-> +       struct etnaviv_gpu *gpu = dev_get_drvdata(&pdev->dev);
-> +
->         component_del(&pdev->dev, &gpu_ops);
->         pm_runtime_disable(&pdev->dev);
-> +
-> +       mutex_destroy(&gpu->lock);
-> +       mutex_destroy(&gpu->sched_lock);
->  }
->
->  static int etnaviv_gpu_rpm_suspend(struct device *dev)
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-> index e3be16165c86..ed6c42384856 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
-> @@ -361,7 +361,7 @@ static void etnaviv_iommu_context_free(struct kref *kref)
->                 container_of(kref, struct etnaviv_iommu_context, refcount);
->
->         etnaviv_cmdbuf_suballoc_unmap(context, &context->cmdbuf_mapping);
-> -
-> +       mutex_destroy(&context->lock);
->         context->global->ops->free(context);
->  }
->  void etnaviv_iommu_context_put(struct etnaviv_iommu_context *context)
-> --
-> 2.34.1
->
+> > void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm, unsigned long to_zap)
+> > 
+> > 		/*
+> > 		 * Unaccount the shadow page before zapping its SPTE so as to
+> > 		 * avoid bouncing tdp_mmu_pages_lock() more than is necessary.
+> > 		 * Clearing nx_huge_page_disallowed before zapping is safe, as
+> > 		 * the flag doesn't protect against iTLB multi-hit, it's there
+> > 		 * purely to prevent bouncing the gfn between an NX huge page
+> > 		 * and an X small spage.  A vCPU could get stuck tearing down
+> > 		 * the shadow page, e.g. if it happens to fault on the region
+> > 		 * before the SPTE is zapped and replaces the shadow page with
+> > 		 * an NX huge page and get stuck tearing down the child SPTEs,
+> > 		 * but that is a rare race, i.e. shouldn't impact performance.
+> > 		 */
+> > 		unaccount_nx_huge_page(kvm, sp);
+> 
+> Might cause jitter. A long jitter might cause an escalation.
+> 
+> What if I do not unaccount in the beginning, and  move page to the end
+> of the list only if it is still in the list?
 
+The race between kvm_mmu_sp_dirty_logging_enabled() vs. kvm_tdp_mmu_map() vs.
+kvm_mmu_zap_collapsible_sptes() still exists.
 
--- 
-greets
---
-Christian Gmeiner, MSc
+> If zapping failed because some other flow might be removing this page but it
+> still in the possible_nx_huge_pages list, then just move it to the end. The
+> thread which is removing will remove it from the list eventually.
+> 
+> for ( ; to_zap; --to_zap) {
+> 	spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> 	if (list_empty(&kvm->arch.possible_tdp_mmu_nx_huge_pages)) {
+> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> 		break;
+> 	}
+> 
+> 	sp = list_first_entry(&kvm->arch.possible_tdp_mmu_nx_huge_pages,
+> 			      struct kvm_mmu_page,
+> 			      possible_nx_huge_page_link);
+> 
+> 	WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
+> 	WARN_ON_ONCE(!sp->role.direct);
+> 
+> 	spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> 
+> 
+> 	/*
+> 	 * Don't bother zapping shadow pages if the memslot is being
+> 	 * dirty logged, as the relevant pages would just be faulted
+> 	 * back in as 4KiB pages.  Potential NX Huge Pages in this slot
+> 	 * will be recovered, along with all the other huge pages in
+> 	 * the slot, when dirty logging is disabled.
+> 	 */
+> 	if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp)) {
+> 		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> 		unaccount_nx_huge_page(kvm, sp);
+> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> 		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+> 	} else if (tdp_mmu_zap_possible_nx_huge_page(kvm, sp)) {
+> 		flush = true;
+> 		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+> 	} else {
+> 		/*
+> 		 * Try again in future if the page is still in the
+> 		 * list
+> 		 */
+> 		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> 		if (!list_empty(&sp->possible_nx_huge_page_link))
+> 			list_move_tail(&sp->possible_nx_huge_page_link,
+> 			kvm-> &kvm->arch.possible_nx_huge_pages);
 
-https://christian-gmeiner.info/privacypolicy
+This is unsafe.  The only thing that prevents a use-after-free of "sp" is the fact
+that this task holds rcu_read_lock().  The sp could already been queued for freeing
+via call_rcu().
+
+> 		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> 	}
+> 
+> 	/* Resched code below */
+> }
 
