@@ -1,174 +1,351 @@
-Return-Path: <linux-kernel+bounces-300751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4856C95E7E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DDD95E7EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00F81F21620
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8865B1C20D30
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D02E770F3;
-	Mon, 26 Aug 2024 05:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704407407A;
+	Mon, 26 Aug 2024 05:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="VpMkqhKR"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="SjXYmLFJ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1BC74416
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663AC38DC7
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724650201; cv=none; b=RGZidDjOSHUkq4BCi7z72lwloVJRdjVC390AkI6EP86PhAjkLJB/BtTkS4wECjYBHu18lS0uxdSzfro04hjuYZC+NFXrh2W4JFN+tFgRD74XxTyfaVAFsKxPPVENRCpNdT/VGXy8hmXu22YJd8RSeEXX9gRENWSEVn+QpVcqK5c=
+	t=1724650246; cv=none; b=OIQWghZ2Rct07zrYGE+AqvxRHxRW/SwCzcy1p8QWfZbfrJ/1NiNtp7U/bq43KFuSamfCUaYCU5kh5ILhPysU6zOru9LzNORyc3oYGpEGMOLRbccnURch9SLrtrIFQ15L3UxOXwqjUEFBwnKrW5CSQerlvR0wgqfuLBFVUlxUZHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724650201; c=relaxed/simple;
-	bh=tqyl9jyvfW5D/WCsL5XIRYk+Gphu2NlhcYsQ0NnaDHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CrFCZePnFFexI1VZL2KT+3rrEkvDJJQhTISMwUOZxyq5fws8IdbgYkkpbKT9AYh+mX88OSiaRONCU416ujg2Qhmbl5kWcXsXDsCaLFY7QvmTMMGbr7i8hRYs+mI347tf4PdWaml2GNd9u8tlMIlmygVfPFVTY+Sz71Rxfc8TrhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=VpMkqhKR; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724650185; x=1727242185;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tqyl9jyvfW5D/WCsL5XIRYk+Gphu2NlhcYsQ0NnaDHs=;
-	b=VpMkqhKRCu+hajpfD4AE96c7Xv97kFUEz01H6KVcrVqZI83Qu1igskJP84aBE+6a
-	EJbpKZZQ1TbytktgYgFRSRmkiM5MLVz97ZoIIhFw6/1U/SwbXbZ9op9apG+VusfK
-	Okq96ATvZ9Tq1JZKLhB0bKs8VlHqtCJkVtAlf8m1vfA=;
-X-AuditID: ac14000a-03e52700000021bc-e1-66cc12c916f3
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 5B.37.08636.9C21CC66; Mon, 26 Aug 2024 07:29:45 +0200 (CEST)
-Received: from [192.168.178.33] (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 26 Aug
- 2024 07:29:44 +0200
-Message-ID: <4e884c6c-ec82-4229-a2a4-55da66cc284f@phytec.de>
-Date: Mon, 26 Aug 2024 07:29:44 +0200
+	s=arc-20240116; t=1724650246; c=relaxed/simple;
+	bh=icpU9qsDi3NYQE9qZQUdP4k5gbHdgxAn0vSXV4NYH1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g14DS3+K308c8Y4nM6jtStHMfB80zKIF2YPZPIGw0J8VMU9whmm8elHGTO7Q5wFHdW884Ary7WXmCsBcRV1hLdbZzDoguJNSdpbTIIZQ0SDZ/xT10xP/clbiqz4GKsXQuZ1tPWdGrHqnAbMltJlgS7eOsojYjJ6aNDlmj9BjFYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=SjXYmLFJ; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c1324be8easo3330270a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 22:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1724650243; x=1725255043; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZAj8uvOya4HiP9l/CwQjSu7HVrLT1SErQUOAVQqfwI=;
+        b=SjXYmLFJkKU/G4lU6HkWCElHXchI67pkV+IeneoH3zq+dUTsWjSmRd7gfzfY83spP3
+         ZHhynlvKFUfiInJr7nsvSsceJRCchcirxxA11aVteRBnadlawgId72Tw44/IY8bzjcrA
+         tCgD8n97EDQLiDF/BkOjYRvatahsuwTQ033MSXgI24BdSU674u2g0y/kJb4JRjFQL9p0
+         APipsCZsZphOk7+LAwBROeDrjkdChfYmtGQ4OvZg2p3Q3MIupOVNjX4eAkttIVoTfelG
+         WHHWzH+kuJU09r5vo3+6n0g4v8FHI9UBamckD1qTRmdOwsVgsLkBw6gnTChRXllJvLnX
+         OZzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724650243; x=1725255043;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eZAj8uvOya4HiP9l/CwQjSu7HVrLT1SErQUOAVQqfwI=;
+        b=I0uxXgSTobKN+FIYNkCCOxgyOtXl+BVNpraAL0cfLvwdAGWvgBVeBDF/Rbey2mduTv
+         VviiBKc3pTVvWB8IZAfBFOc6cHRnvMcbc7HHRsbKDKJM8d12iZnf/CJfhPg5v2XB6eHj
+         HR0n1JpawEv44OsR0SAn93/K98lzL8ktYaKprWGX27e2o3AKT/T9+oE3Xj0Y8TKEL57K
+         40qCQmbFd6WiabkGI+vOZBb4fKbsrbYUrzoFxshGwt+FLZmzHnFS+EyrKDdLpEqY65PW
+         Wb35nYiFVz/Zi1p1bnhwGp0iJcrc9yxJAw3USx9nSYx7EokBKOJ8j1DHTequTuBhqvq2
+         unUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWktULG9RkuRZ/0Zo96XHxU1ZVsVvgGYMaVRE9LC+l1Ye8CRFDDdHAU6pL0Rbq3q9ylixHTg1B6y49GSkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGA+igAMqYLJv/Ruam+YfxNa0YSDMPabHPr0xZNcEpTTmSJL3f
+	cbrJXZT+TwWGJ8BJipyq8rhmHWi5xnaQlGJ6Toa9O9ea2GmTnt/lk0oiZCMhxbk=
+X-Google-Smtp-Source: AGHT+IFAfwY4jvMEw8vz45CKvkOATgMuexpgWgiFUN1H3XwTB6sTI0W3NQ8BP2OTYWCHmTL88+Ydxg==
+X-Received: by 2002:a17:90a:eb11:b0:2d3:ad41:4d7a with SMTP id 98e67ed59e1d1-2d644777e33mr15300789a91.4.1724650243307;
+        Sun, 25 Aug 2024 22:30:43 -0700 (PDT)
+Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613af1884sm8736728a91.43.2024.08.25.22.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2024 22:30:42 -0700 (PDT)
+Date: Sun, 25 Aug 2024 22:30:40 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvalo@kernel.org" <kvalo@kernel.org>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"francesco@dolcini.it" <francesco@dolcini.it>,
+	Pete Hsieh <tsung-hsien.hsieh@nxp.com>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, calvin@wbinvd.org
+Subject: Re: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to
+ support iw61x
+Message-ID: <ZswTABUwME3pliKW@mozart.vkv.me>
+References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
+ <Zsc1efkBHDXdZtfJ@pengutronix.de>
+ <ZsuWExGZyY8Tvu6s@mozart.vkv.me>
+ <PA4PR04MB96384BCB4093D621C43B047ED18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <ZsvtQCXxNJHh_DWS@mozart.vkv.me>
+ <PA4PR04MB96386AB354F886DCB899F02AD18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am64* Disable ethernet by default
- at SoC level
-To: Logan Bristol <logan.bristol@utexas.edu>
-CC: Josua Mayer <josua@solid-run.com>, Wadim Egorov <w.egorov@phytec.de>,
-	<linux@ew.tq-group.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Conor
- Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
-References: <20240809135753.1186-1-logan.bristol@utexas.edu>
-Content-Language: en-US
-From: Daniel Schultz <d.schultz@phytec.de>
-In-Reply-To: <20240809135753.1186-1-logan.bristol@utexas.edu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWyRpKBR/ek0Jk0g67LwhZr9p5jsph/5Byr
-	xfLJC9gtXs66x2ax6fE1VovLu+awWXxdd4bV4k/3ViaLNz/OMln8P/uB3YHL48WEf0wem1Z1
-	snlsXlLv8a/1MbPH8RvbmTza9gV6fN4kF8AexWWTkpqTWZZapG+XwJWxczF/wUPxijcXVrA3
-	MK4X6mLk5JAQMJHYf72RtYuRi0NIYAmTxM/+6ewQzn1GiWONHewgVbwCNhKPL09kBbFZBFQl
-	Ht35ABUXlDg58wkLiC0qIC9x/9YMsLiwQLTEzUnnmEFsEQEdiadbO8CGMgs8YJKY+xqiSAho
-	6LqVP8CamQXEJW49mc8EYrMJaEnc2TIXrJlTwFZi89tWRogaC4nFbw6yQ9jyEtvfzmGGmKMg
-	MXvbZEaId+Qlpp17zQxhh0oc2bSaaQKj8Cwkt85Csm4WkrGzkIxdwMiyilEoNzM5O7UoM1uv
-	IKOyJDVZLyV1EyMo3kQYuHYw9s3xOMTIxMF4iFGCg1lJhFfu8sk0Id6UxMqq1KL8+KLSnNTi
-	Q4zSHCxK4ryrO4JThQTSE0tSs1NTC1KLYLJMHJxSDYyx65y6SzZvmcjgXsM07diNevHkx1v2
-	ehX+7HOaE/ZgWfYF67/7uI+2OH0MWK5xrW0HwwIftc1aG4I/iU1xe3hwxvXdUfe/r1q3zDHw
-	5cOwunpekW4+3diHRw9mSqf9+PrM4bfFdEH5EAW1itdnDjGJpV3raq+7FHtou8yLzBhLYxO5
-	jXtSU7mUWIozEg21mIuKEwF15CJXpQIAAA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB96386AB354F886DCB899F02AD18B2@PA4PR04MB9638.eurprd04.prod.outlook.com>
 
-Hey Logan,
+On Monday 08/26 at 02:56 +0000, David Lin wrote:
+> > From: Calvin Owens <calvin@wbinvd.org>
+> > Sent: Monday, August 26, 2024 10:50 AM
+> > To: David Lin <yu-hao.lin@nxp.com>
+> > Cc: Sascha Hauer <s.hauer@pengutronix.de>; linux-wireless@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; kvalo@kernel.org; johannes@sipsolutions.net;
+> > briannorris@chromium.org; francesco@dolcini.it; Pete Hsieh
+> > <tsung-hsien.hsieh@nxp.com>; kernel@pengutronix.de
+> > Subject: Re: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support
+> > iw61x
+> > 
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> > 
+> > 
+> > On Monday 08/26 at 02:33 +0000, David Lin wrote:
+> > > > From: Calvin Owens <calvin@wbinvd.org>
+> > > > Sent: Monday, August 26, 2024 4:38 AM
+> > > > To: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > Cc: David Lin <yu-hao.lin@nxp.com>; linux-wireless@vger.kernel.org;
+> > > > linux-kernel@vger.kernel.org; kvalo@kernel.org;
+> > > > johannes@sipsolutions.net; briannorris@chromium.org;
+> > > > francesco@dolcini.it; Pete Hsieh <tsung-hsien.hsieh@nxp.com>;
+> > > > kernel@pengutronix.de; calvin@wbinvd.org
+> > > > Subject: [EXT] Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to
+> > > > support iw61x
+> > > >
+> > > > Caution: This is an external email. Please take care when clicking
+> > > > links or opening attachments. When in doubt, report the message
+> > > > using the 'Report this email' button
+> > > >
+> > > >
+> > > > On Thursday 08/22 at 14:56 +0200, Sascha Hauer wrote:
+> > > > > On Fri, Aug 09, 2024 at 05:44:50PM +0800, David Lin wrote:
+> > > > > > This series adds support for IW61x which is a new family of
+> > > > > > 2.4/5 GHz dual-band 1x1 Wi-Fi 6, Bluetooth/Bluetooth Low Energy
+> > > > > > 5.2 and
+> > > > > > 15.4 tri-radio single chip by NXP. These devices support
+> > > > > > 20/40/80MHz single spatial stream in both STA and AP mode.
+> > > > > > Communication to the IW61x is done via SDIO interface
+> > > > > >
+> > > > > > This driver is a derivative of existing Mwifiex [1] and based on
+> > > > > > similar full-MAC architecture [2]. It has been tested with
+> > > > > > i.MX8M Mini evaluation kits in both AP and STA mode.
+> > > > > >
+> > > > > > All code passes sparse and checkpatch
+> > > > > >
+> > > > > > Data sheet (require registration):
+> > > > > > https://ww/
+> > > > > > w.nxp.com%2Fproducts%2Fwireless-connectivity%2Fwi-fi-plus-blueto
+> > > > > > oth-
+> > > > > >
+> > > >
+> > &data=05%7C02%7Cyu-hao.lin%40nxp.com%7Cff25728795724a618a5208dcc5
+> > > > 45c
+> > > > > >
+> > > >
+> > 5fd%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C63860215067862
+> > > > 3224%
+> > > > > >
+> > > >
+> > 7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJB
+> > > > TiI6
+> > > > > >
+> > > >
+> > Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=U0Cej8ysBD%2Fg1Sa4Ia
+> > > > Ph63Ot
+> > > > > > iTcemadiCfMINYM%2BRL4%3D&reserved=0
+> > > > > > plus-802-15-4/2-4-5-ghz-dual-band-1x1-wi-fi-6-802-11ax-plus-blue
+> > > > > > toot
+> > > > > > h-5-
+> > > > > > 4-plus-802-15-4-tri-radio-solution:IW612
+> > > > > >
+> > > > > > Known gaps to be addressed in the following patches,
+> > > > > >   - Enable 11ax capabilities. This initial patch support up to 11ac.
+> > > > > >   - Support DFS channel. This initial patch doesn't support DFS channel
+> > in
+> > > > > >     both AP/STA mode.
+> > > > > >
+> > > > > > This patch is presented as a request for comment with the
+> > > > > > intention of being made into a patch after initial feedbacks are
+> > > > > > addressed
+> > > > > >
+> > > > > > [1] We had considered adding IW61x to mwifiex driver, however due to
+> > > > > >     FW architecture, host command interface and supported features
+> > are
+> > > > > >     significantly different, we have to create the new nxpwifi driver.
+> > > > > >     Subsequent NXP chipsets will be added and sustained in this
+> > > > > > new
+> > > > driver.
+> > > > >
+> > > > > I added IW61x support to the mwifiex driver and besides the VDLL
+> > > > > handling which must be added I didn't notice any differences.
+> > > > > There might be other differences, but I doubt that these can't be
+> > > > > integrated into the mwifiex driver.
+> > > >
+> > > > Hi Sascha,
+> > > >
+> > > > I'd also love to see this patchset, if you're able to share it. I
+> > > > can test on an
+> > > > IW612 if that's helpful at all.
+> > > >
+> > > > > Honestly I don't think adding a new driver is a good ideai, given
+> > > > > how big wifi drivers are and how limited the review bandwidth is.
+> > > > >
+> > > > > What we'll end up with is that we'll receive the same patches for
+> > > > > both drivers, or worse, only for one driver while the other stays
+> > unpatched.
+> > > >
+> > > > I have some concrete experience with "in-tree driver forks" like this:
+> > > > a pair of SCSI drivers named mpt2sas and mpt3sas.
+> > > >
+> > > > The latter was created as a near copy of the former:
+> > > >
+> > > >
+> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
+> > > >
+> > t.kernel%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C582c3c0573b74f83
+> > 42
+> > > >
+> > 3408dcc579bc4a%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
+> > 60237
+> > > >
+> > 3871805816%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoi
+> > V2luM
+> > > >
+> > zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=bLjsRTRsR%2
+> > BTtA
+> > > > jUIVDY396ZF%2BIkwwUFhAubTCin3IVk%3D&reserved=0
+> > >
+> > > .org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Fco
+> > m
+> > > >
+> > mit%2F%3Fid%3Df92363d12359&data=05%7C02%7Cyu-hao.lin%40nxp.com%7
+> > > >
+> > Cff25728795724a618a5208dcc545c5fd%7C686ea1d3bc2b4c6fa92cd99c5c3016
+> > > >
+> > 35%7C0%7C0%7C638602150678637352%7CUnknown%7CTWFpbGZsb3d8eyJW
+> > > >
+> > IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0
+> > > >
+> > %7C%7C%7C&sdata=mzrLLqJNee7vIdV47j8xVSU%2FByjh%2FnNKnRsx1nw3yNo
+> > > > %3D&reserved=0
+> > > >
+> > > > The result was *exactly* what you forsee happening here: both
+> > > > drivers were constantly missing fixes from the other, and they were
+> > > > just subtly different enough that it wasn't simple to "port" patches
+> > > > from one to the other. It was a frustrating experience for everybody
+> > > > involved. I think their git histories prove your point, I'd
+> > > > encourage everyone with a horse in this race to take a look at them.
+> > > >
+> > > > It took three years to finally unify them:
+> > > >
+> > > >
+> > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgi
+> > > >
+> > t.kernel%2F&data=05%7C02%7Cyu-hao.lin%40nxp.com%7C582c3c0573b74f83
+> > 42
+> > > >
+> > 3408dcc579bc4a%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
+> > 60237
+> > > >
+> > 3871815005%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoi
+> > V2luM
+> > > >
+> > zIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=RfY6N6WWXI
+> > n0gZP
+> > > > SBoRySz5eeU8WkFH2HvFHLVNgu3Q%3D&reserved=0
+> > >
+> > > .org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2Fco
+> > m
+> > > >
+> > mit%2F%3Fid%3Dc84b06a48c4d&data=05%7C02%7Cyu-hao.lin%40nxp.com%7
+> > > >
+> > Cff25728795724a618a5208dcc545c5fd%7C686ea1d3bc2b4c6fa92cd99c5c3016
+> > > >
+> > 35%7C0%7C0%7C638602150678649431%7CUnknown%7CTWFpbGZsb3d8eyJW
+> > > >
+> > IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0
+> > > >
+> > %7C%7C%7C&sdata=UGjDfngO1POWuydIfmOL%2BR%2BqJ1BoDQW6NboQUV
+> > > > q2Xh8%3D&reserved=0
+> > > >
+> > > > I doubt anyone would disagree that wifi drivers are much more
+> > > > complex than SCSI drivers. It would be strictly *worse* here, and
+> > > > the path to unifying them strictly longer.
+> > > >
+> > > > Thanks,
+> > > > Calvin
+> > > >
+> > >
+> > > I think Nxpwifi will support NXP new WiFi chips and Mwifiex will support
+> > existed NXP WiFi chips.
+> > 
+> > Hi David,
+> > 
+> > I understand that. I don't think that really changes anything: there will still be
+> > many future patches which need to be applied to both, because the bug being
+> > fixed existed before the fork. As the forked driver diverges, that will only
+> > become more difficult and error prone.
+> > 
+> > Thanks,
+> > Calvin
+> > 
+> 
+> Nxpwifi is not only a fork from Mwifiex. Especially after we modified Nxpwifi
+> based on the comments from Johannes.
 
-my feedback is similar to Josua's.
+I understand you've done real work here. But at the same time, nearly
+1/3rd of the changeset against the original driver is renaming things:
 
-On 09.08.24 15:57, Logan Bristol wrote:
-> External interfaces should be disabled at the SoC DTSI level, since
-> the node is incomplete. Disable Ethernet switch and ports in SoC DTSI
-> and enable them in the board DTS. If the board DTS includes a SoM DTSI
-> that completes the node description, enable the Ethernet switch and ports
-> in SoM DTSI.
+    {0}[calvin ~/linux/drivers/net/wireless/nxp/nxpwifi] tar cf ~/nxpwifi-v2.tar .
+    {0}[calvin ~/linux/drivers/net/wireless/nxp/nxpwifi] cd ../../marvell/mwifiex
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] tar xf ~/nxpwifi-v2.tar
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git add *
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git diff --cached --shortstat
+     42 files changed, 13878 insertions(+), 14274 deletions(-)
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] sed -i 's/nxpwifi/mwifiex/g' *
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] sed -i 's/NXPWIFI/MWIFIEX/g' *
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git add *
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] git diff --cached --shortstat
+     42 files changed, 9940 insertions(+), 10336 deletions(-)
+    {0}[calvin ~/linux/drivers/net/wireless/marvell/mwifiex] cat * | wc -l
+    45591
+
+I'd consider that a fork. For those following at home, I pushed a branch
+to github with nxpwifi v2 applied as a single patchbomb to mwifiex, with
+the renames backed out:
+
+    https://github.com/jcalvinowens/linux/tree/work/nxpwifi-on-mwifiex-no-renames
+
+For my own selfish part, I agree with Sascha: I'd prefer to see that
+changeset as patches against the existing driver, because I know from
+experience that having a community built around one driver will enable
+me to deliver better results for my users, and will make it easier for
+me to contribute when I find bugs to fix.
+
+But this is just one random opinion, I'm not who you need to convince :)
+
+Thanks,
+Calvin
+
+> I think the real bugs fixes of Mwifiex will become less frequently.
+> We can monitor these patches and apply them from Mwifiex to Nxpwifi.
 >
-> Reflect this change in SoM DTSIs by removing ethernet port disable.
+> If we fix issues of Nxpwifi which is also related to Mwifiex, we will
+> submit patches back to Mwifiex.
 >
-> Signed-off-by: Logan Bristol <logan.bristol@utexas.edu>
-> ---
-> Changes since v1:
-> - Enabled cpsw3g and cpsw_port1 in SoM DTSI instead of board DTS
-> if board DTS included SoM DTSI
-> ---
->   arch/arm64/boot/dts/ti/k3-am64-main.dtsi               | 3 +++
->   arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi        | 6 ++----
->   arch/arm64/boot/dts/ti/k3-am642-evm.dts                | 3 +++
->   arch/arm64/boot/dts/ti/k3-am642-sk.dts                 | 3 +++
->   arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi            | 6 ++----
->   arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts | 6 ++----
->   6 files changed, 15 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> index f8370dd03350..69c5af58b727 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> @@ -677,6 +677,7 @@ cpsw3g: ethernet@8000000 {
->   		assigned-clock-parents = <&k3_clks 13 9>;
->   		clock-names = "fck";
->   		power-domains = <&k3_pds 13 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
->   
->   		dmas = <&main_pktdma 0xC500 15>,
->   		       <&main_pktdma 0xC501 15>,
-> @@ -701,6 +702,7 @@ cpsw_port1: port@1 {
->   				phys = <&phy_gmii_sel 1>;
->   				mac-address = [00 00 00 00 00 00];
->   				ti,syscon-efuse = <&main_conf 0x200>;
-> +				status = "disabled";
->   			};
->   
->   			cpsw_port2: port@2 {
-> @@ -709,6 +711,7 @@ cpsw_port2: port@2 {
->   				label = "port2";
->   				phys = <&phy_gmii_sel 2>;
->   				mac-address = [00 00 00 00 00 00];
-> +				status = "disabled";
->   			};
->   		};
->   
-> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-> index ea7c58fb67e2..6bece2fb4e95 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
-> @@ -185,6 +185,7 @@ AM64X_IOPAD(0x0278, PIN_INPUT, 7)	/* (C19) EXTINTn.GPIO1_70 */
->   &cpsw3g {
->   	pinctrl-names = "default";
->   	pinctrl-0 = <&cpsw_rgmii1_pins_default>;
-> +	status = "okay";
->   };
->   
->   &cpsw3g_mdio {
-> @@ -208,10 +209,7 @@ cpsw3g_phy1: ethernet-phy@1 {
->   &cpsw_port1 {
->   	phy-mode = "rgmii-rxid";
->   	phy-handle = <&cpsw3g_phy1>;
-The connected phy is located on the SOM and should be enabled by default.
-> -};
-> -
-> -&cpsw_port2 {
-> -	status = "disabled";
-> +	status = "okay";
->   };
-
-This port is routed to the carrier-board. Please drop this node.
-
-Regards,
-Daniel
-
+> Thanks,
+> David 
+> 
 
