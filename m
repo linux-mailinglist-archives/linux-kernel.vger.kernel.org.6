@@ -1,84 +1,151 @@
-Return-Path: <linux-kernel+bounces-301704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C863F95F452
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:49:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C747495F458
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7171F1F2291A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064901C21F6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B4D18FC7C;
-	Mon, 26 Aug 2024 14:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843391940AB;
+	Mon, 26 Aug 2024 14:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFUVGOCW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKFV+e3n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D51F186619;
-	Mon, 26 Aug 2024 14:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E0718E743;
+	Mon, 26 Aug 2024 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683742; cv=none; b=WkwrZbhCAyQsu+Lv6pyffKwwiM8ir5CcZAx4F0SB9ko9uih3OxOy9C/LSmbmkw4GKiWuWE8g60qDZss6RUs2i3pFZ73ByhIBVuMp+9Nl+zxyo5VcvEAvzS6PYGp+BSFwJu+RWLXuvVbV5MG5BX5a3fqoSekvzZtR8TNbt8j/tZA=
+	t=1724683755; cv=none; b=FIr9YxOPjLTMuoYeLQNzsLHn7jd67G4yqxCyk868GhgiSQZ9KpfrEuVWfNTVTvKyml7HGMlxKNuZ0uWLeCqPqPpmJ7bIuMDf62EZZp6qeMMBIoroUEBHa5kMLJbltDODiikCdFG9Hv8Jern26IBzms+W99pK9LoZPe7dFQ8bUnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683742; c=relaxed/simple;
-	bh=2exWCUJIA11nw5J5XZ/0IFQ4K1xKs7caIt0HuTblj/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iT7PhanUr512sFqhBeZ5EdYfx2yRHr3vlIWMC8pt0i3joOn4oFgoThZTLdlFsc0ypip0PiTWqtIP8zBY9s5gg3bE1DN+861MtDK6tAFxfM/3AsiqGd0ES8bapQnfL2bHe4QgqFisikxBkm+K0MPJWN2JO95sn0SFj+vLS+5BjQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFUVGOCW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323ACC52FC0;
-	Mon, 26 Aug 2024 14:48:57 +0000 (UTC)
+	s=arc-20240116; t=1724683755; c=relaxed/simple;
+	bh=uJYKJP5u52gdFIEA/SVCvB+nGTPXrfaICxlVLoVHi2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rECpEEpTnEcgs4wJzkwgtKN2uLDsf9nXbAxmwCxh6KRdMTxXIZ/JPO+n53BjmTVVCuFdKfcPfCicYz82slGkcMyGXBgB2+TvaBjU035U7SBgvAzK6jYg1F2aiOmQWU10P/pxX82YnxwC+JJL+y5du9zqfTDT4vMWusyEkeoQdEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKFV+e3n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709ECC4AF12;
+	Mon, 26 Aug 2024 14:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724683742;
-	bh=2exWCUJIA11nw5J5XZ/0IFQ4K1xKs7caIt0HuTblj/8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UFUVGOCWcjwgF/zrIkL+0b2NZ02qPsUTLg2Oygz1d+hR05vfJVCA4C2H6AZcoWtPy
-	 ovTrypIEFcy0Nz2QSOcuVil2bOzrD+7qhjaPGTcWm/gTLYGh1m+fxTjBviKhhC8Nhp
-	 NS7s1RdxMOLd6lmR9K5k7ooCbMhPsa+hs59EP0sO2fDiqcep7fcj1Sqhqym6RZLkxb
-	 og3E0MxwGDU4ZfqJGVI7efAWIktzHd2d2GHOoIeNWSRxiN2RTrnjlh4ADF74opG0V4
-	 JPnlSJjkpwKDKed//E2B6AuYXUPznJbbrRGMRiji2WjSd+tWMFMvI4syivyEhnRRWM
-	 0e8IS/F1dQU+w==
-Message-ID: <1ea5db67-652b-46a4-a75f-1d809c019da8@kernel.org>
-Date: Mon, 26 Aug 2024 16:48:55 +0200
+	s=k20201202; t=1724683755;
+	bh=uJYKJP5u52gdFIEA/SVCvB+nGTPXrfaICxlVLoVHi2s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BKFV+e3nTLbba7IfKYx158sxITogkHLfTfOtpil0XHPhMV9Zmrrx7saeH7i0FatzN
+	 pH4dfnLKKDajT5BGfYPv6qcGfjsJrfwLUZfbMQ3VX9HqBHvG3++Km3rXSREFYrRu69
+	 QAz/VWsd3lp2t44BXlXvVpapyjkrh7f3xlFSXRSWjxzG4LomGQvcuwmmUe4wwbhBmR
+	 lXlwydJITijynzn75CON8Gn6S65QzsmWK/Sy8QF+cWZIjWyJYuTVIihgh+rBGPh7eH
+	 yNWTCXrqyzC3/QTg397PRzCCNfbol+NWeq+FLFX7brKLCUwH7DlqjN+ee/rjV6Spyg
+	 K4Du7yX91obcA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so5613873a12.0;
+        Mon, 26 Aug 2024 07:49:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAlc1wxIpicN33V/jKfnRa10awp0XlW5Y/ibM1rZ1OA+Vy6uUlnuA10cH7cY5vf2W3Js0=@vger.kernel.org, AJvYcCWIe0tu0fsUmuSuJvw59Pm25EyCKfjexHTEPhXj/xw+NCpBhavABgcONstsbCGaWOkKbGoPTTdKD88k0SqY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoPDu5z9iEAv+VqwB2/S/Ry3ZC++/T6db18Q2SgbBKR2n+NCpT
+	7MQTdDG+3Nd2aQ6bSo3AJoifueBb+afsb/bgc6a6qfYmURJt0mpSPAsLLTw9UKtR1MYLlSQQksJ
+	CgmmwdcVJHR4x31VnOu6oTqRjQFo=
+X-Google-Smtp-Source: AGHT+IEKLWSILwx6ptoGTQB05HFx+Gqpr+sIMMEXlrHqdZkcGukYw7IXUkPbpM5O4I3GA/JSm4pX8x1fFvrSKY7gjU4=
+X-Received: by 2002:a05:6402:5cc:b0:5bf:50:266b with SMTP id
+ 4fb4d7f45d1cf-5c089171b3fmr6351964a12.19.1724683753967; Mon, 26 Aug 2024
+ 07:49:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: arm: qcom: Add Surface Laptop 7
- devices
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>,
- Stephan Gerhold <stephan.gerhold@linaro.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240826-topic-sl7-v2-0-c32ebae78789@quicinc.com>
- <20240826-topic-sl7-v2-1-c32ebae78789@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240826-topic-sl7-v2-1-c32ebae78789@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240815071545.925867-1-maobibo@loongson.cn> <20240815071545.925867-3-maobibo@loongson.cn>
+In-Reply-To: <20240815071545.925867-3-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 26 Aug 2024 22:49:02 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5_xrmDVTiB=un7LzdLHQDjD564tVmVcHLrgGhhX6Omaw@mail.gmail.com>
+Message-ID: <CAAhV-H5_xrmDVTiB=un7LzdLHQDjD564tVmVcHLrgGhhX6Omaw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] LoongArch: KVM: Invalid guest steal time address
+ on vCPU reset
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26.08.2024 4:37 PM, Konrad Dybcio wrote:
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> 
-> Document the X1E80100-based Microsoft laptops.
-> 
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+Applied, thanks.
+
+Huacai
+
+On Thu, Aug 15, 2024 at 3:15=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
+>
+> If paravirt steal time feature is enabled, there is percpu gpa address
+> passed from guest vcpu and host modified guest memory space with this gpa
+> address. When vcpu is reset normally, it will notify host and invalidate
+> gpa address.
+>
+> However if VM is crashed and VMM reboots VM forcely, vcpu reboot
+> notification callback will not be called in VM, host needs invalid the
+> gpa address, else host will modify guest memory during VM reboots. Here i=
+t
+> is invalidated from vCPU KVM_REG_LOONGARCH_VCPU_RESET ioctl interface.
+>
+> Also funciton kvm_reset_timer() is removed at vCPU reset stage, since SW
+> emulated timer is only used in vCPU block state. When vCPU is removed
+> from block waiting queue, kvm_restore_timer() is called and SW timer
+> is cancelled. And timer register is cleared at VMM when vCPU is reset.
+>
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 > ---
-
-This has received an a-b from krzk.. forgot to include it
-
-https://lore.kernel.org/all/24050176-b269-4b96-b5de-02716cc3eba5@kernel.org/
-
-Konrad
-
+>  arch/loongarch/include/asm/kvm_vcpu.h | 1 -
+>  arch/loongarch/kvm/timer.c            | 7 -------
+>  arch/loongarch/kvm/vcpu.c             | 2 +-
+>  3 files changed, 1 insertion(+), 9 deletions(-)
+>
+> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/inclu=
+de/asm/kvm_vcpu.h
+> index c416cb7125c0..86570084e05a 100644
+> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+> @@ -76,7 +76,6 @@ static inline void kvm_restore_lasx(struct loongarch_fp=
+u *fpu) { }
+>  #endif
+>
+>  void kvm_init_timer(struct kvm_vcpu *vcpu, unsigned long hz);
+> -void kvm_reset_timer(struct kvm_vcpu *vcpu);
+>  void kvm_save_timer(struct kvm_vcpu *vcpu);
+>  void kvm_restore_timer(struct kvm_vcpu *vcpu);
+>
+> diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
+> index bcc6b6d063d9..74a4b5c272d6 100644
+> --- a/arch/loongarch/kvm/timer.c
+> +++ b/arch/loongarch/kvm/timer.c
+> @@ -188,10 +188,3 @@ void kvm_save_timer(struct kvm_vcpu *vcpu)
+>         kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ESTAT);
+>         preempt_enable();
+>  }
+> -
+> -void kvm_reset_timer(struct kvm_vcpu *vcpu)
+> -{
+> -       write_gcsr_timercfg(0);
+> -       kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_TCFG, 0);
+> -       hrtimer_cancel(&vcpu->arch.swtimer);
+> -}
+> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> index 16756ffb55e8..6905283f535b 100644
+> --- a/arch/loongarch/kvm/vcpu.c
+> +++ b/arch/loongarch/kvm/vcpu.c
+> @@ -647,7 +647,7 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
+>                                 vcpu->kvm->arch.time_offset =3D (signed l=
+ong)(v - drdtime());
+>                         break;
+>                 case KVM_REG_LOONGARCH_VCPU_RESET:
+> -                       kvm_reset_timer(vcpu);
+> +                       vcpu->arch.st.guest_addr =3D 0;
+>                         memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->a=
+rch.irq_pending));
+>                         memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arc=
+h.irq_clear));
+>                         break;
+> --
+> 2.39.3
+>
 
