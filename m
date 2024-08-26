@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-301997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB94695F869
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A588895F86B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633C5282882
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD8228409D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6B41991AF;
-	Mon, 26 Aug 2024 17:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1445199221;
+	Mon, 26 Aug 2024 17:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OUmwdnOp"
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Jz8dOTWO"
 Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFB1198E9C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BB51991CE
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724694126; cv=none; b=LW2Kwj9fX3Kj3cqleOAQPMQkuz7rmQlSp4HHr4dzZ89+MDkM8W7ujfPYrdlH3oEvRrrromSgBIzq7wQqwgOfAxH9DQX6xDZgkjWDFN/zu26wyFTno+IJyj+ATexb1uesAcp+APfTVsaoAyxcUu8NFc/vpH3dCxe+TZgzoDOhDTc=
+	t=1724694136; cv=none; b=TDfCZPHOmZwNiYGCTdm+UN/uxun30EPeoHo7atM8IsK5sA/EhFtZrKHAiiog1/MyMvcfNVu+BwOHxpEba1PfJtoj8gkkSe70tegi40hDM72AEgXHovDYDszJdr15zomIxD8ZoB7VJurouJ/hlpDzKRK/BhroxO7PT+1iwGm0PxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724694126; c=relaxed/simple;
-	bh=QuSLEspvauRYDRZz063fX415QSr6sTsEnReWnJYDXVk=;
+	s=arc-20240116; t=1724694136; c=relaxed/simple;
+	bh=rhJBniTHjY88Us32RAgfhKeGcN7GL2KlDbC4HgbLOGQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pv2tBWDKJrMrbEOrY+t7G521YmR/UcHAinEvNnLYmqFetBPAAPWsV5pZO5fQ2ZXVZyWuZevxn5ZuFgm3pi+d6adtIDPiQSeTFwGGWrGJO2cwT2NX3bqRLQAPRKMoiHzXAQ+jhfr8SxeAuWMlGPJY6tmdETpVmoegv7g6gQtxTZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OUmwdnOp; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so5373775a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:42:02 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=fOrKCa6HHSOb7selO4MDLpGnVqKkV5sl5G5jehPlJllwhwBo2oRsaLvZmvuiArwDvlMp6MwHNxGBkIQHurgmGfJSQdnPQnU4sV9a8dDNP5fViDCe7lBRmTPLfuVZHMFnz9VE7bcd9fQy2nJdCgXs1seSAJvkPPW9/ZXSzFaiato=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Jz8dOTWO; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so9043807a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724694121; x=1725298921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=tuxon.dev; s=google; t=1724694133; x=1725298933; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JiCSnJD3HP198YRuwR9nlOg90E6QQ9s3+l37OIn7TdU=;
-        b=OUmwdnOpvRIWhkEmEAVhae0ZqGSgwqeyx6i6qmgV7GHgS1xbADzTRVPvgceJApGf3x
-         zV6VD24l4MMAP9Bt2MOlgWr+Qj12uc5qs6ntTy/X2ASnAKtL/Cym4LNw3U50VmTQeO/i
-         juLndVSyNOR5ONMpHc96US7Sw/pG260fBK0mkLsbdKiIvpc4rNN2hgwPEbzw/RqoJPGp
-         K2pIRs0LjRIvcqg5hioX3Ad20YVVGMR3HJNaiUDk4e7+wso2WsNRuuRzIB4X4ikE+or+
-         brky1YIWkYi/sMSX8D4bMwUiuq4/zWIfLJnI59tEaHzXBwzTZs0wuaV197pyP2SmWabv
-         8e8A==
+        bh=qFiCyxYJLEqGs500HvKL/JsZpsQRPQOlGWk1hMAooLM=;
+        b=Jz8dOTWOZ+Hi4hCWUUDbofQQ+Ln1vYRYZmjmm17P25AlcWrNd91FLsHFlKosU4E09O
+         Jzq8lwJl0yV/sqQ3LuNO3Xw+/9QS6Yfnv3vGOMmuBLi2cYYdgPtatwYhHbJubDz1yfYX
+         LoaZ5mo+hoaNmg0OwRrbelsjMi5JkY8A7iwZo9Yg0fOMsBi1aWFulfaH9beCKsyvJ1i7
+         +TbynLs2yHFj8D6QSf3uQf/subLrRwmphJnEvZdGFV9+S0vVkb7oRlMVDvFEKxLDas/R
+         WRmTkTDTKYJw2oIhZKKyOo29BfbFJfhcRQA1GGT10bRafWXM9U+mqTD+tAFG3vYaWP9I
+         5prw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724694121; x=1725298921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1724694133; x=1725298933;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JiCSnJD3HP198YRuwR9nlOg90E6QQ9s3+l37OIn7TdU=;
-        b=UP1wl+F67lCouyD9xo91TU7Dl2rYg5MXE1fWanVciKCcmFEwU1lroZ/VbyyDp2gZe0
-         foxipkUBuv8X5hO8R443m7Q4eOoHWXqL192COpu7APGj/7EZLW06iSpw7iBWfKBbPTtl
-         nRS4tnUFeLogtFuV7V9mWvqFuMCogehUx/Hp8NFvM8UsEec0viOIuj/4p9FxG00T/G4j
-         LHzkLUppkYnh2GqdTkWG6bPOv4CLQ8eXJ/UwIpSIZfnHsbk3+nTo9HHAwsOZ/FfvdQiB
-         zt3/+j28HLl5YtcrfeCV+mAYKPauRdKTSVZd8YWbbagaCoUjv8yhOcS1yJ/DfmtGRPMR
-         wi1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrnlkVeLnh6kt/KEDz2kzQNZQ+vO4pdio+5RWuBRiK7bpyQvbr0L5lWidG+AxhVHEmYFkb0zs9nDo3fgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlfIsCGLZsmJqZaxM+JFI1XRI8SrEmAtQw0dDPhKmUzOgW+vw+
-	eqouW7/aXBg/0VP1R+eVrZdmYzIN8BQvWwHvYuNjO1LRQLBC1R9eVvSF/BGxYIU=
-X-Google-Smtp-Source: AGHT+IFr4go4JINnJLtcWs0BB1xC/SXPqe+y4XSFmlELq1W0LCxG/Dp4ZIa768YslVaqXV+TjwDVpA==
-X-Received: by 2002:a05:6402:34c7:b0:5c0:ba90:6a9e with SMTP id 4fb4d7f45d1cf-5c0ba906ba4mr80529a12.38.1724694120916;
-        Mon, 26 Aug 2024 10:42:00 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb213739sm9690a12.54.2024.08.26.10.42.00
+        bh=qFiCyxYJLEqGs500HvKL/JsZpsQRPQOlGWk1hMAooLM=;
+        b=juq079+vzD5J1I238rCruz61n4hBaZqd+mavpkrAeHFeRfS+IPQlvbclWJJMdah5EU
+         9Bm/iKfdJDWE3eq2rdKVGhnnjjoAsmapYXEiW64IS4FE4IQVI9FsAnOS+IilOGFYvg5a
+         qtTqiy4F6oXcbK1FPBNX8yPiJmZALdzZHK2ITu5DUn3vvrJUf93Y5QDOCPGzmSSZX4CQ
+         Ber22CGpxAodNQB63BvRL1p/NkOJMlBmMjrrx8ZCR1ud7DEcGZ7aa9n94NCum1tnGv4a
+         1XlSX93rwY/d5i9k/qXjbtPHkd+fqT6agS85GgtwMhW5h4aYf1I/3dkeZsTGYBppiK+v
+         +kmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT+15CORTkegQvw32PihDN/pQ1CKk3TCR8VUOlH5NLagB19AnTyKxLpisyzB1oxcUJbxtO78NisUo+PSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCD96JYzgaYpxh/UkUoddz06AZR9tlAhROOvabg7BmHrHFp5ef
+	9179zGY/P6RtTuKMs3e4XW7pK33y/VFLB8bmbuJqkw7wzOfv8cg8QfXswNDqCnQ=
+X-Google-Smtp-Source: AGHT+IGK/rDWQktFfcdGSgq6zs7nJIlhwN6w7cv1hF04+Aui72thInt0zEQ9R8DGVui0QugunH9n7w==
+X-Received: by 2002:a05:6402:908:b0:5be:ec0a:c10f with SMTP id 4fb4d7f45d1cf-5c0ba195954mr376953a12.2.1724694132631;
+        Mon, 26 Aug 2024 10:42:12 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb481f50sm4519a12.86.2024.08.26.10.42.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 10:42:00 -0700 (PDT)
-Message-ID: <71505c05-b651-4740-b14a-a53084a16a61@suse.com>
-Date: Mon, 26 Aug 2024 19:41:59 +0200
+        Mon, 26 Aug 2024 10:42:12 -0700 (PDT)
+Message-ID: <8ae724e3-f467-4df4-b8cc-f03489bd0f35@tuxon.dev>
+Date: Mon, 26 Aug 2024 20:42:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,137 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/19] tools: Add gendwarfksyms
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-22-samitolvanen@google.com>
+Subject: Re: [PATCH 3/3] ARM: dts: microchip: Use SCKC_{TD, MD}_SLCK IDs for
+ clk32k clocks
+To: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
+ <20240826173116.3628337-4-claudiu.beznea@tuxon.dev>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240815173903.4172139-22-samitolvanen@google.com>
+In-Reply-To: <20240826173116.3628337-4-claudiu.beznea@tuxon.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/15/24 19:39, Sami Tolvanen wrote:
-> Add a basic DWARF parser, which uses libdw to traverse the debugging
-> information in an object file and looks for functions and variables.
-> In follow-up patches, this will be expanded to produce symbol versions
-> for CONFIG_MODVERSIONS from DWARF.
+
+
+On 26.08.2024 20:31, Claudiu Beznea wrote:
+> Use the newly introduced macros instead of raw number. With this device
+> tree code is a bit easier to understand.
 > 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 > ---
->  kernel/module/Kconfig                 |   8 ++
->  scripts/Makefile                      |   1 +
->  scripts/gendwarfksyms/.gitignore      |   2 +
->  scripts/gendwarfksyms/Makefile        |   7 ++
->  scripts/gendwarfksyms/dwarf.c         |  87 +++++++++++++++
->  scripts/gendwarfksyms/gendwarfksyms.c | 146 ++++++++++++++++++++++++++
->  scripts/gendwarfksyms/gendwarfksyms.h |  78 ++++++++++++++
->  7 files changed, 329 insertions(+)
->  create mode 100644 scripts/gendwarfksyms/.gitignore
->  create mode 100644 scripts/gendwarfksyms/Makefile
->  create mode 100644 scripts/gendwarfksyms/dwarf.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
+>  arch/arm/boot/dts/microchip/sam9x60.dtsi | 18 +++++++++---------
+>  arch/arm/boot/dts/microchip/sama7g5.dtsi | 16 ++++++++--------
+>  2 files changed, 17 insertions(+), 17 deletions(-)
 > 
-> [...]
-> +static int parse_options(int argc, const char **argv)
-> +{
-> +	for (int i = 1; i < argc; i++) {
-> +		bool flag = false;
-> +
-> +		for (int j = 0; j < ARRAY_SIZE(options); j++) {
-> +			if (strcmp(argv[i], options[j].arg))
-> +				continue;
-> +
-> +			*options[j].flag = true;
-> +
-> +			if (options[j].param) {
-> +				if (++i >= argc) {
-> +					error("%s needs an argument",
-> +					      options[j].arg);
-> +					return -1;
-> +				}
-> +
-> +				*options[j].param = argv[i];
-> +			}
-> +
-> +			flag = true;
-> +			break;
-> +		}
-> +
-> +		if (!flag)
-> +			object_files[object_count++] = argv[i];
+> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> index 04a6d716ecaf..eeda277e684f 100644
+> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> @@ -560,7 +560,7 @@ tcb0: timer@f8008000 {
+>  				#size-cells = <0>;
+>  				reg = <0xf8008000 0x100>;
+>  				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
+> -				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k 0>;
+> +				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k SCKC_MD_SLCK>;
 
-I would rather add a check that this doesn't produce an out-of-bounds
-access.
+Actually, looking again at it, I don't know if it worth as we use numbers
+directly also for other PMC clock IDs.
 
-> [...]
-> +int main(int argc, const char **argv)
-> +{
-> +	unsigned int n;
-> +
-> +	if (parse_options(argc, argv) < 0)
-> +		return usage();
-> +
-> +	for (n = 0; n < object_count; n++) {
-> +		Dwfl *dwfl;
-> +		int fd;
-> +
-> +		fd = open(object_files[n], O_RDONLY);
-> +		if (fd == -1) {
-> +			error("open failed for '%s': %s", object_files[n],
-> +			      strerror(errno));
-> +			return -1;
-> +		}
-> +
-> +		dwfl = dwfl_begin(&callbacks);
-> +		if (!dwfl) {
-> +			error("dwfl_begin failed for '%s': %s", object_files[n],
-> +			      dwarf_errmsg(-1));
-> +			return -1;
-> +		}
-> +
-> +		if (!dwfl_report_offline(dwfl, object_files[n], object_files[n],
-> +					 fd)) {
-> +			error("dwfl_report_offline failed for '%s': %s",
-> +			      object_files[n], dwarf_errmsg(-1));
-> +			return -1;
-> +		}
-> +
-> +		dwfl_report_end(dwfl, NULL, NULL);
-> +
-> +		if (dwfl_getmodules(dwfl, &process_modules, NULL, 0)) {
-> +			error("dwfl_getmodules failed for '%s'",
-> +			      object_files[n]);
-> +			return -1;
-> +		}
+Sorry for the noise,
+Claudiu Beznea
 
-I see that libdwfl has also directly function dwfl_nextcu(). Would it
-make sense to use it to simplify the code?
 
-> +
-> +		dwfl_end(dwfl);
-> +		close(fd);
-
-Isn't fd consumed by dwfl_report_offline() on success? I'm seeing EBADF
-from this close() call.
-
-> +	}
-> +
-> +	return 0;
-> +}
-
--- 
-Thanks,
-Petr
 
