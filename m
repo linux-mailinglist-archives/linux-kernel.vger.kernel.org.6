@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-300668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E6995E701
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:47:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E5395E706
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50761C20E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:47:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4A51F218A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 02:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA84B6F303;
-	Mon, 26 Aug 2024 02:47:19 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C1B5579F;
-	Mon, 26 Aug 2024 02:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC001773D;
+	Mon, 26 Aug 2024 02:49:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E555256;
+	Mon, 26 Aug 2024 02:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724640439; cv=none; b=JLP6x5f3G9EIXumYOQGem45wUMvot3iB8b+YPPQFEiNA+sAffvRejQU1BwXntz0TZ/zWAl/ZGsR8jMquyRcwpYUTiM/L6SydrQMjtJQWwlKxKouoCU3U40kjXYDlZroEe93UoXHKMAfSNLtqbR/WyReRlx0eLXiamy8B1Uv1s5c=
+	t=1724640574; cv=none; b=W8On4zRIrkRtYxe+ZXZk9aREbSdS3gYODhCK8LwywQ3rlgfA6rQX6Wg16F472FbkH8OoVgwMSrk5b0Q5H55tLGLQieTrxZ8aaguOvBiXIQ/XBNIoz9MAsjbdClj4NuR45AK7kBcfkqk7/B4AhoRKnAiUB5xlwIYLfrBIOLmBLmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724640439; c=relaxed/simple;
-	bh=NTag6DfiSup4A8d5wT7W3XcBTqLLuhqAIuBc8GckCTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jSeLvfZ/xlCl8d4T4duD+LMrcte+eDzwGM+B8+g6wdFOxaePJczwngzPGLt7h6YlPhZzMjFZxvucd94jgG9eX8r57QbMepHyXaMAfMkC2N1NsVOE0Lpc4WaKYxpHszXwPe0wTHc5hTeGX+R1EJlaPLh6lKPkNTJ4EXD9GtnDPBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8CxKJqz7Mtm7vofAA--.28345S3;
-	Mon, 26 Aug 2024 10:47:15 +0800 (CST)
-Received: from haword-linux.loongson.cn (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMCxC2er7MtmDH4iAA--.51899S5;
-	Mon, 26 Aug 2024 10:47:14 +0800 (CST)
-From: zhenghaowei@loongson.cn
-To: zhenghaowei@loongson.cn,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: [PATCH v3 3/3] LoongArch: Update dts to support Loongson UART driver.
-Date: Mon, 26 Aug 2024 10:47:05 +0800
-Message-ID: <20240826024705.55474-4-zhenghaowei@loongson.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240826024705.55474-1-zhenghaowei@loongson.cn>
-References: <20240826024705.55474-1-zhenghaowei@loongson.cn>
+	s=arc-20240116; t=1724640574; c=relaxed/simple;
+	bh=slf0cnSx0YTr94akvuk3CYcV+0+zNfcCPXl+8oshNfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKTQkvCGYApMHVmFW9Kok98aNFao4fhieNHyF3+UTyVxKwYAtBgCzJ879Dn6Ph5h5YMPVaAcggjbEr8Px5s/IpgTDovB9ZZy9BAEYtboDNp/glugpsaikGtiAaMYbOH1Q9j18qvYbN4+QZ9ImyNS3eDx0cIMyiOtICVvG388zNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WsZrR3pxqz4f3l1s;
+	Mon, 26 Aug 2024 10:49:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D8A0D1A1124;
+	Mon, 26 Aug 2024 10:49:26 +0800 (CST)
+Received: from [10.174.178.72] (unknown [10.174.178.72])
+	by APP4 (Coremail) with SMTP id gCh0CgCXv4U17ctmRKjwCg--.11969S3;
+	Mon, 26 Aug 2024 10:49:26 +0800 (CST)
+Message-ID: <080848aa-dece-431a-9974-30a377786b69@huaweicloud.com>
+Date: Mon, 26 Aug 2024 10:49:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ata: libata: Fix memory leak for error path in
+ ata_host_alloc()
+To: Damien Le Moal <dlemoal@kernel.org>,
+ Zheng Qixing <zhengqixing@huaweicloud.com>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20240822033050.2909195-1-zhengqixing@huaweicloud.com>
+ <e5862d36-6f16-469c-9d03-e7681bfb5bf5@kernel.org>
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+In-Reply-To: <e5862d36-6f16-469c-9d03-e7681bfb5bf5@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxC2er7MtmDH4iAA--.51899S5
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgEBBGbLHpsD+AACsX
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cw1xKF13Xr4kXF4fKF13ZFc_yoW8Kr1Dp3
-	9Iv39rGr4Igr1xCryDJFyUJr4DZF98GFnFga13C34UJwsIq3yjvr1rJF9IqF4rXw4rX3y0
-	grnYgrW2gF4UZabCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JM4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
-	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jciSdUUUUU=
+X-CM-TRANSID:gCh0CgCXv4U17ctmRKjwCg--.11969S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7trW8KrW5uw47JryDJrykAFb_yoW8AFWUpa
+	n7Ga15CFZ8Grn7uwnru3WxJFWfKa1UGr4UurZ2g34F9rs0v3W8Ga909as8Wa4j9rs5Wa4U
+	JFy8Xry7CFyUZ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
+	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUSLvNUUUUU=
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-From: Haowei Zheng <zhenghaowei@loongson.cn>
 
-Change to use the Loongson UART driver for Loongson-2K2000,
-Loongson-2K1000 and Loongson-2K0500.
+在 2024/8/23 9:10, Damien Le Moal 写道:
+> On 8/22/24 12:30 PM, Zheng Qixing wrote:
+>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>
+>> In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
+>> for a port, the allocated 'host' structure is not freed before returning
+>> from the function. This results in a potential memory leak.
+>>
+>> This patch adds a kfree(host) before the error handling code is executed
+>> to ensure that the 'host' structure is properly freed in case of an
+>> allocation failure.
+>>
+>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> This needs a Fixes tag. So I added:
+>
+> Fixes: 2623c7a5f279 ("libata: add refcounting to ata_host")
+> Cc: stable@vger.kernel.org>
+>
+> and applied to for-6.11-fixes. Thanks.
 
-Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
----
- arch/loongarch/boot/dts/loongson-2k0500.dtsi | 2 +-
- arch/loongarch/boot/dts/loongson-2k1000.dtsi | 2 +-
- arch/loongarch/boot/dts/loongson-2k2000.dtsi | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Changes in V2:
+Based on Niklas Cassel's suggestion, the commit message and the actual
+content of the patch do not match.
 
-- The compatible property for the UART is changed from "ns16650,loongson"
+It should state "if devres_alloc(ata_devres_release, 0, GFP_KERNEL)
+fails to allocate memory" instead of "if ata_port_alloc(host) fails to 
+allocate
+memory for a port".
 
-    to "loongson,ls7a-uart".
+Should I modify the commit message and submit a new version of the patch?
 
-Changes in V3:
 
-- Compatible has been modified for a specific SoC.
+Zheng Qixing
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k0500.dtsi b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-index 3b38ff8853a7..63c77d70639c 100644
---- a/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-@@ -220,7 +220,7 @@ tsensor: thermal-sensor@1fe11500 {
- 		};
- 
- 		uart0: serial@1ff40800 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls2k0500-uart", "loongson,ls7a-uart";
- 			reg = <0x0 0x1ff40800 0x0 0x10>;
- 			clock-frequency = <100000000>;
- 			interrupt-parent = <&eiointc>;
-diff --git a/arch/loongarch/boot/dts/loongson-2k1000.dtsi b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-index 92180140eb56..cafb8d13c065 100644
---- a/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-@@ -297,7 +297,7 @@ dma-controller@1fe00c40 {
- 		};
- 
- 		uart0: serial@1fe20000 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls2k1000-uart", "loongson,ls7a-uart";
- 			reg = <0x0 0x1fe20000 0x0 0x10>;
- 			clock-frequency = <125000000>;
- 			interrupt-parent = <&liointc0>;
-diff --git a/arch/loongarch/boot/dts/loongson-2k2000.dtsi b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-index 0953c5707825..d4fe91af8c07 100644
---- a/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-@@ -174,7 +174,7 @@ rtc0: rtc@100d0100 {
- 		};
- 
- 		uart0: serial@1fe001e0 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls2k2000-uart";
- 			reg = <0x0 0x1fe001e0 0x0 0x10>;
- 			clock-frequency = <100000000>;
- 			interrupt-parent = <&liointc>;
--- 
-2.43.0
+
+>> ---
+>> Changes in v2:
+>>   - error path is wrong in v1
+>>
+>>   drivers/ata/libata-core.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+>> index e4023fc288ac..f27a18990c38 100644
+>> --- a/drivers/ata/libata-core.c
+>> +++ b/drivers/ata/libata-core.c
+>> @@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev, int n_ports)
+>>   	}
+>>   
+>>   	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
+>> -	if (!dr)
+>> +	if (!dr) {
+>> +		kfree(host);
+>>   		goto err_out;
+>> +	}
+>>   
+>>   	devres_add(dev, dr);
+>>   	dev_set_drvdata(dev, host);
 
 
