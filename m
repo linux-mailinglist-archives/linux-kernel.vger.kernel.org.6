@@ -1,268 +1,113 @@
-Return-Path: <linux-kernel+bounces-301585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AD595F2E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:26:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE4B95F303
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD22C282CAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 670ACB21293
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7FF18732F;
-	Mon, 26 Aug 2024 13:26:25 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A89188915;
+	Mon, 26 Aug 2024 13:34:55 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDBD184525;
-	Mon, 26 Aug 2024 13:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C30618785F;
+	Mon, 26 Aug 2024 13:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678784; cv=none; b=ZDfHo9Ey2mxILsP+ns9cI6ns36ljtRK6dgP8KQzqqdibSrd+26/q5uy+Yegxz8z0Lxolm8GEWQtjv4MAKAstGruOfrMmQoThYOYatU9V7ghH7EcPaJYdu680hbvNfk/ZqQUnqg5zJRMqibX0AhXoMrbRqp21+PnXfhElQ4ZMmnU=
+	t=1724679295; cv=none; b=TmafVnl0Qd7ylFpY9SLke2lfH3CHNn7yPNo5n4WoWyHN0FZp9DWpsbuhaGfEl4FV7rP8x+021vZHz3d+j4+EuHKlvU8LSrvPTtNcOu3eoLuXJajwyjSWNzGtuXlkJCnXY+Mf5TbpM2bo4yn3vb+euBn+sNSUm9AdCnbP5cYGdlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678784; c=relaxed/simple;
-	bh=wbeoBoQsdq28eBmWQ0zZx3b/6EObq1fEm6EEGxfZrnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ovQ8kvXqbxnHVC8bv9dCtT1Ubaru5JMkn/Ew9pFZaWocRIkKipir1/G7op5mOxLSMw67IBBcpBl9vhUm6ZCeXg503Tuf10tGCGP3tY3c+mlDnXrKolx0FzuOONjmtAjBEnT5CUxC3bOPT/zUhRK4XbzfpngdCyyi5tSodPv/R5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from mgb4.. (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id D9DF22B581;
-	Mon, 26 Aug 2024 15:26:13 +0200 (CEST)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	11162571@vivo.com,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH 1/1] media: mgb4: Fix debugfs error handling
-Date: Mon, 26 Aug 2024 15:26:04 +0200
-Message-ID: <20240826132604.3240-2-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826132604.3240-1-tumic@gpxsee.org>
-References: <20240826132604.3240-1-tumic@gpxsee.org>
+	s=arc-20240116; t=1724679295; c=relaxed/simple;
+	bh=SWCCNzyFbi5G+VtT+iTzetETHaM657qBwvjvgB2qxW8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ovNLKo9N/EJujby9y9HqJH43a0GXqKlCdVe0kb+H4s3Fq8cBYhhUMA5gQLAQA1YUrrhOM3CBAWVbS26Xi/h/cwFuRv0uEERioT9TtVTmE5Oqmg2ZP4i7IfscuYWYKjVjwRQC2YMbHMPHMONtrcZyzaKs0WUyWVGvI2U0ETffTHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wss3t4PCnz20ml3;
+	Mon, 26 Aug 2024 21:30:02 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id D8CB71402E1;
+	Mon, 26 Aug 2024 21:34:49 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
+ 2024 21:34:49 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<chenridong@huaweicloud.com>
+Subject: [PATCH v2 -next 00/11] cgroup:cpuset:separate legacy cgroup v1 code and put under config option
+Date: Mon, 26 Aug 2024 13:26:52 +0000
+Message-ID: <20240826132703.558956-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+Cgroups v2 have been around for a while and many users have fully adopted
+them, so they never use cgroups v1 features and functionality. Yet they
+have to "pay" for the cgroup v1 support anyway:
+1) the kernel binary contains an unused cgroup v1 code,
+2) some code paths have additional checks which are not needed,
+3) some common structures like task_struct and mem_cgroup contain unused
+   cgroup v1-specific members.
 
-Fix broken handling of debugfs_create_dir() errors including errors creating
-the parent mgb4(PCIe) device's debugfs directory.
+Cgroup memory controller has already separated legacy code to
+memory-v1.c. So it is time to do the same thing for cpuset controller.
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+This patchset aims to do:
+1) moving cgroup v1-specific cpuset code to the new cpuset-v1.c file,
+2) putting definitions shared by cpuset.c and cpuset-v1.c into the
+   cpuset-internal.h header,
+3) introducing the CONFIG_CPUSETS_V1 config option, turned off by default,
+4) making cpuset-v1.c to compile only if CONFIG_CPUSETS_V1 is set.
+
 ---
- drivers/media/pci/mgb4/mgb4_core.c |  8 ++------
- drivers/media/pci/mgb4/mgb4_core.h |  2 --
- drivers/media/pci/mgb4/mgb4_vin.c  | 25 ++++++++++---------------
- drivers/media/pci/mgb4/mgb4_vin.h  |  1 -
- drivers/media/pci/mgb4/mgb4_vout.c | 25 ++++++++++---------------
- drivers/media/pci/mgb4/mgb4_vout.h |  1 -
- 6 files changed, 22 insertions(+), 40 deletions(-)
+V2:
+- Update to base on the latest cgroup/for-6.12.
+- Add CONFIG_CPUSETS_V1 for cpuset_memory_pressure_bump.
 
-diff --git a/drivers/media/pci/mgb4/mgb4_core.c b/drivers/media/pci/mgb4/mgb4_core.c
-index 2819bbdab484..bc63dc81bcae 100644
---- a/drivers/media/pci/mgb4/mgb4_core.c
-+++ b/drivers/media/pci/mgb4/mgb4_core.c
-@@ -582,9 +582,7 @@ static int mgb4_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 							    NULL);
- #endif
- 
--#ifdef CONFIG_DEBUG_FS
- 	mgbdev->debugfs = debugfs_create_dir(dev_name(&pdev->dev), NULL);
--#endif
- 
- 	/* Get card serial number. On systems without MTD flash support we may
- 	 * get an error thus ignore the return value. An invalid serial number
-@@ -646,6 +644,8 @@ static void mgb4_remove(struct pci_dev *pdev)
- 	hwmon_device_unregister(mgbdev->hwmon_dev);
- #endif
- 
-+	debugfs_remove_recursive(mgbdev->debugfs);
-+
- 	if (mgbdev->indio_dev)
- 		mgb4_trigger_free(mgbdev->indio_dev);
- 
-@@ -656,10 +656,6 @@ static void mgb4_remove(struct pci_dev *pdev)
- 		if (mgbdev->vin[i])
- 			mgb4_vin_free(mgbdev->vin[i]);
- 
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(mgbdev->debugfs);
--#endif
--
- 	device_remove_groups(&mgbdev->pdev->dev, mgb4_pci_groups);
- 	free_spi(mgbdev);
- 	free_i2c(mgbdev);
-diff --git a/drivers/media/pci/mgb4/mgb4_core.h b/drivers/media/pci/mgb4/mgb4_core.h
-index b52cd67270b5..9aec62514c0b 100644
---- a/drivers/media/pci/mgb4/mgb4_core.h
-+++ b/drivers/media/pci/mgb4/mgb4_core.h
-@@ -68,9 +68,7 @@ struct mgb4_dev {
- 	u8 module_version;
- 	u32 serial_number;
- 
--#ifdef CONFIG_DEBUG_FS
- 	struct dentry *debugfs;
--#endif
- };
- 
- #endif
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
-index e9332abb3172..185fb28226b6 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.c
-+++ b/drivers/media/pci/mgb4/mgb4_vin.c
-@@ -853,14 +853,16 @@ static void fpga_init(struct mgb4_vin_dev *vindev)
- 	mgb4_write_reg(video, regs->config, 1U << 9);
- }
- 
--#ifdef CONFIG_DEBUG_FS
--static void debugfs_init(struct mgb4_vin_dev *vindev)
-+static void create_debugfs(struct mgb4_vin_dev *vindev)
- {
-+#ifdef CONFIG_DEBUG_FS
- 	struct mgb4_regs *video = &vindev->mgbdev->video;
-+	struct dentry *entry;
- 
--	vindev->debugfs = debugfs_create_dir(vindev->vdev.name,
--					     vindev->mgbdev->debugfs);
--	if (!vindev->debugfs)
-+	if (IS_ERR_OR_NULL(vindev->mgbdev->debugfs))
-+		return;
-+	entry = debugfs_create_dir(vindev->vdev.name, vindev->mgbdev->debugfs);
-+	if (IS_ERR(entry))
- 		return;
- 
- 	vindev->regs[0].name = "CONFIG";
-@@ -892,10 +894,9 @@ static void debugfs_init(struct mgb4_vin_dev *vindev)
- 	vindev->regset.base = video->membase;
- 	vindev->regset.regs = vindev->regs;
- 
--	debugfs_create_regset32("registers", 0444, vindev->debugfs,
--				&vindev->regset);
--}
-+	debugfs_create_regset32("registers", 0444, entry, &vindev->regset);
- #endif
-+}
- 
- struct mgb4_vin_dev *mgb4_vin_create(struct mgb4_dev *mgbdev, int id)
- {
-@@ -1001,9 +1002,7 @@ struct mgb4_vin_dev *mgb4_vin_create(struct mgb4_dev *mgbdev, int id)
- 		goto err_video_dev;
- 	}
- 
--#ifdef CONFIG_DEBUG_FS
--	debugfs_init(vindev);
--#endif
-+	create_debugfs(vindev);
- 
- 	return vindev;
- 
-@@ -1034,10 +1033,6 @@ void mgb4_vin_free(struct mgb4_vin_dev *vindev)
- 	free_irq(vin_irq, vindev);
- 	free_irq(err_irq, vindev);
- 
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(vindev->debugfs);
--#endif
--
- 	groups = MGB4_IS_GMSL(vindev->mgbdev)
- 	  ? mgb4_gmsl_in_groups : mgb4_fpdl3_in_groups;
- 	device_remove_groups(&vindev->vdev.dev, groups);
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.h b/drivers/media/pci/mgb4/mgb4_vin.h
-index 9693bd0ce180..8fd10c0a5554 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.h
-+++ b/drivers/media/pci/mgb4/mgb4_vin.h
-@@ -58,7 +58,6 @@ struct mgb4_vin_dev {
- 	const struct mgb4_vin_config *config;
- 
- #ifdef CONFIG_DEBUG_FS
--	struct dentry *debugfs;
- 	struct debugfs_regset32 regset;
- 	struct debugfs_reg32 regs[sizeof(struct mgb4_vin_regs) / 4];
- #endif
-diff --git a/drivers/media/pci/mgb4/mgb4_vout.c b/drivers/media/pci/mgb4/mgb4_vout.c
-index 998edcbd9723..133110aac688 100644
---- a/drivers/media/pci/mgb4/mgb4_vout.c
-+++ b/drivers/media/pci/mgb4/mgb4_vout.c
-@@ -676,14 +676,16 @@ static void fpga_init(struct mgb4_vout_dev *voutdev)
- 		       (voutdev->config->id + MGB4_VIN_DEVICES) << 2 | 1 << 4);
- }
- 
--#ifdef CONFIG_DEBUG_FS
--static void debugfs_init(struct mgb4_vout_dev *voutdev)
-+static void create_debugfs(struct mgb4_vout_dev *voutdev)
- {
-+#ifdef CONFIG_DEBUG_FS
- 	struct mgb4_regs *video = &voutdev->mgbdev->video;
-+	struct dentry *entry;
- 
--	voutdev->debugfs = debugfs_create_dir(voutdev->vdev.name,
--					      voutdev->mgbdev->debugfs);
--	if (!voutdev->debugfs)
-+	if (IS_ERR_OR_NULL(voutdev->mgbdev->debugfs))
-+		return;
-+	entry = debugfs_create_dir(voutdev->vdev.name, voutdev->mgbdev->debugfs);
-+	if (IS_ERR(entry))
- 		return;
- 
- 	voutdev->regs[0].name = "CONFIG";
-@@ -711,10 +713,9 @@ static void debugfs_init(struct mgb4_vout_dev *voutdev)
- 	voutdev->regset.base = video->membase;
- 	voutdev->regset.regs = voutdev->regs;
- 
--	debugfs_create_regset32("registers", 0444, voutdev->debugfs,
--				&voutdev->regset);
--}
-+	debugfs_create_regset32("registers", 0444, entry, &voutdev->regset);
- #endif
-+}
- 
- struct mgb4_vout_dev *mgb4_vout_create(struct mgb4_dev *mgbdev, int id)
- {
-@@ -808,9 +809,7 @@ struct mgb4_vout_dev *mgb4_vout_create(struct mgb4_dev *mgbdev, int id)
- 		goto err_video_dev;
- 	}
- 
--#ifdef CONFIG_DEBUG_FS
--	debugfs_init(voutdev);
--#endif
-+	create_debugfs(voutdev);
- 
- 	return voutdev;
- 
-@@ -833,10 +832,6 @@ void mgb4_vout_free(struct mgb4_vout_dev *voutdev)
- 
- 	free_irq(irq, voutdev);
- 
--#ifdef CONFIG_DEBUG_FS
--	debugfs_remove_recursive(voutdev->debugfs);
--#endif
--
- 	groups = MGB4_IS_GMSL(voutdev->mgbdev)
- 	  ? mgb4_gmsl_out_groups : mgb4_fpdl3_out_groups;
- 	device_remove_groups(&voutdev->vdev.dev, groups);
-diff --git a/drivers/media/pci/mgb4/mgb4_vout.h b/drivers/media/pci/mgb4/mgb4_vout.h
-index adc8fe1e7ae6..a07eeabdcf34 100644
---- a/drivers/media/pci/mgb4/mgb4_vout.h
-+++ b/drivers/media/pci/mgb4/mgb4_vout.h
-@@ -54,7 +54,6 @@ struct mgb4_vout_dev {
- 	const struct mgb4_vout_config *config;
- 
- #ifdef CONFIG_DEBUG_FS
--	struct dentry *debugfs;
- 	struct debugfs_regset32 regset;
- 	struct debugfs_reg32 regs[sizeof(struct mgb4_vout_regs) / 4];
- #endif
+Chen Ridong (11):
+  cgroup/cpuset: introduce cpuset-v1.c
+  cgroup/cpuset: move common code to cpuset-internal.h
+  cgroup/cpuset: move memory_pressure to cpuset-v1.c
+  cgroup/cpuset: move relax_domain_level to cpuset-v1.c
+  cgroup/cpuset: move memory_spread to cpuset-v1.c
+  cgroup/cpuset: add callback_lock helper
+  cgroup/cpuset: move legacy hotplug update to cpuset-v1.c
+  cgroup/cpuset: move validate_change_legacy to cpuset-v1.c
+  cgroup/cpuset: move v1 interfaces to cpuset-v1.c
+  cgroup/cpuset: guard cpuset-v1 code under CONFIG_CPUSETS_V1
+  cgroup/cpuset: add sefltest for cpuset v1
+
+ MAINTAINERS                                   |   3 +
+ include/linux/cpuset.h                        |   4 +
+ init/Kconfig                                  |  13 +
+ kernel/cgroup/Makefile                        |   1 +
+ kernel/cgroup/cpuset-internal.h               | 305 +++++++
+ kernel/cgroup/cpuset-v1.c                     | 563 ++++++++++++
+ kernel/cgroup/cpuset.c                        | 850 +-----------------
+ .../selftests/cgroup/test_cpuset_v1_base.sh   |  77 ++
+ 8 files changed, 986 insertions(+), 830 deletions(-)
+ create mode 100644 kernel/cgroup/cpuset-internal.h
+ create mode 100644 kernel/cgroup/cpuset-v1.c
+ create mode 100755 tools/testing/selftests/cgroup/test_cpuset_v1_base.sh
+
 -- 
-2.46.0
+2.34.1
 
 
