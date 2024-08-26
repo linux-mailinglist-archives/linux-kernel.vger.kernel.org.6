@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-301533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2EA95F233
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6FF95F236
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB8D2849EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59454285521
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEF31862B9;
-	Mon, 26 Aug 2024 12:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Dvis41ie"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96889188586;
+	Mon, 26 Aug 2024 12:54:51 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6352C172798;
-	Mon, 26 Aug 2024 12:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D46B172798;
+	Mon, 26 Aug 2024 12:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676881; cv=none; b=YIMpNnV1eoHHu7B6vJKAQrBJJ81hKmh9ebS3sOLRZ9C/FuoNYAxgoFKlybez9gRwMJVMNEdzJAhCUkClTYOOurPnMBuXzvI/b5F6O0ANHpKessnqywcW4mxkPe/+avAR3erS6+20WyV8SG73WbPk943Mtui45f2krh5i99pbthI=
+	t=1724676891; cv=none; b=BBZp9wFnjIVeKZz9zrY6soP5RHCRKi7iJgV/whwMK/8Bi+dPD9pu5tyxtWjN/47xrudPQLB9H0zswBkvo8BCoQnYtQ3a3ne1lBCHIQvFBQEXXenvdql7ud9hQRzgrPqpdAzKzCEDXDfYP0O8Cc5SRXQ3KUfUEChDJqCXhDgsoec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676881; c=relaxed/simple;
-	bh=v88WBWfZpCdGdGKjwhtcFxY3n1G9uCQbsZZkbJ7RUPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kL3pPtgJGD5Jg4hu7wnZVTizqmlym6kIHNWHbTqPvD6ouZxwgUs03JFrEDB5cqLRUXgBaiR9O8Sqp1WiZIQYm1XTpj6nDWPO3szF5IMkU5x3CUPnvbftyoCE6u0ei6TnTaghe3gTjXcT5y7ne1RU6fLgWDtrp/CzxhjA6pCKTxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Dvis41ie; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CRtm2k1gp7t1K52GzLSjl2RYWVeceIa4paPrEJiXqdM=; b=Dvis41ieXGf3GZmZ8nlqU2mofv
-	iqJgs/BcD5SiPsKrAUZm4LXcg9kuZI9klJoXzzSdrYrvtRV5DPwOSjH7LL2MGVZ3nARZri8snLsq6
-	QPBwElAWuI/7JDeN8AX3tKKfPrY2vSeqCyFlAQA34yTSVhW+dFHpNA8ZJYypuiVCt8WA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1siZEu-005i0i-Ff; Mon, 26 Aug 2024 14:54:32 +0200
-Date: Mon, 26 Aug 2024 14:54:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for Global Clock
- Controller on QCS8300
-Message-ID: <049ee7d3-9379-4c8f-88ed-7aec03ad3367@lunn.ch>
-References: <20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com>
- <20240822-qcs8300-gcc-v2-2-b310dfa70ad8@quicinc.com>
- <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
- <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
+	s=arc-20240116; t=1724676891; c=relaxed/simple;
+	bh=ayuY5urcv7wzBc3ca2oQZlLr66hjtTMhY5ZihSO9GZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uDsHuF5zVYNbgAroj//hz4x4p6nIy4CEvhX58/fom4TzgvNnSTX8Kh469aSCUvTZUulafiXlWDge2cYYjX3FlQNmjy1ab9h0nlRVT1pad3admrh/XR+Tz6Ta7vQ8FpUH/481cujT+JAOdXtqNHjyOVxOVcZRCO8m0GsyRWiXC1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1205de17aaso4406993276.2;
+        Mon, 26 Aug 2024 05:54:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724676887; x=1725281687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=86KUoIdgluS3sIu2DePra4NVbpXZdUVLHz5nB5lMqtw=;
+        b=dHde668Zj7GZkGn4/Ga3EUVferxZlzEqy7fIUB8nnVDCOcGpQGv4b0fobaNRfumS/a
+         zReNJTZX+9HntGvHmoBpj49D9IT6jAuGn7QIHI63cDJP2RPy7Yagr4GcXt+PjIJzdaHM
+         ARh52uPHASjvuXewxU7e9+f/iVhxP/Hbqx7jXG+9ZkKb6ppTuITyXa0XosHm7129hzLk
+         y/WJSmfHMNZ8j05lfnJKSrSkE1Gh0pF4raJsdijQltLrK7tgjjm6mgVqqOc/r1EzLZvP
+         k+rHyqVq2Notl6Aqme0z7D4j/OU5bwqG6kLFrryVVLUo8Z4qvtY1HiLu119J6m974EC1
+         aoPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVByxelGyBIu7JgBP8DQjjT217wo1J6ED0obGmTa/VzIc4dIVNL3h0F2jUn1T/S7m56fFZgeGjwNmgiz8CregP3+9M=@vger.kernel.org, AJvYcCVYuRCEsQxAoetaVEiOQav224QMo2Vw3Yea2Kf7ez9uHz4m9xhzyuqML24ZoSbMlH7Ua604OOAUnmMw@vger.kernel.org, AJvYcCW4ttGZL5ENU9oH0xKrutABY+splhbrYm1thegVO6zPONhYVHeghjZ9fHUTeBb6HOf9zbXxZwrk05mvf3eT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdwnCOjWkF+n+7afsIWGeMC8I5nnJmUfXVA2u+E+6w1AIHTaX9
+	TokIHHjsvRLbX6LT9R5VsLe5LhlspCkNLVBu2vvk10j9L77ykTJhYQwuBYGM
+X-Google-Smtp-Source: AGHT+IGOjcFvGFz4OB76F5XENpI49TEQfPeA5TKWUYKaY+3XI1rTx43+OTx1Eoxf+JYa4sG7JGPwSw==
+X-Received: by 2002:a05:6902:230f:b0:e11:698f:8843 with SMTP id 3f1490d57ef6-e17a866641emr11261450276.44.1724676887545;
+        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4bd277sm2029128276.38.2024.08.26.05.54.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b4432b541aso37707017b3.1;
+        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+yKYUUWG149AKjyY23JWXdfwyIA+CwCvY0rNtfAFactPV9UFlBKouOqOWtL8worwQ9T6kwB8ThRkp@vger.kernel.org, AJvYcCVb8XTN03ybvz1EBZuIa0pBBYGMUF1bbiCu67x4xMPx7jP7JNIlt/0uGH4KktPB602EZPz8sEnR2pHDk/0u4LKBfME=@vger.kernel.org, AJvYcCWd/nH1JeuapF1NXzrMzQKUSViYPykeTAN7Dy5QRDwu2feM6+Pp4Kc8+8XYrottiIkZKX5mkWSnImqZoIk+@vger.kernel.org
+X-Received: by 2002:a05:690c:3302:b0:65f:80bb:e6b2 with SMTP id
+ 00721157ae682-6c6251a3eebmr90811867b3.14.1724676887056; Mon, 26 Aug 2024
+ 05:54:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
+References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240821085644.240009-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 14:54:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUt2_2OBeR9eRyfPAAn1z7VU3t1HkwdA-nLi1uO8pp1Pg@mail.gmail.com>
+Message-ID: <CAMuHMdUt2_2OBeR9eRyfPAAn1z7VU3t1HkwdA-nLi1uO8pp1Pg@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable watchdog
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 04:25:39PM +0530, Imran Shaik wrote:
-> 
-> 
-> On 8/23/2024 1:29 AM, Andrew Lunn wrote:
-> > > +static int gcc_qcs8300_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct regmap *regmap;
-> > > +	int ret;
-> > > +
-> > > +	regmap = qcom_cc_map(pdev, &gcc_qcs8300_desc);
-> > > +	if (IS_ERR(regmap))
-> > > +		return PTR_ERR(regmap);
-> > > +
-> > > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
-> > > +				       ARRAY_SIZE(gcc_dfs_clocks));
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* Keep some clocks always enabled */
-> > 
-> > Sorry, but you need to explain why. Why cannot the camera driver
-> > enable these clocks when it loads? Why cannot the display driver
-> > enable these clocks when it loads.
-> > 
-> 
-> These clocks are recommended to be kept always ON as per the HW design and
-> also exposing clock structures and marking them critical in the kernel would
-> lead to redundant code. Based on previous discussions with clock
-> maintainers, it is recommended to keep such clocks enabled at probe and not
-> model them. This approach is consistently followed for all other targets as
-> well.
+On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable WDT1 watchdog on RZ/V2H GP-EVK platform.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I don't see why it would add redundant code. It is a few lines of code
-in the driver, which every driver using clocks has. If you really
-don't want the clock turned off because it is unused, you can use
-CLK_IGNORE_UNUSED, along with a comment explaining why.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-What i was actually guessing is that you don't actually have open
-drivers for these hardware blocks, just a blob running in user
-space. As such, it cannot turn the clocks on. If that is the case, i
-would much prefer you are honest about this, and document it.
+Gr{oetje,eeting}s,
 
-	Andrew
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
