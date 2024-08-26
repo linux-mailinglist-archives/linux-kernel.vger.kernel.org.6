@@ -1,207 +1,238 @@
-Return-Path: <linux-kernel+bounces-301080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DF295EC19
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:36:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727D595EC1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124481F210CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10FF1F211E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84DC558B6;
-	Mon, 26 Aug 2024 08:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF3E13B29F;
+	Mon, 26 Aug 2024 08:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WIcU3A9a"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJ+YLYUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD3A1373
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B4673478;
+	Mon, 26 Aug 2024 08:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661356; cv=none; b=VBz35ne5Uhi7lcUUgd2WzV9lUhMqk+LHvJ7GADkXcUDk0Sqnghz/tol9sKTZYENo7VCU/ff02uezX7NOtjbhIh4ZhKiku6l9QVC9ZUtL7xiuyKof6Z5ngWNl8mwO42XYUJ6ftoJRFsRU36Wg9bIu9UfkQVkCWmODEoAcgCE/HPk=
+	t=1724661412; cv=none; b=EJJigs8dIo1KXDqcnWxmdQmbTg9WL7vSU9/NpNIpCbv+J+3Qt2jvBS0Ky4voKH0ZaZGBjk6/vg5A1VY1d+nzuMerdBIu7bwTEGPGlg1HzTyOolCEvB9rE9+vQLe/5rqAeYiMzY4MAxvggQ3u7k2pOlRxVdyR34RzvqGZLAyoljA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661356; c=relaxed/simple;
-	bh=ASkUA2gyjsQc9oRS8REr46kHFwqkoT5Z7dP8U5l6How=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Q5AZ5SmyBD+dp8gS3VihR18f1Qp0oLlht9AOc4kjeTDkhWrSpdJ2FBlKoJe0aBkqUG0QL7J+68LBzkK0hIXcBML4AdvwRUbyL5najYsCQPlgF0vrJmyA9V103nkxM5GAqmuR4OMbUQyWe7AUTP9kO/4hyVkiGQjLynSsM0qSwZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WIcU3A9a; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724661352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYZBH0XywWgti9APWEcZS82Uqa8SY9jUUWio2WtUyEk=;
-	b=WIcU3A9a+Fs6xRBDxl/2dkcSD/dLO36yPbPJQU6cUjH68jF3RJrD75oIjRHdV4IKZaotfn
-	9Y8HP+37eSdw+je0jNV5DI65yQzMLHmbkUNxkku9pkj9y9WuYNw+KtbmkxBKytcu/jhIq9
-	sw4aNXo6YTKpThRPIJUQRjxpwgALTto=
+	s=arc-20240116; t=1724661412; c=relaxed/simple;
+	bh=RvoSXYx5aZ9xUlAAZQxs9imiRyF//RNpaHWpP9bgIMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8sZJJcKDgPid/vYzKncThKU2akPFDPo8PgMkOwZLMZLxgwVbB4Lixt2exol7kCUmSEFderCEGQHbXY4PoB8te1Kp1AU1u+TPgyl22Yb+glYRpHfnyd/LD/VvmMLfVimFSNycQwbe6WR0b/hb8aIsknREB6tINxjUY5Xhe5W9ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJ+YLYUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E112FC568DE;
+	Mon, 26 Aug 2024 08:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724661411;
+	bh=RvoSXYx5aZ9xUlAAZQxs9imiRyF//RNpaHWpP9bgIMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TJ+YLYUK1VF5e5R6djrUVifNEoPIdmNGRKzIxWWQLsCx62/FOJYAt4CbKyTV31l1G
+	 Sswj5HMVez0VUYUbq5RCJNYhCEqgv+GeTWdlRLy2Y8CmqbRMwhVv4G/h/QLk3OjyE7
+	 DYAaPyyQqAg9Kc915NOFvkCG2qDoLxQwim5TXf8tkCkwJfh2LWT8z5Bt8WoAw+0v9I
+	 cJyvrNALHZaIHtWHHApspnQ8HXezWCq9aCYUbDKWFA4fYecz7AzyLIwqgxITsaF++i
+	 zJrZoQGoWO2cODipqE4W9pUjZnkANzDCwoyjjDETHv0VxrZKz9veTfWXTPBzP+jTr1
+	 4lU3LLxcryTog==
+Message-ID: <cae86533-9eaa-4253-91ae-14c65b378c3c@kernel.org>
+Date: Mon, 26 Aug 2024 10:36:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
- and adding requests to hctx->dispatch
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
-Date: Mon, 26 Aug 2024 16:35:07 +0800
-Cc: Muchun Song <songmuchun@bytedance.com>,
- Ming Lei <ming.lei@redhat.com>,
- Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "yukuai (C)" <yukuai3@huawei.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3AC15539-1B9B-4996-A150-8CAB214159E5@linux.dev>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
- <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
- <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: add ADI ad4030, ad4630 and
+ ad4632
+To: Esteban Blanc <eblanc@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
+ linux-doc@vger.kernel.org
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+ <20240822-eblanc-ad4630_v1-v1-1-5c68f3327fdd@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240822-eblanc-ad4630_v1-v1-1-5c68f3327fdd@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 22/08/2024 14:45, Esteban Blanc wrote:
+> This adds a binding specification for the Analog Devices Inc. AD4030,
+> AD4630 and AD4632 families of ADCs.
+> 
+> - ad4030-24 is a 1 channel SAR ADC with 24 bits of precision and a
+>   sampling rate of 2M samples per second
+> - ad4630-16 is a 2 channels SAR ADC with 16 bits of precision and a
+>   sampling rate of 2M samples per second
+> - ad4630-24 is a 2 channels SAR ADC with 24 bits of precision and a
+>   sampling rate of 2M samples per second
+> - ad4632-16 is a 2 channels SAR ADC with 16 bits of precision and a
+>   sampling rate of 500K samples per second
+> - ad4632-24 is a 2 channels SAR ADC with 24 bits of precision and a
+>   sampling rate of 500K samples per second
+> 
+> Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad4030.yaml    | 113 +++++++++++++++++++++
+>  MAINTAINERS                                        |   8 ++
+>  2 files changed, 121 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+> new file mode 100644
+> index 000000000000..7957c0c0ac7a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+> @@ -0,0 +1,113 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2024 Analog Devices Inc.
+> +# Copyright 2024 BayLibre, SAS.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4030.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD4030 and AD4630 ADC family device driver
+
+"device driver"? Bindings are for hardware. Explain the hardware, not
+driver.
+
+> +
+> +maintainers:
+> +  - Nuno Sa <nuno.sa@analog.com>
+> +  - Michael Hennerich <michael.hennerich@analog.com>
+> +
+> +description: |
+> +  Analog Devices AD4030 single channel and AD4630 dual channel precision SAR ADC
+> +  family
+
+Does not look like wrapped according to Linux coding style. Read the
+coding style (not checkpatch).
+
+> +
+> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4030-24-4032-24.pdf
+> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4630-24_ad4632-24.pdf
+> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/ad4630-16-4632-16.pdf
+> +
+> +properties:
+> +
+
+Drop blank line
+
+> +  compatible:
+> +    enum:
+> +      - adi,ad4030-24
+> +      - adi,ad4630-16
+> +      - adi,ad4630-24
+> +      - adi,ad4632-16
+> +      - adi,ad4632-24
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 100000000
+> +
+> +  spi-rx-bus-width:
+> +    enum: [1, 2, 4]
+> +
+> +  vdd-5v-supply: true
+> +  vdd-1v8-supply: true
+> +  vio-supply: true
+> +
+> +  ref-supply:
+> +    description:
+> +      Optional External unbuffered reference. Used when refin-supply is not
+> +      connected.
+> +
+> +  refin-supply:
+> +    description:
+> +      Internal buffered Reference. Used when ref-supply is not connected.
+> +
+> +  cnv-gpio:
+
+Nope, there is no "gpio" property. It IS ALWAYS gpios. Look at other
+examples.
 
 
+> +    description:
+> +      The Convert Input (CNV). It initiates the sampling conversions.
+> +    maxItems: 1
+> +
+> +  reset-gpio:
 
-> On Aug 22, 2024, at 11:54, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->=20
-> Hi,
->=20
-> =E5=9C=A8 2024/08/19 11:49, Muchun Song =E5=86=99=E9=81=93:
->> On Mon, Aug 19, 2024 at 10:28=E2=80=AFAM Ming Lei =
-<ming.lei@redhat.com> wrote:
->>>=20
->>> Hi Muchun,
->>>=20
->>> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
->>>> Supposing the following scenario with a virtio_blk driver.
->>>>=20
->>>> CPU0                                                                =
-CPU1
->>>>=20
->>>> blk_mq_try_issue_directly()
->>>>     __blk_mq_issue_directly()
->>>>         q->mq_ops->queue_rq()
->>>>             virtio_queue_rq()
->>>>                 blk_mq_stop_hw_queue()
->>>>                                                                     =
-virtblk_done()
->>>>     blk_mq_request_bypass_insert()                                  =
-    blk_mq_start_stopped_hw_queues()
->>>>         /* Add IO request to dispatch list */   1) store            =
-        blk_mq_start_stopped_hw_queue()
->>>>                                                                     =
-            clear_bit(BLK_MQ_S_STOPPED)                 3) store
->>>>     blk_mq_run_hw_queue()                                           =
-            blk_mq_run_hw_queue()
->>>>         if (!blk_mq_hctx_has_pending())                             =
-                if (!blk_mq_hctx_has_pending())         4) load
->>>>             return                                                  =
-                    return
->>>>         blk_mq_sched_dispatch_requests()                            =
-                blk_mq_sched_dispatch_requests()
->>>>             if (blk_mq_hctx_stopped())          2) load             =
-                    if (blk_mq_hctx_stopped())
->>>>                 return                                              =
-                        return
->>>>             __blk_mq_sched_dispatch_requests()                      =
-                    __blk_mq_sched_dispatch_requests()
->>>>=20
->>>> The full memory barrier should be inserted between 1) and 2), as =
-well as between
->>>> 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is =
-cleared or CPU1
->>>> sees dispatch list or setting of bitmap of software queue. =
-Otherwise, either CPU
->>>> will not re-run the hardware queue causing starvation.
->>>=20
->>> Yeah, it is one kind of race which is triggered when adding request =
-into
->>> ->dispatch list after returning STS_RESOURCE. We were troubled by =
-lots of
->>> such kind of race.
->> Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
->>>=20
->>> stopping queue is used in very less drivers, and its only purpose =
-should
->>> be for throttling hw queue in case that low level queue is busy. =
-There seems
->>> more uses of blk_mq_stop_hw_queues(), but most of them should be =
-replaced
->>> with blk_mq_quiesce_queue().
->>>=20
->>> IMO, fixing this kind of issue via memory barrier is too tricky to
->>> maintain cause WRITE/READ dependency is very hard to follow. I'd =
-suggest to
->>> make memory barrier solution as the last resort, and we can try to =
-figure
->>> out other easier & more reliable way first.
->> I do agree it is hard to maintain the dependencies in the future. We =
-should
->> propose an easy-maintainable solution. But I thought it is a =
-long-term issue
->> throughout different stable linux distros. Adding a mb is the easy =
-way to fix
->> the problem (the code footprint is really small), so it will be very
->> easy for others
->> to backport those bug fixes to different stable linux distros. =
-Therefore, mb
->> should be an interim solution. Then, we could improve it based on the =
-solution
->> you've proposed below. What do you think?
->=20
-> I'll agree with Ming, let's figure out a better fix first. Easy to =
-backport to stables is not first consideration.
+Same problem.
 
-Hi Kuai,
-
-All right. I usually focus on MM, it seems there is a gap between MM and =
-BLock.
-Anyway, let's figure out if there is any good solution.
-
->> Thanks,
->> Muchun.
->>>=20
->>> One idea I thought of is to call blk_mq_request_bypass_insert()(or =
-rename
->>> & export it) before calling blk_mq_stop_hw_queue() in driver, then
->>> return new status code STS_STOP_DISPATCH for notifying blk-mq to =
-stop
->>> dispatch simply.
->=20
-> New status code look good to me, however, I wonder can we just remove
-> the problematic blk_mq_stop_hw_queue(), and replace it by handling the
-> new status from block layer?
->=20
-> - Passing the new status to blk_mq_run_dispatch_ops, and quiesce with
-
-I didn't fully understand your suggestion. Let me ask some questions.
-blk_mq_stop_hw_queue() is usually called in blk_mq_ops->queue_rq path,
-it'll be easy for this case to pass the new status to =
-blk_mq_run_dispatch_ops.
-Should we remove blk_mq_stop_hw_queues() as well? How to pass the new
-status to blk_mq_run_dispatch_ops in this case?
-
-> the new status, if no request is inflight, unquiesce immediately;
-
-Actually, I didn't understand how to avoid the above race. May you =
-elaborate
-the scenario?
-
-Muhcun,
-Thanks.
-
-> - unquiesce is any IO is done afterwards;
+> +    description:
+> +      Reset Input (Active Low). Used for asynchronous device reset.
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      The BUSY pin is used to signal that the conversions results are available
+> +      to be transferred when in SPI Clocking Mode. This nodes should be connected
+> +      to an interrupt that is triggered when the BUSY line goes low.
+> +    maxItems: 1
+> +
 
 
+> 
 
+Best regards,
+Krzysztof
 
 
