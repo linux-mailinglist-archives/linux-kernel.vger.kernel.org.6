@@ -1,178 +1,90 @@
-Return-Path: <linux-kernel+bounces-301777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B4F95F574
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:46:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B4C95F571
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13732282BB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFAA1F22458
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7791946B0;
-	Mon, 26 Aug 2024 15:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA41A194124;
+	Mon, 26 Aug 2024 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="LqkQDUsf"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X+7HGJhG"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6255192D72;
-	Mon, 26 Aug 2024 15:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687189; cv=pass; b=uk2TWap3q7S7uZ0e2aSY1gBKahLbKEhgJxNxB83P1BZlQqLNQ22UBWFAKAPWKNhakRM2nHoGhYv1Ak+PFFQq2uE5GdjmxUzd2KFBSrQtoPdaqmy1vJJ1ygAgcAsYvZSRlf4qbnjWcnKelLi05ayWlrZ0JvH7YiOfUPLwUQeRxU4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687189; c=relaxed/simple;
-	bh=Do/+VwEJy4aWUGWjEXhuMvlmv5HouVa8Jk5LAZfggUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F8SIIL6l9XcIsRIX01ZadzElhNB8aHVyOvnf1TcT/43mMjxryLJtkk82Fm/VyM5QnyEpaHMLkeMnWqQqz6WZwxPauxBYpW1uIFmOZunKwDPs4iZNAoXnAqUB7wkvb55TqsbyM5vRBiGfzZODfbEbQRjbSLM8rKgCnoyas7X1JsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=LqkQDUsf; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724687153; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NSgXOg6pf4JTqCqBfaJlETE1ElqADA9SVLQWBaTLNnLv8aaUYzY2wN3OZmLIQDFpOk8gkdZN7hhG2j0/vKC7QChgmuu7O2vgQ4JnhQe5+JcioXS/0GvGuHa5izNnNOEcUUXuOHmh58Whvkrve4BvvExUbLG+Dmi6vC0W91B8bAo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724687153; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zb074lKrTAv50HX1CILzyo6P0szhW30i/SFCvBy70Lk=; 
-	b=a+PNdjk2Ikz8JSGRfSPu9uRgnrY4Z6SXSoMtp1CmhnfWCvZiv5Zl/xLkVZplKNx6tDMpsmnMncbAfoWbwwi3gbfvcyuxmcw+IMA435ShP6VNtP8f/ZfJ8cP2I/fN4gPjrU3F3VZGXzouX5biSAWFdfQWC43gGGH/fzlAgKMjDzc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724687153;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=zb074lKrTAv50HX1CILzyo6P0szhW30i/SFCvBy70Lk=;
-	b=LqkQDUsf/LZqRncbELqVpYqBjZmUZkn4+1sPZ7OmW5TWlkzZw52pQyEAJAh47NOe
-	7eguSKUZhr8IB1Pg+Y3Gb1+4h6ecDm1ONzIj29ScB78qRhlY1qsUt1xBA2a6vaUIJNz
-	gkFaCSLvnyrusBKjAU1Ilrkivai6hO6uHRgWw3j0=
-Received: by mx.zohomail.com with SMTPS id 1724687151652297.5430112358182;
-	Mon, 26 Aug 2024 08:45:51 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v4 4/4] mmc: dw_mmc-rockchip: Add support for rk3576 SoCs
-Date: Mon, 26 Aug 2024 11:45:49 -0400
-Message-ID: <2196769.irdbgypaU6@bootstrap>
-In-Reply-To: <dc77f6dbdfc68369d02005763143cdea@manjaro.org>
-References:
- <20240822212418.982927-1-detlev.casanova@collabora.com>
- <5808226.DvuYhMxLoT@trenzalore>
- <dc77f6dbdfc68369d02005763143cdea@manjaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F37D192D72
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724687182; cv=none; b=K+M/kmgkgYF8dgvTWQ6ujYAYEFPYTjd6gEfZsMYleTTIL6BaS2VA/yXjK3otJPPh7ZaaF///71fiRblCn85gcyKRRE270Uhmvr+DMIpLZH5hCXAuKItnY2seE4RzoWOlCoRvmziJ7sJAtlsf4vWuF6lM3rX/92IO4bRmbwmBn80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724687182; c=relaxed/simple;
+	bh=rijYHIP0Ao4lvCJLZaabkuQiGBKAVts2w69Ma/szZjQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=en3FAVQCuWIogLPoqm2hPsnxTWMIFUYCFGCvdav5zu/lB0uxV8crGFJ5C0tx0fziTNbzTcPoUEoPDrfU4GywTJ8LXxQI4Omj1K9SFGZ38cP1MD3P1MQCf+31VYW/C8HkHCX5LDKrf8MkNSu04JBXUrMhkyj2OqeMlHnESnSQ15Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X+7HGJhG; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=ewcidbvko5enbggt7fhozxovdy.protonmail; t=1724687177; x=1724946377;
+	bh=1S2zdt5fhwBL6dRleG9sKZYBdZBYfRqGJChdpr7OXPg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=X+7HGJhGLPHX1+IPTRM1q+GrUynyMCtOkS7+gafxmPJtqPDa9ifCxgOW1Ga4oSGpy
+	 leDnLCiFYCgudimQW6MX8lkDHV7KkhUDd8BVB2H06KpgzuQDpt5NHWjuSL89P7lFbw
+	 Tvz8IRHhd6IyuNrzpSvX5Nsr92djm9JCIN2aNhD2qGT21FTDVUfw3zh1rZLTYeyhGa
+	 /EGaTxdhJBqDFfkk4xKVbxKSD9FE0qpZTqXO0k7W0vurUl8+pEZg8aU9Zg+dzNB37+
+	 uS71jDlgpeJDQm3EpNcqtIh1qdaiOts93d6X/iUYETMIilJLT5WupVHdeY37TbIZ2p
+	 nW8F4KYQNYdMA==
+Date: Mon, 26 Aug 2024 15:46:12 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: add global lock support
+Message-ID: <91ce9f9a-5def-4f5a-ab9d-9bde4736cca0@proton.me>
+In-Reply-To: <CAH5fLgjtSVMcKL4aMrNT=zJPGvzAPJt3qAUMYdB-+3=s80FNKQ@mail.gmail.com>
+References: <20240826-static-mutex-v1-1-a14ee71561f3@google.com> <9feb41cc-cb1c-4d0d-a3df-09298e69af69@proton.me> <CAH5fLgjtSVMcKL4aMrNT=zJPGvzAPJt3qAUMYdB-+3=s80FNKQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 40ae1f2bb1268bc8d502447b32524023b018a751
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dragan,
+On 26.08.24 17:31, Alice Ryhl wrote:
+> On Mon, Aug 26, 2024 at 5:30=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>> On 26.08.24 17:27, Alice Ryhl wrote:
+>>> +    /// Initialize a global lock.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// * This lock must have been created with [`unsafe_const_new`].
+>>> +    /// * This lock must be pinned.
+>>
+>> You could also ask for `self: Pin<&Self>` and remove this constraint, or
+>> is that not possible in your use-case?
+>=20
+> The value is going to be in a static, and it's inconvenient to have to
+> use Pin::new_unchecked when calling this initializer. Not sure much
+> value is gained.
 
-On Monday, 26 August 2024 10:07:49 EDT Dragan Simic wrote:
-> Hello Detlev,
-> 
-> On 2024-08-23 15:20, Detlev Casanova wrote:
-> > On Friday, 23 August 2024 03:00:57 EDT Dragan Simic wrote:
-> >> Hello Detlev,
-> >> 
-> >> Please see a comment below.
-> >> 
-> >> On 2024-08-22 23:15, Detlev Casanova wrote:
-> >> > On rk3576 the tunable clocks are inside the controller itself, removing
-> >> > the need for the "ciu-drive" and "ciu-sample" clocks.
-> >> > 
-> >> > That makes it a new type of controller that has its own dt_parse
-> >> > function.
-> >> > 
-> >> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >> > ---
-> >> > 
-> >> >  drivers/mmc/host/dw_mmc-rockchip.c | 48 ++++++++++++++++++++++++++----
-> >> >  1 file changed, 43 insertions(+), 5 deletions(-)
-> >> > 
-> >> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
-> >> > b/drivers/mmc/host/dw_mmc-rockchip.c
-> >> > index 1458cb5fd5c7..7c8ccf5e71bc 100644
-> >> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> >> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> > 
-> > [...]
-> > 
-> >> > @@ -435,13 +451,25 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci
-> >> > *host)
-> >> > 
-> >> >  	if (IS_ERR(priv->sample_clk))
-> >> >  	
-> >> >  		dev_dbg(host->dev, "ciu-sample not available\n");
-> >> > 
-> >> > -	host->priv = priv;
-> >> > -
-> >> > 
-> >> >  	priv->internal_phase = false;
-> >> >  	
-> >> >  	return 0;
-> >> >  
-> >> >  }
-> >> > 
-> >> > +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
-> >> > +{
-> >> > +	struct dw_mci_rockchip_priv_data *priv;
-> >> > +	int err = dw_mci_common_parse_dt(host);
-> >> > +	if (err)
-> >> > +		return err;
-> >> > +
-> >> > +	priv = host->priv;
-> >> > +
-> >> > +	priv->internal_phase = true;
-> >> 
-> >> Defining priv, assigning it and using it seems rather redundant,
-> >> when all that's needed is simple "host->priv->internal_phase = true"
-> >> assignment instead.
-> > 
-> > Yes, that's what I did at first, but host->priv is declared as void*,
-> > which
-> > means it needs to be cast to struct dw_mci_rockchip_priv_data * and I
-> > felt
-> > that
-> > 
-> > ((struct dw_mci_rockchip_priv_data *)host->priv)->internal_phase =
-> > true;
-> > 
-> > is not very pretty and harder to read.
-> 
-> Ah, you're right, and I somehow managed to ignore that.
-> 
-> I agree with your conclusions, although I'd suggest something like
-> this, for slightly improved readability:
-> 
->   +static int dw_mci_rk3576_parse_dt(struct dw_mci *host)
->   +{
->   +	struct dw_mci_rockchip_priv_data *priv = host->priv;
->   +	int err;
->   +
->   +	err = dw_mci_common_parse_dt(host);
->   +	if (err)
->   +		return err;
->   +
->   +	priv->internal_phase = true;
->   +
->   +	return 0;
->   +}
+Can't you use `Pin::static_ref` [1]?
 
-That won't work either, because host->priv is initialized in 
-dw_mci_common_parse_dt.
+[1]: https://doc.rust-lang.org/std/pin/struct.Pin.html#method.static_ref
 
-
+---
+Cheers,
+Benno
 
 
