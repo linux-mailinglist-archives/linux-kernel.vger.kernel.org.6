@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-301281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961AE95EE9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:39:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE4395EEA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E38B222E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7661C218BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CCC14AD1A;
-	Mon, 26 Aug 2024 10:39:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D5E14B965;
+	Mon, 26 Aug 2024 10:40:56 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F09B1482F5;
-	Mon, 26 Aug 2024 10:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E9D14A4E1;
+	Mon, 26 Aug 2024 10:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724668769; cv=none; b=lj4H1hLpMeF6qg+haDvAR0ACx5eBada/p1MALoTrMZSuM33ECkoLVo/8vS6f0jVN4jrrdZka4xhQnE0T1KeouT50GSFXtII86hRx1gR41pi/SB2hNKTr5CSIFYZUluDVe1K+hRJ60XtmuyuEJfgd+RAy+QzLEIepspcEAI0Znro=
+	t=1724668856; cv=none; b=Wyxcj8EZDjqy4KR8ccCLd2ylN+x8DVUJortQgG+wgAUwAYpF7HHlfMSM/esbmFPEg0DFdWzCZkP74adONvj/DvgzVdfHAr7QRorR4JgwEefkgPBA+xKQbRZx+GbtD/lkKVY+JJsEalW+isRzNmV8UyAd3ZPBk38DW793DVuAkaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724668769; c=relaxed/simple;
-	bh=U9bvkumoTyJR0RM6t0kMNduBceu+3QaVBv+RAnpVeY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XNOyXqrOWkpiFB7lU7RiUnNM+K9WMybVMRD04REpUtPU2RX6t7jStd0FTWo0sq1PKwYL8s8PCpy5JwbAxPJ1QQOcauzIKLfhOfptjl19hz6m6ALw1v3P3fqv4xXYhOKA5DyUsWJ36e9nBkEw7Dc1UTa9XXnL8ypVAnDjJKnuY0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744F9C51401;
-	Mon, 26 Aug 2024 10:39:24 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:39:32 +0300
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 14/19] arm64: Enforce bounce buffers for realm DMA
-Message-ID: <ZsxbZMxOIP795qPM@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-15-steven.price@arm.com>
+	s=arc-20240116; t=1724668856; c=relaxed/simple;
+	bh=afyYNouRafrI1PVLHdus6keUfhP3xJW8Q5A0kSWXOIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NiS/U7mDPB1PfkOpitr+KcDpnj+wSrtdwzTGHiuHu5it0BJCqqqVqDU2Fz8PvFP21f0KRDzZWafOcrtG1lNwD5E5kaTglajQ1gQ+Exq2qqWWx1v2D5bQJ/BLTMoYJ7wvnaoTx86b34rOVsPcjO9U27SYf2zd5OV1fb6+D30mAYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 26 Aug
+ 2024 13:39:39 +0300
+Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 26 Aug
+ 2024 13:39:38 +0300
+Message-ID: <2417bf98-424b-4d37-ae36-8f5affaffb24@fintech.ru>
+Date: Mon, 26 Aug 2024 03:39:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819131924.372366-15-steven.price@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: dvb-frontends: dib3000mb: fix uninit-value in
+ dib3000_write_reg
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Patrick Boettcher <pb@linuxtv.org>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzbot+c88fc0ebe0d5935c70da@syzkaller.appspotmail.com>,
+	<n.zhandarovich@fintech.ru>
+References: <20240517155800.9881-1-n.zhandarovich@fintech.ru>
+Content-Language: en-US
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In-Reply-To: <20240517155800.9881-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Mon, Aug 19, 2024 at 02:19:19PM +0100, Steven Price wrote:
-> Within a realm guest it's not possible for a device emulated by the VMM
-> to access arbitrary guest memory. So force the use of bounce buffers to
-> ensure that the memory the emulated devices are accessing is in memory
-> which is explicitly shared with the host.
+Hi,
+
+On 5/17/24 08:58, Nikita Zhandarovich wrote:
+> Syzbot reports [1] an uninitialized value issue found by KMSAN in
+> dib3000_read_reg().
 > 
-> This adds a call to swiotlb_update_mem_attributes() which calls
-> set_memory_decrypted() to ensure the bounce buffer memory is shared with
-> the host. For non-realm guests or hosts this is a no-op.
+> Local u8 rb[2] is used in i2c_transfer() as a read buffer; in case
+> that call fails, the buffer may end up with some undefined values.
 > 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+> Since no elaborate error handling is expected in dib3000_write_reg(),
+> simply zero out rb buffer to mitigate the problem.
+> 
+> [1] Syzkaller report
+> dvb-usb: bulk message failed: -22 (6/0)
+> =====================================================
+> BUG: KMSAN: uninit-value in dib3000mb_attach+0x2d8/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
+>  dib3000mb_attach+0x2d8/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
+>  dibusb_dib3000mb_frontend_attach+0x155/0x2f0 drivers/media/usb/dvb-usb/dibusb-mb.c:31
+>  dvb_usb_adapter_frontend_init+0xed/0x9a0 drivers/media/usb/dvb-usb/dvb-usb-dvb.c:290
+>  dvb_usb_adapter_init drivers/media/usb/dvb-usb/dvb-usb-init.c:90 [inline]
+>  dvb_usb_init drivers/media/usb/dvb-usb/dvb-usb-init.c:186 [inline]
+>  dvb_usb_device_init+0x25a8/0x3760 drivers/media/usb/dvb-usb/dvb-usb-init.c:310
+>  dibusb_probe+0x46/0x250 drivers/media/usb/dvb-usb/dibusb-mb.c:110
+> ...
+> Local variable rb created at:
+>  dib3000_read_reg+0x86/0x4e0 drivers/media/dvb-frontends/dib3000mb.c:54
+>  dib3000mb_attach+0x123/0x3c0 drivers/media/dvb-frontends/dib3000mb.c:758
+> ...
+> 
+> Fixes: 74340b0a8bc6 ("V4L/DVB (4457): Remove dib3000-common-module")
+> Reported-by: syzbot+c88fc0ebe0d5935c70da@syzkaller.appspotmail.com
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 > ---
-> v3: Simplify mem_init() by using a 'flags' variable.
-> ---
->  arch/arm64/kernel/rsi.c |  1 +
->  arch/arm64/mm/init.c    | 10 +++++++++-
->  2 files changed, 10 insertions(+), 1 deletion(-)
+>  drivers/media/dvb-frontends/dib3000mb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> index 5c2c977a50fb..69d8d9791c65 100644
-> --- a/arch/arm64/kernel/rsi.c
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -6,6 +6,7 @@
->  #include <linux/jump_label.h>
->  #include <linux/memblock.h>
->  #include <linux/psci.h>
-> +#include <linux/swiotlb.h>
->  
->  #include <asm/io.h>
->  #include <asm/rsi.h>
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 9b5ab6818f7f..1d595b63da71 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -41,6 +41,7 @@
->  #include <asm/kvm_host.h>
->  #include <asm/memory.h>
->  #include <asm/numa.h>
-> +#include <asm/rsi.h>
->  #include <asm/sections.h>
->  #include <asm/setup.h>
->  #include <linux/sizes.h>
-> @@ -369,8 +370,14 @@ void __init bootmem_init(void)
->   */
->  void __init mem_init(void)
+> diff --git a/drivers/media/dvb-frontends/dib3000mb.c b/drivers/media/dvb-frontends/dib3000mb.c
+> index c598b2a63325..7c452ddd9e40 100644
+> --- a/drivers/media/dvb-frontends/dib3000mb.c
+> +++ b/drivers/media/dvb-frontends/dib3000mb.c
+> @@ -51,7 +51,7 @@ MODULE_PARM_DESC(debug, "set debugging level (1=info,2=xfer,4=setfe,8=getfe (|-a
+>  static int dib3000_read_reg(struct dib3000_state *state, u16 reg)
 >  {
-> +	unsigned int flags = SWIOTLB_VERBOSE;
->  	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
->  
-> +	if (is_realm_world()) {
-> +		swiotlb = true;
-> +		flags |= SWIOTLB_FORCE;
-> +	}
-> +
->  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
->  		/*
->  		 * If no bouncing needed for ZONE_DMA, reduce the swiotlb
-> @@ -382,7 +389,8 @@ void __init mem_init(void)
->  		swiotlb = true;
->  	}
->  
-> -	swiotlb_init(swiotlb, SWIOTLB_VERBOSE);
-> +	swiotlb_init(swiotlb, flags);
-> +	swiotlb_update_mem_attributes();
+>  	u8 wb[] = { ((reg >> 8) | 0x80) & 0xff, reg & 0xff };
+> -	u8 rb[2];
+> +	u8 rb[2] = {};
+>  	struct i2c_msg msg[] = {
+>  		{ .addr = state->config.demod_address, .flags = 0,        .buf = wb, .len = 2 },
+>  		{ .addr = state->config.demod_address, .flags = I2C_M_RD, .buf = rb, .len = 2 },
 
-IIRC Will mentioned on a previous version of this series: what do we do
-with the kmalloc() minalign bouncing (or other bouncing)? I think this
-would only work if the device is shared.
 
-I'm more and more inclined to only support shared devices with this
-series (no dev assignment) and make it a strict dependence on RMM 1.0.
-Running it in a different configuration with private devices will fall
-apart. With this condition, the patch looks fine:
+Gentle ping...
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Regards,
+Nikita
 
