@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-301310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7569F95EEE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0188095EEDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02E71F22378
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA9D1F21FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61EE155C8F;
-	Mon, 26 Aug 2024 10:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8363D155325;
+	Mon, 26 Aug 2024 10:50:06 +0000 (UTC)
 Received: from blizzard.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608B1155C87;
-	Mon, 26 Aug 2024 10:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F8152160;
+	Mon, 26 Aug 2024 10:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669414; cv=none; b=KaHQqIUxBkA+wSEtxnReVcH5pQgznxEaGFnVWBAWKGQvDO1HRuqlBxKzsRP3kdj48rMVOABgm6YoYmAF1bg1JO7dScDwI/OCcCM/VfrbSVDxg4CbBG9Jj8rac3nWJyNA5bdW0JQNiNN2BjF4XOUPw5sM+2qty5nJ6F+V2BqhMVo=
+	t=1724669406; cv=none; b=Sn5CJbjHGQiviMmRdWPGxFANZX4D4mqljz2GAYGHZXba+E52M5cAGtnx6dPmuICtKue4T7CDOBEOQQ7IyzQgLNv9gSzKzGFhQnNOpZfhWWUQ6WVAj31gHz+iY7O98qHro5KH0ZMu7i7QBrn1Fv0RqNZik6qx7I1iNar67/5CtgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669414; c=relaxed/simple;
-	bh=g9whlb+2ufFaVEpQMZxnUUuaozKwg0yP2/yN1qqfTDs=;
+	s=arc-20240116; t=1724669406; c=relaxed/simple;
+	bh=tsijDg1QpHf/XW2pCyQGKWUItm4MMvjUNdWU+pyh3k8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U+CXPYJ5Xpk92P9xJb4YbjiwZCcRwP3r5nL4bUSt6qYDGDR5WH78iXEmDr7rgPf1mnKxOwgGeuji31j1LyxeIAYU8YenWwHTLaJ7Cvd7/KhHHRe321+rrApfLq38EQwc7Qj/8kUys3Na8xoozh6G19iw+RkmawuaN0UK7k5BZSg=
+	 MIME-Version; b=E0TjKxM6pdpomHFVFOOSDvZu/cmonOS2KnbB3bcULBnMTNf3FarFFGRPyaerxDuxFTvYwNHanofPXO1nvtVEEgLcXNnkvDPwIkZQT6Jg/QymSDn7ZWEbtFx614mhmGc0MZgt06PvCVubz0BM/lixxUmX6nBVJF9uOovW9tMZoHM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=enjellic.com; arc=none smtp.client-ip=76.10.64.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enjellic.com
 Received: from blizzard.enjellic.com (localhost [127.0.0.1])
-	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbWqB003453;
+	by blizzard.enjellic.com (8.15.2/8.15.2) with ESMTP id 47QAbWmR003457;
 	Mon, 26 Aug 2024 05:37:32 -0500
 Received: (from greg@localhost)
-	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbW2c003452;
+	by blizzard.enjellic.com (8.15.2/8.15.2/Submit) id 47QAbW6d003456;
 	Mon, 26 Aug 2024 05:37:32 -0500
 X-Authentication-Warning: blizzard.enjellic.com: greg set sender to greg@enjellic.com using -f
 From: Greg Wettstein <greg@enjellic.com>
 To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jmorris@namei.org
-Subject: [PATCH v4 13/14] Implement infrastructure for loadable security models.
-Date: Mon, 26 Aug 2024 05:37:27 -0500
-Message-Id: <20240826103728.3378-14-greg@enjellic.com>
+Subject: [PATCH v4 14/14] Activate the configuration and build of the TSEM LSM.
+Date: Mon, 26 Aug 2024 05:37:28 -0500
+Message-Id: <20240826103728.3378-15-greg@enjellic.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240826103728.3378-1-greg@enjellic.com>
 References: <20240826103728.3378-1-greg@enjellic.com>
@@ -50,356 +50,142 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The default deterministic security model can be replaced through
-the use of models that are implemented with kernel loadable
-modules.  Kernel loadable modules can be used to replace the
-following components of the TSEM modeling infrastructure:
-
-- event bypasses
-
-- event initialization
-
-- event mapping
-
-An alternate security model is specified for a security modeling
-namespace by using the following key/value pair as an argument to
-the creation of the security modeling namespace:
-
-model=MODEL_NAME
-
-Where MODEL_NAME is the name of the model compiled into the
-kernel loadable model that implements the model.
-
-Befor any model can be used it must be registered through the
-infrastructure supplied by this commit, namely the nsmgr.c file.
-
-Addition or removal of modules can be locked, either through the
-TSEM control plame or by the 'tsem_locked' kernel command-line
-parameter.  Locking of the registation process is an irreversible
-process, once locked the registration/removal process will be
-locked until the system is rebooted.
+Complete the implementation by integrating TSEM into the
+configuration and kernel build infrastructure.  This includes
+registration of TSEM with the LSM infrastructure and the
+assignment of an LSM identifier number.
 ---
- security/tsem/nsmgr.c | 255 ++++++++++++++++++++++++++++++++++++++++++
- security/tsem/nsmgr.h |  48 ++++++++
- 2 files changed, 303 insertions(+)
- create mode 100644 security/tsem/nsmgr.c
- create mode 100644 security/tsem/nsmgr.h
+ include/uapi/linux/lsm.h |  1 +
+ security/Kconfig         | 11 ++++++-----
+ security/Makefile        |  1 +
+ security/security.c      |  3 ++-
+ security/tsem/Kconfig    | 36 ++++++++++++++++++++++++++++++++++++
+ security/tsem/Makefile   |  6 ++++++
+ 6 files changed, 52 insertions(+), 6 deletions(-)
+ create mode 100644 security/tsem/Kconfig
+ create mode 100644 security/tsem/Makefile
 
-diff --git a/security/tsem/nsmgr.c b/security/tsem/nsmgr.c
+diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+index 33d8c9f4aa6b..6b63c158c1df 100644
+--- a/include/uapi/linux/lsm.h
++++ b/include/uapi/linux/lsm.h
+@@ -64,6 +64,7 @@ struct lsm_ctx {
+ #define LSM_ID_LANDLOCK		110
+ #define LSM_ID_IMA		111
+ #define LSM_ID_EVM		112
++#define LSM_ID_TSEM		113
+ 
+ /*
+  * LSM_ATTR_XXX definitions identify different LSM attributes
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d..a7802eb29034 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -192,6 +192,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/tsem/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+@@ -231,11 +232,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
+-	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
++	default "tsem,landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list, except for those with order
+diff --git a/security/Makefile b/security/Makefile
+index 59f238490665..1d4e0a698a2d 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_TSEM)		+= tsem/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/security.c b/security/security.c
+index e5ca08789f74..1dfd85293ad4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,7 +51,8 @@
+ 	(IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0) + \
+ 	(IS_ENABLED(CONFIG_SECURITY_LANDLOCK) ? 1 : 0) + \
+ 	(IS_ENABLED(CONFIG_IMA) ? 1 : 0) + \
+-	(IS_ENABLED(CONFIG_EVM) ? 1 : 0))
++	(IS_ENABLED(CONFIG_EVM) ? 1 : 0) + \
++	(IS_ENABLED(CONFIG_SECURITY_TSEM) ? 1 : 0))
+ 
+ /*
+  * These are descriptions of the reasons that can be passed to the
+diff --git a/security/tsem/Kconfig b/security/tsem/Kconfig
 new file mode 100644
-index 000000000000..0b34c18feb01
+index 000000000000..2e9d54eb3acc
 --- /dev/null
-+++ b/security/tsem/nsmgr.c
-@@ -0,0 +1,255 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/security/tsem/Kconfig
+@@ -0,0 +1,36 @@
++config SECURITY_TSEM
++	bool "Trusted Security Event Modeling"
++	depends on SECURITY
++	depends on NET && INET
++	select SECURITY_NETWORK
++	select SECURITYFS
++	select CRYPTO
++	select CRYPTO_SHA256
++	select CRYPTO_HASH_INFO
++	select TCG_TPM if HAS_IOMEM && !UML
++	select TCG_TIS if TCG_TPM && X86
++	select TCG_CRB if TCG_TPM && ACPI
++	default n
++	help
++	  This option selects support for Trusted Security Event
++	  Modeling (TSEM).  TSEM implements the ability to model
++	  the security state of either the system at large or in a
++	  restricted namespace on the basis of the LSM security
++	  events and attributes that occur in the scope of the model.
++	  The model may be implemented either in the kernel proper
++	  or exported to an external Trusted Modeling Agent (TMA).
++	  If you are unsure how to answer this question, answer N.
 +
-+/*
-+ * Copyright (C) 2024 Enjellic Systems Development, LLC
-+ * Author: Dr. Greg Wettstein <greg@enjellic.com>
-+ *
-+ * This file contains infrastructure for managing the security models
-+ * for TSEM that are implemented by kernel loadable modules. Any model
-+ * provided by a kernel loadable module must be registered before it
-+ * can be specified for a security modeling namespace.
-+ *
-+ * The registration of additional models, or the removal of existing
-+ * models, can be prevented by 'locking' the registration process.
-+ * This locking can be implemented either through the TSEM control
-+ * plane or by specifying the 'tsem_locked' kernel command-line
-+ * parameter.
-+ */
-+
-+#include "tsem.h"
-+#include "nsmgr.h"
-+
-+static bool locked;
-+static bool setup_locked __ro_after_init;
-+
-+struct model {
-+	struct list_head list;
-+	const struct tsem_context_ops *ops;
-+	struct module *module;
-+};
-+
-+DEFINE_MUTEX(model_list_mutex);
-+LIST_HEAD(model_list);
-+
-+
-+static struct model *find_model(const char *name)
-+{
-+	struct model *found = NULL, *entry = NULL;
-+
-+	list_for_each_entry(entry, &model_list, list) {
-+		if (!strcmp(entry->ops->name, name)) {
-+			found = entry;
-+			break;
-+		}
-+	}
-+	return found;
-+}
-+
-+/**
-+ * tsem_nsmgr_put() - Release a reference to a TSEM security model.
-+ *
-+ * @ops: A pointer to the tsem_context_ops structure that defines
-+ *	 this model.
-+ *
-+ * This function is the counter part to tsem_nsmgr_get() function.
-+ * A check is made to determine if a module is supplying this model and
-+ * if so the reference that was taken to the module when the security
-+ * namespace is created is released.
-+ */
-+void tsem_nsmgr_put(const struct tsem_context_ops *ops)
-+{
-+	struct model *model;
-+
-+	if (!strcmp(tsem_model0_ops.name, ops->name))
-+		return;
-+
-+	mutex_lock(&model_list_mutex);
-+	model = find_model(ops->name);
-+	if (!model) {
-+		pr_warn("tsem: Attempt to put an unknown model.\n");
-+		goto done;
-+	}
-+	if (model->module)
-+		module_put(model->module);
-+
-+ done:
-+	mutex_unlock(&model_list_mutex);
-+}
-+
-+/**
-+ * tsem_nsmgr_get() - Obtain a reference to a TSEM security model.
-+ *
-+ * @name: A null terminated character buffer containing the name of
-+ *	  the security model to obtain a reference for.
-+ *
-+ * This function is used to determine whether or not TSEM has access
-+ * to a security model named by the called.  Upon success of locating
-+ * the named security model a tsem_context_ops structure is returned
-+ * that implements the model.  In addition a reference is taken to
-+ * the module in order to prevent its release while a security modeling
-+ * namespace is using the model.
-+ *
-+ * Return: If the named security model is not available a NULL pointer
-+ *	   is returned.  If the model is available a pointer to the
-+ *	   tsem_context_ops structure that implements the model is
-+ *	   returned.
-+ */
-+const struct tsem_context_ops *tsem_nsmgr_get(const char *name)
-+{
-+	struct model *model;
-+	const struct tsem_context_ops *retn = NULL;
-+
-+	mutex_lock(&model_list_mutex);
-+	model = find_model(name);
-+	mutex_unlock(&model_list_mutex);
-+
-+	if (!model) {
-+		if (request_module("%s", name))
-+			return NULL;
-+
-+		mutex_lock(&model_list_mutex);
-+		model = find_model(name);
-+		mutex_unlock(&model_list_mutex);
-+		if (!model)
-+			return NULL;
-+	}
-+
-+	if (model && try_module_get(model->module))
-+		retn = model->ops;
-+	return retn;
-+}
-+
-+/**
-+ * tsem_nsmgr_lock() - Lock the TSEM loadable module infrastructure.
-+ *
-+ * @by_setup: This boolean value is used to signal that the request to
-+ *	      lock the model state is being done by the system setup.
-+ *
-+ * This function disables the registration of additional loadable
-+ * modules for model implementation.  It also raises the reference count
-+ * for each modules that is loaded to prevent the current modules from
-+ * being unloaded.
-+ *
-+ * Return: This function returns 0 if the modeling infrastructure was
-+ *	   locked or a negative value if locking fails.
-+ */
-+int tsem_nsmgr_lock(const bool by_setup)
-+{
-+	struct model *entry = NULL;
-+
-+	if (by_setup) {
-+		setup_locked = true;
-+		return 0;
-+	}
-+
-+	if (setup_locked)
-+		return -EINVAL;
-+	if (!capable(CAP_MAC_ADMIN))
-+		return -EPERM;
-+	if (tsem_context(current)->id)
-+		return -EINVAL;
-+	if (locked)
-+		return -EINVAL;
-+	locked = true;
-+
-+	mutex_lock(&model_list_mutex);
-+	list_for_each_entry(entry, &model_list, list) {
-+		__module_get(entry->module);
-+	}
-+	mutex_unlock(&model_list_mutex);
-+
-+	pr_info("tsem: Model state is now locked.\n");
-+	return 0;
-+}
-+
-+/**
-+ * tsem_nsmgr_register() - Register a TSEM security namespace model.
-+ * @ops:    A pointer to a tsem_context_ops structure that describes
-+ *	    the model that will be implemented.
-+ * @module: A pointer to the module implementing the security namespace
-+ *	    model.
-+ *
-+ * This function is used by loadable modules to register a security
-+ * model that is to be available for use by security modeling namespaces.
-+ *
-+ * Return: This function returns 0 if the model was successfully registered
-+ *	   or a negative error value if registration failed.
-+ */
-+int tsem_nsmgr_register(const struct tsem_context_ops *ops,
-+			struct module *module)
-+{
-+	int retn = 0;
-+	struct model *model = NULL;
-+
-+	if (setup_locked || locked) {
-+		pr_warn("tsem: Attempt to register model in locked state.\n");
-+		return -EINVAL;
-+	}
-+	if (!capable(CAP_MAC_ADMIN))
-+		return -EPERM;
-+	if (!strcmp(tsem_model0_ops.name, ops->name))
-+		return -EINVAL;
-+
-+	mutex_lock(&model_list_mutex);
-+	if (find_model(ops->name)) {
-+		pr_warn("tsem: Attempt to insert identical model: %s\n",
-+			ops->name);
-+		retn = -EEXIST;
-+		goto done;
-+	}
-+
-+	model = kzalloc(sizeof(*model), GFP_KERNEL);
-+	if (!model) {
-+		retn = -ENOMEM;
-+		goto done;
-+	}
-+
-+	model->ops = ops;
-+	model->module = module;
-+	list_add_tail(&model->list, &model_list);
-+	pr_info("tsem: Registered model: '%s'\n", ops->name);
-+
-+ done:
-+	mutex_unlock(&model_list_mutex);
-+	return retn;
-+}
-+EXPORT_SYMBOL_GPL(tsem_nsmgr_register);
-+
-+/**
-+ * tsem_nsmgr_release() - Release a TSEM security namespace model.
-+ * @name:   A null terminated character buffer containing the name
-+ *	    of the model being implemented.
-+ *
-+ * This function is used to release the use of security modeling
-+ * namespace model.
-+ *
-+ * Return: This function returns 0 if the model was successfully released
-+ *	   or a negative error value if release failed.
-+ */
-+int tsem_nsmgr_release(const struct tsem_context_ops *ops)
-+{
-+	int retn = 0;
-+	struct model *model;
-+
-+	if (setup_locked || locked) {
-+		pr_warn("tsem: Attempt to release model in locked state.\n");
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&model_list_mutex);
-+
-+	model = find_model(ops->name);
-+	if (!model) {
-+		pr_warn("tsem: Model '%s' not found for release.\n",
-+			ops->name);
-+		retn = -EINVAL;
-+		goto done;
-+	}
-+	list_del(&model->list);
-+
-+ done:
-+	mutex_unlock(&model_list_mutex);
-+	pr_info("tsem: Released model: '%s'\n", ops->name);
-+	return retn;
-+}
-+EXPORT_SYMBOL_GPL(tsem_nsmgr_release);
-diff --git a/security/tsem/nsmgr.h b/security/tsem/nsmgr.h
++config SECURITY_TSEM_ROOT_MODEL_PCR
++	int "TPM PCR index for root domain"
++	depends on SECURITY_TSEM
++	range 8 14
++	default 11
++	help
++	  This configuration variable determines the TPM Platform
++	  Configuration Register (PCR) that the coefficients of
++	  security events for the root modeling domain are extended
++	  into.  The default value is one register above the default
++	  value that IMA uses for its integrity measurements, in order
++	  to avoid a conflict between the two sub-systems.  If unsure,
++	  leave the value at its default value of 11.
+diff --git a/security/tsem/Makefile b/security/tsem/Makefile
 new file mode 100644
-index 000000000000..cb4d30a4962d
+index 000000000000..5b26edbe02b0
 --- /dev/null
-+++ b/security/tsem/nsmgr.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
++++ b/security/tsem/Makefile
+@@ -0,0 +1,6 @@
++obj-$(CONFIG_SECURITY_TSEM) := tsem.o model.o namespace.o map.o event.o fs.o \
++	export.o trust.o model0.o
 +
-+/*
-+ * Copyright (C) 2024 Enjellic Systems Development, LLC
-+ * Author: Dr. Greg Wettstein <greg@enjellic.com>
-+ *
-+ * This header file contains declarations for globally visible
-+ * functionality surrounding the registration of security models
-+ * provided in the form of loadable modules.
-+ *
-+ * This header file detects whether or not kernel modules are enabled
-+ * and if not provides a stub function that causes an attempt to
-+ * specify an alternate security model to fail.
-+ */
-+
-+#ifdef CONFIG_MODULES
-+extern void tsem_nsmgr_put(const struct tsem_context_ops *ops);
-+extern const struct tsem_context_ops *tsem_nsmgr_get(const char *name);
-+extern int tsem_nsmgr_lock(const bool);
-+extern int tsem_nsmgr_register(const struct tsem_context_ops *ops,
-+			       struct module *module);
-+extern int tsem_nsmgr_release(const struct tsem_context_ops *ops);
-+#else
-+static inline void tsem_nsmgr_put(const struct tsem_context_ops *ops)
-+{
-+}
-+
-+static inline int tsem_nsmgr_lock(const bool by_setup)
-+{
-+	return EOPNOTSUPP;
-+}
-+
-+static inline const struct tsem_context_ops *tsem_nsmgr_get(const char *name)
-+{
-+	return NULL;
-+}
-+
-+static inline int tsem_nsmgr_register(const struct tsem_context_ops *ops,
-+				      struct module *module)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int tsem_nsmgr_release(const struct tsem_context_ops *ops)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
++ifdef CONFIG_MODULES
++obj-y += nsmgr.o
++endif
 -- 
 2.39.1
 
