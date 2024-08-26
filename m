@@ -1,130 +1,161 @@
-Return-Path: <linux-kernel+bounces-301981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3744895F83B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A396495F83E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD40B21C95
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2281C1F230D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3642A198851;
-	Mon, 26 Aug 2024 17:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2F31991AF;
+	Mon, 26 Aug 2024 17:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjXHhz8r"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s7J4EQRO"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154F5166F13;
-	Mon, 26 Aug 2024 17:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1E7198851
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693744; cv=none; b=DbnL5DE7RA4tMTHHGOJIRhTn+RS0J/6LhSl3NihMso43v+nnUZukfevV5kX+I+SapAqDqEhN9VZqtRanHjXG8e45oTSD1Op3yuFXo2qsx4Tz25NDzBviZzBVDCtmq2CA6SWgk8/ZOQa964nqgnOk2YMq/9dKs11gOuw+h9rkWeI=
+	t=1724693834; cv=none; b=MsU6Zoi67JK5K8QfKcP0Zt3PFiNsqStWw5mCaGDjKrszltlNaF8qp4MnsDj3mSTlIOuXDSOBmY5u3uJLoggyeWhqCxIqJORw7VC4gIDZ/VkK3vZPh4sUoeM+QA7GlQNl2XCkYyqr3bNNsx31Nfc1E2i+d83/JyssLlS6Qawnrbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693744; c=relaxed/simple;
-	bh=0sWVcw96T8tSLQcwGgeWLTWjxATb/PQPdf28mrheZsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFqke2afeDcxyAEgZkld+UYUJjKcbrc5+HRhYnOVhWblXIJA28nsuQ+7twoy/PjgIBkA8T2doP7v3KrrJFQTHWfJE1TNztX8GR2fnAqzHgendMlrpS48LNPTXcEKdtBEC5/MNtv6PxP1nmFFFd+lVZcWKP9m5W67hHlGZ7APMqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjXHhz8r; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724693743; x=1756229743;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0sWVcw96T8tSLQcwGgeWLTWjxATb/PQPdf28mrheZsE=;
-  b=TjXHhz8rUxraygpm9YxyTkswHaPz9LC0OdZkzHEMfAttyHahmxyiy//n
-   xuakahtEv4lW9ZLvrw1KHVdkurh0zuvB2r6BerPsrN2GGz0QPMksY9ZCB
-   eH4fbHka+L3haVaTZId4mhyoSEDybwiNGx1U6xUN8oPr4qb0Z2NO3fcDh
-   QCllJcqFLNBhJ/Vlo2iwwCclbqxs47IvG8mO0cjAyuPf+WxU7XG4fPVku
-   3wE2kl3fCNw77ZmmGYl6DUc+zhS5fACQC/puIRaQV/cI7thU8P1VwazCx
-   jkekBKFtChzCKVQGSOBRNiKkVvEpFsflEwT9G1aTKIfZtb3rYEtQNB9rE
-   A==;
-X-CSE-ConnectionGUID: bUoBmjBySR+91cI7s0GTWg==
-X-CSE-MsgGUID: hrcPCJ3sQEe0gN/7bYbuig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="33760645"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="33760645"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:35:42 -0700
-X-CSE-ConnectionGUID: 3ZaPV8csSDq9Lp5rfbTY1Q==
-X-CSE-MsgGUID: CFx360prSKeBQzT6tXDZBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="63110120"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:35:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sidcu-000000021fS-2HAa;
-	Mon, 26 Aug 2024 20:35:36 +0300
-Date: Mon, 26 Aug 2024 20:35:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hexdump: Allow skipping identical lines
-Message-ID: <Zsy86HZ7uew9-Ef6@smile.fi.intel.com>
-References: <20240826162416.74501-1-miquel.raynal@bootlin.com>
- <20240826162416.74501-3-miquel.raynal@bootlin.com>
+	s=arc-20240116; t=1724693834; c=relaxed/simple;
+	bh=xHmiRNhRRt9eYiRt79QCeyN/h+W2Ra8rJ3ocE5z49V4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dLHDdHP8BNWhOZ3fkdRIm5EwKSCGAZu3XGA8PUaNw0DTP3ovcc+s6zetvLUPjH/x+dAwywGyPhR+yrABPbNF8f/mYtxlierfP+Qt3xTN4R1/ziCC50hbtqXzZGtCf2ck0CgZ13Q9BpbasGISgDYe1OhQm7TwAIfJE8UFh4HdqnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s7J4EQRO; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d2a107aebso16005ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724693832; x=1725298632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oh0j8JVhDYlydZMkUx8RVg1JAsfs2sLF6/GwVKf9xvs=;
+        b=s7J4EQROjtzIKlFOPp601TI4tIz9wUO/Ch7CDGRUItLsBt9AS08almsAY0r/A4D7IV
+         uiz6BjY0bqVo/ZWiYedH2rNFoU4Wzp2bEUNtNsCk6OqZK2JJ074qIYo+4AisRPTyaZDA
+         yv2yDeuGtkVkPZI6+GAYthvDNKntr09K6T+QGOy4OREEFnEsfuVnzBRQxNFzbEKXhkiJ
+         RTvWf+z2YREl8LCYmNd/SEtm6PEn3PPtYIsJA22ga/ECpiRh634TSi2on6/Y6+kKHpLO
+         Nr2PhVjv7NuhP8LU9aoWtpxvQjRsM+1kdB9+HcGrnbSTqd2HZygzU9C0Mxooqn8gLWzO
+         PVpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724693832; x=1725298632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oh0j8JVhDYlydZMkUx8RVg1JAsfs2sLF6/GwVKf9xvs=;
+        b=rwmHSqZYwXmoLlkWkg/AzG8QTYuDf8OLhoVPT5TTMiPjf6tvvhCrhW9LV3Q2WlydU1
+         9OUafigbjP/OHpO9EsK8fHPiu+eLTqlVJ4++9BOFpCS6IU0XfHtdf0fGGEdHBThLiTzw
+         3C0f5sc+emat4JMYlLrg++9qsY6aQwK46b5NESnZ8vO7eRLnm+VL13pCB+OpnP9NdCEE
+         kCZzCsGSBE2vkyiT+MIQdCMIJAllya+VittL3vIpQ4tuvSJthj9sfT0IhziuqnsXExKr
+         tf7KWH889u7Et2BV/dG5sm/tcuOMbYcz2ix8P8PaNkHI0EW5EGA5KmdpgE1n6CILppmr
+         ILiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqTSodbDy+yduXZNTPvvL6x4Pb667CwVBST1hayNucfapWsxp+b0aHm7Eb4l/ad8kgQe1tojSVfhqCTT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw9XM4Q7KafD1nTG1e05Tju+gSntGDn6OZ8mnn2vLeXAa9m+BE
+	+dtcEVCxDdEZK1OlEftCuGocO2WhtYbpKG6YtJ0gBEtsLKagbbLungJ8yqosfIIZEHPRbmjVtNU
+	kHCqiRqUJB1IsKVUiWba95AdUBBEn7X427ng+
+X-Google-Smtp-Source: AGHT+IHDJn2W5sA7BZSuEiAztVMwpsekZ9JYmxVAxVceAMBd/f24sCJ4Q/dzJtDHxuQfgyQ6VwJ8096tyWLH+0vkxGw=
+X-Received: by 2002:a92:c24d:0:b0:39a:f2f4:7ec1 with SMTP id
+ e9e14a558f8ab-39e64de00d4mr36645ab.20.1724693831406; Mon, 26 Aug 2024
+ 10:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826162416.74501-3-miquel.raynal@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240826071641.2691374-1-manojvishy@google.com> <20240826110447.6522e0a7.alex.williamson@redhat.com>
+In-Reply-To: <20240826110447.6522e0a7.alex.williamson@redhat.com>
+From: Manoj Vishwanathan <manojvishy@google.com>
+Date: Mon, 26 Aug 2024 10:36:58 -0700
+Message-ID: <CA+M8utOvUr3LrWhTNtcBhRAsOB-ST8kKWJN4u_0eNCcWLihH4w@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] vfio/iommu: Flag to allow userspace to set DMA
+ buffers system cacheable
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	David Dillow <dillow@google.com>, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 06:24:16PM +0200, Miquel Raynal wrote:
-> When dumping long buffers (especially for debug purposes) it may be very
-> convenient to sometimes avoid spitting all the lines of the buffer if
-> the lines are identical. Typically on embedded devices, the console
-> would be wired to a UART running at 115200 bauds, which makes the dumps
-> very (very) slow. In this case, having a flag to avoid printing
-> duplicated lines is handy.
-> 
-> Example of a made up repetitive output:
-> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
-> 
-> Same but with the flag enabled:
-> 0f 53 63 47 56 55 78 7a aa b7 8c ff ff ff ff ff
-> ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> *
-> ff ff ff ff ff ff ff ff ff ff ff ff 01 2a 39 eb
-
-The problem here is that without offset we can't see how many lines were
-skipped.
-
-Two ways to solve (that come to my mind immediately, maybe more and better):
-1) make sure that new flag implies or expects (otherwise BUILD_BUG_ON() or so)
-  the OFFSET to be set;
-2) [OR] add number of lines skipped in that * line.
-
-Personally I prefer the 1) as I think that you tried to follow the existing
-format of user space tools and there is a chance that there are other tools or
-scripts that parse the dump to restore the binary contents.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Mon, Aug 26, 2024 at 10:04=E2=80=AFAM Alex Williamson
+<alex.williamson@redhat.com> wrote:
+>
+> On Mon, 26 Aug 2024 07:16:37 +0000
+> Manoj Vishwanathan <manojvishy@google.com> wrote:
+>
+> > Hi maintainers,
+> >
+> > This RFC patch introduces the ability for userspace to control whether
+> > device (DMA) buffers are marked as cacheable, enabling them to utilize
+> > the system-level cache.
+> >
+> > The specific changes made in this patch are:
+> >
+> > * Introduce a new flag in `include/linux/iommu.h`:
+> >     * `IOMMU_SYS_CACHE` -  Indicates if the associated page should be c=
+ached in the system's cache hierarchy.
+> > * Add `VFIO_DMA_MAP_FLAG_SYS_CACHE` to `include/uapi/linux/vfio.h`:
+> >     * Allows userspace to set the cacheable attribute to PTE when mappi=
+ng DMA regions using the VFIO interface.
+> > * Update `vfio_iommu_type1.c`:
+> >     * Handle the `VFIO_DMA_MAP_FLAG_SYS_CACHE` flag during DMA mapping =
+operations.
+> >     * Set the `IOMMU_SYS_CACHE` flag in the IOMMU page table entry if
+> > the `VFIO_DMA_MAP_FLAG_SYS_CACHE` is set.
+>
+> We intend to eventually drop vfio type1 in favor of using IOMMUFD,
+> therefore all new type1 features need to first be available in IOMMUFD.
+> Once there we may consider use cases for providing the feature in the
+> legacy type1 interface and the IOMMUFD compatibility interface.  Thanks,
+>
+> Alex
+Thank You, Alex! I will redirect this patch to iommufd in the next version.
+> > * arm/smmu/io-pgtable-arm: Set the MAIR for SYS_CACHE
+> >
+> > The reasoning behind these changes is to provide userspace with
+> > finer-grained control over memory access patterns for devices,
+> > potentially improving performance in scenarios where caching is
+> > beneficial. We saw in some of the use cases where the buffers were
+> > for transient data ( in and out without processing).
+> >
+> > I have tested this patch on certain arm64 machines and observed the
+> > following:
+> >
+> > * There is 14-21% improvement in jitter measurements, where the
+> > buffer on System Level Cache vs DDR buffers
+> > * There was not much of an improvement in latency in the diration of
+> > the tests that I have tried.
+> >
+> > I am open to feedback and suggestions for further improvements.
+> > Please let me know if you have any questions or concerns. Also, I am
+> > working on adding a check in the VFIO layer to ensure that if there
+> > is no architecture supported implementation for sys cache, if should
+> > not apply them.
+> >
+> > Thanks,
+> > Manoj Vishwanathan
+> >
+> > Manoj Vishwanathan (4):
+> >   iommu: Add IOMMU_SYS_CACHE flag for system cache control
+> >   iommu/io-pgtable-arm: Force outer cache for page-level MAIR via user
+> >     flag
+> >   vfio: Add VFIO_DMA_MAP_FLAG_SYS_CACHE to control device access to
+> >     system cache
+> >   vfio/type1: Add support for VFIO_DMA_MAP_FLAG_SYS_CACHE
+> >
+> >  drivers/iommu/io-pgtable-arm.c  | 3 +++
+> >  drivers/vfio/vfio_iommu_type1.c | 5 +++--
+> >  include/linux/iommu.h           | 6 ++++++
+> >  include/uapi/linux/vfio.h       | 1 +
+> >  4 files changed, 13 insertions(+), 2 deletions(-)
+> >
+>
 
