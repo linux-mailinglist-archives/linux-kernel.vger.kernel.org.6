@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-301155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D749C95ED13
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:27:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D6295ECFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15FDD1C217FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F64A2820DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB3C1465B3;
-	Mon, 26 Aug 2024 09:27:14 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B2985654;
-	Mon, 26 Aug 2024 09:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D661442FB;
+	Mon, 26 Aug 2024 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LhswITIy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BC914375D;
+	Mon, 26 Aug 2024 09:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664434; cv=none; b=TdUe0qOjG/DxartHCHap34kFXWsbLmAG9UXlCL0BpkXq0xXpyN4V/F0CXzRwGj6ZUXLnvWqsg4qZHB0oA0+7DxeAv/ctkuNZ46OlfiDMayEJoxKH1H3FVmJjUGL7jJkwif6nnH0+fgc7vY+OJmAtH/WePgyh8E8jxdWnBzpfcAo=
+	t=1724664019; cv=none; b=X5o2zMsvU4+Xo8zTFYix6Chedp5ZDLqp8b6kEN/Hx9D9h4M4Q0u+I3flbftCXJFxMrxM/c60HwSHAnw+Y/YkRtOHaANOJX/BkXFA56YqkewlJBYgX38IA5zcM9P5b36aSe+st86H9Jsf70FOqJo1t82AGIZorxYDbGhBvuXXTqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664434; c=relaxed/simple;
-	bh=tPHPyCneiMEpsTXZkmpOJ4fx4ARtckha6iFhtzuQnRk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZobYrlq2MCSOMfpTESsLgwIfNfUKcMGaaX0CiXkbZD0w3yi/8FSzOMWBj/gKOwN1qLQAyK3queszN/TspIbB8u7Idsr6O/6qNqwEE0oNJOThddHnPOp03P/pl//009IgjfHUp8UbaeaFQFH5xlsYCIOP18WaanZZwxeuVWNU5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wslfm30g6zpVsj;
-	Mon, 26 Aug 2024 17:26:24 +0800 (CST)
-Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2FB8814037E;
-	Mon, 26 Aug 2024 17:27:10 +0800 (CST)
-Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
- (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 26 Aug
- 2024 17:27:09 +0800
-From: Liao Chen <liaochen4@huawei.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: <chris.snook@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <lorenzo@kernel.org>, <nbd@nbd.name>,
-	<sean.wang@mediatek.com>, <Mark-MC.Lee@mediatek.com>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<liaochen4@huawei.com>
-Subject: [PATCH -next 3/3] net: airoha: fix module autoloading
-Date: Mon, 26 Aug 2024 09:18:58 +0000
-Message-ID: <20240826091858.369910-4-liaochen4@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240826091858.369910-1-liaochen4@huawei.com>
-References: <20240826091858.369910-1-liaochen4@huawei.com>
+	s=arc-20240116; t=1724664019; c=relaxed/simple;
+	bh=6zrjWfovnvYVHQDbwv7GoLqzC0b6r5Yxmo9gaCadhxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aKh7DHnIidiIxdiiEo8YOM2FwMpIfCKMu5Enl1ZvNpMUvltgzIv1CHs4y/G7DFMUWnS047g8BAGnkmrUtu7Ci3yLv/PExfr8jcwZARJX2JqqyyOyl2qy0YNnO2cTJLY04H0rVpX4jmwkCm0y2G+C8IdFlSTLt7nLtReEggGEVi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LhswITIy; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=IcuTH
+	Jg1CEcLyJ6Hj7fC29x6ffUfHfVqLjTyQcDWcvg=; b=LhswITIyOB3UcVEBgYlev
+	m05g4HrHJySYQ55JJTBSSo7d+qdTLj5+ZjNHVYvBsrtqwTq5BSUErMnzH5YtcS5w
+	6bdNzXGpIDto5XfP/ZRpO9FRNCxeT0CB2X9+ToU58xsU3c5EOrPU/GQxbfqlZlyc
+	KEiVEn6n32eTLEJqoRloK4=
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wCHrTK_SMxmBnzbJQ--.41842S2;
+	Mon, 26 Aug 2024 17:19:59 +0800 (CST)
+From: soxiebing <soxiebing@163.com>
+To: tiwai@suse.de
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: fix snd_hda_bus_reset when single_cmd is not supported
+Date: Mon, 26 Aug 2024 17:19:58 +0800
+Message-Id: <20240826091958.44375-1-soxiebing@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240821014238.338864-1-soxiebing@163.com>
+References: <20240821014238.338864-1-soxiebing@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,31 +54,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500020.china.huawei.com (7.185.36.49)
+X-CM-TRANSID:_____wCHrTK_SMxmBnzbJQ--.41842S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr43Cr4kWFyrKF1UZFy3twb_yoW3WFc_Gr
+	WFkFWkG3yUJF48uayFg39rZrn293W7W34rJryUXryxtry8Aa90qrn5u3yvvFnrWF1Sq34Y
+	yr40krna9r1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xR_LvttUUUUU==
+X-CM-SenderInfo: 5vr0xvpelqwqqrwthudrp/1tbiRB9Fw2VOEav4EAABsl
 
-Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-based on the alias from of_device_id table.
+>On Wed, 21 Aug 2024 03:42:38 +0200,
+>soxiebing wrote:
+>> 
+>> From: songxiebing <songxiebing@kylinos.cn>
+>> 
+>> When an azx_get_desponse timeout occurs, ensure that bus_reset
+>> can be used when fallback_to_single_cmd is not supported.
+>> 
+>> Signed-off-by: songxiebing <songxiebing@kylinos.cn>
+>
+>Why do you need to change?  Does it fix any real problem you faced?
 
-Signed-off-by: Liao Chen <liaochen4@huawei.com>
----
- drivers/net/ethernet/mediatek/airoha_eth.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for reply, i am testing all these days, but the problem is
+still exists even if using bus reset.
 
-diff --git a/drivers/net/ethernet/mediatek/airoha_eth.c b/drivers/net/ethernet/mediatek/airoha_eth.c
-index 1c5b85a86df1..a80c1fae5c2d 100644
---- a/drivers/net/ethernet/mediatek/airoha_eth.c
-+++ b/drivers/net/ethernet/mediatek/airoha_eth.c
-@@ -2715,6 +2715,7 @@ static const struct of_device_id of_airoha_match[] = {
- 	{ .compatible = "airoha,en7581-eth" },
- 	{ /* sentinel */ }
- };
-+MODULE_DEVICE_TABLE(of, of_airoha_match);
- 
- static struct platform_driver airoha_driver = {
- 	.probe = airoha_probe,
--- 
-2.34.1
+The problem i encountered is that hda_call_codec_resume returned 
+timeout of 120 seconds(defined CONFIG_DPM_WATCHDOG)) when doing s4, 
+azx_get_response timeout occured, it is a low probability event.
+
+To avoid exceeding 120s, can i change the count value to 3 in 
+hda_set_power_state ?
 
 
