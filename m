@@ -1,137 +1,179 @@
-Return-Path: <linux-kernel+bounces-301620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2961195F34B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2168195F351
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25F01F222A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03071F225FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DF618756A;
-	Mon, 26 Aug 2024 13:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E40918732F;
+	Mon, 26 Aug 2024 13:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnF1digA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HUReV4MW"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629CA17B51C;
-	Mon, 26 Aug 2024 13:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DEB944D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724680353; cv=none; b=KCSOx9VMWOW2pJCtChqoQWdawQK7cN8gWY4GpGRtbfWfcHO8Gvz1jDNZBt12MMnODvPs6fzOq+dvNVd2njLp4XGtESTafwTm3+NpIjhqw+AjvpVptytv/CPG/glTc0z+rhRxAGwM1/172AEiOFoL2E6nBDCQsM1Eqf8OUKWC7ks=
+	t=1724680412; cv=none; b=DyZUHr+HjB0WusHMbdAlm7Z7FfgHNG96JEG/RczRvfnBuZWQtGyKOl+KfJpxYjnoOCR9G3j86OtnjvmwVTC1KwrGcoYiJHobkTS3s40rCuf9LINFYpU9ukJRxSMM0N4iqW8zTGRfpf++Totpchs/ch3a68rPXgEoP+gVHB9dsfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724680353; c=relaxed/simple;
-	bh=Ih2aZy7VK+1vLk929aZ2HrdxEuygnHrgNQUcO7Z4NJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWHgVDh/Mt9b1hO9ouYiTszrXBU4Rp8zcAMT7Dmd8izfcgEG+NMyl6mDdHe1UXFR1L6y+7HZpTnSL9VLaM+vmAkt5tQXeli2HcgMbwByy/sP3N5MfF8RZr8Rm94B6irLiP1+ctOv0prlwtmcBGaDzHll6zuHoQs2YyCMp33Fwgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnF1digA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35F3C52FC0;
-	Mon, 26 Aug 2024 13:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724680350;
-	bh=Ih2aZy7VK+1vLk929aZ2HrdxEuygnHrgNQUcO7Z4NJw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mnF1digAxnCngL9LOjd3YG47mqco03wSu3Rda6ewvhEB2kBiqA7Wl1xSO2TxDQsAa
-	 VhHRaztUJAEQYSdkscisW7+ABuMKMe3KlePokEddD1+HCrdkQ0xXmGdzFEr3Y93SeO
-	 rJXi1IVbXVPhVW2qN3k97HVHkK5+5HaHV5+Pii+qPP6VmNbdVgtfkColVlwSzG4DJ7
-	 BRmRWYFn16OkyvgiOeImC6L0d5vE3Dib/aoCkQiEUa5HkG1EhKezEws1IoRne5i5Ow
-	 8NtxXRB2G34ErFIp8GsyvAqLo3Fk9hTFahRD9d5zvPb/UAXFM2uaY8Y8ZYhby/yCRz
-	 aeyrcVStCpj/A==
-Date: Mon, 26 Aug 2024 08:52:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alexey Romanov <avromanov@salutedevices.com>
-Cc: neil.armstrong@linaro.org, clabbe@baylibre.com,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	khilman@baylibre.com, jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com, vadim.fedorenko@linux.dev,
-	linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com
-Subject: Re: [PATCH v9 18/23] dt-bindings: crypto: meson: support new SoC's
-Message-ID: <20240826135228.GA61588-robh@kernel.org>
-References: <20240820145623.3500864-1-avromanov@salutedevices.com>
- <20240820145623.3500864-19-avromanov@salutedevices.com>
+	s=arc-20240116; t=1724680412; c=relaxed/simple;
+	bh=Unqx8jmeFdF1VI5QOpi4woYBB3HElD7uCXnAKWY7p3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6ZlApvwJ2P6DPRedHM3+ABej7UdyUnN1jrp4gtTeYJhR6LerknQ1hqFkczrlP6Zt5zOYyD+mouIU1TQnZ9vxrPLAaAjoGiAabYo1ZMdW4EN1FSsxiJlf0HhRhAq5a24cj2Qo628DhQwW5a/tgKJ5U/7fuDYuuLIAPEUpQ8Armg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HUReV4MW; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202318c4f45so43556705ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:53:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1724680409; x=1725285209; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Q9PuXmg221v4n3ZTHASMPKovmaAn+KWVQTnJOgnGGc=;
+        b=HUReV4MWCmsCMNZbMEcp9XXMs8oxkpkgHLci9RZGSOUbBd5DCsV3uroinBPRJ1W8Qw
+         X7+4pBxnHmPsn49Nl9ho1YxA+F/N3IDHZrw2coQNdAmYzLeH3Y89n4ZFFqaaDoz1a6bL
+         m7cC5hxnz8+nYIQKGy4Z9WHjNpEioiULU2r0w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724680409; x=1725285209;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Q9PuXmg221v4n3ZTHASMPKovmaAn+KWVQTnJOgnGGc=;
+        b=PkXFnlyURYOKcg2SlWsodOfAZe+LbcDdzx+aS42Ui0PjwudBjKoMtTAXNWCiDhdlHg
+         HNORBBIgPItMyPTa73cARteE8FkvcdMkcsA0gdAOPy2PdKokQ5qwrpSzBBRnb2zdS5JJ
+         ZqzdYJ71vow3cAmgRweWgqlFGaDO8XeNaRzqQ+ID4qleDUEAIYU/Aw4XmE3gtHObejSC
+         0y86vHt590qw6oQbRUIc49W2S3E9b1vLCndh4CJYIOBPQUQOevAyO0ndguW7nhmVkY1p
+         etacojPzH553pCjqw76kUHsTxBq86k1Tmes/2jnKWp6x2veoV6gxqYR3X3sNhxFCeDQz
+         M5+g==
+X-Gm-Message-State: AOJu0YwtnnaJLGRtPbZoweUcQdrXJy1qNtQGKqFLTh7y7R+09lD60Ci+
+	rutgawejvc7HWCAQsI83+UljN4Gdopj8HXX4aQYsKpOBkkwpV1NvIwDQSMjKprc=
+X-Google-Smtp-Source: AGHT+IHPm3yVwNwle/7bH3vLcBP8lhcS/vg7K/OhSlZ4Tf+Gfj75dqkDPda3S/tSNa+iUkm9JiM9Hg==
+X-Received: by 2002:a17:902:e5cd:b0:1fd:876b:2a5c with SMTP id d9443c01a7336-2039e56ad74mr124917195ad.65.1724680408762;
+        Mon, 26 Aug 2024 06:53:28 -0700 (PDT)
+Received: from [192.168.121.153] ([218.49.71.194])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038560faddsm67820495ad.231.2024.08.26.06.53.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 06:53:28 -0700 (PDT)
+Message-ID: <32d722e4-7c0d-414e-b94b-8c40e0be0302@linuxfoundation.org>
+Date: Mon, 26 Aug 2024 07:53:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820145623.3500864-19-avromanov@salutedevices.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ftrace/selftest: Test combination of function_graph
+ tracer and function profiler
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240821150903.05c6cf96@gandalf.local.home>
+ <3901c521-be69-4824-a571-9182b9af02b6@linuxfoundation.org>
+ <20240822091929.0db8837f@gandalf.local.home>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240822091929.0db8837f@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 05:56:18PM +0300, Alexey Romanov wrote:
-> Now crypto module available at G12A/G12B/S4/A1/SM1/AXG.
+On 8/22/24 07:19, Steven Rostedt wrote:
+> On Wed, 21 Aug 2024 21:54:42 -0600
+> Shuah Khan <skhan@linuxfoundation.org> wrote:
 > 
-> 1. Add new compatibles:
->   - amlogic,g12a-crypto
->   - amlogic,axg-crypto
->   - amlogic,a1-crypto
->   - amlogic,s4-crypto (uses a1-crypto as fallback)
+>> On 8/21/24 13:09, Steven Rostedt wrote:
+>>> From: Steven Rostedt <rostedt@goodmis.org>
+>>>
+>>> Masami reported a bug when running function graph tracing then the
+>>> function profiler. The following commands would cause a kernel crash:
+>>>
+>>>     # cd /sys/kernel/tracing/
+>>>     # echo function_graph > current_tracer
+>>>     # echo 1 > function_profile_enabled
+>>>
+>>> In that order. Create a test to test this two to make sure this does not
+>>> come back as a regression.
+>>>
+>>> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
+>>>
+>>> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>>> ---
+>>>    .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 30 +++++++++++++++++++
+>>>    1 file changed, 30 insertions(+)
+>>>    create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+>>>
+>>> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+>>> new file mode 100644
+>>> index 000000000000..62d44a1395da
+>>> --- /dev/null
+>>> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+>>> @@ -0,0 +1,30 @@
+>>> +#!/bin/sh
+>>> +# SPDX-License-Identifier: GPL-2.0
+>>> +# description: ftrace - function profiler with function graph tracing
+>>> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
+>>> +
+>>> +# The function graph tracer can now be run along side of the function
+>>> +# profiler. But there was a bug that caused the combination of the two
+>>> +# to crash. It also required the function graph tracer to be started
+>>> +# first.
+>>> +#
+>>> +# This test triggers that bug
+>>> +#
+>>> +# We need function_graph and profiling to to run this test
+>>> +
+>>> +fail() { # mesg
+>>> +    echo $1
+>>> +    exit_fail
+>>> +}
+>>> +
+>>> +echo "Enabling function graph tracer:"
+>>> +echo function_graph > current_tracer
+>>> +echo "enable profiler"
+>>> +
+>>> +# Older kernels do not allow function_profile to be enabled with
+>>> +# function graph tracer. If the below fails, mark it as unsupported
+>>> +echo 1 > function_profile_enabled || exit_unsupported
+>>> +
+>>> +sleep 1
+>>
+>> Any specific reason for this sleep 1 - can you add a comment on top?
 > 
-> Difference between this compatibles:
->  * Different registers offset and the number of setup descriptors.
->  * GXL doesn't support hashing like the others.
->  * G12A/B and A1/S4 crypto HW don't support 192 AES key.
->  * GXL, G12A/B and AXG require a reverse IV key before processing.
+> We add sleep 1 in several locations of the ftrace selftests to let the
+> tracing run for a bit just to see if it triggers anything. Otherwise the
+> clean up can happen before anything gets traced. Although, it's highly
+> unlikely in this case, but still.
 > 
-> 2. Add power-domains in schema, which is required only for A1.
-> This is specific vendor design: in old SoC's power domain for
-> crypto HW was not configurable, but in A1-series it is configurable.
+> I could add a comment if you want of just:
+> 
+> # let it run for a bit
+> sleep 1
+> 
+> 
+>>> +
+>>> +exit 0
+>>
+>> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+>>
+>> Let me know if you would like v2 for this to be taken through my tree.
+> 
+> I'll make a v2 if you want me to.
 
-You added this in the previous patch. So I withdraw my Reviewed-by.
+No need for a v2
 
-> 
-> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> ---
->  .../bindings/crypto/amlogic,gxl-crypto.yaml   | 21 +++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> index 7300328de1d5..106a9d1fed69 100644
-> --- a/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/amlogic,gxl-crypto.yaml
-> @@ -11,8 +11,16 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    items:
-> -      - const: amlogic,gxl-crypto
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - amlogic,s4-crypto
-> +          - const: amlogic,a1-crypto
-> +      - enum:
-> +          - amlogic,gxl-crypto
-> +          - amlogic,axg-crypto
-> +          - amlogic,g12a-crypto
-> +          - amlogic,a1-crypto
->  
->    reg:
->      maxItems: 1
-> @@ -33,6 +41,15 @@ required:
->    - interrupts
->    - clocks
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: amlogic,a1-crypto
-> +    then:
-> +      required:
-> +        - power-domains
-> +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.34.1
-> 
+thanks,
+-- Shuah
+
 
