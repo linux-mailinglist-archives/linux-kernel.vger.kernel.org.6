@@ -1,180 +1,120 @@
-Return-Path: <linux-kernel+bounces-301161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C6F95ED28
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D495ED2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5BD28130C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25561C218D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118B114430E;
-	Mon, 26 Aug 2024 09:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3114430E;
+	Mon, 26 Aug 2024 09:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sj+qabaA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KVl7i6U1"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F02929A2;
-	Mon, 26 Aug 2024 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86977F08;
+	Mon, 26 Aug 2024 09:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664617; cv=none; b=ir4M2B5TphtD0vs1CayM6ww50lWWNZrB6UK7XQjj59JbxIs3zp4Od3XuLkcPyF7n7M08zwYUlYd9VHtkswL3r/ASUWBcIRC++hCoiInIi4COHYSCSsr6nNtLVbtu31L1V4+DwQHgrMtu0hf+Hb4iZcsY66mDLuH3sPf7L5OzGIo=
+	t=1724664640; cv=none; b=tgKpa53/zXSBN+iz84dBDFD0LBsfzNiNt71+2/QsXpx3s9rrP5lU3mQurGAL1J2AbwR8JIKBZOSJRHc5HSRKiff93yZLnEyO9kuOWKpC7+705slQgRx8b4I5+D6cHYg+cRiVo3jA2wjBtYnOxwqcduXm3wUqtiZqf9Sp0KgWD2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664617; c=relaxed/simple;
-	bh=AzKOmmYCYDiPvUMVeA6PO+2K0vfVzN1yaPtjZCfT+8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQStJXZT3WYBKHOC4Z644dNOTP43BBo0uEjQQrrcSkGI4Reuiwf4aF53E79DgfeK0giKcEsWL/Fad6Gp+u24NVzZPmmazXPOXNX8vBgy1VEjeS6nPZaTw5ehz5FnW8DMP9GWlyC0OB1wsXo1lf2TPiPlcm0LB9rcSjd/0e119aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sj+qabaA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156F9C8B4E8;
-	Mon, 26 Aug 2024 09:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724664616;
-	bh=AzKOmmYCYDiPvUMVeA6PO+2K0vfVzN1yaPtjZCfT+8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sj+qabaAeuSWZSKBAS6wzi7JExk+b753ReocbXaPPFGYWhWzGXGvKtnkitWHah+2K
-	 CXcOg7+UYp01N6mwTUo8MhPAejYM43ZK3uRhPZqF8XCtlXKyCGDv2UH79mWbbWU1KL
-	 g5dZax/Hg7CZ0xZ26ZSR1MBRUj8rMsfgv5zDjhwk=
-Date: Mon, 26 Aug 2024 11:30:14 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: leoliu-oc@zhaoxin.com, dlemoal@kernel.org, arnd@kernel.org,
-	schnelle@linux.ibm.com, WeitaoWang-oc@zhaoxin.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mathias.nyman@linux.intel.com, ulf.hansson@linaro.org,
-	vkoul@kernel.org, hslester96@gmail.com, Carsten_Schmid@mentor.com,
-	efremov@linux.com, tonywwang@zhaoxin.com, weitaowang@zhaoxin.com,
-	CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, wwt8723@163.com,
-	stern@rowland.harvard.edu, alex.williamson@redhat.com,
-	guanwentao@uniontech.com, xuerpeng@uniontech.com
-Subject: Re: [PATCH v2] USB: Fix kernel NULL pointer when unbind UHCI form
- vfio-pci
-Message-ID: <2024082631-resort-stays-b065@gregkh>
-References: <42A38D045199FD79+20240826085455.1525536-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1724664640; c=relaxed/simple;
+	bh=IaQvQK322F41Wu3XuQqzpU/an5HrTCCYpOEpInG8XP8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QV43Z9uhFPHhIT7gP2Ii49IE+Ruvx7Zeb4ztZhg72J1/gu/FRvGFbgdktcaOP+TwjjEvX72WhkDiTmZEu/6KFi+r/o4g7D0luqEUpWaQDKgbaULbkekt33a/K4iNqOTvlYpM3kFZQmgjQLNc38bUBGecmhLy39HapB0uCX3WvhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KVl7i6U1; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47Q9UTCR113589;
+	Mon, 26 Aug 2024 04:30:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724664629;
+	bh=M5c+I3fwFUbb6TlPohBPIc7+gZ7Wuml8QQ0nxOyyRsI=;
+	h=From:To:CC:Subject:Date;
+	b=KVl7i6U1jF7Hv9JSTee5ir+NsRUAJ02T0gGgJvh7KFz6qZHuJOLk59ajHJmKundAs
+	 S8Bp2XT6/3SMtCgofHLrNPm9/JF9gYAE9bySgj1kGTttfz1+RZWzO4ZEtEz8Z6btMV
+	 P5hpgrrW/ofRWB4wenDLM1JnvVn8JjUuH3JWC/9Q=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47Q9UTFr015239
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 04:30:29 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 04:30:28 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 04:30:28 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47Q9UPn9118247;
+	Mon, 26 Aug 2024 04:30:25 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <s-anna@ti.com>, <hnagalla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/7] Switch MAIN R5F clusters to Split-mode for TI K3 Platforms
+Date: Mon, 26 Aug 2024 15:00:17 +0530
+Message-ID: <20240826093024.1183540-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42A38D045199FD79+20240826085455.1525536-1-wangyuli@uniontech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Aug 26, 2024 at 04:54:55PM +0800, WangYuli wrote:
-> From: leoliu-oc <leoliu-oc@zhaoxin.com>
-> 
-> This bug is found in Zhaoxin platform, but it's a commom code bug.
+TI's K3 Platforms (J7200-EVM, J721E-EVM, J721E-SK, J721S2-EVM, AM68-SK,
+J784S4-EVM, AM69-SK) have multiple R5F clusters in the MAIN domain. All
+of these clusters are configured for LockStep mode at the moment. Switch
+all of these R5F clusters to Split mode by default to maximize the
+number of R5F cores.
 
-To be fair, this is not a normal "common" code path at all :)
+v3: Changelog:
+* Nishanth
+1) Refactored changes to board level DTS files instead of SoC level dtsi files.
 
-> 
-> Fail sequence:
-> step1: Unbind UHCI controller from native driver;
+Link to v2:
+https://lore.kernel.org/all/20240821095200.3050878-1-b-padhi@ti.com/
 
-First off, you all know this is really an "unsupported" thing to do.  I
-love it how the vfio people abuse this interface for their main code
-path, but remember that is NEVER what it was designed for at all.  The
-fact that it could possibly work at all is a miracle and everyone gets
-lucky if nothing dies when they attempt to manually do the gyrations you
-are doing here.
+v2: Changelog:
+1) Update commit messages to drop "Lockstep-mode" as default mode for early
+booted remoteprocs.
 
-> step2: Bind UHCI controller to vfio-pci, which will put UHCI controller in
-> 	   one vfio group's device list and set UHCI's dev->driver_data to
-> 	   struct vfio-pci(for UHCI)
+Link to v1:
+https://lore.kernel.org/all/20240503062414.804209-1-b-padhi@ti.com/
 
-Who sets the driver_data here?
+Beleswar Padhi (7):
+  arm64: dts: ti: k3-j7200-som-p0: Switch MAIN R5F cluster to Split-mode
+  arm64: dts: ti: k3-j721e-som-p0: Switch MAIN R5F clusters to
+    Split-mode
+  arm64: dts: ti: k3-j721e-sk: Switch MAIN R5F clusters to Split-mode
+  arm64: dts: ti: k3-j721s2-som-p0: Switch MAIN R5F clusters to
+    Split-mode
+  arm64: dts: ti: k3-am68-sk-som: Switch MAIN R5F clusters to Split-mode
+  arm64: dts: ti: k3-j784s4-evm: Switch MAIN R5F clusters to Split-mode
+  arm64: dts: ti: k3-am69-sk: Switch MAIN R5F clusters to Split-mode
 
-> step3: Unbind EHCI controller from native driver, will try to tell UHCI
-> 	   native driver that "I'm removed by set
-> 	   companion_hcd->self.hs_companion to NULL. However, companion_hcd
-> 	   get from UHCI's dev->driver_data that has modified by vfio-pci
-> 	   already. So, the vfio-pci structure will be damaged!
+ arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi   |  8 ++++++++
+ arch/arm64/boot/dts/ti/k3-am69-sk.dts        | 12 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi  |  4 ++++
+ arch/arm64/boot/dts/ti/k3-j721e-sk.dts       |  8 ++++++++
+ arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi  |  8 ++++++++
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi |  8 ++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts     | 12 ++++++++++++
+ 7 files changed, 60 insertions(+)
 
-Damaged how?  Attempting to assign random PCI drivers to the vfio-pci
-driver is again, really really not supported (despite what the vfio
-authors think), so again, it's amazing this works, as you are finding
-out.
+-- 
+2.34.1
 
-> step4: Bind EHCI controller to vfio-pci driver, which will put EHCI
-> 	   controller in the same vfio group as UHCI controller;
->        ... ...
-> step5: Unbind UHCI controller from vfio-pci, which will delete UHCI from
-> 	   vfio group device list that has been damaged in step 3. So, delete
-> 	   operation can random result into a NULL pointer dereference with
-> 	   the below stack dump.
-> step6: Bind UHCI controller to native driver;
-> step7: Unbind EHCI controller from vfio-pci, which will try to remove EHCI
-> 	   controller from the vfio group;
-> step8: Bind EHCI controller to native driver;
-
-That's crazy, why would you be doing all of that in the first place?  Is
-it common to add host controller drivers to virtual machines like this?
-Why not just use usbip instead?
-
-> [  929.114641] uhci_hcd 0000:00:10.0: remove, state 1
-> [  929.114652] usb usb1: USB disconnect, device number 1
-> [  929.114655] usb 1-1: USB disconnect, device number 2
-> [  929.270313] usb 1-2: USB disconnect, device number 3
-> [  929.318404] uhci_hcd 0000:00:10.0: USB bus 1 deregistered
-> [  929.343029] uhci_hcd 0000:00:10.1: remove, state 4
-> [  929.343045] usb usb3: USB disconnect, device number 1
-> [  929.343685] uhci_hcd 0000:00:10.1: USB bus 3 deregistered
-> [  929.369087] ehci-pci 0000:00:10.7: remove, state 4
-> [  929.369102] usb usb4: USB disconnect, device number 1
-> [  929.370325] ehci-pci 0000:00:10.7: USB bus 4 deregistered
-> [  932.398494] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> [  932.398496] PGD 42a67d067 P4D 42a67d067 PUD 42a65f067 PMD 0
-> [  932.398502] Oops: 0002 [#2] SMP NOPTI
-> [  932.398505] CPU: 2 PID: 7824 Comm: vfio_unbind.sh Tainted: P   D  4.19.65-2020051917-rainos #1
-
-Note, this is a very old kernel, and one that has closed source in it
-making it such that none of us can debug it at all.
-
-And are you sure this happens on 6.10?
-
-> diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
-> index a08f3f228e6d..5a63d7a772ae 100644
-> --- a/drivers/usb/core/hcd-pci.c
-> +++ b/drivers/usb/core/hcd-pci.c
-> @@ -48,6 +48,7 @@ static void for_each_companion(struct pci_dev *pdev, struct usb_hcd *hcd,
->  	struct pci_dev		*companion;
->  	struct usb_hcd		*companion_hcd;
->  	unsigned int		slot = PCI_SLOT(pdev->devfn);
-> +	struct pci_driver	*drv;
->  
->  	/*
->  	 * Iterate through other PCI functions in the same slot.
-> @@ -60,6 +61,13 @@ static void for_each_companion(struct pci_dev *pdev, struct usb_hcd *hcd,
->  				PCI_SLOT(companion->devfn) != slot)
->  			continue;
->  
-> +		drv = companion->driver;
-> +		if (drv &&
-> +		    strncmp(drv->name, "uhci_hcd", sizeof("uhci_hcd") - 1) &&
-> +		    strncmp(drv->name, "ohci-pci", sizeof("ohci-pci") - 1) &&
-> +		    strncmp(drv->name, "ehci-pci", sizeof("ehci-pci") - 1))
-
-Attempting to rely on kernel module names within kernel code just is not
-going to work, sorry.
-
-What exactly are you trying to do here?  Please at least comment it.
-
-> +			continue;
-
-Do you just want to fail the binding?  If so, why?  And what is
-precenting a driver to be bound after you do the check?
-
-> +
->  		/*
->  		 * Companion device should be either UHCI,OHCI or EHCI host
->  		 * controller, otherwise skip.
-
-Why doesn't this check suffice?
-
-thanks,
-
-greg k-h
 
