@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-301445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D18495F101
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:14:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0241095F106
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8142A1C237EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:14:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2BCB28B8BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D3618A95E;
-	Mon, 26 Aug 2024 12:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8036C18D643;
+	Mon, 26 Aug 2024 12:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hB9o6d4N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PSHb/iNn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jtHkaRCd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39FB189515;
-	Mon, 26 Aug 2024 12:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C7813BACE;
+	Mon, 26 Aug 2024 12:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674200; cv=none; b=gNDZ47ZGy6Ag3BHHPAe1JHuU1c8RWK0PnjJRKMWIAeDgXpGA/Gs0OKZYgAp9VTc4ufpQdfkVyOJMyZ1EuBZVt9KwTZlzBFX2X+v8HkiwHPJlt98wOMKQu7qpfNHP98yWPZ+TkguuzvFjgHP4vvLsBa1SXMku6oIWRGKIN5gFJN0=
+	t=1724674277; cv=none; b=SUFsYoj5i//wmrPxrKRmObYCPAnAJ5owkbk8TMUaI7orFGqICB9j6Z6tEWHiBEpS089Gt1O3BJCSag/vIH9y9WMLccnbu5GLFqXzX5Ob2uuN8MUDCS1q7vdDkf2SPTjZGOPWpDUGAs0PWDyDdavL4/IVfzsB8fTRCmif0MfEAA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674200; c=relaxed/simple;
-	bh=uJwN0fxg1N1IkI6Yhq5fmrk/zkE6cZP1VOTxvkJrg1o=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gEq+YUPeVasmFqdRRV1IUGFD49QCb+87NSVQzxuAFOUdSRQj5NAIrKauaiCPwAxkIZ6F7wFJ7/VYC3lw20fO9u+6Y3A3tQ4D46bdeX44rZ8OeEQxDOrPOdC9ToR0cje68Yh2dr2AsvF/ct29PqKlH3Ms5KRkZJAudqVzcR5fX9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hB9o6d4N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PSHb/iNn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 Aug 2024 12:09:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724674197;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMstrOJVoWDIQbKV+Oeld0jHFTvF+gmpAx0n7F8s8+E=;
-	b=hB9o6d4NGL5lbu5Lj/ogqYXXRkZyanCAKfNx5icOVdBIuFKjmzHYbm56HCBjTMYOZKBrrQ
-	HYwPGdexUWc9HCOe05cDwXcchgk6aBsS8KZc3wYKsJK+KARhSwWpkOtvps6EmQftDt9MHv
-	lv3icMvjhx0/Ld29XkXl7FK41KsYvyUF7qDh9AJSdqJsdgwMyy3oHY7xekxVtwG1TZD1Fo
-	HnX22v2wLK6hugxg0IZSYRKKKUJd2ZwaPRTJGpKSZxW01TzrrAS1ryA/T/AAoAdTwumT/A
-	g2dlTiLVrWy7O3wqIcKyPFFQ1bBEdkcmmFk/7NwSLN8WCdhX0uMz8Z4jKgZjpg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724674197;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMstrOJVoWDIQbKV+Oeld0jHFTvF+gmpAx0n7F8s8+E=;
-	b=PSHb/iNn/wxdA8RN1+pa2ytlC3h3061dsspJMJpXX1lPoqresVM5VhesC/yBYPyaHGjTCE
-	PRhXU8Y+fUowphDA==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] genirq: Get rid of global lock in irq_do_set_affinity()
-Cc: Kunkun Jiang <jiangkunkun@huawei.com>,
- Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240826080618.3886694-1-maz@kernel.org>
-References: <20240826080618.3886694-1-maz@kernel.org>
+	s=arc-20240116; t=1724674277; c=relaxed/simple;
+	bh=z5x+2ob88XAhjdq4AQjLbg9FAiYcZ+CxNXR5LsRuqoE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=dupxbFLo6lnTmUk79mQ5fw+/4fgCailnqMFXUbwMXfym0QD4rrSdiuTC11ZY5PPA4srYo8+o8IUrN6qkEPbArboRWRrHxtPxTXmiwGGUCMsbrqiSQhkzwnW7SGx7ohWmGzstzu2DQ6vHyj5KIVakCHUjwnukxAIQ9lyrH41gysM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jtHkaRCd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MVZR028093;
+	Mon, 26 Aug 2024 12:11:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=C1H3D6HfkOd6
+	5y8Ain1dJTfueYdn6s2djjyr5it6lMA=; b=jtHkaRCdD6qXoPLwQyw4DfpJiKw8
+	WKqkrPj5Nrlra2dvA2F/tMGPEQgCAIsZ8QWD5rnesR3I+He3AckFJjZSMPMEL3pV
+	boNJkhrYA9PCVU8l1f7hSpjXqBP6vOhbiUaTbY8PWOd7FjnPhfTO0A6/HO3ullIp
+	dEU/zyrUcdosXiTfRQRH/6fNXGUlQB5dbJZ1yWkrAAaL2c4GkCj/ve09Vh7nFw+K
+	X8msS1vwaIY+CisG8P12gWySV1Xs0BclJQY4CKYZA0KXew0PeliIiIepfzrsdKzP
+	7dSYNpVCzSWTz9yjTVe17PyvereXdPViLNMRpKBWJLAJ96a3IbHcsTRueQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4179duuhrm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 12:11:08 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47QCB5c0023371;
+	Mon, 26 Aug 2024 12:11:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4178kkjamn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 26 Aug 2024 12:11:05 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47QCB48A023364;
+	Mon, 26 Aug 2024 12:11:04 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.194])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47QCB4D2023362;
+	Mon, 26 Aug 2024 12:11:04 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3891782)
+	id C8234B63; Mon, 26 Aug 2024 17:41:03 +0530 (+0530)
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+To: manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
+        vkoul@kernel.org
+Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+        Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] Fix unmasking interrupt bit and remove watermark interrupt enablement
+Date: Mon, 26 Aug 2024 17:40:59 +0530
+Message-Id: <1724674261-3144-1-git-send-email-quic_msarkar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c4qIG7jNNNTp8Chbe6vPlqVGnUEfMhzr
+X-Proofpoint-ORIG-GUID: c4qIG7jNNNTp8Chbe6vPlqVGnUEfMhzr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_08,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=687
+ impostorscore=0 adultscore=0 priorityscore=1501 phishscore=0 mlxscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408260095
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172467419687.2215.7707880284542876223.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+This patch series reset STOP_INT_MASK and ABORT_INT_MASK bit and unmask
+these interrupt for HDMA.
 
-Commit-ID:     6c70d79f363c0c9a712e107b9c4d3644ca8c7490
-Gitweb:        https://git.kernel.org/tip/6c70d79f363c0c9a712e107b9c4d3644ca8c7490
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Mon, 26 Aug 2024 09:06:18 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 26 Aug 2024 12:52:35 +02:00
+and also remove enablement of local watermark interrupt enable(LWIE)
+and remote watermarek interrupt enable(RWIE) bit to avoid unnecessary
+watermark interrupt event.
 
-genirq: Get rid of global lock in irq_do_set_affinity()
+Testing
+-------
 
-Kunkun Jiang reports that for a workload involving the simultaneous startup
-of a large number of VMs (for a total of about 200 vcpus), a lot of CPU
-time gets spent on spinning on the tmp_mask_lock that exists as a static
-raw spinlock in irq_do_set_affinity(). This lock protects a global cpumask
-(tmp_mask) that is used as a temporary variable to compute the resulting
-affinity.
+Tested on Qualcomm SA8775P Platform.
 
-While this is triggered by KVM issuing a irq_set_affinity() call each time
-a vcpu is about to execute, it is obvious that having a single global
-resource is not very scalable.
+V3 -> V4:
+- convert IRQs unmasking in a clearer way as suggested by Serge.
 
-Since a cpumask can be a fairly large structure on systems with a high core
-count, a stack allocation is not really appropriate.  Instead, turn the
-global cpumask into a per-CPU variable, removing the need for locking
-altogether as the code is executed with preemption and interrupts disabled.
+V2 -> V3:
+- convert 'STOP, ABORT' to 'stop, abort' as suggested by Serge
+- Added Reviewed-by tag
 
-Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Kunkun Jiang <jiangkunkun@huawei.com>
-Link: https://lore.kernel.org/all/20240826080618.3886694-1-maz@kernel.org
-Link: https://lore.kernel.org/all/a7fc58e4-64c2-77fc-c1dc-f5eb78dbbb01@huawei.com
----
- kernel/irq/manage.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+V1 -> V2:
+- Modified commit message and added Fixes, CC tag as suggested by Mani
+- reanme done to STOP
+- rename DW_HDMA_V0_LIE -> DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE -> DW_HDMA_V0_RWIE
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index dd53298..b6aa259 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -224,15 +224,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	struct irq_desc *desc = irq_data_to_desc(data);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	const struct cpumask  *prog_mask;
-+	struct cpumask *tmp_mask;
- 	int ret;
- 
--	static DEFINE_RAW_SPINLOCK(tmp_mask_lock);
--	static struct cpumask tmp_mask;
-+	static DEFINE_PER_CPU(struct cpumask, __tmp_mask);
- 
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
- 
--	raw_spin_lock(&tmp_mask_lock);
-+	tmp_mask = this_cpu_ptr(&__tmp_mask);
-+
- 	/*
- 	 * If this is a managed interrupt and housekeeping is enabled on
- 	 * it check whether the requested affinity mask intersects with
-@@ -258,11 +259,11 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 
- 		hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
- 
--		cpumask_and(&tmp_mask, mask, hk_mask);
--		if (!cpumask_intersects(&tmp_mask, cpu_online_mask))
-+		cpumask_and(tmp_mask, mask, hk_mask);
-+		if (!cpumask_intersects(tmp_mask, cpu_online_mask))
- 			prog_mask = mask;
- 		else
--			prog_mask = &tmp_mask;
-+			prog_mask = tmp_mask;
- 	} else {
- 		prog_mask = mask;
- 	}
-@@ -272,16 +273,14 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	 * unless we are being asked to force the affinity (in which
- 	 * case we do as we are told).
- 	 */
--	cpumask_and(&tmp_mask, prog_mask, cpu_online_mask);
--	if (!force && !cpumask_empty(&tmp_mask))
--		ret = chip->irq_set_affinity(data, &tmp_mask, force);
-+	cpumask_and(tmp_mask, prog_mask, cpu_online_mask);
-+	if (!force && !cpumask_empty(tmp_mask))
-+		ret = chip->irq_set_affinity(data, tmp_mask, force);
- 	else if (force)
- 		ret = chip->irq_set_affinity(data, mask, force);
- 	else
- 		ret = -EINVAL;
- 
--	raw_spin_unlock(&tmp_mask_lock);
--
- 	switch (ret) {
- 	case IRQ_SET_MASK_OK:
- 	case IRQ_SET_MASK_OK_DONE:
+Mrinmay Sarkar (2):
+  dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
+  dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
+
+ drivers/dma/dw-edma/dw-hdma-v0-core.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
+
+-- 
+2.7.4
+
 
