@@ -1,139 +1,148 @@
-Return-Path: <linux-kernel+bounces-300990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD3495EB4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9603195EB42
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE561F24807
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9EB1F22648
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F38213BC3F;
-	Mon, 26 Aug 2024 08:01:22 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259CF1474B9;
+	Mon, 26 Aug 2024 07:56:25 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E521543ABD;
-	Mon, 26 Aug 2024 08:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B453213AA4C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659281; cv=none; b=Dy4iz3T/+vMaCMnsOwE1EgBqhxLQ6FcJ1BtrKtHKYzhcXzBa8pwgPuT5sCCri8ujxFI1vARsjf3/8hhnpynKse0kYfYpOIbXz4eHv1JwgfLrdGfzXgFakl27hQYKKvrEn/t6QYOWkUKJbtyqL1oIu4HgnzQorGObmncH/9YZ+W4=
+	t=1724658984; cv=none; b=IrnyID7V1X1JgGcGfb/ybUvI1ftGUnRLymCTdU3ouSa+F0xtfo9BHqzfiNarIMgAucjBm6261rW9e1BynGfFKXmdfw6oNwQzHpDUXjBkw41zEq6X5cxvpGdOQkVx/oKOov2Oin2yHj8exIWu+oGE4JVP5WyY6twVeAvdTMzkiw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659281; c=relaxed/simple;
-	bh=24hc1MaXwK1dPf3z/uHEmN69vbP/XiOk2Xd0i6mLAHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LBoUIW9JADty1AqilwhQ+YqIbQVgMNuoKwxIPdY0U6p5AnUEB9pvkrTo06vbXhEXxQZ0SQknfAL4KZ0aOCybBZ98pacAzgRHzsYblt6oYf8p8dOb7r1+D/VeUeDuXk5wK6k00ru8L4BJTPRA6UoXlsVDssc5mY8af0pvF+WKdzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WsjmY6zrTz9sRr;
-	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PYRaK4kN_GHj; Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WsjmY5zwMz9sRk;
-	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BA4DC8B76C;
-	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id GaRqVOGsRqIK; Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CB668B763;
-	Mon, 26 Aug 2024 10:01:17 +0200 (CEST)
-Message-ID: <7d58be73-a8e5-4ec7-bbdc-238b0c25c77b@csgroup.eu>
-Date: Mon, 26 Aug 2024 10:01:17 +0200
+	s=arc-20240116; t=1724658984; c=relaxed/simple;
+	bh=yl2J7lxhc61TQUz0GPf28a5fKqHnTpQ4Z0kdUH6ewNQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U9CvTO6VMyBCtG8Lh/OUkXLzbByb0I6i5ixXU0mDitAw3Sbj/5GhBdtTiN6vKXuUAC9UiozGrM5d0Li41MZ7jy1n5FGENur5FHVjwrVzyrZcpbHACyxpPMRW7D9u/uYa1IP76QBEQdEN4eotQJgVGLr3MoQstURhwnXtQb4t9YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WsjYH4HlYz20mg2;
+	Mon, 26 Aug 2024 15:51:31 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 97E4F140120;
+	Mon, 26 Aug 2024 15:56:18 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
+ 2024 15:56:18 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next] mtd: rawnand: denali: Use the devm_clk_get_enabled() helper function
+Date: Mon, 26 Aug 2024 16:04:08 +0800
+Message-ID: <20240826080408.2522978-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/17] vdso: Change getrandom's generation to unsigned
- long
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <525b48eb79978ddba2d1b8ee23b27bd6c5b0b4ee.1724309198.git.christophe.leroy@csgroup.eu>
- <Zswzu1l3xO99KN3I@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <Zswzu1l3xO99KN3I@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
+The devm_clk_get_enabled() helper:
+  - calls devm_clk_get()
+  - calls clk_prepare_enable() and registers what is needed in order to
+    call clk_disable_unprepare() when needed, as a managed resource.
 
+This simplifies the code.
 
-Le 26/08/2024 à 09:50, Jason A. Donenfeld a écrit :
-> On Thu, Aug 22, 2024 at 09:13:14AM +0200, Christophe Leroy wrote:
->> Performing SMP atomic operations on u64 fails on powerpc32.
->>
->> Random driver generation is handled as unsigned long not u64,
->> see for instance base_cnrg or struct crng.
->>
->> Use the same type for vDSO's getrandom as it gets copied
->> from the above. This is also in line with the local
->> current_generation which is already an unsigned long.
-> 
-> This isn't going to work when 32-bit userspace tries to access a 64-bit
-> kernel.
-> 
-> I had "fixed" this with a vdso_kernel_ulong type way back in an earlier
-> version: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20240528122352.2485958-5-Jason%40zx2c4.com%2F%23Z31include%3Avdso%3Atypes.h&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C41747dd989164267c1cc08dcc5a3c424%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638602554376441761%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=Tf9ShSN6aOOFZ1HymAmHhj0xhQ6BUtHJX95t50gsp9k%3D&reserved=0
-> 
-> But tglx pointed out in that thread that this actually isn't necessary:
-> 
-> | All of this is pointless because if a 32-bit application runs on a
-> | 64-bit kernel it has to use the 64-bit 'generation'. So why on earth do
-> | we need magic here for a 32-bit kernel?
-> |
-> | Just use u64 for both and spare all this voodoo. We're seriously not
-> | "optimizing" for 32-bit kernels.
-> |
-> | All what happens on a 32-bit kernel is that the RNG will store the
-> | unsigned long (32bit) generation into a 64bit variable:
-> |
-> | 	smp_store_release(&_vdso_rng_data.generation, next_gen + 1);
-> |
-> | As the upper 32bit are always zero, there is no issue vs. load store
-> | tearing at all. So there is zero benefit for this aside of slightly
-> | "better" user space code when running on a 32-bit kernel. Who cares?
-> 
-> So I just got rid of it and used a u64 as he suggested.
-> 
-> However, there's also an additional reason why it's not worth churning
-> further over this - because VM_DROPPABLE is 64-bit only (due to flags in
-> vma bits), likely so is vDSO getrandom() for the time being. So I think
-> it makes more sense to retool this series to be ppc64, and then if you
-> really really want 32-bit and can convince folks it matters, then all of
-> these parts (for example, here, the fact that the smp helper doesn't
-> want to tear) can be fixed up in a separate series.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/mtd/nand/raw/denali_dt.c | 29 ++++-------------------------
+ 1 file changed, 4 insertions(+), 25 deletions(-)
 
-So yes I really really want it on ppc32 because this is the only type of 
-boards I have and this is really were we need getrandom() to be 
-optimised, indeed ppc64 was sherry-on-the-cake in my series, I just 
-added it because it was easy to do after doing ppc32.
+diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+index edac8749bb93..2f5666511fda 100644
+--- a/drivers/mtd/nand/raw/denali_dt.c
++++ b/drivers/mtd/nand/raw/denali_dt.c
+@@ -145,15 +145,15 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(denali->host))
+ 		return PTR_ERR(denali->host);
+ 
+-	dt->clk = devm_clk_get(dev, "nand");
++	dt->clk = devm_clk_get_enabled(dev, "nand");
+ 	if (IS_ERR(dt->clk))
+ 		return PTR_ERR(dt->clk);
+ 
+-	dt->clk_x = devm_clk_get(dev, "nand_x");
++	dt->clk_x = devm_clk_get_enabled(dev, "nand_x");
+ 	if (IS_ERR(dt->clk_x))
+ 		return PTR_ERR(dt->clk_x);
+ 
+-	dt->clk_ecc = devm_clk_get(dev, "ecc");
++	dt->clk_ecc = devm_clk_get_enabled(dev, "ecc");
+ 	if (IS_ERR(dt->clk_ecc))
+ 		return PTR_ERR(dt->clk_ecc);
+ 
+@@ -165,18 +165,6 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dt->rst_reg))
+ 		return PTR_ERR(dt->rst_reg);
+ 
+-	ret = clk_prepare_enable(dt->clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = clk_prepare_enable(dt->clk_x);
+-	if (ret)
+-		goto out_disable_clk;
+-
+-	ret = clk_prepare_enable(dt->clk_ecc);
+-	if (ret)
+-		goto out_disable_clk_x;
+-
+ 	denali->clk_rate = clk_get_rate(dt->clk);
+ 	denali->clk_x_rate = clk_get_rate(dt->clk_x);
+ 
+@@ -187,7 +175,7 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = reset_control_deassert(dt->rst_reg);
+ 	if (ret)
+-		goto out_disable_clk_ecc;
++		return ret;
+ 
+ 	ret = reset_control_deassert(dt->rst);
+ 	if (ret)
+@@ -222,12 +210,6 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	reset_control_assert(dt->rst);
+ out_assert_rst_reg:
+ 	reset_control_assert(dt->rst_reg);
+-out_disable_clk_ecc:
+-	clk_disable_unprepare(dt->clk_ecc);
+-out_disable_clk_x:
+-	clk_disable_unprepare(dt->clk_x);
+-out_disable_clk:
+-	clk_disable_unprepare(dt->clk);
+ 
+ 	return ret;
+ }
+@@ -239,9 +221,6 @@ static void denali_dt_remove(struct platform_device *pdev)
+ 	denali_remove(&dt->controller);
+ 	reset_control_assert(dt->rst);
+ 	reset_control_assert(dt->rst_reg);
+-	clk_disable_unprepare(dt->clk_ecc);
+-	clk_disable_unprepare(dt->clk_x);
+-	clk_disable_unprepare(dt->clk);
+ }
+ 
+ static struct platform_driver denali_dt_driver = {
+-- 
+2.34.1
 
-Christophe
 
