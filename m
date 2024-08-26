@@ -1,179 +1,113 @@
-Return-Path: <linux-kernel+bounces-301200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFCB295EDA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:47:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A4695EDA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F1D1F21EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:47:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C564B226AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567AB145FE8;
-	Mon, 26 Aug 2024 09:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DAC14659D;
+	Mon, 26 Aug 2024 09:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ciBCQ1Pi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ra8Bb8ep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A49629A2;
-	Mon, 26 Aug 2024 09:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A28429A2;
+	Mon, 26 Aug 2024 09:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724665619; cv=none; b=Y65irh3oDHirxGYirmkQinskOgcrvxpOyYA90E5h4s6YIZXR3UNS08tZesjx4WxiXsPbcEQZpc9seVLmswbwQ0uD0d8InR+g/FOeQMT9DfPdMmDHQZi4LS1L/7w+b7dLrG5cjMkJ4FZ9fUtEmCvC9F8npn7+rxSWf6UamG/OPbE=
+	t=1724665697; cv=none; b=PjLNjbgxBrGz+8awFwtLUOfEOBX/uUl2VjXzMPcHRwOKsegCeFZ2N9AL40NxwUPhZtmZcYtNYZtopBaITQavbcsRiXqWFKMQIh+7UlnpYE3jvHWcHsPTSkz0wVArSSKHRK7KMTN8e3lcCk0uEokoivesRj07nsKxVLRJR+AFsUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724665619; c=relaxed/simple;
-	bh=mCXIn7qsNRE20+tOnqqQbOI6naJ2PK9DJLRExbHkxXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IK9xXOKWFEYZTeP68DSdWekqJcJmGR1Mus0f3gm19CoWa8rhv7XYwrzrNxd4sPBhvkg2FSndYySEXXAwjPdL/TZ/aygl3nofYh+m/tFoXcwBrWwTOuhORSaAAa7pAvD/90NHzOmRWc38Ili+GkUul/LyhIs91TDediKqVzb6Dm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ciBCQ1Pi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724665610;
-	bh=I/OcPAIhAo/+/MJKv9T9G17d+Q2/Hwz2KsPesi4T8nU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ciBCQ1Pil0X+TE2iSscNdfQ14CCuqyHfPDujxvumWvJGRWJghMyRZDNrn3fkJOQzo
-	 DnMedAgY5qoH8giM98Frag/wDP4Xmo5qzhE5OWaWPvteTQiGSwoqXzdTdbFtDmkKiw
-	 4lsffe0tzQMm/TCVOIIzcw2mwlRuwpJ2BwcZsylgZWcXKpnP5vDPYx4GkG2dtR40Vw
-	 91wNtb21/oK1W1IQRlUoXDIP2ue9ofr0+JUWCD7g57OWF2kz2RHDxxdKxNuWWB+/QH
-	 urj93rPDjDnXqBaJzISQZrRogBz2R+6VrNfbJbLw3oqTOUoz3ZCJVkXGhjaNINQWRe
-	 Ym9tbFsY3dVRQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wsm6L47L6z4wbr;
-	Mon, 26 Aug 2024 19:46:50 +1000 (AEST)
-Date: Mon, 26 Aug 2024 19:46:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Zhiguo Jiang <justinjiang@vivo.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: boot warning after merge of the mm tree
-Message-ID: <20240826194648.407fdf58@canb.auug.org.au>
+	s=arc-20240116; t=1724665697; c=relaxed/simple;
+	bh=40duo67vILFW2Mtz3qng4d4MnMFvqiJDQTSXPleTFaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EV8Q7mDeNIHM1TiPwipKkt93Mz9NuUi78QHfSnOdmSW4kDds/ssI/C8yu0BO9hkReFqfTZaMgmZXwSMJAVSaCFXG9nDLMl3VjtDg4784ygGtrC0ssXggEu4qzjeYTUeYU4Wcn9paiAdHHldEXcHnHXg0qXQWJHOq9V4b2xvdWTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Ra8Bb8ep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E668C4DDFF;
+	Mon, 26 Aug 2024 09:48:13 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ra8Bb8ep"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724665691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=awbUvn+zcUaAMzrxEX5rtv3K5X2zJKdTxDK7qFVNC2A=;
+	b=Ra8Bb8epvfQUmYF44p8hCwYUkMlgxSsvYepqJe39nrmzRZFcnxDHLnhWhQSSslCM/8qTGm
+	rJoy82h0Gs73r3V0WNG+Y+HRCD3DemC+gvIEye0QFf8acyKnRI2qG/QH8beDx5lMQRczDQ
+	B53l/X4IZqTFNqiIK/LddaNIyEDciAE=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 97e8236b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 09:48:11 +0000 (UTC)
+Date: Mon, 26 Aug 2024 11:48:01 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 06/17] vdso: Change getrandom's generation to unsigned
+ long
+Message-ID: <ZsxPUXq0qo4MPDbW@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <525b48eb79978ddba2d1b8ee23b27bd6c5b0b4ee.1724309198.git.christophe.leroy@csgroup.eu>
+ <Zswzu1l3xO99KN3I@zx2c4.com>
+ <7d58be73-a8e5-4ec7-bbdc-238b0c25c77b@csgroup.eu>
+ <87v7znd3g4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/679xP.HeWYbJhl=NG=mSkoa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87v7znd3g4.ffs@tglx>
 
---Sig_/679xP.HeWYbJhl=NG=mSkoa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 26, 2024 at 11:43:39AM +0200, Thomas Gleixner wrote:
+> As explained before, there is no problem with store or load tearing on
+> 32bit systems because the generation counter is only 32bit wide. So the
+> obvious solution is to only update 32 bits on a 32bit kernel:
+> 
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -282,7 +282,7 @@ static void crng_reseed(struct work_stru
+>  	 * is ordered with the write above to base_crng.generation. Pairs with
+>  	 * the smp_rmb() before the syscall in the vDSO code.
+>  	 */
+> -	smp_store_release(&_vdso_rng_data.generation, next_gen + 1);
+> +	smp_store_release((unsigned long *)&_vdso_rng_data.generation, next_gen + 1);
+>  #endif
+>  	if (!static_branch_likely(&crng_is_ready))
+>  		crng_init = CRNG_READY;
 
-Hi all,
+That seems like a pretty clean fix.
 
-After merging the mm tree, today's linux-next boot test (powerpc
-pseries_le_defconfig) produced many warnings like this:
+> But that's a trivial fix compared to making VM_DROPPABLE work on 32-bit
+> correclty. :)
 
-Run /init as init process
-mount (55) used greatest stack depth: 28240 bytes left
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at mm/rmap.c:443 unlink_anon_vmas+0x23c/0x358
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc5-06732-g133a683d26fd =
-#14
-Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200=
- 0xf000004 of:SLOF,HEAD pSeries
-NIP:  c0000000004d0208 LR: c0000000004d0158 CTR: c00000000121d230
-REGS: c0000000049bf550 TRAP: 0700   Not tainted  (6.11.0-rc5-06732-g133a683=
-d26fd)
-MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 44004222  XER=
-: 20000000
-CFAR: c0000000004d019c IRQMASK: 0=20
-GPR00: c0000000004d0158 c0000000049bf7f0 c00000000167b100 c000000008b5e2b0=
-=20
-GPR04: c000000008b5e300 0000000000000006 c00000000445a108 0000000000000000=
-=20
-GPR08: 0000000000000000 0000000000000001 ffffffffffffffff c0000000013550d8=
-=20
-GPR12: 0000000000000000 c000000002b90000 0000000000000000 0000000000000000=
-=20
-GPR16: 0000000000000000 c000000006cea000 c00000000405e3c0 c000000006556500=
-=20
-GPR20: c000000006ce5000 c000000002a30308 0000000000000000 c000000008ba8398=
-=20
-GPR24: c000000008ba8388 c000000008b60310 c000000002acb790 5deadbeef0000100=
-=20
-GPR28: c000000008ba8398 5deadbeef0000122 c000000008ba8388 c000000008b60300=
-=20
-NIP [c0000000004d0208] unlink_anon_vmas+0x23c/0x358
-LR [c0000000004d0158] unlink_anon_vmas+0x18c/0x358
-Call Trace:
-[c0000000049bf7f0] [c0000000004d00f0] unlink_anon_vmas+0x124/0x358 (unrelia=
-ble)
-[c0000000049bf860] [c0000000004a7eec] free_pgtables+0x1d0/0x368
-[c0000000049bf930] [c0000000004bce20] exit_mmap+0x1c0/0x578
-[c0000000049bfa70] [c000000000151f80] __mmput+0x60/0x1e0
-[c0000000049bfaa0] [c0000000005a6980] begin_new_exec+0x6e0/0xed0
-[c0000000049bfb20] [c0000000006405a8] load_elf_binary+0x460/0x1b68
-[c0000000049bfc70] [c0000000005a4088] bprm_execve+0x2ac/0x754
-[c0000000049bfd40] [c0000000005a5de0] do_execveat_common+0x188/0x250
-[c0000000049bfde0] [c0000000005a71c4] sys_execve+0x54/0x6c
-[c0000000049bfe10] [c000000000030980] system_call_exception+0x120/0x310
-[c0000000049bfe50] [c00000000000d6a0] system_call_common+0x160/0x2c4
---- interrupt: c00 at 0x7fff98ea1638
-NIP:  00007fff98ea1638 LR: 000000001004a12c CTR: 0000000000000000
-REGS: c0000000049bfe80 TRAP: 0c00   Not tainted  (6.11.0-rc5-06732-g133a683=
-d26fd)
-MSR:  800000000280f033 <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 22002824  =
-XER: 00000000
-IRQMASK: 0=20
-GPR00: 000000000000000b 00007fffcec19410 00007fff98f79900 000001001dc20410=
-=20
-GPR04: 000001001dc20440 000001001dc20450 0000000000000000 0000000000000000=
-=20
-GPR08: 000001001dc20410 0000000000000000 0000000000000000 0000000000000000=
-=20
-GPR12: 0000000000000000 00007fff98ffa9a0 0000000000000000 0000000000000000=
-=20
-GPR16: 0000000000000000 0000000000000000 0000000000000000 00000000100b8fd0=
-=20
-GPR20: 00000000100d03a2 00000000100b8f90 0000000000000000 0000000000000000=
-=20
-GPR24: 0000000000000000 00000000100e77b8 00000000100b8700 00000000100d03e6=
-=20
-GPR28: 000001001dc20450 00000000100d03e6 000001001dc20410 000001001dc20440=
-=20
-NIP [00007fff98ea1638] 0x7fff98ea1638
-LR [000000001004a12c] 0x1004a12c
---- interrupt: c00
-Code: fbbf0018 7fdff378 48033221 60000000 ebd90000 7c39e040 3bdefff0 418200=
-a8 e87f0008 e9430038 312affff 7d295110 <0b090000> e9430040 312affff 7d29511=
-0=20
----[ end trace 0000000000000000 ]---
-mkdir (59) used greatest stack depth: 28176 bytes left
+My initial response too, and then I noticed he posted this:
+https://lore.kernel.org/all/315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu/
+If that's correct, maybe it's not so bad, at least here. I haven't yet
+looked into the details of it.
 
-Bisected to commit
-
-  1cd7eb306a54 ("vma remove the unneeded avc bound with non-CoWed folio")
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/679xP.HeWYbJhl=NG=mSkoa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMTwgACgkQAVBC80lX
-0Gz7Hgf/SkPRykVm+r9mUMVwXAytiICg8PYztU5H3Pth1yvSI/EHdAgD2GkYIgj7
-fsOOVkSuEQvmyZ17HY0hmD8jQQmvf5BfWc7hA2VX/kPdwv2OtQp9VXYog5anMxz3
-Rw/PEcnSNyHEfsPSFG95AFj36FjWq06rR+g30BxDRjPu36DWNKCXuTLmQ7iq84dM
-KoXoWYOFZEnLFY02G69lLhrH355qlrWaPCzFdRSQL3MQ+PIG8QVQPSTZTvolBAq+
-gCGcZAuE9dpLspZzL8VtleK/QM4vH2eishGzXMQBtB9RCOW7QC8WO4PZm6VJLU6I
-emvcjTW0eUxJ3esgEp6CRTZ8FYFGvw==
-=BD+p
------END PGP SIGNATURE-----
-
---Sig_/679xP.HeWYbJhl=NG=mSkoa--
+Jason
 
