@@ -1,191 +1,98 @@
-Return-Path: <linux-kernel+bounces-301266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E84595EE64
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BB495EE66
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF586280DFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5FB1F21E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458D41474A9;
-	Mon, 26 Aug 2024 10:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138D91474A5;
+	Mon, 26 Aug 2024 10:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hP0vZXH9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5s7nAdj"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837E313B59E;
-	Mon, 26 Aug 2024 10:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D514D146593;
+	Mon, 26 Aug 2024 10:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724667662; cv=none; b=KM05TizIN6mBOZwybaNpi5AH1jbpRaFOFdjxDEtHPNlTbm2Mj0gn8jqf04xixH3HJYFtD3vrZwVgnf7b82taX7NV8bkIXm7mHC7u9xSAkrhowH0K/POCrJKbQ/dy4YIHtTMhKpKJo5DNmR7uvd7k7m3XfZ2GcG51iLFo20JiKNs=
+	t=1724667696; cv=none; b=OkTPaJccsEgtVSwPmd3X5W6RlO7ToQXi0m6/mdvXpXmtHzQlA91HLd9HAf1tExMD806hGplnuro1PDERiQfcSfZh0RP74KeofNHcVAy4jFKYE337lD4ZRZu5ISRTlb8rDDXlbc8dEuqMOkLMGNpj5iarND6IuLEdMJK3r2re/7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724667662; c=relaxed/simple;
-	bh=9ZyvvWc+MtqHVJhq+sPB68b5/mA0ga0XIBp4cTKBisQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CizQ0VWnaInfk9JwmsPX4tMsIxPAf866+zpdZuztrS4qOuRTDMl7w78d4cPaE80EIEc8UV/1L3gi+4iMXJBPNyzYvH9GNAWkCkg5uhiNSeOkLCPX+9ykvd4pALUrWeOiH41YW6z3U5+Tbj41twL5pylOYnJ8klkYzW8m9LosRaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hP0vZXH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34708C58123;
-	Mon, 26 Aug 2024 10:20:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724667662;
-	bh=9ZyvvWc+MtqHVJhq+sPB68b5/mA0ga0XIBp4cTKBisQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hP0vZXH9UFfbDCma1plRy+wY0DsWxH7x6g4HIrDQlE9sK8m1aouszxowMczf9PyNJ
-	 rU0ds4e2ZM0cZsF9c9+vEz+frIsd2AnCx0UkDKVxgNjSE3qH2obPhSvcsrRJlYy+66
-	 HGFMGV3SS6uuuBh5hwQInE6oa7k8+9XuBBZmLR6oZB0ByRe4Jvf3e4/0j/pzNoCV5M
-	 Em8h2v3k6uMP3ZFKb1RxBooKAwvbqLAvOBJUvn0kIEj9JSdYGxuTDS3TT8wag6UHEg
-	 8hQNDbgVlijq4AaUPWNEM4GeJ5NvjoQuy8rxMxN5yroj6C7elkUZPPr8Q+IcewGRyf
-	 SLI7rOl2ceEhw==
-Date: Mon, 26 Aug 2024 11:20:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-Cc: Jason Liu <jasonliu10041728@gmail.com>, "lars@metafoo.de"
- <lars@metafoo.de>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-Message-ID: <20240826111858.7824a811@jic23-huawei>
-In-Reply-To: <FR3P281MB1757A595F22A1F9AE50B76B1CE8B2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-References: <20240825063938.56319-1-jasonliu10041728@gmail.com>
-	<FR3P281MB1757A595F22A1F9AE50B76B1CE8B2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724667696; c=relaxed/simple;
+	bh=haaRV450AsbSM4F3hziAV9r8cmTxOMfG/huLfNYSdZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fr32jXpitvq49tcK2h0Fl/IGcVuILL4Q8F08+GhiW1eZ9FQ6uuf9nh29ycGtclWfq3pvOk4C6KexTXxUwNR1oKBxu/90lwDqSleXUfhW8+RgRyx6p5i+UsP+q1biFm8ejUeIM6ojaNpOqLKTa7zcDl+dTQE5YqE6cA8m7Mpr0CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5s7nAdj; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a81bd549eso296572866b.3;
+        Mon, 26 Aug 2024 03:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724667693; x=1725272493; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=haaRV450AsbSM4F3hziAV9r8cmTxOMfG/huLfNYSdZY=;
+        b=b5s7nAdjbe8+7kFZ/B3qHp95/qBghCa9mFe2E5nF+Z8u68Z1hEsTAk0OFicYiTjMYW
+         M5aiCMP1/Qc669GuKndv9FFZtyTur7LfSARfK+LYj88Wz/2HJc2mUWlKhFZQWUI0IK2j
+         iADKDdlUdnOGJI3RcDNtf2aJs+MX6UcSAGDdk0VI5//0f9e2aMJOrIOHU+MPXsDdP2xp
+         tT8EpGV7+v6jB7dfqJw9F0EW5YkbiBgA5e+QkHMCahI2gUBDzRx334RJ2OWI4uNnC2i4
+         60qBDXOSINvXfy7Ei1TgdEYcFVeRT+aooDQKwoj1xvqp3j5HXZpXcx7TYsN3lsUINWsO
+         TxJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724667693; x=1725272493;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=haaRV450AsbSM4F3hziAV9r8cmTxOMfG/huLfNYSdZY=;
+        b=dYshAx2yw0J9VCEIrRIc5KPH8XysOkPHOlRENIeLgSs78fzbNbAXyQXwt6pItXhx9i
+         AnUdGWkufnGsqBCB+BIGroyBiikh5iKo/w29oEfLYrqxtXtHgDMMWx/YauHabjbz1sIm
+         iL7C021MyksbYRv+Np3ps97f0MvRIiAV162VB5SSgxN0SKOp3D1nOYiNCTE7/4k0I25T
+         Q3mOLWJwiBXpZIaS5+5FSo9bICgfXwxx+E2rtK+JUHhn+ocLJiCo/YB2tCNV5m0vImdL
+         RWN0AbdxnV46u0ZdFjpVZIzeRdUDnpNFUjrGVnXYdUbiJnMNKOMnaYlb+mVuCnfpQ3bR
+         9XmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvSlK7vD+eFiYskXnd1rhoRtMoUTcAp5xSfo88iWpQ8atiPz8Px9c/+oW+5/tHm5Wj9vyVyxZJLeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRh80vTLA0RZ/1BLPZppj0FvNorYbsVW+FusRfoV0rgGjmJpub
+	7HON4hAUOjyH7aGo0zzavtUQojpQqnn6cBdlpgTetvKPSxUMmSJv
+X-Google-Smtp-Source: AGHT+IGy+0SqY7+E+NwLUyVO1/NHEq8jjctrgVTHu2sSqiCLbAPLEJlevhJ3TnLNYssBrtlRRKO/wA==
+X-Received: by 2002:a17:907:2d07:b0:a86:6a2b:3e57 with SMTP id a640c23a62f3a-a86a52bc9b5mr765458566b.29.1724667692626;
+        Mon, 26 Aug 2024 03:21:32 -0700 (PDT)
+Received: from ubuntu2204 (fgw-godollo.uni-mate.hu. [192.188.242.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47c512sm641514466b.150.2024.08.26.03.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 03:21:32 -0700 (PDT)
+Date: Mon, 26 Aug 2024 12:21:30 +0200
+From: =?utf-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v4] drivers: rtc: Add driver for SD2405AL.
+Message-ID: <nuieayffpyac7a7gbgogztwe6cuuxa7p43altngans45cjg76k@jnzez63ip7bk>
+References: <20240624-rtc-sd2405al-v4-1-2b2bc759f98f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624-rtc-sd2405al-v4-1-2b2bc759f98f@gmail.com>
 
-On Mon, 26 Aug 2024 08:22:11 +0000
-Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
+Dear Maintainers,
 
-> Hello,
->=20
-> I was believing that id tables weren't required anymore when using of tab=
-les.
->=20
-> Jonathan,
-> can you help on this subject?
->=20
-> If we have to add id tables, then we need to add all supported chips (mis=
-sing here icm42686 and icm42688).
+my patch has been reviewed by Csókás Bence.
 
-There were some oddities around autoloading for some busses a while
-back but I can't find the reference.
+I recognize that you all have demanding schedules, and I sincerely appreciate
+the time and effort you put into maintaining the Linux kernel. However, I would
+greatly appreciate it if you could share an update on the status of the patch
+and let me know if there are any further actions needed from my side.
 
-+CC Mark + Wolfram for input.
-Do we currently need i2c_device_id and spi_device_id tables for
-autoprobing on DT only platforms?
-
-A few minor comments inline.
-
-
-
-
->=20
-> Thanks,
-> JB
->=20
-> ________________________________________
-> From:=C2=A0Jason Liu <jasonliu10041728@gmail.com>
-> Sent:=C2=A0Sunday, August 25, 2024 08:39
-> To:=C2=A0Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
-> Cc:=C2=A0jic23@kernel.org <jic23@kernel.org>; lars@metafoo.de <lars@metaf=
-oo.de>; linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-kernel=
-@vger.kernel.org <linux-kernel@vger.kernel.org>; Jason Liu <jasonliu1004172=
-8@gmail.com>
-> Subject:=C2=A0[PATCH] iio/inv_icm42600: add inv_icm42600 id_table
-> =C2=A0
-> This Message Is From an Untrusted Sender
-> You have not previously corresponded with this sender.
-> =C2=A0
-> Add the id_table of inv_icm42600, so the device can probe correctly.
->=20
-> Signed-off-by: Jason Liu <jasonliu10041728@gmail.com>
-> ---
->  drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c | 15 +++++++++++++++
->  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c | 15 +++++++++++++++
->  2 files changed, 30 insertions(+)
->=20
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/ii=
-o/imu/inv_icm42600/inv_icm42600_i2c.c
-> index ebb31b385881..8cc550b8cfc3 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-> @@ -71,6 +71,20 @@ static int inv_icm42600_probe(struct i2c_client *clien=
-t)
->  				       inv_icm42600_i2c_bus_setup);
->  }
-> =20
-> +/*
-> + * device id table is used to identify what device can be
-> + * supported by this driver
-> + */
-> +static const struct i2c_device_id inv_icm42600_id[] =3D {
-> +	{"icm42600", INV_CHIP_ICM42600},
-Spaces after { and before }
-> +	{"icm42602", INV_CHIP_ICM42602},
-> +	{"icm42605", INV_CHIP_ICM42605},
-> +	{"icm42622", INV_CHIP_ICM42622},
-> +	{"icm42631", INV_CHIP_ICM42631},
-> +	{}
-{ }
-
-I'm trying to standardize this in IIO.
-
-> +};
-> +MODULE_DEVICE_TABLE(i2c, inv_icm42600_id);
-> +
->  static const struct of_device_id inv_icm42600_of_matches[] =3D {
->  	{
->  		.compatible =3D "invensense,icm42600",
-> @@ -104,6 +118,7 @@ static struct i2c_driver inv_icm42600_driver =3D {
->  		.of_match_table =3D inv_icm42600_of_matches,
->  		.pm =3D pm_ptr(&inv_icm42600_pm_ops),
->  	},
-> +	.id_table =3D inv_icm42600_id,
->  	.probe =3D inv_icm42600_probe,
->  };
->  module_i2c_driver(inv_icm42600_driver);
-> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/ii=
-o/imu/inv_icm42600/inv_icm42600_spi.c
-> index eae5ff7a3cc1..5fe078ddc8a1 100644
-> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-> @@ -67,6 +67,20 @@ static int inv_icm42600_probe(struct spi_device *spi)
->  				       inv_icm42600_spi_bus_setup);
->  }
-> =20
-> +/*
-> + * device id table is used to identify what device can be
-> + * supported by this driver
-> + */
-> +static const struct spi_device_id inv_icm42600_id[] =3D {
-> +	{"icm42600", INV_CHIP_ICM42600},
-> +	{"icm42602", INV_CHIP_ICM42602},
-> +	{"icm42605", INV_CHIP_ICM42605},
-> +	{"icm42622", INV_CHIP_ICM42622},
-> +	{"icm42631", INV_CHIP_ICM42631},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, inv_icm42600_id);
-> +
->  static const struct of_device_id inv_icm42600_of_matches[] =3D {
->  	{
->  		.compatible =3D "invensense,icm42600",
-> @@ -100,6 +114,7 @@ static struct spi_driver inv_icm42600_driver =3D {
->  		.of_match_table =3D inv_icm42600_of_matches,
->  		.pm =3D pm_ptr(&inv_icm42600_pm_ops),
->  	},
-> +	.id_table =3D inv_icm42600_id,
->  	.probe =3D inv_icm42600_probe,
->  };
->  module_spi_driver(inv_icm42600_driver);
-
+Best regards,
+Tóth János
 
