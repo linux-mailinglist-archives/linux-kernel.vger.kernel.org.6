@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-301047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA39495EBD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:26:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC86A95EBD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC0A1C21940
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:26:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 498B8B24EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24821172798;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C637A17AE1C;
 	Mon, 26 Aug 2024 08:21:06 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D3E14430E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4E0154458
 	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660465; cv=none; b=gGHIpyGHLrvQegdK7iMVtluGurcgdHARiKoIXi6azESV0Ccx7LAyBuPfA50pyUKK6UunLITlNu7Ys9uEZC9AitgThN1aYeMS9h0xcpg7mI0R6TAdy5YA8rtYqzqJOgqNvvHo7gl1/YFYUOe6NyLRvqpjGwz7itBVFDCxAIwu7Eo=
+	t=1724660466; cv=none; b=k29kNMe3zvyIE/GD29VMC/gkoD/n2/adiIb3ukV1cC/6KL7SxF2kv2EsELPtu+9HoI1bGIel+nvIaLUDWC18lxTIb8pdv152ACeNqIdwqp6S9bk+kRKOlZfOcorSUVs3iyxCKnN8r/POSYwW/uL+1OXgKLiZ7istdfsJke4keZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660465; c=relaxed/simple;
-	bh=CFXwQtaRxFYcIiQIJWllgwYc8dBwaJAt5TRD2jKy+yg=;
+	s=arc-20240116; t=1724660466; c=relaxed/simple;
+	bh=/UkdKZ07rjAMo1NkFVRpRJv3Vu7W9nRDzv0QA43jVJI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VwJAJmy1h4CSgJttiUnHN7esPstA2R6EtXT5lJ4VczijipL+jo0yU89139FW4Dbsaq207cGAS99bQYZrpwqh/+I9QiDsC7q3oGK7gsh7LdrJjvEHa7IlFt9L97StzoTU6fmA0AfudrjakZrOTeRyt2G4/xYbku5RIICiFCta58Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	 MIME-Version:Content-Type; b=WxxeCov0wlvpwvDgLMRTQj2Qtg8pLL2Zi7LbqIUGS1PzaReml2PWNSVQXqT5Y1hPPB/HDtfo3sDvzaRaXYRWJwHlbBN40rMMG1/TUsfZBaI0A9Tf+eEPME3TUddlMbV5cfp0pvDMT047IbIv2J7cNo5J/+iSKhZlvm5cMewRP8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WskC91Hfpz2CnbF;
-	Mon, 26 Aug 2024 16:20:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wsk9R21hpzpStw;
+	Mon, 26 Aug 2024 16:19:23 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id C1D1E1A0188;
-	Mon, 26 Aug 2024 16:21:01 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 1AC0F18006C;
+	Mon, 26 Aug 2024 16:21:02 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
@@ -42,9 +42,9 @@ From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <lee@kernel.org>, <linux-kernel@vger.kernel.org>, <krzk@kernel.org>,
 	<jic23@kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 08/12] mtd: rawnand: meson: Use for_each_child_of_node_scoped()
-Date: Mon, 26 Aug 2024 16:28:43 +0800
-Message-ID: <20240826082847.2591036-9-ruanjinjie@huawei.com>
+Subject: [PATCH -next 09/12] mtd: rawnand: mtk: Use for_each_child_of_node_scoped()
+Date: Mon, 26 Aug 2024 16:28:44 +0800
+Message-ID: <20240826082847.2591036-10-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240826082847.2591036-1-ruanjinjie@huawei.com>
 References: <20240826082847.2591036-1-ruanjinjie@huawei.com>
@@ -64,15 +64,15 @@ from the loop.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- drivers/mtd/nand/raw/meson_nand.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/nand/raw/mtk_nand.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-index 9eb5470344d0..8806a06462ac 100644
---- a/drivers/mtd/nand/raw/meson_nand.c
-+++ b/drivers/mtd/nand/raw/meson_nand.c
-@@ -1495,14 +1495,12 @@ static int meson_nfc_nand_chips_init(struct device *dev,
- 				     struct meson_nfc *nfc)
+diff --git a/drivers/mtd/nand/raw/mtk_nand.c b/drivers/mtd/nand/raw/mtk_nand.c
+index 17477bb2d48f..d65e6371675b 100644
+--- a/drivers/mtd/nand/raw/mtk_nand.c
++++ b/drivers/mtd/nand/raw/mtk_nand.c
+@@ -1432,15 +1432,12 @@ static int mtk_nfc_nand_chip_init(struct device *dev, struct mtk_nfc *nfc,
+ static int mtk_nfc_nand_chips_init(struct device *dev, struct mtk_nfc *nfc)
  {
  	struct device_node *np = dev->of_node;
 -	struct device_node *nand_np;
@@ -80,13 +80,15 @@ index 9eb5470344d0..8806a06462ac 100644
  
 -	for_each_child_of_node(np, nand_np) {
 +	for_each_child_of_node_scoped(np, nand_np) {
- 		ret = meson_nfc_nand_chip_init(dev, nfc, nand_np);
- 		if (ret) {
- 			meson_nfc_nand_chip_cleanup(nfc);
+ 		ret = mtk_nfc_nand_chip_init(dev, nfc, nand_np);
+-		if (ret) {
 -			of_node_put(nand_np);
++		if (ret)
  			return ret;
- 		}
+-		}
  	}
+ 
+ 	return 0;
 -- 
 2.34.1
 
