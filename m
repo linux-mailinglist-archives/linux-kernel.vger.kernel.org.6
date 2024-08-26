@@ -1,210 +1,158 @@
-Return-Path: <linux-kernel+bounces-301924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5518295F771
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:09:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BC495F772
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A43C282FFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D331C219BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C56198A2C;
-	Mon, 26 Aug 2024 17:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5C5198A0D;
+	Mon, 26 Aug 2024 17:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+NKdVm+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p8d/OM50"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19F018D64D;
-	Mon, 26 Aug 2024 17:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5CF18D64D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692157; cv=none; b=dhBZujzyyGGI+OkpQ/lM9r5aNKcuH36DK5fz+x/bbWmF1PxjZrGDhSEBEvD9tsGQowO41FmTkYQMbYYSzHBqOKVzMdVq/Al5Y49juydVz6lU+GXxF0VNO9/3Ml6hQk7gGGHHATRY+0Sn4/KeS8Qt6AnnTfS2ITgfNtT8tzwEpx0=
+	t=1724692175; cv=none; b=n2VJPt/5AtX36oFihNg0k1tV/+UR0H9mneU1XyGrjFI+cs2eidZixebfjyzFaIOGrmsPosn5qHrgl7ftn8EsMGF0F9hNLs+e+Xtz7+e76TICx+YeqX6Ocqj93huRaWkamqrnomuH9k5Hvfh1bK3vZXuXBS8DnFsUYZZ+Zzt2sBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692157; c=relaxed/simple;
-	bh=o0yrJMcWN9NhQiyL6wLf2W3XPIcdo7ahAbqDUogj2kI=;
+	s=arc-20240116; t=1724692175; c=relaxed/simple;
+	bh=UkMKhXbxUysCKnginI4+ViBJH9lR3aoTZZDC0L1LmJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUtoymrw8rhfH7uEWnt4/Zm/fX6i81Osv5jxvCE4Vro6KtuVwcNiZqta9jxr8KB3X44/NsJPf5INOps3vZNL4JNSY3yRY975+QYJx/O+zzhOfeHRTw0hfP+MCRVObqku3X5VS4g5GV+J5Z7gqnwPoCXex0bgeHiVOf5GYr3xJgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+NKdVm+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E69ABC5828E;
-	Mon, 26 Aug 2024 17:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724692156;
-	bh=o0yrJMcWN9NhQiyL6wLf2W3XPIcdo7ahAbqDUogj2kI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+NKdVm+js++0+tUNii5X3zd86+JbZqnR5lwn7PRQdfmSWAuf/jPFpLfK/nDRPBV1
-	 QuL866WhBf2qaa5M3S5LiUSm9VEKJhEyUUISkLIB7FhTT7Fk4ZYRATlqR/cVOnH2Ex
-	 imv3IwC9Zws7uJhkg5ykDa4tRxRJmzMzKdM60lZkfARGazZdpy9hWplHoC7cGAhYaG
-	 MZjVU3GcCf8a+kZwmG1bMiJm4QbADmyS3LD/ZtBF9wO89s9/jVbhuD9LrO7FWIAiA3
-	 v69Q1qpAVOFc1hARm/tmwKmLSPg4HpoPbS+UvgU340zSSdzKEH3+IPqUmUA2tQeeT1
-	 X2vFCbRQ83fUw==
-Date: Mon, 26 Aug 2024 18:09:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	gregkh@linuxfoundation.org, mturquette@baylibre.com,
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
- #reset-cells for RZ/G3S
-Message-ID: <20240826-daycare-freewill-c0e1400bf255@spud>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
- <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
- <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
- <20240823-plywood-unfixed-d8d8a2d93f14@spud>
- <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
- <20240823-dilute-juggle-7e2d43b8b630@spud>
- <7b16791b-0d7b-49a1-82aa-c4db99ff2bfd@tuxon.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkHWvaffmt/m29OMGuclekP33PnZ6/B4K9vGNwhsLcUJP0OljRMa6VimIDy+hA5FiRyAotfWG+y/ZWyw8CH13A7OWCVNVSEnXjbXuEaQPZbysDqIZoA4Fym+li/aZU5U787tqkK654RN6QRLR9QTUTbJC3ugzIAOe5lLRKc3gPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p8d/OM50; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Aug 2024 13:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724692170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U2AMIywTyKt2xwzTJWAd9krzomxqoEAnx2EiULkeoSA=;
+	b=p8d/OM50msHKVzPngdMQXX0eCpLZKmh4oIrsEBNxBngJ54eLjKpoxnPc0CG1nZrIQSUzHM
+	4dvUdiM/Mr5ylqaIljmWmNqlmY5DAkizfkqUBeWpkYIDJg5bU82lGZj+jFQ4i4qtoYdPXO
+	j0MkUSuBt59dpfEhNlfPIQuYHDxVp80=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, vbabka@suse.cz, 
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, akpm@linux-foundation.org, cl@linux.com, 
+	mhocko@kernel.org, urezki@gmail.com, neeraj.upadhyay@kernel.org
+Subject: Re: [PATCH 6/9] rcu: rcu_pending
+Message-ID: <gqgocomsljkn5sw2jvm432peesjuclfjwd2sasec3kg6tofk5t@ry7rkoo2auek>
+References: <20240819165939.745801-1-kent.overstreet@linux.dev>
+ <20240819165939.745801-7-kent.overstreet@linux.dev>
+ <adc8b09e-5f66-44de-845b-e615069c2e20@paulmck-laptop>
+ <yfhctftdn4itupt735u7dnu2zt2aarm3lzvmyf6bs7hkv4radc@ndw4nsinxhqx>
+ <f7266ab4-aa29-4cbc-a63e-fa582e266864@paulmck-laptop>
+ <4zkfyn2shwot2zxiahn7zt7k2gpnoavyrldzzwo23qqxr6fvfh@xqlz4vehkln5>
+ <4e4a5c89-e9ec-421e-8245-f076044866c9@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kphp1gQZZmvGGz7y"
-Content-Disposition: inline
-In-Reply-To: <7b16791b-0d7b-49a1-82aa-c4db99ff2bfd@tuxon.dev>
-
-
---kphp1gQZZmvGGz7y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4e4a5c89-e9ec-421e-8245-f076044866c9@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 26, 2024 at 01:15:43PM +0300, claudiu beznea wrote:
->=20
->=20
-> On 23.08.2024 19:33, Conor Dooley wrote:
-> > On Fri, Aug 23, 2024 at 07:26:42PM +0300, claudiu beznea wrote:
-> >> On 23.08.2024 19:18, Conor Dooley wrote:
-> >>> On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
-> >>>> Hi, Conor,
-> >>>>
-> >>>> On 22.08.2024 19:42, Conor Dooley wrote:
-> >>>>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
-> >>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>>>
-> >>>>>> The RZ/G3S System controller has registers to control signals that=
- need
-> >>>>>> to be de-asserted/asserted before/after different SoC areas are po=
-wer
-> >>>>>> on/off. This signals are implemented as reset signals. For this do=
-cument
-> >>>>>> the #reset-cells property.
-> >>>>>>
-> >>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>>> ---
-> >>>>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 +++++++++++=
-+++++
-> >>>>>>  1 file changed, 16 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas=
-,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rz=
-g2l-sysc.yaml
-> >>>>>> index 4386b2c3fa4d..6b0bb34485d9 100644
-> >>>>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-=
-sysc.yaml
-> >>>>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-=
-sysc.yaml
-> >>>>>> @@ -42,12 +42,28 @@ properties:
-> >>>>>>        - const: cm33stbyr_int
-> >>>>>>        - const: ca55_deny
-> >>>>>> =20
-> >>>>>> +  "#reset-cells":
-> >>>>>> +    const: 1
-> >>>>>> +
-> >>>>>>  required:
-> >>>>>>    - compatible
-> >>>>>>    - reg
-> >>>>>> =20
-> >>>>>>  additionalProperties: false
-> >>>>>> =20
-> >>>>>> +allOf:
-> >>>>>> +  - if:
-> >>>>>> +      properties:
-> >>>>>> +        compatible:
-> >>>>>> +          contains:
-> >>>>>> +            const: renesas,r9a08g045-sysc
-> >>>>>> +    then:
-> >>>>>> +      required:
-> >>>>>> +        - "#reset-cells"
-> >>>>>
-> >>>>> Given this is new required property on an existing platform, I'd ex=
-pect
-> >>>>> some mention of why it used to be okay to not have this but is now
-> >>>>> required. Did firmware or a bootloader stage take things out of res=
-et?
-> >>>>
-> >>>> On previous SoCs the SYS controller has no support for controlling t=
-he
-> >>>> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
-> >>>> I'll add a note about this on next version.
-> >>>
-> >>> My initial thought here wasn't about previous SoCs though, it was
-> >>> because you didn't add the compatible in this series for /this/ SoC.
-> >>
-> >> RZ/G3S compatible is already present in this file:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
-> >=20
-> > I know, first thing I did when I read the original patch was open the
-> > file ;)
-> > I don't care about the old SoCs, cos you're not applying the property to
-> > them, so what's changed between SoCs isn't really relevant. It's a ment=
-ion
-> > of why, on this SoC, it is safe to add new required properties that I w=
-ant.
->=20
->=20
-> >=20
-> > AFAIU the answer is that no consumer of the resets existed before, so
->=20
-> That's true.
->=20
-> > there's not some special state there, and I am guessing that the new
-> > sysc driver you're adding isn't going to fail to probe if there are no
-> > resets,=20
->=20
-> That's true.
->=20
-> it just won't register a reset controller?
->=20
-> It will register it but,
->=20
-> the new sysc driver is going to probe only for this SoC (RZ/G3S). On RZ/G=
-3S
-> we have 2 resets. These well be registered unconditionally, currently, on=
-ly
-> for RZ/G3S. If there will be no DT users for it then it should be no
-> problem, AFAICT.
+On Mon, Aug 26, 2024 at 09:01:54AM GMT, Paul E. McKenney wrote:
+> But get_state_synchronize_srcu() is still a function call.  But the
+> offer of a function that checks multiple grace-period-state cookies in
+> one call still stands.
 
-Okay, sounds it doesn't break for existing devicetrees.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+It shouldn't be though, it's just reading a sequence number - I'd much
+prefer if it could be at least a static inline.
 
-Thanks,
-Conor.
+Which you won't want to do, because it would mean exposing RCU private
+data structures; hence my approach of exposing an RCU-only api for
+getting a pointer to the sequence number.
 
---kphp1gQZZmvGGz7y
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> > In my current version of the code, we call __get_state_synchronize_rcu()
+> > after we've disabled interrupts; we know the rcu gp seq isn't going to
+> > tick while we're in the critical path. But this doesn't apply if it's
+> > for SRCU, and I don't want to add if (src) srcu_read_lock() branches to
+> > it.
+> 
+> Actually, disabling interrupts does *not* prevent RCU's grace-period 
+> sequence number from changing.  For example, the following really can
+> happen:
+> 
+> o	RCU notices that the current grace period can end.
+> 
+> o	A CPU disables interrupts here.
+> 
+> o	A call to get_state_synchronize_rcu() returns a cookie
+> 	corresponding to the end of the grace period following the
+> 	current one.
+> 
+> o	RCU ends the current grace period, therefore updating the
+> 	grace-period sequence number.
+> 
+> o	RCU starts a new grace period, therefore updating the
+> 	grace-period sequence number once again.
+> 
+> o	RCU cannot complete this new grace period until that CPU
+> 	re-enables interrupts, but it has already updated its grace-period
+> 	sequence number not once, but twice.
+> 
+> So if your code knows that RCU's grace-period sequence number cannot
+> change while a given CPU has interrupts disabled, that code has a bug.
+> A low-probability bug, perhaps, but if your code is running on enough
+> systems, it will make its presence known.
 
------BEGIN PGP SIGNATURE-----
+Ok, good to know
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsy2tQAKCRB4tDGHoIJi
-0rV7AP9DZ2q3xfYMx00ty17Bs3eDE/3N2vWVqh51vuQzlmHBaQD+MSrwIUvtdEhg
-jiaBBICMFZmTjei0JYXu91UpMiCd9AM=
-=MJwd
------END PGP SIGNATURE-----
+> 
+> > Not at all essential, the races that result from this are harmless, but
+> > if we e.g. decide it's worthwhile to only kick off a gp if it hasn't
+> > ticked (i.e. only kick rcu if we're still on seq of the object being
+> > enqueued) it'd be nice.
+> 
+> Why not call get_state_synchronize_rcu(), and ask for a new grace period
+> if the value returned is different than that from the previous call?
 
---kphp1gQZZmvGGz7y--
+We don't want to falsely think the object expires later than it actually
+does, and have more accumulated work than we need to.
+
+> > Funny, I had the same thoughts trying to read your code... :)
+> 
+> Amazing how much easier it is to generate new code than to understand
+> existing code, isn't it?  ;-)
+
+I would have much preferred if your existing code worked with SRCU. You
+think I'm doing this for fun?
+
+> > > Plus, unlike kfree_rcu() post-grace-period handling, call_rcu() callback
+> > > functions usually access the memory block passed to them, which means
+> > > that they are incurring that per-element cache miss in any case.
+> > 
+> > True. But this would allow us to prefetch those objects (several
+> > iterations in advance).
+> 
+> I need to see a CPU on which this actually make a significant difference
+> before adding this sort of complexity.
+
+We would of course want benchmarks to show that this was worthwhile
+before switching call_rcu(), since absent a performance improvement we'd
+want to stick with the approach that doesn't allocate memory.
+
+> > Just processing a few items? hmm, would we want to though, when
+> > otherwise we'd be calling kfree_bulk()? I think icache locality means
+> > we'd generally prefer not to.
+> 
+> You might not want to yet, but you eventually would want this.
+
+Because?
 
