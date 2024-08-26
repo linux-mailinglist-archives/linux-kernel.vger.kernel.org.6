@@ -1,200 +1,189 @@
-Return-Path: <linux-kernel+bounces-301563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA6095F295
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEB695F299
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA014280EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83ECD1C21CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470C817C9AB;
-	Mon, 26 Aug 2024 13:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3614184546;
+	Mon, 26 Aug 2024 13:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WscjqlGu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uk3tXB7b"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19306F31E
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678129; cv=none; b=VZ0j6r6oz9PytnXL8xhAtcH+bub+lQ6BUc0H3rNoYPTjGogHNXQ3/ULaHV0dARzMr6LsVBvt55V0WC1M3+q5fz5ma4zsi2ao+mJMaw7p/IcGFz63tUzUGuT24j5srqXrfFM19pCRuqQBRpc0KXctcUVeRdrORGqWn+3AlZbInnc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678129; c=relaxed/simple;
-	bh=nbx+j22z+ZKthYT5nToIsmG33413+1GTdP6YPI2cyto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a1uJG8rrV4X0dA/ml+VqjgwvG8OKM++Uq8VU3NOAo8kPEImwkaOwNALHbyQC7V066H8nEowbHBFk5ubNkC0A9ZhEgM3IvSBQSZH59oqTPZxWh1RMq2fL4emLflx8iwQUeWAWV2h5i4pjvRLeL1NJMZRkbF7Pg+WpAW5UHjsrlHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WscjqlGu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724678126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HlU9cDRS151p3RNA7bzVGSnTyd6HT4EiI2pPDBkoArU=;
-	b=WscjqlGu9NdB3dt/N7h1k5b6lHLZdBaEjAsHig0Z6i6ELP9+qubMIWAjCz+g6FcBTEZ8Ry
-	KidxTn1TQRvoclmgM++R5fZyWnVCKNSpThR8J8T4BFAHcww4BN1Mjh0lgYa2aQUAKuX9b0
-	y9xEyOAACf2C9tgDqOZl3xlXPVF3Vpo=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-310-7zPMlMzZPPWr6ft2ETs-3Q-1; Mon, 26 Aug 2024 09:15:23 -0400
-X-MC-Unique: 7zPMlMzZPPWr6ft2ETs-3Q-1
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2705e14211dso7078125fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 06:15:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724678123; x=1725282923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HlU9cDRS151p3RNA7bzVGSnTyd6HT4EiI2pPDBkoArU=;
-        b=i9DF6WfTnh4Qd935DB805v1yX9ZstrQRHHbmjKvydVPIWkKD2YR01lrFkVHSd7Kpex
-         eKpiUxE9nY1P5Bcm3IRJJCU4rfsxdgT2nzlDsfZX+PbueFvfstfQxSwI4JmMYEsHV4mX
-         qq091rY111eWdu4SI/3TwAxmdG/YWx/OUgjg2x7TNohJwXjpwo17G2cZii9y5q9l564K
-         nXpFkTu1l8mAXMLK/cskhpLLhg3wOgOam2eeUxuasubsgq/JvFH7Ja+Aa+Inqw587VBY
-         tUudnjIbEt22dqgXszb8FDagj7nF2ro+64mZLga4t6mKd2JqYpRZkto5xdqbQ05hsmAW
-         6kAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzemasCP548S+HYHJrJ3aLgbRbcjdsp+/RvYwGDQMf4rVQoRCYtuFf0sg5vWPbIJxlo1MRzGjz+fWrd7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHwBbW5OuyGkZKZrQzsX1LjXdPLb6qSziP97aN2QbpxvZZHiBn
-	Qpx2FzfYZdMDiHYBYgIOE6StV0ID5jRXikdEW8upAumVo8gXs546fLoyjDPfacmFb+lElxgcyBu
-	L7d9EntT88lpDotIwMMw2UogYHlJhScbcc7c718r1iJUeuOpvR00KKIkvOBQ3Q3YATica3gKv/R
-	bhSk627fsQhjfXaE/O9pdFRplHqST9Hf7rwdSpjAsImJOV+BM=
-X-Received: by 2002:a05:6870:e0c9:b0:25d:f285:d008 with SMTP id 586e51a60fabf-273e63f21e6mr11597747fac.7.1724678122702;
-        Mon, 26 Aug 2024 06:15:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzq2bSMG3n1mMWMxD3e9ncSJzObbAvcFCnCPnp8GOZioFDMaUJRjND+0VdyhQ/m7KU7RFZ8Thw8coLI6QWg6c=
-X-Received: by 2002:a05:6870:e0c9:b0:25d:f285:d008 with SMTP id
- 586e51a60fabf-273e63f21e6mr11597712fac.7.1724678122259; Mon, 26 Aug 2024
- 06:15:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3016F31E;
+	Mon, 26 Aug 2024 13:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724678201; cv=fail; b=ik3LIOTZPkCnTpEehpadY1YLarfbRXt8SaDlyW+DaKKIjKMGI8KRbgGtLoVF4TbFEJy7MY4X+XQaVF+pMxetyPn2PVxTIYvtfnm2hQ/Z9JZfBJj477kdr8LE5n6qiH8eWMNa7uDLy1irMc0NS//MI3DQANxz6M+hPp8VmlyGTkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724678201; c=relaxed/simple;
+	bh=LmfwZSoJaJexc+HW468+UUjSwAAKtF/drMJ67p5zgaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m2oBaoX2xbIJAjyXxE/05aloLBRaL7MseDhR0ff4u7GDd0K8Q1Ety6Y2tmRCSELBvlWWuMMHpjFnn/2DHg+aE/NFIJhsrMc9kkQyRUkHOkFM3kFGes2esGvs5D+4JC2BEI5LuomvJuyd7bVmVKrNDxOHw2xP7JX5UC5iTkcTw5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uk3tXB7b; arc=fail smtp.client-ip=40.107.237.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j6uxE42EWcKo972JPkfq9KcbVx8CQLbYq/OkrwakIEO6nhNItHThAlf9IN9IadGCSJqg5dHfHa6k7uu/h48dy3RyKYlpyr7i5ngYpDGQsfHXhjFE6Fz/bmaoCUcyreaI9eJKbo11GLGjKn1LAhtRJ74XaQtSZFljfgmjjmN12Hyqc7A7jLEgG+7dokvFIlyMywYw4Xj/ti/6QUR/to1ZuMsHL17RNQqftqfeOUSHFVIOcC0C4gnTSPVEcxTn/GGGmf3cgg1HIGrdmDcXvrTdefEXco2qQ1aZwWcSWP/af8KWltSUVfLPUHRYBGsYI5sTu9j/Fe20imM4JyvHE94UNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eihdWNSJv/TNB7zn/IyEUzMA13YI25kLXCI46OjptEo=;
+ b=RCNdxGzpXio/p5tbA1P7IeDPHHfdYP+uFB2RCB4OOlcV22/wxdRLUsdm0HTH+7LtRoNBeiP8jGg4lrj/WzktpA46DR05fbVXW0cxlpPDATWv1mt6dyDjgFSmv1t41NcfmsPS2iNFofOVe0uNV0BoorMvaPVeXGNPKBWqQ9fSLbPyNOu03vge+l9iibD05EwYAzJLCOH1gCZlFMUe9SYYsyDGjBvuHq+U98MY+E5SdObCplrSa1IapSulYOSkuAR2Nn9FTv/keLOADpEwVAD/61TH159u9veFiJpNVeGQxUBwifbCtv1Fb6+TI7umpSTGsn7uUTHpiZF2cdSEJOpspw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eihdWNSJv/TNB7zn/IyEUzMA13YI25kLXCI46OjptEo=;
+ b=Uk3tXB7bhidSxqq86ng68DPZG3+W1UcX4Adlcqc+kW0V9HHIJo0bmFG3AtxWTizZvYQ4xO8epuxIfpl0AoC7H3bC+09UV9oGZ6qz/+7qZtJZwtmxRIN1ZvOJp26y0RIm8AElYaZN3QUIkeN0uEBbb3T75IfY/rjIHOd4JbzdKgc9j0CPIsI+xrXVlRzQEmONzmJRQQxfXs/GfkR8cAJEyLJyx6oSkZla7os1djvo8EIOoitb3EQEm4VCYIjX/9Iuz/RFbI7V+6C1CPiUTN+/zB1mW6czK3d8ji1laAAkTta2wnVYyNmrFClKusgiuF/qnBmrXwM8dU4O8yHOv/+lvg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by SA1PR12MB8919.namprd12.prod.outlook.com (2603:10b6:806:38e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
+ 2024 13:16:36 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 13:16:36 +0000
+Date: Mon, 26 Aug 2024 10:16:35 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: leon@kernel.org, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 for-next 1/3] RDMA/core: Provide
+ rdma_user_mmap_disassociate() to disassociate mmap pages
+Message-ID: <20240826131635.GJ3773488@nvidia.com>
+References: <20240812125640.1003948-1-huangjunxian6@hisilicon.com>
+ <20240812125640.1003948-2-huangjunxian6@hisilicon.com>
+ <20240823152501.GB2342875@nvidia.com>
+ <29b2b4a5-7cdb-4e08-3503-02e4d1123a66@hisilicon.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29b2b4a5-7cdb-4e08-3503-02e4d1123a66@hisilicon.com>
+X-ClientProxiedBy: BN9PR03CA0041.namprd03.prod.outlook.com
+ (2603:10b6:408:fb::16) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826120205.5506-1-liwang@redhat.com> <CAEemH2dYB3tyG4xjE_b1rGBRqtCDOwByq5ZdA0VUxvL3nqW0Vw@mail.gmail.com>
-In-Reply-To: <CAEemH2dYB3tyG4xjE_b1rGBRqtCDOwByq5ZdA0VUxvL3nqW0Vw@mail.gmail.com>
-From: Jan Stancek <jstancek@redhat.com>
-Date: Mon, 26 Aug 2024 15:15:06 +0200
-Message-ID: <CAASaF6xh7_wXiFn9LakEv-LY-szkZ+5fJ0B67ygdCV0g4T-89Q@mail.gmail.com>
-Subject: Re: [LTP] [PATCH] ioctl_loop06: no validate block size
-To: Li Wang <liwang@redhat.com>
-Cc: ltp@lists.linux.it, John Garry <john.g.garry@oracle.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SA1PR12MB8919:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a3816c2-d15f-487b-4141-08dcc5d15015
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Pj6vElOsyUtMLAcIVh5CGX19TodDEXjsffBRa1GSIFn6IsIv0LMmCApQeStl?=
+ =?us-ascii?Q?9Yz9SxZxUoLm9TugQhyeitq8T9p2BJaDgByTcWvY2Pw8fg8E/2ecqzlbQu1A?=
+ =?us-ascii?Q?rjEtVzCI2pfqVoymgHqSeWyCRVm9wa4O75NAZ0zT5+/lS0biFi7JFW3GClz4?=
+ =?us-ascii?Q?mCqUSfYhNLCa5r3UwRvSCkXLIA8NyxiT/X0RpIu/Uw75S7IdkV6klF0c7NGn?=
+ =?us-ascii?Q?bLNBZfN42lbEJtXGLbsGDAFWp5DZixhdxgwxglM9hKRDVqJbO/dUM1kSXZ7/?=
+ =?us-ascii?Q?zsyisjvNYWR6uMZprBuso0WSWeVqcJk9PQdyF5AC8E3ihXvHK0DpuAt0HX8S?=
+ =?us-ascii?Q?lLVL/UPHZ4uJz+YDyJyrp44vi1EjM+tua581lUnqk0PROaJy0Fq1knHdJR3T?=
+ =?us-ascii?Q?PIfBbTV+qFmOdrpHbQKq77F/B/ypNZH98fAEK0JU2tOmV+7Vls9q3xkn3ph4?=
+ =?us-ascii?Q?wRMErgVkEpuUe9xQOotkUERF+z0PHvw8qyiUa07NSfhcYjMVJsavPnWt56OJ?=
+ =?us-ascii?Q?LBC0Xam72erDSpRZ1HJi4HrDOBYAh6eiMPD+rFMxjY8tKDBaFn281TuEFzSy?=
+ =?us-ascii?Q?Ps2RDhw59bUkiYO+tsP9LFn+Zr/R60grIIdJLTnD2Jd7m6g2wkhZSsmudz47?=
+ =?us-ascii?Q?gJ30Ut+HWir81ouNOnp/BRFMW+2o6rF6jkgmFwHuqzGJFTRCDR/wdrzlLVdg?=
+ =?us-ascii?Q?iPjC1X65BCdMAruFb91NXaC3yzasTtQYHy22uRs9oovPZUt1gPDRXVpIK10S?=
+ =?us-ascii?Q?KhGcvTrYjlBlDq31Jsf1qJ1xUbhF0S2LnNkhGFogAnTGu6TgIYq+PVwTvxmq?=
+ =?us-ascii?Q?+wZxAMWnRDCfE/99OqFdarRTm64vTFo51e/FzI07OXKmbAYv063Sj/OwUsoN?=
+ =?us-ascii?Q?fpuNW+GBD0PjMxh54IXkBqjm5wMI40oBVJO86l6icAKcCkDU3Tu/R7Irv0Uq?=
+ =?us-ascii?Q?w7ja/NTSSmZBv3m55wW+QPaxYo086MUC3AOSqq2Qnf+yk50iGzt4EgkSo9db?=
+ =?us-ascii?Q?A4hoVghJQnnppBjbINe75/G6yQwKvMdPss3Qi365DlNbqsVm8b2ygtKb0Mp5?=
+ =?us-ascii?Q?iIg7GKjd7SKGEwmjkl6HZdpOBSW5OtXhDzFjALsX+1LKITiGEAinWgv9yP1L?=
+ =?us-ascii?Q?H2qcd8wC6+PSo41iZZ1G25eat7xyp6DkwFOvFjkcwwc1uKaxZLPDWZXLPzuz?=
+ =?us-ascii?Q?P4vwSNgNNmamobFIUI7KyrxRaRwjzx2JJsQcxlmWo3hxpyRIM4IrUxjr0yVq?=
+ =?us-ascii?Q?NI92O951u8mEpty82AI+/oHmfoJ6SKdThFrHBtNnbmlNbnECXBdj4xjhGQJS?=
+ =?us-ascii?Q?0fKgG0eRS9BaPTlq0YOAu0fpG/XeICNrkEXa315S1qYEZg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bfT5oELBNN+4JLtJWNI/MLrVH9iSPbaPgjPGZc6Iin0K9/bUSmV9wRDsyj4c?=
+ =?us-ascii?Q?jbGS7ut6cggBzWoO/sfzNVLpVLBHsm5A72PwBfWa4yNSERy57sX3MZTFZktP?=
+ =?us-ascii?Q?Ozetpyf+kT9fB4mHbpg2f1PsPgMGRoqY/WUDz7TRJVwptK5X1+0vT10OYB9A?=
+ =?us-ascii?Q?NPTxYk3ObbMAIPcOPCHRuWx7zbtKPczFVSfVLK9gI/53lHe5/MqZc882Kotf?=
+ =?us-ascii?Q?RBrM6AspaXWrI+sr3VVRuXSBIn/vfWZkGNKrusOu1vs3IMv4CrYgSkFbVRI2?=
+ =?us-ascii?Q?K4Izvz+L+4cdfOtGnz2W9+eNgOEbf/dJkpWbjaL0SeO6/vLgNC/78iEbA3TD?=
+ =?us-ascii?Q?odWBh09JrEOckrqJ2kvXwitNxUqUiev0Xj2ZJ1R9IGfPyAcIk/VzvPn4x2vO?=
+ =?us-ascii?Q?Y8lw6TsaxLzb1RZE7gV/Jyz7sRJoL+/dru/3AOOFg4nazHdv8a372IhVSImi?=
+ =?us-ascii?Q?jzvVfhlFVv5+OSi5eH5S6EnhI8ARf8llFHhHEiGh1fjQUqfsy3w3NXdSybSO?=
+ =?us-ascii?Q?gDXFDNAA2k+e1LhpfOsW0JZgZxnDDfkAt265i4SQjJcwrP2sxQ+7T4iWcN/V?=
+ =?us-ascii?Q?eBZOINym9MjZjS0rMBYpt7JgLrAOuBN+jmFmqeDABN8giSD/An8R//8PEIu2?=
+ =?us-ascii?Q?QuagjxVmw5hFPQesDYGGdWGW4Rx8Lcysl1NxLw8gavej/KZky038HlJt/5hx?=
+ =?us-ascii?Q?nk6/8Wbv6+728Die2TIMgIhDDzIGP+FMoxqDkeovGPfyN9Hb2W1dcWLPqv82?=
+ =?us-ascii?Q?RPnJACZ2e8vDbBrq2PgTTK9hkqsp/gQPNctfxXxY9AsZqTO80RDXGMtWBOzF?=
+ =?us-ascii?Q?7o72aEOaSlUWJrURYa/wBL+6SdTo0+NKs7YtNemNPsPYaXMssUpI0ZqKzFFm?=
+ =?us-ascii?Q?bz+Gx8ZVR/9N1jg3pVp2dGSfKWOFCofdgvIQ/7WzePTSl2qzu9DBNQzFZ1vm?=
+ =?us-ascii?Q?I5/wpa5/ZXiYAxJChBqbeWJ3m6RQ4eHJi5nmYguMfsD9E2WMoBxzKUt5e+na?=
+ =?us-ascii?Q?vz8QQPHDn77a+WFb5jffokqtkQFuy/uh3CrkUDtnynFcpbYrNMPkIBIsfuVa?=
+ =?us-ascii?Q?uNxwdF4bB1DvszWzwveB0yCfiHokJqroS7H9lRusB/k7fpEduDxwcYXBLyuT?=
+ =?us-ascii?Q?Z6a8FVCGkt990jjGZ+UGz//CTrp6Ji0EXuP/Dxj1KL26c/QATTby7A2SP4Ll?=
+ =?us-ascii?Q?W8bZ+7GOMQdJdt/WHKwcZPcyjSGbUlsYhL83VZMRrgOLHX+u6PMtRH7Ae5jo?=
+ =?us-ascii?Q?yMAtUSf4SStgN9d4VD6ImhbrKZvKxX5NjKwZwsIs5iv4inI56m0LYahUDdov?=
+ =?us-ascii?Q?NyCIJCFh85EpB9/KWwg+9Kq8SzlkOP7hDxvQv228j0u3Z5ToMmLbsEYd/QYM?=
+ =?us-ascii?Q?vntzmK72GuZAzFajOL9IH4JLTZKrrG5HcY5uXR/q/eu65pFDoe4u11URKNU9?=
+ =?us-ascii?Q?WpGN7SMRVJa0VDOmIFgeW0xGh9qhVTHXdhG9e94CUr8gY7M6Xqz/bjweqO3e?=
+ =?us-ascii?Q?TyBkh936+QUc3t2mmOzkEylyTWB7bADRu3qxHUfmH7Q5U14Nh12/FvQ9vNsY?=
+ =?us-ascii?Q?kg7mERJxPsxsT8QS2nOXNVAVbkLngGb0gjfEKLar?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a3816c2-d15f-487b-4141-08dcc5d15015
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 13:16:36.4289
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SfPjK5MPxu/xIFyZJRhRcIqL2k/OlhZpZh8DtdwhNeR1aVQXhN+AQsTPRN+Kr61a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8919
 
-On Mon, Aug 26, 2024 at 2:46=E2=80=AFPM Li Wang <liwang@redhat.com> wrote:
->
-> Hi All,
->
-> On Mon, Aug 26, 2024 at 8:02=E2=80=AFPM Li Wang <liwang@redhat.com> wrote=
-:
->
-> > Since commit 9423c653fe6110 ("loop: Don't bother validating blocksize")
-> > kernel
-> > drop validating blocksize for both loop_configure and loop_set_block_si=
-ze
-> > so
-> > that set large block size succeeds.
-> >
-> > Error log:
-> >   12 ioctl_loop06.c:76: TINFO: Using LOOP_SET_BLOCK_SIZE with arg >
-> > PAGE_SIZE
-> >   13 ioctl_loop06.c:59: TFAIL: Set block size succeed unexpectedly
-> >   ...
-> >   18 ioctl_loop06.c:76: TINFO: Using LOOP_CONFIGURE with block_size >
-> > PAGE_SIZE
-> >   19 ioctl_loop06.c:59:  TFAIL: Set block size succeed unexpectedly
-> >
->
-> Hmm, maybe I was wrong here, the commit says
->
->   "The block queue limits validation does this for us now."
->
-> which indicates the validation is still on.
->
-> So the test failure probably means a kernel bug but not a test problem.
+On Mon, Aug 26, 2024 at 09:12:33PM +0800, Junxian Huang wrote:
+ 
+> diff --git a/drivers/infiniband/core/uverbs.h b/drivers/infiniband/core/uverbs.h
+> index 821d93c8f712..05b589aad5ef 100644
+> --- a/drivers/infiniband/core/uverbs.h
+> +++ b/drivers/infiniband/core/uverbs.h
+> @@ -160,6 +160,9 @@ struct ib_uverbs_file {
+>         struct page *disassociate_page;
+> 
+>         struct xarray           idr;
+> +
+> +       struct mutex disassociation_lock;
+> +       bool disassociated;
+>  };
+> 
+>  struct ib_uverbs_event {
+> diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
+> index 6b4d5a660a2f..6503f9a23211 100644
+> --- a/drivers/infiniband/core/uverbs_main.c
+> +++ b/drivers/infiniband/core/uverbs_main.c
+> @@ -722,12 +722,12 @@ static void rdma_umap_open(struct vm_area_struct *vma)
+>                 return;
+> 
+>         /* We are racing with disassociation */
+> -       if (!down_read_trylock(&ufile->hw_destroy_rwsem))
+> +       if (!mutex_trylock(&ufile->disassociation_lock))
+>                 goto out_zap;
 
-Before the patch, blk_validate_block_size() did validate original
-value as unsigned long,
-after patch it's validated after cast to unsigned short.
+Nonon, don't touch this stuff! It is fine as is
 
-In LTP thread you mentioned it failed on ppc64le/aarch64 and worked on
-x86_64 and s390x.
-Is it by chance now failing only on kernels with 64k page size?
-(Test attempts to set block size to 2*page size.)
+The extra lock should be in the mmap zap functions only
 
->
-> CC block devs to give some advice.
->
->
->
-> >
-> > Signed-off-by: Li Wang <liwang@redhat.com>
-> > ---
-> >  testcases/kernel/syscalls/ioctl/ioctl_loop06.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/testcases/kernel/syscalls/ioctl/ioctl_loop06.c
-> > b/testcases/kernel/syscalls/ioctl/ioctl_loop06.c
-> > index 317f693a0..4aacd284a 100644
-> > --- a/testcases/kernel/syscalls/ioctl/ioctl_loop06.c
-> > +++ b/testcases/kernel/syscalls/ioctl/ioctl_loop06.c
-> > @@ -23,6 +23,7 @@ static char dev_path[1024];
-> >  static int dev_num, dev_fd, file_fd, attach_flag, loop_configure_sup =
-=3D 1;
-> >  static unsigned int invalid_value, half_value, unalign_value;
-> >  static struct loop_config loopconfig;
-> > +static int novalidate_blocksize =3D 0;
-> >
-> >  static struct tcase {
-> >         unsigned int *setvalue;
-> > @@ -74,6 +75,11 @@ static void run(unsigned int n)
-> >         struct tcase *tc =3D &tcases[n];
-> >
-> >         tst_res(TINFO, "%s", tc->message);
-> > +       if ((*(tc->setvalue) =3D=3D invalid_value) && novalidate_blocks=
-ize) {
-> > +               tst_res(TCONF, "Kernel doesn't validate block size, ski=
-p
-> > invalid value test");
-> > +               return;
-> > +       }
-> > +
-> >         if (tc->ioctl_flag =3D=3D LOOP_SET_BLOCK_SIZE) {
-> >                 if (!attach_flag) {
-> >                         tst_attach_device(dev_path, "test.img");
-> > @@ -126,6 +132,9 @@ static void setup(void)
-> >                 return;
-> >         }
-> >         loopconfig.fd =3D file_fd;
-> > +
-> > +       if ((tst_kvercmp(6, 11, 0)) >=3D 0)
-> > +               novalidate_blocksize =3D 1;
-> >  }
-> >
-> >  static void cleanup(void)
-> > --
-> > 2.46.0
-> >
-> >
-> > --
-> > Mailing list info: https://lists.linux.it/listinfo/ltp
-> >
-> >
->
-> --
-> Regards,
-> Li Wang
->
-> --
-> Mailing list info: https://lists.linux.it/listinfo/ltp
-
+Jason
 
