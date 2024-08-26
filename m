@@ -1,262 +1,92 @@
-Return-Path: <linux-kernel+bounces-301975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C9F95F82F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:32:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5866795F830
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA882836D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A461F237AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFB8199947;
-	Mon, 26 Aug 2024 17:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35D1990A5;
+	Mon, 26 Aug 2024 17:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AIKAxsOt"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GlqAxXBR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SqSvGkEU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BCE19923A
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2748919884C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724693490; cv=none; b=Q6Ax9vqwYg+Z2uAwH8qOZ8EEonOum3Wz8BAFN0tXsc/JidXUQUzPQ406ewiPPrz27emCUoUZ7M2foLuuRmJ6BgqU7jc2jIAV56inyPGDor45v36H0TrhyMo6TZj7Jc7scjMLxoqgghZTgL/S0H8Ov3yQDBSlnTkDW56KCbVgbOU=
+	t=1724693514; cv=none; b=bd5tn8f84sDNOyU1xc441s8X/9oVJmevCxw1xKs9EXPVIj4ay+RFetomFbJ8iDoFXuebxWZWDs/jQU4vAPO5xet4uOpAu4MhanmZV93E91LphLWYzda9aamaWQNR/WTXDDe7KOyuPRPc65paNUE1hBsx7VG+QgIjGqtf6TzXXw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724693490; c=relaxed/simple;
-	bh=0dBxXMZA/aM1vT5tilEszeGIyh1nA8wtXz0deuhmGMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m3zHeE/+gIpQzF7WYAZrNDxfvN2UhATkrkqf1WbC3Jwgi3cj3iw/cpC5Et5Lz4V776Iwh2H5SD6es/9UGM+9e2FeoITr6hFPieFl5SbNbt3ObniU/ZVhOp3z/TNJXcsQjw29u6byW4AZciN7UN1tiif2KDZbYV/R2f2qS/QmrF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AIKAxsOt; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso7688155e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724693487; x=1725298287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T370sUu57dJFmbuCp0n0YvqcvgntixC3zniQ7Z2kajQ=;
-        b=AIKAxsOtAPBdu3FMRztjMS3nBDnh0rn2jISHsCXqXONknU2JFOvn0mnVZvwDaWLU/F
-         L8PzJDSmqoLmjIYarY8wx/L60uZTv6K5dDBNCeb+xsLhhOxS6rMMRmF++E6bcPT1HXdR
-         /zBb0af5RlYNMNDu2c/GbjCbUvlnwxCviUAbXllu5y024wq9t4dHKoeJlIdiD0d4ymV+
-         0Db7yNczfayOWUJF5xOi+nAzhe1yGASivHzr5jO9Zt1EZd3azVz/j8xCn0cfNU7zGk20
-         QYKj44knzRtj76nfMyUhox9QFH8CC1vz+zM+RPxtRiXiWHdj1xGnKUZ327hgU/GDQkEs
-         HFpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724693487; x=1725298287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T370sUu57dJFmbuCp0n0YvqcvgntixC3zniQ7Z2kajQ=;
-        b=t+WuBfXNpBKHFG6HS6VFAkMLWkQefAMEA111hZiPCmoqv+5pKV7y9dLqEddXMrnfVP
-         2g0fAc8dspMGXtlv9659GAv8N6rIiqYj9gNHJjGKu4CgAIoXij7ix8B1C1bCw6BepRik
-         Y4e1lPJmpwhLCuFPtJ85+VB7gsaFV1tWHe8SYhNWrUAqbXTCYM3Chjq/i5TsscFMOWlH
-         h9G1CfYqQ8kmX9CBSdOnlRy2UVq0Z/Q112r6vMJw1c6xGNjVZRevKsMdW4hreDZo+Gua
-         ljEENakJNEG2W2ow6lieBR7hStGG6l72LMxOl9fRwUTMAejxK4LAWkoTfSnkMOkmhS/+
-         DbKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXErzM61/S5oZYoPmNufrSVadNypGTDItUZuIUpIuttxxdSrbj7xRbumFnMbZ5Hl9BGaI2L89Y1H1+jUso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLaHkNf2pwxMgeNqv6jRhabBNw8tv0hmARE6eBTV2jgpo03rX
-	hEWfq9acm8y05i6wGEPCS+OizOC3XNZAUO0TEvDDARO1J3Dza4aeMDW2LY/Ixrc=
-X-Google-Smtp-Source: AGHT+IHl5ECdva99iS8MGwyQOyjCeOAz2cu6VPsZOx2yoj1QvjX+04dStE1ffy8Es6Mq3ecn4kJkDQ==
-X-Received: by 2002:a05:6512:2210:b0:52d:582e:4117 with SMTP id 2adb3069b0e04-5344e4fd009mr59543e87.54.1724693486663;
-        Mon, 26 Aug 2024 10:31:26 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e548781csm446566b.28.2024.08.26.10.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 10:31:26 -0700 (PDT)
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH 3/3] ARM: dts: microchip: Use SCKC_{TD, MD}_SLCK IDs for clk32k clocks
-Date: Mon, 26 Aug 2024 20:31:16 +0300
-Message-Id: <20240826173116.3628337-4-claudiu.beznea@tuxon.dev>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
-References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
+	s=arc-20240116; t=1724693514; c=relaxed/simple;
+	bh=rqrE37Ymk/6DIySLGlwXDHCbwP2tm2cJNWIAq724c8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmeDJSniWHBsCW9Oj5I793ltnK6ix2OdlSiDonHqVRaIGcGGkydkwNQwiMDZ32w+82dBCYSCM3vjpuHscIf6v7gpSWy5nGPdH3MXC9wSRKtciC7JCqM3YJ83zMEiG4Jvwg8tpVRDZbALxLgKk/5LeyTQrUJmPX+GUaDIzetauhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GlqAxXBR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SqSvGkEU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 Aug 2024 19:31:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724693511;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AkZcASK4ZhVjM72PRr7wbPEwfXLYJAc1hlsf/gSb5Wg=;
+	b=GlqAxXBRPQBeqRIdp7YEFkKGSYyjuJ95hzkSmIq8lVdpmRgSdpDAHvFFHTphEHIF7FHTDM
+	5PSz07IXyHDeDZ+Y2o6QF5z6Y+A9eOCKTlRVTYuvpDCxqslD/1ocwKqQCh+Ot66v2HcfEN
+	PbuRXrTyzdJSOiCfA7xVbFpUW+TXGmFG5s/1d3+R0BWB6DRAovv3+ZvIPBSQFu/VTTu96g
+	QGoPH9I73b7kwAlLkRk0xk0o4j3dNIPj9nbGr0jY7yJuxyh3iUl2ELSfIC1IIP7y5st4dw
+	dMFt/Ke/hDrZSr1oc/Wnv+oC+Vg/OHokmAw8mrlbwSPRGfibdNx0eJdwDq/qFA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724693511;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AkZcASK4ZhVjM72PRr7wbPEwfXLYJAc1hlsf/gSb5Wg=;
+	b=SqSvGkEU6QOjP5krxwFS/EKg/yysjqLKhkJPWnYHRP++vjK9SQmcVSs4lwYF4azefHCQPb
+	dw2acvrVcW6ZA7CQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -fixes] drivers: perf: Fix smp_processor_id() use in
+ preemptible code
+Message-ID: <20240826173143.CxUkM4j0@linutronix.de>
+References: <20240826165210.124696-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826165210.124696-1-alexghiti@rivosinc.com>
 
-Use the newly introduced macros instead of raw number. With this device
-tree code is a bit easier to understand.
+On Mon, Aug 26, 2024 at 06:52:10PM +0200, Alexandre Ghiti wrote:
+> As reported in [1], the use of smp_processor_id() in
+> pmu_sbi_device_probe() must be protected by disabling the preemption, so
+> simple use get_cpu()/put_cpu() instead.
+> 
+> Reported-by: Nam Cao <namcao@linutronix.de>
+> Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
----
- arch/arm/boot/dts/microchip/sam9x60.dtsi | 18 +++++++++---------
- arch/arm/boot/dts/microchip/sama7g5.dtsi | 16 ++++++++--------
- 2 files changed, 17 insertions(+), 17 deletions(-)
+Tested-by: Nam Cao <namcao@linutronix.de>
 
-diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-index 04a6d716ecaf..eeda277e684f 100644
---- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-+++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-@@ -560,7 +560,7 @@ tcb0: timer@f8008000 {
- 				#size-cells = <0>;
- 				reg = <0xf8008000 0x100>;
- 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k 0>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k SCKC_MD_SLCK>;
- 				clock-names = "t0_clk", "slow_clk";
- 			};
- 
-@@ -570,7 +570,7 @@ tcb1: timer@f800c000 {
- 				#size-cells = <0>;
- 				reg = <0xf800c000 0x100>;
- 				interrupts = <45 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&pmc PMC_TYPE_PERIPHERAL 45>, <&clk32k 0>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 45>, <&clk32k SCKC_MD_SLCK>;
- 				clock-names = "t0_clk", "slow_clk";
- 			};
- 
-@@ -1038,7 +1038,7 @@ hlcdc: hlcdc@f8038000 {
- 				compatible = "microchip,sam9x60-hlcdc";
- 				reg = <0xf8038000 0x4000>;
- 				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_GCK 25>, <&clk32k 1>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_GCK 25>, <&clk32k SCKC_TD_SLCK>;
- 				clock-names = "periph_clk","sys_clk", "slow_clk";
- 				assigned-clocks = <&pmc PMC_TYPE_GCK 25>;
- 				assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_MCK>;
-@@ -1313,20 +1313,20 @@ pmc: clock-controller@fffffc00 {
- 				reg = <0xfffffc00 0x200>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				#clock-cells = <2>;
--				clocks = <&clk32k 1>, <&clk32k 0>, <&main_xtal>;
-+				clocks = <&clk32k SCKC_TD_SLCK>, <&clk32k SCKC_MD_SLCK>, <&main_xtal>;
- 				clock-names = "td_slck", "md_slck", "main_xtal";
- 			};
- 
- 			reset_controller: reset-controller@fffffe00 {
- 				compatible = "microchip,sam9x60-rstc";
- 				reg = <0xfffffe00 0x10>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k SCKC_MD_SLCK>;
- 			};
- 
- 			shutdown_controller: poweroff@fffffe10 {
- 				compatible = "microchip,sam9x60-shdwc";
- 				reg = <0xfffffe10 0x10>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k SCKC_MD_SLCK>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 				atmel,wakeup-rtc-timer;
-@@ -1338,7 +1338,7 @@ rtt: rtc@fffffe20 {
- 				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
- 				reg = <0xfffffe20 0x20>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 1>;
-+				clocks = <&clk32k SCKC_TD_SLCK>;
- 			};
- 
- 			pit: timer@fffffe40 {
-@@ -1364,14 +1364,14 @@ rtc: rtc@fffffea8 {
- 				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
- 				reg = <0xfffffea8 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 1>;
-+				clocks = <&clk32k SCKC_TD_SLCK>;
- 			};
- 
- 			watchdog: watchdog@ffffff80 {
- 				compatible = "microchip,sam9x60-wdt";
- 				reg = <0xffffff80 0x24>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k SCKC_MD_SLCK>;
- 				status = "disabled";
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-index 17bcdcf0cf4a..2efca9838d69 100644
---- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
-+++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
-@@ -246,7 +246,7 @@ pmc: clock-controller@e0018000 {
- 			reg = <0xe0018000 0x200>;
- 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#clock-cells = <2>;
--			clocks = <&clk32k 1>, <&clk32k 0>, <&main_xtal>;
-+			clocks = <&clk32k SCKC_TD_SLCK>, <&clk32k SCKC_MD_SLCK>, <&main_xtal>;
- 			clock-names = "td_slck", "md_slck", "main_xtal";
- 		};
- 
-@@ -254,13 +254,13 @@ reset_controller: reset-controller@e001d000 {
- 			compatible = "microchip,sama7g5-rstc";
- 			reg = <0xe001d000 0xc>, <0xe001d0e4 0x4>;
- 			#reset-cells = <1>;
--			clocks = <&clk32k 0>;
-+			clocks = <&clk32k SCKC_MD_SLCK>;
- 		};
- 
- 		shdwc: poweroff@e001d010 {
- 			compatible = "microchip,sama7g5-shdwc", "syscon";
- 			reg = <0xe001d010 0x10>;
--			clocks = <&clk32k 0>;
-+			clocks = <&clk32k SCKC_MD_SLCK>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			atmel,wakeup-rtc-timer;
-@@ -272,7 +272,7 @@ rtt: rtc@e001d020 {
- 			compatible = "microchip,sama7g5-rtt", "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
- 			reg = <0xe001d020 0x30>;
- 			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk32k 1>;
-+			clocks = <&clk32k SCKC_TD_SLCK>;
- 		};
- 
- 		clk32k: clock-controller@e001d050 {
-@@ -291,14 +291,14 @@ rtc: rtc@e001d0a8 {
- 			compatible = "microchip,sama7g5-rtc", "microchip,sam9x60-rtc";
- 			reg = <0xe001d0a8 0x30>;
- 			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk32k 1>;
-+			clocks = <&clk32k SCKC_TD_SLCK>;
- 		};
- 
- 		ps_wdt: watchdog@e001d180 {
- 			compatible = "microchip,sama7g5-wdt";
- 			reg = <0xe001d180 0x24>;
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk32k 0>;
-+			clocks = <&clk32k SCKC_MD_SLCK>;
- 		};
- 
- 		chipid@e0020000 {
-@@ -312,7 +312,7 @@ tcb1: timer@e0800000 {
- 			#size-cells = <0>;
- 			reg = <0xe0800000 0x100>;
- 			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&pmc PMC_TYPE_PERIPHERAL 91>, <&pmc PMC_TYPE_PERIPHERAL 92>, <&pmc PMC_TYPE_PERIPHERAL 93>, <&clk32k 1>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 91>, <&pmc PMC_TYPE_PERIPHERAL 92>, <&pmc PMC_TYPE_PERIPHERAL 93>, <&clk32k SCKC_TD_SLCK>;
- 			clock-names = "t0_clk", "t1_clk", "t2_clk", "slow_clk";
- 		};
- 
-@@ -906,7 +906,7 @@ tcb0: timer@e2814000 {
- 			#size-cells = <0>;
- 			reg = <0xe2814000 0x100>;
- 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&pmc PMC_TYPE_PERIPHERAL 88>, <&pmc PMC_TYPE_PERIPHERAL 89>, <&pmc PMC_TYPE_PERIPHERAL 90>, <&clk32k 1>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 88>, <&pmc PMC_TYPE_PERIPHERAL 89>, <&pmc PMC_TYPE_PERIPHERAL 90>, <&clk32k SCKC_TD_SLCK>;
- 			clock-names = "t0_clk", "t1_clk", "t2_clk", "slow_clk";
- 		};
- 
--- 
-2.39.2
+I think this also needs:
+Fixes: a8625217a054 ("drivers/perf: riscv: Implement SBI PMU snapshot function")
 
+Best regards,
+Nam
 
