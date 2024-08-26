@@ -1,193 +1,146 @@
-Return-Path: <linux-kernel+bounces-301840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3833B95F65A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F94895F65D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7716FB21247
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728AE1C220C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F32F194AEB;
-	Mon, 26 Aug 2024 16:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495F61953BE;
+	Mon, 26 Aug 2024 16:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="JQh07fod"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyvyOAvD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B17186619;
-	Mon, 26 Aug 2024 16:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84545194C9E;
+	Mon, 26 Aug 2024 16:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724689331; cv=none; b=kB8umMIwkNUPgz99SHk5P2JpG4FJol1iSFCD5KouhHvkJIp09w/gGHgj8Vmhq7H7W4+1WC+hE+/evsuuIHDJsST+0Rts87XfRSiH+WoBXUQhrSfOTs5FTumYZmFxFRXLS+DO/g46s9hu5dGGavOBAcvJROKsPHK/PGL9Bjtkqvw=
+	t=1724689336; cv=none; b=AhVb/zTy7VL8sdauID0HnuL8qD4b5dTjOvTX3FEPoiSxBmBTLwLbGGKHnw8BtkfODZkXb44jGU/rkgbTAmuI/4QXyUGXDn/Ppl5cja2VdMGrXnyIDrNbTEd9WFITLbx9UIarVidH39BjgmM2oBqWidmPIEhdDYQRbVnNR8/90U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724689331; c=relaxed/simple;
-	bh=pTF0GQuq2D3JFH03RRQkEFsAZH/rp+YFHx4WbIXcsnI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oRmAoQpeSahfiZBf2/eNNTOWIllNtPSTiEj0zT66urY4TIDWus3M0+OGiTFSYtLLcyQGalJ3DQqb+xW0j+RupzpnMyoiK9lkGfgc5abPRzeW2lXV/G5f06MYyozzLJOg4wpZlQ+bsgssLwWm3qjnPC/Faw+/BjM/dvIQtO9RfJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=JQh07fod reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id a059ac823603f2f4; Mon, 26 Aug 2024 18:22:00 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 90A5292159D;
-	Mon, 26 Aug 2024 18:21:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724689320;
-	bh=pTF0GQuq2D3JFH03RRQkEFsAZH/rp+YFHx4WbIXcsnI=;
-	h=From:Subject:Date;
-	b=JQh07fodmCZxdtGpOgkIQzYqaCooc5wvfBh4VDWarG4jmN79x79e16G2FuqjQFCfp
-	 Rm3WARQ3mqk2nSh5CF3vv3T3pELlyaQvqQI9mwPFod/khDJ8ARMWb2heEuXWIRRYA2
-	 BJcotqel0rvcz7JY4qh2x0CGbjeHEgDj9KyCMFDULrWbBM5RnXaqI+XkhclhboyRMe
-	 rMwiGYWPlN0qIWOp0y6uHlc7RMuW8bykmytY1aNzVCRs2eozUySGxDRMNk0OT3n19V
-	 6foCP5fgkvSs0QbrBIb7nM9xdmPrV+Uh8plSoTlzCFDnv7tiK3RZWv6mmPYOcBhYLS
-	 aHjy995zmGlVw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>
-Subject:
- [PATCH v2] thermal: sysfs: Add sanity checks for trip temperature and
- hysteresis
-Date: Mon, 26 Aug 2024 18:21:59 +0200
-Message-ID: <12528772.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1724689336; c=relaxed/simple;
+	bh=+RTZMx1fzQdb+R5GnKXIaBS0hVNREfRA+TCS9zcwgbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ie0bLcHmdqa0EL7IHJtZUzEwIpWrSHIzgxlcETXVl6ES5cQugKKC3stpoHplTe5NWX7N+uo+SMIQkNPYIwb4K30JTWoHIOXr332ZdC9YFfBjO2gmM5zA8lWL9xOyZAyDVmv3cG/g2jDC8JZxeVoBDf6zYMZgO7mVVwDds5FD6Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyvyOAvD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4C2C52FC0;
+	Mon, 26 Aug 2024 16:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724689336;
+	bh=+RTZMx1fzQdb+R5GnKXIaBS0hVNREfRA+TCS9zcwgbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LyvyOAvDft8diKLOLUx20hHBgtJRj7WlrqbidunMWHGD5BOLkxHTL5o6fY7yT8Gs3
+	 DcJbKbnMLgpQyKVvdKGc+flE6lxPFbG4P0K0SNVPn0k/RvbWGO7OgbK/ZEUEIXPd07
+	 3E8i+1Nn+9ESLgGww9YjjHr/qrJNLORNHmJQnc5Q5i/Pu3vwPCVJj8Wi3ZYrjR13xc
+	 JXCO18OxLNbPaGkIjKdBoOi2U+nPIHr5ipkRWEOmayOa6pyxygSEF9rKm3KsFZG+zZ
+	 MjC99H2cFwabwar8EGqf8u7eQG4DStn4QbAn20rnKOmdIwhuoC2NLavgyHVMV4AkM+
+	 5264DWAfuAyZQ==
+Date: Mon, 26 Aug 2024 17:22:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-binding: pinctrl: spacemit: add documents for
+ K1 SoC
+Message-ID: <20240826-turbofan-unwound-280af18d60cc@spud>
+References: <20240825-02-k1-pinctrl-v2-0-ddd38a345d12@gentoo.org>
+ <20240825-02-k1-pinctrl-v2-1-ddd38a345d12@gentoo.org>
+ <66cbf3bb.050a0220.2632ed.b191SMTPIN_ADDED_BROKEN@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedgleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
- vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Add sanity checks for new trip temperature and hysteresis values to
-trip_point_temp_store() and trip_point_hyst_store() to prevent trip
-point threshold from falling below THERMAL_TEMP_INVALID.
-
-However, still allow user space to pass THERMAL_TEMP_INVALID as the
-new trip temperature value to invalidate the trip if necessary.
-
-Also allow the hysteresis to be updated when the temperature is invalid
-to allow user space to avoid having to adjust hysteresis after a valid
-temperature has been set, but in that case just change the value and do
-nothing else.
-
-Fixes: be0a3600aa1e ("thermal: sysfs: Rework the handling of trip point updates")
-Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2:
-   * Reorder the new check in trip_point_hyst_store() to be easier
-     to read (Daniel).
-   * Add a comment explaining the ordering of the new check in
-     trip_point_temp_store().
-   * Allow the hysteresis to be updated when the temperature is invalid.
-
-This is an update of
-
-https://lore.kernel.org/linux-pm/7719509.EvYhyI6sBW@rjwysocki.net/
-
-which is being sent separately because patch [1/2] from the original series
-has been applied.
-
----
- drivers/thermal/thermal_sysfs.c |   50 ++++++++++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 12 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_sysfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-+++ linux-pm/drivers/thermal/thermal_sysfs.c
-@@ -111,18 +111,26 @@ trip_point_temp_store(struct device *dev
- 
- 	mutex_lock(&tz->lock);
- 
--	if (temp != trip->temperature) {
--		if (tz->ops.set_trip_temp) {
--			ret = tz->ops.set_trip_temp(tz, trip, temp);
--			if (ret)
--				goto unlock;
--		}
-+	if (temp == trip->temperature)
-+		goto unlock;
- 
--		thermal_zone_set_trip_temp(tz, trip, temp);
-+	/* Arrange the condition to avoid integer overflows. */
-+	if (temp != THERMAL_TEMP_INVALID &&
-+	    temp <= trip->hysteresis + THERMAL_TEMP_INVALID) {
-+		ret = -EINVAL;
-+		goto unlock;
-+	}
- 
--		__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+	if (tz->ops.set_trip_temp) {
-+		ret = tz->ops.set_trip_temp(tz, trip, temp);
-+		if (ret)
-+			goto unlock;
- 	}
- 
-+	thermal_zone_set_trip_temp(tz, trip, temp);
-+
-+	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+
- unlock:
- 	mutex_unlock(&tz->lock);
- 
-@@ -152,15 +160,33 @@ trip_point_hyst_store(struct device *dev
- 
- 	mutex_lock(&tz->lock);
- 
--	if (hyst != trip->hysteresis) {
--		thermal_zone_set_trip_hyst(tz, trip, hyst);
-+	if (hyst == trip->hysteresis)
-+		goto unlock;
-+
-+	/*
-+	 * Allow the hysteresis to be updated when the temperature is invalid
-+	 * to allow user space to avoid having to adjust hysteresis after a
-+	 * valid temperature has been set, but in that case just change the
-+	 * value and do nothing else.
-+	 */
-+	if (trip->temperature == THERMAL_TEMP_INVALID) {
-+		WRITE_ONCE(trip->hysteresis, hyst);
-+		goto unlock;
-+	}
- 
--		__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+	if (trip->temperature - hyst <= THERMAL_TEMP_INVALID) {
-+		ret = -EINVAL;
-+		goto unlock;
- 	}
- 
-+	thermal_zone_set_trip_hyst(tz, trip, hyst);
-+
-+	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+
-+unlock:
- 	mutex_unlock(&tz->lock);
- 
--	return count;
-+	return ret ? ret : count;
- }
- 
- static ssize_t
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vv0iS6OPh2q+34gu"
+Content-Disposition: inline
+In-Reply-To: <66cbf3bb.050a0220.2632ed.b191SMTPIN_ADDED_BROKEN@mx.google.com>
 
 
+--vv0iS6OPh2q+34gu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 26, 2024 at 03:09:39AM +0000, Yixun Lan wrote:
+>=20
+> On 13:10 Sun 25 Aug     , Yixun Lan wrote:
+> > Add dt-binding for the pinctrl driver of SpacemiT's K1 SoC.
+> >=20
+> > Two vendor specific properties are introduced here, As the pinctrl
+> > has dedicated slew rate enable control - bit[7], so we have
+> > spacemit,slew-rate-{enable,disable} for this. For the same reason,
+> > creating spacemit,strong-pull-up for the strong pull up control.
+> >=20
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+
+I got this mail, and one of your other ones, 5 times. What's going wrong
+with your mail setup?=20
+
+| 250   T Aug 25 Yixun Lan       (6.0K) =E2=94=8C=E2=94=80>[PATCH v2 4/4] r=
+iscv: dts: spacemit: add pinctrl property to uart0 in BPI-F3
+| 251 N T Aug 26 Inochi Amaoto   ( 12K) =E2=94=82 =E2=94=8C=E2=94=80>
+| 252   T Aug 25 Yixun Lan       (6.8K) =E2=94=9C=E2=94=80>[PATCH v2 3/4] r=
+iscv: dts: spacemit: add pinctrl support for K1 SoC
+| 253 N T Aug 26 Inochi Amaoto   ( 46K) =E2=94=82 =E2=94=8C=E2=94=80>
+| 254   T Aug 25 Yixun Lan       ( 38K) =E2=94=9C=E2=94=80>[PATCH v2 2/4] p=
+inctrl: spacemit: add support for SpacemiT K1 SoC
+| 255 N T Aug 26 Inochi Amaoto   ( 22K) =E2=94=82 =E2=94=8C=E2=94=80>
+| 256   T Aug 26 Yixun Lan       ( 333) =E2=94=82 =E2=94=9C=E2=94=80>
+| 257   T Aug 26 Yixun Lan       ( 338) =E2=94=82 =E2=94=9C=E2=94=80>
+| 258   T Aug 26 Yixun Lan       ( 334) =E2=94=82 =E2=94=9C=E2=94=80>
+| 259   T Aug 26 Yixun Lan       ( 334) =E2=94=82 =E2=94=9C=E2=94=80>
+| 260   T Aug 26 Yixun Lan       ( 333) =E2=94=82 =E2=94=9C=E2=94=80>
+| 261   C Aug 25 Rob Herring (Ar (9.0K) =E2=94=82 =E2=94=9C=E2=94=80>
+| 262 N C Aug 26 Krzysztof Kozlo ( 14K) =E2=94=82 =E2=94=82 =E2=94=8C=E2=94=
+=80>
+| 263 N C Aug 26 Inochi Amaoto   ( 19K) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 264   C Aug 26 Yixun Lan       ( 285) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 265   C Aug 26 Yixun Lan       ( 281) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 266 N C Aug 26 Yixun Lan       ( 14K) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 267 N C Aug 26 Yixun Lan       ( 12K) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 268 N C Aug 26 Yixun Lan       ( 12K) =E2=94=82 =E2=94=82 =E2=94=9C=E2=94=
+=80>
+| 269   T Aug 25 Krzysztof Kozlo ( 13K) =E2=94=82 =E2=94=9C=E2=94=80>
+| 270   T Aug 25 Yixun Lan       ( 14K) =E2=94=9C=E2=94=80>[PATCH v2 1/4] d=
+t-binding: pinctrl: spacemit: add documents for K1 SoC
+| 271   T Aug 25 Yixun Lan       (8.5K) [PATCH v2 0/4] riscv: spacemit: add=
+ pinctrl support to K1 SoC
+
+
+--vv0iS6OPh2q+34gu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsyrsgAKCRB4tDGHoIJi
+0q6hAQDeH2i2SNS/Z13kPou1aa7nn27FSu6SRvKx9lRsDN+A0wD/eqwn/JkSg0bn
+sCsM9hBmsqrjbzQW/WiTVKFJWO1kZAk=
+=th+c
+-----END PGP SIGNATURE-----
+
+--vv0iS6OPh2q+34gu--
 
