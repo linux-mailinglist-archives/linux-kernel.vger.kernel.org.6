@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-300715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A48895E780
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:02:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3D895E788
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6481C21000
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DEC11F21719
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2999F450EE;
-	Mon, 26 Aug 2024 04:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="YYnV5Sf7"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020082.outbound.protection.outlook.com [52.101.128.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914AD55893;
+	Mon, 26 Aug 2024 04:05:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C552E419
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724644966; cv=fail; b=OfpgVfnr0VeN+99AXp/Rz0NY6+Jz9RNEq3eMiee/RNVm2wp8DTjkI27NBOiC0Gfy4jkMKYnY32ZEHvHhUgpu4wn4DpIqWIIUz1V/1aaZ9u7K2lHwVpMuEpG8LFbfJEUKQ6I9H+LkdwS869hlr8BhqHfH4oS8GFBh242PgsUmEWU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724644966; c=relaxed/simple;
-	bh=Y7BjIWjbq5wh6DH6CX3RJuKET0NWxxfbiznQz6EpEMQ=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BcuP+uO/93SxsHxDY7HFcSV+mmu/3NDMgiiGjppAqyiTb5Td0WDBK0IzVz1pwV3pRBfVD86LE45dTCSDdZf3gETubUlJtrG3mGeDakl40hfFpMR7XCvViv3DgZOjvGEHt8CAk3cJlZyHgpTQIZApt6y53VBYzr8mmSE5OvZGg1o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=YYnV5Sf7; arc=fail smtp.client-ip=52.101.128.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vm8+buEU+spOwPoBkjsQncqgnGYSwk3wf3rlNWEx7JRxl3L2Y3nJ8uM1aiVRdlwR23bTXVnhTL037T5M/m++RZgD6tvmcLDsnDOzYXg1CQ7SanPS8ozwOWS//lv8FUVbXFSZy6U2cG+ripoEvPmglCKRvvOk8GsrSZqeeMfe1hoKjhkVBnlseuWmm5HVaz3Y3UuZ4qDFY8N0U0toBYaGap25ORfrcRI8+VKN62qlNVbQIzFyx8T7U+8LdpdbBO1D/HL+jVjaNl45dz1HTL26S0DlYW9nUWnU/xbR49vvET+bzHoolii7O3iTx3rGyWiBZSCyD86HMC8GV0VlKnpsdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y7BjIWjbq5wh6DH6CX3RJuKET0NWxxfbiznQz6EpEMQ=;
- b=UcrSYCiYEYGA+Vmb0DDkUbRH413NF3PP9Ao/h4E81Rk/2kwIhiFeIjECQTHjAQoaOtHVQb8QlxXPOepEkUDZqlEEHkon08KubqjwRBbnurWVFtOnaqr6IWYarpFH12BkpYOix3ZO6tT9ciDbpzB+EMRtMCyoIJt4XlVIkaQTLjonJ3C7nlPd430C9tEYJo/6J6ntae4UU+DpjAF21QU8X61f/5SKp+AIkHTD4m5Pfs6+uXMpmisKmEFEZTJ7vWf3tv8Z/jA4XotQL+huKGLqQh1awwoV0QggSUIy2ywGuaXpaw2PXZzwhU/YSk0MOjepsBxsjM0mAkBEJhEfhXkuVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7BjIWjbq5wh6DH6CX3RJuKET0NWxxfbiznQz6EpEMQ=;
- b=YYnV5Sf7OeB82elP85aM/uLDQ9H84nmg9GaULmbUPsBvOtI7v8ROiENsoWKa4WbVZ5SpvjsRbB+Os0JkEO+YlVRbE4QKqvEx1h2E2sGonZ7aRKRhi5qmzo+QR1APAvJ21zNXUOGMMqLiAPOKv1icbXzttQFm3LaoIuWX50pc3LMchDuSOqqnYiTqqukIejCFBSNV6zTsshK8S+MzmC8RK+78qApZfAPeUVizKmSBnaaPEUdZC14Fwag/4aPRk5XJCu6MWX2kqaV7o3dsSTSJ4jBxhpkB8Yc1wojwPaIoL17bLiGRuV7qVzTOR+TuEnXPO8aiIlHKs1bqEcSutzWxLA==
-Received: from OSQPR06MB7252.apcprd06.prod.outlook.com (2603:1096:604:29c::6)
- by JH0PR06MB6535.apcprd06.prod.outlook.com (2603:1096:990:34::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 04:02:38 +0000
-Received: from OSQPR06MB7252.apcprd06.prod.outlook.com
- ([fe80::814e:819a:7d52:7448]) by OSQPR06MB7252.apcprd06.prod.outlook.com
- ([fe80::814e:819a:7d52:7448%6]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 04:02:36 +0000
-From: Billy Tsai <billy_tsai@aspeedtech.com>
-To: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] i3c/master: cmd_v1: Fix the rule for getting i3c mode
-Thread-Topic: [PATCH v1] i3c/master: cmd_v1: Fix the rule for getting i3c mode
-Thread-Index: AQHa92luFhaBtkW4zkim60IDu6KoKLI46okH
-Date: Mon, 26 Aug 2024 04:02:36 +0000
-Message-ID:
- <OSQPR06MB7252463A7C81BF18811DB6EC8B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
-References: <20240826033821.175591-1-billy_tsai@aspeedtech.com>
-In-Reply-To: <20240826033821.175591-1-billy_tsai@aspeedtech.com>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSQPR06MB7252:EE_|JH0PR06MB6535:EE_
-x-ms-office365-filtering-correlation-id: dbf8d73b-296e-43d1-1d64-08dcc583ebeb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?+46fWiH1BRji+56B/nthaG79ZOobUcabqTBRwsHx71n5TkqTNMI9zQF5K9?=
- =?iso-8859-1?Q?eMNNiBHsRtdIU3EuND8GIZvSD1NP2cPAwiNRIhge0uz1thwgwMWY27zGsa?=
- =?iso-8859-1?Q?OAdMsZlpop1sJr3Svq0RUyBAcH4+ObnytmvEskpFOYhRPchk+AEbe0bMli?=
- =?iso-8859-1?Q?uBtez1OCZ51l2SOxIIrRi3TVy13xgdiQqnx/MmxFGwuoFUvxpQpOplabLE?=
- =?iso-8859-1?Q?kZQ3FDTXwiTLKOSWutV39f3H+H5jInPqh5xITTssQOxv3C3LWMylIA+jez?=
- =?iso-8859-1?Q?852Kb1cG8HL9PmnAp17nmEfCqODT0eKu+zhfOaZVNVJnW+zcLyGSlZ7QJr?=
- =?iso-8859-1?Q?EAf0C1sxhFRwKNHbtfhqsdCwOfgHug/XZQdWhx0WB5j8Qc7kYvwqVMhZon?=
- =?iso-8859-1?Q?3sMfejIEe8i/WJEqvUHm78VVt1pmtYHq9NnwalcmNrfm5bR0/kX6/AxeGy?=
- =?iso-8859-1?Q?YUweAkSQQa7EGjhsb0iPJrH7mptVf69cgHz6i6FQoCi673TL3sUPl6sruR?=
- =?iso-8859-1?Q?ssPqgD1b0Whom7V9CiHT509bKeGRiDAl5mvnZhRjtmodKVNr0la60Dmk7A?=
- =?iso-8859-1?Q?6ckonaK8hL3LcdP+ccdjNGIlZzZ/f0MShGzixifvjz+tcLM8jFYTuOpjOK?=
- =?iso-8859-1?Q?qtaCLIrnvzRoIlXYYQyVmeYoadFz4P6WFUYPTKQz1mumLu1kC/m2vQMVY2?=
- =?iso-8859-1?Q?kqdKLSo/a7WSl65alUwBt3g/yWLqvcMqbCd2OKM75opDZ91aqdFrO4Bnm9?=
- =?iso-8859-1?Q?PAJQLp3J+vQdBrY57biwgmFa5kfRVsJId5xowJbFy3kAhsIP4bg7RkjoLc?=
- =?iso-8859-1?Q?D0OBL/WotRGjaAfUaIGVc0j0u3bYKAKY+pzWBruNq7RVKwGwrTsTsYw3jP?=
- =?iso-8859-1?Q?UZItc3u1MLlVEfytFg+SY9npivJyjwRbwjdsTskDjmIa6vO5bmKcyv+iPK?=
- =?iso-8859-1?Q?wr4yqJGLvIsHDIV9x4/jx0yPnSmuhiVgLuxtJfuuyj7e5td81DoKRi8tmU?=
- =?iso-8859-1?Q?epcax7RR4giT8KezCzIQFGKwehdwrvM+qw4Z/JQ4UgTte6nJBp7E+yXL0p?=
- =?iso-8859-1?Q?F2HXnAf3FirTc7Qyh2s5efR01s/2dTF1rjkGNuR5qJE0jc5QJfvTTEqL5N?=
- =?iso-8859-1?Q?Ax3aqTdkdUQHIRCYY3wZqDejYPUWqVvPovKE0TOcpX1d2jDeoZ0N1SnYMu?=
- =?iso-8859-1?Q?0v/T6n3LW6ReTqrOrA0fCX3RHy8Lq5RlEzm1zeFtb4bqJg9oDRowBPN2+t?=
- =?iso-8859-1?Q?+jkzqxrnvk3Jq4w7MuscXdL8DTocK6HvwroyZz0D24XJfZJBn4RIp3gYOR?=
- =?iso-8859-1?Q?NBMre/9W/PCjGbQUiuLZwu3q36WLMf/pUq1CO6zN3Hn/qehgiY4WAUaJMF?=
- =?iso-8859-1?Q?Q2LJabjKSWfwjTmU2USXmZ/zJw1iJj/Vkh73brTy8gGIBLIuDtHgX1oeBk?=
- =?iso-8859-1?Q?ETWGXy2i0ZxUZQYfbm5yCE7MKVy7g9o+9/qToQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSQPR06MB7252.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?45gnaIdWqJNNSQbhBGdmAG7zDU+VCa7WnfvftRJWw8cfa59kt5mYloPVaD?=
- =?iso-8859-1?Q?+TTa39KnfqWJRnWyb8ujcZisp5ivYckrA/3adVpvnrZbfuAAuKXajxFhXz?=
- =?iso-8859-1?Q?SiaucA03OMbuJXtno439knKpm4JG6e2jAXcqJTkQxya2pBPJ106uEddHUi?=
- =?iso-8859-1?Q?KHaS61ACURDuf9KudrhRVqHx6rAIYZZ4h+Lvt9JwYGjhgr/XW+SghYQEl9?=
- =?iso-8859-1?Q?NDD+qJpvRyi5XgtHCOhsO23qhsdBRq4cDFuvISJStLPgs7tl8cy54g3VbX?=
- =?iso-8859-1?Q?m66cV9SH791rS5bhJnNX2VubY4nbMPDDMsnm8sKQglmeDpEGhBdPKHa4mE?=
- =?iso-8859-1?Q?Dig49mXcFeCTApd3DEaoXKW+KvauVvG998UyQzA30hb1XoiPX3Yp4hlL7F?=
- =?iso-8859-1?Q?v+0AzfRfufIGKKMkkQymMZ0fYD0HWoZ5Vu20M7dwlB+spTt4WWQpa+AH1M?=
- =?iso-8859-1?Q?/3VNGwc+PL35+lcSAqBLsm5qYNgU1LhK0WkZiP2BWDoBMKz4Fati2W6tGx?=
- =?iso-8859-1?Q?hP7CKPx76tEsaBNV3sCStdJ/POGN2NWGieZt3wrQlzhd/EjNQ0HGj1UYF8?=
- =?iso-8859-1?Q?b6uPHnHoqdG/fNv+f8651dQrc/e9Zorw7k6mSB76PMTuWHGlX1yIsT/pIW?=
- =?iso-8859-1?Q?AMJ3yo2HhXZnoPS4YSr26hpTVl68xofPErVggi34YNkcNSBwqRrBmJ96EN?=
- =?iso-8859-1?Q?jc5LDHwBZ6zWKlwBlql2Z/SG2/No3VsUcB6Mx8Bj83vqnHHaZetaNeqpXr?=
- =?iso-8859-1?Q?SDdCubhJWvpyzBkqjIqqFxKz8P8A6G2FRRPARsmKFPIIjtNdIHgVr7sz86?=
- =?iso-8859-1?Q?rgpat8aa2Bcg0cwrSmDR/nyzYsyRamc5/XwKiRfgURWegrtl1epYnNdM+s?=
- =?iso-8859-1?Q?0/L2gdHDVPee0RzEYdlvmFNlCCVsiPSjFACZgE05eea4j44S84zUaQKMp3?=
- =?iso-8859-1?Q?MhJIri6VSO89smke+hpXflrdAyGTzW5wj+7zzwh3fmaGAj6rjYA3JmAVIH?=
- =?iso-8859-1?Q?o4EjXsW4/h4vCV6aluYxi3ojRdgF9Hz7C/ilSfCUaLVKW0AgCjtlkKVoVl?=
- =?iso-8859-1?Q?ueMyDLOXmkKyI7inmxG/HHLjCntN8XpiZkjsN5a2GzRLe2O9X7nHTGLxs1?=
- =?iso-8859-1?Q?LuxCwfG4Qepf3FPMiZgDviclov9KoZ0bVAyyfVRhHYuZ0ZPP0drBYqRSBY?=
- =?iso-8859-1?Q?ENsUb5XlSiDtu5SX/VNAC7AzGWv6hSbZHAn+N/pswE9Riq7XsH9KRXYhbV?=
- =?iso-8859-1?Q?xVEsapgEG7BOXqyYk/DR1zEoV0zDFyu+P8hsdCDues3kwLfIyKWMtgy61R?=
- =?iso-8859-1?Q?RVWWwDWmnwmd1Gkt2I4Ung92PU/YZAJlnZEPIDRhH0r8FIaDblESPECTih?=
- =?iso-8859-1?Q?zXyPY5zjyVLsSDobudpbHzyyfzXvZ+XQ8H8Hp+4nxTd7O7fqTXvLblzRKu?=
- =?iso-8859-1?Q?qjvZe4KSgn1Uu+BzZI3OWvQG1PzBiaTNvdFqgT5sM+rItm0eFhDuJ6F6uj?=
- =?iso-8859-1?Q?RHpILusazJxi5Mu4OHCHGvQOh38uUX+Tnd3gj7nrmiWpReiJSmyogXWUSN?=
- =?iso-8859-1?Q?lN6OVQ5VCybYOXiVVyMzks2HCTz5URDuuqWj0JoOl+vvQR3Ib8FrakT0Y3?=
- =?iso-8859-1?Q?3Dy8ad4xjfUwHiHy3qAPfatMVFNqRak2JH?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A308C1F;
+	Mon, 26 Aug 2024 04:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724645123; cv=none; b=kdZrcD5PEhyTzUsDw9bZo06uzlHUR9z9VKX3XYhuk3+DQ8s9cmyJjqrFxyP8it2MlsKTDt4MxVghEzssXE1A+Xyzpu4IJ2AUzprcHLsJ5ufwS6bhcEbIMv3hs1Sds9rOyKjxXj7Vu9VJy13eVeb2QYm0AvwkbCGXTNkgCUFDKQM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724645123; c=relaxed/simple;
+	bh=fPfRbYjyDO34aJFbbBoB95r71qblCD+PaqR0mwZcbkI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fd35LGo0mdDaTJub+453M8dbYUwjcHuli9NyBrI6XCajJdaDPxCaKXCu1jg9PM5T3CEiZLWm72MZbtVjcxNHGC2LjIrt9aEc7Mrhk0q8SAuuUoygqAAS7l/ePg9Fsv+ThNlVVmW+VD7Z6iFAgY4Q0cg7NPdhWjthVi8lJEdpMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WscWz1XWHz4f3jMy;
+	Mon, 26 Aug 2024 12:05:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A63161A1305;
+	Mon, 26 Aug 2024 12:05:17 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4X7_stmGK71Cg--.11259S4;
+	Mon, 26 Aug 2024 12:05:17 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com,
+	jefflexu@linux.alibaba.com,
+	linux-erofs@lists.ozlabs.org,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	libaokun@huaweicloud.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	wozizhi@huawei.com,
+	Baokun Li <libaokun1@huawei.com>,
+	stable@kernel.org
+Subject: [PATCH] cachefiles: fix dentry leak in cachefiles_open_file()
+Date: Mon, 26 Aug 2024 12:00:18 +0800
+Message-Id: <20240826040018.2990763-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSQPR06MB7252.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbf8d73b-296e-43d1-1d64-08dcc583ebeb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2024 04:02:36.9007
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ed0n+dMl2i2nRw6GJhk1+eAX8KpsWfbQ6FXrLpeAkXYDvCHiy5r1XBuZhGIk5yV8dykNyiGo3VJdvFoBA9iTZtUa9B9maqxG8ATJYQ3rKI8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6535
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4X7_stmGK71Cg--.11259S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kry7Cw1xCr4rWr43Gw1UAwb_yoW8uw4fpF
+	ZIyryxGryrury8Gr48JF1rtr1rJ347JF4qqw1kXr18Ar1DZr1rXr17tr1FqryUGrWUZr42
+	qF1UK343Jr1jk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYpnQUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAHBWbK6v869gAAs2
 
-> Based on the I3C TCRI specification, the rules for determining the I3C=0A=
-> mode are as follows:=0A=
-> I3C SCL rate > 8MHz: use SDR0, with a maximum data rate of 8MHz=0A=
-> I3C SCL rate > 6MHz: use SDR1, with a maximum data rate of 6MHz=0A=
-> I3C SCL rate > 4MHz: use SDR2, with a maximum data rate of 4MHz=0A=
-> I3C SCL rate > 2MHz: use SDR3, with a maximum data rate of 2MHz=0A=
-> Otherwise, use SDR4=0A=
-=0A=
-Sorry, the description of the commit message is wrong.=0A=
-I will change it to =0A=
-I3C SCL rate > 8MHz: use SDR0, as SDR1 has a maximum data rate of 8MHz=0A=
-I3C SCL rate > 6MHz: use SDR1, as SDR2 has a maximum data rate of 8MHz=0A=
-I3C SCL rate > 4MHz: use SDR2, as SDR3 has a maximum data rate of 8MHz=0A=
-I3C SCL rate > 2MHz: use SDR3, as SDR4 has a maximum data rate of 8MHz=0A=
-I3C SCL rate <=3D 2MHz: use SDR4=0A=
-and send the v2 patch=
+From: Baokun Li <libaokun1@huawei.com>
+
+In ondemand mode, dentry leaks may be caused when the mount has the
+following concurrency with cull:
+
+            P1             |             P2
+-----------------------------------------------------------
+cachefiles_lookup_cookie
+  cachefiles_look_up_object
+    lookup_one_positive_unlocked
+     // get dentry
+                            cachefiles_cull
+                              inode->i_flags |= S_KERNEL_FILE;
+    cachefiles_open_file
+      cachefiles_mark_inode_in_use
+        __cachefiles_mark_inode_in_use
+          can_use = false
+          if (!(inode->i_flags & S_KERNEL_FILE))
+            can_use = true
+	  return false
+        return false
+        // Returns an error but doesn't put dentry
+
+After that the following WARNING will be triggered when the backend folder
+is umounted:
+
+==================================================================
+BUG: Dentry 000000008ad87947{i=7a,n=Dx_1_1.img}  still in use (1) [unmount of ext4 sda]
+WARNING: CPU: 4 PID: 359261 at fs/dcache.c:1767 umount_check+0x5d/0x70
+CPU: 4 PID: 359261 Comm: umount Not tainted 6.6.0-dirty #25
+RIP: 0010:umount_check+0x5d/0x70
+Call Trace:
+ <TASK>
+ d_walk+0xda/0x2b0
+ do_one_tree+0x20/0x40
+ shrink_dcache_for_umount+0x2c/0x90
+ generic_shutdown_super+0x20/0x160
+ kill_block_super+0x1a/0x40
+ ext4_kill_sb+0x22/0x40
+ deactivate_locked_super+0x35/0x80
+ cleanup_mnt+0x104/0x160
+==================================================================
+
+Add the missing dput() to cachefiles_open_file() for a quick fix.
+
+Fixes: 1f08c925e7a3 ("cachefiles: Implement backing file wrangling")
+Cc: stable@kernel.org
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/cachefiles/namei.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index f53977169db4..0bd2f367c3ff 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -554,6 +554,7 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+ 	if (!cachefiles_mark_inode_in_use(object, d_inode(dentry))) {
+ 		pr_notice("cachefiles: Inode already in use: %pd (B=%lx)\n",
+ 			  dentry, d_inode(dentry)->i_ino);
++		dput(dentry);
+ 		return false;
+ 	}
+ 
+-- 
+2.39.2
+
 
