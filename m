@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-301035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A64A95EBC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:23:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3156495EB85
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5B81C22072
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39E861C20FED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0C814F117;
-	Mon, 26 Aug 2024 08:19:59 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3009513A3F0;
+	Mon, 26 Aug 2024 08:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LrSIsxdl"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BC1465BB;
-	Mon, 26 Aug 2024 08:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8194A28
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724660398; cv=none; b=nFHk5+Nbl0eLFVungvzFts5RCgMJGqgWTjBuPz3mpYH7YXXPOjJ9AFIJf0iJjcWj0OGeXIYXPkWhnVNwkKczkOzaPlMvRwrqZtQshTQjYbCj396oBM5z4x4oSZzKJdhIqpkoGg8MYAQvYY3z0CXqbWVPrSiyQ3altps5hoIw+Qc=
+	t=1724660016; cv=none; b=pENfD8igPpfMaIm1OHyh2TAzAVtxcj6hYz2hznetFEeUKe9SyhSe37c+lWU/SMHehW21ZrNTzsd3x8/JLcAKZUL48JinLiOa+u3Kzw2PfzhreBX/adKBjLwmDKxLpxvd4s9VFCb0iN72ro1ODiQWBYp1sXqawa9POsr7Cd8pjEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724660398; c=relaxed/simple;
-	bh=eEypYZoG6QJSIUdINWthfnAlOoisMVXiIIU515ncHzA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dTqYIfc6lRIz+8XvzrjwPo/iNpfHdLnMq5HSNFpEkcijknh8wS8yGgEflTXvEvkZhLbvQTDmtfMNgcfs3M5yEXOjH7a5DiAU+OGoSSj+6w6wVGCIEBm9xzYFPxlMO+iD8JuPnKQiE4+B3EUOMZh1Oks42SPJ/PZO72OlxTN1V64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wsk6D30Zbz1HHN9;
-	Mon, 26 Aug 2024 16:16:36 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id D240A140135;
-	Mon, 26 Aug 2024 16:19:53 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 26 Aug 2024 16:19:52 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
-	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V4 net-next 11/11] net: add ndo_validate_addr check in dev_set_mac_address
-Date: Mon, 26 Aug 2024 16:12:58 +0800
-Message-ID: <20240826081258.1881385-12-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240826081258.1881385-1-shaojijie@huawei.com>
-References: <20240826081258.1881385-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1724660016; c=relaxed/simple;
+	bh=Qp/00LpdFt9fyZ9y8QshjY+ptg9wzwMtAYA98L2na+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaXb/Ykl8Mr+8d3cWlHc2nht9syuYOeaSBFPweHZI4tx1DOQqz0biyaqIB7mwCw3z5xyGxV1WCWfAdE8EsRuTXt9wLkASAHmCf6wb94ZolAFGYxh9Ynl2snIkppvARpYnyvimZzYcDFkAxDH2p3cdpiyCM10soruA8VwB0s/hqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LrSIsxdl; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D35D20007;
+	Mon, 26 Aug 2024 08:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724660007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qp/00LpdFt9fyZ9y8QshjY+ptg9wzwMtAYA98L2na+o=;
+	b=LrSIsxdlmUt5Cou9Feh8QCcpu4xZ0fj6zVtQ2So7NSmWHulQyMiQPZs67HToG1ptjSlVRf
+	HGZPAGVF2OZOOdGJ6BXW6X8oOScS/y38En16izvGbzQMHpVdeO9CDkdYMq3x7waYSg0F0t
+	nFwf48cMzmjz1EdvjMOJnE3at65uHFXltVc329sYuKBtUng1mhGkgJ3l/Le/i4YnJMmjIf
+	vn4rIxT8rGOjWv6o4MtnRaaxG4QtA08OMHSTrlq4MPpTBiOH9tzKZc1qZxK8WP1RSYHOrz
+	D8x0HP9JxckoBRAu53ANliqxTAUFC8Tumti1BDG4AdLT+qN9LCn02dnuXUCF2g==
+Date: Mon, 26 Aug 2024 10:13:23 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: carlos.song@nxp.com
+Cc: alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-imx@nxp.com
+Subject: Re: [PATCH v3] i3c: master: support to adjust first broadcast
+ address speed
+Message-ID: <20240826101323.746b617c@xps-13>
+In-Reply-To: <20240826050957.1881563-1-carlos.song@nxp.com>
+References: <20240826050957.1881563-1-carlos.song@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-If driver implements ndo_validate_addr,
-core should check the mac address before ndo_set_mac_address.
+Hi Carlos,
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- net/core/dev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+carlos.song@nxp.com wrote on Mon, 26 Aug 2024 13:09:57 +0800:
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index e7260889d4cb..7e9c3017e705 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9087,6 +9087,11 @@ int dev_set_mac_address(struct net_device *dev, struct sockaddr *sa,
- 		return -EOPNOTSUPP;
- 	if (sa->sa_family != dev->type)
- 		return -EINVAL;
-+	if (ops->ndo_validate_addr) {
-+		err = ops->ndo_validate_addr(dev);
-+		if (err)
-+			return err;
-+	}
- 	if (!netif_device_present(dev))
- 		return -ENODEV;
- 	err = dev_pre_changeaddr_notify(dev, sa->sa_data, extack);
--- 
-2.33.0
+> From: Carlos Song <carlos.song@nxp.com>
+>=20
+> According to I3C spec 6.2 Timing Specification, the Open Drain High Period
+> of SCL Clock timing for first broadcast address should be adjusted to 200=
+ns
+> at least. I3C device working as i2c device will see the broadcast to close
+> its Spike Filter then change to work at I3C mode. After that I3C open dra=
+in
+> SCL high level should be adjusted back.
+>=20
+> Signed-off-by: Carlos Song <carlos.song@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Frank, did you test it with eg. the Silvaco master?
+
+Thanks,
+Miqu=C3=A8l
 
