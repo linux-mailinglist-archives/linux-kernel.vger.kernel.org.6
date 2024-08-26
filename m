@@ -1,112 +1,150 @@
-Return-Path: <linux-kernel+bounces-301232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA3A95EE0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:07:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA9C95EE0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2C21F23239
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E531C22072
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836ED146A86;
-	Mon, 26 Aug 2024 10:06:51 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAEC146A6C;
+	Mon, 26 Aug 2024 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/yuAsWy"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FCC804;
-	Mon, 26 Aug 2024 10:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7737113D8A2
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666811; cv=none; b=XZXC0sMiyf1TtWKv8GMyipKvdmcz55d5DekOED2QlFtYin6Rl2nLQe/AWC0kEzD4Vaomx3eh57leuNwNDUdTAWJ7ruOv6CunWvZwqt4sS5cBCEgGuJ3dsYDtpPqKkZc1uSDOmDAhxkIw3ZWBb6xMJhqm4un85pDASq5YGIR807w=
+	t=1724666856; cv=none; b=pBmGvOkL1FopEsuFucI+5MLLkTZdy0b/pHyQm0/WClNu47ZysnV79aXn62JkTSGQM34/GriYHPm5mEY841EPSHFr12Q8D1F3P2+CKKlTd27yhXvGVpFSir0xvnIQ2CcREJSSS0S4nqvkKL8yPG6R5s2qMYPY9mTlOCU1J/euDYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666811; c=relaxed/simple;
-	bh=c7iGIBmPQ0+X5ed9jb4ofzKU/5N8V6B+VMyfLL4JSoc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oJQPqSTYf0hi7p3gHOZ1v6Vab5zZ8bY1luIaXepMc+yJ5WtnIaf01gQUpwpy1VBKktdvBhQfTU7Ield1Dg/RYUnOacVbgDJs40uSPhmB3L938GW9WtMtZs/0zl4NOcU73tZvHVlvTkjCJ1/nMQ75WMSdwjXH6wh4VUbSaf1tHeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAC3v0ubU8xmAXKgCg--.13784S2;
-	Mon, 26 Aug 2024 18:06:32 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	allen.ye@mediatek.com,
-	johannes.berg@intel.com,
-	chui-hao.chiu@mediatek.com,
-	ruanjinjie@huawei.com,
-	make24@iscas.ac.cn,
-	howard-yh.hsu@mediatek.com,
-	greearb@candelatech.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	stable@vger.kernel.org
-Subject: [PATCH] mt76: mt7915: check devm_kasprintf() returned value
-Date: Mon, 26 Aug 2024 18:06:18 +0800
-Message-Id: <20240826100618.2605161-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724666856; c=relaxed/simple;
+	bh=flmAEj5Nd9G8wrUjTaGvwvFK+32RV5njH6u856Suhok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l8/Xyb/NZtLvNFcMRY4nWJGSGBWX3F6fYTEuTTRturSC21DdytxmtOExx22Ny8+MbdHSOqYnaF74d8IsjliZpF+tQ/oedUBOKs2mgZN5f7UtDoacGtcGC1eqzLfdhbaqoli6W+OaQroiZIwZ81dcoEetWYbgyKzNhHC12Ubszaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/yuAsWy; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-371c5cbc7c8so478916f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724666853; x=1725271653; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HjftXAU3xKMpzR2JP/aMX2y07jgOYNP9sRw85N0o18=;
+        b=N/yuAsWyMQ7FlHy/8VYruVPVmrcrn5SM9NDh5vLsoLzoWraf4VNsYs4lfl9zZwoQXz
+         f4yMzo4wA/bXHtdKVCdDVQYhs96C7yCT0jlTCXj71OZuRzNnH/SLUrOro3p/EVGyGLU6
+         et23Z2BOvnev5Tc9YM/g51WrTySFBRmxgkqUfAJAFZTrkOlcuDBANiiTHIAb6XVRDDGo
+         ++rkhRySgzOZYq99orL96jDvgJhfib9CqN4R9X+w/c2eNDG7PlyNvP1p/gQq7FmB8gBn
+         bjoBV3GD2pZmyEA3jp8dYqbsMK+iz6xcCEd2QJvNKs7G+tW9e9nVfyVBG4aCc/0Zztdp
+         BW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724666853; x=1725271653;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+HjftXAU3xKMpzR2JP/aMX2y07jgOYNP9sRw85N0o18=;
+        b=AkJ4CZuHhxvJeiN3oBhMwlkYgtf0ZWVQe9KX8qvcQ50V8lg0eHLZ0GfcSnXmERP2Lo
+         9PrYKkq3k1rf5upurtzLZLf5WuAzNhSj04JcoNEE317yWLkTR0XDq5e9easVY76lbbHl
+         WnO39krX7buxzk+stEFGXgKXcwXhy246E5DQWtSBBsYrBEH7cG0nalnvvlx9HuBgLdPR
+         y6E969ixRItdKvxq/8Y1RJk+GlmbP1ZyImzEzY7DV4y+dhs3xLYZ+tLeogzS3NM/KO4s
+         yn358t9P2v1OQr8t3HKC4TP8DjwEaQOTDHTKLiCtQ3bZbKvenvy5yZk4XpSpL1XEfiLh
+         sawg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEkkJ4dJ6KcOjHEoTsxdR0E++qAKE28RWAG87EZMEJm0kMwqJFM7pte3eF29QIBa9FAuy+I57FuAXDsHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgiySGTe/wVWlNqo6VD0ccbVT7o2mL1TuNbNN6xfairPQlyNWZ
+	DUU5nSm+vJ0wThn+Na0iDHp8A4NnTE4Rm7eU1dixuUibpj6UVI7mV3t/pIaxoD4=
+X-Google-Smtp-Source: AGHT+IFCD5GPA1+BkzRXcgnVVTn8nZixGGKVQtfkU6p7k64Y3GOsR+HExdueg7UHKjrmdDfxphRs4w==
+X-Received: by 2002:a5d:59a9:0:b0:371:8d07:f84b with SMTP id ffacd0b85a97d-3731191519cmr4431159f8f.7.1724666852669;
+        Mon, 26 Aug 2024 03:07:32 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37308110009sm10324821f8f.18.2024.08.26.03.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 03:07:32 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/11] phy: simplify with cleanup.h and few other ideas
+Date: Mon, 26 Aug 2024 12:07:16 +0200
+Message-Id: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3v0ubU8xmAXKgCg--.13784S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFW7ZFW5Ww13Zw4xXFWxCrg_yoWDAFbEgr
-	W8Zrn3GFyrGwn0kr47Cry3Cryaya4kZF1kJ393trW5GrW8AFW7WryfZrn8J397Cws29r15
-	Gwn8AryrZ398ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRRH7K3UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANRTzGYC/x3MQQqAIBBA0avIrBsYTSm6SrSInGo2KgpRSHdPW
+ r7F/xUKZ+ECk6qQ+ZIiMTToTsF2ruFgFN8Mhoyl0ThM54NxxxA9Y9liYiTn2JPt9WB7aF3KvMv
+ 9P+flfT/ZtsNTYwAAAA==
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1853;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=flmAEj5Nd9G8wrUjTaGvwvFK+32RV5njH6u856Suhok=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmzFPVkZ2FsKym2PSIv1cjVB9boTWCPLW6iOlIN
+ /9pOIHBeGeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZsxT1QAKCRDBN2bmhouD
+ 1xLqD/9/qGmAF8uPKhx2wWo3kIzy3zrrimGskzxVQsS1cNXBQRhKKrAI6JAENVXRunpYd01lng/
+ v0Hvcze6XwNg2IOTK4bjA0n0AF1KvOzFzaPNE3cS+W+t1QUPEz0nzSRzXryV6tYTBb2Z4UCzBDS
+ pUC/9jLhQJf1X8giqkNktJNUJ24cOzG4DyUoe4Qvki6ISGMXI2zEMoOOXTOunDcMz9fLB9PBcow
+ q94N2lgYb4EcM/KtB5EVs8pFdB7TRIfd14GRRAPqSFBJ0Po6Ym+nT92uxrsWIEj0Nt2Ag8ZwOk6
+ WpYyQDmrDFhwdQt4TVhVrcm6kHThBEMrS7+1VdulIBcUvpw/o40qvqFIWlxvyntlcqaGtAMQu/D
+ HAO5edJzkHxYXGOcvnDdUFM54tcxqe1EbgWAx61OLgwIrYm/wYoTNHC42CMvduAvA1bNNvHLzSd
+ PWb0C6qh18GesykeVDY1LSwjkYBNHFRLBvgaTUEq4PPdVIqtUU58E4vR3qAc8cgQEtAGJje04nA
+ llG/H/5qkeIe3hLgrmO7ipSS4pfWIRpPjj93sFe7Sdelh1e8oYwZMm1FwRDmAb8d/T6qa5Iklyo
+ QrX76hLjS4tmqrzTHn3WDz+1sUThCLwxfL0K8MoTqIPYsjEMkvYuGKo9rhgnK9AVc4sWYae1LIY
+ EIYW82BvNvhusHg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-devm_kasprintf() can return a NULL pointer on failure but this returned
-value is not checked. Fix this lack and check the returned value.
+Make code simpler with scoped/cleanup.h/dev_err_probe.
 
-Found by code review.
+Best regards,
+Krzysztof
 
-Cc: stable@vger.kernel.org
-Fixes: 6ae39b7c7ed4 ("wifi: mt76: mt7921: Support temp sensor")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/net/wireless/mediatek/mt76/mt7915/init.c | 2 ++
- 1 file changed, 2 insertions(+)
+Krzysztof Kozlowski (11):
+      phy: broadcom: bcm-cygnus-pcie: Simplify with scoped for each OF child loop
+      phy: broadcom: brcm-sata: Simplify with scoped for each OF child loop
+      phy: cadence: sierra: Simplify with scoped for each OF child loop
+      phy: hisilicon: usb2: Simplify with scoped for each OF child loop
+      phy: mediatek: tphy: Simplify with scoped for each OF child loop
+      phy: mediatek: xsphy: Simplify with scoped for each OF child loop
+      phy: qcom: qmp-pcie-msm8996: Simplify with scoped for each OF child loop
+      phy: ti: am654-serdes: Use scoped device node handling to simplify error paths
+      phy: ti: gmii-sel: Simplify with dev_err_probe()
+      phy: ti: j721e-wiz: Drop OF node reference earlier for simpler code
+      phy: ti: j721e-wiz: Simplify with scoped for each OF child loop
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-index a978f434dc5e..7bc3b4cd3592 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
-@@ -194,6 +194,8 @@ static int mt7915_thermal_init(struct mt7915_phy *phy)
- 
- 	name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7915_%s",
- 			      wiphy_name(wiphy));
-+	if (!name)
-+		return -ENOMEM;
- 
- 	cdev = thermal_cooling_device_register(name, phy, &mt7915_thermal_ops);
- 	if (!IS_ERR(cdev)) {
+ drivers/phy/broadcom/phy-bcm-cygnus-pcie.c       | 20 +++-------
+ drivers/phy/broadcom/phy-brcm-sata.c             | 21 ++++------
+ drivers/phy/cadence/phy-cadence-sierra.c         |  7 +---
+ drivers/phy/hisilicon/phy-hisi-inno-usb2.c       | 12 ++----
+ drivers/phy/mediatek/phy-mtk-tphy.c              | 30 ++++++--------
+ drivers/phy/mediatek/phy-mtk-xsphy.c             | 27 +++++--------
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c | 11 ++----
+ drivers/phy/ti/phy-am654-serdes.c                | 50 ++++++++----------------
+ drivers/phy/ti/phy-gmii-sel.c                    | 16 +++-----
+ drivers/phy/ti/phy-j721e-wiz.c                   | 12 ++----
+ 10 files changed, 68 insertions(+), 138 deletions(-)
+---
+base-commit: 834e84894a9d34ecc195d5db5386912bde3eefd7
+change-id: 20240825-phy-of-node-scope-055ed0431743
+
+Best regards,
 -- 
-2.25.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
