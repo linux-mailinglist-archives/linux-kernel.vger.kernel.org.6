@@ -1,123 +1,193 @@
-Return-Path: <linux-kernel+bounces-302404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C1F95FDDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFC395FDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964DD1C2152D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3EA2831A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D288619D88C;
-	Mon, 26 Aug 2024 23:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7961619D09F;
+	Mon, 26 Aug 2024 23:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="37HkrmzI"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="AuQigSbz"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF661B66C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFD3B66C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724716398; cv=none; b=M0X+u1Fw2+Aayi0/4bGVtdxxQ0OXyltK2sndo0Pn5rhCBRj+syMlLAx0XSFpSvcVJyVLZfBoyaOauwRX8DohcMtI46T5GLNb2z9yxywE38XB0Pho9GXbC2n9DPVMwH52PA0HMjQ5VQafQGApf/2PFi0o3L/yMr+Kq6EJWFVaSkQ=
+	t=1724716549; cv=none; b=GyxW1txz6zHqaiebvJTkpLaw3+ltgamf4yNLCWdVxwQy6+vl5mWZks4PXvWhkqaWiiu8hXl2VvWB5rDnhf7yNMCdTWk8EswmwmrgM/Sgn9VTZZwLBQ9R2BYAg2qhsDbsWgNbM7VY1eABtRrrR+rUIVCnsHrmmlOC9ffx/uxPbu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724716398; c=relaxed/simple;
-	bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
+	s=arc-20240116; t=1724716549; c=relaxed/simple;
+	bh=nrH3TZ6YHLWyBeHIRo5xrSVenIAktZ+LbymJzk/ofkc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V5/dN+XZLoYFjR9pTezDVjL4+5jgZhSx6Uv6qvHChGKy13GPD1RG//iZC4Zu811B9oS0BbHAVEIrKUDGV4BaDqMy22O66wBW1PKlZ7SnZ2PxMJtB+TKTX7J5uK1IAaoMMnGP2/BmANJZJpQe88FyxgXjHh4dyKKl2yUdgk8Tj0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=37HkrmzI; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39d3ad05f8eso41865ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:53:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=GrcQx9loKG/1CgkIY2J2PmDkrZpm9D8o3m89sf9PhInbP+SxQefwYKaMbSt0RX1FD7k0L+plKGgIQGWqy9L+4aE9lm0dzZaBtgnjkLnW45S6ymhrVf4C+rpNAZW9cWqL0r1uxxQr9Y2wT1pw2b0Kp+qdL98puzIdAgQM0psqwck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=AuQigSbz; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fdcd7a622so27984571cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724716396; x=1725321196; darn=vger.kernel.org;
+        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724716547; x=1725321347; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
-        b=37HkrmzI0rAAbrXX8bksT61XerBPCtCWgSw1eR9UCJJqoS5lpMjsUnQYUUP14mKz7k
-         L/+Bk43zl/LTIG4jkQsMCmaYXxB7vy3O/YA2JLh735tzbZpK4Uf9yf/0v9zj+uR8lcjG
-         Z0lbQJ31bYa8wT9LHVZsRMQQOJ5ZM9hNxHupbRPNRAAWtkoYF1gEEBt8WSgrlTrjO8l1
-         gGBEn+6+nF8mqokNoY4Yqn1oHEU+bhCSHx8aIwDXktN8qZbm5BJ+qCicBPsbuX2Pxkph
-         ysJfTNHvWV7To6WFarJWHjzMoBSaCdKWfcdLWUd11RKGluc/syLY8lFUd2kLLMzmiZWd
-         4V0g==
+        bh=pxKS43x5b6GIR/dn5+DFA/LtxoDW2/9sZiDISPay3P4=;
+        b=AuQigSbz1XEfC79NDCxdvaXxS6TTnIxXIY4yxZZJXjQ9AfBdUJui1lYyasMfWqWle5
+         4+j6/0hlPEcG8FuaBUfm86VKlx0PW6C/9wW+Iprag5gEUEyKjyydD5j6VeKX35sXyDcP
+         M+D3hWbN3FiKR1s+1ZwjU+ZYV4fgZbrB6fc2N9KoPpQgeXVg2siOGoICRPpCt8PpRNQM
+         C0BNIgpTT70vxSU1s/ern2nfjYMy+bzxFkiPgyIRHQvDY6wFNvRAYZ/ELZwcB1Uv2/bh
+         mSRO5xidQpLIoj4/+nJm+wg79Gq/s4DphzxH74eAYGkLr1E15Vt5/Vh+JeXabgQSI6dR
+         WeMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724716396; x=1725321196;
+        d=1e100.net; s=20230601; t=1724716547; x=1725321347;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gfvHugkBbV/sSEbPcr9P3g/ufuvgcgigP7r8eCXiXd0=;
-        b=O/5OuyB9xF4Bm1gxRFzU+0let0ucwKqpvi5SINQ0xKbwGQBKsKJtwoJmiLhykeYbAV
-         Am+eBe9sw8ueEWNMncDPTHFRuripnUVzfFSmXV94TrI6VloQL1lagMskpRzdkfsAGALs
-         NwC0iCc0Kkn1+7DV8GUbz0tyA0hKzTDys9pQyhFXYRKAXzvIdvPQWWUa2KeysC5EBF1P
-         xFMtUj0N3URkqqIbXpCWqhEMZLPmqeHu0u5DsDGqV4nH6HWna3V6bjQwpkUFupEZb6mN
-         WMxrU1GLS03/LTELdGx1oE3fTyjsgA6vSqdUsAnKh3pSCUamTFZF9YvF4C0Oanmtg+ha
-         CFFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwOyktpNNxGUI1yjN9aym431/duXn4HabYVryn8sLBO7UwNKPiJmbINLOVRs5gCWlmnfs7iS+9CUU6gpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyeu5iUxTwvWg9dVVlCwGJjiMiqKsDbUUM3UhFOX4kv2VzNtc5L
-	LKVvvGCVYab+xBvm9rxPQoUkEECman6gpEqTQB9CwU0W1lC16SyDi6Szwc5yG+L5ky6Cn19Gygk
-	YAWmuprvKHcjILy/yf2Va+60U/X5++ihrJnrK
-X-Google-Smtp-Source: AGHT+IGXtO3D10Uezf3WuYt0RVII2+j/KXfLazJLjbXs+ApM0V9QEMs2qZuqXBWdWC8zxibHnJ6RBxyuRpNdMTukOl0=
-X-Received: by 2002:a05:6e02:1c43:b0:377:1653:a1da with SMTP id
- e9e14a558f8ab-39e65ef32f7mr573245ab.19.1724716395620; Mon, 26 Aug 2024
- 16:53:15 -0700 (PDT)
+        bh=pxKS43x5b6GIR/dn5+DFA/LtxoDW2/9sZiDISPay3P4=;
+        b=QHhaDVnUaSu3vpqqfNYq31IALyiXAJXlkDlAFRTeqtYUCnvZ+OUkw0zHJEkMZ3V/q9
+         O4o17KqjtwSDnuNI8Ztr6yWodvM7/Nuit+staatNSWtPXHx25WpiabgILcWgUNLfx9dw
+         uLtek3np+ex0axbHvKT1fU+DCCnUZvv5Gism1H72MgWdV5xe5yKGKdUl1RjxSJ9Fmcvi
+         KMYmMfAUCls8WO9pDXY8xhHuJXijkCt5udrmp6GeqBnc+t7Q64Y/3F3kNN/fbtTOxi4W
+         ory27dgcSoFWb2EwW+AxkFxhEV8xHD3Un36utwMzY6kHfQi8Dz+PzxbsdU89cOYdR9sr
+         ZpuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW29caLJOQEyK2UYXwyLBqKHbaWOJhQavQTG/+bjXWQ7oCZwmxgdiWBsljmNVGP7urHFik52qMzgkC7+dM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0l5Yi1YHmrFxMnH7X9gSoa9vbZmUqvjxMYgGDhHE3mHFa4ZxS
+	kpwUBf3bq9gNDSki80sxei08jaCs+6mE6Fd7Fv2+fRviKWO77oyYNe4YLf4hut9gV0ECrcqJ2IB
+	I03VxrjypjhjZIQi9u+3CUYonV8bBajH5Gv9xkA==
+X-Google-Smtp-Source: AGHT+IEOn6iheQ+POTNkt4bD5q0z6HwLv9JFIyTkR0lASztMPmZRjIB4WL0FfTO9oAm8pCv3vVk09jQ/Aosb8BUmJRA=
+X-Received: by 2002:a05:622a:134b:b0:456:627d:5542 with SMTP id
+ d75a77b69052e-456627d56c0mr5515331cf.44.1724716546842; Mon, 26 Aug 2024
+ 16:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813213651.1057362-1-ak@linux.intel.com> <Zstiry-K_v51oDC4@tassilo>
- <ZsyR4eQr8X-q2X28@x1> <CAP-5=fWKiN8jJ2rehG+0fw_REyYZxC3562KLBG1g9jHCyXMRvQ@mail.gmail.com>
- <Zs0RE60KpHyZlj8g@x1>
-In-Reply-To: <Zs0RE60KpHyZlj8g@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 26 Aug 2024 16:53:01 -0700
-Message-ID: <CAP-5=fUZwoDrGaEh7Us1aDM+W3aj1zb3D5VEH39qDfCjQGvePQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/4] Create source symlink in perf object dir
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>, linux-perf-users <linux-perf-users@vger.kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240824215130.2134153-1-max@kutsevol.com> <20240824215130.2134153-2-max@kutsevol.com>
+ <20240826143546.77669b47@kernel.org>
+In-Reply-To: <20240826143546.77669b47@kernel.org>
+From: Maksym Kutsevol <max@kutsevol.com>
+Date: Mon, 26 Aug 2024 19:55:36 -0400
+Message-ID: <CAO6EAnX0gqnDOxw5OZ7xT=3FMYoh0ELU5CTnsa6JtUxn0jX51Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] netcons: Add udp send fail statistics to netconsole
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024, 4:34=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kernel=
-.org> wrote:
+Hey Jakub,
+thank you for your time looking into this.
+
+PS. Sorry for the html message, noob mistake.
+
+On Mon, Aug 26, 2024 at 5:35=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> On Mon, Aug 26, 2024 at 08:27:43AM -0700, Ian Rogers wrote:
-> > On Mon, Aug 26, 2024 at 7:32=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Sun, Aug 25, 2024 at 09:58:23AM -0700, Andi Kleen wrote:
-> > > > Arnaldo,
-> > >
-> > > > can you please apply the patchkit? This fixes a regression.
-> > >
-> > > First one was applied, was letting the others to be out there for a
-> > > while, I thought there were concerns about it, but I see Namhyung's A=
-ck,
-> > > so applied.
+> On Sat, 24 Aug 2024 14:50:24 -0700 Maksym Kutsevol wrote:
+> > Enhance observability of netconsole. UDP sends can fail. Start tracking=
+ at
+>
+> nit: "UDP sends" sounds a bit too much like it's using sockets
+> maybe "packet sends"?
+
+
+Sure, it makes sense, I will update it.
+
+>
+> > least two failure possibilities: ENOMEM and NET_XMIT_DROP for every tar=
+get.
+> > Stats are exposed via an additional attribute in CONFIGFS.
+>
+> Please provide a reference to another configfs user in the kernel which
+> exposes stats. To help reviewers validate it's a legit use case.
+>
+doc/Documentation/block/stat.txt describes what stats block devices expose.
+The idea is the same there - a single read gives a coherent snapshot of sta=
+ts.
+Did you mean that the commit message needs updating or info provided
+here is enough?
+
+> > +#ifdef CONFIG_NETCONSOLE_DYNAMIC
+> > +struct netconsole_target_stats  {
+> > +     size_t xmit_drop_count;
+> > +     size_t enomem_count;
+> > +};
+> > +#endif
+>
+> Don't hide types under ifdefs
+> In fact I'm not sure if hiding stats if DYNAMIC isn't enabled makes
+> sense. They don't take up much space.
+>
+I'll remove the ifdef.
+
+Without _DYNAMIC it will not create the sysfs config group, so there
+will be no place to expose the stats from,
+hence the attachment to dynamic config.
+The reason to hide the type comes from the same idea. It's not about
+saving space, but about the fact that
+it can't exist without it the way it's currently implemented. There's
+no way to expose those metrics if _DYNAMIC
+is not enabled.
+
+> > +static ssize_t stats_show(struct config_item *item, char *buf)
+> > +{
+> > +     struct netconsole_target *nt =3D to_target(item);
+> > +
+> > +     return
+> > +             nt->stats.xmit_drop_count, nt->stats.enomem_count);
+>
+> does configfs require value per file like sysfs or this is okay?
+
+
+Docs say (Documentation/filesystems/sysfs.txt):
+
+Attributes should be ASCII text files, preferably with only one value
+per file. It is noted that it may not be efficient to contain only one
+value per file, so it is socially acceptable to express an array of
+values of the same type.
+
+Given those are of the same type, I thought it's ok. To make it less
+"fancy" maybe move to
+just values separated by whitespace + a block in
+Documentation/networking/netconsole.rst describing the format?
+E.g. sysfs_emit(buf, "%lu %lu\n", .....) ? I really don't want to have
+multiple files for it.
+What do you think?
+
+>
+>
+> >  /**
+> >   * send_ext_msg_udp - send extended log message to target
+> >   * @nt: target to send message to
+> > @@ -1063,7 +1102,9 @@ static void send_ext_msg_udp(struct netconsole_ta=
+rget *nt, const char *msg,
+> >                                            "%s", userdata);
 > >
-> > Can we not apply this? See comments on the thread. Basically we're
+> >               msg_ready =3D buf;
+> > -             netpoll_send_udp(&nt->np, msg_ready, msg_len);
+> > +             count_udp_send_stats(nt, netpoll_send_udp(&nt->np,
+> > +                                                       msg_ready,
+> > +                                                       msg_len));
 >
-> And what about the reported segfault?
+> Please add a wrapper which calls netpoll_send_udp() and counts the
+> stats. This sort of nested function calls are unlikely to meet kernel
+> coding requirements.
 
-It is better addressed by:
-https://lore.kernel.org/lkml/20240720074552.1915993-1-irogers@google.com/
 
-One option though is to just remove this formatter. It is possible to
-change my patch to add the thread map support. I think also we should
-change perf script to not inject leader sample events similar to what
-was done for perf inject. This may break scripts, the scripts may
-already have been broken by the event injection. The change to perf
-script actively increases tech debt and aside from comments I see no
-difference in this series from the first that I objected to and set
-about trying to show how to fix the problem more properly.
+I see, will do. Noob question -  I couldn't find any written guidance
+regarding this, if you have it handy - I'd appreciate
+a link to some guidance regarding passing the result of a function to
+a classifier vs wrapper function.
 
-Thanks,
-Ian
+> --
+> pw-bot: cr
 
