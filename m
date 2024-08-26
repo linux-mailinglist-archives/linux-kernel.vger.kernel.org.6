@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-301083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465DC95EC22
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E728B95EC2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EF81F2101D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF761B26DCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5297E12BF25;
-	Mon, 26 Aug 2024 08:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L3NssS4B"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD41C12CDBA;
+	Mon, 26 Aug 2024 08:37:56 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1187773478
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF3773478;
+	Mon, 26 Aug 2024 08:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661452; cv=none; b=gXGnEeVfiPvv3zzTXbAaEQRV7s2H5gpRLTQGVajLO9wc87djPlzQl4YQRsp3Eca9mPmO8qaoDID7prqlt/1Q3SFWDBjhy0QpMZkKvFxiU5Xp5n+G+oasBeP+MmdVlySddNdSzIjMzQe6X0VLIAsAy674nc8lIR1h7dZP7SaT4pc=
+	t=1724661476; cv=none; b=n3dZAyZnrI5yVYlIDQwBufphlH+vhySQk3Z5/fIcXIrAZNcCtXEiWCxbVJbYMLumD1Z14Cq8K3MHpJzFsTXLTi4O/NmIyyAqetwJ0FcPh39gG6j4+hxYA5APeZLsQc1QLh/0z4061ouMhYqMxn7HD9EhDJrkZzaem9/vZ5cv5oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661452; c=relaxed/simple;
-	bh=oM7kZdEzfuoVDcva/iFWT2NafPlq6MKcJXIggs+6Tyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rPbQUl30I9TXS/2eZib2laWoDK+mn9M9+UNNz0R5GBN/VWk9LlJ/4cM7G0pKCF4D/vykoB+wWluU7QdLzJD3Cm1nIqtfVfr/HObcvxd0YXJM7gcx8/7Ebc2p9rvsstdSYUS+pFSpgCj57nLsfuM1NO9J2IDABYejyF0HTvx+NFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L3NssS4B; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-534366c1aa2so3277991e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724661449; x=1725266249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mGxn7htxuwUZYATtE1s95mMQFcoul/l6IY3bhY0xjag=;
-        b=L3NssS4BvwSejKvZBmvkndcutnGJth0RyDil0X4anX3mkGjaXjSeFJqjp9TKh2cIym
-         HyhPYmVbBU6EH4FhVU72qJdBVT5v4h/4L6+wbIvdgRffFi2kFWIK83BghlvmwDsD96x4
-         cW1WH1RYOsil2lC1ysZxAmBw60lPqaYbV0Qs6kbYZN0itX9k0LiS5PfVFJJpl07S1096
-         G/VmzKfxApZRVvQ/hrWSavbRaz9KkQ/lkIrrcWhwkAs15+ywjomskaupS62PeFKMpaK5
-         xValHQwGigWjv1t6Kf35YIowontAuH/ZDHRMv3iAg5Jrt5ZLsvxVn0CSKCUPFoI6ZBV8
-         mVyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724661449; x=1725266249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGxn7htxuwUZYATtE1s95mMQFcoul/l6IY3bhY0xjag=;
-        b=ZGtA2SIApuwbozc/qGwJKXXC+MBWycqWhNK2M91Vqb9igQcnxh78w1zP8l0V4D5Ye9
-         +woRsLd2ZKfj+CGm3EM6r8NuEPrWpwYT8NecH5W6o/tuTp6fe7Rsru+amZeQYIoqutWE
-         X6BKNX4ptmUa9pJ8WdZJqObYMlxcGd3p1wz6eUjsYGpYvXLWO8Akpj0x8EVQcIUnd7JR
-         xUQa9iAND2x5oVFTamKwupwIdxVY5ahdGfQKU7lb58fMnFAsixpwQ2KpQFAgsPIICJ3S
-         7GGkwnJTTltcigNMVb6b/9AIkxyeYJxzWFesDedeAEm8J9BVYff5GvZ44xmy8sNoFNig
-         cSvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpxPtV7bRcfVNHGWO8AW7Uo3yK/lgTs3zXhH5s+cNGTc0PLKlBEz8tx/fSISD52NdWkct5Le0C8+tTKJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuq01+P86qJGrBuctTRi35kwB0TbevBTuyyw8wbF/e4RJyRDi5
-	J/iOQ7HRHnkvOG0sJlnJK0NFzHaCeoItblGpXkxI5h0CWTaAjBEd1ZghHk4deAIXgq1p9lFMATv
-	4Ri9EeDsiSivomsI/p36nWdm+7k7nJJrUHCJ3Ew==
-X-Google-Smtp-Source: AGHT+IHeMj7YBiO18vWqML21+FRq1pFZqa1ADKBp7TehE1pILknI7LCAogJhtpZ5d4cDOjaBm1wLNKiaVP0+mEb8qL0=
-X-Received: by 2002:a05:6512:3188:b0:52e:9c0a:3522 with SMTP id
- 2adb3069b0e04-5343885f878mr6873547e87.44.1724661448779; Mon, 26 Aug 2024
- 01:37:28 -0700 (PDT)
+	s=arc-20240116; t=1724661476; c=relaxed/simple;
+	bh=Hr69Ny0Fx+veT36ohPJ0ZeQmzGQbKmDpmYlnHx6h2l8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPxtaeFYbUDBU5DVez22+YDQkJyv3zgYt/ujk4TSAUBJ+1xglotXc8GZcBLxI1UxeyCtgNUNURwHfY20yaRxa8BQde2CE2T30muYVwHYbQCxEPKZfNk4Jo1U0dbo8hj0FtDcDcXnI2SEk+GLu0aP/lzDC/okdxzHaIxxOK1cmoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WskZl5slLz9sRr;
+	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qtZt4nGFX6b0; Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WskZl4WrZz9sRk;
+	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 85D558B773;
+	Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id g2eIkF1jnL0E; Mon, 26 Aug 2024 10:37:51 +0200 (CEST)
+Received: from [192.168.233.85] (PO17705.IDSI0.si.c-s.fr [192.168.233.85])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1399C8B763;
+	Mon, 26 Aug 2024 10:37:50 +0200 (CEST)
+Message-ID: <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
+Date: Mon, 26 Aug 2024 10:37:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821070740.2378602-1-billy_tsai@aspeedtech.com> <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
-In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Aug 2024 10:37:17 +0200
-Message-ID: <CACRpkdY-sNVdb+nSG4WLZnkj+7jvQ1D0t0Sn+gvOBgCfzvr2fw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	joel@jms.id.au, andrew@codeconstruct.com.au, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	BMC-SW@aspeedtech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+ Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
+ <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
+ <Zsw3xMoX2EI5UUs1@zx2c4.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zsw3xMoX2EI5UUs1@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Billy,
 
-thanks for your patch!
 
-On Wed, Aug 21, 2024 at 9:07=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.c=
-om> wrote:
+Le 26/08/2024 à 10:07, Jason A. Donenfeld a écrit :
+> On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
+>>   
+>> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+>> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
+> 
+> If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
+> instead of _PAGE_SIZE? But if that's the case, why not put the vdso
+> definition of PAGE_SIZE into some vdso header included by this file?
 
-> In the 7th generation of the SoC from Aspeed, the control logic of the
-> GPIO controller has been updated to support per-pin control. Each pin now
-> has its own 32-bit register, allowing for individual control of the pin=
-=E2=80=99s
-> value, direction, interrupt type, and other settings.
->
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-(...)
+It was working ok on powerpc but on x86 I got:
 
-> +static inline u32 field_get(u32 _mask, u32 _val)
-> +{
-> +       return (((_val) & (_mask)) >> (ffs(_mask) - 1));
-> +}
-> +
-> +static inline u32 field_prep(u32 _mask, u32 _val)
-> +{
-> +       return (((_val) << (ffs(_mask) - 1)) & (_mask));
-> +}
+   CC      arch/x86/entry/vdso/vgetrandom.o
+In file included from arch/x86/entry/vdso/vgetrandom.c:7:
+arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:24: error: 
+"PAGE_SIZE" redefined [-Werror]
+    24 | #define PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+       |
+In file included from ./arch/x86/include/asm/page.h:9,
+                  from ./arch/x86/include/asm/thread_info.h:12,
+                  from ./include/linux/thread_info.h:60,
+                  from ./include/linux/smp.h:118,
+                  from ./include/linux/alloc_tag.h:14,
+                  from ./include/linux/percpu.h:5,
+                  from ./arch/x86/include/asm/msr.h:15,
+                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
+                  from ./include/vdso/datapage.h:164,
+                  from 
+arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
+                  from arch/x86/entry/vdso/vgetrandom.c:7:
+./arch/x86/include/asm/page_types.h:11: note: this is the location of 
+the previous definition
+    11 | #define PAGE_SIZE  (_AC(1,UL) << PAGE_SHIFT)
+       |
+In file included from arch/x86/entry/vdso/vgetrandom.c:7:
+arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:25: error: 
+"PAGE_MASK" redefined [-Werror]
+    25 | #define PAGE_MASK (~(PAGE_SIZE - 1))
+       |
+In file included from ./arch/x86/include/asm/page.h:9,
+                  from ./arch/x86/include/asm/thread_info.h:12,
+                  from ./include/linux/thread_info.h:60,
+                  from ./include/linux/smp.h:118,
+                  from ./include/linux/alloc_tag.h:14,
+                  from ./include/linux/percpu.h:5,
+                  from ./arch/x86/include/asm/msr.h:15,
+                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
+                  from ./include/vdso/datapage.h:164,
+                  from 
+arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:7,
+                  from arch/x86/entry/vdso/vgetrandom.c:7:
+./arch/x86/include/asm/page_types.h:12: note: this is the location of 
+the previous definition
+    12 | #define PAGE_MASK  (~(PAGE_SIZE-1))
+       |
+cc1: all warnings being treated as errors
 
-Can't you use FIELD_GET and FIELD_PREP from
-<linux/bitfield.h> instead?
 
-> +static inline void ast_write_bits(void __iomem *addr, u32 mask, u32 val)
-> +{
-> +       iowrite32((ioread32(addr) & ~(mask)) | field_prep(mask, val), add=
-r);
-> +}
-> +
-> +static inline void ast_clr_bits(void __iomem *addr, u32 mask)
-> +{
-> +       iowrite32((ioread32(addr) & ~(mask)), addr);
-> +}
-
-This as a whole looks a bit like a reimplementation of regmap-mmio, can you
-look into using that instead?
-
-Yours,
-Linus Walleij
+Christophe
 
