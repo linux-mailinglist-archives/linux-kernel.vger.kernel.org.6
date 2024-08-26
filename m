@@ -1,172 +1,158 @@
-Return-Path: <linux-kernel+bounces-301740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4404695F4E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB5E95F4F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACD0B21874
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB531C20615
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB41192D64;
-	Mon, 26 Aug 2024 15:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10D194131;
+	Mon, 26 Aug 2024 15:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4lLWe3t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YIk6fmpm"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC561CD25;
-	Mon, 26 Aug 2024 15:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61F3193065
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685929; cv=none; b=SBsF70KYQZ/2xu/TS5rF/uQ2QG6x3V7V6SGCvHgQNyTgGQtCMIkQP1kZu2Mcr4C7BWhYFHSOQ9KDVNkkqeoWXMF0FQPaV3xcSTJUX55IVbE7VjOstFTA7BMJz1LCMIuXOOYvr2vpJAFkN0gPhnso3zkRbLcT3cGHbTBpPO/JV6o=
+	t=1724685944; cv=none; b=OdtDqen4bMOEf9Q2gdzYIBmWexOYcerRgXPNPLsrXTq9IGNSXl/aBz0/D5GqfcpIJ5btREErWnSHzL2dgq87JQfLuwIMwcjN668Wws8CLbOPNAGDcwvOaNsczDnFvjarXTB6NIaYF1/PZP65yD0Eix5p45lrWel41OZrHS3ceB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685929; c=relaxed/simple;
-	bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TuZZ40VI7jeBgKE1MjnlABdVaRtzu34xKKvstFKnwh5vRZTZMx7WALH5wbgREcbqP6I4EwRav5k3PuXJpXLABVL1WH94RODmKf8O/oXV94RD4/4Xz5SPvbMdfjntzby9BPJYX9sQA6P/iZkLBRKegSt3LgsmhiZ3g78QZp8rqRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4lLWe3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8180C52FC5;
-	Mon, 26 Aug 2024 15:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724685928;
-	bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h4lLWe3tw8iH9MLtcbDg+ta2KOzwk2XZO0mAcdXNi+sKjyRcpgt1CRuLy6rXJQA0/
-	 3qESRK95Y35uiGFHPSIT4XP+yQUTq0c7odBjiMjtKYo7mj7QomnurMfr97Vw0YLoDJ
-	 wzbCeYo8HVZ5pHU7TxI6LrGhfRD8ybKdumbOokKkWqYb8yS/JYVgE0+vLF9gNxmZ8G
-	 /K9W1zX0xqoKkGW+LJCfNyOcaXPIvEnO3RScsnO3ypyUwg0kqb/oMjnhllmxwt8af9
-	 dK5SXvKpLXz3O6FkxYJ3/cfnlXBkBuBftnyMutywLg1nKgi0A5Hx/XGPuR9GbstkNI
-	 JbR+qJ6z+eAkA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon, 26 Aug 2024 17:25:04 +0200
-Message-ID: <20240826-vfs-fixes-3028447211c8@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1724685944; c=relaxed/simple;
+	bh=/DMKkyAX33V/uuPtD4o6lStnmjdqMZbSaNtMNVCkcFg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M09Z18CKGMIHuijcq3paEQbEEz+l0ZJhRX6la12h5WJjloQoCj/MWmTerhlPRLTJFHROXWKvXNdm545+zn2BZ2f/duS5N8qrP2X93vzlb8PnRUfwyEYz9qI6CXNPHezfRHk/tMTYtHkqRQ8M+DrK8AW9DXOOKtwPrszgmzkgpI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YIk6fmpm; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5343eeb4973so3671854e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724685940; x=1725290740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WVZxPwWU6fTdIbk77ZAZBmOWFDE8RmLRjC5RiWd9L5I=;
+        b=YIk6fmpm/iQe/kDeAf+huYnLY8U7zrRTJX5PXKokopJUU3BJ5Ga/DYDx2pSOpVteKf
+         0angm6/wfHQZilQ8pogOcKw/1Co/qT3TLT/RvNX4GVPd2pBCEb5c16FlqV7aw86G8rhG
+         vs9Ep3wKjsyqVrD4/2wTH9GJ0FhxhGP5CLjdp2EZidykc5WFi2qsO2DI2PuJEDIEA0sV
+         uvhmXTYcTRkgH55DgJQx3P7C+owpRC5qawP7zfabiVQEhFQB9GORu+WgvSHXd5xtH0Cd
+         IKJsCwylTc8UMq0ReR3Dg17tNVAhWZvJvvhylgnsfUumNdELCvN1X3AZtMSwuuzeHuM1
+         hLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724685940; x=1725290740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WVZxPwWU6fTdIbk77ZAZBmOWFDE8RmLRjC5RiWd9L5I=;
+        b=XUmLfh7B5ePvyoLCGNHBVGOzNEgBXGz74oukNFsDCpRnbXoWuwYM9ZM0X3XtUlRXWY
+         AKsV+a/TuwznLkSGBEEFeTTEaKlk0hp3ZFJ01qGHAtT8ELZkCQ8V7BhtOB+J+W9VqZoS
+         OB+cdwuOajB9SWdXfweVLAkO9Hc0UiNoPQj73IfIP5IZMU2Dt4qdZUFmkM+66buFDkYT
+         W6W7XdduW/gwiv91aVqw4xzkMblHvjUwMfr2QQi1u6O5hMZ8pxb6n0zrxCk7I9vHiSt2
+         hCTsH9cDez3awbRQkHYOc3E+X4mygeik4RPBPHCP7Dv6Z5/E9vOLfMtjhN+tBbKL/Xnv
+         8Nvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEsLdDxG093T7ArRGN6eDxVwPCWPl4zqxj0V+cP2Y1Yl83oQmaRN9jXptDYgPXtkGtVu48Jko5D0l3apE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvck4C58TL9Df2CkRCc8mxEoncmTSwn61wG77f5rTTD69pNXrx
+	l6x946ogkP/JOVCw/YmwKJ2O//6H7orN8NK7p7lG5KicfCRczqJIcEYZVMj4Iww=
+X-Google-Smtp-Source: AGHT+IGqJgMZFTxRO1awmSGF6GW+2CPuDRMo7JmoLYQGXIKpOJ+edUP1SwWEqW7Tv6u077l7Xl+BJg==
+X-Received: by 2002:a05:6512:b22:b0:52c:ddef:4eb7 with SMTP id 2adb3069b0e04-53438846f4cmr8424456e87.20.1724685939527;
+        Mon, 26 Aug 2024 08:25:39 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f437d5fsm683005866b.99.2024.08.26.08.25.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 08:25:39 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/3] watchdog: rzg2l_wdt: Enable properly the watchdog clocks and power domain
+Date: Mon, 26 Aug 2024 18:25:26 +0300
+Message-Id: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3818; i=brauner@kernel.org; h=from:subject:message-id; bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdmRfJ6sb6dvF736N6RSv/z1W5lWumIHX5muDKtcr3e rd9slna1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRHb6MDO/Zry+sFNdaZLA7 WbOxUdnNfIPj9cPRUQ6G4Szz9u/6eomRYd+Zt9vVeZY7Gd6MyP7CHWY8cfZKt2yWa2F5L1+wb15 /lREA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-/* Summary */
-This contains fixes for this merge window:
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-VFS:
+Hi,
 
-- Ensure that backing files uses file->f_ops->splice_write() for splice.
+Watchdog device available on RZ/G3S SoC is part of a software-controlled
+power domain. The watchdog driver implements struct
+watchdog_ops::restart() handler which is called in atomic context via
+this call chain:
 
-netfs:
+kernel_restart() ->
+  machine_restart() ->
+    do_kernel_restart() ->
+      atomic_notifier_call_chain() ->
+        watchdog_restart_notifier()
+          rzg2l_wdt_restart()
 
-- Revert the removal of PG_private_2 from netfs_release_folio() as cephfs still
-  relies on this.
+When the rzg2l_wdt_restart() is called it may happen that the watchdog
+clocks to be disabled and the associated power domain to be off.
+Accessing watchdog registers in this state leads to aborts and system
+blocks.
 
-- When AS_RELEASE_ALWAYS is set on a mapping the folio needs to always be
-  invalidated during truncation.
+To solve this issue the watchdog power domain was marked as IRQ safe
+as well as watchdog device (as proposed by Ulf Hansson). Along with
+it the clk_prepare_enable() calls from the watchdog restart() handler
+were removed and all is based now on pm_runtime_resume_and_get()
+as explained in patch 03/03.
 
-- Fix losing untruncated data in a folio by making letting
-  netfs_release_folio() return false if the folio is dirty.
+Series contains also power domain driver changes to be able to
+register the watchdog PM domain as an IRQ safe one.
 
-- Fix trimming of streaming-write folios in netfs_inval_folio() .
+Initial RFC series for solving this issue was posted at [1].
 
-- Reset iterator before retrying a short read.
+It is safe to merge watchdog and PM domain driver changes though
+different trees.
 
-- Fix interaction of streaming writes with zero-point tracker
+Thank you,
+Claudiu Beznea
 
-afs:
+[1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
 
-- During truncation afs currently calls truncate_setsize() which sets i_size,
-  expands the pagecache and truncates it. The first two operations aren't
-  needed because they will have already been done. So call truncate_pagecache()
-  instead and skip the redundant parts.
+Changes since RFC:
+- dropped patches 01/03, 02/03 from RFC
+- adjusted power domain driver to be able to register the
+  watchdog PM domain as an IRQ safe one
+- drop clock prepare approach from watchdog driver presented in RFC
+  and rely only on pm_runtime_resume_and_get()
+- mark the watchdog device as IRQ safe
 
-overlayfs:
+Claudiu Beznea (3):
+  clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+  clk: renesas: rzg2l-cpg: Mark watchdog and always-on domains as IRQ
+    safe
+  watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
+    handler
 
-- Fix checking of the number of allowed lower layers so 500 layers can actually
-  be used instead of just 499
+ drivers/clk/renesas/r9a08g045-cpg.c | 43 ++++++++++++-----------------
+ drivers/clk/renesas/rzg2l-cpg.c     | 13 +++++----
+ drivers/clk/renesas/rzg2l-cpg.h     | 10 ++-----
+ drivers/watchdog/rzg2l_wdt.c        | 21 ++++++++++++--
+ 4 files changed, 47 insertions(+), 40 deletions(-)
 
-- Add missing '\n' to pr_err() output.
+-- 
+2.39.2
 
-- Pass string to ovl_parse_layer() and thus allow it to be used for
-  Opt_lowerdir as well.
-
-pidfd:
-
-- Revert blocking the creation of pidfds for kthread as apparently userspace
-  relies on this. Specifically, it breaks systemd during shutdown.
-
-romfs:
-
-- Fix romfs_read_folio() to use the correct offset with folio_zero_tail().
-
-/* Testing */
-Debian clang version 16.0.6 (27+b1)
-gcc (Debian 14.2.0-1) 14.2.0
-
-/* Conflicts */
-No known conflicts.
-
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
-
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc6.fixes
-
-for you to fetch changes up to e00e99ba6c6b8e5239e75cd6684a6827d93c39a2:
-
-  netfs: Fix interaction of streaming writes with zero-point tracker (2024-08-24 16:09:17 +0200)
-
-Please consider pulling these changes from the signed vfs-6.11-rc6.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.11-rc6.fixes
-
-----------------------------------------------------------------
-Christian Brauner (4):
-      romfs: fix romfs_read_folio()
-      Revert "pidfd: prevent creation of pidfds for kthreads"
-      ovl: pass string to ovl_parse_layer()
-      Merge patch series "ovl: simplify ovl_parse_param_lowerdir()"
-
-David Howells (7):
-      netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
-      mm: Fix missing folio invalidation calls during truncation
-      afs: Fix post-setattr file edit to do truncation correctly
-      netfs: Fix netfs_release_folio() to say no if folio dirty
-      netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
-      netfs: Fix missing iterator reset on retry of short read
-      netfs: Fix interaction of streaming writes with zero-point tracker
-
-Ed Tsai (1):
-      backing-file: convert to using fops->splice_write
-
-Zhihao Cheng (2):
-      ovl: fix wrong lowerdir number check for parameter Opt_lowerdir
-      ovl: ovl_parse_param_lowerdir: Add missed '\n' for pr_err
-
- fs/afs/inode.c           | 11 ++++++---
- fs/backing-file.c        |  5 +++-
- fs/ceph/inode.c          |  1 +
- fs/netfs/io.c            |  1 +
- fs/netfs/misc.c          | 60 ++++++++++++++++++++++++++++++++++++------------
- fs/netfs/write_collect.c |  7 ++++++
- fs/overlayfs/params.c    | 51 ++++++++++------------------------------
- fs/romfs/super.c         |  2 +-
- kernel/fork.c            | 25 +++-----------------
- mm/truncate.c            |  4 ++--
- 10 files changed, 84 insertions(+), 83 deletions(-)
 
