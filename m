@@ -1,182 +1,191 @@
-Return-Path: <linux-kernel+bounces-301175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BFC95ED51
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:33:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDD895ED22
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD05B20BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE7B1F21840
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6314535F;
-	Mon, 26 Aug 2024 09:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12ED9144307;
+	Mon, 26 Aug 2024 09:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+EjeyBH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NM26uKpO"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2085.outbound.protection.outlook.com [40.107.117.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892FC13D630;
-	Mon, 26 Aug 2024 09:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664792; cv=none; b=keHUoY0pMrmxdKFVhfO3Gp1B5gxiqGGDX17GHdOXZgHrJ4Z+FYJYZMu3ZXu5edyM1VLi3ZjMrTEpUhtWwzhzAWPisA1v7jUBbXgA0qwj5t/0+6PmF9LjB+hsMi5Jhwk8DlpsWj93K8THUsgQzej0TsdIHvT4R3NWxkKTwYb8IDA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664792; c=relaxed/simple;
-	bh=5gF49ZsaBl+eyYEsQZFl8g7Ns5jOi2/2z9XqrrfRfmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SV+uiTefO6odSYwMbjTztiBa59T5ZgIA/Mdc3TBrUKkNyvonjBnSXhxjYRIGfhQvt8kSCn9r1gAAvuexMPvWpx+UABoGGJQ7VSgktOKwJpbvAcW6aK3KHXKS/IKd2uOLyHV05mG7uLgebdLRqbZryjVPrOrmRLqrXmmWpU30QRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+EjeyBH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724664791; x=1756200791;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5gF49ZsaBl+eyYEsQZFl8g7Ns5jOi2/2z9XqrrfRfmI=;
-  b=d+EjeyBHlhkx1BjfdYbQsoXrglBjlBrZdwqR4WIFaK0oK9RzFyGJKaVV
-   BAcPLfxqHTnmYVKKESGwvik+P69q+wIxjGUS3+YiJcO7SKHm8++jLqCU2
-   ExCaswP+Qy+b1zSZ/79KCsgFI61CVcwA8CQNfikrzlHR5JiQKqzHy5hXw
-   trynUIAvPxnr3hnQbhmqfZK8MD4tzz65v37E8zTgSU9rXdmoKPp46GYa7
-   HdiA+rNYIAAfBQUIfubYgcr9IE8N0JpeI34uBRWkZsv+WNut8gc/tEG6p
-   zKD1+wAo6bt49ngN4kGuE8f41o+SQEQ+J5/jZw2I64cmLEAkccWt9P6LO
-   w==;
-X-CSE-ConnectionGUID: uAbQSPB9RSW0VeQbYmKcPw==
-X-CSE-MsgGUID: lnnUEWNvQRu7WcdIPA4ThA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="25967099"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="25967099"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:33:10 -0700
-X-CSE-ConnectionGUID: StgiaI9yQWW9P7hnhG707A==
-X-CSE-MsgGUID: q0WWbT5FSWeCAnkmt419Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62134701"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.246.121]) ([10.245.246.121])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:33:03 -0700
-Message-ID: <f4e609c0-92ff-4724-8243-bfe5de50d308@linux.intel.com>
-Date: Mon, 26 Aug 2024 11:28:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445BD29A2;
+	Mon, 26 Aug 2024 09:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724664559; cv=fail; b=l+LE1UyzhtgHuT6yb/gm41sZrJvpEpHoHeSmkSaKHlJceDsr4KKoDISJwPAXiNuh/yWYiRQntNbaNxBQSGFu2NZH6N8kAHJIhQMlOFVN9PeQIU+enKUeu1jRy4PNWUZ032yVifyM2EPJX+L7eZdCIAfPhidW7O8PKxYqSZJeTbM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724664559; c=relaxed/simple;
+	bh=4hlo8K5+PDhDwsVeBk265EvDugMeyfZLCylCMvTDb3A=;
+	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V4ix8WxqinubKhtFd++DP/Ue5ceFvF328fAE/q3lOey4gEq0ONYlU44CcZe4jWkQDkAqgbu8yPF7vc1kqHKtW8s9q6CqBORsGYloKNqSg6WXgybWba01RGKOrlgHCgGoXbv/YRdMOYT/eDbrlP6K2xCdxwVrjL2+JiDAy0umzns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NM26uKpO; arc=fail smtp.client-ip=40.107.117.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MfRiMlZPcRvaloNCi2n6dEKhh9F2HDBpHHTLCdO1fnoAl0V8QoM87BPXwgY4jBjlr5CF9oXLsjZvAxsaAcsTvEl3koUyvpcqYYGdrWZQl3vxI6LmhW/Gh0yBlAS3uIrdWxikcaVneS9mmHhGF2rjwId00b6+HKe8om2ab3qFscdAF1uyhK0ilja6aqk/nOnr24/KYC4EE9FgvCKsHnzSO+hX45Nsaca66El1I8kzXJaAkkXPWcxjdhfb4J5OMT2Ki9nDOcTW9ImYmDEUbEcGgcaemNlln9jXNWJeSKn6UfjBPO5HUM6mw0TMRtsi2sLhQ8Ba3ORqGF3SD++4/HYkMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4hlo8K5+PDhDwsVeBk265EvDugMeyfZLCylCMvTDb3A=;
+ b=S0mtaoiRtR253Mm6TNWGKjKbQw4tnsbpCPtmZ2sL92IAUmS19+8SGR3MrT8bsIO/PQL3jcjMGp1VRlGfmqYWeyeeLIoqTw5yu/deUaOQjh9RNLTrgDNbt76o22OJUPiAI++P7zxitZ/reGnvNKOjdopGk5ZPJxSCM39eJOGx4Ho5HZEQCpw5pW0C3d/X1Gv88pG1F/0dL3wtKVkV72HFYYDNMMJN617EO6N34qXpYkAz1IIIMPpagdkjrXPZ5xxBWmKo5fPcW7QPBehhPw97u3S5YYjrxaKkiSyZUQVCPqh8HuW0gcbMAj5hqHyJbGPhhVkbsr9FSgyjUcsyeWqrGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4hlo8K5+PDhDwsVeBk265EvDugMeyfZLCylCMvTDb3A=;
+ b=NM26uKpOd97q8Lxzt4Mx9zC6LQVn6EyAWiZb1LC3DRBJ7f6qv6K2JPZ5ZbQELsBo38BGVQCYNx+mGwXjLGj36rpr282YNhBSh95y76JVVGjDqhSLGZLvtUjZ4PF66gFEk5S2WbboSHr+oCHPsmjBxZuBY3qz7lSdE6H6Ok+8bdw4dE4DADo35ti6wO9zqEzdGmiIGcMICyntu0iMceHcJROAugwidO43N2yP10Hfrrzq1UQtkR78KnQQ79NVz0OXQA2fwEC8WR3uSWiQI/N7x36ZtEF/wwkjCIMILfwTc870SZGoujg6ie67GzeaHbNC/lm+YEmurbD39wE281LwOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ PUZPR06MB5540.apcprd06.prod.outlook.com (2603:1096:301:ea::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.24; Mon, 26 Aug 2024 09:29:12 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%6]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 09:29:12 +0000
+Message-ID: <807c17a2-393e-4c49-afe1-e42c736fdce8@vivo.com>
+Date: Mon, 26 Aug 2024 17:29:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] i2c: emev2: drop sclk from struct em_i2c_device
+Content-Language: en-US
+To: biju.das.jz@bp.renesas.com
+References: <20240823035116.21590-1-rongqianfeng@vivo.com>
+ <20240823035116.21590-3-rongqianfeng@vivo.com> <ZsxGP6HKQnBuEE7_@ninjato>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Rong Qianfeng <rongqianfeng@vivo.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Paul Cercueil <paul@crapouillou.net>, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, opensource.kernel@vivo.com
+From: Rong Qianfeng <11065417@vivo.com>
+In-Reply-To: <ZsxGP6HKQnBuEE7_@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0072.apcprd02.prod.outlook.com
+ (2603:1096:4:54::36) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v25 00/33] Introduce QC USB SND audio offloading support
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
- lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, robh@kernel.org,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240823200101.26755-1-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|PUZPR06MB5540:EE_
+X-MS-Office365-Filtering-Correlation-Id: c47ab480-5d67-43d0-77f8-08dcc5b18b71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VmNpeGdDZnRZaDZjVDR0QmZkN2d3U29XZWJTUDhrZjdiaURKVEdmMHp2N2NW?=
+ =?utf-8?B?Z2ZtMEtLNEM2a3RUTzJMZ0t3RW9kMTJzV1ZhN2I0SWhTTi9sQnRTWVVueXJl?=
+ =?utf-8?B?OGlkenNoQkFZdytJdWZCMExyZitzbW55MGZHSG1jay9ZNHhsQ3lwN1VscEhw?=
+ =?utf-8?B?bWhjcjBkNHVmbzRIK3p6cDd6N2xGUFZXZ3RReHlXVnFnTEFEamhEbFh3VXJ0?=
+ =?utf-8?B?VVdqdUFISDVyQUxCNkRQL1JyUWFsMklxb3lsSVZzUjZQVzF4dGJvUnlWMVJh?=
+ =?utf-8?B?bHpneC9Va1M5Z2gxOGxBQU9qeHRqM0I3T1gzMzJpY1Bsc2JLYWozQzBhd3VG?=
+ =?utf-8?B?R3Z2d2N2M1ZwL0pCZjh2RFV1c2V3aEgvR05FNjZOcWIrWElId1ZqSzRKcWI2?=
+ =?utf-8?B?WXlXc1pvaEFyNXpNRUp3cDJ6ZHJnUzlnSi9kc2ZINkFoMUhzc2lYZmlGTWEr?=
+ =?utf-8?B?SmlkeDhNeUdTSmdueTNIQUpmeTRrZTFjQWd1WUxDbVdwbHhyZWdyQVgveFNY?=
+ =?utf-8?B?NCtzaTlnQWwrRHIxdVdTejRvR2dyaXVRTlFXemdEaXg4amt5dVdEL3JqSUsz?=
+ =?utf-8?B?RUIvTmw0MDdBeXVvN1Bmc2JGaWgzb3hWVEJWTS9CU3pHMmJFZUhWd3ZBMENj?=
+ =?utf-8?B?eEVaaVFIVlFjanRUTjlsSDFzaHk1UVRtK0UzM0RDMUZ1RDBZSkRuRy9Ra3dF?=
+ =?utf-8?B?NU9QS0RkaWh6MVpFS1cxWjh6cnJSanZrTnZlM01IUHE2QWhEYUNjTGd1WTJW?=
+ =?utf-8?B?NmFLa3g4VWt5VzNvV0Ywdzh3UWVXSzBTSW50RTJHeTdUclhpVS9WUDV0eXVq?=
+ =?utf-8?B?Y01HTzMzNjAzV09zd2lEWi90R1hNRnJNZmc5QjN6SGxXZmRrUlV3TjhMV0hI?=
+ =?utf-8?B?MGkxamdQSk1nWXF2TUtQZENBTzFabCtNNzhrd1pQdXFRVkdYS29DWGpVVS85?=
+ =?utf-8?B?dDE3bU0wM2pSbDUyVE1CVEVUNDZUaFRhaHhTTGc2Mm5BRytQQ0JTWDhUR3ZN?=
+ =?utf-8?B?VjNTVTZmMlRvQnl0OTNCWFliR3pvL3diRFFPQ2ZJWlptbi8rOVU4SWZwRlg5?=
+ =?utf-8?B?S0lBTndlUmI1N0lYc29ycXZ2NEFaMDVyZS9oVUNsZlpadFJFbWY1SWVSRWdk?=
+ =?utf-8?B?Wk1FbENHMFFtekY5SmN3RjlTYmR3N2lyMXJIRmtsYWpqKzZ1aWJYdTdmNnZY?=
+ =?utf-8?B?QjB4MG1JKzE2QXE4VTVQMW1EN0VHNkYrS0k1S1dTcVFpU2FQYjY2Zzk0R1Uy?=
+ =?utf-8?B?d2dPNjFvdWVQdTJOZlphL3BXdVJUOFJtNDQ3bFg1VHg0Vzl3MzV2QmI0OVZ3?=
+ =?utf-8?B?UzBjMnlCbk1VNzZiNUdWZkoydEhkMjRxU3hLZlJhZ2IrYmJpY2FiU1gzVWpO?=
+ =?utf-8?B?MXJqV2RtanJwNDFyR2JvNmhlUWQ4TUpOZjc5QXJVSExwNnd1NWovVVJNVTk5?=
+ =?utf-8?B?NCtxc0pwTGhVSGNIbnRLdEFaU3FEOXQ4NXlETWdyam5OZk10RXMrMHVtR3lR?=
+ =?utf-8?B?L2V6czdSbjF5eCtDWVlDRkR4Q2svTUVqVHNuaHJNMC9Oam1EcDhzQ0xrUGZ6?=
+ =?utf-8?B?UW1jVVBpbnhlRzExWkVDcWplR0dINW1LM2hMc0V3TFIvZlYyUUo0Vk1DQUdv?=
+ =?utf-8?B?OFNHM2UwRFZCMDlTeWNuTG9ReGI1emZidE9xM2Fvb1JNcmNNelAxSnl1Nk1y?=
+ =?utf-8?B?d3poNHYxcjZPR3hiYlFiTmJ2NzlyUndCRTJLWDV5NWdVYUhVRXRqT2tnYm5s?=
+ =?utf-8?B?TTBqNkZ5ZlZjNGgzT0tVZ0xjVitLeWQwSm1aZGdybldoUXp2WjFMcTlHYWxZ?=
+ =?utf-8?B?WmNqV3FxaFZ2ZmNGOFIrMHZFVXlmcUhwb2VveUs2bUExa1MvclVIenZneC9T?=
+ =?utf-8?B?RnhEOFBRTkZObkoyMHVkS1c0ZmZqd3N6TVdwTk42cE1nRHNUaGdkdkx5eFcw?=
+ =?utf-8?Q?8peuJyRZahk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eFp2ajZTLzRvTnBuRENXMkVZYldJVjZicGdLN3V5RTJxKzUrR3Q3eXpNSmRF?=
+ =?utf-8?B?eVNMSm9OWm0ya2FzeFc5SXFiWXN0SWlBdHFHUk5vektNa1lzVTB0THlwb0dv?=
+ =?utf-8?B?MkFiNm1jVXF2cUJwV1JsNWFoaXFtS0JDd3RobVRmTFJSZ0ZjR3dILzAzYjBt?=
+ =?utf-8?B?Z3doRStoSmMrRGNDVW9VQ2hGY3Q4NGcxNi9aYWs3OFF3YnFmZklaOTdTRzdo?=
+ =?utf-8?B?WVJoVEl2eXAzakNWR0g3VlgrNG5LTzFjNHFycCtHQmg2V25JVzFVSnVxTnVL?=
+ =?utf-8?B?SitQekZPQVhlTGx4ZDc5MjZlWXg5SUl6dU1qVE9zNS8yRk5EN0tUazN1OFUv?=
+ =?utf-8?B?TkJzSG1NTDROVHRRK2ZJUEtOTDFuZmh1WEk0Ty81RXc4aTZrZ0FSUEMrYVBD?=
+ =?utf-8?B?bDFYNzJHRWhvNk1mWE5rMHNQMmNBQ05xbVE5K2pWNldxRklETTFwRkRMb1B0?=
+ =?utf-8?B?bGFUcTRpY0d0RVZ1ZjVVQzkveHoxeU1vNmwydUJDUmRsTlZMWXRSSVBIVlhq?=
+ =?utf-8?B?OGpyb2lxbk1nQjhnRElpR24yREo1MDkzeXVXR1VtbVZDMDlmSkgzb3NJbkxI?=
+ =?utf-8?B?b05mYlBiS285RERzLzVkcFAvS0R0WVlzcjNXem9NaHZZZXM0WWV1dlJteG84?=
+ =?utf-8?B?YzZDeCs0N01zQmNWNVBxUkFnTVovU1h4SVMrOEpUdFAxd3VCZTQ1ZnJlY1dn?=
+ =?utf-8?B?OEV4R0VXRXo2dDNNZllVT0QrdlJuZEg4b1JrSkNqd0MxNFk0YTg3a0EzT2N2?=
+ =?utf-8?B?LzQzRUduWlZhNjArTGxHeGNYUVJOM3k0YXJCTU9NTUwxd0hHTm9FcGUxM1Va?=
+ =?utf-8?B?M0UwMVpYd0hJbndkZ0dFMW4zeGUzNEwydVJHcWx2UkxQak1uamxpNU1xbUNS?=
+ =?utf-8?B?Sld3VDdnN0dpbnFhVFhNU3cwSVVmN1lHNlNlRXBPZlByTTdZWGVaZEhpVW9W?=
+ =?utf-8?B?dytnZGJkdFE3aWtuRHVvYyt3aVQ1eng1b2h6VFdDUWs4T3QvYjRyNFRXZk1o?=
+ =?utf-8?B?RDZKQ1NSQW52NFJBZ2c2TTgyZGV6SzJrUzlyTWs5dkQxVlB1cWdvQWdRREpD?=
+ =?utf-8?B?Vm5VU3YycU1Jb3EyWDNTWDlxdlhUZFFVN0tzZWpiRkNXVGdENjZyQ3VFVEZS?=
+ =?utf-8?B?TDQvVDBsY3FoRTNXZjJkbkxWYTdlTFlNSENsMjdEL3N2KzdKRVgzL3Jua3lT?=
+ =?utf-8?B?a01RZVZlc1o4dlA2d0JGOCtJNlhHeWw2cmtqZUx4dG1oZDhOdldLQ3J4RGt6?=
+ =?utf-8?B?YlMwcWJIdDdHSDF4Nld4NFd3dWJUYnZzMXltOVNRakpQSDVqWkdPanIxS1Z0?=
+ =?utf-8?B?b2Ezckp1dmlwdG8yelpXZDJIemVUOE1EeDdsY1pJTDFtcS9oZVVtRkVnNERF?=
+ =?utf-8?B?MzlXVTJ3d3BKUGlFQXhwSU1GNUJVRFI3aTBJbUhram1GTWpMelhYV3ZZOUdj?=
+ =?utf-8?B?Rmc3dmx0dTFocjczbmxMaHRkN2NLMFc2R2daVmE2SEdXdHIyaXRSMnlDSkdt?=
+ =?utf-8?B?MFkxc05ZdzE2ck1wekh6OGo0azhYcXZCcTFiSlI3aEZzVXNBRVd3UTZtbjNN?=
+ =?utf-8?B?MTlGYlJqUmt3YXU1VmltQWQ2SDVqT0JKUGJZU0NYYzVnaHlFaDl1dGZhK0da?=
+ =?utf-8?B?WksxNzE3WDFVeE94NjJuYks2dHdIdkUxZmd4Z2pFVGF1eXJvajNqbUswM09I?=
+ =?utf-8?B?Vi9ua0hpN1NvWExhU2NDMnRnNXQwZXdyVnllK3NBTkZNdmc4OE5rQnlXYVNH?=
+ =?utf-8?B?WEtibWZrTjR2VTFYL1hjbVJkS256UFhScWJ5UjA5aHFVQ3Y3WUpSdFozMFlO?=
+ =?utf-8?B?VmswV1ViYitMOEpFTG0rRzROSDVlNktkSnBWbnFPUXd1ckVQYU95MGhLc2Zh?=
+ =?utf-8?B?eVh4MHUxRnR3Ty9td3JSWXNPM0hiZ0hTRWEydGFWaTNJWlN4LytLYVh3dHBJ?=
+ =?utf-8?B?WHAxeEN3cmtoVDdINmhseVA1cmh4WHFCdkRaVUxnYUhVajlZcmpSay91UkxY?=
+ =?utf-8?B?RHNLeVhncm0vZVNtdmlkcHk3TFNHNVNUZW9MVHNzMmhEZk80VFZKZ29XWGZt?=
+ =?utf-8?B?VzJGeFdHTkdLRC84bnlyUmg5cEpMOXp0NE1Gc21HN1d0c0loeEpkQ3UzenpM?=
+ =?utf-8?Q?B+zeHMqalt+iNLttFHjzjMwiL?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c47ab480-5d67-43d0-77f8-08dcc5b18b71
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 09:29:12.0366
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: js4Wbzg+rTMn6UjOIJTxsHqDRMXvjdULIQjvHEldmc33vQTC2DXk3HWd1Xl8xe3nN1nPL/2Q6XTCRaDxqWL0wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5540
 
 
-> Changelog
-> --------------------------------------------
-> Changes in v25:
-> - Cleanups on typos mentioned within the xHCI layers
-> - Modified the xHCI interrupter search if clients specify interrupter index
-> - Moved mixer_usb_offload into its own module, so that other vendor offload USB
-> modules can utilize it also.
-> - Added support for USB audio devices that may have multiple PCM streams, as
-> previous implementation only assumed a single PCM device.  SOC USB will be
-> able to handle an array of PCM indexes supported by the USB audio device.
-> - Added some additional checks in the QC USB offload driver to check that device
-> has at least one playback stream before allowing to bind
-> - Reordered DT bindings to fix the error found by Rob's bot.  The patch that
-> added USB_RX was after the example was updated.
-> - Updated comments within SOC USB to clarify terminology and to keep it consistent
-> - Added SND_USB_JACK type for notifying of USB device audio connections
+在 2024/8/26 17:09, Wolfram Sang 写道:
+> On Fri, Aug 23, 2024 at 11:51:14AM +0800, Rong Qianfeng wrote:
+>> For no need to save clk pointer, drop sclk from struct em_i2c_device.
+>>
+>> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+>> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Should be folded into patch 1 IMO.
+Thanks for taking the time to reply.  Your comments can help me learn more.
+I will try to do this in the next version.
 
-I went through the code and didn't find anything that looked like a
-major blocker. There are still a number of cosmetic things you'd want to
-fix such as using checkpatch.pl --strict --codespell to look for obvious
-style issues and typos, see selection below. git am also complains about
-EOF lines.
+---
 
-Overall this is starting to look good and ready for other reviewers to
-look at.
-
-
-
-WARNING: 'reaquire' may be misspelled - perhaps 'reacquire'?
-#54: FILE: drivers/usb/host/xhci-ring.c:3037:
-+ * for non OS owned interrupter event ring. It may drop and reaquire
-xhci->lock
-                                                             ^^^^^^^^
-WARNING: 'compliation' may be misspelled - perhaps 'compilation'?
-#16:
-module compliation added by Wesley Cheng to complete original concept code
-       ^^^^^^^^^^^
-CHECK: Prefer kzalloc(sizeof(*sgt)...) over kzalloc(sizeof(struct
-sg_table)...)
-#105: FILE: drivers/usb/host/xhci-sideband.c:35:
-+	sgt = kzalloc(sizeof(struct sg_table), GFP_KERNEL);
-
-CHECK: struct mutex definition without comment
-#557: FILE: include/linux/usb/xhci-sideband.h:35:
-+	struct mutex			mutex;
-
-WARNING: 'straightfoward' may be misspelled - perhaps 'straightforward'?
-#22:
-straightfoward, as the ASoC components have direct references to the ASoC
-^^^^^^^^^^^^^^
-CHECK: Unnecessary parentheses around 'card == sdev->card_idx'
-#142: FILE: sound/soc/qcom/qdsp6/q6usb.c:217:
-+	if ((card == sdev->card_idx) &&
-+		(pcm == sdev->ppcm_idx[sdev->num_playback - 1])) {
-
-CHECK: Unnecessary parentheses around 'pcm ==
-sdev->ppcm_idx[sdev->num_playback - 1]'
-#142: FILE: sound/soc/qcom/qdsp6/q6usb.c:217:
-+	if ((card == sdev->card_idx) &&
-+		(pcm == sdev->ppcm_idx[sdev->num_playback - 1])) {
-
-WARNING: 'seqeunces' may be misspelled - perhaps 'sequences'?
-#8:
-seqeunces.  This allows for platform USB SND modules to properly initialize
-^^^^^^^^^
-
-WARNING: 'exisiting' may be misspelled - perhaps 'existing'?
-#12:
-exisiting parameters.
-^^^^^^^^^
-
-CHECK: Please use a blank line after function/struct/union/enum declarations
-#1020: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:98:
-+};
-+#define QMI_UAUDIO_STREAM_REQ_MSG_V01_MAX_MSG_LEN 46
-
-CHECK: Please use a blank line after function/struct/union/enum declarations
-#1054: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:132:
-+};
-+#define QMI_UAUDIO_STREAM_RESP_MSG_V01_MAX_MSG_LEN 202
-
-CHECK: Please use a blank line after function/struct/union/enum declarations
-#1081: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:159:
-+};
-+#define QMI_UAUDIO_STREAM_IND_MSG_V01_MAX_MSG_LEN 181
-
-CHECK: Macro argument 'n' may be better as '(n)' to avoid precedence issues
-#100: FILE: sound/usb/mixer_usb_offload.c:19:
-+#define PCM_IDX(n)  (n & 0xffff)
-
-CHECK: Macro argument 'n' may be better as '(n)' to avoid precedence issues
-#101: FILE: sound/usb/mixer_usb_offload.c:20:
-+#define CARD_IDX(n) (n >> 16)
-
+Best Regards,
+Qianfeng
 
