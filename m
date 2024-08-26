@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-302075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A297295F987
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:18:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9852395F989
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB7A282A98
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF4EB21D40
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17A4199253;
-	Mon, 26 Aug 2024 19:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4AF1993B9;
+	Mon, 26 Aug 2024 19:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEwyIGLw"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L/ckrLmI"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5F6198838;
-	Mon, 26 Aug 2024 19:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35251991D2
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724699884; cv=none; b=DfKETvXQz+feHZRn9nw1clDaKJumH1LOc6J27YccJ2yLQUidc/+4AyDN0denC3Q3N6amLE8j/14JcnIWr4BvVxQ/sLnIFr1LC8EfRSnLosMp24dAJUHSd/qVuv4mtx2EN3zrSzuKpA6IFk9R5Tpiae50J65Ku7Zd92eyUhWc8TE=
+	t=1724699887; cv=none; b=pOo2puTZSlrDjxQPQcy3E7xO7pIA0LE7Vh4oFThJm8mUzLJqUuot3YKaVSlVGmvLjoZ0zD5QauLTs23ychT1thPJIPOgckCrziWnu4poQYlz31w+QJUx59Hvl1+2xtZUx6t3udoVZ1e5jkxJGwsyOnLtOakGwnQeqoCDKXQ7vFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724699884; c=relaxed/simple;
-	bh=476Vr14ljCAg86ulRyF8qBXInnpjefzfqCzBtzB5krY=;
+	s=arc-20240116; t=1724699887; c=relaxed/simple;
+	bh=RjoCyBPuUmwzR99UmfsOy2bs4prLnpGChJPMeAZvhHs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhOYIXmpVXf8eENiSE+jCBEarf/m+ZkMq/jPqmhkAa3pGi1BsM+lFB+NUMUmIGWnm+LzcJt2CZHJ7LnSJRT0O61uGKaFll1YLi/2wPnhaxeIzJ37adIeUcZ8Hg1XNT/ZrlgoYphHpN+3Ke3yehut9ExY3RT4XryZeuJqSh6cN0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEwyIGLw; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7143ae1b48fso2657501b3a.1;
-        Mon, 26 Aug 2024 12:18:03 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ux0n4H4fT7HkzqT+uG4TLaQpviqqHh2dBeTc61c9gSuM8Y+evmIWOKj3Mn++kTFAbvo/YTxNNYy50ZO21JDNliJYuOs0FQMygBN4uQzNnsD8b3bG3k02H8TgCZDPwijD/l8WGaJRDAbEs4iNFkusmQSIqwhBdOhyUFhWMxpIpyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L/ckrLmI; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a81bd549eso353361066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:18:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724699882; x=1725304682; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1724699883; x=1725304683; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E2TYhB4X6aKezDz5Iwd0lSG7y3B/W6Y61QRao5geoKM=;
-        b=GEwyIGLwdoklLYQhtOgf2FqzZ9rZSEX8LiprgZ8v330zS99b/qH1eAoEncZ2ibGg7S
-         fqiFzOmlUWUqw22P56qEgojg1DpyGwTimv3hUFWWqNerwIniaUrFRozw8vHT1e1YS52E
-         w2WntGwSjSfcs1mDLiMhW4nzFZIaQ14TgIOpNYrGt0o3EAO51fUgJ5+mcvbZLPS3YBUT
-         5PujbZQLGQHcj7hIhF/azu0OHDIoE2+Kg1mJWZN03v1mqV2Q06lYzAQ0+HJKKV/kRpk8
-         X5x6r8bUiVJSwBywT+JDcm9cWjMyMKjO6XK+tiMk+VJfS4lwRxSY9ra2P4T+sCnpfiLr
-         xT7w==
+        bh=xiRoHNB81Ptn4aOx86M2sFOjWxRebcIeVsDZD8ofhhk=;
+        b=L/ckrLmILb4eNkczjvddaC5JtvIM8FMrKnDkzUW3dZp+/43rhA792RA6zBgMakPXQR
+         1OKKRLwEF367d/taaiZN9jlMZBnsAH72jB4S+ktiM3X9cNhEnbjBt1GFQnvzV53Qh3qY
+         /4azuEsMpnhQVOOcW0Anxs5ddN0pSi+enzQNinOUpOjPuYSisj0aYyWxKBqKuqWphx9R
+         C7cMPYdm4Xu8QtnulkcZWCSjoRLXWNgCeJhBeh/+IZYUiFujtEe8+VCgrb3krn+flvDu
+         GOX4E1rVKSS5ZYrxwzNB6bjqQfiAgmwgz/JXhoI+R6zdLm9qzcCmjduDJFDvrQLn/IuD
+         qslA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724699882; x=1725304682;
+        d=1e100.net; s=20230601; t=1724699883; x=1725304683;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E2TYhB4X6aKezDz5Iwd0lSG7y3B/W6Y61QRao5geoKM=;
-        b=cg6jUEVJtAHn4gWlnurbwOhvnh4wEdaq7JypIu0Wml5OM7RekMi+Wr5WkGeTXCAvyC
-         hunFg61FNJdJLxHnZoYAJqSF2fgoU1fbvM2fW1l30do9dmoU4XRNSO/7g9wX2wy2VYrY
-         tEoxfkfAWqiWgkkkbk2t16vO/PffpoFCLD+sV2WdcqgxYd7B+fj7cKGI8EMeBBRvhN4L
-         3K67dWr/uAMO7OouY1hDpzKkUtw7CqFrzdy62PmlnZ0cSCmGLKnbaC0xD5eLErga7QSO
-         w7Fw1TEOyl0QNG7QkPS7ieRE5zmQtBm5hrMnoISnFg0L+5EB3kNdkfg2tsLDN1/7Rex4
-         RBSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp0MMf4SEi6/vd42lWv1R7wBnVoWYZuozUuYfW1+nfJ3M40DDecBhRU91u3YHEsv93IW3Gf40XTpaC4abb@vger.kernel.org, AJvYcCW0CqP3DiWV9IObZTso790SRBFszvmgsncf8E4r9KaEIowuqsaproi8K4CQYjd/ymY075UJMEf8YOUlWg8=@vger.kernel.org, AJvYcCWoiVngbVeXiD5vB7tQVK6+t2621IIEkbv9wOM1x/XDQ/QWamIR8OcLa9dxYXuQ7K/t6HD4pu14XwK3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz61xJ+9W9ghmJCz4reKyAx6C2crtjJunSLW48aruOa0uDxHGxP
-	zXD7oanZNxwlzYQWZRBMGmypCgEstH6rdIsY7I4vmCTKugoMbIdEWfyAIQ==
-X-Google-Smtp-Source: AGHT+IGDDl5TpnRaUknWm6+yEglC5u1bH2oXfmR2MhTN08egvLn3pvbBrhb0coEXVMOqW6zr7pT3uQ==
-X-Received: by 2002:a05:6a21:4603:b0:1ca:da81:956c with SMTP id adf61e73a8af0-1cc8b41a39amr11864455637.5.1724699882183;
+        bh=xiRoHNB81Ptn4aOx86M2sFOjWxRebcIeVsDZD8ofhhk=;
+        b=GO4hkRRADm6dWqqzWy5dVMcQMpKZva8G2/tiAzx5KDie+SWsUZ29YKIryipEyqvcd2
+         mgCtABrBrVhZG68zQsHZA6gEBn7oX4NBgDcrkVL86DTaGwItdDQndLkbYrpKmmyLxZpW
+         PUzC1z1h7utUSQpq+v8Iag9LGj9nhWhauzir/rp1OxdhDG+kw8NkU7mN+09LW3oSHTEz
+         +BdcEbT8B4pETdYsf6Rp/Bw2GnLNTG2lDX7VBYJZoi1hi+Elx8egA92C2KUPX6eLma1G
+         X/lHCPYrPs7CxjmRwA56ww1FPeWGc6S6x3HEBpWhSwx6et587UNO6RDuebmBw1IaKvJ5
+         K4tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWv6s3pElsjcctXNTY5TSpLl91hXG4aRBbUi3NhYoNIL1DC2kDymT2C8zZBInvkhk5/oUamo+JxBC/wn/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFXpGa9zYw8lW5nWd0HdTGJanPrszX5bFOJ8Un4/HRkfXzCBDa
+	fkMW3S8zEIlNAOWlHYpEMWtD2Z7hNeFMKwEqkYfpIr3yiqRBsJYP+vD+1ih02wk=
+X-Google-Smtp-Source: AGHT+IHrIGYU84UjYCNbDb6/WHAjCYTMtATn4QzceOzz/6tH9FwHu3qL8H4cTXqk5vNmGiA77oJtcw==
+X-Received: by 2002:a17:907:f1d8:b0:a86:9ac9:f3ff with SMTP id a640c23a62f3a-a86a5198afdmr798222466b.26.1724699882968;
         Mon, 26 Aug 2024 12:18:02 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143430cc60sm7338923b3a.154.2024.08.26.12.18.01
+Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5486a1esm10338066b.10.2024.08.26.12.18.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 12:18:01 -0700 (PDT)
-Date: Mon, 26 Aug 2024 12:17:59 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: utsav.agarwal@analog.com
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arturs Artamonovs <arturs.artamonovs@analog.com>,
-	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
-	Oliver Gaskell <oliver.gaskell@analog.com>
-Subject: Re: [PATCH RESEND v11 2/3] Input: adp5588-keys - add support for
- pure gpio
-Message-ID: <ZszU5xzd6S8JKd5E@google.com>
-References: <20240826-adp5588_gpio_support-v11-0-3e5ac2bd31b7@analog.com>
- <20240826-adp5588_gpio_support-v11-2-3e5ac2bd31b7@analog.com>
+        Mon, 26 Aug 2024 12:18:02 -0700 (PDT)
+Date: Mon, 26 Aug 2024 21:18:01 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+Message-ID: <ZszU6dTOJYmujMPd@tiehlicka>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-3-mhocko@kernel.org>
+ <ZsyKQSesqc5rDFmg@casper.infradead.org>
+ <ZsyyqxSv3-IbaAAO@tiehlicka>
+ <ZszAI7oYsh7FvGgg@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,171 +92,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826-adp5588_gpio_support-v11-2-3e5ac2bd31b7@analog.com>
+In-Reply-To: <ZszAI7oYsh7FvGgg@casper.infradead.org>
 
-Hi Utsav,
-
-On Mon, Aug 26, 2024 at 06:22:02PM +0100, Utsav Agarwal via B4 Relay wrote:
-> From: Utsav Agarwal <utsav.agarwal@analog.com>
+On Mon 26-08-24 18:49:23, Matthew Wilcox wrote:
+> On Mon, Aug 26, 2024 at 06:51:55PM +0200, Michal Hocko wrote:
+[...]
+> > If a plan revert is preferably, I will go with it.
 > 
-> Keypad specific setup is relaxed if no keypad rows/columns are specified,
-> enabling a purely gpio operation.
-> 
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> ---
->  drivers/input/keyboard/adp5588-keys.c | 37 +++++++++++++++++++++++++++++++----
->  1 file changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-> index 09bcfc6b9408..7c32f8b69a3e 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -188,6 +188,7 @@ struct adp5588_kpad {
->  	u32 cols;
->  	u32 unlock_keys[2];
->  	int nkeys_unlock;
-> +	bool gpio_only;
->  	unsigned short keycode[ADP5588_KEYMAPSIZE];
->  	unsigned char gpiomap[ADP5588_MAXGPIO];
->  	struct gpio_chip gc;
-> @@ -431,10 +432,12 @@ static int adp5588_gpio_add(struct adp5588_kpad *kpad)
->  	kpad->gc.label = kpad->client->name;
->  	kpad->gc.owner = THIS_MODULE;
->  
-> -	girq = &kpad->gc.irq;
-> -	gpio_irq_chip_set_chip(girq, &adp5588_irq_chip);
-> -	girq->handler = handle_bad_irq;
-> -	girq->threaded = true;
-> +	if (kpad->client->irq) {
-> +		girq = &kpad->gc.irq;
-> +		gpio_irq_chip_set_chip(girq, &adp5588_irq_chip);
-> +		girq->handler = handle_bad_irq;
-> +		girq->threaded = true;
-> +	}
+> There aren't any other users of PF_MEMALLOC_NOWARN and it definitely
+> seems like something you want at a callsite rather than blanket for every
+> allocation below this point.  We don't seem to have many PF_ flags left,
+> so let's not keep it around if there's no immediate plans for it.
 
-I think we should only set up irqchip if we have "interrupt-controller"
-property in the device tree.
+Good point. What about this?
+--- 
+From 923cd429d4b1a3520c93bcf46611ae74a3158865 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Mon, 26 Aug 2024 21:15:02 +0200
+Subject: [PATCH] Revert "mm: introduce PF_MEMALLOC_NORECLAIM,
+ PF_MEMALLOC_NOWARN"
 
->  
->  	mutex_init(&kpad->gpio_lock);
->  
-> @@ -632,6 +635,21 @@ static int adp5588_fw_parse(struct adp5588_kpad *kpad)
->  	struct i2c_client *client = kpad->client;
->  	int ret, i;
->  
-> +	/*
-> +	 * Check if the device is to be operated purely in GPIO mode. To do
-> +	 * so, check that no keypad rows or columns have been specified,
-> +	 * since all GPINS should be configured as GPIO.
-> +	 */
-> +	ret = device_property_present(&client->dev,
-> +			"keypad,num-rows");
-> +	ret |= device_property_present(&client->dev,
-> +			"keypad,num-columns");
-> +	/* If purely GPIO, skip keypad setup */
-> +	if (!ret) {
-> +		kpad->gpio_only = true;
-> +		return 0;
-> +	}
-> +
->  	ret = matrix_keypad_parse_properties(&client->dev, &kpad->rows,
->  					     &kpad->cols);
->  	if (ret)
-> @@ -775,6 +793,11 @@ static int adp5588_probe(struct i2c_client *client)
->  	if (error)
->  		return error;
->  
-> +	if (kpad->gpio_only && !client->irq) {
-> +		dev_info(&client->dev, "Rev.%d, started as GPIO only\n", revid);
-> +		return 0;
-> +	}
+This reverts commit eab0af905bfc3e9c05da2ca163d76a1513159aa4.
 
-This is way too noisy. I think one message logging the revision ID
-should be enough. The rest of the data can be found from elsewhere if
-needed.
+There is no existing user of those flags. PF_MEMALLOC_NOWARN is
+dangerous because a nested allocation context can use GFP_NOFAIL which
+could cause unexpected failure. Such a code would be hard to maintain
+because it could be deeper in the call chain.
 
-Can you try the below on top of yours? If this works I'' squash it
-together with your change.
+PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+that such a allocation contex is inherently unsafe if the context
+doesn't fully control all allocations called from this context.
 
-Thanks.
+While PF_MEMALLOC_NOWARN is not dangerous the way PF_MEMALLOC_NORECLAIM
+is it doesn't have any user and as Matthew has pointed out we are
+running out of those flags so better reclaim it without any real users.
+
+[1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/sched.h    |  4 ++--
+ include/linux/sched/mm.h | 17 ++++-------------
+ 2 files changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f8d150343d42..731ff1078c9e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1657,8 +1657,8 @@ extern struct pid *cad_pid;
+ 						 * I am cleaning dirty pages from some other bdi. */
+ #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
+ #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
+-#define PF_MEMALLOC_NORECLAIM	0x00800000	/* All allocation requests will clear __GFP_DIRECT_RECLAIM */
+-#define PF_MEMALLOC_NOWARN	0x01000000	/* All allocation requests will inherit __GFP_NOWARN */
++#define PF__HOLE__00800000	0x00800000
++#define PF__HOLE__01000000	0x01000000
+ #define PF__HOLE__02000000	0x02000000
+ #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+ #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 91546493c43d..07c4fde32827 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -258,25 +258,16 @@ static inline gfp_t current_gfp_context(gfp_t flags)
+ {
+ 	unsigned int pflags = READ_ONCE(current->flags);
+ 
+-	if (unlikely(pflags & (PF_MEMALLOC_NOIO |
+-			       PF_MEMALLOC_NOFS |
+-			       PF_MEMALLOC_NORECLAIM |
+-			       PF_MEMALLOC_NOWARN |
+-			       PF_MEMALLOC_PIN))) {
++	if (unlikely(pflags & (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS | PF_MEMALLOC_PIN))) {
+ 		/*
+-		 * Stronger flags before weaker flags:
+-		 * NORECLAIM implies NOIO, which in turn implies NOFS
++		 * NOIO implies both NOIO and NOFS and it is a weaker context
++		 * so always make sure it makes precedence
+ 		 */
+-		if (pflags & PF_MEMALLOC_NORECLAIM)
+-			flags &= ~__GFP_DIRECT_RECLAIM;
+-		else if (pflags & PF_MEMALLOC_NOIO)
++		if (pflags & PF_MEMALLOC_NOIO)
+ 			flags &= ~(__GFP_IO | __GFP_FS);
+ 		else if (pflags & PF_MEMALLOC_NOFS)
+ 			flags &= ~__GFP_FS;
+ 
+-		if (pflags & PF_MEMALLOC_NOWARN)
+-			flags |= __GFP_NOWARN;
+-
+ 		if (pflags & PF_MEMALLOC_PIN)
+ 			flags &= ~__GFP_MOVABLE;
+ 	}
+-- 
+2.46.0
+
 
 -- 
-Dmitry
-
-
-diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-index 7c32f8b69a3e..b5f4becf5cb6 100644
---- a/drivers/input/keyboard/adp5588-keys.c
-+++ b/drivers/input/keyboard/adp5588-keys.c
-@@ -432,7 +432,12 @@ static int adp5588_gpio_add(struct adp5588_kpad *kpad)
- 	kpad->gc.label = kpad->client->name;
- 	kpad->gc.owner = THIS_MODULE;
- 
--	if (kpad->client->irq) {
-+	if (device_property_present(dev, "interrupt-controller")) {
-+		if (!kpad->client->irq) {
-+			dev_err(dev, "Unable to serve as interrupt controller without interrupt");
-+			return -EINVAL;
-+		}
-+
- 		girq = &kpad->gc.irq;
- 		gpio_irq_chip_set_chip(girq, &adp5588_irq_chip);
- 		girq->handler = handle_bad_irq;
-@@ -640,12 +645,9 @@ static int adp5588_fw_parse(struct adp5588_kpad *kpad)
- 	 * so, check that no keypad rows or columns have been specified,
- 	 * since all GPINS should be configured as GPIO.
- 	 */
--	ret = device_property_present(&client->dev,
--			"keypad,num-rows");
--	ret |= device_property_present(&client->dev,
--			"keypad,num-columns");
--	/* If purely GPIO, skip keypad setup */
--	if (!ret) {
-+	if (!device_property_present(&client->dev, "keypad,num-rows") &&
-+	    !device_property_present(&client->dev, "keypad,num-columns")) {
-+		/* If purely GPIO, skip keypad setup */
- 		kpad->gpio_only = true;
- 		return 0;
- 	}
-@@ -793,28 +795,19 @@ static int adp5588_probe(struct i2c_client *client)
- 	if (error)
- 		return error;
- 
--	if (kpad->gpio_only && !client->irq) {
--		dev_info(&client->dev, "Rev.%d, started as GPIO only\n", revid);
--		return 0;
--	}
--
--	error = devm_request_threaded_irq(&client->dev, client->irq,
--					  adp5588_hard_irq, adp5588_thread_irq,
--					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
--					  client->dev.driver->name, kpad);
--	if (error) {
--		dev_err(&client->dev, "failed to request irq %d: %d\n",
--			client->irq, error);
--		return error;
--	}
--
--	if (kpad->gpio_only) {
--		dev_info(&client->dev, "Rev.%d GPIO only, irq %d\n",
--				revid, client->irq);
--		return 0;
-+	if (client->irq) {
-+		error = devm_request_threaded_irq(&client->dev, client->irq,
-+						  adp5588_hard_irq, adp5588_thread_irq,
-+						  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+						  client->dev.driver->name, kpad);
-+		if (error) {
-+			dev_err(&client->dev, "failed to request irq %d: %d\n",
-+				client->irq, error);
-+			return error;
-+		}
- 	}
- 
--	dev_info(&client->dev, "Rev.%d keypad, irq %d\n", revid, client->irq);
-+	dev_info(&client->dev, "Rev.%d controller\n", revid);
- 	return 0;
- }
- 
+Michal Hocko
+SUSE Labs
 
