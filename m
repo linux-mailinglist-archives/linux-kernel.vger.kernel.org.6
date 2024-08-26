@@ -1,250 +1,239 @@
-Return-Path: <linux-kernel+bounces-302109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB1895F9E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:44:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD2495F9E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8C91F22EE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD1BB22C3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61455199389;
-	Mon, 26 Aug 2024 19:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5112CD89;
+	Mon, 26 Aug 2024 19:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVRgFvaZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6FnshH6F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVRgFvaZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6FnshH6F"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajPZObjA"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1ED79945
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442AA1F943
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701492; cv=none; b=nR//Wfn++U7D5mAeUwfCVLdqfSr+lzeakc8WnL51qIlOlPSP5DNV29zD2isWnvXiLyL4rlEkFpzWaOMcGNPgC+hLbPS2tY9PG9qjJGk671V86pQXQJvWHGsm7DVvULho1ujPumnCww9q8bNZMnk0noswRHESl/eOXFV4XZcthF4=
+	t=1724701593; cv=none; b=rfPYQZcZkOQfPONRhe4D9nyOp0IucDDEV7ETJSsrpdmEdEFnuJ/A7pjqv6XgCTgvmHCO434UcdsL+gWXYgRKyUjtR3bEsNX93+b0dQHMoUDRYNO53gtsvH8/Sp8kZVOuidfJyEjbb7lgTOEdFUVzX2px7IgADu8HFXyWnzOKDyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701492; c=relaxed/simple;
-	bh=hWdvI9C0Mk+jwyRzmQ+H/t5ywWyCYD46vmCq4OP/C64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ChX9ikoye+70+LeVhyCsAqA2HyOfzorbawInSQJJER3AAs0oEoRu8Na+cgVZhhp54ZaTalmbUHJF47ZACvWtd+SGq6cK+MFj/w6QPdWZeydRBU4VTCdjKJ3l2EbeGc0Du0Yrkc2vk18gRKJ9ShWO2swEEaSQ1NSEmjTHJQjLTr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVRgFvaZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6FnshH6F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVRgFvaZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6FnshH6F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 573481F8AE;
-	Mon, 26 Aug 2024 19:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724701488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LHL39kTG08YAxQMF/S9M2pxd2nii1+KP2CGwq8hsDyY=;
-	b=LVRgFvaZ5KhSBxTDq+9nsjE2ye/+asmWgrQSl+ivIAfw5suRUrDzZ6s1U59/D99vcWrzR0
-	7rVgMefnUwZY6L9Tl3eIAcFVq8WcDNH8Y8Um0n6Tjb+QEE4EnUkZXf4S6vXIoC8jrrAjy0
-	JkA/lfoMkFUrdI1uR0WmcnP2KTagr+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724701488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LHL39kTG08YAxQMF/S9M2pxd2nii1+KP2CGwq8hsDyY=;
-	b=6FnshH6Fa4xbK+FcNhJpseuikBI8EAxgNTkd8/bFCIYGHuwqosnct6YSWBHm2+eGXyXycI
-	Fpd2E03wK5zCtJCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LVRgFvaZ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6FnshH6F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724701488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LHL39kTG08YAxQMF/S9M2pxd2nii1+KP2CGwq8hsDyY=;
-	b=LVRgFvaZ5KhSBxTDq+9nsjE2ye/+asmWgrQSl+ivIAfw5suRUrDzZ6s1U59/D99vcWrzR0
-	7rVgMefnUwZY6L9Tl3eIAcFVq8WcDNH8Y8Um0n6Tjb+QEE4EnUkZXf4S6vXIoC8jrrAjy0
-	JkA/lfoMkFUrdI1uR0WmcnP2KTagr+0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724701488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LHL39kTG08YAxQMF/S9M2pxd2nii1+KP2CGwq8hsDyY=;
-	b=6FnshH6Fa4xbK+FcNhJpseuikBI8EAxgNTkd8/bFCIYGHuwqosnct6YSWBHm2+eGXyXycI
-	Fpd2E03wK5zCtJCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 354E21398D;
-	Mon, 26 Aug 2024 19:44:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VAVYDDDbzGbgOgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 26 Aug 2024 19:44:48 +0000
-Message-ID: <f62fba18-972e-46be-8832-e5ce21ddf9c3@suse.cz>
-Date: Mon, 26 Aug 2024 21:44:47 +0200
+	s=arc-20240116; t=1724701593; c=relaxed/simple;
+	bh=FT0Hw62fCG93HERjwl90JnMREgtvpMGelThq898G1fE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e2bD6ChmLweSF5n4TKIBosjDlSjFqTsRQRiT5acRz4e2PZ9bWTlhM1sh8gT7sHdadps29fof0oUAyzLGQip86WPdFrh77VuDsrTs9O7qztmn8OWJc2jYPRJ/4ifwQz1ZJRj6TkOFsd0AqwfzD9qc/qXSB8MIdgy+JI1C5ZU3DoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajPZObjA; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf7658f4aaso24963036d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724701591; x=1725306391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkcwhp5wUP0PARWUzg25EzXMSiZptOh2qK3AVZk7sM4=;
+        b=ajPZObjAEDFlJx3hoYGNUd3oZGcMFqMUyTZDQQwm/Xzc2bm4hvQ8Tn0S/dcJWFis2D
+         Xt08dnPq5cVzKTTnB/l5VubCsPUD84evGAShA7QIjHiphr7dNBd92RPFBsqG/mYtJHUo
+         2QCOUBaV3ZMriOoBtYXWmbKUWS1P7ZZBka4IKnUSlEaHqycpyNN+vXn15A/cBnVsTIou
+         L7N2ERtHf205a7pXzXoOLicAOlBs2aaxyhVwN2/ws1+L0oO42Wn3znuiEMm3rd+guiTf
+         qHXknHQK9mmOafTQ89/x9C6pmHXRX/xIwzNbYieWl823Q6yAZUBIO/ZlFTOqMkvS1uVN
+         Ns8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724701591; x=1725306391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkcwhp5wUP0PARWUzg25EzXMSiZptOh2qK3AVZk7sM4=;
+        b=Jou5mORwIPo3Pt/NMHo21I2a2nuxvjj1fMiH3BYISIh4nWLfmNJHvLap/dnUKkyxOu
+         1r3AHBRGLFmtl7n0sFTXyFTdgTFYmns3K5YZmo6mOk6scK5TSXb+hVYAS2X8FBaHHJeN
+         DuJJhuX06DTTPwdBu9dDBlmMw9eoEVtisEvp/Rss85O/PEpB5+t0oc9FuCfy+krw5S7h
+         4NOhAabziwyaTIBXO2xjo89OjoyTKDIr8QrylkPLli07FQ1JprvoBBh49V++G5xSMzth
+         HA+cNILVLqedxLMoLYhL+HkjE6LrhFqYoqj2w10PF2oBnUP6vhD9WUMMXxAJ2qd7vmlB
+         K4vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhpHY80M/sNzolIbx0xzynDAvZtL2VU1nDXoL7tXjBw9v504alVPWEK4Xh8Us+KjSeoZy3ZfgZSAO6OdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJfgP+GZebRpMQbjD032aA7spIThMRz2EIxcNWTuyKLgqp555a
+	GNDO9fEvGP7LmPAi0mRk+apjhmOhq6tYku3HjDWElWZjYE52SfZQhnsnBrETi4EUfF+o6zQCvtm
+	8Peh3N8R9DxHQzFbeEqEIGLEcMHU=
+X-Google-Smtp-Source: AGHT+IEzelaGzWbS77Np0l8c2438Rxo5NWk0QoxlbS0DBGhDscOGwbnwXNj8sR5VP+DAMuyPNrBeK4US8tc9JoLZrN0=
+X-Received: by 2002:a05:6214:2b84:b0:6bf:6dc2:e002 with SMTP id
+ 6a1803df08f44-6c32b677f0bmr6678776d6.12.1724701590962; Mon, 26 Aug 2024
+ 12:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Reenable NUMA policy support in the slab allocator
-Content-Language: en-US
-To: cl@gentwo.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Yang Shi <shy828301@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@kernel.org
-References: <20240819-numa_policy-v1-1-f096cff543ee@gentwo.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240819-numa_policy-v1-1-f096cff543ee@gentwo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 573481F8AE
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gentwo.org,infradead.org,cmpxchg.org,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
+ <qim6ug5d3ibrn6mgrk7oybml7qatgw654y2t6wlc25pnpddr2i@yniwf64alx23>
+ <CAGsJ_4wgC+yaCYinv8FYm9RHJfT5wiFxHMn_WTGysdpiH0HS7g@mail.gmail.com> <i6jki2zocqzsjcjgraf6lyl7m3cjzv5lnsuluq5xnvznw7bsge@4easx2ucpxml>
+In-Reply-To: <i6jki2zocqzsjcjgraf6lyl7m3cjzv5lnsuluq5xnvznw7bsge@4easx2ucpxml>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 27 Aug 2024 07:46:19 +1200
+Message-ID: <CAGsJ_4wGK6pu+KNhYjpWgydp6DyjH5tE=9+mje3UyrXdFJOuNw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: hanchuanhua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shy828301@gmail.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
+	ying.huang@intel.com, yosryahmed@google.com, hch@infradead.org, 
+	ryncsn@gmail.com, Tangquan Zheng <zhengtangquan@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/19/24 20:54, Christoph Lameter via B4 Relay wrote:
-> From: Christoph Lameter <cl@gentwo.org>
-> 
-> Revert commit 8014c46ad991 ("slub: use alloc_pages_node() in alloc_slab_page()").
-> 
-> The patch disabled the numa policy support in the slab allocator. It
-> did not consider that alloc_pages() uses memory policies but
-> alloc_pages_node() does not.
-> 
-> As a result of this patch slab memory allocations are no longer spread via
-> interleave policy across all available NUMA nodes on bootup. Instead
-> all slab memory is allocated close to the boot processor. This leads to
-> an imbalance of memory accesses on NUMA systems.
-> 
-> Also applications using MPOL_INTERLEAVE as a memory policy will no longer
-> spread slab allocations over all nodes in the interleave set but allocate
-> memory locally. This may also result in unbalanced allocations
-> on a single numa node.
-> 
-> SLUB does not apply memory policies to individual object allocations.
-> However, it relies on the page allocators support of memory policies
-> through alloc_pages() to do the NUMA memory allocations on a per
-> folio or page level. SLUB also applies memory policies when retrieving
-> partial allocated slab pages from the partial list.
-> 
-> Fixes: 8014c46ad991 ("slub: use alloc_pages_node() in alloc_slab_page()")
-> Cc: stable@kernel.org
+On Sat, Aug 24, 2024 at 5:56=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> Hi Barry,
+>
+> On Thu, Aug 22, 2024 at 05:13:06AM GMT, Barry Song wrote:
+> > On Thu, Aug 22, 2024 at 1:31=E2=80=AFAM Shakeel Butt <shakeel.butt@linu=
+x.dev> wrote:
+> > >
+> > > On Wed, Aug 21, 2024 at 03:45:40PM GMT, hanchuanhua@oppo.com wrote:
+> > > > From: Chuanhua Han <hanchuanhua@oppo.com>
+> > > >
+> > > >
+> > > > 3. With both mTHP swap-out and swap-in supported, we offer the opti=
+on to enable
+> > > >    zsmalloc compression/decompression with larger granularity[2]. T=
+he upcoming
+> > > >    optimization in zsmalloc will significantly increase swap speed =
+and improve
+> > > >    compression efficiency. Tested by running 100 iterations of swap=
+ping 100MiB
+> > > >    of anon memory, the swap speed improved dramatically:
+> > > >                 time consumption of swapin(ms)   time consumption o=
+f swapout(ms)
+> > > >      lz4 4k                  45274                    90540
+> > > >      lz4 64k                 22942                    55667
+> > > >      zstdn 4k                85035                    186585
+> > > >      zstdn 64k               46558                    118533
+> > >
+> > > Are the above number with the patch series at [2] or without? Also ca=
+n
+> > > you explain your experiment setup or how can someone reproduce these?
+> >
+> > Hi Shakeel,
+> >
+> > The data was recorded after applying both this patch (swap-in mTHP) and
+> > patch [2] (compressing/decompressing mTHP instead of page). However,
+> > without the swap-in series, patch [2] becomes useless because:
+> >
+> > If we have a large object, such as 16 pages in zsmalloc:
+> > do_swap_page will happen 16 times:
+> > 1. decompress the whole large object and copy one page;
+> > 2. decompress the whole large object and copy one page;
+> > 3. decompress the whole large object and copy one page;
+> > ....
+> > 16.  decompress the whole large object and copy one page;
+> >
+> > So, patchset [2] will actually degrade performance rather than
+> > enhance it if we don't have this swap-in series. This swap-in
+> > series is a prerequisite for the zsmalloc/zram series.
+>
+> Thanks for the explanation.
+>
+> >
+> > We reproduced the data through the following simple steps:
+> > 1. Collected anonymous pages from a running phone and saved them to a f=
+ile.
+> > 2. Used a small program to open and read the file into a mapped anonymo=
+us
+> > memory.
+> > 3.  Do the belows in the small program:
+> > swapout_start_time
+> > madv_pageout()
+> > swapout_end_time
+> >
+> > swapin_start_time
+> > read_data()
+> > swapin_end_time
+> >
+> > We calculate the throughput of swapout and swapin using the difference =
+between
+> > end_time and start_time. Additionally, we record the memory usage of zr=
+am after
+> > the swapout is complete.
+> >
+>
+> Please correct me if I am wrong but you are saying in your experiment,
+> 100 MiB took 90540 ms to compress/swapout and 45274 ms to
+> decompress/swapin if backed by 4k pages but took 55667 ms and 22942 ms
+> if backed by 64k pages. Basically the table shows total time to compress
+> or decomress 100 MiB of memory, right?
 
-I'm removing this as (unlike the stable tree maintainers) I try to follow
-the stable tree rules, and this wouldn't apply by them. Also it's a revert
-of 6.8 commit, so the LTS kernel 6.6 doesn't care anyway.
+Hi Shakeel,
+Tangquan(CC'd) collected the data and double-checked the case to confirm
+the answer to your question.
 
-> Signed-off-by: Christoph Lameter <cl@gentwo.org>
+We have three cases:
+1. no mTHP swap-in, no zsmalloc/zram multi-pages compression/decompression
+2. have mTHP swap-in, no zsmalloc/zram multi-pages compression/decompressio=
+n
+3. have mTHP swap-in, have zsmalloc/zram multi-pages compression/decompress=
+ion
 
-Thanks, added to slab/for-next
+The data was 1 vs 3.
 
-> ---
->  mm/slub.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c9d8a2497fd6..4dea3c7df5ad 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2318,7 +2318,11 @@ static inline struct slab *alloc_slab_page(gfp_t flags, int node,
->  	struct slab *slab;
->  	unsigned int order = oo_order(oo);
->  
-> -	folio = (struct folio *)alloc_pages_node(node, flags, order);
-> +	if (node == NUMA_NO_NODE)
-> +		folio = (struct folio *)alloc_pages(flags, order);
-> +	else
-> +		folio = (struct folio *)__alloc_pages_node(node, flags, order);
-> +
->  	if (!folio)
->  		return NULL;
->  
-> 
-> ---
-> base-commit: b0da640826ba3b6506b4996a6b23a429235e6923
-> change-id: 20240806-numa_policy-5188f44ba0d8
-> 
-> Best regards,
+To provide more precise data that covers each change, Tangquan tested
+1 vs. 2 and
+2 vs. 3 yesterday using LZ4 (the hardware might differ from the
+previous test, but the
+data shows the same trend) per my request.
 
+1. no mTHP swapin, no zsmalloc/zram patch
+swapin_ms.   30336
+swapout_ms. 65651
+
+2. have mTHP swapin, no zsmalloc/zram patch
+swapin_ms.   27161
+swapout_ms. 61135
+
+3. have mTHP swapin, have zsmalloc/zram patch
+swapin_ms.   13683
+swapout_ms. 43305
+
+The test pseudocode is as follows:
+
+addr=3Dmmap(100M)
+read_anon_data_from_file_to addr();
+
+for(i=3D0;i<100;i++) {
+      swapout_start_time;
+      madv_pageout();
+      swapout_end_time;
+      swapin_start_time;
+      read_addr_to_swapin();
+      swapin_end_time;
+}
+
+So, while we saw some improvement from 1 to 2, the significant gains
+come from using large blocks for compression and decompression.
+
+This mTHP swap-in series ensures that mTHPs aren't lost after the first swa=
+p-in,
+so the following 99 iterations continue to involve THP swap-out and
+mTHP swap-in.
+The improvement from 1 to 2 is due to this mTHP swap-in series, while the
+improvement from 2 to 3 comes from the zsmalloc/zram patchset [2] you
+mentioned.
+
+[2] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.com/
+
+> > >
+> >
+
+Thanks
+Barry
 
