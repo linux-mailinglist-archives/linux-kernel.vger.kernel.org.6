@@ -1,222 +1,130 @@
-Return-Path: <linux-kernel+bounces-301914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B6095F74E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:01:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920CA95F758
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB762830D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D626B215E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8712C194C95;
-	Mon, 26 Aug 2024 17:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290F4198E6E;
+	Mon, 26 Aug 2024 17:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kNKervn9"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2u6NUpi"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68DB18891B
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 17:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BD2197A8A;
+	Mon, 26 Aug 2024 17:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691642; cv=none; b=MbTdPUwp24VV4KH+WUk1QRZ+98FpnfSGT/LSEblWt8zYfJWT4+Ac1pJuwjnJ0INczrnR0j5Y6zw5O5mbJhrUvxGygvMAl9DtjfefTcyWJUHvxBKRGoM9YTqFIBnXeQxJiucGITEizpQDorWiBBgNMipt29yBzicJ2DEV5W/acYQ=
+	t=1724691667; cv=none; b=PLHSeG52/Ej2UJw98EFJQmnp2Qm1gbMvGo924KX56ypmkjT00FuudEWCCqJhYeQf4m3/dzk8Yqo0gYGPdUJU0766AaD0DsSy+B9H71ByaGrbYDmI3LNbDTo/prkXWd40F/29TM3+QLxfNkpnqIJFhzNXUXQKfeBfDEmMyfb8gxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691642; c=relaxed/simple;
-	bh=y57+2mOp6MwfLqW65/FGyTbYnYojmL4y+eOUfw6+Hb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ruK7Zn1/R/HbcJj1HLOmnScHPjFwy3GJG/+b7uwbEAndWuYf9ZH+16no3UZ39s1r+4QvLQ5JRD8mLdAtxtsMOsfTCO07I76bDv42gx437EauJlU2LR6p14mggU1J5+v4GWhEsSZlViMOqPT0URF7j4lpg7w4aUYvPlp+7YlJy24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kNKervn9; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <804a804c-f62d-4814-a174-51d19e3ea094@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724691637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rfGKENWRuewSAOwpAN/lMp6iaeHyoIbXcxwxsIfnPyA=;
-	b=kNKervn9ODUPMnERP5FH//+eFPS7BSn0MTZ7GJszB97jBiYtlBjq1PsbN7jm6ET9+ZLwTV
-	UQc0t1e1e4aY8waYq3kK3aGmTfn4Mvpa34C2oWeyTk6I0vDH2dKlKdgjF+8pKCYMhfPfPl
-	u6P7dmeuHhb6yamg1LpgBfHuRa3A5Zs=
-Date: Tue, 27 Aug 2024 01:00:21 +0800
+	s=arc-20240116; t=1724691667; c=relaxed/simple;
+	bh=AcL260or/eTsKKVe+NUMz9kkEtjMWNdjSjASsUcmUaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ivd6em4tWl/iMluCbv04jDseJhmv+m+RYueAhtOjbG+cjMyXsD32fR5N8PFjh3kThTG6eoA8+6dLHsTKMm3JuiLbSMuc9ipE9V0yw6UGWjVLsaaqzFLz1/2gXQfk7KCfz1OtVMjdLEYwSYnhwm2pgWYt1cjI8MCD3Vei5eCEa0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2u6NUpi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428101fa30aso40067335e9.3;
+        Mon, 26 Aug 2024 10:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724691664; x=1725296464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G4ydZtjipfIDczjm51bqPMppCfyDaZ6I+LqHoxr5iPs=;
+        b=I2u6NUpi0C4dPdOuVspYTwIhN4uDrIEt5paxxDL2u2j7LWJvKcxl0F/D6VFKex+jOR
+         apLy5Howv4mp3aVaN0QIIgNClQcSz0hF2v9eKTVABfJG5yPSha8N1+Pz2ZAJKYIK8fpO
+         YQpwnshmOHBKOfmlNiOXHw/3l2CZ15jLeXNlXG6DGsqp3ubTI5EnEu5DSCA5k6Cw3x8w
+         gEgBOUxU6GxCYUG2/UOnq0gaDJGa6C3EW+sS0+rWP93eJEg8ImpK+tiaE1Ttj/HU+Bhb
+         sdPFsZFLKDeghuhHdVJrVNi8m4steyVt7lEumQmSIIXQMWRcItbpTtaRa+b0MmAtVjta
+         8xDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724691664; x=1725296464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G4ydZtjipfIDczjm51bqPMppCfyDaZ6I+LqHoxr5iPs=;
+        b=c+tBTuHefvcSD1Ej9phtrwmPVjywlv12Y2T+FICqkt5wclPfFG4v2eAxPmMO8MNCQG
+         q639B3JqYFuXfLs6+1yo8b1KFODPw7EXGrPX/BbCjjQsAF+9F2kulijhkE4S+W4eTUpK
+         /lSy+MyZSwPGYHQ+JqXzQKm8m3Uj5iy6c5FwCYayk6ikf3iX2G76NCWodcsFZ4TWb9Va
+         AITnqUdjuL2mP2VzoztQprqj+Vd83e33QChYKrnqTiaTs2KdDVA2jYjze55XYLlvwk3s
+         zgl6Is+Gi6RFUzHVcHf6LWpJFY2VmDZLTSWWtb4J5Dwk9djpg4bNj+riZ1K7VQEEC/FK
+         /4vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmN2yRXoAJlpTF44VGDdenFzfe0ynct26tVEHeNKqmey2kvIRYLFOF9FaLCZhlbLfH2l5d7SffnPJrSrM=@vger.kernel.org, AJvYcCXvuZk9dfEUtSplx7uf0261ASXsAxwaTs0Q6WHTsMKaqaY6Sw6OQt/bNLhkb7WLloUwqAZXnwle@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKgtTrkEr+q3cYRPD6H/nGhsIoIIsLF2SOvrZVpEeNzONQRV/I
+	VEAUmPH5AHFgp91qnXHz9+WPaAVle1EoTYNGMquKyyZChYg/LWRBd1RPJw7glLXpkyP7UJicbTo
+	/ndfwAZGGAO9LADJxJxBXiV5Asno=
+X-Google-Smtp-Source: AGHT+IHynSrDzChnxLMHDn/M5Iab9m1y/ogxb2dC8xJBSJ49uGMJMHFDiyeocp5Q4lOl/XkfTyabY6aubHlNQI2twfk=
+X-Received: by 2002:adf:ab18:0:b0:36b:c126:fe5e with SMTP id
+ ffacd0b85a97d-3748c7d4e55mr221811f8f.30.1724691663770; Mon, 26 Aug 2024
+ 10:01:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] Loongarch: KVM: Add KVM hypercalls documentation for
- LoongArch
-To: Dandan Zhang <zhangdandan@uniontech.com>
-Cc: pbonzini@redhat.com, corbet@lwn.net, zhaotianrui@loongson.cn,
- maobibo@loongson.cn, chenhuacai@kernel.org, kernel@xen0n.name,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, guanwentao@uniontech.com,
- wangyuli@uniontech.com, baimingcong@uniontech.com,
- Xianglai Li <lixianglai@loongson.cn>, Mingcong Bai <jeffbai@aosc.io>
-References: <DE6B1B9EAC9BEF4C+20240826054727.24166-1-zhangdandan@uniontech.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zenghui Yu <zenghui.yu@linux.dev>
-In-Reply-To: <DE6B1B9EAC9BEF4C+20240826054727.24166-1-zhangdandan@uniontech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240826124021.2635705-1-linyunsheng@huawei.com> <20240826124021.2635705-9-linyunsheng@huawei.com>
+In-Reply-To: <20240826124021.2635705-9-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 26 Aug 2024 10:00:27 -0700
+Message-ID: <CAKgT0Ue+6Gke9YguEDiq6whqQg0DdjPjSDDiRHEeVe5MX80+-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v15 08/13] mm: page_frag: use __alloc_pages() to
+ replace alloc_pages_node()
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[ Trivial comments inline.  You can feel free to ignore them since I
-  know almost nothing about loongarch. ]
-
-On 2024/8/26 13:47, Dandan Zhang wrote:
-> From: Bibo Mao <maobibo@loongson.cn>
-> 
-> Add documentation topic for using pv_virt when running as a guest
-> on KVM hypervisor.
-> 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-> Co-developed-by: Mingcong Bai <jeffbai@aosc.io>
-> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-> Link: https://lore.kernel.org/all/5c338084b1bcccc1d57dce9ddb1e7081@aosc.io/
-> Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
+On Mon, Aug 26, 2024 at 5:46=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> It seems there is about 24Bytes binary size increase for
+> __page_frag_cache_refill() after refactoring in arm64 system
+> with 64K PAGE_SIZE. By doing the gdb disassembling, It seems
+> we can have more than 100Bytes decrease for the binary size
+> by using __alloc_pages() to replace alloc_pages_node(), as
+> there seems to be some unnecessary checking for nid being
+> NUMA_NO_NODE, especially when page_frag is part of the mm
+> system.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 > ---
->  Documentation/virt/kvm/index.rst              |  1 +
->  .../virt/kvm/loongarch/hypercalls.rst         | 86 +++++++++++++++++++
->  Documentation/virt/kvm/loongarch/index.rst    | 10 +++
->  MAINTAINERS                                   |  1 +
->  4 files changed, 98 insertions(+)
->  create mode 100644 Documentation/virt/kvm/loongarch/hypercalls.rst
->  create mode 100644 Documentation/virt/kvm/loongarch/index.rst
-> 
-> diff --git a/Documentation/virt/kvm/index.rst b/Documentation/virt/kvm/index.rst
-> index ad13ec55ddfe..9ca5a45c2140 100644
-> --- a/Documentation/virt/kvm/index.rst
-> +++ b/Documentation/virt/kvm/index.rst
-> @@ -14,6 +14,7 @@ KVM
->     s390/index
->     ppc-pv
->     x86/index
-> +   loongarch/index
->  
->     locking
->     vcpu-requests
-> diff --git a/Documentation/virt/kvm/loongarch/hypercalls.rst b/Documentation/virt/kvm/loongarch/hypercalls.rst
-> new file mode 100644
-> index 000000000000..58168dc7166c
-> --- /dev/null
-> +++ b/Documentation/virt/kvm/loongarch/hypercalls.rst
-> @@ -0,0 +1,86 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===================================
-> +The LoongArch paravirtual interface
-> +===================================
-> +
-> +KVM hypercalls use the HVCL instruction with code 0x100 and the hypercall
-> +number is put in a0. Up to five arguments may be placed in registers a1 - a5.
-> +The return value is placed in v0 (an alias of a0).
-> +
-> +Source code for this interface can be found in arch/loongarch/kvm*.
-> +
-> +Querying for existence
-> +======================
-> +
-> +To determine if the host is running on KVM, we can utilize the cpucfg()
-> +function at index CPUCFG_KVM_BASE (0x40000000).
-> +
-> +The CPUCPU_KVM_BASE range, spanning from 0x40000000 to 0x400000FF, The
-> +CPUCPU_KVM_BASE range between 0x40000000 - 0x400000FF is marked as reserved.
+>  mm/page_frag_cache.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> index bba59c87d478..e0ad3de11249 100644
+> --- a/mm/page_frag_cache.c
+> +++ b/mm/page_frag_cache.c
+> @@ -28,11 +28,11 @@ static struct page *__page_frag_cache_refill(struct p=
+age_frag_cache *nc,
+>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>         gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+>                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+> -       page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
+> -                               PAGE_FRAG_CACHE_MAX_ORDER);
+> +       page =3D __alloc_pages(gfp_mask, PAGE_FRAG_CACHE_MAX_ORDER,
+> +                            numa_mem_id(), NULL);
+>  #endif
+>         if (unlikely(!page)) {
+> -               page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
+> +               page =3D __alloc_pages(gfp, 0, numa_mem_id(), NULL);
+>                 if (unlikely(!page)) {
+>                         nc->encoded_page =3D 0;
+>                         return NULL;
 
-What is CPUCPU_KVM_BASE? Grepping it in the code shows nothing.
-
-> +Consequently, all current and future processors will not implement any
-> +feature within this range.
-> +
-> +On a KVM-virtualized Linux system, a read operation on cpucfg() at index
-> +CPUCFG_KVM_BASE (0x40000000) returns the magic string 'KVM\0'.
-> +
-> +Once you have determined that your host is running on a paravirtualization-
-> +capable KVM, you may now use hypercalls as described below.
-> +
-> +KVM hypercall ABI
-> +=================
-> +
-> +The KVM hypercall ABI is simple, with one scratch register a0 (v0) and at most
-> +five generic registers (a1 - a5) used as input parameters. The FP (Floating-
-> +point) and vector registers are not utilized as input registers and must
-> +remain unmodified during a hypercall.
-> +
-> +Hypercall functions can be inlined as it only uses one scratch register.
-> +
-> +The parameters are as follows:
-> +
-> +        ========	================	================
-> +	Register	IN			OUT
-> +        ========	================	================
-> +	a0		function number		Return code
-> +	a1		1st parameter		-
-> +	a2		2nd parameter		-
-> +	a3		3rd parameter		-
-> +	a4		4th parameter		-
-> +	a5		5th parameter		-
-> +        ========	================	================
-
-Please consistently use tab.
-
-> +
-> +The return codes may be one of the following:
-> +
-> +	====		=========================
-> +	Code		Meaning
-> +	====		=========================
-> +	0		Success
-> +	-1		Hypercall not implemented
-> +	-2		Bad Hypercall parameter
-> +	====		=========================
-> +
-> +KVM Hypercalls Documentation
-> +============================
-> +
-> +The template for each hypercall is as follows:
-> +
-> +1. Hypercall name
-> +2. Purpose
-> +
-> +1. KVM_HCALL_FUNC_PV_IPI
-
-Is it still a work-in-progress thing? I don't see it in mainline.
-
-> +------------------------
-> +
-> +:Purpose: Send IPIs to multiple vCPUs.
-> +
-> +- a0: KVM_HCALL_FUNC_PV_IPI
-> +- a1: Lower part of the bitmap for destination physical CPUIDs
-> +- a2: Higher part of the bitmap for destination physical CPUIDs
-> +- a3: The lowest physical CPUID in the bitmap
-
-- Is it a feature that implements IPI broadcast with a PV method?
-- Don't you need to *at least* specify which IPI to send by issuing this
-  hypercall?
-
-But again, as I said I know nothing about loongarch.  I might have
-missed some obvious points.
-
-> +
-> +The hypercall lets a guest send multiple IPIs (Inter-Process Interrupts) with
-> +at most 128 destinations per hypercall.The destinations are represented in a
-                                          ^
-Add a blank space.
-
-> +bitmap contained in the first two input registers (a1 and a2).
-> +
-> +Bit 0 of a1 corresponds to the physical CPUID in the third input register (a3)
-> +and bit 1 corresponds to the physical CPUID in a3+1 (a4), and so on.
-
-This looks really confusing.  "Bit 63 of a1 corresponds to the physical
-CPUID in a3+63 (a66)"?
-
-Zenghui
+I still think this would be better served by fixing alloc_pages_node
+to drop the superfluous checks rather than changing the function. We
+would get more gain by just addressing the builtin constant and
+NUMA_NO_NODE case there.
 
