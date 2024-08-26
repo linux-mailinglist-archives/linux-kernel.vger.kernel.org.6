@@ -1,371 +1,186 @@
-Return-Path: <linux-kernel+bounces-301895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D0C95F6F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C600F95F701
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B37D1F22BD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8009828249F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1E0194C61;
-	Mon, 26 Aug 2024 16:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64586194AEB;
+	Mon, 26 Aug 2024 16:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Yiu2g/eF"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eG074/rT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABA02F870
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEC85476B;
+	Mon, 26 Aug 2024 16:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690636; cv=none; b=CXwBb7vjmmKlnTZtz5lFbLx91h7FYhSEWpWTxQqLgfokdknNz4qj6kRb3puC/lQ5YSuji3hojDiopt7782pn60RTwPfVfM3KDo8xTvsvZXtlKLVaWu24/4W47KX3bHPrf6wHR0ptvN7GfHy7J+OXPOin8LtmaUbnAbAp7ccJlkw=
+	t=1724690842; cv=none; b=fGfYS0d4X34YFh6Bt146o0oFXls93cfbdS2fQ+pOOuxH40531XPz246z9mxcs5gLoxA3HbphUJSh1VgjJlWgl9vAnOcuWM7UCpBrA476S4LUNpkfBndIvyV8auu16Z7kgC18Iw6eamNsyV0VpqL+B7nsMPiXGLMRUXIuSVPmJ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690636; c=relaxed/simple;
-	bh=7+AdKPh34E9ZX3q9C/I0R9uuP//7XFQs7hxQHgSWGdw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvPru6VIG0pPD6vSwCKZhcy7hRL/06LeDRgTkXMmFYVTCkOPEyAqCDZA//RVdZgDIlFzuplIHYlCJvCBVM92GOCNZ2ycYFzj/KXnO09En48qN0iQ4kZZEV9yV58lcZCrCXDfBF5txZlbchO0A+sHk/Z7/Fb9icmDDZb/P7/6cZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Yiu2g/eF; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QGhlvh123946;
-	Mon, 26 Aug 2024 11:43:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724690627;
-	bh=rrLKagzVebS5ikDTKxZWxRLbfVMW+F9ZvokvLXTaRRY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Yiu2g/eFFOEQLPKziDUNbMCKmgSfTnJzYmQnR651y0E2jr0g05/vKTcbjuzm/oicB
-	 S/MRIQhzXs3QQXpde7vz1+JOL9PdFtJzOYq82HaZUSYEwvQkSJtE/4wQMq/i4BgwWG
-	 dcHuxiaa7aykqGsGkrEY/WAS7risDkDlWeoM4Mic=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QGhlJp030956
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 26 Aug 2024 11:43:47 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
- Aug 2024 11:43:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 26 Aug 2024 11:43:46 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QGhklx079967;
-	Mon, 26 Aug 2024 11:43:46 -0500
-Date: Mon, 26 Aug 2024 11:43:46 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Kevin Hilman <khilman@baylibre.com>
-CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Akashdeep Kaur
-	<a-kaur@ti.com>,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: Re: [PATCH v10 3/4] firmware: ti_sci: Introduce Power Management Ops
-Message-ID: <20240826164346.e73vfvd4jzezlbc7@cherisher>
-References: <20240814-lpm-constraints-firmware-msp-v10-0-bee4314bbdc8@baylibre.com>
- <20240814-lpm-constraints-firmware-msp-v10-3-bee4314bbdc8@baylibre.com>
+	s=arc-20240116; t=1724690842; c=relaxed/simple;
+	bh=LZ7q7pyQoiWYUS7iWGjaAiScjjop2VZjk4ASSdGKcKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/5F7NcuYX7QcIlkoT1bU6h6VFK3op3eRwE7T3N42Se2oHcpuV8ADzgwBU3tVbkobRMir4lL9ScOTWsn5nCV0810XKKk5oQ4ktK+ls03/F0mNIRsm9Y1VERREaqS13Z5rd37yNEOCb7YhXdicWOX1sYvANLrSav3V2Wdi8ydLZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eG074/rT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724690840; x=1756226840;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LZ7q7pyQoiWYUS7iWGjaAiScjjop2VZjk4ASSdGKcKw=;
+  b=eG074/rTzBKTQ2dcAhOkJJqbvbPBEl0ItSRMb4ak2HLUUqTTkMXs9RpE
+   /vYWo8BPNNOoqXxgAZg194pNaCzkQWUjXv7NykX5UJxRfhgKg5q8Oyjho
+   mqq4sM96s3dUzULXOP6E+2wYjxQIRoMfLOlIODrYvglzAxl1pxSrhGqQS
+   Zp3VmXPHncjbmnYrI7W0Jy1tZKbBVKxKk/NfGebKqLA/XnzYo2wsBUE7k
+   W+WGI/7JQdu8zk9cXsuyVb6eyVI4Vs78g54Uv3SqZL8KR8rbfThr4+Ach
+   V6hv+G2YijdIM0Lil8o61i3y8Srkh2JSCnCydpWQUdQdM1iCGHc3xQvj/
+   A==;
+X-CSE-ConnectionGUID: PTzp3CnCSyePHhxPPWabwQ==
+X-CSE-MsgGUID: YKMcewjMQw6POp5Bw+68EQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="22993963"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="22993963"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 09:47:19 -0700
+X-CSE-ConnectionGUID: UAIBIfMdT7SWl1IDLOJtyA==
+X-CSE-MsgGUID: 1guBxUyYQx2c0TZiAwv4bA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="66903943"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Aug 2024 09:47:19 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sics7-000HMG-1r;
+	Mon, 26 Aug 2024 16:47:15 +0000
+Date: Tue, 27 Aug 2024 00:46:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wenliang <wenliang202407@163.com>, linux@roeck-us.net
+Cc: oe-kbuild-all@lists.linux.dev, jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Wenliang <wenliang202407@163.com>
+Subject: Re: [PATCH linux dev 6.11] hwmon:add new hwmon driver sq52205
+Message-ID: <202408270025.5A0Q5KZO-lkp@intel.com>
+References: <20240822074426.7241-1-wenliang202407@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814-lpm-constraints-firmware-msp-v10-3-bee4314bbdc8@baylibre.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240822074426.7241-1-wenliang202407@163.com>
 
-On 08:39-20240814, Kevin Hilman wrote:
-> From: Dave Gerlach <d-gerlach@ti.com>
-> 
-[...]
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 808149dcc635..107494406fa5 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -1822,6 +1822,179 @@ static int ti_sci_cmd_set_io_isolation(const struct ti_sci_handle *handle,
->  	return ret;
->  }
->  
-> +/**
-> + * ti_sci_msg_cmd_lpm_wake_reason() - Get the wakeup source from LPM
-> + * @handle:		Pointer to TI SCI handle
-> + * @source:		The wakeup source that woke the SoC from LPM
-> + * @timestamp:		Timestamp of the wakeup event
-> + * @pin:		The pin that has triggered wake up
-> + * @mode:		The last entered low power mode
-> + *
-> + * Return: 0 if all went well, else returns appropriate error value.
-> + */
-> +static int ti_sci_msg_cmd_lpm_wake_reason(const struct ti_sci_handle *handle,
-> +					  u32 *source, u64 *timestamp, u8 *pin, u8 *mode)
-> +{
-> +	struct ti_sci_info *info;
-> +	struct ti_sci_xfer *xfer;
-> +	struct ti_sci_msg_resp_lpm_wake_reason *resp;
-> +	struct device *dev;
-> +	int ret = 0;
-> +
-> +	if (IS_ERR(handle))
-> +		return PTR_ERR(handle);
-> +	if (!handle)
-> +		return -EINVAL;
-> +
-> +	info = handle_to_ti_sci_info(handle);
-> +	dev = info->dev;
-> +
-> +	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_WAKE_REASON,
-> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-> +				   sizeof(struct ti_sci_msg_hdr),
-> +				   sizeof(*resp));
-> +	if (IS_ERR(xfer)) {
-> +		ret = PTR_ERR(xfer);
-> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = ti_sci_do_xfer(info, xfer);
-> +	if (ret) {
-> +		dev_err(dev, "Mbox send fail %d\n", ret);
-> +		goto fail;
-> +	}
-> +
-> +	resp = (struct ti_sci_msg_resp_lpm_wake_reason *)xfer->xfer_buf;
-> +
-> +	if (!ti_sci_is_response_ack(resp)) {
+Hi Wenliang,
 
-A dev_err might be worth here.
+kernel test robot noticed the following build errors:
 
-> +		ret = -ENODEV;
-> +		goto fail;
-> +	}
-> +
-> +	if (source)
-> +		*source = resp->wake_source;
-> +	if (timestamp)
-> +		*timestamp = resp->wake_timestamp;
-> +	if (pin)
-> +		*pin = resp->wake_pin;
-> +	if (mode)
-> +		*mode = resp->mode;
-> +
-> +fail:
-> +	ti_sci_put_one_xfer(&info->minfo, xfer);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * ti_sci_cmd_set_device_constraint() - Set LPM constraint on behalf of a device
-> + * @handle:	pointer to TI SCI handle
-> + * @id:	Device identifier
-> + * @state:	The desired state of device constraint: set or clear
-> + *
-> + * Return: 0 if all went well, else returns appropriate error value.
-> + */
-> +static int ti_sci_cmd_set_device_constraint(const struct ti_sci_handle *handle,
-> +					    u32 id, u8 state)
-> +{
-> +	struct ti_sci_info *info;
-> +	struct ti_sci_msg_req_lpm_set_device_constraint *req;
-> +	struct ti_sci_msg_hdr *resp;
-> +	struct ti_sci_xfer *xfer;
-> +	struct device *dev;
-> +	int ret = 0;
-> +
-> +	if (IS_ERR(handle))
-> +		return PTR_ERR(handle);
-> +	if (!handle)
-> +		return -EINVAL;
-> +
-> +	info = handle_to_ti_sci_info(handle);
-> +	dev = info->dev;
-> +
-> +	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_SET_DEVICE_CONSTRAINT,
-> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-> +				   sizeof(*req), sizeof(*resp));
-> +	if (IS_ERR(xfer)) {
-> +		ret = PTR_ERR(xfer);
-> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
-> +		return ret;
-> +	}
-> +	req = (struct ti_sci_msg_req_lpm_set_device_constraint *)xfer->xfer_buf;
-> +	req->id = id;
-> +	req->state = state;
-> +
-> +	ret = ti_sci_do_xfer(info, xfer);
-> +	if (ret) {
-> +		dev_err(dev, "Mbox send fail %d\n", ret);
-> +		goto fail;
-> +	}
-> +
-> +	resp = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
-> +
-> +	ret = ti_sci_is_response_ack(resp) ? 0 : -ENODEV;
+[auto build test ERROR on linux/master]
 
-A dev_err might be worth here. - same elsewhere. I see a different style
-of if (ret) vs ? 0: -ENODEV usage - might be good to be
-consistent through out.
+url:    https://github.com/intel-lab-lkp/linux/commits/Wenliang/hwmon-add-new-hwmon-driver-sq52205/20240826-103932
+base:   linux/master
+patch link:    https://lore.kernel.org/r/20240822074426.7241-1-wenliang202407%40163.com
+patch subject: [PATCH linux dev 6.11] hwmon:add new hwmon driver sq52205
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240827/202408270025.5A0Q5KZO-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270025.5A0Q5KZO-lkp@intel.com/reproduce)
 
-> +
-> +fail:
-> +	ti_sci_put_one_xfer(&info->minfo, xfer);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * ti_sci_cmd_set_latency_constraint() - Set LPM resume latency constraint
-> + * @handle:	pointer to TI SCI handle
-> + * @latency:	maximum acceptable latency (in ms) to wake up from LPM
-> + * @state:	The desired state of latency constraint: set or clear
-> + *
-> + * Return: 0 if all went well, else returns appropriate error value.
-> + */
-> +static int ti_sci_cmd_set_latency_constraint(const struct ti_sci_handle *handle,
-> +					     u16 latency, u8 state)
-> +{
-> +	struct ti_sci_info *info;
-> +	struct ti_sci_msg_req_lpm_set_latency_constraint *req;
-> +	struct ti_sci_msg_hdr *resp;
-> +	struct ti_sci_xfer *xfer;
-> +	struct device *dev;
-> +	int ret = 0;
-> +
-> +	if (IS_ERR(handle))
-> +		return PTR_ERR(handle);
-> +	if (!handle)
-> +		return -EINVAL;
-> +
-> +	info = handle_to_ti_sci_info(handle);
-> +	dev = info->dev;
-> +
-> +	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_LPM_SET_LATENCY_CONSTRAINT,
-> +				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
-> +				   sizeof(*req), sizeof(*resp));
-> +	if (IS_ERR(xfer)) {
-> +		ret = PTR_ERR(xfer);
-> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
-> +		return ret;
-> +	}
-> +	req = (struct ti_sci_msg_req_lpm_set_latency_constraint *)xfer->xfer_buf;
-> +	req->latency = latency;
-> +	req->state = state;
-> +
-> +	ret = ti_sci_do_xfer(info, xfer);
-> +	if (ret) {
-> +		dev_err(dev, "Mbox send fail %d\n", ret);
-> +		goto fail;
-> +	}
-> +
-> +	resp = (struct ti_sci_msg_hdr *)xfer->xfer_buf;
-> +
-> +	ret = ti_sci_is_response_ack(resp) ? 0 : -ENODEV;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408270025.5A0Q5KZO-lkp@intel.com/
 
-Same
+All errors (new ones prefixed by >>):
 
-> +
-> +fail:
-> +	ti_sci_put_one_xfer(&info->minfo, xfer);
-> +
-> +	return ret;
-> +}
-> +
->  static int ti_sci_cmd_core_reboot(const struct ti_sci_handle *handle)
->  {
->  	struct ti_sci_info *info;
-> @@ -2964,6 +3137,7 @@ static void ti_sci_setup_ops(struct ti_sci_info *info)
->  	struct ti_sci_core_ops *core_ops = &ops->core_ops;
->  	struct ti_sci_dev_ops *dops = &ops->dev_ops;
->  	struct ti_sci_clk_ops *cops = &ops->clk_ops;
-> +	struct ti_sci_pm_ops *pmops = &ops->pm_ops;
->  	struct ti_sci_rm_core_ops *rm_core_ops = &ops->rm_core_ops;
->  	struct ti_sci_rm_irq_ops *iops = &ops->rm_irq_ops;
->  	struct ti_sci_rm_ringacc_ops *rops = &ops->rm_ring_ops;
-> @@ -3003,6 +3177,13 @@ static void ti_sci_setup_ops(struct ti_sci_info *info)
->  	cops->set_freq = ti_sci_cmd_clk_set_freq;
->  	cops->get_freq = ti_sci_cmd_clk_get_freq;
->  
-> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
-> +		pr_debug("detected DM managed LPM in fw_caps\n");
-> +		pmops->lpm_wake_reason = ti_sci_msg_cmd_lpm_wake_reason;
-> +		pmops->set_device_constraint = ti_sci_cmd_set_device_constraint;
-> +		pmops->set_latency_constraint = ti_sci_cmd_set_latency_constraint;
-> +	}
-> +
->  	rm_core_ops->get_range = ti_sci_cmd_get_resource_range;
->  	rm_core_ops->get_range_from_shost =
->  				ti_sci_cmd_get_resource_range_from_shost;
-> @@ -3490,12 +3671,20 @@ static int ti_sci_resume_noirq(struct device *dev)
->  {
->  	struct ti_sci_info *info = dev_get_drvdata(dev);
->  	int ret = 0;
-> +	u32 source;
-> +	u64 time;
-> +	u8 pin;
-> +	u8 mode;
->  
->  	ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_DISABLE);
->  	if (ret)
->  		return ret;
->  	dev_dbg(dev, "%s: disable isolation: %d\n", __func__, ret);
->  
-> +	ti_sci_msg_cmd_lpm_wake_reason(&info->handle, &source, &time, &pin, &mode);
-
-No handling of error?
-
-> +	dev_info(dev, "ti_sci: wakeup source:0x%x, pin:0x%x, mode:0x%x\n",
-> +		 source, pin, mode);
-> +
->  	return 0;
->  }
->  
-	[...]
->  
->  /**
-> diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
-> index 1f1871e23f76..4ba9e520a28f 100644
-> --- a/include/linux/soc/ti/ti_sci_protocol.h
-> +++ b/include/linux/soc/ti/ti_sci_protocol.h
-> @@ -199,6 +199,47 @@ struct ti_sci_clk_ops {
->  #define TISCI_MSG_VALUE_IO_ENABLE			1
->  #define TISCI_MSG_VALUE_IO_DISABLE			0
->  
-> +/* TISCI LPM wake up sources */
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_I2C0	0x00
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_UART0	0x10
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MCU_GPIO0	0x20
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_ICEMELTER0	0x30
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_TIMER0	0x40
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_TIMER1	0x41
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_RTC0	0x50
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_RESET		0x60
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_USB0		0x70
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_USB1		0x71
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MAIN_IO		0x80
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MCU_IO		0x81
-
-^^ I assume these are daisy chain sources. - will these remain OR do we
-have to consider the wake sources SoC dependent? If so, the
-sci_protocol.h will be SoC agnostic..
+   drivers/hwmon/sq52205.c: In function 'sq522xx_probe':
+>> drivers/hwmon/sq52205.c:493:44: error: assignment of member 'max_register' in read-only object
+     493 |         sq522xx_regmap_config.max_register = data->config->registers;
+         |                                            ^
 
 
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_CAN_IO		0x82
-> +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_INVALID		0xFF
-> +
-> +/* TISCI LPM constraint state values */
-> +#define TISCI_MSG_CONSTRAINT_SET			1
-> +#define TISCI_MSG_CONSTRAINT_CLR			0
-> +
+vim +/max_register +493 drivers/hwmon/sq52205.c
 
-[...]
+   460	
+   461	static int sq522xx_probe(struct i2c_client *client)
+   462	{
+   463		struct device *dev = &client->dev;
+   464		struct sq522xx_data *data;
+   465		struct device *hwmon_dev;
+   466		u32 val;
+   467		int ret, group = 0;
+   468		enum sq522xx_ids chip;
+   469	
+   470		if (client->dev.of_node)
+   471			chip = (uintptr_t)of_device_get_match_data(&client->dev);
+   472		else
+   473			chip = i2c_match_id(sq522xx_id, client)->driver_data;
+   474	
+   475		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+   476		if (!data)
+   477			return -ENOMEM;
+   478	
+   479		/* set the device type */
+   480		data->client = client;
+   481		data->config = &sq522xx_config[chip];
+   482		mutex_init(&data->config_lock);
+   483	
+   484		if (of_property_read_u32(dev->of_node, "shunt-resistor", &val) < 0)
+   485			val = SQ522XX_RSHUNT_DEFAULT;
+   486	
+   487	
+   488		if (val <= 0 || val > data->config->calibration_factor)
+   489			return -ENODEV;
+   490	
+   491		data->rshunt = val;
+   492	
+ > 493		sq522xx_regmap_config.max_register = data->config->registers;
+   494	
+   495		data->regmap = devm_regmap_init_i2c(client, &sq522xx_regmap_config);
+   496		if (IS_ERR(data->regmap)) {
+   497			dev_err(dev, "failed to allocate register map\n");
+   498			return PTR_ERR(data->regmap);
+   499		}
+   500	
+   501	
+   502		ret = sq522xx_init(data);
+   503		if (ret < 0) {
+   504			dev_err(dev, "error configuring the device: %d\n", ret);
+   505			return -ENODEV;
+   506		}
+   507		if (chip == sq52205) {
+   508			ret = sq52205_init(data);
+   509			if (ret < 0) {
+   510				dev_err(dev, "error configuring the device cal: %d\n", ret);
+   511				return -ENODEV;
+   512			}
+   513		}
+   514	
+   515		data->groups[group++] = &sq522xx_group;
+   516		if (chip == sq52205)
+   517			data->groups[group++] = &sq52205_group;
+   518	
+   519		hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+   520									data, data->groups);
+   521		if (IS_ERR(hwmon_dev))
+   522			return PTR_ERR(hwmon_dev);
+   523	
+   524		dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
+   525			 client->name, data->rshunt);
+   526	
+   527		return 0;
+   528	}
+   529	
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
