@@ -1,114 +1,281 @@
-Return-Path: <linux-kernel+bounces-301654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACA095F3A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB4895F3AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2807BB21BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:16:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 107F4B21299
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077B8189B9B;
-	Mon, 26 Aug 2024 14:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECD4189514;
+	Mon, 26 Aug 2024 14:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iPBan3rk"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MfM1Hg+b"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB87317D35B
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355A07BB15
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724681794; cv=none; b=qs0qc2P13h+/3sefNPj0Ngg2qG4m5FmWs6oznyo4BKrPEfuCH1Lx+vYwoDOdshmwbO1SYRs5Rg0c/mhVaAL6fHa0yp7pCpntI3BRWID8LSeVBt7NfDBcA6QmR71pPVZ6gcBnavsGrrI1TejD/yEfpKTEvouI0zljYcmwmibBBOw=
+	t=1724681854; cv=none; b=Ce1yFX5nkZ3ze4/njm3HwrU+AN0Rj4dtkrSP2P2ZaLLHYus86w1K3DJXdxevK8OzS/tj7LG+TbWRNjwYFogzd5SbUYYkQw5jbRv7HNvfc+qh/pbbIFQIVUrmw6otTOJ3FC9qoSItWa4AlDPuSzNVj8TOY/xcRZSsXd5HHSTdK7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724681794; c=relaxed/simple;
-	bh=v1Xe3susNIUP6eTSfkqJrSP1V8+XilN7nn1ic9qhbf4=;
+	s=arc-20240116; t=1724681854; c=relaxed/simple;
+	bh=QWGUBF5HAwzgN4a2ndSQqUgGL/hlT0wX/NsRsUbqN3g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pFWYUkqHHq0aRtDcJ1c0hNBd10frPKlP12V8bCCPjZ+MV6DvQWMtS7toZTPFvGlP4NmlGobWCG4+VfFNYo4P3nGlDAAl/YntSOPmQ7oxBXJ+FdCidh82d3IXtyJ18mVpA2fTlSHvmRQ5sXnJ6dar8ByZfFoNlzOVq7UWmSZrbRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iPBan3rk; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a81bd549eso319822066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:16:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=IdVvYtx35fjQpZ8igIVQwiIxDqk1k0PAyboqkrsJtlU7qUg8JpKAtSratKY2NNmv1mXo3+TFUcU6vL9mSFinsFmd57GvygCxdhYpxOsN9YrAsh0o0fSFqzpbnRSE1CqeY3tD2TLIWUt/3jab7xQn/7MLbD2idOI7oQZuI7JrRTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MfM1Hg+b; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334adf7249so5202323e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724681791; x=1725286591; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v1Xe3susNIUP6eTSfkqJrSP1V8+XilN7nn1ic9qhbf4=;
-        b=iPBan3rkVGcAedYb88rylUcF+hhpvwTiuzpsDb7YFHmWeCGHeaaVfwaZr0O3gUt2fX
-         R+GkWSOCEVfbx+N0qeB2ndD+6P3ToZHhRWj0hl+eXbSV3n3G3QncaoNbSZinvawtYk8K
-         QGZ0pm/ak3h7ECxtRwKFiRYuWJzDE3ZF/CxVXXlqyDokTr+/v1RV0X/fYhsTPVpy2rx5
-         ufQ6UhdWs1460U5ujMTjJaKLJLJoYNyAT8SUUQBhSbwJd1RoqZzssCL1Rb91yCP7oZkf
-         GUpemHMqK297ZovYTme4g5wTtEGXXPqieh1AkZNoPMrZI44WGQu0JXJliS1l9aw62eMN
-         8Rmg==
+        d=broadcom.com; s=google; t=1724681850; x=1725286650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzvqaKi2dwiToMCSxppgaYhfIre5qQa+dmrzkWNoV8w=;
+        b=MfM1Hg+b1f5Es42oie3lR2UUFsLSmAEVPoJrELC4k9zRoRJlE6Kh/EU2jHOQ1elSoX
+         q0JYemJ8ttO6jIZ+BUshmvExb0uTIrQh+vMZLhqfo+NDrrDFDqXGe6ssS4KUAXEOkK6J
+         FhvU2Mkm5ia6CeJxwycURIPwTAC4/PQEpV+mA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724681791; x=1725286591;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v1Xe3susNIUP6eTSfkqJrSP1V8+XilN7nn1ic9qhbf4=;
-        b=hr+MnoNmEajzRGyjV04rc41kMeex+BCl1Pf2cjJKJ9iCDBrNW/2xBQG2jCR+lw8TPT
-         eqqPeNvsjXwe4ChL/1l2f/0m0r+TjD16rZBO7Z+B1RRwPXEjywa/zbdMT0i+VD9u+9sJ
-         AJfcmIHlo3bQkzwZI7ifCAG3DFLYklScm2LamwmjXzjj29FAJ5ECFw2r8zmWvfXkkX7t
-         pYFDsUmM/HOPTf/VrnB5AL5aln5Njbndmb7si3I5fNni3FuYxSrpJABJGrxl/7PMalsN
-         isTornH0lO2o4ecqQfZ9CuhC7XnHUXXE8lEX7bmC79ywCvGibhuaCQ/1l+izSEGBVprX
-         xz7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Klie2RM/PpG8MbsZupKpU2pjWWAfRSaQDtLUIbEdjtxTsImJhp99Rqcq51gRCoaS2nESJr5Gv4bZqtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgEgHzFw0HzDZAMUWAiq8brT3KmPUvluimEMdOFg/dnzftT4l5
-	5lALF1m8l3kgsz8JtRrpG+x4E8Sx9CZKkLt+ivToy5m3m2W3p9TCFmG0CFa+ggjA4EI15r0RCqO
-	MAF1g8DJvuKBbTa09HQgThl20Oe3ecv8BspsC
-X-Google-Smtp-Source: AGHT+IHc1AVF/HZHw0p/eGvidrZmazV7XPNxl3Yz5fKQoiTUfqWqxNNdSA3m8Ngw+wN2jEEGvwjeklKa00kNbFG6d8w=
-X-Received: by 2002:a17:907:8688:b0:a86:7af3:8299 with SMTP id
- a640c23a62f3a-a86a519896amr687802866b.25.1724681790338; Mon, 26 Aug 2024
- 07:16:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724681850; x=1725286650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DzvqaKi2dwiToMCSxppgaYhfIre5qQa+dmrzkWNoV8w=;
+        b=Oc8IAGfwwstRL+xW+drVJEi+qPzsCe4OydhTFbt5Nq81rXysqAf+22UFWIkDJ01YUH
+         K2sk/DDMWW1MjIixhsb58T+rEmhcB3u4UW+JDwzRjqnnt34Ys9+EoIs37IBH1IBzMQsr
+         i78ZFPijE1zBcWZ86Ybwc5+rsTUaRyAJ4AbYL+pFxDm7oOnGW3wlVu0E2bd6CQMEKu42
+         re0pLJXkrXHvI0131+/DO97ON8L417bx4fkbllTODNnSeh9c/eElNiT8Yi27SlZHM2uW
+         5gib5XgszT9040e4Jf94z4AD19qEcyY0J3wz9deVo633LnEgUmlNvIKpz5ZQc6Z8vPqg
+         jcLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIxVkPgRLaSBUClc7IdFtg8uceajnKVDBJyEkqfKoucpE4e4Z8/jH3nlN5sWZQ/8AZUq0Tw6CoVArMXvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWiDo1YPf6iK+wGg0kJuhNkhtXj8DvUAAqHHQm240zIc3xjcez
+	5UApSCNTlRQeSCuXcpTPD8W+3PKDmnmvNbBM+x5gMCsHZ84lN95G3xBS2vrcnuD+CpcQpumf1MQ
+	qSsVdVCCw59qehWWhI5iaIqMOTo6lUdLHpB4n
+X-Google-Smtp-Source: AGHT+IGDnXq8lbBoLbszy+XWcdYKrSNmEQewgOdRcJFMVjUHHmBuh5rvOrWGuudGVSLUCudFPPB2kj5zgkVWjn/SQOQ=
+X-Received: by 2002:a05:6512:39d5:b0:52c:90b6:170f with SMTP id
+ 2adb3069b0e04-53438783a93mr8763056e87.29.1724681849594; Mon, 26 Aug 2024
+ 07:17:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHOo4gJRxYjEmQmCv7HRq4yB-AX_0f=ojLmU8PWrmjEhkO+srg@mail.gmail.com>
-In-Reply-To: <CAHOo4gJRxYjEmQmCv7HRq4yB-AX_0f=ojLmU8PWrmjEhkO+srg@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 26 Aug 2024 16:16:19 +0200
-Message-ID: <CANn89iK6rq0XWO5-R5CzA5YAv2ygaTA==EVh+O74VHGDBNqUoA@mail.gmail.com>
-Subject: Re: INFO: task hung in unregister_nexthop_notifier
-To: Hui Guo <guohui.study@gmail.com>
-Cc: David Ahern <dsahern@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com> <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+ <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de> <CA+-6iNykVzd1do=dHDVD3_prJkvfRbA2U-DsLFhSA2S48L_A8A@mail.gmail.com>
+ <87b38984-0a54-4773-ba20-3445d9c9c149@suse.de> <CA+-6iNwJZ+OfYaCBBx04-hO1FmpDE36uJWd1jYvaVs_o4iwWqA@mail.gmail.com>
+ <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de>
+In-Reply-To: <3bb5c6db-11d9-4e65-a581-1a7f6945450a@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 26 Aug 2024 10:17:17 -0400
+Message-ID: <CA+-6iNy7souF-BZHV1sBk2nx04LwshB=6amnOixfPPza96RmWw@mail.gmail.com>
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000000f3215062096c9ea"
+
+--0000000000000f3215062096c9ea
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 4:13=E2=80=AFPM Hui Guo <guohui.study@gmail.com> wr=
-ote:
+On Mon, Aug 26, 2024 at 6:43=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.d=
+e> wrote:
 >
-> Hi Kernel Maintainers,
-> Our tool found the following kernel bug INFO: task hung in
-> unregister_nexthop_notifier on:
-> HEAD Commit: 6e4436539ae182dc86d57d13849862bcafaa4709 Merge tag
-> 'hid-for-linus-2024081901' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid
-> console output:
-> https://github.com/androidAppGuard/KernelBugs/blob/main/6e4436539ae182dc8=
-6d57d13849862bcafaa4709/6548016d46a859fa33565086216fc61c6696a59e/log0
-> kernel config: https://github.com/androidAppGuard/KernelBugs/blob/main/6b=
-0f8db921abf0520081d779876d3a41069dab95/.config
-> repro log: https://github.com/androidAppGuard/KernelBugs/blob/main/6e4436=
-539ae182dc86d57d13849862bcafaa4709/6548016d46a859fa33565086216fc61c6696a59e=
-/repro0
-> syz repro: no
-> C reproducer: no
-> Unfortunately, I don't have any reproducer for this issue yet.
+> Hi Jim,
 >
-> Please let me know if there is anything I can help.
+> <cut>
 >
-> Best,
-> HuiGuo
+> >
+> > Hi Stan,
+> >
+> > Most of the clocks on the STB chips come up active so one does not
+> > have to turn them on and off to have the device function.  It helps
+> > power savings to do this although I'm not sure it is significant.
+> >>
+> >>>
+> >>> Perhaps you don't see the dependence on the PCIe clocks if the 2712
+> >>> does not give the PCIe node a clock property and instead keeps its
+> >>> clocks on all of the time.  In that case I would think that your
+> >>> solution would be fine.
+> >>
+> >> What you mean by my solution? The one where avoiding assert of
+> >> bridge_reset at link [1] bellow?
+> >
+> > Yes.
+> >>
+> >> If so, I still cannot understand the relation between bridge_reset and
+> >> rescal as the comment mentions:
+> >>
+> >> "Shutting down this bridge on pcie1 means accesses to rescal block wil=
+l
+> >> hang the chip if another RC wants to assert/deassert rescal".
+> >
+> > I was just describing my observations; this should not be happening.
+> > I would say it is a HW bug for the 2712.  I can file a bug against the
+> > 2712 but that will not help us right now.  From what I was told by HW,
+> > asserting the PCIe1 bridge reset does not affect the rescal settings,
+> > but it does freeze access to the rescal registers, and that is game
+> > over for the other PCIe controllers accessing the rescal registers.
+>
+> Good findings, thank you.
+>
+> The problem comes from this snippet from brcm_pcie_probe() :
+>
+>         ret =3D pci_host_probe(bridge);
+>         if (!ret && !brcm_pcie_link_up(pcie))
+>                 ret =3D -ENODEV;
+>
+>         if (ret) {
+>                 brcm_pcie_remove(pdev);
+>                 return ret;
+>         }
+>
+> Even when pci_host_probe() is successful the .probe will fail if there
+> are no endpoint devices on this root port bus. This is the case when
+> probing pcie1 port which is the one with external connector. Cause the
+> probe is failing we call reset_control_rearm(rescal) from
+> brcm_pcie_remove(), after that during .probe of pcie2 (the root port
+> where RP1 south-bridge is attached) reset_control_reset(rescal) will
+> issue rescal reset thus rescal-reset driver will stuck on read/write
+> registers.
+>
+> I think we have to drop this link-up check and allow the probe to finish
+> successfully. Even that there no PCI devices attached to bus we want the
+> root port to be visible by lspci tool.
 
-I would ask you to stop sending these reports, we already have syzbot
-with a more complete infrastructure.
+Hi Stan,
+
+What is gained by having only the root bridge shown by lspci?  We do
+not support PCIe hotplug so why have lspci reporting a bridge with no
+devices?
+
+The reason we do this is to save power -- when we see no device we
+turn off the clocks, put things in reset (e.g. bridge), and turn off
+the regulators.  We have SoCs with multiple controllers  and they
+cannot afford to be supplying power to controllers with non-populated
+sockets; these may be products that are trying to conform to mandated
+energy-mode specifications.
+
+ This will solve partially the
+> issue with accessing rescal reset-controller registers after asserting
+> bridge_reset. The other part of the problem will be solved by remove the
+> invocation of reset_control_rearm(rescal) from __brcm_pcie_remove().
+> That way only the first probed root port will issue rescal reset and
+> every next probe will not try to reset rescal because we do not call
+> _rearm(rescal).
+
+In theory I agree with the above -- it should probably not be invoking
+the rearm() when it is being deactivated.  However, I am concerned
+about a controller(s) going into s2 suspend/resume or unbind/bind.
+
+Let me run some tests.
+
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+
+
+>
+> What do you think?
+>
+> ~Stan
+
+--0000000000000f3215062096c9ea
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBIqs1Lt1/cMgZ5tFzGwRAVvlKuY4g7
+6oZq8dJ1LouIZDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MjYxNDE3MzBaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAZwW1dkQMr6QuKCowgaSN1GJ3fXVVSFoBa36SoI4U5PvFP4Gg
+bH0SykJVg58jjTfof0f6wp6D15HMRUvMcysvgxXrjoTahTA8R7Es2TePlOkJvKYkQgnYcdHdZgYQ
+WMM3DZnz5RhzbJZndQyrq7GW4x4J1TFXgOUT4prrYafUtz/vg9RcDe85hBu+JtfiWGWTJ3ES0nVH
+Ug5x2qOPNG3paMjxAXC3JJSf+CznAy2j3pke8rNJzh3z60jpW7myQFqY28wbu2DrXoT041dPrR1r
+4NIFRD+Ft0axq0WRqZpxe7x/mGdRMzTUYA9zMh3N7ojODqQUnmwLQtGiIcm1TgqjJQ==
+--0000000000000f3215062096c9ea--
 
