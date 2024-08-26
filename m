@@ -1,107 +1,192 @@
-Return-Path: <linux-kernel+bounces-302306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6797395FC66
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:05:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A19D195FC63
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 229D828736E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA39286DA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BA619B5AA;
-	Mon, 26 Aug 2024 22:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC619D8A9;
+	Mon, 26 Aug 2024 22:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="B4XIXZsx"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xqhds4SR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AD2B677;
-	Mon, 26 Aug 2024 22:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54BE19CD07;
+	Mon, 26 Aug 2024 22:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724709907; cv=none; b=ce5+GRD6kbIqq86aGbT9iWGtNjBdT86bWhpr7dlP1RU2EzV1mt9fVfbZN/f1Cg2Wrq0YeHh6Y+Sxetz4GXXnFbDtiVricC33SVBFGX++VYKVvkKo0CNn77yI3wO01k5yUL7o2GuQQRWKu+KeWnMfKQXKR95lB3Eu3v1LlBjmZvg=
+	t=1724709723; cv=none; b=D3aUySX7wREzFRy3Iog+Q22Rgge49sqN+RNWy1QejeOWqvn50geQvqNmpLqNDW4BSdeOrPgQ/Ji8RfmQOlTQhwRmF4ugIYHVudlB1INItt8FTCguYMhIxyERNyyNlcZ+viK1yY3kLN/EAbeTm1s8/XiVCZPWU6pctP1OluXjO20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724709907; c=relaxed/simple;
-	bh=IjWHayed3Xgh4hwDl1NCds3zOOOL6kh3/k7gtzqmLvk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qQCTm3ts2fvfRsY2AiSYmGSWrKqii6LymvvJE07/FJcSDaQcHhI0GGmgIX9aVljB+Oxvee7ZudhYPHeR+gnYMtlOKXJcg+Y3Pv67pe3O34X9L7lkA/owq/7R6AOXOuWN7LCv6ookoUwnWsECHS1f2DhxwrltIxK0NO8p/YnkDb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=B4XIXZsx; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 19F6842D39
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1724709905; bh=O93izcclSQSIUW8zW2pcpoIRD+yumVSK2HWs8pc+2tU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B4XIXZsxP+PU+G7gPomS4if8ja4eSNQOFm0j68PxTGZr1SBQIJlT6Rhuy5LUeFwHd
-	 4gekqPs0g000kwWVpw+RBqIWDPR+1cm+lurF+MTfl0WAk+kcxAKx4vSjBfmYqKR9pp
-	 Oa2/1nzvNSKFlNDQphcJq6vwGf+QPRvYg5HxLUFwi3WrlQ1tXFCnOYjxP2D0jHKTzJ
-	 Cw3JamJoBzTPBGgV3fP7ZMH0fB01CfGhZDikdt5KD5UVLkPxmc1WHtWKboi8ilpx/5
-	 gC6Ob9pLWemi6jPpLVATCbC89A8cGfWK1buijSKo6FnHq8HNn9CKh0YJlsxGhGSCEM
-	 uKlBq5m5qGDNg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 19F6842D39;
-	Mon, 26 Aug 2024 22:05:05 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: SurajSonawane2415 <surajsonawane0215@gmail.com>, linux@leemhuis.info
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: Re: [PATCH v4] docs: Fix grammar and phrasing errors in
- reporting-issues.rst
-In-Reply-To: <20240816104902.123452-1-surajsonawane0215@gmail.com>
-References: <20240816104902.123452-1-surajsonawane0215@gmail.com>
-Date: Mon, 26 Aug 2024 16:05:04 -0600
-Message-ID: <87le0j54a7.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1724709723; c=relaxed/simple;
+	bh=CIoa739V7bkZOlxg2vU7fXYEoHptRTFbzF06A/aCqt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1q10Czf8oBW3dQ73lRNTsl1kL1vc9d5f/ITB+UgN7UiBpL7cbL29ptt4d2dw9SQulEgRBJM4h+wbyZuitHoh5uZBMsiK8nRrkxyzzHZsavmamU17mHOONfJ4noBke/573cid5cx17SLG9aTwiSih0AvjmDTToVrs4dpQW89A8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xqhds4SR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724709722; x=1756245722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CIoa739V7bkZOlxg2vU7fXYEoHptRTFbzF06A/aCqt0=;
+  b=Xqhds4SR6odUSda1OiKE3jDxKgkMEv2A0PkIBNqhtB8+zT2bWt3mUdAj
+   9IgGlo2t9WZFRiHc6gNXKdbxHuISfLPicsInfUQrB/o/SZRic4S2PpKLF
+   IGRo33cpSnFWFW+ybVQgSp2PuKIwfkcaOrkGs3zocGWcNyPKwiA+j4i+B
+   8NFFNtITofZLbBCEbdgFsLeFJNDcwgOIwvmtgZg1RRMBebw5NbcbWlb3j
+   uJyDSOXH3T7knG46LYG3TC6OOoMPmEGxXTAdTpPL+ImCoTAEmX4opKcje
+   getGvz2o55Ik1OROJe/0lHlXqYQWgKN3kxY2aFSmqTJ7rYWWtI+F3zy5y
+   w==;
+X-CSE-ConnectionGUID: AKUT56s4Q/iUW1iNHygoqA==
+X-CSE-MsgGUID: SYhSabLpTkGFOVJVIoRqTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="40663125"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="40663125"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:01:52 -0700
+X-CSE-ConnectionGUID: Jawq1xG9QAy+YJcCiJCKmw==
+X-CSE-MsgGUID: c+is8aKDR76eq2gUIXdDQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="62343816"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:01:53 -0700
+Date: Mon, 26 Aug 2024 15:08:49 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Tim Chen <tim.c.chen@intel.com>
+Subject: Re: [PATCH v2 2/3] x86/sched: Add basic support for CPU capacity
+ scaling
+Message-ID: <20240826220849.GA7696@ranerica-svr.sc.intel.com>
+References: <4941491.31r3eYUQgx@rjwysocki.net>
+ <13573795.uLZWGnKmhe@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13573795.uLZWGnKmhe@rjwysocki.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-SurajSonawane2415 <surajsonawane0215@gmail.com> writes:
+On Mon, Aug 12, 2024 at 02:42:26PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Fix grammatical errors and improve phrasing in the `reporting-issues.rst`
-> documentation file. These changes enhance readability and ensure the
-> accuracy of the instructions provided.
->
-> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
-> ---
-> V3 -> V4: Adjust line wrapping to split the long line properly.
-> V2 -> V3: Re-added the fix for the line: "That's why you might be need to uninstall the".
-> V1 -> V2: Removed the unwanted change to the line: "try search terms like".
->
->  Documentation/admin-guide/reporting-issues.rst | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+[...]
 
-So I have been trying for a while to apply this, but have not succeeded.
-It has a number of weird white-space errors.  For example...
+> +bool arch_enable_hybrid_capacity_scale(void)
+> +{
+> +	int cpu;
+> +
+> +	if (static_branch_unlikely(&arch_hybrid_cap_scale_key)) {
+> +		WARN_ONCE(1, "Hybrid CPU capacity scaling already enabled");
+> +		return true;
+> +	}
 
-> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-> index 2fd5a030235a..d0e645fc845a 100644
-> --- a/Documentation/admin-guide/reporting-issues.rst
-> +++ b/Documentation/admin-guide/reporting-issues.rst
-> @@ -56,7 +56,7 @@ developers. It might be all that's needed for people already familiar with
->  reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
->  everyone else there is this section. It is more detailed and uses a
->  step-by-step approach. It still tries to be brief for readability and leaves
-> -out a lot of details; those are described below the step-by-step guide in a
-> +out a lot of details; those are described below in the step-by-step guide in a
->  reference section, which explains each of the steps in more detail. 
+Maybe an empty line here for readability?
 
-There is a spurious space after "detail." that makes things fail.
-Fixing that was not sufficient, though, there are others, and I don't
-have the time to figure it all out.
+> +	arch_cpu_scale = alloc_percpu(struct arch_hybrid_cpu_scale);
+> +	if (!arch_cpu_scale)
+> +		return false;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		per_cpu_ptr(arch_cpu_scale, cpu)->capacity = SCHED_CAPACITY_SCALE;
+> +		per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio = arch_max_freq_ratio;
+> +	}
+> +
+> +	static_branch_enable(&arch_hybrid_cap_scale_key);
+> +
+> +	pr_info("Hybrid CPU capacity scaling enabled\n");
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * arch_set_cpu_capacity - Set scale-invariance parameters for a CPU
+> + * @cpu: Target CPU.
+> + * @cap: Capacity of @cpu, relative to @base_cap, at its maximum frequency.
+> + * @base_cap: System-wide maximum CPU capacity.
 
-Please go through the exercise of emailing the patch to yourself, and
-get to the point where "git am" will accept it; then resend.
+It is confusing to e that @base_cap is the maximum capacity of the system.
+Maybe @max_cap?
 
-Thanks,
+> + * @max_freq: Frequency of @cpu corresponding to @cap.
+> + * @base_freq: Frequency of @cpu at which MPERF counts.
+> + *
+> + * The units in which @cap and @base_cap are expressed do not matter, so long
+> + * as they are consistent, because the former is effectively divided by the
+> + * latter.  Analogously for @max_freq and @base_freq.
+> + *
+> + * After calling this function for all CPUs, call arch_rebuild_sched_domains()
+> + * to let the scheduler know that capacity-aware scheduling can be used going
+> + * forward.
+> + */
+> +void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long base_cap,
+> +			   unsigned long max_freq, unsigned long base_freq)
+> +{
+> +	if (static_branch_likely(&arch_hybrid_cap_scale_key)) {
+> +		WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
+> +			   div_u64(cap << SCHED_CAPACITY_SHIFT, base_cap));
+> +		WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
+> +			   div_u64(max_freq << SCHED_CAPACITY_SHIFT, base_freq));
+> +	} else {
+> +		WARN_ONCE(1, "Hybrid CPU capacity scaling not enabled");
+> +	}
+> +}
+> +
+> +unsigned long arch_scale_cpu_capacity(int cpu)
+> +{
+> +	if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
+> +		return READ_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity);
+> +
+> +	return SCHED_CAPACITY_SCALE;
+> +}
+> +EXPORT_SYMBOL_GPL(arch_scale_cpu_capacity);
+> +
+>  static void scale_freq_tick(u64 acnt, u64 mcnt)
+>  {
+>  	u64 freq_scale;
+> +	u64 freq_ratio;
 
-jon
+Why can't freq_ratio be declared on the same line as freq_scale?
+
+>  
+>  	if (!arch_scale_freq_invariant())
+>  		return;
+> @@ -359,7 +439,12 @@ static void scale_freq_tick(u64 acnt, u6
+>  	if (check_shl_overflow(acnt, 2*SCHED_CAPACITY_SHIFT, &acnt))
+>  		goto error;
+>  
+> -	if (check_mul_overflow(mcnt, arch_max_freq_ratio, &mcnt) || !mcnt)
+> +	if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
+> +		freq_ratio = READ_ONCE(this_cpu_ptr(arch_cpu_scale)->freq_ratio);
+> +	else
+> +		freq_ratio = arch_max_freq_ratio;
+
+It seems that arch_max_freq_ratio will never be used on hybrid processors
+and computing arch_turbo_freq_ratio will be a waste of cycles.
+
+Unfortunately, intel_set_max_freq_ratio() is called before the
+arch_hybrid_cap_scale_key static key is set.
+
+Maybe some rework is in order?
+
+Thanks and BR,
+Ricardo
 
