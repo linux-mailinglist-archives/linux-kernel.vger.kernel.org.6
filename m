@@ -1,185 +1,136 @@
-Return-Path: <linux-kernel+bounces-302307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D901495FC6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F64595FC6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 00:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC831F236DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894351C22869
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC1619D075;
-	Mon, 26 Aug 2024 22:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AE319D074;
+	Mon, 26 Aug 2024 22:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5BBMBIE"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A7MsA1xR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CD129E93;
-	Mon, 26 Aug 2024 22:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1B19342A;
+	Mon, 26 Aug 2024 22:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724710049; cv=none; b=UqWlkRpb88N8ul6OFeR8T0QEpR35NqZULa9EEqM9hLrnN0+uAFTtYxl0633stk6xAZXXKgW9aPSZ6rUUvaa0HcVyNsk6eoRsGveoLoKhyEcMaFcJIymn7v+rsd8+VCZHLbnEusrtq7NJ4fMMRdUAijofSquuLFsnFRbM6w93pEY=
+	t=1724710116; cv=none; b=N6o/bDs7yRNzgwdbCdPSoFdoBo60wTs4W6diInrjbaE5OIbZ0gvBhnN24M+9oI9c1+W3TdbLFT72uuY7m/ID3CYNh6a2bBQmicsFsMCmtlAu8T1wkgqDVcVapOBIxWH8Ql13R9IiQQ/prTfXOIAeDP+LDWCcD0fhDgphrvml3K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724710049; c=relaxed/simple;
-	bh=Q9zqWUSu8fGZ8hrDi4+mX345YfY20cBYd1UNmIScO7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AsAM8O4lh3JJFNIq95JR+8mu3fJd3Bzp63Dzx3zcKLxmbHp71DCGOWAocVJvD51PkVG4gOcd8YrewiNFhfOoRfWNhzF1vmbcfQZd6PJPXDN+Fz4Sy7CM/wQf9ksytLclBordVxsdO9FAK4OgJgbHP9fetkW5dqfGeFTDir+U/oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5BBMBIE; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3bd8784d3so3779823a91.3;
-        Mon, 26 Aug 2024 15:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724710046; x=1725314846; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6wBuMGBO6IYcxN3bymUocORY6Sf95mnXr/c1cVLnvE=;
-        b=h5BBMBIEfdNBTUy4pTRCCHL8GEt8EE0zTYh0dl3BI0cM8LXm3scRNSlP3fgXy1hNld
-         iYJ7oxQKK84h/O54X3bsCQQxhamwLudB9+kdmYw1jfgw9Dpe3X1LadZIvG362NrDFrkO
-         gA4TZ1pzZK0JRah4ySOAHs5Fcv4ah9TUdDTf+ULYFAkKtxRz90DiFsAHqi9TZVr6fTGk
-         mknWCDDHWl6tju3T9ZBfOSjW4LNg8/HHN0y1v3iHOj2hkU3GBzvu3ND0waZEa3xffmYI
-         IaVYg/Ba2Q3j3fTfiJmqoOPk/o+q0JT6xfaHYoRu+TuWK7P8Me6EUJ0tSWwy4cbtzGHa
-         Nzrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724710046; x=1725314846;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N6wBuMGBO6IYcxN3bymUocORY6Sf95mnXr/c1cVLnvE=;
-        b=NWpm6LShfNDUKlPbSaSAHbyNMfk0PknKMQZGCTx2XtEMFmlXC4R6ThncbvEM//FoEb
-         LJy9076DEnjksaWZka9JVaivxm3/4etNIFkku+Yf5BdiE79sg/FcS0Fa6gRGiJQpDD4+
-         PQa3ntpVcZzN3jUv3d1pyscFJmT8DT4DgzBHzmzvg8eLLrZKPXHrc4/tJI0NrWf+nQvc
-         AnfESl6GYTNr9WVUFXhVxpp4pPtas1h1uqFxCu7DpccCNaRSdqwRh8sutr8ZDtj9f13T
-         CQWPGg5Pw72u4i87/lbn3DeR2gP4sGJMw/c+ZG/zQ4dMsZbZbvmmyOVakLnd0GyZjRyi
-         20SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUssi/PegJb4h4CFpcuo143CZiJ1ADNAmOfL1IXyvdTo+BKxlt+1JBxJxdVNpdMG4zTXzQYfOEnrQ==@vger.kernel.org, AJvYcCUxPFbcJca6LQ2WMIospkUVnuuKGX/WjJmFCw0H4GOT9I/NiX/jCumpYwWWx21jbPrzCoYM4lDtUhBuiLSX@vger.kernel.org, AJvYcCVOtheuXI8bWOkn30hy7qYK+MmcnljCYvU1RZQCJC2cdrIAQNQwQ770A8soGUrtxqITaclKTcI/xPuUG5Mx@vger.kernel.org, AJvYcCWvALwIQCZlTYzOqnCZC65PaGdI1yQigoWuXhIBxKPGS22XqVkBCRIdPsIxCBwqiIjm6iA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRPFs+aCJBt7etkmKVNKo5gv2thN+eFQaG+mSo8xb9JqscY9lb
-	S9OZUH1AvP949P+SAKzoZC58P9oqBDVmHsC6dCK5FDUFLrm45SnAyYjQoXa8D7BEiVMwPTuLx37
-	bkiuyfQEti0s2OCARAcN4HxxDuDI=
-X-Google-Smtp-Source: AGHT+IFRGb2W+WsX2UKq4Wk1GLY6uzmcfAn//NcsablcDQq4KUNIB4ejPvdqknItx6x3QLaJ8Xhm9Yg8LYPhTLP2AGY=
-X-Received: by 2002:a17:90b:3785:b0:2d3:ce96:eb62 with SMTP id
- 98e67ed59e1d1-2d646d6fb73mr13331785a91.38.1724710045979; Mon, 26 Aug 2024
- 15:07:25 -0700 (PDT)
+	s=arc-20240116; t=1724710116; c=relaxed/simple;
+	bh=MTJqgXRrpWsKtfxj39yoPmid/iW6hxkvaquXtjAl2hE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOT1qMKuYkpH/dF+Zldztto0ZxgWLMajVnQAZk0YEDOJkEVT+SNtAddLxwHTQl9VPT51c6v6kLZjWRDelvgzqG/H+mU/eF9oZ5M5ubFNbEnDLuSu3BxEbiJbOpbb/QYy5nohJK2NM/qXAdVBDiXABC+oZvFjwANeZ3dLtOid+VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A7MsA1xR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724710114; x=1756246114;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MTJqgXRrpWsKtfxj39yoPmid/iW6hxkvaquXtjAl2hE=;
+  b=A7MsA1xRrd1Hx9RxV/NwrVuxYTlcA0awSsWnk4npQIbV15YbAc0heCaq
+   my5mawcImlkQ7WdPaJVfhBo/mJ24zuszSGr38yYEg0KSbb7612CnhXZj1
+   FEudWT/G/WEZjsj3p7jI5A1eQtFxa7zn7fIBZrv317vK8S40bN+Jzln3S
+   dgNwvHa+4T/IFIT3JKkpANFVmylfnKoeID1JiPiL+t+rSHUpQcbmdbhCR
+   TGbe6U5CxOEcMewfaQDMv32eHtwIFWpw1GE1Z3d2ScTtwlg3nnfCPe2e9
+   DeewG/+0mZ4UVq1mtl3BhWsIEqKfzXLDqBtmRI/ZMAyREz/qLxP/iAcRg
+   g==;
+X-CSE-ConnectionGUID: ks4BfuX5Tyq3A4kBqbx6XQ==
+X-CSE-MsgGUID: UFDcbn3gQn2aGYwETd16+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="40663726"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="40663726"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:08:34 -0700
+X-CSE-ConnectionGUID: 4JVCmYgVQcu+R5/RgJWewA==
+X-CSE-MsgGUID: 8eEoDP5SRC2x05sHFey3mQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="62816508"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Aug 2024 15:08:31 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sihsz-000Hdm-0a;
+	Mon, 26 Aug 2024 22:08:29 +0000
+Date: Tue, 27 Aug 2024 06:07:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ahmed Ehab <bottaawesome633@gmail.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	linux-ext4@vger.kernel.org, syzkaller@googlegroups.com
+Subject: Re: [PATCH v6 2/2] locking/lockdep: Test no new string literal is
+ created in lockdep_set_subclass()
+Message-ID: <202408270559.rym5UAv9-lkp@intel.com>
+References: <20240824221031.7751-2-bottaawesome633@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZsSpU5DqT3sRDzZy@krava> <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org>
- <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org> <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
- <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
- <ZsdYGOS7Yg9pS2BJ@x1> <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org>
- <Zsy1blxRL9VV9DRg@x1> <CA+icZUWMxzAFtr8vsUUQ9OCR68K=F6d6MANx8HMTQntq494roA@mail.gmail.com>
- <20240826184818.GC117125@pauld.westford.csb> <Zszf0_5DKuscmDWi@x1>
-In-Reply-To: <Zszf0_5DKuscmDWi@x1>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 26 Aug 2024 15:07:14 -0700
-Message-ID: <CAEf4Bza2oR1VLyGLyWRBbMbB00DQDFTCHNU_WT+0ktoWPk1Edw@mail.gmail.com>
-Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Phil Auld <pauld@redhat.com>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	Jiri Slaby <jirislaby@kernel.org>, Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org, 
-	Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, msuchanek@suse.com, 
-	usamaarif642@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240824221031.7751-2-bottaawesome633@gmail.com>
 
-On Mon, Aug 26, 2024 at 1:04=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Aug 26, 2024 at 02:48:18PM -0400, Phil Auld wrote:
-> > On Mon, Aug 26, 2024 at 08:42:10PM +0200 Sedat Dilek wrote:
-> > > On Mon, Aug 26, 2024 at 7:03=E2=80=AFPM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Mon, Aug 26, 2024 at 10:57:22AM +0200, Jiri Slaby wrote:
-> > > > > On 22. 08. 24, 17:24, Arnaldo Carvalho de Melo wrote:
-> > > > > > On Thu, Aug 22, 2024 at 11:55:05AM +0800, Shung-Hsi Yu wrote:
-> > > > > > I stumbled on this limitation as well when trying to build the =
-kernel on
-> > > > > > a Libre Computer rk3399-pc board with only 4GiB of RAM, there I=
- just
-> > > > > > created a swapfile and it managed to proceed, a bit slowly, but=
- worked
-> > > > > > as well.
-> > > > >
-> > > > > Here, it hits the VM space limit (3 G).
-> > > >
-> > > > right, in my case it was on a 64-bit system, so just not enough mem=
-ory,
-> > > > not address space.
-> > > >
-> > > > > > Please let me know if what is in the 'next' branch of:
-> > > >
-> > > > > > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
-> > > >
-> > > > > > Works for you, that will be extra motivation to move it to the =
-master
-> > > > > > branch and cut 1.28.
-> > > >
-> > > > > on 64bit (-j1):
-> > > > > * master: 3.706 GB
-> > > > > (* master + my changes: 3.559 GB)
-> > > > > * next: 3.157 GB
-> > > >
-> > > > > on 32bit:
-> > > > >  * master-j1: 2.445 GB
-> > > > >  * master-j16: 2.608 GB
-> > > > >  * master-j32: 2.811 GB
-> > > > >  * next-j1: 2.256 GB
-> > > > >  * next-j16: 2.401 GB
-> > > > >  * next-j32: 2.613 GB
-> > > > >
-> > > > > It's definitely better. So I think it could work now, if the thre=
-ad count
-> > > > > was limited to 1 on 32bit. As building with -j10, -j20 randomly f=
-ails on
-> > > > > random machines (32bit processes only of course). Unlike -j1.
-> > > >
-> > > > Cool, I just merged a patch from Alan Maguire that should help with=
- the
-> > > > parallel case, would be able to test it? It is in the 'next' branch=
-:
-> > > >
-> > > > =E2=AC=A2[acme@toolbox pahole]$ git log --oneline -5
-> > > > f37212d1611673a2 (HEAD -> master) pahole: Teduce memory usage by sm=
-arter deleting of CUs
-> > > >
-> > >
-> > > *R*edzce? memory usage ...
-> > >
-> >
-> > If you meant that further typo it's golden, and if not the irony is ric=
-h :)
-> >
-> > Either way this is my favorite email of the day!
->
-> Hahaha, I went to uppercase what comes after the colon and introduced
-> that typo ;-)
->
-> Faxing it....
+Hi Ahmed,
 
-typo-fest continues ;)
+kernel test robot noticed the following build errors:
 
-but it's great to see that a new pahole release is coming (cc'ing
-Usama), we are eagerly waiting for one of the bug fixes that will go
-into 1.28 (one of the first commits after 1.27 was cut). Note, libbpf
-CI's for pahole-staging is failing, but that seems a one-off test and
-has nothing to do with pahole being broken.
+[auto build test ERROR on tip/locking/core]
+[also build test ERROR on tip/master arm-perf/for-next/perf linus/master tip/auto-latest v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> - Arnaldo
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Ahmed-Ehab/locking-lockdep-Test-no-new-string-literal-is-created-in-lockdep_set_subclass/20240826-145215
+base:   tip/locking/core
+patch link:    https://lore.kernel.org/r/20240824221031.7751-2-bottaawesome633%40gmail.com
+patch subject: [PATCH v6 2/2] locking/lockdep: Test no new string literal is created in lockdep_set_subclass()
+config: i386-buildonly-randconfig-003-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270559.rym5UAv9-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270559.rym5UAv9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408270559.rym5UAv9-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   lib/locking-selftest.c: In function 'lock_class_subclass_X1':
+>> lib/locking-selftest.c:2715:60: error: 'struct rw_semaphore' has no member named 'dep_map'
+    2715 |         const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
+         |                                                            ^
+   lib/locking-selftest.c:2719:47: error: 'struct rw_semaphore' has no member named 'dep_map'
+    2719 |         name_after_setting_subclass = rwsem_X1.dep_map.name;
+         |                                               ^
+
+
+vim +2715 lib/locking-selftest.c
+
+  2712	
+  2713	static void lock_class_subclass_X1(void)
+  2714	{
+> 2715		const char *name_before_setting_subclass = rwsem_X1.dep_map.name;
+  2716		const char *name_after_setting_subclass;
+  2717	
+  2718		lockdep_set_subclass(&rwsem_X1, 1);
+  2719		name_after_setting_subclass = rwsem_X1.dep_map.name;
+  2720		DEBUG_LOCKS_WARN_ON(name_before_setting_subclass != name_after_setting_subclass);
+  2721	}
+  2722	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
