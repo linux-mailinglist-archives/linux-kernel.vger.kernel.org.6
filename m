@@ -1,77 +1,69 @@
-Return-Path: <linux-kernel+bounces-302094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C7095F9BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:32:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCC195F9BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E271C211F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63D81F22699
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD96C199389;
-	Mon, 26 Aug 2024 19:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2663519925B;
+	Mon, 26 Aug 2024 19:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P1/cn244"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=infradead.org header.i=@infradead.org header.b="B8kFP9dp"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB161991AF;
-	Mon, 26 Aug 2024 19:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F54F2B9C5;
+	Mon, 26 Aug 2024 19:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724700750; cv=none; b=hOLO7RUeujdVxj4rFU437Srl5DQqeh0jDBLkqCYbeH0w61aTW2jtNkA7yGZyzh5/XXTLsC6jbxoJ+nzDuVY/uxGu24vRhtY6cNEhn4yZR95EU+pOPJoQvheN52sdmhw+rWSVwwyoIECDcNOz0++eb8cMTVvsIODBoj9bWk5svt0=
+	t=1724700908; cv=none; b=MjBUpSsasQmXdErXK5VvSDx2ZuJ0D7wO3ulINwSxQ126kdQvKMN2gGTs5xlF0Qidx9f8KGDOf02An1yGnU8O3D2YzxREAMIo8aBZuhmqg75LFe7VC9z2C5i0uSRIDN+vd4jG1Xwtq1Y1yvSu2TrGbpobJsnrVpXp7kYPTFuvZ4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724700750; c=relaxed/simple;
-	bh=JlvTZhFbaoZxNuTLLIHrOwdjpiN8PLltgCIRAe/LzX8=;
+	s=arc-20240116; t=1724700908; c=relaxed/simple;
+	bh=k4ybJCK7M0NBIefKLbT7kmgFuCEKaT/XsH34oFmePMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TURMDWA9og2QjKhhgPqvhMIk86Ktx9tB1h9byOEMZnVxaSASdevrxT5O6FNigJqt+nqu1WzBjEu/W75WHRHdO3Pqy44PAkOiN4u1ljBmTzg1zavh0R/HdsTeCde41J+u8AX9Lb282zjmbHhBZPujfK2OiGqMAL/FYKiGwTp92pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P1/cn244; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724700749; x=1756236749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JlvTZhFbaoZxNuTLLIHrOwdjpiN8PLltgCIRAe/LzX8=;
-  b=P1/cn244bHRwWZHg6oi09W9SX94G43MC7NnAzyo6OXv2oEb9sib6iW75
-   uKTM0M6R5xOEOl1MtrhVuSIuD9edCeDgXxoYAjR9CobzSZO3Ls/hWQHZw
-   1LKB0AYVq+iTa9Un6xn8NCwddpcL55PntHZuaZp8E5/gcrNQfRCeKpQgN
-   p6+wDhOjP4/3VAX5zWWi0TZdHsasStFdX6EmkCrl+7iBryroFZXCmu0ob
-   gXpi65lB4Z0JBj4+GPdwTvhi0yax2qrWA23tlu5CFQmbGM/KhUae9pqqU
-   qSyrxfZSf6As1KXvfi0u3BV5eVbptWevzwVmnCotBGWul2FC1Pyuupf+f
-   Q==;
-X-CSE-ConnectionGUID: ClXO1Ev/S0yeG+cLGrMTDQ==
-X-CSE-MsgGUID: zf3bstS0TierK8EDCT1Szw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23302508"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23302508"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 12:32:28 -0700
-X-CSE-ConnectionGUID: MPfpvhmXRZCkE2Ix73HlJQ==
-X-CSE-MsgGUID: Y80lAQGMQHiog0UHUfUIcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="67429121"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 26 Aug 2024 12:32:26 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sifRv-000HXK-0W;
-	Mon, 26 Aug 2024 19:32:23 +0000
-Date: Tue, 27 Aug 2024 03:31:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
-	keescook@chromium.org, john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org, mic@digikod.net
-Subject: Re: [PATCH 02/13] LSM: Use lsmblob in security_audit_rule_match
-Message-ID: <202408270317.8wTE4P5l-lkp@intel.com>
-References: <20240825190048.13289-3-casey@schaufler-ca.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cm6riynSnnvP6IJ2VRB8miJlQ+o6Ez2B83WbIXPdfT8i+/LTwm4uWHkm/tSjeOc7RQFL/4hG5ilUC4kefDWbegZx+cUifRUj3e6THSym8700uLEXh6hD38mnb+FXJ93K35G2XQDoV2NZd3uxgGtJ0aUQVyl0fvLFCp7KGPk5cow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=fail (0-bit key) header.d=infradead.org header.i=@infradead.org header.b=B8kFP9dp reason="key not found in DNS"; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x1LUPN3CKx9WPRDOw9yP1hDbYZryxyKVndTj2KQF0/o=; b=B8kFP9dp5wqu5sC8A6LXRLE0+b
+	tZazdv9A0tiLeP1ZRCIKSbKvyt998trph3im0Y8GM4CBMvoW3yaC03z8D0KKiGFbUllQtVT4WGBkB
+	SEVEBUmm0DymDvU+DaUPCdxrjDK1A9XUp2EB3Bselhqbem9PRf7tTLYFHq5lp32iS+VOlBYKxU+kU
+	Uf3hzDAFB5Fem2jC42yPV5hzSb2AiOzd8ypzqbxsXbTyzT8Idzh8qLr+BE0zlinxOTMDZ9rlbmlAC
+	Tx3fbTmCR5TP4JRYCtP3xi5uJmZ71QBdkJ9al1RkKw2T0jN5cKzgkdq4u6bVDCewJByYsAgLg9b8o
+	hFyFDQYg==;
+Received: from jlbec by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sifUO-00000005Nol-3sQE;
+	Mon, 26 Aug 2024 19:34:56 +0000
+Date: Mon, 26 Aug 2024 12:34:53 -0700
+From: Joel Becker <jlbec@evilplan.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com,
+	jack@suse.com, joseph.qi@linux.alibaba.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com, ~lkcamp/discussion@lists.sr.ht
+Subject: Re: [syzbot] [ext4?] [ocfs2?] kernel BUG in jbd2_cleanup_journal_tail
+Message-ID: <ZszY3SHWTp7XfS3z@google.com>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com,
+	jack@suse.com, joseph.qi@linux.alibaba.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com, ~lkcamp/discussion@lists.sr.ht
+References: <00000000000070a66706204e7698@google.com>
+ <d673f289-2385-4949-ac80-f3a502d4deb2@lkcamp.dev>
+ <20240826133208.GB424729@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,198 +72,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240825190048.13289-3-casey@schaufler-ca.com>
+In-Reply-To: <20240826133208.GB424729@mit.edu>
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+ come to perfection.
+Sender: Joel Becker <jlbec@ftp.linux.org.uk>
 
-Hi Casey,
+On Mon, Aug 26, 2024 at 09:32:08AM -0400, Theodore Ts'o wrote:
+> On Mon, Aug 26, 2024 at 01:22:54AM -0300, Vinicius Peixoto wrote:
+> > Since the disk data is bogus, journal_reset fails with -EINVAL ("JBD2:
+> > Journal too short (blocks 2-1024)"); this leaves journal->j_head == NULL.
+> > However, jbd2_journal_load clears the JBD2_ABORT flag right before calling
+> > journal_reset. This leads to a problem later when ofcs2_mount_volume tries
+> > to flush the journal as part of the cleanup when aborting the mount
+> > operation:
+> > 
+> >   -> ofcs2_mount_volume (error; goto out_system_inodes)
+> >     -> ofcs2_journal_shutdown
+> >       -> jbd2_journal_flush
+> >         -> jbd2_cleanup_journal_tail (J_ASSERT fails)
+> > ...
+> The reason why this isn't an issue with ext4 is because the normal
+> "right" way to do this is if jbd2_journal_load() returns an error, is
+> to call jbd2_journal_destroy() to release the data structures with the
+> journal --- and then don't try to use the journal afterwards.
+> 
+> The weird thing is that there are two code paths in ocfs2 that calls
+> jbd2_journal_load().  One is in ocfs2_replay_journal() which does what
+> ext4 does.  The other is ocfs2_load_journal() which does *not* do
+> this, and this is the one which you saw in the syzkaller reproducer.
+> It looks like one codepath is used to replay the ocfs2 for some other
+> node, and the is to load (and presumably later, replay) the journal
+> for the mounting node.
 
-kernel test robot noticed the following build warnings:
+You are correct, Ted, that one path is for the local journal and the
+other is to recover remote journals for other nodes that may have
+crashed.
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on zohar-integrity/next-integrity linus/master pcmoore-audit/next v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think the big ordering issue is that we set
+osb->journal->j_state=OCFS2_JOURNAL_LOADED in ocfs2_journal_init(),
+before we've attempted any replay.  Later in ocfs2_journal_shutdown(),
+we check this state and decide to perform cleanup.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240826-170520
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20240825190048.13289-3-casey%40schaufler-ca.com
-patch subject: [PATCH 02/13] LSM: Use lsmblob in security_audit_rule_match
-config: i386-buildonly-randconfig-006-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270317.8wTE4P5l-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270317.8wTE4P5l-lkp@intel.com/reproduce)
+Instead, we should not set OCFS2_JOURNAL_LOADED until
+ocfs2_journal_load() has called jbd2_journal_load().  Only then do we
+actually know we have loaded a valid journal.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270317.8wTE4P5l-lkp@intel.com/
+Something like:
 
-All warnings (new ones prefixed by >>):
+```
+	status = jbd2_journal_load(journal->j_journal);
+	if (status < 0) {
+		mlog(ML_ERROR, "Failed to load journal!\n");
+		BUG_ON(!igrab(journal->j_inode));
+		jbd2_journal_destroy(journal->j_journal);
+		iput(journal->j_inode)
+		goto done;
+	}
+	journal->j_state = OCFS2_JOURNAL_LOADED;
+```
 
-   security/integrity/ima/ima_policy.c: In function 'ima_match_rules':
->> security/integrity/ima/ima_policy.c:654:52: warning: passing argument 1 of 'ima_filter_rule_match' makes integer from pointer without a cast [-Wint-conversion]
-     654 |                         rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-         |                                                    ^~~~~
-         |                                                    |
-         |                                                    struct lsmblob *
-   In file included from security/integrity/ima/ima_policy.c:22:
-   security/integrity/ima/ima.h:558:45: note: expected 'u32' {aka 'unsigned int'} but argument is of type 'struct lsmblob *'
-     558 | static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
-         |                                         ~~~~^~~~~
-   security/integrity/ima/ima_policy.c:663:52: warning: passing argument 1 of 'ima_filter_rule_match' makes integer from pointer without a cast [-Wint-conversion]
-     663 |                         rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-         |                                                    ^~~~~
-         |                                                    |
-         |                                                    struct lsmblob *
-   security/integrity/ima/ima.h:558:45: note: expected 'u32' {aka 'unsigned int'} but argument is of type 'struct lsmblob *'
-     558 | static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
-         |                                         ~~~~^~~~~
+With code like this, when jbd2_journal_load() fails, the future
+ocfs2_journal_shutdown() will exit early, because !OCFS2_JOURNAL_LOADED.
 
+I think this is the right spot; a quick audit of the paths (it has been
+a while) doesn't find any other outstanding state; the rest of journal
+startup, such as the commit thread etc, only happen after this.
 
-vim +/ima_filter_rule_match +654 security/integrity/ima/ima_policy.c
+> jbd2_journal_destroy().  It would seem like the *right* thing to do is
+> to bump the refcount in ocfs2_journal_init(), and if for some reason
+> the igrab fails, it can just return an error early, instead of having
+> to resort to BUG_ON() later, and if you don't realize that you have to
+> do this weird igrab() before calling jbd2_journal_destroy(), you'll
+> end up leaking the journal inode.
 
-   553	
-   554	/**
-   555	 * ima_match_rules - determine whether an inode matches the policy rule.
-   556	 * @rule: a pointer to a rule
-   557	 * @idmap: idmap of the mount the inode was found from
-   558	 * @inode: a pointer to an inode
-   559	 * @cred: a pointer to a credentials structure for user validation
-   560	 * @secid: the secid of the task to be validated
-   561	 * @func: LIM hook identifier
-   562	 * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-   563	 * @func_data: func specific data, may be NULL
-   564	 *
-   565	 * Returns true on rule match, false on failure.
-   566	 */
-   567	static bool ima_match_rules(struct ima_rule_entry *rule,
-   568				    struct mnt_idmap *idmap,
-   569				    struct inode *inode, const struct cred *cred,
-   570				    u32 secid, enum ima_hooks func, int mask,
-   571				    const char *func_data)
-   572	{
-   573		int i;
-   574		bool result = false;
-   575		struct ima_rule_entry *lsm_rule = rule;
-   576		bool rule_reinitialized = false;
-   577	
-   578		if ((rule->flags & IMA_FUNC) &&
-   579		    (rule->func != func && func != POST_SETATTR))
-   580			return false;
-   581	
-   582		switch (func) {
-   583		case KEY_CHECK:
-   584		case CRITICAL_DATA:
-   585			return ((rule->func == func) &&
-   586				ima_match_rule_data(rule, func_data, cred));
-   587		default:
-   588			break;
-   589		}
-   590	
-   591		if ((rule->flags & IMA_MASK) &&
-   592		    (rule->mask != mask && func != POST_SETATTR))
-   593			return false;
-   594		if ((rule->flags & IMA_INMASK) &&
-   595		    (!(rule->mask & mask) && func != POST_SETATTR))
-   596			return false;
-   597		if ((rule->flags & IMA_FSMAGIC)
-   598		    && rule->fsmagic != inode->i_sb->s_magic)
-   599			return false;
-   600		if ((rule->flags & IMA_FSNAME)
-   601		    && strcmp(rule->fsname, inode->i_sb->s_type->name))
-   602			return false;
-   603		if ((rule->flags & IMA_FSUUID) &&
-   604		    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
-   605			return false;
-   606		if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
-   607			return false;
-   608		if (rule->flags & IMA_EUID) {
-   609			if (has_capability_noaudit(current, CAP_SETUID)) {
-   610				if (!rule->uid_op(cred->euid, rule->uid)
-   611				    && !rule->uid_op(cred->suid, rule->uid)
-   612				    && !rule->uid_op(cred->uid, rule->uid))
-   613					return false;
-   614			} else if (!rule->uid_op(cred->euid, rule->uid))
-   615				return false;
-   616		}
-   617		if ((rule->flags & IMA_GID) && !rule->gid_op(cred->gid, rule->gid))
-   618			return false;
-   619		if (rule->flags & IMA_EGID) {
-   620			if (has_capability_noaudit(current, CAP_SETGID)) {
-   621				if (!rule->gid_op(cred->egid, rule->gid)
-   622				    && !rule->gid_op(cred->sgid, rule->gid)
-   623				    && !rule->gid_op(cred->gid, rule->gid))
-   624					return false;
-   625			} else if (!rule->gid_op(cred->egid, rule->gid))
-   626				return false;
-   627		}
-   628		if ((rule->flags & IMA_FOWNER) &&
-   629		    !rule->fowner_op(i_uid_into_vfsuid(idmap, inode),
-   630				     rule->fowner))
-   631			return false;
-   632		if ((rule->flags & IMA_FGROUP) &&
-   633		    !rule->fgroup_op(i_gid_into_vfsgid(idmap, inode),
-   634				     rule->fgroup))
-   635			return false;
-   636		for (i = 0; i < MAX_LSM_RULES; i++) {
-   637			int rc = 0;
-   638			struct lsmblob blob = { };
-   639	
-   640			if (!lsm_rule->lsm[i].rule) {
-   641				if (!lsm_rule->lsm[i].args_p)
-   642					continue;
-   643				else
-   644					return false;
-   645			}
-   646	
-   647	retry:
-   648			switch (i) {
-   649			case LSM_OBJ_USER:
-   650			case LSM_OBJ_ROLE:
-   651			case LSM_OBJ_TYPE:
-   652				/* scaffolding */
-   653				security_inode_getsecid(inode, &blob.scaffold.secid);
- > 654				rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-   655							   Audit_equal,
-   656							   lsm_rule->lsm[i].rule);
-   657				break;
-   658			case LSM_SUBJ_USER:
-   659			case LSM_SUBJ_ROLE:
-   660			case LSM_SUBJ_TYPE:
-   661				/* scaffolding */
-   662				blob.scaffold.secid = secid;
-   663				rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
-   664							   Audit_equal,
-   665							   lsm_rule->lsm[i].rule);
-   666				break;
-   667			default:
-   668				break;
-   669			}
-   670	
-   671			if (rc == -ESTALE && !rule_reinitialized) {
-   672				lsm_rule = ima_lsm_copy_rule(rule, GFP_ATOMIC);
-   673				if (lsm_rule) {
-   674					rule_reinitialized = true;
-   675					goto retry;
-   676				}
-   677			}
-   678			if (!rc) {
-   679				result = false;
-   680				goto out;
-   681			}
-   682		}
-   683		result = true;
-   684	
-   685	out:
-   686		if (rule_reinitialized) {
-   687			for (i = 0; i < MAX_LSM_RULES; i++)
-   688				ima_filter_rule_free(lsm_rule->lsm[i].rule);
-   689			kfree(lsm_rule);
-   690		}
-   691		return result;
-   692	}
-   693	
+There are interactions of journal inodes for nodes we don't own, and
+also connections to cluster locks for our own journal (don't replay
+ourselves while another node has locked it and is recovering us).  So we
+do have some state to keep track of.  But it's been so long that I don't
+recall if there was a specific reason we do this late via igrab(), or if
+it's just that we should have done as you describe and missed it.
+You'll note that I copied the igrab/iput game in my snippet above.
+
+Should someone try to audit the igrab/iput thing later?  Yes.  But it's
+not a necessary part of this fix.
+
+Thanks,
+Joel
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+"War doesn't determine who's right; war determines who's left."
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
 
