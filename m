@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-302208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B8895FB23
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:00:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C146295FB26
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E28B22F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACC92884BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F26828DC1;
-	Mon, 26 Aug 2024 21:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DD913CABC;
+	Mon, 26 Aug 2024 21:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YXQBwP4z"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/If90jS"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4261991BA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE0628DC1;
+	Mon, 26 Aug 2024 21:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724706004; cv=none; b=b4myXs2dQi7DLVkKbqnuhoRdbZJ9u/rxC7bxad7ZhuaEKxai2bqvGuTpEEj0Jro+ZQV1FF1j/VF8rbRtT6yH6SEU5HVfRnY48NWrxQ/DgyIdWw0Uv4aFa4DHXe1NtLF9LaSzJuoCNg2i3zC5d8m6T1pT1FUY1y+cVAEqSd4WzsI=
+	t=1724706019; cv=none; b=HleiojYlSA48exKcf8ULJirHsAkbCn6blZbkf6duCPW0GIqAp0w/XOYYidn1/um0OZHlHZJgRpQ5i1YBZJLkcpe9tQlqnCSUU1ff4yo97/9OQEppTqUkxuLb3Te1WbfM1r65uk09vlw4ayrr9eES1vwuPGRsY+pwIKo9l6Z/F3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724706004; c=relaxed/simple;
-	bh=2ruOyogdIf90kRS5aDeFcltxiwdAst+Mnulv/TyjWw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iySQMS8uUMRn916z6D+17yMTu284l450ZHgq4B369ym3zdeQGBzyxYWTOmRa5C0kWB6fgDPkREjs3Hqm7NwYKqWAvGADD8TzFH+4oKPieHzBcLj5IUowSBnDHei5D5RJ3fT290izTs0cetbGXm+vhxG8IYDR/m/aeqT2+x2P/I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YXQBwP4z; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-45029af1408so24621cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:00:02 -0700 (PDT)
+	s=arc-20240116; t=1724706019; c=relaxed/simple;
+	bh=ae6nXL4zmv4vTDHXa1H5uLnPJYnLtqT7NVV6lyTLXrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pGq9vfS7qJS+OZYmXFDmohRMSY5Ja8BR+51lmaZe30O9Fq8gwP8pZZayKTepwKaXwhOtARfk/tjEGJFt+WOMXfgBlK6fSzQYVL8si+sk0TVaNEsgKBSh7UNZAknoZqcnEQmq6JsLUIU5TWJRTQJxu508euw+PGWaHDW7ea+oC6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/If90jS; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42816ca782dso41562595e9.2;
+        Mon, 26 Aug 2024 14:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724706002; x=1725310802; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GVEfW6TQ0hNW6j7JrK27dAV6DKxhXDBh4IjSm2S6kp8=;
-        b=YXQBwP4z3sjReWeYI8c95grJTM8Pg4Eh0Lx3scq1skH5ArbGNI99vj9nQ4x1WtOZN5
-         RFdVHLYigEUm/AM6+WOLVJib83g9wLHB+8+Sxtlwkwwc77BbppfvlBeAzfeOcfZ3SHvh
-         1L9nP1VZmwhOaRKiuLW7khHDrrgeT6QKIqAONX7WYqZaNODj8DDtVmIHOR2D3yGFdwYm
-         T/iQVDbAszvdaR8lHWWEcygBcfUm718YORYYUK7pQ+XbBJGsN6WzTVr4KVTuY6/IK8qU
-         xyOEjcIrT4vl2jclWv3J3HwGtUy56yICzzvgwONQvQWHpraoBZo3Gw3IARgq+qy/6pbr
-         5Mug==
+        d=gmail.com; s=20230601; t=1724706016; x=1725310816; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q+K/X6YqDrxWE8WA9haO3ONaWPfQCU7jkPm8tQUrtw4=;
+        b=O/If90jS3EzhYeiKYNF/vY93ZAPuFjwm6YFSxtqA48lr0Sv5DWPPdodHcGWxxM1tI3
+         9pANE2aLjSdkR/SIvGrsNnMyYjpHk5fQvgyMywSZV/7dhbL40UseJIMPkeeAPd49txhE
+         9XmFG6MrqxhnQz+tW16ybJen1o8u1QBqPYxyQDZy3iu/9uXMO3dAlUedImkH6b+tWmPN
+         VstMtZQ06gf1Ekw+WOxLyCwMA3epOf6saHlLDEyc049giTfGk6ADIFADUHQp/C2BAhqS
+         xcPy2WI7+dp6HYjxTOYY7i0VU75SJfADwiRyjcyXxZSapQMjfzmxDiB7VM1ZiA4MGBBD
+         bnZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724706002; x=1725310802;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GVEfW6TQ0hNW6j7JrK27dAV6DKxhXDBh4IjSm2S6kp8=;
-        b=tFYFQTuwL5mp/rN+uwRhAuXCXenIsbDc94RWBRnIOECi7UjSUoq/oOLPQixAzW4czb
-         AFPwq5Kt8uCtXiDk7u7G/M0L/hhTGIrzeLIJuZuydpNT8iWRJuUV6TZqowE6z0gMQX3U
-         VVT0VRi40wth9n6xwPfcsmNB23uiCCJ+Oja3kF0tQBrMfzkejSGnL3rhR2JVgI3TFT+U
-         rdCXuP3QvuOyPmYcqflC2UQN9byYEQxTv6t3tn7oXfjfC47sgwnUW1Sgq4sjvY0cqAsn
-         4wAJQl7pmElje6qwxXSvWLnlMgXVMYsuELwq5QKAs9B3sfSJgvqy2tZl7LLpcH4vTce3
-         e4dA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCefnGHuwtmIiZiEERJylwP7CydADntR1sNILoMkGd0VheNASUpvB2ywOBSB3bU/TOcfYCzRXB2xiyw3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh5/coZRv048i7mVW6csJ2+GS0zy6znuN5gYdPDfhk44qhYRWG
-	yaXzTjmfalF+LzIXm21/lhayTBc82BNJAI30hPsH/mM1UNcAtW7cpZkfLarVQduUQJ+ybgfJA9p
-	59pY24JTpY2opQhqfg7wbx1/Bxaw3fvjC2KB7
-X-Google-Smtp-Source: AGHT+IFHV5LY4R0wuFIWWzaCqt+lYVB9gaZB5Srpu5shv4KRElf5kMj7ONS8iMGo9WDXlnq9aLqRuVYbZGS3AdE75N0=
-X-Received: by 2002:a05:622a:5b97:b0:444:ccc5:f4c0 with SMTP id
- d75a77b69052e-4566321b920mr132841cf.15.1724706001629; Mon, 26 Aug 2024
- 14:00:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724706016; x=1725310816;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+K/X6YqDrxWE8WA9haO3ONaWPfQCU7jkPm8tQUrtw4=;
+        b=uVt0SQW5VuW07VFz/dr5ebjvl8zUcM/C7eqzq4Y/NO72xkp72aAnRGnpRVUnUOtCRN
+         Tb95ej6C+mn3D2hkxe1aSwudihSTnmzT4uLsSA31uKPewJQ2GAFokQV6Xa0vpdQ8GRGe
+         tuTjMmxMY1h4eZoI6dXLf4SzoLeaVIUcG/AJlzrAW97p3iXw37GCa7C6HoQ7JoCDFv3T
+         FtFRZgGxC2ts5UwOphG4MEmHPHaGtCNLjkSFrD9l0IERyONEKKMrL7xNBhw1XtdG6Ext
+         a2FG4MRptIEQxkIvJJxTlPRl7ETiq+ByVJfuUxChATrphjd+ruQSTNPTReWbY7HBcF0F
+         5JeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVH1Vwp0YL98TPOyZJkq1vQjgw1n9esHZU1ZR3Ua0hJnr7QfQYMpcj9E2UgPBG2N21yilXNFTRrN0UJNj@vger.kernel.org, AJvYcCWuotr1oC22pQw3nQQzpQrqMC3EdMkdHItNdjI8M3VrsuoKinz7f2/JRGtjdtx7Sr+N1pSavq+A0/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwESmLWt9rg+dym6GOGK25oZCGPH0thhF09wyoDOdOX1QOIx7bh
+	IUjOHgnCpRDpqA8MmNehkv686R0qlTYUU0ApX8l56Wi3gn574ra/Ohcfuvcu
+X-Google-Smtp-Source: AGHT+IHvo4aNhV61UXRKNmGdlU/GneWr8ZeoPl4Pe6b7lg2FN9IOF450ZcfDSy6E3fdjSXfvaFiYiQ==
+X-Received: by 2002:a5d:40c5:0:b0:368:4bc0:9210 with SMTP id ffacd0b85a97d-373118566d8mr6369089f8f.25.1724706015194;
+        Mon, 26 Aug 2024 14:00:15 -0700 (PDT)
+Received: from [192.168.1.127] ([151.95.157.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefd9cd1sm203379685e9.38.2024.08.26.14.00.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 14:00:14 -0700 (PDT)
+Message-ID: <1a8adbc3-e8b3-4133-a2dd-449d584d8e8d@gmail.com>
+Date: Mon, 26 Aug 2024 23:00:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823185323.2563194-1-jmattson@google.com> <20240823185323.2563194-2-jmattson@google.com>
- <20240826203308.litigvo6zomwapws@desk>
-In-Reply-To: <20240826203308.litigvo6zomwapws@desk>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 26 Aug 2024 13:59:50 -0700
-Message-ID: <CALMp9eQ1tSQtmvF+7BVdpYto8KPN5jfad3o6XPnU9oVOrfxvjQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] x86/cpufeatures: Clarify semantics of X86_FEATURE_IBPB
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Sandipan Das <sandipan.das@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/1] iio: bmi323: have the peripheral consume less
+ power
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jagath Jog J <jagathjog1996@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>,
+ Jonathan LoBue <jlobue10@gmail.com>
+References: <20240823192921.7df291f8@jic23-huawei>
+ <20240824141122.334620-1-benato.denis96@gmail.com>
+ <20240826114129.71f417c5@jic23-huawei>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <20240826114129.71f417c5@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 26, 2024 at 1:33=E2=80=AFPM Pawan Gupta
-<pawan.kumar.gupta@linux.intel.com> wrote:
->
-> On Fri, Aug 23, 2024 at 11:53:10AM -0700, Jim Mattson wrote:
-> > Since this synthetic feature bit is set on AMD CPUs that don't flush
-> > the RSB on an IBPB, indicate as much in the comment, to avoid
-> > potential confusion with the Intel IBPB semantics.
-> >
-> > Signed-off-by: Jim Mattson <jmattson@google.com>
-> > ---
-> >  arch/x86/include/asm/cpufeatures.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/=
-cpufeatures.h
-> > index dd4682857c12..cabd6b58e8ec 100644
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -215,7 +215,7 @@
-> >  #define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE        ( 7*32+23) /* Dis=
-able Speculative Store Bypass. */
-> >  #define X86_FEATURE_LS_CFG_SSBD              ( 7*32+24)  /* AMD SSBD i=
-mplementation via LS_CFG MSR */
-> >  #define X86_FEATURE_IBRS             ( 7*32+25) /* "ibrs" Indirect Bra=
-nch Restricted Speculation */
-> > -#define X86_FEATURE_IBPB             ( 7*32+26) /* "ibpb" Indirect Bra=
-nch Prediction Barrier */
-> > +#define X86_FEATURE_IBPB             ( 7*32+26) /* "ibpb" Indirect Bra=
-nch Prediction Barrier without RSB flush */
->
-> I don't think the comment is accurate for Intel. Maybe you meant to modif=
-y
-> X86_FEATURE_AMD_IBPB?
+On 26/08/24 12:41, Jonathan Cameron wrote:
+> On Sat, 24 Aug 2024 16:11:21 +0200
+> Denis Benato <benato.denis96@gmail.com> wrote:
+> 
+>> The bmi323 chip is part of handhelds PCs that are run on battery.
+>>
+>> One of said PC is well-known for its short battery life, even in s2idle:
+>> help mitigate that by putting the device in its lowest-consumption
+>> state while the peripheral is unused.
+>>
+>> Have runtime-pm suspend callback save used configuration registers
+>> and runtime-pm resume callback restore saved registers to restore
+>> the previous state.
+>>
+> For future reference, don't send new versions of a patch series
+> in reply to previous version. It's a good way to ensure your
+> code does not get reviewed as busy maintainers and reviewers
+> tend to start with latest threads and this style means
+> your patch ends up way off the top of the screen!
+> 
+> I don't know if other subsystems specifically ask for this style
+> of reply, but the ones that I interact with all specifically ask
+> people to not do what you have here.
+> 
+> Jonathan
+> 
+Hello Jonathan,
 
-It's perhaps a bit terse, but this is what I meant. Perhaps better
-would be "without guaranteed RSB flush"?
+Thanks for the heads up! I didn't know and now I do.
+
+Thanks for your time, patience and guidance.
+
+Best regards,
+Denis
+
+>> Changelog:
+>> - V2: patch 1:
+>> 	+ change patch commit message
+>> 	+ drop removal callbacks and use devm_add_action_or_reset
+>> 	+ split bmi323_init in two functions
+>> 	+ separate regs to save and relative value
+>> 	+ drop unhelpful consts ptr modifiers
+>> 	+ add a comment to explain why BMI323_FIFO_CTRL_REG is
+>> 	  being used in runtime resume
+>> - V3: patch 1:
+>>   + drop a struct array and replace with an array of
+>>     unsigned int: u8 was too small and it would have resulted
+>>     in overflow of register addresses
+>>   + use single-line comments where possible
+>>   + drop useless comments
+>>   + remove intermediate variables
+>>   + remove blank lines
+>>
+>> Previous patches obsoleted:
+>> https://lore.kernel.org/all/20240811161202.19818-1-benato.denis96@gmail.com
+>> https://lore.kernel.org/all/20240818150923.20387-1-benato.denis96@gmail.com
+>>
+>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+>>
+>> Denis Benato (1):
+>>   iio: bmi323: peripheral in lowest power state on suspend
+>>
+>>  drivers/iio/imu/bmi323/bmi323_core.c | 155 ++++++++++++++++++++++++++-
+>>  1 file changed, 153 insertions(+), 2 deletions(-)
+>>
+> 
+
 
