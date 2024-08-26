@@ -1,122 +1,132 @@
-Return-Path: <linux-kernel+bounces-301273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC69295EE74
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9552B95EE7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6184A1F22E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F21284450
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051B3148FF9;
-	Mon, 26 Aug 2024 10:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE1614A4E1;
+	Mon, 26 Aug 2024 10:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2AMVLze"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f2+HPIG+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2DB142E67;
-	Mon, 26 Aug 2024 10:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83B0149E0B
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 10:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724668005; cv=none; b=MnJdPJOY2+0cJ0yVR0rxKKBGQCxhYj8YcIvR/r67Q6z8STsUpXistH5T90v1gSq53XfLB+23QltHj7qXpRiVUCLhDhLSoS6ZGpvPbHD3JfXvVnA7hJDNNZgaMVtgEwVAqTZCyDqUCKZBoZTLavQIEMdgta8tfWTnbzQs+mfjyTI=
+	t=1724668301; cv=none; b=CL8qJ7ol2WLKb4o2pNTvCQu+SaolEgMjswoaHb50GfPNPzjF772rbt/Hhgh56CmyeJ/KTzt4BR84NlPmFb4252hmxCmS4wy36odSDca9KDbG4SnYabfW0tv2ICWbhqsWqLJb1BllRhrspX7lObfDVHpcw7GwcS0x11MXjiKS3oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724668005; c=relaxed/simple;
-	bh=E2EVLfqg8B+gRGm5PmIrhLBiMdMG7xF7LLPpViapmaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FdKeHKlk7caS03WSAg2TGLME0FhUpm0qF46y53MKAqq6FJERTV3CeUbwsEdC+dakMz76i8JwDUYg3SRy2AW3EHabGvFroHdBjI0MWtlItOcUS6/sZGkE9UMEEjfVhSBMySK4ZhORgXuxM5ZsXD+5zq8OAF7JnPyY6ONaCm3BE/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2AMVLze; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724668004; x=1756204004;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E2EVLfqg8B+gRGm5PmIrhLBiMdMG7xF7LLPpViapmaM=;
-  b=g2AMVLzek8D5uOTjiyvM/tU9e+8e09rMpzwRiXJKt/QUAnSZcQFkPNr/
-   oshbawyX0maScyotPhzLuwmCYePwVNgxREgdW8go3i8108sKCe6VFZ/8u
-   1gHKlk5ijYxnqVkrswP2Ioy1rukbAtzENUmjI1OQb97OjXl1r79ZLu52n
-   Vw3pLBdooJYrelf4XsesGSM6c0zy8uxXbJC1QMdD/Qp0U/mTjtNBZRdH2
-   lhK+Z3LgJ8y3R1D5tPnwdsvMWEj7h1qqqc+1YFjuY02gHGLQL7hRPmTUj
-   hb2/HkB+rsI+UL/hSuLDscbeTg/bOhF9ifm3Y3cKsjSu8GQKR7oayuaUA
-   w==;
-X-CSE-ConnectionGUID: umjmUsCORkiZgZG2QSc67Q==
-X-CSE-MsgGUID: Bq56zMJXQVqEILREKxDJbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="33702420"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="33702420"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:26:43 -0700
-X-CSE-ConnectionGUID: VK9kzEA2SlqkEQ2skkneEw==
-X-CSE-MsgGUID: MTojxkx/QgmS2RPgKQzzzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="66640113"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 03:26:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1siWva-00000001pbI-0IVY;
-	Mon, 26 Aug 2024 13:26:26 +0300
-Date: Mon, 26 Aug 2024 13:26:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
-	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
-	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <ZsxYUV_GhYHNtyCk@smile.fi.intel.com>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-7-vassilisamir@gmail.com>
- <ZsjrxLlhmx-TzwXF@smile.fi.intel.com>
- <20240824120222.GG9644@vamoiridPC>
- <20240826110150.5f2e5c72@jic23-huawei>
+	s=arc-20240116; t=1724668301; c=relaxed/simple;
+	bh=D56uU97DHLTAV46MruOMwh3ENgVDe/CheFULj4BVelg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ld5IqU9A50028CNzwyEfdH2TmMR43Qt+iyykZdCafbrtcA5ROff2u8R8sycAT/gs+OeQxn3M9tKftEYfSnttwto5DX0aGXjLdwUYAOYTY1D8KhUxwA/EEshvZALfUmnMxRTXUbmQwxtsor0qqv/j+jviqblm6pddUbc5+0wB2ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f2+HPIG+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724668298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0caQWYctkzPWXc3lfa4QY9g9vHYDKQdJAJoab25gorQ=;
+	b=f2+HPIG+6vgvr0wi/6EF07Ig2NBbrRf/x6ADQyPM2MIgPBAGBKkWItqdlotG/KBsYpLmmJ
+	IHRJVNgDIO/t0JquCzJB4IcwY6+Ec+6xAzHyDiqSbhvhUQmI1NHgQuRE0OHx5MjMJLmB8y
+	QhWwFkKH2oIETfs9Uh2LML4PCyEU/UY=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-511-2mxMM-inOf-rxF4uXtB5vQ-1; Mon, 26 Aug 2024 06:31:35 -0400
+X-MC-Unique: 2mxMM-inOf-rxF4uXtB5vQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37188f68116so2425197f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:31:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724668294; x=1725273094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0caQWYctkzPWXc3lfa4QY9g9vHYDKQdJAJoab25gorQ=;
+        b=Ue2Nj+ciKldXNuiBP/Zk1mNkPAQG23bX+3fdxgIJdCFRl0/eHOQOciELelp+ZUxzMz
+         Y0NBFz6EUgBMwxqaOcx2J2wwFyaVkGmdLjlMTkO8zcrGFwabv91xySX0fuC4YpR5P/Ou
+         c8ty0BELFQl2p/bR59nSQtbL11bgjK74wgSVDDejbE1PrvdK3ucqR/QV+WcuelkmBleu
+         YIm/jsiowMq/Pow9Wq5p4L03plp5Hk0pGG7TPqioUjZxeGxMtC4tKITT4UnWgIYJYPPV
+         hkNAoggXnvVrMqDnEBmx+IwEEhhx+tLlQNIFYtzhsG5jA3D+tZAqT2N8bCWdS+Yrw+6P
+         qwHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtOyPk31ygrB8hx3fviTMb1lL8ByG1q/QU9fASyf6nUyvLUjmiH3Xpd8GMTXNEbCF6k+eMnB3hasy+p0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2a7lVC2cfBHmLh7uwB+6PnhuIDzXfS6Ky3CryBpvfI5zLUtK8
+	Bg9mjUYFZ7bIEHS7SLvL7uBNdFXtceY15OIjPyoPSgG0KNX/qzQXNfNyXg8sk2pblL4l859dMTB
+	mRKWq5MvkKS9JQDFjpYvYric1H5i0CzCAiLYW21f2D43k+6/KLrArnGqewEWCpg==
+X-Received: by 2002:a5d:6702:0:b0:371:8db9:939e with SMTP id ffacd0b85a97d-373118e356cmr5559984f8f.51.1724668293902;
+        Mon, 26 Aug 2024 03:31:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUeeP55UuNdWAbZbdqz9KsjtE0dvBbjRTHSYopNttrDKLMjjvyaUEJgoMgra3xM9ZAZ8FKfQ==
+X-Received: by 2002:a5d:6702:0:b0:371:8db9:939e with SMTP id ffacd0b85a97d-373118e356cmr5559965f8f.51.1724668293420;
+        Mon, 26 Aug 2024 03:31:33 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:833c:88f3:25a9:d641])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac518043csm148327225e9.46.2024.08.26.03.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 03:31:32 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entries in TEXAS INSTRUMENTS AUDIO DRIVERS
+Date: Mon, 26 Aug 2024 12:31:29 +0200
+Message-ID: <20240826103129.18882-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826110150.5f2e5c72@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 11:01:50AM +0100, Jonathan Cameron wrote:
-> On Sat, 24 Aug 2024 14:02:22 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> > On Fri, Aug 23, 2024 at 11:06:28PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Aug 23, 2024 at 08:17:13PM +0200, Vasileios Amoiridis wrote:  
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-...
+Commit e486feb7b8ec ("ASoC: dt-bindings: convert tlv320aic31xx.txt to
+yaml") converts tlv320aic31xx.txt to ti,tlv320dac3100.yaml, but misses to
+adjust the file entry in TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS.
 
-> > > > +	fwnode = dev_fwnode(data->dev);
-> > > > +	if (!fwnode)
-> > > > +		return -ENODEV;  
-> > > 
-> > > Why do you need this? The below will fail anyway.  
-> > 
-> > Because If I don't make this check then fwnode might be garbage and I will
-> > pass garbage to the fwnode_irq_get() function. Or do I miss something?
-> It checks for NULL which is all it can actually be and returns a suitable
-> error code if it is.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Actually not. It may be NULL, error pointer, or valid. So, for a bare minimum
-this check is not full (and again, fwnode APIs should validate fwnode before
-accessing them where it makes sense; if fwnode_irq_get() does not do that or
-misses the case(s), it has to be improved).
+The pattern ti,tlv320*.yaml in the section already covers
+ti,tlv320dac3100.yaml and ti,tlv320adcx140.yaml. So, further file entries
+in this section are redundant. Adjust the file entries in TEXAS INSTRUMENTS
+AUDIO (ASoC/HDA) DRIVERS accordingly.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5dd88c28c0f7..6aa85a43d8c1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22753,8 +22753,6 @@ F:	Documentation/devicetree/bindings/sound/ti,tpa6130a2.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm1681.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm3168a.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320*.yaml
+-F:	Documentation/devicetree/bindings/sound/ti,tlv320adcx140.yaml
+-F:	Documentation/devicetree/bindings/sound/tlv320aic31xx.txt
+ F:	include/sound/tas2*.h
+ F:	include/sound/tlv320*.h
+ F:	include/sound/tpa6130a2-plat.h
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
 
