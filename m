@@ -1,79 +1,55 @@
-Return-Path: <linux-kernel+bounces-301706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECD895F457
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BDB95F39E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBBB282CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:49:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E041F2412A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026D41EEE0;
-	Mon, 26 Aug 2024 14:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="M9J34480"
-Received: from xmbg9.mail.qq.com (xmbg9.mail.qq.com [81.69.217.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82AF189514;
+	Mon, 26 Aug 2024 14:11:11 +0000 (UTC)
+Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9175E1925A4;
-	Mon, 26 Aug 2024 14:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.69.217.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFAF56B72;
+	Mon, 26 Aug 2024 14:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683749; cv=none; b=mhyIldG7hqo7N3qV/EwHM6qc2FxsZz2HgLeX7EaRw04LrxF9J3ZsBNuOwCfxlpZwTtziVm257u9GpicLdc7TpW9BK3LxlQOVTiNXyhIOdYE+HI/GDxh9xpEGGIlimBI21J855RuqE5lRs+LcI4RShmjgVaSe5Ljj/RDn8mImNr4=
+	t=1724681471; cv=none; b=IO1LQ7iOUI4bCyeUMo55bMF2vZG+8MR8fyvoJsMn2JZFwd1qSMZcurixvXVBHZXeB0qqCX6JZ43yAoRXofAHDgX6dgb6jaRo7B+Qqv7x2sFD9i0OVKw8C59YTwgVPNc0Da710maqMxOHqinf05x/ckhJOz/aX8uSVUePiwqq9Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683749; c=relaxed/simple;
-	bh=scIlDt3bJxc6xjtCfFWzsD60sMCU7dzjdhlTShv6odY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=sOP9zgmKhrWtHbKoqUo6Dpys19Gz+lg5ogLcYPurZ+7Magh24RuJDPASgqBdkc+Mn3fU/I9TKoZUZKp5FopNajmZ56R5FmhnI3By+BwfshkHR15r0JpKMZoHSFn6JCaf+Ktcvp0jaqhF4o8H7mI2IrKtvjBR+QoTg3IzKk+G/Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=M9J34480; arc=none smtp.client-ip=81.69.217.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724683737; bh=4MNoqgFAOdi2a+l9olqRlqs76QuNfFgvKzCU8S9eMFE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=M9J344809lRip64V04r7u2HHtiow2rclBETBBHtc+tpcMLhghECfEHMoHxwmDQ7f+
-	 zPqv3qcrZsVCLV+EZwcSV4/2tZppTv4xl5medn7H52JmE+aKy1VrdOqRv5ooHsGEo0
-	 oT/gbQi8cmDaPQpi2ecaQQGuohezlGp8UHtttirg=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 778048C4; Mon, 26 Aug 2024 20:29:56 +0800
-X-QQ-mid: xmsmtpt1724675398txss294ka
-Message-ID: <tencent_6E58783A6D402D596E509598E92AED2ACE0A@qq.com>
-X-QQ-XMAILINFO: ObFHHlrAm440+Li0ed4Ju/KdFISCzgiyIsZhE32LhdfS6NJT3itGqxVFPomip9
-	 /qyEM7g0WqB2UycGjeHyIyXbCB4Pn7dMYfQJcvQltwxZG9EKGrtGvOoA+QfXK7Po31jCw77irgR8
-	 93dOZrOnGPOc+IehOlSLEyhBT3IzyGKA/PC7iLkx1Ajg4v18GbZraiFawlo4TWEkl9NaePI71h/T
-	 UGNBJ6oBVarMRxFq2YZa+ClPJfTPMGsdPcl/hUPt3q2WY9OeRdTBLOlev9ZiS3AdP5BH+EyWtSeL
-	 9oQVqc84ukE9OGdE8/Eo/iOJ9QNR0XNHFLs6khZVtSdjusJkSIvYsvPXliGS32HzbxwvRgfhDPyI
-	 FENgToFynVhykRlg8ws9nwAW4rxIIZTQlTELdxWl+NLMLNl0NYPX2EdvXq/QN4qOe4oNYtBKjwm9
-	 9COBA9TlmeUaHsq75Mi5rDSPcTDJUs9EGRf0dZWjBgnedmRNxlmH5nr8zv2Mujuinu0Fgbv7qQXE
-	 Ndb6XAypeqSZ1N2UvPP9XZtwDII7WNz9Lh6TgP9WFx7J7WQKHdR5k4kidP0BQMwxtzS/9y21miD3
-	 s5cFluMyZ9ORTvRv2TdsLCBqCxtzxaEeIURk+HNTMbpxSk3k2bMitdjSmb0LpyIgVGcEl9RV0TQj
-	 AyfK30UjFMFqu21YK8hnJdUgTAy1cqKJBfaa+VsRe12CeD00W5zzfWoVCZOO0i7McZaK/4dxDjWe
-	 XPYkmtbXt/CbnD2eNoWQKSzBfaBvqfpQWqjN02WO0RMr2lRpJXZ6IYQbs+gS0kHn/PeojiMFr6z/
-	 L5A8sxD1IGF2Fl8hwUh1QR8yrYm4tzd0HsKJ6kX9CvlffeLEtsto6Rcnw+4lxr77nJ+pqiZicZXo
-	 NAMDdkfauLwuSrWbTw/gD/P5pi7fqXbItfAAAYyZPYvU3mpb5C4M9+2OBbcrrGb7bLZpoM3TOICg
-	 4yRQ2LcOfozQX8lw6DhQ==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: gregkh@linuxfoundation.org
-Cc: eadavis@qq.com,
-	kvalo@kernel.org,
+	s=arc-20240116; t=1724681471; c=relaxed/simple;
+	bh=n9kWJiaDHqQ8bH60oDWuOkc32z384dbouLbtbCZjEgg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lMLMg0BticHeGG3oaN5pqRVCpRXSlSY+GwYgTm65SezIdET3SpZAm+CaOaXoqsTHivrM3dsb04Szc2I5TxDpFMCXwLGvA/Av77+hg11PYzwMW8m/FdQBnwOhxH4SVtWoFgPdGz7uDoX9Jf3+8mEm3c8WSfX3/fnjrV8V7tn12w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from [10.177.185.111] (helo=new-mail.astralinux.ru)
+	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <abelova@astralinux.ru>)
+	id 1siZwH-0089b0-5y; Mon, 26 Aug 2024 16:39:21 +0300
+Received: from rbta-msk-lt-106062.astralinux.ru (unknown [10.177.20.58])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4WssHf0G0lz1c066;
+	Mon, 26 Aug 2024 16:40:13 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: Huang Rui <ray.huang@amd.com>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	sergei.shtylyov@gmail.com,
-	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V4 2/2] wifi: ath6kl: remove ath6kl_usb_submit_ctrl_in
-Date: Mon, 26 Aug 2024 20:29:57 +0800
-X-OQ-MSGID: <20240826122955.2674569-4-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240826122955.2674569-3-eadavis@qq.com>
-References: <2024082631-upward-zips-f7b8@gregkh>
- <20240826122955.2674569-3-eadavis@qq.com>
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] cpufreq: amd-pstate: add check for cpufreq_cpu_get's return value
+Date: Mon, 26 Aug 2024 16:38:41 +0300
+Message-Id: <20240826133842.5519-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,78 +57,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-DrWeb-SpamScore: 0
+X-DrWeb-SpamState: legit
+X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetnhgrshhtrghsihgruceuvghlohhvrgcuoegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeffvddvueehvedvgfeivdeuvdduteeulefgfeehieffgfehtedutdfgveefvdeiheenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudejjedrvddtrdehkeenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdquddtiedtiedvrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrddujeejrddvtddrheekmeehfeeiledvpdhmrghilhhfrhhomheprggsvghlohhvrgesrghsthhrrghlihhnuhigrdhruhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprhgrhidrhhhurghnghesrghmugdrtghomhdprhgtphhtthhopegrsggvlhhovhgrsegrshhtrhgrlhhinhhugidrrhhupdhrtghpthhtohepghgruhhthhgrmhdrshhhvghnohihsegrmhgurdgtohhmpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtphhtthhopehpvghrrhihrdihuhgrnhesrg
+ hmugdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
+X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1724674093#02
+X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12138139, Updated: 2024-Aug-26 11:54:02 UTC]
 
-ath6kl_usb_submit_ctrl_in() did not take into account the situation where
-the length of the data read from the device is not equal to the len, and
-such missing judgments will result in subsequent code using incorrect data.
+cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
+and return in case of error.
 
-usb_control_msg_recv() handles the abnormal length of the returned data,
-so using it directly.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
 ---
- drivers/net/wireless/ath/ath6kl/usb.c | 39 +++------------------------
- 1 file changed, 3 insertions(+), 36 deletions(-)
+v2: remove mixing code and declarations
+ drivers/cpufreq/amd-pstate.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
-index 0458b5a078e1..b1fc66d823b8 100644
---- a/drivers/net/wireless/ath/ath6kl/usb.c
-+++ b/drivers/net/wireless/ath/ath6kl/usb.c
-@@ -901,40 +901,6 @@ static int ath6kl_usb_submit_ctrl_out(struct ath6kl_usb *ar_usb,
- 	return 0;
- }
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 68c616b572f2..f8d474168430 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -656,7 +656,12 @@ static void amd_pstate_adjust_perf(unsigned int cpu,
+ 	unsigned long max_perf, min_perf, des_perf,
+ 		      cap_perf, lowest_nonlinear_perf;
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	struct amd_cpudata *cpudata = policy->driver_data;
++	struct amd_cpudata *cpudata;
++
++	if (!policy)
++		return;
++
++	cpudata = policy->driver_data;
  
--static int ath6kl_usb_submit_ctrl_in(struct ath6kl_usb *ar_usb,
--				  u8 req, u16 value, u16 index, void *data,
--				  u32 size)
--{
--	u8 *buf = NULL;
--	int ret;
--
--	if (size > 0) {
--		buf = kmalloc(size, GFP_KERNEL);
--		if (buf == NULL)
--			return -ENOMEM;
--	}
--
--	/* note: if successful returns number of bytes transfered */
--	ret = usb_control_msg(ar_usb->udev,
--				 usb_rcvctrlpipe(ar_usb->udev, 0),
--				 req,
--				 USB_DIR_IN | USB_TYPE_VENDOR |
--				 USB_RECIP_DEVICE, value, index, buf,
--				 size, 2000);
--
--	if (ret < 0) {
--		ath6kl_warn("Failed to read usb control message: %d\n", ret);
--		kfree(buf);
--		return ret;
--	}
--
--	memcpy((u8 *) data, buf, size);
--
--	kfree(buf);
--
--	return 0;
--}
--
- static int ath6kl_usb_ctrl_msg_exchange(struct ath6kl_usb *ar_usb,
- 				     u8 req_val, u8 *req_buf, u32 req_len,
- 				     u8 resp_val, u8 *resp_buf, u32 *resp_len)
-@@ -954,8 +920,9 @@ static int ath6kl_usb_ctrl_msg_exchange(struct ath6kl_usb *ar_usb,
- 	}
+ 	if (policy->min != cpudata->min_limit_freq || policy->max != cpudata->max_limit_freq)
+ 		amd_pstate_update_min_max_limit(policy);
+@@ -870,11 +875,16 @@ static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
+ static void amd_pstate_update_limits(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+-	struct amd_cpudata *cpudata = policy->driver_data;
++	struct amd_cpudata *cpudata;
+ 	u32 prev_high = 0, cur_high = 0;
+ 	int ret;
+ 	bool highest_perf_changed = false;
  
- 	/* get response */
--	ret = ath6kl_usb_submit_ctrl_in(ar_usb, resp_val, 0, 0,
--					resp_buf, *resp_len);
-+	ret = usb_control_msg_recv(ar_usb->udev, 0, resp_val,
-+				USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+				0, 0, resp_buf, *resp_len, 2000, GFP_KERNEL);
- 
- 	return ret;
- }
++	if (!policy)
++		return;
++
++	cpudata = policy->driver_data;
++
+ 	mutex_lock(&amd_pstate_driver_lock);
+ 	if ((!amd_pstate_prefcore) || (!cpudata->hw_prefcore))
+ 		goto free_cpufreq_put;
 -- 
-2.43.0
+2.30.2
 
 
