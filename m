@@ -1,102 +1,180 @@
-Return-Path: <linux-kernel+bounces-300995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC4795EB5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:06:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2805095EB61
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABCB2823DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:06:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97D928379E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A3512CDAE;
-	Mon, 26 Aug 2024 08:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788ED13B286;
+	Mon, 26 Aug 2024 08:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bYohC2yK"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nsvkdg4b"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFCE8837
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249E44EB51
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659551; cv=none; b=bZkISI5ssK1d15tU4q8MANZxsaQY5hfyS9jj9VvFx68GDVfQ5S+7dloTNAoh+TlMI5quNOiX53VXwKAEwHY2sEKL6st6wlGIqEhHXbPhccrnvtVCVruSkPg6oHez21J2kD0i+xakx8vPhUuVl0C3r96j1xK2FqNcE7pyS9x+ZtA=
+	t=1724659571; cv=none; b=YOMmWuwqIHWUTwcYlGcPsNa7krUWQ557jqCziLquqZWTHlGzrKNT1otn4soCjFjbCZuy8Ma9OaUR831Dc0/Np0oh4mcrPEE8QAZV08uA7qfnvs+d32Lmz1PiqfbICEta95zsrr6r3y5dE3cwVpIBdaln8fLgbYzPVTVii8nEvzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659551; c=relaxed/simple;
-	bh=CUfynww9JqKqKGzCXlxZMuLsQyJsqzi9oRVn77PikaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NEX9ZnyNrEFIiq1USqI15r5JDPQVXQD+ztgjzXUfGlcEuhQGXqTrkxSkfGFH7547tqOLngN2NhyOXGNmLZ1P0cVS34Jkpbj9R1bhZuWx6yzeukF2t70w8grUrkdwqztIvEV7FmcdKI0XNG5K4UaAIw+yiOSeuJkDEuHdBDpujXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bYohC2yK; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6D470C0005;
-	Mon, 26 Aug 2024 08:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724659542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CUfynww9JqKqKGzCXlxZMuLsQyJsqzi9oRVn77PikaQ=;
-	b=bYohC2yKZ1VYQb5LTct07W1+fzs/2zjlzCi6uIJoDBmsBf/MISkSxNzErDxwEExxo9wotR
-	LnLrP4smxQxp4r3i2QtIPswcdXKr1LoymeddrDX6ui8kIk48yZBeis4FHxJVZKLu26ksqA
-	7DCPB/FW7QmlyKZcMNfsdY32D8GZyplRcd350vOoP8Wd9PSRF3Amn7CLogypaYUptT51qI
-	ovFrvEZCSETg2GD0TN5xZaIWmm4oRCuXuF1LFSC2epjxTMZgg/Ms/UZmBES86jSCV7J25L
-	cT5mlCdsxN/UATefV8KbNnZULfACCWACRSq7MPhNhBbUaj+GAS41McFI8CVMeg==
-Date: Mon, 26 Aug 2024 10:05:39 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Boris Brezillon
- <boris.brezillon@collabora.com>, Parshuram Thombare <pthombar@cadence.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
- <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Conor Culhane
- <conor.culhane@silvaco.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 02/11] i3c: master: Replace hard code 2 with macro
- I3C_ADDR_SLOT_BITS
-Message-ID: <20240826100539.7f93f8b9@xps-13>
-In-Reply-To: <ZsjNi4RQ+GKxZpUH@lizhi-Precision-Tower-5810>
-References: <20240819-i3c_fix-v3-0-7d69f7b0a05e@nxp.com>
-	<20240819-i3c_fix-v3-2-7d69f7b0a05e@nxp.com>
-	<20240823175502.3d518a69@xps-13>
-	<ZsjNi4RQ+GKxZpUH@lizhi-Precision-Tower-5810>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724659571; c=relaxed/simple;
+	bh=20T+z1/UbHbTVU1JoaoVQa/Dmn44LgaPG0dQ4LmTMiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+Go/rRFSoSlot06Z6Ru0gnIhKcqRJHCHWN7k8PEmCRRIF/RLh1eSBzj7mjxgARcw9ttgswMZj2YREJME9U6H/fbOopluiuLRXVUr26/lweM9Oa6p7s6CYlfOsY2kNT0l/2Y6z5f0YSQt+THchFa1WW98d9wIPtGFgLyapuWW0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nsvkdg4b; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-39d30564949so15078805ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724659568; x=1725264368; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QkvVVX0WwYMRkuJr4fT+lZy5RdN02KU4cSUWfXWqpT4=;
+        b=nsvkdg4bnf9+5IBqNp/OzJuXRYsynBJOah6w0WfDqVfPNAbM+G0NfeIYXcsrtsLWRM
+         zROwXG97lYqvx7vsXmiXohNRm1Pl0DEqT9VZccVs5LGuVZp7Qc/NUyuZQIVY7CLs0bv9
+         8oM6BnktztUTmpl9foOqVnxDmIb1BJjCitlRIzfk8qHtvVBJps+PzForuy+CzE7korKn
+         JIl8X0w0PLs+fClA4wvsC/y+vA6lDJJdAq8/dn3GK8IqAaU3FNiCEfpkgU78nicnueP7
+         R+XQ+PwIV8UQycNSIFk/8j4OYBZ5ehBKBi6Dg7mXLcqdyPHf8Ef7L0WM9Xr7oNLe2Rs5
+         oXvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724659568; x=1725264368;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QkvVVX0WwYMRkuJr4fT+lZy5RdN02KU4cSUWfXWqpT4=;
+        b=iQfFUqoufVdAuOYc3zMo1KBMX5Q6LB4bF8fQJPBPDhKqZ8ZspI2KgiOeoCvoCHYsCx
+         sOBlrPaUGMTpLd0SsHgHg/2R8OEi9cwIyFmlCwwzc+ApbE56HAUwug0oxURIeYIkLFL5
+         LD8GZeX2g7al9AHQLKq4iUJiKyX4NIJTPoUNiX2TjDvxNML2AI9S7eiXgZznBIhmMs3n
+         /QpMonq8K8duy3kR3fBFBmgoJiOHJOwsKjvfKtfcK2HN3NofZetccvpspzDhmVyjZaJE
+         qhgj9lvBNcUsjZhu/ItlazzCtYTHXEJNIj9arXYtCemIRDG3MdfoIAvqo2de5ckaVN/E
+         qMzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiY8CTol8zCx31JsmxmMviQUByybif6hoqPTROxxI708QEihjz8Oo8dQdt8ZIDfKmF1KF9KoI/Ll8rWy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYU73DUfUqJwnqRsNZ/nrYVEefqyrDwDJDhXS9LzTI/4TAuKwE
+	vLAOAdlO6C+5xuv5hWBPJKkLnFlM4ZadO0WF7aYLj+50DOCVnMU/a+87cY+Ttg==
+X-Google-Smtp-Source: AGHT+IE14MNMnJz/dTmMXrxFZE1GO2GsfhXBXLXTNOED5Orn8DKvtf61Cpi9sYgA4TkhBdRdPZ3h9w==
+X-Received: by 2002:a05:6e02:190c:b0:39b:2669:4e44 with SMTP id e9e14a558f8ab-39e3c985c60mr130046555ab.8.1724659568225;
+        Mon, 26 Aug 2024 01:06:08 -0700 (PDT)
+Received: from thinkpad ([220.158.156.53])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ac98b32sm7134309a12.2.2024.08.26.01.06.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 01:06:07 -0700 (PDT)
+Date: Mon, 26 Aug 2024 13:36:03 +0530
+From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: Mank Wang <mank.wang@netprisma.us>
+Cc: "duke_xinanwen@163.com" <duke_xinanwen@163.com>,
+	"loic.poulain@linaro.org" <loic.poulain@linaro.org>,
+	"quic_qianyu@quicinc.com" <quic_qianyu@quicinc.com>,
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bus: mhi: host: pci_generic: Add support for Netprisma
+ LCUR57 and FCUN69
+Message-ID: <20240826080603.joynf4hqklgt6kph@thinkpad>
+References: <PH7PR22MB30388908C5E6DCE67E98C68681B02@PH7PR22MB3038.namprd22.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH7PR22MB30388908C5E6DCE67E98C68681B02@PH7PR22MB3038.namprd22.prod.outlook.com>
 
-Hi Frank,
+On Tue, Jul 30, 2024 at 03:01:05AM +0000, Mank Wang wrote:
+> Add Netprisma LCUR57 and FCUN69 hardware revision:
+> 
+> LCUR57:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1000
+> 	Subsystem: Device 203e:1000
+> 
+> FCUN69:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1001
+> 	Subsystem: Device 203e:1001
+> 
 
-Frank.li@nxp.com wrote on Fri, 23 Aug 2024 13:57:31 -0400:
+Can you please add a note on how this modem is tested? Like using any modem
+manager commands, how the IP interface is created (IPA or MBIM) etc...
 
-> On Fri, Aug 23, 2024 at 05:55:02PM +0200, Miquel Raynal wrote:
-> > Hi Frank,
-> >
-> > Frank.Li@nxp.com wrote on Mon, 19 Aug 2024 12:01:56 -0400:
-> > =20
-> > > Replace the hardcoded value 2, which indicates 2 bits for I3C address
-> > > status, with the predefined macro I3C_ADDR_SLOT_BITS. =20
-> >
-> > I'm fine with the idea but I don't understand the macro name. You're
-> > talking about status bits and yet the macro is named addr_slot?
-> > =20
->=20
-> How about I3C_ADDR_SLOT_STATUS_BITS ?
->=20
-> > > Improve maintainability and extensibility of the code. =20
+> Signed-off-by: Mank Wang <mank.wang@netprisma.us>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 14a11880bcea..054420ca4c8f 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -26,6 +26,7 @@
+>  /* PCI VID definitions */
+>  #define PCI_VENDOR_ID_THALES	0x1269
+>  #define PCI_VENDOR_ID_QUECTEL	0x1eac
+> +#define PCI_VENDOR_ID_NETPRISMA	0x203e
+>  
+>  #define MHI_EDL_DB			91
+>  #define MHI_EDL_COOKIE			0xEDEDEDED
+> @@ -680,6 +681,28 @@ static const struct mhi_pci_dev_info mhi_telit_fn990_info = {
+>  	.mru_default = 32768,
+>  };
+>  
+> +static const struct mhi_pci_dev_info mhi_netprisma_lcur57_info = {
+> +	.name = "netprisma-lcur57",
+> +	.edl = "qcom/prog_firehose_sdx24.mbn",
+> +	/* LCUR57 uses the same controller configuration as quectel_em1xx */
 
-I'm a bit flaky on this concept, but let's try that. Perhaps with all
-the changes requested (esp. rephrasing) it might become clearer in next
-version.
+No need of this comment here and below.
 
-Thanks,
-Miqu=C3=A8l
+- Mani
+
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+> +static const struct mhi_pci_dev_info mhi_netprisma_fcun69_info = {
+> +	.name = "netprisma-fcun69",
+> +	.edl = "qcom/prog_firehose_sdx6x.elf",
+> +	/* FCUN69 uses the same controller configuration as quectel_em1xx */
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+>  /* Keep the list sorted based on the PID. New VID should be added as the last entry */
+>  static const struct pci_device_id mhi_pci_id_table[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0304),
+> @@ -778,6 +801,12 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* T99W175 (sdx55), HP variant */
+>  	{ PCI_DEVICE(0x03f0, 0x0a6c),
+>  		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
+> +	/* NETPRISMA LCUR57 (SDX24) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1000),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_lcur57_info },
+> +	/* NETPRISMA FCUN69 (SDX6X) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+>  	{  }
+>  };
+>  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
+> -- 
+> 2.34.1
+> 
+
+
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
