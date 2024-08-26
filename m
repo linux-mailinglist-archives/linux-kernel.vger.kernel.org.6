@@ -1,239 +1,132 @@
-Return-Path: <linux-kernel+bounces-302110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD2495F9E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEC695F9EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AD1BB22C3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3AADB22CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5112CD89;
-	Mon, 26 Aug 2024 19:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554F212CD89;
+	Mon, 26 Aug 2024 19:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajPZObjA"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="japOw5UI"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442AA1F943
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AA61F943
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701593; cv=none; b=rfPYQZcZkOQfPONRhe4D9nyOp0IucDDEV7ETJSsrpdmEdEFnuJ/A7pjqv6XgCTgvmHCO434UcdsL+gWXYgRKyUjtR3bEsNX93+b0dQHMoUDRYNO53gtsvH8/Sp8kZVOuidfJyEjbb7lgTOEdFUVzX2px7IgADu8HFXyWnzOKDyQ=
+	t=1724701604; cv=none; b=SG1XAQOVQ3dmKb59yuTHONjwGQuXLiQN8pJkks9J/xCH2ToGLyFEDiCQuhKOdZaqCfUkanULdojPUK0nWYj80nwBLx7GL6+IivL2vL8kE4uoOmavg0bxojPW0BnAZhsdk0Ijedv09fyReWR7TM3vUMlf4GKmmWSH/bwd1LJzqIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701593; c=relaxed/simple;
-	bh=FT0Hw62fCG93HERjwl90JnMREgtvpMGelThq898G1fE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e2bD6ChmLweSF5n4TKIBosjDlSjFqTsRQRiT5acRz4e2PZ9bWTlhM1sh8gT7sHdadps29fof0oUAyzLGQip86WPdFrh77VuDsrTs9O7qztmn8OWJc2jYPRJ/4ifwQz1ZJRj6TkOFsd0AqwfzD9qc/qXSB8MIdgy+JI1C5ZU3DoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajPZObjA; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf7658f4aaso24963036d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:46:32 -0700 (PDT)
+	s=arc-20240116; t=1724701604; c=relaxed/simple;
+	bh=xZC7Y7GU0zcEzKHChNxej8vT90J9J2UDFdj42WyJprU=;
+	h=From:To:cc:Subject:In-reply-to:References:Mime-Version:
+	 Content-Type:Date:Message-ID; b=rxoC5QOaOoeMKdzZIOXnRpxkPTFvZhiVdlEk+ATTRlbfCv5vOlEsVqi9uPks2L5tuDiajliJWVFFXgi6jhjgAmtK7eR4eFSzw9aNf61xT0at2frAdOmcmAmWrWMCAbjx34dwEd3PYqmYua+B51F9G2Pn4LuiRB0d64Mhu0PgflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=japOw5UI; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d42da3f7so299399885a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724701591; x=1725306391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xkcwhp5wUP0PARWUzg25EzXMSiZptOh2qK3AVZk7sM4=;
-        b=ajPZObjAEDFlJx3hoYGNUd3oZGcMFqMUyTZDQQwm/Xzc2bm4hvQ8Tn0S/dcJWFis2D
-         Xt08dnPq5cVzKTTnB/l5VubCsPUD84evGAShA7QIjHiphr7dNBd92RPFBsqG/mYtJHUo
-         2QCOUBaV3ZMriOoBtYXWmbKUWS1P7ZZBka4IKnUSlEaHqycpyNN+vXn15A/cBnVsTIou
-         L7N2ERtHf205a7pXzXoOLicAOlBs2aaxyhVwN2/ws1+L0oO42Wn3znuiEMm3rd+guiTf
-         qHXknHQK9mmOafTQ89/x9C6pmHXRX/xIwzNbYieWl823Q6yAZUBIO/ZlFTOqMkvS1uVN
-         Ns8g==
+        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1724701601; x=1725306401; darn=vger.kernel.org;
+        h=message-id:date:mime-version:references:in-reply-to:subject:cc:to
+         :from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ldNdAhKKzaSqr9ERET8WGas8/RLyJLHDmEozqXzjuf4=;
+        b=japOw5UIijQy92voZhL2yL3GCHpl3DyS9tX/a7nCKFUwlPrTkBW+BAbhxxFkCdzbjY
+         mHLN4+gqAkm14Q7YQVmbEG/MvEJacBc2wRzPfSg5m018trP7et4GJhLkgT6eUoxFxpA1
+         yoIMfQ8Zkv8gciTusIHoxInL/xY+4nmP+L6riASdX5cczEpkmT7s9NnaCX/3KG1+rvJf
+         TOB+OwECKXeFV6WPACNdd4FHXf6nVWxYXbdvasVzFBPLfwCsMcTlLwDa6nCfVOQM4oxw
+         0GFz/R5x9dDHu3zSsTUnFqCJ2WbC63zntiM+VPN0wl7qtJHo5M7Nv4pOppeBJUC6yufq
+         /ouw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724701591; x=1725306391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xkcwhp5wUP0PARWUzg25EzXMSiZptOh2qK3AVZk7sM4=;
-        b=Jou5mORwIPo3Pt/NMHo21I2a2nuxvjj1fMiH3BYISIh4nWLfmNJHvLap/dnUKkyxOu
-         1r3AHBRGLFmtl7n0sFTXyFTdgTFYmns3K5YZmo6mOk6scK5TSXb+hVYAS2X8FBaHHJeN
-         DuJJhuX06DTTPwdBu9dDBlmMw9eoEVtisEvp/Rss85O/PEpB5+t0oc9FuCfy+krw5S7h
-         4NOhAabziwyaTIBXO2xjo89OjoyTKDIr8QrylkPLli07FQ1JprvoBBh49V++G5xSMzth
-         HA+cNILVLqedxLMoLYhL+HkjE6LrhFqYoqj2w10PF2oBnUP6vhD9WUMMXxAJ2qd7vmlB
-         K4vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhpHY80M/sNzolIbx0xzynDAvZtL2VU1nDXoL7tXjBw9v504alVPWEK4Xh8Us+KjSeoZy3ZfgZSAO6OdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJfgP+GZebRpMQbjD032aA7spIThMRz2EIxcNWTuyKLgqp555a
-	GNDO9fEvGP7LmPAi0mRk+apjhmOhq6tYku3HjDWElWZjYE52SfZQhnsnBrETi4EUfF+o6zQCvtm
-	8Peh3N8R9DxHQzFbeEqEIGLEcMHU=
-X-Google-Smtp-Source: AGHT+IEzelaGzWbS77Np0l8c2438Rxo5NWk0QoxlbS0DBGhDscOGwbnwXNj8sR5VP+DAMuyPNrBeK4US8tc9JoLZrN0=
-X-Received: by 2002:a05:6214:2b84:b0:6bf:6dc2:e002 with SMTP id
- 6a1803df08f44-6c32b677f0bmr6678776d6.12.1724701590962; Mon, 26 Aug 2024
- 12:46:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724701601; x=1725306401;
+        h=message-id:date:mime-version:references:in-reply-to:subject:cc:to
+         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ldNdAhKKzaSqr9ERET8WGas8/RLyJLHDmEozqXzjuf4=;
+        b=ij566bbLOzySILnW9Xo/oEHNtE4ggTVS14IOTsvsKEGXloMw69YNEvj/CAbaKdnkpC
+         Gd+EjbhRn7HLIDebrAA3mxmnGaZ8MrmpYElLjVvKnJjR7VA8xj5EJUUQA7HOBWvXXqLE
+         zrzrqvF3ZWoO0iPoSr3RjqTgWR37eYHbqpaCfODBdem5IJV8hK2SN3Ao6wHoAMVuaD+e
+         EcxAVu9Hwz5aetPJ5dxo1rbQIax2GRM2TD1zpsNvYeCIlMsG//m2UwCRpWqCR8hCbCVP
+         UYZg9X1TEta6kmnltCp6u86F6dk6Uk1TbSeLFH86gGzsPJhCaVoIzWzHOD6mJVsC8Iu9
+         qePA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoXRkwsG3sB/BE/ZwZNvD4CTVIoScg7qnv9AxUTTZ8czokdOl2YZBRylQh8uVEYw1Lwq9H2ZOvKjXnOLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyypRLz5A34Wjh0Dd7cx5Y5pgtdLsEv9QR+4kkF5E1aQYslhUyu
+	KKCxncowVa2+xZcw3g5AnXjCkO7hnzJTF5IcMvf0wXbZcosLv5T1K1Ug7JmBf4I=
+X-Google-Smtp-Source: AGHT+IHSt2ZDjFKsrx8cKZdACVC77PYM0eLmNVQqOPrI9VKnbgSdrVONsF4R2q9XInSB/Qof3/IWCQ==
+X-Received: by 2002:a05:620a:2401:b0:79e:fcb5:55e2 with SMTP id af79cd13be357-7a6896d66b9mr1306069385a.5.1724701600998;
+        Mon, 26 Aug 2024 12:46:40 -0700 (PDT)
+Received: from turing-police (c-73-31-28-59.hsd1.va.comcast.net. [73.31.28.59])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f41d415sm485696185a.125.2024.08.26.12.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 12:46:40 -0700 (PDT)
+Sender: Valdis Kletnieks <valdis@vt.edu>
+From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.10.0-pre 07/05/2021 with nmh-1.8+dev
+To: Muni Sekhar <munisekharrms@gmail.com>
+cc: kernelnewbies <kernelnewbies@kernelnewbies.org>,
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Query Regarding Stack-Out-of-Bounds Error
+In-reply-to: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
+References: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
- <qim6ug5d3ibrn6mgrk7oybml7qatgw654y2t6wlc25pnpddr2i@yniwf64alx23>
- <CAGsJ_4wgC+yaCYinv8FYm9RHJfT5wiFxHMn_WTGysdpiH0HS7g@mail.gmail.com> <i6jki2zocqzsjcjgraf6lyl7m3cjzv5lnsuluq5xnvznw7bsge@4easx2ucpxml>
-In-Reply-To: <i6jki2zocqzsjcjgraf6lyl7m3cjzv5lnsuluq5xnvznw7bsge@4easx2ucpxml>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 27 Aug 2024 07:46:19 +1200
-Message-ID: <CAGsJ_4wGK6pu+KNhYjpWgydp6DyjH5tE=9+mje3UyrXdFJOuNw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: hanchuanhua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
-	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, mhocko@suse.com, 
-	minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	senozhatsky@chromium.org, shy828301@gmail.com, surenb@google.com, 
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
-	ying.huang@intel.com, yosryahmed@google.com, hch@infradead.org, 
-	ryncsn@gmail.com, Tangquan Zheng <zhengtangquan@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date: Mon, 26 Aug 2024 15:46:39 -0400
+Message-ID: <212937.1724701599@turing-police>
 
-On Sat, Aug 24, 2024 at 5:56=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
+On Mon, 26 Aug 2024 18:04:39 +0530, Muni Sekhar said:
+
+> static struct cmd_info *find_cmd_entry_any_ring(struct intel_gvt *gvt,
+>                unsigned int opcode, int rings)
+> {
+>         struct cmd_info *info = NULL;
+>         unsigned int ring;
+>         ...
+>         for_each_set_bit(ring, (unsigned long *)&rings, I915_NUM_ENGINES) {
 >
-> Hi Barry,
+> In the above code, a 32-bit integer pointer (rings) is being cast to a
+> 64-bit unsigned long pointer, which leads to an extra 4 bytes being
+> accessed. This raises a concern regarding a stack-out-of-bounds bug.
 >
-> On Thu, Aug 22, 2024 at 05:13:06AM GMT, Barry Song wrote:
-> > On Thu, Aug 22, 2024 at 1:31=E2=80=AFAM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> > > On Wed, Aug 21, 2024 at 03:45:40PM GMT, hanchuanhua@oppo.com wrote:
-> > > > From: Chuanhua Han <hanchuanhua@oppo.com>
-> > > >
-> > > >
-> > > > 3. With both mTHP swap-out and swap-in supported, we offer the opti=
-on to enable
-> > > >    zsmalloc compression/decompression with larger granularity[2]. T=
-he upcoming
-> > > >    optimization in zsmalloc will significantly increase swap speed =
-and improve
-> > > >    compression efficiency. Tested by running 100 iterations of swap=
-ping 100MiB
-> > > >    of anon memory, the swap speed improved dramatically:
-> > > >                 time consumption of swapin(ms)   time consumption o=
-f swapout(ms)
-> > > >      lz4 4k                  45274                    90540
-> > > >      lz4 64k                 22942                    55667
-> > > >      zstdn 4k                85035                    186585
-> > > >      zstdn 64k               46558                    118533
-> > >
-> > > Are the above number with the patch series at [2] or without? Also ca=
-n
-> > > you explain your experiment setup or how can someone reproduce these?
-> >
-> > Hi Shakeel,
-> >
-> > The data was recorded after applying both this patch (swap-in mTHP) and
-> > patch [2] (compressing/decompressing mTHP instead of page). However,
-> > without the swap-in series, patch [2] becomes useless because:
-> >
-> > If we have a large object, such as 16 pages in zsmalloc:
-> > do_swap_page will happen 16 times:
-> > 1. decompress the whole large object and copy one page;
-> > 2. decompress the whole large object and copy one page;
-> > 3. decompress the whole large object and copy one page;
-> > ....
-> > 16.  decompress the whole large object and copy one page;
-> >
-> > So, patchset [2] will actually degrade performance rather than
-> > enhance it if we don't have this swap-in series. This swap-in
-> > series is a prerequisite for the zsmalloc/zram series.
->
-> Thanks for the explanation.
->
-> >
-> > We reproduced the data through the following simple steps:
-> > 1. Collected anonymous pages from a running phone and saved them to a f=
-ile.
-> > 2. Used a small program to open and read the file into a mapped anonymo=
-us
-> > memory.
-> > 3.  Do the belows in the small program:
-> > swapout_start_time
-> > madv_pageout()
-> > swapout_end_time
-> >
-> > swapin_start_time
-> > read_data()
-> > swapin_end_time
-> >
-> > We calculate the throughput of swapout and swapin using the difference =
-between
-> > end_time and start_time. Additionally, we record the memory usage of zr=
-am after
-> > the swapout is complete.
-> >
->
-> Please correct me if I am wrong but you are saying in your experiment,
-> 100 MiB took 90540 ms to compress/swapout and 45274 ms to
-> decompress/swapin if backed by 4k pages but took 55667 ms and 22942 ms
-> if backed by 64k pages. Basically the table shows total time to compress
-> or decomress 100 MiB of memory, right?
+> My specific query is: While it is logically understandable that a
+> write operation involving these extra 4 bytes could cause a kernel
+> crash, in this case, it is a read operation that is occurring.
 
-Hi Shakeel,
-Tangquan(CC'd) collected the data and double-checked the case to confirm
-the answer to your question.
+Note that 'ring' is located in the stack frame for the current function. So to
+complete the analysis - is there any way that the stack frame can be located in
+such a way that 'ring' is the *very last* 4 bytes on a page, and the next page
+*isn't* allocated, *and* I915_NUM_ENGINES is big enough to cause the loop to walk
+off the end?
 
-We have three cases:
-1. no mTHP swap-in, no zsmalloc/zram multi-pages compression/decompression
-2. have mTHP swap-in, no zsmalloc/zram multi-pages compression/decompressio=
-n
-3. have mTHP swap-in, have zsmalloc/zram multi-pages compression/decompress=
-ion
+For bonus points, part 1:  Does the answer depend on whether the architecture
+has stacks that grow up, or grow down in address?
 
-The data was 1 vs 3.
+For bonus points, part 2: can this function be called quickly enough, and
+enough times, that it can be abused to do something interesting to L1/L2 cache
+and speculative execution, because some systems will fetch not only the bytes
+needed, but as much as 64 or 128 bytes of cache line?  Can you name 3 security
+bugs that abused this sort of thing?
 
-To provide more precise data that covers each change, Tangquan tested
-1 vs. 2 and
-2 vs. 3 yesterday using LZ4 (the hardware might differ from the
-previous test, but the
-data shows the same trend) per my request.
+Free hint:  There's a bit of interesting code in kernel/exit.c that tells you if
+your system has gotten close to running out of kernel stack.
 
-1. no mTHP swapin, no zsmalloc/zram patch
-swapin_ms.   30336
-swapout_ms. 65651
+[/usr/src/linux-next] dmesg | grep 'greatest stack'
+[    1.093400] [     T40] pgdatinit0 (40) used greatest stack depth: 13920 bytes left
+[    3.832907] [     T82] modprobe (82) used greatest stack depth: 8 bytes left
 
-2. have mTHP swapin, no zsmalloc/zram patch
-swapin_ms.   27161
-swapout_ms. 61135
+Hmm... wonder how that modprobe managed *that* :)
 
-3. have mTHP swapin, have zsmalloc/zram patch
-swapin_ms.   13683
-swapout_ms. 43305
 
-The test pseudocode is as follows:
-
-addr=3Dmmap(100M)
-read_anon_data_from_file_to addr();
-
-for(i=3D0;i<100;i++) {
-      swapout_start_time;
-      madv_pageout();
-      swapout_end_time;
-      swapin_start_time;
-      read_addr_to_swapin();
-      swapin_end_time;
-}
-
-So, while we saw some improvement from 1 to 2, the significant gains
-come from using large blocks for compression and decompression.
-
-This mTHP swap-in series ensures that mTHPs aren't lost after the first swa=
-p-in,
-so the following 99 iterations continue to involve THP swap-out and
-mTHP swap-in.
-The improvement from 1 to 2 is due to this mTHP swap-in series, while the
-improvement from 2 to 3 comes from the zsmalloc/zram patchset [2] you
-mentioned.
-
-[2] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.com/
-
-> > >
-> >
-
-Thanks
-Barry
+        
 
