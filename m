@@ -1,233 +1,290 @@
-Return-Path: <linux-kernel+bounces-300766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96ED895E813
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:48:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596A395E811
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F73B281881
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120E42837AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D835178C90;
-	Mon, 26 Aug 2024 05:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F26A77119;
+	Mon, 26 Aug 2024 05:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Wolf5tiu"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RWL7dc9d"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11A1443D;
-	Mon, 26 Aug 2024 05:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C573C320C
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724651327; cv=none; b=rMbJhtJpvsud2PH7qWqrWEPMFBveJRPwJ+vEwv1niotMtxSUxNiaO2+qkVbdQgRNbI5ma2khnpDF76j7yuWjdBsVJuztSWRUEa1tQSi8GVTaeT6usuWgXz+X+jVEirT2Nyq5vQnwE1+PM5v4DnqxBkmAw10sd5USK+mBEI8eNnE=
+	t=1724651264; cv=none; b=VcxCZwg4suDzJgfq66GaNT3ab1osANxVe6dSTZ3YjUzqQV+kxmfwq/E2LYVip1P/TeLQatCt/bXD0fP3NoTnW3B0OvHKFerHmDTLu9+10aP7nszRs/QcbVv9IN1nBflulk9eCEyxg1KIo0c579GIgZrL0ZRKlYKLxoqvN00S4Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724651327; c=relaxed/simple;
-	bh=nQVe4pkTC4GGqwvv0hQiEOdQUahpl9ZfcNGHajNVUyM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MfKfU8tOt2hNcE5hjL+eZ/7R3C6M3WO5DjRrgfBx9yDmnO8Xdb4xKt2DTjagbOntHOr4TOGM3haddYxG2d8sowETsjch5QtkYQ3Trx9oCiqwTvJYAJE4S08Fl3RObCBXpfmHGS6VVemjE9F4daLEXCS7pMrazY4FY0kdMU1qRpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Wolf5tiu; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724651319;
-	bh=LcnF3lEzDOs24/S93gLZ8vPRLn3bYdD6AON3DPimukw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Wolf5tiuyOuYdSFxnMWHFo/aH11Brfuolf/kJqXXe3Rl6XVqgxOKN6cDesI0ZPHSq
-	 Rc9dAI5pijHfhux5s7mxf9XnvuD+OvQl82sEyYakkXOqVXmDE4/QH4Jq9gh8m5EEIM
-	 75wecd8V9oW3yOy1sGTvHk87Vyaz1q2uLqLCcPro=
-X-QQ-mid: bizesmtp78t1724651296tfspfpab
-X-QQ-Originating-IP: v1Cbbgnlqo89WuZQdgXld1WIjaie1C4oGPQIMjd/6pA=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 26 Aug 2024 13:48:14 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7317953918435259740
-From: Dandan Zhang <zhangdandan@uniontech.com>
-To: pbonzini@redhat.com,
-	corbet@lwn.net,
-	zhaotianrui@loongson.cn,
-	maobibo@loongson.cn,
-	chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	wangyuli@uniontech.com,
-	baimingcong@uniontech.com,
-	Xianglai Li <lixianglai@loongson.cn>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Dandan Zhang <zhangdandan@uniontech.com>
-Subject: [PATCH v2] Loongarch: KVM: Add KVM hypercalls documentation for LoongArch
-Date: Mon, 26 Aug 2024 13:47:27 +0800
-Message-ID: <DE6B1B9EAC9BEF4C+20240826054727.24166-1-zhangdandan@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1724651264; c=relaxed/simple;
+	bh=sNN7Gi7TFWA5uui4XNiyosEuHHsstx1Zym+EVmgBXKw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bk33t0YWzHs7uKEc+Jq3w6SmTzezrlTkQWZGA3zU+OKgchQS/UUHdQebs1bfyHr8MEeO1xlqtizS/h6jhaEOsG/cnK9Ll047mnIadJKldp//yaKLAc70wfHcGrtGwLowtXaKkDOgdhdgH6L8ZoBaFzpaXCGhNGkAbCNnncSoPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RWL7dc9d; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2c1afef7-fed9-4685-bf07-b9f3d44a0077@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724651258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ts+B+wwMLY0gXBEyoiteKuMyTQYOutXDb9a3yKvXexU=;
+	b=RWL7dc9diM7n5fSd4t/eRCeBapVC8b4VBQygRQ9X5izqRegFhOu1RQ2Luhn+29BND4U4Fh
+	6HkZ16e9nYkeB13XMiLhdeRWcZJGUs9IQ52BpDq7nm7Vb92uQs/Tr74igCB55wisYDiVcx
+	Ja0YmrnIoV4VxozxCZaf4DAIk29TzEQ=
+Date: Mon, 26 Aug 2024 11:17:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Subject: Re: [PATCH v3 2/4] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+To: Krzysztof Kozlowski <krzk@kernel.org>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240716084248.1393666-1-a-bhatia1@ti.com>
+ <20240716084248.1393666-3-a-bhatia1@ti.com>
+ <0144d9b4-e830-44b0-95cd-4d49d5051155@kernel.org>
+Content-Language: en-US
+In-Reply-To: <0144d9b4-e830-44b0-95cd-4d49d5051155@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Bibo Mao <maobibo@loongson.cn>
+Hi Krzysztof,
 
-Add documentation topic for using pv_virt when running as a guest
-on KVM hypervisor.
+Thank you for the reviewing the patches.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-Co-developed-by: Mingcong Bai <jeffbai@aosc.io>
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
-Link: https://lore.kernel.org/all/5c338084b1bcccc1d57dce9ddb1e7081@aosc.io/
-Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
----
- Documentation/virt/kvm/index.rst              |  1 +
- .../virt/kvm/loongarch/hypercalls.rst         | 86 +++++++++++++++++++
- Documentation/virt/kvm/loongarch/index.rst    | 10 +++
- MAINTAINERS                                   |  1 +
- 4 files changed, 98 insertions(+)
- create mode 100644 Documentation/virt/kvm/loongarch/hypercalls.rst
- create mode 100644 Documentation/virt/kvm/loongarch/index.rst
 
-diff --git a/Documentation/virt/kvm/index.rst b/Documentation/virt/kvm/index.rst
-index ad13ec55ddfe..9ca5a45c2140 100644
---- a/Documentation/virt/kvm/index.rst
-+++ b/Documentation/virt/kvm/index.rst
-@@ -14,6 +14,7 @@ KVM
-    s390/index
-    ppc-pv
-    x86/index
-+   loongarch/index
- 
-    locking
-    vcpu-requests
-diff --git a/Documentation/virt/kvm/loongarch/hypercalls.rst b/Documentation/virt/kvm/loongarch/hypercalls.rst
-new file mode 100644
-index 000000000000..58168dc7166c
---- /dev/null
-+++ b/Documentation/virt/kvm/loongarch/hypercalls.rst
-@@ -0,0 +1,86 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================================
-+The LoongArch paravirtual interface
-+===================================
-+
-+KVM hypercalls use the HVCL instruction with code 0x100 and the hypercall
-+number is put in a0. Up to five arguments may be placed in registers a1 - a5.
-+The return value is placed in v0 (an alias of a0).
-+
-+Source code for this interface can be found in arch/loongarch/kvm*.
-+
-+Querying for existence
-+======================
-+
-+To determine if the host is running on KVM, we can utilize the cpucfg()
-+function at index CPUCFG_KVM_BASE (0x40000000).
-+
-+The CPUCPU_KVM_BASE range, spanning from 0x40000000 to 0x400000FF, The
-+CPUCPU_KVM_BASE range between 0x40000000 - 0x400000FF is marked as reserved.
-+Consequently, all current and future processors will not implement any
-+feature within this range.
-+
-+On a KVM-virtualized Linux system, a read operation on cpucfg() at index
-+CPUCFG_KVM_BASE (0x40000000) returns the magic string 'KVM\0'.
-+
-+Once you have determined that your host is running on a paravirtualization-
-+capable KVM, you may now use hypercalls as described below.
-+
-+KVM hypercall ABI
-+=================
-+
-+The KVM hypercall ABI is simple, with one scratch register a0 (v0) and at most
-+five generic registers (a1 - a5) used as input parameters. The FP (Floating-
-+point) and vector registers are not utilized as input registers and must
-+remain unmodified during a hypercall.
-+
-+Hypercall functions can be inlined as it only uses one scratch register.
-+
-+The parameters are as follows:
-+
-+        ========	================	================
-+	Register	IN			OUT
-+        ========	================	================
-+	a0		function number		Return code
-+	a1		1st parameter		-
-+	a2		2nd parameter		-
-+	a3		3rd parameter		-
-+	a4		4th parameter		-
-+	a5		5th parameter		-
-+        ========	================	================
-+
-+The return codes may be one of the following:
-+
-+	====		=========================
-+	Code		Meaning
-+	====		=========================
-+	0		Success
-+	-1		Hypercall not implemented
-+	-2		Bad Hypercall parameter
-+	====		=========================
-+
-+KVM Hypercalls Documentation
-+============================
-+
-+The template for each hypercall is as follows:
-+
-+1. Hypercall name
-+2. Purpose
-+
-+1. KVM_HCALL_FUNC_PV_IPI
-+------------------------
-+
-+:Purpose: Send IPIs to multiple vCPUs.
-+
-+- a0: KVM_HCALL_FUNC_PV_IPI
-+- a1: Lower part of the bitmap for destination physical CPUIDs
-+- a2: Higher part of the bitmap for destination physical CPUIDs
-+- a3: The lowest physical CPUID in the bitmap
-+
-+The hypercall lets a guest send multiple IPIs (Inter-Process Interrupts) with
-+at most 128 destinations per hypercall.The destinations are represented in a
-+bitmap contained in the first two input registers (a1 and a2).
-+
-+Bit 0 of a1 corresponds to the physical CPUID in the third input register (a3)
-+and bit 1 corresponds to the physical CPUID in a3+1 (a4), and so on.
-diff --git a/Documentation/virt/kvm/loongarch/index.rst b/Documentation/virt/kvm/loongarch/index.rst
-new file mode 100644
-index 000000000000..83387b4c5345
---- /dev/null
-+++ b/Documentation/virt/kvm/loongarch/index.rst
-@@ -0,0 +1,10 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=========================
-+KVM for LoongArch systems
-+=========================
-+
-+.. toctree::
-+   :maxdepth: 2
-+
-+   hypercalls.rst
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0c94ec0ca478..ae0fa8aa26f8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12294,6 +12294,7 @@ L:	kvm@vger.kernel.org
- L:	loongarch@lists.linux.dev
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
-+F:	Documentation/virt/kvm/loongarch/
- F:	arch/loongarch/include/asm/kvm*
- F:	arch/loongarch/include/uapi/asm/kvm*
- F:	arch/loongarch/kvm/
--- 
-2.43.4
+On 7/21/24 21:06, Krzysztof Kozlowski wrote:
+> On 16/07/2024 10:42, Aradhya Bhatia wrote:
+>> The OLDI (transmitters) TXes do not have registers of their own, and are
+>> dependent on the source video-ports from the DSS to provide
+>> configuration data. This hardware doesn't directly sit on the internal
+>> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
+>> supposed to be child nodes under the DSS, and not independent devices.
+>>
+>> Two of the OLDI TXes can function in tandem to output dual-link OLDI
+>> output, or cloned single-link outputs. In these cases, one OLDI will be
+>> the primary OLDI, and the other one, a companion.
+>>
+>> The OLDI functionality is further supported by a system-control module,
+>> which contains a few registers to control OLDI IO power and
+>> characteristics.
+>>
+>> Add devicetree binding schema for AM625 OLDI TXes.
+>>
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
+>>  MAINTAINERS                                   |   1 +
+>>  2 files changed, 154 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>> new file mode 100644
+>> index 000000000000..0a96e600bc0b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>> @@ -0,0 +1,153 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Texas Instruments AM625 OLDI Transmitter
+>> +
+>> +maintainers:
+>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> +  - Aradhya Bhatia <a-bhatia1@ti.com>
+>> +
+>> +description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
 
+Okay!
+
+> 
+>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
+>> +  pixel data transmission between host and flat panel display over LVDS (Low
+>> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
+>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
+>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
+>> +  padded and un-padded 18-bit RGB bus formats as input.
+>> +
+>> +properties:
+>> +  reg:
+>> +    maxItems: 1
+>> +
+> 
+> How does it even work without compatible? How is this schema selected?
+> If by part of your next patch, then this is not a proper split - this
+> patch itself is noop. Squash the patches.
+> 
+
+Yes, it is supposed to be picked like the next patch does it. I can
+squash these both.
+
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: serial clock input for the OLDI transmitters
+>> +
+>> +  clock-names:
+>> +    const: s_clk
+> 
+> Drop _clk or name it correctly.
+
+Alright!
+
+> 
+>> +
+>> +  ti,companion-oldi:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle to companion OLDI transmitter. This property is mandatory for the
+>> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
+>> +      mode or in clone mode. This property should point to the secondary OLDI
+>> +      TX.
+>> +
+>> +  ti,secondary-oldi:
+>> +    type: boolean
+>> +    description: Boolean property to mark an OLDI TX as secondary node.
+> 
+> Why? Lack companion tells it, doesn't it?
+
+A lack of companion doesn't mean secondary-OLDI automatically, actually.
+
+There is also a possible configuration where 2 OLDI TXes could be
+individually connected to 2 different sources => 2x single Link
+configuration. The OLDI TXes would then work independently.
+
+> 
+>> +
+>> +  ti,oldi-io-ctrl:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
+>> +      control MMR region. This property is needed for OLDI interface to work.
+> 
+> "This property is needed for OLDI interface to work." tells nothing.
+> Everything is needed for everything to work. Be specific.
+> 
+
+Yes! Will fix this.
+
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: Parallel RGB input port
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: LVDS output port
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@1
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        ti,secondary-oldi: true
+> 
+> This does not work... Test your schema.
+> 
+
+I tested again just now. At least the schema check didn't report any
+error. I used the v2024.05 dtschema too.
+
+This github gist[0] captures all details of this test.
+
+Could you instead please elaborate what maybe wrong here, and I will try
+to fix that.
+
+
+>> +    then:
+>> +      properties:
+>> +        ti,companion-oldi: false
+>> +        ti,oldi-io-ctrl: false
+>> +        clocks: false
+>> +        clock-names: false
+>> +
+>> +    else:
+>> +      required:
+>> +        - ti,oldi-io-ctrl
+>> +        - clocks
+>> +        - clock-names
+>> +
+>> +required:
+>> +  - reg
+>> +  - ports
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>> +
+>> +    oldi_txes {
+> 
+> No underscores in node names.
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Right. Will make the name generic.
+
+> 
+> 
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        oldi: oldi@0 {
+> What is the "reg" for?
+
+The reg is for indexing purposes so that the driver can distinguish
+between which OLDI TX is under question. Since, the syscon controller
+has different power control registers and bits for different OLDIs - its
+important for the driver to be able to tell one from another.
+
+
+Regards
+Aradhya
+
+
+[0]: Github Gist of schema testing for patch 2/4.
+https://gist.github.com/aradhya07/e3776cb10ee64c33405db5609cbd2e4f
 
