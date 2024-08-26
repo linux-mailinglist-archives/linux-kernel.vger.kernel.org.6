@@ -1,106 +1,203 @@
-Return-Path: <linux-kernel+bounces-301087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6767595EC33
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895DD95EC46
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21CAD280F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46784281C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E5D13C69B;
-	Mon, 26 Aug 2024 08:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4AE145330;
+	Mon, 26 Aug 2024 08:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QXJ5PEXi"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="dnUBtpCI"
+Received: from smtp9.infineon.com (smtp9.infineon.com [217.10.52.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F4B558B6
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B913D516;
+	Mon, 26 Aug 2024 08:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.52.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661676; cv=none; b=pIdkIA3t6yl35qyjS0832uzKFGOPlnepkDrvC04YkSl4DNW/toNt5IzQIMwRKYBtWFxCcrOxTPdTfw5Ifm3XrLIISfMCnUDFwTPVRxifxf49b80p1XAWl1DPbPHQsmfTK6lS7DKd5HkSnsbGWtSQHXR52w684MxrTF7pUWMvDCE=
+	t=1724661793; cv=none; b=MePIHD/u9pXiuH1VLaYey4S7FBO9EiIDUqyne9mqtBxGbermYh9wXe+2y7BkH6G9mcEUBbwcu0xfs1ho1/OArw2HoGi9bH4s1073/amaNfevMxauGcZG18FQyZVzAj20EDjkYXQf//h8kmEbS8gsgaoSRkh2P+p/glnLR5YkPag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661676; c=relaxed/simple;
-	bh=ZJqPV+M2ayctdGZHxpg+AofznRAfzm17VKe00rGKdUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oQaYPTUQI6HRBM5swwkjwZPiodT69Gbz1leZYOq1JCe7xgNGI8P+6DPqFEohaLIGpnfOcdKvlXHkrmIEOCzi8slXhQAj2LlC8pj2W3sKVpJLil08Y7p1e+7lgDi5vBmnDBMT0kixVpm3+TpeBxvRIaLpXySFyFUXmL+Of+JmhG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QXJ5PEXi; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-533461323cdso4538413e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:41:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724661672; x=1725266472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZJqPV+M2ayctdGZHxpg+AofznRAfzm17VKe00rGKdUU=;
-        b=QXJ5PEXimOZ13K98cB1Y/XAMdYH4RaTmfS5py/vw/c1EpBP3vuWDSuZ/nMvnJIw3mC
-         th9iepXjNaYdXhdsoQTIRbFQPeTnWJ9w0gSc8+bypMPrFqIAYgt8xPbHZ/Zx6A4xn/rn
-         Qa2oJ6jtE/GyZ/2LG+If+pNK+0yw1B4kGIf27Eu15WBiHnoggZ0s1DG8vbzIAXHzTDCC
-         koN3voYr7wc997LIDXTOCa7wNhdEuIDByWc53MdoE7VNja8oCF3mZoieIvmFO/jm+PrC
-         +Hu86PSoFs9hxZu1OZPqurQkKDezFdJkn6tfbYzd45OJKUSX7yaea0Vs8ejhvAOqepA7
-         WukQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724661672; x=1725266472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZJqPV+M2ayctdGZHxpg+AofznRAfzm17VKe00rGKdUU=;
-        b=GSNHizWKNSFepnWHIUwb7jkdw7PeTaJbcZbGGmtnAubtk7WgcRBy2XyDdyVq9gQyz3
-         vjSjNgIIntzzIpDhfPdUOeb1cOqTu4k7p13cB9T9TV7UVpAJfaLkKUdDhJ18gJQjDiIS
-         /TlPRppLYsaDEQJW0oWwTSmtKjn0wC7NwGiCHrCZnGYqh7AMMvR6fvQT9Y6vlmBRdeVw
-         DYh0bKl5v1OVR+jyTAoT120eLk8PDDnvR/TMGmPWRfzbLOgWKbsb+Q6QPNXNUITuncp0
-         Pj52kOUwhqhYmgppQh7cIU0Kmh2RJoSrN1WjlwEvy5dUGm5gh9Aa8mUe7Z1+aO81rzo4
-         4NUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeomsQY2wQkNR3Ra9k67Caw19DiL3p1iXzO8s54wD3tQ5zVJzZKrk21HGCRQlkDh6EvRmxk678A/LUplg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMlfigoyLL503/LS9S3jr/fBZpfU3lO/Smms0CXnZdFcE+R9Sz
-	fdXlZaV3MB457vXMG+REYBJz7jnrjoYUziRQW0JCmjNzWuiGSRzyZab9H3RvH2aRXb/oAAv89Ex
-	Bw4OQZV7Wuhpbqew+7uIsx9SqQhpzTr1mrTJLyw==
-X-Google-Smtp-Source: AGHT+IF1xip2LZYxVRH8VpdWfcRa9uK7A6loLJRPHfWQskmDHQEUYxjPeikly02OaJhz/cUtMMvnXB3y1yNyya30do4=
-X-Received: by 2002:a05:6512:3c85:b0:533:966:72cb with SMTP id
- 2adb3069b0e04-5343885f659mr6807476e87.48.1724661671918; Mon, 26 Aug 2024
- 01:41:11 -0700 (PDT)
+	s=arc-20240116; t=1724661793; c=relaxed/simple;
+	bh=T4nlKPYILTaeeaP8x/8TspIg9b2lQOJQG7zl6YPpuN4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AKdUIeDW/N58S83jT4S40rTX6NpfpPMiw640Pol3HqVOopqIWfI6DwM/AzkGDAaA/cfNL27iByLUrj62vnq8qZNgmIiRxquo4t0B3joZrKkhCgq+uptow9Uge7uCaYV6gRwyywdMHmeANqGEVTkXW3TnEB/nTae3g4pxGU72R8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com; spf=pass smtp.mailfrom=infineon.com; dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b=dnUBtpCI; arc=none smtp.client-ip=217.10.52.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infineon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1724661791; x=1756197791;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=T4nlKPYILTaeeaP8x/8TspIg9b2lQOJQG7zl6YPpuN4=;
+  b=dnUBtpCIrlliNt96207dokKSOIqF+b6lYC44qBKTGppMOshXZ40WKkqf
+   kBr3MDfbbTWNn0esI5tJo76euqdeb5I7pPvn6d5XhkqEsW6B7ygFTW2zy
+   3q4jDr3B7YzRkPEtcYxDCxZMpR7JC/bGbC1NMMA1FUsQUMW+DwcGkcu83
+   c=;
+X-CSE-ConnectionGUID: 5vr0WjKnQ7SJ1gQG7OGhhg==
+X-CSE-MsgGUID: xgNVd0GgQAyn51RzYaczUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="27903999"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719871200"; 
+   d="scan'208";a="27903999"
+Received: from unknown (HELO MUCSE803.infineon.com) ([172.23.29.29])
+  by smtp9.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:41:59 +0200
+Received: from MUCSE832.infineon.com (172.23.7.104) by MUCSE803.infineon.com
+ (172.23.29.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
+ 2024 10:41:58 +0200
+Received: from ISCN5CG3203WLP.infineon.com (10.161.6.196) by
+ MUCSE832.infineon.com (172.23.7.104) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 26 Aug 2024 10:41:56 +0200
+From: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Nobuaki Tsunashima" <Nobuaki.Tsunashima@infineon.com>
+Subject: [PATCH v6] Bluetooth: btbcm: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
+Date: Mon, 26 Aug 2024 17:41:37 +0900
+Message-ID: <20240826084137.86671-1-nobuaki.tsunashima@infineon.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822084733.1599295-1-frank.li@vivo.com> <20240822084733.1599295-4-frank.li@vivo.com>
-In-Reply-To: <20240822084733.1599295-4-frank.li@vivo.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 26 Aug 2024 10:41:00 +0200
-Message-ID: <CACRpkdb-MKYAcWA5KUDZ=oeREs86S68WjqzS9XRTrUbBhLbBtQ@mail.gmail.com>
-Subject: Re: [net-next 3/9] net: ethernet: cortina: Convert to devm_clk_get_enabled()
-To: Yangtao Li <frank.li@vivo.com>
-Cc: clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com, 
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, ulli.kroll@googlemail.com, marcin.s.wojtas@gmail.com, 
-	linux@armlinux.org.uk, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, justinstitt@google.com, 
-	kees@kernel.org, u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com, 
-	horms@kernel.org, shannon.nelson@amd.com, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MUCSE805.infineon.com (172.23.29.31) To
+ MUCSE832.infineon.com (172.23.7.104)
 
-On Thu, Aug 22, 2024 at 10:32=E2=80=AFAM Yangtao Li <frank.li@vivo.com> wro=
-te:
+From: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
 
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
->
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+CYW4373 ROM FW has an issue that it claims LE_Read_Transmit_Power command
+as supported in a response of Read_Local_Supported_Command command but
+rejects the LE_Read_Transmit_Power command with "Unknown HCI Command"
+status. Because Bluetooth driver of kernel 5.11 added sending the
+LE_Read_Transmit_Power command in initialize phase, hci up fails due to the
+issue.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Especially in USB i/f case, it would be difficult to download patch FW that
+includes its fix unless hci is up.
 
-Yours,
-Linus Walleij
+The driver already contains infrastructure to apply the quirk for the
+issue, but currently it only supports DMI based matching. Add support to
+match by chip id and baseline FW version to detect CYW4373 ROM FW build
+in generic system.
+
+Fixes: 7c395ea521e6 ("Bluetooth: Query LE tx power on startup")
+Signed-off-by: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
+---
+V5 -> V6: Change two table names as simpler.
+V4 -> V5: Use skb_pull_data() to access skb->data as safer manner.
+V3 -> V4: Fix a few coding style warnings and refine comments for clarify.
+V2 -> V3: Fix a few coding style warnings and change the subject as more specific.
+V1 -> V2: Fix several coding style warnings.
+
+ drivers/bluetooth/btbcm.c | 45 +++++++++++++++++++++++++++++++++++----
+ drivers/bluetooth/btusb.c |  4 ++++
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index 0a5445ac5e1b..154e5f4a26a8 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -391,7 +391,7 @@ static struct sk_buff *btbcm_read_usb_product(struct hci_dev *hdev)
+ 	return skb;
+ }
+ 
+-static const struct dmi_system_id disable_broken_read_transmit_power[] = {
++static const struct dmi_system_id broken_read_tx_power_dmi[] = {
+ 	{
+ 		 .matches = {
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "Apple Inc."),
+@@ -437,16 +437,53 @@ static const struct dmi_system_id disable_broken_read_transmit_power[] = {
+ 	{ }
+ };
+ 
++struct bcm_chip_version_table {
++	u8 chip_id;			/* Chip ID */
++	u16 baseline;		/* Baseline version of patch FW */
++};
++#define BCM_ROMFW_BASELINE_NUM	0xFFFF
++static const struct bcm_chip_version_table broken_read_tx_power_chip_ver[] = {
++	{ 0x87, BCM_ROMFW_BASELINE_NUM }		/* CYW4373/4373E */
++};
++static bool btbcm_is_disable_broken_read_tx_power_by_chip_ver(u8 chip_id, u16 baseline)
++{
++	int i;
++	size_t table_size = ARRAY_SIZE(broken_read_tx_power_chip_ver);
++	const struct bcm_chip_version_table *entry =
++						&broken_read_tx_power_chip_ver[0];
++
++	for (i = 0 ; i < table_size ; i++, entry++)	{
++		if ((chip_id == entry->chip_id) && (baseline == entry->baseline))
++			return true;
++	}
++
++	return false;
++}
++
+ static int btbcm_read_info(struct hci_dev *hdev)
+ {
+ 	struct sk_buff *skb;
++	u8 *chip_id;
++	u16 *baseline;
+ 
+ 	/* Read Verbose Config Version Info */
+ 	skb = btbcm_read_verbose_config(hdev);
+ 	if (IS_ERR(skb))
+ 		return PTR_ERR(skb);
+-
+-	bt_dev_info(hdev, "BCM: chip id %u", skb->data[1]);
++	skb_pull_data(skb, 1);
++	chip_id = skb_pull_data(skb, sizeof(*chip_id));
++	skb_pull_data(skb, 1);
++	baseline = skb_pull_data(skb, sizeof(*baseline));
++
++	if (chip_id) {
++		bt_dev_info(hdev, "BCM: chip id %u", *chip_id);
++
++		if (baseline) {
++			/* Check Chip ID and disable broken Read LE Min/Max Tx Power */
++			if (btbcm_is_disable_broken_read_tx_power_by_chip_ver(*chip_id, *baseline))
++				set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER, &hdev->quirks);
++		}
++	}
+ 	kfree_skb(skb);
+ 
+ 	return 0;
+@@ -465,7 +502,7 @@ static int btbcm_print_controller_features(struct hci_dev *hdev)
+ 	kfree_skb(skb);
+ 
+ 	/* Read DMI and disable broken Read LE Min/Max Tx Power */
+-	if (dmi_first_match(disable_broken_read_transmit_power))
++	if (dmi_first_match(broken_read_tx_power_dmi))
+ 		set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER, &hdev->quirks);
+ 
+ 	return 0;
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index d31edad7a056..52561c8d8828 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -142,6 +142,10 @@ static const struct usb_device_id btusb_table[] = {
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(0x04ca, 0xff, 0x01, 0x01),
+ 	  .driver_info = BTUSB_BCM_PATCHRAM },
+ 
++	/* Cypress devices with vendor specific id */
++	{ USB_VENDOR_AND_INTERFACE_INFO(0x04b4, 0xff, 0x01, 0x01),
++	  .driver_info = BTUSB_BCM_PATCHRAM },
++
+ 	/* Broadcom devices with vendor specific id */
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0a5c, 0xff, 0x01, 0x01),
+ 	  .driver_info = BTUSB_BCM_PATCHRAM },
+-- 
+2.34.1
+
 
