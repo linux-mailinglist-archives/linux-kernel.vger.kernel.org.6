@@ -1,132 +1,105 @@
-Return-Path: <linux-kernel+bounces-302111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEC695F9EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B11D95F9EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3AADB22CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F34B22B77
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554F212CD89;
-	Mon, 26 Aug 2024 19:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E2D199244;
+	Mon, 26 Aug 2024 19:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="japOw5UI"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n0VnPxq1"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AA61F943
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AB8130ADA;
+	Mon, 26 Aug 2024 19:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724701604; cv=none; b=SG1XAQOVQ3dmKb59yuTHONjwGQuXLiQN8pJkks9J/xCH2ToGLyFEDiCQuhKOdZaqCfUkanULdojPUK0nWYj80nwBLx7GL6+IivL2vL8kE4uoOmavg0bxojPW0BnAZhsdk0Ijedv09fyReWR7TM3vUMlf4GKmmWSH/bwd1LJzqIE=
+	t=1724701630; cv=none; b=IitgZV6IYpbm+e3HBq8Wj3KXdOc0xw2C8z0zB/ivkokkkCyavXMjH3B59WdcimyWkby4VLQMmrtUWc7g6dGQSP0hCWxWXHMicvTHqFInKITr+sVNQ7lRf8Omkh7vhTQDvvxaJUiH+e9VwKChyZ1nUgvAtKqRs/7x5WVgYSdGeEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724701604; c=relaxed/simple;
-	bh=xZC7Y7GU0zcEzKHChNxej8vT90J9J2UDFdj42WyJprU=;
-	h=From:To:cc:Subject:In-reply-to:References:Mime-Version:
-	 Content-Type:Date:Message-ID; b=rxoC5QOaOoeMKdzZIOXnRpxkPTFvZhiVdlEk+ATTRlbfCv5vOlEsVqi9uPks2L5tuDiajliJWVFFXgi6jhjgAmtK7eR4eFSzw9aNf61xT0at2frAdOmcmAmWrWMCAbjx34dwEd3PYqmYua+B51F9G2Pn4LuiRB0d64Mhu0PgflU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=japOw5UI; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d42da3f7so299399885a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1724701601; x=1725306401; darn=vger.kernel.org;
-        h=message-id:date:mime-version:references:in-reply-to:subject:cc:to
-         :from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=ldNdAhKKzaSqr9ERET8WGas8/RLyJLHDmEozqXzjuf4=;
-        b=japOw5UIijQy92voZhL2yL3GCHpl3DyS9tX/a7nCKFUwlPrTkBW+BAbhxxFkCdzbjY
-         mHLN4+gqAkm14Q7YQVmbEG/MvEJacBc2wRzPfSg5m018trP7et4GJhLkgT6eUoxFxpA1
-         yoIMfQ8Zkv8gciTusIHoxInL/xY+4nmP+L6riASdX5cczEpkmT7s9NnaCX/3KG1+rvJf
-         TOB+OwECKXeFV6WPACNdd4FHXf6nVWxYXbdvasVzFBPLfwCsMcTlLwDa6nCfVOQM4oxw
-         0GFz/R5x9dDHu3zSsTUnFqCJ2WbC63zntiM+VPN0wl7qtJHo5M7Nv4pOppeBJUC6yufq
-         /ouw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724701601; x=1725306401;
-        h=message-id:date:mime-version:references:in-reply-to:subject:cc:to
-         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ldNdAhKKzaSqr9ERET8WGas8/RLyJLHDmEozqXzjuf4=;
-        b=ij566bbLOzySILnW9Xo/oEHNtE4ggTVS14IOTsvsKEGXloMw69YNEvj/CAbaKdnkpC
-         Gd+EjbhRn7HLIDebrAA3mxmnGaZ8MrmpYElLjVvKnJjR7VA8xj5EJUUQA7HOBWvXXqLE
-         zrzrqvF3ZWoO0iPoSr3RjqTgWR37eYHbqpaCfODBdem5IJV8hK2SN3Ao6wHoAMVuaD+e
-         EcxAVu9Hwz5aetPJ5dxo1rbQIax2GRM2TD1zpsNvYeCIlMsG//m2UwCRpWqCR8hCbCVP
-         UYZg9X1TEta6kmnltCp6u86F6dk6Uk1TbSeLFH86gGzsPJhCaVoIzWzHOD6mJVsC8Iu9
-         qePA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXRkwsG3sB/BE/ZwZNvD4CTVIoScg7qnv9AxUTTZ8czokdOl2YZBRylQh8uVEYw1Lwq9H2ZOvKjXnOLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypRLz5A34Wjh0Dd7cx5Y5pgtdLsEv9QR+4kkF5E1aQYslhUyu
-	KKCxncowVa2+xZcw3g5AnXjCkO7hnzJTF5IcMvf0wXbZcosLv5T1K1Ug7JmBf4I=
-X-Google-Smtp-Source: AGHT+IHSt2ZDjFKsrx8cKZdACVC77PYM0eLmNVQqOPrI9VKnbgSdrVONsF4R2q9XInSB/Qof3/IWCQ==
-X-Received: by 2002:a05:620a:2401:b0:79e:fcb5:55e2 with SMTP id af79cd13be357-7a6896d66b9mr1306069385a.5.1724701600998;
-        Mon, 26 Aug 2024 12:46:40 -0700 (PDT)
-Received: from turing-police (c-73-31-28-59.hsd1.va.comcast.net. [73.31.28.59])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a67f41d415sm485696185a.125.2024.08.26.12.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 12:46:40 -0700 (PDT)
-Sender: Valdis Kletnieks <valdis@vt.edu>
-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.10.0-pre 07/05/2021 with nmh-1.8+dev
-To: Muni Sekhar <munisekharrms@gmail.com>
-cc: kernelnewbies <kernelnewbies@kernelnewbies.org>,
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Query Regarding Stack-Out-of-Bounds Error
-In-reply-to: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
-References: <CAHhAz+hjhZQnTWX088EmMDbszAJrrBQBqkhvfiMjxQPNtWbkqw@mail.gmail.com>
+	s=arc-20240116; t=1724701630; c=relaxed/simple;
+	bh=1l+UcRRihFinCeQkAhh3WeCzdyaLBGa7D12uLhRQgvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLz3dAXviHMIGac6dkGZ9fne7qeXi6HHM2/8f6u1zk0GvF5OoLk6P/8qJeWveekoGfrweFy+HehN1DX8eWv+OegpeDQkfg5L/yX+kVwlzgNCXUgXQCXny14PR9TuOfAecMLRjz8VjvuO6PQ9Ct+N4VVmvfCqNlr4evhAa4G5ZLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n0VnPxq1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hBFh3cA2kmH2dkDFxpJSjKEkaQyWfxc4ceQWYnieJHc=; b=n0VnPxq1/cHl3id8AuHRGWQFSz
+	LfIfWHT4xoCyQ1o6oc5Ezn0NtdfxljghXB/BT2xy8DNoKM4K1iOSAACgo43JnBexawiQkax3ePXWs
+	fWLn7C3ET0FeAqipbn3R5uUNKM1Z8sUDXRz8K6B2xi304aGgPDVRhmk3pVcLFWw6UNshrWE3Aq+bC
+	zbELhyb7tZ0sLvIz8JKLR17ynZcG88rPjYM2+voXAPi+FzNbV833syhi/su7xlhy05Qrpt58+vFlT
+	lJhObAZhGcns6yUUgH1dyBkIPgXICIgWwcCwuVaaijFDaaZP5o7bmt6zSBRZYjrV7VU3q3qpVxwGv
+	7vWb5Jsg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sifg8-0000000Fw1N-097R;
+	Mon, 26 Aug 2024 19:47:04 +0000
+Date: Mon, 26 Aug 2024 20:47:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zszbt8M5mUPZjbFq@casper.infradead.org>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
+ <egma4j7om4jcrxwpks6odx6wu2jc5q3qdboncwsja32mo4oe7r@qmiviwad32lm>
+ <Zszado75SnObVKG5@casper.infradead.org>
+ <rwqusvtkwzbr2pc2hwmt2lkpffzivrlaw3xfrnrqxze6wmpsex@s3eavvieveld>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Date: Mon, 26 Aug 2024 15:46:39 -0400
-Message-ID: <212937.1724701599@turing-police>
+Content-Disposition: inline
+In-Reply-To: <rwqusvtkwzbr2pc2hwmt2lkpffzivrlaw3xfrnrqxze6wmpsex@s3eavvieveld>
 
-On Mon, 26 Aug 2024 18:04:39 +0530, Muni Sekhar said:
+On Mon, Aug 26, 2024 at 03:42:59PM -0400, Kent Overstreet wrote:
+> On Mon, Aug 26, 2024 at 08:41:42PM GMT, Matthew Wilcox wrote:
+> > On Mon, Aug 26, 2024 at 03:39:47PM -0400, Kent Overstreet wrote:
+> > > Given the amount of plumbing required here, it's clear that passing gfp
+> > > flags is the less safe way of doing it, and this really does belong in
+> > > the allocation context.
+> > > 
+> > > Failure to pass gfp flags correctly (which we know is something that
+> > > happens today, e.g. vmalloc -> pte allocation) means you're introducing
+> > > a deadlock.
+> > 
+> > The problem with vmalloc is that the page table allocation _doesn't_
+> > take a GFP parameter.
+> 
+> yeah, I know. I posted patches to plumb it through, which were nacked by
+> Linus.
+> 
+> And we're trying to get away from passing gfp flags directly, are we
+> not? I just don't buy the GFP_NOFAIL unsafety argument.
 
-> static struct cmd_info *find_cmd_entry_any_ring(struct intel_gvt *gvt,
->                unsigned int opcode, int rings)
-> {
->         struct cmd_info *info = NULL;
->         unsigned int ring;
->         ...
->         for_each_set_bit(ring, (unsigned long *)&rings, I915_NUM_ENGINES) {
->
-> In the above code, a 32-bit integer pointer (rings) is being cast to a
-> 64-bit unsigned long pointer, which leads to an extra 4 bytes being
-> accessed. This raises a concern regarding a stack-out-of-bounds bug.
->
-> My specific query is: While it is logically understandable that a
-> write operation involving these extra 4 bytes could cause a kernel
-> crash, in this case, it is a read operation that is occurring.
+The problem with the giant invasive change of "getting away from passing
+GFP flags directly" is that you need to build consensus for what it
+looks like and convince everyone that you have a solution that solves
+all the problems, or at least doesn't make any of those problems worse.
+You haven't done that, you've just committed code that the MM people hate
+(indeed already rejected), and set back the idea.
 
-Note that 'ring' is located in the stack frame for the current function. So to
-complete the analysis - is there any way that the stack frame can be located in
-such a way that 'ring' is the *very last* 4 bytes on a page, and the next page
-*isn't* allocated, *and* I915_NUM_ENGINES is big enough to cause the loop to walk
-off the end?
-
-For bonus points, part 1:  Does the answer depend on whether the architecture
-has stacks that grow up, or grow down in address?
-
-For bonus points, part 2: can this function be called quickly enough, and
-enough times, that it can be abused to do something interesting to L1/L2 cache
-and speculative execution, because some systems will fetch not only the bytes
-needed, but as much as 64 or 128 bytes of cache line?  Can you name 3 security
-bugs that abused this sort of thing?
-
-Free hint:  There's a bit of interesting code in kernel/exit.c that tells you if
-your system has gotten close to running out of kernel stack.
-
-[/usr/src/linux-next] dmesg | grep 'greatest stack'
-[    1.093400] [     T40] pgdatinit0 (40) used greatest stack depth: 13920 bytes left
-[    3.832907] [     T82] modprobe (82) used greatest stack depth: 8 bytes left
-
-Hmm... wonder how that modprobe managed *that* :)
-
-
-        
+Look, it's not your job to fix it, but if you want to do it, do it
+properly.
 
