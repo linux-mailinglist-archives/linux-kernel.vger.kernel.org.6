@@ -1,106 +1,100 @@
-Return-Path: <linux-kernel+bounces-301101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FA495EC61
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:51:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D24395EC63
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3993B1C21555
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBA811F21483
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7676D13F01A;
-	Mon, 26 Aug 2024 08:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F32255898;
+	Mon, 26 Aug 2024 08:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IzPLqbsX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lkNMvOxh"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062FE13AD22;
-	Mon, 26 Aug 2024 08:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69920286A8
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662256; cv=none; b=LeiLyM6bHRKFyTjzrKwuiwm2o/a0Y2R4Du8BDix6rhH/C0MOzJ7sIf6s/dXM0L/pO+tNtFN6oUhiKfVb0NDYZYbeOBNdknulWdBlIVJ2K/5GDRK54v34dEDITIyHi9Aqs3DsrtZ+vLROvo4DWIeLLpTtyNEEjbHqUOx9tGfX5xY=
+	t=1724662336; cv=none; b=dYcRoI1bywPU7nwpGVGeS33P0WmNc64LOjIyPTxu4iX0QUXxBYhOgQaAYDkUD3HaGrycvE29JYBxGUxVK79aamIGTYX7mdeLGJoxGZ4BP+Jwaird4i6J0vZO6AuOXZPKvxQAPtGmMT3CWU6V83319/ApV0cCHy8SM7fZd5rUg28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662256; c=relaxed/simple;
-	bh=+AAnGphO/V8TJKxCbBXXQF+Kt7V94H4YdOr5ElaF+qA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGW5gOVlVbnxwvCM3BeljohGK0fJXXFPrhowwNAaICqQ7+jBmJu8+nIhpl3r4sQSbDXUpNw0MwqYjC1zr2UtqbDdi0+IpylwFQDQI+H3A/DFi5Tcfrd1HJfid3TYywLWrXNFUxaaURYzGvD6/QjhiI1EgG5Ojge8E4FU/88SbYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IzPLqbsX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 001CFE4;
-	Mon, 26 Aug 2024 10:49:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724662187;
-	bh=+AAnGphO/V8TJKxCbBXXQF+Kt7V94H4YdOr5ElaF+qA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IzPLqbsXU6vPbAiV4OixrkvXb9qUvw/1lyI7SrDHdRh2VPNzjDIFoBLWdz/PpgO7/
-	 0rK+Zg+iCKBpWtDtlUinWZPWd1WU4t/Dj4IjzPHIUt8o6NkJY/hKlVt8QnWQTz2XdT
-	 wTk3hevf1xT90DIL+mRPrEh7yrW6N9obL7C7YWTo=
-Date: Mon, 26 Aug 2024 11:50:49 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ukleinek@kernel.org,
-	xiaoning.wang@nxp.com, Frank.Li@nxp.com, lee@kernel.org
-Subject: Re: [PATCH] pwm: adp5585: Set OSC_EN bit to 1 when PWM state is
- enabled
-Message-ID: <20240826085049.GA23129@pendragon.ideasonboard.com>
-References: <20240826083337.1835405-1-victor.liu@nxp.com>
+	s=arc-20240116; t=1724662336; c=relaxed/simple;
+	bh=iLPgq4j7K2LiYLxuRxf5ckNN955ctmmarm/caOOsssA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jp7dIJl7CVpGumTiU2f3NxR7dxxcwWyCwKk01Xi7e644e+6DWRHpvM84YoQI3tofR3rOmWg3es5ZE9aMPA0qXUMa8DJW7vhtyGUrSE3cQmMsHNiHJmSu6y/ILVOulvgEN4R4HEccsHN55dwoCnJ3GLb7/+La7wgAI02Gih5HmxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lkNMvOxh; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5343d2af735so2503293e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724662333; x=1725267133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iLPgq4j7K2LiYLxuRxf5ckNN955ctmmarm/caOOsssA=;
+        b=lkNMvOxhXIswR4nnZFnAVWjtCk2qP7x27k7mbQQD0h34Aw5Ahyalv4H029ZKjhDKPQ
+         EdvLHffOZqCKyvPkm4WYu+CNLKQAnte++YVmBLPXXuZI4WOm6R0LJGKh1lzbKh3d2Psc
+         zBYQiQhPmiRnhDMmPQ7v9oyZYE3pnH8dpYRMQvO27Bu9HY89mmJjoP9ovSVZ52Fc08Jh
+         AQ2+MNoWF9fI2SJOewN/D0yuDIX271s04926jtON9z9Z08ecwGggN8uBwdqDUcGxF1ZP
+         X8SKMmEWUqLxJsuRmOPqfgJz2P+qJlc//URw8b+s6VPetBUtU8CKdUoYHm8WlFT6U9EE
+         gJvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724662333; x=1725267133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iLPgq4j7K2LiYLxuRxf5ckNN955ctmmarm/caOOsssA=;
+        b=AM59nNDrB/KPAoa8TNVqNW5i5+UqkLWqG1PauMxrPIey8Dz1wclHVlLvAxi5Qmqvps
+         8VCfUGr+1VpmJEAM8cw5HnfluRBlHiTYMlexK6loLXU6ce3nbpuBI0lm97T4bgdK7rHw
+         xUhQT+TJw2t64AXZxfvxN28ZSnobfFPYQkPt2ZvBgI1yYN7VeWU+yY+J2Jf+SMtTCkdd
+         ZPtuNwoHBCXgT2IxPE8OEaoQb3pQhQzddumF1G7IkNuLrw7WvjE4oXKW+qKgRJTQuPRU
+         oLW9DmTBW6lGepj2HMFPW1n0/GnelH47DW2Uj/z6l9MupLsoKLe0Lfq5fPe/TfUYRzYb
+         4ipw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ZDlIC+ddP1NhYu06PILRYcyCMb6b8c+gQrk947wTMgkxcrThwdABXU/1ZR46pP0wtmjqPcdhGSlRwZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIYD6N8rjtKPTv9gKjS4De5xHeFxdZ0T/DXZIo+aGf9rfDd++Y
+	rKw/eplP1t3oWctpGh4XbFtC1Dlr6RDT0sLOrEp6HgDmVmE7moyVyYjZD7IRIEoOUIQoTXLnZ7a
+	4V1PhKVLqv4iCri0Cup39telb0qTbASBcxvzBEg==
+X-Google-Smtp-Source: AGHT+IHdurCu1h8I5sDDWlcStXgFvab4u4dfQ3BDVkKhxSBCdaAQCimGjSbIMIoVyf3zCgPHH//JMjG8dg09AgOyRLc=
+X-Received: by 2002:a05:6512:334d:b0:534:375f:97de with SMTP id
+ 2adb3069b0e04-534387bdfc1mr4983010e87.58.1724662333113; Mon, 26 Aug 2024
+ 01:52:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240826083337.1835405-1-victor.liu@nxp.com>
+References: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
+ <CACRpkdYFc8vuz__7DkFSMFxUC=LSwCJmEun2KXgUvPMq+_e17A@mail.gmail.com> <ZsiygIj9SiP4O0OM@google.com>
+In-Reply-To: <ZsiygIj9SiP4O0OM@google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Aug 2024 10:52:02 +0200
+Message-ID: <CACRpkdZ_y=2WKCLwi5or-=MasvNw2bcxht6a+bFjV=yAfvQhdQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Remove support for platform data from matrix keypad driver
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>, Daniel Mack <daniel@zonque.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Arnd Bergmann <arnd@arndb.de>, soc@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Liu,
+On Fri, Aug 23, 2024 at 6:02=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Thank you for the patch.
+> I'm glad that we agree that we do not want the elaborate merge process
+> and instead push the changes through one tree in one shot we just need
+> to decide which one - soc or input. I am fine with using either.
 
-On Mon, Aug 26, 2024 at 04:33:37PM +0800, Liu Ying wrote:
-> It turns out that OSC_EN bit in GERNERAL_CFG register has to be set to 1
-> when PWM state is enabled, otherwise PWM signal won't be generated.
+I'm also fine with either, but let's take the input tree because the
+you're in direct control of it so it will be easier.
 
-Indeed, this likely got lost during one of the reworks. The apply
-function correctly clears the bit when disabling PWM, but doesn't set it
-otherwise.
-
-> Fixes: e9b503879fd2 ("pwm: adp5585: Add Analog Devices ADP5585 support")
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Uwe, would you be able to queue this for v6.12 ?
-
-> ---
->  drivers/pwm/pwm-adp5585.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
-> index ed7e8c6bcf32..40472ac5db64 100644
-> --- a/drivers/pwm/pwm-adp5585.c
-> +++ b/drivers/pwm/pwm-adp5585.c
-> @@ -100,6 +100,10 @@ static int pwm_adp5585_apply(struct pwm_chip *chip,
->  	if (ret)
->  		return ret;
->  
-> +	ret = regmap_set_bits(regmap, ADP5585_GENERAL_CFG, ADP5585_OSC_EN);
-> +	if (ret)
-> +		return ret;
-> +
->  	return regmap_set_bits(regmap, ADP5585_PWM_CFG, ADP5585_PWM_EN);
->  }
->  
-
--- 
-Regards,
-
-Laurent Pinchart
+Yours,
+Linus Walleij
 
