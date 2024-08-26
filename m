@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-300624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFB795E634
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:17:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F61295E635
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB46D1F2139C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:17:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51CEA1C208EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 01:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2CC1FBA;
-	Mon, 26 Aug 2024 01:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M25mwsJY"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9263524C;
+	Mon, 26 Aug 2024 01:17:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C491333E7
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A5933D5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724635065; cv=none; b=DplhzgSX3yrIRnLrJHtmtCodN1Abcf8Z6vspiFTimSbItbERjIcta6286EbI46ooc6JlGqM8WqLY6NHOXQAlcI+ZrmCnfFzyJENPW28ejbPj25T6+ty0wVWWGvYg2mTLQAEvoUixat0SuTlRYT6Ym+19ihhCH7+ZImhmIt4EcvI=
+	t=1724635069; cv=none; b=W6MuA6orfFZI6hu+p7SUWRzP2LOVuK3UPU2YcbI8tkTVk1ZB6kjNrUcBO1479r7Lg4zkmZdhIXLYJvJ86dy2ugpfPrZE6mPNCmnhU7W4OFkqBdrArZRyVQLN1zFMICi/VSZU3+z1CyVFZfnmyGiMS4X2cA1CjtD+5aZpTxfFgD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724635065; c=relaxed/simple;
-	bh=ezGCtAxcjcPK8pheEZEEdKvztkYND4uAspNgza6uDhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pE1eI5HnHMeqEnEoDgps8FdNL7s8KV/NvkFbj5H6V3ogantUU+UL/rtnU0oomFN13Ml6gqrV7NXqiSgPLLvDpw05PtbxZRM1u601kxEZqtm+toO/QkSBE56PMDSS76qsyZHeeXmUYjW4s9DHe6+FP7EdKHVmlKV37wplryX6N8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M25mwsJY; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f4f2868783so32084361fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 18:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724635062; x=1725239862; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QxFDewXXFNunsztuQO0RvZBxeihd9YkWSHDT+saDUe4=;
-        b=M25mwsJY19mKJsl6Hq0Jm4orVY+W3VugXcv7idQRAMuo2LLMYegnfuKfO9HFhXtb7G
-         zuxzlSS2lADpcKYcQpryW5vJneybQeQgQkdtHraudylfvhBJmqiwtOHzkIVVysysusea
-         TmeQt+AxljYqnUsghTgJr9R95djFoHiHEnGrZ6Gne04H+KHyyifE1vqwfESyizhdUmDe
-         TV2P+/LTdC+QN5jdjpnpFZye+pzMVXYcSiti0miCt2pTndZpfFF9R07YgyqSWf4ndAjn
-         89BFVqzAqXXU/2kuziTJ3sDk22FGwRbsGkG2qpoj4/GOrN1otFtQ6pRh5hmENVkYgRvL
-         3hSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724635062; x=1725239862;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QxFDewXXFNunsztuQO0RvZBxeihd9YkWSHDT+saDUe4=;
-        b=lF5RQ4ZaOuNhsnCZaKDr/gDEB8/d9oFsPm8zSYvVQLFfx/FbBsFsUQQ8F7WkPJa1ly
-         SuBMZDtVlEv8Zh4XvEW4JxO9i/XsWiPqYX8SBm+vAaLTE1Eu5zYGayIwYhJj0bGV1foA
-         +LQADACQfQ9V4wECrOSD6Tl/omtv89TYthI7PLlMgpl0OUVCGy49d7u0ewXZ3+vDJ5Kt
-         lZQVt2ql9R+S99dpoUqawKeeRByQE3XpSSoC3q8sOJwRzVWQSTFB+xiCXvf9QZthcs5/
-         jUKG/yGi0IMbfpX9QhsUbjWvCwu1wgLRgWlXTm7CW+IrXthFN10slRnPYu1uzaGvmV++
-         9Hfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCXcGFEdXsgn67lroAetQmvI5MvqIJVQl8nPJfGTzrWtP6SawmN9I2R7MmzHncDJaO3Z9ly/rw6N0kvPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVVCrM4z4sHW/m+oDi8VpMqWYODsrKporrcWD4fczR/VX3oTD5
-	Tcxknv2rgDg2KiWtQulrmAvCE/1N5u2NceLbm9xbszFaC4r/MI5s
-X-Google-Smtp-Source: AGHT+IHnZ7IT3cdohBhWPZ6YTHGuayfRidXmP/WHsf/HBFEug8GF9wIz0d/MIfigFSY8K3BmYWnoNA==
-X-Received: by 2002:a05:6512:159e:b0:52f:d128:bd13 with SMTP id 2adb3069b0e04-534387bcf46mr5019071e87.39.1724635061452;
-        Sun, 25 Aug 2024 18:17:41 -0700 (PDT)
-Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f39b5sm598277566b.193.2024.08.25.18.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2024 18:17:41 -0700 (PDT)
-Message-ID: <7ab3f48d-841d-4d61-936c-9e5112a3aaef@gmail.com>
-Date: Mon, 26 Aug 2024 03:17:40 +0200
+	s=arc-20240116; t=1724635069; c=relaxed/simple;
+	bh=WGXREo+pSglzNAmtzH6t1B7+ZyGVSAsDCYsmLWxmDhE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NYwDHdEwv7wP+eyXtqpX+Np/TwdyfQgw703yCtGnEmIKKhA8QCdJWBrSr7SAWE+XbZ4XYh6vSWA/W7h33McLPebWHIzIRtM+iRwxHCSdCY5kIPfsK6T7anzNXNG2qrP8iZdslfcScN0DhLDtWSSEp0J1ELDy/g65xFLjXNrJVlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WsXn201RKzpSwx;
+	Mon, 26 Aug 2024 09:16:05 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5DA7E1800A5;
+	Mon, 26 Aug 2024 09:17:44 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 26 Aug 2024 09:17:43 +0800
+Subject: Re: [PATCH] mtd: ubi: remove unused parameter 'pnum' from
+ add_volume()
+To: Wang Zhaolong <wangzhaolong1@huawei.com>, <richard@nod.at>,
+	<miquel.raynal@bootlin.com>, <vigneshr@ti.com>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@huawei.com>
+References: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <7ef4f6c2-feae-e98b-cc85-a9f92eadaa67@huawei.com>
+Date: Mon, 26 Aug 2024 09:17:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: rtl8192e: Fix parenthesis alignment
-To: Gabriel Tassinari <gabrieldtassinari@gmail.com>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ~lkcamp/patches@lists.sr.ht
-References: <20240824144345.8873-1-gabrieldtassinari@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240824144345.8873-1-gabrieldtassinari@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240825083515.4074081-1-wangzhaolong1@huawei.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-On 8/24/24 16:43, Gabriel Tassinari wrote:
-> fix parenthesis alignment in _rtl92e_qos_handle_probe_response to
-> silence checkpatch warning:
+ÔÚ 2024/8/25 16:35, Wang Zhaolong Ð´µÀ:
+> The parameter 'pnum' in the function add_volume() is not used inside the
+> function body. This patch removes this unused parameter to clean up the
+> code and improve readability.
 > 
-> CHECK: Alignment should match open parenthesis
+> This change does not affect the functionality of add_volume() or any other
+> part of the UBI subsystem, as the removed parameter is not utilized.
 > 
-> Signed-off-by: Gabriel Tassinari <gabrieldtassinari@gmail.com>
+> Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
 > ---
->   drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/mtd/ubi/attach.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
 > 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> index ad21263e725f..18739583f579 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-> @@ -322,7 +322,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
+> diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
+> index ae5abe492b52..fe9784c90ea4 100644
+> --- a/drivers/mtd/ubi/attach.c
+> +++ b/drivers/mtd/ubi/attach.c
+> @@ -393,8 +393,7 @@ static int validate_vid_hdr(const struct ubi_device *ubi,
+>    * to the allocated "av" object in case of success and a negative error code in
+>    * case of failure.
+>    */
+> -static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai,
+> -					  int vol_id, int pnum,
+> +static struct ubi_ainf_volume *add_volume(struct ubi_attach_info *ai, int vol_id,
+>   					  const struct ubi_vid_hdr *vid_hdr)
+>   {
+>   	struct ubi_ainf_volume *av;
+> @@ -576,7 +575,7 @@ int ubi_add_to_av(struct ubi_device *ubi, struct ubi_attach_info *ai, int pnum,
+>   	dbg_bld("PEB %d, LEB %d:%d, EC %d, sqnum %llu, bitflips %d",
+>   		pnum, vol_id, lnum, ec, sqnum, bitflips);
 >   
->   	if (network->flags & NETWORK_HAS_QOS_MASK) {
->   		if (active_network &&
-> -				(network->flags & NETWORK_HAS_QOS_PARAMETERS))
-> +		   (network->flags & NETWORK_HAS_QOS_PARAMETERS))
->   			network->qos_data.active = network->qos_data.supported;
+> -	av = add_volume(ai, vol_id, pnum, vid_hdr);
+> +	av = add_volume(ai, vol_id, vid_hdr);
+>   	if (IS_ERR(av))
+>   		return PTR_ERR(av);
 >   
->   		if ((network->qos_data.active == 1) && (active_network == 1) &&
+> 
 
-Hi Gabriel,
-
-Please make your "Subject" line more unique. Consider that we may end up 
-with having dozen of commits like yours, all of them referring to 
-different removals and all without the necessary information to tell 
-what they differ in (except the driver/subsystem). So it would help if 
-you add the changed file or function to make it more unique.
-
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-Thanks for your support.
-
-Bye Philipp
 
