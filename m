@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-301673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE0A95F3DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:29:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E21995F3E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D0C28366E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:29:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C855B2242E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B06B18E051;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E08B18E058;
 	Mon, 26 Aug 2024 14:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="MjhzRnMu"
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="NPSr3PDW"
 Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B070418D621
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A717D35B
 	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682551; cv=none; b=px/6OojYloCfHo6ZdLCKtHNYfHv3yx1LJJ8kVPWn8cqCo1V7D8cYi1HbTVkVOT+1RXPQMJD2OkmrYMcGlix38bq3NXlpFO19mVIMQuRR+vmJCprdXAU/Z9dMiV/WJ/qyiubysvmXTYb7vw/rQAP+p8lTypQf2iTJc76IVQMuCeA=
+	t=1724682551; cv=none; b=hEdw56QsiMGO02KRv17Trq9zwijFU3BerOJRx6xv4BcROG/1fvCSTXIlRQzvDL+pxeJppo4FFB+/B3/0OrrrUPSKopmAvj+l8LCIBcLHwU+3VzbQHrnADfEnY1yeIklFtfnr3KXJnzXwCdZzKqSH8BdkvG3Ol5jr0aECsAbWUzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724682551; c=relaxed/simple;
-	bh=xtxuyIa/wDkl6gBOFbgR2DCEEZ442yZ5rhen22WtP5I=;
+	bh=KQDjVGlS1MvzhndxRSElYqb6hfSxS9TDM5jZsjzmMeM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YPkEdp37HHPiqt81lXuOyIMSm1wysMqaCl63oqoCcZZ0ovEb1R7Jn+RYu4RO2fKI3S4lEAyiEln/sWjaB6L8W2QJveQ+bVIK57RIs8xqfxFWhIGtLbCaLw2YOywLekwApif1xptAsOh+VyyLL4R0YyKylrN/4L9LasqsN5D2C1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=MjhzRnMu; arc=none smtp.client-ip=185.136.65.227
+	 MIME-Version; b=HiBc1mC4bTZrRR1PwKSkkazWN2VLPEpRkuaF7ZBIFZO7xItA/vpkv8TNplw/tgD8556oiT05aW7TnPh+EMeYCJc06eDbMkuOY0RrdqgpFtrQAsudhzySAmAxYPIrOqo09rp9azzp5J1vITHWkMlnGHwvTnsPV2O8RG3/yZdlQDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=NPSr3PDW; arc=none smtp.client-ip=185.136.65.227
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202408261429015982e0a03fde0e65c5
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 2024082614290297f0fd2bdf9b41c8ba
         for <linux-kernel@vger.kernel.org>;
         Mon, 26 Aug 2024 16:29:02 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=x9pt7lsHs5ZT3pCqHVRpcN4kmYqFRl5kXmH0AVDwzNg=;
- b=MjhzRnMuBqT2gD6s7kHTzP6Y0W34Fv7zwOCCwfMO/KjNpDuwTSwt7Ix3ONSpDf5w9KvuQ3
- PxbUms42cmVZk9jo5HRVY6G4OkQqtmVHxh86P8mfhmzqtHsogU8rpa/0LZ3VhWyLqnERJkAh
- EnApAwme0Yjfvs1ZI72YC47WWEr5iASn/j01J5B/RgaXPtOsjk7zHCldMwl7mQ2QnhTN7GWA
- zPp3QJwgDi7w4B69y5N45DHzKRCpw7RDda1K35Hp9aQiWP07rml220sqw7qlW1rS1LUAgDuU
- uJ8CfUsfjoILwhqjlw1Jjsr75t7TzqVnMTLPdGw4g/feR066wOrgXXOw==;
+ bh=EVq9VQ8J6EPvFL5j90kLD0YYUlBOESmGhSbO7jhKHWM=;
+ b=NPSr3PDWhUex5gCsrqMDho/T4x1KETj86XQXgeQKwyYn98/3H6MIRl5JRml0pchiapen7L
+ dF1Lef4glvh0h3a9bWcSgYsaAdOItuDuG6E+Ir2cKfiR7Eyylt+vhJgQOicSCklwrQhn8aE4
+ iWq/2c/4CRqy3kRxXJedn0N4CiHxC0bwax8Q89wjQKTKXbY0zNVUtUm8cwdQLEWtk3FbNWX2
+ 7hIH6JpfIxowTlIcWqcz9ytpmsWR4946pL73Fj8SnNvPW2rNylA9wdhzsE6q8TgHVY79LE4O
+ 4fx1wcxxvWYpSKJfTAbdPBjsFhhwcUcWqFllQkBTvTt5NCH5Gz1tEG9A==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Nishanth Menon <nm@ti.com>,
 	Vignesh Raghavendra <vigneshr@ti.com>,
@@ -54,9 +54,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Bao Cheng Su <baocheng.su@siemens.com>,
 	Hua Qian Li <huaqian.li@siemens.com>
-Subject: [PATCH 1/2] arm64: dts: ti: iot2050: Disable lock-step for all iot2050 boards
-Date: Mon, 26 Aug 2024 16:28:58 +0200
-Message-ID: <d1fad2c1b5275d412338becfd7772216b5b5412c.1724682539.git.jan.kiszka@siemens.com>
+Subject: [PATCH 2/2] arm64: dts: ti: iot2050: Add overlays for M.2 used by firmware
+Date: Mon, 26 Aug 2024 16:28:59 +0200
+Message-ID: <7062ec915ecd161f6c62952eb7c1cd5036785dba.1724682539.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1724682539.git.jan.kiszka@siemens.com>
 References: <cover.1724682539.git.jan.kiszka@siemens.com>
 Precedence: bulk
@@ -69,64 +69,121 @@ Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-From: Li Hua Qian <huaqian.li@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The PG1 A variant of the iot2050 series has been identified which
-partially lacks support for lock-step mode. This implies that all
-iot2050 boards can't support this mode. As a result, lock-step mode has
-been disabled across all iot2050 boards for consistency and to avoid
-potential issues.
+To allow firmware to pick up all DTs from here, move the overlays that
+are normally applied during DT fixup to the kernel source as well. Hook
+then into the build nevertheless to ensure that regular checks are
+performed.
 
-Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg2.dtsi | 5 -----
- arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi     | 5 +++++
- arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dts     | 5 -----
- 3 files changed, 5 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/ti/Makefile               |  2 +
+ ...48-iot2050-advanced-m2-bkey-ekey-pcie.dtso | 27 +++++++++++
+ ...-am6548-iot2050-advanced-m2-bkey-usb3.dtso | 47 +++++++++++++++++++
+ 3 files changed, 76 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtso
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-usb3.dtso
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg2.dtsi b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg2.dtsi
-index e2584a5efe34..b3c4c0eec3dc 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg2.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg2.dtsi
-@@ -9,11 +9,6 @@
-  * Common bits of the IOT2050 Basic and Advanced variants, PG2
-  */
- 
--&mcu_r5fss0 {
--	/* lock-step mode not supported on PG2 boards */
--	ti,cluster-mode = <0>;
--};
--
- &main_pmx0 {
- 	cp2102n_reset_pin_default: cp2102n-reset-default-pins {
- 		pinctrl-single,pins = <
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi
-index ef34b851e178..e76828ccf21b 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi
-@@ -635,3 +635,8 @@ icssg0_eth1_phy: ethernet-phy@1 {
- 		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
- 	};
- };
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+index e20b27ddf901..f459af7fac0d 100644
+--- a/arch/arm64/boot/dts/ti/Makefile
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -77,6 +77,8 @@ dtb-$(CONFIG_ARCH_K3) += k3-am6528-iot2050-basic.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am6528-iot2050-basic-pg2.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced-m2.dtb
++dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtbo
++dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced-m2-bkey-usb3.dtbo
+ dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced-pg2.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am6548-iot2050-advanced-sm.dtb
+ dtb-$(CONFIG_ARCH_K3) += k3-am654-base-board.dtb
+diff --git a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtso b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtso
+new file mode 100644
+index 000000000000..666237f6d79c
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtso
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * IOT2050 M.2 variant, overlay for B-key PCIE0_LANE0 + E-key PCIE1_LANE0
++ * Copyright (c) Siemens AG, 2022-2024
++ *
++ * Authors:
++ *   Chao Zeng <chao.zeng@siemens.com>
++ *   Jan Kiszka <jan.kiszka@siemens.com>
++ */
 +
-+&mcu_r5fss0 {
-+	/* lock-step mode not supported on iot2050 boards */
-+	ti,cluster-mode = <0>;
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/phy/phy.h>
++#include <dt-bindings/gpio/gpio.h>
++
++&pcie0_rc {
++	num-lanes = <1>;
++	phys = <&serdes0 PHY_TYPE_PCIE 1>;
++	phy-names = "pcie-phy0";
++	reset-gpios = <&main_gpio1 15 GPIO_ACTIVE_HIGH>;
++	status = "okay";
 +};
-diff --git a/arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dts b/arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dts
-index 29a31891b3db..4968a47f31ea 100644
---- a/arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am6528-iot2050-basic.dts
-@@ -22,8 +22,3 @@ / {
- 	compatible = "siemens,iot2050-basic", "ti,am654";
- 	model = "SIMATIC IOT2050 Basic";
- };
--
--&mcu_r5fss0 {
--	/* lock-step mode not supported on this board */
--	ti,cluster-mode = <0>;
--};
++
++&pcie1_rc {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-usb3.dtso b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-usb3.dtso
+new file mode 100644
+index 000000000000..0f86235c9771
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-m2-bkey-usb3.dtso
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * IOT2050 M.2 variant, overlay for B-key USB3.0 + E-key PCIE1_LANE0
++ * Copyright (c) Siemens AG, 2022-2024
++ *
++ * Authors:
++ *   Chao Zeng <chao.zeng@siemens.com>
++ *   Jan Kiszka <jan.kiszka@siemens.com>
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/phy/phy.h>
++#include <dt-bindings/gpio/gpio.h>
++
++&serdes0 {
++	assigned-clock-parents = <&k3_clks 153 7>, <&k3_clks 153 4>;
++};
++
++&pcie0_rc {
++	status = "disabled";
++};
++
++&pcie1_rc {
++	pinctrl-names = "default";
++	pinctrl-0 = <&minipcie_pins_default>;
++
++	num-lanes = <1>;
++	phys = <&serdes1 PHY_TYPE_PCIE 0>;
++	phy-names = "pcie-phy0";
++	reset-gpios = <&wkup_gpio0 27 GPIO_ACTIVE_HIGH>;
++	status = "okay";
++};
++
++&dwc3_0 {
++	assigned-clock-parents = <&k3_clks 151 4>,  /* set REF_CLK to 20MHz i.e. PER0_PLL/48 */
++				 <&k3_clks 151 8>;  /* set PIPE3_TXB_CLK to WIZ8B2M4VSB */
++	phys = <&serdes0 PHY_TYPE_USB3 0>;
++	phy-names = "usb3-phy";
++};
++
++&usb0 {
++	maximum-speed = "super-speed";
++	snps,dis-u1-entry-quirk;
++	snps,dis-u2-entry-quirk;
++};
 -- 
 2.43.0
 
