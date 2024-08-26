@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-301832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3021F95F638
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:15:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4E295F63C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9AB20BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E79282C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EDC1946C9;
-	Mon, 26 Aug 2024 16:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59577194AEB;
+	Mon, 26 Aug 2024 16:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ilj4xTAA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYWABbd0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C1113BACE
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987B44374;
+	Mon, 26 Aug 2024 16:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688915; cv=none; b=WmdTTuh++jXm6m+WUTtBnVkT70MCgduzSUPXjls9K3RTy7shjjXZkSC3tf31pTkw2jht5hjDUdXm/YNoRZ+xY/6GB/eZ86f22jyU0GWkFkTbunP/EHITMf6CeguKURXkNT7d7diQcD37eC/VK4cWBzCnELTYQQihESjDDyYNK60=
+	t=1724688930; cv=none; b=mPIywsxa/zY1JPoOA6DuRdQyXzMrbj6DWYMRGNkWg1Lzhf6xnhTnyaRTV7TygeOEVLpNzN/+SUTrVaF+L6jLMi+wB8nDgBAp8lsX6vhGo4z+F5wzyLULYOU2fRybVrYh48FUWWL/NXZHA1Y5YR3zpPWea0uJprw9VQ+Gy0piPNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688915; c=relaxed/simple;
-	bh=PpyI/C464x6EhgM1qIUWeL7Sz+KNsLjuJE/7iztvuPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZ//9cz/MQDGwf24e3e20c2jXRV8IQ4U1aPQrIQABHyZwgnLLnT6kKbJgcJlKeaWmQ/myN2uyYJ2WFv9o4I5PY0xBNfDshCZGyz/SVbTqdzykcMco6SXtnvCvtO3+83kNuC4CQeaQacv5cZLEvgbXZgxLyJoz8l0zkDTNoUGuJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ilj4xTAA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724688913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AnTt/v04kG2lCJ1eZ7LwMpc3AUHrXM5GXqq1e2Zccg4=;
-	b=Ilj4xTAAgoKo578IUO6RVyDr8qOP5Rx+NA5qdvawq0eobJpYclYlmryWNdkgzz12kh/0/T
-	o5A5xCV16rQhgwQ0h+sDi0bwmiDxhUTazhCyU3aeU4svf8fHOjEQN6Ggs186kiaOOISrG0
-	q6GZQMKe7HtvEBKoSOvN5u9j4JkvLbw=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-HZ00kUsoPVWIkb3nVd2cLg-1; Mon, 26 Aug 2024 12:15:09 -0400
-X-MC-Unique: HZ00kUsoPVWIkb3nVd2cLg-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6bf6ead7783so52431626d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:15:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724688909; x=1725293709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AnTt/v04kG2lCJ1eZ7LwMpc3AUHrXM5GXqq1e2Zccg4=;
-        b=siYU5w+HJgtw0jSYcIF2ryW00xIGTKPrx/0rPXxjgbf9a5TabTTZUHekY/L2i9Seza
-         s0VjE8jU4CPjenNHZx/EFSbs5U2BrDMre8WEWLPnlZ6pVf6sXqZqIBeW3EW+V97pkugv
-         yFpkZnA4h/KreUlQ8W32oU+9ymk13Y9ThBByY8SmdV5upN4Q8ypgkJ/32X2/iSdTsXsf
-         u5Htrokcv37MpCUUl7RYK3JSPR68qZkCQ8xdy7VciVdzD1w9B2E4Nf+dT62snZ5XwEuU
-         3WuAEPprZY4/27/l7Hqj+T2ErpwQMtEgdRA7MwKNn0No2voEoXO+CRHds9gXwIkMxFU6
-         HO2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9cuiyFuga+5cYDbXkCdbzXa8soFyDCQvTi/oUb/kaBo2w2C3exTHGZXpx1E5c/NHyBzM3M6FlBn1Trrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzavsUhxL+xPC+d8lT/mpXFKaBqpZOnkUwRE2Odr8tLN9C50fui
-	RXz8kmetfmJ5XlXP6UPdxB5jlPQMLKANJnTfStVfiJtcbdHlF+vmd41pgi+lhB5gdht2eXKYH2i
-	f4jGwvUv7DQ5reJM0H+FZC1o/BqP8CHDSsC8zOr4g1yMFghHKwu0PAijIWpJ8iQ==
-X-Received: by 2002:a05:6214:5544:b0:6bd:69a5:4fc4 with SMTP id 6a1803df08f44-6c16dc2a99cmr118357566d6.8.1724688909168;
-        Mon, 26 Aug 2024 09:15:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHt/ipYTrvhVyJ0rdzo5CkEtbzz8pU+g9RFTfd5qHbSoX00nso7ovG4mPjxp57hJgjSH8DYXQ==
-X-Received: by 2002:a05:6214:5544:b0:6bd:69a5:4fc4 with SMTP id 6a1803df08f44-6c16dc2a99cmr118357106d6.8.1724688908584;
-        Mon, 26 Aug 2024 09:15:08 -0700 (PDT)
-Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162db067asm47686316d6.76.2024.08.26.09.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 09:15:08 -0700 (PDT)
-Date: Mon, 26 Aug 2024 09:15:06 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix incorrect domain ID in context flush
- helper
-Message-ID: <2h2gyzr3anhcpyiorkrjp3o4cdg7sg2rmrvgzmkxopabdsr3ph@jlhq77xjtcdf>
-References: <20240815124857.70038-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1724688930; c=relaxed/simple;
+	bh=jkqzvuLSKjk6lxkGNGUcsw4Ig8szieDjSx37poI+59o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kysOt7e+BPTbVGfC1Lr7I0xgC1ySTtarFdgs0hTvfXdZY+HXnRzv+WuBoUTvJVzHvlWmJ7M+Ai7T4botpUHd3FTSB3iC6PTGMct2lDB+KkHaBv1jtN7itq1Z1RE+efWcGFqfRv8mNDkOHcgBFOOwwwPDIJJP/vGVSoXga7zFpEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYWABbd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE00C52FC6;
+	Mon, 26 Aug 2024 16:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724688930;
+	bh=jkqzvuLSKjk6lxkGNGUcsw4Ig8szieDjSx37poI+59o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NYWABbd0U6yyuZqn5kmSmh7Xdk00XRb45Dx7+od8kmc/pBgSbzMmA4k5NDBVX2wYI
+	 5iJB/R9LzPZ6f5xCvUyJIXel4a+kYx6vhDtNmtl6Xj21jyiXxOe6qIo7uReIXrv0U2
+	 F+M9qmx/R4K0bPMU1mSFNJFVApkx9rQ9jIvpqMqPKLU9E60rqVNW2O2X2nlh9/A8XC
+	 UD6NzLGtFDvo0O92r7YhbEc/ge4S16B0nZ8viWUeReSOHHgRqogx3TZkk0BYqvR17X
+	 b9hUpRe7laTZBx8dtKx8QUujAaTqLeNA4U+72f5NFg3PMezMyuNq/ubMbJ1jtw0oeN
+	 vSDudxbd3Cijw==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-27032e6dbf2so2927846fac.1;
+        Mon, 26 Aug 2024 09:15:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8cOdiTTO4/OnP9JU+0Q3eEaVb3u5sEDk1DzjKK1IJ34WpvfJRaf4W/B9kIA/dKaCq+wMw8Y4rws6Y@vger.kernel.org, AJvYcCUUTB6AlSMTWui6uaFyD/lRp3VYm5hgCSZw05FoB10pVVBegQZtS89eyURodjHn5CdoaBNhn+J7zTSA/mzs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzitKuHFV9J+FjFRFuqOD6FM7BI2mJijb+zugwxH+Uu6SyA+CH5
+	IUHqZni9J98XQDYYH0wevrWVex+CJnVpWYkJuXZ9Bu5aUiVruH2yUEyCPEV12e+4l+ufYFkaBKu
+	K0vGBYCTamT+l7iKxIjL2O0B8mCc=
+X-Google-Smtp-Source: AGHT+IFp1BTLSWH4mpHphZAC/nONYYceOu5PBYhd0g/XSqLewTat+1/1B6joUdncVGCUq66DbIYrXTslw/vMXVK62fc=
+X-Received: by 2002:a05:6871:7419:b0:270:2879:e349 with SMTP id
+ 586e51a60fabf-273e6552ce8mr11105378fac.23.1724688929326; Mon, 26 Aug 2024
+ 09:15:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815124857.70038-1-baolu.lu@linux.intel.com>
+References: <20240812005929.113499-1-sunilvl@ventanamicro.com>
+ <ZrlgVUXC_dCW9ISM@sunil-laptop> <87mskzcnmf.ffs@tglx>
+In-Reply-To: <87mskzcnmf.ffs@tglx>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 26 Aug 2024 18:15:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
+Message-ID: <CAJZ5v0imJcU4cwDuZKEvGf93fZm4ea4s2Ocp3Cnfb3+nBQ0-Gg@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sunil V L <sunilvl@ventanamicro.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Len Brown <lenb@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Anup Patel <anup@brainfault.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, Robert Moore <robert.moore@intel.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Haibo Xu <haibo1.xu@intel.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
+	Drew Fustini <dfustini@tenstorrent.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 08:48:57PM GMT, Lu Baolu wrote:
-> The helper intel_context_flush_present() is designed to flush all related
-> caches when a context entry with the present bit set is modified. It
-> currently retrieves the domain ID from the context entry and uses it to
-> flush the IOTLB and context caches. This is incorrect when the context
-> entry transitions from present to non-present, as the domain ID field is
-> cleared before calling the helper.
-> 
-> Fix it by passing the domain ID programmed in the context entry before the
-> change to intel_context_flush_present(). This ensures that the correct
-> domain ID is used for cache invalidation.
-> 
-> Fixes: f90584f4beb8 ("iommu/vt-d: Add helper to flush caches for context change")
-> Reported-by: Alex Williamson <alex.williamson@redhat.com>
-> Closes: https://lore.kernel.org/linux-iommu/20240814162726.5efe1a6e.alex.williamson@redhat.com/
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+On Mon, Aug 26, 2024 at 5:25=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Mon, Aug 12 2024 at 06:37, Sunil V. L. wrote:
+> > On Mon, Aug 12, 2024 at 06:29:12AM +0530, Sunil V L wrote:
+> >> This series adds support for the below ECR approved by ASWG.
+> >> 1) MADT - https://drive.google.com/file/d/1oMGPyOD58JaPgMl1pKasT-VKsIK=
+ia7zR/view?usp=3Dsharing
+> >>
+> >> The series primarily enables irqchip drivers for RISC-V ACPI based
+> >> platforms.
+> >
+> > This series has spent quite a bit of time now on the list. As you are
+> > aware, few clarifications like _PIC codes are also done now. There is
+> > no major change after you had agreed for the design. So, can this be
+> > considered for the next release please?
+>
+> Rafael, if you want to take it through the ACPI tree, then for the
+> irqchip parts please add:
+>
+>   Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-Joerg,
+Yes, I'm going ro do this.
 
-Can this go into a fixes pr for 6.11?
-
-Regards,
-Jerry
-
+Thank you!
 
