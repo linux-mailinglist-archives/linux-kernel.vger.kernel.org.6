@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-301884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD1C95F6DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5122995F6A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F321F2297E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D34F281D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069161991A4;
-	Mon, 26 Aug 2024 16:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92800194AF4;
+	Mon, 26 Aug 2024 16:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UAQev5N9"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eN6AzQiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27789195805;
-	Mon, 26 Aug 2024 16:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3C1865E7;
+	Mon, 26 Aug 2024 16:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690366; cv=none; b=uRaG9CPzD2JDzA0U93998zOkKjcfRP+doWByl/MT4LahhldE7pmXK79nJcgLGlT6g939Xm/S+Q6siy4yBq4So7wEBDal1BdSPCNuzWTJDWFEJjs9iOqE475ukNL/JUu8tJ00/GxncWnzJrtEj0EZbNVcCRqawgjKLwKHqCDRqUM=
+	t=1724689938; cv=none; b=Q1Vivi+SI8QPTFPIgee0Yp2VwJQZtRhFYI+PuGJwRXL0ruVoBC+cpAAmQ2CWcDw6+uPCwFntWKBL6fEgSr6sag42AMAKbAMJpw9xTMSpKZ3My4YUywmQD4Wp9cNoSkrcYwhNQWR09lC5jsb+ymprnufcdOPZNteu+HjdCtJMw4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690366; c=relaxed/simple;
-	bh=zmx6kFpyVT5IfRf2UW1B3t25cvlhZfOlajPkJYOuAnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDmfPiH3WaLZR1IqR4egQksbEmBCEZZ5rBr5vFtx8q12kCOq/1cXj1i7CooE/icFz8lWt310f8Ke8+fvF+RpnO9+OEyJUWOMLsOF3PPSs9LEEvSsIbCXjsrmQJqSIA3yhsJt+9hiikMFTcSL5/reof8LliTk01Al6pdP1YBfDyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UAQev5N9 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 12cef64563457834; Mon, 26 Aug 2024 18:39:22 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id ACCA5921952;
-	Mon, 26 Aug 2024 18:39:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724690362;
-	bh=zmx6kFpyVT5IfRf2UW1B3t25cvlhZfOlajPkJYOuAnY=;
-	h=From:Subject:Date;
-	b=UAQev5N9VpAsG0fSPW/6cig7AD3yU1pX39UqcbC84dl8UtytslaR1HwTQbgP8GSuL
-	 97VRI+2YBn/pDrnja86uTJPKWJnv9J9pDBpwcID209/5EZTi+3AIoSmDlfUABgdp9r
-	 vy6lG6UixgWdSMkHC8m5CAVHyhpYCnNIC/jXp8rJSGLNdiolM6V5CRI1x3RdqDLstA
-	 ysm0xE76rGFaVdhDH9p2tVkNle0PaKJ3A57lhk1qVUWdt/I9jI/VWVHTUihAuqM1Wi
-	 22aNIKzF/WbXipbsMpuUdTVhCEA1LGgApZYH7xlNxN13wY9ENRIaHMhpjJYmal4h8Y
-	 ohhs8/hia1c6w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Huisong Li <lihuisong@huawei.com>
-Subject:
- [PATCH v1 2/4] thermal: core: Drop dead code from monitor_thermal_zone()
-Date: Mon, 26 Aug 2024 18:31:32 +0200
-Message-ID: <10547425.nUPlyArG6x@rjwysocki.net>
-In-Reply-To: <2979211.e9J7NaK4W3@rjwysocki.net>
-References: <2979211.e9J7NaK4W3@rjwysocki.net>
+	s=arc-20240116; t=1724689938; c=relaxed/simple;
+	bh=CuRZPNcAg/KhTuJ7w3AXF0CuthcPOrzqmzpzn6hzOYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V/VLFYXBZpw8R6NwYB94qP+M5FO7cXUCG0zQVxVQjWmOYjxRw2oVDfnJajRbKbVITNua5yTPvzCNSxugv50uVxHzEP+z3DBeZ6qoSmkQRdCFLwmZ9sfvGjJHK73/eQULDlJtWOLLVidI7+nhMsXolsbOjxa1d+ba5pRMVUIryGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eN6AzQiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D78C52FC1;
+	Mon, 26 Aug 2024 16:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724689938;
+	bh=CuRZPNcAg/KhTuJ7w3AXF0CuthcPOrzqmzpzn6hzOYE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eN6AzQiuMdLSoW/3F9+Kzt5KSH89VVoAwGX8FyZ0s9dQfScSoCdW3p0Xn/z8dpAVH
+	 3zTCHs0lY+KUT9ieqQ+V5lVCTwZNHuE87P+5RQTD1qXNI7ckI0ERu3Ytkgy0GD5tYh
+	 4W5ITXd3z+qbQ4B32jqfAQTouEfv9iPddJR1PgwIuoiw3hZ4PACH4yyn0a5JtxA3Ge
+	 VnlOro3CtNRo5cVHH+mUcPPU/fyHyc7+vAWEv21ZXFl3zG5uWnoYsVszOoCluHNlHM
+	 +Uw7QDpT7EQefBEYOqmU0inTJmdwtZ3aJfIFHV63ui9cxUDQ4KIm9A2iPfzO3baTGQ
+	 2MLkypeCd6nuQ==
+Date: Mon, 26 Aug 2024 09:32:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v3 1/3] phy: open_alliance_helpers: Add defines
+ for link quality metrics
+Message-ID: <20240826093217.3e076b5c@kernel.org>
+In-Reply-To: <20240822115939.1387015-2-o.rempel@pengutronix.de>
+References: <20240822115939.1387015-1-o.rempel@pengutronix.de>
+	<20240822115939.1387015-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
- rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhhuhhishhonhhgsehhuhgrfigvihdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 22 Aug 2024 13:59:37 +0200 Oleksij Rempel wrote:
+> Introduce a set of defines for link quality (LQ) related metrics in the
+> Open Alliance helpers. These metrics include:
+> 
+> - `oa_lq_lfl_esd_event_count`: Number of ESD events detected by the Link
+>   Failures and Losses (LFL).
+> - `oa_lq_link_training_time`: Time required to establish a link.
+> - `oa_lq_remote_receiver_time`: Time required until the remote receiver
+>   signals that it is locked.
+> - `oa_lq_local_receiver_time`: Time required until the local receiver is
+>   locked.
+> - `oa_lq_lfl_link_loss_count`: Number of link losses.
+> - `oa_lq_lfl_link_failure_count`: Number of link failures that do not
+>   cause a link loss.
+> 
+> These standardized defines will be used by PHY drivers to report these
+> statistics.
 
-Since monitor_thermal_zone() is only called when the given thermal zone
-has been enabled, as per the thermal_zone_device_is_enabled() check in
-__thermal_zone_device_update(), the tz->mode check in it always
-evaluates to "false" and the thermal_zone_device_set_polling()
-invocation depending on it is dead code, so drop it.
-
-No functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -364,9 +364,7 @@ static void thermal_zone_recheck(struct
- 
- static void monitor_thermal_zone(struct thermal_zone_device *tz)
- {
--	if (tz->mode != THERMAL_DEVICE_ENABLED)
--		thermal_zone_device_set_polling(tz, 0);
--	else if (tz->passive > 0)
-+	if (tz->passive > 0)
- 		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
- 	else if (tz->polling_delay_jiffies)
- 		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
-
-
-
+If these are defined by a standard why not report them as structured
+data? Like we report ethtool_eth_mac_stats, ethtool_eth_ctrl_stats,
+ethtool_rmon_stats etc.?
 
