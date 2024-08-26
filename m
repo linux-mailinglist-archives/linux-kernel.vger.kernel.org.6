@@ -1,72 +1,133 @@
-Return-Path: <linux-kernel+bounces-302130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B7D95FA46
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:02:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEB495FA4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B381C2084F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664BE282F59
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FEA1990DB;
-	Mon, 26 Aug 2024 20:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64EF19A296;
+	Mon, 26 Aug 2024 20:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GztjKuuk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q1SkOqg/"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7DD199243;
-	Mon, 26 Aug 2024 20:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E9199E98
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702563; cv=none; b=W9I5nFrCdu9vceykGrnvGs6mLiP+P3i100Wtqt7X/XH72d1IZ4oJKvwy1IyaP+d8s+bwDieOUlgx+SfSkWWylAJmW0akoNaenG7zEGLOFoeoj9WkOtVI+ZDvemz+Y4lhG+B3DZHCGRZNTPtPQ9U/qWjbJt0yP1fgf424LG041oo=
+	t=1724702587; cv=none; b=CcJbGHWyXl6Sg1qUR0j9hshM6b2JzgyaPQEKFUCen32zlm50aMH3qK8vm1LtRvgFV5uMHiSo+CMbONpj7N9tOTByR1N7Rsq7LHOPa+RCO/hFlc3zcrcSGOnYKMAnOdnEcY8AQ39qzzY+L/B91uXiin6YC493AUDlLjgewtnlsfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702563; c=relaxed/simple;
-	bh=lWkYccqrI8abW+zXHMHwQiv/jHDEjgCiW5moaBHwmrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FKamceKuBeZDqGpWkbFbspZ6D1UaBG7tKa20CAV2IH3OQYY0VDIg8Xy1bivOKzNReAfeOiox8U9J8EVq0SbgwTffIGXYToxIZHh3PAZ6nPmVesND/dLl3W2KfsEv0IkzReiAA6224VAuJhZY4Xc+G6mGBbAf8Yr61JXa8jdd5gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GztjKuuk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D8DC8B7BC;
-	Mon, 26 Aug 2024 20:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724702563;
-	bh=lWkYccqrI8abW+zXHMHwQiv/jHDEjgCiW5moaBHwmrs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GztjKuukceFjbBeMoNDO1+iHN2CH8/xeeFRF9tLSzay3PWFvghyK7NwNiOhFEpdHg
-	 dh1EBZVnedjF1kNA1VBLphBV1f4yTA9KKMlhtu2ctYgcbk90I2gVt2fEQ6cLIY5iVX
-	 KeOzN1rkBsvEi/gVp/2aecKE2/f2ptXQ35cE/XuZFkB4fbI56CY3c/ELyvG69nVU8t
-	 fc7sgZD8QEvTcNHMZdvgNnK5zo8jxrh5XKCsFbgMxnNZT7LMaCSQYYdReSbM72vToi
-	 caR36Y1VYPlwVKEpM9ZN6szE44oU+5qU7SNh7uTXvYuQwOBuRyKbR3fqTpPiAd/mZO
-	 68RG3WHVOnn0g==
-Date: Mon, 26 Aug 2024 17:02:39 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Shung-Hsi Yu <shung-hsi.yu@suse.com>, dwarves@vger.kernel.org,
-	Jiri Olsa <olsajiri@gmail.com>, masahiroy@kernel.org,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, linux-kbuild@vger.kernel.org,
-	bpf@vger.kernel.org, msuchanek@suse.com
-Subject: Re: [RFC] kbuild: bpf: Do not run pahole with -j on 32bit userspace
-Message-ID: <ZszfX0V1YgM0225K@x1>
-References: <20240820085950.200358-1-jirislaby@kernel.org>
- <ZsSpU5DqT3sRDzZy@krava>
- <523c1afa-ed9d-4c76-baea-1c43b1b0c682@kernel.org>
- <c2086083-4378-4503-b3e2-08fb14f8ff37@kernel.org>
- <7ebee21d-058f-4f83-8959-bd7aaa4e7719@kernel.org>
- <a45nq7wustxrztjxmkqzevv3mkki5oizfik7b24gqiyldhlkhv@4rpy4tzwi52l>
- <ZsdYGOS7Yg9pS2BJ@x1>
- <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org>
+	s=arc-20240116; t=1724702587; c=relaxed/simple;
+	bh=g5xOaai0fgTbYlUKqLFRHlFw5MNLDbz9WCMjdzLGo3Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=chhM4RmnoMkTdU3oWp3ZX6BKGAhoPLICG+Ygf7pNf19d0AsbZhY7lJHYv0WgBMmIVz8ojkWrz3zZPbfIykeMcX2nVc18VpeCw2LH6RCuVNG3fAytfpLf0ViGvARhOq9HI/oNH2v2buskodKCwr6bWqN3KC3o3jN+z+z/iJLNJFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q1SkOqg/; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5becdf7d36aso5230541a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724702584; x=1725307384; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VApVdDfxKyIda0Fc340q9PZEeoaKy91HY6fQC9GFL0U=;
+        b=Q1SkOqg/iPU9Fa6gnkjlcaGewZkWbNJZulREbKAONKaBqfdeBSHESx46Si+roYQwKc
+         wSwRmavWe2pSINYwNiD1rhTJp9VfNhkdp0gFy1y8sxmp3uHzNbHB1fU7uR3leFYG4WBq
+         Pq0lQcHaA952ynFfejUsFrrgS/0Num1IbS1jtO0klPEnqHu9ok5Elh39LRMImxTi9U9q
+         osYAJExt2jS7qwxqRm1huXY7DO4pCQ0KJiCfEGkVzZDBg/o8zXujlIRe/XeDZpDbqazr
+         uwtM6LFIeCONkSeG59m6TtTktvJnYP1KUoGm38XCmFMAVJ3Kj9Mtb/DYnH9o1Exwdlrj
+         B3YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724702584; x=1725307384;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VApVdDfxKyIda0Fc340q9PZEeoaKy91HY6fQC9GFL0U=;
+        b=Uaa39ul+3QAyKd+40zF3Hw5I9SZokLwZlufXI1bwwjYhFFO9d+85z3BPQnHo9qpTHz
+         EwP02dZVpxIklijAL1nFzJgsltv6mBpyKUXV7YP3ismBQK56f99U+mp8M/AylgOG/OS9
+         hSP6TmKWmkCfoBsp058xOAWIG/YZrxL+ridfaXqO+ZMcbHJhpK3qxDKQmS4JMVde+s7L
+         XTBmhZ0mvWM6AG/o79AcWKw9ocAQgJbLOAf81/UdscUw+VgqVlLE4yZKH9PzgmD2tGcI
+         L/CuR5XqZswaI/Dqp586UMTS+b4VDqKmBY2Ctkto7x2duRGDVUKz/mBth+w8Xs/kHmFy
+         yFWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTAzmEd1jk0+pTA2JM4W+DOa+mYtQ9VMCLxJr0WgWlKU+XgzGESjcA0leZjKE/pDdLIMCUI1lfaqPeIXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt8UIlwyVRVe3AJKET2ao7ynn+FTtfWj+ixXAr/fOKJp4YQQYF
+	lesj85CAwK5cyfs2x/HWMLLyGjbx40RgoJXVcriifzEKMWG33NBla1+aG+DVQZk=
+X-Google-Smtp-Source: AGHT+IEJun9KfUteMfL59uNTGUHEpSrl0T1D6SDZ8OvEGiIZBnAyJPah0ll1ZtxJIi9VNurPdw/FLQ==
+X-Received: by 2002:a05:6402:40c5:b0:5be:dc90:d13f with SMTP id 4fb4d7f45d1cf-5c08915b944mr8842242a12.5.1724702583173;
+        Mon, 26 Aug 2024 13:03:03 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1f62bcsm137523a12.35.2024.08.26.13.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 13:03:02 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 26 Aug 2024 22:03:09 +0200
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
+Message-ID: <ZszffZoaK7WRRdjc@apocalypse>
+Mail-Followup-To: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+ <c0b904d8-073d-47ec-9466-28ae3a212dac@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,52 +136,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f170d7c2-2056-4f47-8847-af15b9a78b81@kernel.org>
+In-Reply-To: <c0b904d8-073d-47ec-9466-28ae3a212dac@broadcom.com>
 
-On Mon, Aug 26, 2024 at 10:57:22AM +0200, Jiri Slaby wrote:
-> On 22. 08. 24, 17:24, Arnaldo Carvalho de Melo wrote:
-> > On Thu, Aug 22, 2024 at 11:55:05AM +0800, Shung-Hsi Yu wrote:
-> > I stumbled on this limitation as well when trying to build the kernel on
-> > a Libre Computer rk3399-pc board with only 4GiB of RAM, there I just
-> > created a swapfile and it managed to proceed, a bit slowly, but worked
-> > as well.
-> 
-> Here, it hits the VM space limit (3 G).
-> 
-> > Please let me know if what is in the 'next' branch of:
+Hi Florian,
+
+On 10:01 Wed 21 Aug     , Florian Fainelli wrote:
+> On 8/20/24 07:36, Andrea della Porta wrote:
+> > RaspberryPi RP1 contains Cadence's MACB core. Implement the
+> > changes to be able to operate the customization in the RP1.
 > > 
-> > https://git.kernel.org/pub/scm/devel/pahole/pahole.git
-> > 
-> > Works for you, that will be extra motivation to move it to the master
-> > branch and cut 1.28.
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > 
-> on 64bit (-j1):
-> * master: 3.706 GB
-> (* master + my changes: 3.559 GB)
-> * next: 3.157 GB
+> You are doing a lot of things, all at once, and you should consider
+> extracting your change into a smaller subset with bug fixes first:
 > 
+> - one commit which writes to the RBQPH the upper 32-bits of the RX ring DMA
+> address, that looks like a bug fix
 > 
-> on 32bit:
->  * master-j1: 2.445 GB
->  * master-j16: 2.608 GB
->  * master-j32: 2.811 GB
->  * next-j1: 2.256 GB
->  * next-j16: 2.401 GB
->  * next-j32: 2.613 GB
+> - one commit which retriggers a buffer read, even though that appears to be
+> RP1 specific maybe, if not, then this is also a bug fix
 > 
-> It's definitely better. So I think it could work now, if the thread count
-> was limited to 1 on 32bit. As building with -j10, -j20 randomly fails on
-> random machines (32bit processes only of course). Unlike -j1.
+> - one commit that adds support for macb_shutdown() to kill DMA operations
+> 
+> - one commit which adds support for a configurable PHY reset line + delay
+> specified in milli seconds
+> 
+> - one commit which adds support for controling the interrupt coalescing
+> settings
+> 
+> And then you can add all of the RP1 specific bits like the AXI bridge
+> configuration.
+> 
+> [snip]
+> 
+> > @@ -1228,6 +1246,7 @@ struct macb_queue {
+> >   	dma_addr_t		tx_ring_dma;
+> >   	struct work_struct	tx_error_task;
+> >   	bool			txubr_pending;
+> > +	bool			tx_pending;
+> >   	struct napi_struct	napi_tx;
+> >   	dma_addr_t		rx_ring_dma;
+> > @@ -1293,9 +1312,15 @@ struct macb {
+> >   	u32			caps;
+> >   	unsigned int		dma_burst_length;
+> > +	u8			aw2w_max_pipe;
+> > +	u8			ar2r_max_pipe;
+> > +	bool			use_aw2b_fill;
+> >   	phy_interface_t		phy_interface;
+> > +	struct gpio_desc	*phy_reset_gpio;
+> > +	int			phy_reset_ms;
+> 
+> The delay cannot be negative, so this needs to be unsigned int.
+> 
+> > +
+> >   	/* AT91RM9200 transmit queue (1 on wire + 1 queued) */
+> >   	struct macb_tx_skb	rm9200_txq[2];
+> >   	unsigned int		max_tx_length;
+> > diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> > index 11665be3a22c..5eb5be6c96fc 100644
+> > --- a/drivers/net/ethernet/cadence/macb_main.c
+> > +++ b/drivers/net/ethernet/cadence/macb_main.c
+> > @@ -41,6 +41,9 @@
+> >   #include <linux/inetdevice.h>
+> >   #include "macb.h"
+> > +static unsigned int txdelay = 35;
+> > +module_param(txdelay, uint, 0644);
+> > +
+> >   /* This structure is only used for MACB on SiFive FU540 devices */
+> >   struct sifive_fu540_macb_mgmt {
+> >   	void __iomem *reg;
+> > @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
+> >   	u32 val;
+> >   	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
+> > -				  1, MACB_MDIO_TIMEOUT);
+> > +				  100, MACB_MDIO_TIMEOUT);
+> 
+> Why do we need to increase how frequently we poll?
 
-Great! I'm now processing a patch by Alan Maguire that should help with
-parallel loading, I'll add it o the next branch, together with his work
-on distilled BTF.
+Thanks for your feedback, I will save all your precious suggestions for a future patch that
+will enable the macb ethernet.
+As stated in the cover letter, right now this specific patch is not intended to be upstreamed
+as is but it's just here for testing purposes, hence its 'raw' state.
+For sure the ethernet contained in RP1 will be one of the first device I will try to bring
+upstream, so I'll apply your comments there. Maybe the next time I will also add a better
+explanation about the state of a specific patch in the commit comment itself, and not only
+in the cover letter, just to be more explicit.
 
-If you could test it, it would be great to see how much it helps with
-teh serial case and if it allows for at least some parallel processing
-on 32-bit architectures.
+Many thanks,
+Andrea 
 
-Thanks for all your effort on this, appreciated.
-
-- Arnaldo
+> -- 
+> Florian
+> 
 
