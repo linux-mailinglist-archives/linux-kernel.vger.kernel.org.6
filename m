@@ -1,342 +1,237 @@
-Return-Path: <linux-kernel+bounces-302190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4028695FAF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:52:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9DA95FAF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FAA1C216DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:52:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AA8EB22FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4D7199FC9;
-	Mon, 26 Aug 2024 20:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29741199396;
+	Mon, 26 Aug 2024 20:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPkVTz4W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="jRHZkByp";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="XxiJn1AV"
+Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C578C90;
-	Mon, 26 Aug 2024 20:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFBB1991B5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705517; cv=none; b=nbYi5Kp3LY031uiCkhvdS9/MdJWyBbTua+rH8VHtk/rZNaCaF1jgTQCXhR+7S7P7B3zWUwC0hb2KTJSZsTsGHDQ6BYKVjiZbJCZEZc5HBoLBRAa8hV8yHgEtOr+Hj8avdPgdMFX7DaiObG3CMJX+x4N3NoMJLaf6wg9CQovDEa0=
+	t=1724705577; cv=none; b=IC4g2SYkMZz52nbCo2zDgjs9FSR21w4eIox0B8X0K9bdU1thf1MXndGGOcpT0nh72lkzWyd8ZtcLsJ4W5s7cFEvc9hnqjktWemvenybwOCxV7hvVBv6CrEiMJ1fzpbZor5SOj8cYqSBi1JLcYut4YJHZLPMJpwKoIYnPAf6csSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705517; c=relaxed/simple;
-	bh=9cI9zajRaq0tycp5Wb3Id6IYSXGK88UQf0DbJfUjUDg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yox7lEY+QxeMlCjC17K2+tfgep5PldttdOWa4BgBqws1KGXoTzGvgq+8Gbw4WoW9Nt7KajGCIAZEKHF5FbXui9G7S2H7v9aGqlhVHcp0D1Hc9+B84PUJ0FELyLwxEq1TxBaUZVlAtG71r0xVcunDxyD9zGMwfzhJI3b+lmj1zkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPkVTz4W; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724705515; x=1756241515;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=9cI9zajRaq0tycp5Wb3Id6IYSXGK88UQf0DbJfUjUDg=;
-  b=fPkVTz4W2UjhINCZ3wssQ8TDzEOejjV14PJy2Kx7MVBcYALIDHdaW6jK
-   V9GG53FbtbvJimABQ4J3IYmqYSC2Xmm3AdEkEaojJPsswIQFL6VJXpBIs
-   IXANbdjFfgy0St6cvgXBz0clRqFpLybkH4gORdT0hsnQGafYiLGzc5bcN
-   7i8r33I20/dJTY38KywgeFh8pwQiMU+WnRpbESUbee05OicShSTYVTJXs
-   oLBTBaWo3gn8jyXTAs0atCbDPOlKW88GSVOiOGGLYCEksw//J2u4eoS3F
-   nGw1qcffnjefs9H+bpB9vtOtRioRGRLTo40YdxNc5hmEVNaf1i8OcB2k8
-   Q==;
-X-CSE-ConnectionGUID: iVUh2WWHRxWYCAoTL1MrIQ==
-X-CSE-MsgGUID: +SGnr237RmqGyNoJYOhffA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23020679"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23020679"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 13:51:54 -0700
-X-CSE-ConnectionGUID: cVEOsmVWQ52HZs2CfncAig==
-X-CSE-MsgGUID: 4PnHlC2TS2OfIyOLqxzeGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62682152"
-Received: from dgramcko-desk.amr.corp.intel.com ([10.124.223.43])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 13:51:54 -0700
-Message-ID: <dd30094d963ec559d444aee6d0c26a5cd4c1e432.camel@linux.intel.com>
-Subject: Re: [PATCH] pm-graph: Update directory handling and installation
- process in Makefile
-From: Todd Brandt <todd.e.brandt@linux.intel.com>
-Reply-To: todd.e.brandt@linux.intel.com
-To: Amit Vadhavana <av2082000@gmail.com>, skhan@linuxfoundation.org, 
-	ricardo@marliere.net
-Cc: linux-kernel-mentees@lists.linux.dev, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 26 Aug 2024 13:51:53 -0700
-In-Reply-To: <20240825110620.30109-1-av2082000@gmail.com>
-References: <20240825110620.30109-1-av2082000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1724705577; c=relaxed/simple;
+	bh=rOhOtgmsWxMhv8Vx68oTlpqJEDev/vlplnqmXQQsTEE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ahEOIUxGzf+aVXAMQjB7tptnajhEDjqJp4Ml70HM36TJH5SgBHaYjDVRGP4AREwniF3x5m9f4d8qL+FRT+FJ3zIvv+z8oJe0SuQ7r2j566g0xVdzk/Evd6ynDynslhsod1x7gE6/budDYBplx4iuo9Uz14aplOFWfQqcwX0L8uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=jRHZkByp; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=XxiJn1AV; arc=none smtp.client-ip=169.235.156.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724705575; x=1756241575;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=rOhOtgmsWxMhv8Vx68oTlpqJEDev/vlplnqmXQQsTEE=;
+  b=jRHZkBypzaP5ehmRRJ64Ju4ATNQQfZlwakHOprqDGLb4X2Kw/l9nK8Ro
+   UaWupsJR2Z3EGQ0kPhnwa3L4EPGH6xAP5EaAXaLmN6A9eJU8d3nSHPhFN
+   MB23AQ2gKe45x+XC6wxyVdr9FJHBPyLJD2l8a9oi6cSGCEjNftW55lWxP
+   lNUEXjKbq2BjazEcb1ILjP1ghRYyOpFGChQEK58gULJoxdiIscr7k5Gix
+   BCszksoUpHYnpgZPn3YmhNo/Ks9wxhL63mFLT9/ctTX9+mZCYs3rD0Y9m
+   xi2A/G6o43ts/ciHQ+8uMTf4b/ww8w9qQZnC85nucnOqqoxaMQwavrG2G
+   A==;
+X-CSE-ConnectionGUID: aLsGnAz3S3q2gds1M8whvw==
+X-CSE-MsgGUID: CgRLBf45TXaDC+kpNmLg6A==
+Received: from mail-il1-f199.google.com ([209.85.166.199])
+  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 26 Aug 2024 13:52:54 -0700
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d32a4f301so49616765ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724705573; x=1725310373; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3jovNTpEt2xlDSePsSQJipwFWwKK8ZqmzHDjm/x4SwU=;
+        b=XxiJn1AV0DLk3w4KCDX0iRgTCcoYf0mXqRC+2P1gMxBlfiah8WmBa7a8ULTiW9UcnK
+         JbfmYB5lUbg88Q5pKxGu+4ZffNTRrXI3Iy2szXM2cA0/RgfzDBisegWeu56soguTV7mV
+         tLR/hoaZNTz1msho5ONb9rwHROhSJ1DbVvmyk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724705573; x=1725310373;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jovNTpEt2xlDSePsSQJipwFWwKK8ZqmzHDjm/x4SwU=;
+        b=IA3ZIvJhErLw+u0fvfF+3Y8zVvfHlqiLBC/ll3/vQga1IGoftQRMyEvljK+pObgfuX
+         O3Xshj5AnFldHfGaH3ObqI3IvLAMHEhhIDiZqEBQASA5VGa7U3VR2hO4G4bP7TzcCoD5
+         7UeKM4AIYVoFC8MJPyRmpidOMABVGrqo6zBq2348THD+DYbpJwPSIVZtwcu06fIFH/Mk
+         /I5neWZv4ReVMotG+wry5HZfW1jTxZeK3fkT/D5FsM0TI6ppMczQEC+8iV0PHjOKfFKT
+         fFXiTiwOyMSqjRuvsMv81KGZgMtGHCsPnoIxYtZcSvRzJRvm0H5e2bWraiz1/1dAJBYu
+         rUGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUr9uOoOF5O0CbfU2hz9ti26jsVxbxCmci+8TCZW2PLtC5Sco2KG77wMRXYXjTKcdpZj5yIWrk2PFAVuoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNThVdINr1hSq/me368wUSv9LeyhnPEbMnk/fP/xUom3PhzhJp
+	RTEPM367+D2hfQGYSEVJd2SC3G58Uii5kvM+fQyD4C5ZrhpZ7Q5ElRxlLHid6M9qZvniCU/rJy0
+	mS300IWQaKX2ngxNDqKqQKazX4OwwPBZ2Xh55ms1+fCXvh+Bj39U8XIl3qNxdBhTwkN6zacaj7x
+	TE4yYuG/076eTV/B9+MDDToGW1GYzcxV1yTzRR1biedSJUE+bQM00=
+X-Received: by 2002:a05:6e02:1b0e:b0:39d:47c6:38b1 with SMTP id e9e14a558f8ab-39e640214dbmr6768475ab.9.1724705573106;
+        Mon, 26 Aug 2024 13:52:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrbjfDqA5RDh5l409+sU7yUdTureViDHqY3ihnv9F11d7Arb1WkvSkJYDtb9TlZOvULy1X3rFVKFATqHMi53Q=
+X-Received: by 2002:a05:6e02:1b0e:b0:39d:47c6:38b1 with SMTP id
+ e9e14a558f8ab-39e640214dbmr6768315ab.9.1724705572642; Mon, 26 Aug 2024
+ 13:52:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Mon, 26 Aug 2024 13:52:41 -0700
+Message-ID: <CANikGpeautjFq49hKPhZQ7TQ3zwjToQrGUw+A6Oux90AcQqvcA@mail.gmail.com>
+Subject: BUG: WARNING: possible circular locking dependency detected
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2024-08-25 at 16:36 +0530, Amit Vadhavana wrote:
-> - Standardize directory variables to support more flexible
-> installations.
-> - Add copyright and licensing information to the Makefile.
-> - Introduce ".PHONY" declarations to ensure that specific targets are
-> always
-> =C2=A0 executed, regardless of the presence of files with matching names.
-> - Add a help target to provide usage instructions.
->=20
-> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-> ---
-> =C2=A0tools/power/pm-graph/Makefile | 111 ++++++++++++++++++++++---------=
--
-> --
-> =C2=A01 file changed, 73 insertions(+), 38 deletions(-)
->=20
-> diff --git a/tools/power/pm-graph/Makefile b/tools/power/pm-
-> graph/Makefile
-> index b5310832c19c..aeddbaf2d4c4 100644
-> --- a/tools/power/pm-graph/Makefile
-> +++ b/tools/power/pm-graph/Makefile
-> @@ -1,51 +1,86 @@
-> =C2=A0# SPDX-License-Identifier: GPL-2.0
-> -PREFIX=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0?=3D /usr
-> -DESTDIR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0?=3D
-> +#
-> +# Copyright (c) 2013, Intel Corporation.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> modify it
-> +# under the terms and conditions of the GNU General Public License,
-> +# version 2, as published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope it will be useful, but
-> WITHOUT
-> +# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-> or
-> +# FITNESS FOR A PARTICULAR PURPOSE.=C2=A0 See the GNU General Public
-> License for
-> +# more details.
-> +#
-> +# Authors:
-> +#=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Todd Brandt <todd.e.brandt@linux.i=
-ntel.com>
-> +
-> +# Prefix to the directories we're installing to
-> +DESTDIR ?=3D
-> +
-> +# Directory definitions. These are default and most probably
-> +# do not need to be changed. Please note that DESTDIR is
-> +# added in front of any of them
-> +
-> +BINDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/bin
-> +MANDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/share/man
-> +LIBDIR ?=3D=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/usr/lib
-> +
-> +# Toolchain: what tools do we use, and what options do they need:
-> +INSTALL =3D /usr/bin/install
-> +INSTALL_DATA=C2=A0 =3D ${INSTALL} -m 644
-> =C2=A0
-> =C2=A0all:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo "Nothing to build"
-> =C2=A0
-> =C2=A0install : uninstall
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install sleepgraph.py $(DESTDI=
-R)$(PREFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install bootgraph.py $(DESTDIR=
-)$(PREFIX)/lib/pm-graph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/cgskip.t=
-xt $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze-c=
-allgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze.c=
-fg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/freeze-d=
-ev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby-=
-callgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby.=
-cfg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/standby-=
-dev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-callgraph.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend.=
-cfg $(DESTDIR)$(PREFIX)/lib/pm-
-> graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-dev.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -m 644 config/suspend-=
-x2-proc.cfg
-> $(DESTDIR)$(PREFIX)/lib/pm-graph/config
-> -
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/bin
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/bootgrap=
-h.py
-> $(DESTDIR)$(PREFIX)/bin/bootgraph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/sleepgra=
-ph.py
-> $(DESTDIR)$(PREFIX)/bin/sleepgraph
-> -
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install -d=C2=A0 $(DESTDIR)$(P=
-REFIX)/share/man/man8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install bootgraph.8 $(DESTDIR)=
-$(PREFIX)/share/man/man8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0install sleepgraph.8 $(DESTDIR=
-)$(PREFIX)/share/man/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) sleepgraph.py $(DES=
-TDIR)$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) bootgraph.py $(DEST=
-DIR)$(LIBDIR)/pm-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/cgskip.=
-txt $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze-=
-callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze.=
-cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/freeze-=
-dev.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
--callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
-.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/standby=
--dev.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--callgraph.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
-.cfg $(DESTDIR)$(LIBDIR)/pm-
-> graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--dev.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL_DATA) config/suspend=
--x2-proc.cfg
-> $(DESTDIR)$(LIBDIR)/pm-graph/config
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(BINDIR)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/bootgrap=
-h.py
-> $(DESTDIR)$(BINDIR)/bootgraph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ln -s ../lib/pm-graph/sleepgra=
-ph.py
-> $(DESTDIR)$(BINDIR)/sleepgraph
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) -d=C2=A0 $(DESTDIR)=
-$(MANDIR)/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) bootgraph.8 $(DESTD=
-IR)$(MANDIR)/man8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(INSTALL) sleepgraph.8 $(DEST=
-DIR)$(MANDIR)/man8
-> =C2=A0
-> =C2=A0uninstall :
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/shar=
-e/man/man8/bootgraph.8
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/shar=
-e/man/man8/sleepgraph.8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(MANDIR)/man8=
-/bootgraph.8
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(MANDIR)/man8=
-/sleepgraph.8
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/bin/=
-bootgraph
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/bin/=
-sleepgraph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(BINDIR)/boot=
-graph
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(BINDIR)/slee=
-pgraph
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/config/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph/config ] ; then \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/config; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/config/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph/config ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph/config; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/__pycache__/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph/__pycache__ ] ; then
-> \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph/__pycache__; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/__pycache__/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph/__pycache__ ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph/__pycache__; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(PREFIX)/lib/=
-pm-graph/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(PREFIX)/li=
-b/pm-graph ] ; then \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(PREFIX)/lib/pm-graph; \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f $(DESTDIR)$(LIBDIR)/pm-g=
-raph/*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if [ -d $(DESTDIR)$(LIBDIR)/pm=
--graph ] ; then \
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rmdir $(DESTDIR)$(LIBDIR)/pm-graph; \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi;
-> +
-> +help:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 'Building targets:=
-'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 all=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Nothin=
-g to build'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 install=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Install the program and cre=
-ate
-> necessary directories'
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0@echo=C2=A0 '=C2=A0 uninstall=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Remove installed files and
-> directories'
-> +
-> +.PHONY: all install uninstall help
-This does look much nicer, and it's good to use the absolute path of
-install in case the system doesn't have the PATH setup. Thank you for
-cleaning this up! (re-send with Acked-by)
+Hello,
+We found the following issue using syzkaller on Linux v6.10.
+A possible deadlock issue was discovered in function
+`tty_buffer_flush` when it attempted to acquire lock `buf->lock`.
 
-Acked-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Unfortunately, the syzkaller failed to generate a reproducer.
+But at least we have the report:
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0 #13 Not tainted
+------------------------------------------------------
+kworker/0:0/8 is trying to acquire lock:
+ffff8880130990b8 (&buf->lock){+.+.}-{3:3}, at:
+tty_buffer_flush+0x75/0x3f0 drivers/tty/tty_buffer.c:229
+
+but task is already holding lock:
+ffffffff8da0eb20 (console_lock){+.+.}-{0:0}, at: vc_SAK+0x25/0x210
+drivers/tty/vt/vt_ioctl.c:983
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (console_lock){+.+.}-{0:0}:
+       console_lock+0x15f/0x1a0 kernel/printk/printk.c:2665
+       con_flush_chars+0x67/0x260 drivers/tty/vt/vt.c:3503
+       n_tty_write+0xfb6/0x12d0 drivers/tty/n_tty.c:2405
+       iterate_tty_write drivers/tty/tty_io.c:1021 [inline]
+       file_tty_write+0x589/0xa00 drivers/tty/tty_io.c:1096
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0x8a1/0xc70 fs/read_write.c:590
+       ksys_write+0x19b/0x2c0 fs/read_write.c:643
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x67/0x6f
+
+-> #1 (&tty->termios_rwsem){++++}-{3:3}:
+       down_write+0x36/0x50 kernel/locking/rwsem.c:1579
+       n_tty_flush_buffer+0x2d/0x240 drivers/tty/n_tty.c:358
+       tty_buffer_flush+0x324/0x3f0 drivers/tty/tty_buffer.c:241
+       tty_ldisc_flush+0x66/0xc0 drivers/tty/tty_ldisc.c:388
+       tty_port_close_start+0x2e7/0x540 drivers/tty/tty_port.c:663
+       tty_port_close+0x24/0x140 drivers/tty/tty_port.c:718
+       tty_release+0x284/0xd70 drivers/tty/tty_io.c:1760
+       __fput+0x24a/0x8a0 fs/file_table.c:422
+       task_work_run+0x239/0x2f0 kernel/task_work.c:180
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x12d/0x280 kernel/entry/common.c:218
+       do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x67/0x6f
+
+-> #0 (&buf->lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x37ac/0x8050 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1a9/0x400 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x131/0xd50 kernel/locking/mutex.c:752
+       tty_buffer_flush+0x75/0x3f0 drivers/tty/tty_buffer.c:229
+       tty_ldisc_flush+0x66/0xc0 drivers/tty/tty_ldisc.c:388
+       __do_SAK+0xc4/0x710 drivers/tty/tty_io.c:3038
+       vc_SAK+0x73/0x210 drivers/tty/vt/vt_ioctl.c:993
+       process_one_work kernel/workqueue.c:3248 [inline]
+       process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+       worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+       kthread+0x2eb/0x380 kernel/kthread.c:389
+       ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &buf->lock --> &tty->termios_rwsem --> console_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(console_lock);
+                               lock(&tty->termios_rwsem);
+                               lock(console_lock);
+  lock(&buf->lock);
+
+ *** DEADLOCK ***
+
+4 locks held by kworker/0:0/8:
+ #0: ffff88801307a948 ((wq_completion)events){+.+.}-{0:0}, at:
+process_one_work kernel/workqueue.c:3223 [inline]
+ #0: ffff88801307a948 ((wq_completion)events){+.+.}-{0:0}, at:
+process_scheduled_works+0x8fb/0x1410 kernel/workqueue.c:3329
+ #1: ffffc900000afd20
+((work_completion)(&vc_cons[currcons].SAK_work)){+.+.}-{0:0}, at:
+process_one_work kernel/workqueue.c:3224 [inline]
+ #1: ffffc900000afd20
+((work_completion)(&vc_cons[currcons].SAK_work)){+.+.}-{0:0}, at:
+process_scheduled_works+0x922/0x1410 kernel/workqueue.c:3329
+ #2: ffffffff8da0eb20 (console_lock){+.+.}-{0:0}, at:
+vc_SAK+0x25/0x210 drivers/tty/vt/vt_ioctl.c:983
+ #3: ffff88802f1670a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref
+drivers/tty/tty_ldisc.c:263 [inline]
+ #3: ffff88802f1670a0 (&tty->ldisc_sem){++++}-{0:0}, at:
+tty_ldisc_flush+0x1b/0xc0 drivers/tty/tty_ldisc.c:386
+
+stack backtrace:
+CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events vc_SAK
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x23d/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36c/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x37ac/0x8050 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1a9/0x400 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x131/0xd50 kernel/locking/mutex.c:752
+ tty_buffer_flush+0x75/0x3f0 drivers/tty/tty_buffer.c:229
+ tty_ldisc_flush+0x66/0xc0 drivers/tty/tty_ldisc.c:388
+ __do_SAK+0xc4/0x710 drivers/tty/tty_io.c:3038
+ vc_SAK+0x73/0x210 drivers/tty/vt/vt_ioctl.c:993
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
+ worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
+ kthread+0x2eb/0x380 kernel/kthread.c:389
+ ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
+ </TASK>
+tty tty1: SAK: killed process 7942 (agetty): by session
+tty tty1: SAK: killed process 7942 (agetty): by controlling tty
 
