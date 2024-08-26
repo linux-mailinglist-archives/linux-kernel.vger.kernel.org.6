@@ -1,186 +1,164 @@
-Return-Path: <linux-kernel+bounces-301141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03C095ECEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:17:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9993995ECED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75E0281B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56F81F22273
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12C2142E67;
-	Mon, 26 Aug 2024 09:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C7114374C;
+	Mon, 26 Aug 2024 09:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g7vqHooc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QpkolqLj"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11E58172A;
-	Mon, 26 Aug 2024 09:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3476D8172A
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663821; cv=none; b=UGJM6aQgF/4FYMsbM1FYle+ceQOBg5eGBuDs2I83d53RXHjXl7POXgQMaszioq4dGXxTN24Q7Xc3fCXjkiSso+N6D1xTXkVx8YMvKtmsj7kobRj+ciKMPaVgQuvvfsbVL2bj0cFNub70QrYC8QNpXKrTml9TJtdOFDbQnGpxiCg=
+	t=1724663854; cv=none; b=A2s9307ihiyDiA8y+0kx/ymY9Y2FA2pZ2s65WnAxu7rMnEebjH4opToEB5XOk1NsdI0mEom8k/tmWT31OKu7X+eEjlvk6Fx2NaEzt6jWNwt7b4+L0iCHlCmq+z39Lcvj2+OonOGv2J2GbpiA+UgY96SErPem6KOv0B0e0+oyQSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663821; c=relaxed/simple;
-	bh=ucDCZHH9q43sDJFvaNUh5wuUi566REaO2LKCT0DkCAg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SyKimAkACJGv+9KyoSlgdbDtGje2q6I/N54wvViKWsl8yBDkIvmgj0ACKRugPQ264XXbM0mYEdi8XnpXeUin4Dl8w7xVFDAur3vDihCoJI07OQrU+IV++81YKzQh0gV/c/HCuvQzyQvXsY7qGCLyljIEz9Ldy2QD5fDkz29J7Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g7vqHooc; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724663820; x=1756199820;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ucDCZHH9q43sDJFvaNUh5wuUi566REaO2LKCT0DkCAg=;
-  b=g7vqHoocBcalJqDNgOK0+nHSeqEM5FCNiuRy3nhD9FBauCx5SW5r99d9
-   Q/ZoXTa1aO+PE5qw3fl8KsmZPRMvQI5eADH+XgxZaaUqesvoWrTny0jC+
-   eLPY2R6uM1rd9C4vtuuTyGFEsftQO5vUR0F/3nysdq2r0mcD2bj6od69B
-   YzCSu5NDdP0L9MKiTsZbzIanid7apy47OlqCXw7XzPxzQGYivLCxs3gSF
-   D0NpOUXDNJ1PU/XoMld1eHIXpSX92IngbJzUoocqynfSxBmXDGZdhQmNV
-   3cdT0phbHcC2hRwHXId3TwbBrrjFkrimW9R/WCd6s3WQzJY9BugtGQ3GW
-   w==;
-X-CSE-ConnectionGUID: VaLPiWrWS1e86g5acCPPSQ==
-X-CSE-MsgGUID: 5ZXgTWc3RyKTjYTP4sNT6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="23229363"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="23229363"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:16:59 -0700
-X-CSE-ConnectionGUID: etMzg08HQ0KODBTDShMejA==
-X-CSE-MsgGUID: r5Cz6iMDTRu6Bbf26H+RvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="93253478"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.174])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:16:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 26 Aug 2024 12:16:51 +0300 (EEST)
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-cc: Matthew W Carlis <mattc@purestorage.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/4] PCI: Revert to the original speed after PCIe
- failed link retraining
-In-Reply-To: <alpine.DEB.2.21.2408251412590.30766@angie.orcam.me.uk>
-Message-ID: <db382712-8b71-3f1c-bffd-7b35921704c7@linux.intel.com>
-References: <alpine.DEB.2.21.2408251354540.30766@angie.orcam.me.uk> <alpine.DEB.2.21.2408251412590.30766@angie.orcam.me.uk>
+	s=arc-20240116; t=1724663854; c=relaxed/simple;
+	bh=asCoAs1B6TeLweLBRFsG8LwcXo9p7phRfIJfMNeUiXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=h85HRFqGSwWf4H1gNXvjAYJWtLzjWS5WsiAWQS1hB9h4tUBEcnWYGqtvpL1wxkWLr2hs+bBFGLB5KQP0AVOxLaSjLTcyBcpjYDFR5qdKmkFRXIn5QXfK6Ur8dITgTe7K4G+gO3nwEHkpR93klCs6tbPeigg74YonioWZUdLfERA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QpkolqLj; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240826091727epoutp03034afa70a8c23b351e1736c5ec6163bf~vPKHPPpOx0657006570epoutp03b
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:17:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240826091727epoutp03034afa70a8c23b351e1736c5ec6163bf~vPKHPPpOx0657006570epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724663848;
+	bh=HsgEOK+TFX6wt+HKoeqr6ur6faQDmraUby/Snfioctw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=QpkolqLjozngGmGWciDzQztOWVBRom7ZVrdD7WJ5H5tbY+6T8CgXOkoLWUIuZgCoN
+	 hH5ez+CzqY6aKs0rn/l51RLYfRzG5MDoqjVKjt8QRJcVPY3dkGu0hD8Wn3d4ZZ+hNR
+	 v3K6NE6mgboVuapX/MwNmnnWQB/qQ2+v0t4T4lD4=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240826091727epcas1p34d9645597636831f03915db661976a64~vPKGpftId2876028760epcas1p3m;
+	Mon, 26 Aug 2024 09:17:27 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.227]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WslSQ6zB6z4x9Pr; Mon, 26 Aug
+	2024 09:17:26 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E5.C1.09623.6284CC66; Mon, 26 Aug 2024 18:17:26 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a~vPKFn-Ssp2463524635epcas1p19;
+	Mon, 26 Aug 2024 09:17:26 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240826091726epsmtrp1b73879ec5cd022d94fd160713ed8d77b~vPKFnG9RH2107921079epsmtrp1S;
+	Mon, 26 Aug 2024 09:17:26 +0000 (GMT)
+X-AuditID: b6c32a36-79485a8000002597-b0-66cc4826b65e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	ED.05.08964.6284CC66; Mon, 26 Aug 2024 18:17:26 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.98.171]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240826091725epsmtip15e4c1642950997823fe35a09919eb6fe~vPKFXRirS0411604116epsmtip1L;
+	Mon, 26 Aug 2024 09:17:25 +0000 (GMT)
+From: Seunghwan Baek <sh8267.baek@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org, ritesh.list@gmail.com, quic_asutoshd@quicinc.com,
+	adrian.hunter@intel.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+	cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com,
+	stable@vger.kernel.org
+Subject: [PATCH 2/2] mmc : fix for check cqe halt.
+Date: Mon, 26 Aug 2024 18:17:03 +0900
+Message-Id: <20240826091703.14631-1-sh8267.baek@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmga6ax5k0g/O3DSxOPlnDZjHjVBur
+	xb5rJ9ktfv1dz27RsXUyk8WO52fYLXb9bWayuLxrDpvFkf/9jBYLO+ayWBw81cFu0fRnH4vF
+	tTMnWC0WbHzEaHF8bbjF5kvfWBwEPHbOusvusXjPSyaPO9f2sHlM3FPn0bdlFaPH501yAWxR
+	2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QGcrKZQl
+	5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgrMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz
+	3k6fwFzwiqti7vWrTA2MPzm6GDk5JARMJN5c/sUEYgsJ7GCUWHA4tIuRC8j+xCix69BERgjn
+	G6PE3JOfWWE6el+eY4JI7GWUuLjiCAuE85lR4lXHMkaQKjYBPYlX7YfZQBIiAosYJfb+uMMM
+	4jAL/GSUeH/9IDtIlbCAkcSp9ffBOlgEVCUu7bjNAmLzCthI/OneyQKxT15i9YYDzBD2X3aJ
+	k+9Vuhg5gGwXiQ3rQyHCwhKvjm9hh7ClJF72t0HZxRILN04Cu05CoIVR4vryP4wQCXuJ5tZm
+	NpA5zAKaEut36YOEmQX4JN597WGFGM8r0dEmBFGtKnFqw1aoTmmJ680N0JDwkLg5rQcadrES
+	q54dZZ7AKDMLYegCRsZVjGKpBcW56anFhgVG8JhJzs/dxAhOflpmOxgnvf2gd4iRiYPxEKME
+	B7OSCK/c5ZNpQrwpiZVVqUX58UWlOanFhxhNgUE0kVlKNDkfmH7zSuINTSwNTMyMTCyMLY3N
+	lMR5z1wpSxUSSE8sSc1OTS1ILYLpY+LglGpgWu7vumRryUGbvAzpvI6kjv2ndsfdvrNP0eeJ
+	RnrfouNa+YyCkvusQnflafI49v67Z+h6WDKr8LxH/Pljnumfr0dbcL5KmcroU7izxNfV8D/L
+	opeuQXO4Vnvv2ue02/7vij/3PAQnH776/MGtq3Gyrx/6nzThXNDUIi+obH1lW2hyAfv2JVMc
+	CmdUR3KfntBbusF7T1SifcjDhUZmUx+Jhn0uOd584uvc+o6DZ6O9fxccT1v7acbNj2+f7rro
+	u1/LTod996LNAknhf3dPV026r1gV6HQgVXTV6gqGUxJ2oieVlrnOl0rasdTv4B/1hY3f1JgM
+	dBc8C9y3d6Zu45mkW7zvVey0qmQ3FTl7hJpNUGIpzkg01GIuKk4EACuhMJoHBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSnK6ax5k0g+dv2SxOPlnDZjHjVBur
+	xb5rJ9ktfv1dz27RsXUyk8WO52fYLXb9bWayuLxrDpvFkf/9jBYLO+ayWBw81cFu0fRnH4vF
+	tTMnWC0WbHzEaHF8bbjF5kvfWBwEPHbOusvusXjPSyaPO9f2sHlM3FPn0bdlFaPH501yAWxR
+	XDYpqTmZZalF+nYJXBlvp09gLnjFVTH3+lWmBsafHF2MnBwSAiYSvS/PMXUxcnEICexmlDj8
+	6iIjREJa4vGBl0A2B5AtLHH4cDFEzUdGiW9n5jGD1LAJ6Em8aj/MBpIQEVjBKDFz+VRmEIdZ
+	oJVJ4tzWNiaQKmEBI4lT6++DTWURUJW4tOM2C4jNK2Aj8ad7JwvENnmJ1RsOME9g5FnAyLCK
+	UTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4ULU0dzBuX/VB7xAjEwfjIUYJDmYlEV65
+	yyfThHhTEiurUovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgskycXBKNTAdZhA1
+	cY/xbc65bJtrPL8rcc06/dXqFw/cU7Ja/NaJJ+LfsyKT6BOuN3K2Vq12kuCtnfTO6pf6ojsn
+	re5e7FAzn9CUfSrZ+oHksmwtjVtWJxZoHi8/925nQTerfcV17qun/5aXBP06sOV28AEBHrWQ
+	WV8Wl1dtO8x+WOD3kuiFvfcS5qfwqcr/ir4+38FYyI85demmh/dkjx9c8G/2xF3lh9rvKV37
+	e/ns+279hSf+fH22g6XnyIdn7XJCpxjbLkxkX7zivfufc3HWSaaL/G0P3lioudFt8dF9Fyrj
+	w/9+D2P7ue3a2uMh1g8vr8udqV/ByRC8bl7WtXPMzWtuXrOyUTrn72lwJeTQ2/KE5V5HJZRY
+	ijMSDbWYi4oTAUSiL0DDAgAA
+X-CMS-MailID: 20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a
+References: <CGME20240826091726epcas1p19797d2dd890feef6f9c4b83e9156341a@epcas1p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-639461899-1724663811=:1013"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+To check if mmc cqe is in halt state, need to check set/clear of CQHCI_HALT
+bit. At this time, we need to check with &, not &&. Therefore, code to
+check whether cqe is in halt state is modified to cqhci_halted, which has
+already been implemented.
 
---8323328-639461899-1724663811=:1013
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Fixes: 0653300224a6 ("mmc: cqhci: rename cqhci.c to cqhci-core.c")
+Cc: stable@vger.kernel.org
+Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+---
+ drivers/mmc/host/cqhci-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Sun, 25 Aug 2024, Maciej W. Rozycki wrote:
+diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+index c14d7251d0bb..3d5bcb92c78e 100644
+--- a/drivers/mmc/host/cqhci-core.c
++++ b/drivers/mmc/host/cqhci-core.c
+@@ -282,7 +282,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+ 
+ 	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+ 
+-	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
++	if (cqhci_halted(cq_host))
+ 		cqhci_writel(cq_host, 0, CQHCI_CTL);
+ 
+ 	mmc->cqe_on = true;
+@@ -617,7 +617,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		cqhci_writel(cq_host, 0, CQHCI_CTL);
+ 		mmc->cqe_on = true;
+ 		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+-		if (cqhci_readl(cq_host, CQHCI_CTL) && CQHCI_HALT) {
++		if (cqhci_halted(cq_host)) {
+ 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+ 			       mmc_hostname(mmc));
+ 		}
+-- 
+2.17.1
 
-> When `pcie_failed_link_retrain' has failed to retrain the link by hand=20
-> it leaves the link speed restricted to 2.5GT/s, which will then affect=20
-> any device that has been plugged in later on, which may not suffer from=
-=20
-> the problem that caused the speed restriction to have been attempted. =20
-> Consequently such a downstream device will suffer from an unnecessary=20
-> communication throughput limitation and therefore performance loss.
->=20
-> Remove the speed restriction then and revert the Link Control 2 register=
-=20
-> to its original state if link retraining with the speed restriction in=20
-> place has failed.  Retrain the link again afterwards so as to remove any=
-=20
-> residual state, waiting on LT rather than DLLLA to avoid an excessive=20
-> delay and ignoring the result as this training is supposed to fail anyway=
-=2E
->=20
-> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-> Reported-by: Matthew W Carlis <mattc@purestorage.com>
-> Link: https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.=
-com/
-> Link: https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.=
-com/
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Cc: stable@vger.kernel.org # v6.5+
-> ---
-> Changes from v2:
->=20
-> - Wait on LT rather than DLLLA with clean-up retraining with the speed=20
->   restriction lifted, so as to avoid an excessive delay as it's supposed=
-=20
->   to fail anyway.
->=20
-> New change in v2.
-> ---
->  drivers/pci/quirks.c |   11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> linux-pcie-failed-link-retrain-fail-unclamp.diff
-> Index: linux-macro/drivers/pci/quirks.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-macro.orig/drivers/pci/quirks.c
-> +++ linux-macro/drivers/pci/quirks.c
-> @@ -66,7 +66,7 @@
->   * apply this erratum workaround to any downstream ports as long as they
->   * support Link Active reporting and have the Link Control 2 register.
->   * Restrict the speed to 2.5GT/s then with the Target Link Speed field,
-> - * request a retrain and wait 200ms for the data link to go up.
-> + * request a retrain and check the result.
->   *
->   * If this turns out successful and we know by the Vendor:Device ID it i=
-s
->   * safe to do so, then lift the restriction, letting the devices negotia=
-te
-> @@ -74,6 +74,10 @@
->   * firmware may have already arranged and lift it with ports that alread=
-y
->   * report their data link being up.
->   *
-> + * Otherwise revert the speed to the original setting and request a retr=
-ain
-> + * again to remove any residual state, ignoring the result as it's suppo=
-sed
-> + * to fail anyway.
-> + *
->   * Return TRUE if the link has been successfully retrained, otherwise FA=
-LSE.
->   */
->  bool pcie_failed_link_retrain(struct pci_dev *dev)
-> @@ -92,6 +96,8 @@ bool pcie_failed_link_retrain(struct pci
->  =09pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->  =09if ((lnksta & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_DLLLA)) =3D=3D
->  =09    PCI_EXP_LNKSTA_LBMS) {
-> +=09=09u16 oldlnkctl2 =3D lnkctl2;
-> +
->  =09=09pci_info(dev, "broken device, retraining non-functional downstream=
- link at 2.5GT/s\n");
-> =20
->  =09=09lnkctl2 &=3D ~PCI_EXP_LNKCTL2_TLS;
-> @@ -100,6 +106,9 @@ bool pcie_failed_link_retrain(struct pci
-> =20
->  =09=09if (pcie_retrain_link(dev, false)) {
->  =09=09=09pci_info(dev, "retraining failed\n");
-> +=09=09=09pcie_capability_write_word(dev, PCI_EXP_LNKCTL2,
-> +=09=09=09=09=09=09   oldlnkctl2);
-> +=09=09=09pcie_retrain_link(dev, true);
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-
---8323328-639461899-1724663811=:1013--
 
