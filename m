@@ -1,210 +1,218 @@
-Return-Path: <linux-kernel+bounces-300961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681E095EB07
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B71B95EABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D35828451A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59F5281E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3431865E4;
-	Mon, 26 Aug 2024 07:50:06 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5C13A3F0;
+	Mon, 26 Aug 2024 07:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Iy2MmbaQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D715D5B6;
-	Mon, 26 Aug 2024 07:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F0685654;
+	Mon, 26 Aug 2024 07:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724658605; cv=none; b=YUWW/co8IDAY9wWAVm8gVrPr2NEX4pxp6gix6+hotl5uJ159J8DgStZJBrp35BplwZcEJQjWKc5ciYodR8LIawkYY3iRmar0omsEp3Nr0zP9Ukco2vVSPHJy1nGv87uCsz9h3wCpwuFezX/Botb693Px2e0hT8CO1SCBREwJvnU=
+	t=1724658290; cv=none; b=kLioVdUzYXKqEbMwZYq109MbKGDEYYUnIwKXPNR2HnFkgyvM6oPdVNPv2JdzSW/YgR3exl38jmZcfoGi2/oOInzY2pK0/AsvW1ZW0X9xip7EepcE+O9AeSi6bZ+fRawNxs72Mw2/ev4++45DKVA5xz1+Vx0Hr1hV/KlT3yh4n/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724658605; c=relaxed/simple;
-	bh=GhedG/+ethIkYgfdCk5mqEHNXhEs1KjWW9vogXGiJK8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jtNWgyrL4eVo8dL1d+f+RVQXgxFZNOML3zdRMBK2XUSD7rXJ4joBJQPTzHAU+iUtcqvB3nD9VfRQg9JAgLqEndqIPwk63Dk6gnA6hNHtzqv2hOHfziAW4a47rmX6innh0vLruCsQ/CH6bKQ7pUt/wHUxpiR81+YMzyyGvHP7H1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WsjWF4csTz4f3jMl;
-	Mon, 26 Aug 2024 15:49:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1D2AC1A0359;
-	Mon, 26 Aug 2024 15:50:00 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4WaM8xmWWIECw--.13849S32;
-	Mon, 26 Aug 2024 15:49:59 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: mariusz.tkaczyk@linux.intel.com,
-	xni@redhat.com,
-	song@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH md-6.12 v2 28/42] md/md-bitmap: merge md_bitmap_close_sync() into bitmap_operations
+	s=arc-20240116; t=1724658290; c=relaxed/simple;
+	bh=mFCyXF9RIT3BfuxQITKG4+gybhWmW25JaO1vwdN+664=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZAMC+9I69bnYqTHWqSkX/Hu1TT+6fvEQAU+U5JiOpsmQwWAB/a6ByyLWZpsr8w74G/FvXXB9iUjz/d045oZOELRfFzZFdt62JCL9QDqgBRlpzMU0uYmISOmlv0iByDCQJQn/J7TY6iZKnFYNxGH+AhwTxG0gDyKm3Se/mEKNiMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Iy2MmbaQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q0R3ZF008206;
+	Mon, 26 Aug 2024 07:44:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7oYkUV5ASS9hlhzaDIw+nRplvB4HQ/LLZ9O4q8rWFlk=; b=Iy2MmbaQe1a9Z4Vy
+	9R3z/L9HnwY7AHxlklWzSFEdor0SW5y+atF+vdxpyTRWt2lSAzlnuGFEulrsgf0L
+	EllFI4B0vlh4LldG53qigSQnNPPiK56fse8VLk5lXijJXhhXyJEBA45lacvQSnOb
+	lHYFJxvdsqrGqK/m17pKJmecPAwTFwWzK7YcK2ou76Itd/CCvK0WzTxNFOUnAJQo
+	RB/v6fEGvJV1yQhwNJrUIk3a/keDdsiU2uQG8jqdxEqY+t1ieVgls3Nkr+P7soeD
+	WuXnnsRl/0nPGatO2No72gQNAHVWGTJ3RsTJH+B6PK140feUVgoiH+Agmq7wRBIz
+	999y6A==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4179antv3x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 07:44:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q7ig7e021506
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 07:44:42 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
+ 2024 00:44:40 -0700
+Message-ID: <b3247591-d917-450a-9364-97a5a4f9a030@quicinc.com>
 Date: Mon, 26 Aug 2024 15:44:38 +0800
-Message-Id: <20240826074452.1490072-29-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
-References: <20240826074452.1490072-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHL4WaM8xmWWIECw--.13849S32
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFykAFyDAFW8Jr1rKFWrGrg_yoWrZF1kpa
-	yDJFy3C3y5WFW3X345A34Dua4rtas7trZrKryfG3s3uFykXF9xGF4rGa4jq3WqgF13AFs8
-	Zwn8trW5CryUXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
-	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q6r
-	43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
-	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x
-	0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbPC7UUU
-	UUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] wifi: ath11k: Set IRQ affinity hint after requesting
+ all shared IRQs
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <kvalo@kernel.org>, <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
+ <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
+ <d3ceaead-5619-4413-acce-64567c08fb27@quicinc.com>
+ <20240826070143.ejd6vuorseogmdfe@thinkpad>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20240826070143.ejd6vuorseogmdfe@thinkpad>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4q-YRT6t2D4787U_Cqz7T1uNQR1asJh5
+X-Proofpoint-ORIG-GUID: 4q-YRT6t2D4787U_Cqz7T1uNQR1asJh5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_04,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408260061
 
-From: Yu Kuai <yukuai3@huawei.com>
 
-So that the implementation won't be exposed, and it'll be possible
-to invent a new bitmap by replacing bitmap_operations.
 
-Also change the parameter from bitmap to mddev, to avoid access
-bitmap outside md-bitmap.c as much as possible.
+On 8/26/2024 3:01 PM, Manivannan Sadhasivam wrote:
+> On Mon, Aug 26, 2024 at 11:04:41AM +0800, Baochen Qiang wrote:
+>>
+>>
+>> On 8/23/2024 11:55 PM, Manivannan Sadhasivam wrote:
+> 
+> [...]
+> 
+>>> The warning is due to not clearing the affinity hint before freeing the
+>>> IRQ.
+>>>
+>>> So to fix this, let's set the IRQ affinity hint after requesting all the
+>>> shared IRQ. This will make sure that the affinity hint gets cleared in the
+>>> error path before freeing the IRQ.
+>> if you check 39564b475ac5 ("wifi: ath11k: fix boot failure with one MSI vector") you would see that the hint is set before requesting any IRQ for a purpose.
+>>
+> 
+> Ok, thanks for sharing the history. However, commit 39564b475ac5 looks confusing
+> to me. It asserts that changing the IRQ affinity changes the MSI vector
+> programmed to the device, but I've never heard of that behavior. IRQ affinity
+> change is supposed to only change the CPU mask for the IRQ.
+vector has to be changed, or how does kernel change the target CPU of a certain IRQ? On x86 platform, this is done by apic_set_affinity().
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md-bitmap.c | 9 ++++++---
- drivers/md/md-bitmap.h | 2 +-
- drivers/md/raid1.c     | 2 +-
- drivers/md/raid10.c    | 2 +-
- drivers/md/raid5.c     | 2 +-
- 5 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> For confirming my suspicion, I added the debug print in pci_write_msg_msi() and
+> I can see that it is only getting called once during pci_alloc_irq_vectors().
+> 
+> Moreover with my series, WLAN is working fine on QCA6390 with a shared vector:
+> 
+> 213:       6766          0          0          0          0          0          0          0   PCI-MSI 524288 Edge      bhi, mhi, mhi, ce0, ce1, ce2, ce3, ce5, ce7, ce8, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EX
+> T_IRQ, DP_EXT_IRQ, DP_EXT_IRQ, DP_EXT_IRQ
+> 
+That is because kernel allocates a vector targeting CPU0 at the very fist time, which is exactly what we want by setting IRQ affinity. So there is no need to change vector any more, and therefore you saw only one print of pci_write_msg_msi(). above interrupt counter is a direct evidence to such guess: all interrupts received on CPU0.
 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 8aef907da158..e1dceff2d9a5 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -1671,7 +1671,7 @@ static void bitmap_end_sync(struct mddev *mddev, sector_t offset,
- 	__bitmap_end_sync(mddev->bitmap, offset, blocks, true);
- }
- 
--void md_bitmap_close_sync(struct bitmap *bitmap)
-+static void bitmap_close_sync(struct mddev *mddev)
- {
- 	/* Sync has finished, and any bitmap chunks that weren't synced
- 	 * properly have been aborted.  It remains to us to clear the
-@@ -1679,14 +1679,16 @@ void md_bitmap_close_sync(struct bitmap *bitmap)
- 	 */
- 	sector_t sector = 0;
- 	sector_t blocks;
-+	struct bitmap *bitmap = mddev->bitmap;
-+
- 	if (!bitmap)
- 		return;
-+
- 	while (sector < bitmap->mddev->resync_max_sectors) {
- 		__bitmap_end_sync(bitmap, sector, &blocks, false);
- 		sector += blocks;
- 	}
- }
--EXPORT_SYMBOL(md_bitmap_close_sync);
- 
- void md_bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector, bool force)
- {
-@@ -2017,7 +2019,7 @@ static int bitmap_load(struct mddev *mddev)
- 		bitmap_start_sync(mddev, sector, &blocks, false);
- 		sector += blocks;
- 	}
--	md_bitmap_close_sync(bitmap);
-+	bitmap_close_sync(mddev);
- 
- 	if (mddev->degraded == 0
- 	    || bitmap->events_cleared == mddev->events)
-@@ -2745,6 +2747,7 @@ static struct bitmap_operations bitmap_ops = {
- 	.endwrite		= bitmap_endwrite,
- 	.start_sync		= bitmap_start_sync,
- 	.end_sync		= bitmap_end_sync,
-+	.close_sync		= bitmap_close_sync,
- 
- 	.update_sb		= bitmap_update_sb,
- 	.get_stats		= bitmap_get_stats,
-diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-index d6f2d5979da4..5d919b530317 100644
---- a/drivers/md/md-bitmap.h
-+++ b/drivers/md/md-bitmap.h
-@@ -262,6 +262,7 @@ struct bitmap_operations {
- 	bool (*start_sync)(struct mddev *mddev, sector_t offset,
- 			   sector_t *blocks, bool degraded);
- 	void (*end_sync)(struct mddev *mddev, sector_t offset, sector_t *blocks);
-+	void (*close_sync)(struct mddev *mddev);
- 
- 	void (*update_sb)(struct bitmap *bitmap);
- 	int (*get_stats)(struct bitmap *bitmap, struct md_bitmap_stats *stats);
-@@ -271,7 +272,6 @@ struct bitmap_operations {
- void mddev_set_bitmap_ops(struct mddev *mddev);
- 
- /* these are exported */
--void md_bitmap_close_sync(struct bitmap *bitmap);
- void md_bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector, bool force);
- void md_bitmap_sync_with_cluster(struct mddev *mddev,
- 				 sector_t old_lo, sector_t old_hi,
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index e5942f0d6fd2..52ca5619d9b4 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2790,7 +2790,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
- 		else /* completed sync */
- 			conf->fullsync = 0;
- 
--		md_bitmap_close_sync(mddev->bitmap);
-+		mddev->bitmap_ops->close_sync(mddev);
- 		close_sync(conf);
- 
- 		if (mddev_is_clustered(mddev)) {
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 15299a7774a0..5b1c86c368b1 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3222,7 +3222,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
- 			}
- 			conf->fullsync = 0;
- 		}
--		md_bitmap_close_sync(mddev->bitmap);
-+		mddev->bitmap_ops->close_sync(mddev);
- 		close_sync(conf);
- 		*skipped = 1;
- 		return sectors_skipped;
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 89ae149bf28e..d2b8d2517abf 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -6501,7 +6501,7 @@ static inline sector_t raid5_sync_request(struct mddev *mddev, sector_t sector_n
- 						    &sync_blocks);
- 		else /* completed sync */
- 			conf->fullsync = 0;
--		md_bitmap_close_sync(mddev->bitmap);
-+		mddev->bitmap_ops->close_sync(mddev);
- 
- 		return 0;
- 	}
--- 
-2.39.2
+Actually the issue mentioned in commit 39564b475ac5 happens randomly. But whenever it happens, you could see interrupts received on CPUs other than 0.
 
+> So I think the issue fixed by 39564b475ac5 should be reinvestigated.
+> 
+> - Mani
+> 
+>>>
+>>> Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
+>>>
+>>> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
+>>> Fixes: e94b07493da3 ("ath11k: Set IRQ affinity to CPU0 in case of one MSI vector")
+>>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> ---
+>>>  drivers/net/wireless/ath/ath11k/pci.c | 24 ++++++++++++------------
+>>>  1 file changed, 12 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+>>> index 8d63b84d1261..0c22e18e65c7 100644
+>>> --- a/drivers/net/wireless/ath/ath11k/pci.c
+>>> +++ b/drivers/net/wireless/ath/ath11k/pci.c
+>>> @@ -886,16 +886,10 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>>>  	if (ret)
+>>>  		goto err_pci_disable_msi;
+>>>  
+>>> -	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+>>> -	if (ret) {
+>>> -		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+>>> -		goto err_pci_disable_msi;
+>>> -	}
+>>> -
+>>>  	ret = ath11k_mhi_register(ab_pci);
+>>>  	if (ret) {
+>>>  		ath11k_err(ab, "failed to register mhi: %d\n", ret);
+>>> -		goto err_irq_affinity_cleanup;
+>>> +		goto err_pci_disable_msi;
+>>>  	}
+>>>  
+>>>  	ret = ath11k_hal_srng_init(ab);
+>>> @@ -916,6 +910,12 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>>>  		goto err_ce_free;
+>>>  	}
+>>>  
+>>> +	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+>>> +	if (ret) {
+>>> +		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+>>> +		goto err_free_irq;
+>>> +	}
+>>> +
+>>>  	/* kernel may allocate a dummy vector before request_irq and
+>>>  	 * then allocate a real vector when request_irq is called.
+>>>  	 * So get msi_data here again to avoid spurious interrupt
+>>> @@ -924,17 +924,20 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>>>  	ret = ath11k_pci_config_msi_data(ab_pci);
+>>>  	if (ret) {
+>>>  		ath11k_err(ab, "failed to config msi_data: %d\n", ret);
+>>> -		goto err_free_irq;
+>>> +		goto err_irq_affinity_cleanup;
+>>>  	}
+>>>  
+>>>  	ret = ath11k_core_init(ab);
+>>>  	if (ret) {
+>>>  		ath11k_err(ab, "failed to init core: %d\n", ret);
+>>> -		goto err_free_irq;
+>>> +		goto err_irq_affinity_cleanup;
+>>>  	}
+>>>  	ath11k_qmi_fwreset_from_cold_boot(ab);
+>>>  	return 0;
+>>>  
+>>> +err_irq_affinity_cleanup:
+>>> +	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+>>> +
+>>>  err_free_irq:
+>>>  	ath11k_pcic_free_irq(ab);
+>>>  
+>>> @@ -947,9 +950,6 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>>>  err_mhi_unregister:
+>>>  	ath11k_mhi_unregister(ab_pci);
+>>>  
+>>> -err_irq_affinity_cleanup:
+>>> -	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+>>> -
+>>>  err_pci_disable_msi:
+>>>  	ath11k_pci_free_msi(ab_pci);
+>>>  
+> 
 
