@@ -1,156 +1,181 @@
-Return-Path: <linux-kernel+bounces-301223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF8195EDF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A324295EDF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4929C1C214D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E97285E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B1D146A6C;
-	Mon, 26 Aug 2024 10:01:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7FE146A61;
+	Mon, 26 Aug 2024 10:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="foRn9Rjw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pX/D7tYO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="foRn9Rjw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pX/D7tYO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAB412C544;
-	Mon, 26 Aug 2024 10:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C0B12C544;
+	Mon, 26 Aug 2024 10:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666485; cv=none; b=Quc0YwhnIRvaV1n/KZQbSatS4YKw8copXy9YJx69X96wzZQ52xQr+FbBM17mCF4koNXMH1y7cKlWHAPM4so/8VpweYpl0hG3JGAkXeJgMfwggCnfUQLWbOScPRJnDDn/NAkzJDgKZEzlzcG8dQ7kVZfmsQ5QzsZV4zYAqHGxF9g=
+	t=1724666466; cv=none; b=kWEVuYsWvg/sM59dnFuG4L4PlzkBGLuwuE9NACyG3YQ7HUkQ0h44cFGmBYmPlSMlhYqh8d8yC7saviv8BzPFX978/gHhk+W6uhdpc/pIzAnNSu1ok9X02R/QwSRu8xwiEhWEjf+Jet7zVxZzkSvm2/zkjy+JiT31t3unNGHtWCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666485; c=relaxed/simple;
-	bh=2ajl1sU0FPDPFT8FLCx62T0JXtwPLg9Y0e+KwZ3N2O4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFxb4C1cIRigXn+wwtqhBDR989Q11hmH97xONV0OQFrVEU/eLDiIa1t1MRwCXqw+UK3l0SH32dlx+Al1iHYLN9MOOQNGQGU7/20uaXEZKR5dnQ4ylNlv9f7x0IcMjm7Wj/qOmOcgVuKs7aCWggLQgLaevSaAQA22KLVM/NKnldY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CCEC51407;
-	Mon, 26 Aug 2024 10:01:20 +0000 (UTC)
-Date: Mon, 26 Aug 2024 13:01:29 +0300
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 02/19] arm64: mm: Add confidential computing hook to
- ioremap_prot()
-Message-ID: <ZsxSeQZbMMdtsabP@arm.com>
-References: <20240819131924.372366-1-steven.price@arm.com>
- <20240819131924.372366-3-steven.price@arm.com>
+	s=arc-20240116; t=1724666466; c=relaxed/simple;
+	bh=Qa0x2aJ36ZI+30OPot7ebFxp+rXfMZB4d404jrw3rm0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o62OlgVitaRQNpBytjKjhfbMHyiPJ5VXawlFJBqbRp16LJo9fIDG2ZgKpVV7E3Q7SZ4xVV3zc+GtwDeLqa5EnFP1tmXx5IcNs+IInclxd/GN7Z6SuaORtqjU7sEldenZmVldltV9sYGZtDUQw0yURmHZfpRZcpyfR6gXEqx908k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=foRn9Rjw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pX/D7tYO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=foRn9Rjw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pX/D7tYO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B1AB1219A7;
+	Mon, 26 Aug 2024 10:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724666458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLjQvx1Iw+blgciXlCuxZQqPUe6hj0Rwui1+Ws1wEig=;
+	b=foRn9Rjw8lBWdoRjRG9w8ErWJgqbknlt0K5AgKLSjjsBfILb7cneisBKy3vcXXFVlEi0qF
+	XVzfVhY72l/XGsigD/k2DD1560fnItYrISI0lDEg1JGv5iEF40rMPJMgQnUpy7H/P8OkO9
+	jcDDge3JKX5jH+TPIippU1ZRfspaVFk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724666458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLjQvx1Iw+blgciXlCuxZQqPUe6hj0Rwui1+Ws1wEig=;
+	b=pX/D7tYOz1Wxh6nkXgj3uH6g1FTkq1aKDjgF+Rn9fbzz9y8QnFlIweQ7VFbxsNhYwiLIyb
+	x1rcIJ4ra9uTgaCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=foRn9Rjw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="pX/D7tYO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724666458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLjQvx1Iw+blgciXlCuxZQqPUe6hj0Rwui1+Ws1wEig=;
+	b=foRn9Rjw8lBWdoRjRG9w8ErWJgqbknlt0K5AgKLSjjsBfILb7cneisBKy3vcXXFVlEi0qF
+	XVzfVhY72l/XGsigD/k2DD1560fnItYrISI0lDEg1JGv5iEF40rMPJMgQnUpy7H/P8OkO9
+	jcDDge3JKX5jH+TPIippU1ZRfspaVFk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724666458;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLjQvx1Iw+blgciXlCuxZQqPUe6hj0Rwui1+Ws1wEig=;
+	b=pX/D7tYOz1Wxh6nkXgj3uH6g1FTkq1aKDjgF+Rn9fbzz9y8QnFlIweQ7VFbxsNhYwiLIyb
+	x1rcIJ4ra9uTgaCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8AD7D1398D;
+	Mon, 26 Aug 2024 10:00:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZWF4IFpSzGaneQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 26 Aug 2024 10:00:58 +0000
+Date: Mon, 26 Aug 2024 12:01:42 +0200
+Message-ID: <87h6b7iovt.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: soxiebing <soxiebing@163.com>
+Cc: tiwai@suse.de,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: fix snd_hda_bus_reset when single_cmd is not supported
+In-Reply-To: <20240826091958.44375-1-soxiebing@163.com>
+References: <20240821014238.338864-1-soxiebing@163.com>
+	<20240826091958.44375-1-soxiebing@163.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819131924.372366-3-steven.price@arm.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: B1AB1219A7
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[163.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.51
+X-Spam-Flag: NO
 
-On Mon, Aug 19, 2024 at 02:19:07PM +0100, Steven Price wrote:
-> From: Will Deacon <will@kernel.org>
+On Mon, 26 Aug 2024 11:19:58 +0200,
+soxiebing wrote:
 > 
-> Confidential Computing environments such as pKVM and Arm's CCA
-> distinguish between shared (i.e. emulated) and private (i.e. assigned)
-> MMIO regions.
+> >On Wed, 21 Aug 2024 03:42:38 +0200,
+> >soxiebing wrote:
+> >> 
+> >> From: songxiebing <songxiebing@kylinos.cn>
+> >> 
+> >> When an azx_get_desponse timeout occurs, ensure that bus_reset
+> >> can be used when fallback_to_single_cmd is not supported.
+> >> 
+> >> Signed-off-by: songxiebing <songxiebing@kylinos.cn>
+> >
+> >Why do you need to change?  Does it fix any real problem you faced?
 > 
-> Introduce a hook into our implementation of ioremap_prot() so that MMIO
-> regions can be shared if necessary.
+> Thanks for reply, i am testing all these days, but the problem is
+> still exists even if using bus reset.
+>
+> The problem i encountered is that hda_call_codec_resume returned 
+> timeout of 120 seconds(defined CONFIG_DPM_WATCHDOG)) when doing s4, 
+> azx_get_response timeout occured, it is a low probability event.
 > 
-> Signed-off-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Patch 'borrowed' from Will's series for pKVM:
-> https://lore.kernel.org/r/20240730151113.1497-6-will%40kernel.org
-> ---
->  arch/arm64/include/asm/io.h |  4 ++++
->  arch/arm64/mm/ioremap.c     | 23 ++++++++++++++++++++++-
->  2 files changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-> index 41fd90895dfc..1ada23a6ec19 100644
-> --- a/arch/arm64/include/asm/io.h
-> +++ b/arch/arm64/include/asm/io.h
-> @@ -271,6 +271,10 @@ __iowrite64_copy(void __iomem *to, const void *from, size_t count)
->   * I/O memory mapping functions.
->   */
->  
-> +typedef int (*ioremap_prot_hook_t)(phys_addr_t phys_addr, size_t size,
-> +				   pgprot_t *prot);
-> +int arm64_ioremap_prot_hook_register(const ioremap_prot_hook_t hook);
-> +
->  #define ioremap_prot ioremap_prot
->  
->  #define _PAGE_IOREMAP PROT_DEVICE_nGnRE
-> diff --git a/arch/arm64/mm/ioremap.c b/arch/arm64/mm/ioremap.c
-> index 269f2f63ab7d..6cc0b7e7eb03 100644
-> --- a/arch/arm64/mm/ioremap.c
-> +++ b/arch/arm64/mm/ioremap.c
-> @@ -3,10 +3,22 @@
->  #include <linux/mm.h>
->  #include <linux/io.h>
->  
-> +static ioremap_prot_hook_t ioremap_prot_hook;
-> +
-> +int arm64_ioremap_prot_hook_register(ioremap_prot_hook_t hook)
-> +{
-> +	if (WARN_ON(ioremap_prot_hook))
-> +		return -EBUSY;
-> +
-> +	ioremap_prot_hook = hook;
-> +	return 0;
-> +}
-> +
->  void __iomem *ioremap_prot(phys_addr_t phys_addr, size_t size,
->  			   unsigned long prot)
->  {
->  	unsigned long last_addr = phys_addr + size - 1;
-> +	pgprot_t pgprot = __pgprot(prot);
->  
->  	/* Don't allow outside PHYS_MASK */
->  	if (last_addr & ~PHYS_MASK)
-> @@ -16,7 +28,16 @@ void __iomem *ioremap_prot(phys_addr_t phys_addr, size_t size,
->  	if (WARN_ON(pfn_is_map_memory(__phys_to_pfn(phys_addr))))
->  		return NULL;
->  
-> -	return generic_ioremap_prot(phys_addr, size, __pgprot(prot));
-> +	/*
-> +	 * If a hook is registered (e.g. for confidential computing
-> +	 * purposes), call that now and barf if it fails.
-> +	 */
-> +	if (unlikely(ioremap_prot_hook) &&
-> +	    WARN_ON(ioremap_prot_hook(phys_addr, size, &pgprot))) {
-> +		return NULL;
-> +	}
-> +
-> +	return generic_ioremap_prot(phys_addr, size, pgprot);
->  }
->  EXPORT_SYMBOL(ioremap_prot);
+> To avoid exceeding 120s, can i change the count value to 3 in 
+> hda_set_power_state ?
 
-I should have commented on Will's original series since it's more likely
-to affect pKVM than CCA. Anyway, this is all good with the hook,
-especially if the guest needs to do some paravirtual call. However, we
-have other instances of mapping I/O memory without going through
-ioremap() - io_remap_pfn_range() which uses pgprot_decrypted(). We'll
-need some hooks there as well. And I think there are a few other cases
-of pgprot_decrypted() but we can fix them on a case by case bases (e.g.
-routing them through io_remap_pfn_range()).
+So the change you suggested isn't for any real "fix" but to allow the
+possible workaround with single_cmd to be applicable somehow in a
+different form.  Then we should rather try debugging the original
+issue, instead of change it.
 
-For this patch:
+Does the response timeout happen *during* the S4 suspend, or during S4
+resume, or after S4 resume?
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+To be noted, the behavior you changed is only for the single_cmd
+option is set explicitly, so it's more or less the designed behavior,
+and I don't think it's good to change blindly.
+
+
+Takashi
 
