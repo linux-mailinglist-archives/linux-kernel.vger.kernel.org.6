@@ -1,175 +1,103 @@
-Return-Path: <linux-kernel+bounces-301129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4447F95ECBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBEE95ED4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B64B22783
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:07:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C668828275F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893F142E67;
-	Mon, 26 Aug 2024 09:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4648146D55;
+	Mon, 26 Aug 2024 09:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KAfhreAF"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvAiglF9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A232145A09
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D35145FEE;
+	Mon, 26 Aug 2024 09:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663252; cv=none; b=CPi926rr0XDP5K3zTDm9N0zVqUnkHoA1WJ9/zdTHKduZz3MTVBNyk106EqgyJL0ITPcw7sSLe3NlhWkwV/RIoKou9fhSrXT8gvSAJt6blzSSlJP/wbksAAdgK50Sh7kV/3XVzKGNp0CZZG1lGR8XLsHyjmroPq629D66QpGDY5I=
+	t=1724664784; cv=none; b=LhLakcyv9HMt1a4ny2tazgAzPlmLL+NUn5TXTcsuWOoh7nb1709PJngCNnbRu4nFR9iK50MZzZ/JJxTSVxTJUv2Fgwp6yuOFfUAmcy2p0xF7xoBERAOed1cnmNQisk19FbjY9hyAnp90oxsm1pcDK4vjthlhrZmrn+7DElCXCis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663252; c=relaxed/simple;
-	bh=lj01/f2LiyRrUvTSa8/RM+ENuLL5BYJU8hMdCYL8sIg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KM6pVWPFbbBaY6lKJeA2FNfTBUQj6fieS+iFUYPEyWoadBCyQSFl5JVAEalNgeBOrjYkHt/ilQ/BuNw4XxZEEAiSUGkgFQRKWKzvKxYwCUriT+besMk3CWiTDdx7xBCJf3bpcUwdHa8ElYkSo7+7mIWFRCY3l7KTNcnPKaOHAVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KAfhreAF; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f4f24263acso52141161fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724663248; x=1725268048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UqD5UWcEcVPtLKNughX5xFAsztARfJbyIdaLj7krJ48=;
-        b=KAfhreAFNj29HjT2HRVug5yGbYqg+uXm/EbHaYsfpbUSmXpiiMp08OJpvLccNsKg6z
-         53wRQAOco+Vc83bcSDlU7TzqK67Ajf03FnhkGDXqkGBA92jGKv5eM7HrWhJmj2Ke/GRK
-         3naiX76Odxc44hk3Ag9NgW0nAmv4o1HaTXaCAo2yAG5/KLoU3/BF3ttU1XQldTxODXv2
-         EW58aG/icuOW58s1stk5ivp43KqABTq77vJBj352iqoFbkskE+eJw8ZLJhg6mG8NsJpj
-         e0bcY6FkT/RszqswcmBql1PCylwC+LPG3I8fKde+hmE1gPlpSxR0SfnvubaNW/OK4Xns
-         6tdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724663248; x=1725268048;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqD5UWcEcVPtLKNughX5xFAsztARfJbyIdaLj7krJ48=;
-        b=np+y26vubPexgCNHmocJnaq3wzbQyERcL0ngGWKxz2d1+E95KWTzAazGNMkbch7ZSQ
-         U99C1zdeIP1avozQeaOJK02o15PQfIbsB0/9Ee/bxQIZXC0qDpbUO1dEQYpmGH88A7kY
-         DyXgvrGlt/426h0ssJTUHggQc+YSjGZOhCPifuwks02ODIQu8OxUnFESklm9OBYYUkla
-         iJUCIP8XwLXCa8LjwgvY2f2SKbqYk3KYD9m4FXuJR4LFMdc8iDOFW7ewWxqTdgQOKBtO
-         F0F1WPUBrXXcNmqS3qJd0anwg3eJHmLWrXHdc8Qlc+w6J76gfQw1GpRWSIso5o9BTIP2
-         GfRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwZlNA60K9EcFXRH5jnk+wmXZBIoDt8ObttkoUdopN+26wDXDOpyHDlUt7FeCH9Q7ux1XPaqJLMKS8NkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkdWnSrRYOJIdgKvQgepP/Bme/WJBdmrHvsuipjLXXzC/xds1P
-	vUhgglP8W5De8D/5O/hFNJHq+Awd4Xqqr27DuSPJOUCBmQUI1PUBME/+7mJpQZ8=
-X-Google-Smtp-Source: AGHT+IEK0yN2RYKBDuaStUQnXKZRjXxJWE9pErYm6IieseugH4NhuZzdiuxipurv3igkJJwF0aMRAw==
-X-Received: by 2002:a2e:b892:0:b0:2f3:cf43:c2a8 with SMTP id 38308e7fff4ca-2f4f579e8eamr76624181fa.42.1724663247306;
-        Mon, 26 Aug 2024 02:07:27 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2205e1sm652753666b.12.2024.08.26.02.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 02:07:26 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 26 Aug 2024 11:07:33 +0200
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <ZsxF1ZvsrJbmWzQH@apocalypse>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <2024082420-secluding-rearrange-fcfd@gregkh>
+	s=arc-20240116; t=1724664784; c=relaxed/simple;
+	bh=hLsfUSzR0HEhVpFfdXscTD8zyuZTM22+rpebelyMh1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YcBD6JdaPmwyCFrbAbgb24tKLBI3Ey6fBEmvaqQklvyMKUzrQEshWkcgLNYJzjaPptH8Nad4rleyEUyBxWBeJ8R6CdHzVZm+2CgsngGaNnzhnWiUOWoaFvI/1bC5I4sH3QQgipYm1egW9zKJ/uOkwJjIpdIBs/xBlRdrbu4KrY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvAiglF9; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724664783; x=1756200783;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hLsfUSzR0HEhVpFfdXscTD8zyuZTM22+rpebelyMh1E=;
+  b=kvAiglF94UFmsqyOHS7vasKHowSkNvZxK/UnrCHe3TIw3fNXkIToVxfD
+   9rGHmZFQ6U93hcFycMgjpYVLWKYaOehnnyZF0t46861z2Kdrqoro7IgUP
+   CJR0E7U//1yVodDPUQ6aIOFTe6kmv4bV5VabypUL+1XPcu9yj3QqW9TM7
+   SKZbw/WM8uFKiSVQbLqiie8uVIMizrS4xJYv94SFbdLibz1sSD9K0887Q
+   zFz7uLwVMGVqPVg803w18rdYbMp+VitQZ+Zv1BDcrwszcPcToQkTIepbc
+   bxQ1/iIY6Q8rLDN8f1/ElGV6MtOrYP+d8xba/inzOoO/n4v10w4KuS+BS
+   A==;
+X-CSE-ConnectionGUID: PJwgxjykR6ibOUktBPIWhw==
+X-CSE-MsgGUID: XPr01gcPTHWwEu3+NU2oVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="25967078"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="25967078"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:33:02 -0700
+X-CSE-ConnectionGUID: GheEIs6PTFaDrqiKV0o3lA==
+X-CSE-MsgGUID: ftyAxPLYSzyC0hc4jGqEmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="62134683"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.246.121]) ([10.245.246.121])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:32:56 -0700
+Message-ID: <4149884a-7c60-40d8-848b-8876f16d6d7f@linux.intel.com>
+Date: Mon, 26 Aug 2024 11:09:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024082420-secluding-rearrange-fcfd@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v25 31/33] ALSA: usb-audio: Add USB offload route kcontrol
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
+ lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, robh@kernel.org,
+ gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
+ <20240823200101.26755-32-quic_wcheng@quicinc.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240823200101.26755-32-quic_wcheng@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Greg,
 
-On 09:53 Sat 24 Aug     , Greg Kroah-Hartman wrote:
-> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -2610,6 +2610,9 @@
-> >  #define PCI_VENDOR_ID_TEKRAM		0x1de1
-> >  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
-> >  
-> > +#define PCI_VENDOR_ID_RPI		0x1de4
-> > +#define PCI_DEVICE_ID_RP1_C0		0x0001
-> 
-> Minor thing, but please read the top of this file.  As you aren't using
-> these values anywhere outside of this one driver, there's no need to add
-> these values to pci_ids.h.  Just keep them local to the .c file itself.
->
 
-Thanks, I've read the top part of that file. The reason I've declared those
-two macroes in pci_ids.h is that I'm using them both in the
-main driver (rp1-pci.c) and in drivers/pci/quirks.c.
+> +config SND_USB_OFFLOAD_MIXER
+> +	tristate "Qualcomm USB Audio Offload mixer control"
+> +	help
+> +	 Say Y to enable the Qualcomm USB audio offloading mixer controls.
+> +	 This exposes an USB offload capable kcontrol to signal to
+> +	 applications about which platform sound card can support USB
+> +	 audio offload.  This can potentially be used to fetch further
+> +	 information about the offloading status from the platform sound
+> +	 card.
 
-I suppose I could move DECLARE_PCI_FIXUP_FINAL() inside rp1-pci.c to keep
-those two defines local, but judging from the number of entries of
-DECLARE_PCI_FIXP_FINAL found in quirks.c versus the occurences found in
-respective driver, I assumed the preferred way was to place it in quirks.c.
+I would remove reference to Qualcomm for this Kconfig, all the code
+seems generic to me? Probably a left-over from the previous version.
 
-Many thanks,
-Andrea
-
- 
-> thanks,
-> 
-> greg k-h
 
