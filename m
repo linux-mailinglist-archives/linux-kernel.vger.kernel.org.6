@@ -1,257 +1,144 @@
-Return-Path: <linux-kernel+bounces-301816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA09895F5FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:05:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0727E95F656
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6931F21E69
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:05:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B287F1F22336
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F271946D0;
-	Mon, 26 Aug 2024 16:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BE1194AE2;
+	Mon, 26 Aug 2024 16:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl0GwMn1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOjnfhhJ"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF001940BC;
-	Mon, 26 Aug 2024 16:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B23194A40
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688115; cv=none; b=DQKxghIiNLPkEpAaSQX32APDmZfbry5Erq92wDE2fLwdcEPPOHNiuRhkVSIJn2IvysB4U4m4Wh87wEWdkg8p7O2fFWYTDfdE2zIB1d2Kv+J6CmgkLkLz98qRguI7M0af9t7VKsvRKixCDL7rjltGsSOplKMQRw74heIMIKYPog4=
+	t=1724689262; cv=none; b=hmUDfvUA3nCn3k5ZaEUoldwrZrHfMAAdeC3wsz/aNMW2x92plWQwWYEU/Z4WKQJjuIkUlryRxXwVw83MRkglAzGQdnT9xafS7KKXiSGrBNJK8pk/mNkEc7mRWbvLDBwy2DnpVWcQwWgfaINkQeZSTbWrBPzoKUHC17nGcDOxtFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688115; c=relaxed/simple;
-	bh=A5xnlPqwMK691sFGJdZoiAcotUbdPn6XxzAE/ZmYNpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VE3JAEJYwA37J0hfJQGPwJmGQHJX3T/ihAF8MlFuJCCiKoIGdyOuSg9emg7/OzyB+ILhm44Sua0Utu/l/PCz/Ku3aRBfVsGfv8yW0elSpr/oV5EORM0PGDy71zo6ucZXFx+3lkOYd4yDmn4A1gyZ4robCoVYrVCYZ0nsG9frQRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zl0GwMn1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07718C4E696;
-	Mon, 26 Aug 2024 16:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724688115;
-	bh=A5xnlPqwMK691sFGJdZoiAcotUbdPn6XxzAE/ZmYNpM=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Zl0GwMn1KkYdvI+3WDMZYizU4Prqdgo7an2ZtAbQj3aEGu3RzBv68eWc/jhBzyvAz
-	 iujq6NYOPU+QpKPp2+ECtTapQEpJD338cz5tIHc1BxvmhLs8BtFxpcB+XKByCGFBl2
-	 D7wiXcDlD1JEJzZDuvHNgWzeWGoxpPNiJplzma8Ip/WJTLtR7T8Jpe4hhQNTMt41zO
-	 SaEaMUgz8S83V9co+RidAcFYO9mQMKE6eA+Fk6O3gD70op7RX3C2++Azao2kCa3mcI
-	 Q4RPVkFD7/IwzuXrRGnZf24BvFWdb0Oz3WCTpcB7pFI3p4I/vWaGl/aKBZu2nw7Bnu
-	 SoVboJ25SJ7iQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9E29DCE0B78; Mon, 26 Aug 2024 09:01:54 -0700 (PDT)
-Date: Mon, 26 Aug 2024 09:01:54 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com,
-	akpm@linux-foundation.org, cl@linux.com, mhocko@kernel.org,
-	urezki@gmail.com, neeraj.upadhyay@kernel.org
-Subject: Re: [PATCH 6/9] rcu: rcu_pending
-Message-ID: <4e4a5c89-e9ec-421e-8245-f076044866c9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240819165939.745801-1-kent.overstreet@linux.dev>
- <20240819165939.745801-7-kent.overstreet@linux.dev>
- <adc8b09e-5f66-44de-845b-e615069c2e20@paulmck-laptop>
- <yfhctftdn4itupt735u7dnu2zt2aarm3lzvmyf6bs7hkv4radc@ndw4nsinxhqx>
- <f7266ab4-aa29-4cbc-a63e-fa582e266864@paulmck-laptop>
- <4zkfyn2shwot2zxiahn7zt7k2gpnoavyrldzzwo23qqxr6fvfh@xqlz4vehkln5>
+	s=arc-20240116; t=1724689262; c=relaxed/simple;
+	bh=65mwwAzTqveSbIVeRdWT+IRD9chpaIVji0wmTNJwTs4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sCIs6f9GzKAknjOAWuQVg27VXxb6Vkv21nda+w3dJvSz67lZThorYBRYY7gZldwgDpzN4vkMGUd0mHml0osTggEejhfzreWusxbrxPb4CZfVKrgBqLDj3TSqfSFJwF3Wjtjb6p23P8ma66b/9cugbNKbzWBo1RTZGo1RpMxGjGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOjnfhhJ; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2703967b10cso3242142fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724689260; x=1725294060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AslJABVo00gPblnVR8gYUn7zUqkgg9WhvvpyeH5H28=;
+        b=fOjnfhhJ0iXx11HM/5Ac+bV7TZWV+EadARIzFjLS/OxtlLZM+DmYxpuPLnVdwwhD4G
+         ujkYJeen5lukd6GRZTVyjKI5ijCZ/ZAOEDGUolMeBZGfxknO+HEBAPXa6+JIW5M1jM+d
+         XxItPpVtx3YazXLFLgmYILJ+SWYwwsWjkl9AmtCq4qqgk9ldBcc6flWdvrSf/doFHBoM
+         VvsXpuj1NJXYMj8/IsqK5yQjnlDy8gOjBG9OtLPUbDhFn5RHHoChZ0Bs8vw9U8F9eiex
+         WBw04ETRBAgJvhqPrzXMD38O8tlQ0FF4QP/Kh7JlnLbmXn4je4jygX9ROpkMkB8je+KF
+         wxPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724689260; x=1725294060;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0AslJABVo00gPblnVR8gYUn7zUqkgg9WhvvpyeH5H28=;
+        b=alwQ8ZbsAre1yUHX3T7Ik1Hso/CjB8YnrCtBdvPBxnEB3ph/JyyYVWK0PB5mA9MYGq
+         Nj4ELRoHDf8Vx9ThTalNop/b8q+vniIh9zmYruHJ/34VyHyuu0EliV5qIgeWd2nT0VsM
+         GwnijVnT5vb9QMWZ0NL9dFA9E/qVsepYIJb70lihCr4f6nbsRVNVRmFYMrYqd2RKqbMq
+         2y5G6vz+XdibWxUO02TU8PxGfnmWX9SJ7Cw5hbVykCvBfNzAdplCbnH3k4/XM5PfHE2U
+         Gd1A7u6aqgt4sgoqgNTtw6jx77sPnlOLHj6IKYqKdm+iyiTF4yEa0vqcjnzzwb3YdfSa
+         MMQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRNJXaA1RPKB7+8ZLTGYivW5YmPWYDA+dYT0hkhuPzeFR/bIGTOIWHFJPe69pBgzeWTf0qKqYvoQ+eOSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybSrNYqZRDoWtuIMvj5q6nFlegKmeEH6sc4O9rf2GjkLJOWPZt
+	4sKXULJ7oK/tJe64IwdTzlHXxeRqTEWIl/shpnSd4TgE9fe8LW+4
+X-Google-Smtp-Source: AGHT+IHmikhzl0qq17V3DT9TnvIBp3tik8f35GSxDiprCSyIs8GKTKsExxUf5g1DWQ+fSIxEePrWcg==
+X-Received: by 2002:a05:6870:2250:b0:261:142:7b95 with SMTP id 586e51a60fabf-273e654b961mr11669552fac.25.1724689260094;
+        Mon, 26 Aug 2024 09:21:00 -0700 (PDT)
+Received: from embed-PC.. ([106.222.235.177])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdb54asm7830742a12.42.2024.08.26.09.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 09:20:59 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: agx@sigxcpu.org,
+	kernel@puri.sm,
+	neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: mantix: Transition to multi-context write sequence
+Date: Mon, 26 Aug 2024 21:33:28 +0530
+Message-Id: <20240826160328.12685-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4zkfyn2shwot2zxiahn7zt7k2gpnoavyrldzzwo23qqxr6fvfh@xqlz4vehkln5>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 11:17:29AM -0400, Kent Overstreet wrote:
-> On Mon, Aug 26, 2024 at 07:44:12AM GMT, Paul E. McKenney wrote:
-> > I have gotten requests for a variant of SRCU that dispenses with the
-> > read-side memory barriers, which would allow you to dispense with RCU.
-> > Maybe an srcu_read_lock_lite() and srcu_read_unlock_lite(), similar to
-> > the _nmisafe() variants.  There is always a price, and in this case the
-> > price would be that srcu_read_lock_lite() and srcu_read_unlock_lite()
-> > be restricted to code regions where RCU is watching.  But from what I
-> > know, fs code must already abide by that restriction.
-> > 
-> > Would that help?
-> 
-> I don't think that helps here, but that is something I'd be interested
-> in.
-> 
-> What I would like for this is:
->  - a single #define for RCU_NR_OLDSTATES for both RCU and SRCU
-> 
->  - a way of getting the current RCU gp sequence number without a
->    function call, since we hit that on every single enqueue(). One of my
->    development versions added a function to RCU and SRCU for getting a
->    pointer to the internal sequence number, which we'd call at init
->    time; this lets us skip the function call and a branch. 
-> 
-> Another thing that might make the code a bit easier to reason about is
-> if rcu_read_lock() also worked as an srcu_read_lock() - is something the
-> SRCU variant you're talking about previously would provide?
+Replace deprecated 'mipi_dsi_generic_write_seq()' macro
+to 'mipi_dsi_generic_write_seq_multi()' macro in mantix_init_sequence
+function.
 
-Yes, srcu_read_lock_lite() would return an value that you later pass
-to the corresponding srcu_read_unlock_lite(), just as srcu_read_lock()
-and srcu_read_unlock() do now.
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ .../gpu/drm/panel/panel-mantix-mlaf057we51.c  | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-And they would have the same grace-period algorithm, and thus the same
-value for NUM_ACTIVE_SRCU_POLL_OLDSTATE, as requested above.
+diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+index ea4a6bf6d35b..f276c65cc9bb 100644
+--- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
++++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+@@ -49,22 +49,25 @@ static int mantix_init_sequence(struct mantix *ctx)
+ {
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+ 	struct device *dev = ctx->dev;
++	struct mipi_dsi_multi_context dsi_ctx = {
++		.dsi = dsi
++	};
 
-But get_state_synchronize_srcu() is still a function call.  But the
-offer of a function that checks multiple grace-period-state cookies in
-one call still stands.
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor.
+ 	 */
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
 
-> In my current version of the code, we call __get_state_synchronize_rcu()
-> after we've disabled interrupts; we know the rcu gp seq isn't going to
-> tick while we're in the critical path. But this doesn't apply if it's
-> for SRCU, and I don't want to add if (src) srcu_read_lock() branches to
-> it.
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_INT_CANCEL, 0x03);
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
+-	mipi_dsi_generic_write_seq(dsi, 0x80, 0xA9, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_INT_CANCEL, 0x03);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0xA9, 0x00);
 
-Actually, disabling interrupts does *not* prevent RCU's grace-period 
-sequence number from changing.  For example, the following really can
-happen:
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
+-	mipi_dsi_generic_write_seq(dsi, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
+ 	msleep(20);
 
-o	RCU notices that the current grace period can end.
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_SPI_FINISH, 0xA5);
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xA5);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
+ 	msleep(20);
 
-o	A CPU disables interrupts here.
+ 	dev_dbg(dev, "Panel init sequence done\n");
+--
+2.34.1
 
-o	A call to get_state_synchronize_rcu() returns a cookie
-	corresponding to the end of the grace period following the
-	current one.
-
-o	RCU ends the current grace period, therefore updating the
-	grace-period sequence number.
-
-o	RCU starts a new grace period, therefore updating the
-	grace-period sequence number once again.
-
-o	RCU cannot complete this new grace period until that CPU
-	re-enables interrupts, but it has already updated its grace-period
-	sequence number not once, but twice.
-
-So if your code knows that RCU's grace-period sequence number cannot
-change while a given CPU has interrupts disabled, that code has a bug.
-A low-probability bug, perhaps, but if your code is running on enough
-systems, it will make its presence known.
-
-> Not at all essential, the races that result from this are harmless, but
-> if we e.g. decide it's worthwhile to only kick off a gp if it hasn't
-> ticked (i.e. only kick rcu if we're still on seq of the object being
-> enqueued) it'd be nice.
-
-Why not call get_state_synchronize_rcu(), and ask for a new grace period
-if the value returned is different than that from the previous call?
-
-> > > On the enqueue side, which is the fastpath, this uses a cursor - we're
-> > > not walking the radix tree every time.
-> > > 
-> > > On the processing side, where we're kfree_bulk()ing entire radix tree
-> > > nodes, the radix tree is going to have better cache locality than a list
-> > > of pages.
-> > 
-> > Interesting.  What testing or analysis did you do in the course of
-> > arriving at this conclusion?  In the meantime I will assume that the
-> > analysis involves your radix-tree nodes being more than one page in size.
-> 
-> No, the radix tree nodes are 512 bytes; that's been sufficient in my
-> testing.
-> 
-> (also, please don't refer to PAGE_SIZE outside of mm/ code without a
-> _good_ reason; that's something we've been trying to clean up.)
-
-Moving kfree_rcu() into mm/ will fix that problem.  Plus we did discuss
-this with the mm folks back in the day, especially about the GFP flags,
-so apparently there was a sufficiently good reason.  Maybe still is.
-
-> I'll try to post some performance numbers when I have some time.
-
-I look forward to seeing what you come up with.
-
-> > It might or might not be reasonable, depending on what is going on in the
-> > rest of the system.  The current kfree_rcu() code can run the system out
-> > of full pages, but it won't impede other code allocating smaller blocks
-> > of memory.  We could easily change it to allocate individual rcu_head
-> > structures, but doing so would not necessarily be a win in OOM conditions,
-> > again, depending on what else is going on.
-> 
-> As long as the thread calling kvfree_rcu_mightsleep() can block without
-> blocking memory reclaim it'll be safe. We might want to tweak the GFP
-> flags so to tell the allocator "don't try too hard, bail out so we can
-> check if the gp has expired".
-
-There can be quite a difference between "safe" and "does well in actual
-workloads".
-
-> > I took a quick look at __rcu_pending_enqueue() and my eyes are still
-> > bleeding.  Concatenating linked list of pages is way simpler, way faster,
-> > and way more robust.
-> 
-> Funny, I had the same thoughts trying to read your code... :)
-
-Amazing how much easier it is to generate new code than to understand
-existing code, isn't it?  ;-)
-
-> But, most of __rcu_pending_enqueue() is slowpaths; the fastpath is just
-> 
-> 	objs = get_object_radix(p, seq); /* lookup seq in p->objs */
-> 
->         *objs->cursor++ = ptr ?: head;                                                                                                       
->         /* zero cursor if we hit the end of a radix tree node: */                                                                            
->         if (!(((ulong) objs->cursor) & (GENRADIX_NODE_SIZE - 1)))                                                                            
->                 objs->cursor = NULL;                                                                                                         
->         start_gp = !objs->nr;                                                                                                                
->         objs->nr++;
-> 
-> So I think the performance concerns are moot, and for robustness -
-> memory allocation failure always turns into "use the linked lists of
-> objects", which works similarly to the old code.
-
-Bugs live on slowpaths as well as on fastpaths.  In fact, they tend to
-accumulate there.
-
-> > > But yes, using it for call_rcu() would need more performance
-> > > justification. I haven't seen workloads where call_rcu() performance
-> > > particularly matters, so it's not something I'm pushing for - I included
-> > > that because it's minimal code and other people might know of workloads
-> > > where we do want it.
-> > 
-> > Plus, unlike kfree_rcu() post-grace-period handling, call_rcu() callback
-> > functions usually access the memory block passed to them, which means
-> > that they are incurring that per-element cache miss in any case.
-> 
-> True. But this would allow us to prefetch those objects (several
-> iterations in advance).
-
-I need to see a CPU on which this actually make a significant difference
-before adding this sort of complexity.
-
-> > > > > Ideally we would be getting a callback every time a grace period
-> > > > > completes for which we have objects, but that would require multiple
-> > > > > rcu_heads in flight, and since the number of gp sequence numbers with
-> > > > > uncompleted callbacks is not bounded, we can't do that yet.
-> > > > 
-> > > > Doesn't the call from __rcu_pending_enqueue() to process_finished_items()
-> > > > serve this purpose?  After all, the case that causes trouble is the one
-> > > > where lots of things are being very frequently queued.
-> > > 
-> > > No, because that's unpredictable, and we don't process pending items in
-> > > enqueue() unless we know we can sleep (i.e., we don't do it if the
-> > > caller is latency sensitive).
-> > 
-> > It is possible to do this in an extremely lightweight fashion in the
-> > common case.
-> 
-> Just processing a few items? hmm, would we want to though, when
-> otherwise we'd be calling kfree_bulk()? I think icache locality means
-> we'd generally prefer not to.
-
-You might not want to yet, but you eventually would want this.
-
-							Thanx, Paul
 
