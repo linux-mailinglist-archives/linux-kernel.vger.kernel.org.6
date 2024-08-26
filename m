@@ -1,192 +1,229 @@
-Return-Path: <linux-kernel+bounces-302080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871CA95F994
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:22:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35BF95F998
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C743284186
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8D22B21A3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159F2199229;
-	Mon, 26 Aug 2024 19:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3E71991D2;
+	Mon, 26 Aug 2024 19:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2PAnyuI8"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="QoLu3gs3"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D5D1990C1
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3333E1991CA
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 19:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724700154; cv=none; b=XcixbMXnMJy7n2XeYwm6udo8/7VCS4qlcW7V2S4uobSPTJNsCdTodVPVxpwDSJqB/8ByE2tXHDj7T60VdOv8jH9Y/wzLIBO7G37KgWIRYtILNciSNdeHymOC36KWSUVxtYB/88pjNEynAqt8/ipHqBAF2HzBGQEkvoE41IzjxW4=
+	t=1724700183; cv=none; b=Qb21u7fHhETsJDcyHG939DEP6l9MI9dHcLpFGqE+irzvTWMlZR5Qlfm94DAUWUUVsrt2MNbTN4MX3wG2CdxvA7nLmCElxTPoP1wJFoM9ApSogFitF2rkb5knkn4ZjpgQQDSjdESU3GascZuxLosNoiJpneyNjKnd8Cix7pToQXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724700154; c=relaxed/simple;
-	bh=d0Tbcicfw12lu66Hi+IWpf31ATCDbXiJ5b/jIGBwUFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0ILAJFPbX/4IrWjmtkxTaK2GHYFHNhIpwShAvmQZF8pZyZMQDriPUSHBR4CLNRv76d/6mm235R0XwGdOot0+vxphh22NQo1JXWgxP5i2OPi+TwREEKHkLy3g9ejVRM4M3mGuXRH4I0ZqG8pfO+mz4Ya3T3iHFi0TES3A9TAbOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2PAnyuI8; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fee2bfd28so3881cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:22:32 -0700 (PDT)
+	s=arc-20240116; t=1724700183; c=relaxed/simple;
+	bh=tDJNUr27zxTQ4SUunjdZ0ylIYlgXCyM8c00NYRgGDuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=plQpIu+1UJx0Cq1e/Zko38ALme4ohd0kd7V4D64w81XyKrbOVbg7ephIYUnZrfUB1MlWL/6+JEck7R/419Hc0zw4y0yM+k5CxksNhnNndtVo7ERo5WnxrYZXrm+CWoomC+88eAiv7OGhIRfR+dPqKRWpOPqZQQl06yY1nUd6ER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=QoLu3gs3; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e13e11b23faso4679559276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724700151; x=1725304951; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wNdOTO9/+NVQXsVxQX97atR2OiG6XZKQOu9cHgk5Ak=;
-        b=2PAnyuI86bi/+05fDsu1aqo27QKZFEKrv53uVlYnUi5KRsVigSukOfA2PHi3q6TyU+
-         OD1+Y4Vxa7PIuAA9ENm52h+c2o2CPhaOERfn9pxIVSMfemFZRnInEyapnxuho8xkNNVk
-         C4xhsj7G4FGtKnfDJX+tJo5HMILd3V+6Obk2C/EqsI6ovv83pwokqY4d5peGDJRxiNMQ
-         mFNfJWlx9M4UWlGTG2GPENg/hXfQhI/cZhmqfygO8s+nS1HCwv/ujwzxqqJ8cPr0+kFB
-         BxboZzjUQpRb3fLY71ORsPA1eYxFvkzoO5uAwhYwnsB9xPoltZ5lIfV9ZzfiQxLVKxes
-         4sIQ==
+        d=digitalocean.com; s=google; t=1724700179; x=1725304979; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F6LqBt/cgf5saFNqougCditEz5JCrr5uJaPi0WKZXWo=;
+        b=QoLu3gs3omZpy7j6KkBNyUm3+qvqE79ETW/WoWzgFM8DpjcC/stY01owVBqrrG06R/
+         yazR1E8Rqfcixds5QsYgnvSLwJzTyPsIggAjENAfUqBaEGfrXmOOkqOzw5ZPsNAx64rL
+         W6dHYp2+kE2q8Ax+/bEvzlIYDX27IUqWBJKkA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724700151; x=1725304951;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4wNdOTO9/+NVQXsVxQX97atR2OiG6XZKQOu9cHgk5Ak=;
-        b=vAwCqJ1ZgXZ/OeBh/BHcDN5kceR2YweQgEfOBvu33XoO+3T7DEQxme0Gn9bptEh0HQ
-         ga69pHKvHP3cb4Kz8aFW4TsgKyRSYLsduMI8l2PonPPGOytows9bCdxjAE4RB8G5x7s7
-         M1hqYwBrSRr4Bbo7APUBMuLhrBaQTLU7Q5+LuQyzrIOhMLXw/dZht79dmfFBZ3sgPi+I
-         Y7lA8vIiPdHN5fLxFAJypyeX/ux1ceNsvjGxb68mwNgEjmxuTrHeq+8MoOVBf3hLK8eK
-         ToZEWbEVUyUU9J3Eb9R4RZ7zDVCyvy+ZKDdwVGk6NUiZNh0glEissqCgGK/Z9js5SssO
-         3IzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJmHT+F7R6iFnZj1NQPR9dSETtF2zz2ZWssXcn8EM+v79bagoz/ME1rZMkXzgTOKq/5zOgYSj7ToLch2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9jMLvCw0ZC5gvdd5xRf1da8lMKMfs44j/HWtZoQh1TdMHkd7p
-	O0x5YR1d1OvxWb6bJrwEJz3aFYSojqQBSJv31EMumw7zGJwV9ssAtCXpPRmMf9zWrtSNW8lwaGt
-	Bn9XM95eBwOKbZMg6ptlCP38m1i8NPeHdPoLCDQK6LBzx1WmnjzIhlUZfrg==
-X-Google-Smtp-Source: AGHT+IEHqcP2Os4407lfkc/Wjcnfd6ETwj9VLhWZxgpLrRyuMSjkmCPlgErqZFSvLa3suF/+Lf0SJQRZTnMov6Fl8LI=
-X-Received: by 2002:a05:622a:4b16:b0:447:e728:d9b with SMTP id
- d75a77b69052e-45661a3283emr527261cf.26.1724700151136; Mon, 26 Aug 2024
- 12:22:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724700179; x=1725304979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F6LqBt/cgf5saFNqougCditEz5JCrr5uJaPi0WKZXWo=;
+        b=CugjEwkPsoA1ksDokSnQNOHX6Pcp4UcG7W+N7WL1nGdlrk2sD+CYljsawg5+ptc6L3
+         WNMny2jc/WzqzCe03MVnIJYdKBcb7wyqOTuQznB+tHQXFjTBowLatzakCtWR99ejVZJT
+         ked/+ltRqRhrp7wYjshjB5eu3dCGHlMcKenQBPpqj9RDtbAeNHlypSX7DPBG75IPqn+Y
+         391lDj/dkCNbEZ4y0JTEhZpS4lonfPQp7Py35x8Kp53KgbUixDiPUkosK/onaEqdG6QV
+         r2rxsRUZCstbIaKHatzvxwqxgWl52mUOQbe2sN7WE78N6R/w7weMIPF4XMBMB12a3gdf
+         jlSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWQvILBb7Z47Fj0UAodgK1TdkMQUBCRwn1qjJx81nJTCqTjsePVqgUm63BzbDOQcCKI8ds2/XC3ITG58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjx/5cvH4SKspe/6Jhp/66uj/OC3h/i4qB57jNIu3D8QgAkBrO
+	I413yGozooID1Zu98Zsu3VT3MGSoErgUSDLStxTQUPhQVjOK2mk/vPtl+9FMcs4=
+X-Google-Smtp-Source: AGHT+IENvO39dZD8SM8XQUS6jkNMVVXZUu4Li0XJ01QpUNqrH5VA9EYbqM15qZGvjmYzMuTP3QTLBw==
+X-Received: by 2002:a05:690c:1d:b0:664:5957:f7a with SMTP id 00721157ae682-6c624dca095mr146931867b3.15.1724700179081;
+        Mon, 26 Aug 2024 12:22:59 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:45f:f211:3a7c:9377? ([2603:8080:7400:36da:45f:f211:3a7c:9377])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9a93sm16400567b3.89.2024.08.26.12.22.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 12:22:58 -0700 (PDT)
+Message-ID: <1cb17652-3437-472e-b8d5-8078ba232d60@digitalocean.com>
+Date: Mon, 26 Aug 2024 14:22:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1723723470.git.kai.huang@intel.com> <20240819212156.166703-1-sagis@google.com>
- <29fba60b-b024-417c-86e2-d76a23aa4d6c@intel.com> <CAAhR5DEEsFNqdxbd62tGh9Cj7ZQMQs6fEjAKs6djkZzgZALOfw@mail.gmail.com>
- <f4b60d0e-bec7-45d0-bbdf-fb04362c863a@intel.com> <CAAhR5DFrOaXDbndFOSWAfdu-79buSR2ki_AU=z68FcHmn9o4Ow@mail.gmail.com>
- <47dbc3b5dd6bd7cc3fa94ffe770e22419daf1d01.camel@intel.com>
-In-Reply-To: <47dbc3b5dd6bd7cc3fa94ffe770e22419daf1d01.camel@intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Mon, 26 Aug 2024 14:22:20 -0500
-Message-ID: <CAAhR5DGKNG=RiRyLj1r=xsueUBpyPXOhbhxg72UQTZRXcyyuzw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] TDX host: kexec() support
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>, "luto@kernel.org" <luto@kernel.org>, 
-	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"seanjc@google.com" <seanjc@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Why is set_config not supported in mlx5_vnet?
+To: Dragos Tatulea <dtatulea@nvidia.com>, eli@mellanox.com, mst@redhat.com,
+ jasowang@redhat.com, xuanzhuo@linux.alibaba.com
+Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, eperezma@redhat.com,
+ sashal@kernel.org, yuehaibing@huawei.com, steven.sistare@oracle.com
+References: <33feec1a-2c5d-46eb-8d66-baa802130d7f@digitalocean.com>
+ <afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com>
+ <8a15a46a-2744-4474-8add-7f6fb35552b3@digitalocean.com>
+ <2a1a4dfb-aef1-47c1-81ce-b29ed302c923@nvidia.com>
+Content-Language: en-US
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+In-Reply-To: <2a1a4dfb-aef1-47c1-81ce-b29ed302c923@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 24, 2024 at 4:31=E2=80=AFAM Huang, Kai <kai.huang@intel.com> wr=
-ote:
->
-> On Fri, 2024-08-23 at 11:15 -0500, Sagi Shahar wrote:
-> > On Mon, Aug 19, 2024 at 5:44=E2=80=AFPM Huang, Kai <kai.huang@intel.com=
-> wrote:
-> > >
-> > >
-> > >
-> > > On 20/08/2024 10:28 am, Sagi Shahar wrote:
-> > > > On Mon, Aug 19, 2024 at 5:16=E2=80=AFPM Huang, Kai <kai.huang@intel=
-.com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 20/08/2024 9:21 am, Sagi Shahar wrote:
-> > > > > > > Currently kexec() support and TDX host are muturally exclusiv=
-e in the
-> > > > > > > Kconfig.  This series adds the TDX host kexec support so that=
- they can
-> > > > > > > work together and can be enabled at the same time in the Kcon=
-fig.
-> > > > > >
-> > > > > > I tried testing the kexec functionality and noticed that the TD=
-X module
-> > > > > > fails initialization on the second kernel so you can't actually=
- kexec
-> > > > > > between 2 kernels that enable TDX. Is that the expected behavio=
-r? Are
-> > > > > > there future patches to enable that functionality?
-> > > > > >
-> > > > >
-> > > > > Thanks for testing!
-> > > > >
-> > > > > Yes this is the expected behaviour.  If the first kernel has enab=
-led
-> > > > > TDX, then the second kernel will fail to init TDX.  The reason th=
-e first
-> > > > > SEAMCALL to initialize TDX module in the second kernel will fail =
-due to
-> > > > > module having been initialized.
-> > > > >
-> > > > > However if the first kernel has not enabled TDX, the second kerne=
-l is
-> > > > > able to enable it.
-> > > >
-> > > > Are there any plans to support both kernels being able to enable TD=
-X
-> > > > in the future? Either by changes to KVM or the TDX module?
-> > >
-> > > AFAICT we haven't received such requirement so far.  Let me double ch=
-eck
-> > > internally and get back here.
-> > >
-> > > Btw, if we want to do this purely from software, changing KVM isn't t=
-he
-> > > right thing to do.  We need to somehow pass key data structures manag=
-ing
-> > > TDX module to the second kernel, e.g., module status, locations of
-> > > PAMTs.  And the second kernel needs to be modified to understand thos=
-e,
-> > > which means some old (second) kernels with TDX support may not be abl=
-e
-> > > to support this even if we add this to the kernel.
-> >
-> > Would it be possible to tear down the tdx module and re-initialize it
-> > on the next kernel? I don't think there's a requirement for the tdx
-> > module data structures to remain intact during kexec but it could be
-> > useful if tdx can be enabled on the new kernel.
->
-> We discussed this internally.  The TDX module cannot be re-initialized af=
-ter
-> torn down.  However the new kernel can reload the (same) TDX module and r=
-e-
-> initialize it (the P-SEAMLDR supports reload or runtime update TDX module=
-).
->
-> However our primary focus is to enable baseline TDX support in upstream. =
- For
-> TDX host kexec, at this stage we focus on: 1) enable both TDX and Kexec i=
-n the
-> Kconfig; 2) allow normal kexec and kdump to work when TDX is enabled.  Ma=
-king
-> the second kernel be able to use TDX is next-step plan.
->
-> May I ask is there any real use case that requires the second kernel to b=
-e
-> able to use TDX at this stage?
+Hello,
 
-[Again in plaintext]
+On 8/26/24 10:53 AM, Dragos Tatulea wrote:
+>
+> On 26.08.24 16:26, Carlos Bilbao wrote:
+>> Hello Dragos,
+>>
+>> On 8/26/24 4:06 AM, Dragos Tatulea wrote:
+>>> On 23.08.24 18:54, Carlos Bilbao wrote:
+>>>> Hello,
+>>>>
+>>>> I'm debugging my vDPA setup, and when using ioctl to retrieve the
+>>>> configuration, I noticed that it's running in half duplex mode:
+>>>>
+>>>> Configuration data (24 bytes):
+>>>>   MAC address: (Mac address)
+>>>>   Status: 0x0001
+>>>>   Max virtqueue pairs: 8
+>>>>   MTU: 1500
+>>>>   Speed: 0 Mb
+>>>>   Duplex: Half Duplex
+>>>>   RSS max key size: 0
+>>>>   RSS max indirection table length: 0
+>>>>   Supported hash types: 0x00000000
+>>>>
+>>>> I believe this might be contributing to the underperformance of vDPA.
+>>> mlx5_vdpa vDPA devicess currently do not support the VIRTIO_NET_F_SPEED_DUPLEX
+>>> feature which reports speed and duplex. You can check the state on the
+>>> PF.
+>>
+>> According to ethtool, all my devices are running at full duplex. I assume I
+>> can disregard this configuration output from the module then.
+>>
+> Yep.
+>
+>>>> While looking into how to change this option for Mellanox, I read the following
+>>>> kernel code in mlx5_vnet.c:
+>>>>
+>>>> static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+>>>>                  unsigned int len)
+>>>> {
+>>>>     /* not supported */
+>>>> }
+>>>>
+>>>> I was wondering why this is the case.
+>>> TBH, I don't know why it was not added. But in general, the control VQ is the
+>>> better way as it's dynamic.
+>>>
+>>>> Is there another way for me to change
+>>>> these configuration settings?
+>>>>
+>>> The configuration is done using control VQ for most things (MTU, MAC, VQs,
+>>> etc). Make sure that you have the CTRL_VQ feature set (should be on by
+>>> default). It should appear in `vdpa mgmtdev show` and `vdpa dev config
+>>> show`.
+>>
+>> I see that CTRL_VQ is indeed enabled. Is there any documentation on how to
+>> use the control VQ to get/set vDPA configuration values?
+>>
+>>
+> You are most likely using it already through through qemu. You can check
+> if the CTR_VQ feature also shows up in the output of `vdpa dev config show`.
+>
+> What values are you trying to configure btw?
 
-Right now I don't think we have production requirements for kexec at
-all besides kdump support. Kexec from TDX enabled kernel to a non-TDX
-kernel definitely doesn't have a production requirement.
 
-It would be nice to be able to kexec to a TDX enabled kernel to speed
-up the development cycle instead of waiting for a full reboot but
-that's not a high priority at the moment.
+Yes, CTRL_VQ also shows up in vdpa dev config show. There isn't a specific
+value I want to configure ATM, but my vDPA isn't performing as expected, so
+I'm investigating potential issues. Below is the code I used to retrieve
+the configuration from the driver; I'd be happy to send it as a patch if
+you or someone else reviews it.
+
+
+>
+> Thanks,
+> Dragos
+
+
+Thanks,
+Carlos
+
+---
+
+From ab6ea66c926eaf1e95eb5d73bc23183e0021ee27 Mon Sep 17 00:00:00 2001
+From: Carlos Bilbao <bilbao@vt.edu>
+Date: Sat, 24 Aug 2024 00:24:56 +0000
+Subject: [PATCH] mlx5: Add support to update the vDPA configuration
+
+This is needed for VHOST_VDPA_SET_CONFIG.
+
+Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+---
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index b56aae3f7be3..da31c743b2b9 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -2909,14 +2909,32 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+     struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
+     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
+
+-    if (offset + len <= sizeof(struct virtio_net_config))
++    if (offset + len <= sizeof(struct virtio_net_config)) {
+         memcpy(buf, (u8 *)&ndev->config + offset, len);
++        }
++        else
++        {
++            printk(KERN_ERR "%s: Offset and length out of bounds\n",
++            __func__);
++        }
++
+ }
+
+ static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+                  unsigned int len)
+ {
+-    /* not supported */
++    struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
++    struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
++
++    if (offset + len <= sizeof(struct virtio_net_config))
++    {
++        memcpy((u8 *)&ndev->config + offset, buf, len);
++    }
++    else
++    {
++        printk(KERN_ERR "%s: Offset and length out of bounds\n",
++        __func__);
++    }
+ }
+
+ static u32 mlx5_vdpa_get_generation(struct vdpa_device *vdev)
+--
+2.34.1
+
+
 
