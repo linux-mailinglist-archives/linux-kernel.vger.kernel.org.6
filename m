@@ -1,165 +1,153 @@
-Return-Path: <linux-kernel+bounces-301151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9629395ED08
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 707ED95ED09
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53DC7282130
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E431F22125
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202E414386B;
-	Mon, 26 Aug 2024 09:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YMInmhEj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6905C143886;
+	Mon, 26 Aug 2024 09:24:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF09657CBA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B7C2F34
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724664222; cv=none; b=T9adEBzyFcPGQtuGAche9n5KkxsPidk1QgOSffWbEpcILn/ME1qgRKZ6vGBQKO8Ww7H/kY69RPyMp8Wv1tpYRj/d2ab0YlkWu6tbrcVFgxoghr/dBdqnEcfuE5Y9VM/QnAicszL/xjIn9sZ3n/8DDmKDuLEbj35qgUrIrc3OkS4=
+	t=1724664244; cv=none; b=nHvSNmP4t7czjH8zr5dnzPVMNyXQkMvLP7mGUOVXlDp9Ehhmh1gIRKypbef65zVxoYtPYIVqcKJs3BJKXK1d/9pjVhexde2COonNKwU2Ltk0iMI4soFw3bQQE9t1rg/YmKoex68ZPPEo4KnwY+Hr3pBmUibG79kfqbSsGUZ0mCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724664222; c=relaxed/simple;
-	bh=71telQe5u2/lKw7RfN9qGHW1wjYgdID/jPjgDLWtRq0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fzZY9VW/KkZGSvFH7w4idiOBMcZ5KojkmFqU1jVP4/+WWrSu9suOQ+HtrtzFKwa5uzBGAzNTjLBBK40ooCc+ok8PA+ihBlDwf9LCw/RAgS3lPoKwkGnpktQ0JcxTOIv+urkVlXcKn/9kxfmRiHMzjIZ9BaXPeTJUqIKM/NuuGzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YMInmhEj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724664219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MkjXy/+CcBoacZKR/Pjt2a/67DruiSDyT8kYHTqBAUg=;
-	b=YMInmhEj45ZOGF0lFfoiBj6fOOKy6VRlRRjE02cYlXEkRr9CfQQqDfInsoWZ/N2waNEVb0
-	FrbCNHq4dHeE/uu2PpANn7FeWtKQR8qDF/wY10xOerU6P9aerlUjHappqYIGvsOQektTxx
-	JkHzfXOKoAQZkAEog3b4SOcOE/r155E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-577-RMh53bYKOu6o21-_81pxJw-1; Mon,
- 26 Aug 2024 05:23:34 -0400
-X-MC-Unique: RMh53bYKOu6o21-_81pxJw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DB8E1955D47;
-	Mon, 26 Aug 2024 09:23:33 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07E1619560A3;
-	Mon, 26 Aug 2024 09:23:30 +0000 (UTC)
-Date: Mon, 26 Aug 2024 11:23:26 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: =?GB2312?B?s8LT8bey?= <chenyufan@vivo.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    "opensource.kernel" <opensource.kernel@vivo.com>
-Subject: Re: [PATCH v1] Device-mapper(LVM): Convert to use time_after_eq
- macro
-In-Reply-To: <de43d61e-05c0-466f-b004-a97f2bf2ec39@vivo.com>
-Message-ID: <9cdc4de9-82b8-87fe-4845-6b18ffe26d18@redhat.com>
-References: <20240822015416.3627-1-chenyufan@vivo.com> <1abae895-7fb4-0342-21b9-1fd8e085dc9a@redhat.com> <bc1025c5-fa3c-4a49-9d91-d2d90e7423b4@vivo.com> <6f732dc5-b80e-0e79-a1dd-faebd0d91933@redhat.com> <de43d61e-05c0-466f-b004-a97f2bf2ec39@vivo.com>
+	s=arc-20240116; t=1724664244; c=relaxed/simple;
+	bh=8h1WFEKRjIEGz2Fj0U4d5i4qAhYdoYVS30SZlgnBIE8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FQ/8+aCkVI5Ex6TiTAdhLq6x0KJqr0cOptt/jcwYQwbjVyV0nK0lTsW6UDh16Niomp+EZ5H70vRt7voQcNkDiqHsrACL0BzePHRv3zeN+zljL0Wbsq/KgltUtab2ZMKa9AKzsU12WMtyoGDUf1oB2bZmSgidciBWL//NGBEF+Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-824e12631c3so385770739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:24:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724664241; x=1725269041;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ER0NtE4l4C7XNjLcheduuAEeBURI9b0znRG/oN8+kWc=;
+        b=hgwZwGuvgl12ZmG8CvOZHKpxDPZ9y71uVpU85tTE8Sb7R1JSGSi7CZK11H4v0f8NaY
+         XTJS+V1rfgSazKh/gYJk6DAwn0yM0tulZ5ps3xDYYMZPTI+6jJWyvOuI6rE2c/fzwUsb
+         YWwjd5Pyki1HNB5ncMtKrmnSXe2pAwKi14UDn19vTkSH8zCw1qYGCAHaULzlOSga7TtF
+         DOaCWpZlAjP/cK6F+f3hXO8KzZxQ/tu0MtJnKBzyHel6wnhWyi+lCUPQkBB5+MXmwr0R
+         g2+PfyoU0r+hcYoCBiWjAwp5sbvSOZZFupLtYPqk79vGDqFF6om6gv7EosAgbNfmtkoY
+         muIw==
+X-Gm-Message-State: AOJu0YwBieHLsfMpsU4auhAJaa9ADo6mLJ3S89vBPjitgwFuumOVNLV9
+	nU6rGnH0TMVXYdJQlI1CbqB/q2xOTl0WTBzi+7Bd4RtrrdzigqpJQQXv6vBnJ5AaDbC42rfb+2W
+	je/ISrwugvdUrfIEFZmXykB71t8I/IBVS29Ival/MBkX3V2akiHl0VFk=
+X-Google-Smtp-Source: AGHT+IGi9VrlJYm5tpsY7F7RZGr+8IF7V4g49LE9dbiFCcY4CVWC9k2doLXpoyiU6pxK2OwqyIXpoByl4JS6mC4HwtHRhTWFB2bg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811712-1301487623-1724664212=:882105"
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6638:2102:b0:4c2:a865:133a with SMTP id
+ 8926c6da1cb9f-4ce6ea72e2cmr394297173.1.1724664241498; Mon, 26 Aug 2024
+ 02:24:01 -0700 (PDT)
+Date: Mon, 26 Aug 2024 02:24:01 -0700
+In-Reply-To: <20240826090243.1744030-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000078bbf6062092afd3@google.com>
+Subject: Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
+From: syzbot <syzbot+d16facb00df3f446511c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
----1463811712-1301487623-1724664212=:882105
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in jfs_flush_journal
+
+INFO: task syz.0.15:5770 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc3-syzkaller-00306-gdf6cbc62cc9b-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.15        state:D stack:25840 pid:5770  tgid:5755  ppid:5599   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ jfs_flush_journal+0x72c/0xec0 fs/jfs/jfs_logmgr.c:1573
+ jfs_sync_fs+0x80/0xa0 fs/jfs/super.c:684
+ sync_filesystem+0x1c8/0x230 fs/sync.c:66
+ jfs_remount+0x136/0x6b0 fs/jfs/super.c:432
+ reconfigure_super+0x445/0x880 fs/super.c:1083
+ do_remount fs/namespace.c:3012 [inline]
+ path_mount+0xc22/0xfa0 fs/namespace.c:3791
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc3f097b0ba
+RSP: 002b:00007fc3f17a4e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fc3f17a4ef0 RCX: 00007fc3f097b0ba
+RDX: 00000000200001c0 RSI: 00000000200002c0 RDI: 0000000000000000
+RBP: 00000000200001c0 R08: 00007fc3f17a4ef0 R09: 0000000000108020
+R10: 0000000000108020 R11: 0000000000000246 R12: 00000000200002c0
+R13: 00007fc3f17a4eb0 R14: 0000000000000000 R15: 0000000020000400
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/25:
+ #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
+1 lock held by kswapd0/78:
+2 locks held by getty/4895:
+ #0: ffff88801e8360a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
+1 lock held by syz.0.15/5770:
+ #0: ffff888012b560e0 (&type->s_umount_key#54){+.+.}-{3:3}, at: do_remount fs/namespace.c:3009 [inline]
+ #0: ffff888012b560e0 (&type->s_umount_key#54){+.+.}-{3:3}, at: path_mount+0xbdb/0xfa0 fs/namespace.c:3791
+1 lock held by syz.0.346/6961:
+1 lock held by syz.4.347/6964:
+2 locks held by syz.2.348/6967:
+2 locks held by syz.1.349/6970:
+2 locks held by syz.5.350/6972:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.11.0-rc3-syzkaller-00306-gdf6cbc62cc9b-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
+Tested on:
 
-On Mon, 26 Aug 2024, 陈玉凡 wrote:
-
-> 在 2024/8/24 3:01, Mikulas Patocka 写道:
-> 
-> 
-> On Fri, 23 Aug 2024, 陈玉凡 wrote:
-> 
-> 在 2024/8/23 1:08, Mikulas Patocka 写道:
-> 
-> On Thu, 22 Aug 2024, Chen Yufan wrote:
-> 
-> Use time_after_eq macro instead of opening it for readability.
-> 
-> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
-> ---
->   drivers/md/dm-writecache.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-> index 7ce8847b3..548d4d37e 100644
-> --- a/drivers/md/dm-writecache.c
-> +++ b/drivers/md/dm-writecache.c
-> @@ -16,6 +16,7 @@
->   #include <linux/pfn_t.h>
->   #include <linux/libnvdimm.h>
->   #include <linux/delay.h>
-> +#include <linux/jiffies.h>
->   #include "dm-io-tracker.h"
->   
->   #define DM_MSG_PREFIX "writecache"
-> @@ -1994,8 +1995,8 @@ static void writecache_writeback(struct work_struct *work)
->   	while (!list_empty(&wc->lru) &&
->   	       (wc->writeback_all ||
->   		wc->freelist_size + wc->writeback_size <= wc->freelist_low_watermark ||
-> -		(jiffies - container_of(wc->lru.prev, struct wc_entry, lru)->age >=
-> -		 wc->max_age - wc->max_age / MAX_AGE_DIV))) {
-> +		(time_after_eq(jiffies, container_of(wc->lru.prev, struct wc_entry, lru)->age +
-> +		 (wc->max_age - wc->max_age / MAX_AGE_DIV))))) {
->   
->   		n_walked++;
->   		if (unlikely(n_walked > WRITEBACK_LATENCY) &&
-> -- 
-> 2.39.0
-> 
-> I'm not sure about this. The old and new code is not really equivalent.
-> 
-> Mikulas
-> 
-> The code here is susceptible to overflow issues, and the time_*() macros 
-> can handle this.
-> 
-> Chen
-> 
-> So, describe some case (i.e. the values of jiffies, 
-> container_of(wc->lru.prev, struct wc_entry, lru)->age and wc->max_age) 
-> where the old code misbehaves and the new code doesn't.
-> 
-> If we want to fix a bug, we need to know what the bug actually is.
-> 
-> Mikulas
-> 
-> When jiffies increased beyond the maximum value of unsigned long, it 
-> wraps around to zero, and the value of jiffies would be smaller than the 
-> container_of(wc->lru.prev, struct wc_entry, lru)->age value despite 
-> logically being larger. Eventurally, because of the wraparound, the 
-> result of the condition would be wrong.
-> 
-> Chen
-
-For example, if "jiffies" is 0x10 (because it wrapped around) and 
-"container_of(wc->lru.prev, struct wc_entry, lru)->age" is 0xfffffff0, 
-then the expression "jiffies - container_of(wc->lru.prev, struct wc_entry, 
-lru)->age" would be 0x20. That is the correct value, I don't see any 
-problem with this.
-
-Mikulas
----1463811712-1301487623-1724664212=:882105--
+commit:         df6cbc62 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=156aff87980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=d16facb00df3f446511c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ee53d5980000
 
 
