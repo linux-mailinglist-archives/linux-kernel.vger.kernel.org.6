@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-301534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6FF95F236
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA1B95F238
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59454285521
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4B51C232AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96889188586;
-	Mon, 26 Aug 2024 12:54:51 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623F1189503;
+	Mon, 26 Aug 2024 12:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afXTR4MS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D46B172798;
-	Mon, 26 Aug 2024 12:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A212918757A;
+	Mon, 26 Aug 2024 12:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676891; cv=none; b=BBZp9wFnjIVeKZz9zrY6soP5RHCRKi7iJgV/whwMK/8Bi+dPD9pu5tyxtWjN/47xrudPQLB9H0zswBkvo8BCoQnYtQ3a3ne1lBCHIQvFBQEXXenvdql7ud9hQRzgrPqpdAzKzCEDXDfYP0O8Cc5SRXQ3KUfUEChDJqCXhDgsoec=
+	t=1724676894; cv=none; b=lCVdZeIiZKHnisIeBqQEtC2R8mIh4safhjHUuDi8OZ+DQ3o7+i20CUHixtaWyo+Kw1cuKC4EELsEAe5lo0wPLaXYU3dMamBkKdwbUpWuEfWGnoPGgeeTpU+Nu2AIKYocgfiGd4G6eug96qLLeOsC4xoUArUUqq8w1ltb3dlATWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676891; c=relaxed/simple;
-	bh=ayuY5urcv7wzBc3ca2oQZlLr66hjtTMhY5ZihSO9GZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDsHuF5zVYNbgAroj//hz4x4p6nIy4CEvhX58/fom4TzgvNnSTX8Kh469aSCUvTZUulafiXlWDge2cYYjX3FlQNmjy1ab9h0nlRVT1pad3admrh/XR+Tz6Ta7vQ8FpUH/481cujT+JAOdXtqNHjyOVxOVcZRCO8m0GsyRWiXC1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1205de17aaso4406993276.2;
-        Mon, 26 Aug 2024 05:54:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724676887; x=1725281687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=86KUoIdgluS3sIu2DePra4NVbpXZdUVLHz5nB5lMqtw=;
-        b=dHde668Zj7GZkGn4/Ga3EUVferxZlzEqy7fIUB8nnVDCOcGpQGv4b0fobaNRfumS/a
-         zReNJTZX+9HntGvHmoBpj49D9IT6jAuGn7QIHI63cDJP2RPy7Yagr4GcXt+PjIJzdaHM
-         ARh52uPHASjvuXewxU7e9+f/iVhxP/Hbqx7jXG+9ZkKb6ppTuITyXa0XosHm7129hzLk
-         y/WJSmfHMNZ8j05lfnJKSrSkE1Gh0pF4raJsdijQltLrK7tgjjm6mgVqqOc/r1EzLZvP
-         k+rHyqVq2Notl6Aqme0z7D4j/OU5bwqG6kLFrryVVLUo8Z4qvtY1HiLu119J6m974EC1
-         aoPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVByxelGyBIu7JgBP8DQjjT217wo1J6ED0obGmTa/VzIc4dIVNL3h0F2jUn1T/S7m56fFZgeGjwNmgiz8CregP3+9M=@vger.kernel.org, AJvYcCVYuRCEsQxAoetaVEiOQav224QMo2Vw3Yea2Kf7ez9uHz4m9xhzyuqML24ZoSbMlH7Ua604OOAUnmMw@vger.kernel.org, AJvYcCW4ttGZL5ENU9oH0xKrutABY+splhbrYm1thegVO6zPONhYVHeghjZ9fHUTeBb6HOf9zbXxZwrk05mvf3eT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdwnCOjWkF+n+7afsIWGeMC8I5nnJmUfXVA2u+E+6w1AIHTaX9
-	TokIHHjsvRLbX6LT9R5VsLe5LhlspCkNLVBu2vvk10j9L77ykTJhYQwuBYGM
-X-Google-Smtp-Source: AGHT+IGOjcFvGFz4OB76F5XENpI49TEQfPeA5TKWUYKaY+3XI1rTx43+OTx1Eoxf+JYa4sG7JGPwSw==
-X-Received: by 2002:a05:6902:230f:b0:e11:698f:8843 with SMTP id 3f1490d57ef6-e17a866641emr11261450276.44.1724676887545;
-        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e4bd277sm2029128276.38.2024.08.26.05.54.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b4432b541aso37707017b3.1;
-        Mon, 26 Aug 2024 05:54:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+yKYUUWG149AKjyY23JWXdfwyIA+CwCvY0rNtfAFactPV9UFlBKouOqOWtL8worwQ9T6kwB8ThRkp@vger.kernel.org, AJvYcCVb8XTN03ybvz1EBZuIa0pBBYGMUF1bbiCu67x4xMPx7jP7JNIlt/0uGH4KktPB602EZPz8sEnR2pHDk/0u4LKBfME=@vger.kernel.org, AJvYcCWd/nH1JeuapF1NXzrMzQKUSViYPykeTAN7Dy5QRDwu2feM6+Pp4Kc8+8XYrottiIkZKX5mkWSnImqZoIk+@vger.kernel.org
-X-Received: by 2002:a05:690c:3302:b0:65f:80bb:e6b2 with SMTP id
- 00721157ae682-6c6251a3eebmr90811867b3.14.1724676887056; Mon, 26 Aug 2024
- 05:54:47 -0700 (PDT)
+	s=arc-20240116; t=1724676894; c=relaxed/simple;
+	bh=RxYPZXlQWNrOsrO9+L3fSu/+RgANh56oaxO72vf754I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZbPoIvfojkq9ebO5UK7+d0Kpkh29gn1eFxd4/ttzCPNEvKJ+OdwlVhcRQ08J68siBEdbfFFUCouCCxDoZ17/FvsKsQhfHkoS7rBiqb2U/L8MZx3sHGZPDSKkaC1eupYRMoC2ffSy7VJCCg4mzKQYHc6UqT/12nn3GUo7dmu5vQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afXTR4MS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A58C51439;
+	Mon, 26 Aug 2024 12:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724676894;
+	bh=RxYPZXlQWNrOsrO9+L3fSu/+RgANh56oaxO72vf754I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=afXTR4MSTvhX5BKUEYhJWprAk7RC66nHR4uRAjP2Fbl4tfxKK9CVn4p+kgLuhTrsr
+	 3NM8hHmvvc0fG8wuB+TPuQ5kSbLIf4UrWwyQXs6hJTrGnFhRbObexBJ/Gsb90p0DFV
+	 DcxRS4mV2hHTJEt/eh6BdY5uLjMCGel+jQMHLfEhANLe2HdL6+XtnqraVnEyhReLoK
+	 Yj9NfuWJLivs9kdL/W/fZayfRmRwF7jgNzSxGGbYdLZmmYmikvWY8t+I2mUNdF8pFp
+	 os/Gf2Z3+0nMnqBUxEhxeXtKMbDD0ObxeEbhWjJ8SAiIomfu8usbb+HeO1ZfgoSP3/
+	 mz23mgHMpwwHQ==
+Date: Mon, 26 Aug 2024 14:54:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Jann Horn <jannh@google.com>, 
+	Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] firmware_loader: Block path traversal
+Message-ID: <20240826-indikatoren-fernverkehr-2208f3c38ddd@brauner>
+References: <20240823-firmware-traversal-v2-1-880082882709@google.com>
+ <Zsj7afivXqOL1FXG@bombadil.infradead.org>
+ <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821085644.240009-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240821085644.240009-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240821085644.240009-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Aug 2024 14:54:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUt2_2OBeR9eRyfPAAn1z7VU3t1HkwdA-nLi1uO8pp1Pg@mail.gmail.com>
-Message-ID: <CAMuHMdUt2_2OBeR9eRyfPAAn1z7VU3t1HkwdA-nLi1uO8pp1Pg@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable watchdog
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADWXX_zpqzYdCpmQGF3JgsN4+wk3AsuQLCKREkDC1ScxSfDjQ@mail.gmail.com>
 
-On Wed, Aug 21, 2024 at 10:56=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable WDT1 watchdog on RZ/V2H GP-EVK platform.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sat, Aug 24, 2024 at 09:14:30AM GMT, Linus Torvalds wrote:
+> On Sat, Aug 24, 2024 at 5:13 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > I'm all for this, however a strong rejection outright for the first
+> > kernel release is bound to end up with some angry user with some oddball
+> > driver that had this for whatever stupid reason.
+> 
+> I can't actually see a reason why a firmware file would have a ".."
+> component in it, so I think the immediate rejection is fine -
+> particularly since it has a warning printout, so you see what happened
+> and why.
+> 
+> I do wonder if we should just have a LOOKUP_NO_DOTDOT flag, and just use that.
+> 
+> [ Christian - the issue is the firmware loading path not wanting to
+> have ".." in the pathname so that you can't load outside the normal
+> firmware tree. We could also use LOOKUP_BENEATH, except
+> kernel_read_file_from_path_initns() just takes one long path rather
+> than "here's the base, and here's the path". ]
+> 
+> There might be other people who want LOOKUP_NO_DOTDOT for similar
+> reasons. In fact, some people might want an even stronger "normalized
+> path" validation, where empty components or just "." is invalid, just
+> because that makes pathnames ambiguous.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I think LOOKUP_NO_DOTDOT is potentially interesting for userspace as
+RESOLVE_NO_DOTDOT. Though Jann's reply made me wonder: If some userspace
+project wants to make sure that there are no ".." in the path while
+allowing symlinks and ".." in symlinks then wouldn't it be easier and
+cheaper for userspace to just manually check for ".." in the path
+themselves? I mean RESOLVE_NO_SYMLINKS and RESOLVE_NO_MAGICLINKS
+alleviate some proper pain. Not just because an appropariate userspace
+algorithm is very costly but also because it's hard to get right. But
+with RESOLVE_NO_DOTOT it feels like a pretty mundane string-parsing
+excercise that could be done in userspace. Although I may just lack
+imagination.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+As long as we only have this very limited in-kernel user I think just
+using Jann's helper in this patch is probably good enough.
 
