@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-301571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428D295F2B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B90295F2BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB711F253E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC321F25477
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323E4187870;
-	Mon, 26 Aug 2024 13:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BC318595D;
+	Mon, 26 Aug 2024 13:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="xAo5l42A";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Nk9TpX9U"
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eiNDr/eC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD0518660E;
-	Mon, 26 Aug 2024 13:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D707E17ADFF;
+	Mon, 26 Aug 2024 13:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678286; cv=none; b=b9pW7tvVbwAXnLW+yaz/vq0ePxKSnXDsPuAAgf+XNJKaAPvG6z5O99d7tTEdwMidQJDDlIhnnk/bPe6WpJ3g9qqJ3iDHnqMdtwAbWvsZkBmARVy6CrzhsfbJB1n0sk4AFY4tOCVUwJtSe3d1ZMofJ/mlrrwzpDJ2jY5xHxT11MM=
+	t=1724678410; cv=none; b=RMBUnqtIcAgeh8ud6RRupGOGCgra8d8Bpkf3oBOSc4b+veNwyIwEmhHUVS9d1KRHVje6Rquq7GzCYrddWGY/cbJeMhCYILk7SmL2XCm9HAbnJHwMN5eB+3l6XGgPUxkAlplwADpe7xkSkHO+JnrcEMhCZUh366iSQ/OnqV5QoA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678286; c=relaxed/simple;
-	bh=pmu7uXPGqcVzcXzrSfNLN44lOCpm1i7XA4x7XEEIdCo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=S7VeVo6g7QXoBbsi/ihgvp6A8InLk8SHbo/+IHdIXPwBN+okW05o0VVvhVw5XPuBZzBZ5FpkkITlnthX/Uqa2a2vxuw/v7CW3h6pBlsCX1vnf1Y0XQqHgfpHQt9P0yEUr0x+nETMSgN1fKP2Q5lkY9tWuJFDnTrvJCu6B871PaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=xAo5l42A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Nk9TpX9U; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 2752A1388073;
-	Mon, 26 Aug 2024 09:18:03 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Mon, 26 Aug 2024 09:18:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1724678283;
-	 x=1724764683; bh=zkeHuNn5eQC5k7Li4eeQB4/dsmwDOJpcjedrrQwZgjw=; b=
-	xAo5l42AOfVfEcWQHh80Y7r/rlHcTguF1vYEtfsTO0UcdKZwFR9awOT9ksjAUrXZ
-	hNRa/LJVVRonvhHMUUbQWOJHO9pdbuCxTpaM/bTcjibLi7rgYNgtVH+k9l2oWXV7
-	81GyKdH87iigDmSNFQnaJDMt/UeNgXDrsmbWqhqKqrttDgWTRtQZoTGUh5ri5ZaY
-	fEkGBDImlGV4yQpUOfo/fCnUB0unMIWroTKRliJ0AJsd47Bdg5upBXSPoYMch4gE
-	90JjSnMWSAarVuLz0aa+aw6wLi0W1QqYB/pXmavZBHI0SFGX87CMVCB5ZB60KoXV
-	BCQNtcUxsj4SoFgAvZi2qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724678283; x=
-	1724764683; bh=zkeHuNn5eQC5k7Li4eeQB4/dsmwDOJpcjedrrQwZgjw=; b=N
-	k9TpX9UYGhtDBR1bv+J3O3qPQAP9191EAXWs8mgUkvvHAle6BimUtn1e+uZoCgqZ
-	YZ4K/qHdXAEKZnp4FExYEwqCMF6SDqqIdwPkOcOs7YcFjLyopJv1ozCyLr8hvfHj
-	OQIt9Vebp8In9SiHejlycNapmWIpk35KcfpwJ3ncM/FqF9xRFUWV/UGpd1UtG0Gc
-	aWx4f8ukZgx/Z0gme798tFZIvXTMJX025pyn3EZHYbryA+geeU+8MDDV9DDASMKk
-	gxk+yKERy6zyNaMnMKeAaZ9rspuwi7gheAdFi9GYSMiQL31gbCKQPj793UUfdxWp
-	IwXgBlNQjaECbsITEbPEQ==
-X-ME-Sender: <xms:ioDMZhgvYOIG8yLCz8XkorYsmvrUqKpbC9Ic5HARzY9R9qLBdMrmUA>
-    <xme:ioDMZmC5WU82Z9ZrD2ANM63CsXELdBWDZL0K9G6k2efGEQtF2HYECQkza3DiLxnBh
-    xSIoBIajLWRRkxklx8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvkedgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthho
-    pehsthgvvhgvnhdrhhhilhhlsehimhhgthgvtgdrtghomhdprhgtphhtthhopegsjhhorh
-    hnsehmohhrkhdrnhhopdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhiphhssehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:ioDMZhGGoIGFSLYRlqjBohaPNi1XyZvzqZqruZaXbkSSHZ64BN9obA>
-    <xmx:ioDMZmTHWwSvPoGryZ_JxxGjQfE_qJ7SZN248B-IMsPhcRmqlXAFdQ>
-    <xmx:ioDMZuyBqxQOOSGsxFiwiHKNXrMMKxR6x8MifYk4hDliuXJ2RcHjtg>
-    <xmx:ioDMZs71NtLmG27sRW6d95kiS0WYjYqkQy_nmLJNAdfx7QNDubQpBg>
-    <xmx:i4DMZlrbCd_BqEyQc8e4EHgDJztEUSYkvNngqar9bYohgmg61_VRK8x9>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5A22F1C20064; Mon, 26 Aug 2024 09:18:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724678410; c=relaxed/simple;
+	bh=L7ncuygwK7+Kr9c0J0XU++WFSpxV2mOazxQHlKpiK+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7xZwvlxfUA1ILvwxs4KUzGd/B2TctVPLrV7z+iAD/4X2r4lGlRU/MUIeu0GqL9NRl6vg1SJdkgdKkcKZXEeKYKXak5H1jJ7NJdOeQXbr0+WHzoWihgQz3wX1pY4gy5jt3Dd8oyF5Zi66DcuTvVq5mSmd8FolTThQj8j1R0m4/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eiNDr/eC; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724678409; x=1756214409;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L7ncuygwK7+Kr9c0J0XU++WFSpxV2mOazxQHlKpiK+o=;
+  b=eiNDr/eCMuFL2ocUsfmNFGRlw7HhOAAA4DvgPsRQKIQiVNUJIyEeT07E
+   cj3MWkPcQOVAPmwUQghl4Ro2/nN/cZv6WG0wDRGYabGAy3S4X5nn2Avb/
+   8fizxPtDJOP/ybObBK7T7cjw+Z8abyJrfsTkEwwENxoKsRQDAeEKAvrWD
+   JXwC5bNJ0wLODy0/TPSocQdPGfSnI5XteXQuKHpHM7l5PFSgoS4flLyvA
+   MVaeRx5rWLVuD6ZTWkpWhGjmj9vyWifLnRm1zNrpzUnLiFd8M+5WdDW89
+   jTIiEAaNylTOcQp6+IW7m5Ru431m53rJBNMAjrrNgZCjxD0a5SdRWDrap
+   w==;
+X-CSE-ConnectionGUID: CtsKjvbESQeFHk5n4o+EEw==
+X-CSE-MsgGUID: mlxgfd3KT7OCu1DuKlt36w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23266490"
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="23266490"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 06:20:08 -0700
+X-CSE-ConnectionGUID: JF/zFlvhQFeztm9udLuJrA==
+X-CSE-MsgGUID: THkbdf54S3G4yPuV3/ZMgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
+   d="scan'208";a="93233607"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 06:20:05 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1siZdb-000H75-0W;
+	Mon, 26 Aug 2024 13:20:03 +0000
+Date: Mon, 26 Aug 2024 21:19:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
+	Yiting Deng <yiting.deng@amlogic.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: Re: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
+Message-ID: <202408262106.tU1zTUfx-lkp@intel.com>
+References: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 26 Aug 2024 14:17:39 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Steven J . Hill" <Steven.Hill@imgtec.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Message-Id: <8c49fec9-2afc-44ca-aebc-d08ae0d11305@app.fastmail.com>
-In-Reply-To: <87o75gy85b.fsf@miraculix.mork.no>
-References: <20240824144133.1464835-1-bjorn@mork.no>
- <7f0602dc-8a47-46cb-a12f-09afc082b48f@app.fastmail.com>
- <87o75gy85b.fsf@miraculix.mork.no>
-Subject: Re: [PATCH] MIPS: fw: Gracefully handle unknown firmware protocols
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823-rtc-v1-2-6f70381da283@amlogic.com>
+
+Hi Xianwei,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on dff71e5c6076314f3eefe700abd6af834c57bd64]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xianwei-Zhao-via-B4-Relay/dt-bindings-rtc-Add-Amlogic-A311L2-and-A113X2-rtc/20240826-125504
+base:   dff71e5c6076314f3eefe700abd6af834c57bd64
+patch link:    https://lore.kernel.org/r/20240823-rtc-v1-2-6f70381da283%40amlogic.com
+patch subject: [PATCH 2/3] rtc: support for the Amlogic on-chip RTC
+config: arc-randconfig-002-20240826 (https://download.01.org/0day-ci/archive/20240826/202408262106.tU1zTUfx-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408262106.tU1zTUfx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408262106.tU1zTUfx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/rtc/rtc-amlogic.c:545:12: warning: 'aml_rtc_resume' defined but not used [-Wunused-function]
+     545 | static int aml_rtc_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~
+>> drivers/rtc/rtc-amlogic.c:535:12: warning: 'aml_rtc_suspend' defined but not used [-Wunused-function]
+     535 | static int aml_rtc_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~
 
 
+vim +/aml_rtc_resume +545 drivers/rtc/rtc-amlogic.c
 
-=E5=9C=A82024=E5=B9=B48=E6=9C=8825=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=883:44=EF=BC=8CBj=C3=B8rn Mork=E5=86=99=E9=81=93=EF=BC=9A
-> "Jiaxun Yang" <jiaxun.yang@flygoat.com> writes:
->> =E5=9C=A82024=E5=B9=B48=E6=9C=8824=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=
-=E5=8D=883:41=EF=BC=8CBj=C3=B8rn Mork=E5=86=99=E9=81=93=EF=BC=9A
->>> Boards based on the same SoC family can use different boot loaders.
->>> These may pass numeric arguments which we erroneously interpret as
->>> command line or environment pointers. Such errors will cause boot
->>> to halt at an early stage since commit 056a68cea01e ("mips: allow
->>> firmware to pass RNG seed to kernel").
->>>
->>> One known example of this issue is a HPE switch using a BootWare
->>> boot loader.  It was found to pass these arguments to the kernel:
->>>
->>>   0x00020000 0x00060000 0xfffdffff 0x0000416c
->>>
->>> We can avoid hanging by validating that both passed pointers are in
->>> KSEG1 as expected.
->>
->> Hi Bjorn,
->>
->> This is actually breaking 64 bit systems passing fw_args in XKPHYS or=
- KSEG0.
->
-> Ouch.  Thanks for the feedback.
->
-> But if so, then aren't those already broken with the current test
-> against CKSEG0?  I didn't add that.
->
+   534	
+ > 535	static int aml_rtc_suspend(struct device *dev)
+   536	{
+   537		struct aml_rtc_data *rtc = dev_get_drvdata(dev);
+   538	
+   539		if (device_may_wakeup(dev))
+   540			enable_irq_wake(rtc->irq);
+   541	
+   542		return 0;
+   543	}
+   544	
+ > 545	static int aml_rtc_resume(struct device *dev)
+   546	{
+   547		struct aml_rtc_data *rtc = dev_get_drvdata(dev);
+   548	
+   549		if (device_may_wakeup(dev))
+   550			disable_irq_wake(rtc->irq);
+   551	
+   552		return 0;
+   553	}
+   554	
 
-Ah my bad. My impression was it is possible to pass args in XKPHYS with
-existing infra (and some PMON bootloader is doing that) but it turns out=
- that
-capability was somehow dropped when I was migrating various platforms to
-fw_init_cmdline.
-
-Feel free to propose a patch and go with valid_fw_arg, it's always good =
-to have=20
-robust generic implementation for validating stuff.
-
-In long term we may need to clean up this as Maciej suggested, but IMO g=
-oing through
-jungle of platforms is not a feasible task for casual contributors.
-
-Thanks
---=20
-- Jiaxun
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
