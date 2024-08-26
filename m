@@ -1,88 +1,145 @@
-Return-Path: <linux-kernel+bounces-301443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C07B95F0EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B71A95F0FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF6901C236A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A9A28AE60
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996C187339;
-	Mon, 26 Aug 2024 12:08:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B84A189BB4;
+	Mon, 26 Aug 2024 12:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="okFJKFtw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CrssHsP3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A7C144306
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8ED189509;
+	Mon, 26 Aug 2024 12:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724674083; cv=none; b=Fb5SYZPmAT5mJZgUYd5Lsariiy97qzSmoEfnITDPd3uq8cy5R5cXcD9Ks1ekXrHK1cro7u8zfqw1ijzDV44sW+nCc+nOL9hOoCaecy+DQSGAsVqDbsg2h7Kbvti8F6mGkaTCyQQoJfTiiNzt6TdpSe3sv4eSs9lngozf1h3QkRM=
+	t=1724674200; cv=none; b=eG9egb3m2MmKwP2Lg+SoCNyt3dRtphJ/I2BD4TkBeCgq7ey+QbetlY/C7QEaXNyjAQ7YqSM54MPountBwcl36a3zMLwhWBCWssDEd6LXPi3hebLXxF0UdttwFcxgdzwonapXoyr1LgBs4y2tsQOt78phDNuJbFkOt9i3JtBdQzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724674083; c=relaxed/simple;
-	bh=7H7ZPMsxBIRgLMNNoeMI8qtMILF0jMnKnj12Bq27HP0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bdj/bWaDrdLwbb+2UTudaUhjBRwRlt6grwbsXv77M2xHVF45bmaA+CG1GThITTpwQi1oCjps83wN4e6HNBi1OY3qfxDDQXMUbur3/NbXQUKH8UUkwUsKyyJDdwIi6p9n6g6ivx7cuPxNghrAqCKx/XTynkyrnXPmmfaeMQ7d2mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d27488930so43162785ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:08:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724674081; x=1725278881;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wuE1cX6E/LM7OqLE4HWg7L3K0h/Pi1McYvL/zJdmR4=;
-        b=Ibl9eY6qW+Gem6j95KB4vtFStpmY1B/zMrQ5H6Whvh+stbJ627q5uuQOwdapH25Ruz
-         HpBgsEKJkVvAnh6Du+GNEi9L1BeRNnEm1t3Vq5OdAh1qvfmuTZQ/Uf6opdjLgRHXqS3Y
-         5kHiy5EtfUvRYeF3CUw+tAGC+9AYluO9Sqbo9kn6mnZVj/4+IEsqIJ1PvJ42NqlH4ZOo
-         7v717gSXJAwjlXxuYSSsThTqiJ8zXdDinKMjdUZKTKg/Cua4TXXtzVOx6DNc145DbTWY
-         8WUp9VpLbpwgiy9aSSYDWkmZxL5Ofq5MpX/ke2M5V5szzPnA2gLoJGxaWmaQOx4q1+tL
-         QW9g==
-X-Forwarded-Encrypted: i=1; AJvYcCU13rpzD3WIEmtNjYoqPx6x1ngAPpsyND5Xf63vySWmQm98jXXprQm5KBXjQEea+L9Mn8WSGtudiz2ylBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLrhmHb8eGlddQ57Xz1ry9alj/YJee7EfLfN9OMarLkc+nCqnp
-	IGBn71kb5fZwaULedDyiL9q7Sh3LJYztD227hf7ggsfkB2ZOH65hcz8HcCsx0iaftAs2wUa8g7Q
-	c0eoHhPu9u+c+M3f0hpigWUYwgC+e950ishCXCqJ27EdfMVS1/yJeIvw=
-X-Google-Smtp-Source: AGHT+IFpEhgAp1GvVv0Zg8iV58xhZderM606AbgS39DPBV5pRWlle6onO2rTsGV3Fgn1peEgrDKyRsRZyS18fy4lLhSaMiELYInf
+	s=arc-20240116; t=1724674200; c=relaxed/simple;
+	bh=VoLPEo0V9JY7ZJwtxy7Y2qZ4SJgIQCnBig2lazCG50A=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=WkvOSjplKn3Zu1nAZV/h0ak3Fnhh+5wDI6OPZ1PA0O5Z4ZdcU5cP43gYm1E29HNEPLhzEm1Ws4n9wN7Aj9eNFTqmEuQEp9pIvyJh8hwDY6EsyuLkgBga6U1W9xvxnA75WrpYgpMXcfONE5GiapXg2sX2E8hrVLl8b2EUcwPoIBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=okFJKFtw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CrssHsP3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 Aug 2024 12:09:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724674197;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3sTcGhLvRk1Meh2xKh6nIA6x5WZngjdgUC8xii6ZXI=;
+	b=okFJKFtwTkq31xVzucoBNru+ob3oGlAmWY0XQkDSjzUOedKtzp+WJ4PMEfCJl6KswgKAPx
+	YBQX+lZqKAyqm68lxgNq2/fGS/HGJnOc3qEywT3uwrHVEK8778Pa0TZrLlCCDxrwjmAEjI
+	aZlFqbWye7N3vs+6CZHwk0tMkvRrxRj6m5I8Jc2CEAJuGMKa1g+xxcXLcvBeHJW7MJy6ln
+	nCCVoTY1q2JQueoXd5GwU+fynx2FC8nFP83So+1tJLG/l9B1DmV/V++5RsVbBehj5XCl+3
+	vuCu7SZjbuunebUxBNra48uCSAU47162bmhkD6w2NRAvoXEqhVxEg64eUT2wPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724674197;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3sTcGhLvRk1Meh2xKh6nIA6x5WZngjdgUC8xii6ZXI=;
+	b=CrssHsP3HFw905p6mngf9GjIl4LyQHvyWVh6OGXYGjUdZZg8mULEFRHtDSxNsLyR+lNCV1
+	LY7pMdswVJvVm8BA==
+From: "tip-bot2 for Jeff Xie" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq/procfs: Correctly set file permissions for
+ affinity control files
+Cc: Jeff Xie <jeff.xie@linux.dev>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240825131911.107119-1-jeff.xie@linux.dev>
+References: <20240825131911.107119-1-jeff.xie@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d85:b0:39d:300f:e91c with SMTP id
- e9e14a558f8ab-39e3ca05649mr6986005ab.5.1724674081523; Mon, 26 Aug 2024
- 05:08:01 -0700 (PDT)
-Date: Mon, 26 Aug 2024 05:08:01 -0700
-In-Reply-To: <20240826114341.7421-1-djahchankoike@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb9922062094f965@google.com>
-Subject: Re: [syzbot] [net?] WARNING: lock held when returning to user space
- in ethnl_act_cable_test
-From: syzbot <syzbot+c641161e97237326ea74@syzkaller.appspotmail.com>
-To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <172467419648.2215.9140005520755593403.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the irq/core branch of tip:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Commit-ID:     0b39441eaab8bedcba1129776ec85178d4d0d9fb
+Gitweb:        https://git.kernel.org/tip/0b39441eaab8bedcba1129776ec85178d4d0d9fb
+Author:        Jeff Xie <jeff.xie@linux.dev>
+AuthorDate:    Sun, 25 Aug 2024 21:19:11 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 26 Aug 2024 14:00:25 +02:00
 
-Reported-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
-Tested-by: syzbot+c641161e97237326ea74@syzkaller.appspotmail.com
+genirq/procfs: Correctly set file permissions for affinity control files
 
-Tested on:
+The kernel already knows at the time of interrupt allocation whether
+affinity of an interrupt can be controlled by userspace or not.
 
-commit:         18aaa82b net: netlink: Remove the dump_cb_mutex field ..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10940a29980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c641161e97237326ea74
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14b0800d980000
+It still creates all related procfs control files with read/write
+permissions. That's inconsistent and non-intuitive for system
+administrators and tools.
 
-Note: testing is done by a robot and is best-effort only.
+Therefore set the file permissions to read-only for such interrupts.
+
+[ tglx: Massage change log ]
+
+Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240825131911.107119-1-jeff.xie@linux.dev
+---
+ kernel/irq/proc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 8cccdf4..dcf8190 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -340,6 +340,7 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 	static DEFINE_MUTEX(register_lock);
+ 	void __maybe_unused *irqp = (void *)(unsigned long) irq;
+ 	char name [MAX_NAMELEN];
++	umode_t umode = S_IRUGO;
+ 
+ 	if (!root_irq_dir || (desc->irq_data.chip == &no_irq_chip))
+ 		return;
+@@ -362,8 +363,11 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 		goto out_unlock;
+ 
+ #ifdef CONFIG_SMP
++	if (irq_can_set_affinity_usr(desc->irq_data.irq))
++		umode |= S_IWUSR;
++
+ 	/* create /proc/irq/<irq>/smp_affinity */
+-	proc_create_data("smp_affinity", 0644, desc->dir,
++	proc_create_data("smp_affinity", umode, desc->dir,
+ 			 &irq_affinity_proc_ops, irqp);
+ 
+ 	/* create /proc/irq/<irq>/affinity_hint */
+@@ -371,7 +375,7 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
+ 			irq_affinity_hint_proc_show, irqp);
+ 
+ 	/* create /proc/irq/<irq>/smp_affinity_list */
+-	proc_create_data("smp_affinity_list", 0644, desc->dir,
++	proc_create_data("smp_affinity_list", umode, desc->dir,
+ 			 &irq_affinity_list_proc_ops, irqp);
+ 
+ 	proc_create_single_data("node", 0444, desc->dir, irq_node_proc_show,
 
