@@ -1,116 +1,106 @@
-Return-Path: <linux-kernel+bounces-301333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0724F95EF2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:57:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515DB95EF29
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C6028A5BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053C21F2589B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F116614EC4B;
-	Mon, 26 Aug 2024 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="E7SKQR8g"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B2C155326;
+	Mon, 26 Aug 2024 10:56:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E857614D44D;
-	Mon, 26 Aug 2024 10:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3C014EC73;
+	Mon, 26 Aug 2024 10:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669815; cv=none; b=RCBjIHjIxDtSWFwoR2svAaxW6h7Jhr7pz8TB3gEj8d5gfR5UGyvHcniFNHjYYso//AUVwbj0e4J8DBmXXsieVojGp1YW22QjZssyn1JioQxNSCf/FAEvedp9O7A2J8XEdDGY5uJKn5hG4IdHntzgOP2JJUglC9sMmxHW5Ih+ZUo=
+	t=1724669806; cv=none; b=Cqix82WU3TuwhTmM5Jj8m5Iu4Fq5Rs3m6tyyNKgsG5VNuUlC0BfwLcY2encTbKXitN7Sspm17PqHFpAeJI5JrAWnRWSZZasx6uXXfLm1EtN85ryYBHTlQIDdz+ASx9B7emRNcwFsRB11q3M2qdm5cogBlTxAtaggKkJ/1m/ksLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669815; c=relaxed/simple;
-	bh=qjyKQSfQEdoYMAV1Jmg14iq7QdxPPpOQnSFwYqH16dA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MTC3LFdFoZBxVCnUCILDKTGa9a8aqSvHBc9YfrgzQXEsIW4/Opu8cgH2lA3wAS+AX0pkNJLmRwv0YOBRbXSFmgCYAKbz+Kmg0H5Qk1XoJjsRCUU1EJq6Woo3eB/ScPtMfjX/xU6Bvt7/MuuxTCQRKAg7NubbsHRfDwVNK2GJuAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=E7SKQR8g; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724669787; x=1725274587; i=markus.elfring@web.de;
-	bh=xil6lnVYUEIqTfiiA5wBkozdOtnz6IoK/KV8LMP4ZFY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=E7SKQR8gKRp4YBuftuZ7Bb2f7QC7dRuD3r5WmXYmOiff/iy64ZmA8yI47SBTErzP
-	 vhKSuJh8IsOHW95QtOsJ38w31sh/5sfygJwLP+eksHTL7wXP8/+wFnaUWh7OQqgA0
-	 sjUuBLG0Zadso/uFL0hPNURyh3qL9KXyxkQw9nraepxnMwdxDGx74kx33mL8325Ly
-	 zb0F7guw7ASV9X3oYtfWEte3CIndrnhShnzvjsIvR0Zwu+9e0lPzFsmYvinLFsyIb
-	 Ojn8pfPCURoYhdxIoWGNAl5K+bgHYYXDjU+z0A1XjSOC0u5TBN5ompmMe+9NK6X4s
-	 GEsv8SotILEh2GjOpw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTfkf-1sWfHq1zMj-00UODV; Mon, 26
- Aug 2024 12:56:27 +0200
-Message-ID: <42c569f4-9171-46e0-9df3-72c583106cc4@web.de>
-Date: Mon, 26 Aug 2024 12:56:19 +0200
+	s=arc-20240116; t=1724669806; c=relaxed/simple;
+	bh=xYS9hwo25fKdplDvoujE/gpsXj/SO5ESAxaCSOtBKhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PQeAtSpu7C8nafyEHsMgyG1UP/VJW4A+TfhAWMWB5ylyBdevuOuB/nGUH2DGO1P7VE5t0p2FJjGFDrPcsqbQ+gTL3sIrpIGOAb547//mbTqZpK0zIYAoWps7Zbvpr7iDgWvm3RKlQ7AGayT7wbc26yHrX6xWi4W3q2MknP3YZJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wsnf2232YzyP9Y;
+	Mon, 26 Aug 2024 18:55:54 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1869618006C;
+	Mon, 26 Aug 2024 18:56:40 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 26 Aug 2024 18:56:38 +0800
+Message-ID: <ade6d403-e54c-80fb-7d51-1e00602fcbfb@huawei.com>
+Date: Mon, 26 Aug 2024 18:56:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- BMC-SW@aspeedtech.com, linux-arm-kernel@lists.infradead.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
- Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
-Subject: Re: [PATCH 2/2] gpio: Add G7 Aspeed gpio controller driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2ek2bR01HsFIz987VGqUZM83F9xykdulPeTU9R4bJ/Qcy8kSImn
- 37EMNlb8QmaQC+P0zBrv8F0DISDkjFyCP/upaMf+zUj09yHC/ZG6pVzen3Tz6B6oFLsn1xn
- MYslybCraX1+4TIqfuU7UWVTh8gAZDiwrKXDwu9WaihYUdTcEi5v8nPIxbT+M8lXXqmf6G8
- 1eL1qWm/M6m13Wdfx1s2Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/TnAcufCLFA=;FtV6qGLBY4dbFNQUvEEmmtQ7PVR
- UdKX4alIo55qxkmBSMGIbvU8RS1IFZaHFUs73flvzs8iT8POaeriM70t7WDbuLESmIwIn7zQn
- BBe9dZZD87lK1dW7jTp6D6Fargu/ekjVx0nf8eHPMGTNgIMstG4iIB7FVDfI4JrhajRD3AQ/0
- e8AjqTuZkC5IxDCXWnz1Cag8eQWdmtv2STrUrzlTOAIymnvRKxwYqTf3JOtFVpcQEy+Lx1sm/
- wilQifu0Cb1NJmR8JbIEf+BpcyMw8/Q2IziGHSXonMB2dw99ftLZuJji2HmcQz18lUuF5i3HX
- 26EBPw06s1L8hO3H/5e2rkCFa5OfZ1Oy6+rW/N8KJg6gSfI4BxPmjMd5jUdNyrvDFxuF0dh6v
- 0oPxVk0glFmIoVlRF0DY175BF9JF9sEJ8RIqFwAEepd3EV/5F8mFtuLQp9oAI0UENNIX+y8e1
- Wg1cdSBGz0nEVP9xcX/Kkf9ELgqCoilaW0IIDviYeSy5Ho+t07pvn2saj5//Rt/RCtAZnzuXc
- r3yS9rxyAjAyGsjv3PSuU5ffJB8LzEyvb0JsX6W6D9iZxBQlJ86lbZUGhrNCvSXNt+XBVt/Vk
- T/+SY0++xEoEiG968ecJkrb67OOMiRvPy5lGWVOy7YBBlpqLXfu232dPLm54qPNjJdLG6EWvj
- NUlnaSntLDv23wvGVWmBkLEI5AS4JNs5JNbtoaN5AdUDVwjwLwWjA7LMkdxAkGBSURMJlECUv
- +wQbfn+8UumvxCyqoc+YD5cg0PIQPVZecJLRb1oYzx6jWNie3q8aQtuGnRgQUVzjU81KiDo2B
- Y6aj5yKTaZ5m30tlg61YLAxw==
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
+ for_each_child_of_node_scoped()
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Miquel Raynal
+	<miquel.raynal@bootlin.com>
+CC: <michal.simek@amd.com>, <richard@nod.at>, <vigneshr@ti.com>,
+	<liang.yang@amlogic.com>, <neil.armstrong@linaro.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <heiko@sntech.de>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>, <wens@csie.org>,
+	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
+	<gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
+	<u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
+	<christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
+	<christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <jic23@kernel.org>
+References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
+ <20240826115213.389acaef@xps-13>
+ <f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-=E2=80=A6
-> +++ b/drivers/gpio/gpio-aspeed-g7.c
-> @@ -0,0 +1,831 @@
-=E2=80=A6
-> +static void aspeed_gpio_g7_set(struct gpio_chip *gc, unsigned int offse=
-t, int val)
-> +{
-=E2=80=A6
-> +	raw_spin_lock_irqsave(&gpio->lock, flags);
-> +
-> +	__aspeed_gpio_g7_set(gc, offset, val);
-> +
-> +	raw_spin_unlock_irqrestore(&gpio->lock, flags);
-> +}
-=E2=80=A6
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(raw_spinlock_irqsave)(&gpio->lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.11-rc5/source/include/linux/spinlock.h=
-#L551
 
-Regards,
-Markus
+On 2024/8/26 18:19, Krzysztof Kozlowski wrote:
+> On 26/08/2024 11:52, Miquel Raynal wrote:
+>> Hi Jinjie,
+>>
+>> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
+>>
+>>> Use scoped for_each_available_child_of_node_scoped() when iterating over
+>>> device nodes to make code a bit simpler.
+>>
+>> Why is this a resend ? Did I miss a previous iteration?
+> 
+> You were not cc-ed on previous iteration. I asked for proper split
+> between subsystems and sending to maintainers, thus this resend.
+> 
+> Although for such big patchset, I would expect some waiting time, not
+> sending immediately.
+
+Sorry, I will pay attention to it later.
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
