@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-301355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BD795EF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486C595EF65
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C64B23ACF
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03DE6286452
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880CC14F10E;
-	Mon, 26 Aug 2024 11:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EE713AD32;
+	Mon, 26 Aug 2024 11:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="DmD4TLSV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DD513BACC;
-	Mon, 26 Aug 2024 11:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PEZci8xq"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6C414F9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724670334; cv=none; b=ShR0IDaX88/yXfWuiHcSiuoastefyLQ2laYw9VhAtPiX9Q9ZpvBkt7WNtUho569kCNC6030R3sLwKqK9r0TyC39ZgWg9VeYRG571WsGZ0s28aMmmUxJdhPSNvpdWLlpvz51g+JbeTmwAJSffmKC03quC6IcoIIkIeceIQypz/XA=
+	t=1724670274; cv=none; b=e2tzBXF1LegoBDEezLxnIMQXni3MJdb0xTOVu2JW+mPeAhh/krMOFL4/iHOTd2a2LktZidQ8GZKlDj5PFwaVb55BbXHg97u1tK5By1GSHtY0rveEM4cEStvoGjSquSR0DVsS6epNboRVR81bk2Q4fmQHkyxrhe6KV4MGjReoNY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724670334; c=relaxed/simple;
-	bh=ECQmLS+SgDNwcj4Yiwlvzx6SSOi6T0sHprbGL5cdEow=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=QC7r0kDRFfkPqAz/sFt3gsY+2CxHOmBZRWiELLCBmSUkx+/qiX21tW7iHs/4Ke0Mi7FW08uxgDgPSh0lBju9M684tKhqbxQ9ManY2RalqrHJWWjzxozPclCG7mokKlP5Hzf3niURc119R3PaXV+UghRbRu1jZJXTq7Ko95A9axE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=DmD4TLSV reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=UEQbFR5jnzBFmUCc+bu400VG97t9CgX6FL5i7R24T1I=; b=D
-	mD4TLSVJUBp8yyXdDK0tvrUpHLdIQDmGPVj9OEk2y+8TcSsa65yADoTzC9sSqcl+
-	1oP8ONKBosIrUk4k8GiNFXd2c1AJqnlGCwmuhFbiI5iSGQPvUr1EIJQ8bIiLlZHh
-	EJZtZcyDPBKp87eO6uT044SW9VOUhQykD9YW+jQ/T0=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-115 (Coremail) ; Mon, 26 Aug 2024 19:04:16 +0800
- (CST)
-Date: Mon, 26 Aug 2024 19:04:16 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Detlev Casanova" <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, "Michael Turquette" <mturquette@baylibre.com>, 
-	"Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Heiko Stuebner" <heiko@sntech.de>, 
-	"Philipp Zabel" <p.zabel@pengutronix.de>, 
-	"Elaine Zhang" <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
-	"Sugar Zhang" <sugar.zhang@rock-chips.com>
-Subject: Re:[PATCH v6 1/3] dt-bindings: clock, reset: Add support for rk3576
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240822194956.918527-2-detlev.casanova@collabora.com>
-References: <20240822194956.918527-1-detlev.casanova@collabora.com>
- <20240822194956.918527-2-detlev.casanova@collabora.com>
-X-NTES-SC: AL_Qu2ZBvqcv0ou4CmeYOlS/zNs0JFhP77u7b1sr+0wWMAqvCTo1h85dEdOElnfy96BLkypWViQfDvaEv0osJCt
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1724670274; c=relaxed/simple;
+	bh=qQwuQmq19WaJY2TKw8051kfCZHiwoDZB2S9b1qWk7As=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ba54jIwXGlnQeWYVbNy1Ua0oyJQKQVzbCv6ZDzJGou0YK0oOI5hqy+aXfne/304EB1RuyJgjIXxb7uMSbMChKPGwOQg2xcAuIwN99IeV4xjkfJReDn3bhHFWeFu/9blnDtMVA1fTH6+s85kUcngdWn2IlQRc78zCsFzyINWPULs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PEZci8xq; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428e1915e18so34418425e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724670270; x=1725275070; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kBUf5QDMv+hVbN1ugf3E0laVvepA0Eshqkxu4Gw5YM0=;
+        b=PEZci8xqo5I2MLnHCPmjgoQIAAo3qGuGoGN3N+8QJxGVt5KQhFUERGpZd7sSkdJOce
+         IgbO+wXFDuQ5K8aYl75pxWlgg6cnswOFQxrHihNG6xnDGn4pKptIlw6fOQRIOLP+qKEl
+         RaJ6fDZK962SvEv+malbpsWZ5AeKY6Ln5I5Ax3Zs2PMLQmwK/u6p8D3cgtqavEC2ulFh
+         wp+e/tjV3W16tqPBEn7zcxR42UMXoGLIjbSiFNcp4t/zA9EsfY/0sA3hxnS16fqim74k
+         BB9Zv/ywO3mMLsy/Js+S/pnakbJ6MNwKHXji3NsOvfPGg/Xb4NWmverQ47lz/1OktIgG
+         hLRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724670270; x=1725275070;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kBUf5QDMv+hVbN1ugf3E0laVvepA0Eshqkxu4Gw5YM0=;
+        b=DH2M+cIBk530U5CzW6AOl/Af8bwcyC6A5uC0MMYIVvrdbe5BI74Oa6eAOS6+Ku1cIt
+         L+dQL/NJKDbRC+zkwO0KUpSORYmsYDXZiQ9mkGtfX9PFq1G0a7vY/JtjpZzesnxQvN6o
+         peesboKCyw1b+0ExaUPZiX+Z8kWTZ5Sp/nqm0wjH34YTHaOlnr00ix2rfjUsR+SgeGJV
+         Tj1+4dUs2YRchDbjZbNc+/AqFOJFb4VTBrqwdMRxhEOUc3aiCIIcpIl88/eTYgNRSwip
+         jg+w11mDl+SJbBKV9fIReWJYZa7oHrsyg2nPMOaGLnLrciolzNhppUkKSXZ+93Ck1e9K
+         /WmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp39cgpLRyVDzIiq5u49ENHIPozxXhY4zhNOYMD/sCAvx6wdKNSYoxi2qAWEwirhFTVYYyllsK737j928=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4YmD6+Xc7bANP0QHVikZqlB3tN7yw8PsZNv0SHL6VvILJ5rCv
+	SQtj3KviPtSnJEjcmLnV9+toJlRcU0KQyKw3YQxhXxkZdtJPFz5DfQeTiEx4htI=
+X-Google-Smtp-Source: AGHT+IFjlwzJAG+UaujRUepSwwYiC2cK0519dJmLL8/0p57HqWVGq1Y2q3nJ4NjDjd7xcOtuwkQBYQ==
+X-Received: by 2002:a05:600c:47d0:b0:42b:892d:54c0 with SMTP id 5b1f17b1804b1-42b892d54d7mr58161045e9.12.1724670270117;
+        Mon, 26 Aug 2024 04:04:30 -0700 (PDT)
+Received: from [10.20.4.146] ([212.39.89.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac935211csm134383535e9.47.2024.08.26.04.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 04:04:29 -0700 (PDT)
+Message-ID: <b8ed694f-3ab1-453c-b14b-25113defbdb6@suse.com>
+Date: Mon, 26 Aug 2024 14:04:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7be4da2d.a8a2.1918e5ba74b.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3XzgxYcxmoHQ+AA--.35887W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hVHXmWXz9PfoQAHsJ
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CgpIaSBEZWx0ZXbvvIwKICAgICBUaGFua3MgZm9yIHlvdXIgd29ya+OAggoKCkF0IDIwMjQtMDgt
-MjMgMDM6NDk6MzIsICJEZXRsZXYgQ2FzYW5vdmEiIDxkZXRsZXYuY2FzYW5vdmFAY29sbGFib3Jh
-LmNvbT4gd3JvdGU6Cj5BZGQgY2xvY2sgYW5kIHJlc2V0IElEIGRlZmluZXMgZm9yIHJrMzU3Ni4K
-Pgo+Q29tcGFyZWQgdG8gdGhlIGRvd25zdHJlYW0gYmluZGluZ3Mgd3JpdHRlbiBieSBFbGFpbmUs
-IHRoaXMgdXNlcwo+Y29udGlub3VzIGdhcGxlc3MgSURzIHN0YXJ0aW5nIGF0IDAuIFRodXMgYWxs
-IG51bWJlcnMgYXJlCj5kaWZmZXJlbnQgYmV0d2VlbiBkb3duc3RyZWFtIGFuZCB1cHN0cmVhbSwg
-YnV0IG5hbWVzIGFyZSBrZXB0Cj5leGFjdGx5IHRoZSBzYW1lLgo+Cj5BbHNvIGFkZCBkb2N1bWVu
-dGF0aW9uIGZvciB0aGUgcmszNTc2IENSVSBjb3JlLgo+Cj5TaWduZWQtb2ZmLWJ5OiBFbGFpbmUg
-WmhhbmcgPHpoYW5ncWluZ0Byb2NrLWNoaXBzLmNvbT4KPlNpZ25lZC1vZmYtYnk6IFN1Z2FyIFpo
-YW5nIDxzdWdhci56aGFuZ0Byb2NrLWNoaXBzLmNvbT4KPlNpZ25lZC1vZmYtYnk6IERldGxldiBD
-YXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9yYS5jb20+Cj4tLS0KPiAuLi4vYmluZGlu
-Z3MvY2xvY2svcm9ja2NoaXAscmszNTc2LWNydS55YW1sICAgfCAgNTYgKysKPiAuLi4vZHQtYmlu
-ZGluZ3MvY2xvY2svcm9ja2NoaXAscmszNTc2LWNydS5oICAgfCA1OTIgKysrKysrKysrKysrKysr
-KysrCj4gLi4uL2R0LWJpbmRpbmdzL3Jlc2V0L3JvY2tjaGlwLHJrMzU3Ni1jcnUuaCAgIHwgNTY0
-ICsrKysrKysrKysrKysrKysrCj4gMyBmaWxlcyBjaGFuZ2VkLCAxMjEyIGluc2VydGlvbnMoKykK
-PiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Ns
-b2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFtbAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRl
-L2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+IGNyZWF0ZSBtb2RlIDEw
-MDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3Jlc2V0L3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+Cj5k
-aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3JvY2tj
-aGlwLHJrMzU3Ni1jcnUueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
-bG9jay9yb2NrY2hpcCxyazM1NzYtY3J1LnlhbWwKPm5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj5pbmRl
-eCAwMDAwMDAwMDAwMDAuLjljOWIzNjA0OWM3MQo+LS0tIC9kZXYvbnVsbAo+KysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFt
-bAo+QEAgLTAsMCArMSw1NiBAQAo+KyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAt
-b25seSBPUiBCU0QtMi1DbGF1c2UKPislWUFNTCAxLjIKPistLS0KPiskaWQ6IGh0dHA6Ly9kZXZp
-Y2V0cmVlLm9yZy9zY2hlbWFzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFtbCMKPiskc2No
-ZW1hOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPisKPit0
-aXRsZTogUm9ja2NoaXAgcmszNTc2IEZhbWlseSBDbG9jayBhbmQgUmVzZXQgQ29udHJvbCBNb2R1
-bGUKPisKPittYWludGFpbmVyczoKPisgIC0gRWxhaW5lIFpoYW5nIDx6aGFuZ3FpbmdAcm9jay1j
-aGlwcy5jb20+Cj4rICAtIEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+Cj4rICAtIERl
-dGxldiBDYXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9yYS5jb20+Cj4rCj4rZGVzY3Jp
-cHRpb246Cj4rICBUaGUgUkszNTc2IGNsb2NrIGNvbnRyb2xsZXIgZ2VuZXJhdGVzIHRoZSBjbG9j
-ayBhbmQgYWxzbyBpbXBsZW1lbnRzIGEgcmVzZXQKPisgIGNvbnRyb2xsZXIgZm9yIFNvQyBwZXJp
-cGhlcmFscy4gRm9yIGV4YW1wbGUgaXQgcHJvdmlkZXMgU0NMS19VQVJUMiBhbmQKPisgIFBDTEtf
-VUFSVDIsIGFzIHdlbGwgYXMgU1JTVF9QX1VBUlQyIGFuZCBTUlNUX1NfVUFSVDIgZm9yIHRoZSBz
-ZWNvbmQgVUFSVAo+KyAgbW9kdWxlLgo+Kwo+K3Byb3BlcnRpZXM6Cj4rICBjb21wYXRpYmxlOgo+
-KyAgICBjb25zdDogcm9ja2NoaXAscmszNTc2LWNydQo+Kwo+KyAgcmVnOgo+KyAgICBtYXhJdGVt
-czogMQo+Kwo+KyAgIiNjbG9jay1jZWxscyI6Cj4rICAgIGNvbnN0OiAxCj4rCj4rICAiI3Jlc2V0
-LWNlbGxzIjoKPisgICAgY29uc3Q6IDEKPisKPisgIGNsb2NrczoKPisgICAgbWF4SXRlbXM6IDIK
-PisKPisgIGNsb2NrLW5hbWVzOgo+KyAgICBpdGVtczoKPisgICAgICAtIGNvbnN0OiB4aW4yNG0K
-PisgICAgICAtIGNvbnN0OiB4aW4zMmsKPisKPityZXF1aXJlZDoKPisgIC0gY29tcGF0aWJsZQo+
-KyAgLSByZWcKPisgIC0gIiNjbG9jay1jZWxscyIKPisgIC0gIiNyZXNldC1jZWxscyIKPisKPith
-ZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKPisKPitleGFtcGxlczoKPisgIC0gfAo+KyAgICBj
-bG9jay1jb250cm9sbGVyQDI3MjAwMDAwIHsKPisgICAgICBjb21wYXRpYmxlID0gInJvY2tjaGlw
-LHJrMzU3Ni1jcnUiOwo+KyAgICAgIHJlZyA9IDwweGZkN2MwMDAwIDB4NWMwMDA+Owo+KyAgICAg
-ICNjbG9jay1jZWxscyA9IDwxPjsKPisgICAgICAjcmVzZXQtY2VsbHMgPSA8MT47Cj4rICAgIH07
-Cj5kaWZmIC0tZ2l0IGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9yb2NrY2hpcCxyazM1NzYt
-Y3J1LmggYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+
-bmV3IGZpbGUgbW9kZSAxMDA2NDQKPmluZGV4IDAwMDAwMDAwMDAwMC4uZWUzNzE4NDUyYjc3Cj4t
-LS0gL2Rldi9udWxsCj4rKysgYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJr
-MzU3Ni1jcnUuaAo+QEAgLTAsMCArMSw1OTIgQEAKPisvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
-cjogKEdQTC0yLjAgT1IgTUlUKSAqLwo+Ky8qCj4rKiBDb3B5cmlnaHQgKGMpIDIwMjMgUm9ja2No
-aXAgRWxlY3Ryb25pY3MgQ28uIEx0ZC4KPisqIENvcHlyaWdodCAoYykgMjAyNCBDb2xsYWJvcmEg
-THRkLgo+KyoKPisqIEF1dGhvcjogRWxhaW5lIFpoYW5nIDx6aGFuZ3FpbmdAcm9jay1jaGlwcy5j
-b20+Cj4rKiBBdXRob3I6IERldGxldiBDYXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9y
-YS5jb20+Cj4rKi8KPisKPisjaWZuZGVmIF9EVF9CSU5ESU5HU19DTEtfUk9DS0NISVBfUkszNTc2
-X0gKPisjZGVmaW5lIF9EVF9CSU5ESU5HU19DTEtfUk9DS0NISVBfUkszNTc2X0gKPisKPisvKiBj
-cnUtY2xvY2tzIGluZGljZXMgKi8KPisKPisvKiBjcnUgcGxscyAqLwo+KyNkZWZpbmUgUExMX0JQ
-TEwJCQkwCj4rI2RlZmluZSBQTExfTFBMTAkJCTEKPisjZGVmaW5lIFBMTF9WUExMCQkJMgo+KyNk
-ZWZpbmUgUExMX0FVUExMCQkJMwo+KyNkZWZpbmUgUExMX0NQTEwJCQk0Cj4rI2RlZmluZSBQTExf
-R1BMTAkJCTUKPisjZGVmaW5lIFBMTF9QUExMCQkJNgo+KyNkZWZpbmUgQVJNQ0xLX0wJCQk3Cj4r
-I2RlZmluZSBBUk1DTEtfQgkJCTgKPisKPisvKiBjcnUgY2xvY2tzICovCj4rI2RlZmluZSBDTEtf
-Q1BMTF9ESVYyMAkJCTkKPisjZGVmaW5lIENMS19DUExMX0RJVjEwCQkJMTAKPisjZGVmaW5lIENM
-S19HUExMX0RJVjgJCQkxMQo+KyNkZWZpbmUgQ0xLX0dQTExfRElWNgkJCTEyCgouLi4uLi4uLi4K
-Cj4rI2RlZmluZSBTUlNUX09UR1BIWV8xCQkJNDQ5Cj4rI2RlZmluZSBTUlNUX0hEUFRYX0lOSVQJ
-CQk0NTAKPisjZGVmaW5lIFNSU1RfSERQVFhfQ01OCQkJNDUxCj4rI2RlZmluZSBTUlNUX0hEUFRY
-X0xBTkUJCQk0NTIKPisjZGVmaW5lIFNSU1RfSERNSVRYSFBECQkJNDUzCgpDb21wYXJlZCB0byBS
-SzM1ODgsIHRoaXMgc2hvdWxkIGJlICAgU1JTVF9IRE1JVFhIRFAgIC4gIEkgdGhpbmsgdGhpcyBp
-cyBhIHR5cG8gaW4gVFJN44CCCgo+Kwo+KyNkZWZpbmUgU1JTVF9NUEhZX0lOSVQJCQk0NTQKPisj
-ZGVmaW5lIFNSU1RfUF9NUEhZX0dSRgkJCTQ1NQo+KyNkZWZpbmUgU1JTVF9QX1ZDQ0lPN19JT0MJ
-CTQ1Ngo+Kwo+KyNkZWZpbmUgU1JTVF9IX1BNVTFfQklVCQkJNDU3Cj4rI2RlZmluZSBTUlNUX1Bf
-UE1VMV9OSVUJCQk0NTgKPisjZGVmaW5lIFNSU1RfSF9QTVVfQ00wX0JJVQkJNDU5Cj4rI2RlZmlu
-ZSBTUlNUX1BNVV9DTTBfQ09SRQkJNDYwCj4rI2RlZmluZSBTUlNUX1BNVV9DTTBfSlRBRwkJNDYx
-Cj4rCj4rI2RlZmluZSBTUlNUX1BfQ1JVX1BNVTEJCQk0NjIKPisjZGVmaW5lIFNSU1RfUF9QTVUx
-X0dSRgkJCTQ2Mwo+KyNkZWZpbmUgU1JTVF9QX1BNVTFfSU9DCQkJNDY0Cj4rI2RlZmluZSBTUlNU
-X1BfUE1VMVdEVAkJCTQ2NQo+KyNkZWZpbmUgU1JTVF9UX1BNVTFXRFQJCQk0NjYKPisjZGVmaW5l
-IFNSU1RfUF9QTVVUSU1FUgkJCTQ2Nwo+KyNkZWZpbmUgU1JTVF9QTVVUSU1FUjAJCQk0NjgKPisj
-ZGVmaW5lIFNSU1RfUE1VVElNRVIxCQkJNDY5Cj4rI2RlZmluZSBTUlNUX1BfUE1VMVBXTQkJCTQ3
-MAo+KyNkZWZpbmUgU1JTVF9QTVUxUFdNCQkJNDcxCj4rCj4rI2RlZmluZSBTUlNUX1BfSTJDMAkJ
-CTQ3Mgo+KyNkZWZpbmUgU1JTVF9JMkMwCQkJNDczCj4rI2RlZmluZSBTUlNUX1NfVUFSVDEJCQk0
-NzQKPisjZGVmaW5lIFNSU1RfUF9VQVJUMQkJCTQ3NQo+KyNkZWZpbmUgU1JTVF9QRE0wCQkJNDc2
-Cj4rI2RlZmluZSBTUlNUX0hfUERNMAkJCTQ3Nwo+Kwo+KyNkZWZpbmUgU1JTVF9NX1BETTAJCQk0
-NzgKPisjZGVmaW5lIFNSU1RfSF9WQUQJCQk0NzkKPisKPisjZGVmaW5lIFNSU1RfUF9QTVUwR1JG
-CQkJNDgwCj4rI2RlZmluZSBTUlNUX1BfUE1VMElPQwkJCTQ4MQo+KyNkZWZpbmUgU1JTVF9QX0dQ
-SU8wCQkJNDgyCj4rI2RlZmluZSBTUlNUX0RCX0dQSU8wCQkJNDgzCj4rCj4rI2VuZGlmCj4tLSAK
-PjIuNDYuMAo+Cj4KPl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCj5MaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKPkxpbnV4LXJvY2tjaGlwQGxpc3RzLmlu
-ZnJhZGVhZC5vcmcKPmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
-bGludXgtcm9ja2NoaXAK
+
+
+On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+> From: Xiaoyao Li <xiaoyao.li@intel.com>
+> 
+> While TDX module reports a set of capabilities/features that it
+> supports, what KVM currently supports might be a subset of them.
+> E.g., DEBUG and PERFMON are supported by TDX module but currently not
+> supported by KVM.
+> 
+> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of TDX.
+> supported_attrs and suppported_xfam are validated against fixed0/1
+> values enumerated by TDX module. Configurable CPUID bits derive from TDX
+> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
+> i.e., mask off the bits that are configurable in the view of TDX module
+> but not supported by KVM yet.
+> 
+> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it to 0
+> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of KVM.
+> 
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v1:
+>   - Change setup_kvm_tdx_caps() to use the exported 'struct tdx_sysinfo'
+>     pointer.
+>   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct tdx_sysinfo'
+>     doesn't have 'kvm_tdx_cpuid_config'.
+>   - Updates for uAPI changes
+> ---
+
+<snip>
+
+
+> +
+>   static int tdx_online_cpu(unsigned int cpu)
+>   {
+>   	unsigned long flags;
+> @@ -217,11 +292,16 @@ static int __init __tdx_bringup(void)
+>   		goto get_sysinfo_err;
+>   	}
+>   
+> +	r = setup_kvm_tdx_caps();
+
+nit: Since there are other similarly named functions that come later how 
+about rename this to init_kvm_tdx_caps, so that it's clear that the 
+functions that are executed ones are prefixed with "init_" and those 
+that will be executed on every TDV boot up can be named prefixed with 
+"setup_"
+
+
+> +	if (r)
+> +		goto get_sysinfo_err;
+> +
+>   	/*
+>   	 * Leave hardware virtualization enabled after TDX is enabled
+>   	 * successfully.  TDX CPU hotplug depends on this.
+>   	 */
+>   	return 0;
+> +
+>   get_sysinfo_err:
+>   	__do_tdx_cleanup();
+>   tdx_bringup_err:
+> @@ -232,6 +312,7 @@ static int __init __tdx_bringup(void)
+>   void tdx_cleanup(void)
+>   {
+>   	if (enable_tdx) {
+> +		free_kvm_tdx_cap();
+>   		__do_tdx_cleanup();
+>   		kvm_disable_virtualization();
+>   	}
 
