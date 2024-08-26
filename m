@@ -1,283 +1,182 @@
-Return-Path: <linux-kernel+bounces-301470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC7C95F161
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:36:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0F395F164
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09E6A1F2289F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DDAD1C21311
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 12:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4BC16F908;
-	Mon, 26 Aug 2024 12:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4113F1514F6;
+	Mon, 26 Aug 2024 12:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b="iya35wF5"
-Received: from eu-smtp-delivery-197.mimecast.com (eu-smtp-delivery-197.mimecast.com [185.58.85.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vJzK0Ep+"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EA622071
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14DE158873
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 12:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724675751; cv=none; b=CeLMZ25fboxY/fpRcHAIUj88UdmQsKZBadqPCgXRNkMCYnzf1Nm4dS7UT5uoegbhMM16cZ5RqMDHcq6HA1alPhzgUCEox2QduZzD/KmwpSWuM/pVfzEFsqsmY2tXpedGlsDCwkd/pzkJjVVld9Mu2r23sLdd3zyq3hxYOu/FeMc=
+	t=1724675769; cv=none; b=VGQu25HjyRV+TrW+TA3WomMM1QC8f0AuC8gnYCR4XeLMeN87ftLQdoHMAIiN6ctGT1b1oG+kqQwbmSkLu6D3F5vomCl+7a7iuKukOkuBKhJvb9mDWPbtH6NUVP+iD3n8U+yKSLIlqMSuOHyRFvcYo9MWByvSqctR2IN85QrGPGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724675751; c=relaxed/simple;
-	bh=EQVwB9N+w6vdH0vDgDXf4WFksXc+20mnlpn2jrGswa0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 MIME-Version:Content-Type; b=uMC9XyyCG6Nkuc0h3ctNbr72xGG89FTo34iZT8ndGPbeR9sDXVmM2O3F7RdIjUkHAq0/RkFKJJles9zDgE4XUJkoSsg7nDam7Clul7A5PSRU+w0YxnrNOwMOA+6xiJyKK/tjRL0ujmCMJj0+I0v5+q3K7IxrHMPlJtOuBzF2HBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com; spf=pass smtp.mailfrom=camlingroup.com; dkim=pass (1024-bit key) header.d=camlingroup.com header.i=@camlingroup.com header.b=iya35wF5; arc=none smtp.client-ip=185.58.85.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=camlingroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=camlingroup.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=camlingroup.com;
-	s=mimecast20210310; t=1724675742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OgqRTSzt3bTWzQid5H2iYIiMOjzliWxrosTp2hKNVlY=;
-	b=iya35wF5cKDgBfAQjDnVIhcb83aB3z0cnMspHeliumfNHmk+BjhPDQAWfGkBAUHAwFM9+Q
-	I7Zn6UfpFoSUnfDFoduSU3K0AA5hu7BNfFibLyrLGP+r7kXIGctrfOhZ7mYZ+8vaXW3yQ+
-	mqnFAGFTQfcNv+RWNvSeZWpYekaRXqY=
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com
- (mail-cwxgbr01lp2048.outbound.protection.outlook.com [104.47.85.48]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- uk-mta-60-Em8GJ90vPXmuUH7oIlvTwg-1; Mon, 26 Aug 2024 13:35:41 +0100
-X-MC-Unique: Em8GJ90vPXmuUH7oIlvTwg-1
-Received: from CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:142::9)
- by LO0P123MB5968.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:242::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 12:35:39 +0000
-Received: from CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
- ([fe80::f866:62f9:716e:ca4f]) by CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
- ([fe80::f866:62f9:716e:ca4f%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 12:35:39 +0000
-Message-ID: <5d1f5d01-c7ab-49f9-b754-1c32043668c5@camlingroup.com>
-Date: Mon, 26 Aug 2024 14:35:37 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] serial: sc16is7xx: convert bitmask definitions to
- use BIT() macro
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: linux-serial@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>, Andy Shevchenko <andy@kernel.org>,
- =?UTF-8?Q?Krzysztof_Drobi=C5=84ski?= <k.drobinski@camlintechnologies.com>,
- =?UTF-8?Q?Pawe=C5=82_Lenkow?= <pawel.lenkow@camlingroup.com>,
- Kirill Yatsenko <kirill.yatsenko@camlingroup.com>
-References: <7deb753f-bf86-47ce-89bf-8277aca4293e@camlingroup.com>
- <fbd8debf-46ab-407a-beda-43e083bffee7@camlingroup.com>
- <CAHp75VeqOV7GEqMs6fMi2Fax-97zt+ykEXaptng=pi_BDKU5Bg@mail.gmail.com>
-From: Lech Perczak <lech.perczak@camlingroup.com>
-In-Reply-To: <CAHp75VeqOV7GEqMs6fMi2Fax-97zt+ykEXaptng=pi_BDKU5Bg@mail.gmail.com>
-X-ClientProxiedBy: BE0P281CA0006.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:a::16) To CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:142::9)
+	s=arc-20240116; t=1724675769; c=relaxed/simple;
+	bh=Ja4ynOGDs7r5fFu5xbcjLL+e+XO2ktSDY8OPVS23UWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SrSTVnwTmDsIb15uE4ud8Z8KVQQpMnvJTarWomQTofoFlGiN+Y1inqIugqWVH1eLtbguVgAuahHyY6+Zc5cPh0z22vgBMyVTji4LE7SRKwULdBFe0J4QoXtXlLzoic8v6d6iHhzJq8pSaoQ/f3JaEEZ+XBPbjhwe6sxb2QCtwO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vJzK0Ep+; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-371b8d402c9so179256f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 05:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724675766; x=1725280566; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZxUQ6rvTkSYMAbJPVsEw2y5XiZUn2reb1mGpvWf8Js=;
+        b=vJzK0Ep+6VqBZDt3wKaHvDEnEviV1aeru5iQkCuIk+F5puk5NVR18xCABACm28j2dv
+         5v197uPaLYaQMv31GkkEInS8/r7TfmuC1JAnL1ayalTAWq2rlFQCnC5Laru7KFlpMnsR
+         WoMUbJflCTJRfoX7S/2IJNfSbp0ieaM0+NAH4fooQ329ncmJw7W1iWHUqcAvPB4p5RGR
+         K8vxPnm/RR3fBKu38k3tKgeWM3SF3jIoMiVqSgw933RTOl71HfyNKOQRl5JKlGX+H/Bw
+         KR/o/5Eg6pB7toSwahsAVqTO1zfF5LNTev18ppRI9EUehXr3QeDD1o4uxQ/SQOP592M5
+         tLnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724675766; x=1725280566;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eZxUQ6rvTkSYMAbJPVsEw2y5XiZUn2reb1mGpvWf8Js=;
+        b=EIHm5/5gk5O8pgsn22DeFiYin97ZH6fEzIXn63qFXaDO/ClEuQTBTNvAZ5n8v05Tlc
+         Tcy3iBWHeYMAK/RE3MhtKJP+DR2jT+Igz6X/4udg2faq0x2nTX7tITljrvjXV1wXIw1P
+         f8gVuhxDEL7aV1IWRgA30PUV60Q9MMFEfPOwgZ/oy8bHiASb2EQyetmH/vB3J7BvbVKZ
+         ClHb+kRyXt+DZfLwIJRhM8PMHgdwI36F/UvGrt6Jc6Hjv7moYiVldXuD/r7DJJezJMUC
+         ceJt4Dv9wtN+c5F5zIG6ERt0YAPpNDtcbiwhx7Y5wciqH27itt5qCn09l9MboX4/Ct0X
+         7/eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPxlqvzeKq4KRG3HydUe+YCpiQbI6fl22YihEupgWT3mJyVlB4nJd4frlCnalzycucT2zhsmIviRRorZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/hTChP/OGSZaEBUL8g1rX9KldXlg55OVJ4xL49DMUqDiTIjoT
+	ut+NT8AFZdwABk3DhVvfkon7BZi6V7K50KyBFU20o+vt0/N3AsuGbkU1ibnuVZY=
+X-Google-Smtp-Source: AGHT+IFAnklK+XOXn9+WuMUUgu55FUFp31K3mN+Tx7AOoGQf0pg5wxkskjPjCIP1Ab6rF9SEgTtvWQ==
+X-Received: by 2002:a5d:648a:0:b0:36b:b2a1:ef74 with SMTP id ffacd0b85a97d-373118fdf11mr3766303f8f.8.1724675765915;
+        Mon, 26 Aug 2024 05:36:05 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-373081ff633sm10689277f8f.77.2024.08.26.05.36.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 05:36:05 -0700 (PDT)
+Message-ID: <09b7ea1e-1ddf-47fd-9e46-886c07ad882b@linaro.org>
+Date: Mon, 26 Aug 2024 14:36:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWXP123MB5267:EE_|LO0P123MB5968:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7ee0871-fa4b-4a10-233c-08dcc5cb97c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8HQbo+yzXUPnL+YBk0xuEU8uDYZazr/95eKenNun1vEqlu+s/GyynhMkEN5O?=
- =?us-ascii?Q?JWPAI7OgviI/vb9aSdJYz8j/XjnascJR1TOuf04BZLNn9DDcNnR4XVdcVXET?=
- =?us-ascii?Q?Iv1EG7guB+2Aq0VqjJKh/ExlwuNlnJfL3I1DHM+LwqS1XhJgu5uYjdizLy6H?=
- =?us-ascii?Q?NNLFRnlcrsxjIwkWO/xgKNKTSxJ9xayS02iukhczHAcw3KPDlUOsHYYgSKhI?=
- =?us-ascii?Q?+GwgrB8TcSmHGSUWsy1ge4bIm89ygMa14o4gN/Ru0EdBopMrpEiFP8ZEZbTR?=
- =?us-ascii?Q?EccIFyfVlVyd08EK87ITbcBh6haYrxFv0IJXpzpicnn+PJ4xItNUUKj+gWfE?=
- =?us-ascii?Q?d4/vTpz2Kjbo52apv5kNwGNzzCXplW0iAq1XoFMC9XT8oANJQQivyyT8+XaG?=
- =?us-ascii?Q?Nyt1OaRXbh7Vk4vS7ilfbB76EqXSXdaPWIrXVpr9+MvKTi8JQ3xBUuVTD02Z?=
- =?us-ascii?Q?x2xnRI8uH5gtQk3nJ0D5h9XJHLil8oEv1Mw3lximW0gHgLVpuC2YAu5nG0FJ?=
- =?us-ascii?Q?v55IJnUcP56SKnZs1ShMV6CqNunmLtYFitcUkfoKbJlaJgy4jqhQ47YJHkSL?=
- =?us-ascii?Q?ewfI2WzneQ+8BCf9XRXk3yeehFGfeRLSzWbSs6SnTX4Pcp0PTAiFFlsKJAMG?=
- =?us-ascii?Q?tlKb8FHvTUzppUnLer0s0J1X1PiWyOHk9BJ67DOYvhKCfi6T1X8y52Aw4dkF?=
- =?us-ascii?Q?Y4l2ZujHJkS4cNPkBcdxsNHYGVXKIilKVUNiuIa7fdGYERWrJ5Vb990HDSpY?=
- =?us-ascii?Q?wTPh5TzTHPEj5ZMoWB348eeqpieqs+GQQGGhgVNvrgRSpFvLamdtTHF/7ch0?=
- =?us-ascii?Q?9QOomc6ny75H0wTYQVENurcCbIbtnM/RCO9sMt7AVerItmip5UKDPSHZBO1x?=
- =?us-ascii?Q?K7VXOU5lnOpJ/igfFT/Z7yqOj7JnTe80gLReQtLCMyQDXKACileZzFAiZqZh?=
- =?us-ascii?Q?bAFhCYh6D3LhvLStWM2VP01JCjVHjs1FT4vr+ooOY0gvipPLzC2+FtwljRaE?=
- =?us-ascii?Q?mQS8gGw39kG84Rcpz3YmRNUOoKk4JpFrf6aLiHdF3H6k+pK1SxZJjIestGE8?=
- =?us-ascii?Q?aC7NFXFvWG4I2hge1vj6wy8QYdXTouOnLIzJ7F1aATXkevb6khm5HEWp9wIg?=
- =?us-ascii?Q?QvhmhQ80qxvbV31faN2yw0Z1R14ioOyHTyLf92GtL9LNkFcQFklN7/npTSHl?=
- =?us-ascii?Q?GywjNn7UHLj6PQgsPMlNn6xPQn207FK0IAxIvAyj4Bb82FVOyvxfgFjQ/bKG?=
- =?us-ascii?Q?1gkF4wwWqYhVWok0s7WBWsYd+3OrDl1Api7ZdM127qAVGhj9+VcHz/MlEVxJ?=
- =?us-ascii?Q?9EaZPKRw7U7ctly5/U+itND3yknwvHtOfNZFvdrcGznHNQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/8NuOxm4KDZO+YimLN/Mg8X4u81Q36KXLS3uv6mk5y3a0vWFZU2AGrBVUtX2?=
- =?us-ascii?Q?vA+YOn+QyT4bV5rzKBmd+tecYDKOVJVn4yZoXtoMaQNT/PlxGovnB9vU9vX7?=
- =?us-ascii?Q?+oX38O1rQnHOpzF2L1poCzxHODyqDEe/m9URUtl+qmvdPjZKvaipQ0V3tpNQ?=
- =?us-ascii?Q?UI1VXT9dubHL2k2RX/+19eIYn7DHnzCCSdpgsVdSyL6EWuyPzIjjhj8W4C2F?=
- =?us-ascii?Q?g6SksBtx+zg2BiDA4cczk9o418NMZQFUHacO5Vq2Ac2kNJSlXHJ0f3S8r7iP?=
- =?us-ascii?Q?GXpU/tDSnswwkZ5/YloQgEFyLxT7YN/LUYCYV1ZocUWinv2A2LjIriiRQo0L?=
- =?us-ascii?Q?LUKaGFhJZM5RO8SGmwsn/uRg3awFS+lA5u3RVvPzXN1aNCTDoDO4SHDKe7Ox?=
- =?us-ascii?Q?JCQIg5BKDpVb2YxNITXspZ8merb/sgLj9gPVcuVnEiJxNLKMCgk6cqAD6ja0?=
- =?us-ascii?Q?NLHGt3jVOWo94E/HDThA/I4AMoenKgNU4s+rOTsK6IYNV13FM/DINW5qUncQ?=
- =?us-ascii?Q?l0etJoNiIoJNk0XbVDkDCF39lmJh0Sv/eY6Xc0rbhCKhTvvYjRQbr69golOt?=
- =?us-ascii?Q?QWEPK8pMa2wUzQdxU2ImEuDNH625pgqCW17E+4wVfJJctXEBhXowXw+FWa45?=
- =?us-ascii?Q?RWQ8ZzuAs7aw020VUwTMZf64JPimFK9lhiEVkfMCU9ebGZ0WAzTObl9gdsLx?=
- =?us-ascii?Q?P0VQBI82Y23rLjEejei7wo/dI3ZJ8vJIR2uvK7ULs+SnJeK/QsDwjPG1+2eJ?=
- =?us-ascii?Q?dV9KQkhU78XfUHCRymQ4c0xrjiWVKkyFNyV/gk+PI6Xx6faPS9nFxpcSGsAI?=
- =?us-ascii?Q?QnNXChgPC+SteURntXeE+e8mECB8821m6ORJM5gMnGmT8klBmt/jxz1P+FpO?=
- =?us-ascii?Q?kxWM8I8vK8fU7jc9UR8jQ4eI2FjEhbZ2th0X/6KacaGANM8/zkOSxFPPhODg?=
- =?us-ascii?Q?7Tf+fb0tYNIdxL+GpyX/7MjM8DKano0V5J3CwRcW6oEQ9VafqyK+X7hqYkH5?=
- =?us-ascii?Q?XBPG+RbeqavqVcOLglR1jbPTlwCj8xahhOl1fCnqO9iGPJ1qD1FO9ISMgLI2?=
- =?us-ascii?Q?sm2Qv2xT8OakSN+gW0oeJDYE+UmzPv9ZKS02haUeJsWyppzMMPmLb1l/b1HI?=
- =?us-ascii?Q?5nwbWibZPHDoiALsLwb0Jz5qS2iAb9NcpnUEy1ml9xxxqZpOSc9xnQ5D4mSp?=
- =?us-ascii?Q?SsmHX4REwel7lsU4lC8K6AJhD0pZfWNQLpc5O/OL9HL1KR+jyQ0u3/2361W9?=
- =?us-ascii?Q?pH+BSZziQrAYJVoN3LK3E/UvfeBa5T1+COV7Lz8FP0zvsQgruVg075loB5FV?=
- =?us-ascii?Q?MsZtM4qvvsiE6yjOgoi9JR7bKyfxtC9oPn/C/ErYlytxlNjVrQNqN/bG4072?=
- =?us-ascii?Q?5t+OL+WLjzV0FqsqD29X0Pvrdb/Z/k1IBQQkjNDzZxI85Ay3hUbNLLeTn39C?=
- =?us-ascii?Q?9dZQi1zR2FCkgaDbWOGlPxCJfI9p+Yhhn7aMnUhG2ahoik1Ed0u7oSmtwg6j?=
- =?us-ascii?Q?zLOpe6/SY3Do30xSN87k6Sr5ov/9TAZ2bzn8/4qD/lUES1nUavFme1xNO2zH?=
- =?us-ascii?Q?Det7fzFbddK4INFSKUvVs1dkcDXWPT+EBmrHaNVj21WMnTLDCAXX4sq1JFih?=
- =?us-ascii?Q?7w=3D=3D?=
-X-OriginatorOrg: camlingroup.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7ee0871-fa4b-4a10-233c-08dcc5cb97c2
-X-MS-Exchange-CrossTenant-AuthSource: CWXP123MB5267.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 12:35:39.7035
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fd4b1729-b18d-46d2-9ba0-2717b852b252
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LLE7EqKX7gKCFvvFjGBr/U3hvVb4YDlTWjrjVY8eCCaSFA08vtrrCQy54QP/a1AXGUEOFJNUtLpGfwR0m1eTGkXPRdyk50RtqntR8SaSQpQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB5968
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: camlingroup.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
+ binding
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+ hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+ linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+ aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+References: <CGME20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111@epcas5p3.samsung.com>
+ <20240808134432.50073-1-aakarsh.jain@samsung.com>
+ <8c7127c5-e8f8-4ba2-b39a-0c9ada871977@linaro.org>
+ <0cca01daf797$9e636f50$db2a4df0$@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <0cca01daf797$9e636f50$db2a4df0$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andy,
-
-Thanks for thorough review.
-
-W dniu 23.08.2024 o=C2=A019:58, Andy Shevchenko pisze:
-> On Fri, Aug 23, 2024 at 7:55=E2=80=AFPM Lech Perczak
-> <lech.perczak@camlingroup.com> wrote:
+On 26/08/2024 11:09, Aakarsh Jain wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: 08 August 2024 20:52
+>> To: Aakarsh Jain <aakarsh.jain@samsung.com>; linux-arm-
+>> kernel@lists.infradead.org; linux-media@vger.kernel.org; linux-
+>> kernel@vger.kernel.org
+>> Cc: m.szyprowski@samsung.com; andrzej.hajda@intel.com;
+>> mchehab@kernel.org; hverkuil-cisco@xs4all.nl;
+>> krzysztof.kozlowski+dt@linaro.org; linux-samsung-soc@vger.kernel.org;
+>> gost.dev@samsung.com; aswani.reddy@samsung.com;
+>> pankaj.dubey@samsung.com
+>> Subject: Re: [PATCH v4] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
+>> binding
 >>
->> Now that bit definition comments were cleaned up, convert bitmask
->> definitions to use BIT() macro for clarity.
->> Convert SC16IS7XX_IIR_* bitmask constants, to use GENMASK() macro, where
->> applicable - while at that, realign comments.
->> Compose SC16IS7XX_LSR_BRK_ERROR_MASK using aforementioned constants,
->> instead of open-coding it, and remove now unneeded comment.
->=20
-> comments
+> Hi Krzysztof,
+>> On 08/08/2024 15:44, Aakarsh Jain wrote:
+>>> s5p-mfc bindings to json-schema is already merged with this commit
+>>> 538af6e5856b ("dt-bindings: media: s5p-mfc:
+>>> convert bindings to json-schema"). Remove s5p-mfc.txt file.
+>>>
+>>> Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to
+>>> json-schema")
+>>> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+> Thanks for your review.
+> I don’t see this patch in linux-next. Please let me know if any other changes required.
+> You will pick up this patch via your tree or this will go via Rob's or Media tree?
+> Better you only pick.
 
-Noted.
+Should go via media. Eventually via Rob... but let me just take it so it
+will be faster.
 
->=20
-> ...
->=20
->>  /* IIR register bits */
->> -#define SC16IS7XX_IIR_NO_INT_BIT       (1 << 0) /* No interrupts pendin=
-g */
->> -#define SC16IS7XX_IIR_ID_MASK          0x3e     /* Mask for the interru=
-pt ID */
->> -#define SC16IS7XX_IIR_THRI_SRC         0x02     /* TX holding register =
-empty */
->> -#define SC16IS7XX_IIR_RDI_SRC          0x04     /* RX data interrupt */
->> -#define SC16IS7XX_IIR_RLSE_SRC         0x06     /* RX line status error=
- */
->> -#define SC16IS7XX_IIR_RTOI_SRC         0x0c     /* RX time-out interrup=
-t */
->> -#define SC16IS7XX_IIR_MSI_SRC          0x00     /* Modem status interru=
-pt
->> -                                                 * - only on 75x/76x
->> -                                                 */
->> -#define SC16IS7XX_IIR_INPIN_SRC                0x30     /* Input pin ch=
-ange of state
->> -                                                 * - only on 75x/76x
->> -                                                 */
->> -#define SC16IS7XX_IIR_XOFFI_SRC                0x10     /* Received Xof=
-f */
->> -#define SC16IS7XX_IIR_CTSRTS_SRC       0x20     /* nCTS,nRTS change of =
-state
->> -                                                 * from active (LOW)
->> -                                                 * to inactive (HIGH)
->> -                                                 */
->> +#define SC16IS7XX_IIR_NO_INT_BIT       BIT(0)          /* No interrupts=
- pending */
->=20
->> +#define SC16IS7XX_IIR_ID_MASK          GENMASK(5,1)    /* Mask for the =
-interrupt ID */
->=20
-> This is okay, but the rest of the bit combinations are better to have
-> to be plain numbers as usually they are listed in this way in the
-> datasheets. Note as well that 0x00 is a valid value which you can't
-> express using BIT() or GENMASK() (and this is usually the main point
-> to *not* convert them to these macros).
->=20
->> +#define SC16IS7XX_IIR_THRI_SRC         BIT(1)          /* TX holding re=
-gister empty */
->> +#define SC16IS7XX_IIR_RDI_SRC          BIT(2)          /* RX data inter=
-rupt */
->> +#define SC16IS7XX_IIR_RLSE_SRC         GENMASK(2,1)    /* RX line statu=
-s error */
->> +#define SC16IS7XX_IIR_RTOI_SRC         GENMASK(3,2)    /* RX time-out i=
-nterrupt */
->> +#define SC16IS7XX_IIR_MSI_SRC          0x00            /* Modem status =
-interrupt
->> +                                                        * - only on 75x=
-/76x
->> +                                                        */
->> +#define SC16IS7XX_IIR_INPIN_SRC                GENMASK(5,4)    /* Input=
- pin change of state
->> +                                                        * - only on 75x=
-/76x
->> +                                                        */
->> +#define SC16IS7XX_IIR_XOFFI_SRC                BIT(4)          /* Recei=
-ved Xoff */
->> +#define SC16IS7XX_IIR_CTSRTS_SRC       BIT(5)          /* nCTS,nRTS cha=
-nge of state
->> +                                                        * from active (=
-LOW)
->> +                                                        * to inactive (=
-HIGH)
->> +                                                        */
->
-Before I send out v4, do I get it right, that I should convert back SC16IS7=
-XX_*_SRC
-(i.e. interrupt source constants), and leave the rest as in v3?
-=20
-> ...
->=20
->> +#define SC16IS7XX_LSR_BRK_ERROR_MASK   (SC16IS7XX_LSR_OE_BIT | \
->> +                                       SC16IS7XX_LSR_PE_BIT | \
->> +                                       SC16IS7XX_LSR_FE_BIT | \
->> +                                       SC16IS7XX_LSR_BI_BIT)
->=20
-> It's better to start from the next line
->=20
-> #define SC16IS7XX_LSR_BRK_ERROR_MASK     \
->         (SC16IS7XX_LSR_OE_BIT | ...
-
-Makes sense, noted.
->=20
->=20
-> --
-> With Best Regards,
-> Andy Shevchenko
-
---=20
-Pozdrawiam/With kind regards,
-Lech Perczak
-
-Sr. Software Engineer
-Camlin Technologies Poland Limited Sp. z o.o.
-Strzegomska 54,
-53-611 Wroclaw
+Best regards,
+Krzysztof
 
 
