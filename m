@@ -1,103 +1,148 @@
-Return-Path: <linux-kernel+bounces-300773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A7895E82A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 824B395E82E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C40AB20C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6A0BB20FD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD538002A;
-	Mon, 26 Aug 2024 05:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB5B8060A;
+	Mon, 26 Aug 2024 06:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XIzJZajA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZxgzt9t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA4E7DA95;
-	Mon, 26 Aug 2024 05:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC3480027;
+	Mon, 26 Aug 2024 05:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724651964; cv=none; b=tf/BnUJAb1i/OUG8Xq2PmWiFgYbByUSvToobF9fAhVIt33nCaTML+9JI1QNCGrcPlQNE+Dd1xoDYIKMT8Szn1KnuNTa2V7+BSbTdxz2VTOtoS7opdAC6HvdCPAG2EkJvASQZ/P5JRk4ar7KLzsFxEfy/lSTvM4ylCHA8WWqM8vA=
+	t=1724652000; cv=none; b=Iu/w36OII//i8aEp99e4u8AQp+u1b8mArL9JG4xHSIuzbbhDs2/tcjoPneNBq4KPf9cvG+fdXwT5zvVCrxp9R7Jd3FPfLuT60Cx46OC32lDxQlQAdL/argnVBl9LRTk+AyGneh4HkEkNS/PN0iiatx+PLQYp4mSMzrAcew6ldUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724651964; c=relaxed/simple;
-	bh=SYH+Yfd82H6BihSbm6iBeCJdf68+kRAMeg0G+/RU7B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UdeXGqina+4tfzlVCg+CmTtl1FnTrq3emTf6cHezFIK2kduuTJBmbiPGOkjD858wOdc1dmjbMi1Q84Jin3w46UvF/yeO92J1UZchRpErQzpTdtsl1GqeQGaQ8UQnkbTkwW98Pfn/yN/+lhFuyTh0k7ZACVjCsudBGuWjJRs3GvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XIzJZajA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724651957;
-	bh=egT1+Aptj7H6Gp1KFP1j9VKIzJYtirXUkyhQwc9e64M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XIzJZajAb+xdVDUfCIAArLdpTvZphnrpgdV4pHJAZJSNXZWa/UVj2YLiVoMMV0aAL
-	 wvdnmC4RAAFBVacqIVMCnCX1I5STfd0yn/tS2HHdALecmkol4qqvarAq+YmjOiEpdU
-	 eAcqg522gjZ41E0WNWTtrNgyFGQU6Rh1Zrb5Vr8Gfy8RFB8vu4eBuGlTsYOLhmWrsy
-	 bL6lKi+HtJBlRCWcJJf7ouDESsY9XlfBlR2OnsI+zbsogL8R2FUd53oUODsdzG6gcb
-	 /18bCKsVq1DnrGbgtZPNhEkV0fekqhr3BttKm7jS1WnNsYwhcTx+a7kfnJ9st5N3yj
-	 GRB+XFwc5y0/A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wsg3n31ZPz4x81;
-	Mon, 26 Aug 2024 15:59:17 +1000 (AEST)
-Date: Mon, 26 Aug 2024 15:59:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Xiaogang Chen
- <xiaogang.chen@amd.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the amdgpu tree
-Message-ID: <20240826155916.59ad7d57@canb.auug.org.au>
+	s=arc-20240116; t=1724652000; c=relaxed/simple;
+	bh=gwPC1PQuLbmGGEoj2L86IgnR3bAMfnC2ZsSKA6aNxgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oyjcg0Jh5ddLBLxL5h1hFjYyG6xCl4/wYzGMUWD2T9/ZXnZauAa848W3s3I9pf66NajMauVa9dwnZhLHy64DFneXyqrIRD4ldvPnrwWpl5vzJJX17X8tAuiudjmh/SYDm7JID4lkDFQ4LTE7w0i4+UVPliFJsXXX0phLrLGQCMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZxgzt9t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F95C4DDE1;
+	Mon, 26 Aug 2024 05:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724651999;
+	bh=gwPC1PQuLbmGGEoj2L86IgnR3bAMfnC2ZsSKA6aNxgI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UZxgzt9t6AJLxZSGRafeIrUPvOi2Zm4UWjzQJArD2Tkw7gYTFtxyCXNO5NJSJR65n
+	 t/WmhalthFYqJuaBPfCMwbKZpXG9zjq63jtHMycczrT0pYWb+S2xD+JyK6NroPTlob
+	 l1/yFJrzM6WrZazrfwf4Dtqdqdx5TR5lZCQYozBA3uuvRCochukTHKRGCMdDmRRZkE
+	 rJQ0B/y7ShKcSmOj6l5oyFpCQ+M60o0xtZSQq5LU8t2U/Ge010Ctyc2IRByGvUhUA9
+	 CiXplAEL8hMzVYT9I53qmUnRm+ybyDBlFODxRsFKFmxV/+XJ1XGzu+HY0m1AHvnoZs
+	 73P/MSdg84ZRw==
+Date: Mon, 26 Aug 2024 07:59:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: zhenghaowei@loongson.cn
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name, 
+	p.zabel@pengutronix.de, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] dt-bindings: serial: Add Loongson UART controller
+Message-ID: <7346m2dmduzdrhzmhlnms24bltoczbajfxfh6wcxxplzydqskc@2xey7pdc24t3>
+References: <20240826024705.55474-1-zhenghaowei@loongson.cn>
+ <20240826024705.55474-2-zhenghaowei@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SiuDbp5m.tSvqms5lgbEnXM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240826024705.55474-2-zhenghaowei@loongson.cn>
 
---Sig_/SiuDbp5m.tSvqms5lgbEnXM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 26, 2024 at 10:47:03AM +0800, zhenghaowei@loongson.cn wrote:
+> From: Haowei Zheng <zhenghaowei@loongson.cn>
+> 
+> Add Loongson UART controller binding with DT schema format using
+> json-schema.
+> 
+> Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
+> ---
+>  .../bindings/serial/loongson,uart.yaml        | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/loongson,uart.yaml
+> 
+> Changes in V2:
+> 
+> - Correct the schema formatting errors.
+> 
+> - file name changed from 'loongson-uart.yaml' to 'loongson,ls7a-uart.yaml'
+> 
+> - Replace 'loongson,loongson-uart' with 'loongson,ls7a-uart'.
+> 
+> Changes in V3:
+> 
+> - Change the filename from 'loongson,ls7a-uart.yaml' to 'loongson,uart.yaml'.
+> 
+> - Drop newly defined features: fractional-division, rts-invert, dtr-invert,
+>   cts-invert and dsr-invert.
+> 
+> - Add three specific SoC: 'loongson,ls7a-uart', 'loongson,ls3a5000-uart' and 
+>   'loongson,ls2k2000-uart'.
+> 
+> - Drop 'LOONGSON UART DRIVER' description in MAINTAINERS.
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/loongson,uart.yaml b/Documentation/devicetree/bindings/serial/loongson,uart.yaml
+> new file mode 100644
+> index 000000000000..19a65dd5be9f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/loongson,uart.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/loongson,uart.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Loongson UART
+> +
+> +maintainers:
+> +  - Haowei Zheng <zhenghaowei@loongson.cn>
+> +
+> +allOf:
+> +  - $ref: serial.yaml
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - loongson,ls7a-uart
 
-Hi all,
+Quick look tells me there is no such soc like ls7a. If there is such,
+please point me to the DTSI.
 
-After merging the amdgpu tree, today's linux-next build (htmldocs)
-produced this warning:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2785: warning: Function parameter or=
- struct member 'ts' not described in 'amdgpu_vm_handle_fault'
+> +          - loongson,ls3a5000-uart
+> +          - loongson,ls2k2000-uart
+> +      - items:
+> +          - enum:
+> +              - loongson,ls2k1000-uart
+> +              - loongson,ls2k0500-uart
+> +          - const: loongson,ls7a-uart
 
-Introduced by commit
+Just use real SoC names.
 
-  6ef29715ac06 ("drm/amdkfd: Change kfd/svm page fault drain handling")
+> +      - items:
+> +          - enum:
+> +              - loongson,ls2k1500-uart
+> +          - const: loongson,ls2k2000-uart
+> +      - items:
+> +          - enum:
+> +              - loongson,ls3a6000-uart
+> +          - const: loongson,ls3a5000-uart
 
---=20
-Cheers,
-Stephen Rothwell
+Best regards,
+Krzysztof
 
---Sig_/SiuDbp5m.tSvqms5lgbEnXM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMGbQACgkQAVBC80lX
-0GyI+AgAlQSo2Z5VEbSWgw/folicfeK7sCDhsMtZHtHr3+/vAjNlkwmtB9ZtYjn+
-/nn5SYS3jpXiw6HwYyiPfGE7bLKyumdJmyLmZYnm6tz7QcdPouFDS9zmP4Mu2V91
-jq3Y+PTvAyHJwhMA3dncGS2HYMhxJPTIlksQlviEoaLDIPzb3KO+6az5gRzq2A95
-n7GPZXs6yJmfO9kxoPeoCaw9FXWj/zyMhprs8kNYpN30bToRuVlNytAG2NAX8vqB
-aJwT1MK+9STS1zESLfHVVccyRfKHrYn3Vag9AkuXSF1/G9CGLN9mGoSO9/OaSTwl
-VmS/080smZ3D2s2QxH/G3GBINfIBZA==
-=u5Mx
------END PGP SIGNATURE-----
-
---Sig_/SiuDbp5m.tSvqms5lgbEnXM--
 
