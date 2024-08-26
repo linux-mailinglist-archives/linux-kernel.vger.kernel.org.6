@@ -1,493 +1,113 @@
-Return-Path: <linux-kernel+bounces-301670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C5995F3D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:27:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB15995F3D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7D3281CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:27:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBDD6B21470
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 14:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FB91917E0;
-	Mon, 26 Aug 2024 14:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF5B18C907;
+	Mon, 26 Aug 2024 14:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dc8a9aGS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dx43YwUj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dc8a9aGS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dx43YwUj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Qtk8/oNd"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F51218BC02
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFAE188934
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682395; cv=none; b=cfYpgOkreuUd9mk79xpwzhZjVdGKKunj9EYaxYeaTCZ+nTx1PAxsrLxWOSto5l6UzZUUn11ScMADTPVL9F98aK/4tIbDnr56uZpFBKFhy9/BpNA688gZHzYURJHtZn4ef31SMV085zKXlSo9kFArbqGAS/qyLc/LwwId/JtnQdg=
+	t=1724682500; cv=none; b=ckQIuXwntYpTtXL10w8z7Dkgp8SHzblzRf5hDqWs6QdfsC0DnzM17kuufQWmhtionL2rXcuu9z8Ibtw5UxwTodigNTYejwtCAVCVJ+Q61y18B+72fY+wJHb+VExASjXGeqzFFWF9yy8Q8LDVFONgepqHh3cX1jNoG3/PB46vD+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724682395; c=relaxed/simple;
-	bh=TngTKqLHr0G2tL5rnDabB4f3aRrCdzzjC/et5a+7Vcc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=scnTfZZ8pXZdICIOIRelaFRg75HzF9fmrGIZwDkEF+9sdeHxEDUwrErWwBN4NK1cFzILhXs1QsGPsz4gpIovbC7n6y5oTeAFXEMwGOY3HsqKosndWnGUkCkf3ezqkKlMnQJjzLYAoUJfC9Mho1hhdg5j6rY2gnqMtFF2uoWQL+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dc8a9aGS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dx43YwUj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dc8a9aGS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dx43YwUj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 76D081F88E;
-	Mon, 26 Aug 2024 14:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724682391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wa0GrujLyRktBjXtErBVv/t2vyB8G9m9XnQsx7R8eSk=;
-	b=dc8a9aGS+3gZsqXOuW24gHzWhRTmX4aiNqZzDUo9T8RAAlT222tlyb1acyEQhT14k1bXqB
-	kIdNaxA90cEAK1Fn2qZHBa0jLCCnEmeT4ZFRrfRjJGeLvgVordfdcZPZ+PCTp6fU7WdOo1
-	J9m5cNYl6CyN4nazKjdG0KRyPKKIM8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724682391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wa0GrujLyRktBjXtErBVv/t2vyB8G9m9XnQsx7R8eSk=;
-	b=dx43YwUjHa4BOi3x22NXNIauMubM6LeIfODXwf3fi0l2fxhzldN+qg1zfimtqeeBYAUe8I
-	HKTinEIrChx/ZgBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724682391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wa0GrujLyRktBjXtErBVv/t2vyB8G9m9XnQsx7R8eSk=;
-	b=dc8a9aGS+3gZsqXOuW24gHzWhRTmX4aiNqZzDUo9T8RAAlT222tlyb1acyEQhT14k1bXqB
-	kIdNaxA90cEAK1Fn2qZHBa0jLCCnEmeT4ZFRrfRjJGeLvgVordfdcZPZ+PCTp6fU7WdOo1
-	J9m5cNYl6CyN4nazKjdG0KRyPKKIM8E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724682391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wa0GrujLyRktBjXtErBVv/t2vyB8G9m9XnQsx7R8eSk=;
-	b=dx43YwUjHa4BOi3x22NXNIauMubM6LeIfODXwf3fi0l2fxhzldN+qg1zfimtqeeBYAUe8I
-	HKTinEIrChx/ZgBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EADBF13724;
-	Mon, 26 Aug 2024 14:26:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FdHxN5aQzGbcVAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 26 Aug 2024 14:26:30 +0000
-Message-ID: <69f3eb8d-67b3-41f1-b813-210a682f3ba3@suse.de>
-Date: Mon, 26 Aug 2024 16:26:30 +0200
+	s=arc-20240116; t=1724682500; c=relaxed/simple;
+	bh=RKnVRf/nil6QQnV4ahq6WMo7sI1Rs57zGSIKSR5JaL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YcVKPp0QpdhSv+lb1IRMhaXPo4kE4HD/wVPz1jR3iVdVZX3y1U0vN41PTrIj0HtCTBJdaUyPNgWL46b4EUvuuUc9zh3Ev2SBBEHfIroxJvIya23ZbCxRcHsyeMn9A+BXPwgnlJMlMbnH0Rw8VNQyvo33019/9SNRwLEXsPs6hdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Qtk8/oNd; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bebcdc75e9so752746a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724682497; x=1725287297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3HQX3W+V5qFpoRZmybHNvK82qQ8mjp2N+L1Kl096Fk=;
+        b=Qtk8/oNdDb/oJo/rEnAR+d+mPVsyf3FRF4hDTgw23LteSj0Wl/U1NJ7KGkVWxyVEun
+         sNb5laGlmRGfaASOIVYtmb9MeVm2RDcJvrq8z5gZkKF59SEqG0a17jxqicqFNWE8e5/U
+         7DxpcPG90LqRSyRXW2+sBjnIko0L1+Wp4GKkZ5ju04E3Vn/4NuNcSWSbvq3LEsN4hSdB
+         cBxqKSh66qBzILqo2MJSqAVDXDUyOf2/01Dqdoo7aoo2m0MxeUebRVq5xfyDed/iiz/X
+         pGsLO+hBB8MPGJZZgUUi9NmUSxu1Ohji0SGypE4aujFR+HW/3aYVwZhIxduwhoBu2lFy
+         o/TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724682497; x=1725287297;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x3HQX3W+V5qFpoRZmybHNvK82qQ8mjp2N+L1Kl096Fk=;
+        b=cedw63L2lWaDyGaO+2NmBesgkN/1/yKVtzBnecc2sBRdosq5tufO21HGK16Sg6h3eh
+         1TcGj0hTN+r7mIG9quKD7xXMyGxZNLBmEMEymN/B6Iengh8C8nmGRGwHdQaSeYdfDAFi
+         a9bOGhoawfx1EmP6GuodPSL8y8NELNUR4ugQl7Ex3I2qIqvV6ntUvdS841VeAntA/e7N
+         W69v63INhH4NgbhOWbWPqa2XIt8NRsTveUOWVU8dT1JWN6+EV+qO1Z5fRpY5hdOqY/71
+         hfARNRI8U4n+t/njgGblz/GDDrbHf4+o/ydZXWAcKTc3QwR5ZLe60kVLKW0+nFYp2W/w
+         cenQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdjXM0PYZNMVukT67Q4rQ7e9QW/9isJnFONjkl+uuS7v+OxMDyWmqUELEUFpD1RgeI6N0IX0z5NR2t1iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx95bl78YafUjepiCvVN6bvT7Cz5oQJW1IHCgwRjQupJ2ZmYTrY
+	KO0I61dpZ/kSVEHBDSZMD3Dp71hWvujDLP4jVhsQOvWMSC6hIxCsyvuSs2hpKfM=
+X-Google-Smtp-Source: AGHT+IFwJaZG3S7tk1ysm4uwHbvobVf83RisE4PJjZcv6t3t0iyRMBmhEYrAbSzdsWXktT9+qUBb+A==
+X-Received: by 2002:a17:907:7d91:b0:a80:ed7e:8468 with SMTP id a640c23a62f3a-a86a4e5897fmr401349066b.0.1724682496652;
+        Mon, 26 Aug 2024 07:28:16 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f43795asm677885066b.98.2024.08.26.07.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 07:28:16 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: dsterba@suse.com,
+	gustavoars@kernel.org,
+	kees@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] affs: Remove unused struct members in affs_root_head
+Date: Mon, 26 Aug 2024 16:27:36 +0200
+Message-ID: <20240826142735.64490-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: Fix kerneldoc for "Returns" section
-To: renjun wang <renjunw0@foxmail.com>, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
- rodrigo.vivi@intel.com, tursulin@ursulin.net, lyude@redhat.com,
- imre.deak@intel.com, Wayne.Lin@amd.com, ville.syrjala@linux.intel.com,
- vidya.srinivas@intel.com, jouni.hogander@intel.com,
- andi.shyti@linux.intel.com, janusz.krzysztofik@linux.intel.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- intel-gfx@lists.freedesktop.org
-References: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <tencent_37A873672B5CD20DECAF99DEDAC5E45C3106@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[foxmail.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[foxmail.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
+Only ptype is actually used. Remove the other struct members.
 
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/affs/amigaffs.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Am 24.08.24 um 10:36 schrieb renjun wang:
-> The blank line between title "Returns:" and detail description is not
-> allowed, otherwise the title will goes under the description block in
-> generated .html file after running `make htmldocs`.
->
-> There are a few examples for current kerneldoc:
-> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_crtc_commit_wait
-> https://www.kernel.org/doc/html/latest/gpu/drm-kms.html#c.drm_atomic_get_crtc_state
-> https://www.kernel.org/doc/html/latest/gpu/i915.html#c.i915_vma_pin_fence
->
-> Signed-off-by: renjun wang <renjunw0@foxmail.com>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-I'll add this patch and the other doc fix to the drm-misc tree. Thanks a 
-lot for the fixes.
-
-Best regards
-Thomas
-
-> ---
->   drivers/gpu/drm/display/drm_dp_mst_topology.c | 4 ----
->   drivers/gpu/drm/drm_atomic.c                  | 6 ------
->   drivers/gpu/drm/drm_atomic_helper.c           | 2 --
->   drivers/gpu/drm/drm_file.c                    | 7 -------
->   drivers/gpu/drm/drm_gem.c                     | 7 ++-----
->   drivers/gpu/drm/drm_modes.c                   | 1 -
->   drivers/gpu/drm/drm_rect.c                    | 1 -
->   drivers/gpu/drm/drm_vblank.c                  | 2 --
->   drivers/gpu/drm/i915/gem/i915_gem_object.h    | 1 -
->   drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c  | 1 -
->   drivers/gpu/drm/i915/i915_vma.h               | 1 -
->   11 files changed, 2 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-> index fc2ceae61db2..e68d23997d53 100644
-> --- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-> @@ -5569,7 +5569,6 @@ EXPORT_SYMBOL(drm_dp_mst_atomic_check_mgr);
->    * drm_dp_atomic_release_time_slots()
->    *
->    * Returns:
-> - *
->    * 0 if the new state is valid, negative error code otherwise.
->    */
->   int drm_dp_mst_atomic_check(struct drm_atomic_state *state)
-> @@ -5606,7 +5605,6 @@ EXPORT_SYMBOL(drm_dp_mst_topology_state_funcs);
->    * topology object.
->    *
->    * RETURNS:
-> - *
->    * The MST topology state or error pointer.
->    */
->   struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
-> @@ -5626,7 +5624,6 @@ EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
->    * topology object.
->    *
->    * Returns:
-> - *
->    * The old MST topology state, or NULL if there's no topology state for this MST mgr
->    * in the global atomic state
->    */
-> @@ -5651,7 +5648,6 @@ EXPORT_SYMBOL(drm_atomic_get_old_mst_topology_state);
->    * topology object.
->    *
->    * Returns:
-> - *
->    * The new MST topology state, or NULL if there's no topology state for this MST mgr
->    * in the global atomic state
->    */
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 6e516c39a372..0fc99da93afe 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -63,7 +63,6 @@ EXPORT_SYMBOL(__drm_crtc_commit_free);
->    * hardware and flipped to.
->    *
->    * Returns:
-> - *
->    * 0 on success, a negative error code otherwise.
->    */
->   int drm_crtc_commit_wait(struct drm_crtc_commit *commit)
-> @@ -337,7 +336,6 @@ EXPORT_SYMBOL(__drm_atomic_state_free);
->    * not created by userspace through an IOCTL call.
->    *
->    * Returns:
-> - *
->    * Either the allocated state or the error code encoded into the pointer. When
->    * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
->    * entire atomic sequence must be restarted. All other errors are fatal.
-> @@ -518,7 +516,6 @@ static int drm_atomic_connector_check(struct drm_connector *connector,
->    * is consistent.
->    *
->    * Returns:
-> - *
->    * Either the allocated state or the error code encoded into the pointer. When
->    * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
->    * entire atomic sequence must be restarted. All other errors are fatal.
-> @@ -828,7 +825,6 @@ EXPORT_SYMBOL(drm_atomic_private_obj_fini);
->    * object lock to make sure that the state is consistent.
->    *
->    * RETURNS:
-> - *
->    * Either the allocated state or the error code encoded into a pointer.
->    */
->   struct drm_private_state *
-> @@ -1061,7 +1057,6 @@ EXPORT_SYMBOL(drm_atomic_get_new_crtc_for_encoder);
->    * make sure that the state is consistent.
->    *
->    * Returns:
-> - *
->    * Either the allocated state or the error code encoded into the pointer. When
->    * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
->    * entire atomic sequence must be restarted. All other errors are fatal.
-> @@ -1169,7 +1164,6 @@ static void drm_atomic_connector_print_state(struct drm_printer *p,
->    * state is consistent.
->    *
->    * Returns:
-> - *
->    * Either the allocated state or the error code encoded into the pointer. When
->    * the error is EDEADLK then the w/w mutex code has detected a deadlock and the
->    * entire atomic sequence must be restarted.
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index fb97b51b38f1..43cdf39019a4 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -2266,7 +2266,6 @@ crtc_or_fake_commit(struct drm_atomic_state *state, struct drm_crtc *crtc)
->    * automatically.
->    *
->    * Returns:
-> - *
->    * 0 on success. -EBUSY when userspace schedules nonblocking commits too fast,
->    * -ENOMEM on allocation failures and -EINTR when a signal is pending.
->    */
-> @@ -3009,7 +3008,6 @@ EXPORT_SYMBOL(drm_atomic_helper_cleanup_planes);
->    * don't pass the right state structures to the callbacks.
->    *
->    * Returns:
-> - *
->    * Returns 0 on success. Can return -ERESTARTSYS when @stall is true and the
->    * waiting for the previous commits has been interrupted.
->    */
-> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-> index 714e42b05108..7beed6902208 100644
-> --- a/drivers/gpu/drm/drm_file.c
-> +++ b/drivers/gpu/drm/drm_file.c
-> @@ -355,7 +355,6 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
->    * resources for it. It also calls the &drm_driver.open driver callback.
->    *
->    * RETURNS:
-> - *
->    * 0 on success or negative errno value on failure.
->    */
->   int drm_open(struct inode *inode, struct file *filp)
-> @@ -417,7 +416,6 @@ void drm_lastclose(struct drm_device * dev)
->    * DRM device also proceeds to call the &drm_driver.lastclose driver callback.
->    *
->    * RETURNS:
-> - *
->    * Always succeeds and returns 0.
->    */
->   int drm_release(struct inode *inode, struct file *filp)
-> @@ -489,7 +487,6 @@ void drm_file_update_pid(struct drm_file *filp)
->    * call the &drm_driver.lastclose driver callback.
->    *
->    * RETURNS:
-> - *
->    * Always succeeds and returns 0.
->    */
->   int drm_release_noglobal(struct inode *inode, struct file *filp)
-> @@ -532,7 +529,6 @@ EXPORT_SYMBOL(drm_release_noglobal);
->    * safety.
->    *
->    * RETURNS:
-> - *
->    * Number of bytes read (always aligned to full events, and can be 0) or a
->    * negative error code on failure.
->    */
-> @@ -618,7 +614,6 @@ EXPORT_SYMBOL(drm_read);
->    * See also drm_read().
->    *
->    * RETURNS:
-> - *
->    * Mask of POLL flags indicating the current status of the file.
->    */
->   __poll_t drm_poll(struct file *filp, struct poll_table_struct *wait)
-> @@ -656,7 +651,6 @@ EXPORT_SYMBOL(drm_poll);
->    * already hold &drm_device.event_lock.
->    *
->    * RETURNS:
-> - *
->    * 0 on success or a negative error code on failure.
->    */
->   int drm_event_reserve_init_locked(struct drm_device *dev,
-> @@ -698,7 +692,6 @@ EXPORT_SYMBOL(drm_event_reserve_init_locked);
->    * drm_event_reserve_init_locked() instead.
->    *
->    * RETURNS:
-> - *
->    * 0 on success or a negative error code on failure.
->    */
->   int drm_event_reserve_init(struct drm_device *dev,
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index d4bbc5d109c8..149b8e25da5b 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -689,7 +689,6 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
->    * For a single handle lookup, use drm_gem_object_lookup().
->    *
->    * Returns:
-> - *
->    * @objs filled in with GEM object pointers. Returned GEM objects need to be
->    * released with drm_gem_object_put(). -ENOENT is returned on a lookup
->    * failure. 0 is returned on success.
-> @@ -737,12 +736,11 @@ EXPORT_SYMBOL(drm_gem_objects_lookup);
->    * @filp: DRM file private date
->    * @handle: userspace handle
->    *
-> - * Returns:
-> + * If looking up an array of handles, use drm_gem_objects_lookup().
->    *
-> + * Returns:
->    * A reference to the object named by the handle if such exists on @filp, NULL
->    * otherwise.
-> - *
-> - * If looking up an array of handles, use drm_gem_objects_lookup().
->    */
->   struct drm_gem_object *
->   drm_gem_object_lookup(struct drm_file *filp, u32 handle)
-> @@ -763,7 +761,6 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
->    * @timeout: timeout value in jiffies or zero to return immediately
->    *
->    * Returns:
-> - *
->    * Returns -ERESTARTSYS if interrupted, 0 if the wait timed out, or
->    * greater than 0 on success.
->    */
-> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-> index 1a0890083aee..6ba167a33461 100644
-> --- a/drivers/gpu/drm/drm_modes.c
-> +++ b/drivers/gpu/drm/drm_modes.c
-> @@ -539,7 +539,6 @@ static int fill_analog_mode(struct drm_device *dev,
->    * to reach those resolutions.
->    *
->    * Returns:
-> - *
->    * A pointer to the mode, allocated with drm_mode_create(). Returns NULL
->    * on error.
->    */
-> diff --git a/drivers/gpu/drm/drm_rect.c b/drivers/gpu/drm/drm_rect.c
-> index 85c79a38c13a..492acce0516f 100644
-> --- a/drivers/gpu/drm/drm_rect.c
-> +++ b/drivers/gpu/drm/drm_rect.c
-> @@ -85,7 +85,6 @@ static u32 clip_scaled(int src, int dst, int *clip)
->    * factors from @src to @dst.
->    *
->    * RETURNS:
-> - *
->    * %true if rectangle @dst is still visible after being clipped,
->    * %false otherwise.
->    */
-> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> index cc3571e25a9a..6428b7975dd6 100644
-> --- a/drivers/gpu/drm/drm_vblank.c
-> +++ b/drivers/gpu/drm/drm_vblank.c
-> @@ -686,7 +686,6 @@ EXPORT_SYMBOL(drm_calc_timestamping_constants);
->    * drm_atomic_helper_calc_timestamping_constants().
->    *
->    * Returns:
-> - *
->    * Returns true on success, and false on failure, i.e. when no accurate
->    * timestamp could be acquired.
->    */
-> @@ -831,7 +830,6 @@ EXPORT_SYMBOL(drm_crtc_vblank_helper_get_vblank_timestamp_internal);
->    * drm_atomic_helper_calc_timestamping_constants().
->    *
->    * Returns:
-> - *
->    * Returns true on success, and false on failure, i.e. when no accurate
->    * timestamp could be acquired.
->    */
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> index 5d7446a48ae7..3dc61cbd2e11 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
-> @@ -89,7 +89,6 @@ __i915_gem_object_unset_pages(struct drm_i915_gem_object *obj);
->    * @handle: userspace handle
->    *
->    * Returns:
-> - *
->    * A pointer to the object named by the handle if such exists on @filp, NULL
->    * otherwise. This object is only valid whilst under the RCU read lock, and
->    * note carefully the object may be in the process of being destroyed.
-> diff --git a/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c b/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-> index 93bc1cc1ee7e..0ffba50981e3 100644
-> --- a/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_ggtt_fencing.c
-> @@ -418,7 +418,6 @@ int __i915_vma_pin_fence(struct i915_vma *vma)
->    * For an untiled surface, this removes any existing fence.
->    *
->    * Returns:
-> - *
->    * 0 on success, negative error code on failure.
->    */
->   int i915_vma_pin_fence(struct i915_vma *vma)
-> diff --git a/drivers/gpu/drm/i915/i915_vma.h b/drivers/gpu/drm/i915/i915_vma.h
-> index e356dfb883d3..6a6be8048aa8 100644
-> --- a/drivers/gpu/drm/i915/i915_vma.h
-> +++ b/drivers/gpu/drm/i915/i915_vma.h
-> @@ -389,7 +389,6 @@ void i915_vma_unpin_iomap(struct i915_vma *vma);
->    * i915_vma_unpin_fence().
->    *
->    * Returns:
-> - *
->    * True if the vma has a fence, false otherwise.
->    */
->   int __must_check i915_vma_pin_fence(struct i915_vma *vma);
-
+diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+index 1b973a669d23..9b40ae618852 100644
+--- a/fs/affs/amigaffs.h
++++ b/fs/affs/amigaffs.h
+@@ -49,12 +49,6 @@ struct affs_short_date {
+ 
+ struct affs_root_head {
+ 	__be32 ptype;
+-	__be32 spare1;
+-	__be32 spare2;
+-	__be32 hash_size;
+-	__be32 spare3;
+-	__be32 checksum;
+-	__be32 hashtable[1];
+ };
+ 
+ struct affs_root_tail {
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.46.0
 
 
