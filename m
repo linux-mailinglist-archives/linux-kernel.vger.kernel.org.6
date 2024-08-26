@@ -1,93 +1,148 @@
-Return-Path: <linux-kernel+bounces-301956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18BC95F7F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:24:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9A195F7F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB3C281F2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC371C22220
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52B9198E8F;
-	Mon, 26 Aug 2024 17:23:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42A01991B4;
+	Mon, 26 Aug 2024 17:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RG7jfQBZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8A5192D64;
-	Mon, 26 Aug 2024 17:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED041990A5;
+	Mon, 26 Aug 2024 17:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724692986; cv=none; b=TX960K2r74PtTgqq9Pu5YVGC64mO71n9cH8AnnGQT+ExeqVB9eaiDiiYxyc/Jj3FCCzM83sfX6kDVnPgBYKVcJGt6UJhsVzSWN56Mge9trMe5RPqUY1IkFXwXn6qwVqbD9JlhN4gXjkBi3jxubgDnER99BRMNe6InYO79fUZM74=
+	t=1724693008; cv=none; b=fzsi2ISXWeuMDisjZ9WpUGDTn+jgES37XyMKEC+I5ELgvH5c8kx/LIZxCiLORMea34EoWP/bUJSTx1jIHpJkCze/UHhfNbVDxbTcpjAn9BZ/QMbWKMXN1XSeyaZ3Jmhk65PZhQj9c3KvY9JM8JT2asfj7G9REgjW8aTNc+VNa6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724692986; c=relaxed/simple;
-	bh=Tbwceg4mBncecvIJb60omwuuf82G3YGTK9IQSWftNsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fiRfTlrfOAFXEVtlwhc9nTYQNJI1ygfAQ4Xi5571mhIxNMNrRWF5KB8kDyPNE+D+Dz7JYuRoLxBqM77e8e1RYyyKl7UbpOBVQgzlvaxAMQOAxwbyJB/V6pU9RlXK61Hn5Aykuyn47Qkg54X9Un6Py1TS0YeRb+jQBXIBJ2GTfls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WsyDk0RTZz9sPd;
-	Mon, 26 Aug 2024 19:23:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id uY71CR5DqUTz; Mon, 26 Aug 2024 19:23:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WsyDj6XDDz9rvV;
-	Mon, 26 Aug 2024 19:23:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CF4C28B77B;
-	Mon, 26 Aug 2024 19:23:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id hSYrx2GAOvwj; Mon, 26 Aug 2024 19:23:01 +0200 (CEST)
-Received: from [192.168.233.119] (unknown [192.168.233.119])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A01C8B763;
-	Mon, 26 Aug 2024 19:23:01 +0200 (CEST)
-Message-ID: <c14bc7fa-5692-4952-ac83-ed14c65ed821@csgroup.eu>
-Date: Mon, 26 Aug 2024 19:23:00 +0200
+	s=arc-20240116; t=1724693008; c=relaxed/simple;
+	bh=EH4sLmUi31moY38px/brd6V2p1f9A3ICQEkXbIPLoGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCDqqdWeccaZFIJ7jYTQMApU9KlbMwEK/+IXgNzyJF+KcC1j60kiOhwnl9oWA9Gj+SsO62ck1FGHthQ7mLNk160i5/lMYG8kETFex+TINtaQf9OavTnVZGflu40OGwzNuWpGrugpiVHKQhlDUi4ADmdnHo03SRMP2BLwN0k6TWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RG7jfQBZ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724693007; x=1756229007;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EH4sLmUi31moY38px/brd6V2p1f9A3ICQEkXbIPLoGI=;
+  b=RG7jfQBZDEE+xybcGDjX9YoxUj9drbl/SUod1/1aYLD6Q+gR5UxauPu1
+   LcH2GvM7hUqUMp2zAGcAUHW1P88VeyjfhEDJX4q+rZZjg5ZtWNrLAk5Vx
+   ZxpA7t1f07WGID5WZz18LYlxCbw2cWeuNpUPti02iGTVNl/wvq1vnTBRN
+   vNyvHX8etKcrdQGkDoMoxb8YgnfH+x95FOKkRO8MLUeTWIVzxqc6+CHaM
+   QtQ+ZoKiyDoO2TeJHJlRi83ANKgxbgVbfE30yVyZ3cOcp9oT5ogEtyXNe
+   CpwAXLeRSsQjWh49QGaSBpBMtT/BWOWu1WT3MNdlR9RD0eOM9bDjQnk50
+   A==;
+X-CSE-ConnectionGUID: j1Jf8l10S2mjGbi4pYugwQ==
+X-CSE-MsgGUID: aMrX+BC3T9iiDBY2Ff+vng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="40635600"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="40635600"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:23:26 -0700
+X-CSE-ConnectionGUID: 8A35PKczQaeEPyg9h8MbHQ==
+X-CSE-MsgGUID: NdgO3xEzQY6GDoWJMR2D+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="67264184"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:23:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sidQz-000000021TV-2vmu;
+	Mon, 26 Aug 2024 20:23:17 +0300
+Date: Mon, 26 Aug 2024 20:23:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 02/25] printk: Add print format (%par) for struct range
+Message-ID: <Zsy6BbJiYqiXORGu@smile.fi.intel.com>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-2-7c9b96cba6d7@intel.com>
+ <ZsSjdjzRSG87alk5@pathway.suse.cz>
+ <66c77b1c5c65c_1719d2940@iweiny-mobl.notmuch>
+ <Zsd_EctNZ80fuKMu@smile.fi.intel.com>
+ <ZsyB5rqhaZ-oRwny@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch net-next v2] net: ethtool: fix unheld rtnl lock
-To: Diogo Jahchan Koike <djahchankoike@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240826180922.730a19ea@fedora-3.home>
- <20240826170105.5544-1-djahchankoike@gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240826170105.5544-1-djahchankoike@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsyB5rqhaZ-oRwny@pathway.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Diogo,
+On Mon, Aug 26, 2024 at 03:23:50PM +0200, Petr Mladek wrote:
+> On Thu 2024-08-22 21:10:25, Andy Shevchenko wrote:
+> > On Thu, Aug 22, 2024 at 12:53:32PM -0500, Ira Weiny wrote:
+> > > Petr Mladek wrote:
+> > > > On Fri 2024-08-16 09:44:10, Ira Weiny wrote:
 
-Le 26/08/2024 à 19:00, Diogo Jahchan Koike a écrit :
-> [Vous ne recevez pas souvent de courriers de djahchankoike@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+...
+
+> > > > > +	%par	[range 0x60000000-0x6fffffff] or
+> > > > 
+> > > > It seems that it is always 64-bit. It prints:
+> > > > 
+> > > > struct range {
+> > > > 	u64   start;
+> > > > 	u64   end;
+> > > > };
+> > > 
+> > > Indeed.  Thanks I should not have just copied/pasted.
+> > 
+> > With that said, I'm not sure the %pa is a good placeholder for this ('a' stands
+> > to "address" AFAIU). Perhaps this should go somewhere under %pr/%pR?
 > 
-> Hi Maxime
+> The r/R in %pr/%pR actually stands for "resource".
 > 
-> Thanks for the clarification, I missed that. Should I resend my first patch
-> or should I release the lock before every return (tbh, I feel like that may
-> lead to a lot of repeated code) and send a new patch?
-> 
+> But "%ra" really looks like a better choice than "%par". Both
+> "resource"  and "range" starts with 'r'. Also the struct resource
+> is printed as a range of values.
 
-Do not duplicate release lock before every return.
+Fine with me as long as it:
+1) doesn't collide with %pa namespace
+2) tries to deduplicate existing code as much as possible.
 
-See 
-https://docs.kernel.org/process/coding-style.html#centralized-exiting-of-functions
+> > > > > +		[range 0x0000000060000000-0x000000006fffffff]
+> > > > > +
+> > > > > +For printing struct range.  A variation of printing a physical address is to
+> > > > > +print the value of struct range which are often used to hold a physical address
+> > > > > +range.
+> > > > > +
+> > > > > +Passed by reference.
 
-Christophe
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
