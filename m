@@ -1,145 +1,236 @@
-Return-Path: <linux-kernel+bounces-302402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EAD95FDD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:40:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D3095FDD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2024 01:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D8D1C21718
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C941C2139E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E9819D886;
-	Mon, 26 Aug 2024 23:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C1719D88E;
+	Mon, 26 Aug 2024 23:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJqV+Uq3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2jobZu2O"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A19A1482E6;
-	Mon, 26 Aug 2024 23:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DD27DA92
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 23:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724715639; cv=none; b=kb6l5y5BIJqcHHH4i2g60aKS24+rY2w68KDV7f1Hk0E3iD5BV23QYefy+LTYwEWb8oiDaNE1SBqiOYnTeDcTWtb415Mbllg8ajCqdmUhqx4alrxO+mtdh0cTRgDlaujGHX463JfhrrUb9LxySW9zA4AMTSO6YR3x6sTDW7UvPpc=
+	t=1724715797; cv=none; b=OuydSvfDBGACdmywRw4fOW/1mUtX3zdlHm9vbdU3EG6lUey0s1tlyvo/GZb6rRr1NMQ9x0tvdVvKrGbG/VyoPv+t0hADAD1PCP/zuqEBUvamvGuxvk3mtpDj2PQBj9gScJ9LeV7XiXpqto6C5hx7cPimSkkf0tsQwtps6NP37KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724715639; c=relaxed/simple;
-	bh=571xJqCK4wO/Nkpro048RV+IqOsjkddALvzLZ8d2+NY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPjK0pKKKFTARJ+tlNi050ai4MeJSHHBgw69qHeKHSx+nrizfY27TtQgb7crLyMyczDDGO0rhCNZwlGJ+s3CCPkshQmhLga3SmVXE7uaA69EQ2M6b919LwcLIEED8c0G1rwZdlH9aDeKVAVAg+6kOIpBpEMZK3yf8TXSTC5Yb4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJqV+Uq3; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724715637; x=1756251637;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=571xJqCK4wO/Nkpro048RV+IqOsjkddALvzLZ8d2+NY=;
-  b=UJqV+Uq3LnFLH/UA/DgGXvvjsDppBPEl3ldl5c1oF1ZKE3iy+gQ57Ad9
-   2qQpvr6M7OEsecm1K5HA7MnBGkPVozAN1rJ1dbiOe9+ZMrYcNoMGtWV4T
-   I4SNzjv5+pu8MtZUlFcK42YNut7lNdjBsaaorQDKrNDrP0fEQ/J9JbLBC
-   8iegbfktAaiFpTDfEKEu/sBL48hTwQfGSpyd1/w+ix40653lbY7zYN04V
-   1Nl0XEJQJgLInfZE+z0eA5Jf2DFcUxbVp1+soyu3efZ4ziiHZCnbNGNyY
-   m6l7DBXtn1UtdAwXw/71b+I9nGmnvIbp/fCR8PrKn/7C0CyeV8Nce+ro2
-   Q==;
-X-CSE-ConnectionGUID: v5IVfa3STguAPteckh6B3w==
-X-CSE-MsgGUID: 45hHCUW2TkSYU/vz+Ke7VA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="48555799"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="48555799"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 16:40:36 -0700
-X-CSE-ConnectionGUID: AxF7d+MhRQu3PzBd2tU2tw==
-X-CSE-MsgGUID: a7uNzrDrRHeEpfI7mJcKAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62646779"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Aug 2024 16:40:33 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sijK3-000Hh8-0X;
-	Mon, 26 Aug 2024 23:40:31 +0000
-Date: Tue, 27 Aug 2024 07:40:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, krisman@kernel.org,
-	Daniel Rosenberg <drosen@google.com>, smcv@collabora.com,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH 1/5] tmpfs: Add casefold lookup support
-Message-ID: <202408270609.Nj6iM21E-lkp@intel.com>
-References: <20240823173332.281211-2-andrealmeid@igalia.com>
+	s=arc-20240116; t=1724715797; c=relaxed/simple;
+	bh=aLKvXwCQ8CpZX8jumViMtPWTpxywDphZ6fLhEFAOD9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UTqzRzLVmUaVKBVxwdnXjNK5e8wHB8xQOFKKdJ2An+J/aYZ7lv7BPX5MERACl0cXOycyWs2AqBseJRvJaliH+KkGwlgnzNYto5p0hXhFs39ol0uFJ8RHquVy5d8itGWwzXVFYuIYMHa9PsnDupboSN6UUUEY1aj4dOMIDKmrlS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2jobZu2O; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39d41b61178so38025ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 16:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724715794; x=1725320594; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dnincskxIZjFY36curyurg9fJCPd6cnHUMKQnuVVoFk=;
+        b=2jobZu2OZCmcjuR6xeSEPHogVnKQb6uUhW7xz2CpqQrA5LChdZ5h6HcX0uaQjiVgbn
+         MDiCK5/sv74DYnY7ykBZTpamu1x5zEmWQp/fhtxrnUo5nGYFn6WO2A4bt883/4rrlo9T
+         XgmoDnl/nVqD61siUHUoOAvBrtkqLWKu5T+1iWsRXPwjDPuvMbjhMhaKdUt8EFZN3qqF
+         SkvBTMtVA5oN5mqhbtdkpXvx9cKcf03u27YPY1/WLpC9Rh0s7u1v3RRZOvBpkUWYP5QI
+         O2lNfTISv8Sg15fXfL5Ot223AC57B8NWfE+Q5aUHkPUsUb7rj7kefbGBzNO3aV5npbP7
+         v7jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724715794; x=1725320594;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dnincskxIZjFY36curyurg9fJCPd6cnHUMKQnuVVoFk=;
+        b=JdaH6ZjUZCoi0q+wPcEMEQlOGP9seXv0dul/ZgiboftJSNW1Hm2LmjXTlUH1GaRU6u
+         ejPAh6tlSHhIuLAUBlzM4CIu58sTiRi/mIB+dOGMgU42H8aoXB0pLqkJ0M/2ExfACW1D
+         4dvimcYtS/02syym9WcjC8n9d/fE5Km9IuhObP7ojLNyx/voQZ5rivog3+sDB0XiMDNl
+         vSwPljrnQQkZy3X5lyI+fdtBZN0OLL2KV9cnLEPh84Jhh3QKFbqQ36x+e75nXDXQlYX/
+         ORl9WECvBwGJITXmeQurt86uctMmdAiueMAG5xJoaOLcAiVX1NLY2N8fjxshzK3WPHMj
+         oyzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgE40LdUsxUkPXnJ4djdIqOCbIgrOAeGw5JqI1OeT4QvOmVZWg95AQJUAVEmzRxGWx1KYRD1qQftRnFdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMKMm8DqXpN5QZr7P9nDR5sfNZMxU+ojSQnRMBXub/Q3H/rD/N
+	0epI4X1xejmSkodGcDHp1NtPesHkNlEbWeyvZZUKyNK3chaqyBKJXjYz3HFGMAkU6386JhoTU47
+	PSLa/q4uF695oQ27jmuOokd8XM8okLj5vnhhG
+X-Google-Smtp-Source: AGHT+IFE60KjWQ+LhatMhLcNn4ylcp/3BX1PMZw7JB2CKalx7ld2SR1EOoZ3z8exQZ8pHnycdnnra1ayimhJIxisGrc=
+X-Received: by 2002:a05:6e02:18c7:b0:381:24d7:7cc6 with SMTP id
+ e9e14a558f8ab-39e65ea0ae0mr778165ab.3.1724715794374; Mon, 26 Aug 2024
+ 16:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823173332.281211-2-andrealmeid@igalia.com>
+References: <20240813165619.748102-1-yuanchu@google.com> <ZsSTdY5hsv05jcj-@PC2K9PVX.TheFacebook.com>
+In-Reply-To: <ZsSTdY5hsv05jcj-@PC2K9PVX.TheFacebook.com>
+From: Yuanchu Xie <yuanchu@google.com>
+Date: Mon, 26 Aug 2024 16:43:01 -0700
+Message-ID: <CAJj2-QGtvvrhjH_h1wL3FCg4HgZU27rqxSCDZzPws81yPK_DvQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] mm: workingset reporting
+To: gourry@gourry.net
+Cc: David Hildenbrand <david@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
+	Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
+	Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Gregory Price <gregory.price@memverge.com>, Huang Ying <ying.huang@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lance Yang <ioworker0@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>, 
+	David Rientjes <rientjes@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Shuah Khan <shuah@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>, 
+	Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Abel Wu <wuyun.abel@bytedance.com>, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi André,
+On Tue, Aug 20, 2024 at 6:00=E2=80=AFAM Gregory Price <gourry@gourry.net> w=
+rote:
+>
+> On Tue, Aug 13, 2024 at 09:56:11AM -0700, Yuanchu Xie wrote:
+> > This patch series provides workingset reporting of user pages in
+> > lruvecs, of which coldness can be tracked by accessed bits and fd
+> > references. However, the concept of workingset applies generically to
+> > all types of memory, which could be kernel slab caches, discardable
+> > userspace caches (databases), or CXL.mem. Therefore, data sources might
+> > come from slab shrinkers, device drivers, or the userspace. IMO, the
+> > kernel should provide a set of workingset interfaces that should be
+> > generic enough to accommodate the various use cases, and be extensible
+> > to potential future use cases. The current proposed interfaces are not
+> > sufficient in that regard, but I would like to start somewhere, solicit
+> > feedback, and iterate.
+> >
+> ... snip ...
+> > Use cases
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Promotion/Demotion
+> > If different mechanisms are used for promition and demotion, workingset
+> > information can help connect the two and avoid pages being migrated bac=
+k
+> > and forth.
+> > For example, given a promotion hot page threshold defined in reaccess
+> > distance of N seconds (promote pages accessed more often than every N
+> > seconds). The threshold N should be set so that ~80% (e.g.) of pages on
+> > the fast memory node passes the threshold. This calculation can be done
+> > with workingset reports.
+> > To be directly useful for promotion policies, the workingset report
+> > interfaces need to be extended to report hotness and gather hotness
+> > information from the devices[1].
+> >
+> > [1]
+> > https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirem=
+ents-white-paper-pdf-1
+> >
+> > Sysfs and Cgroup Interfaces
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > The interfaces are detailed in the patches that introduce them. The mai=
+n
+> > idea here is we break down the workingset per-node per-memcg into time
+> > intervals (ms), e.g.
+> >
+> > 1000 anon=3D137368 file=3D24530
+> > 20000 anon=3D34342 file=3D0
+> > 30000 anon=3D353232 file=3D333608
+> > 40000 anon=3D407198 file=3D206052
+> > 9223372036854775807 anon=3D4925624 file=3D892892
+> >
+> > I realize this does not generalize well to hotness information, but I
+> > lack the intuition for an abstraction that presents hotness in a useful
+> > way. Based on a recent proposal for move_phys_pages[2], it seems like
+> > userspace tiering software would like to move specific physical pages,
+> > instead of informing the kernel "move x number of hot pages to y
+> > device". Please advise.
+> >
+> > [2]
+> > https://lore.kernel.org/lkml/20240319172609.332900-1-gregory.price@memv=
+erge.com/
+> >
+>
+> Just as a note on this work, this is really a testing interface.  The
+> end-goal is not to merge such an interface that is user-facing like
+> move_phys_pages, but instead to have something like a triggered kernel
+> task that has a directive of "Promote X pages from Device A".
+>
+> This work is more of an open collaboration for prototyping such that we
+> don't have to plumb it through the kernel from the start and assess the
+> usefulness of the hardware hotness collection mechanism.
 
-kernel test robot noticed the following build warnings:
+Understood. I think we previously had this exchange and I forgot to
+remove the mentions from the cover letter.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> ---
+>
+> More generally on promotion, I have been considering recently a problem
+> with promoting unmapped pagecache pages - since they are not subject to
+> NUMA hint faults.  I started looking at PG_accessed and PG_workingset as
+> a potential mechanism to trigger promotion - but i'm starting to see a
+> pattern of competing priorities between reclaim (LRU/MGLRU) logic and
+> promotion logic.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/tmpfs-Add-casefold-lookup-support/20240826-135457
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240823173332.281211-2-andrealmeid%40igalia.com
-patch subject: [PATCH 1/5] tmpfs: Add casefold lookup support
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240827/202408270609.Nj6iM21E-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270609.Nj6iM21E-lkp@intel.com/reproduce)
+In this case, IMO hardware support would be good as it could provide
+the kernel with exactly what pages are hot, and it would not care
+whether a page is mapped or not. I recall there being some CXL
+proposal on this, but I'm not sure whether it has settled into a
+standard yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270609.Nj6iM21E-lkp@intel.com/
+>
+> Reclaim is triggered largely under memory pressure - which means co-optin=
+g
+> reclaim logic for promotion is at best logically confusing, and at worst
+> likely to introduce regressions.  The LRU/MGLRU logic is written largely
+> for reclaim, not promotion.  This makes hacking promotion in after the
+> fact rather dubious - the design choices don't match.
+>
+> One example: if a page moves from inactive->active (or old->young), we
+> could treat this as a page "becoming hot" and mark it for promotion, but
+> this potentially punishes pages on the "active/younger" lists which are
+> themselves hotter.
 
-All warnings (new ones prefixed by >>):
+To avoid punishing pages on the "young" list, one could insert the
+page into a "less young" generation, but it would be difficult to have
+a fixed policy for this in the kernel, so it may be best for this to
+be configurable via BPF. One could insert the page in the middle of
+the active/inactive list, but that would in effect create multiple
+generations.
 
->> mm/shmem.c:4874:23: warning: 'shmem_lookup' defined but not used [-Wunused-function]
-    4874 | static struct dentry *shmem_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
-         |                       ^~~~~~~~~~~~
+>
+> I'm starting to think separate demotion/reclaim and promotion components
+> are warranted. This could take the form of a separate kernel worker that
+> occasionally gets scheduled to manage a promotion list, or even the
+> addition of a PG_promote flag to decouple reclaim and promotion logic
+> completely.  Separating the structures entirely would be good to allow
+> both demotion/reclaim and promotion to occur concurrently (although this
+> seems problematic under memory pressure).
+>
+> Would like to know your thoughts here.  If we can decide to segregate
+> promotion and demotion logic, it might go a long way to simplify the
+> existing interfaces and formalize transactions between the two.
 
+The two systems still have to interact, so separating the two would
+essentially create a new policy that decides whether the
+demotion/reclaim or the promotion policy is in effect. If promotion
+could figure out where to insert the page in terms of generations,
+wouldn't that be simpler?
 
-vim +/shmem_lookup +4874 mm/shmem.c
+>
+> (also if you're going to LPC, might be worth a chat in person)
 
-  4873	
-> 4874	static struct dentry *shmem_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
-  4875	{
-  4876		if (dentry->d_name.len > NAME_MAX)
-  4877			return ERR_PTR(-ENAMETOOLONG);
-  4878	
-  4879		/*
-  4880		 * For now, VFS can't deal with case-insensitive negative dentries, so
-  4881		 * we prevent them from being created
-  4882		 */
-  4883		if (IS_CASEFOLDED(dir))
-  4884			return NULL;
-  4885	
-  4886		d_add(dentry, NULL);
-  4887	
-  4888		return NULL;
-  4889	}
-  4890	
+I cannot make it to LPC. :( Sadness
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yuanchu
 
