@@ -1,80 +1,104 @@
-Return-Path: <linux-kernel+bounces-302013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBC495F8AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 19:58:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8D295F8B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE21F282BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A598B223EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37568199221;
-	Mon, 26 Aug 2024 17:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A131990CF;
+	Mon, 26 Aug 2024 18:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQhc+tsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0lTchuZ3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q8+BgpRi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5AC1991AF;
-	Mon, 26 Aug 2024 17:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9415F41B;
+	Mon, 26 Aug 2024 18:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724695035; cv=none; b=KSkxre0DMi0K3rHTy1x6bNr1fswTIfIa3bHGmzbjfL4mSO0EjfUz5U2J6n6peLNbiACDgphFw8Lr+lQK2iaDTbMhwB8k6iTbSP65dMm5+VHsrgHWp7HYy9HUeOLvBQjkEbawqwOBPjK63XBdhTHGwMgTFwSHcjdelNWqJ7x+pzk=
+	t=1724695235; cv=none; b=fvoxpYI7pAVtYUJlcSXYdmSzH1cyRSBgP7Sgv75SZRnLrlFw/cQBoWsUTrBWfBVPrhE0i4PtmXwMEOH8GwWIMT2UsybJPXhfM+Z+KkAVSifCy3Ud4q9HsxVmNefi46QFHrGHGwPM7IRDS+uSdrBdJ/6nGaY5Vl3zJ7RbkQluodI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724695035; c=relaxed/simple;
-	bh=lMKKl6X0Obu7zaLv5b6ZbxDB97sf+AkKiJrbIarWJQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PAWMiEWpeM6zXPZqTNBP1dZEGLVHn7mfiy+dwcaNCoJVkUfK3lg/h759Qcx9O0HtffunSzCnbhjWYuiJBMfr/tPg+piR7/J7fibs0cGQClJUncCBl++VTRu9SGFvR3LSwQBNQ9M+Jz/0rwx/yBVwQ0Gv7RKnREMKpkRszQYwH48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQhc+tsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7069C8B7A3;
-	Mon, 26 Aug 2024 17:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724695035;
-	bh=lMKKl6X0Obu7zaLv5b6ZbxDB97sf+AkKiJrbIarWJQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tQhc+tsCBHQlJCAS/+SqnJgG1FiHHeMa3lMu05+LacbQoEfaC3JtsHv0l4cNM+YDX
-	 DBwPORTXORAyTdNd5LSycMPibA67zi76GBbJvvyiAswU/dVYn8bJNJsusxOCHKO0H8
-	 ywzKQtItH1q+QeWPhQJW485/ZaxPAotAQFUVs5H2Jwd9iQPPwYxd6IP84wVoNuFDC3
-	 4twtlMwgvuxGV2RHzd4mWLT17hRq7giqrWTpzZHmRN+uDZzCQc2L20nGe8RvHKfQEW
-	 sjHfiwBQu4gZUjPO1qFBeWcAZ+uRQoOpg2m0UrBf+8oEVvce5ZeaPME/NSY2Ren1MP
-	 KYAMpdzEJbwMQ==
-Date: Mon, 26 Aug 2024 12:57:12 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jens Reidel <adrian@travitia.xyz>
-Cc: linux-input@vger.kernel.org, krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org, andersson@kernel.org,
-	linux-arm-msm@vger.kernel.org, konrad.dybcio@linaro.org,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com
-Subject: Re: [PATCH 1/2] dt-bindings: input: qcom,pm8xxx-vib: Document PM6150
- compatible
-Message-ID: <172469501820.1128279.133921156287509066.robh@kernel.org>
-References: <20240606181027.98537-1-adrian@travitia.xyz>
- <20240606181027.98537-2-adrian@travitia.xyz>
+	s=arc-20240116; t=1724695235; c=relaxed/simple;
+	bh=G9y0cnu6WaX8lCNmJVUZ1SNi426o9h/MNjtqmUcLGC8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ktCKQL/c5X0TNd8dO+ln4Mz4ja1uBXq9ubTo8nPOEblPMjAKJvnQbsKAHHfPZHUWl2TdTGNbnrJD33njM3qn1AkJ3MFqkbYezMHYI8RwBwS9RtPIpbtuiyO1bXNN+DulYafbCLuqkLrGpE8Tti0xvsvAfvXQKXOIm4h2JRNqHrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0lTchuZ3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q8+BgpRi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724695231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9y0cnu6WaX8lCNmJVUZ1SNi426o9h/MNjtqmUcLGC8=;
+	b=0lTchuZ3RmWfLT/OIweKq33x7naoyHnsqQ8AvtbDPge6nTR7QEwhWqmVQDRfkLZisnYlsH
+	GVgmnbMqDb9TnOA7pWE8UL+VEZjDzIIWd+DxN1CkwjJjwf10gCVvE6eynyGMje1DmKDfPj
+	ibVUeDp4ztzhaJCD+cfA5U5Oyx3I5VWLrwxXGvh1ogbXGcOa3A73L+L99aK2s/DVMWTg4S
+	Bv8dWSvikO98VvKmqiL2XZGbIsI7XIUNLd3slv7Hbf8NjQzlTZdTOhtteQ0nbcas3+oM8P
+	gdLhijkrPH3/PQcOQHzCojp5KnIyznATnn5pqRNDLF6DKSViKAkDTUzKfiDg/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724695231;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9y0cnu6WaX8lCNmJVUZ1SNi426o9h/MNjtqmUcLGC8=;
+	b=Q8+BgpRi7dwHICpOAVlmyvIoxDAivAMJ0CwoQSNP2Y3EEtAAlZ+5m3H+YaaxeqzeJ6LV+Q
+	JY3sRPdXIJye/JCA==
+To: debarbos@redhat.com
+Cc: Petr Mladek <pmladek@suse.com>, pmaldek@suse.com, williams@redhat.com,
+ tglx@linutronix.de, linux-rt-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: test 1: was: Re: A Comparison of printk between upstream and
+ linux-rt-devel
+In-Reply-To: <Zsy12a7DQqu7h4zp@debarbos-thinkpadt14sgen2i.remote.csb>
+References: <ZsdoD6PomBRsB-ow@debarbos-thinkpadt14sgen2i.remote.csb>
+ <ZshiIdUFQs4CKW2t@pathway.suse.cz>
+ <Zsjd0WUNIU8_kprt@debarbos-thinkpadt14sgen2i.remote.csb>
+ <ZsyK-s2D8eqqBrXU@pathway.suse.cz>
+ <ZsyVXMqM2SK0aYyV@debarbos-thinkpadt14sgen2i.remote.csb>
+ <Zsyafduo2UItzLAK@pathway.suse.cz> <871q2b8bou.fsf@jogness.linutronix.de>
+ <Zsy12a7DQqu7h4zp@debarbos-thinkpadt14sgen2i.remote.csb>
+Date: Mon, 26 Aug 2024 20:06:31 +0206
+Message-ID: <87wmk36u68.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606181027.98537-2-adrian@travitia.xyz>
+Content-Type: text/plain
 
+On 2024-08-26, Derek Barbosa <debarbos@redhat.com> wrote:
+> This is not running in QEMU. I installed & booted this kernel directly.
+> Considering that this produced a vmcore, I could try my hand at doing a crash
+> analysis (with some pointers).
 
-On Thu, 06 Jun 2024 20:10:26 +0200, Jens Reidel wrote:
-> The PM6150 vibrator module is compatible with the PMI632 vibrator
-> module, document the PM6150 vibrator compatible as fallback for the
-> PMI632 vibrator.
-> 
-> Signed-off-by: Jens Reidel <adrian@travitia.xyz>
-> ---
->  Documentation/devicetree/bindings/input/qcom,pm8xxx-vib.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+That would be nice. It would be interesting to see if the trace is in
+the ringbuffer. If not, it probably means the system is hanging in the
+console driver while trying to print out the messages synchronously.
 
-Seems this one was missed. Applied, thanks!
+> Do you think running this kernel in QEMU would behave any differently
+> than it is now?
 
+Until now, I have never needed bare metal to debug/fix printk issues for
+serial. This is because the 8250 UART is so simple and QEMU emulation of
+it is good enough.
+
+Of course, this is one (of many) reasons why I am very grateful that you
+are running all these tests on bare metal! Thanks for this!
+
+_If_ the problems are reproducible using QEMU/KVM, it would be really
+easy to dig deeper. Even if it is just to confirm, "Oh yeah, we know
+about that problem... not fixable with legacy printing." But sometimes
+we see that it is an easily fixable problem to at least help improve the
+reliability of legacy printing.
+
+John
 
