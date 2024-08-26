@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-300914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3956995EA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:30:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B41395EA71
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F56288D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:30:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E510B21D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B54135A63;
-	Mon, 26 Aug 2024 07:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cZ5RB3D5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE91B135A63;
+	Mon, 26 Aug 2024 07:30:57 +0000 (UTC)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE21D339AB;
-	Mon, 26 Aug 2024 07:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C07582490
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657433; cv=none; b=qHYLWZhtsevKqecyT9pmNZXAcDaHR1NC3I7hcMy86GHVFdOSGjhbm1uRA60t5c8HPjzsbu/r+yu8WsdTitAZ89sbt4D7/olPtY9bv2AWrDwtEOOFdly/llfWWd3iJ+J7dPgObRuygJVLGz0LJrunKozFbS9wJflo5We73wY5jic=
+	t=1724657457; cv=none; b=ASP0qNU2FFzsvEnZyyL2FWtNmHNWvfVh0qaSctMGX7ZoAiNIjwJujigQYUBMcQkfw9Ytls+bYoT7UcV5wnsUcIeaJlMaWneL45+jIiZfzD5L7EbUeisEBMe8ETS6ztzSExQG3UElvamlRWgO+PzjBc6eOYq9lU+9zE6eCA3eaAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657433; c=relaxed/simple;
-	bh=nLJafC/RJkAiXMmcJ/serDyLuQ5oEl1N6bGyWiLxg4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DItKcWysL9P6hSxlD3qUufjc4JGMJbHGU6x3yn6VxPEogvtQ0uIjsFGvzVQOGIa+6BeB9WRvvgHXSWggXu4ymQMtpykm/7mIEzkn4v9kCxWlFATmo5/mSaFX9L3WQGcDGFbVbpJLzhVQwyKL+DCJVfNUciLOJM72yxln0/i2dns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cZ5RB3D5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAFBC8CDC1;
-	Mon, 26 Aug 2024 07:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724657433;
-	bh=nLJafC/RJkAiXMmcJ/serDyLuQ5oEl1N6bGyWiLxg4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cZ5RB3D5dAncRGaWeUEbGsIQ5WH4jGnpnWnV8DZ1XAd8FUaqpQlEmRmyGHxUjy2or
-	 EGubQ6IAp9znH/XaycXZFddQsIdY/cmGyWfuFUii1EcDC0bKiyJW1aNnc4ovJW3hiI
-	 I3/HDEPU3+UB+5O+WlgGGrjzS1pzGsM/wTGK6u5k=
-Date: Mon, 26 Aug 2024 09:30:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Johan Hovold <johan@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>, stable@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: rtc: at91sam9: fix OF node leak in probe() error path
-Message-ID: <2024082622-freckles-armored-978c@gregkh>
-References: <20240825183103.102904-1-krzysztof.kozlowski@linaro.org>
- <675f1e34-784f-44d2-9774-2652b919eecd@web.de>
- <391cc2f7-4a88-4565-8653-e46bd77e28f8@linaro.org>
- <bbc43cc6-0ee9-4cfd-b642-ac888ad9e627@web.de>
+	s=arc-20240116; t=1724657457; c=relaxed/simple;
+	bh=CX/j63UgkM15rLGMJ0MEpUE6c01kEYDRQQNx5pWSrmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UAFiYkZu1X1We8dG3Kkfb6YGLVjherwU7gkyVtIy9gQS8yyvskXRDhcFjtLbX5lbfz2xzeAbLyD7kFvjtNpA4SvgZS07RO2YRZuRzgXWSWDL3xYPtkHc5AkqqtOkpOHrm1j819DxIRDrlu+3RlolVM+/QMiDMvjaQ4zbfYaioBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso3940522276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:30:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724657454; x=1725262254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ej0Y88/f1FavQ2R0a1yf4wgWu7EXeTD+zQk15WdLEY8=;
+        b=v5C+n3zGBFdv41B9Iknd8Bd5rkYl0ruRMoBfdyCBLRLrqIxpn6zk2WsULPjz5Cv1kl
+         U4MMnL6Jj7WB18zPkaqayZAb2e2vlMYLifZ6HglV+Sg1i4u4UIQ4Y0T2Y5UL6KWYpRX9
+         bWz/fIU1t9bX5D4AjRSJS8+/SKrk4Xmp5tWOBoXB5c1Ym3L67idfjgUfYWJGdX2DwBgp
+         zGNRiWYDdJlJ9YFOeMwSH55f2xvZdleBPyOSC06sl/04oADtJzx9rgIi81f6iGXkHxhm
+         Zps+Cs7AyJCKPrwigAXLbEvyfK+seUDXMKvNdlVjviFJyJYBRf9/xbVGs8OvG+PaHjww
+         LyTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEL7HaEoderHg2ID+6ibfYhNQk0+xlaWataUDcSg6WT0bqEDdnZf+/La7JJ8JZQRllc7ShYUUU3ZKJ1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWsqSx4x69euYjIqlggkRaGdQqQXtut18kSnmpaAObGh86shsO
+	gW9mRrgQf8bsrV0yLVqE2ZbjTPdta7wGCzhVxZQT8ZnEcpFR3UdLs+bek3U/
+X-Google-Smtp-Source: AGHT+IGFIVAoBU5dwaQ5WeBoQ52StBWuNSDwdPFe1nIKnS8LYCdUYieoFzE1ZzSpuQKKb80Q/dgZ4Q==
+X-Received: by 2002:a05:6902:98d:b0:e0b:caef:9845 with SMTP id 3f1490d57ef6-e17a866e3ccmr10305143276.56.1724657453749;
+        Mon, 26 Aug 2024 00:30:53 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e56a5f7sm1922288276.44.2024.08.26.00.30.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 00:30:53 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6b5b65b1b9fso32858137b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:30:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1UdPD/7o0k7pKBTD7P0ARWJNBV4JHmuoE+N77TfekC7QuQcFgF0wVzRBJw2Diwb4eiOlvH/HhuAVb6go=@vger.kernel.org
+X-Received: by 2002:a05:690c:660f:b0:673:b39a:92f0 with SMTP id
+ 00721157ae682-6c624bd7e33mr108695887b3.11.1724657453347; Mon, 26 Aug 2024
+ 00:30:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bbc43cc6-0ee9-4cfd-b642-ac888ad9e627@web.de>
+References: <20240730234506.492743-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240730234506.492743-2-thorsten.blum@toblux.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 09:30:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVP+tpOEKo61EEd0Ynk=efaWRxoXDzSiWQo7YVe=W74iQ@mail.gmail.com>
+Message-ID: <CAMuHMdVP+tpOEKo61EEd0Ynk=efaWRxoXDzSiWQo7YVe=W74iQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] m68k: cmpxchg: Use swap() to improve code
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 09:12:32AM +0200, Markus Elfring wrote:
-> >>> Driver is leaking an OF node reference obtained from
-> >>> of_parse_phandle_with_fixed_args().
-> >>
-> >> Is there a need to improve such a change description another bit?
-> >>
-> >> + Imperative mood
-> …
-> > Commit msg is fine.
-> …
-> >> + Tags like “Fixes” and “Cc”
-> >
-> > Read the patch.
-> 
-> What does hinder you to take requirements from a known information source
-> better into account?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.11-rc5#n94
-> 
-> Regards,
-> Markus
-> 
+On Wed, Jul 31, 2024 at 1:46=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
+> Remove the local variable tmp and use the swap() macro instead.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-Hi,
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.12.
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+Gr{oetje,eeting}s,
 
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
+                        Geert
 
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-thanks,
-
-greg k-h's patch email bot
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
