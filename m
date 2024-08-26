@@ -1,152 +1,90 @@
-Return-Path: <linux-kernel+bounces-302038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD45F95F905
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFE495F907
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8201F2471A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDA283589
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A3D18FC83;
-	Mon, 26 Aug 2024 18:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A278D19342A;
+	Mon, 26 Aug 2024 18:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sSiQOZkX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p0oxIZv4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9kNKGik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9A62C1AC;
-	Mon, 26 Aug 2024 18:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32D92C1AC;
+	Mon, 26 Aug 2024 18:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724697245; cv=none; b=SsTfMNZ2PRjZDKCDvb7mOa73ivaYtwr9AS4Qyhjt0otsD4MBWILy5j0VLOPMaf2TaK5Yag97tHps+EvU4CTNojmaWMcvb8km43A7Pc/h2bx8tYMqPKCsfQh9d6Rp1JrW1HV0/zOsKdDK6cn0FXgFbO2/8y9TSq31dt4ysdprZT8=
+	t=1724697305; cv=none; b=A3oc1UkJFLAjwa/cPgl4lkwTeeRiTghvEQcDUvOP+jyChq0Xsb06s27P1PhAUDhU5LhKYi6BMZVEjG/wyYYsVylNVsoraYjF6sg8owMhnY+60vN9SDgQirhVSJaIB1flYCgI+62oLqE+W0PzBmn/KGeLmuv582+8qz9sOSO8wMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724697245; c=relaxed/simple;
-	bh=guX2tivSxV7z7lWtu431aYcSdIr8EJX8n4eAlgq26Pw=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=qYHeIkxQGxomU3RXQwdrktsxD09gDRbRv+ycaywSY63BXhQevReeNSD6F9IVeBfn0ntCVlmO8/X4bvsCEqYw4gtcCL26oOjJk631y7V1xeqDrksvOH/q6pDNw18AmGKD82MzVWMFxgtznZbnjZfAI/3EBlrnD7DYrf4sR8DYRF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sSiQOZkX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p0oxIZv4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 Aug 2024 18:34:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724697242;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=KGRFennBUtNkwAsK8Bg3nFB1JrnOtN7cPgW+iT6uS5Q=;
-	b=sSiQOZkXaSBELYyae5uCxhowi9+DboYvHjmSB1AuHV+vvOS4ov1JlIpaZPTUWNnyPT5dmJ
-	1T/J4JwSRy/2cbfrrl377X6CG22xKp7G+JuOwq0HMad8Cok0cWzKFhMd8rkyKyfkVmA2F9
-	nyYl4fQOzJuMmLZTjyDR+i6MNPC0rFQ4DbgeNUyPyI47QAQQZu/P7erM9rkuejWqtSy32N
-	UVgHq7t+8wy/lRuffA4mejIO7uWbFeCvYqLK/dVYFa44HrzX1tjMbbhiX5Ou5e1fcR0+Ps
-	gosEQ5HBcjqLfk/Ib+uWr3rIcWlN09TKKg+ECkf+y9J4yWlHi9p+qmGcH4Z0Aw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724697242;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=KGRFennBUtNkwAsK8Bg3nFB1JrnOtN7cPgW+iT6uS5Q=;
-	b=p0oxIZv4F1DCWsAwxkfY5EWyNWpTinU9uaGhnRYi4hcvGFrceGSro30si5FpIHudKStnDh
-	W4vSodDkrwHwIFDQ==
-From: "tip-bot2 for Max Ramanouski" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/ioremap: Improve iounmap() address range checks
-Cc: Max Ramanouski <max8rr8@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Christoph Hellwig <hch@lst.de>,
- Alistair Popple <apopple@nvidia.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1724697305; c=relaxed/simple;
+	bh=WJUAZ2Dnc20rY85yKNE4tfrmUEmCUGOXJQaQKBPAr9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPOUZJTjANCej56hPA9IceaD5QyJKDsn3DdIFtg7FrSb99w+UcXVl1aSvHVNph2Nvmh6ioLs8zrUdFszb/e13TNgMbSsnmRAVApaeoUyyiwH0/EklB9yifBZPu6l2BaBw8/5g1QIDrnAAfe2CQwSr0/uF2WGztE8Mx0qh+0br6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9kNKGik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED00C4DDF5;
+	Mon, 26 Aug 2024 18:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724697304;
+	bh=WJUAZ2Dnc20rY85yKNE4tfrmUEmCUGOXJQaQKBPAr9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9kNKGikqxa2n8dwiS0KYPv3mxnWfzvEtamLt2bCcvBMrVu0riREh5f9h7nO+MnOy
+	 EgJp6E6VI9dLYmWYOYwv1fx7J23oOqWmFbbG81eMF5JCe56UUH18cmd3e/pKPkD+zI
+	 kfYj0NE5LJ79JFD63oED2A8g32ucuPF6imZ57daUJJf8I/OKzeL+FNCOaKw9lDBr6b
+	 IJfRdLn/p4mgr0e4/toMcTlfJodHPAi/bKVnD0yXH/wa9hAo+FFWrIElsY33vmbJi7
+	 +Hzzp60KT6vyImJDzxyLFx2o8Sq6a8Hnf3EU/Cz9hPNropubo5BYFDwdG9cr6dMvPL
+	 ediOM5/42em0A==
+Date: Mon, 26 Aug 2024 08:35:03 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: void@manifault.com, peterz@infradead.org, mingo@redhat.com,
+	cgroups@vger.kernel.org, lizefan.x@bytedance.com,
+	hannes@cmpxchg.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, David Vernet <dvernet@meta.com>,
+	Josh Don <joshdon@google.com>, Hao Luo <haoluo@google.com>,
+	Barret Rhoden <brho@google.com>
+Subject: Re: [PATCH 1/7] cgroup: Implement cgroup_show_cftypes()
+Message-ID: <ZszK1zQJSjuEO4r5@slm.duckdns.org>
+References: <20240808002550.731248-1-tj@kernel.org>
+ <20240808002550.731248-2-tj@kernel.org>
+ <qsdgtsunxgbxb6lf7x7m5777jxmumddomsofuuimqenoyliabx@assdbc6zj2ag>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172469724139.2215.3812505849962933435.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qsdgtsunxgbxb6lf7x7m5777jxmumddomsofuuimqenoyliabx@assdbc6zj2ag>
 
-The following commit has been merged into the x86/mm branch of tip:
+Hello, Michal.
 
-Commit-ID:     50c6dbdfd16e312382842198a7919341ad480e05
-Gitweb:        https://git.kernel.org/tip/50c6dbdfd16e312382842198a7919341ad480e05
-Author:        Max Ramanouski <max8rr8@gmail.com>
-AuthorDate:    Sun, 25 Aug 2024 01:01:11 +03:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Mon, 26 Aug 2024 10:19:55 -07:00
+On Tue, Aug 20, 2024 at 04:38:40PM +0200, Michal Koutný wrote:
+> On Wed, Aug 07, 2024 at 02:25:23PM GMT, Tejun Heo <tj@kernel.org> wrote:
+> > +void cgroup_show_cftype(struct cftype *cft, bool show)
+> > +{
+> > +	struct cgroup_subsys *ss = cft->ss;
+> > +	struct cgroup *root = ss ? &ss->root->cgrp : &cgrp_dfl_root.cgrp;
+> 
+> Strictly speaking, this (v1) cgroup_root dereference should be guarded
+> with cgroup_mutex too (should be the root destroy concurrently).
 
-x86/ioremap: Improve iounmap() address range checks
+Ah, right. I think I might just drop this patch. Hiding and showing the
+interface files dynamically doesn't seem to work that well in practive (ie.
+it causes more production problems than it solves). Something a bit more
+boring like triggering a warning when a unimplemented feature is used is
+probably better here.
 
-Allowing iounmap() on memory that was not ioremap()'d in the first
-place is obviously a bad idea.  There is currently a feeble attempt to
-avoid errant iounmap()s by checking to see if the address is below
-"high_memory".  But that's imprecise at best because there are plenty
-of high addresses that are also invalid to call iounmap() on.
+Thanks.
 
-Thankfully, there is a more precise helper: is_ioremap_addr().  x86
-just does not use it in iounmap().
-
-Restrict iounmap() to addresses in the ioremap region, by using
-is_ioremap_addr(). This aligns x86 closer to the generic iounmap()
-implementation.
-
-Additionally, add a warning in case there is an attempt to iounmap()
-invalid memory.  This replaces an existing silent return and will
-help alert folks to any incorrect usage of iounmap().
-
-Due to VMALLOC_START on i386 not being present in asm/pgtable.h,
-include for asm/vmalloc.h had to be added to include/linux/ioremap.h.
-
-[ dhansen: tweak subject and changelog ]
-
-Signed-off-by: Max Ramanouski <max8rr8@gmail.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
-Link: https://lore.kernel.org/all/20240824220111.84441-1-max8rr8%40gmail.com
----
- arch/x86/mm/ioremap.c   | 3 ++-
- include/linux/ioremap.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index aa7d279..70b02fc 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -11,6 +11,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-+#include <linux/ioremap.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/mmiotrace.h>
-@@ -457,7 +458,7 @@ void iounmap(volatile void __iomem *addr)
- {
- 	struct vm_struct *p, *o;
- 
--	if ((void __force *)addr <= high_memory)
-+	if (WARN_ON_ONCE(!is_ioremap_addr((void __force *)addr)))
- 		return;
- 
- 	/*
-diff --git a/include/linux/ioremap.h b/include/linux/ioremap.h
-index f0e99fc..2bd1661 100644
---- a/include/linux/ioremap.h
-+++ b/include/linux/ioremap.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/kasan.h>
- #include <asm/pgtable.h>
-+#include <asm/vmalloc.h>
- 
- #if defined(CONFIG_HAS_IOMEM) || defined(CONFIG_GENERIC_IOREMAP)
- /*
+-- 
+tejun
 
