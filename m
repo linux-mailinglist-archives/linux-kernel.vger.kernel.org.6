@@ -1,62 +1,75 @@
-Return-Path: <linux-kernel+bounces-301732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A330395F4CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E10695F4CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AA21F255F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2ABD1C21EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7440019309E;
-	Mon, 26 Aug 2024 15:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D3518E057;
+	Mon, 26 Aug 2024 15:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bRqcjasO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zd3Q/RhR"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B705F1925A1;
-	Mon, 26 Aug 2024 15:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC30018D638;
+	Mon, 26 Aug 2024 15:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685128; cv=none; b=L52ON/mOriV93ndLfFlPxYK7boaSIC8kTh1sOwRu/iBj5HC9vseX2H7sVZdGwrrkcKcdZe2DG7rwxU6QsHAeMOfm+n7jk6ugWSuT+bO0mNOOrFe7wprvggkYvSRM+dzGtkMkrKnYagrnQBEDHP1/JXBedb8sIlETJR1SCiJHGTY=
+	t=1724685140; cv=none; b=hKyIRGuAFaYwG9YI62gBDogHt4i7uwBgQdpf9Rcw53QHbglrzau1PIw/N7Wj8LIbnIk2zwzPvftxE4UxUXZ9qMQu4mvkUmjvCt38//EUn8Vz/XSFXNr71ZdMOzJyKV0l4Cy+/KdH9Ry4qoBWsl+KXTv77dKUx2seE6RS2R5T06Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685128; c=relaxed/simple;
-	bh=MNySsTMjSfq+h1YPOUlX+67nt0L84v5H9Fl6brzwTkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I+g4V7+XFlksSyC56ShD8JwnSuv6E9Kb/O5vvM1+i+Lftzvd6OT1rhj52Iec0MYITlapn6x+w1cHTtffzVCv2porxlFmxUeRIO4vewxKf1VDgsuL5w0nKP4KmxrCkXE+PeMFzURMDKpjGaBjyo8HeoJrTBCiuWcme5RC98RBx/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bRqcjasO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MSR5003106;
-	Mon, 26 Aug 2024 15:11:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2WGmtVoNopml6AxDzLxFtlGo8E8wIzrXO8d4WxlEMaA=; b=bRqcjasOwsmas9aV
-	UYudAUzthwzDtTcb2T2KNGHLiCBmz7L29S1nPWntYunXe2nT2OY10QXKhO0TI5fn
-	udCVuc+e5aF/0ETvRBLUPo9KyQa3aDD+JsEmPQw2kNlaKHQ4Lxbun4sn23ew89ou
-	DzgXtpeSm+hYKJmSUFnifZ2vUdVcqTYnOt5r86rZxUKEMARX4UgZ41guO7sYSNhC
-	kyVhmgrpI2UWJjpywhtzA+2Iw4tmnBRBkUnOFFMkJQd9UfqGPfYhc3N4kB+zbeuS
-	ktw2SuN2EV+IoMVk5HKcvuH1W2ztm2JNrjva+WOpYr8a05Y3YfpZ+2dyfoRbeP1D
-	ySTzRg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41796kv1b8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 15:11:46 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47QFBi60008804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 15:11:44 GMT
-Received: from [10.110.100.101] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
- 2024 08:11:44 -0700
-Message-ID: <5459c1bc-33eb-41ad-b290-3d40bb5b81fe@quicinc.com>
-Date: Mon, 26 Aug 2024 08:11:43 -0700
+	s=arc-20240116; t=1724685140; c=relaxed/simple;
+	bh=MrfygaZtea27JXYmnab/RKenVpslT6ZKSAHsyCQvwMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BhbCoaJmHyIdmaeVCc7av2JCiSJQSjED7SABfd/KGIOol/djD1nGWyB9lu+SoHUuQ94D8Guykbiq12+lHfBS7rog1eODAKg7AG60Hrc8RCLST+hzoK4dD5/+GoWEvbW1GujAenTOYT4V0pD9e9tWQQHlXD+BH9ZzJV77R7WDWPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zd3Q/RhR; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3c071d276so2927139a91.1;
+        Mon, 26 Aug 2024 08:12:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724685138; x=1725289938; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ezq5MM+KL5qw4ps6P21Dw52XpyfzivaUMGCgpfxor/c=;
+        b=Zd3Q/RhR7zEX7iIqmJ7rAn65xit+obogPex0kQ8pTnfZP4mUz9SW2rL8xShwkB+D+3
+         O75C65V7EIXeiA3KkyS9ldeHHi+tYhnRAb8LtBNRfLHdTZD59cDPv+PQIK2OV6ojMKgo
+         bJsqulWqHFauLW9N5Opdk+CjOmPEQzY64zWB/ui/xgv+TtQIHH8z2AxU+bBmR+omT6ST
+         omNNtcXjPApY0lQN75yK/4TZLEfbeMjx+9nvJGq0kXjsNNBgLtWBZ3bZDFKweLiHgoSO
+         G8c/6o6d9QXN+72mwhPKwuyFZ7/IBAvZSRyzOZ7oODDU/YHPo0n3qpLX1+NrYVZN4wJ+
+         eEWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724685138; x=1725289938;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ezq5MM+KL5qw4ps6P21Dw52XpyfzivaUMGCgpfxor/c=;
+        b=eT9KD1wF7RgpMVaSzXDfL+GC8aLaDM4Yt39kH5RpXIM1HAAaerd7fzRBulR35Z+dxO
+         tKkWzDchP1w8SeykXY2CV2yz+BQlvNDy1DR84TlYnMaItCdgBLSfUqyQur6zyuKD7a69
+         cXhNsn9u//0rvOeYXqmBuxCOhObpydODieUVxx1CRO/za0ojJsWHSrhGbxfu0T7U059/
+         DvpgyiqZ/XK+/4pCE9ruzIeKam+J6ZzquI/b09l78U9myqyF/LptGwr9SE1o2LxnmtHe
+         OmnMvOQmB1Js7cYNUB/mrLo9giJ9PJ25DrcXDwFD3iLBjmy92tVlH76Kr0mCXEi3MZna
+         wxqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVX3N+cMWlgA2OIQdLnQfITS1WJ0tE/En46Cc+PQJx5pswtl9CVP71HwPcHJ/D1Iw9yDDGrsbM75PjQO84=@vger.kernel.org, AJvYcCW2gneqBi9rJ7oFH2LyCxLsNuLludpB9N9DNEjLyNIOrFWaw1dRC1k+Tz42HAExiSUbStK0dg9fqdAlMysww+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTMkAR/aax4FB3+FtE1dGDAOEivRNGDsNCEK2UWLtdX6seQlkL
+	xjxYjJJ/wQinoI4wsLjwscTcYCz2HcLZ2nNdSDjv/4o9evlO/0hy
+X-Google-Smtp-Source: AGHT+IHeW6SfEHwo+G8477dXA3JST49Dz8dCkolSifdtMUHpjF9Z5NHsIKyH0Pui7yqpFMKmwfzlwg==
+X-Received: by 2002:a17:90b:3593:b0:2d3:d299:ddd2 with SMTP id 98e67ed59e1d1-2d646b90f7cmr9819370a91.6.1724685137911;
+        Mon, 26 Aug 2024 08:12:17 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d6136fc523sm9903418a91.9.2024.08.26.08.12.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 08:12:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7fda0a60-e34e-4853-bb4b-2c29c0806754@roeck-us.net>
+Date: Mon, 26 Aug 2024 08:12:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,134 +77,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v25 01/33] xhci: add helper to stop endpoint and wait for
- completion
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Mathias Nyman
-	<mathias.nyman@linux.intel.com>
-References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
- <20240823200101.26755-2-quic_wcheng@quicinc.com>
- <9f25b900-ae1c-41af-a380-ac5e00860283@linux.intel.com>
+Subject: Re: [PATCH v1] iTCO_wdt: ignore NMI_NOW bit on register comparison
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Oleksandr Ocheretnyi <oocheret@cisco.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Jean Delvare
+ <jdelvare@suse.de>, Wolfram Sang <wsa@kernel.org>,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xe-linux-external@cisco.com
+References: <20240826075303.3964392-1-oocheret@cisco.com>
+ <20240826111811.GP1532424@black.fi.intel.com>
 Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <9f25b900-ae1c-41af-a380-ac5e00860283@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tzt44VPgerTf-ShlyNRILMJIgpSquE64
-X-Proofpoint-ORIG-GUID: tzt44VPgerTf-ShlyNRILMJIgpSquE64
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_12,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
- spamscore=0 clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408260115
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240826111811.GP1532424@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Pierre,
-
-On 8/26/2024 1:48 AM, Pierre-Louis Bossart wrote:
->
-> On 8/23/24 22:00, Wesley Cheng wrote:
->> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+On 8/26/24 04:18, Mika Westerberg wrote:
+> Hi,
+> 
+> On Mon, Aug 26, 2024 at 12:53:01AM -0700, Oleksandr Ocheretnyi wrote:
+>> Commit da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake
+>> PCH iTCO") does not ignore NMI_NOW bit on write operation to TCO1_CNT
+>> register what causes unexpected NMIs due to NMI_NOW bit inversion
+>> during regular crashkernel's workflow with following logs:
 >>
->> Expose xhci_stop_endpoint_sync() which is a synchronous variant of
->> xhci_queue_stop_endpoint().  This is useful for client drivers that are
->> using the secondary interrupters, and need to stop/clean up the current
->> session.  The stop endpoint command handler will also take care of cleaning
->> up the ring.
+>> iTCO_vendor_support: vendor-support=0
+>> iTCO_wdt iTCO_wdt: unable to reset NO_REBOOT flag, device
+>>                                              disabled by hardware/BIOS
 >>
->> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> This change clears NMI_NOW bit in the TCO1_CNT register to have no
+>> effect on NMI_NOW bit inversion what can cause NMI immediately.
+>>
+>> Fixes: da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake PCH iTCO")
+>> Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
 >> ---
->>  drivers/usb/host/xhci.c | 39 +++++++++++++++++++++++++++++++++++++++
->>  drivers/usb/host/xhci.h |  2 ++
->>  2 files changed, 41 insertions(+)
+>>   drivers/watchdog/iTCO_wdt.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
->> index 37eb37b0affa..3a051ed32907 100644
->> --- a/drivers/usb/host/xhci.c
->> +++ b/drivers/usb/host/xhci.c
->> @@ -2784,6 +2784,45 @@ static int xhci_reserve_bandwidth(struct xhci_hcd *xhci,
->>  	return -ENOMEM;
->>  }
->>  
->> +/*
->> + * Synchronous XHCI stop endpoint helper.  Issues the stop endpoint command and
->> + * waits for the command completion before returning.
->> + */
->> +int xhci_stop_endpoint_sync(struct xhci_hcd *xhci, struct xhci_virt_ep *ep, int suspend,
->> +			    gfp_t gfp_flags)
->> +{
->> +	struct xhci_command *command;
->> +	unsigned long flags;
->> +	int ret;
->> +
->> +	command = xhci_alloc_command(xhci, true, gfp_flags);
->> +	if (!command)
->> +		return -ENOMEM;
->> +
->> +	spin_lock_irqsave(&xhci->lock, flags);
->> +	ret = xhci_queue_stop_endpoint(xhci, command, ep->vdev->slot_id,
->> +				       ep->ep_index, suspend);
->> +	if (ret < 0) {
->> +		spin_unlock_irqrestore(&xhci->lock, flags);
->> +		goto out;
->> +	}
->> +
->> +	xhci_ring_cmd_db(xhci);
->> +	spin_unlock_irqrestore(&xhci->lock, flags);
->> +
->> +	wait_for_completion(command->completion);
->> +
->> +	if (command->status == COMP_COMMAND_ABORTED ||
->> +	    command->status == COMP_COMMAND_RING_STOPPED) {
->> +		xhci_warn(xhci, "Timeout while waiting for stop endpoint command\n");
-> nit-pick: is this really a timeout? In that case you would have used
-> wait_for_completion_timeout(), no?
+>> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+>> index 264857d314da..679c115ef7d3 100644
+>> --- a/drivers/watchdog/iTCO_wdt.c
+>> +++ b/drivers/watchdog/iTCO_wdt.c
+>> @@ -224,7 +224,7 @@ static int update_no_reboot_bit_cnt(void *priv, bool set)
+>>   		val |= BIT(0);
+>>   	else
+>>   		val &= ~BIT(0);
+>> -	outw(val, TCO1_CNT(p));
+>> +	outw(val & ~BIT(8), TCO1_CNT(p));
+> 
+> I suggest adding some #define for the magical number 8 so that it is
+> easier for anyone looking at this driver to figure out what it is doing.
+> 
+> Otherwise looks good to me, thanks!
+> 
 
-With respects to the xHCI command implementation, every time a command is queued to the host controller, it arms timer (xhci->cmd_timer) that is used to handle the timeout conditions.  This is the reason for not using the _timeout() variant, as we can let the xHCI command timeout handler do the cleanup and stopping of the HCD. (marking as dead)  It will also ensure that any completion events are completed as part of the timeout handler as well (xhci_handle_command_timeout() --> xhci_abort_cmd_ring())
+Not really; it appears to be hiding a change in code which is supposed to do
+something different (it is supposed to set or clear the no_reboot bit),
+with no explanation whatsoever. That warrants a comment in the code.
+Also, I would prefer
+	val = inw(TCO1_CNT(p)) & ~BIT(8);
 
-Thanks
+Guenter
 
-Wesley Cheng
+>>   	newval = inw(TCO1_CNT(p));
+>>   
+>>   	/* make sure the update is successful */
+>> -- 
+>> 2.39.3
 
->> +		ret = -ETIME;
->> +	}
->> +out:
->> +	xhci_free_command(xhci, command);
->> +
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(xhci_stop_endpoint_sync);
->>  
->>  /* Issue a configure endpoint command or evaluate context command
->>   * and wait for it to finish.
->> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
->> index 30415158ed3c..1c6126ed55b0 100644
->> --- a/drivers/usb/host/xhci.h
->> +++ b/drivers/usb/host/xhci.h
->> @@ -1914,6 +1914,8 @@ void xhci_ring_doorbell_for_active_rings(struct xhci_hcd *xhci,
->>  void xhci_cleanup_command_queue(struct xhci_hcd *xhci);
->>  void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring);
->>  unsigned int count_trbs(u64 addr, u64 len);
->> +int xhci_stop_endpoint_sync(struct xhci_hcd *xhci, struct xhci_virt_ep *ep,
->> +			    int suspend, gfp_t gfp_flags);
->>  
->>  /* xHCI roothub code */
->>  void xhci_set_link_state(struct xhci_hcd *xhci, struct xhci_port *port,
 
