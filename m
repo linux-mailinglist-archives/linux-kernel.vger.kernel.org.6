@@ -1,178 +1,245 @@
-Return-Path: <linux-kernel+bounces-301790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252A495F59C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5DC95F59F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75DA5B2194E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F04D1F22A7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51E194122;
-	Mon, 26 Aug 2024 15:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014D01946B5;
+	Mon, 26 Aug 2024 15:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="roUybWse"
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TAFJaw25"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC5A5B69E
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724687626; cv=none; b=RWK1055WNRrGx/YeOUWy8S/ERW90vAkrYG/C7B6mUngMKvqT9Hs8na70gMocAlw8aKKc93TxAmGoqpnUbDGvFElKjy9OwqeDYJABe8JLfmp+ltCNX2nuboiZPKpLFbBMMG9jS6rD0EPIJEvG+aDUAKo8h5i+ZSBZXAk8uoZ7f+w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724687626; c=relaxed/simple;
-	bh=vzLXQUg3IQH3OK+gN0nDPO2osOJfXKx1BbebPO+B4Ec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UuGO+VecZTvHwrR1OJ56nXSyRmRciMUL0Z3HN7W2x8PFOWzI7JPN5yS8uhK09x4HntaVN0PV3rFOHBNMb9CvWXtpXaSZvOvie3FjLMP8I1FuBAjq9IIbFq1RLTmEEeVz5tEG6WByQ7jSt+IWRXoQEj+g/dU8WosF4xgzlVxi4hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=roUybWse; arc=none smtp.client-ip=66.163.189.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724687616; bh=fkqRBn+f/Mb4/1jgbdencFgn7M2XbTO9vuNjNuGD1hI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=roUybWsengKeNiB+xNgHcU7Yij/guqp4LwwaF1clV2aHLfK5wzy3dOHXh75DSrNkMSgCHi3br2iNklGxmAq8nhEtKa09jYGiHLABQu4fTvvh3N9J9DhZeR8uU7FjMWC2B8+E49B0Pji8rnVFS3ecKRCHQQREd3Fxm3ooHdKb/BIWOHT/Scq0Q/hceIaCtTmMu4Ez9JjxKiyLiT56uoGVIycTXsjoa75lAieLgHTSGfX+3WUeeRuVijsSI9t2cfbt4FbtHse53PsMCKLd8iz1ZpCrCtXIzYRYn3l8xCzEPUuECYX3LLOB8Zy+TV+Vi6XZBNEq9qXmdiVSTi6F7Zkw3g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724687616; bh=V9S7oELKq+2UlUFfbw0VYP03P1nSBrZG+jVqzeqFA4q=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rRK/2yDSGosm0hTKfP/vrDOcar952YzOrQh2ljhk6SENQdpC0JZ3v4WuwfQYUmd/aDwJDc2VQsesCWkR9g+IqD2Mq4apTxI0Y+3OV/NFoatZRxYCCPuGXe9Mo+RtEOTblY/Dt7FjP3RGH5DoNA97L9vrXd9h5SPP/s6Xlz8UbSBtrpbc+qjbPyCrr5C9VZPe5lsqPLOavZVRQlR74iQAfLrpl4Ppke/DZIt7Nmj+3mKTL3cXbaGJWWbOK/ZnN3zZCXIstlgR7p+NzdCcyB43sRjA1ievd9Vfow8GYPmrzT7ZrFkPLJXN61t5/OfEvMLwoRWD4CDHDiuT1CbQB9e4JQ==
-X-YMail-OSG: jUT8g8AVM1kggEYmeFvfk.lcQIvtDPi3pe.KL8lqgSP2MNlI4nG3sjEaJvsUC6Q
- i3D7iBQAP3rb.klT_ziB0PdOrjMZkdXdDtNIrRXocMXU2B1HuMyUHiP7_fyrE1hSLerprdpXWmJ_
- T1Ih3oFo6PlZAhXYykFcax.s4u.cVENpPBh61Uj8Y3P_J.Og3Fa09EwWHP5gDAYSxojFK7f5.Uzr
- NIuP3Wff41nh2E0jtvevmFlbwpW0Wj5Uq71.9TQhXv.rJXyzjCnOEpFJKiUMNvH.CVTLzryT3NRl
- Tqgn.UC_WO.U2D7tWQyHheFFfKdiAM1INBdcbtDRsioULCf.w5a7qiVYDXXImxAoQ6YlAlpHs8CE
- Dw1HqXsWq3h5a1.bEtMeqwBpU07OBSUNTrSnZp_JznVXCL8P5FEBiH0F8i_mxObYVIFe1oh4EQNj
- nQEi1oH1GLCiCerP38zt1L0kIpOh_cjKw544ATzlcDRQ1jzjgqjEZtbUq9Xjv2w13KiZCkGUq3yE
- qSy01LOD2DQD1Hs3pBNUpP5_dO2a0X0vUOvksFFsantkxZI4IkvnwcfnKgq4TXWThETkQWXVT451
- 7pkZj4hvu3J..jp6z7wTnypW.VF9_62HIyfPTHjiQmQMvDcPhG18jT6k58mVQRK7U07hWHWbGS_4
- SPvf1hpBlimLHZoMh0LA7ZnBBukviLBfFwdrmhsV968Fl75NvclUbtkclQruRBDQKSteGMjiJa0t
- dSpkpKbBKPrYz_HyeFvckD9Wdf0DLp0vEGdznIQXnDoSpfkaslELzq3ymJKZwUQVZlPTl23ufqyw
- hlMRXFt.eoBwmg1uQgx_lbtA69rCK6V17F9x3YwWwLJlsVumHAeXO1361S0BXEbQrxROm3.OOHD6
- QV3GJVDle4G.uu6dQl9nLhhml2jNY2umWaLHHrRFr.PXsqyBo3MjiH5A_ZssdQ.TVsjoBUvSbnm1
- jYAFuG6hppR2V3fufhusGhz.CdpPMl91tj5AMpB8YAvju88GVNqfKxBv2kYLGM_mspQeMilePZqj
- _CtjPu3WYYNCl1vleS2Utut5FwLFdKPRBi7qqZclQbccUI.Vm8N41DlS.QJlidSoWMcarqiWCfAx
- fMvUIrnVG0DyPkJb1jD2fZBjPsme3jezSjCakoXTnvgPS4DrMcZNeYtaPsG.KNN.IyT0J9DzGHo1
- nltoyPVbcnnWC3fJnWF3Fxt3RYNmpcUWl48RskRsPDic.DWng4DR55QRpjtxZ9KD7OX4Uee2Xy0a
- nxx8YFQs6uU_GIxr.J6wbeqFqh0K8p11Ag3lZHYQ3WyyizNcgeAslt_oR35PKFwVGt3xqddSLppR
- 3eU7AgH5chW1Olc7i5rLpNuK_17tY2cMA4gWwgb5XxRPNqEuqkHPVULj8d7ldIUaaJeDMMqiOYG6
- 5b2A4VQDm6SQxxgKkGHcWn2p4VXvuEd0ehzguWpDmV_zSpO_z6.DzewR3SviRSn2UtTQc1iB.IYI
- Esx6nEmstGjs18L.p80u6ki5r53kDl1zDbbhgRT8BA.kel2yDhPDNmYi_0jvVJzQpxdR5OB6G.EY
- 3_pkcqIciqpFgEYGxH9LxCJYzoEEsean7eV93F1PI2nKDXuFhNYetMytNYr8p89E4fHd2Jg.e3yp
- u5wpL7uNVIyNtUJHOqDTTt5nnL5DQTBW.NycX7ZNQTv65tsCq2nzsAKtTTWaXwGX01oB4SpXEqoU
- EAl2qtoZf6EQf.mPTMpr3o_vlkinu040QEITwC8IF.xWY5c5Tikohpuujl3Mz45QSlRAHw8BaPJJ
- CEskodOtPwb7Fte3hsUTEpt0ykQBOvkvxjHpU5f24yCnevfY_oV48tXFd2lwEs_VsCE8.yekm1JS
- qNSNML.7WUIdMpxL10qbTbdcGJogV7A5CUEGfG8kWEpNzTFb4hVjCFi6W56iyHDeP5Noc8xPB53Y
- fytX7WPHsTibeO8oiO6Qmdxqme4tgAelnmpM0oJbCpLvefp8lTA8kSObeemd9ghqGVvIVWsqO80T
- ty7d8Vz8iPz9vc1h.gUBS7hBIWsoJFL7VusywfjqvgKiJh279FzzhX82yD0HkuK549ubnbcrvt9n
- XLhH.lRyFqWegDl2qTpvqdIe6zP_WtLr0azeJ1fiSQp9KOZS.BNy0jzc1wwQHccWHDk_QCOv09Lt
- 4Fg5VhRumJSkrmUFZ3NsS4tgTh3jQkpaBJ0EMynlg0Z9VcP3V3MkGbhD1Xx5VSf2tPg695Ha8BVk
- zYwBvxDRg22IlY846.0mEZV8AGKuftkjD6nGpBtrdcyAbYBHniSXJi8656kneFSvgSkCZMvVJLKv
- hIvRHiVpQqeN1X5pIT7pf.Vgqku4D7m.Hq25FyfQ-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: dbea9ff7-c467-4336-af98-49f8a7d8c4f1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Aug 2024 15:53:36 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c5e689e62c84dd1f2aa7c31397f92338;
-          Mon, 26 Aug 2024 15:53:34 +0000 (UTC)
-Message-ID: <4403f4ce-21eb-47a1-93f1-c663a96de9bc@schaufler-ca.com>
-Date: Mon, 26 Aug 2024 08:53:31 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FAE145B1D;
+	Mon, 26 Aug 2024 15:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724687639; cv=fail; b=QpVwd+5xRnQDZgOXSVOoa0LTkE0pNkt86dzbsaO4P3HFBBpJvL74ZFB2i68A1WfNAJik01mxxORinhkyvtGciYCHhZpRUasYEtsNjptF0Nu6It1i+MD0nmSI3HSc2Dvfwvj4/xNTeqvegWg2E7zahLDy8VYbtDlZDEIo5T7h5nE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724687639; c=relaxed/simple;
+	bh=FdFn0bys+BjcAl0p272kphb/gXWPwVCP9oKJGjkT6n8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lnpc2IUalW5LZVKq/mAytcHkTh1qVXuMEQW0GQ696DyIRfNlTOtMuxCwq/SBLoUUvnyRtKCXkoIdikE1aLGq5nCclwRDy1onyqhrW37VvYxVBtyxL/l2N8Us4DlWPZVLynOAtv8QiHWiu25txMW9LH3fA1wpnX/bKq0R9wPAdjw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TAFJaw25; arc=fail smtp.client-ip=40.107.223.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HMsROeDB+vouVYVRdZQ9Ua0I5QVjjst/PucItOxmmQaqJmTRzEpZU/EsSoYTXaUl9UOTQjdI2d+rzkQLJv6BBztHzGQ974BgN10fB9BDj6rXAB/EDPHnCAPNPFzcHjP5WIdepYFRZG4uCcdOVZZu72YSm/OuJzbMhU1TQeAfXGeLn9l6yl+I4C1eylpVaGj/DW6Z8Vp0IpjVud4Sw1iMNMT1tV8vwrlGrYDrLIW5T+Aue4j1MT9FZ+7W/hbQ4h1BnExe0lG4e17Md/M8O784pNR6N1i48qWyxFVMMT1+ZI1OEI31Q5Dv8csaKQciLoq8qQvtnZ5l1HK/i07j1QBJuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YtYigxZYCTWOeVSVD2jPZOAHnw05tYsFTxZpAdwO9Tc=;
+ b=Q62QpTBXY3poGFKt1nrIXAfNdiP3dEbLOxQEJdlI1lGNpbJu3hHjElzNIH9Y0YJ3enYjPORhVwc+4EJ4lpHacLyUvnedlibL2aUn6rh182T6U3jx5HIxle5eAHGf4Qnbj39mCCrACxp0GMRzO+v0uAeBriH92sT8E5QthI3+phSiA5h4+kKLcfPipwo97SVQCFe8kkca33xS6gFe7B0/2zz+ESK9xlyUXl6ueFi2NYDud44vJIaPk+WydPkny/vgkftJ1slqapjs76MeMOlKdvCtNmabufnQBcqJouLkBGq/aZneXYzmI9NXpVsxdZk3L2zRu36NvI+mhgspTq/4Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YtYigxZYCTWOeVSVD2jPZOAHnw05tYsFTxZpAdwO9Tc=;
+ b=TAFJaw25JZDntK7T+Awr5juvsiMipGq4BE+KLd96ja8QuzfwmeY9UX6ogSIvobvNY4bZhqf7dFmac4K0kI0GziuHetnY1iX6JiCuoXa7GJ8D39eE9WF9fpBrVzcdszOD+6grndjJBiisxsvJSPLri+GZAH639znNtiVPyxHqrjrs0VeN3SRxuOznuq/etvVf+NPR7imHrzXBD4b1HFH8AXwyx8FVnPVoAvALZxzABPcDjWbJmm8o4tG/lrxssOfOVye1bC5vswhcTE5rrRbTPsxYPIDoUVbzHKhn1r/0PpKQCdSOAX9zZ/9BCWjjUuzD5w/GztyPazA4f5WHcYUqnQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
+ by IA1PR12MB8190.namprd12.prod.outlook.com (2603:10b6:208:3f2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 26 Aug
+ 2024 15:53:53 +0000
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
+ 15:53:53 +0000
+Message-ID: <2a1a4dfb-aef1-47c1-81ce-b29ed302c923@nvidia.com>
+Date: Mon, 26 Aug 2024 17:53:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Why is set_config not supported in mlx5_vnet?
+To: Carlos Bilbao <cbilbao@digitalocean.com>, eli@mellanox.com,
+ mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com
+Cc: virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, eperezma@redhat.com,
+ sashal@kernel.org, yuehaibing@huawei.com, steven.sistare@oracle.com
+References: <33feec1a-2c5d-46eb-8d66-baa802130d7f@digitalocean.com>
+ <afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com>
+ <8a15a46a-2744-4474-8add-7f6fb35552b3@digitalocean.com>
+Content-Language: en-US
+From: Dragos Tatulea <dtatulea@nvidia.com>
+In-Reply-To: <8a15a46a-2744-4474-8add-7f6fb35552b3@digitalocean.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0275.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e6::17) To CY8PR12MB8297.namprd12.prod.outlook.com
+ (2603:10b6:930:79::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/14] Add primary TSEM implementation file.
-To: Greg Wettstein <greg@enjellic.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jmorris@namei.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20240826103728.3378-1-greg@enjellic.com>
- <20240826103728.3378-5-greg@enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240826103728.3378-5-greg@enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|IA1PR12MB8190:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3389f60-d84a-4fa5-8b5b-08dcc5e74927
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WWFheTU5dkR0Nk91UEJYNXRJbDdFTnYyTzJCZmppZXBsN1BmZUhXSUo4WkZN?=
+ =?utf-8?B?V0VVL1c5K1BUd2FGbnYrRDhycG9QbmN2SzZHOUN1alFsM095Qzlxd09DUHBx?=
+ =?utf-8?B?dktoQmJPNGplMzJQZTBjNkl6OHVwTXc3S1AraVFFc3p6c0cwQ1NJRVNONzhx?=
+ =?utf-8?B?dHMrSjc2NlRsRnVJd1hJdWs4eTBydDMweHM5Y0hNK0RVVlAwUWs2bzFpbHMz?=
+ =?utf-8?B?bTlBTnhCOHdBWXpKKzllYk55VFpObk1IU2w4a2tyT0w5YUhwaGpCNUk4RVk2?=
+ =?utf-8?B?UVo5N3dTZUhmSFhNRVNXQ3Z1Mkl5TDQ3eitTZEo1V1RtQ0Q3OVRpaEhoblV1?=
+ =?utf-8?B?Q24zUzFHbWwyakVBV1U3aDJMcmVsNGVIVDVwMmY3QndrQzNpUTVkK0JJMjY5?=
+ =?utf-8?B?UWlEWk5mRE8wblB3azZKN2N4VkptWk1leHlOOWhEcXFHczk1aTZmcXFidldl?=
+ =?utf-8?B?SlNuanl1YnIzd0MrRWxBZThNeWthd0cyVW4rV1pZR1hWOXZpOE5kcTVrcVRm?=
+ =?utf-8?B?TzVycWorelJHOEszN3pybGl0QTl6Y2lrQkVnODdxdFMxYlRoWEJYZEFOZjRp?=
+ =?utf-8?B?QkVJY2EwS0VTblJ1NHVRMERWSHRIZXJFOWxqTFB3aGVDU1BDbXpPZmJCbWJU?=
+ =?utf-8?B?YXd3ajRaaVkvVDhEUi9kZFcwMng3clV4K0V4emJCTGJ0NWNhRStETmh4SjVH?=
+ =?utf-8?B?UWtaMkgzRWNQVjl1TTlUZlhwWWpDQ3hpQlNvR1NHcDN0aGdVVW4rY0xnbk85?=
+ =?utf-8?B?d2NTVitOemVua09PY255ZlhTQUpVY2x6b2ZSYkFCclBENHRtaU9Dd09YZktz?=
+ =?utf-8?B?MjJXTEIrVVJRU0dZSmRUampjcFFjYmtpVEdacEFyV3FyeW0raFgxZUU2Q2lH?=
+ =?utf-8?B?b011K2ZjbTJjMEFIOTBHRjNnOUtESjhNVGZmOXlEY2N0RW00am5mNWtzRGd3?=
+ =?utf-8?B?d3ltWFF3WUpTZHhTK2hNdXRCdUM3WFpONUpEUUltczRvSXM1Z3FvV0gxRm8r?=
+ =?utf-8?B?dmh5TkJabEtaRDcyZmtIakFac3htclFyNzFpZG85c1RLY2NUVXE3U3RhZllW?=
+ =?utf-8?B?ZmdUWkY5VDB0N1hQWm1sYjR3VXBReWVsYUdjd215TGRVUzd4RlBTbkdWckVl?=
+ =?utf-8?B?QzBiQ2hDa1Y1cFQwd1FZK1VySEdRVVM0cFpFN3RxV2wrR0xHbm9zaExWQnZ4?=
+ =?utf-8?B?YzlzTFFKNy9RNFA1cWpCQnlaVnU0eng3RjVRYklLclNLdVgrdkYxNXZmbXZL?=
+ =?utf-8?B?VkJYWUxBb1V3V0l4K1cyeXBIc2N0KzIxWnZFWUN6MXVlQ21uNHFCWnplN2xK?=
+ =?utf-8?B?cTJUYmRwOHJMRVAranhnOGVNWGVTVkRtL01qdy9yQ3FVMHJCWHRWdDg4Rnln?=
+ =?utf-8?B?YXdONUlHN1ZpSFRLNXFMRkU1RWk2ZGNvRUNlS21jbktpSXI5blh5L1RYS2Z5?=
+ =?utf-8?B?VEo4b2dGYXBCU24rYk8rb3lNU3VkeFhmalZnc1lBQ3VuSkZXUGdMQWZrNzR3?=
+ =?utf-8?B?S2w5MmR4SHJDWnUrMDNmVVVJMjZUY2w2TERJNE9zZUJlYitKUllaSXpJWit4?=
+ =?utf-8?B?SE9FTTgrN0VzRU5kZmFZTTdNUWlzYW90cllFSkVsakpVOENPN3V1V0s5THlh?=
+ =?utf-8?B?K1FaTktnanc5a1FrVUpndlpEbWtTZlNZYXFwTnh3a2pjbHhvTFhoZDF4OENK?=
+ =?utf-8?B?Z0hLdHZuVS9vaTM4ZFYvMFdKcXZHbXdsNWpkM1czYXlmY05VM1lQRzVjTVBk?=
+ =?utf-8?B?Z0tybGt5eFBSeG5sRWNnbXlHNG9oYjRQbE44enJMdlZwaEc1aWNVc0d2aWhE?=
+ =?utf-8?B?bXJmRTB5SElxSWFrcWQydz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?akF3aW1tUHIyWXhONEpyMGFjVE1zbDAya3pWbFYvVWIxSlo3eHZYWDdsVUJ2?=
+ =?utf-8?B?UklyUnk0NDc0NWhNdWFGak8yOERSeEpvSEJtSTUrQlJySmk4VWlURFJLYzRk?=
+ =?utf-8?B?Mmp6QzdXajRrbnZkZTVNanVnSEhQa2hyOEsvMTUyWFdubHB5dnFINkwwbndH?=
+ =?utf-8?B?MWltOWpBYys0QmpqQ3luMzBlb3h3NE8wU0VCUWFNaVA4dFMrSFpxU3dhekRP?=
+ =?utf-8?B?cVN0QS9CM095dXVBd3pqc2NZZjduMmZQRHduR3ZORFZyb2dPRjc1cm1BTmkr?=
+ =?utf-8?B?UkFvbXhyUXFzNXNTUlhsMVlrd1lsQVVGNENCMGJXRlhhUTkycHRjdVJsZlJK?=
+ =?utf-8?B?d2s5TW5JSkFOa3JDM3BkRms2T09xekNkU01kOXBVdzZVTXY1VWx6L3V0TDVG?=
+ =?utf-8?B?dFRKRTNQMnIwczJFUURYK051ZlpwMHcxTEo0WW14SkhsczBpYVJFUVNqQWF4?=
+ =?utf-8?B?anNOWWdldU50SnBVdUEwUHNpN2pHNDd3RzQ5TTJ1dkxuSVJWc3NnbW9pOUdo?=
+ =?utf-8?B?S3RIVTBjd2hvbnUxRkM5a2tlZEE1cHplbjBSRm5OOWVDUlc3Q0lhMHkzUGN6?=
+ =?utf-8?B?bnFFSUtWcGpYV0tmTXZZVFE4L2xVQUpxYW85am9pNlRPaTFramE0NWpZNHN5?=
+ =?utf-8?B?TDMxUkNkeWZkcFBCSWZZaC9XYWc4ZktnOXZBb08wR0MyK2tWV1hFN3FCeEt0?=
+ =?utf-8?B?bXRBRkJNZ1A0dzBPT3Y2NmwreDVRajYyUXZkQ0NleTRQellET21aSlZnU1Vx?=
+ =?utf-8?B?UUtLeEFwbGdrV1NYa204OFVoYkk3UXlUcnNhUlY3MU96dmt5bnJEcHNlSXlU?=
+ =?utf-8?B?bUZNMlpwbmkrTUx5QXltbFlQenpraXlUdDVKT2hsd1A2aUhqU21xSHNBMU4y?=
+ =?utf-8?B?YkdreHBzRmwyNyt4alpvZEJsdFBUU3V0SXhOZTBhVXdUZGxDdGxWdEtURWJF?=
+ =?utf-8?B?NUdmSjIxNUVYQ2N1M0huTkNGdWt5czl0YUVuUHp3YytodTZGQjQ5Q0ZtNmxS?=
+ =?utf-8?B?Tkw5VDBpeE5OOXd1aXhsazhQSGJ4UE9lSzJ4RDNsUGltMTFrYUdBQTlXRHVG?=
+ =?utf-8?B?bjlwUlZiRHVPQWF4TDdnNjBlamMzelFMbDh0alI1MVBOTUhFcU80ZFVMVVoz?=
+ =?utf-8?B?dEVZMmRZZXcrbSt5cnFFdDZGOHBCQ2MyVllDYlZvQlZLUEUvaDhBNERpY1Z0?=
+ =?utf-8?B?ZGpvQ010ZTViVkNneFRUVDd3bk82bkpPZU1XNktPaVJyeW1rMHd3b0twQzQr?=
+ =?utf-8?B?ekV6SFJBYjVPaytDS1FCVUYzMGFaQXFqSXE5NEozYThHZWtlcHJwS1pybDFE?=
+ =?utf-8?B?eDM4STJYMWxnRHlVaTNYSDRHbWRwQXQ2bVJ5WUd2ZjZ3MjNZQyttNG01TlJl?=
+ =?utf-8?B?NEF1djdzcFZDcHdBTzFCY0lMRmNXY0F0YUJLdXlWOEdDeHlvWGVJWnJjNktj?=
+ =?utf-8?B?ZGJ1ZXVqSkRtSzFMWWRGYll4RWRiSFFWaGREZzVObGc0THZ1eFE3S2NkckFp?=
+ =?utf-8?B?cm9wQlZMQkdibWFhZTAvVWRNYkVBaGp0Z0hmUk9IcUw1Z2drUXFrSk9xU2Fq?=
+ =?utf-8?B?Tjc4WWpHbENqVi9YbW1COXNzU1NPTW9CdmZLYmZCeUVybXR5RmdQbm84anpK?=
+ =?utf-8?B?RlRNc2ZSMm9ZZXo1VHBTck91OExZbjRtVjZZYW5QeWxrUzVJZnIvb1VGdEw1?=
+ =?utf-8?B?ZVZCSmlrQ1VLdEVRZGhzUndVQ2lESzVpRWlUZGc4VW53d3JJd3JyRnQ4bmx6?=
+ =?utf-8?B?ZzFUTmJ6cDRzaytlT3BERzhFcjhlK1kxNkQ3Zm02WE5vdW5RUFZPcGFIMHV4?=
+ =?utf-8?B?bCsxME51clJka1BGQVFNZC9ON3dVVUo4TXVuL29FaGlJQmpCV3VsTHNxQlF0?=
+ =?utf-8?B?SWxERDlBWGRaQnNyeUphT25GZDIwS2F2OTVxeDlBWFQ1ZkN0aGxoOXYxeUMr?=
+ =?utf-8?B?aWc1b2l5ZWZzOUlhUmtVdzA2TFVyY3psaS9BL1NtSW1PVlFValdMQXJNcHNO?=
+ =?utf-8?B?bWtWbWNBbzE0ZDdGeXFvRjVGMllFcG5Nb2o4cDkwR1hiZERnd0pvcHkzT0Uz?=
+ =?utf-8?B?VFVtT3VFQzA1UXhGZ2tvc3phbjVHZ1RlOHhVYVRpSWNKcHBsLzdoSnVwT0Y1?=
+ =?utf-8?Q?W7Py12gMG5c2xsKOJe/ZZAMas?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3389f60-d84a-4fa5-8b5b-08dcc5e74927
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 15:53:53.7389
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g5wgn+qvxUe3ut4tl4AiPo8hjtPYJ2uroeMLhVBO/5kpvvcjN36dQONeKpd4tu8LbRb825KgGIhHY6gpuaX/3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8190
 
-On 8/26/2024 3:37 AM, Greg Wettstein wrote:
-> The tsem.c file is the 'master' file in the TSEM implementation. It is
-> responsible for initializing the LSM and providing the implementation of the
-> security event handlers.
-> ---
->  security/tsem/tsem.c | 2446 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 2446 insertions(+)
->  create mode 100644 security/tsem/tsem.c
+
+
+On 26.08.24 16:26, Carlos Bilbao wrote:
+> Hello Dragos,
+> 
+> On 8/26/24 4:06 AM, Dragos Tatulea wrote:
+>>
+>> On 23.08.24 18:54, Carlos Bilbao wrote:
+>>> Hello,
+>>>
+>>> I'm debugging my vDPA setup, and when using ioctl to retrieve the
+>>> configuration, I noticed that it's running in half duplex mode:
+>>>
+>>> Configuration data (24 bytes):
+>>>   MAC address: (Mac address)
+>>>   Status: 0x0001
+>>>   Max virtqueue pairs: 8
+>>>   MTU: 1500
+>>>   Speed: 0 Mb
+>>>   Duplex: Half Duplex
+>>>   RSS max key size: 0
+>>>   RSS max indirection table length: 0
+>>>   Supported hash types: 0x00000000
+>>>
+>>> I believe this might be contributing to the underperformance of vDPA.
+>> mlx5_vdpa vDPA devicess currently do not support the VIRTIO_NET_F_SPEED_DUPLEX
+>> feature which reports speed and duplex. You can check the state on the
+>> PF.
+> 
+> 
+> According to ethtool, all my devices are running at full duplex. I assume I
+> can disregard this configuration output from the module then.
+> 
+Yep.
+
+> 
+>>
+>>> While looking into how to change this option for Mellanox, I read the following
+>>> kernel code in mlx5_vnet.c:
+>>>
+>>> static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+>>>                  unsigned int len)
+>>> {
+>>>     /* not supported */
+>>> }
+>>>
+>>> I was wondering why this is the case.
+>> TBH, I don't know why it was not added. But in general, the control VQ is the
+>> better way as it's dynamic.
+>>
+>>> Is there another way for me to change
+>>> these configuration settings?
+>>>
+>> The configuration is done using control VQ for most things (MTU, MAC, VQs,
+>> etc). Make sure that you have the CTRL_VQ feature set (should be on by
+>> default). It should appear in `vdpa mgmtdev show` and `vdpa dev config
+>> show`.
+> 
+> 
+> I see that CTRL_VQ is indeed enabled. Is there any documentation on how to
+> use the control VQ to get/set vDPA configuration values?
+> 
 >
-> diff --git a/security/tsem/tsem.c b/security/tsem/tsem.c
-> new file mode 100644
-> index 000000000000..76d65b3e62b3
-> --- /dev/null
-> +++ b/security/tsem/tsem.c
-> @@ -0,0 +1,2446 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/*
-> + * Copyright (C) 2024 Enjellic Systems Development, LLC
-> + * Author: Dr. Greg Wettstein <greg@enjellic.com>
-> + *
-> + * This file is the primary implementation file for the tsem LSM.
-> + *
-> + * It implements initialization and setup functions that interpret
-> + * kernel command-line arguments and prepares TSEM for operation.
-> + *
-> + * In addition it contains all of the TSEM specific security event
-> + * handlers that are responsible for handling the LSM events that TSEM
-> + * models.
-> + *
-> + * Each TSEM event handler calls the tsem_allocate_event() function to
-> + * allocate a structure that will be used to describe the event.  The
-> + * CELL union of this structure contains various structures that are
-> + * used to hold these parameters.
-> + *
-> + * Since the event characterization parameters need to be retained for
-> + * the lifetime of the tsem_event structure that is allocated.  In the
-> + * case of internally modeled namespaces this lifespan is the lifetime
-> + * of the security modeling namespace.  In the case of externally
-> + * modeled namespaces, the lifespan is until the security event
-> + * description is exported to an external trust orchestrator.
-> + *
-> + * In order to support this model, the event description structures
-> + * are typically composed of a union over 'in' and 'out' structures.
-> + * The 'in' structures are used to hold arguments to the event handler
-> + * that may only be relevant for the duration of the call.  These
-> + * values are translated into members of the 'out' structure that
-> + * retain the values until the end of the lifetime of the tsem_event
-> + * structure.
-> + *
-> + * Each TSEM event handler is responsible for allocating a tsem_event
-> + * structure and populating the appropriate CELL structure with the
-> + * input characteristics of the event.  The dispatch_event() function
-> + * is called to handle the modeling of the event.  This function
-> + * returns the permission value that is returned as the result of the
-> + * LSM event handler.
-> + *
-> + * The dispatch_event() calls the tsem_event_init() function that is
-> + * responsible for translating the input parameters into values that
-> + * will be retained for the lifetime of the security event
-> + * description.  The populated event description is then dispatched to
-> + * either the tsem_model_event() or the tsem_export_event() for
-> + * modeling by either the internal TMA or by a TMA associated with an
-> + * external trust orchestrator.
-> + */
-> +
-> + ...
-> +
-> +static int tsem_file_open(struct file *file)
-> +{
-> +	struct inode *inode = file_inode(file);
-> +	struct tsem_event *ep;
-> +
-> +	if (static_branch_unlikely(&tsem_not_ready))
-> +		return 0;
-> +	if (bypass_event(TSEM_FILE_OPEN))
-> +		return 0;
-> +	if (unlikely(tsem_inode(inode)->status == TSEM_INODE_CONTROL_PLANE)) {
-> +		if (capable(CAP_MAC_ADMIN))
+You are most likely using it already through through qemu. You can check
+if the CTR_VQ feature also shows up in the output of `vdpa dev config show`.
 
-Don't you mean CAP_MAC_OVERRIDE? CAP_MAC_ADMIN is for changes to the security
-state of the system, where CAP_MAC_OVERRIDE is for access control decision
-exceptions. Here (and elsewhere) you use the former in access checks.
+What values are you trying to configure btw?
 
+Thanks,
+Dragos
 
