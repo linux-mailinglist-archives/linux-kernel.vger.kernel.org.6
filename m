@@ -1,267 +1,250 @@
-Return-Path: <linux-kernel+bounces-300701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1317C95E758
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:35:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F8295E72D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5954C2812B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1362819B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC75339AB;
-	Mon, 26 Aug 2024 03:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BC82E400;
+	Mon, 26 Aug 2024 03:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="puHgiMUW";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="qqP8CdnG"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PW4Z4JtH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A756FB0;
-	Mon, 26 Aug 2024 03:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724643333; cv=fail; b=kKpjgWY/5LKT+SwwOGlJZNtqfDef49Zq4EsDb9wWff+ImlB1ylV2Up4bbeRdlIWKH7kIi6WDNw6pWEJQjUv9RmdtTepF9UqF1GIXNHXnZfvSvNA0YRF41xWB0eG9w97pj+RJ4EkZr31tBB/p22IxaF27bJN6GBX/c/iuV2qDXXU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724643333; c=relaxed/simple;
-	bh=qczi27yaz93LmEBa4oizwOm0M+fU8h7V7slNq4hDlTE=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rNwDeNtouLpOCn4flj7skXbKvsg6fJHuolG14xCWQrlFB1oVcXrL1eWX4i6maY+9iVvrXeXkMBqPGi4+G1BxhCEaQXNSTZsr4EhBMniWbHjiImNSrypg60BAMqMEbK43iOkZIC7EYq4gZ7mrqFnjSZMmMy5NlBH2n6qkHlpu28c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=puHgiMUW; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=qqP8CdnG; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127837.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47PEiStX028817;
-	Sun, 25 Aug 2024 20:04:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=qczi27yaz93LmEBa4oizwOm0M+fU8h7V7slNq4hDl
-	TE=; b=puHgiMUWqDSX9sD4pf5+vCLlGVXyz0TSj0D9KMRAWHJfUzxPmYSezbZl9
-	T4s89lFo/mZUAa286wHRPBR41qf6RVLGJw9XP5/LvqzL3etQ6ie1By9DnPLzfW6K
-	OIxHW1S24PTHtYTNlrDJOcy7nrA7QZUiEQbsrVU3rFuw4EqPKwaPJv2mFkrFG16T
-	qtE/jz4GbL5cOF+AdSKXm5mDvECkjQHP+zaUCGY8UphOrEqjobpaq6sbD/fVN+cM
-	1DSSs7e3DwVGkQC0Tv6/JTbsrmmgUkyjfBckAph7oNX1g7ALLeQTBZKgeFrs9yO5
-	HVbi6c4iZBmcPbQuWhMR7NvR/H9lw==
-Received: from bn8pr05cu002.outbound.protection.outlook.com (mail-eastus2azlp17011026.outbound.protection.outlook.com [40.93.12.26])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 417bea2bn7-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FB618C36;
+	Mon, 26 Aug 2024 03:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724641502; cv=none; b=VW/bGPTHiZdQmqxZy/TQNTKHjUQGLzKqGM0Dh+i3hyBY3T+XWwxhRzkKxpdxbVlhsAoYh4s6geUP1qsAcoW5dpLxjcIl/JAVEgjs8lv5w3PN0ar1DCO6BLTHhVnhR6S3QAyTXx2Ib2QMPm+ghpwk879tdHhy1oDCPh7jKkdVjpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724641502; c=relaxed/simple;
+	bh=vNScu6jJTCQXpVIQSsaj1iqFQ9TuTkIvMclsz22HBUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qdI0E2e2jsFlHYAuO+3hjivG75mUGQlq0XLyQX8ZT45TRQ1VOg5Rpdz9mvTm30a1mYFLo63kPsaAh+WZhGooqc8tE/yOFORZZrLxencgPC/HyoUyiJJU/e5US7Ux5LLMO+fqUMrKOPHb1zn+lmNjtisPURINZHt8mvZXsErIo1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PW4Z4JtH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47PNdsPH027007;
+	Mon, 26 Aug 2024 03:04:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aizQnuz/qzViwPkiNWxfqvDhyuY/B2cAggz0wcFedkU=; b=PW4Z4JtHyi891lXn
+	Cd1oWAjES0EpLhKS32XYlAxOPxForjC8/VUrVuDydKde/XR3Q7RkDRJbBVq6g6ud
+	eaJUbghVvuxt2+JvNFZ0qf9xvVbwHFttTJt8J+uyScwR3iAuJMuW6faUtK9P904H
+	JXCAefViEPhqNezUpRQPX5zKTwDBU1jJ7yDmdu7eVDbSZEpdVLhmTt/rlsc0t9Cv
+	04G5NBS7ecxevv3t6sRv797ZTq8yXOuvYN65wiZ6qCkWFNkiZlXUtXFBhlE7ag1v
+	Zv5YHB0uNyySWrVemde1OcEnkXQPJ5Zm8Kje7/nGxNtWlTPDtwSls0PW8F11QT7J
+	DvhQQg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41796kt9sg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 25 Aug 2024 20:04:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JDcItZHCf+fxFCooUxSrn/89Iz3VRiaTp2C+KwpCWAcu2Hx14lPWTKU1anfidZcKRK2XxbZaxZ9m2IkznZOUp9jpD4Pk/l3aT0tZ55nI+ddnJ6xG1wJ+9c8CrrirVmlTsAv5kgzPKmYejTmOxkbORaWpaFhDsZbZ6+ZSvfbO5nQi82qqQNXXYH6AUn6SuFzAY0tu7sQMmETmu6x251UxNnKxCGPejreIsDhJT+W0jbqiQKGFz5PF5km5bm2dRetl1jBsqotQxF8oATcfleN6EFaDbdHpSr/ue+tDkyphFZKQAcsS7ZM+JwdFs4WrlieycPvxWxrHTprjwp1zfBePPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qczi27yaz93LmEBa4oizwOm0M+fU8h7V7slNq4hDlTE=;
- b=Nq7aFtViz8Pw7dUMQkGN7voKlzlShCo+1e/8r3FQgJngar9yMmAMg8eTL+0ckV0rqTaPBQVEyRpaYL/gJ0+P9/AXULZQRWjgWfavv4OL45t4Ok7TTuiVZ3kcD0+cB2sEX421LauuKCXKS+y856iEtftYAM6q3drTiY5OdR+y1vQtYQa6HZ5A0JuKum9sFObwoW6aNKc7VOc9lvjIdoPl5t9mpqjRA/6p3reQGnvtjIbP9fgXNkRsUAOImzikphG9zs2QCvSyhyX5UXUQw2L/YuZCnLeJ8V03YJVb54dbuewp3xmCMHLsm0yP8VMvv70T3TbUzoD0O5JkxDaftjboww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qczi27yaz93LmEBa4oizwOm0M+fU8h7V7slNq4hDlTE=;
- b=qqP8CdnGFWAYrDsblRjtWg5z48EQR0BOq+bb1k0D4oyGg1MNPhkASVd0l1jjjKN99a8xdZ3XeQyIpKWu+NkSyMrTXkpLx0R2xAEtrHiOsqzWFMGprKCfk+WYbxc+1U8MgN+VAleKhJcYviZiRJeGkgq/XfiHe5eKT6TOT6n1JnQQaOr28eVMf+GwdOjSpviymUjFxzwevakpZ+HTYF67k0UFcJEgF/QEd4cJ8Z3hmlLOJq+pysifac23OxH29kHxkAARKr+DvcZESRCxKF1QJ7oHC0zl3WyrhhhN/PpsVnCM8f9LTwDICG8mjIAc1AJsomvBhvVKj6r41mPZzBfnKw==
-Received: from CH0PR02MB8041.namprd02.prod.outlook.com (2603:10b6:610:106::10)
- by BY5PR02MB7044.namprd02.prod.outlook.com (2603:10b6:a03:232::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Mon, 26 Aug
- 2024 03:04:13 +0000
-Received: from CH0PR02MB8041.namprd02.prod.outlook.com
- ([fe80::b78d:8753:23a8:cc78]) by CH0PR02MB8041.namprd02.prod.outlook.com
- ([fe80::b78d:8753:23a8:cc78%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 03:04:12 +0000
-From: Eiichi Tsukata <eiichi.tsukata@nutanix.com>
-To: "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com"
-	<mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "mark.rutland@arm.com"
-	<mark.rutland@arm.com>,
-        "alexander.shishkin@linux.intel.com"
-	<alexander.shishkin@linux.intel.com>,
-        "jolsa@kernel.org" <jolsa@kernel.org>,
-        "irogers@google.com" <irogers@google.com>,
-        "adrian.hunter@intel.com"
-	<adrian.hunter@intel.com>,
-        "kan.liang@linux.intel.com"
-	<kan.liang@linux.intel.com>,
-        "james.clark@linaro.org"
-	<james.clark@linaro.org>,
-        "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built with
- -O0
-Thread-Topic: [PATCH] perf test: Use -Wp,-U_FORTIFY_SOURCE for tests built
- with -O0
-Thread-Index: AQHa58iFg0Q+913iDEurf7AueZctN7IZw9OAgB81zYA=
-Date: Mon, 26 Aug 2024 03:04:12 +0000
-Message-ID: <C00F1D39-9A12-4D1C-85BD-48A6D7C0290B@nutanix.com>
-References: <20240806061749.143072-1-eiichi.tsukata@nutanix.com>
- <4D19AE26-E1B4-44B6-A8C7-639EF2B69317@nutanix.com>
-In-Reply-To: <4D19AE26-E1B4-44B6-A8C7-639EF2B69317@nutanix.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3776.700.51)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR02MB8041:EE_|BY5PR02MB7044:EE_
-x-ms-office365-filtering-correlation-id: 7ac59db8-17d7-466e-36bc-08dcc57bc2de
-x-proofpoint-crosstenant: true
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?STF3aENsUDBIMkFXVUZSclBXcmllK3U3OEk4M2V2V2hWVjVVZE5yUllKVTE0?=
- =?utf-8?B?TEpKU00yTHRGaDRzQjJnK0JJb3ZockpWYUhmWElMREVKVkVWSENtbnBkaG1t?=
- =?utf-8?B?TEc0bjE0YUlLTGxlTSt4QTNVR09SdU5BSHJaemhtSE92UFhqODZYUHNvNEt0?=
- =?utf-8?B?VitVQWFTR1g5eFI0alZzeVhJUTVjd01OcEdFbUlrMjFjZnlMYyt1L1BzRkxu?=
- =?utf-8?B?Y0NvN1JrNzBRdDZTdGdTNHcrUFhEemZydmRmYjVOZEVkOWJVcjEybktFdTBm?=
- =?utf-8?B?cGRHeWZ3ZVdEZ1dZQlVQTEMxWStJMXMwRklTbkNBcE5HWlEydGx1OExTL2da?=
- =?utf-8?B?dUZMUEFZL3dlZHJ0OThDZjNKclVHcFM1WnhVM0p1Z0F2NEhOSk1QRHRJS251?=
- =?utf-8?B?UFVZTTZ1ZWFBTTdXRnlZREVvOWpDUEh1clVrc1Jld3lzd2VscVh6citGRjJO?=
- =?utf-8?B?WUZGVk9KbWRyWlJIR05USmRqOTQrYzNYTmZvQThVY2daa3F0OWcvWXZhY0ln?=
- =?utf-8?B?bFdzUmZwR1dVWDNWL0Vaa2RNYzIvc3FtNEp1RjBDYXJ2aGRIY1VSTy9qTmFs?=
- =?utf-8?B?dVk2OU1MSjBabUk0bzFmdDNtdGNxcVRwQXE2Ti9kY3pBNGJIMXk2T1ZSdVFs?=
- =?utf-8?B?TGRSMjJFWVJ5U0tVTkE1bXZTY3pVOUxZZ0pRellFK01vRDRoUVNtSTlSc3JN?=
- =?utf-8?B?TUJ1WHJkMjJML09TcWtaUk5ISUljclg2ZnVxdHdxdVNPVGtaTEd5WDZiN1J2?=
- =?utf-8?B?WXRPYjgxU2JhVTZFS3dxdzlRbnBjWCszR0grMCt6T1RDOTIzdFdPNk1XM0U0?=
- =?utf-8?B?aHhPNGFkV3NmQ21waDY2b3dEazVxQWRnWWJUb3lPWFREYnRReVo0emt0WThG?=
- =?utf-8?B?ajlQdVUyWThDMHB5YTFpT0pxUWVqb3JKbXVBbkZvMmt5TWdwNjlMS2w1YWV1?=
- =?utf-8?B?aktESHREV0xMV0dwTzFCZGxSdkt6bUFidHhRM243UFQrb2x4WW9LMjBqekhO?=
- =?utf-8?B?VEpDU1VweDlrNklBSUNNWGk4RFNoekVKQWhjc1NSanl6N0VzUkgwNzd4RUx1?=
- =?utf-8?B?MG1Yb2lBTFZZRHhua2k3Z3k3RUpDTFVNeC9uWFpZcm1hdVlJV1JURmRvb3ds?=
- =?utf-8?B?SzZ1dlo3c0FmZTRpRzhIMDRNeWJSckthd3dNTC81VjZGNDNCVG9mSXpiTy91?=
- =?utf-8?B?K2o3bzZQZ0NZcUZIOHJodzV0NDI3aGw5QkRsbkJITE9MSmFPZUZuNTJjWGNI?=
- =?utf-8?B?R1gwc05XZG5OWlNBLzFLMytWYm90eW01M25pb3M1MmZCd3l5dFhHaE56VEtz?=
- =?utf-8?B?YktIbTRONjB4dFhUeGV4b0lXR0Jhb3dDd0VMV2plR21qbDV3L1VRRWFIdWZs?=
- =?utf-8?B?Ym1hRU9WMGlLckw0ZENZWWdBMFBqcVhxUHF6c0pud0hTZlUyR2JCNXQ0MS9v?=
- =?utf-8?B?THVoc2hrRDJaOXBYQWlHc0V3OTlPcE1NdVZWLy9JR2ZaZnUzcWhiYTZJdEFP?=
- =?utf-8?B?Sk1VMTJxa2txOURRV1l5VzVvOGkvQVZOaWtxaFNEaDM1WlByVHVJUDRtM3Q5?=
- =?utf-8?B?VkJ4R1p2azBKdVltSkptdEdneDZ3cDUxUXI1amI1VkVTallXUmdtTVIxS1FC?=
- =?utf-8?B?QWE2Z0RucVVDNXhDUXQvUURROXB6ZDlKTGt4V29oT3RZUnNreWo4bXhlcjJO?=
- =?utf-8?B?NHZDaDVwWEpqN0paL2lhRW00VkZkcnlrOWZIcktnSUZObnUyQlU5OEltK2U0?=
- =?utf-8?B?L2tkK1JhTnl6Wm9vT3ljaGUxYUlwUjFuTUN5QmtYaEt2RWpVM3oxbCthUkFO?=
- =?utf-8?B?RFo1QkRPbjlWQVBoM2x5UW5Fc2htb29jLy9GWHZiam9xTVZvMWFFdmNkb2Er?=
- =?utf-8?Q?xxIlriTPh5dZ0?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR02MB8041.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?S3NYaWdBaXJ6VnAxMEoybkFvY2c5N3BKaGVTankyelVMa0tIdzZhclhxSWMx?=
- =?utf-8?B?enE3ZFdrNEVVOXF3cng2Umh1S2NLcW9JVFhXSDRndzRIYnU5NndqVVlrUjVo?=
- =?utf-8?B?UXVTN2orKzVvNlhaVnhxUURrNjhmQlpmcTF5dnRsRGtSVVd4cmhrS29zOVpN?=
- =?utf-8?B?ZkRiM21weC9aT0JCbkU0RUw3Rjc1Q2ZWWmdPQThld2dwU0R4S3BPT3BVMnZm?=
- =?utf-8?B?ZWRxVldZTEJBOXhad1VaRUlHdnNxNzlRUTBZYmRsa0ZiL3pKRGUzdkJGZmR0?=
- =?utf-8?B?MlZDNjJ2VG1mZndXU255N084QjV3ODkzMUd6QWZLdS9sWllzbXlBb0N3NVp4?=
- =?utf-8?B?eGJGSGxlWUxTTHpUTmFVdmFGdThNb3U0d005SHNxSzQrN1VrOU1wSHlSL3JJ?=
- =?utf-8?B?dFVXUi8wd1VkNjd0OFhWZHZIQTltOW91N0NUVGF1czdMVVJJYmtDa2dsbEVK?=
- =?utf-8?B?Q2YwbEd0N3E3a1NNTFByZXJCTHJxeGpMR1ZpemNuSHJIUmlrMlB0ZS9xK0ds?=
- =?utf-8?B?cWx1WEFrUTc1T1l2WnpMRWdGckdlTlp6Y1UxTHZiVW1GZXdyUlcyMjU3SHB3?=
- =?utf-8?B?YkNjODVEcCthYS9JV1pMQzFTQ25JYmFUWEN4Q3hnb0lDdjFIL0lhU1BMZnZM?=
- =?utf-8?B?VmNicVQyalNUQUp3OWpkQXdoS21XOGVqek1Xei9mMURPdWtnaS9LRWxqbVR4?=
- =?utf-8?B?U2R2SlI2c3JoU0hzMWpvWjRGdEJBRHBqK2RWc295MVk2R0Zzcll1aVRCbVd1?=
- =?utf-8?B?WFhUdGMvZ1NLZGM3L0sxK2xuTGl3VUp2YWFFZjRJZ3JscFY0M2hmZTJJVmI5?=
- =?utf-8?B?dVdBTzBIUlZnTmhrSWhURENlaXh1YkRiWHptb0ZzNGF5ZVZLblVmK0o0M0JH?=
- =?utf-8?B?TlU5c0JoV05IeGR1Wmd0S3ExTUpPVjh1ZEZnWHJ5bG5na1BIVFRTMitpUHE3?=
- =?utf-8?B?MUd4S29DVHVmWlZneXNnMjUwK0d2dzJReCs1bnJhZlVWQUVBUE1HK09VbGJk?=
- =?utf-8?B?cHBtczlOT3hoNWRpYVJJVDRsa05vY2pBSmNCN1QwOGFLNkJDYVluTklyZ2Rj?=
- =?utf-8?B?Nk0venl5Qndxd21MMWxuSnUzQVRrUGN3bDFLZUdLekxIL0IyeVpSbHpIVVJU?=
- =?utf-8?B?TmVJWDArc0x6NmNTL2JyamdJd3hCMm1OVXh3bVJTRE90eU9nNkpkejZZV2VV?=
- =?utf-8?B?YWd4a1hBTG53N1lNQ2VqbzVQRDE5QVlYa0FCcDlUL29PSE1vZm1ndFNPNkxH?=
- =?utf-8?B?bCs1N090V0llam04a1VMdXVyeURLbWx4amh0akNuK3h3czkvSndZNEplbUJx?=
- =?utf-8?B?bnJlR29qdXVhYTRseHAvRWh1aHNHZVZXK0VhVXVmNzl2MkUyMStYUjYxTkVO?=
- =?utf-8?B?b1ZpM2ZWNTBaRkxDSi9jc3hvUzMwbDIvOVlRVzQ2LzFES2tjNDBCNmF5WkpO?=
- =?utf-8?B?K0VXejNzUjJpYjJPK0JPOW5vL0JUMm9pTmJPNEdEQnlhY1VzSTgxeVMrazZ3?=
- =?utf-8?B?bEVoYmR4OGhqb3NMeEp2L2tVaWF6aWxRQjBnK2JoVXZSTWRremFMMS9JRFFN?=
- =?utf-8?B?VjVlK3dwbHIyeG1RWCs3aGo0ZUpXRms0R2pLSXZXMGJhdUp0ZG5GcWdYU0xj?=
- =?utf-8?B?aEdHekN0cXo4V09VNUZpYXc0VUU1TVJ6R2ZpazM4dWZGWUV5ZjhhbDhQbVJu?=
- =?utf-8?B?aE1vOWM2cXIxMzBSNXJlUGZGTDRlcE9FWEhSdWtySzdiek9Xam96YkNlZ0o2?=
- =?utf-8?B?Q1ZFVHl0UmhKRVZyK2FUWlhNQlBObElTU2NudjNlRWJzY3h5QjBXcGZiRjEr?=
- =?utf-8?B?dlptcythV1FoZmlJRExjeWRJTzBVRWFEUnZzQ3Q2V1FHMXNQV2YyWnhGaTZz?=
- =?utf-8?B?OFF2RnRjU3FhNXNnZmVINncyOTdtaW9ReVdteGtoL2xQWkZNVSttUzduUEEr?=
- =?utf-8?B?d2h5YVdFMmluQ2ZXdFZwVEN0QUpZRkphSjViOGx6UkZwT2ZmTkNFcUkxU2kz?=
- =?utf-8?B?L0VKcnAvekM0Z1VuQXJoMEdPaXZ3NmIvd1pmM2ZrUEkyazlwWHM4ZHkwQ0V0?=
- =?utf-8?B?eUV4dCtNZVZ3WW9BdW5COGEvWmVXaTltMld1TWdLWjJNbWFUR1U3d0NJS1E4?=
- =?utf-8?B?cU9MakFhTThrSUxZUHRkemp3NzdlWEEyQzhlYUJCRzd3aTQ1WkQrTngzVkY4?=
- =?utf-8?B?OXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7249A6C1A39A154FA7FB7492B8AF2013@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	Mon, 26 Aug 2024 03:04:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q34jo5009812
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 03:04:45 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 25 Aug
+ 2024 20:04:43 -0700
+Message-ID: <d3ceaead-5619-4413-acce-64567c08fb27@quicinc.com>
+Date: Mon, 26 Aug 2024 11:04:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR02MB8041.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ac59db8-17d7-466e-36bc-08dcc57bc2de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2024 03:04:12.0566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L4QXv2ej4Uk8fcf9qs0eeySc4HIjQVgmpL/uGY2+THMmbV5Ye85A/dNa7B16lgslb549DaKIk2aUHLCaN3q7h9H4FiBD+A/XBb9LcXCIVNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB7044
-X-Proofpoint-GUID: z8HmbswoEVJGeFyqDL0isLVRI8Bpk9OL
-X-Authority-Analysis: v=2.4 cv=d4ynygjE c=1 sm=1 tr=0 ts=66cbf0af cx=c_pps a=iiQOqwU6IAtWz55ZD8rkjg==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=0034W8JfsZAA:10 a=64Cc0HZtAAAA:8 a=vTr9H3xdAAAA:8
- a=Naob4n88W26HrkX6swAA:9 a=QEXdDO2ut3YA:10 a=14NRyaPF5x3gF6G45PvQ:22 a=7PCjnrUJ-F5voXmZD6jJ:22
-X-Proofpoint-ORIG-GUID: z8HmbswoEVJGeFyqDL0isLVRI8Bpk9OL
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] wifi: ath11k: Set IRQ affinity hint after requesting
+ all shared IRQs
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <kvalo@kernel.org>, <jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240823155502.57333-1-manivannan.sadhasivam@linaro.org>
+ <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <20240823155502.57333-2-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l7ApslopMnCS61v-ZRsFfZUBR7eAYbFx
+X-Proofpoint-ORIG-GUID: l7ApslopMnCS61v-ZRsFfZUBR7eAYbFx
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-25_20,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Reason: safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408260023
 
-UGluZw0KDQo+IE9uIEF1ZyA2LCAyMDI0LCBhdCAxNToyNywgRWlpY2hpIFRzdWthdGEgPGVpaWNo
-aS50c3VrYXRhQG51dGFuaXguY29tPiB3cm90ZToNCj4gDQo+IEhpLA0KPiANCj4gRllJOiBGZWRv
-cmEgdXNlcyDigJxSUE1fT1BUX0ZMQUdT4oCdICBhcyDigJxFWFRSQV9DRkxBR1PigJ0gdG8gYnVp
-bGQgcGVyZi4NCj4gaHR0cHM6Ly9zcmMuZmVkb3JhcHJvamVjdC5vcmcvcnBtcy9rZXJuZWwvYmxv
-Yi9yYXdoaWRlL2Yva2VybmVsLnNwZWMjXzI5MDgNCj4gDQo+IEFuZCBvbiBGZWRvcmE0MCwgIGl0
-IGhhcyDigJwtV3AsLURfRk9SVElGWV9TT1VSQ0U9M+KAnS4NCj4gDQo+IFtlaWljaGlAdDQ5NSB+
-XSQgcnBtIC0tc2hvd3JjIHwgZ3JlcCBSUE1fT1BUIHwgaGVhZCAtbiAxDQo+ICBSUE1fT1BUX0ZM
-QUdTPSIle29wdGZsYWdzfSINCj4gW2VpaWNoaUB0NDk1IH5dJCBycG0gLS1ldmFsICcle29wdGZs
-YWdzfScNCj4gLU8yIC1mbHRvPWF1dG8gLWZmYXQtbHRvLW9iamVjdHMgLWZleGNlcHRpb25zIC1n
-IC1ncmVjb3JkLWdjYy1zd2l0Y2hlcyAtcGlwZSAtV2FsbCAtV25vLWNvbXBsYWluLXdyb25nLWxh
-bmcgLVdlcnJvcj1mb3JtYXQtc2VjdXJpdHkgLVdwLC1VX0ZPUlRJRllfU09VUkNFLC1EX0ZPUlRJ
-RllfU09VUkNFPTMgLVdwLC1EX0dMSUJDWFhfQVNTRVJUSU9OUyAtc3BlY3M9L3Vzci9saWIvcnBt
-L3JlZGhhdC9yZWRoYXQtaGFyZGVuZWQtY2MxIC1mc3RhY2stcHJvdGVjdG9yLXN0cm9uZyAtc3Bl
-Y3M9L3Vzci9saWIvcnBtL3JlZGhhdC9yZWRoYXQtYW5ub2Jpbi1jYzEgIC1tNjQgLW1hcmNoPXg4
-Ni02NCAtbXR1bmU9Z2VuZXJpYyAtZmFzeW5jaHJvbm91cy11bndpbmQtdGFibGVzIC1mc3RhY2st
-Y2xhc2gtcHJvdGVjdGlvbiAtZmNmLXByb3RlY3Rpb24gLWZuby1vbWl0LWZyYW1lLXBvaW50ZXIg
-LW1vbi1vbWl0LWxlYWYtZnJhbWUtcG9pbnRlcg0KPiANCj4gQmVzdCwNCj4gRWlpY2hpDQo+IA0K
-Pj4gT24gQXVnIDYsIDIwMjQsIGF0IDE1OjE3LCBFaWljaGkgVHN1a2F0YSA8ZWlpY2hpLnRzdWth
-dGFAbnV0YW5peC5jb20+IHdyb3RlOg0KPj4gDQo+PiBJZiBFWFRSQV9DRkxBR1MgaGFzICItV3As
-LURfRk9SVElGWV9TT1VSQ0U9MiIsIHRoZSBidWlsZCBmYWlscyB3aXRoOg0KPj4gDQo+PiBlcnJv
-cjogI3dhcm5pbmcgX0ZPUlRJRllfU09VUkNFIHJlcXVpcmVzIGNvbXBpbGluZyB3aXRoIG9wdGlt
-aXphdGlvbiAoLU8pIFstV2Vycm9yPWNwcF0NCj4+IA0KPj4gVXNlICItV3AsLVVfRk9SVElGWV9T
-T1VSQ0UiIGluc3RlYWQgb2YgIi1VX0ZPUlRJRllfU09VUkNFIiBmb3IgdGVzdHMNCj4+IGJ1aWx0
-IHdpdGggLU8wLg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5OiBFaWljaGkgVHN1a2F0YSA8ZWlpY2hp
-LnRzdWthdGFAbnV0YW5peC5jb20+DQo+PiAtLS0NCj4+IHRvb2xzL3BlcmYvdGVzdHMvd29ya2xv
-YWRzL0J1aWxkIHwgOCArKysrLS0tLQ0KPj4gMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
-KSwgNCBkZWxldGlvbnMoLSkNCj4+IA0KPj4gZGlmZiAtLWdpdCBhL3Rvb2xzL3BlcmYvdGVzdHMv
-d29ya2xvYWRzL0J1aWxkIGIvdG9vbHMvcGVyZi90ZXN0cy93b3JrbG9hZHMvQnVpbGQNCj4+IGlu
-ZGV4IDQ4YmYwZDNiMGYzZC4uZWMzNmMyMWUzNzVlIDEwMDY0NA0KPj4gLS0tIGEvdG9vbHMvcGVy
-Zi90ZXN0cy93b3JrbG9hZHMvQnVpbGQNCj4+ICsrKyBiL3Rvb2xzL3BlcmYvdGVzdHMvd29ya2xv
-YWRzL0J1aWxkDQo+PiBAQCAtNyw3ICs3LDcgQEAgcGVyZi10ZXN0LXkgKz0gc3FydGxvb3Aubw0K
-Pj4gcGVyZi10ZXN0LXkgKz0gYnJzdGFjay5vDQo+PiBwZXJmLXRlc3QteSArPSBkYXRhc3ltLm8N
-Cj4+IA0KPj4gLUNGTEFHU19zcXJ0bG9vcC5vICAgICAgICAgPSAtZyAtTzAgLWZuby1pbmxpbmUg
-LVVfRk9SVElGWV9TT1VSQ0UNCj4+IC1DRkxBR1NfbGVhZmxvb3AubyAgICAgICAgID0gLWcgLU8w
-IC1mbm8taW5saW5lIC1mbm8tb21pdC1mcmFtZS1wb2ludGVyIC1VX0ZPUlRJRllfU09VUkNFDQo+
-PiAtQ0ZMQUdTX2Jyc3RhY2subyAgICAgICAgICA9IC1nIC1PMCAtZm5vLWlubGluZSAtVV9GT1JU
-SUZZX1NPVVJDRQ0KPj4gLUNGTEFHU19kYXRhc3ltLm8gICAgICAgICAgPSAtZyAtTzAgLWZuby1p
-bmxpbmUgLVVfRk9SVElGWV9TT1VSQ0UNCj4+ICtDRkxBR1Nfc3FydGxvb3AubyAgICAgICAgID0g
-LWcgLU8wIC1mbm8taW5saW5lIC1XcCwtVV9GT1JUSUZZX1NPVVJDRQ0KPj4gK0NGTEFHU19sZWFm
-bG9vcC5vICAgICAgICAgPSAtZyAtTzAgLWZuby1pbmxpbmUgLWZuby1vbWl0LWZyYW1lLXBvaW50
-ZXIgLVdwLC1VX0ZPUlRJRllfU09VUkNFDQo+PiArQ0ZMQUdTX2Jyc3RhY2subyAgICAgICAgICA9
-IC1nIC1PMCAtZm5vLWlubGluZSAtV3AsLVVfRk9SVElGWV9TT1VSQ0UNCj4+ICtDRkxBR1NfZGF0
-YXN5bS5vICAgICAgICAgID0gLWcgLU8wIC1mbm8taW5saW5lIC1XcCwtVV9GT1JUSUZZX1NPVVJD
-RQ0KPj4gLS0gDQo+PiAyLjQ1LjINCj4+IA0KPiANCg0K
+
+
+On 8/23/2024 11:55 PM, Manivannan Sadhasivam wrote:
+> If a shared IRQ is used by the driver due to platform limitation, then the
+> IRQ affinity hint is set right after the allocation of IRQ vectors in
+> ath11k_pci_alloc_msi(). This does no harm unless one of the functions
+> requesting the IRQ fails and attempt to free the IRQ. This results in the
+> below warning:
+> 
+> [   29.804276] ath11k_pci 0000:01:00.0: failed to power up mhi: -110
+> [   29.810564] ath11k_pci 0000:01:00.0: failed to start mhi: -110
+> [   29.816566] ath11k_pci 0000:01:00.0: failed to power up :-110
+> [   29.847202] ath11k_pci 0000:01:00.0: failed to create soc core: -110
+> [   29.853735] ath11k_pci 0000:01:00.0: failed to init core: -110
+> [   29.859745] ------------[ cut here ]------------
+> [   29.864486] WARNING: CPU: 7 PID: 349 at kernel/irq/manage.c:1929 free_irq+0x278/0x29c
+> [   29.872529] Modules linked in: snd_soc_hdmi_codec ath11k_pci(+) venus_dec venus_enc ath11k videobuf2_dma_contig videobuf2_memops nb7vpq904m lontium_lt9611uxc mcp251xfd mac80211 can_dev libarc4 hci_uart
+>  btqca btbcm ax88179_178a usbnet option leds_qcom_lpg usb_wwan led_class_multicolor usbserial crct10dif_ce qcom_pmic_tcpm tcpm venus_core aux_hpd_bridge qcom_spmi_adc_tm5 v4l2_mem2mem qcom_pon qcom_spmi_a
+> dc5 videobuf2_v4l2 bluetooth videobuf2_common msm qcom_spmi_temp_alarm rtc_pm8xxx qcom_vadc_common ocmem snd_soc_sm8250 gpu_sched snd_soc_qcom_sdw videodev drm_exec phy_qcom_qmp_combo drm_display_helper s
+> nd_soc_qcom_common qcom_stats mc i2c_qcom_geni llcc_qcom spi_geni_qcom drm_dp_aux_bus aux_bridge icc_bwmon typec qcom_rng coresight_stm coresight_tmc coresight_replicator stm_core coresight_funnel soundwi
+> re_qcom qrtr pci_pwrctl_pwrseq qcrypto pci_pwrctl_core soundwire_bus snd_soc_lpass_va_macro pinctrl_sm8250_lpass_lpi snd_soc_lpass_wsa_macro authenc lpass_gfm_sm8250 coresight slimbus pinctrl_lpass_lpi
+> [   29.872610]  snd_soc_lpass_macro_common qcom_q6v5_pas libdes qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common pwrseq_qcom_wcn qcom_glink_smem mdt_loader pwrseq_core icc_osm_l3 qmi_helpers qcom_wdt socin
+> fo display_connector drm_kms_helper cfg80211 rfkill fuse drm backlight ip_tables x_tables ipv6
+> [   29.990067] CPU: 7 UID: 0 PID: 349 Comm: (udev-worker) Not tainted 6.11-rc4 #50
+> [   29.997564] Hardware name: Qualcomm Technologies, Inc. Robotics RB5 (DT)
+> [   30.004446] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   30.011591] pc : free_irq+0x278/0x29c
+> [   30.015355] lr : free_irq+0xb4/0x29c
+> [   30.019030] sp : ffff800081f236e0
+> [   30.022441] x29: ffff800081f236e0 x28: ffff64630d260000 x27: ffffd8d89a8c3458
+> [   30.029764] x26: ffff64630d26ac00 x25: 00000000000000d6 x24: ffff6463029c58dc
+> [   30.037086] x23: ffff6463029c5990 x22: ffff64630d261c58 x21: 0000000000000000
+> [   30.044408] x20: ffff646301431c00 x19: ffff6463029c5800 x18: 0000000000000010
+> [   30.051730] x17: 0000000000010108 x16: ffffd8d8f1d8b840 x15: 0763072007740769
+> [   30.059051] x14: 000000000000030d x13: ffff646306b35ae8 x12: ffffd8d8f3852b80
+> [   30.066374] x11: ffff646306b356c0 x10: 0000000000000000 x9 : 00000000000000d6
+> [   30.073696] x8 : 000000000000000f x7 : 1fffec8c605626a1 x6 : ffffd8d8f2e602b8
+> [   30.081017] x5 : 0000000000000030 x4 : ffff646302b13580 x3 : ffff646301431c98
+> [   30.088339] x2 : 0000000000200880 x1 : ffff646301431c00 x0 : ffffd8d8f2b2c1b8
+> [   30.095662] Call trace:
+> [   30.098183]  free_irq+0x278/0x29c
+> [   30.101595]  ath11k_pcic_free_irq+0x70/0x10c [ath11k]
+> [   30.106800]  ath11k_pci_probe+0x800/0x820 [ath11k_pci]
+> [   30.112081]  local_pci_probe+0x40/0xbc
+> [   30.115934]  pci_device_probe+0x1d4/0x1e8
+> [   30.120049]  really_probe+0xbc/0x268
+> [   30.123727]  __driver_probe_device+0x78/0x12c
+> [   30.128204]  driver_probe_device+0x40/0x11c
+> [   30.132505]  __driver_attach+0x74/0x124
+> [   30.136445]  bus_for_each_dev+0x78/0xe0
+> [   30.140383]  driver_attach+0x24/0x30
+> [   30.144059]  bus_add_driver+0xe4/0x208
+> [   30.147910]  driver_register+0x60/0x128
+> [   30.151849]  __pci_register_driver+0x44/0x50
+> [   30.156238]  ath11k_pci_init+0x2c/0x6c [ath11k_pci]
+> [   30.161242]  do_one_initcall+0x70/0x1b8
+> [   30.165182]  do_init_module+0x5c/0x1f0
+> [   30.169034]  load_module+0x19f0/0x1abc
+> [   30.172884]  init_module_from_file+0x88/0xc8
+> [   30.177273]  __arm64_sys_finit_module+0x1c4/0x2b0
+> [   30.182102]  invoke_syscall+0x44/0x100
+> [   30.185953]  el0_svc_common.constprop.0+0xc0/0xe0
+> [   30.190783]  do_el0_svc+0x1c/0x28
+> [   30.194196]  el0_svc+0x34/0xdc
+> [   30.197335]  el0t_64_sync_handler+0xc0/0xc4
+> [   30.201635]  el0t_64_sync+0x190/0x194
+> [   30.205399] ---[ end trace 0000000000000000 ]---
+> [   30.432731] ath11k_pci 0000:01:00.0: probe with driver ath11k_pci failed with error -110
+> 
+> The warning is due to not clearing the affinity hint before freeing the
+> IRQ.
+> 
+> So to fix this, let's set the IRQ affinity hint after requesting all the
+> shared IRQ. This will make sure that the affinity hint gets cleared in the
+> error path before freeing the IRQ.
+if you check 39564b475ac5 ("wifi: ath11k: fix boot failure with one MSI vector") you would see that the hint is set before requesting any IRQ for a purpose.
+
+> 
+> Tested-on: QCA6390 hw2.0 PCI WLAN.HST.1.0.1-05266-QCAHSTSWPLZ_V2_TO_X86-1
+> 
+> Cc: Baochen Qiang <quic_bqiang@quicinc.com>
+> Fixes: e94b07493da3 ("ath11k: Set IRQ affinity to CPU0 in case of one MSI vector")
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/net/wireless/ath/ath11k/pci.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
+> index 8d63b84d1261..0c22e18e65c7 100644
+> --- a/drivers/net/wireless/ath/ath11k/pci.c
+> +++ b/drivers/net/wireless/ath/ath11k/pci.c
+> @@ -886,16 +886,10 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>  	if (ret)
+>  		goto err_pci_disable_msi;
+>  
+> -	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+> -	if (ret) {
+> -		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+> -		goto err_pci_disable_msi;
+> -	}
+> -
+>  	ret = ath11k_mhi_register(ab_pci);
+>  	if (ret) {
+>  		ath11k_err(ab, "failed to register mhi: %d\n", ret);
+> -		goto err_irq_affinity_cleanup;
+> +		goto err_pci_disable_msi;
+>  	}
+>  
+>  	ret = ath11k_hal_srng_init(ab);
+> @@ -916,6 +910,12 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>  		goto err_ce_free;
+>  	}
+>  
+> +	ret = ath11k_pci_set_irq_affinity_hint(ab_pci, cpumask_of(0));
+> +	if (ret) {
+> +		ath11k_err(ab, "failed to set irq affinity %d\n", ret);
+> +		goto err_free_irq;
+> +	}
+> +
+>  	/* kernel may allocate a dummy vector before request_irq and
+>  	 * then allocate a real vector when request_irq is called.
+>  	 * So get msi_data here again to avoid spurious interrupt
+> @@ -924,17 +924,20 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>  	ret = ath11k_pci_config_msi_data(ab_pci);
+>  	if (ret) {
+>  		ath11k_err(ab, "failed to config msi_data: %d\n", ret);
+> -		goto err_free_irq;
+> +		goto err_irq_affinity_cleanup;
+>  	}
+>  
+>  	ret = ath11k_core_init(ab);
+>  	if (ret) {
+>  		ath11k_err(ab, "failed to init core: %d\n", ret);
+> -		goto err_free_irq;
+> +		goto err_irq_affinity_cleanup;
+>  	}
+>  	ath11k_qmi_fwreset_from_cold_boot(ab);
+>  	return 0;
+>  
+> +err_irq_affinity_cleanup:
+> +	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+> +
+>  err_free_irq:
+>  	ath11k_pcic_free_irq(ab);
+>  
+> @@ -947,9 +950,6 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
+>  err_mhi_unregister:
+>  	ath11k_mhi_unregister(ab_pci);
+>  
+> -err_irq_affinity_cleanup:
+> -	ath11k_pci_set_irq_affinity_hint(ab_pci, NULL);
+> -
+>  err_pci_disable_msi:
+>  	ath11k_pci_free_msi(ab_pci);
+>  
 
