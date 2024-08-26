@@ -1,260 +1,277 @@
-Return-Path: <linux-kernel+bounces-301898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB0395F705
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC9295F706
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9056DB21363
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1901F22CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 16:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95C1197A6C;
-	Mon, 26 Aug 2024 16:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629D2197A8B;
+	Mon, 26 Aug 2024 16:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2jGjECB"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ko22VsWg"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396285476B;
-	Mon, 26 Aug 2024 16:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFD5F873;
+	Mon, 26 Aug 2024 16:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690850; cv=none; b=R/6UonFS4UZxs+WAFyjJJNeju4UKnwqc9Q4THAADXa0s5L0/DDImJ/o19EpI9PiCmGWI8uMY1pXGZY6eIo3dBCD6FgMNTzCSyqvTSQTKXOkWdseJAO6MdT1WT5sUCdSWa9o1A53wHuMEVhzU7fuOfnE/3uo86T1u9rj+NAbeYzA=
+	t=1724690850; cv=none; b=J9/snlHwxl/l2kMWRLZzOFPAmLf/xWx/sh2KSF+54/1qQe8uB9E3g/vhNRlJtTsbdMzFoZlMLcz9Y0XvVb8FnBRmS253c7iWKUe+vlQgNpsE2Auc2//NlJrT0Ao8nTuTNRhr7n8AhJ6P4UM8QB428H/rpF7521tRKzy0jm+cOgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724690850; c=relaxed/simple;
-	bh=izioCexJK48o9UQtYxFI+H76BnTEAKguOiGppcefk/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S0j009blY36VuQJno3Gb+Vc6laWL787MQK580ES5uJHBmlleqzlX7hxaho/Kl23T3HBTWIDrQrLWCOnhkO6LKf12viUDYUX2zzvE00tafybmmvtMPXgRw4hFNaIp3M27nhlftLXICZ2ARblIW4gS/Q6zaDf25FgNmuNMdhCQPXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2jGjECB; arc=none smtp.client-ip=209.85.128.51
+	bh=1S7H2ZKpr97e45EbhSMdMR7X/7KfyCzA0o0Hzjc2xLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sb/4jUXoWTpOUZBkZz64xcjQZEaGUmAZYDAvilaE2n5juXLaSBhvIt2/NbPmdgDb9P1UV6K+qnyJKDSWnc6im67fY09SRYFmgxBrpSyPExj4vPnJxpPLWYmRPRKMVxSBGWBqnO6N7/Q9HS13j6ShQJ4XsAz4/hXEXtbj98bkO2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ko22VsWg; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42819654737so39205975e9.1;
-        Mon, 26 Aug 2024 09:47:27 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37196229343so2852737f8f.0;
+        Mon, 26 Aug 2024 09:47:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724690846; x=1725295646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Szx7H5nibeV9OXvQnlfmFvfwbgNiPLWHXneUeuVFRCE=;
-        b=H2jGjECBgsOEBRR7nmyteneTWnfn8vtit2r/p0ssyDTPPjxl0imrUUZ2Nm+Tnq5tdg
-         r0R3b8oJj8DW8MHgL34+tR/oUIt+fqEC+0o+FnGXZ9mraZieuPWfNUEBnfzY3amHgnkf
-         Z52uwarLY5rE66sbM2HZHOVwfwfmrBjiB/+inh3fPDGqewySlUKy+RbddMPLWiKDyGko
-         vnK1k+6sUr6m81bux7JUv+IZ/CRot9NmRa2cyIxln3AYfY3l1kk0CaRs7gVg/MB67OPJ
-         0g9dZ/nM6UA+lzj5EgrMs05tsGzm7HXrz4zVUjSQmiVXrpULVpmMDWjm2oSMYBculr8Z
-         WHnA==
+        d=gmail.com; s=20230601; t=1724690847; x=1725295647; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SKbf1ohA+1o/gWoQsuuL4/aWJwZFQVs/5SqMRPbJMT0=;
+        b=ko22VsWgJModv7ELb/ivOqF3qtYEt2pMm02QqDQ9wtOi1S50tBywt3JiqtnLdH2xc2
+         3Iew5ULMqdQARNEVo4lGpSmId7D8lSG8Ik4do+xyGiZlzV57Ihys4Sx3bHi/9dekfE39
+         RgA5F0IXHB74DqidtejScjhGxlcLKhiJ0NjyxjYRwgKMQTRMkKArlKeJDr/EKUHCDKXc
+         5s0DSIDwrkAs9B4dcv44yokQ0ahyQsWHhD3M5oftdyn+Lz37yF6q6TmgNeoKQi+EcM6y
+         51x911PsH/fJXDd+zzEA25oNvSZOkO9T/+Co6bDG7TqNZGMov9fhc7iauCt8cTy92sZw
+         D1IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724690846; x=1725295646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Szx7H5nibeV9OXvQnlfmFvfwbgNiPLWHXneUeuVFRCE=;
-        b=G1JYJQnauXvrpUaOHB0kNVjhcqrUDKgg2vn6GtSWzUCIxAxL3iukijkLLgW7r1wKWK
-         Npt23SxQOC6G1QTPObC+k68fup2v7efO/LXKWPr3v2bRzVICkDnaoJNCTcqYzPbWVSCW
-         brJCjuqpw0wH4HcyNbGX2zSPTpoYCL9Ai2xW/BtYpqHXw6xpJ5KfFvZ/ynmIXPjZHxWj
-         IyouMc26r9pGSwxacrmaSe8lMFYRNlADHLSDBO6g1ygh8xo6ekod2V08ZHCz8iPv3tQN
-         LVjXTSzD0Rddiw6OPU3wmui7mjyG0MtEnJREf/wU/LykYc85TX4oErJH6e9+/RceSDs6
-         c4lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBdSF8yoF5Q94YC53s8Tz1K2scjJnvjVrahy+1PUl/PINZMgvkeTO4St4nror/6hN9zuboGssW@vger.kernel.org, AJvYcCXXlUkC47RkRhXtiE1WrOI3S1TKueUO53zsAX7pGBlQ/u3CxsoR9JpQ39Q/Os51j4CSzKlycyM8c3XhAqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxKC9cfsfdPcWWC0pxBsMjyslE+M0cMnHKYgioRjKOIscNkRMi
-	R4ej6t70gsLFESz3fxOdgH+zEZneQsAW5te0O9G7tS6qrHf1tXY1qtA6I0KGfuVCIXY4kgD/dfZ
-	LsrOahtG1UyUYrJI5HAl1Gkrrrmk=
-X-Google-Smtp-Source: AGHT+IEx3LpkKHy8rXxvKdKLggv+6qoGi/cT0E5RSpquS8L+eYvXm7iMq1KqgRqmbOCqXhlUNkBsnxCmM2ap1ORjATY=
-X-Received: by 2002:a05:6000:82:b0:373:591:14e4 with SMTP id
- ffacd0b85a97d-373118c86d4mr6482636f8f.49.1724690846258; Mon, 26 Aug 2024
- 09:47:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724690847; x=1725295647;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SKbf1ohA+1o/gWoQsuuL4/aWJwZFQVs/5SqMRPbJMT0=;
+        b=wOJWqdw+DVUzgd4k+C2V1nmrV91OZTh7SEO/pxYqWj6jS+r8/PH5ztKjCN74i8l26v
+         cJou3AyNvrGX1JB1iJpX9FriwjkwIEbRFEHoNudnrLjIE7raKr9oR/S1sB7xrdJKtaun
+         2uqKU+1ZzfnnEUBz8paDlKmnJwDAc+EYsL/bgXelrKyufPX8/m0sCNUsQOeu9ldfexeY
+         DR1KvXnxkjXHbC9QuwqVgFEre7EizJiEQajRmOEa6QGyYf7sWFd25VsEWl/IT7cUy1ca
+         l4CNDqgAQjqPmut6TGZY4Db4RN/aSPujd2Uxr+dMzBKhJkxbPbiTS1Iglb/1ZlwK90MN
+         dDvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGUDze7tDri6lSQzmzeHRLB8lVEUaaXrY0Qei3VHgC7WzTqdMKfks5o897wIwGVZethiL/YDvGLHkL7iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6qwFDOk+i6+SNxVnhyyfpq/LGSJAfilpNERTStm8WHHEY3hwL
+	1bwTvI44R5Mi8Vs5iZhiAx/5Z7ab2XJeXN1BVlBgIHEUhCfZ3Cnt
+X-Google-Smtp-Source: AGHT+IHAHeB2IEbfkzBBPlNMahcqSaE8JIZRCZCEI0JWJ3AQHKPZ12JgsS5s1AgfAXtyLp4jFwvknA==
+X-Received: by 2002:a5d:410a:0:b0:36c:ff0c:36d7 with SMTP id ffacd0b85a97d-373118580b7mr7217598f8f.2.1724690845950;
+        Mon, 26 Aug 2024 09:47:25 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f220d16sm687261366b.22.2024.08.26.09.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 09:47:25 -0700 (PDT)
+Message-ID: <61411216-d196-42de-aa64-12bd28aef44f@gmail.com>
+Date: Mon, 26 Aug 2024 17:47:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826124021.2635705-1-linyunsheng@huawei.com> <20240826124021.2635705-7-linyunsheng@huawei.com>
-In-Reply-To: <20240826124021.2635705-7-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Mon, 26 Aug 2024 09:46:49 -0700
-Message-ID: <CAKgT0Uc7tRi6uGTpx2n9_JAK+sbPg7QcOOOSLK+a41cFMcqCWg@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 06/13] mm: page_frag: reuse existing space
- for 'size' and 'pfmemalloc'
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] mm: introduce THP deferred setting
+To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, Peter Xu <peterx@redhat.com>,
+ Rafael Aquini <aquini@redhat.com>, Andrea Arcangeli <aarcange@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Zi Yan <ziy@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>
+References: <20240729222727.64319-1-npache@redhat.com>
+ <72320F9D-9B6A-4ABA-9B18-E59B8382A262@nvidia.com>
+ <CAA1CXcCD798gkLoZuz3Cd5-Wf2MRfnAG_EB0U3nbScZeFv09dw@mail.gmail.com>
+ <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAA1CXcCCOS8-aqcm+w8Aoqe2P5q005wMrgmtx=xjzJgjKFb7mg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 5:46=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> Currently there is one 'struct page_frag' for every 'struct
-> sock' and 'struct task_struct', we are about to replace the
-> 'struct page_frag' with 'struct page_frag_cache' for them.
-> Before begin the replacing, we need to ensure the size of
-> 'struct page_frag_cache' is not bigger than the size of
-> 'struct page_frag', as there may be tens of thousands of
-> 'struct sock' and 'struct task_struct' instances in the
-> system.
->
-> By or'ing the page order & pfmemalloc with lower bits of
-> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
-> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
-> And page address & pfmemalloc & order is unchanged for the
-> same page in the same 'page_frag_cache' instance, it makes
-> sense to fit them together.
->
-> After this patch, the size of 'struct page_frag_cache' should be
-> the same as the size of 'struct page_frag'.
->
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  include/linux/mm_types_task.h   | 19 ++++++-----
->  include/linux/page_frag_cache.h | 60 +++++++++++++++++++++++++++++++--
->  mm/page_frag_cache.c            | 51 +++++++++++++++-------------
->  3 files changed, 97 insertions(+), 33 deletions(-)
->
-> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.=
-h
-> index cdc1e3696439..a8635460e027 100644
-> --- a/include/linux/mm_types_task.h
-> +++ b/include/linux/mm_types_task.h
-> @@ -50,18 +50,21 @@ struct page_frag {
->  #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MASK)
->  #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX_SIZ=
-E)
->  struct page_frag_cache {
-> -       void *va;
-> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +       /* encoded_page consists of the virtual address, pfmemalloc bit a=
-nd order
-> +        * of a page.
-> +        */
-> +       unsigned long encoded_page;
-> +
-> +       /* we maintain a pagecount bias, so that we dont dirty cache line
-> +        * containing page->_refcount every time we allocate a fragment.
-> +        */
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
->         __u16 offset;
-> -       __u16 size;
-> +       __u16 pagecnt_bias;
->  #else
->         __u32 offset;
-> +       __u32 pagecnt_bias;
->  #endif
-> -       /* we maintain a pagecount bias, so that we dont dirty cache line
-> -        * containing page->_refcount every time we allocate a fragment.
-> -        */
-> -       unsigned int            pagecnt_bias;
-> -       bool pfmemalloc;
->  };
->
->  /* Track pages that require TLB flushes */
-> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
-che.h
-> index 0a52f7a179c8..372d6ed7e20a 100644
-> --- a/include/linux/page_frag_cache.h
-> +++ b/include/linux/page_frag_cache.h
-> @@ -3,18 +3,74 @@
->  #ifndef _LINUX_PAGE_FRAG_CACHE_H
->  #define _LINUX_PAGE_FRAG_CACHE_H
->
-> +#include <linux/bits.h>
-> +#include <linux/build_bug.h>
->  #include <linux/log2.h>
-> +#include <linux/mm.h>
->  #include <linux/mm_types_task.h>
->  #include <linux/types.h>
->
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +/* Use a full byte here to enable assembler optimization as the shift
-> + * operation is usually expecting a byte.
-> + */
-> +#define PAGE_FRAG_CACHE_ORDER_MASK             GENMASK(7, 0)
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       8
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEM=
-ALLOC_SHIFT)
-> +#else
-> +/* Compiler should be able to figure out we don't read things as any val=
-ue
-> + * ANDed with 0 is 0.
-> + */
-> +#define PAGE_FRAG_CACHE_ORDER_MASK             0
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT       0
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         BIT(PAGE_FRAG_CACHE_PFMEM=
-ALLOC_SHIFT)
-> +#endif
-> +
-> +static inline unsigned long page_frag_encode_page(struct page *page,
-> +                                                 unsigned int order,
-> +                                                 bool pfmemalloc)
-> +{
-> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_MAX_ORDER > PAGE_FRAG_CACHE_ORDER_MA=
-SK);
-> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_PFMEMALLOC_BIT >=3D PAGE_SIZE);
-> +
-> +       return (unsigned long)page_address(page) |
-> +               (order & PAGE_FRAG_CACHE_ORDER_MASK) |
-> +               ((unsigned long)pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_=
-SHIFT);
-> +}
-> +
-> +static inline unsigned long page_frag_encoded_page_order(unsigned long e=
-ncoded_page)
-> +{
-> +       return encoded_page & PAGE_FRAG_CACHE_ORDER_MASK;
-> +}
-> +
-> +static inline bool page_frag_encoded_page_pfmemalloc(unsigned long encod=
-ed_page)
-> +{
-> +       return !!(encoded_page & PAGE_FRAG_CACHE_PFMEMALLOC_BIT);
-> +}
-> +
-> +static inline void *page_frag_encoded_page_address(unsigned long encoded=
-_page)
-> +{
-> +       return (void *)(encoded_page & PAGE_MASK);
-> +}
-> +
-> +static inline struct page *page_frag_encoded_page_ptr(unsigned long enco=
-ded_page)
-> +{
-> +       return virt_to_page((void *)encoded_page);
-> +}
-> +
->  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->  {
-> -       nc->va =3D NULL;
-> +       nc->encoded_page =3D 0;
->  }
->
->  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache =
-*nc)
->  {
-> -       return !!nc->pfmemalloc;
-> +       return page_frag_encoded_page_pfmemalloc(nc->encoded_page);
-> +}
-> +
-> +static inline unsigned int page_frag_cache_page_size(unsigned long encod=
-ed_page)
-> +{
-> +       return PAGE_SIZE << page_frag_encoded_page_order(encoded_page);
->  }
->
->  void page_frag_cache_drain(struct page_frag_cache *nc);
 
-So how many of these additions are actually needed outside of the
-page_frag_cache.c file? I'm just wondering if we could look at moving
-most of these into the c file itself instead of making them accessible
-to all callers as I don't believe we currently have anyone looking
-into the size of the frag cache or anything like that and I would
-prefer to avoid exposing such functionality if possible. As the
-non-order0 allocation problem with this has pointed out people will
-exploit any interface exposed even if unintentionally.
 
-I would want to move the size/order logic as well as splitting out the
-virtual address as we shouldn't be allowing the user to look at that
-without going through an allocation function.
+On 26/08/2024 11:40, Nico Pache wrote:
+> On Tue, Jul 30, 2024 at 4:37 PM Nico Pache <npache@redhat.com> wrote:
+>>
+>> Hi Zi Yan,
+>> On Mon, Jul 29, 2024 at 7:26 PM Zi Yan <ziy@nvidia.com> wrote:
+>>>
+>>> +Kirill
+>>>
+>>> On 29 Jul 2024, at 18:27, Nico Pache wrote:
+>>>
+>>>> We've seen cases were customers switching from RHEL7 to RHEL8 see a
+>>>> significant increase in the memory footprint for the same workloads.
+>>>>
+>>>> Through our investigations we found that a large contributing factor to
+>>>> the increase in RSS was an increase in THP usage.
+>>>
+>>> Any knob is changed from RHEL7 to RHEL8 to cause more THP usage?
+>> IIRC, most of the systems tuning is the same. We attributed the
+>> increase in THP usage to a combination of improvements in the kernel,
+>> and improvements in the libraries (better alignments). That allowed
+>> THP allocations to succeed at a higher rate. I can go back and confirm
+>> this tomorrow though.
+>>>
+>>>>
+>>>> For workloads like MySQL, or when using allocators like jemalloc, it is
+>>>> often recommended to set /transparent_hugepages/enabled=never. This is
+>>>> in part due to performance degradations and increased memory waste.
+>>>>
+>>>> This series introduces enabled=defer, this setting acts as a middle
+>>>> ground between always and madvise. If the mapping is MADV_HUGEPAGE, the
+>>>> page fault handler will act normally, making a hugepage if possible. If
+>>>> the allocation is not MADV_HUGEPAGE, then the page fault handler will
+>>>> default to the base size allocation. The caveat is that khugepaged can
+>>>> still operate on pages thats not MADV_HUGEPAGE.
+>>>
+>>> Why? If user does not explicitly want huge page, why bother providing huge
+>>> pages? Wouldn't it increase memory footprint?
+>>
+>> So we have "always", which will always try to allocate a THP when it
+>> can. This setting gives good performance in a lot of conditions, but
+>> tends to waste memory. Additionally applications DON'T need to be
+>> modified to take advantage of THPs.
+>>
+>> We have "madvise" which will only satisfy allocations that are
+>> MADV_HUGEPAGE, this gives you granular control, and a lot of times
+>> these madvises come from libraries. Unlike "always" you DO need to
+>> modify your application if you want to use THPs.
+>>
+>> Then we have "never", which of course, never allocates THPs.
+>>
+>> Ok. back to your question, like "madvise", "defer" gives you the
+>> benefits of THPs when you specifically know you want them
+>> (madv_hugepage), but also benefits applications that dont specifically
+>> ask for them (or cant be modified to ask for them), like "always"
+>> does. The applications that dont ask for THPs must wait for khugepaged
+>> to get them (avoid insertions at PF time)-- this curbs a lot of memory
+>> waste, and gives an increased tunability over "always". Another added
+>> benefit is that khugepaged will most likely not operate on short lived
+>> allocations, meaning that only longstanding memory will be collapsed
+>> to THPs.
+>>
+>> The memory waste can be tuned with max_ptes_none... lets say you want
+>> ~90% of your PMD to be full before collapsing into a huge page. simply
+>> set max_ptes_none=64. or no waste, set max_ptes_none=0, requiring the
+>> 512 pages to be present before being collapsed.
+>>
+>>>
+>>>>
+>>>> This allows for two things... one, applications specifically designed to
+>>>> use hugepages will get them, and two, applications that don't use
+>>>> hugepages can still benefit from them without aggressively inserting
+>>>> THPs at every possible chance. This curbs the memory waste, and defers
+>>>> the use of hugepages to khugepaged. Khugepaged can then scan the memory
+>>>> for eligible collapsing.
+>>>
+>>> khugepaged would replace application memory with huge pages without specific
+>>> goal. Why not use a user space agent with process_madvise() to collapse
+>>> huge pages? Admin might have more knobs to tweak than khugepaged.
+>>
+>> The benefits of "always" are that no userspace agent is needed, and
+>> applications dont have to be modified to use madvise(MADV_HUGEPAGE) to
+>> benefit from THPs. This setting hopes to gain some of the same
+>> benefits without the significant waste of memory and an increased
+>> tunability.
+>>
+>> future changes I have in the works are to make khugepaged more
+>> "smart". Moving it away from the round robin fashion it currently
+>> operates in, to instead make smart and informed decisions of what
+>> memory to collapse (and potentially split).
+>>
+>> Hopefully that helped explain the motivation for this new setting!
+> 
+> Any last comments before I resend this?
+> 
+> Ive been made aware of
+> https://lore.kernel.org/all/20240730125346.1580150-1-usamaarif642@gmail.com/T/#u
+> which introduces THP splitting. These are both trying to achieve the
+> same thing through different means. Our approach leverages khugepaged
+> to promote pages, while Usama's uses the reclaim path to demote
+> hugepages and shrink the underlying memory.
+> 
+> I will leave it up to reviewers to determine which is better; However,
+> we can't have both, as we'd be introducing trashing conditions.
+> 
+
+Hi,
+
+Just inserting this here from my cover letter:
+
+Waiting for khugepaged to scan memory and
+collapse pages into THP can be slow and unpredictable in terms of performance
+(i.e. you dont know when the collapse will happen), while production
+environments require predictable performance. If there is enough memory
+available, its better for both performance and predictability to have
+a THP from fault time, i.e. THP=always rather than wait for khugepaged
+to collapse it, and deal with sparsely populated THPs when the system is
+running out of memory.
+
+I just went through your patches, and am not sure why we can't have both?
+Both use max_ptes_none as the tunable. If the number of zero-filled pages
+is above max_ptes_none, the shrinker will split them, and khugepaged will not collapse
+them (SCAN_EXCEED_NONE_PTE), so I don't see how it causes trashing?
+
+
+> Cheers,
+> -- Nico
+> 
+> 
+> 
+> 
+> 
+>>
+>> Cheer!
+>> -- Nico
+>>>
+>>>>
+>>>> Admins may want to lower max_ptes_none, if not, khugepaged may
+>>>> aggressively collapse single allocations into hugepages.
+>>>>
+>>>> RFC note
+>>>> ==========
+>>>> Im not sure if im missing anything related to the mTHP
+>>>> changes. I think now that we have hugepage_pmd_enabled in
+>>>> commit 00f58104202c ("mm: fix khugepaged activation policy") everything
+>>>> should work as expected.
+>>>>
+>>>> Nico Pache (2):
+>>>>   mm: defer THP insertion to khugepaged
+>>>>   mm: document transparent_hugepage=defer usage
+>>>>
+>>>>  Documentation/admin-guide/mm/transhuge.rst | 18 ++++++++++---
+>>>>  include/linux/huge_mm.h                    | 15 +++++++++--
+>>>>  mm/huge_memory.c                           | 31 +++++++++++++++++++---
+>>>>  3 files changed, 55 insertions(+), 9 deletions(-)
+>>>>
+>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>> Cc: Matthew Wilcox <willy@infradead.org>
+>>>> Cc: Barry Song <baohua@kernel.org>
+>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> Cc: Lance Yang <ioworker0@gmail.com>
+>>>> Cc: Peter Xu <peterx@redhat.com>
+>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>> Cc: Rafael Aquini <aquini@redhat.com>
+>>>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>>> --
+>>>> 2.45.2
+>>>
+>>> --
+>>> Best Regards,
+>>> Yan, Zi
+> 
+
 
