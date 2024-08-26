@@ -1,294 +1,127 @@
-Return-Path: <linux-kernel+bounces-300980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA09A95EB35
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE80095EB29
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5401C216A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:02:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D3DB237E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C005140394;
-	Mon, 26 Aug 2024 07:53:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F278513C81C;
+	Mon, 26 Aug 2024 07:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kQHi3+H3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34C113E039;
-	Mon, 26 Aug 2024 07:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAE413B58F;
+	Mon, 26 Aug 2024 07:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724658823; cv=none; b=MzUyseN8i7lk5WWRS74pApqDbJmfeVZGr3tFaGWmB+zBsZ6EUj3pZBD5YmLVsB0chYFMpUZNTj8jJa3141R8NdCTrhUPzyUmhefPi08jPEGD6VMi3fFsSUkiNQERm9j3JbrbP7YxZyzIqSK+bMAiqUgceV2YGfhXQySkuCCtgso=
+	t=1724658633; cv=none; b=jDk9KQDDE7842X/Hopo0DJMEiu+pJN13CbzrBJST+3/540uykiZ2NGSNEtmwP8yAdFT5z25H4DRQM6283m0HSiTkkSVVmyCVvR+HbZK9vCUa+EFeMGKM2rT5hKs6340xZBscykcVRgR0VZMe+QTdj1k5Ma7z6UyxH77KyT78Ph0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724658823; c=relaxed/simple;
-	bh=89S7aqW0XWcT8u4h7lIkLcU4uOiqz5+yPwST6RasXGk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=naGwJbDO/DkfLmUxCJcMvj7U/cA13SYQDcujKlYTG+DdExllDr3w3EOD+Xl19CJGIBNvhbg3GXn9OxU8gY1OPRyQUOPAixs7dlf8NWN4LE0kdPPliFQSDvQCeyZldz3UC2IVbGPLX6wLQsF3ZrLa9uSIKbfWP+EDITaZ6vqkm4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WsjbS25JTz4f3jLy;
-	Mon, 26 Aug 2024 15:53:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B9DFC1A058E;
-	Mon, 26 Aug 2024 15:53:38 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4WBNMxmd6QECw--.16182S4;
-	Mon, 26 Aug 2024 15:53:38 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH md-6.12] md: remove flush handling
-Date: Mon, 26 Aug 2024 15:48:43 +0800
-Message-Id: <20240826074843.1575099-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724658633; c=relaxed/simple;
+	bh=KeABgBOSoLm17wZZI/r7qcPmjAXdHdKZRqOmKOrrI6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzCLWH6FD5dgI+UZi39H5m2tdFvOS9mA59XjbsPvxgEvU1HjyNJg8fRaC9Dzpb0Z1+ZAl5JDch1l+fTNzDIlWlY90/m3Ejy3ACW8b2VsPsRK6I4hg5CY1anuaoEIs3AIJIwMNI8g6ooIl0xtwYuoCVRPNErypaF18JWjK2c1CQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=kQHi3+H3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D6AEC4DE00;
+	Mon, 26 Aug 2024 07:50:30 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kQHi3+H3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724658628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QLg9tCESPGWijcOQ8JKikCNIoatGO4axd4GWvhdYYE=;
+	b=kQHi3+H3+KvCec2w2M7PlU9vKWJw4MmxxAJGd8KaVakXHO8fuSwuvQEqHIKMXDXig3bKh+
+	ifsFzp2/VTZPMw2Xlzn3wncTqsCSsCMf5EeNfxJMaXsiP8wA6aGHQYqp29D4T5aekQPuNp
+	d0TD8Rv85cFT6vXrvtP1KLsRK1jqaR4=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8cf2c087 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:50:28 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:50:19 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 06/17] vdso: Change getrandom's generation to unsigned
+ long
+Message-ID: <Zswzu1l3xO99KN3I@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <525b48eb79978ddba2d1b8ee23b27bd6c5b0b4ee.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4WBNMxmd6QECw--.16182S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF17Kw43ZF17Ww43GF47twb_yoW3Jr15p3
-	ySg3ZxJr48XrZ0qw1DJFWkXr1Fgw1xKayDtrW3Z34xZr13Jrn8GayFqryFqr98A3s3urW5
-	Ww4kt3yDuryjqFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_
-	Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUG0P
-	hUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <525b48eb79978ddba2d1b8ee23b27bd6c5b0b4ee.1724309198.git.christophe.leroy@csgroup.eu>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Thu, Aug 22, 2024 at 09:13:14AM +0200, Christophe Leroy wrote:
+> Performing SMP atomic operations on u64 fails on powerpc32.
+> 
+> Random driver generation is handled as unsigned long not u64,
+> see for instance base_cnrg or struct crng.
+> 
+> Use the same type for vDSO's getrandom as it gets copied
+> from the above. This is also in line with the local
+> current_generation which is already an unsigned long.
 
-For flush request, md has a special flush handling to merge concurrent
-flush request into single one, however, the whole mechanism is based on
-a disk level spin_lock 'mddev->lock'. And fsync can be called quite
-often in some user cases, for consequence, spin lock from IO fast path can
-cause performance degration.
+This isn't going to work when 32-bit userspace tries to access a 64-bit
+kernel.
 
-Fortunately, the block layer already have flush handling to merge
-concurrent flush request, and it only acquire hctx level spin lock(see
-details in blk-flush.c).
+I had "fixed" this with a vdso_kernel_ulong type way back in an earlier
+version: https://lore.kernel.org/lkml/20240528122352.2485958-5-Jason@zx2c4.com/#Z31include:vdso:types.h
 
-This patch remove the flush handling in md, and convert to use general
-block layer flush handling in underlying disks.
+But tglx pointed out in that thread that this actually isn't necessary:
 
-Flush test for 4 nvme raid10:
-start 128 threads to do fsync 100000 times, on arm64, see how long it
-takes.
+| All of this is pointless because if a 32-bit application runs on a
+| 64-bit kernel it has to use the 64-bit 'generation'. So why on earth do
+| we need magic here for a 32-bit kernel?
+| 
+| Just use u64 for both and spare all this voodoo. We're seriously not
+| "optimizing" for 32-bit kernels.
+|
+| All what happens on a 32-bit kernel is that the RNG will store the
+| unsigned long (32bit) generation into a 64bit variable:
+| 
+| 	smp_store_release(&_vdso_rng_data.generation, next_gen + 1);
+| 
+| As the upper 32bit are always zero, there is no issue vs. load store
+| tearing at all. So there is zero benefit for this aside of slightly
+| "better" user space code when running on a 32-bit kernel. Who cares?
 
-Test result: about 10 times faster for high concurrency.
-Before this patch: 50943374 microseconds
-After this patch:  5096347  microseconds
+So I just got rid of it and used a u64 as he suggested.
 
-BTW, this patch can fix the same problem as commit 611d5cbc0b35 ("md: fix
-deadlock between mddev_suspend and flush bio").
+However, there's also an additional reason why it's not worth churning
+further over this - because VM_DROPPABLE is 64-bit only (due to flags in
+vma bits), likely so is vDSO getrandom() for the time being. So I think
+it makes more sense to retool this series to be ppc64, and then if you
+really really want 32-bit and can convince folks it matters, then all of
+these parts (for example, here, the fact that the smp helper doesn't
+want to tear) can be fixed up in a separate series.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md.c | 137 ++++--------------------------------------------
- drivers/md/md.h |  10 ----
- 2 files changed, 11 insertions(+), 136 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index a38981de8901..4d675f7cc2a7 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -546,137 +546,23 @@ static int mddev_set_closing_and_sync_blockdev(struct mddev *mddev, int opener_n
- 	return 0;
- }
- 
--/*
-- * Generic flush handling for md
-- */
--
--static void md_end_flush(struct bio *bio)
--{
--	struct md_rdev *rdev = bio->bi_private;
--	struct mddev *mddev = rdev->mddev;
--
--	bio_put(bio);
--
--	rdev_dec_pending(rdev, mddev);
--
--	if (atomic_dec_and_test(&mddev->flush_pending))
--		/* The pre-request flush has finished */
--		queue_work(md_wq, &mddev->flush_work);
--}
--
--static void md_submit_flush_data(struct work_struct *ws);
--
--static void submit_flushes(struct work_struct *ws)
-+bool md_flush_request(struct mddev *mddev, struct bio *bio)
- {
--	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
- 	struct md_rdev *rdev;
-+	struct bio *new;
- 
--	mddev->start_flush = ktime_get_boottime();
--	INIT_WORK(&mddev->flush_work, md_submit_flush_data);
--	atomic_set(&mddev->flush_pending, 1);
--	rcu_read_lock();
--	rdev_for_each_rcu(rdev, mddev)
--		if (rdev->raid_disk >= 0 &&
--		    !test_bit(Faulty, &rdev->flags)) {
--			struct bio *bi;
--
--			atomic_inc(&rdev->nr_pending);
--			rcu_read_unlock();
--			bi = bio_alloc_bioset(rdev->bdev, 0,
--					      REQ_OP_WRITE | REQ_PREFLUSH,
--					      GFP_NOIO, &mddev->bio_set);
--			bi->bi_end_io = md_end_flush;
--			bi->bi_private = rdev;
--			atomic_inc(&mddev->flush_pending);
--			submit_bio(bi);
--			rcu_read_lock();
--		}
--	rcu_read_unlock();
--	if (atomic_dec_and_test(&mddev->flush_pending))
--		queue_work(md_wq, &mddev->flush_work);
--}
--
--static void md_submit_flush_data(struct work_struct *ws)
--{
--	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
--	struct bio *bio = mddev->flush_bio;
--
--	/*
--	 * must reset flush_bio before calling into md_handle_request to avoid a
--	 * deadlock, because other bios passed md_handle_request suspend check
--	 * could wait for this and below md_handle_request could wait for those
--	 * bios because of suspend check
--	 */
--	spin_lock_irq(&mddev->lock);
--	mddev->prev_flush_start = mddev->start_flush;
--	mddev->flush_bio = NULL;
--	spin_unlock_irq(&mddev->lock);
--	wake_up(&mddev->sb_wait);
--
--	if (bio->bi_iter.bi_size == 0) {
--		/* an empty barrier - all done */
--		bio_endio(bio);
--	} else {
--		bio->bi_opf &= ~REQ_PREFLUSH;
--
--		/*
--		 * make_requst() will never return error here, it only
--		 * returns error in raid5_make_request() by dm-raid.
--		 * Since dm always splits data and flush operation into
--		 * two separate io, io size of flush submitted by dm
--		 * always is 0, make_request() will not be called here.
--		 */
--		if (WARN_ON_ONCE(!mddev->pers->make_request(mddev, bio)))
--			bio_io_error(bio);
--	}
--
--	/* The pair is percpu_ref_get() from md_flush_request() */
--	percpu_ref_put(&mddev->active_io);
--}
-+	rdev_for_each(rdev, mddev) {
-+		if (rdev->raid_disk < 0 || test_bit(Faulty, &rdev->flags))
-+			continue;
- 
--/*
-- * Manages consolidation of flushes and submitting any flushes needed for
-- * a bio with REQ_PREFLUSH.  Returns true if the bio is finished or is
-- * being finished in another context.  Returns false if the flushing is
-- * complete but still needs the I/O portion of the bio to be processed.
-- */
--bool md_flush_request(struct mddev *mddev, struct bio *bio)
--{
--	ktime_t req_start = ktime_get_boottime();
--	spin_lock_irq(&mddev->lock);
--	/* flush requests wait until ongoing flush completes,
--	 * hence coalescing all the pending requests.
--	 */
--	wait_event_lock_irq(mddev->sb_wait,
--			    !mddev->flush_bio ||
--			    ktime_before(req_start, mddev->prev_flush_start),
--			    mddev->lock);
--	/* new request after previous flush is completed */
--	if (ktime_after(req_start, mddev->prev_flush_start)) {
--		WARN_ON(mddev->flush_bio);
--		/*
--		 * Grab a reference to make sure mddev_suspend() will wait for
--		 * this flush to be done.
--		 *
--		 * md_flush_reqeust() is called under md_handle_request() and
--		 * 'active_io' is already grabbed, hence percpu_ref_is_zero()
--		 * won't pass, percpu_ref_tryget_live() can't be used because
--		 * percpu_ref_kill() can be called by mddev_suspend()
--		 * concurrently.
--		 */
--		WARN_ON(percpu_ref_is_zero(&mddev->active_io));
--		percpu_ref_get(&mddev->active_io);
--		mddev->flush_bio = bio;
--		spin_unlock_irq(&mddev->lock);
--		INIT_WORK(&mddev->flush_work, submit_flushes);
--		queue_work(md_wq, &mddev->flush_work);
--		return true;
-+		new = bio_alloc_bioset(rdev->bdev, 0,
-+				       REQ_OP_WRITE | REQ_PREFLUSH, GFP_NOIO,
-+				       &mddev->bio_set);
-+		bio_chain(new, bio);
-+		submit_bio(new);
- 	}
- 
--	/* flush was performed for some other bio while we waited. */
--	spin_unlock_irq(&mddev->lock);
--	if (bio->bi_iter.bi_size == 0) {
--		/* pure flush without data - all done */
-+	if (bio_sectors(bio) == 0) {
- 		bio_endio(bio);
- 		return true;
- 	}
-@@ -763,7 +649,6 @@ int mddev_init(struct mddev *mddev)
- 	atomic_set(&mddev->openers, 0);
- 	atomic_set(&mddev->sync_seq, 0);
- 	spin_lock_init(&mddev->lock);
--	atomic_set(&mddev->flush_pending, 0);
- 	init_waitqueue_head(&mddev->sb_wait);
- 	init_waitqueue_head(&mddev->recovery_wait);
- 	mddev->reshape_position = MaxSector;
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 1c6a5f41adca..5d2e6bd58e4d 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -572,16 +572,6 @@ struct mddev {
- 						   */
- 	struct bio_set			io_clone_set;
- 
--	/* Generic flush handling.
--	 * The last to finish preflush schedules a worker to submit
--	 * the rest of the request (without the REQ_PREFLUSH flag).
--	 */
--	struct bio *flush_bio;
--	atomic_t flush_pending;
--	ktime_t start_flush, prev_flush_start; /* prev_flush_start is when the previous completed
--						* flush was started.
--						*/
--	struct work_struct flush_work;
- 	struct work_struct event_work;	/* used by dm to report failure event */
- 	mempool_t *serial_info_pool;
- 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
--- 
-2.39.2
-
+Jason
 
