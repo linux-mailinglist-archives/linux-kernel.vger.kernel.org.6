@@ -1,269 +1,172 @@
-Return-Path: <linux-kernel+bounces-301739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815E695F4E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:21:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4404695F4E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43279281F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:21:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACD0B21874
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DD41917DB;
-	Mon, 26 Aug 2024 15:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB41192D64;
+	Mon, 26 Aug 2024 15:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OUeVifWh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4lLWe3t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E5D1CD25
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC561CD25;
+	Mon, 26 Aug 2024 15:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724685702; cv=none; b=OZEBxwqLqk5ICOaqTO+Ayd8DtYuQP3VdNzpSY9b9Y96ZVoDudplT4/0lWlgxL9g0H3nKg8DucDmO4ZYcDY1CorEdvy9qSTjU77UXADP5xtLyVwZsvPHLsR7UTj6LXtw824oGR8PazjgA5pNSsC6y+qKoIdr6lLh13DgNF65yAMo=
+	t=1724685929; cv=none; b=SBsF70KYQZ/2xu/TS5rF/uQ2QG6x3V7V6SGCvHgQNyTgGQtCMIkQP1kZu2Mcr4C7BWhYFHSOQ9KDVNkkqeoWXMF0FQPaV3xcSTJUX55IVbE7VjOstFTA7BMJz1LCMIuXOOYvr2vpJAFkN0gPhnso3zkRbLcT3cGHbTBpPO/JV6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724685702; c=relaxed/simple;
-	bh=tA/MsSfzkj1MqCD3WTlhjukiP7Lt92aU47rj291EsiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CUCqPgNQIZ5hCnwfWrG8iXqNtADVlX9dZlfa2E4WNq+rlzqBgWD93QvHVVesJQtWRw4LM1L6DfAF5S68E5onBiFKP7H1NmlyD/i0UuYf2t5Mt3SGNRTEmfvjz7fdGOZYRgenNxOuGhmlfaW3CR2eTMQMfQj1AyyLbxvLLgMzyfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OUeVifWh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724685699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xVfhKRaKDm7iJJwFGB1UlcUKzw1fwN0vnWpe4TV7n4c=;
-	b=OUeVifWhxorJ9KXrDH8ObPCYLCUr6GStC0NibWeZkEqTn1itmawvfAH2cJkMqQ6mWm1ydS
-	P7TMGmqNp1PFOpv7v0hjSefa8wXm32FaGhS54AXAu3qRNDE1125P51PSJgytUt+mEv7OQM
-	xXI4wdbTSxri5T9VaM/cTYaUNCRlEpc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-rjrDA-irPSeiW_tbDh9JDQ-1; Mon, 26 Aug 2024 11:21:38 -0400
-X-MC-Unique: rjrDA-irPSeiW_tbDh9JDQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-372fe1ba9a6so2971133f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:21:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724685697; x=1725290497;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xVfhKRaKDm7iJJwFGB1UlcUKzw1fwN0vnWpe4TV7n4c=;
-        b=FDrR4vRvyqvflZy7HvUTuXiC8Veb7qHwTpqKRvU2KqROPbnBAEnvUYd0gw3IjLUF+r
-         D1m4qJwnr1hnxWYyO20rL+6hOIOBKhWRARcestTyQF3bCn8zu3Gxi2lhhH/GaF42d6nE
-         SBLOSHsm8kgB0OEu5Z6TjWPg3KhbHZhYA5k7vWSWREsOqzRRraywWz54tSIpJ//p1lIi
-         PpE7ccy40Q7fxaexMbMeysqt52zcO35Ba3msduo387S95otAR3ykSwFOMV+tdGAn+8Lj
-         t+dWHsV0lQ+6Ny6upmF3nGuIyxjAkRYaWyKVdmNSXGSHouBxc20+t3TaOt8vlmPvjWFW
-         P20w==
-X-Gm-Message-State: AOJu0YztAUbnXQ4RtIsVXSJmVLUl+GknmRyQ/JXX03gwwN1Nd6AJmrpw
-	p8P7jz8vrKzqUKPgK/PaKJ/k257Cd/v2IDPlh0lRlkpEDbx1OnzNPFPg5AgPBebv+xRIF646o53
-	ANxNobR/bcgOKDEz/NHN13Xxq9DUIcX7PIqsbXzESCFDkskuxPZCziX8Wc7/2vQ==
-X-Received: by 2002:adf:a419:0:b0:371:8a8e:bf34 with SMTP id ffacd0b85a97d-373118fbbe1mr5277985f8f.62.1724685696620;
-        Mon, 26 Aug 2024 08:21:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqu679kC3Scr/Ra6Rb2UAlKN2NPsv8B8ucTOfLynfazsHuojuRcC2LVUpZliNcZRCUyAXJew==
-X-Received: by 2002:adf:a419:0:b0:371:8a8e:bf34 with SMTP id ffacd0b85a97d-373118fbbe1mr5277934f8f.62.1724685695655;
-        Mon, 26 Aug 2024 08:21:35 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c737:1900:16b0:8dc:77e:31af? (p200300cbc737190016b008dc077e31af.dip0.t-ipconnect.de. [2003:cb:c737:1900:16b0:8dc:77e:31af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm10986513f8f.53.2024.08.26.08.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:21:34 -0700 (PDT)
-Message-ID: <f318f65d-4198-481c-98a0-00415664614c@redhat.com>
-Date: Mon, 26 Aug 2024 17:21:32 +0200
+	s=arc-20240116; t=1724685929; c=relaxed/simple;
+	bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TuZZ40VI7jeBgKE1MjnlABdVaRtzu34xKKvstFKnwh5vRZTZMx7WALH5wbgREcbqP6I4EwRav5k3PuXJpXLABVL1WH94RODmKf8O/oXV94RD4/4Xz5SPvbMdfjntzby9BPJYX9sQA6P/iZkLBRKegSt3LgsmhiZ3g78QZp8rqRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4lLWe3t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8180C52FC5;
+	Mon, 26 Aug 2024 15:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724685928;
+	bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=h4lLWe3tw8iH9MLtcbDg+ta2KOzwk2XZO0mAcdXNi+sKjyRcpgt1CRuLy6rXJQA0/
+	 3qESRK95Y35uiGFHPSIT4XP+yQUTq0c7odBjiMjtKYo7mj7QomnurMfr97Vw0YLoDJ
+	 wzbCeYo8HVZ5pHU7TxI6LrGhfRD8ybKdumbOokKkWqYb8yS/JYVgE0+vLF9gNxmZ8G
+	 /K9W1zX0xqoKkGW+LJCfNyOcaXPIvEnO3RScsnO3ypyUwg0kqb/oMjnhllmxwt8af9
+	 dK5SXvKpLXz3O6FkxYJ3/cfnlXBkBuBftnyMutywLg1nKgi0A5Hx/XGPuR9GbstkNI
+	 JbR+qJ6z+eAkA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 26 Aug 2024 17:25:04 +0200
+Message-ID: <20240826-vfs-fixes-3028447211c8@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/14] mm: pgtable: introduce
- pte_offset_map_{ro|rw}_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
- willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3818; i=brauner@kernel.org; h=from:subject:message-id; bh=wPp+lpnf6Z7NpVDAMX08zwhLtbHujBYZzuDcdLCSyqo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdmRfJ6sb6dvF736N6RSv/z1W5lWumIHX5muDKtcr3e rd9slna1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRHb6MDO/Zry+sFNdaZLA7 WbOxUdnNfIPj9cPRUQ6G4Szz9u/6eomRYd+Zt9vVeZY7Gd6MyP7CHWY8cfZKt2yWa2F5L1+wb15 /lREA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 22.08.24 09:13, Qi Zheng wrote:
-> Currently, the usage of pte_offset_map_nolock() can be divided into the
-> following two cases:
-> 
-> 1) After acquiring PTL, only read-only operations are performed on the PTE
->     page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
->     that the PTE page will not be freed, and there is no need to worry
->     about whether the pmd entry is modified.
+/* Summary */
+This contains fixes for this merge window:
 
-There is also the usage where we don't grab the PTL at all, and only do 
-a racy (read-only) lookup.
+VFS:
 
-> 
-> 2) After acquiring PTL, the pte or pmd entries may be modified. At this
->     time, we need to ensure that the pmd entry has not been modified
->     concurrently.
-> 
-> To more clearing distinguish between these two cases, this commit
-> introduces two new helper functions to replace pte_offset_map_nolock().
-> For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
-> to changing the name to pte_offset_map_rw_nolock(), it also outputs the
-> pmdval when successful. This can help the caller recheck *pmd once the PTL
-> is taken. In some cases, that is, either the mmap_lock for write, or
-> pte_same() check on contents, is also enough to ensure that the pmd entry
-> is stable. But in order to prevent the interface from being abused, we
-> choose to pass in a dummy local variable instead of NULL.
-> 
-> Subsequent commits will convert pte_offset_map_nolock() into the above
-> two functions one by one, and finally completely delete it.
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->   Documentation/mm/split_page_table_lock.rst |  7 ++++
->   include/linux/mm.h                         |  5 +++
->   mm/pgtable-generic.c                       | 43 ++++++++++++++++++++++
->   3 files changed, 55 insertions(+)
-> 
-> diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
-> index e4f6972eb6c04..08d0e706a32db 100644
-> --- a/Documentation/mm/split_page_table_lock.rst
-> +++ b/Documentation/mm/split_page_table_lock.rst
-> @@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
->    - pte_offset_map_nolock()
->   	maps PTE, returns pointer to PTE with pointer to its PTE table
->   	lock (not taken), or returns NULL if no PTE table;
+- Ensure that backing files uses file->f_ops->splice_write() for splice.
 
-What will happen to pte_offset_map_nolock() after this series? Does it 
-still exist or will it become an internal helper?
+netfs:
 
-> + - pte_offset_map_ro_nolock()
-> +	maps PTE, returns pointer to PTE with pointer to its PTE table
-> +	lock (not taken), or returns NULL if no PTE table;
-> + - pte_offset_map_rw_nolock()
-> +	maps PTE, returns pointer to PTE with pointer to its PTE table
-> +	lock (not taken) and the value of its pmd entry, or returns NULL
-> +	if no PTE table;
+- Revert the removal of PG_private_2 from netfs_release_folio() as cephfs still
+  relies on this.
 
-[...]
+- When AS_RELEASE_ALWAYS is set on a mapping the folio needs to always be
+  invalidated during truncation.
 
-> +pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
-> +				unsigned long addr, pmd_t *pmdvalp,
-> +				spinlock_t **ptlp)
-> +{
-> +	pmd_t pmdval;
-> +	pte_t *pte;
-> +
-> +	BUG_ON(!pmdvalp);
+- Fix losing untruncated data in a folio by making letting
+  netfs_release_folio() return false if the folio is dirty.
 
-As raised, no BUG_ON please. VM_WARN_ON_ONCE() is helpful during early 
-testing and should catch these kind of things.
+- Fix trimming of streaming-write folios in netfs_inval_folio() .
 
-If someone thinks not requiring a non-NULL pointer is better, please 
-speak up, I'm not married to that idea :)
+- Reset iterator before retrying a short read.
 
-> +	pte = __pte_offset_map(pmd, addr, &pmdval);
-> +	if (likely(pte))
-> +		*ptlp = pte_lockptr(mm, &pmdval);
-> +	*pmdvalp = pmdval;
-> +	return pte;
-> +}
-> +
->   /*
->    * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
->    * __pte_offset_map_lock() below, is usually called with the pmd pointer for
-> @@ -356,6 +383,22 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
->    * recheck *pmd once the lock is taken; in practice, no callsite needs that -
->    * either the mmap_lock for write, or pte_same() check on contents, is enough.
->    *
-> + * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like
-> + * pte_offset_map(); but when successful, it also outputs a pointer to the
-> + * spinlock in ptlp - as pte_offset_map_lock() does, but in this case without
-> + * locking it.  This helps the caller to avoid a later pte_lockptr(mm, *pmd),
-> + * which might by that time act on a changed *pmd: pte_offset_map_ro_nolock()
-> + * provides the correct spinlock pointer for the page table that it returns.
-> + * For readonly case, the caller does not need to recheck *pmd after the lock is
-> + * taken, because the RCU lock will ensure that the PTE page will not be freed. > + *
-> + * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
-> + * pte_offset_map_ro_nolock(); but when successful, it also outputs the
-> + * pdmval. For cases where pte or pmd entries may be modified, that is, maywrite
-> + * case, this can help the caller recheck *pmd once the lock is taken. In some
-> + * cases, that is, either the mmap_lock for write, or pte_same() check on
-> + * contents, is also enough to ensure that the pmd entry is stable.
-> + *
->    * Note that free_pgtables(), used after unmapping detached vmas, or when
->    * exiting the whole mm, does not take page table lock before freeing a page
->    * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
+- Fix interaction of streaming writes with zero-point tracker
 
-In general to me a step into the right direction. Likely the 
-documentation could be further clarified in some aspects:
+afs:
 
-Like that the use of pte_offset_map_ro_nolock() does not allow to easily 
-identify if the page table was replaced in the meantime. Even after 
-grabbing the PTL, we might be looking either at a page table that is 
-still mapped or one that was unmapped and is about to get freed. But for 
-R/O access this is usually sufficient AFAIUK.
+- During truncation afs currently calls truncate_setsize() which sets i_size,
+  expands the pagecache and truncates it. The first two operations aren't
+  needed because they will have already been done. So call truncate_pagecache()
+  instead and skip the redundant parts.
 
-Or that "RO" / "RW" expresses the intended semantics, not that the 
-*kmap* will be RO/RW protected.
+overlayfs:
 
--- 
-Cheers,
+- Fix checking of the number of allowed lower layers so 500 layers can actually
+  be used instead of just 499
 
-David / dhildenb
+- Add missing '\n' to pr_err() output.
 
+- Pass string to ovl_parse_layer() and thus allow it to be used for
+  Opt_lowerdir as well.
+
+pidfd:
+
+- Revert blocking the creation of pidfds for kthread as apparently userspace
+  relies on this. Specifically, it breaks systemd during shutdown.
+
+romfs:
+
+- Fix romfs_read_folio() to use the correct offset with folio_zero_tail().
+
+/* Testing */
+Debian clang version 16.0.6 (27+b1)
+gcc (Debian 14.2.0-1) 14.2.0
+
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc6.fixes
+
+for you to fetch changes up to e00e99ba6c6b8e5239e75cd6684a6827d93c39a2:
+
+  netfs: Fix interaction of streaming writes with zero-point tracker (2024-08-24 16:09:17 +0200)
+
+Please consider pulling these changes from the signed vfs-6.11-rc6.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.11-rc6.fixes
+
+----------------------------------------------------------------
+Christian Brauner (4):
+      romfs: fix romfs_read_folio()
+      Revert "pidfd: prevent creation of pidfds for kthreads"
+      ovl: pass string to ovl_parse_layer()
+      Merge patch series "ovl: simplify ovl_parse_param_lowerdir()"
+
+David Howells (7):
+      netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
+      mm: Fix missing folio invalidation calls during truncation
+      afs: Fix post-setattr file edit to do truncation correctly
+      netfs: Fix netfs_release_folio() to say no if folio dirty
+      netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
+      netfs: Fix missing iterator reset on retry of short read
+      netfs: Fix interaction of streaming writes with zero-point tracker
+
+Ed Tsai (1):
+      backing-file: convert to using fops->splice_write
+
+Zhihao Cheng (2):
+      ovl: fix wrong lowerdir number check for parameter Opt_lowerdir
+      ovl: ovl_parse_param_lowerdir: Add missed '\n' for pr_err
+
+ fs/afs/inode.c           | 11 ++++++---
+ fs/backing-file.c        |  5 +++-
+ fs/ceph/inode.c          |  1 +
+ fs/netfs/io.c            |  1 +
+ fs/netfs/misc.c          | 60 ++++++++++++++++++++++++++++++++++++------------
+ fs/netfs/write_collect.c |  7 ++++++
+ fs/overlayfs/params.c    | 51 ++++++++++------------------------------
+ fs/romfs/super.c         |  2 +-
+ kernel/fork.c            | 25 +++-----------------
+ mm/truncate.c            |  4 ++--
+ 10 files changed, 84 insertions(+), 83 deletions(-)
 
