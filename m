@@ -1,216 +1,187 @@
-Return-Path: <linux-kernel+bounces-300900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D443A95EA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3830595EA48
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE221F21CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6525E1C21354
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94011376E6;
-	Mon, 26 Aug 2024 07:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ca+2nGf6"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA519129A78
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1389312BF02;
+	Mon, 26 Aug 2024 07:23:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D846B12BEBE
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724656878; cv=none; b=EzogU9ClXd+lJHOl5UmhfbQlLE26x5xoiGee3hVyq06qnIR0NTq7ngNmMJykQXPGkI/KsGB+crQeBR4obrMk6FHzPg3F3G/3qpCpSizbZXTv82EM6p+40QT1otdWUQRNFKGqXJDsvXfY0BTNiwkNuE3LU0cy9nKmfkdNO14XTow=
+	t=1724657037; cv=none; b=BWXkGmTlPXq/VhbQ98lVvrhObtsDcQhffEydMsZHglsWwiI5mMCLvMDb+f82izI2zXsPf0jCBW+mKXkjpFDg1K1ERuCGW8ou6D8hhVegi3bnzmZIBq2aSH637zqS+xyVO+GRD0HguZV7FwOC5iLBjia5t89tX2tDtnPvpweyosU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724656878; c=relaxed/simple;
-	bh=82WFEoh8dI6a0Rbl//ansxOC9mSUsYdhkWeiRVQn/Bo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fn0jYRxL0OMpMvWKeA8k0HJcXz+ciPqh5k3M6qJ0nSJ1QhzEbKTkNk4A1Sz+UnaFCM+zFLVlqI2NpjBebQLRnBgcWUAyXF8BZkgomul1BRpaBtsfE4G8Wwhh/UAuNAQ0b4splnil1+lS9FhjDjvulG26JaYVPtE1zrefdr3Kx0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ca+2nGf6; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-533461323cdso4458569e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724656875; x=1725261675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9s80hAoba+vF/YE3Nvr8fKfluCQHu+8VdHsPUZS9vM=;
-        b=Ca+2nGf6mgohEbxkJrirCdMCKV0IAz+TOKjWORQxdPW2ptfaGcRBjTm6LLpllBsI0J
-         3aIgfjo4wjKzPokTwUv3x8zUWSyhCKL+6ywHiTd/yJ589tMGzTiw5U2+RA31PBGekY0e
-         S/8NKBZ917eEfWU/1IaoNsC0fxgHoq+L5GThs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724656875; x=1725261675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t9s80hAoba+vF/YE3Nvr8fKfluCQHu+8VdHsPUZS9vM=;
-        b=knZ7KuJXG78hCEB192b0WgEMkn7Hf6m8fmQUeQK7pTYhpc0bUeZyYQvPqrCF8xow64
-         VpOvMOGOezDLLikPL3uq+qOJTdjvEgKqFghVURS2eVH4Gclu2TY4vkNksbzKqEGciAoB
-         ZMZ0cmhv1UAIBmZHrA0ZQGScKcFpt4bASciilO/73IZxWxazNWRf15GkuSpqNuIUGX2E
-         jiNLbx6ZsqvmE5krjhvsjm4AWtXzPpoxbN2BYXwdz7r+L+dfp9+ImaBqF2bAgrA341wx
-         pMNpfxCYDA00g+Beol46KZ4JcEu2iNJ3M0JBNSNrGWUoF5TWmrjQqs4hmq0cUDU1V2Pl
-         jVXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqMZXPnyr8T+hU+IMGIG/0ObBmlWEpECbmHGJLmFm18AUs2liHhvEfrFt3bKEyXCYFlci8RGf/5m49GZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza3jPMDjkoVGONn8aX1Y4mVTJJeY5imZ7OPzww73cSvPrd9ywy
-	NkisQ8lnPXoCZbZYd6mp6VDLNZKbRSKPJD7gv9rBhKprgjPsweAZ2J9bxojEzYFGH8qYOX4K7UK
-	99H69bsTe9F1GlalbXdXxL8bj8+uNEVBOxTdS
-X-Google-Smtp-Source: AGHT+IGihttkaipApdxajdI+u8zonSwerG1x9HLpL1VsK/H7AuQIzQB7NEiNyk7f9sK11N97AVeIrS8sEeRsiAeiSOI=
-X-Received: by 2002:a05:6512:3087:b0:52c:dc25:d706 with SMTP id
- 2adb3069b0e04-53438868deemr6871597e87.52.1724656874411; Mon, 26 Aug 2024
- 00:21:14 -0700 (PDT)
+	s=arc-20240116; t=1724657037; c=relaxed/simple;
+	bh=40KCpo4a/KT+N/jHw0w/ATGM1OP+/u7YqRjVvp7FewI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mePKtqJ1m7ZMxn3vOZsmFzUp1E6M3rbJ8YQ8V6njCApAJ6/sfHUPtYONyKlpqLm5sj7gaeZLWSdHGNyHiNKOYY4BJV7Wne/983GZWmdjFDugwIzueaFm3ZBrmOy5I1DK6HeOwiyVSMZP4pepknP3Ev5t4NvDIrC9pxDLen1/B88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E17E2339;
+	Mon, 26 Aug 2024 00:24:14 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F8F13F66E;
+	Mon, 26 Aug 2024 00:23:45 -0700 (PDT)
+Date: Mon, 26 Aug 2024 09:23:34 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Jie Zhan <zhanjie9@hisilicon.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, vincent.guittot@linaro.org,
+	vanshikonda@os.amperecomputing.com, sumitg@nvidia.com,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	viresh.kumar@linaro.org, rafael@kernel.org
+Subject: Re: [PATCH v6 3/4] arm64: Provide an AMU-based version of
+ arch_freq_get_on_cpu
+Message-ID: <ZswtdoRmwFHXdweK@arm.com>
+References: <20240603082154.3830591-1-beata.michalska@arm.com>
+ <20240603082154.3830591-4-beata.michalska@arm.com>
+ <e2bf18e6-30cc-c85d-5fd4-c2be83922597@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822092006.3134096-1-wenst@chromium.org> <20240822092006.3134096-9-wenst@chromium.org>
- <ZsdJOUe44hiGur-s@smile.fi.intel.com> <CAGXv+5G7h08Pvd24_6LoUB_8w_Cd0RntRSjNdn_FjrRH1ZF5oQ@mail.gmail.com>
- <ZsiWALpt1IpTHsKg@smile.fi.intel.com>
-In-Reply-To: <ZsiWALpt1IpTHsKg@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 26 Aug 2024 15:21:03 +0800
-Message-ID: <CAGXv+5FzMb3fERnUwd5DF_=TqXr2_6h+n_UPpfvJc_-eu7pNYg@mail.gmail.com>
-Subject: Re: [PATCH v5 08/10] i2c: of-prober: Add GPIO support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2bf18e6-30cc-c85d-5fd4-c2be83922597@hisilicon.com>
 
-On Fri, Aug 23, 2024 at 10:01=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Aug 23, 2024 at 06:32:16PM +0800, Chen-Yu Tsai wrote:
-> > On Thu, Aug 22, 2024 at 10:20=E2=80=AFPM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Aug 22, 2024 at 05:20:01PM +0800, Chen-Yu Tsai wrote:
->
+On Wed, Aug 14, 2024 at 02:46:16PM +0800, Jie Zhan wrote:
+> Hi Beata,
+Hi Jie,
+> 
+> On 03/06/2024 16:21, Beata Michalska wrote:
+> > With the Frequency Invariance Engine (FIE) being already wired up with
+> > sched tick and making use of relevant (core counter and constant
+> > counter) AMU counters, getting the current frequency for a given CPU,
+> > can be achieved by utilizing the frequency scale factor which reflects
+> > an average CPU frequency for the last tick period length.
+> > 
+> > The solution is partially based on APERF/MPERF implementation of
+> > arch_freq_get_on_cpu.
+> > 
+> > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > ---
+> >   arch/arm64/kernel/topology.c | 110 +++++++++++++++++++++++++++++++----
+> >   1 file changed, 100 insertions(+), 10 deletions(-)
 > ...
->
-> > > > +     if (!data->gpiods)
-> > > > +             return 0;
-> > >
-> > > If it comes a new code (something else besides GPIOs and regulators) =
-this
-> > > will be a (small) impediment. Better to have a helper for each case a=
-nd do
-> > >
-> > >         ret =3D ..._gpiods();
-> > >         if (ret)
-> > >                 ...
-> > >
-> > > Same for regulators and anything else in the future, if any.
-> >
-> > I'm not sure I follow. Do you mean wrap each individual type in a wrapp=
-er
-> > and call those here, like the following?
-> >
-> >     i2c_of_probe_enable_res(...)
-> >     {
-> >         ret =3D i2c_of_probe_enable_regulators(...)
-> >         if (ret)
-> >               return ret;
-> >
-> >         ret =3D i2c_of_probe_enable_gpios(...)
-> >         if (ret)
-> >               goto error_disable_regulators;
-> >
-> >         ...
-> >     }
->
-> Yes.
->
-> ...
->
-> > > > +             /*
-> > > > +              * reset GPIOs normally have opposite polarity compar=
-ed to
-> > >
-> > > "reset"
-> > >
-> > > > +              * enable GPIOs. Instead of parsing the flags again, =
-simply
-> > >
-> > > "enable"
-> > >
-> > > > +              * set the raw value to high.
-> > >
-> > > This is quite a fragile assumption. Yes, it would work in 98% cases, =
-but will
-> > > break if it's not true somewhere else.
-> >
-> > Well, this seems to be the de facto standard. Or it would have to remem=
-ber
-> > what each GPIO descriptor's name is, and try to classify those into eit=
-her
-> > "enable" or "reset", and set their respective logical values to 1 or 0.
-> > And then you run into a peripheral with a broken binding that has its
-> > "reset" GPIO inverted, i.e. it's driver behavior needs to follow the
-> > "enable" GPIO style. The class of devices this prober targets are
-> > consumer electronics (laptops, tablets, phones) that at least have gone
-> > through some component selection where the options won't have conflicti=
-ng
-> > requirements.
->
-> I'm talking from real life example(s) :-)
->
-> Recently I looked at the OV7251 sensor driver that expects "enable" GPIO =
-while
-> all users supply "reset"-as-"enable" with the exact trouble I described.
-> Yet it's pure software / ABI issue in that case, but who knows what PCB
-> engineers may come up with.
+> > +
+> > +#define AMU_SAMPLE_EXP_MS	20
+> > +
+> > +unsigned int arch_freq_get_on_cpu(int cpu)
+> > +{
+> > +	struct amu_cntr_sample *amu_sample;
+> > +	unsigned int start_cpu = cpu;
+> > +	unsigned long last_update;
+> > +	unsigned int freq = 0;
+> > +	u64 scale;
+> > +
+> > +	if (!amu_fie_cpu_supported(cpu) || !arch_scale_freq_ref(cpu))
+> > +		return 0;
+> > +
+> > +retry:
+> > +	amu_sample = per_cpu_ptr(&cpu_amu_samples, cpu);
+> > +
+> > +	last_update = amu_sample->last_update;
+> > +
+> > +	/*
+> > +	 * For those CPUs that are in full dynticks mode,
+> > +	 * and those that have not seen tick for a while
+> > +	 * try an alternative source for the counters (and thus freq scale),
+> > +	 * if available, for given policy:
+> > +	 * this boils down to identifying an active cpu within the same freq
+> > +	 * domain, if any.
+> > +	 */
+> > +	if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+> > +	    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+> One question here.
+> 
+> The 2nd condition, providing the addtional code in patch 4, would be:
+> (!idle_cpu(cpu) && time_is_before_jiffies(last_update +
+> msecs_to_jiffies(AMU_SAMPLE_EXP_MS)))
+> That means trying another cpu in the same freq domain if this cpu is running
+> and not having a tick recently.
+> 
+> In this case, if it fails to find an alternative cpu in the following code,
+> can it just jump to the calculation
+> part and return an 'old' frequency rather than return 0?
+> The freq here won't be older than the freq when the cpu went idle last time
+> -- yet the freq before last idle
+> is returned if the cpu were idle (patch 4).
+To be fair, I will be dropping the idle_cpu check from this condition so that
+we do keep the cap on the validity of the scale factor: meaning if the cpu
+remains idle for longer than assumed 20ms we will either look for alternative
+or return 0. I'm not entirely convinced returning somewhat stale information on
+the freq for CPUs that remain idle for a while will be useful.
 
-For the OV7251 case specifically, the current approach works fine, as the
-polarity is the same: high electric level for a working chip.
-
-But now that you mention it, camera sensors are exactly the case I had
-in mind, though not the same chip. Some of the OmniVision and GalaxyCore
-sensors have a "shutdown" pin that is active high, i.e. high electric
-level shuts down the chip.
-
-So I guess the alternative would be to remember each GPIO's name, and
-do the appropriate thing based on the name, and also set the logical
-value, not the raw value. If it says "shutdown" or "reset", set the
-logical value to 0; if it says "enable", set it to 1. And hopefully
-we don't run into a binding which has "shutdown" but is actually
-"enable" ...
-
-I don't have this case and I kind of want to leave it as a TODO though.
-I feel like the scope of the series is expanding ever so slightly.
+One note here: as per discussion in [1] this functionality will be moved to new
+sysfs attribute so it will no longer be used via scaling_cur_freq.
 
 
-ChenYu
+> 
+> > +		struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> > +		int ref_cpu = cpu;
+> > +
+> > +		if (!policy)
+> > +			goto leave;
+> > +
+> > +		if (!policy_is_shared(policy)) {
+> > +			cpufreq_cpu_put(policy);
+> > +			goto leave;
+> > +		}
+> > +
+> > +		do {
+> > +			ref_cpu = cpumask_next_wrap(ref_cpu, policy->cpus,
+> > +						    start_cpu, false);
+> start_cpu is only used here. looks like we can s/start_cpu/cpu/ and remove
+> its definition above?
+It is indeed but it is needed for the cpumask_next_wrap to know when to stop
+the iteration after wrapping.
 
-> > And if the polarities of the possible components don't line up, then th=
-is
-> > probe structure can't really do anything. One would need something that
-> > power sequences each component separately and probes it. I would really
-> > like to avoid that if possible, as it makes the boot time (to periphera=
-l
-> > available) dependent on which component you have and how far down the
-> > list it is. We have Chromebooks that have 4 touchscreen components
-> > introduced over the years. In that case something more like Doug's
-> > original proposal would work better: something that forces mutual
-> > exclusivity among a class of devices.
->
-> Maybe. I just pointed out the potential problem.
->
-> > > > +              */
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+---
+[1] https://lore.kernel.org/all/20240603081331.3829278-1-beata.michalska@arm.com/
+---
+
+BR
+Beata
+> > +
+> > +		} while (ref_cpu < nr_cpu_ids && idle_cpu(ref_cpu));
+> > +
+> > +		cpufreq_cpu_put(policy);
+> > +
+> > +		if (ref_cpu >= nr_cpu_ids)
+> > +			/* No alternative to pull info from */
+> > +			goto leave;
+> > +
+> > +		cpu = ref_cpu;
+> > +		goto retry;
+> > +	}
+> > +	/*
+> > +	 * Reversed computation to the one used to determine
+> > +	 * the arch_freq_scale value
+> > +	 * (see amu_scale_freq_tick for details)
+> > +	 */
+> > +	scale = arch_scale_freq_capacity(cpu);
+> > +	freq = scale * arch_scale_freq_ref(cpu);
+> > +	freq >>= SCHED_CAPACITY_SHIFT;
+> > +leave:
+> > +	return freq;
+> > +}
+> > +
+> >   static void amu_fie_setup(const struct cpumask *cpus)
+> >   {
+> >   	int cpu;
+> 
 
