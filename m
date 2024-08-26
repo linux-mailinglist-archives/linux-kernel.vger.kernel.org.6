@@ -1,203 +1,121 @@
-Return-Path: <linux-kernel+bounces-301093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895DD95EC46
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E3C95EC36
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46784281C22
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011E21F21B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4AE145330;
-	Mon, 26 Aug 2024 08:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A6C13C8EA;
+	Mon, 26 Aug 2024 08:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="dnUBtpCI"
-Received: from smtp9.infineon.com (smtp9.infineon.com [217.10.52.204])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HIdfvaZx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B913D516;
-	Mon, 26 Aug 2024 08:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.52.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568FA73478;
+	Mon, 26 Aug 2024 08:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661793; cv=none; b=MePIHD/u9pXiuH1VLaYey4S7FBO9EiIDUqyne9mqtBxGbermYh9wXe+2y7BkH6G9mcEUBbwcu0xfs1ho1/OArw2HoGi9bH4s1073/amaNfevMxauGcZG18FQyZVzAj20EDjkYXQf//h8kmEbS8gsgaoSRkh2P+p/glnLR5YkPag=
+	t=1724661715; cv=none; b=OYdtlZvh0VUPW7TR0UWAEFbHvEw9jlh/k/Hku+HAoYxUVfPicLNSwguaM/0t+4cGI5IyLEVGl4bUgJXDMhty+tbuSWHCCnvqKdjRX0eTPSZPSnxReNJRvf7LgctdADMcMDerBpEMqcDnEZd+T8p/YaaWpyx3T9Z/azbl8WGs5EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661793; c=relaxed/simple;
-	bh=T4nlKPYILTaeeaP8x/8TspIg9b2lQOJQG7zl6YPpuN4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AKdUIeDW/N58S83jT4S40rTX6NpfpPMiw640Pol3HqVOopqIWfI6DwM/AzkGDAaA/cfNL27iByLUrj62vnq8qZNgmIiRxquo4t0B3joZrKkhCgq+uptow9Uge7uCaYV6gRwyywdMHmeANqGEVTkXW3TnEB/nTae3g4pxGU72R8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com; spf=pass smtp.mailfrom=infineon.com; dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b=dnUBtpCI; arc=none smtp.client-ip=217.10.52.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infineon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1724661791; x=1756197791;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=T4nlKPYILTaeeaP8x/8TspIg9b2lQOJQG7zl6YPpuN4=;
-  b=dnUBtpCIrlliNt96207dokKSOIqF+b6lYC44qBKTGppMOshXZ40WKkqf
-   kBr3MDfbbTWNn0esI5tJo76euqdeb5I7pPvn6d5XhkqEsW6B7ygFTW2zy
-   3q4jDr3B7YzRkPEtcYxDCxZMpR7JC/bGbC1NMMA1FUsQUMW+DwcGkcu83
-   c=;
-X-CSE-ConnectionGUID: 5vr0WjKnQ7SJ1gQG7OGhhg==
-X-CSE-MsgGUID: xgNVd0GgQAyn51RzYaczUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="27903999"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719871200"; 
-   d="scan'208";a="27903999"
-Received: from unknown (HELO MUCSE803.infineon.com) ([172.23.29.29])
-  by smtp9.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 10:41:59 +0200
-Received: from MUCSE832.infineon.com (172.23.7.104) by MUCSE803.infineon.com
- (172.23.29.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
- 2024 10:41:58 +0200
-Received: from ISCN5CG3203WLP.infineon.com (10.161.6.196) by
- MUCSE832.infineon.com (172.23.7.104) with Microsoft SMTP Server
+	s=arc-20240116; t=1724661715; c=relaxed/simple;
+	bh=mTeGXa6kLrneVi/7UwU5293IHLpRJlJKgu0HALZVp4M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKyy6pzjagK5ZH822rF/6xHayyHP/ry0AcURvyEweI31SFO7RdBa/Amic46KijNBFY4EeThWagYmjRZYrM4OBEuAFPCriprQohEZ+G6dZv/cWqNuAZ58xEN/6SWSWHZojIWpZF5CxsL2Yhu8o5aGGAxhgWPtNRT/0tGV3qJKQNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HIdfvaZx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MTBe016970;
+	Mon, 26 Aug 2024 08:41:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sDwK8FKewltdzBhScg9N/IjW
+	sMDQSCc47T7kexD8SfY=; b=HIdfvaZxflCIAjSDsU8t8MgCQz28t7wTamfrZ4xZ
+	T7bmtBNiGvBZluZkf7+TSErICBSDMtQT3LjsGj7smoXYt8QhBQPdVeEHK0/siLDh
+	iLyX+zNrXU9vmf3tW6mIKFvbD8k+h4OzZ5uFxcjQebKbI7GaI9rQETWdwito19Aa
+	XpPUpaVm7cQTWq8Yuz+Fk6P7FKslhAQ05YeoZS8P7wUfvINF6Cw87N4sC/W/y6ES
+	xXpZR5iU05uoNmKXJdcuahw+YaYYZDlPe8+ZIR76T2sU9ue9fovxH72g1lPcf3lZ
+	TOWgTspCm5CkJP0RCCGZoERZUgAX5fVbu0s95YnmVk+bwA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417988b182-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 08:41:50 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47Q8fnVm011566
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 08:41:49 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 26 Aug 2024 10:41:56 +0200
-From: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Nobuaki Tsunashima" <Nobuaki.Tsunashima@infineon.com>
-Subject: [PATCH v6] Bluetooth: btbcm: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
-Date: Mon, 26 Aug 2024 17:41:37 +0900
-Message-ID: <20240826084137.86671-1-nobuaki.tsunashima@infineon.com>
-X-Mailer: git-send-email 2.34.1
+ 15.2.1544.9; Mon, 26 Aug 2024 01:41:45 -0700
+Date: Mon, 26 Aug 2024 16:41:41 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        Yushan Li <quic_yushli@quicinc.com>
+Subject: Re: [PATCH] arm64: dts: qcom: Add coresight nodes for x1e80100
+Message-ID: <Zsw/xTCZMDHkfrEm@jiegan-gv.ap.qualcomm.com>
+References: <20240826061900.790715-1-quic_jiegan@quicinc.com>
+ <548ccc89-3e0b-47ce-891b-4a181b79c714@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MUCSE805.infineon.com (172.23.29.31) To
- MUCSE832.infineon.com (172.23.7.104)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <548ccc89-3e0b-47ce-891b-4a181b79c714@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Yth64yOcBy3Zaz7W6KlnWiWNsnzMsEY_
+X-Proofpoint-ORIG-GUID: Yth64yOcBy3Zaz7W6KlnWiWNsnzMsEY_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_05,2024-08-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ spamscore=0 adultscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 impostorscore=0 suspectscore=0
+ mlxlogscore=541 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408260068
 
-From: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
-
-CYW4373 ROM FW has an issue that it claims LE_Read_Transmit_Power command
-as supported in a response of Read_Local_Supported_Command command but
-rejects the LE_Read_Transmit_Power command with "Unknown HCI Command"
-status. Because Bluetooth driver of kernel 5.11 added sending the
-LE_Read_Transmit_Power command in initialize phase, hci up fails due to the
-issue.
-
-Especially in USB i/f case, it would be difficult to download patch FW that
-includes its fix unless hci is up.
-
-The driver already contains infrastructure to apply the quirk for the
-issue, but currently it only supports DMI based matching. Add support to
-match by chip id and baseline FW version to detect CYW4373 ROM FW build
-in generic system.
-
-Fixes: 7c395ea521e6 ("Bluetooth: Query LE tx power on startup")
-Signed-off-by: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
----
-V5 -> V6: Change two table names as simpler.
-V4 -> V5: Use skb_pull_data() to access skb->data as safer manner.
-V3 -> V4: Fix a few coding style warnings and refine comments for clarify.
-V2 -> V3: Fix a few coding style warnings and change the subject as more specific.
-V1 -> V2: Fix several coding style warnings.
-
- drivers/bluetooth/btbcm.c | 45 +++++++++++++++++++++++++++++++++++----
- drivers/bluetooth/btusb.c |  4 ++++
- 2 files changed, 45 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index 0a5445ac5e1b..154e5f4a26a8 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -391,7 +391,7 @@ static struct sk_buff *btbcm_read_usb_product(struct hci_dev *hdev)
- 	return skb;
- }
+On Mon, Aug 26, 2024 at 10:20:54AM +0200, Krzysztof Kozlowski wrote:
+> On 26/08/2024 08:19, Jie Gan wrote:
+> > Add following coresight components for x1e80100 platform,
+> > include CTI, dummy sink, dynamic Funnel, Replicator, STM,
+> > TPDM, TPDA and TMC ETF.
+> > 
+> > Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> > Tested-by: Yushan Li <quic_yushli@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 1534 ++++++++++++++++++++++++
+> >  1 file changed, 1534 insertions(+)
+> > 
+> 
+> And does it pass dtbs_check W=1?
+>
+It passed with "make CHECK_DTBS=y qcom/x1e80100-crd.dtb".
  
--static const struct dmi_system_id disable_broken_read_transmit_power[] = {
-+static const struct dmi_system_id broken_read_tx_power_dmi[] = {
- 	{
- 		 .matches = {
- 			DMI_MATCH(DMI_BOARD_VENDOR, "Apple Inc."),
-@@ -437,16 +437,53 @@ static const struct dmi_system_id disable_broken_read_transmit_power[] = {
- 	{ }
- };
- 
-+struct bcm_chip_version_table {
-+	u8 chip_id;			/* Chip ID */
-+	u16 baseline;		/* Baseline version of patch FW */
-+};
-+#define BCM_ROMFW_BASELINE_NUM	0xFFFF
-+static const struct bcm_chip_version_table broken_read_tx_power_chip_ver[] = {
-+	{ 0x87, BCM_ROMFW_BASELINE_NUM }		/* CYW4373/4373E */
-+};
-+static bool btbcm_is_disable_broken_read_tx_power_by_chip_ver(u8 chip_id, u16 baseline)
-+{
-+	int i;
-+	size_t table_size = ARRAY_SIZE(broken_read_tx_power_chip_ver);
-+	const struct bcm_chip_version_table *entry =
-+						&broken_read_tx_power_chip_ver[0];
-+
-+	for (i = 0 ; i < table_size ; i++, entry++)	{
-+		if ((chip_id == entry->chip_id) && (baseline == entry->baseline))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int btbcm_read_info(struct hci_dev *hdev)
- {
- 	struct sk_buff *skb;
-+	u8 *chip_id;
-+	u16 *baseline;
- 
- 	/* Read Verbose Config Version Info */
- 	skb = btbcm_read_verbose_config(hdev);
- 	if (IS_ERR(skb))
- 		return PTR_ERR(skb);
--
--	bt_dev_info(hdev, "BCM: chip id %u", skb->data[1]);
-+	skb_pull_data(skb, 1);
-+	chip_id = skb_pull_data(skb, sizeof(*chip_id));
-+	skb_pull_data(skb, 1);
-+	baseline = skb_pull_data(skb, sizeof(*baseline));
-+
-+	if (chip_id) {
-+		bt_dev_info(hdev, "BCM: chip id %u", *chip_id);
-+
-+		if (baseline) {
-+			/* Check Chip ID and disable broken Read LE Min/Max Tx Power */
-+			if (btbcm_is_disable_broken_read_tx_power_by_chip_ver(*chip_id, *baseline))
-+				set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER, &hdev->quirks);
-+		}
-+	}
- 	kfree_skb(skb);
- 
- 	return 0;
-@@ -465,7 +502,7 @@ static int btbcm_print_controller_features(struct hci_dev *hdev)
- 	kfree_skb(skb);
- 
- 	/* Read DMI and disable broken Read LE Min/Max Tx Power */
--	if (dmi_first_match(disable_broken_read_transmit_power))
-+	if (dmi_first_match(broken_read_tx_power_dmi))
- 		set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER, &hdev->quirks);
- 
- 	return 0;
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index d31edad7a056..52561c8d8828 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -142,6 +142,10 @@ static const struct usb_device_id btusb_table[] = {
- 	{ USB_VENDOR_AND_INTERFACE_INFO(0x04ca, 0xff, 0x01, 0x01),
- 	  .driver_info = BTUSB_BCM_PATCHRAM },
- 
-+	/* Cypress devices with vendor specific id */
-+	{ USB_VENDOR_AND_INTERFACE_INFO(0x04b4, 0xff, 0x01, 0x01),
-+	  .driver_info = BTUSB_BCM_PATCHRAM },
-+
- 	/* Broadcom devices with vendor specific id */
- 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0a5c, 0xff, 0x01, 0x01),
- 	  .driver_info = BTUSB_BCM_PATCHRAM },
--- 
-2.34.1
-
+Thanks,
+Jie
 
