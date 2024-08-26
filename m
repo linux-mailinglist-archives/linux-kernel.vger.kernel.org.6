@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-300998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFAC95EB66
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:07:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DCF95EB69
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 10:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF75B1F2057F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9651C2140A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D061A4D8C3;
-	Mon, 26 Aug 2024 08:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD5E13B5B3;
+	Mon, 26 Aug 2024 08:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mGhkX/41"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="StHVCOh4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D7F4EB51
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37514EB51;
+	Mon, 26 Aug 2024 08:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724659655; cv=none; b=HNeP5yDUwF0GlmJt4+GAuwin5jHVPCIDrA7BkcjmmALD7inG6Tn4YldY2yvnRSCF7yPCC8doieGYEYWkudpLP075o5XFw6GE+L4f5XcOj6rZs+0Fce+b1d8WVlsXxikzONS22C4Bn2ikbxzRuLGb6D4no4I6TWRpfX5kmOzo3bM=
+	t=1724659665; cv=none; b=ArulI7VhmgDN3otL9XdqE+iQXWA71QZmZ3Ry7278MfyFDv45/d1I18QX+RVoDdHkFao4pvGQNG6eSmIhTLLuvquR9SCMnRKDBEZV78m+5xnh2Xu+78Bk9UBwjg2pV16SvBq8IfWf7v9X4wNlMIHpXdP7MM+wtVEK7KDrGJnFcRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724659655; c=relaxed/simple;
-	bh=hV7TuaBbJxdh8PMDEbM6FyaOUO1HfxZZRMdSrK8OE5M=;
+	s=arc-20240116; t=1724659665; c=relaxed/simple;
+	bh=2zXfAK81LnBk/mOEZ9lvbbgXSwT+8B3Bi2M4zPLnMko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RRg208+J1aUVy7y/swzTU9uTVEZXUnRRu8ep1N2RwhD/4UqM5oPzzNpQFzglZM2joZ1IodoWepEmBbViYhbU5rB07HsiYPY3F49LiCTPi+zKIiZKjv0jOXcBJnice0ERf+xYTx802vVtvL/g+N1fCntxjtn247+4jo4PxWRjivk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mGhkX/41; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d427fb7c92so2839448a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 01:07:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724659653; x=1725264453; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yvPqTM9lOHuvyIm7/RZh/RxFxg0X7bP4l3quDfoGQkE=;
-        b=mGhkX/41zpNBPhM4n3N6tSnwSYIJ9AnNlHHW9d4QKj0WsmQjdaP3XK6Duf2j4MiAEt
-         OJ6LeCMg63DuXUpn2JGsqPHUw1wfoyD0U2PQwyK25QT14nwvKdKfjsXvcrnNJ32Dl8Bt
-         byQGbhHsq/gcV5FpSaQl1MIz40bjgyZYxD2XXllPZ4aDE7txQyALd/ejJ3SptRntF+g9
-         FCU73xOR80nDekvOFMPlqm64+jYzoZF/GzSs2xdV5237vOKbSqgbjNwemLtCEPJST5QD
-         9yCObn6lUYYB5YdXKyJNGaT6qY+UFhY4wpf/Y5ISQ9ebXR/p6ZA8NgJkMi7vNbhR6mVv
-         AHUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724659653; x=1725264453;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvPqTM9lOHuvyIm7/RZh/RxFxg0X7bP4l3quDfoGQkE=;
-        b=ifE00oLUD7h0QL1kzWROpQGF45y1DAJjJcZAM/ef1nAyFFMTt7/vXRBWBFXABZam2N
-         DtyuGPBOX3nzKKRsBP7DP6YD4Y0WZGqKZ1lYE6e9NPAN8Ncz/6uDHrZeRVZk2grM2wat
-         +miKyeyMYbm2ibfwfB7Qs+2LHG+Kb5SC21oUqW24XdDPlymdzTJMODHCQ86T4Obg8vxD
-         uFQJciBXN0aSD0WyBPkuIrXQBsJ3Yh0qnG0jinhzEJVfPl9MZuQisFAp39n+JnNYGcKr
-         h96rMCwv+CgeglCTkNhCh95QpS4YWCmElbUuyTM9HHvIx2bAJPU/bIts09ThBDCjoDZB
-         AvOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIe4swsbA9QACBkmnFuNn8gjF9027y/eq9xaBDeSdWzWRAap3+jPtH+Ai4owp7DtNtEqZT6ptb1GfZ+N8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVmAQMoU/qiEtUjH2MYCVx5sRalj7hnU86kNkoro3uSLUi6Mpo
-	d5rPkfThoqkVXJ4cFs4okZBSQLOfK6ztzukSGANnATYAeRDlVje++FwYkVu/BQ==
-X-Google-Smtp-Source: AGHT+IFX23Te10Zeki5eDRR2JQF2WuxBqrUSKbBm0Dtnccf1x4S1ehHPRhh557+EAHWGUsykWovd3Q==
-X-Received: by 2002:a17:90b:4f83:b0:2c9:80fd:a111 with SMTP id 98e67ed59e1d1-2d646bf2bd3mr8610579a91.18.1724659652847;
-        Mon, 26 Aug 2024 01:07:32 -0700 (PDT)
-Received: from thinkpad ([220.158.156.53])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613b1cc67sm9071887a91.51.2024.08.26.01.07.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 01:07:32 -0700 (PDT)
-Date: Mon, 26 Aug 2024 13:37:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Fabio Porcedda <fabio.porcedda@gmail.com>
-Cc: Daniele Palmas <dnlplm@gmail.com>, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] bus: mhi: host: pci_generic: Fix the name for the Telit
- FE990A
-Message-ID: <20240826080728.myy5whs5kmghnvvo@thinkpad>
-References: <20240820080439.837666-1-fabio.porcedda@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeO0cBFvBUJlw/cxyxTZDv6LBxV8FRel0h/zcDZh6AdmTxeV5ccsxepH/otRhN+agrBaz9rmGl/M/YdeUucrbEgl15763TJHy3sKKiRoFqYpBllIhq5KEC5pRw9YreKOQJQzzT+Yykv3JjBEh41XE8JeQYVw1bdqHkU4N+nVmNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=StHVCOh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8E8C8CDD6;
+	Mon, 26 Aug 2024 08:07:43 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="StHVCOh4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724659661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UaxHDzyeQARFqyBuo6p6nbdr7RFX49mOAxwSudvJyzo=;
+	b=StHVCOh4KNNCyFXRLYUoNCdTcNxSS6Z3asRmnJ9ATPyiIOC/xbFWmEWaSFpaObsfsoO+X3
+	qqjWV+mwTMIgJyMwkuMkqXw1CrHepM96JxAR4p2UKjZOsZsDhunIzVT2qZzKIWCwWJ7sje
+	lqmadHbYXdoCfy5fWd5XhoCzWQm9vhQ=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a6c12a3f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 08:07:41 +0000 (UTC)
+Date: Mon, 26 Aug 2024 10:07:32 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
+Message-ID: <Zsw3xMoX2EI5UUs1@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
+ <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,61 +76,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240820080439.837666-1-fabio.porcedda@gmail.com>
+In-Reply-To: <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Tue, Aug 20, 2024 at 10:04:39AM +0200, Fabio Porcedda wrote:
-> Add a mhi_pci_dev_info struct specific for the Telit FE990A modem in
-> order to use the correct product name.
-> 
-> Cc: stable@vger.kernel.org # 6.1+
-> Fixes: 0724869ede9c ("bus: mhi: host: pci_generic: add support for Telit FE990 modem")
-> Signed-off-by: Fabio Porcedda <fabio.porcedda@gmail.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 14a11880bcea..fb701c67f763 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -680,6 +680,15 @@ static const struct mhi_pci_dev_info mhi_telit_fn990_info = {
->  	.mru_default = 32768,
->  };
+On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
+> diff --git a/arch/x86/include/asm/pvclock.h b/arch/x86/include/asm/pvclock.h
+> index 0c92db84469d..6e4f8fae3ce9 100644
+> --- a/arch/x86/include/asm/pvclock.h
+> +++ b/arch/x86/include/asm/pvclock.h
+> @@ -5,6 +5,7 @@
+>  #include <asm/clocksource.h>
+>  #include <asm/pvclock-abi.h>
 >  
-> +static const struct mhi_pci_dev_info mhi_telit_fe990a_info = {
-> +	.name = "telit-fe990a",
-> +	.config = &modem_telit_fn990_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.sideband_wake = false,
-> +	.mru_default = 32768,
-> +};
-> +
->  /* Keep the list sorted based on the PID. New VID should be added as the last entry */
->  static const struct pci_device_id mhi_pci_id_table[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0304),
-> @@ -697,9 +706,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  	/* Telit FN990 */
->  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x1c5d, 0x2010),
->  		.driver_data = (kernel_ulong_t) &mhi_telit_fn990_info },
-> -	/* Telit FE990 */
-> +	/* Telit FE990A */
->  	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x1c5d, 0x2015),
-> -		.driver_data = (kernel_ulong_t) &mhi_telit_fn990_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_telit_fe990a_info },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0308),
->  		.driver_data = (kernel_ulong_t) &mhi_qcom_sdx65_info },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0309),
-> -- 
-> 2.46.0
-> 
+> +struct timespec64;
+>  /* some helper functions for xen and kvm pv clock sources */
+>  u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src);
+>  u64 pvclock_clocksource_read_nowd(struct pvclock_vcpu_time_info *src);
 
--- 
-மணிவண்ணன் சதாசிவம்
+This change isn't mentioned in the commit message and could probably
+benefit from doing so.
+
+> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+> index b230f0b10832..cab153c5f9be 100644
+> --- a/lib/vdso/getrandom.c
+> +++ b/lib/vdso/getrandom.c
+> @@ -3,15 +3,13 @@
+>   * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+>   */
+>  
+> -#include <linux/cache.h>
+> -#include <linux/kernel.h>
+> -#include <linux/time64.h>
+> +#include <linux/minmax.h>
+>  #include <vdso/datapage.h>
+>  #include <vdso/getrandom.h>
+> +#include <vdso/unaligned.h>
+
+Ah, that's where you do it. Ignore my comment on the previous commit,
+then.
+
+>  #include <asm/vdso/getrandom.h>
+> -#include <asm/vdso/vsyscall.h>
+> -#include <asm/unaligned.h>
+>  #include <uapi/linux/mman.h>
+> +#include <uapi/linux/random.h>
+>  
+>  #define MEMCPY_AND_ZERO_SRC(type, dst, src, len) do {				\
+>  	while (len >= sizeof(type)) {						\
+> @@ -23,6 +21,9 @@
+>  	}									\
+>  } while (0)
+>  
+> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
+> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
+
+If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
+instead of _PAGE_SIZE? But if that's the case, why not put the vdso
+definition of PAGE_SIZE into some vdso header included by this file?
 
