@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-301720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE8E95F488
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D4A95F49D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513A61F22C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D7B1F22947
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9040C18FC83;
-	Mon, 26 Aug 2024 15:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A492193088;
+	Mon, 26 Aug 2024 15:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="VkXBgwvi"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ijqGN3++"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79CC1CD25;
-	Mon, 26 Aug 2024 15:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AB313B286;
+	Mon, 26 Aug 2024 15:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724684514; cv=none; b=LLBS+AFzf4qgEEbCZIEjh4buds0peSJJ8MsM7mjB9kD/FzD9cF8nGyL7XrFr9kmMUM7ztUC6N/zqOyeeNceGDv7BZ/KHkRS6/zI/aMdMBEV1Ixp61+crwAKOHAHf0qQSKoPPbTCM1UzAYMtkHaeBH0QPVO7qrjbZG6kzLiiqlMA=
+	t=1724684925; cv=none; b=nmnvDHs+R2x9DS7xgXvBKmErowgKGhOMMEMFRL/ToHg3r2Xc+mDoH2vGrJfeF046eFrXmmv6/r+k/JG5tU3rMbBIBKm9NJAcw3beT8hftmqj2RtrsC5XEERKKITPY3sQ6iba3kjzjY7w/6HjXgc0KJ4f7oNFxOTNZA51MVrkG9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724684514; c=relaxed/simple;
-	bh=jSgjWvvQD8+edtmVB9c/uNcLn+pooqKkSJVmKNPbAt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohcs4byLjhu6uNeH7gWoFIf6XDptx6ib5GuAfovEnjB8PanHpAdGxnb/l0u5OCJ00OxL3ZgGretXk3xXTA7FhFrxTOqrLVsgiA3MIjZwMcEvcPc2AxDJUO8K7JDDr7eI+kWaXVR+KifiPtLZAsTVjVaKzSCLfdzdZ6K+AdQdK+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=VkXBgwvi; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wsv5g1cLsz9svW;
-	Mon, 26 Aug 2024 17:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1724684503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5yXLWDQCZ5TK80/zWFIY2TSxF4QwKlkw5RXpKLYOLgM=;
-	b=VkXBgwvizjFv4gZcT25+rPkj6gmAtxLp9+dGtSIvUOs1NoI3Ea84US7yl7RS/exadB9d68
-	wHeXj+UUQhGFzkVW1xW7Q+utTSuxkm8imagvFVFOuWPwypxlH8S1ASL9g7SeID6ePFzG/G
-	+nlxzhHZGezrnPmFBawnhAjukn7+/5kgoVyfDEnDe/e3dVlf9YjBmGwrS9wFfbyfy+n64w
-	It3bMogpdAyYK3D5i1eHg5soC8YsGKp9NxBJgITLRI4za36o5ss4Wl9mtkY2mEsJCFyqP8
-	cN9shsFq8hvV2pX4bCO2G8SyJa6B4Tef2IadQUW5ReMnrWhXdXc23TIW2+KtYg==
-Date: Mon, 26 Aug 2024 15:01:38 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, linux-kselftest@vger.kernel.org,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] selftests/mm: do not try to split below filesystem block
- size
-Message-ID: <20240826150138.xi3jmtylcej2m6ff@quentin>
-References: <20240826145344.33665-1-kernel@pankajraghav.com>
- <340DCD7C-8456-4F5B-B503-9DF5903C16DA@nvidia.com>
+	s=arc-20240116; t=1724684925; c=relaxed/simple;
+	bh=IS5O62vTquZGY9iCfoeiIpSDO0hBEfkkcs+K/HFrRBo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pu3d3p2pvVyqcX1rOQvDAFjuW9ZmkI/LJl7qUAnDyoLb7GSRBXyNXHah2l1NSDZ0tWgmnwJZeXBVHrttSFoE0+iATRH6r9kFfW8xwqF4sm9wDD7/CZ101qrdJgWhezcySNnwmoOQwPzYFQRP4LJTbu9GRMF9SluOwEysimVvw54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ijqGN3++; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47QF8OwG036649;
+	Mon, 26 Aug 2024 10:08:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724684904;
+	bh=8SadMn9BIJuUjTDgmzUFfmBg/3FZu68BaYZYp7OppYg=;
+	h=From:To:CC:Subject:Date;
+	b=ijqGN3++9AMq+98M4ft6QqqXcXHl1J6AuXxkP9GmW57yxi/K61ABlHnB+lRiMdY8Y
+	 FicGMJuGPwnXwQeLfmlS9Fg5oZMslLbxdh1iSLDWUew3NL9x6rfDkx5ifaMyBczNlt
+	 JWZFzLkdsRiZFaHKHwpGlZu2iUydkkpqkGDcA6Vs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47QF8OJ0124004
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 26 Aug 2024 10:08:24 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ Aug 2024 10:08:24 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 Aug 2024 10:08:24 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47QF8NCb100774;
+	Mon, 26 Aug 2024 10:08:23 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sebastian.fricke@collabora.com>, <linux-doc@vger.kernel.org>
+CC: <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <s-jain1@ti.com>,
+        <r-donadkar@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
+        <p-mantena@ti.com>, <vijayp@ti.com>, <devarsht@ti.com>,
+        <andi.shyti@linux.intel.com>, <nicolas@ndufresne.ca>,
+        <andriy.shevchenko@linux.intel.com>, <jirislaby@kernel.org>,
+        <davidgow@google.com>, <dlatypov@google.com>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <jani.nikula@intel.com>, <rdunlap@infradead.org>,
+        <nik.borisov@suse.com>, <Dave.Martin@arm.com>
+Subject: [PATCH v2 0/6] Add rounding macros and enable KUnit tests
+Date: Mon, 26 Aug 2024 20:38:16 +0530
+Message-ID: <20240826150822.4057164-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <340DCD7C-8456-4F5B-B503-9DF5903C16DA@nvidia.com>
-X-Rspamd-Queue-Id: 4Wsv5g1cLsz9svW
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Aug 26, 2024 at 10:59:16AM -0400, Zi Yan wrote:
-> On 26 Aug 2024, at 10:53, Pankaj Raghav (Samsung) wrote:
-> 
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> >
-> > There is no point trying to split pagecache thp below the blocksize of
-> > the filesystem as that is the minimum order that pagecache needs to
-> > maintain to support blocksizes greater than pagesize [1].
-> 
-> But the purpose of the tests is to make sure all cases are properly handled,
-> right? If we do not test splitting pagecache large folio below the
-> block size, we will never know if a kernel change breaks the handling.
-> 
-> Just my two cents.
+This adds new rounding macros to round to closest integer along with
+enabling KUnit tests for all math.h macros.  It also updates kernel-doc to
+render math.h related documentation and lastly updates the imagination jpeg
+encoder to use the newly introduced rounding macros to find nearest value.
 
-That is a fair point. Let's ignore this patch then :)
+Also to note that math.h is orphaned and so these changes need
+to be pulled by subsystem using them as discussed in below threads:
 
-> 
-> >
-> > Set the lower limit for the splitting order to be the fs blocksize
-> > order.
-> >
-> > As the number of tests will now depend on the minimum splitting order,
-> > move the file preparation before calling ksft_set_plan().
-> >
-> > [1] https://lore.kernel.org/linux-fsdevel/20240822135018.1931258-1-kernel@pankajraghav.com/
-> >
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >  .../selftests/mm/split_huge_page_test.c       | 19 +++++++++++++------
-> >  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> 
-> --
-> Best Regards,
-> Yan, Zi
+Link:
+https://lore.kernel.org/all/1db64af7-3688-4bcc-a671-9440d8f02d1a@xs4all.nl/
+https://lore.kernel.org/all/ZmHDWeuezCEgj20m@smile.fi.intel.com/
 
+Changelog:
+V2:
+- Fix grammar in new rounding off macro descriptions
+- Use roundup for rounclosest to avoid overflow
 
+Previous patch series:
+https://lore.kernel.org/all/20240708155943.2314427-1-devarsht@ti.com/#t
+
+Rangediff (V2->V1):
+https://gist.github.com/devarsht/a3c4420869d3f66fdc88e0af6a0f0a95
+
+Daniel Latypov (1):
+  lib: Add basic KUnit test for lib/math
+
+Devarsh Thakkar (5):
+  math.h: Add macros for rounding to the closest value
+  math.h: Use kernel-doc syntax for division macros
+  Documentation: core-api: Add math.h macros and functions
+  lib: math_kunit: Add tests for new macros related to rounding to
+    nearest value
+  media: imagination: Round to closest multiple for cropping region
+
+ Documentation/core-api/kernel-api.rst         |   6 +
+ .../platform/imagination/e5010-jpeg-enc.c     |   8 +-
+ include/linux/math.h                          |  86 ++++-
+ lib/math/Kconfig                              |  14 +
+ lib/math/Makefile                             |   1 +
+ lib/math/math_kunit.c                         | 329 ++++++++++++++++++
+ 6 files changed, 434 insertions(+), 10 deletions(-)
+ create mode 100644 lib/math/math_kunit.c
 
 -- 
-Pankaj Raghav
+2.39.1
+
 
