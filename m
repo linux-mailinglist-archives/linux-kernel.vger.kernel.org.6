@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-302030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CBE95F8E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC9195F8F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21991F22DA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E6F1F22A33
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 18:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100A18248C;
-	Mon, 26 Aug 2024 18:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9D5198E6D;
+	Mon, 26 Aug 2024 18:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuYRjDLl"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="htD3buhA"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4582B677;
-	Mon, 26 Aug 2024 18:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724696751; cv=none; b=Idz+0ZEt+I+BnNpylVAtaHP8LexbeGolqHxQyCWWYaNojZDhiIGS7cvizYtoBtt8PdmUC6nFjI2NepfVKDIt4wzQA0BlajYcPAs5dcgGyGQ5V7jtxjr3XfslvyW/mM4XnxArjseCdEDk4rmf6uMQrp96EOHzgi6kHgAhw4F6c3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724696751; c=relaxed/simple;
-	bh=mImBejdDjCpmXj8Di/I/HuyYPVoWvfKJBu1QEeSsOCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a6IAqk120L6XVveqhf+qX3Zt33DFhQomI98RnsN3MjbW+l+HVsOBepGVjDAied/QkjuotEtUcpXlHL4Hnf3SQMuOn3n8q1rrH2vDauzYpXpXiAiuUBsPbe8awWZiYKB2XlDsom6HbaaZbs/e8P+9fJrNmz85FZ3U/Eo0xEArlww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuYRjDLl; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f50966c469so20112391fa.3;
-        Mon, 26 Aug 2024 11:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724696748; x=1725301548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mb4ZRd/HYSDhjIzksDC7j+rAhxPX+JataK0xq/4974Y=;
-        b=FuYRjDLlPiKYVhkf2EeR7BQj4oAuLvYYUAnC7hyVNvFjOoTlQTPI45m6T8SJzWFdVZ
-         2xRb00zKr1tHr1Jh5TzDvR14YOhYP5erzVAwjNWQRt+9uasucpQo0jWHDt9VEl+RK4w4
-         +fhUIK/BDIDLYD0VH5fdR5RgQd1c5QjNpT/YJ+CWc5m/obBxljoiV4abiDOpznF0cDHL
-         zvdZGK9H2PjMymF3Ae4lI8tNhd5AvY0/6HT/QHs/+S7KG+tfqDkeGMoZWTAbwQ5gdiY5
-         ZaR+ukbAZrDynY57cZlvwSefA4rIFgvSYFiKftmXA4SKCG00mHAKrdCnarPC7hkCNMTY
-         cBHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724696748; x=1725301548;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mb4ZRd/HYSDhjIzksDC7j+rAhxPX+JataK0xq/4974Y=;
-        b=rFo8QY7+2SBq/hb+PXDIZTtd3pZQxmEGzEkznAiCMxIjPPba/Eme8x86SL5Hfpexnz
-         37F28A9LoCWMBAFLxmncfQLnts7FF8aG+FXojG5Bd8AVSKM0hxc0UDe7rf2MugcI99Sw
-         5rlb3vRFbgA4VMj8ybFdbxK80V42MgoEPAffcrWXOhkIc//NrOf2v5iOFeCU0ZegBsC6
-         S3TbF0oYvNl8LIomO0OU//BK7fyco8YNinCGLJh1UKp4Dk5/pdbwtJEQn9wp76KzcKJs
-         JssEvow+aEHlkIahSkJqnOLVWbrtWy+UWpI2vQHJEIWk7OI+XPKmTd2irwcRfQMHfWex
-         cybA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyPh+agK62MRUNtqqNodCvdAAXPz7qDRobQdSAdNkjFTm02xrXc/6SHNtTFt/KLPrfn6zf2/rFN+tzMFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIfVHRMqsfwj+IxQ0bHFm642c4URs17Y67vyMuCqUkgqdqhN+5
-	DAuqVZUzPlRLOoUCMFtc5VVyJtQ7HgN2njSoyS3tmeV9js5E51I/
-X-Google-Smtp-Source: AGHT+IGfIubUWy4+G9XbvlH4YSyyow/qjoMcdvdum2e0UHJt52Y1f9rr3awhlwJkEU0p9G4B+VKxxg==
-X-Received: by 2002:a2e:8014:0:b0:2f3:ee44:c6de with SMTP id 38308e7fff4ca-2f4f5776474mr58901701fa.27.1724696747016;
-        Mon, 26 Aug 2024 11:25:47 -0700 (PDT)
-Received: from playground.localdomain ([86.127.146.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb471e0csm39753a12.78.2024.08.26.11.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 11:25:46 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: ipc: replace "enum sof_comp_type" field with "uint32_t"
-Date: Mon, 26 Aug 2024 14:24:42 -0400
-Message-Id: <20240826182442.6191-1-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7D1B677;
+	Mon, 26 Aug 2024 18:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724696977; cv=pass; b=rflBfrAveIEwt1nVe1STZCg7GQoocvavVYqX+d5MeRSgOeTIcIinov/SYer92pYz7ZtZCxWlYH0VU5AtNMH+BBLsaTnHBLRzmyn27j4m8eWfMWYIXvGwqU2Cst5hk9xBPsOeFd+2S1nhfiLRepYIUedCwi8d3r73eMkyV9DcDE0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724696977; c=relaxed/simple;
+	bh=7elaK7w8TADYvF/jzKz6El00Sz1dv/A26LJ+qsrKCpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KnMvi9oezzffP8xrojgKCQbuxLwdXfBF1e2lOjoqTkCIP7xyjqlfNGK6iXkWv1TEWQacwe/1d+N9tSV1yfn8pDTuidQrSRPaYWFc8h10YWBYnY6FMZA0+o9VqSxoaIZ41otnD+T884brvlbhozRTGWZ42IsFUe74wjfy+ljp6oI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=htD3buhA; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724696896; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C6THzlhv9WAt7UFlgrShq2UZuL6caw7uhlDNqAdIte4dzK7HOZshr2PLGC3Ec99ZcYj+01+awrsAU7zjr132iE9jSN00Pxoo7P7YMmYVpXwdfww/jjCduWCuSLrTOc4oYbjaczppGRxK/GBgHq1ZZpliTRy4ogmL3A6wv9B02Ws=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724696896; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AtqnBqpa9UzhLTndpZmzFs2sALtGroOJRRcTDXcxiaM=; 
+	b=W7YBsWqkfx6gpAWMPvZdrbntbjcqweW/WyJ60FVRMUWwZQD2w9NLoFdcINgjgX6G4aTGFx+S+yk2sUU7juorYzLQwF+UWwdyNAMSGcA2iEb9LzVD9g5HO6fH8AAf05ru4L+mYdeSBmQL8OgGtNDJNdHkIL+/U1UihTE46QVJPlA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724696896;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=AtqnBqpa9UzhLTndpZmzFs2sALtGroOJRRcTDXcxiaM=;
+	b=htD3buhABCdWbrTH+l3rKvCJU+ZLGqYQ6EpT0KVU9bvPTvIXBceWDFtWg4XsWV7W
+	P76OhTJJ2O+Z3h54GG9Vxw4BoGL80kf8w2YNjK8z2Pd5p7wnz4D6LiufP3SGwjAHcX3
+	6/uVY3XcPyH5V420WdKEhlvtnr1/m/Bp9bxgZUcg=
+Received: by mx.zohomail.com with SMTPS id 17246968937020.26691709516398987;
+	Mon, 26 Aug 2024 11:28:13 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: airlied@gmail.com, alchark@gmail.com, amadeus@jmu.edu.cn,
+ andi.shyti@kernel.org, andyshrk@163.com, broonie@kernel.org,
+ cl@rock-chips.com, conor+dt@kernel.org, daniel@ffwll.ch,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dsimic@manjaro.org, efectn@protonmail.com, finley.xiao@rock-chips.com,
+ gregkh@linuxfoundation.org, heiko@sntech.de, honyuenkwun@gmail.com,
+ jagan@edgeble.ai, jamie@jamieiles.com, jic23@kernel.org,
+ jirislaby@kernel.org, jonas@kwiboo.se, jszhang@kernel.org,
+ kernel@collabora.com, krzk+dt@kernel.org, lars@metafoo.de, lee@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux@roeck-us.net,
+ maarten.lankhorst@linux.intel.com, macromorgan@hotmail.com, megi@xff.cz,
+ michael.riesch@wolfvision.net, mripard@kernel.org, robh@kernel.org,
+ tim@feathertop.org, tzimmermann@suse.de, ulf.hansson@linaro.org,
+ wim@linux-watchdog.org
+Subject: Re: [PATCH v2 11/12] arm64: dts: rockchip: Add rk3576 SoC base DT
+Date: Mon, 26 Aug 2024 14:28:09 -0400
+Message-ID: <22403959.EfDdHjke4D@bootstrap>
+In-Reply-To: <20240825140824.200453-1-amadeus@jmu.edu.cn>
+References:
+ <23624422.6Emhk5qWAg@trenzalore> <20240825140824.200453-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Sunday, 25 August 2024 10:08:24 EDT Chukun Pan wrote:
+> Hi,
+> 
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> > ...
+> > +		opp-1416000000 {
+> > +			opp-hz = /bits/ 64 <1416000000>;
+> > +			opp-microvolt = <725000 725000 950000>;
+> > +			opp-microvolt-L1 = <712500 712500 950000>;
+> > +			opp-microvolt-L2 = <700000 700000 950000>;
+> > +			opp-microvolt-L3 = <700000 700000 950000>;
+> > +			opp-microvolt-L4 = <700000 700000 950000>;
+> > +			opp-microvolt-L5 = <700000 700000 950000>;
+> > +			clock-latency-ns = <40000>;
+> > +		};
+> > ...
+> 
+> I'm curious if these frequencies work properly. On the bsp kernel,
+> 'opp-microvolt-L<name>' is used by the PVTM driver, I don't know
+> if it works on the upstream kernel. Sorry but have you tested it
+> with mhz (https://github.com/wtarreau/mhz)?
 
-Normally, the type of enums is "unsigned int" or "int". GCC has
-the "-fshort-enums" option, which instructs the compiler to
-use the smallest data type that can hold all the values in
-the enum (i.e: char, short, int or their unsigned variants).
+Running mhz gives me:
+# ./mhz
+count=566627 us50=19994 us250=99977 diff=79983 cpu_MHz=1416.869
 
-According to the GCC documentation, "-fshort-enums" may be
-default on some targets. This seems to be the case for SOF
-when built for a certain 32-bit ARM platform.
+Which seems to correspond to the set opp-hz value. As mentionned by Alexey, 
+the opp-microvolt-L.* values are not used by the driver.
 
-On Linux, this is not the case (tested with "aarch64-linux-gnu-gcc")
-which means enums such as "enum sof_comp_type" will end up having
-different sizes on Linux and SOF. Since "enum sof_comp_type" is used in
-IPC-related structures such as "struct sof_ipc_comp", this means
-the fields of the structures will end up being placed at different
-offsets. This, in turn, leads to SOF not being able to properly
-interpret data passed from Linux.
+I also have not tested any cpufreq settings/driver on this board yet. I can 
+remove the opp-microvolt-L.* for now.
 
-With this in mind, replace "enum sof_comp_type" from
-"struct sof_ipc_comp" with "uint32_t".
+Detlev.
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- include/sound/sof/topology.h | 2 +-
- include/uapi/sound/sof/abi.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/sound/sof/topology.h b/include/sound/sof/topology.h
-index 3ba086f61983..449e93c25184 100644
---- a/include/sound/sof/topology.h
-+++ b/include/sound/sof/topology.h
-@@ -54,7 +54,7 @@ enum sof_comp_type {
- struct sof_ipc_comp {
- 	struct sof_ipc_cmd_hdr hdr;
- 	uint32_t id;
--	enum sof_comp_type type;
-+	uint32_t type;
- 	uint32_t pipeline_id;
- 	uint32_t core;
- 
-diff --git a/include/uapi/sound/sof/abi.h b/include/uapi/sound/sof/abi.h
-index 937ed9408c23..c1b158ec5dab 100644
---- a/include/uapi/sound/sof/abi.h
-+++ b/include/uapi/sound/sof/abi.h
-@@ -29,7 +29,7 @@
- /* SOF ABI version major, minor and patch numbers */
- #define SOF_ABI_MAJOR 3
- #define SOF_ABI_MINOR 23
--#define SOF_ABI_PATCH 0
-+#define SOF_ABI_PATCH 1
- 
- /* SOF ABI version number. Format within 32bit word is MMmmmppp */
- #define SOF_ABI_MAJOR_SHIFT	24
--- 
-2.34.1
 
 
