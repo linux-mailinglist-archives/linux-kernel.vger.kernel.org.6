@@ -1,162 +1,230 @@
-Return-Path: <linux-kernel+bounces-300706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2971595E768
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:44:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AAA95E76D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACFA0B20F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0441C20E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 03:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC22376E6;
-	Mon, 26 Aug 2024 03:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF902A1D8;
+	Mon, 26 Aug 2024 03:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VcK+uAA9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PzJ62BWz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CB022071;
-	Mon, 26 Aug 2024 03:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639A21FA5
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 03:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724643850; cv=none; b=c79yZFCBJ0NziWC8En3qJLbYR9l0r1v3dxcTEtMDFb8QM9dZ+TFj/PHDy8RS237NTd9RP+H3hMWxgxGkNJs1z4GgU7m4XkHoLXTyI8uXKTRG9fqtWpGarV1VMfz90+B95f5XW73Hm2t2kAPe/vAAIe5xGzwMkbV475amYIrF/f8=
+	t=1724643954; cv=none; b=RVFyLvPVEWsEsuNE8u4WmORe0odMh64tREmeu7kjqZAKMC88Qp61RanaoaVPgBz5ELy0OpsSsiWjaIuGjv737zsLWaB4ZDUgLKrtufzEpJl6aosABz6ujjxN5l2RCOezQG3FFHtH4rLXLOLYauJ37dmNFJ7dcq23ONCG8xWa7nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724643850; c=relaxed/simple;
-	bh=wq1+06h/2U+aYgsDNv8HtuFWV7/urcHq16tWke3R3tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=u1O4NXiWduoy2biMRDsDde8AhPNDhXQmp5mFMe3WR1tHMgIIMkOLfxLp/BN1jh8w4cuQEAFvWVeAOJv2ebBEblfiSb/TGoCwGHJjU47NTDv/wlm70DMBU7zQ26ZHQsAjl+b94wn3P/kM/q+p4U6Skae9QRe4depsqjYABaZ3PMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VcK+uAA9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724643845;
-	bh=Ya3MPHYHe6oVN7OXY5da0L9DlLiJ//IBQcVi1P4oL8I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VcK+uAA9JVhgR2WpsoyHcnKRw0ZedbZPf450LwV7bze9y9aq53xt1Yu+CENwtPDnT
-	 jbgr+qsqbdpffHjCTrrKB2AZGLWBtSU5riK8+LzvelwC6BfRAwzUfzNNlEqJcFrnsX
-	 7v+LXR6Awl/Ejx5yiLDryyiyuCXdDPkpz+hv1zcXuoHnMhZ6tOju+r6e+oSi0Tc9GX
-	 Cgimb890MUj0A8gRVhGJ4rzFDLc/+SpPErINeSlwmnIQEj/LR4KS5joyEoyqJs/sic
-	 RvnxUiLENe8K0BSEA/mbxm8aC1ND4C9eA/LbdmbaIb/8Hem8VeA2cvHpZxU0ggw4iF
-	 +5bgTlkbo23+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wsc3m1NXTz4x81;
-	Mon, 26 Aug 2024 13:44:04 +1000 (AEST)
-Date: Mon, 26 Aug 2024 13:44:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
-Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Konrad
- Dybcio <quic_kdybcio@quicinc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>
-Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
-Message-ID: <20240826134403.5177f7c6@canb.auug.org.au>
+	s=arc-20240116; t=1724643954; c=relaxed/simple;
+	bh=M9XWxvAXe9Y9VlNoNxPVfKIIAp2h5vrt/nQ9Kj/R3IA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KGkgpdYZl9wkSjjGGDizEQSSoUCuXPGc9Cy6wfegqNKvAkPw7mnEYQ8/beV1F5drbjQ7v0vGg4KHeHiiWf5c9GKCvaauVgGjVHw2yce13UBnGz7Gl+mw3JRzeh1XZ6DnRmG9nvQVSNu+wCkgiq1xfGDwFCq/P3Q0NyFBQRNHBsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PzJ62BWz; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-201f2b7fe0dso32532095ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2024 20:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1724643951; x=1725248751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zvWOwClfiaH1DttbH7BPu8W++zXReNa1Df7Gb//N78M=;
+        b=PzJ62BWzghe4X6G1/OQYS79j6qwLJ7OFCI/hNI4vv8B6/82TYtFz5V8iNIZ7ThW2gC
+         dXAClddzOQ1WFs38kQKbxUfLvrC8VM0wTs6qLWqIj8GXtAg5Y4O5YHzom6t7mKSb1H0h
+         AWUiycjaIm6vISmp6mVptDnIFG9chXpodUball0uRTdaURGPQaRWb5VIocTZsi5JButX
+         pY5dHdN7b1QcMNjDk7/a3bVEwkqgHaAKnFPdMgOhJW3Kvxw9TvxEfFsHFrI8wc3sgdIs
+         ZVuSqo5/yMQHTLAy02nplK39krtLeuqRXy0qfxps14eWUkj7RzeI6w2MTFfWRNdNEPMx
+         8Htg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724643951; x=1725248751;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zvWOwClfiaH1DttbH7BPu8W++zXReNa1Df7Gb//N78M=;
+        b=DMyX1ZeJ0zzEfR3ovPE9Acf5ZwXbWk5XQCo0cuaBtGx8lbliEE2riOjqd2lm7rSLqV
+         +KqsY0iP5rTEHnss2lxkqNT69I9YphjUeLKkmS6GdVtI+63VBPeFET7NfnBakDQygwo+
+         urkCJj5nJVWKJVQHTFp+gQQsObMqssvuA7eXBmLRlfn0gVa8GAYI3sRhFlXsbjr/mbhU
+         C8uLPoxP41I1af+vk8zhkq/2exbUohQ/gtw4jZawQnOg1eHzPITOKcGfcD3tDQZ0DaVd
+         iq8pUd22ul5V8fJf/rZHYQ3UJT/Zw3V+RIJvntXNWA8UgpldwqibaUdoSW4IKz0bwxb3
+         cdcg==
+X-Gm-Message-State: AOJu0Yzp/Z6GTgliQR7pUZjA1mDBTmPk+gmuaLX0DjN+Rk35dlZqEQcX
+	FlFJ1GSqkyNkZEiu+hcZRzY3/rolCEcRY2ESN9BM49GG5e2+FRWzq68T/0rfi9BBBL5ce1byHKm
+	d
+X-Google-Smtp-Source: AGHT+IGAkZ33RhQT3ptanHl7KQvF7KkwrtMZ12R2MHtdXUQfC4ypCCwefP5BwgNzFzSw2mbOlGcnOw==
+X-Received: by 2002:a17:903:2301:b0:1fb:2bed:6418 with SMTP id d9443c01a7336-2039e515956mr105951845ad.57.1724643951510;
+        Sun, 25 Aug 2024 20:45:51 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385566479sm59745285ad.58.2024.08.25.20.45.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2024 20:45:51 -0700 (PDT)
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: david@redhat.com,
+	hughd@google.com,
+	willy@infradead.org,
+	muchun.song@linux.dev,
+	vbabka@kernel.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org,
+	vishal.moola@gmail.com,
+	peterx@redhat.com,
+	ryan.roberts@arm.com,
+	christophe.leroy2@cs-soprasteria.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v2 01/14 update] mm: pgtable: introduce pte_offset_map_{ro|rw}_nolock()
+Date: Mon, 26 Aug 2024 11:45:12 +0800
+Message-Id: <20240826034512.76917-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
+References: <e866151ccd257ca14a9361ba59f8c3086aa76e4f.1724310149.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2EBkEkixnqJsqf4LX8J.Pu9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/2EBkEkixnqJsqf4LX8J.Pu9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Currently, the usage of pte_offset_map_nolock() can be divided into the
+following two cases:
 
-Hi all,
+1) After acquiring PTL, only read-only operations are performed on the PTE
+   page. In this case, the RCU lock in pte_offset_map_nolock() will ensure
+   that the PTE page will not be freed, and there is no need to worry
+   about whether the pmd entry is modified.
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in:
+2) After acquiring PTL, the pte or pmd entries may be modified. At this
+   time, we need to ensure that the pmd entry has not been modified
+   concurrently.
 
-  drivers/platform/surface/surface_aggregator_registry.c
+To more clearing distinguish between these two cases, this commit
+introduces two new helper functions to replace pte_offset_map_nolock().
+For 1), just rename it to pte_offset_map_ro_nolock(). For 2), in addition
+to changing the name to pte_offset_map_rw_nolock(), it also outputs the
+pmdval when successful. This can help the caller recheck *pmd once the PTL
+is taken. In some cases, that is, either the mmap_lock for write, or
+pte_same() check on contents, is also enough to ensure that the pmd entry
+is stable. But in order to prevent the interface from being abused, we
+choose to pass in a dummy local variable instead of NULL.
 
-between commits:
+Subsequent commits will convert pte_offset_map_nolock() into the above
+two functions one by one, and finally completely delete it.
 
-  28d04b4a2cc2 ("platform/surface: aggregator_registry: Add support for Sur=
-face Laptop Studio 2")
-  99ae7b9ba047 ("platform/surface: aggregator_registry: Add support for Sur=
-face Laptop 6")
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+Change to use VM_WARN_ON_ONCE() instead of BUG_ON(). (David Hildenbrand)
 
-from Linus' tree and commit:
+ Documentation/mm/split_page_table_lock.rst |  7 ++++
+ include/linux/mm.h                         |  5 +++
+ mm/pgtable-generic.c                       | 43 ++++++++++++++++++++++
+ 3 files changed, 55 insertions(+)
 
-  b27622f13172 ("platform/surface: Add OF support")
+diff --git a/Documentation/mm/split_page_table_lock.rst b/Documentation/mm/split_page_table_lock.rst
+index e4f6972eb6c04..08d0e706a32db 100644
+--- a/Documentation/mm/split_page_table_lock.rst
++++ b/Documentation/mm/split_page_table_lock.rst
+@@ -19,6 +19,13 @@ There are helpers to lock/unlock a table and other accessor functions:
+  - pte_offset_map_nolock()
+ 	maps PTE, returns pointer to PTE with pointer to its PTE table
+ 	lock (not taken), or returns NULL if no PTE table;
++ - pte_offset_map_ro_nolock()
++	maps PTE, returns pointer to PTE with pointer to its PTE table
++	lock (not taken), or returns NULL if no PTE table;
++ - pte_offset_map_rw_nolock()
++	maps PTE, returns pointer to PTE with pointer to its PTE table
++	lock (not taken) and the value of its pmd entry, or returns NULL
++	if no PTE table;
+  - pte_offset_map()
+ 	maps PTE, returns pointer to PTE, or returns NULL if no PTE table;
+  - pte_unmap()
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index da29b066495d6..a00cb35ce065f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2954,6 +2954,11 @@ static inline pte_t *pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+ 
+ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 			unsigned long addr, spinlock_t **ptlp);
++pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, spinlock_t **ptlp);
++pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, pmd_t *pmdvalp,
++				spinlock_t **ptlp);
+ 
+ #define pte_unmap_unlock(pte, ptl)	do {		\
+ 	spin_unlock(ptl);				\
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index a78a4adf711ac..7abcea4451a71 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -317,6 +317,33 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+ 	return pte;
+ }
+ 
++pte_t *pte_offset_map_ro_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, spinlock_t **ptlp)
++{
++	pmd_t pmdval;
++	pte_t *pte;
++
++	pte = __pte_offset_map(pmd, addr, &pmdval);
++	if (likely(pte))
++		*ptlp = pte_lockptr(mm, &pmdval);
++	return pte;
++}
++
++pte_t *pte_offset_map_rw_nolock(struct mm_struct *mm, pmd_t *pmd,
++				unsigned long addr, pmd_t *pmdvalp,
++				spinlock_t **ptlp)
++{
++	pmd_t pmdval;
++	pte_t *pte;
++
++	VM_WARN_ON_ONCE(!pmdvalp);
++	pte = __pte_offset_map(pmd, addr, &pmdval);
++	if (likely(pte))
++		*ptlp = pte_lockptr(mm, &pmdval);
++	*pmdvalp = pmdval;
++	return pte;
++}
++
+ /*
+  * pte_offset_map_lock(mm, pmd, addr, ptlp), and its internal implementation
+  * __pte_offset_map_lock() below, is usually called with the pmd pointer for
+@@ -356,6 +383,22 @@ pte_t *pte_offset_map_nolock(struct mm_struct *mm, pmd_t *pmd,
+  * recheck *pmd once the lock is taken; in practice, no callsite needs that -
+  * either the mmap_lock for write, or pte_same() check on contents, is enough.
+  *
++ * pte_offset_map_ro_nolock(mm, pmd, addr, ptlp), above, is like
++ * pte_offset_map(); but when successful, it also outputs a pointer to the
++ * spinlock in ptlp - as pte_offset_map_lock() does, but in this case without
++ * locking it.  This helps the caller to avoid a later pte_lockptr(mm, *pmd),
++ * which might by that time act on a changed *pmd: pte_offset_map_ro_nolock()
++ * provides the correct spinlock pointer for the page table that it returns.
++ * For readonly case, the caller does not need to recheck *pmd after the lock is
++ * taken, because the RCU lock will ensure that the PTE page will not be freed.
++ *
++ * pte_offset_map_rw_nolock(mm, pmd, addr, pmdvalp, ptlp), above, is like
++ * pte_offset_map_ro_nolock(); but when successful, it also outputs the
++ * pdmval. For cases where pte or pmd entries may be modified, that is, maywrite
++ * case, this can help the caller recheck *pmd once the lock is taken. In some
++ * cases, that is, either the mmap_lock for write, or pte_same() check on
++ * contents, is also enough to ensure that the pmd entry is stable.
++ *
+  * Note that free_pgtables(), used after unmapping detached vmas, or when
+  * exiting the whole mm, does not take page table lock before freeing a page
+  * table, and may not use RCU at all: "outsiders" like khugepaged should avoid
+-- 
+2.20.1
 
-from the drivers-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/platform/surface/surface_aggregator_registry.c
-index a23dff35f8ca,ac96e883cb57..000000000000
---- a/drivers/platform/surface/surface_aggregator_registry.c
-+++ b/drivers/platform/surface/surface_aggregator_registry.c
-@@@ -275,24 -274,20 +276,36 @@@ static const struct software_node *ssam
-  	NULL,
-  };
- =20
- +/* Devices for Surface Laptop 6. */
- +static const struct software_node *ssam_node_group_sl6[] =3D {
- +	&ssam_node_root,
- +	&ssam_node_bat_ac,
- +	&ssam_node_bat_main,
- +	&ssam_node_tmp_perf_profile_with_fan,
- +	&ssam_node_tmp_sensors,
- +	&ssam_node_fan_speed,
- +	&ssam_node_hid_main_keyboard,
- +	&ssam_node_hid_main_touchpad,
- +	&ssam_node_hid_main_iid5,
- +	&ssam_node_hid_sam_sensors,
- +	&ssam_node_hid_sam_ucm_ucsi,
- +	NULL,
- +};
- +
-+ /* Devices for Surface Laptop 7. */
-+ static const struct software_node *ssam_node_group_sl7[] =3D {
-+ 	&ssam_node_root,
-+ 	&ssam_node_bat_ac,
-+ 	&ssam_node_bat_main,
-+ 	&ssam_node_tmp_perf_profile_with_fan,
-+ 	&ssam_node_fan_speed,
-+ 	&ssam_node_hid_sam_keyboard,
-+ 	/* TODO: evaluate thermal sensors devices when we get a driver for that =
-*/
-+ 	NULL,
-+ };
-+=20
- -/* Devices for Surface Laptop Studio. */
- -static const struct software_node *ssam_node_group_sls[] =3D {
- +/* Devices for Surface Laptop Studio 1. */
- +static const struct software_node *ssam_node_group_sls1[] =3D {
-  	&ssam_node_root,
-  	&ssam_node_bat_ac,
-  	&ssam_node_bat_main,
-
---Sig_/2EBkEkixnqJsqf4LX8J.Pu9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbL+gMACgkQAVBC80lX
-0GxyBgf9ETWTD9YHp1wpWXWYyBR75GHbBW9/SnwN0fOIYi7hurDzW4Pt+Zb3osed
-khtaM5OzkT+jyleErj9YZXnOwP23pWbgtNRn0mfbcJ2ub+gBD5+jmJIZUU8bUMb0
-d0fZ/ifUbUh0LcEoS/8KwtaUISA/PEwztjFD9pUaBNlGGY8nQZQSAYFFouaMEzo6
-IH7MyJUSZGJpg2qz3bOVHOKeTCjANEB1dQ+d52S8snrGjU3YVqLvnPwop98hOa6f
-66xywuJ//dh3GhWJAwZaCSLGWgwNnePLgkMiCvJ4Bt1lTPMrlZo/7c8YNRKuphfD
-PQuTkqV43iOiauodpHfmtQJ6iUOUdQ==
-=sX4t
------END PGP SIGNATURE-----
-
---Sig_/2EBkEkixnqJsqf4LX8J.Pu9--
 
