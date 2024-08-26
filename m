@@ -1,98 +1,185 @@
-Return-Path: <linux-kernel+bounces-301407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234F795F025
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:50:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE0A95F02B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEBB81F24A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:50:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE9CB20B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B1E156241;
-	Mon, 26 Aug 2024 11:50:48 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EC315B108;
+	Mon, 26 Aug 2024 11:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNbYA2Zg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C2613BACE
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 11:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F31F154BFB;
+	Mon, 26 Aug 2024 11:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724673048; cv=none; b=KDq5sdLr3x5UGQgkIU43pc8/DUbrMnV95J9VGcrPXx6G8mjaAbQTSm7nsRLi6DWiP88WF52ruCgSGZ8hRsdHNk4g11SKeSk7ICy0gths+gftF43SoQQdcEYDV4kIxE25QjCR9+y/NSLHjfi4M9q2Xg/uziA2KGABnhLcIgUkoj0=
+	t=1724673127; cv=none; b=F6C7WhPrHnK0HHMEWbt7aLRJCr1VIdCtW3p3oEJrB9F5vulJcGqaDou2cK9oHdH15uNwETwWZeoSE9SextRUkjpjaFZs0qZ8MZqCvYK/wWlhacyvYk8TB8asVcj/MMmI6RHqgJhGhmQMW8/99MSstg0hFYfb/RqZTwDRnbY77pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724673048; c=relaxed/simple;
-	bh=SpB9ti7a+1Xr4/NShERRoEKAxVnuh9w503CDXqETYxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwZZ+59JqVlRB6FFLlo7tCclvVH+koJN4YODut2/2sZSpA/iw/xqZHIXXK1iD/ZRytr2Keas/M+0kvqygdlYS2DWJaPvgYthLCGVUUlsk0K7epg7WipwRASVlkdqZLYnPYskGk7BGEH4f7XdT5OsJXu6EMMR0b2LUbpEruevs+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0255CE0003;
-	Mon, 26 Aug 2024 11:50:35 +0000 (UTC)
-Message-ID: <9cdf868a-e937-4be3-8e7a-a7d12d3fe5da@ghiti.fr>
-Date: Mon, 26 Aug 2024 13:50:35 +0200
+	s=arc-20240116; t=1724673127; c=relaxed/simple;
+	bh=i2dGvBJiOzFBpxJZ9poHt28SZifywP4j9xIWloGd5Qk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CR53/vJP/jgzkaeSng4l0np1qTj8v23qfPnETeSJOsijdn2SPHzEfCXjJAUPPT1BTtOW6crdPBxeMnfCgk76xTrag6U9JpyLy0TdiwR/RRcXrxEIxVeAkXpkgid9Lk00lEBErsWB7KlxMm2kaMqwl8F+cYXMNKxDYMrZW6GsEDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNbYA2Zg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835AAC4FF1A;
+	Mon, 26 Aug 2024 11:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724673126;
+	bh=i2dGvBJiOzFBpxJZ9poHt28SZifywP4j9xIWloGd5Qk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JNbYA2ZgV3tgQ+zIHFGJ2EuHS4BhkufLxxOFGcK+xZceZohYtESn4QEQMEAOaDAfk
+	 CApa7avuZeeo06YWUpTEftISkjTa3lrL+O0wx/8RsEa4WTMU6R7QHc1JEvJ+gR7aU4
+	 59P/EjdWhJthuVWlU6mX3t7t2Qe4hIf9YMwABYguT6/ZcjrB/11Ts8R39WNoYlaF77
+	 O0FQAr6USylu3KeoXVqgEpdD8q6Xs0kUcCG8FlAd1bXo3ifSNGdGNrBf6/jcA10hwC
+	 cM/gFRuIodxyXzwVq7tBMEKk0eNbMpVZFVXpo74Rdai5Uw/tjpCvMXa5SdcBb1uFCM
+	 2J2Zl0DEaHNzQ==
+Message-ID: <a758430446a2952e3ac85b64fc9983f8045e83e6.camel@kernel.org>
+Subject: Re: [PATCH v1] net: sunrpc: Fix error checking for
+ d_hash_and_lookup()
+From: Jeff Layton <jlayton@kernel.org>
+To: Yan Zhen <yanzhen@vivo.com>, chuck.lever@oracle.com, trondmy@kernel.org,
+  anna@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  opensource.kernel@vivo.com
+Date: Mon, 26 Aug 2024 07:52:04 -0400
+In-Reply-To: <20240826070659.2287801-1-yanzhen@vivo.com>
+References: <20240826070659.2287801-1-yanzhen@vivo.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Fix toolchain vector detection
-Content-Language: en-US
-To: Anton Blanchard <antonb@tenstorrent.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240819001131.1738806-1-antonb@tenstorrent.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240819001131.1738806-1-antonb@tenstorrent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Anton,
-
-On 19/08/2024 02:11, Anton Blanchard wrote:
-> A recent change to gcc flags rv64iv as no longer valid:
->
->     cc1: sorry, unimplemented: Currently the 'V' implementation
->     requires the 'M' extension
->
-> and as a result vector support is disabled. Fix this by adding m
-> to our toolchain vector detection code.
->
-> Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
+On Mon, 2024-08-26 at 15:06 +0800, Yan Zhen wrote:
+> The d_hash_and_lookup() function returns either an error pointer or NULL.
+>=20
+> It might be more appropriate to check error using IS_ERR_OR_NULL().
+>=20
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 > ---
->   arch/riscv/Kconfig | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0f3cd7c3a436..939ea7f6a228 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -552,8 +552,8 @@ config RISCV_ISA_SVPBMT
->   config TOOLCHAIN_HAS_V
->   	bool
->   	default y
-> -	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64iv)
-> -	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32iv)
-> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64imv)
-> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32imv)
->   	depends on LLD_VERSION >= 140000 || LD_VERSION >= 23800
->   	depends on AS_HAS_OPTION_ARCH
->   
+>  net/sunrpc/rpc_pipe.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+> index 910a5d850d04..fd03dd46b1f2 100644
+> --- a/net/sunrpc/rpc_pipe.c
+> +++ b/net/sunrpc/rpc_pipe.c
+> @@ -1306,7 +1306,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+> =20
+>  	/* We should never get this far if "gssd" doesn't exist */
+>  	gssd_dentry =3D d_hash_and_lookup(root, &q);
+> -	if (!gssd_dentry)
+> +	if (IS_ERR_OR_NULL(gssd_dentry))
+>  		return ERR_PTR(-ENOENT);
 
+This is the routine that fills out rpc_pipefs directory. If this
+returns an IS_ERR value, then we should probably return
+PTR_ERR(gssd_dentry) instead of -ENOENT.
 
-As Conor noted, we need to backport this to stable releases so here is a 
-Fixes tag:
+> =20
+>  	ret =3D rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
+> @@ -1318,7 +1318,7 @@ rpc_gssd_dummy_populate(struct dentry *root, struct=
+ rpc_pipe *pipe_data)
+>  	q.name =3D gssd_dummy_clnt_dir[0].name;
+>  	q.len =3D strlen(gssd_dummy_clnt_dir[0].name);
+>  	clnt_dentry =3D d_hash_and_lookup(gssd_dentry, &q);
+> -	if (!clnt_dentry) {
+> +	if (IS_ERR_OR_NULL(clnt_dentry)) {
+>  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+>  		pipe_dentry =3D ERR_PTR(-ENOENT);
+>  		goto out;
 
-Fixes: fa8e7cce55da ("riscv: Enable Vector code to be built")
+Ditto here.
 
-Thanks,
-
-Alex
-
-
+Nice catch, either way though. This definitely should be fixed.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
