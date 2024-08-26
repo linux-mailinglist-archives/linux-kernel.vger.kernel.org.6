@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-300717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7940B95E791
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AAB95E792
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAC01F2157C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7348C281605
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 04:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1EC46450;
-	Mon, 26 Aug 2024 04:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA7B7174F;
+	Mon, 26 Aug 2024 04:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBKqip38"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVoD8QbZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAE663C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3446F2E0
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 04:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724645503; cv=none; b=j2RNuZcbJTGBzUgW6q2a8hJVe2z+uuDmvDn3Selgk9m/uE1ujZHgwOmcjbL/+PthPB35HhqpfcAdkIf/nJhQPmr6AWscL58uxEZJD/wfjGLcECN6xRZmdH1Eonmb7fGTT2y92mhOua4sEjQoSFjvDu0xA2fVJ1vod6sJOMUntaQ=
+	t=1724645554; cv=none; b=pxFyu3o+F3lIL0YGlHHzuSn2pzT6adm/vBkIgaamDgQaFZYO0skl0m3kWgX8KjhWi77+Ad5LbV4nfR7u7x+I28mJzYvNjN5y0hMLeweR+K4pMQOCpx0Zr8gLeO6BCSnP3SIve022Zo0b0Eec7Jwyql2CfynRIekI7tW92xcKdqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724645503; c=relaxed/simple;
-	bh=q4zLTK6jJh9Ouhg0CWmDF6JpWwLOZqwak5tvcYzeCw0=;
+	s=arc-20240116; t=1724645554; c=relaxed/simple;
+	bh=/lrwtogEFLiUD0yQcwy0DgYm1CyK4KyNMKlNshXlAiA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4/qi0T++xOHwgSa0kqPzR/GpWxxHFKWWMdJVlD5l1r1RD7jdX9x8sC16OnTBfzboexnXmCO7rnIJ3YqLcR30FX7CZq2WEBsaIXVq30if5ERFMn+R28jkGYEtCn2JiyvibPROcjLtVbyvocI9nscE3wYMvlp3EjnoXA5SzpzChE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBKqip38; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D09C4AF0E;
-	Mon, 26 Aug 2024 04:11:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=IkmFuT+zD59Qg1ycgvJ4J/WP6q8KAAG4leozw+VztP6eWziMssrDX6zi02dRrj4Nhi2AnU0fUCQjTwQBGaY+C3pUIuDTwwVpl+XCS0fm/U8WheQuhrGApeypJIa1JZv7ZE+VroDQ1aDGRIaPtVNB10q2HteSjhIAdp5KtvAng2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVoD8QbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E16C32786;
+	Mon, 26 Aug 2024 04:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724645503;
-	bh=q4zLTK6jJh9Ouhg0CWmDF6JpWwLOZqwak5tvcYzeCw0=;
+	s=k20201202; t=1724645553;
+	bh=/lrwtogEFLiUD0yQcwy0DgYm1CyK4KyNMKlNshXlAiA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZBKqip38qTcw0FXgIElQ5rApVOMc3yVR19hGtfSxg/a+gSr9Pknu8ADTzd4Xv6Px4
-	 dFfaWZS6KMBQODibCxiAQHvv5qS8fNhCnI4bVhrPzBYo9IvV6NzlFMeftnlc2bUndh
-	 CdpyDUnG3HFnO4NKRRxqdK/XslOC/p3dM4BuacQfqlJ2aWbj7JsJb/CVHPHFkk4oIA
-	 LaPd0iHLwzd7qC68ceSxDEyJDr0dXFr/mwOZi5jkiKkzTrCy2cnI8p3pE3hU2VI4AW
-	 bkPHtiWnA4qZKwLJGw238JB0EcCdH5DY7yH8h1e5XjswVasd3NIpLkr8V7+CvhyL0a
-	 9eiisAaSxZlsg==
-Message-ID: <afad6db5-e33c-4402-adec-d1948300191a@kernel.org>
-Date: Mon, 26 Aug 2024 13:11:39 +0900
+	b=BVoD8QbZnqdjJFV0fXriEuKnNS9Zlhd0JaOmInPzqfB+XNOYZPRLbxbIEh7wAghOS
+	 T6R+IuYg1DRf8VC6ahwWj4vF1liHQkHK4oB+9QfTwGPCGyLF+wb1/f6tQpEM94zfed
+	 26C3avVddnxIdB9aMT1bmDs8/DB/cicvduVL8U0s+w6OGaBQLScckp11bYOJulgSuO
+	 JFWS6KhaUnax6ztB69lkB5DG4yTQ2+bB0wycqndgWAizoXrqg+eE5B4/v9JnzglH2c
+	 BNS7WoEOlnefw19SDbbP9ZVuv24Jdbvhbqb/fhLfcgEBhtfP2/g4unnKC7kzIXSjCv
+	 d3wz/0JpNewsw==
+Message-ID: <d05f7fea-f13e-41e8-8416-3b410431127d@kernel.org>
+Date: Mon, 26 Aug 2024 13:12:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] reset: k210: fix OF node leak in probe() error path
+Subject: Re: [PATCH 0/5] reset: cleanup and simplify with devm and scoped
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  Philipp Zabel <p.zabel@pengutronix.de>, Antoine Tenart <atenart@kernel.org>,
  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
@@ -57,25 +57,45 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 Cc: linux-kernel@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
  linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 References: <20240825-reset-cleanup-scoped-v1-0-03f6d834f8c0@linaro.org>
- <20240825-reset-cleanup-scoped-v1-2-03f6d834f8c0@linaro.org>
 From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
 Organization: Western Digital Research
-In-Reply-To: <20240825-reset-cleanup-scoped-v1-2-03f6d834f8c0@linaro.org>
+In-Reply-To: <20240825-reset-cleanup-scoped-v1-0-03f6d834f8c0@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 8/25/24 11:14 PM, Krzysztof Kozlowski wrote:
-> Driver is leaking OF node reference on memory allocation failure.
-> Acquire the OF node reference after memory allocation to fix this and
-> keep it simple.
+> Hi,
 > 
-> Fixes: 5a2308da9f60 ("riscv: Add Canaan Kendryte K210 reset controller")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Two simple fixes, which do not cover real scenario (memory allocation
+> failure during probe), thus not marking CC-stable. Rest of patchset is
+> simplifying of code.
 
-Looks good.
+Patches that have a Fixes tag will likely be picked up for stable by Sasha's
+bot anyway... Not a problem for these patches I think.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (5):
+>       reset: berlin: fix OF node leak in probe() error path
+>       reset: k210: fix OF node leak in probe() error path
+>       reset: simplify locking with guard()
+>       reset: lpc18xx: simplify with dev_err_probe()
+>       reset: lpc18xx: simplify with devm_clk_get_enabled()
+> 
+>  drivers/reset/core.c          | 15 ++++-----------
+>  drivers/reset/reset-berlin.c  |  3 ++-
+>  drivers/reset/reset-k210.c    |  3 ++-
+>  drivers/reset/reset-lpc18xx.c | 43 ++++++++++---------------------------------
+>  4 files changed, 18 insertions(+), 46 deletions(-)
+> ---
+> base-commit: e706b1fe2384d38e6e9edfb6d9e11e26873c24c7
+> change-id: 20240825-reset-cleanup-scoped-64bb3cb6157f
+> 
+> Best regards,
 
 -- 
 Damien Le Moal
