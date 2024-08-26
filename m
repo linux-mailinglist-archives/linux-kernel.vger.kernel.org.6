@@ -1,180 +1,117 @@
-Return-Path: <linux-kernel+bounces-300746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9706395E7D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:13:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A7095E7DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB24D1C20E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:13:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27107B20E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 05:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9B57441F;
-	Mon, 26 Aug 2024 05:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Nosm46wM"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010001.outbound.protection.outlook.com [52.101.128.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A499770F1;
+	Mon, 26 Aug 2024 05:19:00 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1975208C4;
-	Mon, 26 Aug 2024 05:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724649212; cv=fail; b=vA9DS2UAft1uljmtIdR90mHO8HJGVF6UwkT2OHz9laDG9jFoFoBCp/qklGskcJfnO3I7rS8yMCoedW26jzC26iSwUw5ag60WNZ2vB5wqk6f5gJB61lUVhuvBQaAPtJS2kc5moHnv0n3Bkt9hXoKVSIYbKvNXXQWaz7jkkhjoebk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724649212; c=relaxed/simple;
-	bh=wXfb3suI4rRlcPAg0YpX9vQLdgF/yY/21e8diA258rM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=L0RjXRESxCtuxgR+vHH6TQ0lMfUCU7JmEIfM5/teAbPitaudftZVNaLGJTnb907WJJRATjA1udv40aDtRkdb7fcG2Mr3u6fGBWDH+xqrbOJ/UaF4jGicKMA5IyzOW+QF6qMmd0VHsV8xFhJonJhZ7jmk2Ot0HXlPJhw8Z+f/mCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Nosm46wM; arc=fail smtp.client-ip=52.101.128.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cx9oWYBVIgpYzORHMJYnM7ArNG3/oDS2hff6d241wqWpwji1kw5eX+MRAs7pQ20UedYDR2UHETNWxQXjXbvXyUvwcggjNYc6zLBtw9a6x3w5VlKnzCeGMUfxsQzavZGlwPZUI8ZLYWRkzaiFgatQXoSpOd+hQt1vNh4NdyBjBRqlYkPwEJhxjc39Pqe8CNH4ZQ74d8ip9rx+eTHsx9oVHbfODUNuLnNuZbArsMkap9ybbWx/GxYjXtW745AQhNTJ7O+aODiDiGUhTDGOQxu8dvH0jc57adupRPc4nXetB7JYsduMganDlx6bB2iSkMrz71zNDKwvC3G7/xSE2yPiEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hROMcqqRnoZRZc2LirlEFY+V5DIrAHnsadq7SFa8As4=;
- b=liw6A5ATL7K6mIrT0nLII32B6XzOzya0RBXrK2U1TFBdATZ1V+rCn4CbJRUP92I+PLk7s9Q6fYmL1+TKlLD/kO6IyWtAnyDcYlMqRAwYhu+bgux+yllV3ETuwSOSZZLqxMdlSycoxziIqL69aHEsYgRIIjdTuG6YBhD0dWegFzw8U2UIZnCMnjKQr3Q3llu+F6hvr5WCtVBaBpUSEWTYpM+ZutNDYHwoJjScOo14gSbPMUpAV9BBEjjg3WrwQiQXJaV4AJ0mxbLqXOTHa1CKa6n/G+ahNV+LK00t427s1zrc/QO1h4xMZK7whn/ICD858aIyfjQb66NFqOWAPrHanw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hROMcqqRnoZRZc2LirlEFY+V5DIrAHnsadq7SFa8As4=;
- b=Nosm46wMl0xfPx4wdGavw6VWc4ZQkwkFIeoyrQMsRB+MP435/GwbdxqV7uFKgTl5IdRw/uTfKpKjl5scxy3QV5Ikr5yRcxYJgPCaoJ5aMHVzbqfzS4HR9qH2XYhYl3tRQzthIXRWivENrVuRDXQ9kn/LBWSmBY8VqmUhZEg3YeVigy9bX3b4hgxKEJQ6ZEJQh6IP8SoxTDsM/Qk+QmBKYlubdvz+7ylKn63soCSpYEMG1kdAKIuO8foT/nT1uYqGjFXsCthZ8v9c6Xjz3TaXE65O7OiBqZrAH8lB7BDcsXg5T1IwFByxzOgwLRPpm0RtRNBV1FtbklGHjHKimKZgjg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by SEYPR06MB5964.apcprd06.prod.outlook.com (2603:1096:101:d9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.23; Mon, 26 Aug
- 2024 05:13:24 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.021; Mon, 26 Aug 2024
- 05:13:24 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1BC1119A;
+	Mon, 26 Aug 2024 05:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724649539; cv=none; b=hGTbnLu7PQe6K62Ycm9h0dBm0Y5EfIhX9lwVY/8wh7N3zY+R4slF15g9Fs4pGcgxy7xbbuxh9Y9VrP8/yc6Ro5G0mPnrgJj0k/6OuKztfzE9M0Ev7gXU735Aqn6w3A8dNUi0Uik29pAwJ90uYUhfGGSR4NB9c35DlSekA1IQep4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724649539; c=relaxed/simple;
+	bh=BZ+tG3sPqkdp1r8WVl3AmA1qeUmicg7w7NSIoJ6H0IM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RCnP/Y7JbMqp4Qkl6Z1StFkXHFl1sJ9z/tcYmDVSH41gmcAYbVNNWEmPEjScuIAvLU/+ncuLPIsHIhAU7tVeZPScKXrKpIADp0i8NgU1JmIPNeuADM11RCnmJQByKtCMsBYRzaQ68LpmEim5PpqirVIRTRBlTlRbwj9wjFLpOa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowACnr0smEMxmxHKPCg--.37321S2;
+	Mon, 26 Aug 2024 13:18:33 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com,
+	howard-yh.hsu@mediatek.com,
+	StanleyYP.Wang@mediatek.com,
+	benjamin-jw.lin@mediatek.com,
+	allen.ye@mediatek.com,
+	chank.chen@mediatek.com,
+	meichia.chiu@mediatek.com,
+	Bo.Jiao@mediatek.com,
+	Money.Wang@mediatek.com,
+	akpm@linux-foundation.org
+Cc: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	opensoure.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v1] clk: qcom: Fix error checking for devm_clk_hw_get_clk()
-Date: Mon, 26 Aug 2024 13:12:33 +0800
-Message-Id: <20240826051233.1937767-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0097.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b4::11) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] wifi: mt76: mt7996: fix NULL pointer dereference in mt7996_mcu_sta_bfer_he
+Date: Mon, 26 Aug 2024 13:18:22 +0800
+Message-Id: <20240826051822.2564194-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|SEYPR06MB5964:EE_
-X-MS-Office365-Filtering-Correlation-Id: d65d8c08-4f05-4cef-a97a-08dcc58dcf97
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N9OPC75XM3h9CPFIF2dzc3+ewuiuTZ5FAf4bkQsZU/fPh6f1QVHYFyxL3lT8?=
- =?us-ascii?Q?Nq8Tuamc1ZtAdceIwdjzrZ8sfqpB9YblVISNErVqu451gR1HZiBnudcX/g/Q?=
- =?us-ascii?Q?ZCpoXPYmuc2N3x1W2G1JupL2djsOLbGewZzHGekqFcqg3TUvQutFdzNTB1lk?=
- =?us-ascii?Q?5ALSV0X+7Wqm1JX9Stoj18kZRZt+I3GUL1rTagha64Qt33eo64ZoXwvLXtcE?=
- =?us-ascii?Q?TqAZWJdJA+19d37mDn+vFtVfbbE1wFyle9JXcUsYP0D+oL5dqCSKkYsdYEXI?=
- =?us-ascii?Q?Uxko6U4eYdrUHpCf90mvyL6gX3XUKbyY7AljlngmHpf3qp6p8vuL54fJIQn5?=
- =?us-ascii?Q?a0p7WwvwN3qwOI/By6foc+EUlO4uS1hYiajGaP4jOpOID2E24aEW08dLWeLJ?=
- =?us-ascii?Q?SxksYmkZaOg+mXH2k4vAcRRgBP/gdZDfx1DYiwJMIVytShgb480EdkrPcRIK?=
- =?us-ascii?Q?s/UzhZnnJmSRqiYCNXPPrwkYzXKXPD7NZ9dnXTyjGs+921nlwOi/+F1v/+ra?=
- =?us-ascii?Q?gJwe8HS0AmUlfpCvYu/68FUHbY/oVsE/g/FAgZNCNiVtJQiFlrldBPu9V8g1?=
- =?us-ascii?Q?L6o6VH8Sp681iM875E95VMZ6meBrZBIF+XSwivt2Zom2DbkKvlx9vzsbYwgw?=
- =?us-ascii?Q?QtNweQkD30bGvkYkpN4vNmGzBDLwI4bs7r94SJpfPnePJtap8M5yBq70Dus4?=
- =?us-ascii?Q?uU/xIsS0jagj6FVzYS8Z4WOo71aWBBr0oeIm9E70X/4R4HGE+5a4DhhXe3Ns?=
- =?us-ascii?Q?LGjFEQIcABeFWInX+Twt3m4T3j8LNz6NEzA/zDh9dFK3jig4nFox12E+rp80?=
- =?us-ascii?Q?JhVc3g893Spe/jHTaUADRxa6yg3T9AxIEStHzxUc6JWRP01q3JJSzuoZaUK9?=
- =?us-ascii?Q?JEuy53jooq+EBTb2rAHkYHK8Ztsc6OUbiTb0C3BJ4xpt1ypis/Nl5UBCahfo?=
- =?us-ascii?Q?x54XR+V8wNVghi4fQEyQ4eGfRyC9eY7saI7geIWRPtmXyGCwduRehEAX02yr?=
- =?us-ascii?Q?7gkRl8mm7HLWfx7c5cMM2NJouWjX9XJ5OKLuIcy4uZ6m4Ct868TRi8Os7mQr?=
- =?us-ascii?Q?lI9Xnmmpn6rlLqn8TQ+vrO3Q3m/Nct7vpdICVn/5bx4AUYaaK8tx8ZemxLnG?=
- =?us-ascii?Q?ZLV7Cq/+l3JMl/K6FEo1dnSwdkatnr0NmF3G1A2KxCqpsIz/S0hNRo8dalgd?=
- =?us-ascii?Q?8UMme2QHr6ENNGdixTGC/dy4LdHRi7AzsgKs8zAAxWd8Q17G5JOuCvQKZn/d?=
- =?us-ascii?Q?eYHTldBp6UPSCFpMhW8cj/BZldPArpb2/8nuQqh+ihL/r584M7KXWIeoMfYC?=
- =?us-ascii?Q?uRCrwnFBhduOgLtYbv1sBhKSrrf5cmtDNzbbPyWDfZ5aOjXxbfd0dht4Qt4U?=
- =?us-ascii?Q?66cw9Xeu2FcrnzISgGW/9vDMIwO+32TGNDFUl7AUMmtGyxbORQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cp2mF6lmQ7HzG6KgtghI7yGJd21Q8YfJ1HrLR5XjLev+2wIuPt/jnUkzw/jC?=
- =?us-ascii?Q?xHHLWxFUc3Q2mb5S2mB4tch5FVlVz2kUTZ0YdeiiACV5ZMqmiz08Yr0p1uzx?=
- =?us-ascii?Q?A6pYdIPtuRQ+Y9ntRfU8CJvDpQLrRMALo/BmQVjJopkbywDPGZNBLG//o9b/?=
- =?us-ascii?Q?b7meVqhj8Rk0gImKOd12lhUKkIRoibgOMNDdF6d88u56splPIcqOY6kRP6JU?=
- =?us-ascii?Q?Br2x7bGmSUU9XI7QR3l6aW3fBH7WDSZZeI1ETPaYgvGV53My7lR+XoWPnw/y?=
- =?us-ascii?Q?BtKX/LcIcNxEY93JFySWlH2Knnu0YOGHt8bczyJT3Vd+d9HNTK1SgsEhPN6h?=
- =?us-ascii?Q?NwP1BoQPb2mYY+QosDD3laiMpWRzgTEVBYYC1d9SjgfEEF5HoaBE9OnC7Btr?=
- =?us-ascii?Q?iOhlNUVyyuQjpzhUGCLKX9Iqpx3CRx1X9gBljMKJDJaw+Xui0g51xGIouVwI?=
- =?us-ascii?Q?AXo7eplJ+dkBEqaKAaJ/OyJaAf2oQDSVK4hvDvBAX7EYgAGGL5T/KKJM9vWV?=
- =?us-ascii?Q?CdovgeeRcAhZpc05eq8FpcKttFhHeeA1liN8iLW/4V3zS2vPLkqY3qxxx7Sr?=
- =?us-ascii?Q?EmGy7c+6N3DlkJgAvbkunIj8EFzTenve9s0ef/6q30PBHa7WPEhd0VSLuHjd?=
- =?us-ascii?Q?ZKtzYxEBmT303boYZijio/7uy1vFl+09QeUd5TsqhAgSCpHkUIINsLu53l8h?=
- =?us-ascii?Q?cIzaXCgmRfX8kQrV1xhn3h3ukZ3CQqZrk6LxPSRrszEllYn0Dc7O7HSiluNV?=
- =?us-ascii?Q?5GwVbnABfwqsw82YbX3gqKlrxkgR3TdG4PYpxER4px+O/WRYhbp77QMKHGtA?=
- =?us-ascii?Q?jae+HixxpxYhoSWQ6hF4wDdW1DBsTfFHLrUmQQoW2wufPpLc8d/F0twYHvWm?=
- =?us-ascii?Q?vngVNpvfNuuzm1UbebhH58iFEkkmw+Kf8yyU4NBtpTgVRq0YdW33cBX1iUww?=
- =?us-ascii?Q?1Y0N89Ml+CufdFJQXDQStzPzijDAGbvrxs0/3SzhYtmeEp1YkEySZHa4irOJ?=
- =?us-ascii?Q?HMIJc1c3j9pEROCLjJspIouxQns4F7vxIDdQ78jP1tdkRyVqLYj9oqpGjo3U?=
- =?us-ascii?Q?a9kZfKoR/rYk4XiLAjEfSj0twgfaKA9FXtJ9ytGMm1lYd4C1U7sY0TcVUGyx?=
- =?us-ascii?Q?WQyKYZHLDrGY3IU+ZQbo6twvLnLmW28qT27WHDfrq5Yck7OU/ZYPOYhNgAR4?=
- =?us-ascii?Q?XgKMlbH+XinbfhMi14qDPtpOqT2cI2cHVv9eZjCGjwiTZrmzUz7DSINZXGqR?=
- =?us-ascii?Q?bkXT2dPo2tFqBsdqiReBLERlTORQokSapi+djtu/rYHmpEGF8K9jLYu+5al0?=
- =?us-ascii?Q?uNp2W0f6GmyvXPas5o05AD1LADsitPFP34VKMMECi3+HTQPQVV32norENAWA?=
- =?us-ascii?Q?mozl3pUN3zaLFq2PJ7VIOWlK0wHBlta/w7osV6RY286E7u2PjiVtPkLQXuwh?=
- =?us-ascii?Q?m/SP0GM8mvFg3zUONl4M6x8zFeh1DlJ1xDuqLWViSHkbmkr37I6UAeSgtfot?=
- =?us-ascii?Q?AmWj8alfIfZzGpKeJCRZqGbz2VcoyHTupw7u/WJ1IgFKTlHy/bwthfbyBGUa?=
- =?us-ascii?Q?0j0shHHrRY+gkaNXNJi1B+9MWyY5eHQgyc6gWLvQ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d65d8c08-4f05-4cef-a97a-08dcc58dcf97
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 05:13:24.5665
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZxBtozLd4MBKTFNHnHf/11YVbqf6PR7FlDoAQOTfgqarYsP78ryfKfwbprUdJE5VfnWk1JCKNA+fvCq4WccR9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5964
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACnr0smEMxmxHKPCg--.37321S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZw1UtrWxKF1xJr13Jwb_yoWDXrXE9r
+	n29FnIqw48Kw48Kr429wnxuryay3ykZF97Gay5tayfta97J3yUZF1IvFn3Ar13uFn7ZF1U
+	J3ZrJFy0y395WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSxFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRKCJmDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-The devm_clk_hw_get_clk() function returns error pointers.
-It never returns NULL.  Update the check accordingly.
+Fix the NULL pointer dereference in mt7996_mcu_sta_bfer_he
+routine adding an sta interface to the mt7996 driver.
 
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: 98686cd21624 ("wifi: mt76: mt7996: add driver for MediaTek Wi-Fi 7 (802.11be) devices")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/clk/qcom/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 33cc1f73c69d..69c7876fac23 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -273,7 +273,7 @@ static int qcom_cc_icc_register(struct device *dev,
- 		icd[i].slave_id = desc->icc_hws[i].slave_id;
- 		hws = &desc->clks[desc->icc_hws[i].clk_id]->hw;
- 		icd[i].clk = devm_clk_hw_get_clk(dev, hws, "icc");
--		if (!icd[i].clk)
-+		if (IS_ERR(icd[i].clk))
- 			return dev_err_probe(dev, -ENOENT,
- 					     "(%d) clock entry is null\n", i);
- 		icd[i].name = clk_hw_get_name(hws);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index 2e4fa9f48dfb..cba28d8d5562 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -1544,6 +1544,9 @@ mt7996_mcu_sta_bfer_he(struct ieee80211_sta *sta, struct ieee80211_vif *vif,
+ 	u8 nss_mcs = mt7996_mcu_get_sta_nss(mcs_map);
+ 	u8 snd_dim, sts;
+ 
++	if (!vc)
++		return;
++
+ 	bf->tx_mode = MT_PHY_TYPE_HE_SU;
+ 
+ 	mt7996_mcu_sta_sounding_rate(bf);
 -- 
-2.34.1
+2.25.1
 
 
