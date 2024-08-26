@@ -1,136 +1,92 @@
-Return-Path: <linux-kernel+bounces-302134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8FD95FA5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC97095FA5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 22:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0422817FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914FE28163B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 20:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE53199E84;
-	Mon, 26 Aug 2024 20:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E06D199EAC;
+	Mon, 26 Aug 2024 20:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cMPDm5it"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ei6CbuRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBA612DD88
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 20:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AD199259;
+	Mon, 26 Aug 2024 20:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702751; cv=none; b=NA5xaoIW9IoVbC3C1NIBOjiwf3QuH6VTWS20TYZqf/QHy2DNQoIjX8a8OF2gY43MqZaEkgJzO54fvOoRQ4W9W0FWJbXd9xkTlrP5gFtFoM/IA9D0olhuLWn7QzitUsQoo7citjbe/lLILvkFhwZ21b+REJa/eU2Dx+mocgtqn7Q=
+	t=1724702768; cv=none; b=Wqc+7igizLDOpqtRILI6x59TpwIpOSxdjM9JXBn0emL6oQOt7fQMfNis2uJhpZNA6Wtzj8GqyPcutxPUOcPSsYa1LfaNy5WQmI7VQO1auZ/US9VJ8P+mxSGji84D9vS/r9Z4LYFBkYd6lUY/3U9JOGYktpXHLIMhf8COiks2ytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702751; c=relaxed/simple;
-	bh=IUpfP3Sgeq5oBNkk/3ORO0MyKxei7eyBm40BHBM5L4g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Tc5mc/CSd6toT3lLThocfmMe8B+pGh2GQJLcWqO/SPqTr9VLUvqjTlMtVTG4oHuRT0+G3o3qIoTEBrZVt1yM+I6rInq5yOttaDARX10eJG+KxnRB9kz2Bh/24nSKGgoOLKW1kMMdxLmGa1qyByhpeVSi7C99asSExvEptU+GbUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cMPDm5it; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b4eda2f2f5so69571747b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 13:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724702748; x=1725307548; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnxIhNbH4Gch2W3JBVVv+gBN+5BkAO7Ys6CmFB2+1ug=;
-        b=cMPDm5itG+idQUTB+/oQRYuTrd5UeEVzxxDpp5M6ii5jhzv6RXDD+oyZ5S+BH2yJ5r
-         j4O4gBTRb5MX00k8suLA+pykgUpK25HBlMSFXOZH1nouS0EThspLzvOofrROup+S+pb8
-         HTYuepGFIHFxVcLhfMxRtulP4xPCW2Q9hlGAoeuUNGOaNjXzuvwR4VZtqF7FBx6/yB+3
-         ijWcCWtjVYdpQ9tmSaXTRIQZYOKy0x+v6FF81HF55TIIGYFgthMEFt2g1pmdARPjvd8M
-         0klFl3g/xLRBs/HhhZcnldoF23y0kUX1VcgE7qK0hBdCwdSHo2QQBEu0mWU/t7bF0vQr
-         1k0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724702748; x=1725307548;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnxIhNbH4Gch2W3JBVVv+gBN+5BkAO7Ys6CmFB2+1ug=;
-        b=SWmuWEpTkyf3AdSZTIsBo02H7xLQEyvBS21+8jxqoCjOJtH8hnM3amZITDcFXUiPxy
-         AFHOi3mT53e0uGSV8JmJKYXTu4vA1ZCqnk3Isk2gRAHyBLfsj5tJcDKc3+hP/hqhRkqX
-         mwtnynjRIFRunaR6jfSrIkgfyBVkmV2+23SH5NBaoavDAjIkH8A9qMhlaa24C83IG2FX
-         SyqjuI1nfpdLO88eYU5Zk/Cf5ACTV7vDZ5XEKtLbY9+NJRQgj+5YeD9QpBHHn098w2J+
-         tvwdzLx+VgU/sAC1L0+DFXNty1hpNyCta7SUbwReJi8vj/zqMSHpZtAqBeTwJbQQ66pa
-         cowA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuZY5q4Aca+TvMoTHqJiqdzue8Y5BoBFp9kVhF1ORoNxdgBjWF8vz/+AlVlFomnLZ7JQC5wtTOq5aOGLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBu04aXw6oCRg5GPxn8D7a1ZuKSI7WgLevozO+TXgi0vWKDXoN
-	pR7KsnkGazmNRFURF5z7Kecj3kSJrnL9S5DAuWpwJx8KyysC5A14m1EYW4qRIz3krdi5tiWYonv
-	RuQ==
-X-Google-Smtp-Source: AGHT+IGLSh4YWTamDhAv9x2uzuZdYhGakrF4oXP91GrZ+B9R3joQTi/ORWEEJKAfgGtk+l47h8Mnz0Jd94s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:2188:0:b0:e16:55e7:5138 with SMTP id
- 3f1490d57ef6-e17a80075e1mr22228276.0.1724702748409; Mon, 26 Aug 2024 13:05:48
- -0700 (PDT)
-Date: Mon, 26 Aug 2024 13:05:47 -0700
-In-Reply-To: <096cdf1b-bc79-4e88-8ae9-99a373245ef8@intel.com>
+	s=arc-20240116; t=1724702768; c=relaxed/simple;
+	bh=4HdFyJdvZKE0tNyptE2wGNNoK+nN5uPzYDUa2pU7TkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gTrjSm1Usy4b1NRvsTWiPmDeriQSFh/Ss/FEjUUyfovjBPb/xHkvhDA673UkxL4ODKsAJ7NHDKkO26moK08Ww2yT5lZBB8hsBVH0xZ2EJnQauQ0l4NINr17yowFSfCsyecvZ8zpHFyzUU6bY+LhMOKnxnhywJg8UWrmSoDKVppY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ei6CbuRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9A0C4FF72;
+	Mon, 26 Aug 2024 20:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724702768;
+	bh=4HdFyJdvZKE0tNyptE2wGNNoK+nN5uPzYDUa2pU7TkU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ei6CbuRAuetpbe48frNv0DGa8REv90njY+nqhLw9yxilYkyp3e26ljbYaR+3K2zeE
+	 K0scN4JEpuWiDqj8Gd1HCwWF5EmuSjUnvWPgv5gs/ZjwSf0tScodjn/Ol2B2lZ+5C5
+	 Zo32ZQ0GNsXJSrHkV2I42Utxcr74h7YUaGg8pkMhxqUBdOXyu/Lyr9WPqupBgVi9KM
+	 q4ssm3PFUmJpJ6PIMXjvkir5hOPbMmnOKIICyxEYdLtaL9l+biaARTkEuZuB854jkR
+	 774AMH7bUIqMnszhvR4MB1rt/hHCLdKPg20oy48XlqMoylPjWpeMaYnyLyx7qeBmdr
+	 9RPFZHdGDUSuA==
+From: Kees Cook <kees@kernel.org>
+To: Greg Ungerer <gregungerer@westnet.com.au>,
+	linux-kernel@vger.kernel.org,
+	Max Filippov <jcmvbkbc@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined
+Date: Mon, 26 Aug 2024 13:06:04 -0700
+Message-Id: <172470276219.1124110.5967273192476181059.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
+References: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240822202226.862398-1-sohil.mehta@intel.com>
- <ZsfJUT0AWFhoONWf@google.com> <096cdf1b-bc79-4e88-8ae9-99a373245ef8@intel.com>
-Message-ID: <ZszgGxZLDQYIEJpX@google.com>
-Subject: Re: [RFC PATCH] x86/cpufeature: Add feature dependency checks
-From: Sean Christopherson <seanjc@google.com>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Uros Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Vegard Nossum <vegard.nossum@oracle.com>, 
-	Tony Luck <tony.luck@intel.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23, 2024, Sohil Mehta wrote:
-> On 8/22/2024 4:27 PM, Sean Christopherson wrote:
-> > On Thu, Aug 22, 2024, Sohil Mehta wrote:
-> >> Arguably, this situation should only happen on broken hardware and it may not
-> >> make sense to add such a check to the kernel. OTOH, this can be viewed as a
-> >> safety mechanism to make failures more graceful on such configurations in real
-> >> or virtual environments.
-> > 
-> > And goofy Kconfigs.   But yeah, lack of any meaningful fallout is why my version
-> > didn't go anywhere.
-> > 
+On Sun, 25 Aug 2024 20:27:45 -0700, Max Filippov wrote:
+> create_elf_fdpic_tables() does not correctly account the space for the
+> AUX vector when an architecture has ELF_HWCAP2 defined. Prior to the
+> commit 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv") it
+> resulted in the last entry of the AUX vector being set to zero, but with
+> that change it results in a kernel BUG.
 > 
-> By fallout do you mean that the observed behavior when the kernel runs
-> into such a misconfiguration
-
-This.
-
-> or just the general lack of such
-> misconfigured hardware/guest?
+> Fix that by adding one to the number of AUXV entries (nitems) when
+> ELF_HWCAP2 is defined.
 > 
-> I tried experimenting with the behavior for the last entry on the
-> cpuid_deps[] table:
-> { X86_FEATURE_FRED,                     X86_FEATURE_WRMSRNS   },
-> 
-> In this case, even if WRMSRNS is not present, the kernel would go ahead
-> and enable FRED, which would cause a panic when wrmsrns() is exercised
-> in update_task_stack().
-> 
-> I agree to the second part that such conditions are more likely to
-> happen in pre-production environments.
+> [...]
 
-And in VMs, e.g. unless the SDM explicitly says FRED implies WRMSRNS, it will be
-architecturally legal, if unusual, to advertise FRED with WRMSRNS to a guest.
+Applied to for-linus/execve, thanks!
 
-> But I still feel that for the rare case when something like this seeps
-> through it would be better to disable the feature upfront than run in a
-> kernel panic or some other unexpected behavior.
+[1/1] binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined
+      https://git.kernel.org/kees/c/c6a09e342f8e
 
-Agreed.
+Take care,
 
-> > https://lore.kernel.org/all/20221203003745.1475584-2-seanjc@google.com
-> > 
-> 
-> The code is very similar to the one I proposed. If we do take this
-> forward, would it be fine if I add a Originally-by tag from you?
+-- 
+Kees Cook
 
-No need, you came up with the code independently.
 
