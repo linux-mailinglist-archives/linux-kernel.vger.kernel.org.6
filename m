@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-301122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E48595EC9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:00:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6123895EC9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DC76B2405E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117E2280DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F230813DDB6;
-	Mon, 26 Aug 2024 09:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pXL8eYFR"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBB113E033;
+	Mon, 26 Aug 2024 09:02:57 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749913AD22;
-	Mon, 26 Aug 2024 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D013AD22
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724662846; cv=none; b=SS2McssDUVA6izXaPETtPs7FjSZgptqjhCXMZhxxd2TAJ5QEmXl2nfkF7qYPXcJpB/VWjjLj6uB9DliF17/nZTEzJxsRUj3sDBOeALhTwugPK1nmZmx2pN8w780aCxbHgz4q7ogXwFolt72mY8AmXxwZFFyTkeQFsCj+FneTagI=
+	t=1724662977; cv=none; b=T4ClQa+MnT8IEyVeS2Wo9FqFuqNNaw1XXSiI1kMZiman2WepbnOput5XPi7XwFaw3dRcjuL7Y6X7lzffmLjJcflglbf4VaJw2TghkllrSMOdMr47IZHdLV1Jd5XlhvjcEJzH/8DCvH6Lk2dcJhvKyVea924b70lCViO/9MRK4lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724662846; c=relaxed/simple;
-	bh=fw3mwugogCB7KnXEdkXpUIMDWmO4PBh+J4IMIJItIZI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ff6cmtyJwAOggG+7X8zp8mjR0XXRiqkf2KwBMSLdUOS5i9gBzvd0tBMdXDMsDUq5pSjrZid1bJBryPykQC4rxF3tfmiCb6cRn6qCIWihCO+XewJXs+FBMpcERWncD2nfqB770zc66HrsWpneaT/yZ9aRzf2M4krKIRhxjcpomFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pXL8eYFR; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724662830; x=1725267630; i=markus.elfring@web.de;
-	bh=fw3mwugogCB7KnXEdkXpUIMDWmO4PBh+J4IMIJItIZI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pXL8eYFRNcxdMdZT0savz718Vnmqg4hulxFAw5Dp+L/NA3f792ar2uW1iWUJPhmR
-	 f5yHDkQ8nbHeelR04ifjGuT9mLOGp0WX6B4YYR+PFg2AId/QZgWn+ezRoD5JPpOoc
-	 al4+4dWdCbM5GzGYAhJb1LYBm6PKiLvcHPduoAXPo79EALfETPVSS9H3FLHUcNf06
-	 jRG3hh8jwtbZ90yRsXVWaALrY1CZCn3T4ugcQBDws4pBZmG3DG06S3XdfUMLAkFU6
-	 i2MzlH/Kbg2Vdu19qJ5QqtOC/6ILXwTOSmzpeVbcAwFmhJJwTXT5895hOsGFiLWfL
-	 HrBMRH4uYbBtadizlg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Gkg-1s1AQW1znO-00zsLs; Mon, 26
- Aug 2024 11:00:30 +0200
-Message-ID: <05a1b1bf-4de7-4e1e-8ec9-8c61e129e5b5@web.de>
-Date: Mon, 26 Aug 2024 11:00:30 +0200
+	s=arc-20240116; t=1724662977; c=relaxed/simple;
+	bh=QGvof0Rw99PI8XpAFNAPY4o/L3KC7BAhCkWXawdqiOY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mQRbwpBc05PWumBtx+dduxaZCEBhc2HUUjmnhMrDwP+5+sScDV8muhhuHkzXn+yvgud2I+m2dIc2fbDK0eFjPjGEsiVg4vefNZRdbvY2WnXOxiEO1xpsQBT1Qqb4bIvJSF6LqNaKz+y0yEZWNLS15iK353ndoi4rN0jBlsw2M8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2ced7e8eso42038675ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:02:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724662975; x=1725267775;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xK+km/Nfi+Ke0Omx2P0pSP6qNE9tca+bC1fqshUE+Lg=;
+        b=L0UL3FHfZdx6X1AoghqHnZqKx4procm6ufZTS8ewv+uWAB/QlQjH90ynIeO30aqG2R
+         5ygkXWzMj8HIlgr9cwgwEQ9C69F/bphuEy0nCuH+jyWFhimzQWE9MAWOhV/MKPBlSnbr
+         AmEmT8s6xg9EK7eNaxgJr6RHFLygQBJ+y82v/5mV6Tny5exgw2NQ+k3VrnpPYmW0FcQv
+         rMQMGx0uJgGbFpjvEmRCZ6hz9IBcxXDN82eosyaxV9trji07/nhFR9elyNvX2dJjMiJh
+         xZT4xVJZXtj3mIls0YRMF4p/RzGz6B9qusLSHM4z+hahk88jmr6BEh2SX3WDttSP8ws0
+         D4Ww==
+X-Gm-Message-State: AOJu0YwXOLenIC2UHU5gC8YPDdoaLEcS4RlgIXjWdGwd/tbryF+XWXQl
+	PPb3uVLQ8zQ6CmlBblFsxpPtVpSvav8HBwzahiZvhGYQ8jeEVqRZeHU6bPL66hRC3G1jlpmsaGI
+	GyxE4Ix+j1lr4yiPm6fSNolDaRnHU0RGtrrxEuaXFUmwcAk88d/UMwk4=
+X-Google-Smtp-Source: AGHT+IGHkifQ/nGGNU1Nx2lfWIC/ApmmEYyTEm0fnWq0i4CKLq592y2F8V7JU0/4udBSwcbIFMEwOcbYHYfP6Wp8/CKv1fY0nlvV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <ZsrAa9XcDvHeIs9T@google.com>
-Subject: Re: [PATCH] Input: psmouse-smbus - use guard notation when acquiring
- mutex
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZsrAa9XcDvHeIs9T@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3Z2aoRuaPlsTgz07INOT3VvchL+LwZAFNzoMIAFiuj3zPvmM5Xm
- oIKD2tLweh1nm1c6LYjBv4U2z2qgG38WMRhDcXCdzCNQkMDLXKrd4DFoFM2H5ae8twIIe1q
- zcejtzekH6CKnaaRyjU57CqkR3eWRcLwCvGeK0t/wWGd0tX4VHQKWl4b6ul1sS24MW7Hp5/
- wTuYbpztUGfaW9kc8sfBA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bxSVx8RpDCc=;qIlbB4Qx+F5roM7zGOVTn91fST/
- xbfvou3+OPHo7UkdkcIzf5rREXfPGBWsfn7baCEdM9EZXoIk7Ziryz1qn1KJQCfcZZ6KyCsPe
- 1n2G6ZBfN3NeENhqtj/N6GuArE3d26tKfS1ilpqTJDaxXZzLwZlFwtwGEGiAaGE9cJwQF3kys
- 5BtyOQD7QnUdQ6+n+dUT93rz78FpO52llALuu3sM16zqWiowBWNLQJca7vwZVWG+/TCAU/isR
- sYweaP1HphG4jUWCEtyaTlz3kXCG8wccaPdMNy14whwU4meNsx79QAy35uhVtEruKbJKHbokJ
- BorZOjV9clBufA59dPvHfOkpRh7KvTnAD9mK08cst3quyNyOaHYXD10Bqzy2FbGtBkQcvT9zk
- 1q2v5ch2NaTqD3EMrPiUFVO9tPf2rDpSPZz2QdHf5WOfqSUO5hmqSBvpZeM+X+lYUI6RP58PP
- 5A1jOqhNlfYmBHEZpiO892Hr4uNKsc3WaXhuWjIi3UKeM4Tm6LyF0PpBCX293pO4VC8it1V7m
- J8sUYgFkSIkDIaD+khlgFKOiwo0WaTB+WvlCEs6ELA9NmqLSKvuKbxpS0e9FN1pTz2swnZ3zB
- NXXDuZ2a4rNN9D16zbMCDLJBWd1OJzl1XURa6CqVdKGfDJgDnl+9ASIqbvmiQRlhNFPIVyUeY
- RDzNkCPecgjofwfbFXdVnootBSuIBrhKDobrDbiVgpT7mQ21NsIBd1UlCqaiJl7TIwUCOlLst
- RQXYVvOh3mtwazLF7pYvdM64JlydnZ3NbwhAoDaxGxkT/biFs3rhnER7zQ1n94M5dGm9o1Dm1
- 5VSleBjXqQdMBrqvP5yoAqjg==
+X-Received: by 2002:a05:6e02:1d19:b0:397:9426:e7fc with SMTP id
+ e9e14a558f8ab-39e3c8d2ad1mr8552585ab.0.1724662975264; Mon, 26 Aug 2024
+ 02:02:55 -0700 (PDT)
+Date: Mon, 26 Aug 2024 02:02:55 -0700
+In-Reply-To: <000000000000ab44fc06203f0d28@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ff8b0d06209263b3@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
+From: syzbot <syzbot+d16facb00df3f446511c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> This makes the code =E2=80=A6
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-How do you think about to improve such a change description with imperativ=
-e wordings?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc5#n94
+***
 
-Regards,
-Markus
+Subject: Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in lmLogInit
+Author: lizhi.xu@windriver.com
+
+blk dev max sector is 0
+
+#syz test: upstream df6cbc62cc9b
+
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 9609349e92e5..14404780f38d 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -1163,6 +1163,15 @@ static int open_inline_log(struct super_block *sb)
+ 
+ 	set_bit(log_INLINELOG, &log->flag);
+ 	log->bdev_file = sb->s_bdev_file;
++	printk("sb: %p, sb t: %s, sbf: %p, bdev1: %p, sbdev: %p, %s\n",
++		sb, sb->s_type->name, sb->s_bdev_file, file_bdev(sb->s_bdev_file), sb->s_bdev, __func__);
++
++	if (!bdev_nr_sectors(file_bdev(sb->s_bdev_file))) {
++		kfree(log);
++		jfs_warn("open_inline_log: block device max sector is 0");
++		return -EINVAL;
++	}
++
+ 	log->base = addressPXD(&JFS_SBI(sb)->logpxd);
+ 	log->size = lengthPXD(&JFS_SBI(sb)->logpxd) >>
+ 	    (L2LOGPSIZE - sb->s_blocksize_bits);
 
