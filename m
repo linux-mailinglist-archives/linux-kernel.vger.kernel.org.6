@@ -1,112 +1,496 @@
-Return-Path: <linux-kernel+bounces-302279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-302280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D922995FC0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:49:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38A395FC10
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 23:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17BD61C227A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD371F22BD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 21:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298C219CD12;
-	Mon, 26 Aug 2024 21:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqRq4KBI"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416F519D09E;
+	Mon, 26 Aug 2024 21:49:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298FB64A
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16B519CCF3
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 21:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724708940; cv=none; b=otcgjXrQDO1CorpklmU9HUXqxqbxYEGgCU2z7brigxqqDo8Liu1CA2MnXbVYxSfMKfW2rfhUjifjKqXTauRneecDmPC3hvE+mollxEqMT3L9nlWc0NlDhR9KIjum+krDaTMFMcytedibkCDY3VauxrkC3VYcFgMMXqcixAGodz0=
+	t=1724708956; cv=none; b=UO7+aw8L4c8H0mzsLeHufekZG2w7yYoMV9dasKuZjrsw4GOnuJ5X/lwNzAgnbmPzWA70MVbQSI5f/g6BK2QrhZMloZcQD533p0qN31RtPiJU0dARzeCoX3n9kjoCJv5sgUq9mNvXXuSIcI4EZ2hOEjpthbaaXBvSAC15657f1vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724708940; c=relaxed/simple;
-	bh=xdz6JSkn2AEuVmNz6w5uVIoARWYD3VBI4VhoF7crCAY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GyI+lAFPuCUeGQ3KOkhToqqeD2Y1OEPBu7hhxoNPHteR0YdFeSgwqjMXVPp5QynI/byzrp3hbz4XypjkcPQqp2Gjkv+axnK0wVjCXRVTCC/HMxOf1R8PXCFQsuvUVEuPjktJnODR6BB8iZMeM/U4LQsfD2GLadNBLsTmjdMP/HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqRq4KBI; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso3257011a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 14:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724708938; x=1725313738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yy8J2IE41q6zia8cYCGqVYSEyhsGRBLlE3f/+odahgE=;
-        b=SqRq4KBIZvgmrVIyJXkI5tFzN4uMJpYYhN3dg8y7DJpB7GoKySxEylNw85cknBtL/x
-         o3a84uouJ5jrqYYK4enilG4qhH/gKvjUZ5Wrkq4Zt5qR9m1qd0oN7Bc+bpaM10OTDhjv
-         c0BVwNPbXYnvTeIVUlqn+06iW0X7j2wmjp5t/fXAEOg+mXAumKAoT5mt1C1LuxKO82s/
-         Kzf6Nwm524kczRnQnQpraHbZWT64SjBmuxjLvlQz9tLwfMxgOzLzxNoE6coQ35FO/qHj
-         0kcVcpAw6ivzKmFTKNyBaGxvpBCLvFZXP0IYC2v1gDPO3YUwZ+WM8RpOhv8b62bevEQ7
-         MXhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724708938; x=1725313738;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yy8J2IE41q6zia8cYCGqVYSEyhsGRBLlE3f/+odahgE=;
-        b=TSMRb0NWyyFlcu3pzv1ArBmJfkfYUS6hYx9V0x2HyodHCA1DtWEib9vJ3wTKAm1xDW
-         UTKUfChGFEmgiJN3L/lN2CzAs92XTCsUnki9VpOXLtIPq2BfLBXpmSYb4rzhQlS9ybsT
-         Fh8fPacCEB45bEta0+9uB1Fb5vTsHQq2AQ52Za+VEyyIoFqzzH3qV4Yqa5HSO3SAHLN6
-         uL5K38WLj0yyurxxJrfhGuMjH3KtndEn+tHeClwIcwfMGqRoWX+PuQRaamnodaFXIqA4
-         MHnAT84Uw7H3EjbuJuz30FuiCsZG7xT4KUm9OVPAAo1OvqaDKTYtOnYR/Hz6obaBbEkB
-         uS5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXn0CgboWo7Mi5FdUbm4ckPRtV/nZLpKdEo0p5h1JsovCui8KKlA3GFMJ1WPUt5vTzERURKxcctDtnpW+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGFnF5kg60bYQfkseRfymJUM5PqYVXX033l/4eORMvzToTd2TN
-	rqzeRng2aDBYhYg7w0N/6h4UmXGDHni4LxXI7XqLleyZoJ0YQghP
-X-Google-Smtp-Source: AGHT+IH3ihqt8I3Yrxd1Jr09igMRh1xBOyJkSngSBh8WiYzs1NcJ+XJK1sqyLAEPGBIVSxiIB7qvYA==
-X-Received: by 2002:a17:90b:1052:b0:2c9:5ecd:e3c5 with SMTP id 98e67ed59e1d1-2d646d38277mr12648440a91.33.1724708938371;
-        Mon, 26 Aug 2024 14:48:58 -0700 (PDT)
-Received: from localhost.localdomain ([2804:4b0:1408:4900:9408:c7b2:31:3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb1726sm12621151a91.37.2024.08.26.14.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 14:48:57 -0700 (PDT)
-From: Gabriel Tassinari <gabrieldtassinari@gmail.com>
-To: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH v3] staging: rtl8192e: Fix parenthesis alignment in rtl_core.c:325
-Date: Mon, 26 Aug 2024 18:48:53 -0300
-Message-ID: <20240826214853.21003-1-gabrieldtassinari@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724708956; c=relaxed/simple;
+	bh=7FRZdrTBAJxGbrev3kbxN9txdjRT1IBa9NHDOYCUlow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sS47coy0c4u5E67gqH4ZM/6nCRc8nIYay1ypukyxKUfo0j71J4Cm7VcPeasI86GO42R8puIy/1AlNVx6pVfbrVSLgajWe4AH84sseRIOdQCrFtLd1Srg+ED12fGVpxZYp4yLXOqb/SozSf7mS+RCMvaT3if+bR5xgMg8JLhmrZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sihaD-0000Jb-Cb; Mon, 26 Aug 2024 23:49:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sihaC-003HKU-Q6; Mon, 26 Aug 2024 23:49:04 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sihaC-007Bxv-2F;
+	Mon, 26 Aug 2024 23:49:04 +0200
+Date: Mon, 26 Aug 2024 23:49:04 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: andrzej.p@collabora.com, asmadeus@codewreck.org, corbet@lwn.net,
+	ericvh@kernel.org, gregkh@linuxfoundation.org,
+	kernel@pengutronix.de, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net, v9fs@lists.linux.dev
+Subject: Re: [PATCH v9 2/3] net/9p/usbg: Add new usb gadget function transport
+Message-ID: <Zsz4UKIOf5li0bb0@pengutronix.de>
+References: <20240116-ml-topic-u9p-v9-0-93d73f47b76b@pengutronix.de>
+ <20240116-ml-topic-u9p-v9-2-93d73f47b76b@pengutronix.de>
+ <645bd24f-b86e-4cc1-b65f-7b48d81e633e@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GPnHP9l0rAOi/RZz"
+Content-Disposition: inline
+In-Reply-To: <645bd24f-b86e-4cc1-b65f-7b48d81e633e@wanadoo.fr>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-fix parenthesis alignment in _rtl92e_qos_handle_probe_response to
-silence checkpatch warning:
 
-CHECK: Alignment should match open parenthesis
+--GPnHP9l0rAOi/RZz
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gabriel Tassinari <gabrieldtassinari@gmail.com>
----
-v3: Adjust the indentation by adding one space
-v2: Include the modified file in commit message
----
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the review!
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index ad21263e725f..75192041008d 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -322,7 +322,7 @@ static int _rtl92e_qos_handle_probe_response(struct r8192_priv *priv,
- 
- 	if (network->flags & NETWORK_HAS_QOS_MASK) {
- 		if (active_network &&
--				(network->flags & NETWORK_HAS_QOS_PARAMETERS))
-+		    (network->flags & NETWORK_HAS_QOS_PARAMETERS))
- 			network->qos_data.active = network->qos_data.supported;
- 
- 		if ((network->qos_data.active == 1) && (active_network == 1) &&
--- 
-2.46.0
+I just send out v10 with your suggestions:
 
+https://lore.kernel.org/all/20240116-ml-topic-u9p-v10-0-a85fdeac2c52@pengut=
+ronix.de/
+
+On Fri, Aug 23, 2024 at 11:45:23AM +0200, Christophe JAILLET wrote:
+>Le 23/08/2024 =E0 09:36, Michael Grzeschik a =E9crit=A0:
+>>Add the new gadget function for 9pfs transport. This function is
+>>defining an simple 9pfs transport interface that consists of one in and
+>>one out endpoint. The endpoints transmit and receive the 9pfs protocol
+>>payload when mounting a 9p filesystem over usb.
+>>
+>>Tested-by: Andrzej Pietrasiewicz <andrzej.p-ZGY8ohtN/8qB+jHODAdFcQ@public=
+=2Egmane.org>
+>>Signed-off-by: Michael Grzeschik <m.grzeschik-bIcnvbaLZ9MEGnE8C9+IrQ@publ=
+ic.gmane.org>
+>>
+>>---
+>
+>Hi,
+>
+>a few nitpicks below and 1 or 2 real questions.
+>
+>>+#include <linux/slab.h>
+>>+#include <linux/kernel.h>
+>>+#include <linux/device.h>
+>>+#include <linux/module.h>
+>>+#include <linux/err.h>
+>>+#include <linux/usb/composite.h>
+>>+#include <linux/usb/func_utils.h>
+>>+#include <linux/completion.h>
+>
+>Keep it in alphabetic order?
+>
+
+Did that!
+
+>>+
+>>+#include <net/9p/9p.h>
+>>+#include <net/9p/client.h>
+>>+#include <net/9p/transport.h>
+>>+
+>
+>...
+>
+>>+static void usb9pfs_tx_complete(struct usb_ep *ep, struct usb_request *r=
+eq)
+>>+{
+>>+	struct f_usb9pfs *usb9pfs =3D ep->driver_data;
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	struct p9_req_t *p9_tx_req =3D req->context;
+>>+	unsigned long flags;
+>>+
+>>+	/* reset zero packages */
+>>+	req->zero =3D 0;
+>>+
+>>+	if (req->status) {
+>>+		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+			ep->name, req->status, req->actual, req->length);
+>>+		return;
+>>+	}
+>>+
+>>+	dev_dbg(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+		ep->name, req->status, req->actual, req->length);
+>>+
+>>+	spin_lock_irqsave(&usb9pfs->lock, flags);
+>>+	WRITE_ONCE(p9_tx_req->status, REQ_STATUS_SENT);
+>>+
+>>+	p9_req_put(usb9pfs->client, p9_tx_req);
+>>+
+>>+	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+>>+
+>>+	complete(&usb9pfs->send);
+>>+
+>>+	return;
+>
+>Is it needed?
+
+Nope, gone!
+
+>>+}
+>
+>...
+>
+>>+static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *r=
+eq)
+>>+{
+>>+	struct f_usb9pfs *usb9pfs =3D ep->driver_data;
+>>+	struct usb_composite_dev *cdev =3D usb9pfs->function.config->cdev;
+>>+	struct p9_req_t *p9_rx_req;
+>>+
+>>+	if (req->status) {
+>>+		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+>>+			ep->name, req->status, req->actual, req->length);
+>>+		return;
+>>+	}
+>>+
+>>+	p9_rx_req =3D usb9pfs_rx_header(usb9pfs, req->buf);
+>>+	if (!p9_rx_req) {
+>>+		return;
+>>+	}
+>
+>The { } could be removd.
+
+Done!
+
+>>+
+>>+	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
+>>+
+>>+	p9_rx_req->rc.size =3D req->actual;
+>>+
+>>+	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
+>>+	p9_req_put(usb9pfs->client, p9_rx_req);
+>>+
+>>+	complete(&usb9pfs->received);
+>>+
+>>+	return;
+>
+>Is it needed?
+
+No.
+
+>>+}
+>
+>...
+>
+>>+static int alloc_requests(struct usb_composite_dev *cdev,
+>>+			  struct f_usb9pfs *usb9pfs)
+>>+{
+>>+	int ret =3D 0;
+>>+
+>>+	usb9pfs->in_req =3D usb_ep_alloc_request(usb9pfs->in_ep, GFP_ATOMIC);
+>>+	if (!usb9pfs->in_req) {
+>>+		ret =3D -ENOENT;
+>>+		goto fail;
+>>+	}
+>>+
+>>+	usb9pfs->out_req =3D alloc_ep_req(usb9pfs->out_ep, usb9pfs->buflen);
+>>+	if (!usb9pfs->out_req) {
+>>+		ret =3D -ENOENT;
+>>+		goto fail_in;
+>>+	}
+>>+
+>>+	usb9pfs->in_req->complete =3D usb9pfs_tx_complete;
+>>+	usb9pfs->out_req->complete =3D usb9pfs_rx_complete;
+>>+
+>>+	/* length will be set in complete routine */
+>>+	usb9pfs->in_req->context =3D usb9pfs;
+>>+	usb9pfs->out_req->context =3D usb9pfs;
+>>+
+>>+	return ret;
+>
+>return 0; to be more explicit?
+>(and would avoid the =3D 0 when declared)
+
+Good point. Did that.
+
+>>+
+>>+fail_in:
+>>+	usb_ep_free_request(usb9pfs->in_ep, usb9pfs->in_req);
+>>+fail:
+>>+	return ret;
+>>+}
+>>+
+>>+static int enable_endpoint(struct usb_composite_dev *cdev,
+>>+			   struct f_usb9pfs *usb9pfs, struct usb_ep *ep)
+>>+{
+>>+	int ret;
+>>+
+>>+	ret =3D config_ep_by_speed(cdev->gadget, &usb9pfs->function, ep);
+>>+	if (ret)
+>>+		return ret;
+>>+
+>>+	ret =3D usb_ep_enable(ep);
+>>+	if (ret < 0)
+>>+		return ret;
+>>+
+>>+	ep->driver_data =3D usb9pfs;
+>>+
+>>+	return ret;
+>
+>return 0; to be more explicit?
+
+Agreed!
+
+>>+}
+>
+>...
+>
+>>+static int p9_usbg_create(struct p9_client *client, const char *devname,=
+ char *args)
+>>+{
+>>+	struct f_usb9pfs_dev *dev;
+>>+	struct f_usb9pfs_dev *tmp;
+>>+	struct f_usb9pfs *usb9pfs;
+>>+	struct usb_function *f;
+>>+	int ret =3D -ENOENT;
+>>+	int found =3D 0;
+>>+
+>>+	if (!devname)
+>>+		return -EINVAL;
+>>+
+>>+	mutex_lock(&usb9pfs_lock);
+>
+>Using cleanup.h would simplify locking in early exit paths.
+
+Whoo, cleanup.h is a peace of art. I totally forgot about that.
+
+I also addressed the the spinlocks which seemed obvious.
+
+>>+	list_for_each_entry_safe(dev, tmp, &usbg_instance_list, usb9pfs_instanc=
+e) {
+>
+>Why the _safe version is used here?
+>The list is not modify here directly.
+
+No need. I used the non safe version instead.
+
+>>+		if (!strncmp(devname, dev->tag, strlen(devname))) {
+>>+			if (!dev->inuse) {
+>>+				dev->inuse =3D true;
+>>+				found =3D 1;
+>>+				break;
+>>+			}
+>>+			ret =3D -EBUSY;
+>>+			break;
+>>+		}
+>>+	}
+>>+
+>>+	if (!found) {
+>>+		mutex_unlock(&usb9pfs_lock);
+>>+		pr_err("no channels available for device %s\n", devname);
+>>+		return ret;
+>>+	}
+>>+
+>>+	usb9pfs =3D dev->usb9pfs;
+>>+	if (!usb9pfs) {
+>>+		mutex_unlock(&usb9pfs_lock);
+>>+		return -EINVAL;
+>>+	}
+>>+
+>>+	f =3D &usb9pfs->function;
+>>+
+>>+	client->trans =3D (void *)usb9pfs;
+>>+	if (!usb9pfs->in_req)
+>>+		client->status =3D Disconnected;
+>>+	else
+>>+		client->status =3D Connected;
+>>+	usb9pfs->client =3D client;
+>>+
+>>+	client->trans_mod->maxsize =3D usb9pfs->buflen;
+>>+
+>>+	complete(&usb9pfs->received);
+>>+	mutex_unlock(&usb9pfs_lock);
+>>+
+>>+	return 0;
+>>+}
+>
+>...
+>
+>>+static ssize_t f_usb9pfs_opts_buflen_show(struct config_item *item, char=
+ *page)
+>>+{
+>>+	struct f_usb9pfs_opts *opts =3D to_f_usb9pfs_opts(item);
+>>+	int ret;
+>>+
+>>+	mutex_lock(&opts->lock);
+>>+	ret =3D sprintf(page, "%d\n", opts->buflen);
+>
+>sysfs_emit()?
+>
+
+Good point!
+
+>>+	mutex_unlock(&opts->lock);
+>>+
+>>+	return ret;
+>>+}
+>
+>...
+>
+>>+static struct f_usb9pfs_dev *_usb9pfs_do_find_dev(const char *tag)
+>>+{
+>>+	struct f_usb9pfs_dev *usb9pfs_dev;
+>>+	struct f_usb9pfs_dev *tmp;
+>>+
+>>+	if (!tag)
+>>+		return NULL;
+>>+
+>>+	list_for_each_entry_safe(usb9pfs_dev, tmp, &usbg_instance_list, usb9pfs=
+_instance) {
+>
+>Why the _safe version is used here?
+>The list is not modify here directly.
+
+No need for _safe. I switched back to the generic version.
+
+>>+		if (strcmp(usb9pfs_dev->tag, tag) =3D=3D 0)
+>>+			return usb9pfs_dev;
+>>+	}
+>>+
+>>+	return NULL;
+>>+}
+>
+>...
+>
+>>+static void usb9pfs_free_instance(struct usb_function_instance *fi)
+>>+{
+>>+	struct f_usb9pfs_opts *usb9pfs_opts =3D
+>>+		container_of(fi, struct f_usb9pfs_opts, func_inst);
+>>+	struct f_usb9pfs_dev *dev =3D usb9pfs_opts->dev;
+>>+
+>>+	list_del(&dev->usb9pfs_instance);
+>
+>When it is added in the usbg_instance_list list below, it is protected=20
+>by the usb9pfs_lock mutex. Should it be also protected when it is=20
+>removed?
+>
+
+Using the mutex here is valid.
+
+>>+	kfree(usb9pfs_opts);
+>>+}
+>>+
+>>+static struct usb_function_instance *usb9pfs_alloc_instance(void)
+>>+{
+>>+	struct f_usb9pfs_opts *usb9pfs_opts;
+>>+	struct f_usb9pfs_dev *dev;
+>>+
+>>+	usb9pfs_opts =3D kzalloc(sizeof(*usb9pfs_opts), GFP_KERNEL);
+>>+	if (!usb9pfs_opts)
+>>+		return ERR_PTR(-ENOMEM);
+>>+
+>>+	mutex_init(&usb9pfs_opts->lock);
+>>+
+>>+	usb9pfs_opts->func_inst.set_inst_name =3D usb9pfs_set_inst_tag;
+>>+	usb9pfs_opts->func_inst.free_func_inst =3D usb9pfs_free_instance;
+>>+
+>>+	usb9pfs_opts->buflen =3D DEFAULT_BUFLEN;
+>>+
+>>+	mutex_lock(&usb9pfs_lock);
+>>+	dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
+>
+>If kzalloc() was called outside of the mutex, it would be slightly=20
+>simpler, IMHO.
+
+Totally. I do the alloc and ..
+>
+>>+	if (IS_ERR(dev)) {
+>>+		mutex_unlock(&usb9pfs_lock);
+>>+		kfree(usb9pfs_opts);
+>>+		return ERR_CAST(dev);
+>>+	}
+>>+	list_add_tail(&dev->usb9pfs_instance, &usbg_instance_list);
+>>+	mutex_unlock(&usb9pfs_lock);
+>>+
+>>+	usb9pfs_opts->dev =3D dev;
+>>+	dev->opts =3D usb9pfs_opts;
+>
+>'dev' is added to the usbg_instance_list list within a mutex section,=20
+>so it looks possible that this list is also accessed from somewhere=20
+>else.
+>
+>Would it make sense to initialize dev->opts also within the mutex=20
+>section, to avoid concurrent access to this new item, when dev->opts=20
+>is still NULL?
+
+=2E. the allocation all before even adding the prepared instance to the
+list. This should make it safe. I actually moved the list alternation
+to be the last operation in this function.
+
+>>+
+>>+	config_group_init_type_name(&usb9pfs_opts->func_inst.group, "",
+>>+				    &usb9pfs_func_type);
+>>+
+>>+	return &usb9pfs_opts->func_inst;
+>>+}
+>
+>...
+>
+>CJ
+>
+>
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--GPnHP9l0rAOi/RZz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmbM+EkACgkQC+njFXoe
+LGSgpRAAhrCulzEsujQVmu2etzCkEOSRWic7JNK8FPPIvYri3ZDUl6tkFPSfkFel
+5H85lrUd2u5uoCbaKK51w+qpYGmVl/4N4eFViOAO9Yp/i9c1Hk2m5/2H1U9jMeJt
+2WBqHYP89b14FUbOFP0JKoZxBM/KrPIUq4qfGUEISrwb7wIgwGi2sjyWFQDnPLsO
+Rm+k2Q6cD5tjLBP6qaakV6T9WVJe6OBnGAKnQ7arqHKRkm6bx6dbtLCTS6dVvWBh
+MrjhRFAZsfwsGM/9iLClrcnzl1HG2CieADrgWjBu4dRqteGfTdP8Hly8Bo1pRKa3
+3vdwwkfka0Zy7mSnRk6H3dWnHUkMmpjy0liTianuhv2eB/k7sOlOhRZXlDMX2Pwl
+mkYZUWRtv/slWBfk0EoOu7TKxRBNDotNXRSxnmG/ze8hpF9Y9l4O4A2Mf7lDb+b7
+xgcJtw1kTkH4syGxNgsAQWOZvO0rPC+4pnjohL015ugP1o5yWgvsuerNthnbu5qS
+q+6lkXDpq5SGTtXpVyA02mkchVoG1pII/6mGDLC2A9254Yc7E6Fn6amHYqblWb50
+xS9MuX4yo7Ce6PB6HWItTue5Df/Ik520LKOyZcWtWRSaUEorYa8N5HXAm5Atl8GC
+Az8QXRQ4s1nEHVAyrwDYI159qP7xD21xjeUvu6RsQnkw8g/4D2Q=
+=llQ8
+-----END PGP SIGNATURE-----
+
+--GPnHP9l0rAOi/RZz--
 
