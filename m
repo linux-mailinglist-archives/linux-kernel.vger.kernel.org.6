@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-300891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715EE95EA2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:17:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883E495EA31
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A601F2187F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5551C20F5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 07:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9491712CDB6;
-	Mon, 26 Aug 2024 07:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCE21386BF;
+	Mon, 26 Aug 2024 07:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UtxDmW2D"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iTRiaFj9"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9012D60C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22BA12D773
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 07:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724656613; cv=none; b=BCE0d35ICNcz7bq0Aeu7aU6rAZHhZV+9QKt7iYHAUFbWW+OCJkru7razDqapkqjy0a8jVBmOWT+z4p6GwJPXLYKrQbr2oh7fZt3buOSVqxu4dphzn11pK3FrUIoaQWI42ThGd2Suco45zZXu6WeW5YPX8YvNh8COocf60cBOOFE=
+	t=1724656616; cv=none; b=IYlQ23U9H7eMuQl+z4XG04yFKOqV7ARoQjwMPK74C0U83S2OWVvpFFfTXG6urh0IBRq1ow6vj+S4mcWaA5hsZaCxOpm3ZNdSKalMUpl/5UFPo+5TyAsA0ub2v2I+oHSEqsw42DZOFjjdPqgFEQKiAQnJTyYOHzXwxzbYQcucF6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724656613; c=relaxed/simple;
-	bh=1gtR87ixu3xX/yZkJQmBWEFQ1yWlrKRo9um2N45Rb3Y=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jwLmnCjgq0eQRso1VyhFWfUmillR/DXbSV6HeXiuMp3xRwqGJntCSsAaQvvLsUU9Sw97n4W28kd1EaXGHnmt2VGh2hIU3B7f4h0n3rKvCCEbUb4fC/EuAWWG1wxKhJH2nlMHgntB6whiaTbUmnpPFIHd0u7eNtVfaCQxJpJW+gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UtxDmW2D; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1724656616; c=relaxed/simple;
+	bh=HP374hzQKt1PoMnLVLHbgO5xbnjTW90EAECCpEBd9MY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NbTOzOqYdvqFAXxSNAZ1q0QrxnZB0lzSEDdEB9HwQkmM3V9ZrXdRJxfesvgc/t6YdNVFR6LuPlb5WMau5kWtfBrXhCbTd93CVn9CTVKF/K1J2bpntaai/K1gLkGnPmndrBl6Vmta83hKSA31lWthpM437AwBD4Wnw1k2l3Bk7Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iTRiaFj9; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6addeef41a2so77557827b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:16:51 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03623b24ddso7143418276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 00:16:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724656610; x=1725261410; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QKa/kYIJy5Dsz6zNa7Wz95w7f1KZUUXm7OUrx2gbGns=;
-        b=UtxDmW2DviBrjN1M42SMjMegYQOm/BT03WXno3+5vO46FoFK/KQxiOnJdN3EApcA9v
-         U2m7NvkF7y6jUtm577jb1yZxSGB1opMMiU1qC7E4vIVwfTDFpVVmpjqLN5uE9WwppYL+
-         RQ7bpaFAfVYkTXX7OnbzQG1bj5RI4ZEBW6UDQrL6RcMd/nuS+mOaq70q33ZU7cxPrQZN
-         dVMVuOSy8e2p59NRgzPT2IOE20lNklTwJ1uhOZH4BvD3OuiUD4P67paBSJZgKdTqd4m1
-         ttRhE0oPi5YzUUuKArpi4GZwbA8YO3bLcShaKyVz1eVhi++SORmGUA+ub+/NPW9eWFZ/
-         vTMA==
+        d=google.com; s=20230601; t=1724656614; x=1725261414; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIcgUoBTp9GuGTx+59sM7fDXSn2WoTkdtpOjFEdC9AM=;
+        b=iTRiaFj9DVQv5vMxurVVHm9QF8PGaaxslhibr4dOqZgEmBXS0qd0Pe9NgxqPZoShKI
+         oWTP6JOaplLGzEoKYlsl2wqKGg5SGAInS+L1cxLnGCkLekvS7AM5i8ERN8qNGLxP+DfV
+         XO0MOKFo5ev3blh8TCW+gI6z9XVx0u0wRi1PECfkYidYjFlDoQnOAiMAT23Cy7PHZo4b
+         +mKnAkb1jkwkXOq5Fa25/PTg1ZKlR/+AeCLv/hSoSft4BOf/gPtkOQ9YkFRhdsFCxFtB
+         YqpHUHT9TtkmnVrH3Pc3GZamSNYa0EWAw5cEq13PO5DxFOzl1dvqQa3MRshFJuTsArOr
+         ScDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724656610; x=1725261410;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QKa/kYIJy5Dsz6zNa7Wz95w7f1KZUUXm7OUrx2gbGns=;
-        b=xVVAKnMHN0UKBWQ/8k2SC2/Hh3KciWG0dccnJ6LOUDB1EXTKVLJzHUTTVba+gWzaR4
-         XwUhCnhxAGYXfbJgaUOeE4APuBEU09C2N0JhC3VNnqXYMd05eMclDYvUNSm4p1U1zmyH
-         CuGnlrLl5KeVtA1RAQFclATPISzIQQ20+py0zzNoNulxWV5yoKUoLrPebZkmiurwE3Qw
-         hXCFVZey84Q/pouqNIRZe43m8szou6L+mn5nxXUAzmPYeVqxIb9z8ezCvN6q7rk14s75
-         ++OtfmywzTYiNj94mpvaxyc3TIm8uV+Db61mF9ZZ99vItTd5i/nyJ/8JaV6PsvG3hEna
-         RlkA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7/BOuBGmtZ5uST0e/i4huzRrCvS0A+RecsUFAG8sw23yqjG8cZRC9RH3YcSmdb7KIyMcbXg7nG8TNUPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR/iV264eAgR3i5g/2PO5g19jUqsEV6qo+nmlkQeNz7RbosZdV
-	n4QaFkaU/whgDWv3qJgstSreLOI2rusGlL8W9+DUgrD3OVwIHVedx5M10IH+Bn7hk3D9nI5WJuC
-	pIQ314Ad0dTZSVHRbAw==
-X-Google-Smtp-Source: AGHT+IGnGHU5UoNWSFReeRjXc204LYtfrKxuoFl5Xjmcsh2ogPXEKrWFLUTvo69hIgjLsAr3T4NF8XbqX4tetajV
+        d=1e100.net; s=20230601; t=1724656614; x=1725261414;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QIcgUoBTp9GuGTx+59sM7fDXSn2WoTkdtpOjFEdC9AM=;
+        b=GLgrhbr67pyUIcLfBXEI4jC7M/7NWd1buXLxLBn6MhuSjJlGsZqTllPzm/segQKPbe
+         bD5TJjYFPQ0Ou5HeECdc8oRYhxCIcq+2Cq5QFLloCiJBDA+tzSmlVN9xsb/VsCv3JrNf
+         o6Ti1z7g/WDypDPPjkag3KuzZUyWyDzFbFxsugF22vP+XPgzGwyJmDiewQYAHrSFV6B2
+         cqoyTWNyiNNtkr3lmvkdAmX1DmWA9TdApD4ju3XzGvRkl+J/O4phDGCos827YctjpPW/
+         Tfy3morEFbiI+h0FhjT4ZmQ6vG3sp0MDm76pzyOd6S2WEDb05QMcdVd3itz1qMP0MO5D
+         UV8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOJLoUDn4gWKB+eiTjp1tCsO609T9+buEtUidc7McOt6R8p4wAkZfom5sqv9bGoKaEzNXYhePd7RqNyyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/q6SbyQ2j6r2KnZmaJGWyI9AHzaHXAjf+StgUL/OHdjPfJ5ne
+	pKxHZLCS1EpX5saTHIYzmylFHyL5CgIwOqMv2SWVxpb+1PMMPkw8C0ov4Cy7SHrSMoslbFi44qi
+	xHIthPoUBUHBaBalgag==
+X-Google-Smtp-Source: AGHT+IHrlol7Anpnd920uxfnTbedTgfOoLRdg3g5Rtafipisfy+CH2cN56NbbUf6MkXF303FuBbETzycPNKV+61W
 X-Received: from manojvishy.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:413f])
- (user=manojvishy job=sendgmr) by 2002:a05:690c:4485:b0:6c1:298e:5a7 with SMTP
- id 00721157ae682-6c627ef7d23mr1963427b3.5.1724656610306; Mon, 26 Aug 2024
- 00:16:50 -0700 (PDT)
-Date: Mon, 26 Aug 2024 07:16:37 +0000
+ (user=manojvishy job=sendgmr) by 2002:a25:ad5d:0:b0:e16:50d2:3d36 with SMTP
+ id 3f1490d57ef6-e17a86208demr247806276.7.1724656613663; Mon, 26 Aug 2024
+ 00:16:53 -0700 (PDT)
+Date: Mon, 26 Aug 2024 07:16:38 +0000
+In-Reply-To: <20240826071641.2691374-1-manojvishy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240826071641.2691374-1-manojvishy@google.com>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240826071641.2691374-1-manojvishy@google.com>
-Subject: [PATCH v1 0/4] vfio/iommu: Flag to allow userspace to set DMA buffers
- system cacheable
+Message-ID: <20240826071641.2691374-2-manojvishy@google.com>
+Subject: [PATCH v1 1/4] iommu: Add IOMMU_SYS_CACHE flag for system cache control
 From: Manoj Vishwanathan <manojvishy@google.com>
 To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
 	Joerg Roedel <joro@8bytes.org>, Alex Williamson <alex.williamson@redhat.com>, 
@@ -81,54 +83,31 @@ Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
 	David Dillow <dillow@google.com>, Manoj Vishwanathan <manojvishy@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi maintainers,
+This flag indicates whether the associated page should be cached in the
+system's cache hierarchy.
 
-This RFC patch introduces the ability for userspace to control whether
-device (DMA) buffers are marked as cacheable, enabling them to utilize
-the system-level cache.
+Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
+---
+ include/linux/iommu.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-The specific changes made in this patch are:
-
-* Introduce a new flag in `include/linux/iommu.h`: 
-    * `IOMMU_SYS_CACHE` -  Indicates if the associated page should be cached in the system's cache hierarchy.
-* Add `VFIO_DMA_MAP_FLAG_SYS_CACHE` to `include/uapi/linux/vfio.h`:
-    * Allows userspace to set the cacheable attribute to PTE when mapping DMA regions using the VFIO interface.
-* Update `vfio_iommu_type1.c`:
-    * Handle the `VFIO_DMA_MAP_FLAG_SYS_CACHE` flag during DMA mapping operations.
-    * Set the `IOMMU_SYS_CACHE` flag in the IOMMU page table entry if the `VFIO_DMA_MAP_FLAG_SYS_CACHE` is set.
-
-* arm/smmu/io-pgtable-arm: Set the MAIR for SYS_CACHE
-
-The reasoning behind these changes is to provide userspace with finer-grained control over memory access patterns for devices,
-potentially improving performance in scenarios where caching is beneficial. We saw in some of the use cases where the buffers were
-for transient data ( in and out without processing).
-
-I have tested this patch on certain arm64 machines and observed the following:
-
-* There is 14-21% improvement in jitter measurements, where the buffer on System Level Cache vs DDR buffers
-* There was not much of an improvement in latency in the diration of the tests that I have tried.
-
-I am open to feedback and suggestions for further improvements. Please let me know if you have any questions or concerns.
-Also, I am working on adding a check in the VFIO layer to ensure that if there is no architecture supported implementation for
-sys cache, if should not apply them.
-
-Thanks,
-Manoj Vishwanathan
-
-Manoj Vishwanathan (4):
-  iommu: Add IOMMU_SYS_CACHE flag for system cache control
-  iommu/io-pgtable-arm: Force outer cache for page-level MAIR via user
-    flag
-  vfio: Add VFIO_DMA_MAP_FLAG_SYS_CACHE to control device access to
-    system cache
-  vfio/type1: Add support for VFIO_DMA_MAP_FLAG_SYS_CACHE
-
- drivers/iommu/io-pgtable-arm.c  | 3 +++
- drivers/vfio/vfio_iommu_type1.c | 5 +++--
- include/linux/iommu.h           | 6 ++++++
- include/uapi/linux/vfio.h       | 1 +
- 4 files changed, 13 insertions(+), 2 deletions(-)
-
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 04cbdae0052e..ca895c83c24f 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -31,6 +31,12 @@
+  */
+ #define IOMMU_PRIV	(1 << 5)
+ 
++/*
++ * Flag to indicate whether the associated page should be cached in the
++ * system's cache hierarchy.
++ */
++#define IOMMU_SYS_CACHE (1 << 6)
++
+ struct iommu_ops;
+ struct iommu_group;
+ struct bus_type;
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
