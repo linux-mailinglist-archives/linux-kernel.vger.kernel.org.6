@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-301752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E1F95F511
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:29:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D080695F51A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 17:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46D11F22891
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:29:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3586DB21966
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AA8192B93;
-	Mon, 26 Aug 2024 15:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C1019341D;
+	Mon, 26 Aug 2024 15:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T6uNE0H2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iRL/dea7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6909357CB5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 15:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2316D191F81;
+	Mon, 26 Aug 2024 15:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686162; cv=none; b=fkgOjeOBEDeN8BJgGhAWJcU+m86qLNTg8MUs286u65SLXiNsAqSLFtcQlWxgXsu/RX0qcl6Hf7dnvVtztWbGQ8Hi6RGc5nk5xCu2vnYZlp9UD8MkkVwSNL0Dtr5ctVN37p5K0fIJb1b6EJ2YGPccr2+R1HS5SGvcglVyHQ58Vx4=
+	t=1724686244; cv=none; b=SDB5xGnmPD9htSiLKHIUEn2KfI0+OqlymAlMX564OzT5rvi27+0GCOKkcEqvZWo5Wvo2mw2tqM0fWLeomSviAZfsQ9PF6BRQ7nJZqg31xyya9bQjQ60E85/5zqdMXkcU9Eus7FR9LjxRN1H1PriYEyFSrnBpdGNchs3/gBE8h0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686162; c=relaxed/simple;
-	bh=LiBh6bheIGF1T4IsjalAoraUKPWBNSp3FW9vky6annk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUZ7X4RERZlWzNJEQoUtPzHqvNYCr66h+fVBuhlhGkgmNSni3OJHiBAYfrYtLeIhkqyvPVHS1CFZ2LefRcjUKmnpukVACUrptIWUmQT46EAG9ef8g8KgIMi+5Ag0WkdCsgN3uDgiQvW7sxvz3ooZDs0LG05I7Yjgs5k0La0M3aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T6uNE0H2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724686160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3yeyrur9JchRS4G+E40jDxueZEFy5Y+L0lctOP/TD28=;
-	b=T6uNE0H2b73nUt+9mquqlvkTBEcTvp2yUThG2CFOkmpNTv4BXyVAE6gkpCOUWFJKqsW0Kf
-	GySUTHll+qmx3eeJWconIr2GUwMpchux7RHf/aUGyDGpMZFK/0S2f6fy4HDxU7Ibtm8n2U
-	HWkAManNw8dK3z/ZmjxeL9avIPfFgjQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-160-eZ2WDPkhNkCnv5DO80kltg-1; Mon, 26 Aug 2024 11:29:19 -0400
-X-MC-Unique: eZ2WDPkhNkCnv5DO80kltg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280b119a74so38051885e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 08:29:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686157; x=1725290957;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3yeyrur9JchRS4G+E40jDxueZEFy5Y+L0lctOP/TD28=;
-        b=YeIlz5ZJ+wdjBlcEzIy0cgZaYoS2DKoTSmK2kOAtmfkEnfEd8J3mH681oOpYSOyR6d
-         DAwPd+XDJknzyKUnSJjGm2xzvtQN6mjuX6lF7oOcImqTjeZ/cAQQgJjr30oYaH7agYr7
-         L6HzQq4/8R86Tc6ao+1+RgHOrhCcHbBreK6qpFHuaHpWO2Tmgn/9pF+cQ8qAmUsSdwcR
-         urBAGWHSDp4+qO8nQK5mjXQ4tv4ZId0WwJK/xDiEKUngn84PxdsU0n47W7gNg3qGFlbF
-         vwRSHwcxEaBjKIG/mKiv5pbarPRpquKYjfXaJ5mlhsc+DeVzfPxRRJhQr1nMfS0Az5Ar
-         g/EQ==
-X-Gm-Message-State: AOJu0Yysxl1jMyh5lXmjFXHt3Bcqasyx6KpKTGMHLeqy+oC96kSpO88N
-	ejp2NZaondA4GEM/1dQVQSIJQapMnOlaAfpIBH7+wVf5Dwe4r439c2ru0EM2P3JRxd50/bDFlUH
-	bb0QM+1kot1/CoAh66j2ogvKA7EzFrysTbj+YeCEw9olYjgxwA4jyjkif1s3aJQ==
-X-Received: by 2002:a05:600c:5008:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-42acd5d9eb4mr79002765e9.29.1724686157682;
-        Mon, 26 Aug 2024 08:29:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTKCP0p2qioREnhkg5F6czIUKGVk/jVDXVVBB+cR6pmwpQ5yr8ooT3Ysi1Ih5xbzSoM5g55w==
-X-Received: by 2002:a05:600c:5008:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-42acd5d9eb4mr79002145e9.29.1724686156681;
-        Mon, 26 Aug 2024 08:29:16 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c737:1900:16b0:8dc:77e:31af? (p200300cbc737190016b008dc077e31af.dip0.t-ipconnect.de. [2003:cb:c737:1900:16b0:8dc:77e:31af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef81a5esm192721155e9.28.2024.08.26.08.29.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 08:29:15 -0700 (PDT)
-Message-ID: <2f7ce228-0b7d-4b59-82b0-5d14e884bba5@redhat.com>
-Date: Mon, 26 Aug 2024 17:29:14 +0200
+	s=arc-20240116; t=1724686244; c=relaxed/simple;
+	bh=waCFBInKCgr3fjghz/KTpMmb1BUwOX3RU89Ze1FxgrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AoAAAuzAKzT4WMzreiwvQzjf0POFgPrzuQO3yf9B0/H/2RCe595fJPLlO8BMUoVdszzZqHugF33fAbYdqSjIUCzN0mKkUhgpGP6qWV6LjIlXYLhJN8kga5m2L23POhwQQ7XErzSRGnIqK+FdPGgSpXcA1tMvdlvgG7MWQrxiIGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iRL/dea7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MR9C021818;
+	Mon, 26 Aug 2024 15:30:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3UlnzQdlD2biWQeL/xGoUZGUrre5RLUHhlOMVI/Zssg=; b=iRL/dea74mnxIAi1
+	QJuAVOYwcnr6JOrcm3eIDnBkbAhV6p+dH/arFIqgXoGfopi8vQ/KKDtATqBok77B
+	dTcMuTRipay8P/7SuJw0ata6R2K7KrmPgTBFKrk1SbBeCmmuFBLBnHEEJUVmXkPp
+	JVQ6eAAo4NUzKCNlXGSXO0WWFaSvM4D/9Boag3wmtBxlftD3pGBz0/fwGnqBzRS4
+	OrvTPUxM16o0rdvwUPsJjx6DAYoJA/IIoQjIoQdYJKJDKxH2lg/6sVXI5F1vKGOM
+	7U10uz0TtHdFaamjp5HRvDkiAc5pcZa4mvblfm8fXi+vCS5M1gAbv2nMVHKSd/sP
+	Otbfww==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41798kc2bu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 15:30:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47QFUEAw025610
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 Aug 2024 15:30:14 GMT
+Received: from [10.216.62.85] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
+ 2024 08:30:07 -0700
+Message-ID: <6ec972b0-a971-4d35-9d8f-4a0fe3660514@quicinc.com>
+Date: Mon, 26 Aug 2024 21:00:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,97 +64,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/14] mm: filemap: filemap_fault_recheck_pte_none()
- use pte_offset_map_ro_nolock()
-To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
- willy@infradead.org, muchun.song@linux.dev, vbabka@kernel.org,
- akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
- peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1724310149.git.zhengqi.arch@bytedance.com>
- <d5d4744c87c759a53b5e115a0d59326232696f61.1724310149.git.zhengqi.arch@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2] usb: gadget: uvc: Add H264 frame format support
+To: Michael Riesch <michael.riesch@wolfvision.net>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Daniel Scally <dan.scally@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
+        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
+        Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        Vijayavardhan Vennapusa
+	<quic_vvreddy@quicinc.com>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711082304.1363-1-quic_akakum@quicinc.com>
+ <2024071126-napped-cobbler-4693@gregkh>
+ <0f3fe4b4-5451-480e-a9e4-11ee921521b9@quicinc.com>
+ <07d9e1f4-201f-47dc-b692-b1aa14511420@quicinc.com>
+ <acb0bcba-82de-4d67-9000-7c50a8456ff1@wolfvision.net>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d5d4744c87c759a53b5e115a0d59326232696f61.1724310149.git.zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: AKASH KUMAR <quic_akakum@quicinc.com>
+In-Reply-To: <acb0bcba-82de-4d67-9000-7c50a8456ff1@wolfvision.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PlFYmix_A_5zoFO-onk-Y6WElAQInJcn
+X-Proofpoint-ORIG-GUID: PlFYmix_A_5zoFO-onk-Y6WElAQInJcn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_12,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999
+ malwarescore=0 phishscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408260119
 
-On 22.08.24 09:13, Qi Zheng wrote:
-> In filemap_fault_recheck_pte_none(), we just do pte_none() check, so
-> convert it to using pte_offset_map_ro_nolock().
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->   mm/filemap.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 0f13126b43b08..c98da9af6b9bd 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3234,8 +3234,8 @@ static vm_fault_t filemap_fault_recheck_pte_none(struct vm_fault *vmf)
->   	if (!(vmf->flags & FAULT_FLAG_ORIG_PTE_VALID))
->   		return 0;
->   
-> -	ptep = pte_offset_map_nolock(vma->vm_mm, vmf->pmd, vmf->address,
-> -				     &vmf->ptl);
-> +	ptep = pte_offset_map_ro_nolock(vma->vm_mm, vmf->pmd, vmf->address,
-> +					&vmf->ptl);
->   	if (unlikely(!ptep))
->   		return VM_FAULT_NOPAGE;
->   
+Hi Michael,
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+On 8/26/2024 3:06 PM, Michael Riesch wrote:
+> Hi Akash,
+>
+> Thanks for your patches. Very interesting to see H.264 UVC gadget
+> support coming to life. May I ask how you tested your patches? What does
+> the user space stack on the gadget side look like? And what is the USB
+> host in your setup (OS, application, ...)?
+We have added support in our application code which opens uvc node 
+during enumeration,
+e2e application POTPLAYER can be used to test which has h264 decoder 
+support, with my changes
+you can see in device setting option along with mjpeg,uncompressed , 
+h264 and all frames and fps
+which we can be added in any init service, which can create and populate 
+uvc properties.
+You need to create sysfs entries as shared in Documentation,
+With format names, driver creates parameters and we need to populate all 
+paramters which are writable.
+we have validated in linux, android and ubuntu OS.
+>
+> On 8/1/24 08:15, AKASH KUMAR wrote:
+>> Hi Greg,Daniel,Laurent,
+>>
+>> On 7/11/2024 3:13 PM, AKASH KUMAR wrote:
+>>> On 7/11/2024 2:37 PM, Greg Kroah-Hartman wrote:
+>>>> On Thu, Jul 11, 2024 at 01:53:04PM +0530, Akash Kumar wrote:
+>>>>> Add support for framebased frame format which can be used to support>>>> multiple formats like H264 or H265 other than mjpeg and YUV frames.
+>>>>>
+>>>>> Framebased format is set to H264 by default, which can be updated to
+>>>>> other formats by updating the GUID through guid configfs attribute.
+>>>>> Using Different structures for all 3 formats as H264 has different
+>>>>> structure than mjpeg and uncompressed which will be paased to
+>>>>> frame make func based on active format instead of common frame
+>>>>> structure, have updated all apis in driver accordingly.
+>>>>> h264 is not recognized by hosts machine during enumeration
+>>>>> with common frame structure, so we need to pass h264 frame
+>>>>> structure separately.
+>>>>>
+>>>>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+>>>>> ---
+>>>>>    .../ABI/testing/configfs-usb-gadget-uvc       |  88 ++-
+>>>>>    drivers/usb/gadget/function/uvc_configfs.c    | 570
+>>>>> +++++++++++++++---
+>>>>>    drivers/usb/gadget/function/uvc_configfs.h    |  34 +-
+>>>>>    drivers/usb/gadget/function/uvc_v4l2.c        |  80 ++-
+>>>>>    include/uapi/linux/usb/video.h                |  62 ++
+>>>>>    5 files changed, 714 insertions(+), 120 deletions(-)
+>>>>>
+>>>>> Changes for v2:
+>>>>> - Added H264 frame format Details in Documentation/ABI/
+>>>>>     and new configsfs attribute path for mjpeg and
+>>>>>     uncompresseed formats.
+>>>>>
+>>>>> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>>>> b/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>>>> index 4feb692c4c1d..2580083cdcc5 100644
+>>>>> --- a/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>>>> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>>>> @@ -224,13 +224,13 @@ Description:    Additional color matching
+>>>>> descriptors
+>>>>>                          white
+>>>>>            ========================
+>>>>> ======================================
+>>>>>    -What: /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg
+>>>>> -Date:        Dec 2014
+>>>>> +What:
+>>>>> /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg/name
+>>>> You are changing an existing api, how will all existing code handle
+>>>> this? Will it not break? What is ensuring that this will work as-is ok?
+>>>> I have modified all existing apis in kernel and have handled it and
+>>>> all existing formats
+>>> are working along with H264 in this change. Only user needs to change
+>>> configfs parameter
+>>> path according to updated path in documentation in Userspace.Currently
+>>> H264 doesn't work with same
+>>> structure and we need add it differently as a result these configfs
+>>> paths are getting updated.
+>>> Daniel and Laurent can you suggest if it ok?
+>>>>> -#define UVCG_FRAME_ATTR(cname, aname, bits) \
+>>>>> -static ssize_t uvcg_frame_##cname##_show(struct config_item *item,
+>>>>> char *page)\
+>>>>> +#define UVCG_FRAME_ATTR(cname, fname, bits) \
+>>>>> +static ssize_t uvcg_frame_##fname##_##cname##_show(struct
+>>>>> config_item *item, char *page)\
+>>>>>    {                                    \
+>>>>>        struct uvcg_frame *f = to_uvcg_frame(item);            \
+>>>>>        struct f_uvc_opts *opts;                    \
+>>>>> @@ -1936,14 +1941,14 @@ static ssize_t
+>>>>> uvcg_frame_##cname##_show(struct config_item *item, char *page)\
+>>>>>        opts = to_f_uvc_opts(opts_item);                \
+>>>>>                                        \
+>>>>>        mutex_lock(&opts->lock);                    \
+>>>>> -    result = sprintf(page, "%u\n", f->frame.cname);            \
+>>>>> +    result = scnprintf(page, PAGE_SIZE, "%u\n",
+>>>>> f->frame.fname.cname);\
+>>>> sysfs_emit() is made for this.
+>>> Sure, will change.
+>>>
+>>>
+>> can you suggest how to support H264 format without changing userspace
+>> nodes,
+>> as H264 format structure is different from mjpeg and uncompressed format
+>> and
+>> using same structure show issue as host is not able to recognize H264
+>> format frames.
+>>
+>> Thanks,
+>> Akash
+>>
+> After only a quick look at the USB Video Payload H264 1.5 document, I
+> think there should be a folder
+>    /config/usb-gadget/gadget/functions/uvc.name/streaming/h264/
+> with the formats
+>    /config/usb-gadget/gadget/functions/uvc.name/streaming/h264/name
+> and the frames
+>    /config/usb-gadget/gadget/functions/uvc.name/streaming/h264/name/name
+> in analogy to the other payloads, namely mjpeg and uncompressed.
+> Naturally, the attributes will be different to the existing formats.
+>
+> What exactly does not work with this approach?
+We need to add additional name for mjpeg and uncompressed due to 
+different structure
+as we cannot support all 3 formats with same frame struct type.
+This name can be any dummy word and formats are added inside this dummy 
+name instead
+of mjpeg and uncompressed.
+>
+> Best regards,
+> Michael
+Thanks,
+Akash
 
