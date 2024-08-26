@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-301556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2732395F27B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2CD95F27F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 15:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CE221C218DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B76283C79
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 13:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE83E17C9AD;
-	Mon, 26 Aug 2024 13:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C4F180021;
+	Mon, 26 Aug 2024 13:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kcRs0Up6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ay/V7/Ai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A7713C695;
-	Mon, 26 Aug 2024 13:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4EF1E519;
+	Mon, 26 Aug 2024 13:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677921; cv=none; b=FY3D3ucbfs4TZNJujs/oPNK0aCes3vBImZdTEt0HqwaMp5rLzSuStmRWgW8VRLNw+MSoZjnIO8VtbQF21xLSE5Nea2FCZw7dFC6xyMFQLwUdZ7vMxquqCZlvPQVLzVI1NhsKyqEFJBZSgdMCt+PVQVBNO4qDrhboOTkSsUzgVDE=
+	t=1724677937; cv=none; b=SHLaPL+4CE9Kq2UksWKmJXeR2Dhxc7Uzu72eArQbN3+1XsHYo3+S3xHMWCtOVmUF/cgUFEjuzk3W914MB+7mqaY3Y79oKFUoepxQRx/Xztm5fj2xsypAbZ3oBoCFXk4hyVWmtaUIDbMFkxSz1IHkcYikH14tjUMvZMCjSUNbnhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677921; c=relaxed/simple;
-	bh=ivF/jbpHiVz5xnl0u7eRNCvvm7IVCf7GHqjOdoyEiJ0=;
+	s=arc-20240116; t=1724677937; c=relaxed/simple;
+	bh=2Hwc0rlUSM7yZPSibAcCUtm/BA1aKxtEQmG6ERlsGHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYu5O0bMaTDpm3cnYDh1waqo05FxFKSXgiwr8Al9X6jdK0yV9SFDEuHYl4sEttcq+WxGeS+lpG/WMQoyO/vilwKNINcZE7Aacxw6s//I6JypqwkMY9lqHaJ7m/O2AucAxlw8Ap4+jUqAAxp18YwBLrUeIvZ8kpLmR2N4+2+ok8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kcRs0Up6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CnEqIrJf/5Uvl3Jm/q/BrEQtwg9oxHJd/L725YJbtSg=; b=kcRs0Up6Cpe13NcGd7CsxcTXEg
-	wfUx33ph4ytvCOW5PBAgqcDvh4o1EGSJoK5TGxQCgPNeuG/v3D6JkU/rF2hdYZcbDhu6XmX0Y461C
-	LZZ8BwGkStTknZyAzOa9dQgtUckbdxeGFNrcU3twnz5o7iteGmZ3xjv70tJkt3u7oT/lbuXQlLbzO
-	oSF3vL64NTiTdj3Z70gPw8W2W86zGz3Rd9OF/5fwwtq68NRPdXcEq+NKFk1zhI15jjtzu+HtZn8pt
-	H5KbjDahvkUiYuDiMfOr8HwTsFriXnImrEp4FssGplhuGTpXTswtIQPfYPK+il474iHx5lr1OO8mC
-	ZMNhtxgw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1siZVT-0000000FQMj-2njG;
-	Mon, 26 Aug 2024 13:11:39 +0000
-Date: Mon, 26 Aug 2024 14:11:39 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zsx_C0QuecO1C0dB@casper.infradead.org>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-2-mhocko@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sD+bhJ7vB4xHye/Q0bU8BmMR7fTDiPOSoiMlXysG0yNQFQHyTkm4JEELl4C8mqTUGPMQCaO+aeOWpWfjPTqkaR9ClNeRXQGLSylmS6oTTxEo3PVrqiLA4hjwBkRHpgllozu2s3Z7mhT3ohmwnhjvfuPXnkJowU3bm4l9Io+VLog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ay/V7/Ai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080D6C5E8A6;
+	Mon, 26 Aug 2024 13:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724677937;
+	bh=2Hwc0rlUSM7yZPSibAcCUtm/BA1aKxtEQmG6ERlsGHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ay/V7/AinftTTAO6O36jLK1UzgGW3+ab6Tn87cJIZj6yLUdx/awwevwjbhOA9w0c8
+	 gZHHUZ6zkdosLGLsWJRnVTL7e/SuwkxXP5STG5MvCIUX3SXgObnD8TLE9+KcX5O4fF
+	 3viLZyhpAEo5H0atnKGpVUPShK/xTgLqm5eYU5Os=
+Date: Mon, 26 Aug 2024 15:12:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, sergei.shtylyov@gmail.com,
+	syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V4 1/2] wifi: ath6kl: Replace ath6kl_usb_submit_ctrl_in
+ with usb_control_msg_recv
+Message-ID: <2024082651-boring-friend-cee3@gregkh>
+References: <2024082631-upward-zips-f7b8@gregkh>
+ <tencent_A037749680365C4BCC750776D566183C4509@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,43 +58,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
+In-Reply-To: <tencent_A037749680365C4BCC750776D566183C4509@qq.com>
 
-On Mon, Aug 26, 2024 at 10:47:12AM +0200, Michal Hocko wrote:
-> @@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
->   */
->  static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
->  {
-> -	struct bch_inode_info *inode =
-> -		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
-> -				  __bch2_new_inode(trans->c));
-> +	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
+On Mon, Aug 26, 2024 at 08:29:56PM +0800, Edward Adam Davis wrote:
+> ath6kl_usb_submit_ctrl_in() did not take into account the situation where
+> the length of the data read from the device is not equal to the len, and
+> such missing judgments will result in subsequent code using incorrect data.
+> 
+> usb_control_msg_recv() handles the abnormal length of the returned data,
+> so using it directly can fix this warning.
+> 
+> Reported-by: syzbot+92c6dd14aaa230be6855@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+> V4: Adjust indentation style
+> 
 
-GFP_NOWAIT include GFP_NOWARN these days (since 16f5dfbc851b)
+Please list all of the version changes here.
 
-> +++ b/fs/inode.c
-> @@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
->   * These are initializations that need to be done on every inode
->   * allocation as the fields are not initialised by slab allocation.
->   */
-> -int inode_init_always(struct super_block *sb, struct inode *inode)
-> +int inode_init_always(struct super_block *sb, struct inode *inode, gfp_t gfp)
+Also, I got 2 copies of this, did something go wrong on your side?
 
-Did you send the right version of this patch?  There should be a "_gfp"
-appended to this function name.
+thanks,
 
-> +++ b/include/linux/fs.h
-> @@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
->  
->  extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
->  
-> -extern int inode_init_always(struct super_block *, struct inode *);
-> +extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
-
-You can drop the "extern" while you're changing this line.
-
-> +static inline int inode_init_always(struct super_block *sb, struct inode *inode)
-> +{
-> +	return inode_init_always_gfp(sb, inode, GFP_NOFS);
-> +}
+greg k-h
 
