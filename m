@@ -1,79 +1,104 @@
-Return-Path: <linux-kernel+bounces-300775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-300776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601F695E831
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:01:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA6195E833
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 08:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2FC7B20DAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01129B20F7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 06:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DCB8062A;
-	Mon, 26 Aug 2024 06:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC51180638;
+	Mon, 26 Aug 2024 06:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2MOgqYB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HXmqvlCU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFE32C1AC;
-	Mon, 26 Aug 2024 06:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CCF374C3;
+	Mon, 26 Aug 2024 06:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724652055; cv=none; b=Q9u7rfkjJSc5rK5igAE4jMA8GvIXKVLcOa13O4nty2Sd8GZR9QlsovVHJvQnCZcdMWAmxSaVGl154u5Cmp+XNt3bgzEknSr4ych0Jgotcf28fsq08MCyGGr6I8nc5bL5ntHRjZM+b5wfLeJ6wvgLWnqZr9ID5fGdDJf4npKwxKQ=
+	t=1724652075; cv=none; b=JA8+uS31SAB7N+JjEoAWQmpm38PHpk8YHAfQzwYMmIoqj75VA7HVw031R6FmzVxuGMrpLnHzQH2WbyodpBzSpSBvS9mtF1pxHe1bFpNKtT3jt9YCDhOas+x7foPnZAnXSs2Zdzg5aBJp7FDf7iL/oroRQbuPoVUySJ3MxrJNwXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724652055; c=relaxed/simple;
-	bh=M8PzmzGsKxoxe7APmdLlrOMwSJDjNeWLTNO/ZLQaq+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FrICi3F19hSWy7DkvIklXwYWu6ubpFVqIHTjfoRuozNgKGDeM4BlX8LJ2tQq2cF1W8if/b8+anpeD0eba+Gtn+h6i9uX/dST4Dqiy7gilFHq05+HPMawYl9W0PBmd1Yw3DPi4UcDmozXDvsGDarRmNNkEWyUionZM01UtxaKfsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2MOgqYB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0944EC4DE00;
-	Mon, 26 Aug 2024 06:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724652055;
-	bh=M8PzmzGsKxoxe7APmdLlrOMwSJDjNeWLTNO/ZLQaq+Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R2MOgqYB1+c+B3HmKWJNdFq5pWC0ZdwT7maoaxpQAzOQvYnFbW3xTjmtCGrC7fgmj
-	 KsXHARBtpgxhB2hPDZ92VZoL8Dr3Ltd+aYGceYD/69W3P9Zl6W9tkOiSZxjH4AhmVF
-	 D0e3M/gnWktJ723Lk9NyFky8Fur/Y4Hi/KJWQxM271rVAO30/mKQciK4qjBaXy4cUw
-	 JC48WSZC1Jg+RvBuX/D2Ihgh6I4wd+aG9nsdfnt3czoWMKonKyK24VvebTwOGAzqda
-	 aIURyC1PSYrreXtmQyU8VudnW0i4GIfI8Otvtq5E8Uu3nMHDA5wxjK6LmtNey/X7my
-	 68kIPA0WqQt0g==
-Date: Mon, 26 Aug 2024 08:00:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: zhenghaowei@loongson.cn
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name, 
-	p.zabel@pengutronix.de, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH v3 3/3] LoongArch: Update dts to support Loongson UART
- driver.
-Message-ID: <gtbaqcnk4g3f4achlyiixu2bbb2rxoxoitbltqxavexjoyqxlf@furbr4zsirkz>
-References: <20240826024705.55474-1-zhenghaowei@loongson.cn>
- <20240826024705.55474-4-zhenghaowei@loongson.cn>
+	s=arc-20240116; t=1724652075; c=relaxed/simple;
+	bh=xm/0ljIY2dEJkscMcgTFut9jN9RIx8riUitENXBb6Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mkcVxYBbzczeqwCMSfGk4m5SEkjDAGXvsMrT2xMh9LCgZk12KQNgAKKfLguNc3V9NiEGF0SdCRii5dwBOPPMPTJpT/d4Vtc5wLL2rwgj6kb+hrg/ZzwxAQYMxKC9NDg+vhGEieBuFk9JsEdtR78CzEw/LJ5dsdnw1W8lS4f8r8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HXmqvlCU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724652070;
+	bh=qepQQwBNH4v4/xuscOtqVGuwOtBATLrA418zEGyGD5E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HXmqvlCUeDUp7Vc13pbf5+lR2e87rt69RNXD939SKDUJ1hAIu9TaX6JI8TK7/2yZZ
+	 ypQVrT9Gz6Vjbbuo+Be5o2GhFy08rqtWQoUn4u8Ky5u8OInR84dSLmXIFSbbmOzTRE
+	 YHEw2qsH28ITLgxC6UOlAv/skleQtYiJ1mx/sqNvM5mx5xn3+mwEttSCbVvvRj9cBT
+	 k/3w+n/MurfRaaQm79SM0LBb8fz8fuwSvBoP/vteypmCbcuFd8xPyDLSy0UDpMFx2B
+	 ifhM0cMfY70WRl+2spsBT4eaTr18C4dAnU+jXkVKtqKSqfyyuMjzd3ylpUan0Ua2F3
+	 hD4KxWADZo6gQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wsg5x5N8Qz4x82;
+	Mon, 26 Aug 2024 16:01:09 +1000 (AEST)
+Date: Mon, 26 Aug 2024 16:01:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav
+ <p.raghav@samsung.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20240826160109.12d97220@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240826024705.55474-4-zhenghaowei@loongson.cn>
+Content-Type: multipart/signed; boundary="Sig_/u.V+TDPbAEAFT=0f87Jve_z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Aug 26, 2024 at 10:47:05AM +0800, zhenghaowei@loongson.cn wrote:
-> From: Haowei Zheng <zhenghaowei@loongson.cn>
-> 
-> Change to use the Loongson UART driver for Loongson-2K2000,
-> Loongson-2K1000 and Loongson-2K0500.
+--Sig_/u.V+TDPbAEAFT=0f87Jve_z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why?
+Hi all,
 
-That's what commit msg should explain.  This is not bisectable and
-breaks users without any reasonable need/explanation.
+After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+produced this warning:
 
-Best regards,
-Krzysztof
+include/linux/pagemap.h:480: warning: Function parameter or struct member '=
+index' not described in 'mapping_align_index'
 
+Introduced by commit
+
+  c104d25f8c49 ("filemap: allocate mapping_min_order folios in the page cac=
+he")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/u.V+TDPbAEAFT=0f87Jve_z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbMGiUACgkQAVBC80lX
+0GxS8Af5ARlZhGA4XyesnNCr08Fesij5G+Pm4GNeSaI6hqL4bds5QtluYXGjUcxl
+BAcDGFqZHlxkBznRknxaU0BttW8NJ4eNzYeEU8BUewuZnFML4d8wEAjhVt6gKX2f
+1PK2XeYXkhiAgFSWsZIKj2L+0lrjW3qY7FVvAHTwLoIHtFCzeTc67grLRySjnymv
+GvekN6rHAnT10J8wVV2yQ0qiIwMfL3w7IGUs1/SCTyicdZnpk9PyQGdcMNPefpkF
++wQyPYf5g/nejRXi64Z9dgh2uKJ6gJu2a+FkI46R77lg6cgcaqkU6JXgj3ProwRz
+p9Lu5tp911qHzpnpbw0hMYSA74Meng==
+=+1v0
+-----END PGP SIGNATURE-----
+
+--Sig_/u.V+TDPbAEAFT=0f87Jve_z--
 
