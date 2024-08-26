@@ -1,59 +1,133 @@
-Return-Path: <linux-kernel+bounces-301128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-301129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA1D95ECB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:07:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4447F95ECBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 11:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181D41C2171A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:07:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B64B22783
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2024 09:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D48C143C7D;
-	Mon, 26 Aug 2024 09:07:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893F142E67;
+	Mon, 26 Aug 2024 09:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KAfhreAF"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462C884047
-	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A232145A09
+	for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 09:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663233; cv=none; b=IRO3lAZfjGqqAjzS/KPLu2wlLks6fm95Nwqy/ZFy20rk/5pvmKQRZb8MZex42fFpDTrilF3WoW59Hrq7+XkIAySHricmELchCZa1hIJMxnvbXagC+UaQ+UUuXOR/ScsJpYWUQ1xjIe/Qbj5wTxcikHysha0byIPENsVfmZBZvf4=
+	t=1724663252; cv=none; b=CPi926rr0XDP5K3zTDm9N0zVqUnkHoA1WJ9/zdTHKduZz3MTVBNyk106EqgyJL0ITPcw7sSLe3NlhWkwV/RIoKou9fhSrXT8gvSAJt6blzSSlJP/wbksAAdgK50Sh7kV/3XVzKGNp0CZZG1lGR8XLsHyjmroPq629D66QpGDY5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663233; c=relaxed/simple;
-	bh=VYcpTxpZ8oA8e1PlWGOKIV6M0wWDxeEsIXyzKs/3vNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2RyYQ+9kFumWayc1Pr9Syl/kdPDyVMxupKKKpYUJBN7mxtvUNt2t6UKwyBfgYX+hNB05FyXYOqr4SNY8tWBlm2OAdewt1CN01mfIet4Zl9XI/mwozWCXLtgF5HEvt5ZkXGYw4itWEKOSCyGPUhDN8AvL3oWQg9fDB4MTCQeYv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1siVgm-0005di-Hd; Mon, 26 Aug 2024 11:07:04 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1siVgm-0039P3-2Q; Mon, 26 Aug 2024 11:07:04 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1siVgl-0070tM-35;
-	Mon, 26 Aug 2024 11:07:03 +0200
-Date: Mon, 26 Aug 2024 11:07:03 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	Francesco Dolcini <francesco@dolcini.it>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/31] wifi: mwifiex: drop HostCmd_CMD_802_11_MAC_ADDRESS
- response handling
-Message-ID: <ZsxFt19nQs4D7Q7t@pengutronix.de>
-References: <20240820-mwifiex-cleanup-v1-0-320d8de4a4b7@pengutronix.de>
- <20240820-mwifiex-cleanup-v1-3-320d8de4a4b7@pengutronix.de>
- <Zsd-ZxscUBmf0xsu@google.com>
+	s=arc-20240116; t=1724663252; c=relaxed/simple;
+	bh=lj01/f2LiyRrUvTSa8/RM+ENuLL5BYJU8hMdCYL8sIg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KM6pVWPFbbBaY6lKJeA2FNfTBUQj6fieS+iFUYPEyWoadBCyQSFl5JVAEalNgeBOrjYkHt/ilQ/BuNw4XxZEEAiSUGkgFQRKWKzvKxYwCUriT+besMk3CWiTDdx7xBCJf3bpcUwdHa8ElYkSo7+7mIWFRCY3l7KTNcnPKaOHAVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KAfhreAF; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f4f24263acso52141161fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2024 02:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724663248; x=1725268048; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UqD5UWcEcVPtLKNughX5xFAsztARfJbyIdaLj7krJ48=;
+        b=KAfhreAFNj29HjT2HRVug5yGbYqg+uXm/EbHaYsfpbUSmXpiiMp08OJpvLccNsKg6z
+         53wRQAOco+Vc83bcSDlU7TzqK67Ajf03FnhkGDXqkGBA92jGKv5eM7HrWhJmj2Ke/GRK
+         3naiX76Odxc44hk3Ag9NgW0nAmv4o1HaTXaCAo2yAG5/KLoU3/BF3ttU1XQldTxODXv2
+         EW58aG/icuOW58s1stk5ivp43KqABTq77vJBj352iqoFbkskE+eJw8ZLJhg6mG8NsJpj
+         e0bcY6FkT/RszqswcmBql1PCylwC+LPG3I8fKde+hmE1gPlpSxR0SfnvubaNW/OK4Xns
+         6tdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724663248; x=1725268048;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UqD5UWcEcVPtLKNughX5xFAsztARfJbyIdaLj7krJ48=;
+        b=np+y26vubPexgCNHmocJnaq3wzbQyERcL0ngGWKxz2d1+E95KWTzAazGNMkbch7ZSQ
+         U99C1zdeIP1avozQeaOJK02o15PQfIbsB0/9Ee/bxQIZXC0qDpbUO1dEQYpmGH88A7kY
+         DyXgvrGlt/426h0ssJTUHggQc+YSjGZOhCPifuwks02ODIQu8OxUnFESklm9OBYYUkla
+         iJUCIP8XwLXCa8LjwgvY2f2SKbqYk3KYD9m4FXuJR4LFMdc8iDOFW7ewWxqTdgQOKBtO
+         F0F1WPUBrXXcNmqS3qJd0anwg3eJHmLWrXHdc8Qlc+w6J76gfQw1GpRWSIso5o9BTIP2
+         GfRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwZlNA60K9EcFXRH5jnk+wmXZBIoDt8ObttkoUdopN+26wDXDOpyHDlUt7FeCH9Q7ux1XPaqJLMKS8NkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkdWnSrRYOJIdgKvQgepP/Bme/WJBdmrHvsuipjLXXzC/xds1P
+	vUhgglP8W5De8D/5O/hFNJHq+Awd4Xqqr27DuSPJOUCBmQUI1PUBME/+7mJpQZ8=
+X-Google-Smtp-Source: AGHT+IEK0yN2RYKBDuaStUQnXKZRjXxJWE9pErYm6IieseugH4NhuZzdiuxipurv3igkJJwF0aMRAw==
+X-Received: by 2002:a2e:b892:0:b0:2f3:cf43:c2a8 with SMTP id 38308e7fff4ca-2f4f579e8eamr76624181fa.42.1724663247306;
+        Mon, 26 Aug 2024 02:07:27 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2205e1sm652753666b.12.2024.08.26.02.07.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 02:07:26 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 26 Aug 2024 11:07:33 +0200
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZsxF1ZvsrJbmWzQH@apocalypse>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <2024082420-secluding-rearrange-fcfd@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,70 +136,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zsd-ZxscUBmf0xsu@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <2024082420-secluding-rearrange-fcfd@gregkh>
 
-On Thu, Aug 22, 2024 at 11:07:35AM -0700, Brian Norris wrote:
-> Hi Sascha,
+Hi Greg,
+
+On 09:53 Sat 24 Aug     , Greg Kroah-Hartman wrote:
+> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > --- a/include/linux/pci_ids.h
+> > +++ b/include/linux/pci_ids.h
+> > @@ -2610,6 +2610,9 @@
+> >  #define PCI_VENDOR_ID_TEKRAM		0x1de1
+> >  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+> >  
+> > +#define PCI_VENDOR_ID_RPI		0x1de4
+> > +#define PCI_DEVICE_ID_RP1_C0		0x0001
 > 
-> On Tue, Aug 20, 2024 at 01:55:28PM +0200, Sascha Hauer wrote:
-> > The command response handler copies the new MAC address over to
-> > priv->curr_addr. The same is done in the code issuing the call
-> > already, so drop the unnecessary HostCmd_CMD_802_11_MAC_ADDRESS
-> > handling.
+> Minor thing, but please read the top of this file.  As you aren't using
+> these values anywhere outside of this one driver, there's no need to add
+> these values to pci_ids.h.  Just keep them local to the .c file itself.
+>
+
+Thanks, I've read the top part of that file. The reason I've declared those
+two macroes in pci_ids.h is that I'm using them both in the
+main driver (rp1-pci.c) and in drivers/pci/quirks.c.
+
+I suppose I could move DECLARE_PCI_FIXUP_FINAL() inside rp1-pci.c to keep
+those two defines local, but judging from the number of entries of
+DECLARE_PCI_FIXP_FINAL found in quirks.c versus the occurences found in
+respective driver, I assumed the preferred way was to place it in quirks.c.
+
+Many thanks,
+Andrea
+
+ 
+> thanks,
 > 
-> It took a bit to figure out what you meant here -- I guess you're
-> referring to mwifiex_set_mac_address()? It could help to document what
-> you mean.
-
-Ok, I can clarify this a bit when sending this next time.
-
-Right now what we have is:
-
-1) mwifiex_set_mac_address() sets priv->curr_addr to the desired new MAC
-   address
-2) mwifiex_cmd_802_11_mac_address() (called from mwifiex_send_cmd())
-   constructs the HostCmd_CMD_802_11_MAC_ADDRESS command, using the MAC
-   address in priv->curr_addr
-3) mwifiex_ret_802_11_mac_address(), called from the response handler,
-   sets priv->curr_addr to the MAC address received with the command
-   response, which of course is the same as we initially copied there
-   in step 1), which makes 3) redundant and unnecessary
-
-> 
-> I'm also a bit torn; this command API ostensibly has a (unused so far,
-> for this command) HostCmd_ACT_GEN_GET mode, in which case this *is*
-> important.
-> 
-> If anything, I might consider dropping some of the handling in
-> mwifiex_set_mac_address(), because it seems to presume (and then has to
-> undo for failure) behavior of the underlying command.
-
-What we could do instead of dropping 3) is:
-
-1) pass the new MAC address in the data_buf argument to
-   mwifiex_send_cmd()
-2) instead of priv->curr_addr use data_buf in
-   mwifiex_cmd_802_11_mac_address()
-
-With this the response handler would still set priv->curr_addr in case
-the command went through successfully. No need to undo priv->curr_addr
-to the previous MAC address in case the command failed.
-
-Sounds good to me. Is that where you aiming at?
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> greg k-h
 
